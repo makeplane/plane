@@ -1,11 +1,12 @@
 import { Popover, Transition } from "@headlessui/react";
 import * as React from "react";
-import { ColorResult, SketchPicker } from "react-color";
+import * as ColorPicker from "react-color";
+import type { ColorResult } from "react-color";
 import { usePopper } from "react-popper";
 // helpers
-import { cn } from "../../helpers";
-// components
 import { Button } from "../button";
+import { cn } from "../utils";
+// components
 import { Input } from "./input";
 
 export interface InputColorPickerProps {
@@ -100,7 +101,7 @@ export const InputColorPicker: React.FC<InputColorPickerProps> = (props) => {
                     style={styles.popper}
                     {...attributes.popper}
                   >
-                    <SketchPicker color={value} onChange={handleColorChange} />
+                    <ColorPicker.SketchPicker color={value} onChange={handleColorChange} />
                   </div>
                 </Popover.Panel>
               </Transition>

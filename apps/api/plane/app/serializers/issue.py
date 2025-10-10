@@ -1,5 +1,3 @@
-from lxml import html
-
 # Django imports
 from django.utils import timezone
 from django.core.validators import URLValidator
@@ -43,7 +41,6 @@ from plane.db.models import (
 )
 from plane.utils.content_validator import (
     validate_html_content,
-    validate_json_content,
     validate_binary_data,
 )
 
@@ -128,20 +125,18 @@ class IssueCreateSerializer(BaseSerializer):
             raise serializers.ValidationError("Start date cannot exceed target date")
 
         # Validate description content for security
-        if "description" in attrs and attrs["description"]:
-            is_valid, error_msg = validate_json_content(attrs["description"])
-            if not is_valid:
-                raise serializers.ValidationError({"description": error_msg})
-
         if "description_html" in attrs and attrs["description_html"]:
-            is_valid, error_msg = validate_html_content(attrs["description_html"])
+            is_valid, error_msg, sanitized_html = validate_html_content(attrs["description_html"])
             if not is_valid:
-                raise serializers.ValidationError({"description_html": error_msg})
+                raise serializers.ValidationError({"error": "html content is not valid"})
+            # Update the attrs with sanitized HTML if available
+            if sanitized_html is not None:
+                attrs["description_html"] = sanitized_html
 
         if "description_binary" in attrs and attrs["description_binary"]:
             is_valid, error_msg = validate_binary_data(attrs["description_binary"])
             if not is_valid:
-                raise serializers.ValidationError({"description_binary": error_msg})
+                raise serializers.ValidationError({"description_binary": "Invalid binary data"})
 
         # Validate assignees are from project
         if attrs.get("assignee_ids", []):
@@ -170,9 +165,7 @@ class IssueCreateSerializer(BaseSerializer):
                 pk=attrs.get("state").id,
             ).exists()
         ):
-            raise serializers.ValidationError(
-                "State is not valid please pass a valid state_id"
-            )
+            raise serializers.ValidationError("State is not valid please pass a valid state_id")
 
         # Check parent issue is from workspace as it can be cross workspace
         if (
@@ -182,9 +175,7 @@ class IssueCreateSerializer(BaseSerializer):
                 pk=attrs.get("parent").id,
             ).exists()
         ):
-            raise serializers.ValidationError(
-                "Parent is not valid issue_id please pass a valid issue_id"
-            )
+            raise serializers.ValidationError("Parent is not valid issue_id please pass a valid issue_id")
 
         if (
             attrs.get("estimate_point")
@@ -193,9 +184,7 @@ class IssueCreateSerializer(BaseSerializer):
                 pk=attrs.get("estimate_point").id,
             ).exists()
         ):
-            raise serializers.ValidationError(
-                "Estimate point is not valid please pass a valid estimate_point_id"
-            )
+            raise serializers.ValidationError("Estimate point is not valid please pass a valid estimate_point_id")
 
         return attrs
 
@@ -341,11 +330,7 @@ class IssueActivitySerializer(BaseSerializer):
     source_data = serializers.SerializerMethodField()
 
     def get_source_data(self, obj):
-        if (
-            hasattr(obj, "issue")
-            and hasattr(obj.issue, "source_data")
-            and obj.issue.source_data
-        ):
+        if hasattr(obj, "issue") and hasattr(obj.issue, "source_data") and obj.issue.source_data:
             return {
                 "source": obj.issue.source_data[0].source,
                 "source_email": obj.issue.source_data[0].source_email,
@@ -395,12 +380,8 @@ class IssueLabelSerializer(BaseSerializer):
 
 class IssueRelationSerializer(BaseSerializer):
     id = serializers.UUIDField(source="related_issue.id", read_only=True)
-    project_id = serializers.PrimaryKeyRelatedField(
-        source="related_issue.project_id", read_only=True
-    )
-    sequence_id = serializers.IntegerField(
-        source="related_issue.sequence_id", read_only=True
-    )
+    project_id = serializers.PrimaryKeyRelatedField(source="related_issue.project_id", read_only=True)
+    sequence_id = serializers.IntegerField(source="related_issue.sequence_id", read_only=True)
     name = serializers.CharField(source="related_issue.name", read_only=True)
     relation_type = serializers.CharField(read_only=True)
     state_id = serializers.UUIDField(source="related_issue.state.id", read_only=True)
@@ -439,9 +420,7 @@ class IssueRelationSerializer(BaseSerializer):
 
 class RelatedIssueSerializer(BaseSerializer):
     id = serializers.UUIDField(source="issue.id", read_only=True)
-    project_id = serializers.PrimaryKeyRelatedField(
-        source="issue.project_id", read_only=True
-    )
+    project_id = serializers.PrimaryKeyRelatedField(source="issue.project_id", read_only=True)
     sequence_id = serializers.IntegerField(source="issue.sequence_id", read_only=True)
     name = serializers.CharField(source="issue.name", read_only=True)
     relation_type = serializers.CharField(read_only=True)
@@ -583,25 +562,17 @@ class IssueLinkSerializer(BaseSerializer):
 
     # Validation if url already exists
     def create(self, validated_data):
-        if IssueLink.objects.filter(
-            url=validated_data.get("url"), issue_id=validated_data.get("issue_id")
-        ).exists():
-            raise serializers.ValidationError(
-                {"error": "URL already exists for this Issue"}
-            )
+        if IssueLink.objects.filter(url=validated_data.get("url"), issue_id=validated_data.get("issue_id")).exists():
+            raise serializers.ValidationError({"error": "URL already exists for this Issue"})
         return IssueLink.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
         if (
-            IssueLink.objects.filter(
-                url=validated_data.get("url"), issue_id=instance.issue_id
-            )
+            IssueLink.objects.filter(url=validated_data.get("url"), issue_id=instance.issue_id)
             .exclude(pk=instance.id)
             .exists()
         ):
-            raise serializers.ValidationError(
-                {"error": "URL already exists for this Issue"}
-            )
+            raise serializers.ValidationError({"error": "URL already exists for this Issue"})
 
         return super().update(instance, validated_data)
 
@@ -664,16 +635,33 @@ class IssueReactionSerializer(BaseSerializer):
 
 
 class IssueReactionLiteSerializer(DynamicBaseSerializer):
+    display_name = serializers.CharField(source="actor.display_name", read_only=True)
+
     class Meta:
         model = IssueReaction
-        fields = ["id", "actor", "issue", "reaction"]
+        fields = ["id", "actor", "issue", "reaction", "display_name"]
 
 
 class CommentReactionSerializer(BaseSerializer):
+    display_name = serializers.CharField(source="actor.display_name", read_only=True)
+
     class Meta:
         model = CommentReaction
-        fields = "__all__"
-        read_only_fields = ["workspace", "project", "comment", "actor", "deleted_at"]
+        fields = [
+            "id",
+            "actor",
+            "comment",
+            "reaction",
+            "display_name",
+            "deleted_at",
+            "workspace",
+            "project",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        read_only_fields = ["workspace", "project", "comment", "actor", "deleted_at", "created_by", "updated_by"]
 
 
 class IssueVoteSerializer(BaseSerializer):
@@ -908,18 +896,21 @@ class IssueLiteSerializer(DynamicBaseSerializer):
 class IssueDetailSerializer(IssueSerializer):
     description_html = serializers.CharField()
     is_subscribed = serializers.BooleanField(read_only=True)
+    is_intake = serializers.BooleanField(read_only=True)
 
     class Meta(IssueSerializer.Meta):
-        fields = IssueSerializer.Meta.fields + ["description_html", "is_subscribed"]
+        fields = IssueSerializer.Meta.fields + [
+            "description_html",
+            "is_subscribed",
+            "is_intake",
+        ]
         read_only_fields = fields
 
 
 class IssuePublicSerializer(BaseSerializer):
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
     state_detail = StateLiteSerializer(read_only=True, source="state")
-    reactions = IssueReactionSerializer(
-        read_only=True, many=True, source="issue_reactions"
-    )
+    reactions = IssueReactionSerializer(read_only=True, many=True, source="issue_reactions")
     votes = IssueVoteSerializer(read_only=True, many=True)
 
     class Meta:

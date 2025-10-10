@@ -1,21 +1,21 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-// components
+// plane imports
 import { useTranslation } from "@plane/i18n";
-import {
-  EstimateLoaderScreen,
-  EstimateEmptyScreen,
-  EstimateDisableSwitch,
-  CreateEstimateModal,
-  DeleteEstimateModal,
-  EstimateList,
-} from "@/components/estimates";
 // hooks
-import { useProject, useProjectEstimates } from "@/hooks/store";
+import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useProject } from "@/hooks/store/use-project";
 // plane web components
 import { UpdateEstimateModal } from "@/plane-web/components/estimates";
-import { SettingsHeading } from "../settings";
+// local imports
+import { SettingsHeading } from "../settings/heading";
+import { CreateEstimateModal } from "./create/modal";
+import { DeleteEstimateModal } from "./delete/modal";
+import { EstimateEmptyScreen } from "./empty-screen";
+import { EstimateDisableSwitch } from "./estimate-disable-switch";
+import { EstimateList } from "./estimate-list";
+import { EstimateLoaderScreen } from "./loader-screen";
 
 type TEstimateRoot = {
   workspaceSlug: string;

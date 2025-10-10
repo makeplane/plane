@@ -3,9 +3,10 @@ import { useParams } from "next/navigation";
 // plane utils
 import { cn } from "@plane/utils";
 // components
-import { IssueEmojiReactions, IssueVotes } from "@/components/issues/reactions";
+import { IssueEmojiReactions } from "@/components/issues/reactions/issue-emoji-reactions";
+import { IssueVotes } from "@/components/issues/reactions/issue-vote-reactions";
 // hooks
-import { usePublish } from "@/hooks/store";
+import { usePublish } from "@/hooks/store/publish";
 
 type Props = {
   issueId: string;

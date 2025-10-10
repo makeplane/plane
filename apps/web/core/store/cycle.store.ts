@@ -1,7 +1,5 @@
 import { isPast, isToday } from "date-fns";
-import isEmpty from "lodash/isEmpty";
-import set from "lodash/set";
-import sortBy from "lodash/sortBy";
+import { sortBy, set, isEmpty } from "lodash-es";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
@@ -22,7 +20,7 @@ import { CycleArchiveService } from "@/services/cycle_archive.service";
 import { IssueService } from "@/services/issue";
 import { ProjectService } from "@/services/project";
 // store
-import { CoreRootStore } from "./root.store";
+import type { CoreRootStore } from "./root.store";
 
 export interface ICycleStore {
   // loaders

@@ -4,13 +4,17 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { ChevronDown } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { Collapsible } from "@plane/ui";
-import { CountChip } from "@/components/common";
-import { MembersSettingsLoader } from "@/components/ui";
-import { WorkspaceInvitationsListItem, WorkspaceMembersListItem } from "@/components/workspace";
+// components
+import { CountChip } from "@/components/common/count-chip";
+import { MembersSettingsLoader } from "@/components/ui/loader/settings/members";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+// local imports
+import { WorkspaceInvitationsListItem } from "./invitations-list-item";
+import { WorkspaceMembersListItem } from "./members-list-item";
 
 export const WorkspaceMembersList: FC<{ searchQuery: string; isAdmin: boolean }> = observer((props) => {
   const { searchQuery, isAdmin } = props;
@@ -24,6 +28,7 @@ export const WorkspaceMembersList: FC<{ searchQuery: string; isAdmin: boolean }>
       fetchWorkspaceMembers,
       fetchWorkspaceMemberInvitations,
       workspaceMemberIds,
+      getFilteredWorkspaceMemberIds,
       getSearchedWorkspaceMemberIds,
       workspaceMemberInvitationIds,
       getSearchedWorkspaceInvitationIds,
@@ -45,9 +50,16 @@ export const WorkspaceMembersList: FC<{ searchQuery: string; isAdmin: boolean }>
   if (!workspaceMemberIds && !workspaceMemberInvitationIds) return <MembersSettingsLoader />;
 
   // derived values
-  const searchedMemberIds = getSearchedWorkspaceMemberIds(searchQuery);
+  const filteredMemberIds = workspaceSlug ? getFilteredWorkspaceMemberIds(workspaceSlug.toString()) : [];
+  const searchedMemberIds = searchQuery ? getSearchedWorkspaceMemberIds(searchQuery) : filteredMemberIds;
   const searchedInvitationsIds = getSearchedWorkspaceInvitationIds(searchQuery);
-  const memberDetails = searchedMemberIds?.map((memberId) => getWorkspaceMemberDetails(memberId));
+  const memberDetails = searchedMemberIds
+    ?.map((memberId) => getWorkspaceMemberDetails(memberId))
+    .sort((a, b) => {
+      if (a?.is_active && !b?.is_active) return -1;
+      if (!a?.is_active && b?.is_active) return 1;
+      return 0;
+    });
 
   return (
     <>

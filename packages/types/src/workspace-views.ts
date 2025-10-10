@@ -2,7 +2,7 @@ import {
   IWorkspaceViewProps,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
-  IIssueFilterOptions,
+  TWorkItemFilterExpression,
 } from "./view-props";
 import { EViewAccess } from "./views";
 
@@ -16,7 +16,7 @@ export interface IWorkspaceView {
   updated_by: string;
   name: string;
   description: string;
-  filters: IIssueFilterOptions;
+  rich_filters: TWorkItemFilterExpression;
   display_filters: IIssueDisplayFilterOptions;
   display_properties: IIssueDisplayProperties;
   query: any;
@@ -32,4 +32,6 @@ export interface IWorkspaceView {
   };
 }
 
-export type TStaticViewTypes = "all-issues" | "assigned" | "created" | "subscribed";
+export const STATIC_VIEW_TYPES = ["all-issues", "assigned", "created", "subscribed"];
+
+export type TStaticViewTypes = (typeof STATIC_VIEW_TYPES)[number];

@@ -3,18 +3,22 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
-import { Tooltip, ControlLink } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { ControlLink } from "@plane/ui";
 import { findTotalDaysInRange, generateWorkItemLink } from "@plane/utils";
 // components
 import { SIDEBAR_WIDTH } from "@/components/gantt-chart/constants";
 // helpers
 // hooks
-import { useIssueDetail, useIssues, useProject, useProjectState } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 //
 import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-stats";
 import { getBlockViewDetails } from "../utils";
@@ -59,7 +63,7 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
           <div>{message}</div>
         </div>
       }
-      position="top-left"
+      position="top-start"
       disabled={!message}
     >
       <div

@@ -12,7 +12,6 @@ from plane.db.models import (
 
 from plane.utils.content_validator import (
     validate_html_content,
-    validate_json_content,
 )
 from .base import BaseSerializer
 
@@ -45,6 +44,10 @@ class ProjectCreateSerializer(BaseSerializer):
             "archive_in",
             "close_in",
             "timezone",
+            "logo_props",
+            "external_source",
+            "external_id",
+            "is_issue_type_enabled",
         ]
 
         read_only_fields = [
@@ -63,9 +66,7 @@ class ProjectCreateSerializer(BaseSerializer):
                 workspace_id=self.context["workspace_id"],
                 member_id=data.get("project_lead"),
             ).exists():
-                raise serializers.ValidationError(
-                    "Project lead should be a user in the workspace"
-                )
+                raise serializers.ValidationError("Project lead should be a user in the workspace")
 
         if data.get("default_assignee", None) is not None:
             # Check if the default assignee is a member of the workspace
@@ -73,9 +74,7 @@ class ProjectCreateSerializer(BaseSerializer):
                 workspace_id=self.context["workspace_id"],
                 member_id=data.get("default_assignee"),
             ).exists():
-                raise serializers.ValidationError(
-                    "Default assignee should be a user in the workspace"
-                )
+                raise serializers.ValidationError("Default assignee should be a user in the workspace")
 
         return data
 
@@ -84,14 +83,10 @@ class ProjectCreateSerializer(BaseSerializer):
         if identifier == "":
             raise serializers.ValidationError(detail="Project Identifier is required")
 
-        if ProjectIdentifier.objects.filter(
-            name=identifier, workspace_id=self.context["workspace_id"]
-        ).exists():
+        if ProjectIdentifier.objects.filter(name=identifier, workspace_id=self.context["workspace_id"]).exists():
             raise serializers.ValidationError(detail="Project Identifier is taken")
 
-        project = Project.objects.create(
-            **validated_data, workspace_id=self.context["workspace_id"]
-        )
+        project = Project.objects.create(**validated_data, workspace_id=self.context["workspace_id"])
         return project
 
 
@@ -116,25 +111,17 @@ class ProjectUpdateSerializer(ProjectCreateSerializer):
         """Update a project"""
         if (
             validated_data.get("default_state", None) is not None
-            and not State.objects.filter(
-                project=instance, id=validated_data.get("default_state")
-            ).exists()
+            and not State.objects.filter(project=instance, id=validated_data.get("default_state")).exists()
         ):
             # Check if the default state is a state in the project
-            raise serializers.ValidationError(
-                "Default state should be a state in the project"
-            )
+            raise serializers.ValidationError("Default state should be a state in the project")
 
         if (
             validated_data.get("estimate", None) is not None
-            and not Estimate.objects.filter(
-                project=instance, id=validated_data.get("estimate")
-            ).exists()
+            and not Estimate.objects.filter(project=instance, id=validated_data.get("estimate")).exists()
         ):
             # Check if the estimate is a estimate in the project
-            raise serializers.ValidationError(
-                "Estimate should be a estimate in the project"
-            )
+            raise serializers.ValidationError("Estimate should be a estimate in the project")
         return super().update(instance, validated_data)
 
 
@@ -179,9 +166,7 @@ class ProjectSerializer(BaseSerializer):
                 member_id=data.get("project_lead"),
             ).exists()
         ):
-            raise serializers.ValidationError(
-                "Project lead should be a user in the workspace"
-            )
+            raise serializers.ValidationError("Project lead should be a user in the workspace")
 
         # Check default assignee should be a member of the workspace
         if (
@@ -191,32 +176,17 @@ class ProjectSerializer(BaseSerializer):
                 member_id=data.get("default_assignee"),
             ).exists()
         ):
-            raise serializers.ValidationError(
-                "Default assignee should be a user in the workspace"
-            )
+            raise serializers.ValidationError("Default assignee should be a user in the workspace")
 
         # Validate description content for security
-        if "description" in data and data["description"]:
-            # For Project, description might be text field, not JSON
-            if isinstance(data["description"], dict):
-                is_valid, error_msg = validate_json_content(data["description"])
-                if not is_valid:
-                    raise serializers.ValidationError({"description": error_msg})
-
-        if "description_text" in data and data["description_text"]:
-            is_valid, error_msg = validate_json_content(data["description_text"])
-            if not is_valid:
-                raise serializers.ValidationError({"description_text": error_msg})
-
         if "description_html" in data and data["description_html"]:
             if isinstance(data["description_html"], dict):
-                is_valid, error_msg = validate_json_content(data["description_html"])
-            else:
-                is_valid, error_msg = validate_html_content(
-                    str(data["description_html"])
-                )
+                is_valid, error_msg, sanitized_html = validate_html_content(str(data["description_html"]))
+                # Update the data with sanitized HTML if available
+                if sanitized_html is not None:
+                    data["description_html"] = sanitized_html
             if not is_valid:
-                raise serializers.ValidationError({"description_html": error_msg})
+                raise serializers.ValidationError({"error": "html content is not valid"})
 
         return data
 
@@ -225,14 +195,10 @@ class ProjectSerializer(BaseSerializer):
         if identifier == "":
             raise serializers.ValidationError(detail="Project Identifier is required")
 
-        if ProjectIdentifier.objects.filter(
-            name=identifier, workspace_id=self.context["workspace_id"]
-        ).exists():
+        if ProjectIdentifier.objects.filter(name=identifier, workspace_id=self.context["workspace_id"]).exists():
             raise serializers.ValidationError(detail="Project Identifier is taken")
 
-        project = Project.objects.create(
-            **validated_data, workspace_id=self.context["workspace_id"]
-        )
+        project = Project.objects.create(**validated_data, workspace_id=self.context["workspace_id"])
         _ = ProjectIdentifier.objects.create(
             name=project.identifier,
             project=project,

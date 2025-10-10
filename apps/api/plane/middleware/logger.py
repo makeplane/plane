@@ -47,10 +47,7 @@ class RequestLoggerMiddleware:
             return response
 
         user_id = (
-            request.user.id
-            if getattr(request, "user")
-            and getattr(request.user, "is_authenticated", False)
-            else None
+            request.user.id if getattr(request, "user") and getattr(request.user, "is_authenticated", False) else None
         )
 
         user_agent = request.META.get("HTTP_USER_AGENT", "")
@@ -97,11 +94,7 @@ class APITokenLogMiddleware:
             return None
 
         # Check if content is binary by looking for common binary file signatures
-        if (
-            content.startswith(b"\x89PNG")
-            or content.startswith(b"\xff\xd8\xff")
-            or content.startswith(b"%PDF")
-        ):
+        if content.startswith(b"\x89PNG") or content.startswith(b"\xff\xd8\xff") or content.startswith(b"%PDF"):
             return "[Binary Content]"
 
         try:
@@ -121,14 +114,8 @@ class APITokenLogMiddleware:
                     method=request.method,
                     query_params=request.META.get("QUERY_STRING", ""),
                     headers=str(request.headers),
-                    body=(
-                        self._safe_decode_body(request_body) if request_body else None
-                    ),
-                    response_body=(
-                        self._safe_decode_body(response.content)
-                        if response.content
-                        else None
-                    ),
+                    body=(self._safe_decode_body(request_body) if request_body else None),
+                    response_body=(self._safe_decode_body(response.content) if response.content else None),
                     response_code=response.status_code,
                     ip_address=get_client_ip(request=request),
                     user_agent=request.META.get("HTTP_USER_AGENT", None),

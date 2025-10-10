@@ -1,21 +1,19 @@
 import React, { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane constants
+// plane imports
 import { ALL_ISSUES, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssuesStoreType, IBlockUpdateData, TIssue, EIssueLayoutTypes } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
-// hooks
 import { renderFormattedPayloadDate } from "@plane/utils";
+// components
 import { ETimeLineTypeType, TimeLineTypeContext } from "@/components/gantt-chart/contexts";
 import { GanttChartRoot } from "@/components/gantt-chart/root";
 import { IssueGanttSidebar } from "@/components/gantt-chart/sidebar/issues/sidebar";
-import { QuickAddIssueRoot, IssueGanttBlock, GanttQuickAddIssueButton } from "@/components/issues";
-//constants
-// helpers
-//hooks
-import { useIssues, useUserPermissions } from "@/hooks/store";
+// hooks
+import { useIssues } from "@/hooks/store/use-issues";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { useTimeLineChart } from "@/hooks/use-timeline-chart";
@@ -23,6 +21,8 @@ import { useTimeLineChart } from "@/hooks/use-timeline-chart";
 import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
 
 import { IssueLayoutHOC } from "../issue-layout-HOC";
+import { GanttQuickAddIssueButton, QuickAddIssueRoot } from "../quick-add";
+import { IssueGanttBlock } from "./blocks";
 
 interface IBaseGanttRoot {
   viewId?: string | undefined;

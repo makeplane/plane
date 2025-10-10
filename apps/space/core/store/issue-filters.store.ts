@@ -1,15 +1,13 @@
-import cloneDeep from "lodash/cloneDeep";
-import isEqual from "lodash/isEqual";
-import set from "lodash/set";
+import { cloneDeep, isEqual, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane internal
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@plane/constants";
-import { IssuePaginationOptions, TIssueParams } from "@plane/types";
+import type { IssuePaginationOptions, TIssueParams } from "@plane/types";
 // store
-import { CoreRootStore } from "@/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 // types
-import {
+import type {
   TIssueLayoutOptions,
   TIssueFilters,
   TIssueQueryFilters,

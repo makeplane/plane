@@ -12,7 +12,9 @@ import { GROUP_WORKSPACE_TRACKER_EVENT } from "@plane/constants";
 import { getUserRole } from "@plane/utils";
 // hooks
 import { captureClick, joinEventGroup } from "@/helpers/event-tracker.helper";
-import { useWorkspace, useUser, useInstance, useUserPermissions } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 // dynamic imports
 const PostHogPageView = dynamic(() => import("@/lib/posthog-view"), { ssr: false });
 

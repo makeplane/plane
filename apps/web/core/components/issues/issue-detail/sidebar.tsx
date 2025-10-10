@@ -6,25 +6,29 @@ import { CalendarCheck2, CalendarClock, LayoutPanelTop, Signal, Tag, Triangle, U
 // i18n
 import { useTranslation } from "@plane/i18n";
 // ui
-import { ContrastIcon, DiceIcon, DoubleCircleIcon } from "@plane/ui";
+import { ContrastIcon, DiceIcon, DoubleCircleIcon } from "@plane/propel/icons";
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
-import {
-  DateDropdown,
-  EstimateDropdown,
-  MemberDropdown,
-  PriorityDropdown,
-  StateDropdown,
-} from "@/components/dropdowns";
+import { DateDropdown } from "@/components/dropdowns/date";
+import { EstimateDropdown } from "@/components/dropdowns/estimate";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import { IssueCycleSelect, IssueLabel, IssueModuleSelect } from "@/components/issues";
-// helpers
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // hooks
-import { useProjectEstimates, useIssueDetail, useProject, useProjectState, useMember } from "@/hooks/store";
+import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useMember } from "@/hooks/store/use-member";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web components
-import { IssueParentSelectRoot, IssueWorklogProperty } from "@/plane-web/components/issues";
 // components
 import { WorkItemAdditionalSidebarProperties } from "@/plane-web/components/issues/issue-details/additional-properties";
+import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
+import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
+import { IssueCycleSelect } from "./cycle-select";
+import { IssueLabel } from "./label";
+import { IssueModuleSelect } from "./module-select";
 import type { TIssueOperations } from "./root";
 
 type Props = {

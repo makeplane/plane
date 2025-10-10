@@ -3,12 +3,14 @@
 import { Dispatch, FC, SetStateAction, useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
+// plane imports
 import { estimateCount } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeError } from "@plane/types";
-import { Button, Sortable } from "@plane/ui";
-// components
-import { EstimatePointCreate, EstimatePointItemPreview } from "@/components/estimates/points";
-// plane web constants
+import { Sortable } from "@plane/ui";
+// local imports
+import { EstimatePointCreate } from "./create";
+import { EstimatePointItemPreview } from "./preview";
 
 type TEstimatePointCreateRoot = {
   workspaceSlug: string;
@@ -102,7 +104,7 @@ export const EstimatePointCreateRoot: FC<TEstimatePointCreateRoot> = observer((p
         key: currentKey,
         value: "",
       });
-      handleEstimatePointError && handleEstimatePointError(currentKey, "", "", undefined, "add");
+      handleEstimatePointError?.(currentKey, "", "", undefined, "add");
     }
   };
 

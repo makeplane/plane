@@ -4,9 +4,10 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 // types
 import { WORKSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { IWorkspace } from "@plane/types";
 // ui
-import { Button, Collapsible } from "@plane/ui";
+import { Collapsible } from "@plane/ui";
 import { DeleteWorkspaceModal } from "./delete-workspace-modal";
 // components
 

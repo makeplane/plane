@@ -1,9 +1,8 @@
 import { Extensions } from "@tiptap/core";
-import CharacterCount from "@tiptap/extension-character-count";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
-import TextStyle from "@tiptap/extension-text-style";
-import TiptapUnderline from "@tiptap/extension-underline";
+import { TextStyle } from "@tiptap/extension-text-style";
+import { CharacterCount } from "@tiptap/extensions";
 import { Markdown } from "tiptap-markdown";
 // extensions
 import {
@@ -38,7 +37,14 @@ import { CustomStarterKitExtension } from "./starter-kit";
 
 type TArguments = Pick<
   IEditorProps,
-  "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "mentionHandler" | "placeholder" | "tabIndex"
+  | "disabledExtensions"
+  | "flaggedExtensions"
+  | "fileHandler"
+  | "isTouchDevice"
+  | "mentionHandler"
+  | "placeholder"
+  | "tabIndex"
+  | "extendedEditorProps"
 > & {
   enableHistory: boolean;
   editable: boolean;
@@ -50,10 +56,12 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     enableHistory,
     fileHandler,
     flaggedExtensions,
+    isTouchDevice = false,
     mentionHandler,
     placeholder,
     tabIndex,
     editable,
+    extendedEditorProps,
   } = args;
 
   const extensions = [
@@ -67,7 +75,6 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     ListKeymap({ tabIndex }),
     CustomLinkExtension,
     CustomTypographyExtension,
-    TiptapUnderline,
     TextStyle,
     TaskList.configure({
       HTMLAttributes: {
@@ -102,11 +109,13 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       disabledExtensions,
       fileHandler,
       isEditable: editable,
+      isTouchDevice,
     }),
     ...CoreEditorAdditionalExtensions({
       disabledExtensions,
       flaggedExtensions,
       fileHandler,
+      extendedEditorProps,
     }),
   ];
 

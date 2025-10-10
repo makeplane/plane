@@ -8,7 +8,7 @@ import { ChartYAxisMetric } from "@plane/types";
 // plane package imports
 import { CustomSelect } from "@plane/ui";
 // hooks
-import { useProjectEstimates } from "@/hooks/store";
+import { useProjectEstimates } from "@/hooks/store/estimates";
 // plane web constants
 type Props = {
   value: ChartYAxisMetric;

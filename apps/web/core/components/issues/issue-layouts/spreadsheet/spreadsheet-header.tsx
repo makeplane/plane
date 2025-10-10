@@ -7,11 +7,10 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/type
 // components
 import { Row } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { MultipleSelectGroupAction } from "@/components/core";
-import { SpreadsheetHeaderColumn } from "@/components/issues/issue-layouts";
-// helpers
+import { MultipleSelectGroupAction } from "@/components/core/multiple-select";
 // hooks
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import { SpreadsheetHeaderColumn } from "./spreadsheet-header-column";
 
 interface Props {
   displayProperties: IIssueDisplayProperties;
@@ -46,7 +45,7 @@ export const SpreadsheetHeader = observer((props: Props) => {
     <thead className="sticky top-0 left-0 z-[12] border-b-[0.5px] border-custom-border-100">
       <tr>
         <th
-          className="group/list-header sticky left-0 z-[15] h-11 w-[28rem] flex items-center gap-1 bg-custom-background-90 text-sm font-medium before:absolute before:h-full before:right-0 before:border-custom-border-100"
+          className="group/list-header sticky min-w-60 left-0 z-[15] h-11 flex items-center gap-1 bg-custom-background-90 text-sm font-medium before:absolute before:h-full before:right-0 before:border-custom-border-100"
           tabIndex={-1}
         >
           <Row>

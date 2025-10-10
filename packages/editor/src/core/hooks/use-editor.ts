@@ -1,16 +1,20 @@
 import { useEditorState, useEditor as useTiptapEditor } from "@tiptap/react";
 import { useImperativeHandle, useEffect } from "react";
-// constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import type { MarkdownStorage } from "tiptap-markdown";
 // extensions
 import { CoreEditorExtensions } from "@/extensions";
 // helpers
 import { getEditorRefHelpers } from "@/helpers/editor-ref";
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // props
 import { CoreEditorProps } from "@/props";
 // types
 import type { TEditorHookProps } from "@/types";
+
+declare module "@tiptap/core" {
+  interface Storage {
+    markdown: MarkdownStorage;
+  }
+}
 
 export const useEditor = (props: TEditorHookProps) => {
   const {
@@ -20,6 +24,7 @@ export const useEditor = (props: TEditorHookProps) => {
     editorClassName = "",
     editorProps = {},
     enableHistory,
+    extendedEditorProps,
     extensions = [],
     fileHandler,
     flaggedExtensions,
@@ -27,9 +32,11 @@ export const useEditor = (props: TEditorHookProps) => {
     handleEditorReady,
     id = "",
     initialValue,
+    isTouchDevice,
     mentionHandler,
     onAssetChange,
     onChange,
+    onEditorFocus,
     onTransaction,
     placeholder,
     provider,
@@ -52,11 +59,13 @@ export const useEditor = (props: TEditorHookProps) => {
       },
       extensions: [
         ...CoreEditorExtensions({
-          editable,
           disabledExtensions,
+          editable,
           enableHistory,
+          extendedEditorProps,
           fileHandler,
           flaggedExtensions,
+          isTouchDevice,
           mentionHandler,
           placeholder,
           tabIndex,
@@ -70,6 +79,7 @@ export const useEditor = (props: TEditorHookProps) => {
       },
       onUpdate: ({ editor }) => onChange?.(editor.getJSON(), editor.getHTML()),
       onDestroy: () => handleEditorReady?.(false),
+      onFocus: onEditorFocus,
     },
     [editable]
   );
@@ -80,10 +90,15 @@ export const useEditor = (props: TEditorHookProps) => {
     // supported and value is undefined when the data from swr is not populated
     if (value == null) return;
     if (editor) {
-      const isUploadInProgress = getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY)?.uploadInProgress;
+      const { uploadInProgress: isUploadInProgress } = editor.storage.utility;
       if (!editor.isDestroyed && !isUploadInProgress) {
         try {
-          editor.commands.setContent(value, false, { preserveWhitespace: true });
+          editor.commands.setContent(value, {
+            emitUpdate: false,
+            parseOptions: {
+              preserveWhitespace: true,
+            },
+          });
           if (editor.state.selection) {
             const docLength = editor.state.doc.content.size;
             const relativePosition = Math.min(editor.state.selection.from, docLength - 1);
@@ -107,7 +122,7 @@ export const useEditor = (props: TEditorHookProps) => {
   const assetsList = useEditorState({
     editor,
     selector: ({ editor }) => ({
-      assets: editor ? getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY)?.assetsList : [],
+      assets: editor?.storage.utility?.assetsList ?? [],
     }),
   });
   // trigger callback when assets list changes

@@ -16,8 +16,9 @@ import {
   WORKSPACE_DEFAULT_SEARCH_RESULT,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { LayersIcon } from "@plane/propel/icons";
 import { IWorkspaceSearchResults } from "@plane/types";
-import { LayersIcon, Loader, ToggleSwitch } from "@plane/ui";
+import { Loader, ToggleSwitch } from "@plane/ui";
 import { cn, getTabIndex } from "@plane/utils";
 // components
 import {
@@ -31,17 +32,20 @@ import {
   CommandPaletteThemeActions,
   CommandPaletteWorkspaceSettingsActions,
 } from "@/components/command-palette";
-import { SimpleEmptyState } from "@/components/empty-state";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // helpers
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useCommandPalette, useIssueDetail, useProject, useUser, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProject } from "@/hooks/store/use-project";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
 

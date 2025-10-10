@@ -3,13 +3,14 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Loader, setToast, TOAST_TYPE, ToggleSwitch } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Loader, ToggleSwitch } from "@plane/ui";
 // hooks
 import { useInstance } from "@/hooks/store";
 // components
 import { InstanceEmailForm } from "./email-config-form";
 
-const InstanceEmailPage = observer(() => {
+const InstanceEmailPage: React.FC = observer(() => {
   // store
   const { fetchInstanceConfigurations, formattedConfig, disableEmail } = useInstance();
 
@@ -29,7 +30,7 @@ const InstanceEmailPage = observer(() => {
           message: "Email feature has been disabled",
           type: TOAST_TYPE.SUCCESS,
         });
-      } catch (error) {
+      } catch (_error) {
         setToast({
           title: "Error disabling email",
           message: "Failed to disable email feature. Please try again.",

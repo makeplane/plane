@@ -2,10 +2,11 @@
 
 import { ChevronDown, X } from "lucide-react";
 // plane imports
-import { DiceIcon, Tooltip } from "@plane/ui";
+import { DiceIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // hooks
-import { useModule } from "@/hooks/store";
+import { useModule } from "@/hooks/store/use-module";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type ModuleButtonContentProps = {

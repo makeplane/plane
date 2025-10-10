@@ -1,10 +1,10 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // plane imports
 import { UserService } from "@plane/services";
 import { EStartOfTheWeek, TUserProfile } from "@plane/types";
 // store
-import { CoreRootStore } from "@/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 
 type TError = {
   status: string;
@@ -51,6 +51,7 @@ export class ProfileStore implements IProfileStore {
     billing_address_country: undefined,
     billing_address: undefined,
     has_billing_address: false,
+    has_marketing_email_consent: false,
     created_at: "",
     updated_at: "",
     language: "",

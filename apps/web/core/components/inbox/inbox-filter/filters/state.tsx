@@ -3,12 +3,13 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { EIconSize } from "@plane/constants";
+import { StateGroupIcon } from "@plane/propel/icons";
 import { IState } from "@plane/types";
-import { Loader, StateGroupIcon } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // components
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // hooks
-import { useProjectInbox } from "@/hooks/store";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 
 type Props = {
   states: IState[] | undefined;

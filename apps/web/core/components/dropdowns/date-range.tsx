@@ -2,17 +2,20 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { Placement } from "@popperjs/core";
-import { DateRange, Matcher } from "react-day-picker";
+import { observer } from "mobx-react";
+import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { ArrowRight, CalendarCheck2, CalendarDays, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // ui
-import { ComboDropDown, Calendar } from "@plane/ui";
+import { Calendar, DateRange, Matcher } from "@plane/propel/calendar";
+import { ComboDropDown } from "@plane/ui";
 import { cn, renderFormattedDate } from "@plane/utils";
 // helpers
 // hooks
+import { useUserProfile } from "@/hooks/store/user";
 import { useDropdown } from "@/hooks/use-dropdown";
 // components
 import { DropdownButton } from "./buttons";
@@ -57,9 +60,11 @@ type Props = {
   renderPlaceholder?: boolean;
   customTooltipContent?: React.ReactNode;
   customTooltipHeading?: string;
+  defaultOpen?: boolean;
+  renderInPortal?: boolean;
 };
 
-export const DateRangeDropdown: React.FC<Props> = (props) => {
+export const DateRangeDropdown: React.FC<Props> = observer((props) => {
   const { t } = useTranslation();
   const {
     buttonClassName,
@@ -91,10 +96,15 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
     renderPlaceholder = true,
     customTooltipContent,
     customTooltipHeading,
+    defaultOpen = false,
+    renderInPortal = false,
   } = props;
   // states
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   const [dateRange, setDateRange] = useState<DateRange>(value);
+  // hooks
+  const { data } = useUserProfile();
+  const startOfWeek = data?.start_of_the_week;
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   // popper-js refs
@@ -160,13 +170,15 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
         isActive={isOpen}
         tooltipHeading={customTooltipHeading ?? t("project_cycles.date_range")}
         tooltipContent={
-          customTooltipContent ?? (
-            <>
-              {dateRange.from ? renderFormattedDate(dateRange.from) : ""}
-              {dateRange.from && dateRange.to ? " - " : ""}
-              {dateRange.to ? renderFormattedDate(dateRange.to) : ""}
-            </>
-          )
+          <>
+            {customTooltipContent ?? (
+              <>
+                {dateRange.from ? renderFormattedDate(dateRange.from) : ""}
+                {dateRange.from && dateRange.to ? " - " : ""}
+                {dateRange.to ? renderFormattedDate(dateRange.to) : ""}
+              </>
+            )}
+          </>
         }
         showTooltip={showTooltip}
         variant={buttonVariant}
@@ -186,7 +198,9 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
               renderPlaceholder && (
                 <>
                   <span className="text-custom-text-400">{placeholder.from}</span>
-                  <ArrowRight className="h-3 w-3 flex-shrink-0 text-custom-text-400" />
+                  {placeholder.from && placeholder.to && (
+                    <ArrowRight className="h-3 w-3 flex-shrink-0 text-custom-text-400" />
+                  )}
                   <span className="text-custom-text-400">{placeholder.to}</span>
                 </>
               )
@@ -240,6 +254,34 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
     </button>
   );
 
+  const comboOptions = (
+    <Combobox.Options data-prevent-outside-click static>
+      <div
+        className="my-1 bg-custom-background-100 shadow-custom-shadow-rg border-[0.5px] border-custom-border-300 rounded-md overflow-hidden z-30"
+        ref={setPopperElement}
+        style={styles.popper}
+        {...attributes.popper}
+      >
+        <Calendar
+          className="rounded-md border border-custom-border-200 p-3"
+          captionLayout="dropdown"
+          selected={dateRange}
+          onSelect={(val: DateRange | undefined) => {
+            onSelect?.(val);
+          }}
+          mode="range"
+          disabled={disabledDays}
+          showOutsideDays
+          fixedWeeks
+          weekStartsOn={startOfWeek}
+          initialFocus
+        />
+      </div>
+    </Combobox.Options>
+  );
+
+  const Options = renderInPortal ? createPortal(comboOptions, document.body) : comboOptions;
+
   return (
     <ComboDropDown
       as="div"
@@ -255,30 +297,7 @@ export const DateRangeDropdown: React.FC<Props> = (props) => {
       disabled={disabled}
       renderByDefault={renderByDefault}
     >
-      {isOpen && (
-        <Combobox.Options className="fixed z-10" static>
-          <div
-            className="my-1 bg-custom-background-100 shadow-custom-shadow-rg border-[0.5px] border-custom-border-300 rounded-md overflow-hidden"
-            ref={setPopperElement}
-            style={styles.popper}
-            {...attributes.popper}
-          >
-            <Calendar
-              captionLayout="dropdown"
-              classNames={{ root: `p-3 rounded-md` }}
-              selected={dateRange}
-              onSelect={(val) => {
-                onSelect?.(val);
-              }}
-              mode="range"
-              disabled={disabledDays}
-              showOutsideDays
-              fixedWeeks
-              initialFocus
-            />
-          </div>
-        </Combobox.Options>
-      )}
+      {isOpen && Options}
     </ComboDropDown>
   );
-};
+});

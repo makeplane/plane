@@ -1,12 +1,14 @@
 "use client";
+
 import { FC } from "react";
 import { observer } from "mobx-react";
 import { Briefcase } from "lucide-react";
 // components
-import { ProjectLogo } from "@/components/common";
-import { NavbarControls } from "@/components/issues";
+import { ProjectLogo } from "@/components/common/project-logo";
 // store
-import { PublishStore } from "@/store/publish/publish.store";
+import type { PublishStore } from "@/store/publish/publish.store";
+// local imports
+import { NavbarControls } from "./controls";
 
 type Props = {
   publishSettings: PublishStore;

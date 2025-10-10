@@ -35,6 +35,10 @@ on:
       - preview
       - canary
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   TARGET_BRANCH: ${{ github.ref_name }}
   ARM64_BUILD: ${{ github.event.inputs.arm64 }}
@@ -268,15 +272,14 @@ jobs:
     if: ${{ needs.branch_build_setup.outputs.aio_build == 'true' }}
     name: Build-Push AIO Docker Image
     runs-on: ubuntu-22.04
-    needs: [
-        branch_build_setup,
-        branch_build_push_admin,
-        branch_build_push_web,
-        branch_build_push_space,
-        branch_build_push_live,
-        branch_build_push_api,
-        branch_build_push_proxy
-      ]
+    needs:
+      - branch_build_setup
+      - branch_build_push_admin
+      - branch_build_push_web
+      - branch_build_push_space
+      - branch_build_push_live
+      - branch_build_push_api
+      - branch_build_push_proxy
     steps:
       - name: Checkout Files
         uses: actions/checkout@v4
@@ -285,7 +288,7 @@ jobs:
         id: prepare_aio_assets
         run: |
           cd deployments/aio/community
-          
+
           if [ "${{ needs.branch_build_setup.outputs.build_type }}" == "Release" ]; then
             aio_version=${{ needs.branch_build_setup.outputs.release_version }}
           else
@@ -324,7 +327,14 @@ jobs:
   upload_build_assets:
     name: Upload Build Assets
     runs-on: ubuntu-22.04
-    needs: [branch_build_setup, branch_build_push_admin, branch_build_push_web, branch_build_push_space, branch_build_push_live, branch_build_push_api, branch_build_push_proxy]
+    needs:
+      - branch_build_setup
+      - branch_build_push_admin
+      - branch_build_push_web
+      - branch_build_push_space
+      - branch_build_push_live
+      - branch_build_push_api
+      - branch_build_push_proxy
     steps:
       - name: Checkout Files
         uses: actions/checkout@v4
@@ -397,4 +407,3 @@ jobs:
             ${{ github.workspace }}/deployments/cli/community/docker-compose.yml
             ${{ github.workspace }}/deployments/cli/community/variables.env
             ${{ github.workspace }}/deployments/swarm/community/swarm.sh
-

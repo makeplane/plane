@@ -1,30 +1,23 @@
-import { Editor, NodeViewProps, NodeViewWrapper } from "@tiptap/react";
+import { type NodeViewProps, NodeViewWrapper } from "@tiptap/react";
 import { useEffect, useRef, useState } from "react";
-// constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
-// helpers
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // local imports
-import type { CustomImageExtension, TCustomImageAttributes } from "../types";
+import type { CustomImageExtensionType, TCustomImageAttributes } from "../types";
 import { CustomImageBlock } from "./block";
 import { CustomImageUploader } from "./uploader";
 
 export type CustomImageNodeViewProps = Omit<NodeViewProps, "extension" | "updateAttributes"> & {
-  extension: CustomImageExtension;
-  getPos: () => number;
-  editor: Editor;
+  extension: CustomImageExtensionType;
   node: NodeViewProps["node"] & {
     attrs: TCustomImageAttributes;
   };
   updateAttributes: (attrs: Partial<TCustomImageAttributes>) => void;
-  selected: boolean;
 };
 
 export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) => {
   const { editor, extension, node } = props;
   const { src: imgNodeSrc } = node.attrs;
 
-  const [isUploaded, setIsUploaded] = useState(false);
+  const [isUploaded, setIsUploaded] = useState(!!imgNodeSrc);
   const [resolvedSrc, setResolvedSrc] = useState<string | undefined>(undefined);
   const [resolvedDownloadSrc, setResolvedDownloadSrc] = useState<string | undefined>(undefined);
   const [imageFromFileSystem, setImageFromFileSystem] = useState<string | undefined>(undefined);
@@ -43,13 +36,13 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
   // the image is already uploaded if the image-component node has src attribute
   // and we need to remove the blob from our file system
   useEffect(() => {
-    if (resolvedSrc) {
+    if (resolvedSrc || imgNodeSrc) {
       setIsUploaded(true);
       setImageFromFileSystem(undefined);
     } else {
       setIsUploaded(false);
     }
-  }, [resolvedSrc]);
+  }, [resolvedSrc, imgNodeSrc]);
 
   useEffect(() => {
     if (!imgNodeSrc) {
@@ -84,7 +77,7 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
           <CustomImageUploader
             failedToLoadImage={failedToLoadImage}
             loadImageFromFileSystem={setImageFromFileSystem}
-            maxFileSize={getExtensionStorage(editor, CORE_EXTENSIONS.CUSTOM_IMAGE).maxFileSize}
+            maxFileSize={editor.storage.imageComponent?.maxFileSize}
             setIsUploaded={setIsUploaded}
             {...props}
           />

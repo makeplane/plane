@@ -5,12 +5,13 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { Button, getButtonStyling, Row } from "@plane/ui";
+import { Button, getButtonStyling } from "@plane/propel/button";
+import { Row } from "@plane/ui";
 // components
-import { Logo } from "@/components/common";
-import { ProjectFeaturesList } from "@/components/project/settings";
+import { Logo } from "@/components/common/logo";
+import { ProjectFeaturesList } from "@/components/project/settings/features-list";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 
 type Props = {
   workspaceSlug: string;

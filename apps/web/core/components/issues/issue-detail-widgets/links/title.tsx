@@ -5,10 +5,10 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { TIssueServiceType } from "@plane/types";
 import { CollapsibleButton } from "@plane/ui";
-// components
-import { IssueLinksActionButton } from "@/components/issues/issue-detail-widgets";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+// local imports
+import { IssueLinksActionButton } from "./quick-action-button";
 
 type Props = {
   isOpen: boolean;

@@ -1,16 +1,16 @@
 "use client";
 
 import { observer } from "mobx-react";
-// ui
 import { useParams } from "next/navigation";
-import { Breadcrumbs, Button, Header, RecentStickyIcon } from "@plane/ui";
+// plane imports
+import { Button } from "@plane/propel/button";
+import { RecentStickyIcon } from "@plane/propel/icons";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
-
-// hooks
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { StickySearch } from "@/components/stickies/modal/search";
 import { useStickyOperations } from "@/components/stickies/sticky/use-operations";
-// plane-web
+// hooks
 import { useSticky } from "@/hooks/use-stickies";
 
 export const WorkspaceStickyHeader = observer(() => {

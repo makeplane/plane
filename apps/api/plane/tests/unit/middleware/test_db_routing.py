@@ -111,9 +111,7 @@ class TestReadReplicaRoutingMiddleware:
         mock_clear.assert_called_once()
 
     @patch("plane.middleware.db_routing.clear_read_replica_context")
-    def test_call_cleans_up_context_on_exception(
-        self, mock_clear, middleware, get_request, mock_get_response
-    ):
+    def test_call_cleans_up_context_on_exception(self, mock_clear, middleware, get_request, mock_get_response):
         """Test __call__ cleans up context even if get_response raises."""
         mock_get_response.side_effect = Exception("Test exception")
 
@@ -139,9 +137,7 @@ class TestProcessView:
         assert result is None
 
     @patch("plane.middleware.db_routing.set_use_read_replica")
-    def test_with_read_method_and_replica_false(
-        self, mock_set, middleware, get_request
-    ):
+    def test_with_read_method_and_replica_false(self, mock_set, middleware, get_request):
         """Test process_view with GET request and use_read_replica=False."""
         view_func = Mock()
         view_func.use_read_replica = False
@@ -152,9 +148,7 @@ class TestProcessView:
         assert result is None
 
     @patch("plane.middleware.db_routing.set_use_read_replica")
-    def test_with_read_method_and_no_replica_attribute(
-        self, mock_set, middleware, get_request
-    ):
+    def test_with_read_method_and_no_replica_attribute(self, mock_set, middleware, get_request):
         """Test process_view with GET request and no use_read_replica attr."""
         view_func = Mock(spec=[])  # No use_read_replica attribute
 
@@ -287,9 +281,7 @@ class TestAttributeDetection:
             (None, False),
         ],
     )
-    def test_should_use_read_replica_truthy_falsy_values(
-        self, middleware, value, expected
-    ):
+    def test_should_use_read_replica_truthy_falsy_values(self, middleware, value, expected):
         """Test _should_use_read_replica with various truthy/falsy values."""
 
         # Create a real object to test the attribute handling
@@ -309,9 +301,7 @@ class TestExceptionHandling:
     """Test cases for exception handling and cleanup."""
 
     @patch("plane.middleware.db_routing.clear_read_replica_context")
-    def test_process_exception_cleans_up_context(
-        self, mock_clear, middleware, request_factory
-    ):
+    def test_process_exception_cleans_up_context(self, mock_clear, middleware, request_factory):
         """Test process_exception cleans up context."""
         request = request_factory.get("/api/test/")
         exception = Exception("Test exception")
@@ -323,9 +313,7 @@ class TestExceptionHandling:
 
     @patch("plane.middleware.db_routing.set_use_read_replica")
     @patch("plane.middleware.db_routing.clear_read_replica_context")
-    def test_integration_full_request_cycle(
-        self, mock_clear, mock_set, middleware, request_factory, mock_get_response
-    ):
+    def test_integration_full_request_cycle(self, mock_clear, mock_set, middleware, request_factory, mock_get_response):
         """Test complete request cycle from __call__ through process_view."""
         request = request_factory.get("/api/test/")
         view_func = Mock()
@@ -410,9 +398,7 @@ class TestEdgeCases:
             def __getattr__(self, name):
                 if name == "use_read_replica":
                     raise AttributeError("Simulated attribute error")
-                raise AttributeError(
-                    f"'{type(self).__name__}' object has no attribute '{name}'"
-                )
+                raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
         view_func = ProblematicView()
 

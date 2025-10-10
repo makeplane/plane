@@ -1,9 +1,10 @@
 "use client";
 
-import isNil from "lodash/isNil";
+import { isNil } from "lodash-es";
 import { ContrastIcon } from "lucide-react";
 // types
 import { EIconSize, ISSUE_PRIORITIES } from "@plane/constants";
+import { CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
 import {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -12,7 +13,7 @@ import {
   TGroupedIssues,
 } from "@plane/types";
 // ui
-import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
+import { Avatar } from "@plane/ui";
 // components
 // constants
 // stores

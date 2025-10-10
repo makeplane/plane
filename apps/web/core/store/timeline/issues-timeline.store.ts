@@ -1,6 +1,6 @@
 import { autorun } from "mobx";
 // Plane-web
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 import { BaseTimeLineStore, IBaseTimelineStore } from "@/plane-web/store/timeline/base-timeline.store";
 
 export interface IIssuesTimeLineStore extends IBaseTimelineStore {

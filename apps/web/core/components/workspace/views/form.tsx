@@ -1,29 +1,27 @@
 "use client";
 
-import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-// constant
+// plane imports
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
-// i18n
 import { useTranslation } from "@plane/i18n";
-// types
+import { Button } from "@plane/propel/button";
 import {
   EViewAccess,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
-  IIssueFilterOptions,
   IWorkspaceView,
   EIssueLayoutTypes,
+  EIssuesStoreType,
+  IIssueFilters,
 } from "@plane/types";
-// ui
-import { Button, Input, TextArea } from "@plane/ui";
-// components
+import { Input, TextArea } from "@plane/ui";
 import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/utils";
-import { AppliedFiltersList, DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
-// helpers
-// hooks
-import { useLabel, useMember } from "@/hooks/store";
+// components
+import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
+import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
+// plane web imports
+import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 import { AccessController } from "@/plane-web/components/views/access-controller";
 
 type Props = {
@@ -31,9 +29,10 @@ type Props = {
   handleClose: () => void;
   data?: IWorkspaceView;
   preLoadedData?: Partial<IWorkspaceView>;
+  workspaceSlug: string;
 };
 
-const defaultValues: Partial<IWorkspaceView> = {
+const DEFAULT_VALUES: Partial<IWorkspaceView> = {
   name: "",
   description: "",
   access: EViewAccess.PUBLIC,
@@ -45,76 +44,37 @@ const defaultValues: Partial<IWorkspaceView> = {
 };
 
 export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
-  const { handleFormSubmit, handleClose, data, preLoadedData } = props;
+  const { handleFormSubmit, handleClose, data, preLoadedData, workspaceSlug } = props;
   // i18n
   const { t } = useTranslation();
-  // store hooks
-  const { workspaceLabels } = useLabel();
-  const {
-    workspace: { workspaceMemberIds },
-  } = useMember();
-
+  // form info
+  const defaultValues = {
+    ...DEFAULT_VALUES,
+    ...preLoadedData,
+    ...data,
+  };
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
     control,
     reset,
-    setValue,
-    watch,
+    getValues,
   } = useForm<IWorkspaceView>({
     defaultValues,
   });
+  // derived values
+  const workItemFilters: IIssueFilters = {
+    richFilters: getValues("rich_filters"),
+    displayFilters: getValues("display_filters"),
+    displayProperties: getValues("display_properties"),
+    kanbanFilters: undefined,
+  };
 
   const handleCreateUpdateView = async (formData: Partial<IWorkspaceView>) => {
     await handleFormSubmit(formData);
-
     reset({
       ...defaultValues,
     });
-  };
-
-  useEffect(() => {
-    reset({
-      ...defaultValues,
-      ...preLoadedData,
-      ...data,
-    });
-  }, [data, preLoadedData, reset]);
-
-  const selectedFilters: IIssueFilterOptions = watch("filters");
-
-  // filters whose value not null or empty array
-  let appliedFilters: IIssueFilterOptions | undefined = undefined;
-  Object.entries(selectedFilters ?? {}).forEach(([key, value]) => {
-    if (!value) return;
-    if (Array.isArray(value) && value.length === 0) return;
-    if (!appliedFilters) appliedFilters = {};
-    appliedFilters[key as keyof IIssueFilterOptions] = value;
-  });
-
-  const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
-    // To clear all filters of any particular filter key.
-    if (!value) {
-      setValue("filters", {
-        ...selectedFilters,
-        [key]: [],
-      });
-      return;
-    }
-
-    let newValues = selectedFilters?.[key] ?? [];
-    newValues = newValues.filter((val) => val !== value);
-
-    setValue("filters", {
-      ...selectedFilters,
-      [key]: newValues,
-    });
-  };
-
-  const clearAllFilters = () => {
-    if (!selectedFilters) return;
-
-    setValue("filters", {});
   };
 
   return (
@@ -170,39 +130,6 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
           </div>
           <div className="flex gap-2">
             <AccessController control={control} />
-            {/* filters dropdown */}
-            <Controller
-              control={control}
-              name="filters"
-              render={({ field: { onChange, value: filters } }) => (
-                <FiltersDropdown title={t("common.filters")}>
-                  <FilterSelection
-                    filters={filters ?? {}}
-                    handleFiltersUpdate={(key, value) => {
-                      const newValues = filters?.[key] ?? [];
-
-                      if (Array.isArray(value)) {
-                        value.forEach((val) => {
-                          if (!newValues.includes(val)) newValues.push(val);
-                        });
-                      } else {
-                        if (filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-                        else newValues.push(value);
-                      }
-
-                      onChange({
-                        ...filters,
-                        [key]: newValues,
-                      });
-                    }}
-                    layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.spreadsheet}
-                    labels={workspaceLabels ?? undefined}
-                    memberIds={workspaceMemberIds ?? undefined}
-                  />
-                </FiltersDropdown>
-              )}
-            />
-
             {/* display filters dropdown */}
             <Controller
               control={control}
@@ -214,7 +141,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
                   render={({ field: { onChange: onDisplayPropertiesChange, value: displayProperties } }) => (
                     <FiltersDropdown title={t("common.display")}>
                       <DisplayFiltersSelection
-                        layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.spreadsheet}
+                        layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.layoutOptions.spreadsheet}
                         displayFilters={displayFilters ?? {}}
                         handleDisplayFiltersUpdate={(updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
                           onDisplayFiltersChange({
@@ -236,18 +163,31 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
               )}
             />
           </div>
-          {selectedFilters && Object.keys(selectedFilters).length > 0 && (
-            <div>
-              <AppliedFiltersList
-                appliedFilters={appliedFilters ?? {}}
-                handleClearAllFilters={clearAllFilters}
-                handleRemoveFilter={handleRemoveFilter}
-                labels={workspaceLabels ?? undefined}
-                states={undefined}
-                alwaysAllowEditing
-              />
-            </div>
-          )}
+          <div>
+            {/* filters dropdown */}
+            <Controller
+              control={control}
+              name="rich_filters"
+              render={({ field: { onChange: onFiltersChange } }) => (
+                <WorkspaceLevelWorkItemFiltersHOC
+                  entityId={data?.id}
+                  entityType={EIssuesStoreType.GLOBAL}
+                  filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.filters}
+                  initialWorkItemFilters={workItemFilters}
+                  isTemporary
+                  updateFilters={(updateFilters) => onFiltersChange(updateFilters)}
+                  showOnMount
+                  workspaceSlug={workspaceSlug}
+                >
+                  {({ filter: workspaceViewWorkItemsFilter }) =>
+                    workspaceViewWorkItemsFilter && (
+                      <WorkItemFiltersRow filter={workspaceViewWorkItemsFilter} variant="modal" />
+                    )
+                  }
+                </WorkspaceLevelWorkItemFiltersHOC>
+              )}
+            />
+          </div>
         </div>
       </div>
       <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">

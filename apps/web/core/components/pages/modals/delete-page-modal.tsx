@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 // ui
 import { useParams } from "next/navigation";
 import { PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
-import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { AlertModalCore } from "@plane/ui";
 // constants
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
@@ -13,7 +14,7 @@ import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 type TConfirmPageDeletionProps = {
   isOpen: boolean;

@@ -1,8 +1,8 @@
 import * as React from "react";
 
-import { cn } from "@plane/utils";
+import { cn } from "../utils/classname";
 
-const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
+const Table = React.forwardRef<React.ComponentRef<"table">, React.ComponentPropsWithoutRef<"table">>(
   ({ className, ...props }, ref) => (
     <div className="relative w-full overflow-auto">
       <table ref={ref} className={cn("w-full caption-bottom text-sm", className)} {...props} />
@@ -11,7 +11,7 @@ const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableE
 );
 Table.displayName = "Table";
 
-const TableHeader = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
+const TableHeader = React.forwardRef<React.ComponentRef<"thead">, React.ComponentPropsWithoutRef<"thead">>(
   ({ className, ...props }, ref) => (
     <thead
       ref={ref}
@@ -22,19 +22,19 @@ const TableHeader = React.forwardRef<HTMLTableSectionElement, React.HTMLAttribut
 );
 TableHeader.displayName = "TableHeader";
 
-const TableBody = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
+const TableBody = React.forwardRef<React.ComponentRef<"tbody">, React.ComponentPropsWithoutRef<"tbody">>(
   ({ className, ...props }, ref) => <tbody ref={ref} className={cn("", className)} {...props} />
 );
 TableBody.displayName = "TableBody";
 
-const TableFooter = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
+const TableFooter = React.forwardRef<React.ComponentRef<"tfoot">, React.ComponentPropsWithoutRef<"tfoot">>(
   ({ className, ...props }, ref) => (
     <tfoot ref={ref} className={cn("bg-custom-background-300 font-medium", className)} {...props} />
   )
 );
 TableFooter.displayName = "TableFooter";
 
-const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTMLTableRowElement>>(
+const TableRow = React.forwardRef<React.ComponentRef<"tr">, React.ComponentPropsWithoutRef<"tr">>(
   ({ className, ...props }, ref) => (
     <tr
       ref={ref}
@@ -45,30 +45,34 @@ const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTML
 );
 TableRow.displayName = "TableRow";
 
-const TableHead = React.forwardRef<HTMLElement, React.ThHTMLAttributes<HTMLElement>>(({ className, ...props }, ref) => (
-  <th
-    ref={ref as any}
-    className={cn(
-      "h-10 px-2 text-left align-middle font-medium text-custom-text-300 [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
-      className
-    )}
-    {...props}
-  />
-));
+const TableHead = React.forwardRef<React.ComponentRef<"th">, React.ComponentPropsWithoutRef<"th">>(
+  ({ className, ...props }, ref) => (
+    <th
+      ref={ref}
+      className={cn(
+        "h-10 px-2 text-left align-middle font-medium text-custom-text-300 [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+        className
+      )}
+      {...props}
+    />
+  )
+);
 TableHead.displayName = "TableHead";
 
-const TableCell = React.forwardRef<HTMLElement, React.TdHTMLAttributes<HTMLElement>>(({ className, ...props }, ref) => (
-  <td
-    ref={ref as any}
-    className={cn("p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]", className)}
-    {...props}
-  />
-));
+const TableCell = React.forwardRef<React.ComponentRef<"td">, React.ComponentPropsWithoutRef<"td">>(
+  ({ className, ...props }, ref) => (
+    <td
+      ref={ref}
+      className={cn("p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]", className)}
+      {...props}
+    />
+  )
+);
 TableCell.displayName = "TableCell";
 
-const TableCaption = React.forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>(
+const TableCaption = React.forwardRef<React.ComponentRef<"caption">, React.ComponentPropsWithoutRef<"caption">>(
   ({ className, ...props }, ref) => (
-    <caption ref={ref as any} className={cn("mt-4 text-sm text-custom-text-300", className)} {...props} />
+    <caption ref={ref} className={cn("mt-4 text-sm text-custom-text-300", className)} {...props} />
   )
 );
 TableCaption.displayName = "TableCaption";

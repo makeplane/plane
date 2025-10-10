@@ -2,14 +2,14 @@
 
 import { FC } from "react";
 import { observer } from "mobx-react";
-// Plane
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
 import { TCommentsOperations, TIssueComment } from "@plane/types";
-import { Tooltip } from "@plane/ui";
-// components
 import { cn } from "@plane/utils";
-import { ReactionSelector } from "@/components/issues";
 // helpers
 import { renderEmoji } from "@/helpers/emoji.helper";
+// local imports
+import { ReactionSelector } from "../issues/issue-detail/reactions";
 
 export type TProps = {
   comment: TIssueComment;

@@ -5,16 +5,14 @@ import { Layers, Link, Paperclip, Waypoints } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
-// components
-import {
-  IssueAttachmentActionButton,
-  IssueLinksActionButton,
-  RelationActionButton,
-  SubIssuesActionButton,
-  IssueDetailWidgetButton,
-} from "@/components/issues/issue-detail-widgets";
 // plane web imports
 import { WorkItemAdditionalWidgetActionButtons } from "@/plane-web/components/issues/issue-detail-widgets/action-buttons";
+// local imports
+import { IssueAttachmentActionButton } from "./attachments";
+import { IssueLinksActionButton } from "./links";
+import { RelationActionButton } from "./relations";
+import { SubIssuesActionButton } from "./sub-issues";
+import { IssueDetailWidgetButton } from "./widget-button";
 
 type Props = {
   workspaceSlug: string;

@@ -10,7 +10,7 @@ import {
   PasteRule,
   removeDuplicates,
 } from "@tiptap/core";
-import { emojis, emojiToShortcode, shortcodeToEmoji } from "@tiptap/extension-emoji";
+import { EmojiStorage, emojis, emojiToShortcode, shortcodeToEmoji } from "@tiptap/extension-emoji";
 import { Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
 import Suggestion, { SuggestionOptions } from "@tiptap/suggestion";
 import emojiRegex from "emoji-regex";
@@ -65,20 +65,15 @@ export type EmojiItem = {
   /**
    * Store some custom data
    */
-  [key: string]: any;
+  [key: string]: unknown;
 };
 
 export type EmojiOptions = {
-  HTMLAttributes: Record<string, any>;
+  HTMLAttributes: Record<string, unknown>;
   emojis: EmojiItem[];
   enableEmoticons: boolean;
   forceFallbackImages: boolean;
   suggestion: Omit<SuggestionOptions, "editor">;
-};
-
-export type EmojiStorage = {
-  emojis: EmojiItem[];
-  isSupported: (item: EmojiItem) => boolean;
 };
 
 export const EmojiSuggestionPluginKey = new PluginKey("emojiSuggestion");
@@ -342,6 +337,10 @@ export const Emoji = Node.create<EmojiOptions, EmojiStorage>({
   },
 
   addProseMirrorPlugins() {
+    const isTouchDevice = !!this.editor.storage.utility.isTouchDevice;
+    if (isTouchDevice) {
+      return [];
+    }
     return [
       Suggestion({
         editor: this.editor,

@@ -2,7 +2,7 @@
 import React, { FC } from "react";
 // helpers
 import { cn } from "@plane/utils";
-import { SidebarHamburgerToggle } from "../core";
+import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
 
 type Props = {
   children: React.ReactNode;

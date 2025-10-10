@@ -1,10 +1,11 @@
 import { enableStaticRendering } from "mobx-react";
 // plane imports
 import { FALLBACK_LANGUAGE, LANGUAGE_STORAGE_KEY } from "@plane/i18n";
+import { IWorkItemFilterStore, WorkItemFilterStore } from "@plane/shared-state";
 // plane web store
 import { AnalyticsStore, IAnalyticsStore } from "@/plane-web/store/analytics.store";
 import { CommandPaletteStore, ICommandPaletteStore } from "@/plane-web/store/command-palette.store";
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 import { IStateStore, StateStore } from "@/plane-web/store/state.store";
 // stores
 import { CycleStore, ICycleStore } from "./cycle.store";
@@ -64,6 +65,7 @@ export class CoreRootStore {
   transient: ITransientStore;
   stickyStore: IStickyStore;
   editorAssetStore: IEditorAssetStore;
+  workItemFilters: IWorkItemFilterStore;
 
   constructor() {
     this.router = new RouterStore();
@@ -94,6 +96,7 @@ export class CoreRootStore {
     this.stickyStore = new StickyStore();
     this.editorAssetStore = new EditorAssetStore();
     this.analytics = new AnalyticsStore();
+    this.workItemFilters = new WorkItemFilterStore();
   }
 
   resetOnSignOut() {
@@ -126,5 +129,6 @@ export class CoreRootStore {
     this.transient = new TransientStore();
     this.stickyStore = new StickyStore();
     this.editorAssetStore = new EditorAssetStore();
+    this.workItemFilters = new WorkItemFilterStore();
   }
 }

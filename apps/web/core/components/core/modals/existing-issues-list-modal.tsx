@@ -6,16 +6,19 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // ui
-import { Button, Loader, ToggleSwitch, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { Loader, ToggleSwitch } from "@plane/ui";
 import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // helpers
 // hooks
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // services
 import { ProjectService } from "@/services/project";
 // components
@@ -320,18 +323,19 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                     )}
                   </Combobox.Options>
                 </Combobox>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center p-3">
                   <Button
                     variant="link-primary"
                     size="sm"
                     onClick={handleSelectIssues}
                     disabled={filteredIssues.length === 0}
+                    className={filteredIssues.length === 0 ? "p-0" : ""}
                   >
                     {selectedIssues.length === issues.length
                       ? t("issue.select.deselect_all")
                       : t("issue.select.select_all")}
                   </Button>
-                  <div className="flex items-center justify-end gap-2 p-3">
+                  <div className="flex items-center justify-end gap-2">
                     <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                       {t("common.cancel")}
                     </Button>

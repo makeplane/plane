@@ -5,13 +5,13 @@ import { cn } from "@plane/utils";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 
-interface EditorClassNames {
+type EditorClassNameArgs = {
   noBorder?: boolean;
   borderOnFocus?: boolean;
   containerClassName?: string;
-}
+};
 
-export const getEditorClassNames = ({ noBorder, borderOnFocus, containerClassName }: EditorClassNames) =>
+export const getEditorClassNames = ({ noBorder, borderOnFocus, containerClassName }: EditorClassNameArgs) =>
   cn(
     "w-full max-w-full sm:rounded-lg focus:outline-none focus:border-0",
     {

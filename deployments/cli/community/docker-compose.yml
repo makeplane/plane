@@ -24,7 +24,6 @@ x-aws-s3-env: &aws-s3-env
   AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
 
 x-proxy-env: &proxy-env
-  SSL: ${SSL:-false}
   APP_DOMAIN: ${APP_DOMAIN:-localhost}
   FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
   CERT_EMAIL: ${CERT_EMAIL}
@@ -64,7 +63,7 @@ services:
     deploy:
       replicas: ${WEB_REPLICAS:-1}
       restart_policy:
-        condition: on-failure
+        condition: any
     depends_on:
       - api
       - worker
@@ -74,7 +73,7 @@ services:
     deploy:
       replicas: ${SPACE_REPLICAS:-1}
       restart_policy:
-        condition: on-failure
+        condition: any
     depends_on:
       - api
       - worker
@@ -85,7 +84,7 @@ services:
     deploy:
       replicas: ${ADMIN_REPLICAS:-1}
       restart_policy:
-        condition: on-failure
+        condition: any
     depends_on:
       - api
       - web
@@ -97,7 +96,7 @@ services:
     deploy:
       replicas: ${LIVE_REPLICAS:-1}
       restart_policy:
-        condition: on-failure
+        condition: any
     depends_on:
       - api
       - web
@@ -108,7 +107,7 @@ services:
     deploy:
       replicas: ${API_REPLICAS:-1}
       restart_policy:
-        condition: on-failure
+        condition: any
     volumes:
       - logs_api:/code/plane/logs
     environment:
@@ -124,7 +123,7 @@ services:
     deploy:
       replicas: ${WORKER_REPLICAS:-1}
       restart_policy:
-        condition: on-failure
+        condition: any
     volumes:
       - logs_worker:/code/plane/logs
     environment:
@@ -141,7 +140,7 @@ services:
     deploy:
       replicas: ${BEAT_WORKER_REPLICAS:-1}
       restart_policy:
-        condition: on-failure
+        condition: any
     volumes:
       - logs_beat-worker:/code/plane/logs
     environment:
@@ -174,18 +173,18 @@ services:
     deploy:
       replicas: 1
       restart_policy:
-        condition: on-failure
+        condition: any
     environment:
       <<: *db-env
     volumes:
       - pgdata:/var/lib/postgresql/data
 
   plane-redis:
-    image: valkey/valkey:7.2.5-alpine
+    image: valkey/valkey:7.2.11-alpine
     deploy:
       replicas: 1
       restart_policy:
-        condition: on-failure
+        condition: any
     volumes:
       - redisdata:/data
 
@@ -194,7 +193,7 @@ services:
     deploy:
       replicas: 1
       restart_policy:
-        condition: on-failure
+        condition: any
     environment:
       <<: *mq-env
     volumes:
@@ -207,7 +206,7 @@ services:
     deploy:
       replicas: 1
       restart_policy:
-        condition: on-failure
+        condition: any
     environment:
       <<: *minio-env
     volumes:
@@ -219,7 +218,7 @@ services:
     deploy:
       replicas: 1
       restart_policy:
-        condition: on-failure
+        condition: any
     environment:
       <<: *proxy-env
     ports:

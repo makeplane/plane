@@ -7,7 +7,7 @@ import type { EditorRefApi } from "@plane/editor";
 import type { TCommentsOperations, TIssueComment } from "@plane/types";
 import { isCommentEmpty } from "@plane/utils";
 // components
-import { LiteTextEditor } from "@/components/editor";
+import { LiteTextEditor } from "@/components/editor/lite-text";
 
 type Props = {
   activityOperations: TCommentsOperations;
@@ -93,7 +93,7 @@ export const CommentCardEditForm: React.FC<Props> = observer((props) => {
             const { asset_id } = await activityOperations.uploadCommentAsset(blockId, file, comment.id);
             return asset_id;
           }}
-          projectId={projectId?.toString() ?? ""}
+          projectId={projectId}
           parentClassName="p-2"
           displayConfig={{
             fontSize: "small-font",

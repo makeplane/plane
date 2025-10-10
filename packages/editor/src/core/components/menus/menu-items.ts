@@ -1,4 +1,4 @@
-import { Editor } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 import {
   BoldIcon,
   Heading1,
@@ -18,10 +18,11 @@ import {
   Heading5,
   Heading6,
   CaseSensitive,
-  LucideIcon,
+  type LucideIcon,
   MinusSquare,
   Palette,
   AlignCenter,
+  LinkIcon,
 } from "lucide-react";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
@@ -30,6 +31,7 @@ import {
   insertHorizontalRule,
   insertImage,
   insertTableCommand,
+  setLinkEditor,
   setText,
   setTextAlign,
   toggleBackgroundColor,
@@ -44,6 +46,7 @@ import {
   toggleTaskList,
   toggleTextColor,
   toggleUnderline,
+  unsetLinkEditor,
 } from "@/helpers/editor-commands";
 // types
 import { TCommandWithProps, TEditorCommands } from "@/types";
@@ -67,7 +70,7 @@ export const TextItem = (editor: Editor): EditorMenuItem<"text"> => ({
   icon: CaseSensitive,
 });
 
-type SupportedHeadingLevels = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+type SupportedHeadingLevels = Extract<TEditorCommands, "h1" | "h2" | "h3" | "h4" | "h5" | "h6">;
 
 const HeadingItem = <T extends SupportedHeadingLevels>(
   editor: Editor,
@@ -189,13 +192,26 @@ export const ImageItem = (editor: Editor): EditorMenuItem<"image"> => ({
   icon: ImageIcon,
 });
 
-export const HorizontalRuleItem = (editor: Editor) =>
+export const HorizontalRuleItem = (editor: Editor): EditorMenuItem<"divider"> =>
   ({
     key: "divider",
     name: "Divider",
     isActive: () => editor?.isActive(CORE_EXTENSIONS.HORIZONTAL_RULE),
     command: () => insertHorizontalRule(editor),
     icon: MinusSquare,
+  }) as const;
+
+export const LinkItem = (editor: Editor): EditorMenuItem<"link"> =>
+  ({
+    key: "link",
+    name: "Link",
+    isActive: () => editor?.isActive("link"),
+    command: (props) => {
+      if (!props) return;
+      if (props.url) setLinkEditor(editor, props.url, props.text);
+      else unsetLinkEditor(editor);
+    },
+    icon: LinkIcon,
   }) as const;
 
 export const TextColorItem = (editor: Editor): EditorMenuItem<"text-color"> => ({
@@ -254,8 +270,9 @@ export const getEditorMenuItems = (editor: Editor | null): EditorMenuItem<TEdito
     TableItem(editor),
     ImageItem(editor),
     HorizontalRuleItem(editor),
+    LinkItem(editor),
     TextColorItem(editor),
     BackgroundColorItem(editor),
     TextAlignItem(editor),
-  ];
+  ] as EditorMenuItem<TEditorCommands>[];
 };

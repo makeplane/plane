@@ -3,10 +3,10 @@ import { observer } from "mobx-react";
 import { FileRejection, useDropzone } from "react-dropzone";
 import { UploadCloud } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssueServiceType, TIssueServiceType } from "@plane/types";
 // hooks
-import { TOAST_TYPE, setToast } from "@plane/ui";
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web hooks
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
 // types

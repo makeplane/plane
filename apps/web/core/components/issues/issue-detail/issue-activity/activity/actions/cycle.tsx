@@ -3,8 +3,8 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { ContrastIcon } from "@plane/ui";
-import { useIssueDetail } from "@/hooks/store";
+import { ContrastIcon } from "@plane/propel/icons";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
 import { IssueActivityBlockComponent } from "./";
 // icons

@@ -18,9 +18,7 @@ def generate_token():
 
 
 class ExporterHistory(BaseModel):
-    name = models.CharField(
-        max_length=255, verbose_name="Exporter Name", null=True, blank=True
-    )
+    name = models.CharField(max_length=255, verbose_name="Exporter Name", null=True, blank=True)
     type = models.CharField(
         max_length=50,
         default="issue_exports",
@@ -29,13 +27,9 @@ class ExporterHistory(BaseModel):
             ("issue_worklogs", "Issue Worklogs"),
         ),
     )
-    workspace = models.ForeignKey(
-        "db.WorkSpace", on_delete=models.CASCADE, related_name="workspace_exporters"
-    )
+    workspace = models.ForeignKey("db.WorkSpace", on_delete=models.CASCADE, related_name="workspace_exporters")
     project = ArrayField(models.UUIDField(default=uuid.uuid4), blank=True, null=True)
-    provider = models.CharField(
-        max_length=50, choices=(("json", "json"), ("csv", "csv"), ("xlsx", "xlsx"))
-    )
+    provider = models.CharField(max_length=50, choices=(("json", "json"), ("csv", "csv"), ("xlsx", "xlsx")))
     status = models.CharField(
         max_length=50,
         choices=(
@@ -56,6 +50,7 @@ class ExporterHistory(BaseModel):
         related_name="workspace_exporters",
     )
     filters = models.JSONField(blank=True, null=True)
+    rich_filters = models.JSONField(default=dict, blank=True, null=True)
 
     class Meta:
         verbose_name = "Exporter"

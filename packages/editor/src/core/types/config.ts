@@ -1,5 +1,6 @@
 // plane imports
 import { TWebhookConnectionQueryParams } from "@plane/types";
+import { TExtendedFileHandler } from "@/plane-editor/types/config";
 
 export type TFileHandler = {
   assetsUploadStatus: Record<string, number>; // blockId => progress percentage
@@ -17,13 +18,13 @@ export type TFileHandler = {
      */
     maxFileSize: number;
   };
-};
+} & TExtendedFileHandler;
 
 export type TEditorFontStyle = "sans-serif" | "serif" | "monospace";
 
-export type TEditorFontSize = "small-font" | "large-font";
+export type TEditorFontSize = "small-font" | "large-font" | "mobile-font";
 
-export type TEditorLineSpacing = "regular" | "small";
+export type TEditorLineSpacing = "regular" | "small" | "mobile-regular";
 
 export type TDisplayConfig = {
   fontStyle?: TEditorFontStyle;
@@ -41,7 +42,6 @@ export type TUserDetails = {
 
 export type TRealtimeConfig = {
   url: string;
-  queryParams: TWebhookConnectionQueryParams;
 };
 
 export type IMarking = {

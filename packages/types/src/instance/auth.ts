@@ -2,8 +2,8 @@ export type TInstanceAuthenticationModes = {
   key: string;
   name: string;
   description: string;
-  icon: JSX.Element;
-  config: JSX.Element;
+  icon: React.ReactNode;
+  config: React.ReactNode;
   unavailable?: boolean;
 };
 

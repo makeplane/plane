@@ -205,7 +205,7 @@ ul[data-type="taskList"] li[data-checked="true"] {
 /* Overwrite tippy-box original max-width */
 
 .tippy-box {
-  max-width: 600px !important;
+  max-width: 800px !important;
 }
 
 .fade-in {
@@ -339,9 +339,9 @@ p.editor-paragraph-block {
   }
 
   padding-bottom: var(--heading-1-padding-bottom);
-  font-size: var(--font-size-h1);
-  line-height: var(--line-height-h1);
-  font-weight: 600;
+  font-size: var(--font-size-h1) !important;
+  line-height: var(--line-height-h1) !important;
+  font-weight: 600 !important;
 }
 
 .prose :where(h2.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
@@ -350,9 +350,9 @@ p.editor-paragraph-block {
   }
 
   padding-bottom: var(--heading-2-padding-bottom);
-  font-size: var(--font-size-h2);
-  line-height: var(--line-height-h2);
-  font-weight: 600;
+  font-size: var(--font-size-h2) !important;
+  line-height: var(--line-height-h2) !important;
+  font-weight: 600 !important;
 }
 
 .prose :where(h3.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
@@ -361,9 +361,9 @@ p.editor-paragraph-block {
   }
 
   padding-bottom: var(--heading-3-padding-bottom);
-  font-size: var(--font-size-h3);
-  line-height: var(--line-height-h3);
-  font-weight: 600;
+  font-size: var(--font-size-h3) !important;
+  line-height: var(--line-height-h3) !important;
+  font-weight: 600 !important;
 }
 
 .prose :where(h4.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
@@ -372,9 +372,9 @@ p.editor-paragraph-block {
   }
 
   padding-bottom: var(--heading-4-padding-bottom);
-  font-size: var(--font-size-h4);
-  line-height: var(--line-height-h4);
-  font-weight: 600;
+  font-size: var(--font-size-h4) !important;
+  line-height: var(--line-height-h4) !important;
+  font-weight: 600 !important;
 }
 
 .prose :where(h5.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
@@ -383,9 +383,9 @@ p.editor-paragraph-block {
   }
 
   padding-bottom: var(--heading-5-padding-bottom);
-  font-size: var(--font-size-h5);
-  line-height: var(--line-height-h5);
-  font-weight: 600;
+  font-size: var(--font-size-h5) !important;
+  line-height: var(--line-height-h5) !important;
+  font-weight: 600 !important;
 }
 
 .prose :where(h6.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
@@ -394,9 +394,9 @@ p.editor-paragraph-block {
   }
 
   padding-bottom: var(--heading-6-padding-bottom);
-  font-size: var(--font-size-h6);
-  line-height: var(--line-height-h6);
-  font-weight: 600;
+  font-size: var(--font-size-h6) !important;
+  line-height: var(--line-height-h6) !important;
+  font-weight: 600 !important;
 }
 
 .prose :where(p.editor-paragraph-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
@@ -418,8 +418,8 @@ p.editor-paragraph-block {
     }
   }
 
-  font-size: var(--font-size-regular);
-  line-height: var(--line-height-regular);
+  font-size: var(--font-size-regular) !important;
+  line-height: var(--line-height-regular) !important;
 }
 
 p.editor-paragraph-block + p.editor-paragraph-block {
@@ -499,4 +499,10 @@ span[data-name][data-type="emoji"] img {
   padding: 0;
   max-width: 1.25em;
   max-height: 1.25em;
+}
+
+/* touch device styles */
+.touch-select-none {
+  user-select: none;
+  -webkit-user-select: none;
 }

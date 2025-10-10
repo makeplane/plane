@@ -1,10 +1,10 @@
 import { FC, MutableRefObject } from "react";
 // components
 import { TIssue, IIssueDisplayProperties, TIssueMap, TGroupedIssues } from "@plane/types";
-import { IssueBlockRoot } from "@/components/issues/issue-layouts/list";
 // hooks
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // types
+import { IssueBlockRoot } from "./block-root";
 import { TRenderQuickActions } from "./list-view-types";
 
 interface Props {

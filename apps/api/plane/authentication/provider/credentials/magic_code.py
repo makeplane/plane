@@ -72,17 +72,13 @@ class MagicCodeProvider(CredentialAdapter):
                 email = str(self.key).replace("magic_", "", 1)
                 if User.objects.filter(email=email).exists():
                     raise AuthenticationException(
-                        error_code=AUTHENTICATION_ERROR_CODES[
-                            "EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN"
-                        ],
+                        error_code=AUTHENTICATION_ERROR_CODES["EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN"],
                         error_message="EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN",
                         payload={"email": str(email)},
                     )
                 else:
                     raise AuthenticationException(
-                        error_code=AUTHENTICATION_ERROR_CODES[
-                            "EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP"
-                        ],
+                        error_code=AUTHENTICATION_ERROR_CODES["EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP"],
                         error_message="EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP",
                         payload={"email": self.key},
                     )
@@ -128,17 +124,13 @@ class MagicCodeProvider(CredentialAdapter):
                 email = str(self.key).replace("magic_", "", 1)
                 if User.objects.filter(email=email).exists():
                     raise AuthenticationException(
-                        error_code=AUTHENTICATION_ERROR_CODES[
-                            "INVALID_MAGIC_CODE_SIGN_IN"
-                        ],
+                        error_code=AUTHENTICATION_ERROR_CODES["INVALID_MAGIC_CODE_SIGN_IN"],
                         error_message="INVALID_MAGIC_CODE_SIGN_IN",
                         payload={"email": str(email)},
                     )
                 else:
                     raise AuthenticationException(
-                        error_code=AUTHENTICATION_ERROR_CODES[
-                            "INVALID_MAGIC_CODE_SIGN_UP"
-                        ],
+                        error_code=AUTHENTICATION_ERROR_CODES["INVALID_MAGIC_CODE_SIGN_UP"],
                         error_message="INVALID_MAGIC_CODE_SIGN_UP",
                         payload={"email": str(email)},
                     )

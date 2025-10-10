@@ -2,36 +2,25 @@
 
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
-// plane constants
+import { ChartNoAxesColumn, SlidersHorizontal } from "lucide-react";
+// plane imports
 import { EIssueFilterType, ISSUE_STORE_TO_FILTERS_MAP } from "@plane/constants";
-// i18n
 import { useTranslation } from "@plane/i18n";
-// types
-import {
-  EIssuesStoreType,
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  IIssueFilterOptions,
-  EIssueLayoutTypes,
-} from "@plane/types";
-import { Button } from "@plane/ui";
-// components
-import { isIssueFilterActive } from "@plane/utils";
+import { Button } from "@plane/propel/button";
+import { EIssueLayoutTypes, EIssuesStoreType, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+// hooks
+import { useIssues } from "@/hooks/store/use-issues";
+// plane web imports
+import { TProject } from "@/plane-web/types";
+// local imports
+import { WorkItemsModal } from "../analytics/work-items/modal";
+import { WorkItemFiltersToggle } from "../work-item-filters/filters-toggle";
 import {
   DisplayFiltersSelection,
   FiltersDropdown,
-  FilterSelection,
-  IssueLayoutIcon,
   LayoutSelection,
   MobileLayoutSelection,
-} from "@/components/issues";
-// helpers
-// hooks
-import { useLabel, useProjectState, useMember, useIssues } from "@/hooks/store";
-// plane web types
-import { TProject } from "@/plane-web/types";
-import { WorkItemsModal } from "../analytics/work-items/modal";
-import { ChartNoAxesColumn, ChevronDown, ListFilter, SlidersHorizontal } from "lucide-react";
+} from "./issue-layouts/filters";
 
 type Props = {
   currentProjectDetails: TProject | undefined;
@@ -47,7 +36,8 @@ const LAYOUTS = [
   EIssueLayoutTypes.SPREADSHEET,
   EIssueLayoutTypes.GANTT,
 ];
-const HeaderFilters = observer((props: Props) => {
+
+export const HeaderFilters = observer((props: Props) => {
   const {
     currentProjectDetails,
     projectId,
@@ -61,37 +51,12 @@ const HeaderFilters = observer((props: Props) => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // store hooks
   const {
-    project: { projectMemberIds },
-  } = useMember();
-  const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(storeType);
-  const { projectStates } = useProjectState();
-  const { projectLabels } = useLabel();
   // derived values
   const activeLayout = issueFilters?.displayFilters?.layout;
-  const layoutDisplayFiltersOptions = ISSUE_STORE_TO_FILTERS_MAP[storeType]?.[activeLayout];
+  const layoutDisplayFiltersOptions = ISSUE_STORE_TO_FILTERS_MAP[storeType]?.layoutOptions[activeLayout];
 
-  const handleFiltersUpdate = useCallback(
-    (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !projectId) return;
-      const newValues = issueFilters?.filters?.[key] ?? [];
-
-      if (Array.isArray(value)) {
-        // this validation is majorly for the filter start_date, target_date custom
-        value.forEach((val) => {
-          if (!newValues.includes(val)) newValues.push(val);
-          else newValues.splice(newValues.indexOf(val), 1);
-        });
-      } else {
-        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-        else newValues.push(value);
-      }
-
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { [key]: newValues });
-    },
-    [workspaceSlug, projectId, issueFilters, updateFilters]
-  );
   const handleLayoutChange = useCallback(
     (layout: EIssueLayoutTypes) => {
       if (!workspaceSlug || !projectId) return;
@@ -138,27 +103,7 @@ const HeaderFilters = observer((props: Props) => {
           activeLayout={activeLayout}
         />
       </div>
-      <FiltersDropdown
-        title={t("common.filters")}
-        placement="bottom-end"
-        isFiltersApplied={isIssueFilterActive(issueFilters)}
-        miniIcon={<ListFilter className="size-3.5" />}
-      >
-        <FilterSelection
-          filters={issueFilters?.filters ?? {}}
-          handleFiltersUpdate={handleFiltersUpdate}
-          displayFilters={issueFilters?.displayFilters ?? {}}
-          handleDisplayFiltersUpdate={handleDisplayFilters}
-          layoutDisplayFiltersOptions={layoutDisplayFiltersOptions}
-          labels={projectLabels}
-          memberIds={projectMemberIds ?? undefined}
-          projectId={projectId}
-          states={projectStates}
-          cycleViewDisabled={!currentProjectDetails?.cycle_view}
-          moduleViewDisabled={!currentProjectDetails?.module_view}
-          isEpic={storeType === EIssuesStoreType.EPIC}
-        />
-      </FiltersDropdown>
+      <WorkItemFiltersToggle entityType={storeType} entityId={projectId} />
       <FiltersDropdown
         miniIcon={<SlidersHorizontal className="size-3.5" />}
         title={t("common.display")}
@@ -193,5 +138,3 @@ const HeaderFilters = observer((props: Props) => {
     </>
   );
 });
-
-export default HeaderFilters;

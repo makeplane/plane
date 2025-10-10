@@ -3,6 +3,7 @@ const project = resolve(process.cwd(), "tsconfig.json");
 
 module.exports = {
   extends: ["prettier", "plugin:@typescript-eslint/recommended"],
+  parser: "@typescript-eslint/parser",
   env: {
     node: true,
     es6: true,
@@ -25,10 +26,33 @@ module.exports = {
     "@typescript-eslint/no-unused-vars": [
       "warn",
       {
-        "argsIgnorePattern": "^_",
-        "varsIgnorePattern": "^_",
-        "caughtErrorsIgnorePattern": "^_"
-      }
+        argsIgnorePattern: "^_",
+        varsIgnorePattern: "^_",
+        caughtErrorsIgnorePattern: "^_",
+      },
     ],
-  }
+    "import/order": [
+      "warn",
+      {
+        groups: ["builtin", "external", "internal", "parent", "sibling"],
+        pathGroups: [
+          {
+            pattern: "@plane/**",
+            group: "external",
+            position: "after",
+          },
+          {
+            pattern: "@/**",
+            group: "internal",
+            position: "before",
+          },
+        ],
+        pathGroupsExcludedImportTypes: ["builtin", "internal", "react"],
+        alphabetize: {
+          order: "asc",
+          caseInsensitive: true,
+        },
+      },
+    ],
+  },
 };

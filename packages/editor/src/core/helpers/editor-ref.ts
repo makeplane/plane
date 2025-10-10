@@ -1,5 +1,5 @@
-import { HocuspocusProvider } from "@hocuspocus/provider";
-import { Editor } from "@tiptap/core";
+import type { HocuspocusProvider } from "@hocuspocus/provider";
+import type { Editor } from "@tiptap/core";
 import { DOMSerializer } from "@tiptap/pm/model";
 import * as Y from "yjs";
 // components
@@ -11,7 +11,6 @@ import { CORE_EDITOR_META } from "@/constants/meta";
 import type { EditorRefApi, TEditorCommands } from "@/types";
 // local imports
 import { getParagraphCount } from "./common";
-import { getExtensionStorage } from "./get-extension-storage";
 import { insertContentAtSavedSelection } from "./insert-content-at-cursor-position";
 import { scrollSummary, scrollToNodeViaDOMCoordinates } from "./scroll-to-node";
 
@@ -24,8 +23,41 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
   const { editor, provider } = args;
 
   return {
+    blur: () => editor?.commands.blur(),
     clearEditor: (emitUpdate = false) => {
       editor?.chain().setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true).clearContent(emitUpdate).run();
+    },
+    createSelectionAtCursorPosition: () => {
+      if (!editor) return;
+      const { empty } = editor.state.selection;
+
+      if (empty) {
+        // Get the text content and position info
+        const { $from } = editor.state.selection;
+        const textContent = $from.parent.textContent;
+        const posInNode = $from.parentOffset;
+
+        // Find word boundaries
+        let start = posInNode;
+        let end = posInNode;
+
+        // Move start position backwards until we hit a word boundary
+        while (start > 0 && /\w/.test(textContent[start - 1])) {
+          start--;
+        }
+
+        // Move end position forwards until we hit a word boundary
+        while (end < textContent.length && /\w/.test(textContent[end])) {
+          end++;
+        }
+
+        // If we found a word, select it using editor commands
+        if (start !== end) {
+          const from = $from.start() + start;
+          const to = $from.start() + end;
+          editor.commands.setTextSelection({ from, to });
+        }
+      }
     },
     getDocument: () => {
       const documentBinary = provider?.document ? Y.encodeStateAsUpdate(provider?.document) : null;
@@ -39,23 +71,37 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
       };
     },
     getDocumentInfo: () => ({
-      characters: editor ? getExtensionStorage(editor, CORE_EXTENSIONS.CHARACTER_COUNT)?.characters?.() : 0,
+      characters: editor?.storage.characterCount?.characters?.() ?? 0,
       paragraphs: getParagraphCount(editor?.state),
-      words: editor ? getExtensionStorage(editor, CORE_EXTENSIONS.CHARACTER_COUNT)?.words?.() : 0,
+      words: editor?.storage.characterCount?.words?.() ?? 0,
     }),
-    getHeadings: () => (editor ? getExtensionStorage(editor, CORE_EXTENSIONS.HEADINGS_LIST)?.headings : []),
+    getHeadings: () => (editor ? editor.storage.headingsList?.headings : []),
     getMarkDown: () => {
-      const markdownOutput = editor?.storage?.markdown?.getMarkdown?.();
+      const markdownOutput = editor?.storage?.markdown?.getMarkdown?.() ?? "";
       return markdownOutput;
+    },
+    isAnyDropbarOpen: () => {
+      if (!editor) return false;
+      const utilityStorage = editor.storage.utility;
+      return utilityStorage.activeDropbarExtensions.length > 0;
     },
     scrollSummary: (marking) => {
       if (!editor) return;
       scrollSummary(editor, marking);
     },
     setEditorValue: (content, emitUpdate = false) => {
-      editor?.commands.setContent(content, emitUpdate, { preserveWhitespace: true });
+      editor
+        ?.chain()
+        .setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true)
+        .setMeta(CORE_EDITOR_META.INTENTIONAL_DELETION, true)
+        .setContent(content, {
+          emitUpdate,
+          parseOptions: {
+            preserveWhitespace: true,
+          },
+        })
+        .run();
     },
-    blur: () => editor?.commands.blur(),
     emitRealTimeUpdate: (message) => provider?.sendStateless(message),
     executeMenuItemCommand: (props) => {
       const { itemKey } = props;
@@ -70,7 +116,14 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
         console.warn(`No command found for item: ${itemKey}`);
       }
     },
+    focus: (args) => editor?.commands.focus(args),
+    getCoordsFromPos: (pos) => editor?.view.coordsAtPos(pos ?? editor.state.selection.from),
     getCurrentCursorPosition: () => editor?.state.selection.from,
+    getAttributesWithExtendedMark: (mark, attribute) => {
+      if (!editor) return;
+      editor.commands.extendMarkRange(mark);
+      return editor.getAttributes(attribute);
+    },
     getSelectedText: () => {
       if (!editor) return null;
 
@@ -104,8 +157,7 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
         editor.chain().focus().deleteRange({ from, to }).insertContent(contentHTML).run();
       }
     },
-    isEditorReadyToDiscard: () =>
-      !!editor && getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY)?.uploadInProgress === false,
+    isEditorReadyToDiscard: () => editor?.storage?.utility?.uploadInProgress === false,
     isMenuItemActive: (props) => {
       const { itemKey } = props;
       const editorItems = getEditorMenuItems(editor);
@@ -119,11 +171,11 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
     listenToRealTimeUpdate: () => provider && { on: provider.on.bind(provider), off: provider.off.bind(provider) },
     onDocumentInfoChange: (callback) => {
       const handleDocumentInfoChange = () => {
-        if (!editor) return;
+        if (!editor?.storage) return;
         callback({
-          characters: editor ? getExtensionStorage(editor, CORE_EXTENSIONS.CHARACTER_COUNT)?.characters?.() : 0,
+          characters: editor.storage.characterCount?.characters?.() ?? 0,
           paragraphs: getParagraphCount(editor?.state),
-          words: editor ? getExtensionStorage(editor, CORE_EXTENSIONS.CHARACTER_COUNT)?.words?.() : 0,
+          words: editor.storage.characterCount?.words?.() ?? 0,
         });
       };
 
@@ -139,7 +191,7 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
     onHeadingChange: (callback) => {
       const handleHeadingChange = () => {
         if (!editor) return;
-        const headings = getExtensionStorage(editor, CORE_EXTENSIONS.HEADINGS_LIST)?.headings;
+        const headings = editor.storage.headingsList?.headings;
         if (headings) {
           callback(headings);
         }
@@ -165,7 +217,8 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
         editor?.off("transaction", callback);
       };
     },
-    scrollToNodeViaDOMCoordinates(behavior, pos) {
+    redo: () => editor?.commands.redo(),
+    scrollToNodeViaDOMCoordinates({ pos, behavior = "smooth" }) {
       const resolvedPos = pos ?? editor?.state.selection.from;
       if (!editor || !resolvedPos) return;
       scrollToNodeViaDOMCoordinates(editor, resolvedPos, behavior);
@@ -197,5 +250,6 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
       if (!document) return;
       Y.applyUpdate(document, value);
     },
+    undo: () => editor?.commands.undo(),
   };
 };

@@ -1,27 +1,23 @@
 import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
-// types
+// plane imports
+import type { EditorRefApi } from "@plane/editor";
 import { EIssueServiceType, TNameDescriptionLoader } from "@plane/types";
-// components
 import { cn } from "@plane/utils";
-import {
-  IssuePeekOverviewHeader,
-  TPeekModes,
-  PeekOverviewIssueDetails,
-  PeekOverviewProperties,
-  TIssueOperations,
-  IssuePeekOverviewLoader,
-  IssuePeekOverviewError,
-  IssueDetailWidgets,
-} from "@/components/issues";
-// helpers
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import useKeypress from "@/hooks/use-keypress";
 import usePeekOverviewOutsideClickDetector from "@/hooks/use-peek-overview-outside-click";
-// store hooks
+// local imports
+import type { TIssueOperations } from "../issue-detail";
 import { IssueActivity } from "../issue-detail/issue-activity";
+import { IssueDetailWidgets } from "../issue-detail-widgets";
+import { IssuePeekOverviewError } from "./error";
+import { IssuePeekOverviewHeader, TPeekModes } from "./header";
+import { PeekOverviewIssueDetails } from "./issue-detail";
+import { IssuePeekOverviewLoader } from "./loader";
+import { PeekOverviewProperties } from "./properties";
 
 interface IIssueView {
   workspaceSlug: string;
@@ -58,6 +54,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   const [isEditIssueModalOpen, setIsEditIssueModalOpen] = useState(false);
   // ref
   const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
+  const editorRef = useRef<EditorRefApi>(null);
   // store hooks
   const {
     setPeekIssue,
@@ -85,8 +82,9 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   usePeekOverviewOutsideClickDetector(
     issuePeekOverviewRef,
     () => {
+      const isAnyDropbarOpen = editorRef.current?.isAnyDropbarOpen();
       if (!embedIssue) {
-        if (!isAnyModalOpen && !isAnyEpicModalOpen && !isAnyLocalModalOpen) {
+        if (!isAnyModalOpen && !isAnyEpicModalOpen && !isAnyLocalModalOpen && !isAnyDropbarOpen) {
           removeRoutePeekId();
         }
       }
@@ -95,10 +93,10 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   );
 
   const handleKeyDown = () => {
-    const slashCommandDropdownElement = document.querySelector("#slash-command");
     const editorImageFullScreenModalElement = document.querySelector(".editor-image-full-screen-modal");
     const dropdownElement = document.activeElement?.tagName === "INPUT";
-    if (!isAnyModalOpen && !slashCommandDropdownElement && !dropdownElement && !editorImageFullScreenModalElement) {
+    const isAnyDropbarOpen = editorRef.current?.isAnyDropbarOpen();
+    if (!isAnyModalOpen && !dropdownElement && !isAnyDropbarOpen && !editorImageFullScreenModalElement) {
       removeRoutePeekId();
       const issueElement = document.getElementById(`issue-${issueId}`);
       if (issueElement) issueElement?.focus();
@@ -115,16 +113,16 @@ export const IssueView: FC<IIssueView> = observer((props) => {
 
   const peekOverviewIssueClassName = cn(
     !embedIssue
-      ? "fixed z-[25] flex flex-col overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 transition-all duration-300"
+      ? "absolute z-[25] flex flex-col overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 transition-all duration-300"
       : `w-full h-full`,
     !embedIssue && {
-      "top-2 bottom-2 right-2 w-full md:w-[50%] border-0 border-l": peekMode === "side-peek",
+      "top-0 bottom-0 right-0 w-full md:w-[50%] border-0 border-l": peekMode === "side-peek",
       "size-5/6 top-[8.33%] left-[8.33%]": peekMode === "modal",
       "inset-0 m-4 absolute": peekMode === "full-screen",
     }
   );
 
-  const shouldUsePortal = !embedIssue && peekMode === "full-screen";
+  const shouldUsePortal = !embedIssue;
 
   const portalContainer = document.getElementById("full-screen-portal") as HTMLElement;
 
@@ -171,6 +169,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                 {["side-peek", "modal"].includes(peekMode) ? (
                   <div className="relative flex flex-col gap-3 px-8 py-5 space-y-3">
                     <PeekOverviewIssueDetails
+                      editorRef={editorRef}
                       workspaceSlug={workspaceSlug}
                       projectId={projectId}
                       issueId={issueId}
@@ -211,6 +210,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                     <div className="relative h-full w-full space-y-6 overflow-auto p-4 py-5">
                       <div className="space-y-3">
                         <PeekOverviewIssueDetails
+                          editorRef={editorRef}
                           workspaceSlug={workspaceSlug}
                           projectId={projectId}
                           issueId={issueId}

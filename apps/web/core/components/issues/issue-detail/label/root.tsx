@@ -3,11 +3,13 @@
 import { FC, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssueServiceType, IIssueLabel, TIssue, TIssueServiceType } from "@plane/types";
 // components
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
-import { useIssueDetail, useLabel, useProjectInbox } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useLabel } from "@/hooks/store/use-label";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 // ui
 // types
 import { LabelList, IssueLabelSelectRoot } from "./";

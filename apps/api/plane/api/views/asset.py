@@ -8,7 +8,7 @@ from django.conf import settings
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from drf_spectacular.utils import OpenApiExample, OpenApiRequest, OpenApiTypes
+from drf_spectacular.utils import OpenApiExample, OpenApiRequest
 
 # Module Imports
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
@@ -158,9 +158,7 @@ class UserAssetEndpoint(BaseAPIView):
         # Get the presigned URL
         storage = S3Storage(request=request)
         # Generate a presigned URL to share an S3 object
-        presigned_url = storage.generate_presigned_post(
-            object_name=asset_key, file_type=type, file_size=size_limit
-        )
+        presigned_url = storage.generate_presigned_post(object_name=asset_key, file_type=type, file_size=size_limit)
         # Return the presigned URL
         return Response(
             {
@@ -236,9 +234,7 @@ class UserAssetEndpoint(BaseAPIView):
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
         # get the entity and save the asset id for the request field
-        self.entity_asset_delete(
-            entity_type=asset.entity_type, asset=asset, request=request
-        )
+        self.entity_asset_delete(entity_type=asset.entity_type, asset=asset, request=request)
         asset.save(update_fields=["is_deleted", "deleted_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -282,8 +278,9 @@ class UserServerAssetEndpoint(BaseAPIView):
     def post(self, request):
         """Generate presigned URL for user server asset upload.
 
-        Create a presigned URL for uploading user profile assets (avatar or cover image) using server credentials.
-        This endpoint generates the necessary credentials for direct S3 upload with server-side authentication.
+        Create a presigned URL for uploading user profile assets
+        (avatar or cover image) using server credentials. This endpoint generates the
+        necessary credentials for direct S3 upload with server-side authentication.
         """
         # get the asset key
         name = request.data.get("name")
@@ -334,9 +331,7 @@ class UserServerAssetEndpoint(BaseAPIView):
         # Get the presigned URL
         storage = S3Storage(request=request, is_server=True)
         # Generate a presigned URL to share an S3 object
-        presigned_url = storage.generate_presigned_post(
-            object_name=asset_key, file_type=type, file_size=size_limit
-        )
+        presigned_url = storage.generate_presigned_post(object_name=asset_key, file_type=type, file_size=size_limit)
         # Return the presigned URL
         return Response(
             {
@@ -388,16 +383,15 @@ class UserServerAssetEndpoint(BaseAPIView):
     def delete(self, request, asset_id):
         """Delete user server asset.
 
-        Delete a user profile asset (avatar or cover image) using server credentials and remove its reference from the user profile.
-        This performs a soft delete by marking the asset as deleted and updating the user's profile.
+        Delete a user profile asset (avatar or cover image) using server credentials and
+        remove its reference from the user profile. This performs a soft delete by marking the
+        asset as deleted and updating the user's profile.
         """
         asset = FileAsset.objects.get(id=asset_id, user_id=request.user.id)
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
         # get the entity and save the asset id for the request field
-        self.entity_asset_delete(
-            entity_type=asset.entity_type, asset=asset, request=request
-        )
+        self.entity_asset_delete(entity_type=asset.entity_type, asset=asset, request=request)
         asset.save(update_fields=["is_deleted", "deleted_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -429,9 +423,7 @@ class GenericAssetEndpoint(BaseAPIView):
             workspace = Workspace.objects.get(slug=slug)
 
             # Get the asset
-            asset = FileAsset.objects.get(
-                id=asset_id, workspace_id=workspace.id, is_deleted=False
-            )
+            asset = FileAsset.objects.get(id=asset_id, workspace_id=workspace.id, is_deleted=False)
 
             # Check if the asset exists and is uploaded
             if not asset.is_uploaded:
@@ -457,13 +449,9 @@ class GenericAssetEndpoint(BaseAPIView):
             )
 
         except Workspace.DoesNotExist:
-            return Response(
-                {"error": "Workspace not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Workspace not found"}, status=status.HTTP_404_NOT_FOUND)
         except FileAsset.DoesNotExist:
-            return Response(
-                {"error": "Asset not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Asset not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             log_exception(e)
             return Response(
@@ -565,14 +553,12 @@ class GenericAssetEndpoint(BaseAPIView):
             created_by=request.user,
             external_id=external_id,
             external_source=external_source,
-            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,  # Using ISSUE_ATTACHMENT since we'll bind it to issues
+            entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,  # Using ISSUE_ATTACHMENT since we'll bind it to issues # noqa: E501
         )
 
         # Get the presigned URL
         storage = S3Storage(request=request, is_server=True)
-        presigned_url = storage.generate_presigned_post(
-            object_name=asset_key, file_type=type, file_size=size_limit
-        )
+        presigned_url = storage.generate_presigned_post(object_name=asset_key, file_type=type, file_size=size_limit)
 
         return Response(
             {
@@ -611,9 +597,7 @@ class GenericAssetEndpoint(BaseAPIView):
         and trigger metadata extraction.
         """
         try:
-            asset = FileAsset.objects.get(
-                id=asset_id, workspace__slug=slug, is_deleted=False
-            )
+            asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug, is_deleted=False)
 
             # Update is_uploaded status
             asset.is_uploaded = request.data.get("is_uploaded", asset.is_uploaded)
@@ -626,6 +610,4 @@ class GenericAssetEndpoint(BaseAPIView):
 
             return Response(status=status.HTTP_204_NO_CONTENT)
         except FileAsset.DoesNotExist:
-            return Response(
-                {"error": "Asset not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Asset not found"}, status=status.HTTP_404_NOT_FOUND)

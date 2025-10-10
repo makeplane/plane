@@ -4,33 +4,37 @@ import { Dispatch, SetStateAction, useEffect, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EInboxIssueSource, TIssue, TNameDescriptionLoader } from "@plane/types";
-import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
-// components
+import { Loader } from "@plane/ui";
 import { getTextContent } from "@plane/utils";
+// components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
-import { InboxIssueContentProperties } from "@/components/inbox/content";
-import {
-  IssueDescriptionInput,
-  IssueTitleInput,
-  IssueActivity,
-  IssueReaction,
-  TIssueOperations,
-  IssueAttachmentRoot,
-} from "@/components/issues";
+import { IssueAttachmentRoot } from "@/components/issues/attachment";
+import { IssueDescriptionInput } from "@/components/issues/description-input";
+import type { TIssueOperations } from "@/components/issues/issue-detail";
+import { IssueActivity } from "@/components/issues/issue-detail/issue-activity";
+import { IssueReaction } from "@/components/issues/issue-detail/reactions";
+import { IssueTitleInput } from "@/components/issues/title-input";
 // helpers
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useIssueDetail, useMember, useProject, useProjectInbox, useUser } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useMember } from "@/hooks/store/use-member";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
+import { useUser } from "@/hooks/store/user";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // store types
-import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe";
+import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe/duplicate-popover";
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 // services
 import { IntakeWorkItemVersionService } from "@/services/inbox";
 // stores
-import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
+import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
+// local imports
+import { InboxIssueContentProperties } from "./issue-properties";
 // services init
 const intakeWorkItemVersionService = new IntakeWorkItemVersionService();
 

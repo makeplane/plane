@@ -9,12 +9,15 @@ import { Pin, PinOff } from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel, IWorkspaceSidebarNavigationItem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { DragHandle, DropIndicator, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { DragHandle, DropIndicator } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { SidebarNavItem } from "@/components/sidebar";
+import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // hooks
-import { useAppTheme, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 // local imports
 import { UpgradeBadge } from "../upgrade-badge";
@@ -163,7 +166,7 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
           <Tooltip
             // isMobile={isMobile}
             tooltipContent={t("drag_to_rearrange")}
-            position="top-right"
+            position="top-end"
             disabled={isDragging}
           >
             <button

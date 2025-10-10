@@ -26,9 +26,7 @@ def soft_delete_related_objects(app_label, model_name, instance_pk, using=None):
 
     # Get all related fields that are reverse relationships
     all_related = [
-        f
-        for f in instance._meta.get_fields()
-        if (f.one_to_many or f.one_to_one) and f.auto_created and not f.concrete
+        f for f in instance._meta.get_fields() if (f.one_to_many or f.one_to_one) and f.auto_created and not f.concrete
     ]
 
     # Handle each related field
@@ -40,11 +38,7 @@ def soft_delete_related_objects(app_label, model_name, instance_pk, using=None):
             continue
 
         # Get the on_delete behavior name
-        on_delete_name = (
-            relation.on_delete.__name__
-            if hasattr(relation.on_delete, "__name__")
-            else ""
-        )
+        on_delete_name = relation.on_delete.__name__ if hasattr(relation.on_delete, "__name__") else ""
 
         if on_delete_name == "DO_NOTHING":
             continue
@@ -82,9 +76,7 @@ def soft_delete_related_objects(app_label, model_name, instance_pk, using=None):
                                 )
                 else:
                     # Handle other relationships
-                    related_queryset = getattr(instance, related_name)(
-                        manager="objects"
-                    ).all()
+                    related_queryset = getattr(instance, related_name)(manager="objects").all()
 
                     for related_obj in related_queryset:
                         if hasattr(related_obj, "deleted_at"):
@@ -139,85 +131,49 @@ def hard_delete():
 
     days = settings.HARD_DELETE_AFTER_DAYS
     # check delete workspace
-    _ = Workspace.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
-    ).delete()
+    _ = Workspace.all_objects.filter(deleted_at__lt=timezone.now() - timezone.timedelta(days=days)).delete()
 
     # check delete project
-    _ = Project.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
-    ).delete()
+    _ = Project.all_objects.filter(deleted_at__lt=timezone.now() - timezone.timedelta(days=days)).delete()
 
     # check delete cycle
-    _ = Cycle.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
-    ).delete()
+    _ = Cycle.all_objects.filter(deleted_at__lt=timezone.now() - timezone.timedelta(days=days)).delete()
 
     # check delete module
-    _ = Module.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
-    ).delete()
+    _ = Module.all_objects.filter(deleted_at__lt=timezone.now() - timezone.timedelta(days=days)).delete()
 
     # check delete issue
-    _ = Issue.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
-    ).delete()
+    _ = Issue.all_objects.filter(deleted_at__lt=timezone.now() - timezone.timedelta(days=days)).delete()
 
     # check delete page
-    _ = Page.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
-    ).delete()
+    _ = Page.all_objects.filter(deleted_at__lt=timezone.now() - timezone.timedelta(days=days)).delete()
 
     # check delete view
-    _ = IssueView.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
-    ).delete()
+    _ = IssueView.all_objects.filter(deleted_at__lt=timezone.now() - timezone.timedelta(days=days)).delete()
 
     # check delete label
-    _ = Label.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
-    ).delete()
+    _ = Label.all_objects.filter(deleted_at__lt=timezone.now() - timezone.timedelta(days=days)).delete()
 
     # check delete state
-    _ = State.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
-    ).delete()
+    _ = State.all_objects.filter(deleted_at__lt=timezone.now() - timezone.timedelta(days=days)).delete()
 
-    _ = IssueActivity.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
-    ).delete()
+    _ = IssueActivity.all_objects.filter(deleted_at__lt=timezone.now() - timezone.timedelta(days=days)).delete()
 
-    _ = IssueComment.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
-    ).delete()
+    _ = IssueComment.all_objects.filter(deleted_at__lt=timezone.now() - timezone.timedelta(days=days)).delete()
 
-    _ = IssueLink.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
-    ).delete()
+    _ = IssueLink.all_objects.filter(deleted_at__lt=timezone.now() - timezone.timedelta(days=days)).delete()
 
-    _ = IssueReaction.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
-    ).delete()
+    _ = IssueReaction.all_objects.filter(deleted_at__lt=timezone.now() - timezone.timedelta(days=days)).delete()
 
-    _ = UserFavorite.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
-    ).delete()
+    _ = UserFavorite.all_objects.filter(deleted_at__lt=timezone.now() - timezone.timedelta(days=days)).delete()
 
-    _ = ModuleIssue.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
-    ).delete()
+    _ = ModuleIssue.all_objects.filter(deleted_at__lt=timezone.now() - timezone.timedelta(days=days)).delete()
 
-    _ = CycleIssue.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
-    ).delete()
+    _ = CycleIssue.all_objects.filter(deleted_at__lt=timezone.now() - timezone.timedelta(days=days)).delete()
 
-    _ = Estimate.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
-    ).delete()
+    _ = Estimate.all_objects.filter(deleted_at__lt=timezone.now() - timezone.timedelta(days=days)).delete()
 
-    _ = EstimatePoint.all_objects.filter(
-        deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
-    ).delete()
+    _ = EstimatePoint.all_objects.filter(deleted_at__lt=timezone.now() - timezone.timedelta(days=days)).delete()
 
     # at last, check for every thing which ever is left and delete it
     # Get all Django models
@@ -228,8 +184,6 @@ def hard_delete():
         # Check if the model has a 'deleted_at' field
         if hasattr(model, "deleted_at"):
             # Get all instances where 'deleted_at' is greater than 30 days ago
-            _ = model.all_objects.filter(
-                deleted_at__lt=timezone.now() - timezone.timedelta(days=days)
-            ).delete()
+            _ = model.all_objects.filter(deleted_at__lt=timezone.now() - timezone.timedelta(days=days)).delete()
 
     return

@@ -6,10 +6,10 @@ import { observer } from "mobx-react";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EIssuesStoreType, EUserWorkspaceRoles } from "@plane/types";
-import { DetailedEmptyState } from "@/components/empty-state";
-import { CreateUpdateIssueModal } from "@/components/issues";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // constants
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 export const WorkspaceDraftEmptyState: FC = observer(() => {

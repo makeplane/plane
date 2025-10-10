@@ -214,9 +214,7 @@ class Command(BaseCommand):
         ]
 
         for item in config_keys:
-            obj, created = InstanceConfiguration.objects.get_or_create(
-                key=item.get("key")
-            )
+            obj, created = InstanceConfiguration.objects.get_or_create(key=item.get("key"))
             if created:
                 obj.category = item.get("category")
                 obj.is_encrypted = item.get("is_encrypted", False)
@@ -225,15 +223,9 @@ class Command(BaseCommand):
                 else:
                     obj.value = item.get("value")
                 obj.save()
-                self.stdout.write(
-                    self.style.SUCCESS(
-                        f"{obj.key} loaded with value from environment variable."
-                    )
-                )
+                self.stdout.write(self.style.SUCCESS(f"{obj.key} loaded with value from environment variable."))
             else:
-                self.stdout.write(
-                    self.style.WARNING(f"{obj.key} configuration already exists")
-                )
+                self.stdout.write(self.style.WARNING(f"{obj.key} configuration already exists"))
 
         keys = ["IS_GOOGLE_ENABLED", "IS_GITHUB_ENABLED", "IS_GITLAB_ENABLED", "IS_GITEA_ENABLED"]
         if not InstanceConfiguration.objects.filter(key__in=keys).exists():
@@ -261,11 +253,7 @@ class Command(BaseCommand):
                         category="AUTHENTICATION",
                         is_encrypted=False,
                     )
-                    self.stdout.write(
-                        self.style.SUCCESS(
-                            f"{key} loaded with value from environment variable."
-                        )
-                    )
+                    self.stdout.write(self.style.SUCCESS(f"{key} loaded with value from environment variable."))
                 if key == "IS_GITHUB_ENABLED":
                     GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET = get_configuration_value(
                         [
@@ -289,39 +277,25 @@ class Command(BaseCommand):
                         category="AUTHENTICATION",
                         is_encrypted=False,
                     )
-                    self.stdout.write(
-                        self.style.SUCCESS(
-                            f"{key} loaded with value from environment variable."
-                        )
-                    )
+                    self.stdout.write(self.style.SUCCESS(f"{key} loaded with value from environment variable."))
                 if key == "IS_GITLAB_ENABLED":
-                    GITLAB_HOST, GITLAB_CLIENT_ID, GITLAB_CLIENT_SECRET = (
-                        get_configuration_value(
-                            [
-                                {
-                                    "key": "GITLAB_HOST",
-                                    "default": os.environ.get(
-                                        "GITLAB_HOST", "https://gitlab.com"
-                                    ),
-                                },
-                                {
-                                    "key": "GITLAB_CLIENT_ID",
-                                    "default": os.environ.get("GITLAB_CLIENT_ID", ""),
-                                },
-                                {
-                                    "key": "GITLAB_CLIENT_SECRET",
-                                    "default": os.environ.get(
-                                        "GITLAB_CLIENT_SECRET", ""
-                                    ),
-                                },
-                            ]
-                        )
+                    GITLAB_HOST, GITLAB_CLIENT_ID, GITLAB_CLIENT_SECRET = get_configuration_value(
+                        [
+                            {
+                                "key": "GITLAB_HOST",
+                                "default": os.environ.get("GITLAB_HOST", "https://gitlab.com"),
+                            },
+                            {
+                                "key": "GITLAB_CLIENT_ID",
+                                "default": os.environ.get("GITLAB_CLIENT_ID", ""),
+                            },
+                            {
+                                "key": "GITLAB_CLIENT_SECRET",
+                                "default": os.environ.get("GITLAB_CLIENT_SECRET", ""),
+                            },
+                        ]
                     )
-                    if (
-                        bool(GITLAB_HOST)
-                        and bool(GITLAB_CLIENT_ID)
-                        and bool(GITLAB_CLIENT_SECRET)
-                    ):
+                    if bool(GITLAB_HOST) and bool(GITLAB_CLIENT_ID) and bool(GITLAB_CLIENT_SECRET):
                         value = "1"
                     else:
                         value = "0"
@@ -331,11 +305,7 @@ class Command(BaseCommand):
                         category="AUTHENTICATION",
                         is_encrypted=False,
                     )
-                    self.stdout.write(
-                        self.style.SUCCESS(
-                            f"{key} loaded with value from environment variable."
-                        )
-                    )
+                    self.stdout.write(self.style.SUCCESS(f"{key} loaded with value from environment variable."))
                 if key == "IS_GITEA_ENABLED":
                     GITEA_HOST, GITEA_CLIENT_ID, GITEA_CLIENT_SECRET = (
                         get_configuration_value(
@@ -380,6 +350,4 @@ class Command(BaseCommand):
                     )
         else:
             for key in keys:
-                self.stdout.write(
-                    self.style.WARNING(f"{key} configuration already exists")
-                )
+                self.stdout.write(self.style.WARNING(f"{key} configuration already exists"))

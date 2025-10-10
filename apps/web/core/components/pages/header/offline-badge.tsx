@@ -1,10 +1,10 @@
 import { observer } from "mobx-react";
 // plane imports
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // hooks
 import useOnlineStatus from "@/hooks/use-online-status";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
   page: TPageInstance;

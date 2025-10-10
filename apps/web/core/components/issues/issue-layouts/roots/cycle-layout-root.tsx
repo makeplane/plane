@@ -1,26 +1,28 @@
 import React, { useState } from "react";
-import isEmpty from "lodash/isEmpty";
+import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane constants
+import { ISSUE_DISPLAY_FILTERS_BY_PAGE, PROJECT_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
-import { LogoSpinner } from "@/components/common";
-import { TransferIssues, TransferIssuesModal } from "@/components/cycles";
-import {
-  CycleAppliedFiltersRoot,
-  CycleCalendarLayout,
-  BaseGanttRoot,
-  CycleKanBanLayout,
-  CycleListLayout,
-  CycleSpreadsheetLayout,
-  IssuePeekOverview,
-} from "@/components/issues";
-// constants
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { TransferIssues } from "@/components/cycles/transfer-issues";
+import { TransferIssuesModal } from "@/components/cycles/transfer-issues-modal";
 // hooks
-import { useCycle, useIssues } from "@/hooks/store";
+import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
+import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
+import { useCycle } from "@/hooks/store/use-cycle";
+import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
+// local imports
+import { IssuePeekOverview } from "../../peek-overview";
+import { CycleCalendarLayout } from "../calendar/roots/cycle-root";
+import { BaseGanttRoot } from "../gantt";
+import { CycleKanBanLayout } from "../kanban/roots/cycle-root";
+import { CycleListLayout } from "../list/roots/cycle-root";
+import { CycleSpreadsheetLayout } from "../spreadsheet/roots/cycle-root";
 
 const CycleIssueLayout = (props: {
   activeLayout: EIssueLayoutTypes | undefined;
@@ -44,29 +46,30 @@ const CycleIssueLayout = (props: {
 };
 
 export const CycleLayoutRoot: React.FC = observer(() => {
-  const { workspaceSlug, projectId, cycleId } = useParams();
+  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId, cycleId: routerCycleId } = useParams();
+  const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
+  const projectId = routerProjectId ? routerProjectId.toString() : undefined;
+  const cycleId = routerCycleId ? routerCycleId.toString() : undefined;
   // store hooks
   const { issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
   const { getCycleById } = useCycle();
   // state
   const [transferIssuesModal, setTransferIssuesModal] = useState(false);
+  // derived values
+  const workItemFilters = cycleId ? issuesFilter?.getIssueFilters(cycleId) : undefined;
+  const activeLayout = workItemFilters?.displayFilters?.layout;
 
   const { isLoading } = useSWR(
-    workspaceSlug && projectId && cycleId
-      ? `CYCLE_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}_${cycleId.toString()}`
-      : null,
+    workspaceSlug && projectId && cycleId ? `CYCLE_ISSUES_${workspaceSlug}_${projectId}_${cycleId}` : null,
     async () => {
       if (workspaceSlug && projectId && cycleId) {
-        await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString(), cycleId.toString());
+        await issuesFilter?.fetchFilters(workspaceSlug, projectId, cycleId);
       }
     },
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  const issueFilters = issuesFilter?.getIssueFilters(cycleId?.toString());
-  const activeLayout = issueFilters?.displayFilters?.layout;
-
-  const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
+  const cycleDetails = cycleId ? getCycleById(cycleId) : undefined;
   const cycleStatus = cycleDetails?.status?.toLocaleLowerCase() ?? "draft";
   const isCompletedCycle = cycleStatus === "completed";
   const isProgressSnapshotEmpty = isEmpty(cycleDetails?.progress_snapshot);
@@ -77,7 +80,7 @@ export const CycleLayoutRoot: React.FC = observer(() => {
 
   if (!workspaceSlug || !projectId || !cycleId) return <></>;
 
-  if (isLoading && !issueFilters)
+  if (isLoading && !workItemFilters)
     return (
       <div className="h-full w-full flex items-center justify-center">
         <LogoSpinner />
@@ -86,31 +89,48 @@ export const CycleLayoutRoot: React.FC = observer(() => {
 
   return (
     <IssuesStoreContext.Provider value={EIssuesStoreType.CYCLE}>
-      <TransferIssuesModal
-        handleClose={() => setTransferIssuesModal(false)}
-        cycleId={cycleId.toString()}
-        isOpen={transferIssuesModal}
-      />
-      <div className="relative flex h-full w-full flex-col overflow-hidden">
-        {cycleStatus === "completed" && (
-          <TransferIssues
-            handleClick={() => setTransferIssuesModal(true)}
-            canTransferIssues={canTransferIssues}
-            disabled={!isEmpty(cycleDetails?.progress_snapshot)}
-          />
+      <ProjectLevelWorkItemFiltersHOC
+        enableSaveView
+        entityType={EIssuesStoreType.CYCLE}
+        entityId={cycleId}
+        filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.filters}
+        initialWorkItemFilters={workItemFilters}
+        updateFilters={issuesFilter?.updateFilterExpression.bind(issuesFilter, workspaceSlug, projectId, cycleId)}
+        projectId={projectId}
+        workspaceSlug={workspaceSlug}
+      >
+        {({ filter: cycleWorkItemsFilter }) => (
+          <>
+            <TransferIssuesModal
+              handleClose={() => setTransferIssuesModal(false)}
+              cycleId={cycleId}
+              isOpen={transferIssuesModal}
+            />
+            <div className="relative flex h-full w-full flex-col overflow-hidden">
+              {cycleStatus === "completed" && (
+                <TransferIssues
+                  handleClick={() => setTransferIssuesModal(true)}
+                  canTransferIssues={canTransferIssues}
+                  disabled={!isEmpty(cycleDetails?.progress_snapshot)}
+                />
+              )}
+              {cycleWorkItemsFilter && (
+                <WorkItemFiltersRow
+                  filter={cycleWorkItemsFilter}
+                  trackerElements={{
+                    saveView: PROJECT_VIEW_TRACKER_ELEMENTS.CYCLE_HEADER_SAVE_AS_VIEW_BUTTON,
+                  }}
+                />
+              )}
+              <div className="h-full w-full overflow-auto">
+                <CycleIssueLayout activeLayout={activeLayout} cycleId={cycleId} isCompletedCycle={isCompletedCycle} />
+              </div>
+              {/* peek overview */}
+              <IssuePeekOverview />
+            </div>
+          </>
         )}
-        <CycleAppliedFiltersRoot />
-
-        <div className="h-full w-full overflow-auto">
-          <CycleIssueLayout
-            activeLayout={activeLayout}
-            cycleId={cycleId?.toString()}
-            isCompletedCycle={isCompletedCycle}
-          />
-        </div>
-        {/* peek overview */}
-        <IssuePeekOverview />
-      </div>
+      </ProjectLevelWorkItemFiltersHOC>
     </IssuesStoreContext.Provider>
   );
 });

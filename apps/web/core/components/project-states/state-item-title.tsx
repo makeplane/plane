@@ -3,10 +3,10 @@ import { observer } from "mobx-react";
 import { GripVertical, Pencil } from "lucide-react";
 // plane imports
 import { EIconSize, STATE_TRACKER_ELEMENTS } from "@plane/constants";
+import { StateGroupIcon } from "@plane/propel/icons";
 import { IState, TStateOperationsCallbacks } from "@plane/types";
-import { StateGroupIcon } from "@plane/ui";
 // local imports
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { StateDelete, StateMarksAsDefault } from "./options";
 
 type TBaseStateItemTitleProps = {

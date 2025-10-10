@@ -2,20 +2,20 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
-// types
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel, GLOBAL_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IWorkspaceView } from "@plane/types";
-import { CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomMenu, TContextMenuItem } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
-// components
-import { CreateUpdateWorkspaceViewModal, DeleteGlobalViewModal } from "@/components/workspace";
-// constants
 // helpers
-// hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useUser, useUserPermissions } from "@/hooks/store";
+// hooks
+import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { useViewMenuItems } from "@/plane-web/components/views/helper";
+// local imports
+import { DeleteGlobalViewModal } from "./delete-view-modal";
+import { CreateUpdateWorkspaceViewModal } from "./modal";
 
 type Props = {
   workspaceSlug: string;
@@ -30,7 +30,6 @@ export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
   // store hooks
   const { data } = useUser();
   const { allowPermissions } = useUserPermissions();
-  const { t } = useTranslation();
   // auth
   const isOwner = view?.owned_by === data?.id;
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
@@ -46,40 +45,22 @@ export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
     });
   const handleOpenInNewTab = () => window.open(`/${viewLink}`, "_blank");
 
-  const MENU_ITEMS: TContextMenuItem[] = [
-    {
-      key: "edit",
-      action: () => setUpdateViewModal(true),
-      title: t("edit"),
-      icon: Pencil,
-      shouldRender: isOwner,
-    },
-    {
-      key: "open-new-tab",
-      action: handleOpenInNewTab,
-      title: t("open_in_new_tab"),
-      icon: ExternalLink,
-    },
-    {
-      key: "copy-link",
-      action: handleCopyText,
-      title: t("copy_link"),
-      icon: LinkIcon,
-    },
-    {
-      key: "delete",
-      action: () => setDeleteViewModal(true),
-      title: t("delete"),
-      icon: Trash2,
-      shouldRender: isOwner || isAdmin,
-    },
-  ];
+  const MENU_ITEMS: TContextMenuItem[] = useViewMenuItems({
+    isOwner,
+    isAdmin,
+    setDeleteViewModal,
+    setCreateUpdateViewModal: setUpdateViewModal,
+    handleOpenInNewTab,
+    handleCopyText,
+    isLocked: view.is_locked,
+    workspaceSlug,
+    viewId: view.id,
+  });
 
   return (
     <>
       <CreateUpdateWorkspaceViewModal data={view} isOpen={updateViewModal} onClose={() => setUpdateViewModal(false)} />
       <DeleteGlobalViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
-
       <CustomMenu
         ellipsis
         placement="bottom-end"
@@ -91,9 +72,7 @@ export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
           return (
             <CustomMenu.MenuItem
               key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 captureClick({
                   elementName: GLOBAL_VIEW_TRACKER_ELEMENTS.QUICK_ACTIONS,
                 });

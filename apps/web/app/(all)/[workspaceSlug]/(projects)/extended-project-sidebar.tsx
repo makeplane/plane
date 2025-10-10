@@ -7,13 +7,16 @@ import { useParams } from "next/navigation";
 import { Plus, Search } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
 import { copyUrlToClipboard, orderJoinedProjects } from "@plane/utils";
 // components
-import { CreateProjectModal } from "@/components/project";
-import { SidebarProjectsListItem } from "@/components/workspace";
+import { CreateProjectModal } from "@/components/project/create-project-modal";
+import { SidebarProjectsListItem } from "@/components/workspace/sidebar/projects-list-item";
 // hooks
-import { useAppTheme, useProject, useUserPermissions } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 import { TProject } from "@/plane-web/types";
 import { ExtendedSidebarWrapper } from "./extended-sidebar-wrapper";
 

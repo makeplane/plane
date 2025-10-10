@@ -9,13 +9,16 @@ import { ChevronDown, CirclePlus, LogOut, Mails } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IWorkspace } from "@plane/types";
-import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { Loader } from "@plane/ui";
 import { orderWorkspacesList, cn } from "@plane/utils";
 // helpers
-import { AppSidebarItem } from "@/components/sidebar";
+import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 // hooks
-import { useAppTheme, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser, useUserProfile } from "@/hooks/store/user";
 // plane web helpers
 import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
 // components
@@ -66,9 +69,6 @@ export const WorkspaceMenuRoot = observer((props: WorkspaceMenuRootProps) => {
     if (isWorkspaceMenuOpen) toggleAnySidebarDropdown(true);
     else toggleAnySidebarDropdown(false);
   }, [isWorkspaceMenuOpen]);
-
-  const logo = activeWorkspace?.logo_url;
-  const name = activeWorkspace?.name;
 
   return (
     <Menu

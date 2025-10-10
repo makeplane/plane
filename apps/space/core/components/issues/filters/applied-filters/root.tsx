@@ -1,11 +1,11 @@
 "use client";
 
 import { FC, useCallback } from "react";
-import cloneDeep from "lodash/cloneDeep";
+import { cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 // hooks
-import { useIssueFilter } from "@/hooks/store";
+import { useIssueFilter } from "@/hooks/store/use-issue-filter";
 // store
 import type { TIssueLayout, TIssueQueryFilters } from "@/types/issue";
 // components

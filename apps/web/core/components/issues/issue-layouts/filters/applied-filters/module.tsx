@@ -3,8 +3,8 @@
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // hooks
-import { DiceIcon } from "@plane/ui";
-import { useModule } from "@/hooks/store";
+import { DiceIcon } from "@plane/propel/icons";
+import { useModule } from "@/hooks/store/use-module";
 // ui
 
 type Props = {

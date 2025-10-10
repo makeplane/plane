@@ -9,14 +9,16 @@ import {
   NOTIFICATION_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Spinner, Tooltip } from "@plane/ui";
-// components
-import { NotificationFilter, NotificationHeaderMenuOption } from "@/components/workspace-notifications";
-// constants
-// hooks
+import { Tooltip } from "@plane/propel/tooltip";
+import { Spinner } from "@plane/ui";
+// helpers
 import { captureSuccess } from "@/helpers/event-tracker.helper";
-import { useWorkspaceNotifications } from "@/hooks/store";
+// hooks
+import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// local imports
+import { NotificationFilter } from "../../filters/menu";
+import { NotificationHeaderMenuOption } from "./menu-option";
 
 type TNotificationSidebarHeaderOptions = {
   workspaceSlug: string;

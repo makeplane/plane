@@ -1,7 +1,4 @@
-import concat from "lodash/concat";
-import set from "lodash/set";
-import sortBy from "lodash/sortBy";
-import update from "lodash/update";
+import { update, concat, set, sortBy } from "lodash-es";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
@@ -14,7 +11,7 @@ import { ModuleService } from "@/services/module.service";
 import { ModuleArchiveService } from "@/services/module_archive.service";
 import { ProjectService } from "@/services/project";
 // store
-import { CoreRootStore } from "./root.store";
+import type { CoreRootStore } from "./root.store";
 
 export interface IModuleStore {
   //Loaders

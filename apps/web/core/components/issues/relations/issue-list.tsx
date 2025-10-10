@@ -1,12 +1,12 @@
 "use client";
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-// Plane
+// plane imports
 import { EIssueServiceType, TIssue, TIssueServiceType } from "@plane/types";
-// components
-import { RelationIssueListItem } from "@/components/issues/relations";
-// Plane-web
+// Plane-web imports
 import { TIssueRelationTypes } from "@/plane-web/types";
+// local imports
+import { RelationIssueListItem } from "./issue-list-item";
 
 type Props = {
   workspaceSlug: string;

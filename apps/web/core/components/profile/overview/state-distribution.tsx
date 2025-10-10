@@ -3,12 +3,11 @@ import { STATE_GROUPS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { PieChart } from "@plane/propel/charts/pie-chart";
 import { IUserProfileData, IUserStateDistribution } from "@plane/types";
-// ui
 import { Card } from "@plane/ui";
 import { capitalizeFirstLetter } from "@plane/utils";
-import { ProfileEmptyState } from "@/components/ui";
-// helpers
-// image
+// components
+import { ProfileEmptyState } from "@/components/ui/profile-empty-state";
+// assets
 import stateGraph from "@/public/empty-state/state_graph.svg";
 
 type Props = {

@@ -2,10 +2,10 @@
 
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
+import { CycleGroupIcon } from "@plane/propel/icons";
 import { TCycleGroups } from "@plane/types";
 // hooks
-import { CycleGroupIcon } from "@plane/ui";
-import { useCycle } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
 // ui
 // types
 

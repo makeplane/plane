@@ -11,12 +11,17 @@ import { EUserProjectRoles, TCycleFilters } from "@plane/types";
 import { Header, EHeaderVariant } from "@plane/ui";
 import { calculateTotalFilters } from "@plane/utils";
 import { PageHead } from "@/components/core/page-title";
-import { CyclesView, CycleCreateUpdateModal, CycleAppliedFiltersList } from "@/components/cycles";
-import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
-import { CycleModuleListLayout } from "@/components/ui";
-// helpers
+import { CycleAppliedFiltersList } from "@/components/cycles/applied-filters";
+import { CyclesView } from "@/components/cycles/cycles-view";
+import { CycleCreateUpdateModal } from "@/components/cycles/modal";
+import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module-list-loader";
 // hooks
-import { useCycle, useProject, useCycleFilter, useUserPermissions } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
+import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
@@ -76,7 +81,7 @@ const ProjectCyclesPage = observer(() => {
       </div>
     );
 
-  if (loader) return <CycleModuleListLayout />;
+  if (loader) return <CycleModuleListLayoutLoader />;
 
   return (
     <>
