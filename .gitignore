@@ -102,3 +102,6 @@ dev-editor
 storybook-static
 
 CLAUDE.md
+
+# Icon migration scripts
+scripts/icon-migration/
