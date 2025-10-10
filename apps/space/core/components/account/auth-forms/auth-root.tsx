@@ -27,7 +27,7 @@ import GithubLightLogo from "/public/logos/github-black.png";
 import GithubDarkLogo from "/public/logos/github-dark.svg";
 import GitlabLogo from "/public/logos/gitlab-logo.svg";
 import GoogleLogo from "/public/logos/google-logo.svg";
-import GiteaLogo from "/public/logos/gitea-logo.svg"
+import GiteaLogo from "/public/logos/gitea-logo.svg";
 // local imports
 import { TermsAndConditions } from "../terms-and-conditions";
 import { AuthBanner } from "./auth-banner";

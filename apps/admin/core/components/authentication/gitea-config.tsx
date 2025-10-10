@@ -22,7 +22,6 @@ export const GiteaConfiguration: React.FC<Props> = observer((props) => {
   // store
   const { formattedConfig } = useInstance();
   // derived values
-  console.log("formattedConfig", formattedConfig);
   const GiteaConfig = formattedConfig?.IS_GITEA_ENABLED ?? "";
   const GiteaConfigured = !!formattedConfig?.GITEA_HOST && !!formattedConfig?.GITEA_CLIENT_ID && !!formattedConfig?.GITEA_CLIENT_SECRET;
 
