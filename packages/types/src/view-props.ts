@@ -100,6 +100,7 @@ export const WORK_ITEM_FILTER_PROPERTY_KEYS = [
   "cycle_id",
   "module_id",
   "project_id",
+  "issue_type", // 新增：工作项类型过滤键
 ] as const;
 export type TWorkItemFilterProperty = (typeof WORK_ITEM_FILTER_PROPERTY_KEYS)[number];
 

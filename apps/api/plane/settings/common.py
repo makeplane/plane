@@ -21,7 +21,7 @@ load_dotenv()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Secret Key
-SECRET_KEY = os.environ.get("SECRET_KEY", get_random_secret_key())
+SECRET_KEY = os.environ.get("SECRET_KEY", '4-%4*+&uzpes*9%1=q*ya9@su^$d!9py5ze%67#+lgvqogy%-2')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", "0"))

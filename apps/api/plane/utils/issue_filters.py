@@ -154,6 +154,20 @@ def filter_labels(params, issue_filter, method, prefix=""):
     issue_filter[f"{prefix}label_issue__deleted_at__isnull"] = True
     return issue_filter
 
+def filter_work_types(params, issue_filter, method, prefix=""):
+    if method == "GET":
+        labels = [item for item in params.get("labels").split(",") if item != "null"]
+        if "None" in labels:
+            issue_filter[f"{prefix}labels__isnull"] = True
+        labels = filter_valid_uuids(labels)
+        if len(labels) and "" not in labels:
+            issue_filter[f"{prefix}labels__in"] = labels
+    else:
+        if params.get("labels", None) and len(params.get("labels")) and params.get("labels") != "null":
+            issue_filter[f"{prefix}labels__in"] = params.get("labels")
+    issue_filter[f"{prefix}label_issue__deleted_at__isnull"] = True
+    return issue_filter
+
 
 def filter_assignees(params, issue_filter, method, prefix=""):
     if method == "GET":
@@ -301,6 +315,20 @@ def filter_issue_state_type(params, issue_filter, method, prefix=""):
     return issue_filter
 
 
+def filter_type_id(params, issue_filter, method, prefix=""):
+    if method == "GET":
+        type_ids = [item for item in params.get("type_id").split(",") if item != "null"]
+        if "None" in type_ids:
+            issue_filter[f"{prefix}type_id__isnull"] = True
+        type_ids = filter_valid_uuids(type_ids)
+        if len(type_ids) and "" not in type_ids:
+            issue_filter[f"{prefix}type_id__in"] = type_ids
+    else:
+        if params.get("type_id", None) and len(params.get("type_id")) and params.get("type_id") != "null":
+            issue_filter[f"{prefix}type_id__in"] = params.get("type_id")
+    return issue_filter
+
+
 def filter_project(params, issue_filter, method, prefix=""):
     if method == "GET":
         projects = [item for item in params.get("project").split(",") if item != "null"]
@@ -311,6 +339,7 @@ def filter_project(params, issue_filter, method, prefix=""):
         if params.get("project", None) and len(params.get("project")) and params.get("project") != "null":
             issue_filter[f"{prefix}project__in"] = params.get("project")
     return issue_filter
+
 
 
 def filter_cycle(params, issue_filter, method, prefix=""):
@@ -441,7 +470,10 @@ def issue_filters(query_params, method, prefix=""):
         "start_date": filter_start_date,
         "target_date": filter_target_date,
         "completed_at": filter_completed_at,
+        # 保留旧语义：type=active/backlog/...（状态组）
         "type": filter_issue_state_type,
+        # 新增：按 Issue.type 外键过滤
+        "type_id": filter_type_id,
         "project": filter_project,
         "cycle": filter_cycle,
         "module": filter_module,

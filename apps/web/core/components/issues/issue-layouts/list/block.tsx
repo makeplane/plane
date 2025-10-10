@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch, MouseEvent, SetStateAction, useEffect, useRef } from "react";
+import { Dispatch, MouseEvent, SetStateAction, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
@@ -29,6 +29,8 @@ import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-st
 // types
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 import { TRenderQuickActions } from "./list-view-types";
+import * as LucideIcons from "lucide-react";
+import { projectIssueTypesCache, type TIssueType } from "@/services/project";
 
 interface IssueBlockProps {
   issueId: string;
@@ -47,6 +49,8 @@ interface IssueBlockProps {
   setIsCurrentBlockDragging: React.Dispatch<React.SetStateAction<boolean>>;
   canDrag: boolean;
   isEpic?: boolean;
+  // 新增：来自上层的 issue types 映射
+  projectIssueTypesMap?: Record<string, TIssueType>;
 }
 
 export const IssueBlock = observer((props: IssueBlockProps) => {
@@ -83,6 +87,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
     setPeekIssue,
     subIssues: subIssuesStore,
   } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
+  const projectIssueTypesMap = projectIssueTypesCache.get(projectId ?? "");
 
   const handleIssuePeekOverview = (issue: TIssue) =>
     workspaceSlug &&
@@ -105,6 +110,10 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
   const isDraggingAllowed = canDrag && canEditIssueProperties;
 
   const { isMobile } = usePlatformOS();
+  // 删除以下三行本地服务与缓存逻辑
+  // const projectIssueTypeService = new ProjectIssueTypeService();
+  // const projectIssueTypesCache = new Map<string, Record<string, TIssueType>>();
+  // const [issueTypesMap, setIssueTypesMap] = useState<Record<string, TIssueType> | null>(null);
 
   useEffect(() => {
     const element = issueRef.current;
@@ -228,7 +237,33 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
                 </Tooltip>
               )}
               {displayProperties && (displayProperties.key || displayProperties.issue_type) && (
-                <div className="flex-shrink-0" style={{ minWidth: `${keyMinWidth}px` }}>
+                <div className="flex-shrink-0 flex items-center gap-1" style={{ minWidth: `${keyMinWidth}px` }}>
+                  {/* 在标识符前显示类型图标，使用上层传入的映射 */}
+                  {projectIssueTypesMap &&
+                    issue?.type_id &&
+                    projectIssueTypesMap[issue.type_id]?.logo_props?.icon &&
+                    (() => {
+                      const { name, color, background_color } = projectIssueTypesMap[issue.type_id].logo_props!.icon!;
+                      const IconComp = (LucideIcons as any)[name] as React.FC<any> | undefined;
+                      return (
+                        <span
+                          className="inline-flex items-center justify-center rounded-sm"
+                          style={{
+                            backgroundColor: background_color || "transparent",
+                            color: color || "currentColor",
+                            width: "16px",
+                            height: "16px",
+                          }}
+                          aria-label={`Issue type: ${projectIssueTypesMap[issue.type_id].name}`}
+                        >
+                          {IconComp ? (
+                            <IconComp className="h-3.5 w-3.5" strokeWidth={2} />
+                          ) : (
+                            <span className="h-3.5 w-3.5" />
+                          )}
+                        </span>
+                      );
+                    })()}
                   {issue.project_id && (
                     <IssueIdentifier
                       issueId={issueId}

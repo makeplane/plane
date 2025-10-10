@@ -388,10 +388,12 @@ class IssueViewSet(BaseViewSet):
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
 
+
         serializer = IssueCreateSerializer(
             data=request.data,
             context={
                 "project_id": project_id,
+                "type_id": request.data['type_id'],
                 "workspace_id": project.workspace_id,
                 "default_assignee_id": project.default_assignee_id,
             },

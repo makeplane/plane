@@ -21,6 +21,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { HIGHLIGHT_CLASS, getIssueBlockId, isIssueNew } from "../utils";
 import { IssueBlock } from "./block";
 import { TRenderQuickActions } from "./list-view-types";
+import type { TIssueType } from "@/services/project";
 
 type Props = {
   issueId: string;

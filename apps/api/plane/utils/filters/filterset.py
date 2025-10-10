@@ -150,6 +150,10 @@ class IssueFilterSet(BaseFilterSet):
     project_id = filters.UUIDFilter(field_name="project_id")
     project_id__in = UUIDInFilter(field_name="project_id", lookup_expr="in")
 
+    # 新增：支持按 Issue.type 过滤（外键列为 type_id）
+    type_id = filters.UUIDFilter(field_name="type_id")
+    type_id__in = UUIDInFilter(field_name="type_id", lookup_expr="in")
+
     subscriber_id = filters.UUIDFilter(method="filter_subscriber_id")
     subscriber_id__in = UUIDInFilter(method="filter_subscriber_id_in", lookup_expr="in")
 

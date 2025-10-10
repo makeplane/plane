@@ -94,6 +94,7 @@ class IssueCreateSerializer(BaseSerializer):
         required=False,
     )
     project_id = serializers.UUIDField(source="project.id", read_only=True)
+    type_id = serializers.UUIDField(source="type.id", read_only=True)
     workspace_id = serializers.UUIDField(source="workspace.id", read_only=True)
 
     class Meta:
@@ -193,11 +194,12 @@ class IssueCreateSerializer(BaseSerializer):
         labels = validated_data.pop("label_ids", None)
 
         project_id = self.context["project_id"]
+        type_id = self.context["type_id"]
         workspace_id = self.context["workspace_id"]
         default_assignee_id = self.context["default_assignee_id"]
 
         # Create Issue
-        issue = Issue.objects.create(**validated_data, project_id=project_id)
+        issue = Issue.objects.create(**validated_data, project_id=project_id,type_id=type_id)
 
         # Issue Audit Users
         created_by_id = issue.created_by_id

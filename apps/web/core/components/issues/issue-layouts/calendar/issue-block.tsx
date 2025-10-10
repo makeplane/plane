@@ -27,6 +27,8 @@ import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/iss
 // local components
 import { TRenderQuickActions } from "../list/list-view-types";
 import { CalendarStoreType } from "./base-calendar-root";
+import { projectIssueTypesCache } from "@/services/project";
+import * as LucideIcons from "lucide-react";
 
 type Props = {
   issue: TIssue;
@@ -87,6 +89,9 @@ export const CalendarIssueBlock = observer(
       isEpic,
       isArchived: !!issue?.archived_at,
     });
+    const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId } = useParams();
+    const projectId = routerProjectId?.toString();
+    const projectIssueTypesMap = projectIssueTypesCache.get(projectId ?? "");
 
     return (
       <ControlLink
@@ -120,6 +125,32 @@ export const CalendarIssueBlock = observer(
                   backgroundColor: stateColor,
                 }}
               />
+              {/* 在标识符前显示类型图标，使用上层传入的映射 */}
+              {projectIssueTypesMap &&
+                issue?.type_id &&
+                projectIssueTypesMap[issue.type_id]?.logo_props?.icon &&
+                (() => {
+                  const { name, color, background_color } = projectIssueTypesMap[issue.type_id].logo_props!.icon!;
+                  const IconComp = (LucideIcons as any)[name] as React.FC<any> | undefined;
+                  return (
+                    <span
+                      className="inline-flex items-center justify-center rounded-sm"
+                      style={{
+                        backgroundColor: background_color || "transparent",
+                        color: color || "currentColor",
+                        width: "16px",
+                        height: "16px",
+                      }}
+                      aria-label={`Issue type: ${projectIssueTypesMap[issue.type_id].name}`}
+                    >
+                      {IconComp ? (
+                        <IconComp className="h-3.5 w-3.5" strokeWidth={2} />
+                      ) : (
+                        <span className="h-3.5 w-3.5" />
+                      )}
+                    </span>
+                  );
+                })()}
               {issue.project_id && (
                 <IssueIdentifier
                   issueId={issue.id}

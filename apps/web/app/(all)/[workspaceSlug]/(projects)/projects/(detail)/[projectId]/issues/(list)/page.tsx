@@ -10,6 +10,8 @@ import { PageHead } from "@/components/core/page-title";
 import { ProjectLayoutRoot } from "@/components/issues/issue-layouts/roots/project-layout-root";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
+import { useEffect, useState } from "react";
+import { projectIssueTypesCache, ProjectIssueTypeService, TIssueType } from "@/services/project";
 
 const ProjectIssuesPage = observer(() => {
   const { projectId } = useParams();
@@ -25,6 +27,28 @@ const ProjectIssuesPage = observer(() => {
   // derived values
   const project = getProjectById(projectId.toString());
   const pageTitle = project?.name ? `${project?.name} - ${t("issue.label", { count: 2 })}` : undefined; // Count is for pluralization
+  const [projectIssueTypesMap, setProjectIssueTypesMap] = useState<Record<string, TIssueType> | undefined>(undefined);
+  const { workspaceSlug } = useParams();
+  useEffect(() => {
+    const ws = workspaceSlug?.toString();
+    const pid = projectId?.toString();
+    if (!ws || !pid) return;
+
+    const svc = new ProjectIssueTypeService();
+    svc
+      .fetchProjectIssueTypes(ws, pid)
+      .then((list) => {
+        const map: Record<string, TIssueType> = {};
+        list?.forEach((t) => {
+          if (t?.id) map[t.id] = t;
+        });
+        projectIssueTypesCache.set(pid, map);
+        setProjectIssueTypesMap(map);
+      })
+      .catch(() => {
+        // 静默失败，不影响页面其他功能
+      });
+  }, [workspaceSlug, projectId]);
 
   return (
     <>

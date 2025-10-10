@@ -71,7 +71,6 @@ export const ProjectActivity: FC<TProjectActivity> = observer((props) => {
     setIsLoading(true);
     try {
       const response = await fetchProjectHistory(workspaceSlug, projectId);
-      console.log("🚀 ~ fetchActivities ~ responsess:", response);
       // 由于后端返回的是模拟数据，我们需要处理单个对象或数组
       const activityData = Array.isArray(response) ? response : [response];
       setActivities(activityData);

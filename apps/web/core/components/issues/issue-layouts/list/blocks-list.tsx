@@ -6,19 +6,21 @@ import { TSelectionHelper } from "@/hooks/use-multiple-select";
 // types
 import { IssueBlockRoot } from "./block-root";
 import { TRenderQuickActions } from "./list-view-types";
+import type { TIssueType } from "@/services/project";
 
 interface Props {
-  issueIds: TGroupedIssues | any;
-  issuesMap: TIssueMap;
+  issueIds: string[] | undefined;
   groupId: string;
-  canEditProperties: (projectId: string | undefined) => boolean;
+  displayProperties?: IIssueDisplayProperties;
+  containerRef: MutableRefObject<HTMLDivElement | null>;
+  // 新增
+  issuesMap: TIssueMap;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
-  displayProperties: IIssueDisplayProperties | undefined;
-  containerRef: MutableRefObject<HTMLDivElement | null>;
+  canEditProperties: (projectId: string | undefined) => boolean;
+  selectionHelpers: TSelectionHelper;
   isDragAllowed: boolean;
   canDropOverIssue: boolean;
-  selectionHelpers: TSelectionHelper;
   isEpic?: boolean;
 }
 

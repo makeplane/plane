@@ -49,6 +49,8 @@ export interface IList {
   handleCollapsedGroups: (value: string) => void;
   collapsedGroups: TIssueKanbanFilters;
   isEpic?: boolean;
+  // 新增：上层传入的 issue types 映射
+  projectIssueTypesMap?: Record<string, any>;
 }
 
 export const List: React.FC<IList> = observer((props) => {

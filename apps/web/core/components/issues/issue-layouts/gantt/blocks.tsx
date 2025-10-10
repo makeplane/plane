@@ -23,6 +23,8 @@ import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/iss
 import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-stats";
 import { getBlockViewDetails } from "../utils";
 import { GanttStoreType } from "./base-gantt-root";
+import { projectIssueTypesCache } from "@/services/project";
+import * as LucideIcons from "lucide-react";
 
 type Props = {
   issueId: string;
@@ -127,6 +129,9 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
     sequenceId: issueDetails?.sequence_id,
     isEpic,
   });
+  const { projectId: routerProjectId } = useParams();
+  const projectId = routerProjectId?.toString();
+  const projectIssueTypesMap = projectIssueTypesCache.get(projectId ?? "");
 
   return (
     <ControlLink
@@ -137,6 +142,27 @@ export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
       disabled={!!issueDetails?.tempId}
     >
       <div className="relative flex h-full w-full cursor-pointer items-center gap-2">
+        {projectIssueTypesMap &&
+          issueDetails?.type_id &&
+          projectIssueTypesMap[issueDetails.type_id]?.logo_props?.icon &&
+          (() => {
+            const { name, color, background_color } = projectIssueTypesMap[issueDetails.type_id].logo_props!.icon!;
+            const IconComp = (LucideIcons as any)[name] as React.FC<any> | undefined;
+            return (
+              <span
+                className="inline-flex items-center justify-center rounded-sm"
+                style={{
+                  backgroundColor: background_color || "transparent",
+                  color: color || "currentColor",
+                  width: "16px",
+                  height: "16px",
+                }}
+                aria-label={`Issue type: ${projectIssueTypesMap[issueDetails.type_id].name}`}
+              >
+                {IconComp ? <IconComp className="h-3.5 w-3.5" strokeWidth={2} /> : <span className="h-3.5 w-3.5" />}
+              </span>
+            );
+          })()}
         {issueDetails?.project_id && (
           <IssueIdentifier
             issueId={issueDetails.id}
