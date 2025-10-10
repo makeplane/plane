@@ -18,9 +18,11 @@ type Props = {
   isMobile: boolean;
   isChangeInIdentifierRequired: boolean;
   setIsChangeInIdentifierRequired: (value: boolean) => void;
+  handleFormOnChange?: () => void;
 };
 const ProjectCommonAttributes: React.FC<Props> = (props) => {
-  const { setValue, isMobile, isChangeInIdentifierRequired, setIsChangeInIdentifierRequired } = props;
+  const { setValue, isMobile, isChangeInIdentifierRequired, setIsChangeInIdentifierRequired, handleFormOnChange } =
+    props;
   const {
     formState: { errors },
     control,
@@ -37,6 +39,7 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
     if (e.target.value === "") setValue("identifier", "");
     else setValue("identifier", projectIdentifierSanitizer(e.target.value).substring(0, 5));
     onChange(e);
+    handleFormOnChange?.();
   };
 
   const handleIdentifierChange = (onChange: any) => (e: ChangeEvent<HTMLInputElement>) => {
@@ -44,6 +47,7 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
     const alphanumericValue = projectIdentifierSanitizer(value);
     setIsChangeInIdentifierRequired(false);
     onChange(alphanumericValue);
+    handleFormOnChange?.();
   };
   return (
     <div className="grid grid-cols-1 gap-x-2 gap-y-3 md:grid-cols-4">
@@ -128,7 +132,10 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
               name="description"
               value={value}
               placeholder={t("description")}
-              onChange={onChange}
+              onChange={(e) => {
+                onChange(e);
+                handleFormOnChange?.();
+              }}
               className="!h-24 text-sm focus:border-blue-400"
               hasError={Boolean(errors?.description)}
               tabIndex={getIndex("description")}
