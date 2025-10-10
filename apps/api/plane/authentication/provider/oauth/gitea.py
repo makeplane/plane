@@ -111,7 +111,13 @@ class GiteaOAuthProvider(OauthAdapter):
         try:
             # Gitea may not provide email in user response, so fetch it separately
             emails_url = f"{self.userinfo_url}/emails"
-            emails_response = requests.get(emails_url, headers=headers).json()
+            response = requests.get(emails_url, headers=headers)
+            if not response.ok:
+                raise AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES["GITEA_OAUTH_PROVIDER_ERROR"],
+                    error_message=f"GITEA_OAUTH_PROVIDER_ERROR: Failed to fetch emails (status: {response.status_code}, response: {response.text})",
+                )
+            emails_response = response.json()
             email = next(
                 (email["email"] for email in emails_response if email.get("primary")), None
             )
@@ -119,10 +125,10 @@ class GiteaOAuthProvider(OauthAdapter):
                 # If no primary email, use the first one
                 email = emails_response[0].get("email")
             return email
-        except requests.RequestException:
+        except requests.RequestException as e:
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["GITEA_OAUTH_PROVIDER_ERROR"],
-                error_message="GITEA_OAUTH_PROVIDER_ERROR",
+                error_message=f"GITEA_OAUTH_PROVIDER_ERROR: Exception occurred while fetching emails: {str(e)}",
             )
 
     def set_user_data(self):
