@@ -452,8 +452,6 @@ def create_views(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> Non
     if not view_seeds:
         return
 
-    view_map: Dict[int, uuid.UUID] = {}
-
     for view_seed in view_seeds:
         project_id = view_seed.pop("project_id")
         IssueView.objects.create(
@@ -463,7 +461,6 @@ def create_views(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> Non
             created_by_id=workspace.created_by_id,
             owned_by_id=workspace.created_by_id,
         )
-    return view_map
 
 
 @shared_task
