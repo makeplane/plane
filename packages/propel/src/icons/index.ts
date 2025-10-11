@@ -59,6 +59,7 @@ export * from "./wiki-icon";
 export * from "./brand";
 export * from "./suspended-user";
 
+export * from "./add-icon";
 export * from "./analytics-icon";
 export * from "./cycle-icon";
 export * from "./draft-icon";

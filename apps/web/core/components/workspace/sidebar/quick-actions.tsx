@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, SIDEBAR_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { DraftIcon } from "@plane/propel/icons";
+import { AddIcon } from "@plane/propel/icons";
 import { TIssue } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
@@ -90,7 +90,7 @@ export const SidebarQuickActions = observer(() => {
           onMouseLeave={handleMouseLeave}
           disabled={disabled}
         >
-          <DraftIcon className="size-4" />
+          <AddIcon className="size-4" />
           <span className="text-sm font-medium truncate max-w-[145px]">{t("sidebar.new_work_item")}</span>
         </button>
         <AppSearch />
