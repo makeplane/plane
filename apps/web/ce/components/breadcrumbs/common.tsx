@@ -16,7 +16,6 @@ type TCommonProjectBreadcrumbProps = {
 
 export const CommonProjectBreadcrumbs: FC<TCommonProjectBreadcrumbProps> = (props) => {
   const { workspaceSlug, projectId, featureKey, isLast = false } = props;
-  console.log("🚀 ~ CommonProjectBreadcrumbs ~ featureKey:", featureKey);
 
   return (
     <>

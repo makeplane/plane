@@ -1,5 +1,6 @@
 export * from "./cycle";
 export * from "./date";
+export * from "./issue-type";
 export * from "./label";
 export * from "./module";
 export * from "./priority";

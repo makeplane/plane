@@ -9,12 +9,14 @@ import {
   Tag,
   Users,
 } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 // plane imports
 import {
   ContrastIcon,
   CycleGroupIcon,
   DiceIcon,
   DoubleCircleIcon,
+  LayersIcon,
   PriorityIcon,
   StateGroupIcon,
 } from "@plane/propel/icons";
@@ -35,6 +37,7 @@ import {
   getCreatedByFilterConfig,
   getCycleFilterConfig,
   getFileURL,
+  getIssueTypeFilterConfig,
   getLabelFilterConfig,
   getMentionFilterConfig,
   getModuleFilterConfig,
@@ -53,6 +56,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useProjectIssueTypes } from "@/hooks/store/use-project-issue-types";
 // plane web imports
 import { useFiltersOperatorConfigs } from "@/plane-web/hooks/rich-filters/use-filters-operator-configs";
 
@@ -89,6 +93,9 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
   const { getModuleById } = useModule();
   const { getStateById } = useProjectState();
   const { getUserDetails } = useMember();
+  // project issue types
+  const { issueTypes: workItemTypes } = useProjectIssueTypes(workspaceSlug, projectId);
+
   // derived values
   const operatorConfigs = useFiltersOperatorConfigs({ workspaceSlug });
   const filtersToShow = useMemo(() => new Set(allowedFilters), [allowedFilters]);
@@ -330,6 +337,45 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     [isFilterEnabled, projects, operatorConfigs]
   );
 
+  // issue type filter config
+  const issueTypeFilterConfig = useMemo(
+    () =>
+      getIssueTypeFilterConfig("type_id" as any)({
+        isEnabled: isFilterEnabled("type_id") && workItemTypes !== undefined,
+        filterIcon: LayersIcon,
+        getOptionIcon: (issueType: any) => {
+          // 如果有图标配置，使用具体的图标
+          if (issueType?.logo_props?.icon) {
+            const { name, color, background_color } = issueType.logo_props.icon;
+            const IconComp = (LucideIcons as any)[name] as React.FC<any> | undefined;
+            return (
+              <span
+                className="inline-flex items-center justify-center rounded-sm"
+                style={{
+                  backgroundColor: background_color || "transparent",
+                  color: color || "currentColor",
+                  width: "16px",
+                  height: "16px",
+                }}
+                aria-label={`Issue type: ${issueType.name}`}
+              >
+                {IconComp ? (
+                  <IconComp className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+                ) : (
+                  <span className="h-3 w-3" />
+                )}
+              </span>
+            );
+          }
+          // 如果没有图标配置，使用默认图标
+          return <LayersIcon className="h-3 w-3 flex-shrink-0" />;
+        },
+        issueTypes: workItemTypes ?? [],
+        ...operatorConfigs,
+      }) as TFilterConfig<TWorkItemFilterProperty, TFilterValue>,
+    [isFilterEnabled, workItemTypes, operatorConfigs]
+  );
+
   return {
     configs: [
       stateFilterConfig,
@@ -341,6 +387,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       labelFilterConfig,
       cycleFilterConfig,
       moduleFilterConfig,
+      issueTypeFilterConfig,
       startDateFilterConfig,
       targetDateFilterConfig,
       createdByFilterConfig,
@@ -358,9 +405,10 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       created_by_id: createdByFilterConfig,
       subscriber_id: subscriberFilterConfig,
       priority: priorityFilterConfig,
+      type_id: issueTypeFilterConfig,
       start_date: startDateFilterConfig,
       target_date: targetDateFilterConfig,
-    },
+    } as { [key in TWorkItemFilterProperty]?: TFilterConfig<TWorkItemFilterProperty, TFilterValue> },
     isFilterEnabled,
   };
 };
