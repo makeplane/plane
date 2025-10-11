@@ -20,6 +20,8 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+// services
+import { projectIssueTypesCache } from "@/services/project";
 // plane web components
 import { WorkItemAdditionalSidebarProperties } from "@/plane-web/components/issues/issue-details/additional-properties";
 import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
@@ -28,6 +30,8 @@ import type { TIssueOperations } from "../issue-detail";
 import { IssueCycleSelect } from "../issue-detail/cycle-select";
 import { IssueLabel } from "../issue-detail/label";
 import { IssueModuleSelect } from "../issue-detail/module-select";
+// lucide icons
+import * as LucideIcons from "lucide-react";
 
 interface IPeekOverviewProperties {
   workspaceSlug: string;
@@ -54,6 +58,9 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const projectDetails = getProjectById(issue.project_id);
   const isEstimateEnabled = projectDetails?.estimate;
   const stateDetails = getStateById(issue.state_id);
+
+  // // Get project issue types map
+  const projectIssueTypesMap = projectIssueTypesCache.get(issue.project_id ?? "");
 
   const minDate = getDate(issue.start_date);
   minDate?.setDate(minDate.getDate());
@@ -85,6 +92,45 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
           />
         </div>
+
+        {/* type */}
+        {projectIssueTypesMap && issue?.type_id && projectIssueTypesMap[issue.type_id] && (
+          <div className="flex w-full items-center gap-3 h-8">
+            <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+              <LucideIcons.Type className="h-4 w-4 flex-shrink-0" />
+              <span>类型</span>
+            </div>
+            <div className="w-3/4 flex-grow flex items-center gap-2 rounded px-2 py-0.5 text-sm">
+              {(() => {
+                const issueType = projectIssueTypesMap[issue.type_id];
+                const { name, color, background_color } = issueType.logo_props?.icon || {};
+                const IconComp = name ? ((LucideIcons as any)[name] as React.FC<any> | undefined) : undefined;
+
+                return (
+                  <>
+                    <span
+                      className="inline-flex items-center justify-center rounded-sm flex-shrink-0"
+                      style={{
+                        backgroundColor: background_color || "transparent",
+                        color: color || "currentColor",
+                        width: "16px",
+                        height: "16px",
+                      }}
+                      aria-label={`Issue type: ${issueType.name}`}
+                    >
+                      {IconComp ? (
+                        <IconComp className="h-3.5 w-3.5" strokeWidth={2} />
+                      ) : (
+                        <span className="h-3.5 w-3.5" />
+                      )}
+                    </span>
+                    <span className="text-custom-text-200">{issueType.name}</span>
+                  </>
+                );
+              })()}
+            </div>
+          </div>
+        )}
 
         {/* assignee */}
         <div className="flex w-full items-center gap-3 h-8">
