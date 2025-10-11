@@ -365,7 +365,7 @@ def create_pages(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> Non
     return
 
 
-def create_cycles(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> None:
+def create_cycles(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> Dict[int, uuid.UUID]:
     # Create cycles
     cycle_seeds = read_seed_file("cycles.json")
     if not cycle_seeds:
