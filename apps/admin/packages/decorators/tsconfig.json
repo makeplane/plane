@@ -1,0 +1,15 @@
+{
+  "extends": "@plane/typescript-config/node-library.json",
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "lib": ["ES2020"],
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["./src", "./*.ts"],
+  "exclude": ["dist", "build", "node_modules"]
+}

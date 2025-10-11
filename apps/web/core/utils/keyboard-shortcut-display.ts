@@ -16,3 +16,4 @@ export function getKeyboardShortcutDisplay(): string {
 export function getKeyboardShortcutTooltip(): string {
   return `Create new work item (${getKeyboardShortcutDisplay()})`;
 }
+

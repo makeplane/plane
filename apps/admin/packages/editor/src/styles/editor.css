@@ -1,0 +1,508 @@
+.ProseMirror {
+  position: relative;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  -moz-tab-size: 4;
+  tab-size: 4;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+  outline: none !important;
+  cursor: text;
+  font-family: var(--font-style);
+  font-size: var(--font-size-regular);
+  font-weight: 400;
+  color: inherit;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  appearance: textfield;
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+/* Placeholder only for the first line in an empty editor. */
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--color-placeholder);
+  pointer-events: none;
+  height: 0;
+}
+
+/* Display Placeholders on every new line. */
+.ProseMirror p.is-empty::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--color-placeholder);
+  pointer-events: none;
+  height: 0;
+}
+
+.ProseMirror li blockquote {
+  margin-top: 10px;
+  padding-inline-start: 1em;
+}
+
+/* block quotes */
+.ProseMirror blockquote {
+  font-style: normal;
+  font-weight: 400;
+  border-left: 3px solid rgb(var(--color-border-300));
+}
+
+.ProseMirror blockquote p::before,
+.ProseMirror blockquote p::after {
+  display: none;
+}
+/* end block quotes */
+
+.ProseMirror code::before,
+.ProseMirror code::after {
+  display: none;
+}
+
+/* Custom image styles */
+.ProseMirror img {
+  margin-top: 0 !important;
+  margin-bottom: 0;
+
+  &:not(.read-only-image):not(.loading-image) {
+    transition: filter 0.1s ease-in-out;
+
+    &:hover {
+      cursor: pointer;
+      filter: brightness(90%);
+    }
+
+    &.ProseMirror-selectednode {
+      outline: 3px solid rgba(var(--color-primary-100));
+      filter: brightness(90%);
+    }
+  }
+}
+
+/* Custom gap cursor styles  */
+.ProseMirror-gapcursor::after {
+  border-top: 1px solid rgb(var(--color-text-100)) !important;
+}
+
+/* to-do list */
+ul[data-type="taskList"] li {
+  font-size: var(--font-size-list);
+  line-height: 1.5;
+}
+
+ul[data-type="taskList"] li > label {
+  position: absolute;
+  left: -5px;
+  margin: 0.1rem 0.15rem 0 0;
+  user-select: none;
+}
+
+ul[data-type="taskList"] li > div {
+  margin-left: 1.15rem;
+}
+
+ul[data-type="taskList"] li > label input[type="checkbox"] {
+  border: 1px solid rgba(var(--color-text-100), 0.2) !important;
+  outline: none;
+  border-radius: 2px;
+  transform: scale(1.05);
+}
+
+.ProseMirror[contenteditable="true"] input[type="checkbox"]:hover {
+  background-color: rgba(var(--color-text-100), 0.1);
+}
+
+.ProseMirror[contenteditable="false"] input[type="checkbox"] {
+  pointer-events: none;
+}
+
+ul[data-type="taskList"] li > label input[type="checkbox"]:checked {
+  background-color: rgba(var(--color-primary-100)) !important;
+  border-color: rgba(var(--color-primary-100)) !important;
+  color: white !important;
+}
+
+ul[data-type="taskList"] li > label input[type="checkbox"]:checked:hover {
+  background-color: rgba(var(--color-primary-300)) !important;
+  border-color: rgba(var(--color-primary-300)) !important;
+}
+
+@media screen and (max-width: 768px) {
+  ul[data-type="taskList"] li > label {
+    margin-right: 0.5rem;
+  }
+}
+
+/* the p tag just after the ul tag */
+ul[data-type="taskList"] + p.editor-paragraph-block {
+  margin-top: 0.4rem !important;
+}
+
+ul[data-type="taskList"] li > label input[type="checkbox"] {
+  position: relative;
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: transparent;
+  margin: 0;
+  cursor: pointer;
+  width: 0.8rem;
+  height: 0.8rem;
+  position: relative;
+  border: 1.5px solid rgb(var(--color-text-100));
+  margin-right: 0.2rem;
+  margin-top: 0.15rem;
+
+  &:active {
+    background-color: rgb(var(--color-background-90));
+  }
+
+  /* check sign */
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0.5em;
+    height: 0.5em;
+    transform: scale(0);
+    transform-origin: center;
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  }
+
+  &:checked::before {
+    transform: scale(1) translate(-50%, -50%);
+  }
+}
+
+ul[data-type="taskList"] li > div {
+  & > p.editor-paragraph-block {
+    margin-top: 10px;
+    transition: color 0.2s ease;
+  }
+
+  [data-text-color] {
+    transition: opacity 0.2s ease;
+  }
+}
+
+ul[data-type="taskList"] li[data-checked="true"] {
+  & > div > p.editor-paragraph-block {
+    color: var(--color-placeholder);
+  }
+
+  [data-text-color] {
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+  }
+}
+/* end to-do list */
+
+/* Overwrite tippy-box original max-width */
+
+.tippy-box {
+  max-width: 800px !important;
+}
+
+.fade-in {
+  opacity: 1;
+  transition: opacity 0.3s ease-in;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+}
+
+@keyframes spinning {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.resize-cursor {
+  cursor: ew-resize;
+  cursor: col-resize;
+}
+
+.ProseMirror table * .is-empty::before {
+  opacity: 0;
+}
+
+/* code block, inline code */
+.ProseMirror pre {
+  font-family: JetBrainsMono, monospace;
+  tab-size: 2;
+}
+
+.ProseMirror pre code {
+  background: none;
+  color: inherit;
+  padding: 0;
+}
+
+.ProseMirror code {
+  font-size: var(--font-size-code);
+}
+/* end code block, inline code */
+
+div[data-type="horizontalRule"] {
+  line-height: 0;
+  padding: var(--divider-padding-top) 0 var(--divider-padding-bottom) 0;
+  margin-top: 0;
+  margin-bottom: 0;
+
+  & > div {
+    border-bottom: 2px solid rgb(var(--color-border-200));
+  }
+}
+
+/* Cursor styles for the inline code blocks */
+@keyframes blink {
+  49% {
+    border-color: unset;
+  }
+
+  50% {
+    border-color: transparent;
+  }
+
+  99% {
+    border-color: transparent;
+  }
+}
+
+.no-cursor {
+  caret-color: transparent;
+}
+
+div:focus .fake-cursor,
+span:focus .fake-cursor {
+  margin-right: -1px;
+  border-left-width: 1.5px;
+  border-left-style: solid;
+  animation: blink 1s;
+  animation-iteration-count: infinite;
+  position: relative;
+  z-index: 1;
+}
+
+/* numbered, bulleted and to-do lists spacing */
+.prose ol:where(.prose > :first-child):not(:where([class~="not-prose"], [class~="not-prose"] *)),
+.prose
+  ul:not([data-type="taskList"]):where(.prose > :first-child):not(:where([class~="not-prose"], [class~="not-prose"] *)),
+.prose ul[data-type="taskList"]:where(.prose > :first-child) {
+  margin-top: 0.25rem !important;
+  margin-bottom: 1px !important;
+}
+
+.prose ol:not(:where(.prose > :first-child):not(:where([class~="not-prose"], [class~="not-prose"] *))),
+.prose
+  ul:not([data-type="taskList"]):not(
+    :where(.prose > :first-child):not(:where([class~="not-prose"], [class~="not-prose"] *))
+  ),
+.prose ul[data-type="taskList"]:not(:where(.prose > :first-child)) {
+  margin-top: calc(0.25rem + 3px) !important;
+  margin-bottom: 1px !important;
+}
+
+ol ol,
+ol ul:not([data-type="taskList"]),
+ul:not([data-type="taskList"]) ul:not([data-type="taskList"]),
+ul:not([data-type="taskList"]) ol {
+  margin-top: 0.45rem !important;
+}
+
+ul[data-type="taskList"] ul[data-type="taskList"] {
+  margin-top: 0.6rem;
+}
+/* end numbered, bulleted and to-do lists spacing */
+
+h1.editor-heading-block,
+h2.editor-heading-block,
+h3.editor-heading-block,
+h4.editor-heading-block,
+h5.editor-heading-block,
+h6.editor-heading-block,
+p.editor-paragraph-block {
+  margin: 0 !important;
+}
+
+/* tailwind typography */
+.prose :where(h1.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  &:not(:first-child) {
+    padding-top: var(--heading-1-padding-top);
+  }
+
+  padding-bottom: var(--heading-1-padding-bottom);
+  font-size: var(--font-size-h1) !important;
+  line-height: var(--line-height-h1) !important;
+  font-weight: 600 !important;
+}
+
+.prose :where(h2.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  &:not(:first-child) {
+    padding-top: var(--heading-2-padding-top);
+  }
+
+  padding-bottom: var(--heading-2-padding-bottom);
+  font-size: var(--font-size-h2) !important;
+  line-height: var(--line-height-h2) !important;
+  font-weight: 600 !important;
+}
+
+.prose :where(h3.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  &:not(:first-child) {
+    padding-top: var(--heading-3-padding-top);
+  }
+
+  padding-bottom: var(--heading-3-padding-bottom);
+  font-size: var(--font-size-h3) !important;
+  line-height: var(--line-height-h3) !important;
+  font-weight: 600 !important;
+}
+
+.prose :where(h4.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  &:not(:first-child) {
+    padding-top: var(--heading-4-padding-top);
+  }
+
+  padding-bottom: var(--heading-4-padding-bottom);
+  font-size: var(--font-size-h4) !important;
+  line-height: var(--line-height-h4) !important;
+  font-weight: 600 !important;
+}
+
+.prose :where(h5.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  &:not(:first-child) {
+    padding-top: var(--heading-5-padding-top);
+  }
+
+  padding-bottom: var(--heading-5-padding-bottom);
+  font-size: var(--font-size-h5) !important;
+  line-height: var(--line-height-h5) !important;
+  font-weight: 600 !important;
+}
+
+.prose :where(h6.editor-heading-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  &:not(:first-child) {
+    padding-top: var(--heading-6-padding-top);
+  }
+
+  padding-bottom: var(--heading-6-padding-bottom);
+  font-size: var(--font-size-h6) !important;
+  line-height: var(--line-height-h6) !important;
+  font-weight: 600 !important;
+}
+
+.prose :where(p.editor-paragraph-block):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  &:first-child {
+    padding-top: 0;
+  }
+
+  &:not(:first-child) {
+    padding-top: var(--paragraph-padding-top);
+  }
+
+  &:not(td p.editor-paragraph-block, th p.editor-paragraph-block) {
+    &:last-child {
+      padding-bottom: var(--paragraph-padding-bottom);
+    }
+
+    &:not(:last-child) {
+      padding-bottom: var(--paragraph-padding-between);
+    }
+  }
+
+  font-size: var(--font-size-regular) !important;
+  line-height: var(--line-height-regular) !important;
+}
+
+p.editor-paragraph-block + p.editor-paragraph-block {
+  padding-top: var(--paragraph-padding-between) !important;
+}
+
+.prose :where(ol):not(:where([class~="not-prose"], [class~="not-prose"] *)) li p.editor-paragraph-block,
+.prose :where(ul):not(:where([class~="not-prose"], [class~="not-prose"] *)) li p.editor-paragraph-block {
+  font-size: var(--font-size-list);
+  line-height: var(--line-height-list);
+}
+
+.prose :where(.prose > :first-child):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  margin-top: 0;
+}
+/* end tailwind typography */
+
+/* text colors */
+[data-text-color="gray"] {
+  color: var(--editor-colors-gray-text);
+}
+[data-text-color="peach"] {
+  color: var(--editor-colors-peach-text);
+}
+[data-text-color="pink"] {
+  color: var(--editor-colors-pink-text);
+}
+[data-text-color="orange"] {
+  color: var(--editor-colors-orange-text);
+}
+[data-text-color="green"] {
+  color: var(--editor-colors-green-text);
+}
+[data-text-color="light-blue"] {
+  color: var(--editor-colors-light-blue-text);
+}
+[data-text-color="dark-blue"] {
+  color: var(--editor-colors-dark-blue-text);
+}
+[data-text-color="purple"] {
+  color: var(--editor-colors-purple-text);
+}
+/* end text colors */
+
+/* background colors */
+[data-background-color="gray"] {
+  background-color: var(--editor-colors-gray-background);
+}
+[data-background-color="peach"] {
+  background-color: var(--editor-colors-peach-background);
+}
+[data-background-color="pink"] {
+  background-color: var(--editor-colors-pink-background);
+}
+[data-background-color="orange"] {
+  background-color: var(--editor-colors-orange-background);
+}
+[data-background-color="green"] {
+  background-color: var(--editor-colors-green-background);
+}
+[data-background-color="light-blue"] {
+  background-color: var(--editor-colors-light-blue-background);
+}
+[data-background-color="dark-blue"] {
+  background-color: var(--editor-colors-dark-blue-background);
+}
+[data-background-color="purple"] {
+  background-color: var(--editor-colors-purple-background);
+}
+/* end background colors */
+
+/* emoji styles */
+span[data-name][data-type="emoji"] img {
+  display: inline !important;
+  vertical-align: middle;
+  margin: 0;
+  padding: 0;
+  max-width: 1.25em;
+  max-height: 1.25em;
+}
+
+/* touch device styles */
+.touch-select-none {
+  user-select: none;
+  -webkit-user-select: none;
+}

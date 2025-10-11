@@ -1,0 +1,44 @@
+{
+  "name": "admin",
+  "description": "Admin UI for Plane",
+  "version": "1.0.0",
+  "license": "AGPL-3.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3001",
+    "build": "next build",
+    "preview": "next build && next start",
+    "start": "next start",
+    "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
+    "check:lint": "eslint . --max-warnings 19",
+    "check:types": "tsc --noEmit",
+    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "fix:lint": "eslint . --fix",
+    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\""
+  },
+  "dependencies": {
+    "@headlessui/react": "^1.7.19",
+    "autoprefixer": "10.4.14",
+    "axios": "1.12.0",
+    "lodash-es": "4.17.21",
+    "lucide-react": "0.469.0",
+    "mobx": "6.12.0",
+    "mobx-react": "9.1.1",
+    "next": "14.2.32",
+    "next-themes": "^0.2.1",
+    "postcss": "^8.4.49",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-hook-form": "7.51.5",
+    "sharp": "0.33.5",
+    "swr": "2.2.4",
+    "uuid": "13.0.0"
+  },
+  "devDependencies": {
+    "@types/lodash-es": "4.17.12",
+    "@types/node": "22.12.0",
+    "@types/react": "18.3.11",
+    "@types/react-dom": "18.3.1",
+    "typescript": "5.8.3"
+  }
+}

@@ -1,7 +1,10 @@
 {
   "name": "plane",
   "description": "Open-source project management that unlocks customer value",
-  "repository": "https://github.com/makeplane/plane.git",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/makeplane/plane.git"
+  },
   "version": "1.0.0",
   "license": "AGPL-3.0",
   "private": true,
@@ -48,5 +51,33 @@
   "packageManager": "pnpm@10.12.1",
   "engines": {
     "node": ">=22.18.0"
-  }
+  },
+  "main": "mock-api.js",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^14.2.32",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-turbo": "^1.13.4",
+    "eslint-import-resolver-node": "^0.3.9",
+    "eslint-import-resolver-typescript": "^3.10.1",
+    "eslint-module-utils": "^2.12.1",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.3",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-storybook": "^9.1.10",
+    "eslint-plugin-turbo": "^1.13.4",
+    "eslint-scope": "^7.2.2",
+    "eslint-visitor-keys": "^3.4.3",
+    "express": "^4.21.2",
+    "typescript": "^5.8.3"
+  },
+  "keywords": [],
+  "author": "",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/makeplane/plane/issues"
+  },
+  "homepage": "https://github.com/makeplane/plane#readme"
 }

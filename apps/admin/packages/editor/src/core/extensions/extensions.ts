@@ -1,0 +1,135 @@
+import { Extensions } from "@tiptap/core";
+import TaskItem from "@tiptap/extension-task-item";
+import TaskList from "@tiptap/extension-task-list";
+import { TextStyle } from "@tiptap/extension-text-style";
+import { CharacterCount } from "@tiptap/extensions";
+import { Markdown } from "tiptap-markdown";
+// extensions
+import {
+  CustomCalloutExtension,
+  CustomCodeBlockExtension,
+  CustomCodeInlineExtension,
+  CustomColorExtension,
+  CustomHorizontalRule,
+  CustomKeymap,
+  CustomLinkExtension,
+  CustomMentionExtension,
+  CustomQuoteExtension,
+  CustomTextAlignExtension,
+  CustomTypographyExtension,
+  ImageExtension,
+  ListKeymap,
+  Table,
+  TableCell,
+  TableHeader,
+  TableRow,
+  UtilityExtension,
+} from "@/extensions";
+// plane editor extensions
+import { CoreEditorAdditionalExtensions } from "@/plane-editor/extensions";
+// types
+import type { IEditorProps } from "@/types";
+// local imports
+import { CustomImageExtension } from "./custom-image/extension";
+import { EmojiExtension } from "./emoji/extension";
+import { CustomPlaceholderExtension } from "./placeholder";
+import { CustomStarterKitExtension } from "./starter-kit";
+
+type TArguments = Pick<
+  IEditorProps,
+  | "disabledExtensions"
+  | "flaggedExtensions"
+  | "fileHandler"
+  | "isTouchDevice"
+  | "mentionHandler"
+  | "placeholder"
+  | "tabIndex"
+  | "extendedEditorProps"
+> & {
+  enableHistory: boolean;
+  editable: boolean;
+};
+
+export const CoreEditorExtensions = (args: TArguments): Extensions => {
+  const {
+    disabledExtensions,
+    enableHistory,
+    fileHandler,
+    flaggedExtensions,
+    isTouchDevice = false,
+    mentionHandler,
+    placeholder,
+    tabIndex,
+    editable,
+    extendedEditorProps,
+  } = args;
+
+  const extensions = [
+    CustomStarterKitExtension({
+      enableHistory,
+    }),
+    EmojiExtension,
+    CustomQuoteExtension,
+    CustomHorizontalRule,
+    CustomKeymap,
+    ListKeymap({ tabIndex }),
+    CustomLinkExtension,
+    CustomTypographyExtension,
+    TextStyle,
+    TaskList.configure({
+      HTMLAttributes: {
+        class: "not-prose pl-2 space-y-2",
+      },
+    }),
+    TaskItem.configure({
+      HTMLAttributes: {
+        class: "relative",
+      },
+      nested: true,
+    }),
+    CustomCodeBlockExtension,
+    CustomCodeInlineExtension,
+    Markdown.configure({
+      html: true,
+      transformCopiedText: false,
+      transformPastedText: true,
+      breaks: true,
+    }),
+    Table,
+    TableHeader,
+    TableCell,
+    TableRow,
+    CustomMentionExtension(mentionHandler),
+    CustomPlaceholderExtension({ placeholder }),
+    CharacterCount,
+    CustomColorExtension,
+    CustomTextAlignExtension,
+    CustomCalloutExtension,
+    UtilityExtension({
+      disabledExtensions,
+      fileHandler,
+      isEditable: editable,
+      isTouchDevice,
+    }),
+    ...CoreEditorAdditionalExtensions({
+      disabledExtensions,
+      flaggedExtensions,
+      fileHandler,
+      extendedEditorProps,
+    }),
+  ];
+
+  if (!disabledExtensions.includes("image")) {
+    extensions.push(
+      ImageExtension({
+        fileHandler,
+      }),
+      CustomImageExtension({
+        fileHandler,
+        isEditable: editable,
+      })
+    );
+  }
+
+  return extensions;
+};
