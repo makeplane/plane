@@ -292,6 +292,7 @@ def create_project_issues(
             epoch=time.time(),
         )
 
+        # Create issue labels
         for label_id in labels:
             IssueLabel.objects.create(
                 issue=issue,
@@ -301,22 +302,26 @@ def create_project_issues(
                 created_by_id=workspace.created_by_id,
             )
 
-        CycleIssue.objects.create(
-            issue=issue,
-            cycle_id=cycles_map[cycle_id],
-            project_id=project_map[project_id],
-            workspace_id=workspace.id,
-            created_by_id=workspace.created_by_id,
-        )
-
-        for module_id in module_ids:
-            ModuleIssue.objects.create(
+        # Create cycle issues
+        if cycle_id:
+            CycleIssue.objects.create(
                 issue=issue,
-                module_id=module_map[module_id],
+                cycle_id=cycles_map[cycle_id],
                 project_id=project_map[project_id],
                 workspace_id=workspace.id,
                 created_by_id=workspace.created_by_id,
             )
+
+        # Create module issues
+        if module_ids:
+            for module_id in module_ids:
+                ModuleIssue.objects.create(
+                    issue=issue,
+                    module_id=module_map[module_id],
+                    project_id=project_map[project_id],
+                    workspace_id=workspace.id,
+                    created_by_id=workspace.created_by_id,
+                )
 
         logger.info(f"Task: workspace_seed_task -> Issue {issue_id} created")
     return
