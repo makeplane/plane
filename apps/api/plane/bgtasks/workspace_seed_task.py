@@ -383,8 +383,8 @@ def create_cycles(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> No
             end_date = start_date + timedelta(days=14)
 
         if type == "UPCOMING":
-            # Get the last cyle
-            last_cycle = Cycle.objects.filter(project_id=project_id).order_by("-end_date").first()
+            # Get the last cycle
+            last_cycle = Cycle.objects.filter(project_id=project_map[project_id]).order_by("-end_date").first()
             if last_cycle:
                 start_date = last_cycle.end_date + timedelta(days=1)
                 end_date = start_date + timedelta(days=14)
@@ -455,9 +455,8 @@ def create_views(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> Non
     view_map: Dict[int, uuid.UUID] = {}
 
     for view_seed in view_seeds:
-        view_id = view_seed.pop("id")
         project_id = view_seed.pop("project_id")
-        view = IssueView.objects.create(
+        IssueView.objects.create(
             **view_seed,
             project_id=project_map[project_id],
             workspace=workspace,
