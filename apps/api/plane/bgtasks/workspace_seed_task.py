@@ -383,7 +383,7 @@ def create_cycles(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> No
             end_date = start_date + timedelta(days=14)
 
         if type == "UPCOMING":
-            # Get the last cyle
+            # Get the last cycle
             last_cycle = Cycle.objects.filter(project_id=project_id).order_by("-end_date").first()
             if last_cycle:
                 start_date = last_cycle.end_date + timedelta(days=1)
