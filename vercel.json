@@ -1,15 +1,6 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "apps/admin/package.json",
-      "use": "@vercel/next"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/apps/admin/$1"
-    }
-  ]
+  "buildCommand": "cd apps/admin && npm install && npm run build",
+  "outputDirectory": "apps/admin/.next",
+  "installCommand": "npm install"
 }
