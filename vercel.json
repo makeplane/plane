@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "cd apps/admin && npm install && npm run build",
+  "buildCommand": "pnpm install && pnpm turbo run build --filter=admin",
   "outputDirectory": "apps/admin/.next",
-  "installCommand": "npm install"
+  "installCommand": "pnpm install"
 }
