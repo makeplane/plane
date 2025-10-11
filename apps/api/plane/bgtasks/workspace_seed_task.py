@@ -125,13 +125,33 @@ def create_project_and_member(workspace: Workspace) -> Dict[int, uuid.UUID]:
                     user_id=workspace_member["member_id"],
                     workspace_id=workspace.id,
                     display_filters={
-                        "group_by": None,
-                        "order_by": "sort_order",
-                        "type": None,
-                        "sub_issue": True,
-                        "show_empty_groups": True,
                         "layout": "list",
-                        "calendar_date_range": "",
+                        "calendar": {"layout": "month", "show_weekends": False},
+                        "group_by": "state",
+                        "order_by": "sort_order",
+                        "sub_issue": True,
+                        "sub_group_by": None,
+                        "show_empty_groups": True,
+                    },
+                    display_properties={
+                        "key": True,
+                        "link": True,
+                        "cycle": False,
+                        "state": True,
+                        "labels": False,
+                        "modules": False,
+                        "assignee": True,
+                        "due_date": False,
+                        "estimate": True,
+                        "priority": True,
+                        "created_on": True,
+                        "issue_type": True,
+                        "start_date": False,
+                        "updated_on": True,
+                        "customer_count": True,
+                        "sub_issue_count": False,
+                        "attachment_count": False,
+                        "customer_request_count": True,
                     },
                     created_by_id=workspace.created_by_id,
                 )
@@ -344,8 +364,8 @@ def create_pages(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> Non
             logger.info(f"Task: workspace_seed_task -> Project Page {page_id} created")
     return
 
-def create_cycles(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> None:
 
+def create_cycles(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> None:
     # Create cycles
     cycle_seeds = read_seed_file("cycles.json")
     if not cycle_seeds:
@@ -389,7 +409,7 @@ def create_cycles(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> No
 
 def create_modules(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> None:
     """Creates modules for each project in the workspace.
-    
+
     Args:
         workspace: The workspace containing the projects
         project_map: Mapping of seed project IDs to actual project IDs
@@ -399,12 +419,12 @@ def create_modules(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> N
         return
 
     module_map: Dict[int, uuid.UUID] = {}
-    
+
     for index, module_seed in enumerate(module_seeds):
         module_id = module_seed.pop("id")
         project_id = module_seed.pop("project_id")
-        
-        start_date = timezone.now() + timedelta(days=index*2)
+
+        start_date = timezone.now() + timedelta(days=index * 2)
         end_date = start_date + timedelta(days=14)
 
         module = Module.objects.create(
@@ -422,7 +442,7 @@ def create_modules(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> N
 
 def create_views(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> None:
     """Creates views for each project in the workspace.
-    
+
     Args:
         workspace: The workspace containing the projects
         project_map: Mapping of seed project IDs to actual project IDs
@@ -433,7 +453,7 @@ def create_views(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> Non
         return
 
     view_map: Dict[int, uuid.UUID] = {}
-    
+
     for view_seed in view_seeds:
         view_id = view_seed.pop("id")
         project_id = view_seed.pop("project_id")
