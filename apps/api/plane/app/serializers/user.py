@@ -12,7 +12,7 @@ from plane.utils.url import contains_url
 from .base import BaseSerializer
 
 # Regex pattern to block the following special characters in names:
-# & + , : ; = ? @ # | ' < > . ( ) % ! -
+# & + , : ; $ ^ } { * = ? @ # | ' < > . ( ) % ! -
 
 FORBIDDEN_NAME_CHARS_PATTERN = r"^.*[&+,:;$^}{*=?@#|'<>.()%!-].*$"
 
@@ -23,7 +23,7 @@ class UserSerializer(BaseSerializer):
             raise serializers.ValidationError("First name cannot contain a URL.")
 
         if re.match(FORBIDDEN_NAME_CHARS_PATTERN, value):
-            raise serializers.ValidationError("First name cannot contain special characters")
+            raise serializers.ValidationError("First name cannot contain special characters.")
 
         return value
 
@@ -32,7 +32,7 @@ class UserSerializer(BaseSerializer):
             raise serializers.ValidationError("Last name cannot contain a URL.")
 
         if re.match(FORBIDDEN_NAME_CHARS_PATTERN, value):
-            raise serializers.ValidationError("Last name cannot contain special characters")
+            raise serializers.ValidationError("Last name cannot contain special characters.")
 
         return value
 
