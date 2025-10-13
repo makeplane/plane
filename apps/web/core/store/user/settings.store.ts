@@ -1,6 +1,6 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 // plane imports
-import { IUserSettings } from "@plane/types";
+import type { IUserSettings } from "@plane/types";
 // services
 import { UserService } from "@/services/user.service";
 

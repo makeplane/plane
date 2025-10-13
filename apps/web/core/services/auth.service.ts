@@ -1,6 +1,6 @@
 // types
 import { API_BASE_URL } from "@plane/constants";
-import { ICsrfTokenData, IEmailCheckData, IEmailCheckResponse } from "@plane/types";
+import type { ICsrfTokenData, IEmailCheckData, IEmailCheckResponse } from "@plane/types";
 // helpers
 // services
 import { APIService } from "@/services/api.service";

@@ -3,7 +3,7 @@
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 import { CycleGroupIcon } from "@plane/propel/icons";
-import { TCycleGroups } from "@plane/types";
+import type { TCycleGroups } from "@plane/types";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 // ui

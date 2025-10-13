@@ -1,7 +1,7 @@
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
-import { TPageNavigationPaneTab } from "..";
+import type { TPageNavigationPaneTab } from "..";
 
 export type TPageNavigationPaneAdditionalTabPanelsRootProps = {
   activeTab: TPageNavigationPaneTab;

@@ -11,16 +11,8 @@ import { useLocalStorage } from "@plane/hooks";
 import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IProject } from "@plane/types";
-import {
-  Avatar,
-  AvatarGroup,
-  TOAST_TYPE,
-  setToast,
-  setPromiseToast,
-  ContextMenu,
-  TContextMenuItem,
-  FavoriteStar,
-} from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { Avatar, AvatarGroup, TOAST_TYPE, setToast, setPromiseToast, ContextMenu, FavoriteStar } from "@plane/ui";
 import { copyUrlToClipboard, cn, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";

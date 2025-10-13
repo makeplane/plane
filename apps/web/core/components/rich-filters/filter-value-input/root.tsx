@@ -1,8 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
-import {
-  FILTER_FIELD_TYPE,
+import type {
   TFilterConditionNode,
   TFilterValue,
   TFilterProperty,
@@ -14,6 +13,7 @@ import {
   TSupportedFilterFieldConfigs,
   TFilterConditionNodeForDisplay,
 } from "@plane/types";
+import { FILTER_FIELD_TYPE } from "@plane/types";
 // local imports
 import { DateRangeFilterValueInput } from "./date/range";
 import { SingleDateFilterValueInput } from "./date/single";

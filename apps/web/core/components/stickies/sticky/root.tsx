@@ -3,7 +3,7 @@ import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
 import { Minimize2 } from "lucide-react";
 // plane types
-import { TSticky } from "@plane/types";
+import type { TSticky } from "@plane/types";
 // plane utils
 import { cn } from "@plane/utils";
 // hooks

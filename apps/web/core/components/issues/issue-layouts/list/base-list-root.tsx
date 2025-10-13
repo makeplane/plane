@@ -1,16 +1,12 @@
-import { FC, useCallback, useEffect } from "react";
+import type { FC } from "react";
+import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane constants
 import { EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 // types
-import {
-  EIssuesStoreType,
-  GroupByColumnTypes,
-  TGroupedIssues,
-  TIssueKanbanFilters,
-  EIssueLayoutTypes,
-} from "@plane/types";
+import type { EIssuesStoreType, GroupByColumnTypes, TGroupedIssues, TIssueKanbanFilters } from "@plane/types";
+import { EIssueLayoutTypes } from "@plane/types";
 // constants
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
@@ -23,7 +19,7 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { List } from "./default";
 // types
-import { IQuickActionProps, TRenderQuickActions } from "./list-view-types";
+import type { IQuickActionProps, TRenderQuickActions } from "./list-view-types";
 
 type ListStoreType =
   | EIssuesStoreType.PROJECT

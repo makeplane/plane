@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // local imports
 import { EstimateListItem } from "./estimate-list-item";

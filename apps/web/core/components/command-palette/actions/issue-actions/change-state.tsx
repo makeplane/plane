@@ -3,7 +3,8 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EIssueServiceType, TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // store hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web imports

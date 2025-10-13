@@ -2,8 +2,8 @@ import React, { useRef, useEffect } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // plane imports
-import { IFilterInstance } from "@plane/shared-state";
-import {
+import type { IFilterInstance } from "@plane/shared-state";
+import type {
   SingleOrArray,
   TExternalFilter,
   TFilterProperty,

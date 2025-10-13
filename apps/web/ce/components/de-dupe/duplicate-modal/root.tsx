@@ -1,8 +1,8 @@
 "use-client";
 
-import { FC } from "react";
+import type { FC } from "react";
 // types
-import { TDeDupeIssue } from "@plane/types";
+import type { TDeDupeIssue } from "@plane/types";
 
 type TDuplicateModalRootProps = {
   workspaceSlug: string;

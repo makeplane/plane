@@ -2,7 +2,7 @@
 
 import { FileText } from "lucide-react";
 // plane imports
-import { IFavorite, TLogoProps } from "@plane/types";
+import type { IFavorite, TLogoProps } from "@plane/types";
 // components
 import { Logo } from "@/components/common/logo";
 // plane web constants

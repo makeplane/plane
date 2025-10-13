@@ -1,4 +1,4 @@
-import { TIssueRelationTypes } from "../types";
+import type { TIssueRelationTypes } from "../types";
 
 export const REVERSE_RELATIONS: { [key in TIssueRelationTypes]: TIssueRelationTypes } = {
   blocked_by: "blocking",

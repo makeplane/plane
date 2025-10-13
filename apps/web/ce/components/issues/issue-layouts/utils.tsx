@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import {
   CalendarCheck2,
   CalendarClock,
@@ -13,8 +13,9 @@ import {
   Users,
 } from "lucide-react";
 // types
-import { DiceIcon, DoubleCircleIcon, ISvgIcons } from "@plane/propel/icons";
-import { IGroupByColumn, IIssueDisplayProperties, TGetColumns, TSpreadsheetColumn } from "@plane/types";
+import type { ISvgIcons } from "@plane/propel/icons";
+import { DiceIcon, DoubleCircleIcon } from "@plane/propel/icons";
+import type { IGroupByColumn, IIssueDisplayProperties, TGetColumns, TSpreadsheetColumn } from "@plane/types";
 // components
 import {
   SpreadsheetAssigneeColumn,

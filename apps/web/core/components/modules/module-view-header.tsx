@@ -1,6 +1,7 @@
 "use client";
 
-import React, { FC, useCallback, useEffect, useRef, useState } from "react";
+import type { FC } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ListFilter, Search, X } from "lucide-react";
@@ -10,7 +11,7 @@ import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
-import { TModuleFilters } from "@plane/types";
+import type { TModuleFilters } from "@plane/types";
 // ui
 import { cn, calculateTotalFilters } from "@plane/utils";
 // plane utils

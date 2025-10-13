@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { CalendarCheck2, CopyPlus, Signal, Tag, Users } from "lucide-react";
 import { DoubleCircleIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { TInboxDuplicateIssueDetails, TIssue } from "@plane/types";
+import type { TInboxDuplicateIssueDetails, TIssue } from "@plane/types";
 import { ControlLink } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, generateWorkItemLink } from "@plane/utils";
 // components

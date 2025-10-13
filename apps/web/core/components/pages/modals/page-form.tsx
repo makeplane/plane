@@ -1,7 +1,9 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-import { FileText, Globe2, Lock, LucideIcon } from "lucide-react";
+import type { FormEvent } from "react";
+import { useState } from "react";
+import type { LucideIcon } from "lucide-react";
+import { FileText, Globe2, Lock } from "lucide-react";
 // plane imports
 import { ETabIndices, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";

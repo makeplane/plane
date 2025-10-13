@@ -1,4 +1,5 @@
-import { FC, Fragment } from "react";
+import type { FC } from "react";
+import { Fragment } from "react";
 import { observer } from "mobx-react";
 // local imports
 import { InboxIssueListItem } from "./inbox-list-item";

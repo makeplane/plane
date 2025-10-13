@@ -5,7 +5,7 @@ import { ChevronRight, ChevronUp } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // types
 import { Button } from "@plane/propel/button";
-import { IProject } from "@plane/types";
+import type { IProject } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
 

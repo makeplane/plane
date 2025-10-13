@@ -7,7 +7,7 @@ import { Briefcase, FileText } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // plane types
 import { LayersIcon } from "@plane/propel/icons";
-import { TActivityEntityData, THomeWidgetProps, TRecentActivityFilterKeys } from "@plane/types";
+import type { TActivityEntityData, THomeWidgetProps, TRecentActivityFilterKeys } from "@plane/types";
 // plane ui
 // components
 import { ContentOverflowWrapper } from "@/components/core/content-overflow-HOC";

@@ -1,7 +1,8 @@
 "use client";
 
-import { FC, useEffect, useRef, useState } from "react";
-import { Placement } from "@popperjs/core";
+import type { FC } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
@@ -12,7 +13,7 @@ import { Combobox } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 // icon
 import { ContrastIcon, CycleGroupIcon } from "@plane/propel/icons";
-import { TCycleGroups } from "@plane/types";
+import type { TCycleGroups } from "@plane/types";
 // ui
 // store hooks
 import { useCycle } from "@/hooks/store/use-cycle";

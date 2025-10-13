@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useFormContext, Controller } from "react-hook-form";
 import { Plus } from "lucide-react";
 import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
-import { IJiraImporterForm } from "@plane/types";
+import type { IJiraImporterForm } from "@plane/types";
 // hooks
 // components
 import { CustomSelect, Input } from "@plane/ui";

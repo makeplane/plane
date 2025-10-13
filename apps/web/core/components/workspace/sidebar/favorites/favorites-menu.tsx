@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import {
+import type {
   DragLocationHistory,
   DropTargetRecord,
   ElementDragPayload,
@@ -18,7 +18,7 @@ import { useTranslation } from "@plane/i18n";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { IFavorite } from "@plane/types";
+import type { IFavorite } from "@plane/types";
 // constants
 
 // helpers
@@ -29,7 +29,8 @@ import useLocalStorage from "@/hooks/use-local-storage";
 // plane web components
 import { FavoriteFolder } from "./favorite-folder";
 import { FavoriteRoot } from "./favorite-items";
-import { getInstructionFromPayload, TargetData } from "./favorites.helpers";
+import type { TargetData } from "./favorites.helpers";
+import { getInstructionFromPayload } from "./favorites.helpers";
 import { NewFavoriteFolder } from "./new-fav-folder";
 
 export const SidebarFavoritesMenu = observer(() => {

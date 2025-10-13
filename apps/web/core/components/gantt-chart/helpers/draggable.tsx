@@ -1,4 +1,5 @@
-import React, { RefObject } from "react";
+import type { RefObject } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 // hooks
 import type { IGanttBlock } from "@plane/types";

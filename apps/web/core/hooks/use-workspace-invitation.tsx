@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import { Control, FieldArrayWithId, FormState, useFieldArray, useForm, UseFormWatch } from "react-hook-form";
+import type { Control, FieldArrayWithId, FormState, UseFormWatch } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 // plane imports
 import { EUserPermissions } from "@plane/constants";
 

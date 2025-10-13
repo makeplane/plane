@@ -1,7 +1,7 @@
 import React from "react";
 import { Transition } from "@headlessui/react";
 // plane imports
-import { SingleOrArray, IFilterOption, TFilterValue } from "@plane/types";
+import type { SingleOrArray, IFilterOption, TFilterValue } from "@plane/types";
 import { cn, toFilterArray } from "@plane/utils";
 
 type TSelectedOptionsDisplayProps<V extends TFilterValue> = {
