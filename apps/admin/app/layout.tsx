@@ -1,5 +1,5 @@
-import { ReactNode } from "react";
-import { Metadata } from "next";
+import type { ReactNode } from "react";
+import type { Metadata } from "next";
 // plane imports
 import { ADMIN_BASE_PATH } from "@plane/constants";
 // styles
