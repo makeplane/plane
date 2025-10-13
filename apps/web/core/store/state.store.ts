@@ -3,7 +3,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // plane imports
 import { STATE_GROUPS } from "@plane/constants";
-import { IState } from "@plane/types";
+import type { IState } from "@plane/types";
 // helpers
 import { sortStates } from "@plane/utils";
 // plane web

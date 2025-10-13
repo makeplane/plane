@@ -1,6 +1,7 @@
 "use client";
 
-import React, { FC, useCallback, useMemo } from "react";
+import type { FC } from "react";
+import React, { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
@@ -8,7 +9,7 @@ import { FileText, Layers } from "lucide-react";
 import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { DiceIcon, ContrastIcon, LayersIcon, Intake } from "@plane/propel/icons";
-import { EUserProjectRoles } from "@plane/types";
+import type { EUserProjectRoles } from "@plane/types";
 // plane ui
 // components
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";

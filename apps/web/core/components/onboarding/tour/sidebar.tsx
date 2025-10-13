@@ -4,7 +4,7 @@
 import { FileText, Layers } from "lucide-react";
 import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/propel/icons";
 // types
-import { TTourSteps } from "./root";
+import type { TTourSteps } from "./root";
 
 const sidebarOptions: {
   key: TTourSteps;

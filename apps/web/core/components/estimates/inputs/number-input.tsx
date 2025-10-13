@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { useTranslation } from "@plane/i18n";
 type TEstimateNumberInputProps = {
   value?: number;

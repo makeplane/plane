@@ -1,7 +1,8 @@
 import { computedFn } from "mobx-utils";
-import { EUserPermissions } from "@plane/constants";
+import type { EUserPermissions } from "@plane/constants";
 import type { RootStore } from "@/plane-web/store/root.store";
-import { BaseUserPermissionStore, type IBaseUserPermissionStore } from "@/store/user/base-permissions.store";
+import { BaseUserPermissionStore } from "@/store/user/base-permissions.store";
+import type { IBaseUserPermissionStore } from "@/store/user/base-permissions.store";
 
 export type IUserPermissionStore = IBaseUserPermissionStore;
 

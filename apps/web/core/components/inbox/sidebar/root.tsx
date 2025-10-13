@@ -1,9 +1,11 @@
 "use client";
 
-import { FC, useCallback, useEffect, useRef, useState } from "react";
+import type { FC } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { TInboxIssueCurrentTab, EInboxIssueCurrentTab } from "@plane/types";
+import type { TInboxIssueCurrentTab } from "@plane/types";
+import { EInboxIssueCurrentTab } from "@plane/types";
 // plane imports
 import { Header, Loader, EHeaderVariant } from "@plane/ui";
 import { cn } from "@plane/utils";

@@ -1,21 +1,21 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Tab } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
-import { TWorkItemFilterCondition } from "@plane/shared-state";
-import { TModuleDistribution, TModuleEstimateDistribution, TModulePlotType } from "@plane/types";
+import type { TWorkItemFilterCondition } from "@plane/shared-state";
+import type { TModuleDistribution, TModuleEstimateDistribution, TModulePlotType } from "@plane/types";
 import { cn, toFilterArray } from "@plane/utils";
 // components
-import { AssigneeStatComponent, TAssigneeData } from "@/components/core/sidebar/progress-stats/assignee";
-import { LabelStatComponent, TLabelData } from "@/components/core/sidebar/progress-stats/label";
-import {
-  createFilterUpdateHandler,
-  PROGRESS_STATS,
-  TSelectedFilterProgressStats,
-} from "@/components/core/sidebar/progress-stats/shared";
-import { StateGroupStatComponent, TStateGroupData } from "@/components/core/sidebar/progress-stats/state_group";
+import type { TAssigneeData } from "@/components/core/sidebar/progress-stats/assignee";
+import { AssigneeStatComponent } from "@/components/core/sidebar/progress-stats/assignee";
+import type { TLabelData } from "@/components/core/sidebar/progress-stats/label";
+import { LabelStatComponent } from "@/components/core/sidebar/progress-stats/label";
+import type { TSelectedFilterProgressStats } from "@/components/core/sidebar/progress-stats/shared";
+import { createFilterUpdateHandler, PROGRESS_STATS } from "@/components/core/sidebar/progress-stats/shared";
+import type { TStateGroupData } from "@/components/core/sidebar/progress-stats/state_group";
+import { StateGroupStatComponent } from "@/components/core/sidebar/progress-stats/state_group";
 // hooks
 import useLocalStorage from "@/hooks/use-local-storage";
 

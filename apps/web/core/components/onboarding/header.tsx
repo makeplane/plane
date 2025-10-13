@@ -1,12 +1,13 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { ChevronLeft } from "lucide-react";
 // plane imports
 import { PlaneLockup } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { EOnboardingSteps, TOnboardingStep } from "@plane/types";
+import type { TOnboardingStep } from "@plane/types";
+import { EOnboardingSteps } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
 import { useUser } from "@/hooks/store/user";

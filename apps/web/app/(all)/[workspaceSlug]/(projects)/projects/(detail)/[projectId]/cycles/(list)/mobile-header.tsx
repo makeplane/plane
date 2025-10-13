@@ -2,9 +2,10 @@
 
 import { observer } from "mobx-react";
 // ui
-import { GanttChartSquare, LayoutGrid, List, type LucideIcon } from "lucide-react";
+import { GanttChartSquare, LayoutGrid, List } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 // plane package imports
-import { TCycleLayoutOptions } from "@plane/types";
+import type { TCycleLayoutOptions } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // hooks
 import { useCycleFilter } from "@/hooks/store/use-cycle-filter";

@@ -1,6 +1,7 @@
 "use client";
 
-import { MutableRefObject, useEffect, useRef, useState } from "react";
+import type { MutableRefObject } from "react";
+import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
@@ -10,13 +11,14 @@ import { observer } from "mobx-react";
 import { createRoot } from "react-dom/client";
 // types
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { IIssueLabel, InstructionType } from "@plane/types";
+import type { IIssueLabel, InstructionType } from "@plane/types";
 // ui
 import { DropIndicator } from "@plane/ui";
 // components
 import { useUserPermissions } from "@/hooks/store/user";
 import { LabelName } from "./label-block/label-name";
-import { TargetData, getCanDrop, getInstructionFromPayload } from "./label-utils";
+import type { TargetData } from "./label-utils";
+import { getCanDrop, getInstructionFromPayload } from "./label-utils";
 
 type LabelDragPreviewProps = {
   label: IIssueLabel;

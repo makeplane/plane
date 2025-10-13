@@ -2,23 +2,22 @@
 
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import {
+import type {
   Control,
-  Controller,
   FieldArrayWithId,
   UseFieldArrayRemove,
   UseFormGetValues,
   UseFormSetValue,
   UseFormWatch,
-  useFieldArray,
-  useForm,
 } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 // icons
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Plus, XCircle } from "lucide-react";
 import { Listbox } from "@headlessui/react";
 // plane imports
-import { ROLE, ROLE_DETAILS, EUserPermissions, MEMBER_TRACKER_EVENTS, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
+import type { EUserPermissions } from "@plane/constants";
+import { ROLE, ROLE_DETAILS, MEMBER_TRACKER_EVENTS, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";

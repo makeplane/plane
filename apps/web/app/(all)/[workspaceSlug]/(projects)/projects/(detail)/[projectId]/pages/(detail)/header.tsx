@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import { FileText } from "lucide-react";
 import { EProjectFeatureKey } from "@plane/constants";
 // types
-import { ICustomSearchSelectOption } from "@plane/types";
+import type { ICustomSearchSelectOption } from "@plane/types";
 // ui
 import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components

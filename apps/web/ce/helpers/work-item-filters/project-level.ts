@@ -1,4 +1,4 @@
-import { TWorkItemFiltersEntityProps } from "@/plane-web/hooks/work-item-filters/use-work-item-filters-config";
+import type { TWorkItemFiltersEntityProps } from "@/plane-web/hooks/work-item-filters/use-work-item-filters-config";
 
 export type TGetAdditionalPropsForProjectLevelFiltersHOCParams = {
   workspaceSlug: string;

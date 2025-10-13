@@ -1,6 +1,6 @@
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
-import { type TDescriptionVersionsListResponse, type TDescriptionVersionDetails } from "@plane/types";
+import type { TDescriptionVersionsListResponse, TDescriptionVersionDetails } from "@plane/types";
 // helpers
 // services
 import { APIService } from "@/services/api.service";

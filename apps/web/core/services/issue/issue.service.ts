@@ -1,8 +1,8 @@
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
-import {
-  EIssueServiceType,
+import type {
   TIssueParams,
+  EIssueServiceType,
   type IIssueDisplayProperties,
   type TBulkOperationsPayload,
   type TIssue,

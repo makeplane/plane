@@ -3,7 +3,7 @@
 // types
 import { Briefcase, FileText, Layers, LayoutGrid } from "lucide-react";
 import { ContrastIcon, DiceIcon } from "@plane/propel/icons";
-import {
+import type {
   IWorkspaceDefaultSearchResult,
   IWorkspaceIssueSearchResult,
   IWorkspacePageSearchResult,

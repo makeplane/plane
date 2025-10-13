@@ -1,13 +1,15 @@
 "use client";
 
-import { FC, Fragment, useMemo, useState } from "react";
+import type { FC } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { AlertCircle, ChevronUp, ChevronDown } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import { EEstimateSystem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EIssuesStoreType, TModulePlotType } from "@plane/types";
+import type { TModulePlotType } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 import { CustomSelect, Spinner } from "@plane/ui";
 // components
 // constants

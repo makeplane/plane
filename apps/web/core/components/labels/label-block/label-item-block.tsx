@@ -1,12 +1,14 @@
 "use client";
 
-import { MutableRefObject, useRef, useState } from "react";
-import { LucideIcon, X } from "lucide-react";
+import type { MutableRefObject } from "react";
+import { useRef, useState } from "react";
+import type { LucideIcon } from "lucide-react";
+import { X } from "lucide-react";
 // plane helpers
 import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
-import { IIssueLabel } from "@plane/types";
+import type { IIssueLabel } from "@plane/types";
 // ui
 import { CustomMenu, DragHandle } from "@plane/ui";
 // helpers

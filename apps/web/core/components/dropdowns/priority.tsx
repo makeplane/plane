@@ -1,6 +1,7 @@
 "use client";
 
-import { Fragment, ReactNode, useRef, useState } from "react";
+import type { ReactNode } from "react";
+import { Fragment, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search, SignalHigh } from "lucide-react";
@@ -10,7 +11,7 @@ import { useTranslation } from "@plane/i18n";
 // types
 import { PriorityIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { TIssuePriorities } from "@plane/types";
+import type { TIssuePriorities } from "@plane/types";
 // ui
 import { ComboDropDown } from "@plane/ui";
 // helpers
@@ -21,7 +22,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // constants
 import { BACKGROUND_BUTTON_VARIANTS, BORDER_BUTTON_VARIANTS, BUTTON_VARIANTS_WITHOUT_TEXT } from "./constants";
 // types
-import { TDropdownProps } from "./types";
+import type { TDropdownProps } from "./types";
 
 type Props = TDropdownProps & {
   button?: ReactNode;

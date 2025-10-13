@@ -2,11 +2,16 @@ import { orderBy, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { IEstimate as IEstimateType, IEstimatePoint as IEstimatePointType, TEstimateSystemKeys } from "@plane/types";
+import type {
+  IEstimate as IEstimateType,
+  IEstimatePoint as IEstimatePointType,
+  TEstimateSystemKeys,
+} from "@plane/types";
 // plane web services
 import estimateService from "@/plane-web/services/project/estimate.service";
 // store
-import { IEstimatePoint, EstimatePoint } from "@/store/estimates/estimate-point";
+import type { IEstimatePoint } from "@/store/estimates/estimate-point";
+import { EstimatePoint } from "@/store/estimates/estimate-point";
 import type { CoreRootStore } from "@/store/root.store";
 
 type TErrorCodes = {

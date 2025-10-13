@@ -1,18 +1,19 @@
-import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
+import type { Dispatch, SetStateAction } from "react";
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@plane/constants";
-import {
-  CollaborativeDocumentEditorWithRef,
-  type EditorRefApi,
-  type TAIMenuProps,
-  type TDisplayConfig,
-  type TFileHandler,
-  type TRealtimeConfig,
-  type TServerHandler,
+import { CollaborativeDocumentEditorWithRef } from "@plane/editor";
+import type {
+  EditorRefApi,
+  TAIMenuProps,
+  TDisplayConfig,
+  TFileHandler,
+  TRealtimeConfig,
+  TServerHandler,
 } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
+import type { TSearchEntityRequestPayload, TSearchResponse, TWebhookConnectionQueryParams } from "@plane/types";
 import { ERowVariant, Row } from "@plane/ui";
 import { cn, generateRandomColor, hslToHex } from "@plane/utils";
 // components
@@ -26,7 +27,7 @@ import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web imports
 import { EditorAIMenu } from "@/plane-web/components/pages";
 import type { TExtendedEditorExtensionsConfig } from "@/plane-web/hooks/pages";
-import { EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";

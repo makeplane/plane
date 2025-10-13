@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 // types
 import { GLOBAL_VIEW_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { IWorkspaceView } from "@plane/types";
+import type { IWorkspaceView } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
 // constants

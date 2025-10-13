@@ -1,7 +1,7 @@
 import React from "react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { ISearchIssueResponse } from "@plane/types";
+import type { ISearchIssueResponse } from "@plane/types";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";

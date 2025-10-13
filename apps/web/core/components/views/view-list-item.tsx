@@ -1,11 +1,12 @@
 "use client";
 
-import { FC, useRef } from "react";
+import type { FC } from "react";
+import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Layers } from "lucide-react";
 // types
-import { IProjectView } from "@plane/types";
+import type { IProjectView } from "@plane/types";
 // components
 import { Logo } from "@/components/common/logo";
 import { ListItem } from "@/components/core/list";

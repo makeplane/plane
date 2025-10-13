@@ -1,6 +1,7 @@
 "use client";
 
-import React, { FC, MouseEvent, useEffect, useMemo, useState } from "react";
+import type { FC, MouseEvent } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -18,7 +19,7 @@ import { useTranslation } from "@plane/i18n";
 import { LayersIcon, TransferIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { ICycle, TCycleGroups } from "@plane/types";
+import type { ICycle, TCycleGroups } from "@plane/types";
 import { Avatar, AvatarGroup, FavoriteStar } from "@plane/ui";
 import { getDate, getFileURL, generateQueryParams } from "@plane/utils";
 // components

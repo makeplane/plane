@@ -1,4 +1,5 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import type { Dispatch, SetStateAction } from "react";
+import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, Pencil, Trash2 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
@@ -6,11 +7,13 @@ import { Disclosure, Transition } from "@headlessui/react";
 // icons
 // types
 import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
-import { IIssueLabel } from "@plane/types";
+import type { IIssueLabel } from "@plane/types";
 // components
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { CreateUpdateLabelInline, TLabelOperationsCallbacks } from "./create-update-label-inline";
-import { ICustomMenuItem, LabelItemBlock } from "./label-block/label-item-block";
+import type { TLabelOperationsCallbacks } from "./create-update-label-inline";
+import { CreateUpdateLabelInline } from "./create-update-label-inline";
+import type { ICustomMenuItem } from "./label-block/label-item-block";
+import { LabelItemBlock } from "./label-block/label-item-block";
 import { LabelDndHOC } from "./label-drag-n-drop-HOC";
 import { ProjectSettingLabelItem } from "./project-setting-label-item";
 

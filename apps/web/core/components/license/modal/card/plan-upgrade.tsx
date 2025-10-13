@@ -1,16 +1,17 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { TALK_TO_SALES_URL } from "@plane/constants";
-import { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
+import type { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
 import { getDiscountPillStyle } from "@plane/ui";
 import { calculateYearlyDiscount, cn, getSubscriptionName, getSubscriptionPriceDetails } from "@plane/utils";
 // components
 import { BasePaidPlanCard, TalkToSalesCard } from "@/components/license";
 // local components
-import { PlanCheckoutButton, TCheckoutParams } from "./checkout-button";
+import type { TCheckoutParams } from "./checkout-button";
+import { PlanCheckoutButton } from "./checkout-button";
 
 export type PlanUpgradeCardProps = {
   planVariant: EProductSubscriptionEnum;

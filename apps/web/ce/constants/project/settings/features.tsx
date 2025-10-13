@@ -1,8 +1,8 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { FileText, Layers, Timer } from "lucide-react";
 // plane imports
 import { ContrastIcon, DiceIcon, Intake } from "@plane/propel/icons";
-import { IProject } from "@plane/types";
+import type { IProject } from "@plane/types";
 
 export type TProperties = {
   key: string;

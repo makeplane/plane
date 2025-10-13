@@ -7,7 +7,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { PROJECT_ERROR_MESSAGES, CYCLE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { ICycle } from "@plane/types";
+import type { ICycle } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
 // helpers

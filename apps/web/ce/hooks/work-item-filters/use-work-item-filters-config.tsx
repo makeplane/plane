@@ -18,7 +18,7 @@ import {
   PriorityIcon,
   StateGroupIcon,
 } from "@plane/propel/icons";
-import {
+import type {
   ICycle,
   IState,
   IUserLite,

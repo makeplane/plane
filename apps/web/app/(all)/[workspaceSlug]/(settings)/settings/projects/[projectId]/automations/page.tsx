@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { IProject } from "@plane/types";
+import type { IProject } from "@plane/types";
 // ui
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";

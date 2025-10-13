@@ -1,4 +1,4 @@
-import { TDeDupeIssue } from "@plane/types";
+import type { TDeDupeIssue } from "@plane/types";
 
 export const useDebouncedDuplicateIssues = (
   workspaceSlug: string | undefined,

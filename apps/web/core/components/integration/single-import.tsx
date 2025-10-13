@@ -5,7 +5,7 @@ import { Trash2 } from "lucide-react";
 // plane imports
 import { IMPORTERS_LIST } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IImporterService } from "@plane/types";
+import type { IImporterService } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // icons
 // helpers
