@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useState, useRef } from "react";
+import type { FC } from "react";
+import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { ExternalLink, FileText, HelpCircle, MoveLeft } from "lucide-react";

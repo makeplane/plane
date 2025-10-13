@@ -1,5 +1,5 @@
 "use client";
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";

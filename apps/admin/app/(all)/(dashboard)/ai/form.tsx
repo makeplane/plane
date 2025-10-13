@@ -1,12 +1,13 @@
 "use client";
-import { FC } from "react";
+import type { FC } from "react";
 import { useForm } from "react-hook-form";
 import { Lightbulb } from "lucide-react";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { IFormattedInstanceConfiguration, TInstanceAIConfigurationKeys } from "@plane/types";
+import type { IFormattedInstanceConfiguration, TInstanceAIConfigurationKeys } from "@plane/types";
 // components
-import { ControllerInput, TControllerInputFormField } from "@/components/common/controller-input";
+import type { TControllerInputFormField } from "@/components/common/controller-input";
+import { ControllerInput } from "@/components/common/controller-input";
 // hooks
 import { useInstance } from "@/hooks/store";
 

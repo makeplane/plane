@@ -1,6 +1,7 @@
 "use client";
 
-import { ReactNode, createContext } from "react";
+import type { ReactNode } from "react";
+import { createContext } from "react";
 // plane admin store
 import { RootStore } from "@/plane-admin/store/root.store";
 
