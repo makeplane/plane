@@ -1,3 +1,7 @@
+# Python imports
+import re
+
+
 # Third party imports
 from rest_framework import serializers
 
@@ -7,8 +11,10 @@ from plane.utils.url import contains_url
 
 from .base import BaseSerializer
 
-# Django imports
-import re
+# Regex pattern to block the following special characters in names:
+# & + , : ; = ? @ # | ' < > . ( ) % ! -
+
+FORBIDDEN_NAME_CHARS_PATTERN = r"^.*[&+,:;$=?@#|'<>.()%!-].*$"
 
 
 class UserSerializer(BaseSerializer):
@@ -16,14 +22,18 @@ class UserSerializer(BaseSerializer):
         if contains_url(value):
             raise serializers.ValidationError("First name cannot contain a URL.")
 
-        if re.match(r"^.*[&+,:;=?@#|'<>.()%!-].*$", value):
-            raise serializers.ValidationError("first name cannot contain special characters")
+        if re.match(FORBIDDEN_NAME_CHARS_PATTERN, value):
+            raise serializers.ValidationError("First name cannot contain special characters")
 
         return value
 
     def validate_last_name(self, value):
         if contains_url(value):
             raise serializers.ValidationError("Last name cannot contain a URL.")
+
+        if re.match(FORBIDDEN_NAME_CHARS_PATTERN, value):
+            raise serializers.ValidationError("Last name cannot contain special characters")
+
         return value
 
     class Meta:
