@@ -22,11 +22,11 @@ export class CollaborationController {
 
       // Set up error handling for the connection
       ws.on("error", (error: Error) => {
-        logger.error("WebSocket connection error:", error);
+        logger.error("COLLABORATION_CONTROLLER: WebSocket connection error:", error);
         ws.close(1011, "Internal server error");
       });
     } catch (error) {
-      logger.error("WebSocket connection error:", error);
+      logger.error("COLLABORATION_CONTROLLER: WebSocket connection error:", error);
       ws.close(1011, "Internal server error");
     }
   }

@@ -29,6 +29,7 @@
       "@babel/helpers": "7.26.10",
       "@babel/runtime": "7.26.10",
       "chokidar": "3.6.0",
+      "happy-dom": "20.0.0",
       "tar-fs": "3.0.9",
       "prosemirror-view": "1.40.0",
       "@types/express": "4.17.23",
