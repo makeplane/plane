@@ -1,16 +1,16 @@
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
+import { EIssueServiceType } from "@plane/types";
 import type {
   TIssueParams,
-  EIssueServiceType,
-  type IIssueDisplayProperties,
-  type TBulkOperationsPayload,
-  type TIssue,
-  type TIssueActivity,
-  type TIssueLink,
-  type TIssueServiceType,
-  type TIssuesResponse,
-  type TIssueSubIssues,
+  IIssueDisplayProperties,
+  TBulkOperationsPayload,
+  TIssue,
+  TIssueActivity,
+  TIssueLink,
+  TIssueServiceType,
+  TIssuesResponse,
+  TIssueSubIssues,
 } from "@plane/types";
 import { getIssuesShouldFallbackToServer } from "@plane/utils";
 // services
