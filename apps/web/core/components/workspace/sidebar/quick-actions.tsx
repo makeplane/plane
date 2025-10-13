@@ -74,7 +74,7 @@ export const SidebarQuickActions = observer(() => {
         fetchIssueDetails={false}
         isDraft
       />
-      <div className={cn("flex items-center justify-between gap-2 cursor-pointer", {})}>
+      <div className="flex items-center justify-between gap-2 cursor-pointer">
         <SidebarAddButton
           label={
             <>

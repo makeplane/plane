@@ -4,7 +4,6 @@ import { cn } from "@plane/utils";
 type Props = React.ComponentProps<"button"> & {
   label: React.ReactNode;
   onClick: () => void;
-  disabled: boolean;
 };
 
 export const SidebarAddButton: FC<Props> = (props) => {
