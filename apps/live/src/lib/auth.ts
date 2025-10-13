@@ -36,7 +36,7 @@ export const onAuthenticate = async ({
     cookie = parsedToken.cookie;
   } catch (error) {
     // If token parsing fails, fallback to request headers
-    logger.error("Token parsing failed, using request headers:", error);
+    logger.error("AUTH: Token parsing failed, using request headers:", error);
   } finally {
     // If cookie is still not found, fallback to request headers
     if (!cookie) {
@@ -76,7 +76,8 @@ export const handleAuthentication = async ({ cookie, userId }: { cookie: string;
         name: user.display_name,
       },
     };
-  } catch (_error) {
+  } catch (error) {
+    logger.error("AUTH: Token parsing failed, using request headers:", error);
     throw Error("Authentication unsuccessful!");
   }
 };
