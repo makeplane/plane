@@ -4,7 +4,7 @@ import { isNil } from "lodash-es";
 import { ContrastIcon } from "lucide-react";
 // types
 import { EIconSize, ISSUE_PRIORITIES } from "@plane/constants";
-import { CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
+import { CycleGroupIcon, ModuleIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
 import type {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -95,14 +95,14 @@ const getModuleColumns = (moduleStore: IIssueModuleStore): IGroupByColumn[] | un
       moduleGroups.push({
         id: moduleInfo.id,
         name: moduleInfo.name,
-        icon: <DiceIcon className="h-3.5 w-3.5" />,
+        icon: <ModuleIcon className="h-3.5 w-3.5" />,
         payload: { module_ids: [moduleInfo.id] },
       });
   }) as any;
   moduleGroups.push({
     id: "None",
     name: "None",
-    icon: <DiceIcon className="h-3.5 w-3.5" />,
+    icon: <ModuleIcon className="h-3.5 w-3.5" />,
     payload: { module_ids: [] },
   });
 

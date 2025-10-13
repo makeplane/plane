@@ -16,7 +16,7 @@ import {
   MODULE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
-import { LayersIcon } from "@plane/propel/icons";
+import { WorkItemsIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { IModule } from "@plane/types";
@@ -232,7 +232,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 text-custom-text-200">
-                <LayersIcon className="h-4 w-4 text-custom-text-300" />
+                <WorkItemsIcon className="h-4 w-4 text-custom-text-300" />
                 <span className="text-xs text-custom-text-300">{issueCount ?? "0 Work item"}</span>
               </div>
               {moduleLeadDetails ? (
