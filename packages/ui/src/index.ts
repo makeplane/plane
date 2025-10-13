@@ -28,7 +28,6 @@ export * from "./spinners";
 export * from "./tables";
 export * from "./tabs";
 export * from "./tag";
-export * from "./toast";
 export * from "./tooltip";
 export * from "./typography";
 export * from "./utils";
