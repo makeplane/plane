@@ -5,7 +5,8 @@ import type { IssuePaginationOptions, TLoader } from "@plane/types";
 // store
 import type { CoreRootStore } from "@/store/root.store";
 // types
-import { BaseIssuesStore, type IBaseIssuesStore } from "./helpers/base-issues.store";
+import { BaseIssuesStore } from "./helpers/base-issues.store";
+import type { IBaseIssuesStore } from "./helpers/base-issues.store";
 
 export interface IIssueStore extends IBaseIssuesStore {
   // actions
