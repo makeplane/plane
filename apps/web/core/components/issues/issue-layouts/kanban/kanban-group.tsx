@@ -10,6 +10,7 @@ import { DRAG_ALLOWED_GROUPS } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 //types
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import {
   TGroupedIssues,
   TIssue,
@@ -20,7 +21,6 @@ import {
   TIssueOrderByOptions,
   EIssueLayoutTypes,
 } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 import { KanbanIssueBlockLoader } from "@/components/ui/loader/layouts/kanban-layout-loader";

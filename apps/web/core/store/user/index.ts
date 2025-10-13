@@ -256,7 +256,7 @@ export class UserStore implements IUserStore {
 
   // helper actions
   /**
-   * @description fetches the prjects with write permissions
+   * @description fetches the projects with write permissions
    * @returns {{[projectId: string]: number} || null}
    */
   fetchProjectsWithCreatePermissions = (): { [key: string]: TUserPermissions } => {

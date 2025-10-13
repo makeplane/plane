@@ -1196,7 +1196,7 @@ class CycleAnalyticsEndpoint(BaseAPIView):
         if the issues were transferred to the new cycle, then the progress_snapshot will be present
         return the progress_snapshot data in the analytics for each date
             
-        else issues were not transferred to the new cycle then generate the stats from the cycle isssue bridge tables
+        else issues were not transferred to the new cycle then generate the stats from the cycle issue bridge tables
         """
 
         if cycle.progress_snapshot:

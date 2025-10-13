@@ -4,22 +4,20 @@
   "description": "Core Editor that powers Plane",
   "license": "AGPL-3.0",
   "private": true,
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.cts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
     "./lib": {
-      "require": "./dist/lib.js",
-      "types": "./dist/lib.d.mts",
-      "import": "./dist/lib.mjs"
+      "import": "./dist/lib.js",
+      "require": "./dist/lib.cjs"
     },
+    "./package.json": "./package.json",
     "./styles": "./dist/styles/index.css"
   },
   "scripts": {
@@ -40,7 +38,7 @@
     "@floating-ui/dom": "^1.7.1",
     "@floating-ui/react": "^0.26.4",
     "@headlessui/react": "^1.7.3",
-    "@hocuspocus/provider": "^2.15.0",
+    "@hocuspocus/provider": "3.2.5",
     "@plane/constants": "workspace:*",
     "@plane/hooks": "workspace:*",
     "@plane/types": "workspace:*",
@@ -83,10 +81,9 @@
     "@plane/eslint-config": "workspace:*",
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@types/node": "18.15.3",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@types/uuid": "^8.3.4",
     "postcss": "^8.4.38",
     "tsdown": "catalog:",
     "typescript": "catalog:"

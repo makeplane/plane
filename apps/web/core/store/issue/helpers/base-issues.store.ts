@@ -1673,7 +1673,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   };
 
   /**
-   * This Method is used to get data of the issue based on the ids of the data for states, labels adn assignees
+   * This Method is used to get data of the issue based on the ids of the data for states, labels and assignees
    * @param dataType what type of data is being sent
    * @param dataIds id/ids of the data that is to be populated
    * @param order ascending or descending for arrays of data

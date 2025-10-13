@@ -9,10 +9,11 @@ import { useParams } from "next/navigation";
 import { MoreHorizontal } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EIssueServiceType, TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
 // ui
-import { ControlLink, DropIndicator, TOAST_TYPE, setToast } from "@plane/ui";
+import { ControlLink, DropIndicator } from "@plane/ui";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // components
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";

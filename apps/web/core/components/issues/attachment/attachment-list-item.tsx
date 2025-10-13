@@ -83,9 +83,7 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
 
             <CustomMenu ellipsis closeOnSelect placement="bottom-end" disabled={disabled}>
               <CustomMenu.MenuItem
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
+                onClick={() => {
                   toggleDeleteAttachmentModal(attachmentId);
                 }}
               >

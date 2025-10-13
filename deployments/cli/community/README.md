@@ -156,7 +156,7 @@ There are many other settings you can play with, but we suggest you configure `E
 
 ### Continue with setup - Start Server (Docker Compose)
 
-Lets again run the `./setup.sh` command. You will again be prompted with the below options. This time select `2` to start the sevices
+Lets again run the `./setup.sh` command. You will again be prompted with the below options. This time select `2` to start the services
 
 ```bash
 Select a Action you want to perform:
@@ -191,7 +191,7 @@ In case you want to make changes to `plane.env` variables, we suggest you to sto
 
 #### Docker Compose 
 
-Lets again run the `./setup.sh` command. You will again be prompted with the below options. This time select `3` to stop the sevices
+Lets again run the `./setup.sh` command. You will again be prompted with the below options. This time select `3` to stop the services
 
 ```bash
 Select a Action you want to perform:
@@ -213,7 +213,7 @@ If all goes well, you must see something like this
 
 #### Docker Swarm
 
-Lets again run the `./setup.sh` command. You will again be prompted with the below options. This time select `2` to stop the sevices
+Lets again run the `./setup.sh` command. You will again be prompted with the below options. This time select `2` to stop the services
 
 ```bash
 Select an Action you want to perform:
@@ -236,7 +236,7 @@ If all goes well, you will see the confirmation from docker cli
 
 In case you want to make changes to `plane.env` variables, without stopping the server or you noticed some abnormalies in services, you can restart the services with `RESTART` / `REDEPLOY` option.
 
-Lets again run the `./setup.sh` command. You will again be prompted with the below options. This time select `4` to restart the sevices
+Lets again run the `./setup.sh` command. You will again be prompted with the below options. This time select `4` to restart the services
 
 #### Docker Compose
 ```bash

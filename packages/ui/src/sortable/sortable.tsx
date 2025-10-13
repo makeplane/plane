@@ -1,4 +1,4 @@
-import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/dist/cjs/entry-point/element/adapter.js";
 import React, { Fragment, useEffect, useMemo } from "react";
 import { Draggable } from "./draggable";
 

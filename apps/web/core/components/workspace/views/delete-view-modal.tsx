@@ -5,9 +5,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
 import { GLOBAL_VIEW_TRACKER_EVENTS } from "@plane/constants";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IWorkspaceView } from "@plane/types";
 // ui
-import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { AlertModalCore } from "@plane/ui";
 // constants
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";

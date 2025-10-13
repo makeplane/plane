@@ -22,12 +22,11 @@ import { ROLE, ROLE_DETAILS, EUserPermissions, MEMBER_TRACKER_EVENTS, MEMBER_TRA
 import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IUser, IWorkspace } from "@plane/types";
 // ui
-import { Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
-// constants
+import { Input, Spinner } from "@plane/ui";
 // helpers
-// hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // services
 import { WorkspaceService } from "@/plane-web/services";

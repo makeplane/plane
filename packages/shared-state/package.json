@@ -27,9 +27,8 @@
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@types/node": "^22.5.4",
+    "@types/node": "catalog:",
     "@types/lodash-es": "catalog:",
-    "@types/uuid": "catalog:",
     "typescript": "catalog:"
   }
 }
