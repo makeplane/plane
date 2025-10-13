@@ -1,5 +1,5 @@
 // plane editor
-import { TMentionComponentProps } from "@plane/editor";
+import type { TMentionComponentProps } from "@plane/editor";
 // plane web components
 import { EditorAdditionalMentionsRoot } from "@/plane-web/components/editor";
 // local components

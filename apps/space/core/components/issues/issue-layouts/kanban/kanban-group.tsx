@@ -1,6 +1,7 @@
 "use client";
 
-import { MutableRefObject, forwardRef, useCallback, useRef, useState } from "react";
+import type { MutableRefObject } from "react";
+import { forwardRef, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 //types
 import type {

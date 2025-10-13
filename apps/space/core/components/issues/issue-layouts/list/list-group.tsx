@@ -1,10 +1,17 @@
 "use client";
 
-import { Fragment, MutableRefObject, forwardRef, useRef, useState } from "react";
+import type { MutableRefObject } from "react";
+import { Fragment, forwardRef, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // plane types
-import { IGroupByColumn, TIssueGroupByOptions, IIssueDisplayProperties, TPaginationData, TLoader } from "@plane/types";
+import type {
+  IGroupByColumn,
+  TIssueGroupByOptions,
+  IIssueDisplayProperties,
+  TPaginationData,
+  TLoader,
+} from "@plane/types";
 // plane utils
 import { cn } from "@plane/utils";
 // hooks

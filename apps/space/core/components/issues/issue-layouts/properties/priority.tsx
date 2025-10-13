@@ -5,7 +5,7 @@ import { useTranslation } from "@plane/i18n";
 // types
 import { PriorityIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { TIssuePriorities } from "@plane/types";
+import type { TIssuePriorities } from "@plane/types";
 // constants
 import { cn, getIssuePriorityFilters } from "@plane/utils";
 

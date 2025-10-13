@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { RichTextEditor } from "@/components/editor/rich-text-editor";
 import { usePublish } from "@/hooks/store/publish";
 // types
-import { IIssue } from "@/types/issue";
+import type { IIssue } from "@/types/issue";
 // local imports
 import { IssueReactions } from "./issue-reaction";
 

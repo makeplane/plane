@@ -12,7 +12,7 @@ import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/with
 // helpers
 import { getDate } from "@/helpers/date-time.helper";
 //// hooks
-import { IIssue } from "@/types/issue";
+import type { IIssue } from "@/types/issue";
 import { IssueBlockCycle } from "./cycle";
 import { IssueBlockDate } from "./due-date";
 import { IssueBlockLabels } from "./labels";

@@ -18,7 +18,7 @@ import { copyTextToClipboard, addSpaceIfCamelCase } from "@/helpers/string.helpe
 import { usePublish } from "@/hooks/store/publish";
 import { useStates } from "@/hooks/store/use-state";
 // types
-import { IIssue, IPeekMode } from "@/types/issue";
+import type { IIssue, IPeekMode } from "@/types/issue";
 
 type Props = {
   issueDetails: IIssue;
