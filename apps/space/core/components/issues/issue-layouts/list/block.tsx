@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 // plane types
 import { Tooltip } from "@plane/propel/tooltip";
-import { IIssueDisplayProperties } from "@plane/types";
+import type { IIssueDisplayProperties } from "@plane/types";
 // plane ui
 // plane utils
 import { cn } from "@plane/utils";

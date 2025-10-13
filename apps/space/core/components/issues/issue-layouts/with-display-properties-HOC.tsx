@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { IIssueDisplayProperties } from "@plane/types";

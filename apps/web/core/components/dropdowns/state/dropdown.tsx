@@ -28,7 +28,7 @@ export const StateDropdown: React.FC<TWorkItemStateDropdownProps> = observer((pr
 
   // fetch states if not provided
   const onDropdownOpen = async () => {
-    if (stateIds === undefined && workspaceSlug && projectId) {
+    if ((stateIds === undefined || stateIds.length === 0) && workspaceSlug && projectId) {
       setStateLoader(true);
       await fetchProjectStates(workspaceSlug.toString(), projectId);
       setStateLoader(false);

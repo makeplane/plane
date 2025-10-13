@@ -15,7 +15,7 @@ import {
 } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { LayersIcon, TransferIcon } from "@plane/propel/icons";
+import { TransferIcon, WorkItemsIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { ICycle, TCycleGroups } from "@plane/types";
@@ -217,7 +217,7 @@ export const CycleListItemAction: FC<Props> = observer((props) => {
       </button>
       {showIssueCount && (
         <div className="flex items-center gap-1">
-          <LayersIcon className="h-4 w-4 text-custom-text-300" />
+          <WorkItemsIcon className="h-4 w-4 text-custom-text-300" />
           <span className="text-xs text-custom-text-300">{cycleDetails.total_issues}</span>
         </div>
       )}

@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import { KeyRound, Mails } from "lucide-react";
 // types
-import {
+import type {
   TGetBaseAuthenticationModeProps,
   TInstanceAuthenticationMethodKeys,
   TInstanceAuthenticationModes,
