@@ -14,7 +14,7 @@ from .base import BaseSerializer
 # Regex pattern to block the following special characters in names:
 # & + , : ; = ? @ # | ' < > . ( ) % ! -
 
-FORBIDDEN_NAME_CHARS_PATTERN = r"^.*[&+,:;$=?@#|'<>.()%!-].*$"
+FORBIDDEN_NAME_CHARS_PATTERN = r"^.*[&+,:;$^}{*=?@#|'<>.()%!-].*$"
 
 
 class UserSerializer(BaseSerializer):
