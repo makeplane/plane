@@ -1,7 +1,6 @@
 "use client";
 
 import { Command } from "cmdk";
-import { ContrastIcon } from "lucide-react";
 // hooks
 import {
   CYCLE_TRACKER_ELEMENTS,
@@ -9,7 +8,7 @@ import {
   PROJECT_PAGE_TRACKER_ELEMENTS,
   PROJECT_VIEW_TRACKER_ELEMENTS,
 } from "@plane/constants";
-import { ModuleIcon, PageIcon, ViewsIcon } from "@plane/propel/icons";
+import { CycleIcon, ModuleIcon, PageIcon, ViewsIcon } from "@plane/propel/icons";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // ui
@@ -36,7 +35,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
           className="focus:outline-none"
         >
           <div className="flex items-center gap-2 text-custom-text-200">
-            <ContrastIcon className="h-3.5 w-3.5" />
+            <CycleIcon className="h-3.5 w-3.5" />
             Create new cycle
           </div>
           <kbd>Q</kbd>
