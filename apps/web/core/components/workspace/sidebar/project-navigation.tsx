@@ -117,7 +117,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
       {
         i18n_key: "sidebar.intake",
         key: "intake",
-        name: "IntakeIcon",
+        name: "Intake",
         href: `/${workspaceSlug}/projects/${projectId}/intake`,
         icon: IntakeIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
@@ -177,9 +177,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
           <Link key={item.key} href={item.href} onClick={handleProjectClick}>
             <SidebarNavItem isActive={!!isActive(item)}>
               <div className="flex items-center gap-1.5 py-[1px]">
-                <item.icon
-                  className={`flex-shrink-0 size-4 ${item.name === "IntakeIcon" ? "stroke-1" : "stroke-[1.5]"}`}
-                />
+                <item.icon className={`flex-shrink-0 size-4 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`} />
                 <span className="text-xs font-medium">{t(item.i18n_key)}</span>
               </div>
             </SidebarNavItem>

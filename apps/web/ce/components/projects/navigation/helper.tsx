@@ -68,7 +68,7 @@ export const getProjectFeatureNavigation = (
   {
     i18n_key: "sidebar.intake",
     key: EProjectFeatureKey.INTAKE,
-    name: "IntakeIcon",
+    name: "Intake",
     href: `/${workspaceSlug}/projects/${projectId}/intake`,
     icon: IntakeIcon,
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
