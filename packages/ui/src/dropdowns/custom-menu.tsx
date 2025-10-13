@@ -222,7 +222,11 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
       tabIndex={tabIndex}
       className={cn("relative w-min text-left", className)}
       onKeyDownCapture={handleKeyDown}
-      onClick={handleOnClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        handleOnClick();
+      }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       data-main-menu="true"
