@@ -22,13 +22,11 @@ module.exports = {
   },
   ignorePatterns: [".*.js", "node_modules/"],
   rules: {
-    "import/no-duplicates": ["error", { "prefer-inline": false }],
-    "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
-    "@typescript-eslint/no-import-type-side-effects": "error",
     "no-useless-escape": "off",
     "prefer-const": "error",
     "no-irregular-whitespace": "error",
     "no-trailing-spaces": "error",
+    "no-duplicate-imports": "error",
     "no-useless-catch": "warn",
     "no-case-declarations": "error",
     "no-undef": "error",
@@ -59,14 +57,6 @@ module.exports = {
         selector: "variable",
         format: ["camelCase", "snake_case", "UPPER_CASE", "PascalCase"],
         leadingUnderscore: "allow",
-      },
-    ],
-    "@typescript-eslint/consistent-type-imports": [
-      "error",
-      {
-        prefer: "type-imports",
-        fixStyle: "separate-type-imports",
-        disallowTypeAnnotations: false,
       },
     ],
     "import/order": [
