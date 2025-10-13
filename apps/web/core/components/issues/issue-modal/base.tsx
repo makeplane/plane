@@ -60,6 +60,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const [description, setDescription] = useState<string | undefined>(undefined);
   const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
   const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   // store hooks
   const { t } = useTranslation();
   const { workspaceSlug, projectId: routerProjectId, cycleId, moduleId, workItem } = useParams();
@@ -147,8 +148,13 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
 
     setActiveProjectId(null);
     setChangesMade(null);
+    setIsFullscreen(false); // 关闭弹框时重置全屏状态
     onClose();
     handleDuplicateIssueModal(false);
+  };
+
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
   };
 
   const handleCreateIssue = async (
@@ -373,8 +379,10 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     <ModalCore
       isOpen={isOpen}
       position={EModalPosition.TOP}
-      width={isDuplicateModalOpen ? EModalWidth.VIXL : EModalWidth.XXXXL}
-      className="!bg-transparent rounded-lg shadow-none transition-[width] ease-linear"
+      width={isFullscreen ? EModalWidth.VIIXL : isDuplicateModalOpen ? EModalWidth.VIXL : EModalWidth.XXXXL}
+      className={`!bg-transparent rounded-lg shadow-none transition-[width] ease-linear ${
+        isFullscreen ? "!fixed !inset-0 !w-screen !h-screen !max-w-none !max-h-none !m-0 !rounded-none" : ""
+      }`}
     >
       {withDraftIssueWrapper ? (
         <DraftIssueLayout {...commonIssueModalProps} changesMade={changesMade} onChange={handleFormChange} />

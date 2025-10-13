@@ -27,6 +27,7 @@ import {
   IssueAttachmentActivity,
   IssueArchivedAtActivity,
   IssueInboxActivity,
+  IssueDynamicPropertyActivity,
 } from "./actions";
 
 type TIssueActivityItem = {
@@ -46,7 +47,40 @@ export const IssueActivityItem: FC<TIssueActivityItem> = observer((props) => {
 
   const componentDefaultProps = { activityId, ends };
 
-  const activityField = getActivityById(activityId)?.field;
+  const activity = getActivityById(activityId);
+  const activityField = activity?.field;
+
+  // 检查是否为动态字段活动
+  if (
+    activity?.verb === "updated" &&
+    activity?.field &&
+    ![
+      "state",
+      "name",
+      "description",
+      "assignees",
+      "priority",
+      "estimate_points",
+      "estimate_categories",
+      "estimate_point",
+      "parent",
+      "start_date",
+      "target_date",
+      "cycles",
+      "modules",
+      "labels",
+      "link",
+      "attachment",
+      "archived_at",
+      "intake",
+      "inbox",
+      "type",
+    ].includes(activity.field) &&
+    !activityRelations.includes(activity.field)
+  ) {
+    return <IssueDynamicPropertyActivity {...componentDefaultProps} showIssue={false} />;
+  }
+
   switch (activityField) {
     case null: // default issue creation
       return <IssueDefaultActivity {...componentDefaultProps} />;

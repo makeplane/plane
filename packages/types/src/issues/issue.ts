@@ -70,6 +70,7 @@ export type TBaseIssue = {
   is_draft: boolean;
   is_epic?: boolean;
   is_intake?: boolean;
+  dynamic_properties?: any;
 };
 
 export type IssueRelation = {
@@ -78,6 +79,7 @@ export type IssueRelation = {
   project_id: string;
   relation_type: TIssueRelationTypes;
   sequence_id: number;
+  dynamic_properties: any;
 };
 
 export type TIssue = TBaseIssue & {

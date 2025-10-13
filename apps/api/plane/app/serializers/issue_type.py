@@ -11,7 +11,7 @@ class IssueTypeSerializer(BaseSerializer):
         model = IssueType
         fields = [
             "id",
-            "name", 
+            "name",
             "description",
             "logo_props",
             "is_epic",
@@ -30,7 +30,7 @@ class IssueTypeSerializer(BaseSerializer):
 class ProjectIssueTypeSerializer(BaseSerializer):
     issue_type = IssueTypeSerializer(read_only=True)
     issue_type_id = serializers.PrimaryKeyRelatedField(
-        source="issue_type", 
+        source="issue_type",
         queryset=IssueType.objects.all(),
         write_only=True
     )
@@ -40,7 +40,7 @@ class ProjectIssueTypeSerializer(BaseSerializer):
         fields = [
             "id",
             "issue_type",
-            "issue_type_id", 
+            "issue_type_id",
             "level",
             "is_default",
             "project",
@@ -74,6 +74,30 @@ class IssueTypePropertySerializer(BaseSerializer):
         read_only_fields = ["project", "created_at", "updated_at"]
 
 
+class IssueTypeWithPropertySerializer(BaseSerializer):
+    properties = IssueTypePropertySerializer(many=True, read_only=True)
+
+    class Meta:
+        model = IssueType
+        fields = [
+            "id",
+            "name",
+            "description",
+            "logo_props",
+            "is_epic",
+            "is_default",
+            "is_active",
+            "level",
+            "external_source",
+            "external_id",
+            "workspace",
+            "created_at",
+            "updated_at",
+            "properties"
+        ]
+        read_only_fields = ["workspace", "created_at", "updated_at"]
+
+
 class IssuePropertyValueSerializer(BaseSerializer):
     property = IssueTypePropertySerializer(read_only=True)
     property_id = serializers.PrimaryKeyRelatedField(
@@ -103,3 +127,6 @@ class IssuePropertyValueBulkSerializer(serializers.Serializer):
         child=serializers.ListField(child=serializers.CharField()),
         help_text="格式: {property_id: [value1, value2, ...]}"
     )
+
+
+

@@ -30,6 +30,8 @@ import type { TIssueOperations } from "../issue-detail";
 import { IssueCycleSelect } from "../issue-detail/cycle-select";
 import { IssueLabel } from "../issue-detail/label";
 import { IssueModuleSelect } from "../issue-detail/module-select";
+// local components
+import { PeekOverviewDynamicProperties } from "./dynamic-properties";
 // lucide icons
 import * as LucideIcons from "lucide-react";
 
@@ -332,6 +334,15 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <IssueLabel workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} />
           </div>
         </div>
+
+        {/* 动态字段 - 放置在标签下方 */}
+        <PeekOverviewDynamicProperties
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issue={issue}
+          disabled={disabled}
+          issueOperations={issueOperations}
+        />
 
         <IssueWorklogProperty
           workspaceSlug={workspaceSlug}

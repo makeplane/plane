@@ -26,6 +26,9 @@ import type { TIssueOperations } from "../issue-detail";
 import { IssueParentDetail } from "../issue-detail/parent";
 import { IssueReaction } from "../issue-detail/reactions";
 import { IssueTitleInput } from "../title-input";
+import { projectIssueTypesCache } from "@/services/project";
+import * as LucideIcons from "lucide-react";
+import { useParams } from "next/navigation";
 // services init
 const workItemVersionService = new WorkItemVersionService();
 
@@ -89,6 +92,10 @@ export const PeekOverviewIssueDetails: FC<Props> = observer((props) => {
         : "<p></p>"
       : undefined;
 
+  const { projectId: routerProjectId } = useParams();
+  const projectId = routerProjectId?.toString();
+  const projectIssueTypesMap = projectIssueTypesCache.get(projectId ?? "");
+
   return (
     <div className="space-y-2">
       {issue.parent_id && (
@@ -100,7 +107,28 @@ export const PeekOverviewIssueDetails: FC<Props> = observer((props) => {
           issueOperations={issueOperations}
         />
       )}
-      <div className="flex items-center justify-between gap-2">
+      <div className="relative flex h-full w-full cursor-pointer items-center gap-2">
+        {projectIssueTypesMap &&
+          issue?.type_id &&
+          projectIssueTypesMap[issue.type_id]?.logo_props?.icon &&
+          (() => {
+            const { name, color, background_color } = projectIssueTypesMap[issue.type_id].logo_props!.icon!;
+            const IconComp = (LucideIcons as any)[name] as React.FC<any> | undefined;
+            return (
+              <span
+                className="inline-flex items-center justify-center rounded-sm"
+                style={{
+                  backgroundColor: background_color || "transparent",
+                  color: color || "currentColor",
+                  width: "16px",
+                  height: "16px",
+                }}
+                aria-label={`Issue type: ${projectIssueTypesMap[issue.type_id].name}`}
+              >
+                {IconComp ? <IconComp className="h-3.5 w-3.5" strokeWidth={2} /> : <span className="h-3.5 w-3.5" />}
+              </span>
+            );
+          })()}
         <IssueTypeSwitcher issueId={issueId} disabled={isArchived || disabled} />
         {duplicateIssues?.length > 0 && (
           <DeDupeIssuePopoverRoot

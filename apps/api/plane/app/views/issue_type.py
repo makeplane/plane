@@ -11,10 +11,10 @@ from plane.app.views import BaseAPIView
 from plane.app.permissions import ProjectMemberPermission, ProjectEntityPermission
 from plane.app.serializers.issue_type import (
     IssueTypeSerializer,
-    ProjectIssueTypeSerializer, 
+    ProjectIssueTypeSerializer,
     IssueTypePropertySerializer,
     IssuePropertyValueSerializer,
-    IssuePropertyValueBulkSerializer,
+    IssuePropertyValueBulkSerializer, IssueTypeWithPropertySerializer,
 )
 from plane.db.models import (
     IssueType, 
@@ -43,7 +43,7 @@ class ProjectIssueTypeListCreateAPIEndpoint(BaseAPIView):
     def get(self, request, slug, project_id):
         """获取项目的Issue Type列表"""
         issue_types = self.get_queryset()
-        serializer = IssueTypeSerializer(issue_types, many=True)
+        serializer = IssueTypeWithPropertySerializer(issue_types, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, slug, project_id):
@@ -177,3 +177,5 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
                 return Response(result_serializer.data, status=status.HTTP_201_CREATED)
                 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+

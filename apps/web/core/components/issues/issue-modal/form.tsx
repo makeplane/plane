@@ -28,6 +28,7 @@ import {
   IssueParentTag,
   IssueProjectSelect,
   IssueTitleInput,
+  IssueDynamicProperties,
 } from "@/components/issues/issue-modal/components";
 // helpers
 // hooks
@@ -46,15 +47,20 @@ import { WorkItemModalAdditionalProperties } from "@/plane-web/components/issues
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 import { ChevronRight } from "lucide-react";
 
+// 扩展TIssue类型以支持动态属性
+type TIssueWithDynamicProperties = TIssue & {
+  dynamic_properties?: Record<string, any>;
+};
+
 export interface IssueFormProps {
-  data?: Partial<TIssue>;
+  data?: Partial<TIssueWithDynamicProperties>;
   issueTitleRef: React.MutableRefObject<HTMLInputElement | null>;
   isCreateMoreToggleEnabled: boolean;
   onAssetUpload: (assetId: string) => void;
   onCreateMoreToggleChange: (value: boolean) => void;
-  onChange?: (formData: Partial<TIssue> | null) => void;
+  onChange?: (formData: Partial<TIssueWithDynamicProperties> | null) => void;
   onClose: () => void;
-  onSubmit: (values: Partial<TIssue>, is_draft_issue?: boolean) => Promise<void>;
+  onSubmit: (values: Partial<TIssueWithDynamicProperties>, is_draft_issue?: boolean) => Promise<void>;
   projectId: string;
   isDraft: boolean;
   moveToIssue?: boolean;
@@ -133,8 +139,13 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const { getStateById } = useProjectState();
 
   // form info
-  const methods = useForm<TIssue>({
-    defaultValues: { ...DEFAULT_WORK_ITEM_FORM_VALUES, project_id: defaultProjectId, ...data },
+  const methods = useForm<TIssueWithDynamicProperties>({
+    defaultValues: {
+      ...DEFAULT_WORK_ITEM_FORM_VALUES,
+      project_id: defaultProjectId,
+      ...data,
+      dynamic_properties: data?.dynamic_properties || {},
+    },
     reValidateMode: "onChange",
   });
   const {
@@ -167,10 +178,18 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       if (workItemTemplateId) {
         // reset work item template id
         setWorkItemTemplateId(null);
-        reset({ ...DEFAULT_WORK_ITEM_FORM_VALUES, project_id: projectId });
+        reset({
+          ...DEFAULT_WORK_ITEM_FORM_VALUES,
+          project_id: projectId,
+          dynamic_properties: {},
+        });
         editorRef.current?.clearEditor();
       } else {
-        reset(getUpdateFormDataForReset(projectId, getValues()));
+        const resetData = getUpdateFormDataForReset(projectId, getValues());
+        reset({
+          ...resetData,
+          dynamic_properties: {},
+        });
       }
     }
     if (projectId && routeProjectId !== projectId) fetchCycles(workspaceSlug?.toString(), projectId);
@@ -192,6 +211,16 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, projectId]);
 
+  // 当工作项类型改变时，重置动态属性
+  useEffect(() => {
+    const typeId = watch("type_id");
+    if (typeId && !data?.id) {
+      // 仅在创建新工作项时重置动态属性
+      setValue("dynamic_properties", {}, { shouldValidate: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watch("type_id")]);
+
   useEffect(() => {
     if (workItemTemplateId && editorRef.current) {
       handleTemplateChange({
@@ -203,7 +232,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workItemTemplateId]);
 
-  const handleFormSubmit = async (formData: Partial<TIssue>, is_draft_issue = false) => {
+  const handleFormSubmit = async (formData: Partial<TIssueWithDynamicProperties>, is_draft_issue = false) => {
     // Check if the editor is ready to discard
     if (!editorRef.current?.isEditorReadyToDiscard()) {
       setToast({
@@ -232,6 +261,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
           id: data.id,
           description_html: formData.description_html ?? "<p></p>",
           type_id: getValues<"type_id">("type_id"),
+          dynamic_properties: formData.dynamic_properties,
         };
 
     // this condition helps to move the issues from draft to project issues
@@ -253,6 +283,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             project_id: getValues<"project_id">("project_id"),
             type_id: getValues<"type_id">("type_id"),
             description_html: data?.description_html ?? "<p></p>",
+            dynamic_properties: {},
           });
           editorRef?.current?.clearEditor();
         }
@@ -361,48 +392,43 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
   return (
     <FormProvider {...methods}>
-      <div className="flex gap-2 bg-transparent">
-        <div className="rounded-lg w-full">
-          <form
-            ref={formRef}
-            onSubmit={handleSubmit((data) => handleFormSubmit(data))}
-            className="flex flex-col w-full"
-          >
-            <div className="p-5 rounded-t-lg bg-custom-background-100">
-              <h3 className="text-xl font-medium text-custom-text-200 pb-2">{modalTitle}</h3>
-              <div className="flex items-center justify-between pt-2 pb-4">
-                <div className="flex items-center gap-x-1">
-                  <IssueProjectSelect
-                    control={control}
-                    disabled={!!data?.id || !!data?.sourceIssueId || isProjectSelectionDisabled}
-                    handleFormChange={handleFormChange}
-                  />
-                  {projectId && storeType !== EIssuesStoreType.EPIC && (
-                    <>
-                      <ChevronRight className="h-3 w-3 text-custom-text-400 flex-shrink-0" />
-                      <IssueTypeSelect
-                        control={control}
-                        projectId={projectId}
-                        editorRef={editorRef}
-                        disabled={!!data?.id || !!data?.sourceIssueId}
-                        handleFormChange={handleFormChange}
-                        renderChevron
-                      />
-                    </>
+      <div className="group relative flex flex-col gap-2.5">
+        <div className="relative">
+          <form ref={formRef} onSubmit={handleSubmit((data) => handleFormSubmit(data, false))}>
+            <div className="space-y-5 p-5 bg-custom-background-100">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-medium text-custom-text-200">{modalTitle}</h3>
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-center gap-x-2">
+                  {!isProjectSelectionDisabled && (
+                    <IssueProjectSelect control={control} handleFormChange={handleFormChange} />
                   )}
-                  {projectId && !data?.id && !data?.sourceIssueId && (
+                  <ChevronRight className="h-3 w-3 text-custom-text-400 flex-shrink-0" />
+
+                  <IssueTypeSelect
+                    control={control}
+                    projectId={projectId}
+                    handleFormChange={handleFormChange}
+                    renderChevron
+                  />
+                  {workItemTemplateId && (
                     <WorkItemTemplateSelect
                       projectId={projectId}
                       typeId={watch("type_id")}
                       handleModalClose={() => {
-                        if (handleDraftAndClose) {
-                          handleDraftAndClose();
+                        if (isCreateMoreToggleEnabled) {
+                          reset({
+                            ...DEFAULT_WORK_ITEM_FORM_VALUES,
+                            project_id: getValues<"project_id">("project_id"),
+                            type_id: getValues<"type_id">("type_id"),
+                            dynamic_properties: {},
+                          });
+                          editorRef?.current?.clearEditor();
                         } else {
                           onClose();
                         }
                       }}
-                      handleFormChange={handleFormChange}
-                      renderChevron
                     />
                   )}
                 </div>
@@ -493,6 +519,13 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   isDraft={isDraft}
                   handleFormChange={handleFormChange}
                   setSelectedParentIssue={setSelectedParentIssue}
+                />
+                {/* 动态字段组件 */}
+                <IssueDynamicProperties
+                  control={control}
+                  projectId={projectId}
+                  workspaceSlug={workspaceSlug?.toString()}
+                  handleFormChange={handleFormChange}
                 />
               </div>
               <div className="flex items-center justify-end gap-4 py-3" tabIndex={getIndex("create_more")}>
