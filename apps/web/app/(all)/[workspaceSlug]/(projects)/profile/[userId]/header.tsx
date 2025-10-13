@@ -8,7 +8,7 @@ import { useParams } from "next/navigation";
 import { ChevronDown, PanelRight } from "lucide-react";
 import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { UserActivityIcon } from "@plane/propel/icons";
+import { YourWorkIcon } from "@plane/propel/icons";
 import { IUserProfileProjectSegregation } from "@plane/types";
 import { Breadcrumbs, Header, CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -59,7 +59,7 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
               <BreadcrumbLink
                 label={breadcrumbLabel}
                 disableTooltip
-                icon={<UserActivityIcon className="h-4 w-4 text-custom-text-300" />}
+                icon={<YourWorkIcon className="h-4 w-4 text-custom-text-300" />}
               />
             }
           />

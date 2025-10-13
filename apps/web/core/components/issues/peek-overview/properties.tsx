@@ -6,7 +6,7 @@ import { Signal, Tag, Triangle, LayoutPanelTop, CalendarClock, CalendarCheck2, U
 // i18n
 import { useTranslation } from "@plane/i18n";
 // ui icons
-import { DiceIcon, DoubleCircleIcon, ContrastIcon } from "@plane/propel/icons";
+import { CycleIcon, DoubleCircleIcon, ModuleIcon } from "@plane/propel/icons";
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -229,7 +229,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         {projectDetails?.module_view && (
           <div className="flex w-full items-center gap-3 min-h-8 h-full">
             <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-              <DiceIcon className="h-4 w-4 flex-shrink-0" />
+              <ModuleIcon className="h-4 w-4 flex-shrink-0" />
               <span>{t("common.modules")}</span>
             </div>
             <IssueModuleSelect
@@ -246,7 +246,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         {projectDetails?.cycle_view && (
           <div className="flex w-full items-center gap-3 h-8">
             <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-              <ContrastIcon className="h-4 w-4 flex-shrink-0" />
+              <CycleIcon className="h-4 w-4 flex-shrink-0" />
               <span>{t("common.cycle")}</span>
             </div>
             <IssueCycleSelect

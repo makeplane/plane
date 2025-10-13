@@ -17,7 +17,7 @@ import {
 import { usePlatformOS } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { ContrastIcon } from "@plane/propel/icons";
+import { CycleIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import {
   EIssuesStoreType,
@@ -123,7 +123,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
       return {
         value: _cycle.id,
         query: _cycle.name,
-        content: <SwitcherLabel name={_cycle.name} LabelIcon={ContrastIcon} />,
+        content: <SwitcherLabel name={_cycle.name} LabelIcon={CycleIcon} />,
       };
     })
     .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
@@ -158,7 +158,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                     title={cycleDetails?.name}
                     icon={
                       <Breadcrumbs.Icon>
-                        <ContrastIcon className="size-4 flex-shrink-0 text-custom-text-300" />
+                        <CycleIcon className="size-4 flex-shrink-0 text-custom-text-300" />
                       </Breadcrumbs.Icon>
                     }
                     isLast

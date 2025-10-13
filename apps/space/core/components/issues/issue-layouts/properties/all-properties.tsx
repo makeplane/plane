@@ -1,7 +1,8 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { Layers, Link, Paperclip } from "lucide-react";
+import { Link, Paperclip } from "lucide-react";
+import { ViewsIcon } from "@plane/propel/icons";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IIssueDisplayProperties } from "@plane/types";
@@ -142,7 +143,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
               }
             )}
           >
-            <Layers className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <ViewsIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
             <div className="text-xs">{issue.sub_issues_count}</div>
           </div>
         </Tooltip>
