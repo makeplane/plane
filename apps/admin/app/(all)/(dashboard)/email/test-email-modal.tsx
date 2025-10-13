@@ -1,4 +1,5 @@
-import React, { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import React, { useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
 import { Button } from "@plane/propel/button";
