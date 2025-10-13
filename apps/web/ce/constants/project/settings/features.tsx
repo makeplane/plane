@@ -62,7 +62,7 @@ export const PROJECT_BASE_FEATURES_LIST: TBaseFeatureList = {
   inbox: {
     key: "intake",
     property: "inbox_view",
-    title: "IntakeIcon",
+    title: "Intake",
     description: "Consider and discuss work items before you add them to your project.",
     icon: <IntakeIcon className="h-5 w-5 flex-shrink-0 text-custom-text-300" />,
     isPro: false,
