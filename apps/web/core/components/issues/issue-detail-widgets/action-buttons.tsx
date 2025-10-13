@@ -1,9 +1,10 @@
 "use client";
 
 import React, { FC } from "react";
-import { Layers, Link, Paperclip, Waypoints } from "lucide-react";
-// plane imports
+import { Link, Paperclip, Waypoints } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { ViewsIcon } from "@plane/propel/icons";
+// plane imports
 import { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // plane web imports
 import { WorkItemAdditionalWidgetActionButtons } from "@/plane-web/components/issues/issue-detail-widgets/action-buttons";
@@ -36,7 +37,7 @@ export const IssueDetailWidgetActionButtons: FC<Props> = (props) => {
           customButton={
             <IssueDetailWidgetButton
               title={t("issue.add.sub_issue")}
-              icon={<Layers className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
+              icon={<ViewsIcon className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
               disabled={disabled}
             />
           }
