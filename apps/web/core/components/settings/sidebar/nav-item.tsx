@@ -42,7 +42,7 @@ const SettingsSidebarNavItem = observer((props: TSettingsSidebarNavItemProps) =>
     "hover:bg-custom-primary-100/10",
     {
       "text-custom-text-200 bg-custom-background-80/75": typeof isActive === "function" ? isActive(setting) : isActive,
-      "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 active:bg-custom-sidebar-background-90":
+      "text-custom-sidebar-text-300 hover:bg-custom-sidebar-background-90 active:bg-custom-sidebar-background-90":
         typeof isActive === "function" ? !isActive(setting) : !isActive,
     }
   );
