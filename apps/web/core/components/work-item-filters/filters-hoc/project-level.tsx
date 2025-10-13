@@ -167,6 +167,7 @@ export const ProjectLevelWorkItemFiltersHOC = observer((props: TProjectLevelWork
       <WorkItemFiltersHOC
         {...props}
         {...getAdditionalProjectLevelFiltersHOCProps({
+          entityType: props.entityType,
           workspaceSlug,
           projectId,
         })}
