@@ -5,11 +5,12 @@ import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { CalendarCheck2, CalendarClock, Layers, Link, Paperclip } from "lucide-react";
+import { CalendarCheck2, CalendarClock, Link, Paperclip } from "lucide-react";
 // types
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
+import { ViewsIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // ui
@@ -465,7 +466,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
                 }
               )}
             >
-              <Layers className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+              <ViewsIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
               <div className="text-xs">{subIssueCount}</div>
             </div>
           </Tooltip>

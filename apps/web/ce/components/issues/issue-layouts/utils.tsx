@@ -13,7 +13,7 @@ import {
   Users,
 } from "lucide-react";
 // types
-import { DiceIcon, DoubleCircleIcon, ISvgIcons } from "@plane/propel/icons";
+import { DoubleCircleIcon, ISvgIcons, ModuleIcon } from "@plane/propel/icons";
 import { IGroupByColumn, IIssueDisplayProperties, TGetColumns, TSpreadsheetColumn } from "@plane/types";
 // components
 import {
@@ -71,7 +71,7 @@ export const SpreadSheetPropertyIconMap: Record<string, FC<ISvgIcons>> = {
   CalenderCheck2: CalendarCheck2,
   Triangle: Triangle,
   Tag: Tag,
-  DiceIcon: DiceIcon,
+  ModuleIcon: ModuleIcon,
   ContrastIcon: ContrastIcon,
   Signal: Signal,
   CalendarClock: CalendarClock,

@@ -1,10 +1,11 @@
 import { ReactNode, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Briefcase, Check, ChevronDown, Search } from "lucide-react";
+import { Check, ChevronDown, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { ProjectIcon } from "@plane/propel/icons";
 import { ComboDropDown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
@@ -154,7 +155,7 @@ export const ProjectDropdownBase: React.FC<Props> = observer((props) => {
               return projectDetails?.logo_props ? renderIcon(projectDetails.logo_props) : null;
             })
           ) : (
-            <Briefcase className="size-3 text-custom-text-300" />
+            <ProjectIcon className="size-3 text-custom-text-300" />
           )}
         </div>
       );

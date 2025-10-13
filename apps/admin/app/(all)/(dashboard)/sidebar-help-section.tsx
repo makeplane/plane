@@ -3,11 +3,11 @@
 import { FC, useState, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { ExternalLink, FileText, HelpCircle, MoveLeft } from "lucide-react";
+import { ExternalLink, HelpCircle, MoveLeft } from "lucide-react";
 import { Transition } from "@headlessui/react";
 // plane internal packages
 import { WEB_BASE_URL } from "@plane/constants";
-import { DiscordIcon, GithubIcon } from "@plane/propel/icons";
+import { DiscordIcon, GithubIcon, PageIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // hooks
@@ -20,7 +20,7 @@ const helpOptions = [
   {
     name: "Documentation",
     href: "https://docs.plane.so/",
-    Icon: FileText,
+    Icon: PageIcon,
   },
   {
     name: "Join our Discord",
@@ -110,7 +110,7 @@ export const AdminSidebarHelpSection: FC = observer(() => {
                     <Link href={href} key={name} target="_blank">
                       <div className="flex items-center gap-x-2 rounded px-2 py-1 text-xs hover:bg-custom-background-80">
                         <div className="grid flex-shrink-0 place-items-center">
-                          <Icon className="h-3.5 w-3.5 text-custom-text-200" size={14} />
+                          <Icon className="h-3.5 w-3.5 text-custom-text-200" width={14} height={14} />
                         </div>
                         <span className="text-xs">{name}</span>
                       </div>

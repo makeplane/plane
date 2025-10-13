@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, SIDEBAR_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { AddIcon } from "@plane/propel/icons";
 import { TIssue } from "@plane/types";
 import { cn } from "@plane/utils";
 // components

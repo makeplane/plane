@@ -1,7 +1,7 @@
 "use client";
 
 import { Command } from "cmdk";
-import { ContrastIcon, FileText, Layers } from "lucide-react";
+import { ContrastIcon } from "lucide-react";
 // hooks
 import {
   CYCLE_TRACKER_ELEMENTS,
@@ -9,7 +9,7 @@ import {
   PROJECT_PAGE_TRACKER_ELEMENTS,
   PROJECT_VIEW_TRACKER_ELEMENTS,
 } from "@plane/constants";
-import { DiceIcon } from "@plane/propel/icons";
+import { ModuleIcon, PageIcon, ViewsIcon } from "@plane/propel/icons";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // ui
@@ -52,7 +52,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
           className="focus:outline-none"
         >
           <div className="flex items-center gap-2 text-custom-text-200">
-            <DiceIcon className="h-3.5 w-3.5" />
+            <ModuleIcon className="h-3.5 w-3.5" />
             Create new module
           </div>
           <kbd>M</kbd>
@@ -68,7 +68,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
           className="focus:outline-none"
         >
           <div className="flex items-center gap-2 text-custom-text-200">
-            <Layers className="h-3.5 w-3.5" />
+            <ViewsIcon className="h-3.5 w-3.5" />
             Create new view
           </div>
           <kbd>V</kbd>
@@ -84,7 +84,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
           className="focus:outline-none"
         >
           <div className="flex items-center gap-2 text-custom-text-200">
-            <FileText className="h-3.5 w-3.5" />
+            <PageIcon className="h-3.5 w-3.5" />
             Create new page
           </div>
           <kbd>D</kbd>

@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { PenSquare } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Button } from "@plane/propel/button";
+import { DraftIcon } from "@plane/propel/icons";
 import { EIssuesStoreType } from "@plane/types";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
@@ -48,7 +48,7 @@ export const WorkspaceDraftHeader = observer(() => {
             <Breadcrumbs>
               <Breadcrumbs.Item
                 component={
-                  <BreadcrumbLink label={t("drafts")} icon={<PenSquare className="h-4 w-4 text-custom-text-300" />} />
+                  <BreadcrumbLink label={t("drafts")} icon={<DraftIcon className="h-4 w-4 text-custom-text-300" />} />
                 }
               />
             </Breadcrumbs>
