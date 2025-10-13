@@ -16,7 +16,7 @@ import { useIssueDetails } from "@/hooks/store/use-issue-details";
 import { useUser } from "@/hooks/store/use-user";
 import useIsInIframe from "@/hooks/use-is-in-iframe";
 // types
-import { IIssue } from "@/types/issue";
+import type { IIssue } from "@/types/issue";
 
 type Props = {
   anchor: string;
