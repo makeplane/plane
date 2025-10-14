@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 // wrappers
 import { CommandPaletteProvider } from "@/components/power-k/modal-wrapper";
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";

@@ -1,9 +1,11 @@
 "use client";
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EIssueServiceType, TIssue, TIssueServiceType } from "@plane/types";
+import type { TIssue, TIssueServiceType } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 import { Collapsible } from "@plane/ui";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
@@ -12,7 +14,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // Plane-web
 import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
-import { TIssueRelationTypes } from "@/plane-web/types";
+import type { TIssueRelationTypes } from "@/plane-web/types";
 // helper
 import { DeleteIssueModal } from "../../delete-issue-modal";
 import { RelationIssueList } from "../../relations/issue-list";

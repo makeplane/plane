@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import {
@@ -17,7 +17,7 @@ import { EModalWidth, ModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { FreePlanCard, PlanUpgradeCard } from "@/components/license";
-import { TCheckoutParams } from "@/components/license/modal/card/checkout-button";
+import type { TCheckoutParams } from "@/components/license/modal/card/checkout-button";
 
 // Constants
 const COMMON_CARD_CLASSNAME = "flex flex-col w-full h-full justify-end col-span-12 sm:col-span-6 xl:col-span-3";

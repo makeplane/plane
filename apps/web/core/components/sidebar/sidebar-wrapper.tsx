@@ -1,7 +1,9 @@
-import { FC, useEffect, useRef } from "react";
+import type { FC } from "react";
+import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
+import { ScrollArea } from "@plane/propel/scrollarea";
 // components
 import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";
 import { SidebarDropdown } from "@/components/workspace/sidebar/dropdown";
@@ -56,9 +58,16 @@ export const SidebarWrapper: FC<TSidebarWrapperProps> = observer((props) => {
         {/* Quick actions */}
         {quickActions}
       </div>
-      <div className="flex flex-col gap-3 overflow-x-hidden scrollbar-sm h-full w-full overflow-y-auto vertical-scrollbar px-3 pt-3 pb-0.5">
+
+      <ScrollArea
+        orientation="vertical"
+        scrollType="hover"
+        size="sm"
+        rootClassName="size-full overflow-x-hidden overflow-y-auto"
+        viewportClassName="flex flex-col gap-3 overflow-x-hidden h-full w-full overflow-y-auto px-3 pt-3 pb-0.5"
+      >
         {children}
-      </div>
+      </ScrollArea>
       {/* Help Section */}
       <div className="flex items-center justify-between p-3 border-t border-custom-border-200 bg-custom-sidebar-background-100 h-12">
         <WorkspaceEditionBadge />

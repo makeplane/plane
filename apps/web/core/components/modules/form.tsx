@@ -6,7 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { IModule } from "@plane/types";
+import type { IModule } from "@plane/types";
 // ui
 import { Input, TextArea } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";

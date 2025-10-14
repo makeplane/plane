@@ -1,8 +1,9 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 // plane imports
-import { TActivityFilters, ACTIVITY_FILTER_TYPE_OPTIONS, TActivityFilterOption } from "@plane/constants";
+import type { TActivityFilters, TActivityFilterOption } from "@plane/constants";
+import { ACTIVITY_FILTER_TYPE_OPTIONS } from "@plane/constants";
 // components
 import { ActivityFilter } from "@/components/issues/issue-detail/issue-activity";
 

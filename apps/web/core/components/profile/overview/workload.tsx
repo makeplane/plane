@@ -2,7 +2,7 @@
 import { STATE_GROUPS } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
-import { IUserStateDistribution } from "@plane/types";
+import type { IUserStateDistribution } from "@plane/types";
 import { Card, ECardDirection, ECardSpacing } from "@plane/ui";
 // constants
 

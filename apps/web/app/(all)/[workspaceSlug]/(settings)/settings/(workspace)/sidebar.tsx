@@ -7,7 +7,7 @@ import {
   EUserPermissions,
   WORKSPACE_SETTINGS_CATEGORY,
 } from "@plane/constants";
-import { EUserWorkspaceRoles } from "@plane/types";
+import type { EUserWorkspaceRoles } from "@plane/types";
 import { SettingsSidebar } from "@/components/settings/sidebar";
 import { useUserPermissions } from "@/hooks/store/user";
 import { shouldRenderSettingLink } from "@/plane-web/helpers/workspace.helper";

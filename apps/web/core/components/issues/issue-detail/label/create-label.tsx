@@ -1,17 +1,18 @@
 "use client";
 
-import { FC, useState, Fragment, useEffect } from "react";
+import type { FC } from "react";
+import { useState, Fragment, useEffect } from "react";
 import { TwitterPicker } from "react-color";
 import { Controller, useForm } from "react-hook-form";
 import { usePopper } from "react-popper";
 import { Plus, X, Loader } from "lucide-react";
 import { Popover } from "@headlessui/react";
-import { IIssueLabel } from "@plane/types";
+import type { IIssueLabel } from "@plane/types";
 // hooks
 import { Input } from "@plane/ui";
 // ui
 // types
-import { TLabelOperations } from "./root";
+import type { TLabelOperations } from "./root";
 
 type ILabelCreate = {
   workspaceSlug: string;

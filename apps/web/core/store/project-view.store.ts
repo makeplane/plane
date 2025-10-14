@@ -2,7 +2,7 @@ import { set } from "lodash-es";
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { IProjectView, TViewFilters } from "@plane/types";
+import type { IProjectView, TViewFilters } from "@plane/types";
 // constants
 // helpers
 import { getValidatedViewFilters, getViewName, orderViews, shouldFilterView } from "@plane/utils";

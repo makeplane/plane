@@ -1,5 +1,6 @@
 import { useContext } from "react";
-import { EIssueServiceType, TIssueServiceType } from "@plane/types";
+import type { TIssueServiceType } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // mobx store
 import { StoreContext } from "@/lib/store-context";
 // types

@@ -3,7 +3,7 @@
 import { observer } from "mobx-react";
 import { ProjectIcon } from "@plane/propel/icons";
 // plane imports
-import { ICustomSearchSelectOption } from "@plane/types";
+import type { ICustomSearchSelectOption } from "@plane/types";
 import { BreadcrumbNavigationSearchDropdown, Breadcrumbs } from "@plane/ui";
 // components
 import { Logo } from "@/components/common/logo";
@@ -11,7 +11,7 @@ import { SwitcherLabel } from "@/components/common/switcher-label";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { TProject } from "@/plane-web/types";
+import type { TProject } from "@/plane-web/types";
 
 type TProjectBreadcrumbProps = {
   workspaceSlug: string;

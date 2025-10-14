@@ -18,7 +18,7 @@ import {
 import { useTranslation } from "@plane/i18n";
 import { ModuleStatusIcon, WorkItemsIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
+import type { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // plane ui
 import { Loader, CustomSelect, TextArea } from "@plane/ui";
 // components

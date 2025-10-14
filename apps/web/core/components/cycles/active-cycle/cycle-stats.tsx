@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, Fragment, useCallback, useRef, useState } from "react";
+import type { FC } from "react";
+import { Fragment, useCallback, useRef, useState } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { CalendarCheck } from "lucide-react";
@@ -10,8 +11,9 @@ import { Tab } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { PriorityIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { TWorkItemFilterCondition } from "@plane/shared-state";
-import { EIssuesStoreType, ICycle } from "@plane/types";
+import type { TWorkItemFilterCondition } from "@plane/shared-state";
+import type { ICycle } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 // ui
 import { Loader, Avatar } from "@plane/ui";
 import { cn, renderFormattedDate, renderFormattedDateWithoutYear, getFileURL } from "@plane/utils";
@@ -29,7 +31,7 @@ import useLocalStorage from "@/hooks/use-local-storage";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // store
-import { ActiveCycleIssueDetails } from "@/store/issue/cycle";
+import type { ActiveCycleIssueDetails } from "@/store/issue/cycle";
 
 export type ActiveCycleStatsProps = {
   workspaceSlug: string;

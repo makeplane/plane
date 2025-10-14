@@ -2,7 +2,7 @@ import { set, sortBy } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { EUserPermissions } from "@plane/constants";
+import type { EUserPermissions } from "@plane/constants";
 import type { IWorkspaceBulkInviteFormData, IWorkspaceMember, IWorkspaceMemberInvitation } from "@plane/types";
 // plane-web constants
 // services
@@ -13,7 +13,8 @@ import type { IUserStore } from "@/store/user";
 // store
 import type { CoreRootStore } from "../../root.store";
 import type { IMemberRootStore } from "../index.ts";
-import { WorkspaceMemberFiltersStore, IWorkspaceMemberFiltersStore } from "./workspace-member-filters.store";
+import type { IWorkspaceMemberFiltersStore } from "./workspace-member-filters.store";
+import { WorkspaceMemberFiltersStore } from "./workspace-member-filters.store";
 
 export interface IWorkspaceMembership {
   id: string;

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, FC, useRef, useEffect } from "react";
+import type { FC } from "react";
+import { useState, useRef, useEffect } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
@@ -21,7 +22,7 @@ import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { TProject } from "@/plane-web/types";
+import type { TProject } from "@/plane-web/types";
 // local imports
 import { SidebarProjectsListItem } from "./projects-list-item";
 

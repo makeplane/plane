@@ -1,7 +1,7 @@
 // plane imports
-import { EIssuesStoreType } from "@plane/types";
+import type { EIssuesStoreType } from "@plane/types";
 // plane web imports
-import { TWorkItemFiltersEntityProps } from "@/plane-web/hooks/work-item-filters/use-work-item-filters-config";
+import type { TWorkItemFiltersEntityProps } from "@/plane-web/hooks/work-item-filters/use-work-item-filters-config";
 
 export type TGetAdditionalPropsForProjectLevelFiltersHOCParams = {
   entityType: EIssuesStoreType;

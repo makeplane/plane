@@ -7,7 +7,10 @@ import { LinkIcon, Signal, Trash2, UserMinus2, UserPlus2, Users } from "lucide-r
 // plane imports
 import { DoubleCircleIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { EIssueServiceType, TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
+// hooks
+// helpers
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";

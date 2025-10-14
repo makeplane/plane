@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, ReactNode } from "react";
+import type { FC, ReactNode } from "react";
 import { Tooltip } from "@plane/propel/tooltip";
 // helpers
 import { cn } from "@plane/utils";

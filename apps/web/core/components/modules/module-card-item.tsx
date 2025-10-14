@@ -1,6 +1,7 @@
 "use client";
 
-import React, { SyntheticEvent, useRef } from "react";
+import type { SyntheticEvent } from "react";
+import React, { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
@@ -19,7 +20,7 @@ import { useLocalStorage } from "@plane/hooks";
 import { WorkItemsIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { IModule } from "@plane/types";
+import type { IModule } from "@plane/types";
 import { Card, FavoriteStar, LinearProgressIndicator } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, generateQueryParams } from "@plane/utils";
 // components

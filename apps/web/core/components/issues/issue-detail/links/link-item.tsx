@@ -1,12 +1,13 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Pencil, Trash2, Copy, Link } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { EIssueServiceType, TIssueServiceType } from "@plane/types";
+import type { TIssueServiceType } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
 import { calculateTimeAgo, copyTextToClipboard } from "@plane/utils";
@@ -14,7 +15,7 @@ import { calculateTimeAgo, copyTextToClipboard } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { TLinkOperationsModal } from "./create-update-link-modal";
+import type { TLinkOperationsModal } from "./create-update-link-modal";
 
 type TIssueLinkItem = {
   linkId: string;

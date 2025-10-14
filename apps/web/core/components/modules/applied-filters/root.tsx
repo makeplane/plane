@@ -1,6 +1,6 @@
 import { X } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { TModuleDisplayFilters, TModuleFilters } from "@plane/types";
+import type { TModuleDisplayFilters, TModuleFilters } from "@plane/types";
 // components
 import { Header, EHeaderVariant, Tag } from "@plane/ui";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";

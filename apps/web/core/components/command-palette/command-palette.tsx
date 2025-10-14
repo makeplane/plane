@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useCallback, useEffect, FC, useMemo } from "react";
+import type { FC } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";

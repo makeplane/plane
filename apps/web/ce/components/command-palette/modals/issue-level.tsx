@@ -1,8 +1,9 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EIssueServiceType, EIssuesStoreType, TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 // components
 import { BulkDeleteIssuesModal } from "@/components/core/modals/bulk-delete-issues-modal";
 import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";

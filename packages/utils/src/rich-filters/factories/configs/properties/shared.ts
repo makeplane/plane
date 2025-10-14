@@ -14,6 +14,7 @@ import {
   IFilterIconConfig,
   TCreateDateFilterParams,
   TCreateFilterConfigParams,
+  TFilterIconType,
 } from "../shared";
 
 // ------------ Base User Filter Types ------------
@@ -94,3 +95,11 @@ export const getProjectMultiSelectConfig = (
       ...params,
     }
   );
+
+/**
+ * Custom property filter specific params
+ */
+export type TCustomPropertyFilterParams<T extends TFilterIconType> = TCreateFilterConfigParams &
+  IFilterIconConfig<T> & {
+    propertyDisplayName: string;
+  };

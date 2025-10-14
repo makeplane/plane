@@ -1,11 +1,11 @@
 import { unset, set } from "lodash-es";
 import { observable, action, makeObservable, runInAction } from "mobx";
 // types
-import { TProjectPublishSettings } from "@plane/types";
+import type { TProjectPublishSettings } from "@plane/types";
 // services
 import { ProjectPublishService } from "@/services/project";
 // store
-import { ProjectRootStore } from "@/store/project";
+import type { ProjectRootStore } from "@/store/project";
 
 export interface IProjectPublishStore {
   // states

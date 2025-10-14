@@ -1,13 +1,14 @@
 "use client";
 
-import { FC, useEffect, useState, FormEvent } from "react";
+import type { FC, FormEvent } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Check, Info, X } from "lucide-react";
 import { EEstimateSystem, MAX_ESTIMATE_POINT_INPUT_LENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
+import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
 import { Spinner } from "@plane/ui";
 import { cn, isEstimatePointValuesRepeated } from "@plane/utils";
 import { EstimateInputRoot } from "@/components/estimates/inputs/root";

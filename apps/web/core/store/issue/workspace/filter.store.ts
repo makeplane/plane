@@ -2,9 +2,9 @@ import { isEmpty, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { EIssueFilterType, TSupportedFilterTypeForUpdate } from "@plane/constants";
-import {
-  EIssuesStoreType,
+import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
+import { EIssueFilterType } from "@plane/constants";
+import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   TIssueKanbanFilters,
@@ -12,21 +12,17 @@ import {
   TIssueParams,
   TStaticViewTypes,
   IssuePaginationOptions,
-  EIssueLayoutTypes,
   TWorkItemFilterExpression,
-  STATIC_VIEW_TYPES,
   TSupportedFilterForUpdate,
 } from "@plane/types";
+import { EIssuesStoreType, EIssueLayoutTypes, STATIC_VIEW_TYPES } from "@plane/types";
 import { handleIssueQueryParamsByLayout } from "@plane/utils";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // local imports
-import {
-  IBaseIssueFilterStore,
-  IIssueFilterHelperStore,
-  IssueFilterHelperStore,
-} from "../helpers/issue-filter-helper.store";
-import { IIssueRootStore } from "../root.store";
+import type { IBaseIssueFilterStore, IIssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
+import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
+import type { IIssueRootStore } from "../root.store";
 
 type TWorkspaceFilters = TStaticViewTypes | string;
 

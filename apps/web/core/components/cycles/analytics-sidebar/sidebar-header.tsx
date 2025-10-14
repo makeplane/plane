@@ -1,6 +1,7 @@
 "use client";
 
-import React, { FC, useEffect } from "react";
+import type { FC } from "react";
+import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ArrowRight, ChevronRight } from "lucide-react";
@@ -14,7 +15,7 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { ICycle } from "@plane/types";
+import type { ICycle } from "@plane/types";
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";

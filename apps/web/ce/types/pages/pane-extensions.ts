@@ -1,6 +1,6 @@
-import {
-  type INavigationPaneExtension as ICoreNavigationPaneExtension,
-  type INavigationPaneExtensionComponent,
+import type {
+  INavigationPaneExtension as ICoreNavigationPaneExtension,
+  INavigationPaneExtensionComponent,
 } from "@/components/pages/navigation-pane";
 
 // EE Union/map of extension data types (keyed by extension id)

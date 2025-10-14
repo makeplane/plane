@@ -1,8 +1,9 @@
 "use client";
 
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 // plane imports
-import { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
+import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // local imports
 import { IssueDetailWidgetActionButtons } from "./action-buttons";
 import { IssueDetailWidgetCollapsibles } from "./issue-detail-widget-collapsibles";

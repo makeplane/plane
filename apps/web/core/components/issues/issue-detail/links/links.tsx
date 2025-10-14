@@ -1,10 +1,10 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // computed
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { IssueLinkDetail } from "./link-detail";
 // hooks
-import { TLinkOperations } from "./root";
+import type { TLinkOperations } from "./root";
 
 export type TLinkOperationsModal = Exclude<TLinkOperations, "create">;
 

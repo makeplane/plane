@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Placement } from "@popperjs/core";
+import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Check, Search } from "lucide-react";
@@ -9,7 +9,7 @@ import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { ModuleIcon } from "@plane/propel/icons";
-import { IModule } from "@plane/types";
+import type { IModule } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";

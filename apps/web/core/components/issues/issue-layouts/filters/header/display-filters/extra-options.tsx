@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { IIssueDisplayFilterOptions, TIssueExtraOptions } from "@plane/types";
+import type { IIssueDisplayFilterOptions, TIssueExtraOptions } from "@plane/types";
 // components
 import { FilterOption } from "@/components/issues/issue-layouts/filters";
 

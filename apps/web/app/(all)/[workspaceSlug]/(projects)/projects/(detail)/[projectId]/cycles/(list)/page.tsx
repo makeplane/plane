@@ -6,7 +6,8 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel, CYCLE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EUserProjectRoles, TCycleFilters } from "@plane/types";
+import type { TCycleFilters } from "@plane/types";
+import { EUserProjectRoles } from "@plane/types";
 // components
 import { Header, EHeaderVariant } from "@plane/ui";
 import { calculateTotalFilters } from "@plane/utils";

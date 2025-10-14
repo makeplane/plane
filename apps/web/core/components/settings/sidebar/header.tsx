@@ -14,7 +14,7 @@ export const SettingsSidebarHeader = observer((props: { customHeader?: React.Rea
   return customHeader
     ? customHeader
     : currentWorkspace && (
-        <div className="flex w-full gap-3 items-center justify-between pr-2">
+        <div className="flex w-full gap-3 items-center justify-between px-2">
           <div className="flex w-full gap-3 items-center overflow-hidden">
             <WorkspaceLogo
               logo={currentWorkspace.logo_url ?? ""}

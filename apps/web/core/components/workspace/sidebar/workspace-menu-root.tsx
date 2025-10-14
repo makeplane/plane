@@ -10,7 +10,7 @@ import { Menu, Transition } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { IWorkspace } from "@plane/types";
+import type { IWorkspace } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { orderWorkspacesList, cn } from "@plane/utils";
 // helpers
