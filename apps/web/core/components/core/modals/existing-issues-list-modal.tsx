@@ -120,7 +120,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
     if (selectedWorkItemIds) {
       setSelectedIssues(issues.filter((issue) => selectedWorkItemIds.includes(issue.id)));
     }
-  }, [isOpen, selectedWorkItemIds, issues]);
+  }, [isOpen, selectedWorkItemIds]);
 
   useEffect(() => {
     handleSearch();
