@@ -7,7 +7,7 @@ import { WEB_BASE_URL, ORGANIZATION_SIZE, RESTRICTED_URLS } from "@plane/constan
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { InstanceWorkspaceService } from "@plane/services";
-import { IWorkspace } from "@plane/types";
+import type { IWorkspace } from "@plane/types";
 // components
 import { CustomSelect, Input } from "@plane/ui";
 // hooks

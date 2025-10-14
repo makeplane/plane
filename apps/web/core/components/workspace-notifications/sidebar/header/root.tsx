@@ -2,9 +2,9 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { Inbox } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { InboxIcon } from "@plane/propel/icons";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
@@ -34,7 +34,7 @@ export const NotificationSidebarHeader: FC<TNotificationSidebarHeader> = observe
             component={
               <BreadcrumbLink
                 label={t("notification.label")}
-                icon={<Inbox className="h-4 w-4 text-custom-text-300" />}
+                icon={<InboxIcon className="h-4 w-4 text-custom-text-300" />}
                 disableTooltip
               />
             }

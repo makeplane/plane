@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { ContrastIcon } from "@plane/propel/icons";
+import { CycleIcon } from "@plane/propel/icons";
 import { ComboDropDown } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
@@ -121,7 +121,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
             variant={buttonVariant}
             renderToolTipByDefault={renderByDefault}
           >
-            {!hideIcon && <ContrastIcon className="h-3 w-3 flex-shrink-0" />}
+            {!hideIcon && <CycleIcon className="h-3 w-3 flex-shrink-0" />}
             {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (!!selectedName || !!placeholder) && (
               <span className="max-w-40 flex-grow truncate">{selectedName ?? placeholder}</span>
             )}

@@ -3,7 +3,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 // hooks
-import { TInstanceAuthenticationMethodKeys } from "@plane/types";
+import type { TInstanceAuthenticationMethodKeys } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 import { useInstance } from "@/hooks/store";
 // ui

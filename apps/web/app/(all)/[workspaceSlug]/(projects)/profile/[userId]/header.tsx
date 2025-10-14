@@ -3,12 +3,11 @@
 // ui
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { ChevronDown, PanelRight } from "lucide-react";
 import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { UserActivityIcon } from "@plane/propel/icons";
+import { YourWorkIcon } from "@plane/propel/icons";
 import type { IUserProfileProjectSegregation } from "@plane/types";
 import { Breadcrumbs, Header, CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -29,6 +28,7 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
   const { userProjectsData, type = undefined, showProfileIssuesFilter } = props;
   // router
   const { workspaceSlug, userId } = useParams();
+  const router = useRouter();
   // store hooks
   const { toggleProfileSidebar, profileSidebarCollapsed } = useAppTheme();
   const { data: currentUser } = useUser();
@@ -59,7 +59,7 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
               <BreadcrumbLink
                 label={breadcrumbLabel}
                 disableTooltip
-                icon={<UserActivityIcon className="h-4 w-4 text-custom-text-300" />}
+                icon={<YourWorkIcon className="h-4 w-4 text-custom-text-300" />}
               />
             }
           />
@@ -83,14 +83,12 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
           >
             <></>
             {tabsList.map((tab) => (
-              <CustomMenu.MenuItem className="flex items-center gap-2" key={tab.route}>
-                <Link
-                  key={tab.route}
-                  href={`/${workspaceSlug}/profile/${userId}/${tab.route}`}
-                  className="w-full text-custom-text-300"
-                >
-                  {t(tab.i18n_label)}
-                </Link>
+              <CustomMenu.MenuItem
+                className="flex items-center gap-2"
+                key={tab.route}
+                onClick={() => router.push(`/${workspaceSlug}/profile/${userId}/${tab.route}`)}
+              >
+                <span className="w-full text-custom-text-300">{t(tab.i18n_label)}</span>
               </CustomMenu.MenuItem>
             ))}
           </CustomMenu>

@@ -3,10 +3,11 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { Box, Check, PenTool, Rocket, Monitor, RefreshCw, Layers } from "lucide-react";
+import { Box, Check, PenTool, Rocket, Monitor, RefreshCw } from "lucide-react";
 // plane imports
 import { ONBOARDING_TRACKER_ELEMENTS, USER_TRACKER_EVENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
+import { ViewsIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TUserProfile } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
@@ -24,7 +25,7 @@ type Props = {
 
 const ROLES = [
   { id: "product-manager", label: "Product Manager", icon: Box },
-  { id: "engineering-manager", label: "Engineering Manager", icon: Layers },
+  { id: "engineering-manager", label: "Engineering Manager", icon: ViewsIcon },
   { id: "designer", label: "Designer", icon: PenTool },
   { id: "developer", label: "Developer", icon: Monitor },
   { id: "founder-executive", label: "Founder/Executive", icon: Rocket },

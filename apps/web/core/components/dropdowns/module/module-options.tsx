@@ -8,7 +8,7 @@ import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { DiceIcon } from "@plane/propel/icons";
+import { ModuleIcon } from "@plane/propel/icons";
 import type { IModule } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
@@ -85,7 +85,7 @@ export const ModuleOptions = observer((props: Props) => {
       query: `${moduleDetails?.name}`,
       content: (
         <div className="flex items-center gap-2">
-          <DiceIcon className="h-3 w-3 flex-shrink-0" />
+          <ModuleIcon className="h-3 w-3 flex-shrink-0" />
           <span className="flex-grow truncate">{moduleDetails?.name}</span>
         </div>
       ),
@@ -97,7 +97,7 @@ export const ModuleOptions = observer((props: Props) => {
       query: t("module.no_module"),
       content: (
         <div className="flex items-center gap-2">
-          <DiceIcon className="h-3 w-3 flex-shrink-0" />
+          <ModuleIcon className="h-3 w-3 flex-shrink-0" />
           <span className="flex-grow truncate">{t("module.no_module")}</span>
         </div>
       ),

@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { FileText } from "lucide-react";
+import { PageIcon } from "@plane/propel/icons";
 // plane import
 import type { TActivityEntityData, TPageEntityData } from "@plane/types";
 import { Avatar } from "@plane/ui";
@@ -43,7 +43,7 @@ export const RecentPage = (props: BlockProps) => {
             {pageDetails?.logo_props?.in_use ? (
               <Logo logo={pageDetails?.logo_props} size={16} type="lucide" />
             ) : (
-              <FileText className="size-4 text-custom-text-350" />
+              <PageIcon className="size-4 text-custom-text-350" />
             )}
           </div>
           {pageDetails?.project_identifier && (

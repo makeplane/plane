@@ -8,7 +8,7 @@ import { Loader as LoaderIcon } from "lucide-react";
 // types
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { setPromiseToast } from "@plane/propel/toast";
-import { TInstanceConfigurationKeys } from "@plane/types";
+import type { TInstanceConfigurationKeys } from "@plane/types";
 import { Loader, ToggleSwitch } from "@plane/ui";
 
 import { cn } from "@plane/utils";

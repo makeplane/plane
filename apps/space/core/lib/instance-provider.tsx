@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";

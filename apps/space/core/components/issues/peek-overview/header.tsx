@@ -13,7 +13,7 @@ import { copyTextToClipboard } from "@/helpers/string.helper";
 import { useIssueDetails } from "@/hooks/store/use-issue-details";
 import useClipboardWritePermission from "@/hooks/use-clipboard-write-permission";
 // types
-import { IIssue, IPeekMode } from "@/types/issue";
+import type { IIssue, IPeekMode } from "@/types/issue";
 
 type Props = {
   handleClose: () => void;

@@ -3,9 +3,10 @@ import type { ColumnDef, Row, RowData } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { Briefcase, UserRound } from "lucide-react";
-// plane package imports
+import { UserRound } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { ProjectIcon } from "@plane/propel/icons";
+// plane package imports
 import type { AnalyticsTableDataMap, WorkItemInsightColumns } from "@plane/types";
 // plane web components
 import { Avatar } from "@plane/ui";
@@ -82,7 +83,7 @@ const WorkItemsInsightTable = observer(() => {
                   {project?.logo_props ? (
                     <Logo logo={project.logo_props} size={18} />
                   ) : (
-                    <Briefcase className="h-4 w-4" />
+                    <ProjectIcon className="h-4 w-4" />
                   )}
                   {project?.name}
                 </div>

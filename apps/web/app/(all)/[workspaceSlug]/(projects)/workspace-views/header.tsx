@@ -3,7 +3,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Layers } from "lucide-react";
 // plane imports
 import {
   EIssueFilterType,
@@ -13,6 +12,7 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { ViewsIcon } from "@plane/propel/icons";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, ICustomSearchSelectOption } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
@@ -94,7 +94,7 @@ export const GlobalIssuesHeader = observer(() => {
   const defaultOptions = DEFAULT_GLOBAL_VIEWS_LIST.map((view) => ({
     value: view.key,
     query: view.key,
-    content: <SwitcherLabel name={t(view.i18n_label)} LabelIcon={Layers} />,
+    content: <SwitcherLabel name={t(view.i18n_label)} LabelIcon={ViewsIcon} />,
   }));
 
   const workspaceOptions = (currentWorkspaceViews || []).map((view) => {
@@ -103,7 +103,7 @@ export const GlobalIssuesHeader = observer(() => {
     return {
       value: _view.id,
       query: _view.name,
-      content: <SwitcherLabel name={_view.name} LabelIcon={Layers} />,
+      content: <SwitcherLabel name={_view.name} LabelIcon={ViewsIcon} />,
     };
   });
 
@@ -123,7 +123,7 @@ export const GlobalIssuesHeader = observer(() => {
           <Breadcrumbs>
             <Breadcrumbs.Item
               component={
-                <BreadcrumbLink label={t("views")} icon={<Layers className="h-4 w-4 text-custom-text-300" />} />
+                <BreadcrumbLink label={t("views")} icon={<ViewsIcon className="h-4 w-4 text-custom-text-300" />} />
               }
             />
             <Breadcrumbs.Item
@@ -137,7 +137,7 @@ export const GlobalIssuesHeader = observer(() => {
                   title={viewDetails?.name ?? t(defaultViewDetails?.i18n_label ?? "")}
                   icon={
                     <Breadcrumbs.Icon>
-                      <Layers className="size-4 flex-shrink-0 text-custom-text-300" />
+                      <ViewsIcon className="size-4 flex-shrink-0 text-custom-text-300" />
                     </Breadcrumbs.Icon>
                   }
                   isLast

@@ -3,7 +3,7 @@
 import type { FC } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
-import { FileText } from "lucide-react";
+import { PageIcon } from "@plane/propel/icons";
 // plane imports
 import { getPageName } from "@plane/utils";
 // components
@@ -43,7 +43,7 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
           {logo_props?.in_use ? (
             <Logo logo={logo_props} size={16} type="lucide" />
           ) : (
-            <FileText className="h-4 w-4 text-custom-text-300" />
+            <PageIcon className="h-4 w-4 text-custom-text-300" />
           )}
         </>
       }

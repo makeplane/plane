@@ -5,7 +5,7 @@ import type { IFilterInstance } from "@plane/shared-state";
 import type { TExternalFilter, TFilterProperty } from "@plane/types";
 import { cn } from "@plane/ui";
 // components
-import { AddFilterButton } from "@/components/rich-filters/add-filters-button";
+import { AddFilterButton } from "@/components/rich-filters/add-filters/button";
 
 type TFiltersToggleProps<P extends TFilterProperty, E extends TExternalFilter> = {
   filter: IFilterInstance<P, E> | undefined;

@@ -3,7 +3,7 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { DiceIcon } from "@plane/propel/icons";
+import { ModuleIcon } from "@plane/propel/icons";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
 import { IssueActivityBlockComponent } from "./";
@@ -23,7 +23,7 @@ export const IssueModuleActivity: FC<TIssueModuleActivity> = observer((props) =>
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<DiceIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />}
+      icon={<ModuleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />}
       activityId={activityId}
       ends={ends}
     >

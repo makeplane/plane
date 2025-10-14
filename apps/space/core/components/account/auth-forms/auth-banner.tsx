@@ -1,9 +1,9 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { Info, X } from "lucide-react";
 // helpers
-import { TAuthErrorInfo } from "@/helpers/authentication.helper";
+import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
 
 type TAuthBanner = {
   bannerData: TAuthErrorInfo | undefined;

@@ -3,7 +3,7 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { LayersIcon } from "@plane/propel/icons";
+import { WorkItemsIcon } from "@plane/propel/icons";
 import { EInboxIssueSource } from "@plane/types";
 // hooks
 import { capitalizeFirstLetter } from "@plane/utils";
@@ -28,7 +28,7 @@ export const IssueDefaultActivity: FC<TIssueDefaultActivity> = observer((props) 
   return (
     <IssueActivityBlockComponent
       activityId={activityId}
-      icon={<LayersIcon width={14} height={14} className="text-custom-text-200" aria-hidden="true" />}
+      icon={<WorkItemsIcon width={14} height={14} className="text-custom-text-200" aria-hidden="true" />}
       ends={ends}
     >
       <>

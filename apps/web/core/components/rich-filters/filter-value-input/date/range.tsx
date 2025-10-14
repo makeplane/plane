@@ -6,7 +6,7 @@ import { cn, isValidDate, renderFormattedPayloadDate, toFilterArray } from "@pla
 // components
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 // local imports
-import { COMMON_FILTER_ITEM_BORDER_CLASSNAME } from "../../shared";
+import { COMMON_FILTER_ITEM_BORDER_CLASSNAME, EMPTY_FILTER_PLACEHOLDER_TEXT } from "../../shared";
 
 type TDateRangeFilterValueInputProps<P extends TFilterProperty> = {
   config: TDateRangeFilterFieldConfig<string>;
@@ -42,7 +42,7 @@ export const DateRangeFilterValueInput = observer(
         minDate={config.min}
         maxDate={config.max}
         mergeDates
-        placeholder={{ from: "--" }}
+        placeholder={{ from: EMPTY_FILTER_PLACEHOLDER_TEXT }}
         buttonVariant="transparent-with-text"
         buttonClassName={cn("rounded-none", {
           [COMMON_FILTER_ITEM_BORDER_CLASSNAME]: !isDisabled,

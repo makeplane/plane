@@ -1,7 +1,7 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { Briefcase } from "lucide-react";
+import { ProjectIcon } from "@plane/propel/icons";
 // plane imports
 import type { ICustomSearchSelectOption } from "@plane/types";
 import { BreadcrumbNavigationSearchDropdown, Breadcrumbs } from "@plane/ui";
@@ -39,7 +39,12 @@ export const ProjectBreadcrumb = observer((props: TProjectBreadcrumbProps) => {
         value: projectId,
         query: project?.name,
         content: (
-          <SwitcherLabel name={project?.name} logo_props={project?.logo_props} LabelIcon={Briefcase} type="material" />
+          <SwitcherLabel
+            name={project?.name}
+            logo_props={project?.logo_props}
+            LabelIcon={ProjectIcon}
+            type="material"
+          />
         ),
       };
     })
