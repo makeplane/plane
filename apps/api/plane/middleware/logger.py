@@ -13,8 +13,6 @@ from plane.utils.ip_address import get_client_ip
 from plane.db.models import APIActivityLog
 from django.http import JsonResponse
 from django.core.exceptions import RequestDataTooBig
-from rest_framework.response import Response
-from rest_framework import status
 
 api_logger = logging.getLogger("plane.api.request")
 
@@ -87,12 +85,12 @@ class RequestBodySizeLimitMiddleware:
         try:
             _ = request.body
         except RequestDataTooBig:
-            return Response(
+            return JsonResponse(
                 {
                     "error": "Request body too large",
                     "detail": "The size of the request body exceeds the maximum allowed size.",
                 },
-                status=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                status=413,
             )
 
         # If body size is OK, continue with the request
