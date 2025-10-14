@@ -100,9 +100,9 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
                   featureItem={featureItem}
-                  isEnabled={Boolean(currentProjectDetails?.[featureItem.property as keyof IProject])}
+                  value={Boolean(currentProjectDetails?.[featureItem.property as keyof IProject])}
                   handleSubmit={handleSubmit}
-                  isAdmin={isAdmin}
+                  disabled={!isAdmin}
                 />
               </div>
               <div className="pl-14">
