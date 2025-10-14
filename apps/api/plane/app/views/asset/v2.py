@@ -736,6 +736,12 @@ class DuplicateAssetEndpoint(BaseAPIView):
         entity_id = request.data.get("entity_id", None)
         entity_type = request.data.get("entity_type", None)
 
+        if not entity_id or not entity_type or entity_type not in FileAsset.EntityTypeContext.values:
+            return Response(
+                {"error": "Invalid entity type or entity id"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         workspace = Workspace.objects.get(slug=slug)
         if project_id:
             # check if project exists in the workspace
@@ -748,6 +754,12 @@ class DuplicateAssetEndpoint(BaseAPIView):
         original_asset = FileAsset.objects.filter(
             workspace=workspace, id=asset_id
         ).first()
+
+        if not original_asset:
+            return Response(
+                {"error": "Asset not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
         # for original_asset in original_assets:
         destination_key = f"{workspace.id}/{uuid.uuid4().hex}-{original_asset.attributes.get('name')}"
         duplicated_asset = FileAsset.objects.create(
