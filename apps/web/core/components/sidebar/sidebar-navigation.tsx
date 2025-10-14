@@ -17,8 +17,8 @@ export const SidebarNavItem: FC<TSidebarNavItem> = (props) => {
       className={cn(
         "cursor-pointer relative group w-full flex items-center justify-between gap-1.5 rounded px-2 py-1 outline-none",
         {
-          "text-custom-primary-200 bg-custom-primary-100/10": isActive,
-          "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 active:bg-custom-sidebar-background-90":
+          "text-custom-text-200 bg-custom-background-80/75": isActive,
+          "text-custom-sidebar-text-300 hover:bg-custom-sidebar-background-90 active:bg-custom-sidebar-background-90":
             !isActive,
         },
         className
