@@ -41,7 +41,10 @@ export const IssueParentSiblingItem: FC<TIssueParentSiblingItem> = observer((pro
 
   return (
     <>
-      <CustomMenu.MenuItem key={issueDetail.id} onClick={() => window.open(workItemLink, "_blank")}>
+      <CustomMenu.MenuItem
+        key={issueDetail.id}
+        onClick={() => window.open(workItemLink, "_blank", "noopener,noreferrer")}
+      >
         <div className="flex items-center gap-2 py-0.5">
           {issueDetail.project_id && projectDetails?.identifier && (
             <IssueIdentifier
