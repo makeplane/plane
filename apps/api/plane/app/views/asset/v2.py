@@ -760,7 +760,6 @@ class DuplicateAssetEndpoint(BaseAPIView):
                 {"error": "Asset not found"}, status=status.HTTP_404_NOT_FOUND
             )
 
-        # for original_asset in original_assets:
         destination_key = f"{workspace.id}/{uuid.uuid4().hex}-{original_asset.attributes.get('name')}"
         duplicated_asset = FileAsset.objects.create(
             attributes={
