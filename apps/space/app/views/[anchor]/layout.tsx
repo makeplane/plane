@@ -1,6 +1,8 @@
 "use client";
 
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
+import { Outlet } from "react-router";
 import useSWR from "swr";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
@@ -12,16 +14,9 @@ import { usePublish, usePublishList } from "@/hooks/store/publish";
 import { ViewNavbarRoot } from "@/plane-web/components/navbar";
 import { useView } from "@/plane-web/hooks/store";
 
-type Props = {
-  children: React.ReactNode;
-  params: {
-    anchor: string;
-  };
-};
-
-const ViewsLayout = observer((props: Props) => {
-  const { children, params } = props;
+const ViewsLayout = observer(() => {
   // params
+  const params = useParams<{ anchor: string }>();
   const { anchor } = params;
   // store hooks
   const { fetchPublishSettings } = usePublishList();
@@ -56,7 +51,9 @@ const ViewsLayout = observer((props: Props) => {
       <div className="relative flex h-[60px] flex-shrink-0 select-none items-center border-b border-custom-border-300 bg-custom-sidebar-background-100">
         <ViewNavbarRoot publishSettings={publishSettings} />
       </div>
-      <div className="relative h-full w-full overflow-hidden bg-custom-background-90">{children}</div>
+      <div className="relative h-full w-full overflow-hidden bg-custom-background-90">
+        <Outlet />
+      </div>
       <PoweredBy />
     </div>
   );

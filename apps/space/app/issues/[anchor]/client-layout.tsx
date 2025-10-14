@@ -1,6 +1,7 @@
 "use client";
 
 import { observer } from "mobx-react";
+import { Outlet } from "react-router";
 import useSWR from "swr";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
@@ -10,14 +11,10 @@ import { IssuesNavbarRoot } from "@/components/issues/navbar";
 // hooks
 import { usePublish, usePublishList } from "@/hooks/store/publish";
 import { useIssueFilter } from "@/hooks/store/use-issue-filter";
+import type { Route } from "./+types/page";
 
-type Props = {
-  children: React.ReactNode;
-  anchor: string;
-};
-
-export const IssuesClientLayout = observer((props: Props) => {
-  const { children, anchor } = props;
+const IssuesClientLayout = observer((props: Route.ComponentProps) => {
+  const { anchor } = props.params;
   // store hooks
   const { fetchPublishSettings } = usePublishList();
   const publishSettings = usePublish(anchor);
@@ -57,9 +54,13 @@ export const IssuesClientLayout = observer((props: Props) => {
         <div className="relative flex h-[60px] flex-shrink-0 select-none items-center border-b border-custom-border-300 bg-custom-sidebar-background-100">
           <IssuesNavbarRoot publishSettings={publishSettings} />
         </div>
-        <div className="relative h-full w-full overflow-hidden bg-custom-background-90">{children}</div>
+        <div className="relative h-full w-full overflow-hidden bg-custom-background-90">
+          <Outlet />
+        </div>
       </div>
       <PoweredBy />
     </>
   );
 });
+
+export default IssuesClientLayout;

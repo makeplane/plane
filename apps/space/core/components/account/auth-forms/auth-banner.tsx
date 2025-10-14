@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { Info, X } from "lucide-react";
 // helpers
 import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
@@ -10,7 +9,7 @@ type TAuthBanner = {
   handleBannerData?: (bannerData: TAuthErrorInfo | undefined) => void;
 };
 
-export const AuthBanner: FC<TAuthBanner> = (props) => {
+export const AuthBanner: React.FC<TAuthBanner> = (props) => {
   const { bannerData, handleBannerData } = props;
 
   if (!bannerData) return <></>;

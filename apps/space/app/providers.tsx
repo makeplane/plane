@@ -1,6 +1,5 @@
 "use client";
 
-import type { ReactNode, FC } from "react";
 import { ThemeProvider } from "next-themes";
 // components
 import { TranslationProvider } from "@plane/i18n";
@@ -8,13 +7,7 @@ import { InstanceProvider } from "@/lib/instance-provider";
 import { StoreProvider } from "@/lib/store-provider";
 import { ToastProvider } from "@/lib/toast-provider";
 
-interface IAppProvider {
-  children: ReactNode;
-}
-
-export const AppProvider: FC<IAppProvider> = (props) => {
-  const { children } = props;
-
+export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
       <StoreProvider>
@@ -26,4 +19,4 @@ export const AppProvider: FC<IAppProvider> = (props) => {
       </StoreProvider>
     </ThemeProvider>
   );
-};
+}

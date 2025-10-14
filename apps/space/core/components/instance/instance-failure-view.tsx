@@ -1,14 +1,13 @@
 "use client";
 
-import type { FC } from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Button } from "@plane/propel/button";
 // assets
-import InstanceFailureDarkImage from "public/instance/instance-failure-dark.svg";
-import InstanceFailureImage from "public/instance/instance-failure.svg";
+import InstanceFailureDarkImage from "@/app/assets/instance/instance-failure-dark.svg?url";
+import InstanceFailureImage from "@/app/assets/instance/instance-failure.svg?url";
 
-export const InstanceFailureView: FC = () => {
+export const InstanceFailureView: React.FC = () => {
   const { resolvedTheme } = useTheme();
 
   const instanceImage = resolvedTheme === "dark" ? InstanceFailureDarkImage : InstanceFailureImage;

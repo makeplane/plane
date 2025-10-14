@@ -1,7 +1,7 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 // components
 import { PoweredBy } from "@/components/common/powered-by";
 // hooks
@@ -9,16 +9,10 @@ import { usePublish } from "@/hooks/store/publish";
 // plane-web
 import { ViewLayoutsRoot } from "@/plane-web/components/issue-layouts/root";
 
-type Props = {
-  params: {
-    anchor: string;
-  };
-};
-
-const ViewsPage = observer((props: Props) => {
-  const { params } = props;
-  const { anchor } = params;
+const ViewsPage = observer(() => {
   // params
+  const params = useParams<{ anchor: string }>();
+  const { anchor } = params;
   const searchParams = useSearchParams();
   const peekId = searchParams.get("peekId") || undefined;
 
