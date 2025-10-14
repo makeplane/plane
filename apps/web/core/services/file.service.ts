@@ -1,9 +1,8 @@
-import { AxiosRequestConfig } from "axios";
+import type { AxiosRequestConfig } from "axios";
 // plane types
 import { API_BASE_URL } from "@plane/constants";
 import { getFileMetaDataForUpload, generateFileUploadPayload } from "@plane/services";
-import { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
-import { EFileAssetType } from "@plane/types/src/enums";
+import type { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
 import { getAssetIdFromUrl } from "@plane/utils";
 // helpers
 // services
@@ -254,22 +253,6 @@ export class FileService extends APIService {
   async restoreOldEditorAsset(workspaceId: string, src: string): Promise<void> {
     const assetKey = getAssetIdFromUrl(src);
     return this.post(`/api/workspaces/file-assets/${workspaceId}/${assetKey}/restore/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async duplicateAssets(
-    workspaceSlug: string,
-    data: {
-      entity_id: string;
-      entity_type: EFileAssetType;
-      project_id?: string;
-      asset_ids: string[];
-    }
-  ): Promise<Record<string, string>> {
-    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/duplicate-assets/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
