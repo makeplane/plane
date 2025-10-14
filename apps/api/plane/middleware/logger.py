@@ -13,6 +13,8 @@ from plane.utils.ip_address import get_client_ip
 from plane.db.models import APIActivityLog
 from django.http import JsonResponse
 from django.core.exceptions import RequestDataTooBig
+from rest_framework.response import Response
+from rest_framework import status
 
 api_logger = logging.getLogger("plane.api.request")
 
@@ -76,26 +78,21 @@ class RequestBodySizeLimitMiddleware:
     Middleware to catch RequestDataTooBig exceptions and return
     413 Request Entity Too Large instead of 400 Bad Request.
 
-    This middleware should be placed at the top of the middleware stack
-    to ensure it catches the exception before any other middleware or view
-    tries to access request.body.
     """
 
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
-        # Proactively try to access request.body to trigger size check early
         try:
-            # This will raise RequestDataTooBig if body is too large
             _ = request.body
         except RequestDataTooBig:
-            return JsonResponse(
+            return Response(
                 {
                     "error": "Request body too large",
                     "detail": "The size of the request body exceeds the maximum allowed size.",
                 },
-                status=413,
+                status=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
             )
 
         # If body size is OK, continue with the request
