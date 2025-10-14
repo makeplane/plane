@@ -16,7 +16,7 @@ import type {
 import { FILTER_FIELD_TYPE } from "@plane/types";
 // local imports
 import { AdditionalFilterValueInput } from "@/plane-web/components/rich-filters/filter-value-input/root";
-import { TFilterValueInputProps } from "../shared";
+import type { TFilterValueInputProps } from "../shared";
 import { DateRangeFilterValueInput } from "./date/range";
 import { SingleDateFilterValueInput } from "./date/single";
 import { MultiSelectFilterValueInput } from "./select/multi";

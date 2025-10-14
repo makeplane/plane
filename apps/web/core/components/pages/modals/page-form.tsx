@@ -1,6 +1,6 @@
 "use client";
 
-import type { FormEvent} from "react";
+import type { FormEvent } from "react";
 import { useState } from "react";
 import type { LucideIcon } from "lucide-react";
 import { Globe2, Lock } from "lucide-react";

@@ -12,7 +12,7 @@ import {
   Users,
 } from "lucide-react";
 // types
-import type { ISvgIcons} from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/propel/icons";
 import { CycleIcon, DoubleCircleIcon, ModuleIcon } from "@plane/propel/icons";
 import type { IGroupByColumn, IIssueDisplayProperties, TGetColumns, TSpreadsheetColumn } from "@plane/types";
 // components
