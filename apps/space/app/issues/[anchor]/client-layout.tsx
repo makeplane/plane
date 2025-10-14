@@ -11,7 +11,7 @@ import { IssuesNavbarRoot } from "@/components/issues/navbar";
 // hooks
 import { usePublish, usePublishList } from "@/hooks/store/publish";
 import { useIssueFilter } from "@/hooks/store/use-issue-filter";
-import type { Route } from "./+types/page";
+import type { Route } from "./+types/client-layout";
 
 const IssuesClientLayout = observer((props: Route.ComponentProps) => {
   const { anchor } = props.params;
