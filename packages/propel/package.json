@@ -167,6 +167,7 @@
     "./styles/react-day-picker": "./dist/styles/react-day-picker.css"
   },
   "dependencies": {
+    "@babel/runtime": "7.26.10",
     "@base-ui-components/react": "1.0.0-beta.3",
     "@base-ui-components/utils": "^0.1.0",
     "@floating-ui/core": "^1.7.3",
@@ -180,8 +181,10 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
+    "fontfaceobserver": "^2.3.0",
     "frimousse": "^0.3.0",
     "lucide-react": "catalog:",
+    "object-assign": "^4.1.1",
     "react": "catalog:",
     "react-day-picker": "9.5.0",
     "react-dom": "catalog:",

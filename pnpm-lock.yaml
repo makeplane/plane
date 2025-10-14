@@ -107,12 +107,6 @@ importers:
 
   apps/admin:
     dependencies:
-      '@babel/runtime':
-        specifier: 7.26.10
-        version: 7.26.10
-      '@borewit/text-codec':
-        specifier: 0.1.1
-        version: 0.1.1
       '@headlessui/react':
         specifier: ^1.7.19
         version: 1.7.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -149,9 +143,6 @@ importers:
       '@tanstack/virtual-core':
         specifier: ^3.13.12
         version: 3.13.12
-      '@tokenizer/inflate':
-        specifier: 0.2.7
-        version: 0.2.7
       '@vercel/edge':
         specifier: 1.2.2
         version: 1.2.2
@@ -173,27 +164,15 @@ importers:
       debug:
         specifier: 4.4.3
         version: 4.4.3
-      dom4:
-        specifier: ^2.1.6
-        version: 2.1.6
       dotenv:
         specifier: ^16.4.5
         version: 16.6.1
       express:
         specifier: ^5.1.0
         version: 5.1.0
-      fflate:
-        specifier: 0.8.2
-        version: 0.8.2
-      fontfaceobserver:
-        specifier: ^2.3.0
-        version: 2.3.0
       http-proxy-middleware:
         specifier: ^3.0.5
         version: 3.0.5
-      ieee754:
-        specifier: 1.2.1
-        version: 1.2.1
       isbot:
         specifier: ^5.1.31
         version: 5.1.31
@@ -221,9 +200,6 @@ importers:
       next-themes:
         specifier: ^0.2.1
         version: 0.2.1(next@14.2.32(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      object-assign:
-        specifier: ^4.1.1
-        version: 4.1.1
       react:
         specifier: 'catalog:'
         version: 18.3.1
@@ -251,18 +227,9 @@ importers:
       set-cookie-parser:
         specifier: ^2.6.0
         version: 2.7.1
-      strtok3:
-        specifier: 10.3.4
-        version: 10.3.4
       swr:
         specifier: 'catalog:'
         version: 2.2.4(react@18.3.1)
-      token-types:
-        specifier: 6.1.1
-        version: 6.1.1
-      uint8array-extras:
-        specifier: 1.5.0
-        version: 1.5.0
       use-sync-external-store:
         specifier: ^1.2.0
         version: 1.5.0(react@18.3.1)
@@ -1100,6 +1067,9 @@ importers:
 
   packages/propel:
     dependencies:
+      '@babel/runtime':
+        specifier: 7.26.10
+        version: 7.26.10
       '@base-ui-components/react':
         specifier: 1.0.0-beta.3
         version: 1.0.0-beta.3(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1139,12 +1109,18 @@ importers:
       cmdk:
         specifier: ^1.1.1
         version: 1.1.1(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      fontfaceobserver:
+        specifier: ^2.3.0
+        version: 2.3.0
       frimousse:
         specifier: ^0.3.0
         version: 0.3.0(react@18.3.1)(typescript@5.8.3)
       lucide-react:
         specifier: 'catalog:'
         version: 0.469.0(react@18.3.1)
+      object-assign:
+        specifier: ^4.1.1
+        version: 4.1.1
       react:
         specifier: 'catalog:'
         version: 18.3.1
@@ -1206,18 +1182,39 @@ importers:
 
   packages/services:
     dependencies:
+      '@borewit/text-codec':
+        specifier: 0.1.1
+        version: 0.1.1
       '@plane/constants':
         specifier: workspace:*
         version: link:../constants
       '@plane/types':
         specifier: workspace:*
         version: link:../types
+      '@tokenizer/inflate':
+        specifier: 0.2.7
+        version: 0.2.7
       axios:
         specifier: 'catalog:'
         version: 1.12.0(debug@4.4.3)
+      fflate:
+        specifier: 0.8.2
+        version: 0.8.2
       file-type:
         specifier: ^21.0.0
         version: 21.0.0
+      ieee754:
+        specifier: 1.2.1
+        version: 1.2.1
+      strtok3:
+        specifier: 10.3.4
+        version: 10.3.4
+      token-types:
+        specifier: 6.1.1
+        version: 6.1.1
+      uint8array-extras:
+        specifier: 1.5.0
+        version: 1.5.0
     devDependencies:
       '@plane/eslint-config':
         specifier: workspace:*
@@ -1436,6 +1433,9 @@ importers:
       dom-helpers:
         specifier: ^5.2.1
         version: 5.2.1
+      dom4:
+        specifier: ^2.1.6
+        version: 2.1.6
       dot-case:
         specifier: ^3.0.4
         version: 3.0.4
@@ -1469,6 +1469,9 @@ importers:
       no-case:
         specifier: ^3.0.4
         version: 3.0.4
+      object-assign:
+        specifier: ^4.1.1
+        version: 4.1.1
       param-case:
         specifier: ^3.0.4
         version: 3.0.4
