@@ -7,7 +7,8 @@ import { usePopper } from "react-popper";
 import { CalendarDays, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // ui
-import { Calendar, Matcher } from "@plane/propel/calendar";
+import type { Matcher } from "@plane/propel/calendar";
+import { Calendar } from "@plane/propel/calendar";
 import { ComboDropDown } from "@plane/ui";
 import { cn, renderFormattedDate, getDate } from "@plane/utils";
 // helpers
@@ -19,7 +20,7 @@ import { DropdownButton } from "./buttons";
 // constants
 import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 // types
-import { TDropdownProps } from "./types";
+import type { TDropdownProps } from "./types";
 
 type Props = TDropdownProps & {
   clearIconClassName?: string;

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import {
+import type {
   DragLocationHistory,
   ElementDragPayload,
   DropTargetRecord,
@@ -22,7 +22,7 @@ import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { DraftIcon, FavoriteFolderIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { IFavorite, InstructionType } from "@plane/types";
+import type { IFavorite, InstructionType } from "@plane/types";
 import { CustomMenu, DropIndicator, DragHandle } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";

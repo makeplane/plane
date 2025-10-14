@@ -1,13 +1,14 @@
 "use client";
 
-import { FC, useState, useRef } from "react";
+import type { FC } from "react";
+import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, Plus } from "lucide-react";
 // plane imports
 import { EIconSize, STATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { StateGroupIcon } from "@plane/propel/icons";
-import { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
+import type { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import { StateList, StateCreate } from "@/components/project-states";

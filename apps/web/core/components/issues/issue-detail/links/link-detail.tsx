@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 // hooks
 // ui
 import { Pencil, Trash2, ExternalLink } from "lucide-react";
@@ -14,7 +14,7 @@ import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@plane/ut
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { TLinkOperationsModal } from "./create-update-link-modal";
+import type { TLinkOperationsModal } from "./create-update-link-modal";
 
 export type TIssueLinkDetail = {
   linkId: string;

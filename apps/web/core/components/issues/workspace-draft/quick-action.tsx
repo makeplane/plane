@@ -3,7 +3,8 @@
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { ContextMenu, CustomMenu } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 

@@ -3,7 +3,7 @@ import { useFormContext } from "react-hook-form";
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { IProject } from "@plane/types";
+import type { IProject } from "@plane/types";
 // ui
 // helpers
 import { getTabIndex } from "@plane/utils";

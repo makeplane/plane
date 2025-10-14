@@ -1,9 +1,10 @@
-import { FC, Fragment } from "react";
+import type { FC } from "react";
+import { Fragment } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { ICycle, TCycleEstimateType } from "@plane/types";
+import type { ICycle, TCycleEstimateType } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import ProgressChart from "@/components/core/sidebar/progress-chart";

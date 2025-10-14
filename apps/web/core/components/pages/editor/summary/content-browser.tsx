@@ -3,7 +3,8 @@ import { useState, useEffect, useCallback } from "react";
 import type { EditorRefApi, IMarking } from "@plane/editor";
 import { cn } from "@plane/utils";
 // components
-import { OutlineHeading1, OutlineHeading2, OutlineHeading3, THeadingComponentProps } from "./heading-components";
+import type { THeadingComponentProps } from "./heading-components";
+import { OutlineHeading1, OutlineHeading2, OutlineHeading3 } from "./heading-components";
 
 type Props = {
   className?: string;

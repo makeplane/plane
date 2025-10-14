@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 // plane imports
 import { DEFAULT_PRODUCT_BILLING_FREQUENCY, SUBSCRIPTION_WITH_BILLING_FREQUENCY } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EProductSubscriptionEnum, TBillingFrequency, TProductBillingFrequency } from "@plane/types";
+import type { TBillingFrequency, TProductBillingFrequency } from "@plane/types";
+import { EProductSubscriptionEnum } from "@plane/types";
 import { getSubscriptionTextColor } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components

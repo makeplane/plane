@@ -6,7 +6,8 @@ import { useParams } from "next/navigation";
 // components
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EUserProjectRoles, EViewAccess, TViewFilterProps } from "@plane/types";
+import type { EViewAccess, TViewFilterProps } from "@plane/types";
+import { EUserProjectRoles } from "@plane/types";
 import { Header, EHeaderVariant } from "@plane/ui";
 import { calculateTotalFilters } from "@plane/utils";
 import { PageHead } from "@/components/core/page-title";

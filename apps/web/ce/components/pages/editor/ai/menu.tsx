@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { ChevronRight, CornerDownRight, LucideIcon, RefreshCcw, Sparkles, TriangleAlert } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { ChevronRight, CornerDownRight, RefreshCcw, Sparkles, TriangleAlert } from "lucide-react";
 // plane editor
 import type { EditorRefApi } from "@plane/editor";
 // plane ui
@@ -12,7 +13,8 @@ import { RichTextEditor } from "@/components/editor/rich-text";
 // plane web constants
 import { AI_EDITOR_TASKS, LOADING_TEXTS } from "@/plane-web/constants/ai";
 // plane web services
-import { AIService, TTaskPayload } from "@/services/ai.service";
+import type { TTaskPayload } from "@/services/ai.service";
+import { AIService } from "@/services/ai.service";
 import { AskPiMenu } from "./ask-pi-menu";
 const aiService = new AIService();
 

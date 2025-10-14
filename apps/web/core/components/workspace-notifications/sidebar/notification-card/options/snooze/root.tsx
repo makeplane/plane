@@ -1,6 +1,7 @@
 "use client";
 
-import { Dispatch, FC, Fragment, SetStateAction } from "react";
+import type { Dispatch, FC, SetStateAction } from "react";
+import { Fragment } from "react";
 import { observer } from "mobx-react";
 import { Clock } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
@@ -14,7 +15,7 @@ import { cn } from "@plane/utils";
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // store
-import { INotification } from "@/store/notifications/notification";
+import type { INotification } from "@/store/notifications/notification";
 // local imports
 import { NotificationSnoozeModal } from "./modal";
 

@@ -1,7 +1,8 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { LucideIcon, Users } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { Users } from "lucide-react";
 // plane ui
 import { Avatar, AvatarGroup } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";

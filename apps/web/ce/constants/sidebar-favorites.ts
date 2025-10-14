@@ -1,15 +1,8 @@
-import { LucideIcon } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 // plane imports
-import {
-  CycleIcon,
-  FavoriteFolderIcon,
-  ISvgIcons,
-  ModuleIcon,
-  PageIcon,
-  ProjectIcon,
-  ViewsIcon,
-} from "@plane/propel/icons";
-import { IFavorite } from "@plane/types";
+import type { ISvgIcons } from "@plane/propel/icons";
+import { CycleIcon, FavoriteFolderIcon, ModuleIcon, PageIcon, ProjectIcon, ViewsIcon } from "@plane/propel/icons";
+import type { IFavorite } from "@plane/types";
 
 export const FAVORITE_ITEM_ICONS: Record<string, React.FC<ISvgIcons> | LucideIcon> = {
   page: PageIcon,

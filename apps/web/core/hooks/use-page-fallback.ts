@@ -1,8 +1,9 @@
 import { useCallback, useEffect } from "react";
 // plane editor
-import { type EditorRefApi, getBinaryDataFromDocumentEditorHTMLString } from "@plane/editor";
+import { getBinaryDataFromDocumentEditorHTMLString } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 // plane types
-import { TDocumentPayload } from "@plane/types";
+import type { TDocumentPayload } from "@plane/types";
 // hooks
 import useAutoSave from "@/hooks/use-auto-save";
 

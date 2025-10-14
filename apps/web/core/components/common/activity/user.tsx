@@ -1,8 +1,8 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // types
-import { TWorkspaceBaseActivity } from "@plane/types";
+import type { TWorkspaceBaseActivity } from "@plane/types";
 // store hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";

@@ -1,8 +1,8 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
-import { IWorkspaceMemberInvitation } from "@plane/types";
+import type { IWorkspaceMemberInvitation } from "@plane/types";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { WorkspaceLogo } from "@/components/workspace/logo";

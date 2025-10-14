@@ -1,6 +1,7 @@
 "use client";
 
-import { ReactNode, useRef, useState } from "react";
+import type { ReactNode } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
@@ -15,7 +16,7 @@ import { useDropdown } from "@/hooks/use-dropdown";
 // local components and constants
 import { DropdownButton } from "../buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
-import { TDropdownProps } from "../types";
+import type { TDropdownProps } from "../types";
 import { CycleOptions } from "./cycle-options";
 
 type Props = TDropdownProps & {

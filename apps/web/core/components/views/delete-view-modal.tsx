@@ -6,7 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 // types
 import { PROJECT_VIEW_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { IProjectView } from "@plane/types";
+import type { IProjectView } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
 // helpers

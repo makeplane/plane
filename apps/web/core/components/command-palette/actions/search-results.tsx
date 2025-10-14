@@ -4,7 +4,7 @@ import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { IWorkspaceSearchResults } from "@plane/types";
+import type { IWorkspaceSearchResults } from "@plane/types";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports

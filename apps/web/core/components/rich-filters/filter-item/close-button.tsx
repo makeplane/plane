@@ -2,8 +2,8 @@ import React from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // plane imports
-import { IFilterInstance } from "@plane/shared-state";
-import { TExternalFilter, TFilterProperty } from "@plane/types";
+import type { IFilterInstance } from "@plane/shared-state";
+import type { TExternalFilter, TFilterProperty } from "@plane/types";
 
 interface FilterItemCloseButtonProps<P extends TFilterProperty, E extends TExternalFilter> {
   conditionId: string;

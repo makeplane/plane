@@ -13,7 +13,7 @@ import {
 // plane types
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { TPage } from "@plane/types";
+import type { TPage } from "@plane/types";
 // plane ui
 import { Breadcrumbs, Header } from "@plane/ui";
 // helpers

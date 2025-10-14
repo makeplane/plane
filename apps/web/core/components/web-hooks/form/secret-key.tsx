@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, FC } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { range } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -10,7 +11,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { IWebhook } from "@plane/types";
+import type { IWebhook } from "@plane/types";
 // ui
 import { csvDownload, copyTextToClipboard } from "@plane/utils";
 // hooks

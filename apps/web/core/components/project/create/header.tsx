@@ -6,7 +6,7 @@ import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
 // plane types
-import { IProject } from "@plane/types";
+import type { IProject } from "@plane/types";
 // plane ui
 import { getFileURL, getTabIndex } from "@plane/utils";
 // components
