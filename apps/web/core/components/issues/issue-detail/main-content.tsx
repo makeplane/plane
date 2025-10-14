@@ -28,6 +28,7 @@ import { NameDescriptionUpdateStatus } from "../issue-update-status";
 import { PeekOverviewProperties } from "../peek-overview/properties";
 import { IssueTitleInput } from "../title-input";
 import { IssueActivity } from "./issue-activity";
+import { IssueDynamicProperties } from "./dynamic-properties";
 import { IssueParentDetail } from "./parent";
 import { IssueReaction } from "./reactions";
 import { TIssueOperations } from "./root";
@@ -127,49 +128,59 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           containerClassName="-ml-3"
         />
 
-        <IssueDescriptionInput
-          editorRef={editorRef}
-          workspaceSlug={workspaceSlug}
-          projectId={issue.project_id}
-          issueId={issue.id}
-          initialValue={issue.description_html}
-          disabled={isArchived || !isEditable}
-          issueOperations={issueOperations}
-          setIsSubmitting={(value) => setIsSubmitting(value)}
-          containerClassName="-ml-3 border-none"
-        />
+        {/* 动态字段组件 - 添加滚动容器 */}
+        <div className="max-h-[40vh] overflow-y-auto vertical-scrollbar scrollbar-sm">
+          <IssueDescriptionInput
+            editorRef={editorRef}
+            workspaceSlug={workspaceSlug}
+            projectId={issue.project_id}
+            issueId={issue.id}
+            initialValue={issue.description_html}
+            disabled={isArchived || !isEditable}
+            issueOperations={issueOperations}
+            setIsSubmitting={(value) => setIsSubmitting(value)}
+            containerClassName="-ml-3 border-none"
+          />
 
-        <div className="flex items-center justify-between gap-2">
-          {currentUser && (
-            <IssueReaction
-              className="flex-shrink-0"
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              issueId={issueId}
-              currentUser={currentUser}
-              disabled={isArchived}
-            />
-          )}
-          {isEditable && (
-            <DescriptionVersionsRoot
-              className="flex-shrink-0"
-              entityInformation={{
-                createdAt: issue.created_at ? new Date(issue.created_at) : new Date(),
-                createdByDisplayName: getUserDetails(issue.created_by ?? "")?.display_name ?? "",
-                id: issueId,
-                isRestoreDisabled: !isEditable || isArchived,
-              }}
-              fetchHandlers={{
-                listDescriptionVersions: (issueId) =>
-                  workItemVersionService.listDescriptionVersions(workspaceSlug, projectId, issueId),
-                retrieveDescriptionVersion: (issueId, versionId) =>
-                  workItemVersionService.retrieveDescriptionVersion(workspaceSlug, projectId, issueId, versionId),
-              }}
-              handleRestore={(descriptionHTML) => editorRef.current?.setEditorValue(descriptionHTML, true)}
-              projectId={projectId}
-              workspaceSlug={workspaceSlug}
-            />
-          )}
+          <div className="flex items-center justify-between gap-2">
+            {currentUser && (
+              <IssueReaction
+                className="flex-shrink-0"
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                issueId={issueId}
+                currentUser={currentUser}
+                disabled={isArchived}
+              />
+            )}
+            {isEditable && (
+              <DescriptionVersionsRoot
+                className="flex-shrink-0"
+                entityInformation={{
+                  createdAt: issue.created_at ? new Date(issue.created_at) : new Date(),
+                  createdByDisplayName: getUserDetails(issue.created_by ?? "")?.display_name ?? "",
+                  id: issueId,
+                  isRestoreDisabled: !isEditable || isArchived,
+                }}
+                fetchHandlers={{
+                  listDescriptionVersions: (issueId) =>
+                    workItemVersionService.listDescriptionVersions(workspaceSlug, projectId, issueId),
+                  retrieveDescriptionVersion: (issueId, versionId) =>
+                    workItemVersionService.retrieveDescriptionVersion(workspaceSlug, projectId, issueId, versionId),
+                }}
+                handleRestore={(descriptionHTML) => editorRef.current?.setEditorValue(descriptionHTML, true)}
+                projectId={projectId}
+                workspaceSlug={workspaceSlug}
+              />
+            )}
+          </div>
+          {/* <IssueDynamicProperties
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            issueId={issueId}
+            issueOperations={issueOperations}
+            disabled={!isEditable || isArchived}
+          /> */}
         </div>
       </div>
 

@@ -471,27 +471,39 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   "max-h-[45vh] overflow-hidden overflow-y-auto vertical-scrollbar scrollbar-sm"
               )}
             >
-              <div className="px-5">
-                <IssueDescriptionEditor
-                  control={control}
-                  isDraft={isDraft}
-                  issueName={watch("name")}
-                  issueId={data?.id}
-                  descriptionHtmlData={data?.description_html}
-                  editorRef={editorRef}
-                  submitBtnRef={submitBtnRef}
-                  gptAssistantModal={gptAssistantModal}
-                  workspaceSlug={workspaceSlug?.toString()}
-                  projectId={projectId}
-                  handleFormChange={handleFormChange}
-                  handleDescriptionHTMLDataChange={(description_html) =>
-                    setValue<"description_html">("description_html", description_html)
-                  }
-                  setGptAssistantModal={setGptAssistantModal}
-                  handleGptAssistantClose={() => reset(getValues())}
-                  onAssetUpload={onAssetUpload}
-                  onClose={onClose}
-                />
+              {/* 动态字段组件 - 独立滚动容器 */}
+              <div className="max-h-[40vh] overflow-y-auto vertical-scrollbar scrollbar-sm">
+                <div className="px-5">
+                  <IssueDescriptionEditor
+                    control={control}
+                    isDraft={isDraft}
+                    issueName={watch("name")}
+                    issueId={data?.id}
+                    descriptionHtmlData={data?.description_html}
+                    editorRef={editorRef}
+                    submitBtnRef={submitBtnRef}
+                    gptAssistantModal={gptAssistantModal}
+                    workspaceSlug={workspaceSlug?.toString()}
+                    projectId={projectId}
+                    handleFormChange={handleFormChange}
+                    handleDescriptionHTMLDataChange={(description_html) =>
+                      setValue<"description_html">("description_html", description_html)
+                    }
+                    setGptAssistantModal={setGptAssistantModal}
+                    handleGptAssistantClose={() => reset(getValues())}
+                    onAssetUpload={onAssetUpload}
+                    onClose={onClose}
+                  />
+                </div>
+                {/* 动态字段组件*/}
+                {/* <div className="mt-16">
+                  <IssueDynamicProperties
+                    control={control}
+                    projectId={projectId}
+                    workspaceSlug={workspaceSlug?.toString()}
+                    handleFormChange={handleFormChange}
+                  />
+                </div> */}
               </div>
               <WorkItemModalAdditionalProperties
                 isDraft={isDraft}
@@ -519,13 +531,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   isDraft={isDraft}
                   handleFormChange={handleFormChange}
                   setSelectedParentIssue={setSelectedParentIssue}
-                />
-                {/* 动态字段组件 */}
-                <IssueDynamicProperties
-                  control={control}
-                  projectId={projectId}
-                  workspaceSlug={workspaceSlug?.toString()}
-                  handleFormChange={handleFormChange}
                 />
               </div>
               <div className="flex items-center justify-end gap-4 py-3" tabIndex={getIndex("create_more")}>

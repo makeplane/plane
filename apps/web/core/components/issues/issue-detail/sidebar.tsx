@@ -2,7 +2,17 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { CalendarCheck2, CalendarClock, LayoutPanelTop, Signal, Tag, Triangle, UserCircle2, Users } from "lucide-react";
+import {
+  CalendarCheck2,
+  CalendarClock,
+  LayoutPanelTop,
+  Signal,
+  Tag,
+  Triangle,
+  UserCircle2,
+  Users,
+  Type,
+} from "lucide-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // ui
@@ -21,6 +31,8 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+// services
+import { projectIssueTypesCache } from "@/services/project";
 // plane web components
 // components
 import { WorkItemAdditionalSidebarProperties } from "@/plane-web/components/issues/issue-details/additional-properties";
@@ -30,6 +42,9 @@ import { IssueCycleSelect } from "./cycle-select";
 import { IssueLabel } from "./label";
 import { IssueModuleSelect } from "./module-select";
 import type { TIssueOperations } from "./root";
+import { PeekOverviewDynamicProperties } from "../peek-overview/dynamic-properties";
+// lucide icons
+import * as LucideIcons from "lucide-react";
 
 type Props = {
   workspaceSlug: string;
@@ -58,6 +73,9 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   // derived values
   const projectDetails = getProjectById(issue.project_id);
   const stateDetails = getStateById(issue.state_id);
+
+  // Get project issue types map
+  const projectIssueTypesMap = projectIssueTypesCache.get(issue.project_id ?? "");
 
   const minDate = issue.start_date ? getDate(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
@@ -90,6 +108,45 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
               />
             </div>
+
+            {/* type */}
+            {projectIssueTypesMap && issue?.type_id && projectIssueTypesMap[issue.type_id] && (
+              <div className="flex h-8 items-center gap-2">
+                <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+                  <Type className="h-4 w-4 flex-shrink-0" />
+                  <span>类型</span>
+                </div>
+                <div className="w-3/5 flex-grow flex items-center gap-2 rounded px-2 py-0.5 text-sm">
+                  {(() => {
+                    const issueType = projectIssueTypesMap[issue.type_id];
+                    const { name, color, background_color } = issueType.logo_props?.icon || {};
+                    const IconComp = name ? ((LucideIcons as any)[name] as React.FC<any> | undefined) : undefined;
+
+                    return (
+                      <>
+                        <span
+                          className="inline-flex items-center justify-center rounded-sm flex-shrink-0"
+                          style={{
+                            backgroundColor: background_color || "transparent",
+                            color: color || "currentColor",
+                            width: "16px",
+                            height: "16px",
+                          }}
+                          aria-label={`Issue type: ${issueType.name}`}
+                        >
+                          {IconComp ? (
+                            <IconComp className="h-3.5 w-3.5" strokeWidth={2} />
+                          ) : (
+                            <span className="h-3.5 w-3.5" />
+                          )}
+                        </span>
+                        <span className="text-custom-text-200">{issueType.name}</span>
+                      </>
+                    );
+                  })()}
+                </div>
+              </div>
+            )}
 
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
@@ -287,6 +344,14 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 />
               </div>
             </div>
+
+            <PeekOverviewDynamicProperties
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              issue={issue}
+              disabled={!isEditable}
+              issueOperations={issueOperations}
+            />
 
             <IssueWorklogProperty
               workspaceSlug={workspaceSlug}

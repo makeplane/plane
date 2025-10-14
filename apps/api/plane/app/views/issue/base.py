@@ -766,7 +766,7 @@ class IssueViewSet(BaseViewSet):
                         verb="updated",
                         old_value=old_value_formatted,
                         new_value=new_value_formatted,
-                        field="dynamic_property",
+                        field=property_name,
                         project_id=project_id,
                         workspace_id=workspace_id,
                         comment=f"updated {property_name} to",

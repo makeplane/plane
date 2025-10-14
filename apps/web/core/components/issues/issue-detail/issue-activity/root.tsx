@@ -126,6 +126,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
       <div className="space-y-3">
         <div className="min-h-[200px]">
           <div className="space-y-3">
+            {/* <div className="max-h-[40vh] overflow-y-auto vertical-scrollbar scrollbar-sm"> */}
             {!disabled && sortOrder === E_SORT_ORDER.DESC && renderCommentCreationBox}
             <IssueActivityCommentRoot
               projectId={projectId}
@@ -138,6 +139,8 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
               disabled={disabled}
               sortOrder={sortOrder || E_SORT_ORDER.ASC}
             />
+            {/* </div> */}
+
             {!disabled && sortOrder === E_SORT_ORDER.ASC && renderCommentCreationBox}
           </div>
         </div>

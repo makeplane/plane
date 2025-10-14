@@ -336,13 +336,15 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         </div>
 
         {/* 动态字段 - 放置在标签下方 */}
-        <PeekOverviewDynamicProperties
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          issue={issue}
-          disabled={disabled}
-          issueOperations={issueOperations}
-        />
+        <div className="max-h-[40vh] overflow-y-auto vertical-scrollbar scrollbar-sm mt-3">
+          <PeekOverviewDynamicProperties
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            issue={issue}
+            disabled={disabled}
+            issueOperations={issueOperations}
+          />
+        </div>
 
         <IssueWorklogProperty
           workspaceSlug={workspaceSlug}

@@ -9,7 +9,7 @@ import { TIssue } from "@plane/types";
 // ui
 import { Input, TextArea } from "@plane/ui";
 // hooks
-import { useProjectIssueTypes } from "@/hooks/store/use-project-issue-types";
+import { useProjectIssueTypesFromCache } from "@/hooks/store/use-project-issue-types-cache";
 // services
 import { TIssueType, TIssueTypeProperty } from "@/services/project/project-issue-type.service";
 
@@ -23,8 +23,8 @@ type TDynamicPropertiesProps = {
 export const IssueDynamicProperties: React.FC<TDynamicPropertiesProps> = observer((props) => {
   const { control, projectId, workspaceSlug, handleFormChange } = props;
 
-  // hooks
-  const { issueTypes } = useProjectIssueTypes(workspaceSlug, projectId ?? undefined);
+  // 使用缓存版本的hook
+  const { issueTypes } = useProjectIssueTypesFromCache(workspaceSlug, projectId ?? undefined);
 
   // 监听type_id的变化
   const typeId = useWatch({
@@ -219,13 +219,13 @@ export const IssueDynamicProperties: React.FC<TDynamicPropertiesProps> = observe
 
   return (
     <div className="space-y-3">
-      <div className="border-t border-custom-border-200 pt-3">
+      <div className="">
         <div className="space-y-3">
           {activeProperties.map((property) => (
-            <div key={property.id} className="flex items-center gap-3">
-              <div className="flex items-center gap-2 min-w-0 flex-shrink-0">
+            <div key={property.id} className="flex items-start gap-3 pl-4 pr-4">
+              <div className="flex items-center gap-2 w-32 flex-shrink-0 pt-2">
                 {renderIcon(property.logo_props)}
-                <label className="text-sm font-medium text-custom-text-200 whitespace-nowrap">
+                <label className="text-sm font-medium text-custom-text-200 truncate">
                   {property.display_name}
                   {property.is_required && <span className="text-red-500 ml-1">*</span>}
                 </label>

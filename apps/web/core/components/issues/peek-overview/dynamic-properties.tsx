@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import * as LucideIcons from "lucide-react";
 // hooks
@@ -18,6 +18,94 @@ interface IPeekOverviewDynamicProperties {
   disabled: boolean;
   issueOperations: TIssueOperations;
 }
+
+// 自适应高度的 Textarea 组件
+interface AutoResizeTextareaProps {
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onBlur: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
+  className: string;
+  placeholder: string;
+  minRows?: number;
+  maxRows?: number;
+}
+
+const AutoResizeTextarea: FC<AutoResizeTextareaProps> = ({
+  value,
+  onChange,
+  onBlur,
+  className,
+  placeholder,
+  minRows = 2,
+  maxRows = 8,
+}) => {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // 自动调整高度的函数
+  const adjustHeight = () => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    // 重置高度以获取正确的 scrollHeight
+    textarea.style.height = "auto";
+
+    // 计算行高
+    const computedStyle = window.getComputedStyle(textarea);
+    const lineHeight = parseInt(computedStyle.lineHeight) || 20;
+    const paddingTop = parseInt(computedStyle.paddingTop) || 0;
+    const paddingBottom = parseInt(computedStyle.paddingBottom) || 0;
+
+    const minHeight = lineHeight * minRows + paddingTop + paddingBottom;
+    const maxHeight = lineHeight * maxRows + paddingTop + paddingBottom;
+
+    // 获取内容高度
+    const scrollHeight = textarea.scrollHeight;
+
+    // 设置新高度，在最小和最大高度之间
+    const newHeight = Math.min(Math.max(scrollHeight, minHeight), maxHeight);
+    textarea.style.height = `${newHeight}px`;
+
+    // 如果内容超过最大高度，显示滚动条
+    if (scrollHeight > maxHeight) {
+      textarea.style.overflowY = "auto";
+    } else {
+      textarea.style.overflowY = "hidden";
+    }
+  };
+
+  // 当值改变时调整高度
+  useEffect(() => {
+    adjustHeight();
+  }, [value, minRows, maxRows]);
+
+  // 组件挂载时调整高度
+  useEffect(() => {
+    adjustHeight();
+  }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    onChange(e);
+    // 在下一个事件循环中调整高度，确保值已更新
+    setTimeout(adjustHeight, 0);
+  };
+
+  return (
+    <textarea
+      ref={textareaRef}
+      value={value}
+      onChange={handleChange}
+      onBlur={onBlur}
+      className={`${className} vertical-scrollbar scrollbar-sm`}
+      placeholder={placeholder}
+      style={{
+        resize: "none",
+        minHeight: `${minRows * 20}px`,
+        transition: "height 0.1s ease-out",
+        overflowY: "hidden", // 初始状态隐藏滚动条
+      }}
+    />
+  );
+};
 
 export const PeekOverviewDynamicProperties: FC<IPeekOverviewDynamicProperties> = observer((props) => {
   const { workspaceSlug, projectId, issue, disabled, issueOperations } = props;
@@ -129,7 +217,7 @@ export const PeekOverviewDynamicProperties: FC<IPeekOverviewDynamicProperties> =
       hasError ? "border-red-500" : ""
     }`;
 
-    const textareaClassName = `w-full bg-transparent border-none outline-none text-sm text-custom-text-200 placeholder-custom-text-400 resize-none min-h-[2rem] ${
+    const textareaClassName = `w-full bg-transparent border-none outline-none text-sm text-custom-text-200 placeholder-custom-text-400 ${
       hasError ? "border-red-500" : ""
     }`;
 
@@ -137,13 +225,14 @@ export const PeekOverviewDynamicProperties: FC<IPeekOverviewDynamicProperties> =
       case "TEXT":
         return (
           <div className="w-full">
-            <textarea
+            <AutoResizeTextarea
               value={currentValue}
               onChange={(e) => updateLocalValue(property.id, e.target.value)}
               onBlur={(e) => saveDynamicProperty(property.id, e.target.value, property)}
               className={textareaClassName}
               placeholder="输入文本..."
-              rows={property.is_multi ? 4 : 2}
+              minRows={property.is_multi ? 3 : 2}
+              maxRows={property.is_multi ? 10 : 6}
             />
             {hasError && <p className="text-xs text-red-500 mt-1">{hasError}</p>}
           </div>
