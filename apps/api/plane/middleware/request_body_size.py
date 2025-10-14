@@ -17,7 +17,7 @@ class RequestBodySizeLimitMiddleware:
         except RequestDataTooBig:
             return JsonResponse(
                 {
-                    "error": "Request body too large",
+                    "error": "REQUEST_BODY_TOO_LARGE",
                     "detail": "The size of the request body exceeds the maximum allowed size.",
                 },
                 status=413,
