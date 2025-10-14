@@ -273,6 +273,21 @@ class IssueRelationChoices(models.TextChoices):
     IMPLEMENTED_BY = "implemented_by", "Implemented By"
 
 
+# Bidirectional relation pairs: (forward, reverse)
+# Defined after class to avoid enum metaclass conflicts
+IssueRelationChoices._RELATION_PAIRS = (
+    ("blocked_by", "blocking"),
+    ("relates_to", "relates_to"),  # symmetric
+    ("duplicate", "duplicate"),  # symmetric
+    ("start_before", "start_after"),
+    ("finish_before", "finish_after"),
+    ("implemented_by", "implements"),
+)
+
+# Generate reverse mapping from pairs
+IssueRelationChoices._REVERSE_MAPPING = {forward: reverse for forward, reverse in IssueRelationChoices._RELATION_PAIRS}
+
+
 class IssueRelation(ProjectBaseModel):
     issue = models.ForeignKey(Issue, related_name="issue_relation", on_delete=models.CASCADE)
     related_issue = models.ForeignKey(Issue, related_name="issue_related", on_delete=models.CASCADE)
