@@ -33,7 +33,7 @@ export const ProjectFeatureToggle = (props: Props) => {
     <ToggleSwitch
       value={isEnabled}
       onChange={() => handleSubmit(featureItem.key, featureItem.property)}
-      disabled={!featureItem.isEnabled || !isAdmin}
+      disabled={isEnabled || !isAdmin}
       size="sm"
       data-ph-element={PROJECT_TRACKER_ELEMENTS.TOGGLE_FEATURE}
     />
