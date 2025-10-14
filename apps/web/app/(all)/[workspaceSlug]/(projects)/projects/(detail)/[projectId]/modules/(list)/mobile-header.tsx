@@ -6,7 +6,8 @@ import { MODULE_VIEW_LAYOUTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CustomMenu, Row } from "@plane/ui";
 import { ModuleLayoutIcon } from "@/components/modules";
-import { useModuleFilter, useProject } from "@/hooks/store";
+import { useModuleFilter } from "@/hooks/store/use-module-filter";
+import { useProject } from "@/hooks/store/use-project";
 
 export const ModulesListMobileHeader = observer(() => {
   const { currentProjectDetails } = useProject();

@@ -66,7 +66,7 @@ export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, 
     | {
         value: string;
         query: string;
-        content: JSX.Element;
+        content: React.ReactNode;
       }[]
     | undefined;
 
@@ -92,7 +92,6 @@ export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, 
             newUsers[index].email = "";
             setUsers(newUsers);
           }}
-          optionsClassName="w-full"
           noChevron
         >
           {importOptions.map((option) => (

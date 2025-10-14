@@ -16,17 +16,22 @@ import {
 } from "@plane/constants";
 // plane types
 import { useTranslation } from "@plane/i18n";
+import { ModuleStatusIcon, WorkItemsIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // plane ui
-import { Loader, LayersIcon, CustomSelect, ModuleStatusIcon, TOAST_TYPE, setToast, TextArea } from "@plane/ui";
+import { Loader, CustomSelect, TextArea } from "@plane/ui";
 // components
 // helpers
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
-import { DateRangeDropdown, MemberDropdown } from "@/components/dropdowns";
+import { DateRangeDropdown } from "@/components/dropdowns/date-range";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { CreateUpdateModuleLinkModal, ModuleAnalyticsProgress, ModuleLinksList } from "@/components/modules";
 import { captureElementAndEvent, captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
-import { useModule, useProjectEstimates, useUserPermissions } from "@/hooks/store";
+import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useModule } from "@/hooks/store/use-module";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web constants
 const defaultValues: Partial<IModule> = {
   lead_id: "",
@@ -391,7 +396,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
           </div>
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
-              <LayersIcon className="h-4 w-4" />
+              <WorkItemsIcon className="h-4 w-4" />
               <span className="text-base">{t("issues")}</span>
             </div>
             <div className="flex h-7 w-3/5 items-center">
@@ -405,7 +410,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
           {isEstimatePointValid && (
             <div className="flex items-center justify-start gap-1">
               <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
-                <LayersIcon className="h-4 w-4" />
+                <WorkItemsIcon className="h-4 w-4" />
                 <span className="text-base">{t("points")}</span>
               </div>
               <div className="flex h-7 w-3/5 items-center">

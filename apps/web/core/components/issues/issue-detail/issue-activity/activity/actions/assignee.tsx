@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // icons
 import { Users } from "lucide-react";
 // hooks;
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
 import { IssueActivityBlockComponent, IssueLink } from "./";
 

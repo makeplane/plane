@@ -1,15 +1,16 @@
 "use client";
 import React, { FC } from "react";
 import { observer } from "mobx-react";
-import { LayersIcon, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { WorkItemsIcon } from "@plane/propel/icons";
 import { TIssue, TIssueServiceType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
 type Props = {
   issueId: string;
@@ -73,7 +74,7 @@ export const SubIssuesActionButton: FC<Props> = observer((props) => {
     },
     {
       i18n_label: "common.add_existing",
-      icon: <LayersIcon className="h-3 w-3" />,
+      icon: <WorkItemsIcon className="h-3 w-3" />,
       onClick: handleAddExisting,
     },
   ];
@@ -86,9 +87,7 @@ export const SubIssuesActionButton: FC<Props> = observer((props) => {
       {optionItems.map((item, index) => (
         <CustomMenu.MenuItem
           key={index}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
+          onClick={() => {
             item.onClick();
           }}
         >

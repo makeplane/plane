@@ -3,8 +3,8 @@
 import { FC, useState } from "react";
 import { observer } from "mobx-react";
 import { STATE_TRACKER_EVENTS, STATE_GROUPS } from "@plane/constants";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { StateForm } from "@/components/project-states";
 // hooks

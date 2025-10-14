@@ -3,16 +3,16 @@ import { observer } from "mobx-react";
 import { PanelLeft } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { IntakeIcon } from "@plane/propel/icons";
 import { EInboxIssueCurrentTab } from "@plane/types";
-import { Intake } from "@plane/ui";
-// components
 import { cn } from "@plane/utils";
-import { SimpleEmptyState } from "@/components/empty-state";
-import { InboxSidebar, InboxContentRoot } from "@/components/inbox";
-import { InboxLayoutLoader } from "@/components/ui";
-// helpers
+// components
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
+import { InboxContentRoot } from "@/components/inbox/content";
+import { InboxSidebar } from "@/components/inbox/sidebar";
+import { InboxLayoutLoader } from "@/components/ui/loader/layouts/project-inbox/inbox-layout-loader";
 // hooks
-import { useProjectInbox } from "@/hooks/store";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 type TInboxIssueRoot = {
@@ -61,7 +61,7 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
   if (error && error?.status === "init-error")
     return (
       <div className="relative w-full h-full flex flex-col gap-3 justify-center items-center">
-        <Intake className="size-[60px]" strokeWidth={1.5} />
+        <IntakeIcon className="size-[60px]" strokeWidth={1.5} />
         <div className="text-custom-text-200">{error?.message}</div>
       </div>
     );

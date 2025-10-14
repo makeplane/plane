@@ -1,9 +1,9 @@
 import { observer } from "mobx-react";
 // plane imports
-import { ArchiveIcon } from "@plane/ui";
+import { ArchiveIcon } from "@plane/propel/icons";
 import { renderFormattedDate } from "@plane/utils";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
   page: TPageInstance;

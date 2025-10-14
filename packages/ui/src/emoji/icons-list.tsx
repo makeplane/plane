@@ -1,11 +1,13 @@
+"use client";
+
 import { Search } from "lucide-react";
 import React, { useEffect, useState } from "react";
 // icons
 import useFontFaceObserver from "use-font-face-observer";
+import { InfoIcon } from "@plane/propel/icons";
 import { MATERIAL_ICONS_LIST } from "..";
-import { cn } from "../../helpers";
 import { Input } from "../form-fields";
-import { InfoIcon } from "../icons";
+import { cn } from "../utils";
 // components
 // hooks
 // helpers

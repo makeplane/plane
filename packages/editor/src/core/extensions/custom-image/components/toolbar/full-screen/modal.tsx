@@ -11,15 +11,16 @@ const ZOOM_STEPS = [0.5, 1, 1.5, 2];
 
 type Props = {
   aspectRatio: number;
-  isFullScreenEnabled: boolean;
   downloadSrc: string;
+  isFullScreenEnabled: boolean;
+  isTouchDevice: boolean;
   src: string;
   toggleFullScreenMode: (val: boolean) => void;
   width: string;
 };
 
 const ImageFullScreenModalWithoutPortal = (props: Props) => {
-  const { aspectRatio, isFullScreenEnabled, downloadSrc, src, toggleFullScreenMode, width } = props;
+  const { aspectRatio, isFullScreenEnabled, isTouchDevice, downloadSrc, src, toggleFullScreenMode, width } = props;
   // refs
   const dragStart = useRef({ x: 0, y: 0 });
   const dragOffset = useRef({ x: 0, y: 0 });
@@ -191,7 +192,7 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
 
   return (
     <div
-      className={cn("fixed inset-0 size-full z-30 bg-black/90 opacity-0 pointer-events-none transition-opacity", {
+      className={cn("fixed inset-0 size-full z-50 bg-black/90 opacity-0 pointer-events-none transition-opacity", {
         "opacity-100 pointer-events-auto editor-image-full-screen-modal": isFullScreenEnabled,
         "cursor-default": !isDragging,
         "cursor-grabbing": isDragging,
@@ -233,7 +234,13 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
           <div className="flex items-center">
             <button
               type="button"
-              onClick={() => handleMagnification("decrease")}
+              onClick={(e) => {
+                if (isTouchDevice) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }
+                handleMagnification("decrease");
+              }}
               className="size-6 grid place-items-center text-white/60 hover:text-white disabled:text-white/30 transition-colors duration-200"
               disabled={magnification <= MIN_ZOOM}
               aria-label="Zoom out"
@@ -243,7 +250,13 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
             <span className="text-sm w-12 text-center text-white">{Math.round(100 * magnification)}%</span>
             <button
               type="button"
-              onClick={() => handleMagnification("increase")}
+              onClick={(e) => {
+                if (isTouchDevice) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }
+                handleMagnification("increase");
+              }}
               className="size-6 grid place-items-center text-white/60 hover:text-white disabled:text-white/30 transition-colors duration-200"
               disabled={magnification >= MAX_ZOOM}
               aria-label="Zoom in"
@@ -251,22 +264,26 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
               <Plus className="size-4" />
             </button>
           </div>
-          <button
-            type="button"
-            onClick={() => window.open(downloadSrc, "_blank")}
-            className="flex-shrink-0 size-8 grid place-items-center text-white/60 hover:text-white transition-colors duration-200"
-            aria-label="Download image"
-          >
-            <Download className="size-4" />
-          </button>
-          <button
-            type="button"
-            onClick={() => window.open(src, "_blank")}
-            className="flex-shrink-0 size-8 grid place-items-center text-white/60 hover:text-white transition-colors duration-200"
-            aria-label="Open image in new tab"
-          >
-            <ExternalLink className="size-4" />
-          </button>
+          {!isTouchDevice && (
+            <button
+              type="button"
+              onClick={() => window.open(downloadSrc, "_blank")}
+              className="flex-shrink-0 size-8 grid place-items-center text-white/60 hover:text-white transition-colors duration-200"
+              aria-label="Download image"
+            >
+              <Download className="size-4" />
+            </button>
+          )}
+          {!isTouchDevice && (
+            <button
+              type="button"
+              onClick={() => window.open(src, "_blank")}
+              className="flex-shrink-0 size-8 grid place-items-center text-white/60 hover:text-white transition-colors duration-200"
+              aria-label="Open image in new tab"
+            >
+              <ExternalLink className="size-4" />
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -279,7 +296,10 @@ export const ImageFullScreenModal: React.FC<Props> = (props) => {
   if (portal) {
     modal = ReactDOM.createPortal(modal, portal);
   } else {
-    console.warn("Portal element #editor-portal not found. Rendering inline.");
+    console.warn("Portal element #editor-portal not found. Rendering in document.body");
+    if (typeof document !== "undefined" && document.body) {
+      modal = ReactDOM.createPortal(modal, document.body);
+    }
   }
   return modal;
 };

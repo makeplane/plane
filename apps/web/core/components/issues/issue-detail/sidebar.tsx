@@ -6,25 +6,29 @@ import { CalendarCheck2, CalendarClock, LayoutPanelTop, Signal, Tag, Triangle, U
 // i18n
 import { useTranslation } from "@plane/i18n";
 // ui
-import { ContrastIcon, DiceIcon, DoubleCircleIcon } from "@plane/ui";
+import { CycleIcon, DoubleCircleIcon, ModuleIcon } from "@plane/propel/icons";
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
-import {
-  DateDropdown,
-  EstimateDropdown,
-  MemberDropdown,
-  PriorityDropdown,
-  StateDropdown,
-} from "@/components/dropdowns";
+import { DateDropdown } from "@/components/dropdowns/date";
+import { EstimateDropdown } from "@/components/dropdowns/estimate";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import { IssueCycleSelect, IssueLabel, IssueModuleSelect } from "@/components/issues";
-// helpers
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // hooks
-import { useProjectEstimates, useIssueDetail, useProject, useProjectState, useMember } from "@/hooks/store";
+import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useMember } from "@/hooks/store/use-member";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web components
-import { IssueParentSelectRoot, IssueWorklogProperty } from "@/plane-web/components/issues";
 // components
 import { WorkItemAdditionalSidebarProperties } from "@/plane-web/components/issues/issue-details/additional-properties";
+import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
+import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
+import { IssueCycleSelect } from "./cycle-select";
+import { IssueLabel } from "./label";
+import { IssueModuleSelect } from "./module-select";
 import type { TIssueOperations } from "./root";
 
 type Props = {
@@ -223,7 +227,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             {projectDetails?.module_view && (
               <div className="flex min-h-8 gap-2">
                 <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
-                  <DiceIcon className="h-4 w-4 flex-shrink-0" />
+                  <ModuleIcon className="h-4 w-4 flex-shrink-0" />
                   <span>{t("common.modules")}</span>
                 </div>
                 <IssueModuleSelect
@@ -240,7 +244,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             {projectDetails?.cycle_view && (
               <div className="flex h-8 items-center gap-2">
                 <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-                  <ContrastIcon className="h-4 w-4 flex-shrink-0" />
+                  <CycleIcon className="h-4 w-4 flex-shrink-0" />
                   <span>{t("common.cycle")}</span>
                 </div>
                 <IssueCycleSelect

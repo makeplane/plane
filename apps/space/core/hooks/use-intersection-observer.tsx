@@ -1,4 +1,5 @@
-import { RefObject, useEffect } from "react";
+import type { RefObject } from "react";
+import { useEffect } from "react";
 
 export type UseIntersectionObserverProps = {
   containerRef: RefObject<HTMLDivElement | null> | undefined;
@@ -18,7 +19,9 @@ export const useIntersectionObserver = (
       const observer = new IntersectionObserver(
         (entries) => {
           if (entries[entries.length - 1].isIntersecting) {
-            callback && callback();
+            if (callback) {
+              callback();
+            }
           }
         },
         {

@@ -8,14 +8,16 @@ import { useParams } from "next/navigation";
 import { ChevronDown, PanelRight } from "lucide-react";
 import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { YourWorkIcon } from "@plane/propel/icons";
 import { IUserProfileProjectSegregation } from "@plane/types";
-import { Breadcrumbs, Header, CustomMenu, UserActivityIcon } from "@plane/ui";
+import { Breadcrumbs, Header, CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
-import { ProfileIssuesFilter } from "@/components/profile";
+import { ProfileIssuesFilter } from "@/components/profile/profile-issues-filter";
 // hooks
-import { useAppTheme, useUser, useUserPermissions } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 
 type TUserProfileHeader = {
   userProjectsData: IUserProfileProjectSegregation | undefined;
@@ -57,7 +59,7 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
               <BreadcrumbLink
                 label={breadcrumbLabel}
                 disableTooltip
-                icon={<UserActivityIcon className="h-4 w-4 text-custom-text-300" />}
+                icon={<YourWorkIcon className="h-4 w-4 text-custom-text-300" />}
               />
             }
           />

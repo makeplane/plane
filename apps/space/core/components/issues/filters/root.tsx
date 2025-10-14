@@ -1,7 +1,8 @@
 "use client";
 
-import { FC, useCallback } from "react";
-import cloneDeep from "lodash/cloneDeep";
+import type { FC } from "react";
+import { useCallback } from "react";
+import { cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 // constants
@@ -12,9 +13,9 @@ import { FilterSelection } from "@/components/issues/filters/selection";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
-import { useIssueFilter } from "@/hooks/store";
+import { useIssueFilter } from "@/hooks/store/use-issue-filter";
 // types
-import { TIssueQueryFilters } from "@/types/issue";
+import type { TIssueQueryFilters } from "@/types/issue";
 
 type IssueFiltersDropdownProps = {
   anchor: string;

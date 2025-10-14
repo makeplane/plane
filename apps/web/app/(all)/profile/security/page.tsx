@@ -4,19 +4,21 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Eye, EyeOff } from "lucide-react";
+// plane imports
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// ui
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Input, PasswordStrengthIndicator } from "@plane/ui";
 // components
 import { getPasswordStrength } from "@plane/utils";
-import { PasswordStrengthMeter } from "@/components/account/password-strength-meter";
 import { PageHead } from "@/components/core/page-title";
-import { ProfileSettingContentHeader, ProfileSettingContentWrapper } from "@/components/profile";
+import { ProfileSettingContentHeader } from "@/components/profile/profile-setting-content-header";
+import { ProfileSettingContentWrapper } from "@/components/profile/profile-setting-content-wrapper";
 // helpers
-import { authErrorHandler } from "@/helpers/authentication.helper";
+import { authErrorHandler, type EAuthenticationErrorCodes } from "@/helpers/authentication.helper";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user";
 // services
 import { AuthService } from "@/services/auth.service";
 
@@ -87,8 +89,10 @@ const SecurityPage = observer(() => {
         title: t("auth.common.password.toast.change_password.success.title"),
         message: t("auth.common.password.toast.change_password.success.message"),
       });
-    } catch (err: any) {
-      const errorInfo = authErrorHandler(err.error_code?.toString());
+    } catch (error: unknown) {
+      const err = error as Error & { error_code?: string };
+      const code = err.error_code?.toString();
+      const errorInfo = code ? authErrorHandler(code as EAuthenticationErrorCodes) : undefined;
       setToast({
         type: TOAST_TYPE.ERROR,
         title: errorInfo?.title ?? t("auth.common.password.toast.error.title"),
@@ -108,7 +112,7 @@ const SecurityPage = observer(() => {
 
   const passwordSupport = password.length > 0 &&
     getPasswordStrength(password) != E_PASSWORD_STRENGTH.STRENGTH_VALID && (
-      <PasswordStrengthMeter password={password} isFocused={isPasswordInputFocused} />
+      <PasswordStrengthIndicator password={password} isFocused={isPasswordInputFocused} />
     );
 
   const renderPasswordMatchError = !isRetryPasswordInputFocused || confirmPassword.length >= password.length;

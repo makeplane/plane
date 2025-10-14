@@ -3,23 +3,23 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { X, Pencil, Trash, Link as LinkIcon } from "lucide-react";
-// Plane
+// plane imports
 import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import { EIssueServiceType, TIssue, TIssueServiceType } from "@plane/types";
-import { ControlLink, CustomMenu, Tooltip } from "@plane/ui";
-// components
+import { ControlLink, CustomMenu } from "@plane/ui";
 import { generateWorkItemLink } from "@plane/utils";
-import { RelationIssueProperty } from "@/components/issues/relations";
-// helpers
 // hooks
-import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProject } from "@/hooks/store/use-project";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
-import { TIssueRelationTypes } from "@/plane-web/types";
+// plane web imports
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import type { TIssueRelationTypes } from "@/plane-web/types";
 // local imports
 import { useRelationOperations } from "../issue-detail-widgets/relations/helper";
+import { RelationIssueProperty } from "./properties";
 
 type Props = {
   workspaceSlug: string;
@@ -58,7 +58,6 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
     toggleDeleteIssueModal,
   } = useIssueDetail(issueServiceType);
   const project = useProject();
-  const { getProjectStates } = useProjectState();
   const { isMobile } = usePlatformOS();
   // derived values
   const issue = getIssueById(relationIssueId);
@@ -66,9 +65,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
   const issueOperations = useRelationOperations(!!issue?.is_epic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
   const projectDetail = (issue && issue.project_id && project.getProjectById(issue.project_id)) || undefined;
   const projectId = issue?.project_id;
-  const currentIssueStateDetail =
-    (issue?.project_id && getProjectStates(issue?.project_id)?.find((state) => issue?.state_id == state.id)) ||
-    undefined;
+
   if (!issue || !projectId) return <></>;
 
   const workItemLink = generateWorkItemLink({
@@ -126,15 +123,9 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
         className="w-full cursor-pointer"
       >
         {issue && (
-          <div className="group relative flex min-h-11 h-full w-full items-center gap-3 px-1.5 py-1 transition-all hover:bg-custom-background-90">
+          <div className="group relative flex min-h-11 h-full w-full items-center px-1.5 py-1 transition-all hover:bg-custom-background-90">
             <span className="size-5 flex-shrink-0" />
             <div className="flex w-full truncate cursor-pointer items-center gap-3">
-              <div
-                className="h-2 w-2 flex-shrink-0 rounded-full"
-                style={{
-                  backgroundColor: currentIssueStateDetail?.color ?? "#737373",
-                }}
-              />
               <div className="flex-shrink-0">
                 {projectDetail && (
                   <IssueIdentifier

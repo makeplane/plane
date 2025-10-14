@@ -1,9 +1,11 @@
 import { observer } from "mobx-react";
-import { TLoader } from "@plane/types";
-import { LogoSpinner } from "@/components/common";
+// plane imports
+import type { TLoader } from "@plane/types";
+// components
+import { LogoSpinner } from "@/components/common/logo-spinner";
 
 interface Props {
-  children: string | JSX.Element | JSX.Element[];
+  children: string | React.ReactNode | React.ReactNode[];
   getGroupIssueCount: (
     groupId: string | undefined,
     subGroupId: string | undefined,

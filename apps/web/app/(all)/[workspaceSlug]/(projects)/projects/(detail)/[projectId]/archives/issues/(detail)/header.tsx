@@ -4,16 +4,17 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
-import { ArchiveIcon, Breadcrumbs, LayersIcon, Header } from "@plane/ui";
+import { ArchiveIcon, WorkItemsIcon } from "@plane/propel/icons";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
-import { IssueDetailQuickActions } from "@/components/issues";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { IssueDetailQuickActions } from "@/components/issues/issue-detail/issue-detail-quick-actions";
 // constants
 import { ISSUE_DETAILS } from "@/constants/fetch-keys";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 // plane web
-import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs";
+import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs/project";
 // services
 import { IssueService } from "@/services/issue";
 
@@ -51,7 +52,7 @@ export const ProjectArchivedIssueDetailsHeader = observer(() => {
               <BreadcrumbLink
                 href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
                 label="Work items"
-                icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />}
+                icon={<WorkItemsIcon className="h-4 w-4 text-custom-text-300" />}
               />
             }
           />

@@ -4,15 +4,16 @@ import { FC, RefObject } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ETabIndices } from "@plane/constants";
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { EFileAssetType, TIssue } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { getDescriptionPlaceholderI18n, getTabIndex } from "@plane/utils";
 // components
-import { RichTextEditor } from "@/components/editor/rich-text-editor/rich-text-editor";
+import { RichTextEditor } from "@/components/editor/rich-text/editor";
 // hooks
-import { useEditorAsset, useProjectInbox } from "@/hooks/store";
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { WorkspaceService } from "@/plane-web/services";

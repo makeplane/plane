@@ -6,15 +6,18 @@ import { usePathname } from "next/navigation";
 // Plane imports
 import { EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import { EIssueServiceType, EIssuesStoreType, IWorkItemPeekOverview, TIssue } from "@plane/types";
-import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
-// components
-import { IssueView, TIssueOperations } from "@/components/issues";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useIssueDetail, useIssues, useUserPermissions } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
+// local imports
+import { TIssueOperations } from "../issue-detail";
+import { IssueView } from "./view";
 
 export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => {
   const {
@@ -61,7 +64,7 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
       fetch: async (workspaceSlug: string, projectId: string, issueId: string) => {
         try {
           setError(false);
-          await fetchIssue(workspaceSlug, projectId, issueId, is_draft ? "DRAFT" : "DEFAULT");
+          await fetchIssue(workspaceSlug, projectId, issueId);
         } catch (error) {
           setError(true);
           console.error("Error fetching the parent issue", error);

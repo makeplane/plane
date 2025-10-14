@@ -12,15 +12,18 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { useTranslation } from "@plane/i18n";
+import { Tooltip } from "@plane/propel/tooltip";
 import { IUserProfileProjectSegregation } from "@plane/types";
 // plane ui
-import { Loader, Tooltip } from "@plane/ui";
+import { Loader } from "@plane/ui";
 import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
 // components
-import { Logo } from "@/components/common";
+import { Logo } from "@/components/common/logo";
 // helpers
 // hooks
-import { useAppTheme, useProject, useUser } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useProject } from "@/hooks/store/use-project";
+import { useUser } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // components
 import { ProfileSidebarTime } from "./time";
@@ -116,7 +119,7 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
                   className="h-full w-full rounded object-cover"
                 />
               ) : (
-                <div className="flex h-[52px] w-[52px] items-center justify-center rounded bg-custom-background-90 capitalize text-custom-text-100">
+                <div className="flex h-[52px] w-[52px] items-center justify-center rounded bg-[#028375] capitalize text-white">
                   {userData?.first_name?.[0]}
                 </div>
               )}

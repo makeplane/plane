@@ -1,9 +1,9 @@
-import { Briefcase } from "lucide-react";
+import { ProjectIcon } from "@plane/propel/icons";
 // plane package imports
-import { Logo } from "@plane/ui";
 import { cn } from "@plane/utils";
+import { Logo } from "@/components/common/logo";
 // plane web hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 
 type Props = {
   project: {
@@ -40,7 +40,7 @@ const ActiveProjectItem = (props: Props) => {
               <Logo logo={projectDetails?.logo_props} size={16} />
             ) : (
               <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
-                <Briefcase className="h-4 w-4" />
+                <ProjectIcon className="h-4 w-4" />
               </span>
             )}
           </span>

@@ -5,8 +5,10 @@ import { Disclosure, Transition } from "@headlessui/react";
 // store
 // icons
 // types
+import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { IIssueLabel } from "@plane/types";
 // components
+import { captureClick } from "@/helpers/event-tracker.helper";
 import { CreateUpdateLabelInline, TLabelOperationsCallbacks } from "./create-update-label-inline";
 import { ICustomMenuItem, LabelItemBlock } from "./label-block/label-item-block";
 import { LabelDndHOC } from "./label-drag-n-drop-HOC";
@@ -49,6 +51,9 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
     {
       CustomIcon: Pencil,
       onClick: () => {
+        captureClick({
+          elementName: PROJECT_SETTINGS_TRACKER_ELEMENTS.LABELS_CONTEXT_MENU,
+        });
         setEditLabelForm(true);
         setIsUpdating(true);
       },
@@ -58,7 +63,12 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
     },
     {
       CustomIcon: Trash2,
-      onClick: handleLabelDelete,
+      onClick: () => {
+        captureClick({
+          elementName: PROJECT_SETTINGS_TRACKER_ELEMENTS.LABELS_CONTEXT_MENU,
+        });
+        handleLabelDelete(label);
+      },
       isVisible: true,
       text: "Delete label",
       key: "delete_label",

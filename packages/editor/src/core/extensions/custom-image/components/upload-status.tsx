@@ -1,10 +1,6 @@
 import { Editor } from "@tiptap/core";
 import { useEditorState } from "@tiptap/react";
 import { useEffect, useRef, useState } from "react";
-// constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
-// helpers
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 
 type Props = {
   editor: Editor;
@@ -20,7 +16,7 @@ export const ImageUploadStatus: React.FC<Props> = (props) => {
   // subscribe to image upload status
   const uploadStatus: number | undefined = useEditorState({
     editor,
-    selector: ({ editor }) => getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY)?.assetsUploadStatus?.[nodeId],
+    selector: ({ editor }) => editor.storage.utility?.assetsUploadStatus?.[nodeId],
   });
 
   useEffect(() => {
@@ -52,7 +48,7 @@ export const ImageUploadStatus: React.FC<Props> = (props) => {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [uploadStatus]);
+  }, [displayStatus, uploadStatus]);
 
   if (uploadStatus === undefined) return null;
 

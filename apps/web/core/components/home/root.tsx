@@ -6,13 +6,12 @@ import { PRODUCT_TOUR_TRACKER_EVENTS } from "@plane/constants";
 import { ContentWrapper } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { TourRoot } from "@/components/onboarding";
+import { TourRoot } from "@/components/onboarding/tour";
 // helpers
 import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
-import { useUserProfile, useUser } from "@/hooks/store";
 import { useHome } from "@/hooks/store/use-home";
-import useSize from "@/hooks/use-window-size";
+import { useUserProfile, useUser } from "@/hooks/store/user";
 // plane web components
 import { HomePeekOverviewsRoot } from "@/plane-web/components/home";
 // local imports
@@ -24,8 +23,7 @@ export const WorkspaceHomeView = observer(() => {
   const { workspaceSlug } = useParams();
   const { data: currentUser } = useUser();
   const { data: currentUserProfile, updateTourCompleted } = useUserProfile();
-  const { toggleWidgetSettings, fetchWidgets } = useHome();
-  const [windowWidth] = useSize();
+  const { fetchWidgets } = useHome();
 
   useSWR(
     workspaceSlug ? `HOME_DASHBOARD_WIDGETS_${workspaceSlug}` : null,
@@ -62,13 +60,11 @@ export const WorkspaceHomeView = observer(() => {
       )}
       <>
         <HomePeekOverviewsRoot />
-        <ContentWrapper
-          className={cn("gap-6 bg-custom-background-90/20", {
-            "vertical-scrollbar scrollbar-lg": windowWidth >= 768,
-          })}
-        >
-          {currentUser && <UserGreetingsView user={currentUser} handleWidgetModal={() => toggleWidgetSettings(true)} />}
-          <DashboardWidgets />
+        <ContentWrapper className={cn("gap-6 bg-custom-background-100 mx-auto scrollbar-hide px-page-x lg:px-0")}>
+          <div className="max-w-[800px] mx-auto w-full">
+            {currentUser && <UserGreetingsView user={currentUser} />}
+            <DashboardWidgets />
+          </div>
         </ContentWrapper>
       </>
     </>

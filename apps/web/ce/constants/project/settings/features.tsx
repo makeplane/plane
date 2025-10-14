@@ -1,8 +1,8 @@
 import { ReactNode } from "react";
-import { FileText, Layers, Timer } from "lucide-react";
+import { Timer } from "lucide-react";
 // plane imports
+import { CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon } from "@plane/propel/icons";
 import { IProject } from "@plane/types";
-import { ContrastIcon, DiceIcon, Intake } from "@plane/ui";
 
 export type TProperties = {
   key: string;
@@ -28,7 +28,7 @@ export const PROJECT_BASE_FEATURES_LIST: TBaseFeatureList = {
     property: "cycle_view",
     title: "Cycles",
     description: "Timebox work as you see fit per project and change frequency from one period to the next.",
-    icon: <ContrastIcon className="h-5 w-5 flex-shrink-0 rotate-180 text-custom-text-300" />,
+    icon: <CycleIcon className="h-5 w-5 flex-shrink-0 rotate-180 text-custom-text-300" />,
     isPro: false,
     isEnabled: true,
   },
@@ -37,7 +37,7 @@ export const PROJECT_BASE_FEATURES_LIST: TBaseFeatureList = {
     property: "module_view",
     title: "Modules",
     description: "Group work into sub-project-like set-ups with their own leads and assignees.",
-    icon: <DiceIcon width={20} height={20} className="flex-shrink-0 text-custom-text-300" />,
+    icon: <ModuleIcon width={20} height={20} className="flex-shrink-0 text-custom-text-300" />,
     isPro: false,
     isEnabled: true,
   },
@@ -46,7 +46,7 @@ export const PROJECT_BASE_FEATURES_LIST: TBaseFeatureList = {
     property: "issue_views_view",
     title: "Views",
     description: "Save sorts, filters, and display options for later or share them.",
-    icon: <Layers className="h-5 w-5 flex-shrink-0 text-custom-text-300" />,
+    icon: <ViewsIcon className="h-5 w-5 flex-shrink-0 text-custom-text-300" />,
     isPro: false,
     isEnabled: true,
   },
@@ -55,7 +55,7 @@ export const PROJECT_BASE_FEATURES_LIST: TBaseFeatureList = {
     property: "page_view",
     title: "Pages",
     description: "Write anything like you write anything.",
-    icon: <FileText className="h-5 w-5 flex-shrink-0 text-custom-text-300" />,
+    icon: <PageIcon className="h-5 w-5 flex-shrink-0 text-custom-text-300" />,
     isPro: false,
     isEnabled: true,
   },
@@ -64,7 +64,7 @@ export const PROJECT_BASE_FEATURES_LIST: TBaseFeatureList = {
     property: "inbox_view",
     title: "Intake",
     description: "Consider and discuss work items before you add them to your project.",
-    icon: <Intake className="h-5 w-5 flex-shrink-0 text-custom-text-300" />,
+    icon: <IntakeIcon className="h-5 w-5 flex-shrink-0 text-custom-text-300" />,
     isPro: false,
     isEnabled: true,
   },

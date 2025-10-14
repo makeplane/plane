@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { Controller, Control } from "react-hook-form";
+import type { Control } from "react-hook-form";
+import { Controller } from "react-hook-form";
 // icons
 import { Eye, EyeOff } from "lucide-react";
 // plane internal packages
@@ -13,7 +14,7 @@ type Props = {
   type: "text" | "password";
   name: string;
   label: string;
-  description?: string | JSX.Element;
+  description?: string | React.ReactNode;
   placeholder: string;
   error: boolean;
   required: boolean;
@@ -23,7 +24,7 @@ export type TControllerInputFormField = {
   key: string;
   type: "text" | "password";
   label: string;
-  description?: string | JSX.Element;
+  description?: string | React.ReactNode;
   placeholder: string;
   error: boolean;
   required: boolean;

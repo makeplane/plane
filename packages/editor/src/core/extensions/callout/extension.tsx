@@ -1,14 +1,18 @@
-import { findParentNodeClosestToPos, Predicate, ReactNodeViewRenderer } from "@tiptap/react";
-// extensions
-import { CustomCalloutBlock } from "@/extensions";
+import { findParentNodeClosestToPos, type Predicate, ReactNodeViewRenderer } from "@tiptap/react";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
-// config
+// local imports
+import { CustomCalloutBlock, type CustomCalloutNodeViewProps } from "./block";
 import { CustomCalloutExtensionConfig } from "./extension-config";
-// utils
+import type { CustomCalloutExtensionOptions, CustomCalloutExtensionStorage } from "./types";
 import { getStoredBackgroundColor, getStoredLogo } from "./utils";
 
-export const CustomCalloutExtension = CustomCalloutExtensionConfig.extend({
+export const CustomCalloutExtension = CustomCalloutExtensionConfig.extend<
+  CustomCalloutExtensionOptions,
+  CustomCalloutExtensionStorage
+>({
   selectable: true,
   draggable: true,
 
@@ -25,7 +29,7 @@ export const CustomCalloutExtension = CustomCalloutExtensionConfig.extend({
             type: this.name,
             content: [
               {
-                type: "paragraph",
+                type: CORE_EXTENSIONS.PARAGRAPH,
               },
             ],
             attrs: {
@@ -63,6 +67,8 @@ export const CustomCalloutExtension = CustomCalloutExtensionConfig.extend({
   },
 
   addNodeView() {
-    return ReactNodeViewRenderer(CustomCalloutBlock);
+    return ReactNodeViewRenderer((props) => (
+      <CustomCalloutBlock {...props} node={props.node as CustomCalloutNodeViewProps["node"]} />
+    ));
   },
 });

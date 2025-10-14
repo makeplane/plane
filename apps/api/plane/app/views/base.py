@@ -24,6 +24,7 @@ from rest_framework.viewsets import ModelViewSet
 from plane.authentication.session import BaseSessionAuthentication
 from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator
+from plane.utils.core.mixins import ReadReplicaControlMixin
 
 
 class TimezoneMixin:
@@ -40,7 +41,7 @@ class TimezoneMixin:
             timezone.deactivate()
 
 
-class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
+class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePaginator):
     model = None
 
     permission_classes = [IsAuthenticated]
@@ -52,6 +53,8 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
     filterset_fields = []
 
     search_fields = []
+
+    use_read_replica = False
 
     def get_queryset(self):
         try:
@@ -69,11 +72,7 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
             response = super().handle_exception(exc)
             return response
         except Exception as e:
-            (
-                print(e, traceback.format_exc())
-                if settings.DEBUG
-                else print("Server Error")
-            )
+            (print(e, traceback.format_exc()) if settings.DEBUG else print("Server Error"))
             if isinstance(e, IntegrityError):
                 return Response(
                     {"error": "The payload is not valid"},
@@ -112,9 +111,7 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
             if settings.DEBUG:
                 from django.db import connection
 
-                print(
-                    f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}"
-                )
+                print(f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}")
 
             return response
         except Exception as exc:
@@ -136,20 +133,16 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
 
     @property
     def fields(self):
-        fields = [
-            field for field in self.request.GET.get("fields", "").split(",") if field
-        ]
+        fields = [field for field in self.request.GET.get("fields", "").split(",") if field]
         return fields if fields else None
 
     @property
     def expand(self):
-        expand = [
-            expand for expand in self.request.GET.get("expand", "").split(",") if expand
-        ]
+        expand = [expand for expand in self.request.GET.get("expand", "").split(",") if expand]
         return expand if expand else None
 
 
-class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
+class BaseAPIView(TimezoneMixin, ReadReplicaControlMixin, APIView, BasePaginator):
     permission_classes = [IsAuthenticated]
 
     filter_backends = (DjangoFilterBackend, SearchFilter)
@@ -159,6 +152,8 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
     filterset_fields = []
 
     search_fields = []
+
+    use_read_replica = False
 
     def filter_queryset(self, queryset):
         for backend in list(self.filter_backends):
@@ -211,9 +206,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
             if settings.DEBUG:
                 from django.db import connection
 
-                print(
-                    f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}"
-                )
+                print(f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}")
             return response
 
         except Exception as exc:
@@ -230,14 +223,10 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
 
     @property
     def fields(self):
-        fields = [
-            field for field in self.request.GET.get("fields", "").split(",") if field
-        ]
+        fields = [field for field in self.request.GET.get("fields", "").split(",") if field]
         return fields if fields else None
 
     @property
     def expand(self):
-        expand = [
-            expand for expand in self.request.GET.get("expand", "").split(",") if expand
-        ]
+        expand = [expand for expand in self.request.GET.get("expand", "").split(",") if expand]
         return expand if expand else None

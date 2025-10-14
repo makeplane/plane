@@ -1,27 +1,27 @@
-import { Briefcase, FileText, History } from "lucide-react";
+import { History } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { LayersIcon } from "@plane/ui";
+import { PageIcon, ProjectIcon, WorkItemsIcon } from "@plane/propel/icons";
 
 const getDisplayContent = (type: string) => {
   switch (type) {
     case "project":
       return {
-        icon: <Briefcase size={30} className="text-custom-text-400/40" />,
+        icon: <ProjectIcon height={30} width={30} className="text-custom-text-400/40" />,
         text: "home.recents.empty.project",
       };
     case "page":
       return {
-        icon: <FileText size={30} className="text-custom-text-400/40" />,
+        icon: <PageIcon height={30} width={30} className="text-custom-text-400/40" />,
         text: "home.recents.empty.page",
       };
     case "issue":
       return {
-        icon: <LayersIcon className="text-custom-text-400/40 w-[30px] h-[30px]" />,
+        icon: <WorkItemsIcon className="text-custom-text-400/40 w-[30px] h-[30px]" />,
         text: "home.recents.empty.issue",
       };
     default:
       return {
-        icon: <History size={30} className="text-custom-text-400/40" />,
+        icon: <History height={30} width={30} className="text-custom-text-400/40" />,
         text: "home.recents.empty.default",
       };
   }

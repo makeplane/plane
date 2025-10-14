@@ -1,12 +1,12 @@
 import { createContext } from "react";
 // ce imports
-// react-hook-form
 import { UseFormReset, UseFormWatch } from "react-hook-form";
 // plane imports
-import { EditorRefApi } from "@plane/editor";
-import { ISearchIssueResponse, TIssue } from "@plane/types";
+import type { EditorRefApi } from "@plane/editor";
+import type { ISearchIssueResponse, TIssue } from "@plane/types";
+// plane web imports
 import { TIssuePropertyValues, TIssuePropertyValueErrors } from "@/plane-web/types/issue-types";
-import { TIssueFields } from "ce/components/issues";
+import { TIssueFields } from "ce/components/issues/issue-modal";
 
 export type TPropertyValuesValidationProps = {
   projectId: string | null;
@@ -28,6 +28,12 @@ export type TCreateUpdatePropertyValuesProps = {
   isDraft?: boolean;
 };
 
+export type TCreateSubWorkItemProps = {
+  workspaceSlug: string;
+  projectId: string;
+  parentId: string;
+};
+
 export type THandleTemplateChangeProps = {
   workspaceSlug: string;
   reset: UseFormReset<TIssue>;
@@ -35,8 +41,9 @@ export type THandleTemplateChangeProps = {
 };
 
 export type THandleProjectEntitiesFetchProps = {
+  workItemProjectId: string | null | undefined;
+  workItemTypeId: string | undefined;
   workspaceSlug: string;
-  templateId: string;
 };
 
 export type THandleParentWorkItemDetailsProps = {
@@ -65,6 +72,7 @@ export type TIssueModalContext = {
   handleProjectEntitiesFetch: (props: THandleProjectEntitiesFetchProps) => Promise<void>;
   handleTemplateChange: (props: THandleTemplateChangeProps) => Promise<void>;
   handleConvert: (workspaceSlug: string, data: Partial<TIssue>) => Promise<void>;
+  handleCreateSubWorkItem: (props: TCreateSubWorkItemProps) => Promise<void>;
 };
 
 export const IssueModalContext = createContext<TIssueModalContext | undefined>(undefined);

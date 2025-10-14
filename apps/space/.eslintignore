@@ -1,0 +1,12 @@
+.next/*
+out/*
+public/*
+dist/*
+node_modules/*
+.turbo/*
+.env*
+.env
+.env.local
+.env.development
+.env.production
+.env.test

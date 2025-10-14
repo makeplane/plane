@@ -54,7 +54,7 @@ export const JiraImportUsers: FC = () => {
     | {
         value: string;
         query: string;
-        content: JSX.Element;
+        content: React.ReactNode;
       }[]
     | undefined;
 
@@ -96,7 +96,6 @@ export const JiraImportUsers: FC = () => {
                         input
                         value={value}
                         onChange={onChange}
-                        optionsClassName="w-full"
                         label={<span className="capitalize">{Boolean(value) ? value : ("Ignore" as any)}</span>}
                       >
                         <CustomSelect.Option value="invite">Invite by email</CustomSelect.Option>

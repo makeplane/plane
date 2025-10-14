@@ -1,13 +1,13 @@
 import * as React from "react";
 import { useState } from "react";
+import { Tooltip } from "@plane/propel/tooltip";
 import { ICustomSearchSelectOption } from "@plane/types";
-import { cn } from "../../helpers";
 import { CustomSearchSelect } from "../dropdowns";
-import { Tooltip } from "../tooltip";
+import { cn } from "../utils";
 import { Breadcrumbs } from "./breadcrumbs";
 
 type TBreadcrumbNavigationSearchDropdownProps = {
-  icon?: React.JSX.Element;
+  icon?: React.ReactNode;
   title?: string;
   selectedItem: string;
   navigationItems: ICustomSearchSelectOption[];
@@ -16,6 +16,7 @@ type TBreadcrumbNavigationSearchDropdownProps = {
   isLast?: boolean;
   handleOnClick?: () => void;
   disableRootHover?: boolean;
+  shouldTruncate?: boolean;
 };
 
 export const BreadcrumbNavigationSearchDropdown: React.FC<TBreadcrumbNavigationSearchDropdownProps> = (props) => {
@@ -28,6 +29,7 @@ export const BreadcrumbNavigationSearchDropdown: React.FC<TBreadcrumbNavigationS
     navigationDisabled = false,
     isLast = false,
     handleOnClick,
+    shouldTruncate = false,
   } = props;
   // state
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -65,8 +67,15 @@ export const BreadcrumbNavigationSearchDropdown: React.FC<TBreadcrumbNavigationS
                 }
               )}
             >
-              {icon && <Breadcrumbs.Icon>{icon}</Breadcrumbs.Icon>}
-              <Breadcrumbs.Label>{title}</Breadcrumbs.Label>
+              {shouldTruncate && <div className="flex @4xl:hidden text-custom-text-300">...</div>}
+              <div
+                className={cn("flex gap-2", {
+                  "hidden @4xl:flex gap-2": shouldTruncate,
+                })}
+              >
+                {icon && <Breadcrumbs.Icon>{icon}</Breadcrumbs.Icon>}
+                <Breadcrumbs.Label>{title}</Breadcrumbs.Label>
+              </div>
             </button>
           </Tooltip>
           <Breadcrumbs.Separator

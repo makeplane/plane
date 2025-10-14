@@ -9,7 +9,7 @@ import { useTranslation } from "@plane/i18n";
 import { CustomSelect, Input } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 import { InvitationFormValues } from "@/hooks/use-workspace-invitation";
 
 type TInvitationFieldsProps = {
@@ -83,7 +83,6 @@ export const InvitationFields = observer((props: TInvitationFieldsProps) => {
                     value={value}
                     label={<span className="text-xs sm:text-sm">{ROLE[value]}</span>}
                     onChange={onChange}
-                    optionsClassName="w-full"
                     className="flex-grow w-24"
                     input
                   >

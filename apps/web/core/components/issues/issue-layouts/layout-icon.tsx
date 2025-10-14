@@ -1,5 +1,5 @@
 import { List, Kanban, Calendar, Sheet, GanttChartSquare, LucideProps } from "lucide-react";
-import { EIssueLayoutTypes } from "@plane/constants";
+import { EIssueLayoutTypes } from "@plane/types";
 
 export const IssueLayoutIcon = ({ layout, ...props }: { layout: EIssueLayoutTypes } & LucideProps) => {
   switch (layout) {

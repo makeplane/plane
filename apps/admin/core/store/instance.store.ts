@@ -1,9 +1,10 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // plane internal packages
-import { EInstanceStatus, TInstanceStatus } from "@plane/constants";
+import type { TInstanceStatus } from "@plane/constants";
+import { EInstanceStatus } from "@plane/constants";
 import { InstanceService } from "@plane/services";
-import {
+import type {
   IInstance,
   IInstanceAdmin,
   IInstanceConfiguration,
@@ -12,7 +13,7 @@ import {
   IInstanceConfig,
 } from "@plane/types";
 // root store
-import { CoreRootStore } from "@/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 
 export interface IInstanceStore {
   // issues
@@ -209,7 +210,7 @@ export class InstanceStore implements IInstanceStore {
         });
       });
       await this.instanceService.disableEmail();
-    } catch (error) {
+    } catch (_error) {
       console.error("Error disabling the email");
       this.instanceConfigurations = instanceConfigurations;
     }

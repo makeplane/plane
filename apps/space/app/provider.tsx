@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, ReactNode } from "react";
+import type { ReactNode, FC } from "react";
+import { ThemeProvider } from "next-themes";
 // components
 import { TranslationProvider } from "@plane/i18n";
 import { InstanceProvider } from "@/lib/instance-provider";
@@ -15,12 +16,14 @@ export const AppProvider: FC<IAppProvider> = (props) => {
   const { children } = props;
 
   return (
-    <StoreProvider>
-      <TranslationProvider>
-        <ToastProvider>
-          <InstanceProvider>{children}</InstanceProvider>
-        </ToastProvider>
-      </TranslationProvider>
-    </StoreProvider>
+    <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
+      <StoreProvider>
+        <TranslationProvider>
+          <ToastProvider>
+            <InstanceProvider>{children}</InstanceProvider>
+          </ToastProvider>
+        </TranslationProvider>
+      </StoreProvider>
+    </ThemeProvider>
   );
 };

@@ -4,16 +4,18 @@ import { Controller, useForm } from "react-hook-form";
 import { Check, MessageSquare, MoreVertical, X } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
 // plane imports
-import { EditorRefApi } from "@plane/editor";
-import { TIssuePublicComment } from "@plane/types";
+import type { EditorRefApi } from "@plane/editor";
+import type { TIssuePublicComment } from "@plane/types";
 import { getFileURL } from "@plane/utils";
 // components
-import { LiteTextEditor, LiteTextReadOnlyEditor } from "@/components/editor";
-import { CommentReactions } from "@/components/issues/peek-overview";
+import { LiteTextEditor } from "@/components/editor/lite-text-editor";
+import { CommentReactions } from "@/components/issues/peek-overview/comment/comment-reactions";
 // helpers
 import { timeAgo } from "@/helpers/date-time.helper";
 // hooks
-import { useIssueDetails, usePublish, useUser } from "@/hooks/store";
+import { usePublish } from "@/hooks/store/publish";
+import { useIssueDetails } from "@/hooks/store/use-issue-details";
+import { useUser } from "@/hooks/store/use-user";
 import useIsInIframe from "@/hooks/use-is-in-iframe";
 
 type Props = {
@@ -102,6 +104,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                 name="comment_html"
                 render={({ field: { onChange, value } }) => (
                   <LiteTextEditor
+                    editable
                     anchor={anchor}
                     workspaceId={workspaceID?.toString() ?? ""}
                     onEnterKeyPress={handleSubmit(handleCommentUpdate)}
@@ -138,7 +141,8 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             </div>
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
-            <LiteTextReadOnlyEditor
+            <LiteTextEditor
+              editable={false}
               anchor={anchor}
               workspaceId={workspaceID?.toString() ?? ""}
               ref={showEditorRef}

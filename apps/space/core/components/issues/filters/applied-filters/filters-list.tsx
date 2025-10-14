@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // types
 import { useTranslation } from "@plane/i18n";
-import { TFilters } from "@/types/issue";
+import type { TFilters } from "@/types/issue";
 // components
 import { AppliedPriorityFilters } from "./priority";
 import { AppliedStateFilters } from "./state";
@@ -39,17 +39,9 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
               {filterKey === "priority" && (
                 <AppliedPriorityFilters
                   handleRemove={(val) => handleRemoveFilter("priority", val)}
-                  values={filterValue ?? []}
+                  values={(filterValue ?? []) as TFilters["priority"]}
                 />
               )}
-
-              {/* {filterKey === "labels" && labels && (
-                <AppliedLabelsFilters
-                  handleRemove={(val) => handleRemoveFilter("labels", val)}
-                  labels={labels}
-                  values={value}
-                />
-              )} */}
 
               {filterKey === "state" && (
                 <AppliedStateFilters

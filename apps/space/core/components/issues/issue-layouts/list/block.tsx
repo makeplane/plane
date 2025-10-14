@@ -5,15 +5,16 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 // plane types
-import { IIssueDisplayProperties } from "@plane/types";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { IIssueDisplayProperties } from "@plane/types";
 // plane ui
-import { Tooltip } from "@plane/ui";
 // plane utils
 import { cn } from "@plane/utils";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
-import { useIssueDetails, usePublish } from "@/hooks/store";
+import { usePublish } from "@/hooks/store/publish";
+import { useIssueDetails } from "@/hooks/store/use-issue-details";
 //
 import { IssueProperties } from "../properties/all-properties";
 
@@ -74,7 +75,7 @@ export const IssueBlock = observer((props: IssueBlockProps) => {
             onClick={handleIssuePeekOverview}
             className="w-full truncate cursor-pointer text-sm text-custom-text-100"
           >
-            <Tooltip tooltipContent={issue.name} position="top-left">
+            <Tooltip tooltipContent={issue.name} position="top-start">
               <p className="truncate">{issue.name}</p>
             </Tooltip>
           </Link>

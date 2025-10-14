@@ -1,5 +1,4 @@
-import clone from "lodash/clone";
-import set from "lodash/set";
+import { clone, set } from "lodash-es";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 // types
 import { computedFn } from "mobx-utils";
@@ -7,7 +6,7 @@ import { IWorkspaceSidebarNavigationItem, IWorkspace, IWorkspaceSidebarNavigatio
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // store
-import { CoreRootStore } from "@/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 // sub-stores
 import { ApiTokenStore, IApiTokenStore } from "./api-token.store";
 import { HomeStore, IHomeStore } from "./home";

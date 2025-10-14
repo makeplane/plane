@@ -2,7 +2,7 @@ import { useContext } from "react";
 // mobx store
 import { StoreContext } from "@/lib/store-context";
 // types
-import { ITransientStore } from "@/store/transient.store";
+import type { ITransientStore } from "@/store/transient.store";
 
 export const useTransient = (): ITransientStore => {
   const context = useContext(StoreContext);

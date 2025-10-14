@@ -2,78 +2,36 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane constants
-import { EIssueLayoutTypes, EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
-import {
-  EIssuesStoreType,
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  IIssueFilterOptions,
-} from "@plane/types";
+import { EIssuesStoreType, IIssueDisplayFilterOptions, IIssueDisplayProperties, EIssueLayoutTypes } from "@plane/types";
 // components
-import { isIssueFilterActive } from "@plane/utils";
-import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, LayoutSelection } from "@/components/issues";
-// helpers
+import { DisplayFiltersSelection, FiltersDropdown, LayoutSelection } from "@/components/issues/issue-layouts/filters";
+import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-toggle";
 // hooks
-import { useIssues, useLabel } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
 
 export const ProfileIssuesFilter = observer(() => {
   // i18n
   const { t } = useTranslation();
   // router
-  const { workspaceSlug, userId } = useParams();
+  const { workspaceSlug, userId: routeUserId } = useParams();
+  const userId = routeUserId ? routeUserId.toString() : undefined;
   // store hook
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.PROFILE);
-
-  const { workspaceLabels } = useLabel();
   // derived values
-  const states = undefined;
-  const members = undefined;
   const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleLayoutChange = useCallback(
     (layout: EIssueLayoutTypes) => {
       if (!workspaceSlug || !userId) return;
-      updateFilters(
-        workspaceSlug.toString(),
-        undefined,
-        EIssueFilterType.DISPLAY_FILTERS,
-        { layout: layout },
-        userId.toString()
-      );
+      updateFilters(workspaceSlug.toString(), undefined, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, userId);
     },
     [workspaceSlug, updateFilters, userId]
-  );
-
-  const handleFiltersUpdate = useCallback(
-    (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !userId) return;
-      const newValues = issueFilters?.filters?.[key] ?? [];
-
-      if (Array.isArray(value)) {
-        // this validation is majorly for the filter start_date, target_date custom
-        value.forEach((val) => {
-          if (!newValues.includes(val)) newValues.push(val);
-          else newValues.splice(newValues.indexOf(val), 1);
-        });
-      } else {
-        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-        else newValues.push(value);
-      }
-
-      updateFilters(
-        workspaceSlug.toString(),
-        undefined,
-        EIssueFilterType.FILTERS,
-        { [key]: newValues },
-        userId.toString()
-      );
-    },
-    [workspaceSlug, issueFilters, updateFilters, userId]
   );
 
   const handleDisplayFilters = useCallback(
@@ -84,7 +42,7 @@ export const ProfileIssuesFilter = observer(() => {
         undefined,
         EIssueFilterType.DISPLAY_FILTERS,
         updatedDisplayFilter,
-        userId.toString()
+        userId
       );
     },
     [workspaceSlug, updateFilters, userId]
@@ -93,13 +51,7 @@ export const ProfileIssuesFilter = observer(() => {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !userId) return;
-      updateFilters(
-        workspaceSlug.toString(),
-        undefined,
-        EIssueFilterType.DISPLAY_PROPERTIES,
-        property,
-        userId.toString()
-      );
+      updateFilters(workspaceSlug.toString(), undefined, EIssueFilterType.DISPLAY_PROPERTIES, property, userId);
     },
     [workspaceSlug, updateFilters, userId]
   );
@@ -111,30 +63,11 @@ export const ProfileIssuesFilter = observer(() => {
         onChange={(layout) => handleLayoutChange(layout)}
         selectedLayout={activeLayout}
       />
-
-      <FiltersDropdown
-        title={t("common.filters")}
-        placement="bottom-end"
-        isFiltersApplied={isIssueFilterActive(issueFilters)}
-      >
-        <FilterSelection
-          layoutDisplayFiltersOptions={
-            activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.profile_issues[activeLayout] : undefined
-          }
-          filters={issueFilters?.filters ?? {}}
-          handleFiltersUpdate={handleFiltersUpdate}
-          displayFilters={issueFilters?.displayFilters ?? {}}
-          handleDisplayFiltersUpdate={handleDisplayFilters}
-          states={states}
-          labels={workspaceLabels}
-          memberIds={members}
-        />
-      </FiltersDropdown>
-
+      {userId && <WorkItemFiltersToggle entityType={EIssuesStoreType.PROFILE} entityId={userId} />}
       <FiltersDropdown title={t("common.display")} placement="bottom-end">
         <DisplayFiltersSelection
           layoutDisplayFiltersOptions={
-            activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.profile_issues[activeLayout] : undefined
+            activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.profile_issues.layoutOptions[activeLayout] : undefined
           }
           displayFilters={issueFilters?.displayFilters ?? {}}
           handleDisplayFiltersUpdate={handleDisplayFilters}

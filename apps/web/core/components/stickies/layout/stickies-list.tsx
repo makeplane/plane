@@ -13,10 +13,11 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EUserWorkspaceRoles } from "@plane/types";
 // components
-import { DetailedEmptyState, SimpleEmptyState } from "@/components/empty-state";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 import { StickiesEmptyState } from "@/components/home/widgets/empty-states/stickies";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useSticky } from "@/hooks/use-stickies";
 // local imports
@@ -185,7 +186,7 @@ export const StickiesLayout = (props: TStickiesLayout) => {
     if (width === null) return 4;
 
     if (width < 640) return 2; // sm
-    if (width < 768) return 3; // md
+    if (width < 850) return 3; // md
     if (width < 1024) return 4; // lg
     if (width < 1280) return 5; // xl
     return 6; // 2xl and above

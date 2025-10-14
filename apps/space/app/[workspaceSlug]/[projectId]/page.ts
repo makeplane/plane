@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 // plane imports
 import { SitesProjectPublishService } from "@plane/services";
-import { TProjectPublishSettings } from "@plane/types";
+import type { TProjectPublishSettings } from "@plane/types";
 
 const publishService = new SitesProjectPublishService();
 
@@ -10,7 +10,7 @@ type Props = {
     workspaceSlug: string;
     projectId: string;
   };
-  searchParams: any;
+  searchParams: Record<"board" | "peekId", string | string[] | undefined>;
 };
 
 export default async function IssuesPage(props: Props) {
@@ -23,7 +23,7 @@ export default async function IssuesPage(props: Props) {
   try {
     response = await publishService.retrieveSettingsByProjectId(workspaceSlug, projectId);
   } catch (error) {
-    // redirect to 404 page on error
+    console.error("Error fetching project publish settings:", error);
     notFound();
   }
 
@@ -31,8 +31,8 @@ export default async function IssuesPage(props: Props) {
   if (response?.entity_name === "project") {
     url = `/issues/${response?.anchor}`;
     const params = new URLSearchParams();
-    if (board) params.append("board", board);
-    if (peekId) params.append("peekId", peekId);
+    if (board) params.append("board", String(board));
+    if (peekId) params.append("peekId", String(peekId));
     if (params.toString()) url += `?${params.toString()}`;
     redirect(url);
   } else {

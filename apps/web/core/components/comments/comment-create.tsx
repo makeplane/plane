@@ -1,19 +1,15 @@
 import { FC, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm, Controller } from "react-hook-form";
-// plane constants
+// plane imports
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
-// plane editor
-import { EditorRefApi } from "@plane/editor";
-// plane types
-import { TIssueComment, TCommentsOperations } from "@plane/types";
+import type { EditorRefApi } from "@plane/editor";
+import type { TIssueComment, TCommentsOperations } from "@plane/types";
 import { cn, isCommentEmpty } from "@plane/utils";
 // components
-import { LiteTextEditor } from "@/components/editor";
-// constants
-// helpers
+import { LiteTextEditor } from "@/components/editor/lite-text";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 // services
 import { FileService } from "@/services/file.service";
 
@@ -113,10 +109,12 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
             control={control}
             render={({ field: { value, onChange } }) => (
               <LiteTextEditor
+                editable
                 workspaceId={workspaceId}
                 id={"add_comment_" + entityId}
                 value={"<p></p>"}
                 workspaceSlug={workspaceSlug}
+                projectId={projectId}
                 onEnterKeyPress={(e) => {
                   if (!isEmpty && !isSubmitting) {
                     handleSubmit(onSubmit)(e);

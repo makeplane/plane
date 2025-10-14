@@ -1,10 +1,10 @@
 "use client";
 
-import isNil from "lodash/isNil";
-import { ContrastIcon } from "lucide-react";
+import { isNil } from "lodash-es";
 // types
 import { EIconSize, ISSUE_PRIORITIES } from "@plane/constants";
-import {
+import { CycleGroupIcon, CycleIcon, ModuleIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
+import type {
   GroupByColumnTypes,
   IGroupByColumn,
   TCycleGroups,
@@ -12,15 +12,15 @@ import {
   TGroupedIssues,
 } from "@plane/types";
 // ui
-import { Avatar, CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon } from "@plane/ui";
+import { Avatar } from "@plane/ui";
 // components
 // constants
 // stores
-import { ICycleStore } from "@/store/cycle.store";
-import { IIssueLabelStore } from "@/store/label.store";
-import { IIssueMemberStore } from "@/store/members.store";
-import { IIssueModuleStore } from "@/store/module.store";
-import { IStateStore } from "@/store/state.store";
+import type { ICycleStore } from "@/store/cycle.store";
+import type { IIssueLabelStore } from "@/store/label.store";
+import type { IIssueMemberStore } from "@/store/members.store";
+import type { IIssueModuleStore } from "@/store/module.store";
+import type { IStateStore } from "@/store/state.store";
 
 export const HIGHLIGHT_CLASS = "highlight";
 export const HIGHLIGHT_WITH_LINE = "highlight-with-line";
@@ -75,7 +75,7 @@ const getCycleColumns = (cycleStore: ICycleStore): IGroupByColumn[] | undefined 
   cycleGroups.push({
     id: "None",
     name: "None",
-    icon: <ContrastIcon className="h-3.5 w-3.5" />,
+    icon: <CycleIcon className="h-3.5 w-3.5" />,
     payload: { cycle_id: null },
   });
 
@@ -94,14 +94,14 @@ const getModuleColumns = (moduleStore: IIssueModuleStore): IGroupByColumn[] | un
       moduleGroups.push({
         id: moduleInfo.id,
         name: moduleInfo.name,
-        icon: <DiceIcon className="h-3.5 w-3.5" />,
+        icon: <ModuleIcon className="h-3.5 w-3.5" />,
         payload: { module_ids: [moduleInfo.id] },
       });
   }) as any;
   moduleGroups.push({
     id: "None",
     name: "None",
-    icon: <DiceIcon className="h-3.5 w-3.5" />,
+    icon: <ModuleIcon className="h-3.5 w-3.5" />,
     payload: { module_ids: [] },
   });
 

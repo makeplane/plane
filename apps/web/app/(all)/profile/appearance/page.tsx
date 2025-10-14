@@ -6,16 +6,18 @@ import { useTheme } from "next-themes";
 // plane imports
 import { I_THEME_OPTION, THEME_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { setPromiseToast } from "@plane/propel/toast";
 import { IUserTheme } from "@plane/types";
-import { setPromiseToast } from "@plane/ui";
 // components
 import { applyTheme, unsetCustomCssVariables } from "@plane/utils";
-import { LogoSpinner } from "@/components/common";
-import { ThemeSwitch, PageHead, CustomThemeSelector } from "@/components/core";
-import { ProfileSettingContentHeader, ProfileSettingContentWrapper } from "@/components/profile";
-// helpers
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { PageHead } from "@/components/core/page-title";
+import { CustomThemeSelector } from "@/components/core/theme/custom-theme-selector";
+import { ThemeSwitch } from "@/components/core/theme/theme-switch";
+import { ProfileSettingContentHeader } from "@/components/profile/profile-setting-content-header";
+import { ProfileSettingContentWrapper } from "@/components/profile/profile-setting-content-wrapper";
 // hooks
-import { useUserProfile } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store/user";
 
 const ProfileAppearancePage = observer(() => {
   const { t } = useTranslation();

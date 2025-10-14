@@ -4,7 +4,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import useSWR from "swr";
-import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
+import { setPromiseToast } from "@plane/propel/toast";
+import { Loader, ToggleSwitch } from "@plane/ui";
 // components
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 // hooks
@@ -67,9 +68,11 @@ const InstanceGoogleAuthenticationPage = observer(() => {
               <ToggleSwitch
                 value={Boolean(parseInt(enableGoogleConfig))}
                 onChange={() => {
-                  Boolean(parseInt(enableGoogleConfig)) === true
-                    ? updateConfig("IS_GOOGLE_ENABLED", "0")
-                    : updateConfig("IS_GOOGLE_ENABLED", "1");
+                  if (Boolean(parseInt(enableGoogleConfig)) === true) {
+                    updateConfig("IS_GOOGLE_ENABLED", "0");
+                  } else {
+                    updateConfig("IS_GOOGLE_ENABLED", "1");
+                  }
                 }}
                 size="sm"
                 disabled={isSubmitting || !formattedConfig}

@@ -1,12 +1,12 @@
 import { Combobox } from "@headlessui/react";
-import sortBy from "lodash/sortBy";
+import { sortBy } from "lodash-es";
 import React, { FC, useMemo, useRef, useState } from "react";
 import { usePopper } from "react-popper";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 // local imports
-import { cn } from "../../helpers";
 import { useDropdownKeyPressed } from "../hooks/use-dropdown-key-pressed";
+import { cn } from "../utils";
 import { DropdownButton } from "./common";
 import { DropdownOptions } from "./common/options";
 import { IMultiSelectDropdown } from "./dropdown";

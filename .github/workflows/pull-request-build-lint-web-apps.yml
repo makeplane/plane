@@ -1,0 +1,53 @@
+name: Build and lint web apps
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - "preview"
+    types:
+      - "opened"
+      - "synchronize"
+      - "ready_for_review"
+      - "review_requested"
+      - "reopened"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-lint:
+    name: Build and lint web apps
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    if: |
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.requested_reviewers != null
+    env:
+      TURBO_SCM_BASE: ${{ github.event.pull_request.base.sha }}
+      TURBO_SCM_HEAD: ${{ github.sha }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 50
+          filter: blob:none
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+
+      - name: Enable Corepack and pnpm
+        run: corepack enable pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint Affected
+        run: pnpm turbo run check:lint --affected
+
+      - name: Check Affected format
+        run: pnpm turbo run check:format --affected
+
+      - name: Build Affected
+        run: pnpm turbo run build --affected

@@ -1,8 +1,4 @@
-import clone from "lodash/clone";
-import orderBy from "lodash/orderBy";
-import set from "lodash/set";
-import unset from "lodash/unset";
-import update from "lodash/update";
+import { clone, update, unset, orderBy, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
@@ -20,8 +16,6 @@ import {
   TIssue,
   TBulkOperationsPayload,
 } from "@plane/types";
-// constants
-// helpers
 import { getCurrentDateTimeInISO, convertToISODateString } from "@plane/utils";
 // local-db
 import { addIssueToPersistanceLayer } from "@/local-db/utils/utils";

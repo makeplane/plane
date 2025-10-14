@@ -4,7 +4,7 @@ import useSWR from "swr";
 import { TIssue } from "@plane/types";
 // components
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // types
 import { IssueParentSiblingItem } from "./sibling-item";
 

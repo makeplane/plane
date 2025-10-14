@@ -1,11 +1,12 @@
 "use client";
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
-import { FileText, GithubIcon, MessageSquare, Rocket } from "lucide-react";
+import { GithubIcon, MessageSquare, Rocket } from "lucide-react";
 // ui
-import { DiscordIcon } from "@plane/ui";
+import { DiscordIcon, PageIcon } from "@plane/propel/icons";
 // hooks
-import { useCommandPalette, useTransient } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useTransient } from "@/hooks/store/use-transient";
 
 type Props = {
   closePalette: () => void;
@@ -39,7 +40,7 @@ export const CommandPaletteHelpActions: React.FC<Props> = observer((props) => {
         className="focus:outline-none"
       >
         <div className="flex items-center gap-2 text-custom-text-200">
-          <FileText className="h-3.5 w-3.5" />
+          <PageIcon className="h-3.5 w-3.5" />
           Open Plane documentation
         </div>
       </Command.Item>

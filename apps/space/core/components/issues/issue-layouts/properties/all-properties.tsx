@@ -1,28 +1,25 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { Layers, Link, Paperclip } from "lucide-react";
-// plane types
-import { IIssueDisplayProperties } from "@plane/types";
-// plane ui
-import { Tooltip } from "@plane/ui";
-// plane utils
+import { Link, Paperclip } from "lucide-react";
+import { ViewsIcon } from "@plane/propel/icons";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
+import type { IIssueDisplayProperties } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
-import {
-  IssueBlockDate,
-  IssueBlockLabels,
-  IssueBlockPriority,
-  IssueBlockState,
-  IssueBlockMembers,
-  IssueBlockModules,
-  IssueBlockCycle,
-} from "@/components/issues";
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/with-display-properties-HOC";
 // helpers
 import { getDate } from "@/helpers/date-time.helper";
 //// hooks
-import { IIssue } from "@/types/issue";
+import type { IIssue } from "@/types/issue";
+import { IssueBlockCycle } from "./cycle";
+import { IssueBlockDate } from "./due-date";
+import { IssueBlockLabels } from "./labels";
+import { IssueBlockMembers } from "./member";
+import { IssueBlockModules } from "./modules";
+import { IssueBlockPriority } from "./priority";
+import { IssueBlockState } from "./state";
 
 export interface IIssueProperties {
   issue: IIssue;
@@ -146,7 +143,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
               }
             )}
           >
-            <Layers className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <ViewsIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
             <div className="text-xs">{issue.sub_issues_count}</div>
           </div>
         </Tooltip>

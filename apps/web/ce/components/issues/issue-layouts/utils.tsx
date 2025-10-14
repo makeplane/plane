@@ -3,7 +3,6 @@ import {
   CalendarCheck2,
   CalendarClock,
   CalendarDays,
-  ContrastIcon,
   LayersIcon,
   Link2,
   Paperclip,
@@ -13,8 +12,8 @@ import {
   Users,
 } from "lucide-react";
 // types
+import { CycleIcon, DoubleCircleIcon, ISvgIcons, ModuleIcon } from "@plane/propel/icons";
 import { IGroupByColumn, IIssueDisplayProperties, TGetColumns, TSpreadsheetColumn } from "@plane/types";
-import { DiceIcon, DoubleCircleIcon, ISvgIcons } from "@plane/ui";
 // components
 import {
   SpreadsheetAssigneeColumn,
@@ -31,7 +30,7 @@ import {
   SpreadsheetStateColumn,
   SpreadsheetSubIssueColumn,
   SpreadsheetUpdatedOnColumn,
-} from "@/components/issues/issue-layouts/spreadsheet";
+} from "@/components/issues/issue-layouts/spreadsheet/columns";
 // store
 import { store } from "@/lib/store-context";
 
@@ -71,8 +70,8 @@ export const SpreadSheetPropertyIconMap: Record<string, FC<ISvgIcons>> = {
   CalenderCheck2: CalendarCheck2,
   Triangle: Triangle,
   Tag: Tag,
-  DiceIcon: DiceIcon,
-  ContrastIcon: ContrastIcon,
+  ModuleIcon: ModuleIcon,
+  ContrastIcon: CycleIcon,
   Signal: Signal,
   CalendarClock: CalendarClock,
   DoubleCircleIcon: DoubleCircleIcon,

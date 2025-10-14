@@ -4,8 +4,8 @@ import { observer } from "mobx-react";
 
 // icons
 import { X } from "lucide-react";
+import { PriorityIcon } from "@plane/propel/icons";
 import { TIssuePriorities } from "@plane/types";
-import { PriorityIcon } from "@plane/ui";
 // types
 
 type Props = {

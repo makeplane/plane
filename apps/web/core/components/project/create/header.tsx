@@ -4,14 +4,14 @@ import { X } from "lucide-react";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
 // plane types
 import { IProject } from "@plane/types";
 // plane ui
-import { CustomEmojiIconPicker, EmojiIconPickerTypes, Logo } from "@plane/ui";
-import { convertHexEmojiToDecimal, getFileURL, getTabIndex } from "@plane/utils";
+import { getFileURL, getTabIndex } from "@plane/utils";
 // components
-import { ImagePickerPopover } from "@/components/core";
-// helpers
+import { Logo } from "@/components/common/logo";
+import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 // plane web imports
 import { ProjectTemplateSelect } from "@/plane-web/components/projects/create/template-select";
 
@@ -66,7 +66,8 @@ const ProjectCreateHeader: React.FC<Props> = (props) => {
           name="logo_props"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <CustomEmojiIconPicker
+            <EmojiPicker
+              iconType="material"
               isOpen={isOpen}
               handleToggle={(val: boolean) => setIsOpen(val)}
               className="flex items-center justify-center"
@@ -81,8 +82,7 @@ const ProjectCreateHeader: React.FC<Props> = (props) => {
 
                 if (val?.type === "emoji")
                   logoValue = {
-                    value: convertHexEmojiToDecimal(val.value.unified),
-                    url: val.value.imageUrl,
+                    value: val.value,
                   };
                 else if (val?.type === "icon") logoValue = val.value;
 

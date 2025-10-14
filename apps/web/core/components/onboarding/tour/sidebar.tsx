@@ -1,8 +1,7 @@
 "use client";
 
 // icons
-import { FileText, Layers } from "lucide-react";
-import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/ui";
+import { CycleIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
 // types
 import { TTourSteps } from "./root";
 
@@ -14,27 +13,27 @@ const sidebarOptions: {
   {
     key: "work-items",
     label: "Work items",
-    Icon: LayersIcon,
+    Icon: WorkItemsIcon,
   },
   {
     key: "cycles",
     label: "Cycles",
-    Icon: ContrastIcon,
+    Icon: CycleIcon,
   },
   {
     key: "modules",
     label: "Modules",
-    Icon: DiceIcon,
+    Icon: ModuleIcon,
   },
   {
     key: "views",
     label: "Views",
-    Icon: Layers,
+    Icon: ViewsIcon,
   },
   {
     key: "pages",
     label: "Pages",
-    Icon: FileText,
+    Icon: PageIcon,
   },
 ];
 

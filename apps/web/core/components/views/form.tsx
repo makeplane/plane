@@ -1,48 +1,48 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { Layers } from "lucide-react";
-// plane constants
-import { EIssueLayoutTypes, ETabIndices, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
-// i18n
+// plane imports
+import { ETabIndices, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// types
+import { Button } from "@plane/propel/button";
+import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
+import { ViewsIcon } from "@plane/propel/icons";
 import {
   EViewAccess,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
-  IIssueFilterOptions,
   IProjectView,
+  EIssueLayoutTypes,
+  EIssuesStoreType,
+  IIssueFilters,
 } from "@plane/types";
-// ui
-import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input, TextArea } from "@plane/ui";
-import {
-  convertHexEmojiToDecimal,
-  getComputedDisplayFilters,
-  getComputedDisplayProperties,
-  getTabIndex,
-} from "@plane/utils";
+import { Input, TextArea } from "@plane/ui";
+import { getComputedDisplayFilters, getComputedDisplayProperties, getTabIndex } from "@plane/utils";
 // components
-import { Logo } from "@/components/common";
-import { AppliedFiltersList, DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "@/components/issues";
-// helpers
+import { Logo } from "@/components/common/logo";
+import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
+import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 // hooks
-import { useLabel, useMember, useProject, useProjectState } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-
+// plane web imports
 import { AccessController } from "@/plane-web/components/views/access-controller";
+// local imports
 import { LayoutDropDown } from "../dropdowns/layout";
+import { ProjectLevelWorkItemFiltersHOC } from "../work-item-filters/filters-hoc/project-level";
 
 type Props = {
   data?: IProjectView | null;
   handleClose: () => void;
   handleFormSubmit: (values: IProjectView) => Promise<void>;
   preLoadedData?: Partial<IProjectView> | null;
+  projectId: string;
+  workspaceSlug: string;
 };
 
-const defaultValues: Partial<IProjectView> = {
+const DEFAULT_VALUES: Partial<IProjectView> = {
   name: "",
   description: "",
   access: EViewAccess.PUBLIC,
@@ -51,23 +51,24 @@ const defaultValues: Partial<IProjectView> = {
 };
 
 export const ProjectViewForm: React.FC<Props> = observer((props) => {
-  const { handleFormSubmit, handleClose, data, preLoadedData } = props;
+  const { handleFormSubmit, handleClose, data, preLoadedData, projectId, workspaceSlug } = props;
   // i18n
   const { t } = useTranslation();
   // state
   const [isOpen, setIsOpen] = useState(false);
   // store hooks
-  const { currentProjectDetails } = useProject();
-  const { projectStates } = useProjectState();
-  const { projectLabels } = useLabel();
-  const {
-    project: { projectMemberIds },
-  } = useMember();
+  const { getProjectById } = useProject();
   const { isMobile } = usePlatformOS();
   // form info
+  const defaultValues = {
+    ...DEFAULT_VALUES,
+    ...preLoadedData,
+    ...data,
+  };
   const {
     control,
     formState: { errors, isSubmitting },
+    getValues,
     handleSubmit,
     reset,
     setValue,
@@ -75,53 +76,23 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
   } = useForm<IProjectView>({
     defaultValues,
   });
-
+  // derived values
+  const projectDetails = getProjectById(projectId);
   const logoValue = watch("logo_props");
-
-  const { getIndex } = getTabIndex(ETabIndices.PROJECT_VIEW, isMobile);
-
-  const selectedFilters: IIssueFilterOptions = {};
-  Object.entries(watch("filters") ?? {}).forEach(([key, value]) => {
-    if (!value) return;
-
-    if (Array.isArray(value) && value.length === 0) return;
-
-    selectedFilters[key as keyof IIssueFilterOptions] = value;
-  });
-
-  // for removing filters from a key
-  const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
-    // If value is null then remove all the filters of that key
-    if (!value) {
-      setValue("filters", {
-        ...selectedFilters,
-        [key]: null,
-      });
-      return;
-    }
-
-    const newValues = selectedFilters?.[key] ?? [];
-
-    if (Array.isArray(value)) {
-      value.forEach((val) => {
-        if (newValues.includes(val)) newValues.splice(newValues.indexOf(val), 1);
-      });
-    } else {
-      if (selectedFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-    }
-
-    setValue("filters", {
-      ...selectedFilters,
-      [key]: newValues,
-    });
+  const workItemFilters: IIssueFilters = {
+    richFilters: getValues("rich_filters"),
+    displayFilters: getValues("display_filters"),
+    displayProperties: getValues("display_properties"),
+    kanbanFilters: undefined,
   };
+  const { getIndex } = getTabIndex(ETabIndices.PROJECT_VIEW, isMobile);
 
   const handleCreateUpdateView = async (formData: IProjectView) => {
     await handleFormSubmit({
       name: formData.name,
       description: formData.description,
       logo_props: formData.logo_props,
-      filters: formData.filters,
+      rich_filters: formData.rich_filters,
       display_filters: formData.display_filters,
       display_properties: formData.display_properties,
       access: formData.access,
@@ -132,20 +103,6 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
     });
   };
 
-  const clearAllFilters = () => {
-    if (!selectedFilters) return;
-
-    setValue("filters", {});
-  };
-
-  useEffect(() => {
-    reset({
-      ...defaultValues,
-      ...preLoadedData,
-      ...data,
-    });
-  }, [data, preLoadedData, reset]);
-
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateView)}>
       <div className="space-y-5 p-5">
@@ -154,7 +111,8 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
         </h3>
         <div className="space-y-3">
           <div className="flex items-start gap-2 w-full">
-            <EmojiIconPicker
+            <EmojiPicker
+              iconType="lucide"
               isOpen={isOpen}
               handleToggle={(val: boolean) => setIsOpen(val)}
               className="flex items-center justify-center flex-shrink0"
@@ -165,18 +123,18 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                     {logoValue?.in_use ? (
                       <Logo logo={logoValue} size={18} type="lucide" />
                     ) : (
-                      <Layers className="h-4 w-4 text-custom-text-300" />
+                      <ViewsIcon className="h-4 w-4 text-custom-text-300" />
                     )}
                   </>
                 </span>
               }
+              // TODO: fix types
               onChange={(val: any) => {
                 let logoValue = {};
 
                 if (val?.type === "emoji")
                   logoValue = {
-                    value: convertHexEmojiToDecimal(val.value.unified),
-                    url: val.value.imageUrl,
+                    value: val.value,
                   };
                 else if (val?.type === "icon") logoValue = val.value;
 
@@ -257,43 +215,6 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                     }
                     value={displayFilters.layout}
                   />
-
-                  {/* filters dropdown */}
-                  <Controller
-                    control={control}
-                    name="filters"
-                    render={({ field: { onChange, value: filters } }) => (
-                      <FiltersDropdown title={t("common.filters")} tabIndex={getIndex("filters")}>
-                        <FilterSelection
-                          filters={filters ?? {}}
-                          handleFiltersUpdate={(key, value) => {
-                            const newValues = filters?.[key] ?? [];
-
-                            if (Array.isArray(value)) {
-                              value.forEach((val) => {
-                                if (!newValues.includes(val)) newValues.push(val);
-                              });
-                            } else {
-                              if (filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-                              else newValues.push(value);
-                            }
-
-                            onChange({
-                              ...filters,
-                              [key]: newValues,
-                            });
-                          }}
-                          layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[displayFilters.layout]}
-                          labels={projectLabels ?? undefined}
-                          memberIds={projectMemberIds ?? undefined}
-                          states={projectStates}
-                          cycleViewDisabled={!currentProjectDetails?.cycle_view}
-                          moduleViewDisabled={!currentProjectDetails?.module_view}
-                        />
-                      </FiltersDropdown>
-                    )}
-                  />
-
                   {/* display filters dropdown */}
                   <Controller
                     control={control}
@@ -301,7 +222,9 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                     render={({ field: { onChange: onDisplayPropertiesChange, value: displayProperties } }) => (
                       <FiltersDropdown title={t("common.display")}>
                         <DisplayFiltersSelection
-                          layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[displayFilters.layout]}
+                          layoutDisplayFiltersOptions={
+                            ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.layoutOptions[displayFilters.layout]
+                          }
                           displayFilters={displayFilters ?? {}}
                           handleDisplayFiltersUpdate={(updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
                             onDisplayFiltersChange({
@@ -318,8 +241,8 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                               ...updatedDisplayProperties,
                             });
                           }}
-                          cycleViewDisabled={!currentProjectDetails?.cycle_view}
-                          moduleViewDisabled={!currentProjectDetails?.module_view}
+                          cycleViewDisabled={!projectDetails?.cycle_view}
+                          moduleViewDisabled={!projectDetails?.module_view}
                         />
                       </FiltersDropdown>
                     )}
@@ -328,17 +251,32 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
               )}
             />
           </div>
-          {selectedFilters && Object.keys(selectedFilters).length > 0 && (
-            <div>
-              <AppliedFiltersList
-                appliedFilters={selectedFilters}
-                handleClearAllFilters={clearAllFilters}
-                handleRemoveFilter={handleRemoveFilter}
-                labels={projectLabels ?? []}
-                states={projectStates}
-              />
-            </div>
-          )}
+          <div>
+            {/* filters dropdown */}
+            <Controller
+              control={control}
+              name="rich_filters"
+              render={({ field: { onChange: onFiltersChange } }) => (
+                <ProjectLevelWorkItemFiltersHOC
+                  entityId={data?.id}
+                  entityType={EIssuesStoreType.PROJECT_VIEW}
+                  filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.filters}
+                  initialWorkItemFilters={workItemFilters}
+                  isTemporary
+                  updateFilters={(updateFilters) => onFiltersChange(updateFilters)}
+                  projectId={projectId}
+                  showOnMount
+                  workspaceSlug={workspaceSlug}
+                >
+                  {({ filter: projectViewWorkItemsFilter }) =>
+                    projectViewWorkItemsFilter && (
+                      <WorkItemFiltersRow filter={projectViewWorkItemsFilter} variant="modal" />
+                    )
+                  }
+                </ProjectLevelWorkItemFiltersHOC>
+              )}
+            />
+          </div>
         </div>
       </div>
       <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">

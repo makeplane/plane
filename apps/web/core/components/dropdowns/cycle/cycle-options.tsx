@@ -11,11 +11,11 @@ import { Combobox } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // icon
+import { CycleGroupIcon, CycleIcon } from "@plane/propel/icons";
 import { TCycleGroups } from "@plane/types";
 // ui
-import { ContrastIcon, CycleGroupIcon } from "@plane/ui";
 // store hooks
-import { useCycle } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 
@@ -23,7 +23,7 @@ type DropdownOptions =
   | {
       value: string | null;
       query: string;
-      content: JSX.Element;
+      content: React.ReactNode;
     }[]
   | undefined;
 
@@ -110,7 +110,7 @@ export const CycleOptions: FC<CycleOptionsProps> = observer((props) => {
       query: t("cycle.no_cycle"),
       content: (
         <div className="flex items-center gap-2">
-          <ContrastIcon className="h-3 w-3 flex-shrink-0" />
+          <CycleIcon className="h-3 w-3 flex-shrink-0" />
           <span className="flex-grow truncate">{t("cycle.no_cycle")}</span>
         </div>
       ),

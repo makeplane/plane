@@ -1,32 +1,36 @@
 "use client";
 
-import React, { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
+import { useTheme } from "next-themes";
 // plane imports
+import { API_BASE_URL } from "@plane/constants";
 import { SitesAuthService } from "@plane/services";
-import { IEmailCheckData } from "@plane/types";
+import type { IEmailCheckData } from "@plane/types";
+import { OAuthOptions } from "@plane/ui";
 // components
-import {
-  AuthHeader,
-  AuthBanner,
-  AuthEmailForm,
-  AuthUniqueCodeForm,
-  AuthPasswordForm,
-  OAuthOptions,
-  TermsAndConditions,
-} from "@/components/account";
 // helpers
-import {
-  EAuthenticationErrorCodes,
-  EErrorAlertType,
-  TAuthErrorInfo,
-  authErrorHandler,
-} from "@/helpers/authentication.helper";
+import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
+import { EErrorAlertType, authErrorHandler, EAuthenticationErrorCodes } from "@/helpers/authentication.helper";
 // hooks
-import { useInstance } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance";
 // types
 import { EAuthModes, EAuthSteps } from "@/types/auth";
+// assets
+import GithubLightLogo from "/public/logos/github-black.png";
+import GithubDarkLogo from "/public/logos/github-dark.svg";
+import GitlabLogo from "/public/logos/gitlab-logo.svg";
+import GoogleLogo from "/public/logos/google-logo.svg";
+// local imports
+import { TermsAndConditions } from "../terms-and-conditions";
+import { AuthBanner } from "./auth-banner";
+import { AuthHeader } from "./auth-header";
+import { AuthEmailForm } from "./email";
+import { AuthPasswordForm } from "./password";
+import { AuthUniqueCodeForm } from "./unique-code";
 
 const authService = new SitesAuthService();
 
@@ -36,6 +40,7 @@ export const AuthRoot: FC = observer(() => {
   const emailParam = searchParams.get("email") || undefined;
   const error_code = searchParams.get("error_code") || undefined;
   const nextPath = searchParams.get("next_path") || undefined;
+  const next_path = searchParams.get("next_path");
   // states
   const [authMode, setAuthMode] = useState<EAuthModes>(EAuthModes.SIGN_UP);
   const [authStep, setAuthStep] = useState<EAuthSteps>(EAuthSteps.EMAIL);
@@ -43,6 +48,7 @@ export const AuthRoot: FC = observer(() => {
   const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
   const [isPasswordAutoset, setIsPasswordAutoset] = useState(true);
   // hooks
+  const { resolvedTheme } = useTheme();
   const { config } = useInstance();
 
   useEffect(() => {
@@ -146,12 +152,54 @@ export const AuthRoot: FC = observer(() => {
       });
   };
 
+  const content = authMode === EAuthModes.SIGN_UP ? "Sign up" : "Sign in";
+
+  const OAuthConfig = [
+    {
+      id: "google",
+      text: `${content} with Google`,
+      icon: <Image src={GoogleLogo} height={18} width={18} alt="Google Logo" />,
+      onClick: () => {
+        window.location.assign(`${API_BASE_URL}/auth/google/${next_path ? `?next_path=${next_path}` : ``}`);
+      },
+      enabled: config?.is_google_enabled,
+    },
+    {
+      id: "github",
+      text: `${content} with GitHub`,
+      icon: (
+        <Image
+          src={resolvedTheme === "dark" ? GithubLightLogo : GithubDarkLogo}
+          height={18}
+          width={18}
+          alt="GitHub Logo"
+        />
+      ),
+      onClick: () => {
+        window.location.assign(`${API_BASE_URL}/auth/github/${next_path ? `?next_path=${next_path}` : ``}`);
+      },
+      enabled: config?.is_github_enabled,
+    },
+    {
+      id: "gitlab",
+      text: `${content} with GitLab`,
+      icon: <Image src={GitlabLogo} height={18} width={18} alt="GitLab Logo" />,
+      onClick: () => {
+        window.location.assign(`${API_BASE_URL}/auth/gitlab/${next_path ? `?next_path=${next_path}` : ``}`);
+      },
+      enabled: config?.is_gitlab_enabled,
+    },
+  ];
+
   return (
-    <div className="relative flex flex-col space-y-6">
-      <AuthHeader authMode={authMode}>
+    <div className="flex flex-col justify-center items-center flex-grow w-full py-6 mt-10">
+      <div className="relative flex flex-col gap-6 max-w-[22.5rem] w-full">
         {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
           <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />
         )}
+        <AuthHeader authMode={authMode} />
+        {isOAuthEnabled && <OAuthOptions options={OAuthConfig} compact={authStep === EAuthSteps.PASSWORD} />}
+
         {authStep === EAuthSteps.EMAIL && <AuthEmailForm defaultEmail={email} onSubmit={handleEmailVerification} />}
         {authStep === EAuthSteps.UNIQUE_CODE && (
           <AuthUniqueCodeForm
@@ -182,9 +230,8 @@ export const AuthRoot: FC = observer(() => {
             }}
           />
         )}
-        {isOAuthEnabled && <OAuthOptions />}
         <TermsAndConditions isSignUp={authMode === EAuthModes.SIGN_UP ? true : false} />
-      </AuthHeader>
+      </div>
     </div>
   );
 });

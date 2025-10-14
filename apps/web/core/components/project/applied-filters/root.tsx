@@ -1,21 +1,17 @@
 "use client";
 
 import { X } from "lucide-react";
-// i18n
+// plane imports
 import { useTranslation } from "@plane/i18n";
-// types
+import { Tooltip } from "@plane/propel/tooltip";
 import { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types";
-// ui
-import { EHeaderVariant, Header, Tag, Tooltip } from "@plane/ui";
-// components
+import { EHeaderVariant, Header, Tag } from "@plane/ui";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
-import {
-  AppliedAccessFilters,
-  AppliedDateFilters,
-  AppliedMembersFilters,
-  AppliedProjectDisplayFilters,
-} from "@/components/project";
-// helpers
+// local imports
+import { AppliedAccessFilters } from "./access";
+import { AppliedDateFilters } from "./date";
+import { AppliedMembersFilters } from "./members";
+import { AppliedProjectDisplayFilters } from "./project-display-filters";
 
 type Props = {
   appliedFilters: TProjectFilters;

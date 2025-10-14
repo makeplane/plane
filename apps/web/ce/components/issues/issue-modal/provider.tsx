@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { ISearchIssueResponse, TIssue } from "@plane/types";
 // components
-import { IssueModalContext } from "@/components/issues";
+import { IssueModalContext } from "@/components/issues/issue-modal/context";
 // hooks
 import { useUser } from "@/hooks/store/user/user-user";
 
@@ -44,6 +44,7 @@ export const IssueModalProvider = observer((props: TIssueModalProviderProps) => 
         handleProjectEntitiesFetch: () => Promise.resolve(),
         handleTemplateChange: () => Promise.resolve(),
         handleConvert: () => Promise.resolve(),
+        handleCreateSubWorkItem: () => Promise.resolve(),
       }}
     >
       {children}

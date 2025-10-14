@@ -14,14 +14,14 @@ import {
   EChartModels,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { BarChart } from "@plane/propel/charts/bar-chart";
 import { TBarItem, TChart, TChartDatum, ChartXAxisProperty, ChartYAxisMetric } from "@plane/types";
 // plane web components
-import { Button } from "@plane/ui";
 import { generateExtendedColors, parseChartData } from "@/components/chart/utils";
 // hooks
-import { useProjectState } from "@/hooks/store";
 import { useAnalytics } from "@/hooks/store/use-analytics";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { AnalyticsService } from "@/services/analytics.service";
 import AnalyticsEmptyState from "../empty-state";

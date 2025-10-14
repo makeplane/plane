@@ -2,10 +2,10 @@
 
 import { CheckIcon } from "lucide-react";
 import * as React from "react";
-import { cn } from "../../helpers";
 // ui
+import { Tooltip } from "@plane/propel/tooltip";
 import { CustomMenu, TContextMenuItem } from "../dropdowns";
-import { Tooltip } from "../tooltip";
+import { cn } from "../utils";
 import { Breadcrumbs } from "./breadcrumbs";
 
 type TBreadcrumbNavigationDropdownProps = {
@@ -45,8 +45,11 @@ export const BreadcrumbNavigationDropdown = (props: TBreadcrumbNavigationDropdow
           }
         )}
       >
-        {selectedItemIcon && <Breadcrumbs.Icon>{selectedItemIcon}</Breadcrumbs.Icon>}
-        <Breadcrumbs.Label>{selectedItem.title}</Breadcrumbs.Label>
+        <div className="flex @4xl:hidden text-custom-text-300">...</div>
+        <div className="hidden @4xl:flex gap-2">
+          {selectedItemIcon && <Breadcrumbs.Icon>{selectedItemIcon}</Breadcrumbs.Icon>}
+          <Breadcrumbs.Label>{selectedItem.title}</Breadcrumbs.Label>
+        </div>
       </button>
     </Tooltip>
   );

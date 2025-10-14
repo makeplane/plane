@@ -6,9 +6,9 @@ import { usePopper } from "react-popper";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // helpers
-import { cn } from "../../helpers";
-// hooks
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
+import { cn } from "../utils";
+// hooks
 // types
 import {
   ICustomMenuDropdownProps,
@@ -222,7 +222,11 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
       tabIndex={tabIndex}
       className={cn("relative w-min text-left", className)}
       onKeyDownCapture={handleKeyDown}
-      onClick={handleOnClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        handleOnClick();
+      }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       data-main-menu="true"

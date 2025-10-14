@@ -1,6 +1,6 @@
-import range from "lodash/range";
+import { range } from "lodash-es";
 
-export const CycleModuleBoardLayout = () => (
+export const CycleModuleBoardLayoutLoader = () => (
   <div className="h-full w-full animate-pulse">
     <div className="flex h-full w-full justify-between">
       <div className="grid h-full w-full grid-cols-1 gap-6 overflow-y-auto p-8 lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4 auto-rows-max transition-all">

@@ -1,13 +1,14 @@
-import React, { useRef, useState } from "react";
-import { usePopper } from "react-popper";
-import { Listbox } from "@headlessui/react";
+import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown } from "lucide-react";
+import React, { useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { usePopper } from "react-popper";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // hooks
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 // helpers
-import { cn } from "../../helpers";
+import { cn } from "../utils";
 // types
 import { ICustomSelectItemProps, ICustomSelectProps } from "./helper";
 
@@ -54,7 +55,7 @@ const CustomSelect = (props: ICustomSelectProps) => {
   };
 
   return (
-    <Listbox
+    <Combobox
       as="div"
       ref={dropdownRef}
       tabIndex={tabIndex}
@@ -66,7 +67,7 @@ const CustomSelect = (props: ICustomSelectProps) => {
     >
       <>
         {customButton ? (
-          <Listbox.Button as={React.Fragment}>
+          <Combobox.Button as={React.Fragment}>
             <button
               ref={setReferenceElement}
               type="button"
@@ -77,9 +78,9 @@ const CustomSelect = (props: ICustomSelectProps) => {
             >
               {customButton}
             </button>
-          </Listbox.Button>
+          </Combobox.Button>
         ) : (
-          <Listbox.Button as={React.Fragment}>
+          <Combobox.Button as={React.Fragment}>
             <button
               ref={setReferenceElement}
               type="button"
@@ -98,38 +99,43 @@ const CustomSelect = (props: ICustomSelectProps) => {
               {label}
               {!noChevron && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
             </button>
-          </Listbox.Button>
+          </Combobox.Button>
         )}
       </>
-      {isOpen && (
-        <Listbox.Options className="fixed z-20" onClick={() => closeDropdown()} static>
-          <div
-            className={cn(
-              "my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap",
-              {
-                "max-h-60": maxHeight === "lg",
-                "max-h-48": maxHeight === "md",
-                "max-h-36": maxHeight === "rg",
-                "max-h-28": maxHeight === "sm",
-              },
-              optionsClassName
-            )}
-            ref={setPopperElement}
-            style={styles.popper}
-            {...attributes.popper}
-          >
-            {children}
-          </div>
-        </Listbox.Options>
-      )}
-    </Listbox>
+      {isOpen &&
+        createPortal(
+          <Combobox.Options data-prevent-outside-click static>
+            <div
+              className={cn(
+                "my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-48 whitespace-nowrap z-30",
+                optionsClassName
+              )}
+              ref={setPopperElement}
+              style={styles.popper}
+              {...attributes.popper}
+            >
+              <div
+                className={cn("space-y-1 overflow-y-scroll", {
+                  "max-h-60": maxHeight === "lg",
+                  "max-h-48": maxHeight === "md",
+                  "max-h-36": maxHeight === "rg",
+                  "max-h-28": maxHeight === "sm",
+                })}
+              >
+                {children}
+              </div>
+            </div>
+          </Combobox.Options>,
+          document.body
+        )}
+    </Combobox>
   );
 };
 
 const Option = (props: ICustomSelectItemProps) => {
   const { children, value, className } = props;
   return (
-    <Listbox.Option
+    <Combobox.Option
       value={value}
       className={({ active }) =>
         cn(
@@ -147,7 +153,7 @@ const Option = (props: ICustomSelectItemProps) => {
           {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
         </>
       )}
-    </Listbox.Option>
+    </Combobox.Option>
   );
 };
 

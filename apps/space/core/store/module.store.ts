@@ -1,11 +1,11 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane imports
 import { SitesModuleService } from "@plane/services";
 // types
-import { TPublicModule } from "@/types/modules";
+import type { TPublicModule } from "@/types/modules";
 // root store
-import { CoreRootStore } from "./root.store";
+import type { CoreRootStore } from "./root.store";
 
 export interface IIssueModuleStore {
   // observables

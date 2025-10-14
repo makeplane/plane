@@ -5,8 +5,8 @@ import { addDays } from "date-fns";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 // ui
+import { Tooltip } from "@plane/propel/tooltip";
 import type { IBlockUpdateData, IGanttBlock } from "@plane/types";
-import { Tooltip } from "@plane/ui";
 // helpers
 import { renderFormattedDate, renderFormattedPayloadDate } from "@plane/utils";
 // hooks
@@ -48,6 +48,7 @@ export const ChartAddBlock: React.FC<Props> = observer((props) => {
     blockUpdateHandler(block.data, {
       start_date: renderFormattedPayloadDate(startDate) ?? undefined,
       target_date: renderFormattedPayloadDate(endDate) ?? undefined,
+      meta: block.meta,
     });
   };
 

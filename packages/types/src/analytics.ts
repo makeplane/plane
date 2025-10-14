@@ -28,6 +28,7 @@ export enum ChartYAxisMetric {
   WORK_ITEM_DUE_THIS_WEEK_COUNT = "WORK_ITEM_DUE_THIS_WEEK_COUNT",
   WORK_ITEM_DUE_TODAY_COUNT = "WORK_ITEM_DUE_TODAY_COUNT",
   BLOCKED_WORK_ITEM_COUNT = "BLOCKED_WORK_ITEM_COUNT",
+  EPIC_WORK_ITEM_COUNT = "EPIC_WORK_ITEM_COUNT",
 }
 
 export type TAnalyticsTabsBase = "overview" | "work-items";
@@ -72,7 +73,7 @@ export interface WorkItemInsightColumns {
   backlog_work_items: number;
   un_started_work_items: number;
   started_work_items: number;
-  // incase of peek view, we will display the display_name instead of project__name
+  // in case of peek view, we will display the display_name instead of project__name
   display_name?: string;
   avatar_url?: string;
   assignee_id?: string;

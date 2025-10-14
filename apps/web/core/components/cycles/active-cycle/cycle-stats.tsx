@@ -1,29 +1,33 @@
 "use client";
 
 import { FC, Fragment, useCallback, useRef, useState } from "react";
-import isEmpty from "lodash/isEmpty";
+import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { CalendarCheck } from "lucide-react";
 // headless ui
 import { Tab } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EIssuesStoreType, ICycle, IIssueFilterOptions } from "@plane/types";
+import { PriorityIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
+import { TWorkItemFilterCondition } from "@plane/shared-state";
+import { EIssuesStoreType, ICycle } from "@plane/types";
 // ui
-import { Tooltip, Loader, PriorityIcon, Avatar } from "@plane/ui";
+import { Loader, Avatar } from "@plane/ui";
 import { cn, renderFormattedDate, renderFormattedDateWithoutYear, getFileURL } from "@plane/utils";
 // components
-import { SingleProgressStats } from "@/components/core";
-import { StateDropdown } from "@/components/dropdowns";
-import { SimpleEmptyState } from "@/components/empty-state";
+import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // helpers
 // hooks
-import { useIssueDetail, useIssues } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useIssues } from "@/hooks/store/use-issues";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import useLocalStorage from "@/hooks/use-local-storage";
 // plane web components
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // store
 import { ActiveCycleIssueDetails } from "@/store/issue/cycle";
 
@@ -32,7 +36,7 @@ export type ActiveCycleStatsProps = {
   projectId: string;
   cycle: ICycle | null;
   cycleId?: string | null;
-  handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string[], redirect?: boolean) => void;
+  handleFiltersUpdate: (conditions: TWorkItemFilterCondition[]) => void;
   cycleIssueDetails: ActiveCycleIssueDetails;
 };
 
@@ -182,7 +186,9 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                                 issueId: issue.id,
                                 isArchived: !!issue.archived_at,
                               });
-                              handleFiltersUpdate("priority", ["urgent", "high"], true);
+                              handleFiltersUpdate([
+                                { property: "priority", operator: "in", value: ["urgent", "high"] },
+                              ]);
                             }
                           }}
                         >
@@ -192,7 +198,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                               projectId={projectId}
                               textContainerClassName="text-xs text-custom-text-200"
                             />
-                            <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
+                            <Tooltip position="top-start" tooltipHeading="Title" tooltipContent={issue.name}>
                               <span className="text-[0.825rem] text-custom-text-100 truncate">{issue.name}</span>
                             </Tooltip>
                           </div>
@@ -272,7 +278,9 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                         total={assignee.total_issues}
                         onClick={() => {
                           if (assignee.assignee_id) {
-                            handleFiltersUpdate("assignees", [assignee.assignee_id], true);
+                            handleFiltersUpdate([
+                              { property: "assignee_id", operator: "in", value: [assignee.assignee_id] },
+                            ]);
                           }
                         }}
                       />
@@ -329,11 +337,15 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                     }
                     completed={label.completed_issues}
                     total={label.total_issues}
-                    onClick={() => {
-                      if (label.label_id) {
-                        handleFiltersUpdate("labels", [label.label_id], true);
-                      }
-                    }}
+                    onClick={
+                      label.label_id
+                        ? () => {
+                            if (label.label_id) {
+                              handleFiltersUpdate([{ property: "label_id", operator: "in", value: [label.label_id] }]);
+                            }
+                          }
+                        : undefined
+                    }
                   />
                 ))
               ) : (

@@ -59,4 +59,4 @@ class Command(BaseCommand):
         user.is_password_autoset = False
         user.save()
 
-        self.stdout.write(self.style.SUCCESS("User password updated succesfully"))
+        self.stdout.write(self.style.SUCCESS("User password updated successfully"))

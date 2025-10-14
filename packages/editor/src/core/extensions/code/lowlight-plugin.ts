@@ -1,3 +1,5 @@
+// TODO: check all the type errors and fix them
+
 import { findChildren } from "@tiptap/core";
 import { Node as ProsemirrorNode } from "@tiptap/pm/model";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
@@ -112,24 +114,20 @@ export function LowlightPlugin({
           ([oldNodeName, newNodeName].includes(name) ||
             // OR transaction adds/removes named node,
             newNodes.length !== oldNodes.length ||
-            // OR transaction has changes that completely encapsulte a node
+            // OR transaction has changes that completely encapsulate a node
             // (for example, a transaction that affects the entire document).
             // Such transactions can happen during collab syncing via y-prosemirror, for example.
             transaction.steps.some(
               (step) =>
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
+                // @ts-expect-error type error
                 step.from !== undefined &&
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
+                // @ts-expect-error type error
                 step.to !== undefined &&
                 oldNodes.some(
                   (node) =>
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
+                    // @ts-expect-error type error
                     node.pos >= step.from &&
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
+                    // @ts-expect-error type error
                     node.pos + node.node.nodeSize <= step.to
                 )
             ))

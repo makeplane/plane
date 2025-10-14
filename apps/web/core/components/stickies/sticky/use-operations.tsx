@@ -1,9 +1,8 @@
 import { useMemo } from "react";
 // plane types
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { InstructionType, TSticky } from "@plane/types";
-// plane ui
-import { setToast, TOAST_TYPE } from "@plane/ui";
 // plane utils
 import { isCommentEmpty } from "@plane/utils";
 // components

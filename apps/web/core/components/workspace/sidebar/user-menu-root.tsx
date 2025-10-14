@@ -12,10 +12,12 @@ import { Menu, Transition } from "@headlessui/react";
 // plane imports
 import { GOD_MODE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Avatar, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Avatar } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks
-import { useAppTheme, useUser } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useUser } from "@/hooks/store/user";
 import { useAppRail } from "@/hooks/use-app-rail";
 
 type Props = {
@@ -103,7 +105,7 @@ export const UserMenuRoot = observer((props: Props) => {
                 {...attributes.popper}
               >
                 <div className="flex flex-col gap-2.5 pb-2">
-                  <span className="px-2 text-custom-sidebar-text-200">{currentUser?.email}</span>
+                  <span className="px-2 text-custom-sidebar-text-200 truncate">{currentUser?.email}</span>
                   <Link href={`/${workspaceSlug}/settings/account`}>
                     <Menu.Item as="div">
                       <span className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">

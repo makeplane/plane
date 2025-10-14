@@ -4,10 +4,11 @@ import React, { FC, useState } from "react";
 import { useParams } from "next/navigation";
 // ui
 import { WORKSPACE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
-import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { AlertModalCore } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useWebhook } from "@/hooks/store";
+import { useWebhook } from "@/hooks/store/use-webhook";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 interface IDeleteWebhook {

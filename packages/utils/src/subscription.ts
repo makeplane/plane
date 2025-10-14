@@ -1,4 +1,4 @@
-import orderBy from "lodash/orderBy";
+import { orderBy } from "lodash-es";
 // plane imports
 import { EProductSubscriptionEnum, IPaymentProduct, TProductSubscriptionType, TSubscriptionPrice } from "@plane/types";
 
@@ -41,21 +41,14 @@ export const getSubscriptionName = (planVariant: EProductSubscriptionEnum): stri
 /**
  * Gets the base subscription name for upgrade/downgrade paths
  * @param planVariant - The current subscription plan variant
- * @param isSelfHosted - Whether the instance is self-hosted / community
  * @returns The name of the base subscription plan
- *
- * @remarks
- * - For self-hosted / community instances, the upgrade path differs from cloud instances
- * - Returns the immediate lower tier subscription name
  */
-export const getBaseSubscriptionName = (planVariant: TProductSubscriptionType, isSelfHosted: boolean): string => {
+export const getBaseSubscriptionName = (planVariant: TProductSubscriptionType): string => {
   switch (planVariant) {
     case EProductSubscriptionEnum.ONE:
       return getSubscriptionName(EProductSubscriptionEnum.FREE);
     case EProductSubscriptionEnum.PRO:
-      return isSelfHosted
-        ? getSubscriptionName(EProductSubscriptionEnum.ONE)
-        : getSubscriptionName(EProductSubscriptionEnum.FREE);
+      return getSubscriptionName(EProductSubscriptionEnum.FREE);
     case EProductSubscriptionEnum.BUSINESS:
       return getSubscriptionName(EProductSubscriptionEnum.PRO);
     case EProductSubscriptionEnum.ENTERPRISE:

@@ -1,6 +1,6 @@
 // plane imports
 import { MAX_FILE_SIZE } from "@plane/constants";
-import { TFileHandler, TReadOnlyFileHandler } from "@plane/editor";
+import type { TFileHandler } from "@plane/editor";
 import { SitesFileService } from "@plane/services";
 import { getFileURL } from "@plane/utils";
 // services
@@ -22,10 +22,11 @@ type TArgs = {
 };
 
 /**
- * @description this function returns the file handler required by the read-only editors
+ * @description this function returns the file handler required by the editors
+ * @param {TArgs} args
  */
-export const getReadOnlyEditorFileHandlers = (args: Pick<TArgs, "anchor" | "workspaceId">): TReadOnlyFileHandler => {
-  const { anchor, workspaceId } = args;
+export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
+  const { anchor, uploadFile, workspaceId } = args;
 
   const getAssetSrc = async (path: string) => {
     if (!path) return "";
@@ -38,31 +39,9 @@ export const getReadOnlyEditorFileHandlers = (args: Pick<TArgs, "anchor" | "work
 
   return {
     checkIfAssetExists: async () => true,
+    assetsUploadStatus: {},
     getAssetDownloadSrc: getAssetSrc,
     getAssetSrc: getAssetSrc,
-    restore: async (src: string) => {
-      if (src?.startsWith("http")) {
-        await sitesFileService.restoreOldEditorAsset(workspaceId, src);
-      } else {
-        await sitesFileService.restoreNewAsset(anchor, src);
-      }
-    },
-  };
-};
-
-/**
- * @description this function returns the file handler required by the editors
- * @param {TArgs} args
- */
-export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
-  const { anchor, uploadFile, workspaceId } = args;
-
-  return {
-    ...getReadOnlyEditorFileHandlers({
-      anchor,
-      workspaceId,
-    }),
-    assetsUploadStatus: {},
     upload: uploadFile,
     delete: async (src: string) => {
       if (src?.startsWith("http")) {
@@ -72,6 +51,13 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
       }
     },
     cancel: sitesFileService.cancelUpload,
+    restore: async (src: string) => {
+      if (src?.startsWith("http")) {
+        await sitesFileService.restoreOldEditorAsset(workspaceId, src);
+      } else {
+        await sitesFileService.restoreNewAsset(anchor, src);
+      }
+    },
     validation: {
       maxFileSize: MAX_FILE_SIZE,
     },

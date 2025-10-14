@@ -54,9 +54,7 @@ def project_add_user_email(current_site, project_member_id, invitor_id):
         subject = "You have been invited to a Plane project"
 
         # Render the email template
-        html_content = render_to_string(
-            "emails/notifications/project_addition.html", context
-        )
+        html_content = render_to_string("emails/notifications/project_addition.html", context)
         text_content = strip_tags(html_content)
         # Initialize the connection
         connection = get_connection(

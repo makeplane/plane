@@ -48,7 +48,6 @@ module.exports = {
         "custom-sidebar-shadow-2xl": "var(--color-sidebar-shadow-2xl)",
         "custom-sidebar-shadow-3xl": "var(--color-sidebar-shadow-3xl)",
         "custom-sidebar-shadow-4xl": "var(--color-sidebar-shadow-4xl)",
-        "onboarding-shadow-sm": "var(--color-onboarding-shadow-sm)",
       },
       colors: {
         custom: {
@@ -230,25 +229,6 @@ module.exports = {
               200: convertToRGB("--color-subscription-enterprise-200"),
               400: convertToRGB("--color-subscription-enterprise-400"),
             },
-          },
-        },
-        onboarding: {
-          background: {
-            100: convertToRGB("--color-onboarding-background-100"),
-            200: convertToRGB("--color-onboarding-background-200"),
-            300: convertToRGB("--color-onboarding-background-300"),
-            400: convertToRGB("--color-onboarding-background-400"),
-          },
-          text: {
-            100: convertToRGB("--color-onboarding-text-100"),
-            200: convertToRGB("--color-onboarding-text-200"),
-            300: convertToRGB("--color-onboarding-text-300"),
-            400: convertToRGB("--color-onboarding-text-400"),
-          },
-          border: {
-            100: convertToRGB("--color-onboarding-border-100"),
-            200: convertToRGB("--color-onboarding-border-200"),
-            300: convertToRGB("--color-onboarding-border-300"),
           },
         },
         toast: {
@@ -459,13 +439,22 @@ module.exports = {
         80: "18rem",
         96: "21.6rem",
       },
-      backgroundImage: {
-        "onboarding-gradient-100": "var( --gradient-onboarding-100)",
-        "onboarding-gradient-200": "var( --gradient-onboarding-200)",
-        "onboarding-gradient-300": "var( --gradient-onboarding-300)",
-      },
       fontFamily: {
         custom: ["Inter", "sans-serif"],
+      },
+      zIndex: {
+        base: 0 /* default content */,
+        header: 10 /* sticky headers, navbars */,
+        sidebar: 20 /* sidebars, drawers */,
+        dropdown: 30 /* dropdowns, select menus */,
+        popover: 40 /* popovers, hovercards */,
+        tooltip: 50 /* tooltips, hints */,
+        sticky: 60 /* sticky UI */,
+        backdrop: 90 /* backdrop / overlay */,
+        modal: 100 /* dialogs, modals */,
+        toast: 110 /* toast, alerts */,
+        loader: 120 /* blocking loader/spinner */,
+        max: 9999 /* emergency override (rare use) */,
       },
     },
   },
@@ -485,6 +474,14 @@ module.exports = {
           ".px-page-x": {
             paddingLeft: "1.35rem",
             paddingRight: "1.35rem",
+          },
+        },
+        // Hide scrollbar but keep functionality
+        ".scrollbar-hide": {
+          "-ms-overflow-style": "none" /* IE and Edge */,
+          "scrollbar-width": "none" /* Firefox */,
+          "&::-webkit-scrollbar": {
+            display: "none" /* Chrome, Safari and Opera */,
           },
         },
       };

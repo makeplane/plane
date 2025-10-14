@@ -5,7 +5,8 @@ import { useParams } from "next/navigation";
 import { CalendarCheck2, Signal } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { DoubleCircleIcon, StateGroupIcon, TOAST_TYPE, setToast } from "@plane/ui";
+import { DoubleCircleIcon, StateGroupIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { cn, getIssuePriorityFilters } from "@plane/utils";
 // components
 import { Icon } from "@/components/ui";
@@ -14,9 +15,10 @@ import { renderFormattedDate } from "@/helpers/date-time.helper";
 import { shouldHighlightIssueDueDate } from "@/helpers/issue.helper";
 import { copyTextToClipboard, addSpaceIfCamelCase } from "@/helpers/string.helper";
 // hooks
-import { usePublish, useStates } from "@/hooks/store";
+import { usePublish } from "@/hooks/store/publish";
+import { useStates } from "@/hooks/store/use-state";
 // types
-import { IIssue, IPeekMode } from "@/types/issue";
+import type { IIssue, IPeekMode } from "@/types/issue";
 
 type Props = {
   issueDetails: IIssue;

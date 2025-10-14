@@ -2,11 +2,11 @@ import { observer } from "mobx-react";
 // plane imports
 import { getUserRole } from "@plane/utils";
 // components
-import { WorkspaceLogo } from "@/components/workspace";
+import { WorkspaceLogo } from "@/components/workspace/logo";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
-import { SubscriptionPill } from "@/plane-web/components/common";
+import { SubscriptionPill } from "@/plane-web/components/common/subscription/subscription-pill";
 
 export const SettingsSidebarHeader = observer((props: { customHeader?: React.ReactNode }) => {
   const { customHeader } = props;

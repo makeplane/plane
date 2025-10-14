@@ -4,11 +4,12 @@ import { useParams } from "next/navigation";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
-import { CycleIssueQuickActions } from "@/components/issues";
-// constants
 // hooks
-import { useCycle, useIssues, useUserPermissions } from "@/hooks/store";
-// components
+import { useCycle } from "@/hooks/store/use-cycle";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useUserPermissions } from "@/hooks/store/user";
+// local imports
+import { CycleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseKanBanRoot } from "../base-kanban-root";
 
 export const CycleKanBanLayout: React.FC = observer(() => {

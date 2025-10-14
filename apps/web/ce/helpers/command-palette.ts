@@ -4,6 +4,7 @@ import {
   MODULE_TRACKER_ELEMENTS,
   PROJECT_PAGE_TRACKER_ELEMENTS,
   PROJECT_TRACKER_ELEMENTS,
+  PROJECT_VIEW_TRACKER_ELEMENTS,
   WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { TCommandPaletteActionList, TCommandPaletteShortcut, TCommandPaletteShortcutList } from "@plane/types";
@@ -78,7 +79,10 @@ export const getProjectShortcutsList: () => TCommandPaletteActionList = () => {
     v: {
       title: "Create a new view",
       description: "Create a new view in the current project",
-      action: () => toggleCreateViewModal(true),
+      action: () => {
+        toggleCreateViewModal(true);
+        captureClick({ elementName: PROJECT_VIEW_TRACKER_ELEMENTS.COMMAND_PALETTE_ADD_ITEM });
+      },
     },
     backspace: {
       title: "Bulk delete work items",

@@ -12,7 +12,7 @@ const nextConfig = {
     return [
       {
         source: "/(.*)?",
-        headers: [{ key: "X-Frame-Options", value: "SAMEORIGIN" }],
+        headers: [{ key: "X-Frame-Options", value: "DENY" }],
       },
     ];
   },
@@ -28,7 +28,7 @@ const nextConfig = {
       "react-day-picker",
       "react-dropzone",
       "react-hook-form",
-      "lodash",
+      "lodash-es",
       "clsx",
       "tailwind-merge",
       "@plane/constants",

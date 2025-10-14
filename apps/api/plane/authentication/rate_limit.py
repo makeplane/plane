@@ -21,6 +21,4 @@ class AuthenticationThrottle(AnonRateThrottle):
                 error_message="RATE_LIMIT_EXCEEDED",
             )
         except AuthenticationException as e:
-            return Response(
-                e.get_error_dict(), status=status.HTTP_429_TOO_MANY_REQUESTS
-            )
+            return Response(e.get_error_dict(), status=status.HTTP_429_TOO_MANY_REQUESTS)

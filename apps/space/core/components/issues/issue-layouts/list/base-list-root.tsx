@@ -1,12 +1,12 @@
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 // types
-import { IIssueDisplayProperties, TGroupedIssues } from "@plane/types";
+import type { IIssueDisplayProperties, TGroupedIssues } from "@plane/types";
 // constants
 // components
 import { IssueLayoutHOC } from "@/components/issues/issue-layouts/issue-layout-HOC";
 // hooks
-import { useIssue } from "@/hooks/store";
+import { useIssue } from "@/hooks/store/use-issue";
 import { List } from "./default";
 
 type Props = {
@@ -41,7 +41,7 @@ export const IssuesListLayoutRoot = observer((props: Props) => {
     (groupId?: string) => {
       fetchNextPublicIssues(anchor, groupId);
     },
-    [fetchNextPublicIssues]
+    [anchor, fetchNextPublicIssues]
   );
 
   return (

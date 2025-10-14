@@ -7,27 +7,25 @@ import { Link2, MoveDiagonal, MoveRight } from "lucide-react";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType, TNameDescriptionLoader } from "@plane/types";
-import {
-  CenterPanelIcon,
-  CustomSelect,
-  FullScreenPanelIcon,
-  SidePanelIcon,
-  TOAST_TYPE,
-  Tooltip,
-  setToast,
-} from "@plane/ui";
+import { CustomSelect } from "@plane/ui";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
-// components
-import { IssueSubscription, NameDescriptionUpdateStatus, WorkItemDetailQuickActions } from "@/components/issues";
-import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // helpers
-// store hooks
-
-import { useIssueDetail, useIssues, useProject, useUser } from "@/hooks/store";
-import { useAppRouter } from "@/hooks/use-app-router";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useProject } from "@/hooks/store/use-project";
+import { useUser } from "@/hooks/store/user";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// local imports
+import { IssueSubscription } from "../issue-detail/subscription";
+import { WorkItemDetailQuickActions } from "../issue-layouts/quick-action-dropdowns";
+import { NameDescriptionUpdateStatus } from "../issue-update-status";
+
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
 const PEEK_OPTIONS: { key: TPeekModes; icon: any; i18n_title: string }[] = [
@@ -86,8 +84,6 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
   } = props;
   // ref
   const parentRef = useRef<HTMLDivElement>(null);
-  // router
-  const router = useAppRouter();
   const { t } = useTranslation();
   // store hooks
   const { data: currentUser } = useUser();
@@ -96,6 +92,7 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
     setPeekIssue,
     removeIssue,
     archiveIssue,
+    getIsIssuePeeked,
   } = useIssueDetail();
   const { isMobile } = usePlatformOS();
   const { getProjectIdentifierById } = useProject();
@@ -155,9 +152,11 @@ export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((pr
 
   const handleArchiveIssue = async () => {
     try {
-      await archiveIssue(workspaceSlug, projectId, issueId).then(() => {
-        router.push(`/${workspaceSlug}/projects/${projectId}/archives/issues/${issueDetails?.id}`);
-      });
+      await archiveIssue(workspaceSlug, projectId, issueId);
+      // check and remove if issue is peeked
+      if (getIsIssuePeeked(issueId)) {
+        removeRoutePeekId();
+      }
       captureSuccess({
         eventName: WORK_ITEM_TRACKER_EVENTS.archive,
         payload: { id: issueId },

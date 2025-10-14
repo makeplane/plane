@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 
 // components
-import { ArchiveIcon, DoubleCircleIcon, ContrastIcon, DiceIcon, Intake } from "@plane/ui";
+import { ArchiveIcon, CycleIcon, DoubleCircleIcon, IntakeIcon, ModuleIcon } from "@plane/propel/icons";
 import { store } from "@/lib/store-context";
 import { TProjectActivity } from "@/plane-web/types";
 
@@ -47,8 +47,8 @@ export const iconsMap: ActivityIconMap = {
   name: <Type className="h-3.5 w-3.5 text-custom-text-200" />,
   state: <DoubleCircleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
   estimate: <Triangle size={14} className="text-custom-text-200" />,
-  cycle: <ContrastIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
-  module: <DiceIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
+  cycle: <CycleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
+  module: <ModuleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
   page: <FileText className="h-3.5 w-3.5 text-custom-text-200" />,
   network: <Globe className="h-3.5 w-3.5 text-custom-text-200" />,
   identifier: <Hash className="h-3.5 w-3.5 text-custom-text-200" />,
@@ -59,11 +59,11 @@ export const iconsMap: ActivityIconMap = {
   is_time_tracking_enabled: <Timer className="h-3.5 w-3.5 text-custom-text-200" />,
   is_issue_type_enabled: <ListTodo className="h-3.5 w-3.5 text-custom-text-200" />,
   default: <Network className="h-3.5 w-3.5 text-custom-text-200" />,
-  module_view: <DiceIcon className="h-3.5 w-3.5 text-custom-text-200" />,
-  cycle_view: <ContrastIcon className="h-3.5 w-3.5 text-custom-text-200" />,
+  module_view: <ModuleIcon className="h-3.5 w-3.5 text-custom-text-200" />,
+  cycle_view: <CycleIcon className="h-3.5 w-3.5 text-custom-text-200" />,
   issue_views_view: <Layers className="h-3.5 w-3.5 text-custom-text-200" />,
   page_view: <FileText className="h-3.5 w-3.5 text-custom-text-200" />,
-  intake_view: <Intake className="h-3.5 w-3.5 text-custom-text-200" />,
+  intake_view: <IntakeIcon className="h-3.5 w-3.5 text-custom-text-200" />,
 };
 
 export const messages = (activity: TProjectActivity): { message: string | ReactNode; customUserName?: string } => {

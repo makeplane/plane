@@ -1,9 +1,9 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 // plane imports
 import { SitesCycleService } from "@plane/services";
-import { TPublicCycle } from "@/types/cycle";
+import type { TPublicCycle } from "@/types/cycle";
 // store
-import { CoreRootStore } from "./root.store";
+import type { CoreRootStore } from "./root.store";
 
 export interface ICycleStore {
   // observables

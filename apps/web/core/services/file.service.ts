@@ -1,10 +1,11 @@
 import { AxiosRequestConfig } from "axios";
 // plane types
 import { API_BASE_URL } from "@plane/constants";
+import { getFileMetaDataForUpload, generateFileUploadPayload } from "@plane/services";
 import { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
 import { EFileAssetType } from "@plane/types/src/enums";
+import { getAssetIdFromUrl } from "@plane/utils";
 // helpers
-import { generateFileUploadPayload, getAssetIdFromUrl, getFileMetaDataForUpload } from "@plane/utils";
 // services
 import { APIService } from "@/services/api.service";
 import { FileUploadService } from "@/services/file-upload.service";
@@ -69,7 +70,7 @@ export class FileService extends APIService {
     file: File,
     uploadProgressHandler?: AxiosRequestConfig["onUploadProgress"]
   ): Promise<TFileSignedURLResponse> {
-    const fileMetaData = getFileMetaDataForUpload(file);
+    const fileMetaData = await getFileMetaDataForUpload(file);
     return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/`, {
       ...data,
       ...fileMetaData,
@@ -146,7 +147,7 @@ export class FileService extends APIService {
     file: File,
     uploadProgressHandler?: AxiosRequestConfig["onUploadProgress"]
   ): Promise<TFileSignedURLResponse> {
-    const fileMetaData = getFileMetaDataForUpload(file);
+    const fileMetaData = await getFileMetaDataForUpload(file);
     return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/`, {
       ...data,
       ...fileMetaData,
@@ -176,7 +177,7 @@ export class FileService extends APIService {
   }
 
   async uploadUserAsset(data: TFileEntityInfo, file: File): Promise<TFileSignedURLResponse> {
-    const fileMetaData = getFileMetaDataForUpload(file);
+    const fileMetaData = await getFileMetaDataForUpload(file);
     return this.post(`/api/assets/v2/user-assets/`, {
       ...data,
       ...fileMetaData,
@@ -290,7 +291,6 @@ export class FileService extends APIService {
         throw err?.response?.data;
       });
   }
-
   async getProjectCoverImages(): Promise<string[]> {
     return this.get(`/api/project-covers/`)
       .then((res) => res?.data)

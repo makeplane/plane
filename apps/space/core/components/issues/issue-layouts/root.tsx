@@ -1,18 +1,22 @@
 "use client";
 
-import { FC, useEffect } from "react";
+import type { FC } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
-import { IssueKanbanLayoutRoot, IssuesListLayoutRoot } from "@/components/issues";
 import { IssueAppliedFilters } from "@/components/issues/filters/applied-filters/root";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 // hooks
-import { useIssue, useIssueDetails, useIssueFilter } from "@/hooks/store";
+import { useIssue } from "@/hooks/store/use-issue";
+import { useIssueDetails } from "@/hooks/store/use-issue-details";
+import { useIssueFilter } from "@/hooks/store/use-issue-filter";
 // store
-import { PublishStore } from "@/store/publish/publish.store";
-// assets
+import type { PublishStore } from "@/store/publish/publish.store";
+// local imports
 import { SomethingWentWrongError } from "./error";
+import { IssueKanbanLayoutRoot } from "./kanban/base-kanban-root";
+import { IssuesListLayoutRoot } from "./list/base-list-root";
 
 type Props = {
   peekId: string | undefined;

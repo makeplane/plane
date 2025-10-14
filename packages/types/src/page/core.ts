@@ -2,12 +2,13 @@ import { TLogoProps } from "../common";
 import { EPageAccess } from "../enums";
 import { TPageExtended } from "./extended";
 
-export type TPage = TPageExtended & {
+export type TPage = {
   access: EPageAccess | undefined;
   archived_at: string | null | undefined;
   color: string | undefined;
   created_at: Date | undefined;
   created_by: string | undefined;
+  description: object | undefined;
   description_html: string | undefined;
   id: string | undefined;
   is_favorite: boolean;
@@ -20,7 +21,8 @@ export type TPage = TPageExtended & {
   updated_by: string | undefined;
   workspace: string | undefined;
   logo_props: TLogoProps | undefined;
-};
+  deleted_at: Date | undefined;
+} & TPageExtended;
 
 // page filters
 export type TPageNavigationTabs = "public" | "private" | "archived";

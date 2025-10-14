@@ -6,23 +6,28 @@ import { Signal, Tag, Triangle, LayoutPanelTop, CalendarClock, CalendarCheck2, U
 // i18n
 import { useTranslation } from "@plane/i18n";
 // ui icons
-import { DiceIcon, DoubleCircleIcon, ContrastIcon } from "@plane/ui";
+import { CycleIcon, DoubleCircleIcon, ModuleIcon } from "@plane/propel/icons";
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
-import {
-  DateDropdown,
-  EstimateDropdown,
-  PriorityDropdown,
-  MemberDropdown,
-  StateDropdown,
-} from "@/components/dropdowns";
+import { DateDropdown } from "@/components/dropdowns/date";
+import { EstimateDropdown } from "@/components/dropdowns/estimate";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import { IssueCycleSelect, IssueModuleSelect, IssueLabel, TIssueOperations } from "@/components/issues";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // helpers
-import { useIssueDetail, useMember, useProject, useProjectState } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useMember } from "@/hooks/store/use-member";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web components
-import { IssueParentSelectRoot, IssueWorklogProperty } from "@/plane-web/components/issues";
 import { WorkItemAdditionalSidebarProperties } from "@/plane-web/components/issues/issue-details/additional-properties";
+import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
+import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
+import type { TIssueOperations } from "../issue-detail";
+import { IssueCycleSelect } from "../issue-detail/cycle-select";
+import { IssueLabel } from "../issue-detail/label";
+import { IssueModuleSelect } from "../issue-detail/module-select";
 
 interface IPeekOverviewProperties {
   workspaceSlug: string;
@@ -224,7 +229,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         {projectDetails?.module_view && (
           <div className="flex w-full items-center gap-3 min-h-8 h-full">
             <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-              <DiceIcon className="h-4 w-4 flex-shrink-0" />
+              <ModuleIcon className="h-4 w-4 flex-shrink-0" />
               <span>{t("common.modules")}</span>
             </div>
             <IssueModuleSelect
@@ -241,7 +246,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         {projectDetails?.cycle_view && (
           <div className="flex w-full items-center gap-3 h-8">
             <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-              <ContrastIcon className="h-4 w-4 flex-shrink-0" />
+              <CycleIcon className="h-4 w-4 flex-shrink-0" />
               <span>{t("common.cycle")}</span>
             </div>
             <IssueCycleSelect

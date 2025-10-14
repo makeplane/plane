@@ -1,7 +1,8 @@
 "use client";
 
 // types
-import { Briefcase, FileText, Layers, LayoutGrid } from "lucide-react";
+import { LayoutGrid } from "lucide-react";
+import { CycleIcon, ModuleIcon, PageIcon, ProjectIcon, ViewsIcon } from "@plane/propel/icons";
 import {
   IWorkspaceDefaultSearchResult,
   IWorkspaceIssueSearchResult,
@@ -10,15 +11,14 @@ import {
   IWorkspaceSearchResult,
 } from "@plane/types";
 // ui
-import { ContrastIcon, DiceIcon } from "@plane/ui";
 // helpers
 import { generateWorkItemLink } from "@plane/utils";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 
 export type TCommandGroups = {
   [key: string]: {
-    icon: JSX.Element | null;
+    icon: React.ReactNode | null;
     itemName: (item: any) => React.ReactNode;
     path: (item: any, projectId: string | undefined) => string;
     title: string;
@@ -27,7 +27,7 @@ export type TCommandGroups = {
 
 export const commandGroups: TCommandGroups = {
   cycle: {
-    icon: <ContrastIcon className="h-3 w-3" />,
+    icon: <CycleIcon className="h-3 w-3" />,
     itemName: (cycle: IWorkspaceDefaultSearchResult) => (
       <h6>
         <span className="text-xs text-custom-text-300">{cycle.project__identifier}</span> {cycle.name}
@@ -62,7 +62,7 @@ export const commandGroups: TCommandGroups = {
     title: "Work items",
   },
   issue_view: {
-    icon: <Layers className="h-3 w-3" />,
+    icon: <ViewsIcon className="h-3 w-3" />,
     itemName: (view: IWorkspaceDefaultSearchResult) => (
       <h6>
         <span className="text-xs text-custom-text-300">{view.project__identifier}</span> {view.name}
@@ -73,7 +73,7 @@ export const commandGroups: TCommandGroups = {
     title: "Views",
   },
   module: {
-    icon: <DiceIcon className="h-3 w-3" />,
+    icon: <ModuleIcon className="h-3 w-3" />,
     itemName: (module: IWorkspaceDefaultSearchResult) => (
       <h6>
         <span className="text-xs text-custom-text-300">{module.project__identifier}</span> {module.name}
@@ -84,7 +84,7 @@ export const commandGroups: TCommandGroups = {
     title: "Modules",
   },
   page: {
-    icon: <FileText className="h-3 w-3" />,
+    icon: <PageIcon className="h-3 w-3" />,
     itemName: (page: IWorkspacePageSearchResult) => (
       <h6>
         <span className="text-xs text-custom-text-300">{page.project__identifiers?.[0]}</span> {page.name}
@@ -100,7 +100,7 @@ export const commandGroups: TCommandGroups = {
     title: "Pages",
   },
   project: {
-    icon: <Briefcase className="h-3 w-3" />,
+    icon: <ProjectIcon className="h-3 w-3" />,
     itemName: (project: IWorkspaceProjectSearchResult) => project?.name,
     path: (project: IWorkspaceProjectSearchResult) => `/${project?.workspace__slug}/projects/${project?.id}/issues/`,
     title: "Projects",

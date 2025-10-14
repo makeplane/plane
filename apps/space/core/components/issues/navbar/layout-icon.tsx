@@ -1,5 +1,6 @@
-import { List, Kanban, LucideProps } from "lucide-react";
-import { TIssueLayout } from "@plane/constants";
+import type { LucideProps } from "lucide-react";
+import { List, Kanban } from "lucide-react";
+import type { TIssueLayout } from "@plane/constants";
 
 export const IssueLayoutIcon = ({ layout, ...props }: { layout: TIssueLayout } & LucideProps) => {
   switch (layout) {

@@ -1,17 +1,20 @@
 import { observer } from "mobx-react";
 // plane types
+import { PriorityIcon, StateGroupIcon, WorkItemsIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 import { EIssueServiceType, TActivityEntityData, TIssueEntityData } from "@plane/types";
 // plane ui
-import { LayersIcon, PriorityIcon, StateGroupIcon, Tooltip } from "@plane/ui";
 import { calculateTimeAgo, generateWorkItemLink } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
-import { MemberDropdown } from "@/components/dropdowns";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 // helpers
 // hooks
-import { useIssueDetail, useProject, useProjectState } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 
 type BlockProps = {
   activity: TActivityEntityData;
@@ -74,7 +77,7 @@ export const RecentIssue = observer((props: BlockProps) => {
           ) : (
             <div className="flex gap-2 items-center justify-center">
               <div className="flex-shrink-0 grid place-items-center rounded bg-custom-background-80 size-8">
-                <LayersIcon className="size-4 text-custom-text-350" />
+                <WorkItemsIcon className="size-4 text-custom-text-350" />
               </div>
               <div className="font-medium text-custom-text-400 text-sm whitespace-nowrap">
                 {issueDetails?.project_identifier}-{issueDetails?.sequence_id}
@@ -129,7 +132,7 @@ export const RecentIssue = observer((props: BlockProps) => {
       className="bg-transparent my-auto !px-2 border-none py-3"
       itemClassName="my-auto"
       onItemClick={handlePeekOverview}
-      preventDefaultNProgress
+      preventDefaultProgress
     />
   );
 });

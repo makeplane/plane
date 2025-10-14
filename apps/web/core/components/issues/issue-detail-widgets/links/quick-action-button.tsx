@@ -5,7 +5,7 @@ import { Plus } from "lucide-react";
 // plane imports
 import { TIssueServiceType } from "@plane/types";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
 type Props = {
   customButton?: React.ReactNode;

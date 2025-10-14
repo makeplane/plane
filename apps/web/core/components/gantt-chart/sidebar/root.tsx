@@ -2,10 +2,10 @@ import { RefObject } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // components
-import type { ChartDataType, IBlockUpdateData, IGanttBlock } from "@plane/types";
+import type { IBlockUpdateData } from "@plane/types";
 import { Row, ERowVariant } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { MultipleSelectGroupAction } from "@/components/core";
+import { MultipleSelectGroupAction } from "@/components/core/multiple-select";
 // helpers
 // hooks
 import { TSelectionHelper } from "@/hooks/use-multiple-select";
@@ -22,7 +22,7 @@ type Props = {
   enableSelection: boolean | ((blockId: string) => boolean);
   sidebarToRender: (props: any) => React.ReactNode;
   title: string;
-  quickAdd?: React.JSX.Element | undefined;
+  quickAdd?: React.ReactNode | undefined;
   selectionHelpers: TSelectionHelper;
   isEpic?: boolean;
 };
@@ -82,7 +82,7 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
         <h6>{t("common.duration")}</h6>
       </Row>
 
-      <Row variant={ERowVariant.HUGGING} className="min-h-full h-max bg-custom-background-100 overflow-hidden">
+      <Row variant={ERowVariant.HUGGING} className="min-h-full h-max bg-custom-background-100">
         {sidebarToRender &&
           sidebarToRender({
             title,

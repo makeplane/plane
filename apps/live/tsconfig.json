@@ -19,8 +19,9 @@
     "inlineSources": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "sourceRoot": "/"
+    "sourceRoot": "/",
+    "types": ["node"]
   },
-  "include": ["src/**/*.ts", "tsup.config.ts"],
-  "exclude": ["./dist", "./build", "./node_modules"]
+  "include": ["src/**/*.ts", "tsdown.config.ts"],
+  "exclude": ["./dist", "./build", "./node_modules", "**/*.d.ts"]
 }

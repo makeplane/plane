@@ -16,27 +16,23 @@ import {
   MODULE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
+import { WorkItemsIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
 import { IModule } from "@plane/types";
-import {
-  Card,
-  FavoriteStar,
-  LayersIcon,
-  LinearProgressIndicator,
-  TOAST_TYPE,
-  Tooltip,
-  setPromiseToast,
-  setToast,
-} from "@plane/ui";
+import { Card, FavoriteStar, LinearProgressIndicator } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, generateQueryParams } from "@plane/utils";
 // components
-import { DateRangeDropdown } from "@/components/dropdowns";
+import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { ModuleQuickActions } from "@/components/modules";
 import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
 // helpers
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 // hooks
-import { useMember, useModule, useUserPermissions } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useModule } from "@/hooks/store/use-module";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web constants
@@ -211,7 +207,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   }));
 
   return (
-    <div className="relative" data-prevent-nprogress>
+    <div className="relative" data-prevent-progress>
       <Link ref={parentRef} href={`/${workspaceSlug}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}>
         <Card>
           <div>
@@ -236,7 +232,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 text-custom-text-200">
-                <LayersIcon className="h-4 w-4 text-custom-text-300" />
+                <WorkItemsIcon className="h-4 w-4 text-custom-text-300" />
                 <span className="text-xs text-custom-text-300">{issueCount ?? "0 Work item"}</span>
               </div>
               {moduleLeadDetails ? (

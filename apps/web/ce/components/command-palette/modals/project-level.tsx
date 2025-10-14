@@ -1,11 +1,11 @@
 import { observer } from "mobx-react";
 // components
-import { CycleCreateUpdateModal } from "@/components/cycles";
+import { CycleCreateUpdateModal } from "@/components/cycles/modal";
 import { CreateUpdateModuleModal } from "@/components/modules";
-import { CreatePageModal } from "@/components/pages";
-import { CreateUpdateProjectViewModal } from "@/components/views";
+import { CreatePageModal } from "@/components/pages/modals/create-page-modal";
+import { CreateUpdateProjectViewModal } from "@/components/views/modal";
 // hooks
-import { useCommandPalette } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 // plane web hooks
 import { EPageStoreType } from "@/plane-web/hooks/store";
 

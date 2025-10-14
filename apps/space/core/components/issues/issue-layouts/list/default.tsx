@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // types
-import {
+import type {
   GroupByColumnTypes,
   TGroupedIssues,
   IIssueDisplayProperties,
@@ -11,7 +11,11 @@ import {
   TLoader,
 } from "@plane/types";
 // hooks
-import { useMember, useModule, useStates, useLabel, useCycle } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
+import { useLabel } from "@/hooks/store/use-label";
+import { useMember } from "@/hooks/store/use-member";
+import { useModule } from "@/hooks/store/use-module";
+import { useStates } from "@/hooks/store/use-state";
 //
 import { getGroupByColumns } from "../utils";
 import { ListGroup } from "./list-group";

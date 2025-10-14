@@ -1,13 +1,15 @@
 "use client";
 
-import { FC, FormEvent, useMemo, useRef, useState } from "react";
+import type { FC, FormEvent } from "react";
+import { useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // icons
 import { CircleAlert, XCircle } from "lucide-react";
 // types
-import { IEmailCheckData } from "@plane/types";
+import { Button } from "@plane/propel/button";
+import type { IEmailCheckData } from "@plane/types";
 // ui
-import { Button, Input, Spinner } from "@plane/ui";
+import { Input, Spinner } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 import { checkEmailValidity } from "@/helpers/string.helper";
@@ -46,13 +48,13 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
   return (
     <form onSubmit={handleFormSubmit} className="mt-5 space-y-4">
       <div className="space-y-1">
-        <label className="text-sm text-onboarding-text-300 font-medium" htmlFor="email">
+        <label className="text-sm text-custom-text-300 font-medium" htmlFor="email">
           Email
         </label>
         <div
           className={cn(
-            `relative flex items-center rounded-md bg-onboarding-background-200 border`,
-            !isFocused && Boolean(emailError?.email) ? `border-red-500` : `border-onboarding-border-100`
+            `relative flex items-center rounded-md bg-custom-background-100 border`,
+            !isFocused && Boolean(emailError?.email) ? `border-red-500` : `border-custom-border-100`
           )}
           onFocus={() => {
             setIsFocused(true);
@@ -68,7 +70,7 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="name@company.com"
-            className={`disable-autofill-style h-[46px] w-full placeholder:text-onboarding-text-400 autofill:bg-red-500 border-0 focus:bg-none active:bg-transparent`}
+            className={`disable-autofill-style h-10 w-full placeholder:text-custom-text-400 autofill:bg-red-500 border-0 focus:bg-none active:bg-transparent`}
             autoComplete="on"
             autoFocus
             ref={inputRef}
@@ -83,7 +85,7 @@ export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
               }}
               tabIndex={-1}
             >
-              <XCircle className="h-[46px] w-11 px-3 stroke-custom-text-400 hover:cursor-pointer text-xs" />
+              <XCircle className="h-10 w-11 px-3 stroke-custom-text-400 hover:cursor-pointer text-xs" />
             </button>
           )}
         </div>

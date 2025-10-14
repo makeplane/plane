@@ -1,4 +1,4 @@
-import range from "lodash/range";
+import { range } from "lodash-es";
 
 export const NotificationsLoader = () => (
   <div className="divide-y divide-custom-border-100 animate-pulse overflow-hidden">

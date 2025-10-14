@@ -1,18 +1,19 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import xor from "lodash/xor";
+import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane ui
 import { useTranslation } from "@plane/i18n";
-import { Button, Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
-import { Logo } from "@/components/common";
-import { SimpleEmptyState } from "@/components/empty-state";
+import { Logo } from "@/components/common/logo";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // helpers
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 type Props = {

@@ -1,11 +1,8 @@
-import concat from "lodash/concat";
-import pull from "lodash/pull";
-import set from "lodash/set";
-import uniq from "lodash/uniq";
-import update from "lodash/update";
+import { pull, concat, update, uniq, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
-// services
+// Plane Imports
 import { TIssueComment, TIssueCommentMap, TIssueCommentIdMap, TIssueServiceType } from "@plane/types";
+// services
 import { IssueCommentService } from "@/services/issue";
 // types
 import { IIssueDetail } from "./root.store";

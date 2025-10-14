@@ -3,16 +3,20 @@ import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Briefcase, Check, Hotel, Users, X } from "lucide-react";
+import { Check, Hotel, Users, X } from "lucide-react";
 // plane ui
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { ProjectIcon } from "@plane/propel/icons";
 import { cn, getFileURL } from "@plane/utils";
 // helpers
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useCommandPalette, useProject, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useProject } from "@/hooks/store/use-project";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web constants
 
 export const NoProjectsEmptyState = observer(() => {
@@ -44,7 +48,7 @@ export const NoProjectsEmptyState = observer(() => {
       id: "create-project",
       title: "home.empty.create_project.title",
       description: "home.empty.create_project.description",
-      icon: <Briefcase className="size-10" />,
+      icon: <ProjectIcon className="size-4" />,
       flag: "projects",
       cta: {
         text: "home.empty.create_project.cta",
@@ -62,7 +66,7 @@ export const NoProjectsEmptyState = observer(() => {
       id: "invite-team",
       title: "home.empty.invite_team.title",
       description: "home.empty.invite_team.description",
-      icon: <Users className="size-10" />,
+      icon: <Users className="size-4" />,
       flag: "visited_members",
       cta: {
         text: "home.empty.invite_team.cta",
@@ -74,7 +78,7 @@ export const NoProjectsEmptyState = observer(() => {
       id: "configure-workspace",
       title: "home.empty.configure_workspace.title",
       description: "home.empty.configure_workspace.description",
-      icon: <Hotel className="size-10" />,
+      icon: <Hotel className="size-4" />,
       flag: "visited_workspace",
       cta: {
         text: "home.empty.configure_workspace.cta",
@@ -89,7 +93,7 @@ export const NoProjectsEmptyState = observer(() => {
       icon:
         currentUser?.avatar_url && currentUser?.avatar_url.trim() !== "" ? (
           <Link href={`/${workspaceSlug}/profile/${currentUser?.id}`}>
-            <span className="relative flex h-6 w-6 items-center justify-center rounded-full p-4 capitalize text-white">
+            <span className="relative flex size-4 items-center justify-center rounded-full p-4 capitalize text-white">
               <img
                 src={getFileURL(currentUser?.avatar_url)}
                 className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
@@ -99,7 +103,7 @@ export const NoProjectsEmptyState = observer(() => {
           </Link>
         ) : (
           <Link href={`/${workspaceSlug}/profile/${currentUser?.id}`}>
-            <span className="relative flex h-6 w-6 items-center justify-center rounded-full bg-gray-700 p-4 capitalize text-white text-sm">
+            <span className="relative flex size-4 items-center justify-center rounded-full bg-gray-700 p-4 capitalize text-white text-sm">
               {(currentUser?.email ?? currentUser?.display_name ?? "?")[0]}
             </span>
           </Link>
@@ -142,17 +146,17 @@ export const NoProjectsEmptyState = observer(() => {
           {t("home.empty.not_right_now")}
         </button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {EMPTY_STATE_DATA.map((item) => {
           const isStateComplete = isComplete(item.flag);
           return (
             <div
               key={item.id}
-              className="flex flex-col items-center justify-center p-6 bg-custom-background-100 rounded-lg text-center border border-custom-border-200/40"
+              className="flex flex-col p-4 bg-custom-background-100 rounded-xl border border-custom-border-200/40"
             >
               <div
                 className={cn(
-                  "grid place-items-center bg-custom-background-90 rounded-full size-20 mb-3 text-custom-text-400",
+                  "grid place-items-center bg-custom-background-90 rounded-full size-9 mb-3 text-custom-text-400",
                   {
                     "text-custom-primary-100 bg-custom-primary-100/10": !isStateComplete,
                   }
@@ -160,10 +164,10 @@ export const NoProjectsEmptyState = observer(() => {
               >
                 <span className="text-3xl my-auto">{item.icon}</span>
               </div>
-              <h3 className="text-base font-medium text-custom-text-100 mb-2">{t(item.title)}</h3>
-              <p className="text-sm text-custom-text-300 mb-2">{t(item.description)}</p>
+              <h3 className="text-sm font-medium text-custom-text-100 mb-2">{t(item.title)}</h3>
+              <p className="text-[11px] text-custom-text-300 mb-2">{t(item.description)}</p>
               {isStateComplete ? (
-                <div className="flex items-center gap-2 bg-[#17a34a] rounded-full p-1">
+                <div className="flex items-center gap-2 bg-[#17a34a] rounded-full p-1 w-fit">
                   <Check className="size-3 text-custom-primary-100 text-white" />
                 </div>
               ) : (

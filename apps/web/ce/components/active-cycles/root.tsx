@@ -1,3 +1,4 @@
-import { WorkspaceActiveCyclesUpgrade } from "@/plane-web/components/active-cycles";
+// local imports
+import { WorkspaceActiveCyclesUpgrade } from "./workspace-active-cycles-upgrade";
 
 export const WorkspaceActiveCyclesRoot = () => <WorkspaceActiveCyclesUpgrade />;

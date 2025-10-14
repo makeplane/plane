@@ -1,10 +1,10 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { observable, action, makeObservable, runInAction } from "mobx";
 // plane imports
 import { InstanceService } from "@plane/services";
-import { IInstance, IInstanceConfig } from "@plane/types";
+import type { IInstance, IInstanceConfig } from "@plane/types";
 // store
-import { CoreRootStore } from "@/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 
 type TError = {
   status: string;
@@ -64,7 +64,7 @@ export class InstanceStore implements IInstanceStore {
         this.instance = instanceInfo.instance;
         this.config = instanceInfo.config;
       });
-    } catch (error) {
+    } catch (_error) {
       runInAction(() => {
         this.isLoading = false;
         this.error = {

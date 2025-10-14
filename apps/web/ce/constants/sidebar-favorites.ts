@@ -1,14 +1,22 @@
-import { Briefcase, FileText, Layers, LucideIcon } from "lucide-react";
+import { LucideIcon } from "lucide-react";
 // plane imports
+import {
+  CycleIcon,
+  FavoriteFolderIcon,
+  ISvgIcons,
+  ModuleIcon,
+  PageIcon,
+  ProjectIcon,
+  ViewsIcon,
+} from "@plane/propel/icons";
 import { IFavorite } from "@plane/types";
-import { ContrastIcon, DiceIcon, FavoriteFolderIcon, ISvgIcons } from "@plane/ui";
 
 export const FAVORITE_ITEM_ICONS: Record<string, React.FC<ISvgIcons> | LucideIcon> = {
-  page: FileText,
-  project: Briefcase,
-  view: Layers,
-  module: DiceIcon,
-  cycle: ContrastIcon,
+  page: PageIcon,
+  project: ProjectIcon,
+  view: ViewsIcon,
+  module: ModuleIcon,
+  cycle: CycleIcon,
   folder: FavoriteFolderIcon,
 };
 

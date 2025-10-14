@@ -2,11 +2,12 @@
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { Breadcrumbs, ContrastIcon, Header } from "@plane/ui";
+import { CycleIcon } from "@plane/propel/icons";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // plane web components
-import { UpgradeBadge } from "@/plane-web/components/workspace";
+import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
 
 export const WorkspaceActiveCycleHeader = observer(() => {
   const { t } = useTranslation();
@@ -18,7 +19,7 @@ export const WorkspaceActiveCycleHeader = observer(() => {
             component={
               <BreadcrumbLink
                 label={t("active_cycles")}
-                icon={<ContrastIcon className="h-4 w-4 text-custom-text-300 rotate-180" />}
+                icon={<CycleIcon className="h-4 w-4 text-custom-text-300 rotate-180" />}
               />
             }
           />

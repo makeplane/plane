@@ -1,6 +1,9 @@
 "use client";
 
-import { AppHeader, ContentWrapper } from "@/components/core";
+// components
+import { AppHeader } from "@/components/core/app-header";
+import { ContentWrapper } from "@/components/core/content-wrapper";
+// local imports
 import { WorkspaceDraftHeader } from "./header";
 
 export default function WorkspaceDraftLayout({ children }: { children: React.ReactNode }) {
