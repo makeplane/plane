@@ -2,7 +2,7 @@
 
 import { observer } from "mobx-react";
 // plane ui
-import { ContrastIcon } from "@plane/propel/icons";
+import { CycleIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 // plane utils
 import { cn } from "@plane/utils";
@@ -28,7 +28,7 @@ export const IssueBlockCycle = observer(({ cycleId, shouldShowBorder = true }: P
         )}
       >
         <div className="flex w-full items-center text-xs gap-1.5">
-          <ContrastIcon className="h-3 w-3 flex-shrink-0" />
+          <CycleIcon className="h-3 w-3 flex-shrink-0" />
           <div className="max-w-40 flex-grow truncate ">{cycle?.name ?? "No Cycle"}</div>
         </div>
       </div>

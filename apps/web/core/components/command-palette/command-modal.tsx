@@ -16,7 +16,7 @@ import {
   WORKSPACE_DEFAULT_SEARCH_RESULT,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { LayersIcon } from "@plane/propel/icons";
+import { WorkItemsIcon } from "@plane/propel/icons";
 import { IWorkspaceSearchResults } from "@plane/types";
 import { Loader, ToggleSwitch } from "@plane/ui";
 import { cn, getTabIndex } from "@plane/utils";
@@ -358,7 +358,7 @@ export const CommandModal: React.FC = observer(() => {
                                   className="focus:bg-custom-background-80"
                                 >
                                   <div className="flex items-center gap-2 text-custom-text-200">
-                                    <LayersIcon className="h-3.5 w-3.5" />
+                                    <WorkItemsIcon className="h-3.5 w-3.5" />
                                     Create new work item
                                   </div>
                                   <kbd>C</kbd>

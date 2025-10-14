@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 // plane types
-import { LayersIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
+import { PriorityIcon, StateGroupIcon, WorkItemsIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EIssueServiceType, TActivityEntityData, TIssueEntityData } from "@plane/types";
 // plane ui
@@ -77,7 +77,7 @@ export const RecentIssue = observer((props: BlockProps) => {
           ) : (
             <div className="flex gap-2 items-center justify-center">
               <div className="flex-shrink-0 grid place-items-center rounded bg-custom-background-80 size-8">
-                <LayersIcon className="size-4 text-custom-text-350" />
+                <WorkItemsIcon className="size-4 text-custom-text-350" />
               </div>
               <div className="font-medium text-custom-text-400 text-sm whitespace-nowrap">
                 {issueDetails?.project_identifier}-{issueDetails?.sequence_id}

@@ -1,5 +1,5 @@
 import { EIssueGroupByToServerOptions, EServerGroupByToFilterOptions } from "@plane/constants";
-import { IssuePaginationOptions, TIssueParams } from "@plane/types";
+import type { IssuePaginationOptions, TIssueParams } from "@plane/types";
 
 /**
  * This Method is used to construct the url params along with paginated values

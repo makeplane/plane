@@ -2,9 +2,10 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { FileText, HelpCircle, MessagesSquare, MoveLeft, User } from "lucide-react";
+import { HelpCircle, MessagesSquare, MoveLeft, User } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { PageIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -73,7 +74,7 @@ export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(
                 target="_blank"
                 className="flex items-center justify- gap-x-2 rounded text-xs hover:bg-custom-background-80"
               >
-                <FileText className="h-3.5 w-3.5 text-custom-text-200" size={14} />
+                <PageIcon className="h-3.5 w-3.5 text-custom-text-200" height={14} width={14} />
                 <span className="text-xs">{t("documentation")}</span>
               </a>
             </CustomMenu.MenuItem>

@@ -15,7 +15,7 @@ import {
   WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { Button } from "@plane/propel/button";
-import { DiceIcon } from "@plane/propel/icons";
+import { ModuleIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import {
   EIssuesStoreType,
@@ -118,7 +118,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
       return {
         value: _module.id,
         query: _module.name,
-        content: <SwitcherLabel name={_module.name} LabelIcon={DiceIcon} />,
+        content: <SwitcherLabel name={_module.name} LabelIcon={ModuleIcon} />,
       };
     })
     .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
@@ -149,7 +149,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                       router.push(`/${workspaceSlug}/projects/${projectId}/modules/${value}`);
                     }}
                     title={moduleDetails?.name}
-                    icon={<DiceIcon className="size-3.5 flex-shrink-0 text-custom-text-300" />}
+                    icon={<ModuleIcon className="size-3.5 flex-shrink-0 text-custom-text-300" />}
                     isLast
                   />
                 }

@@ -1,47 +1,13 @@
 // plane imports
-import { EQUALITY_OPERATOR, IUserLite, TFilterProperty, COLLECTION_OPERATOR } from "@plane/types";
+import { EQUALITY_OPERATOR, TFilterProperty, COLLECTION_OPERATOR } from "@plane/types";
 // local imports
 import {
   createFilterConfig,
-  TCreateFilterConfigParams,
-  IFilterIconConfig,
   TCreateFilterConfig,
-  getMultiSelectConfig,
   createOperatorConfigEntry,
+  getMemberMultiSelectConfig,
+  TCreateUserFilterParams,
 } from "../../../rich-filters";
-
-// ------------ Base User Filter Types ------------
-
-/**
- * User filter specific params
- */
-export type TCreateUserFilterParams = TCreateFilterConfigParams &
-  IFilterIconConfig<IUserLite> & {
-    members: IUserLite[];
-  };
-
-/**
- * Helper to get the member multi select config
- * @param params - The filter params
- * @returns The member multi select config
- */
-export const getMemberMultiSelectConfig = (params: TCreateUserFilterParams) =>
-  getMultiSelectConfig<IUserLite, string, IUserLite>(
-    {
-      items: params.members,
-      getId: (member) => member.id,
-      getLabel: (member) => member.display_name,
-      getValue: (member) => member.id,
-      getIconData: (member) => member,
-    },
-    {
-      singleValueOperator: EQUALITY_OPERATOR.EXACT,
-      ...params,
-    },
-    {
-      ...params,
-    }
-  );
 
 // ------------ Assignee filter ------------
 
@@ -62,11 +28,11 @@ export const getAssigneeFilterConfig =
     createFilterConfig<P, string>({
       id: key,
       label: "Assignees",
+      ...params,
       icon: params.filterIcon,
-      isEnabled: params.isEnabled,
       supportedOperatorConfigsMap: new Map([
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
-          getMemberMultiSelectConfig(updatedParams)
+          getMemberMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
         ),
       ]),
     });
@@ -90,11 +56,11 @@ export const getMentionFilterConfig =
     createFilterConfig<P, string>({
       id: key,
       label: "Mentions",
+      ...params,
       icon: params.filterIcon,
-      isEnabled: params.isEnabled,
       supportedOperatorConfigsMap: new Map([
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
-          getMemberMultiSelectConfig(updatedParams)
+          getMemberMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
         ),
       ]),
     });
@@ -118,11 +84,11 @@ export const getCreatedByFilterConfig =
     createFilterConfig<P, string>({
       id: key,
       label: "Created by",
+      ...params,
       icon: params.filterIcon,
-      isEnabled: params.isEnabled,
       supportedOperatorConfigsMap: new Map([
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
-          getMemberMultiSelectConfig(updatedParams)
+          getMemberMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
         ),
       ]),
     });
@@ -146,11 +112,11 @@ export const getSubscriberFilterConfig =
     createFilterConfig<P, string>({
       id: key,
       label: "Subscriber",
+      ...params,
       icon: params.filterIcon,
-      isEnabled: params.isEnabled,
       supportedOperatorConfigsMap: new Map([
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
-          getMemberMultiSelectConfig(updatedParams)
+          getMemberMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
         ),
       ]),
     });

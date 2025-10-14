@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { Home, Settings, User, Bell } from "lucide-react";
+import { Settings, User, Bell } from "lucide-react";
+import { HomeIcon } from "../icons";
 import { Tabs } from "./tabs";
 
 type TabOption = {
@@ -152,7 +153,7 @@ export const DisabledTab: Story = {
 export const WithIcons: Story = {
   render({ defaultValue }) {
     const tabsWithIcons = [
-      { label: "Home", value: "home", icon: Home },
+      { label: "Home", value: "home", icon: HomeIcon },
       { label: "Profile", value: "profile", icon: User },
       { label: "Settings", value: "settings", icon: Settings },
       { label: "Notifications", value: "notifications", icon: Bell },
@@ -184,7 +185,7 @@ export const WithIcons: Story = {
 export const IconsOnly: Story = {
   render({ defaultValue }) {
     const iconTabs = [
-      { value: "home", icon: Home },
+      { value: "home", icon: HomeIcon },
       { value: "profile", icon: User },
       { value: "settings", icon: Settings },
       { value: "notifications", icon: Bell },
