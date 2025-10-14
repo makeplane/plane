@@ -22,6 +22,7 @@ from plane.app.serializers import (
 )
 
 from plane.app.permissions import ProjectMemberPermission, allow_permission, ROLE
+from plane.app.views.custom.simple_api import temporary_create_issue_type
 from plane.db.models import (
     UserFavorite,
     Intake,
@@ -240,6 +241,7 @@ class ProjectViewSet(BaseViewSet):
         serializer = ProjectSerializer(data={**request.data}, context={"workspace_id": workspace.id})
         if serializer.is_valid():
             serializer.save()
+            temporary_create_issue_type(project_id=serializer.data["id"])
 
             # Add the user as Administrator to the project
             _ = ProjectMember.objects.create(
