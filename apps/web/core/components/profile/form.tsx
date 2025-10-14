@@ -249,6 +249,10 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                   name="first_name"
                   rules={{
                     required: "Please enter first name",
+                    pattern: {
+                      value: /^[a-zA-Z\s\-_]*$/,
+                      message: "First name can only contain letters, spaces, hyphens, and underscores",
+                    },
                   }}
                   render={({ field: { value, onChange, ref } }) => (
                     <Input
@@ -273,6 +277,12 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                 <Controller
                   control={control}
                   name="last_name"
+                  rules={{
+                    pattern: {
+                      value: /^[a-zA-Z\s\-_]*$/,
+                      message: "Last name can only contain letters, spaces, hyphens, and underscores",
+                    },
+                  }}
                   render={({ field: { value, onChange, ref } }) => (
                     <Input
                       id="last_name"
@@ -289,6 +299,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                     />
                   )}
                 />
+                {errors.last_name && <span className="text-xs text-red-500">{errors.last_name.message}</span>}
               </div>
               <div className="flex flex-col gap-1">
                 <h4 className="text-sm font-medium text-custom-text-200">

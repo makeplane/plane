@@ -214,6 +214,10 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
                 value: 24,
                 message: "Name must be within 24 characters.",
               },
+              pattern: {
+                value: /^[a-zA-Z\s\-_]*$/,
+                message: "Name can only contain letters, spaces, hyphens, and underscores",
+              },
             }}
             render={({ field: { value, onChange, ref } }) => (
               <input
