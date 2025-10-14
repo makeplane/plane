@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 // plane imports
-import { TOOLBAR_ITEMS, type ToolbarMenuItem, type EditorRefApi } from "@plane/editor";
+import { TOOLBAR_ITEMS } from "@plane/editor";
+import type { ToolbarMenuItem, EditorRefApi } from "@plane/editor";
 import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";

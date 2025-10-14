@@ -1,8 +1,9 @@
-import { FC, useMemo, useState } from "react";
+import type { FC } from "react";
+import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { ListFilter, Search, X } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { IIssueFilterOptions, IState } from "@plane/types";
+import type { IIssueFilterOptions, IState } from "@plane/types";
 import { cn } from "@plane/utils";
 import {
   FilterAssignees,

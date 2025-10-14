@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from "axios";
+import { logger } from "@plane/logger";
 import { env } from "@/env";
 
 export abstract class APIService {
@@ -13,6 +14,17 @@ export abstract class APIService {
       withCredentials: true,
       timeout: 20000,
     });
+    this.setupInterceptors();
+  }
+
+  private setupInterceptors() {
+    this.axiosInstance.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        logger.error("AXIOS_ERROR:", error);
+        return Promise.reject(error);
+      }
+    );
   }
 
   setHeader(key: string, value: string) {

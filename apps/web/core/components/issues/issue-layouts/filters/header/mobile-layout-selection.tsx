@@ -2,7 +2,7 @@ import { ChevronDown } from "lucide-react";
 import { ISSUE_LAYOUTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { EIssueLayoutTypes } from "@plane/types";
+import type { EIssueLayoutTypes } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import { IssueLayoutIcon } from "../../layout-icon";
 

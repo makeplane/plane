@@ -1,7 +1,7 @@
 import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
-import { IStickyStore } from "@/store/sticky/sticky.store";
+import type { IStickyStore } from "@/store/sticky/sticky.store";
 // plane web stores
 
 export const useSticky = (): IStickyStore => {

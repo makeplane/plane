@@ -1,10 +1,10 @@
 "use client";
 
-import { FC, ReactNode } from "react";
+import type { FC, ReactNode } from "react";
 import { Network } from "lucide-react";
 // types
 import { Tooltip } from "@plane/propel/tooltip";
-import { TWorkspaceBaseActivity } from "@plane/types";
+import type { TWorkspaceBaseActivity } from "@plane/types";
 // ui
 // helpers
 import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@plane/utils";

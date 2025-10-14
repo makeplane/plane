@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useTheme } from "next-themes";
 // plane imports
 import { Toast } from "@plane/propel/toast";

@@ -2,7 +2,7 @@ import { set } from "lodash-es";
 import { makeObservable, observable, runInAction, action } from "mobx";
 // plane imports
 import { SitesProjectPublishService } from "@plane/services";
-import { TProjectPublishSettings } from "@plane/types";
+import type { TProjectPublishSettings } from "@plane/types";
 // store
 import { PublishStore } from "@/store/publish/publish.store";
 import type { CoreRootStore } from "@/store/root.store";

@@ -1,7 +1,8 @@
 "use client";
 
-import { FC, useEffect, useRef, useState } from "react";
-import { Placement } from "@popperjs/core";
+import type { FC } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
@@ -11,8 +12,8 @@ import { Combobox } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // icon
-import { ContrastIcon, CycleGroupIcon } from "@plane/propel/icons";
-import { TCycleGroups } from "@plane/types";
+import { CycleGroupIcon, CycleIcon } from "@plane/propel/icons";
+import type { TCycleGroups } from "@plane/types";
 // ui
 // store hooks
 import { useCycle } from "@/hooks/store/use-cycle";
@@ -110,7 +111,7 @@ export const CycleOptions: FC<CycleOptionsProps> = observer((props) => {
       query: t("cycle.no_cycle"),
       content: (
         <div className="flex items-center gap-2">
-          <ContrastIcon className="h-3 w-3 flex-shrink-0" />
+          <CycleIcon className="h-3 w-3 flex-shrink-0" />
           <span className="flex-grow truncate">{t("cycle.no_cycle")}</span>
         </div>
       ),

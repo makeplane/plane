@@ -1,4 +1,6 @@
-import { Styles, StyleSheet } from "@react-pdf/renderer";
+import type { Styles } from "@react-pdf/renderer";
+import { StyleSheet } from "@react-pdf/renderer";
+import type { LucideIcon } from "lucide-react";
 import {
   AlignCenter,
   AlignLeft,
@@ -17,7 +19,6 @@ import {
   List,
   ListOrdered,
   ListTodo,
-  LucideIcon,
   Strikethrough,
   Table,
   TextQuote,

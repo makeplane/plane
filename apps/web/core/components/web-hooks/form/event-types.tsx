@@ -1,6 +1,6 @@
 // types
 import { useTranslation } from "@plane/i18n";
-import { TWebhookEventTypes } from "@plane/types";
+import type { TWebhookEventTypes } from "@plane/types";
 
 type Props = {
   value: string;

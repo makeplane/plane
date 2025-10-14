@@ -5,7 +5,7 @@ import React from "react";
 import { ISSUE_LAYOUTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
-import { EIssueLayoutTypes } from "@plane/types";
+import type { EIssueLayoutTypes } from "@plane/types";
 // ui
 // types
 import { IssueLayoutIcon } from "@/components/issues/issue-layouts/layout-icon";

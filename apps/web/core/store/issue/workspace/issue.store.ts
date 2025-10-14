@@ -1,6 +1,6 @@
 import { action, makeObservable, runInAction } from "mobx";
 // base class
-import {
+import type {
   IssuePaginationOptions,
   TBulkOperationsPayload,
   TIssue,
@@ -11,9 +11,10 @@ import {
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // types
-import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
-import { IIssueRootStore } from "../root.store";
-import { IWorkspaceIssuesFilter } from "./filter.store";
+import type { IBaseIssuesStore } from "../helpers/base-issues.store";
+import { BaseIssuesStore } from "../helpers/base-issues.store";
+import type { IIssueRootStore } from "../root.store";
+import type { IWorkspaceIssuesFilter } from "./filter.store";
 
 export interface IWorkspaceIssues extends IBaseIssuesStore {
   // observable

@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useState, useMemo, useCallback } from "react";
+import type { FC } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // Plane imports
@@ -8,7 +9,8 @@ import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
-import { EIssueServiceType, EIssuesStoreType, IWorkItemPeekOverview, TIssue } from "@plane/types";
+import type { IWorkItemPeekOverview, TIssue } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -17,7 +19,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
 // local imports
-import { TIssueOperations } from "../issue-detail";
+import type { TIssueOperations } from "../issue-detail";
 import { IssueView } from "./view";
 
 export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => {

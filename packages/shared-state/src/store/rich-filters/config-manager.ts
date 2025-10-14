@@ -24,6 +24,7 @@ export interface IFilterConfigManager<P extends TFilterProperty> {
   // observables
   filterConfigs: Map<P, IFilterConfig<P, TFilterValue>>; // filter property -> config
   configOptions: TConfigOptions;
+  areConfigsReady: boolean;
   // computed
   allAvailableConfigs: IFilterConfig<P, TFilterValue>[];
   // computed functions
@@ -32,6 +33,7 @@ export interface IFilterConfigManager<P extends TFilterProperty> {
   register: <C extends TFilterConfig<P, TFilterValue>>(config: C) => void;
   registerAll: (configs: TFilterConfig<P, TFilterValue>[]) => void;
   updateConfigByProperty: (property: P, configUpdates: Partial<TFilterConfig<P, TFilterValue>>) => void;
+  setAreConfigsReady: (value: boolean) => void;
 }
 
 /**
@@ -57,6 +59,7 @@ export class FilterConfigManager<P extends TFilterProperty, E extends TExternalF
   // observables
   filterConfigs: IFilterConfigManager<P>["filterConfigs"];
   configOptions: IFilterConfigManager<P>["configOptions"];
+  areConfigsReady: IFilterConfigManager<P>["areConfigsReady"];
   // parent filter instance
   private _filterInstance: IFilterInstance<P, E>;
 
@@ -69,18 +72,21 @@ export class FilterConfigManager<P extends TFilterProperty, E extends TExternalF
   constructor(filterInstance: IFilterInstance<P, E>, params: TConfigManagerParams) {
     this.filterConfigs = new Map<P, IFilterConfig<P>>();
     this.configOptions = this._initializeConfigOptions(params.options);
+    this.areConfigsReady = true;
     // parent filter instance
     this._filterInstance = filterInstance;
 
     makeObservable(this, {
       filterConfigs: observable,
       configOptions: observable,
+      areConfigsReady: observable,
       // computed
       allAvailableConfigs: computed,
       // helpers
       register: action,
       registerAll: action,
       updateConfigByProperty: action,
+      setAreConfigsReady: action,
     });
   }
 
@@ -144,6 +150,14 @@ export class FilterConfigManager<P extends TFilterProperty, E extends TExternalF
   updateConfigByProperty: IFilterConfigManager<P>["updateConfigByProperty"] = action((property, configUpdates) => {
     const prevConfig = this.filterConfigs.get(property);
     prevConfig?.mutate(configUpdates);
+  });
+
+  /**
+   * Updates the configs ready state.
+   * @param value - The new configs ready state.
+   */
+  setAreConfigsReady: IFilterConfigManager<P>["setAreConfigsReady"] = action((value) => {
+    this.areConfigsReady = value;
   });
 
   // ------------ private computed ------------

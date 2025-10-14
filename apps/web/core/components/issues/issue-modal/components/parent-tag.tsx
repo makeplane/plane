@@ -2,12 +2,13 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { Control, Controller } from "react-hook-form";
+import type { Control } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { X } from "lucide-react";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 // types
-import { ISearchIssueResponse, TIssue } from "@plane/types";
+import type { ISearchIssueResponse, TIssue } from "@plane/types";
 // helpers
 import { getTabIndex } from "@plane/utils";
 // hooks

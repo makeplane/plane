@@ -14,7 +14,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { useProjectColumns } from "@/plane-web/components/projects/settings/useProjectColumns";
 // store
-import { IProjectMemberDetails } from "@/store/member/project/base-project-member.store";
+import type { IProjectMemberDetails } from "@/store/member/project/base-project-member.store";
 // local imports
 import { ConfirmProjectMemberRemove } from "./confirm-project-member-remove";
 

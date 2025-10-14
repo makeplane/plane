@@ -37,6 +37,7 @@ export interface ComboboxOptionsProps {
   positionerClassName?: string;
   searchQuery?: string;
   onSearchQueryChange?: (query: string) => void;
+  onSearchQueryKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 export interface ComboboxOptionProps {
@@ -109,6 +110,7 @@ function ComboboxOptions({
   positionerClassName,
   searchQuery: controlledSearchQuery,
   onSearchQueryChange,
+  onSearchQueryKeyDown,
 }: ComboboxOptionsProps) {
   // const [searchQuery, setSearchQuery] = React.useState("");
   const [internalSearchQuery, setInternalSearchQuery] = React.useState("");
@@ -172,6 +174,7 @@ function ComboboxOptions({
                   placeholder={searchPlaceholder}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={onSearchQueryKeyDown}
                   className={cn(
                     "w-full rounded border border-custom-border-100 bg-custom-background-90 py-1.5 pl-8 pr-2 text-sm outline-none placeholder:text-custom-text-400",
                     inputClassName

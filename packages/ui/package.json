@@ -53,7 +53,6 @@
     "react-color": "^2.19.3",
     "react-day-picker": "9.5.0",
     "react-popper": "^2.3.0",
-    "sonner": "^1.4.41",
     "tailwind-merge": "^2.0.0",
     "use-font-face-observer": "^1.2.2"
   },

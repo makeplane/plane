@@ -1,7 +1,10 @@
 import type { CoreRootStore } from "../root.store";
-import { IProjectPublishStore, ProjectPublishStore } from "./project-publish.store";
-import { IProjectStore, ProjectStore } from "./project.store";
-import { IProjectFilterStore, ProjectFilterStore } from "./project_filter.store";
+import type { IProjectPublishStore } from "./project-publish.store";
+import { ProjectPublishStore } from "./project-publish.store";
+import type { IProjectStore } from "./project.store";
+import { ProjectStore } from "./project.store";
+import type { IProjectFilterStore } from "./project_filter.store";
+import { ProjectFilterStore } from "./project_filter.store";
 
 export interface IProjectRootStore {
   project: IProjectStore;

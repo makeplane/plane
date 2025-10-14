@@ -1,6 +1,6 @@
 import { action, makeObservable, runInAction } from "mobx";
 // types
-import {
+import type {
   TIssue,
   TLoader,
   ViewFlags,
@@ -10,10 +10,11 @@ import {
 } from "@plane/types";
 // helpers
 // base class
-import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
+import type { IBaseIssuesStore } from "../helpers/base-issues.store";
+import { BaseIssuesStore } from "../helpers/base-issues.store";
 // services
-import { IIssueRootStore } from "../root.store";
-import { IProjectIssuesFilter } from "./filter.store";
+import type { IIssueRootStore } from "../root.store";
+import type { IProjectIssuesFilter } from "./filter.store";
 
 export interface IProjectIssues extends IBaseIssuesStore {
   viewFlags: ViewFlags;

@@ -1,9 +1,10 @@
 "use client";
 
-import { Control, Controller } from "react-hook-form";
+import type { Control } from "react-hook-form";
+import { Controller } from "react-hook-form";
 // constants
 import { WORKSPACE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
-import { IWebhook } from "@plane/types";
+import type { IWebhook } from "@plane/types";
 // ui
 import { ToggleSwitch } from "@plane/ui";
 // hooks

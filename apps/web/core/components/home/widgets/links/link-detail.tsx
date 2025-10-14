@@ -1,17 +1,19 @@
 "use client";
 
-import { FC, useCallback, useMemo } from "react";
+import type { FC } from "react";
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { Pencil, ExternalLink, Link, Trash2 } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { TContextMenuItem, LinkItemBlock } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { LinkItemBlock } from "@plane/ui";
 // plane utils
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
 import { useHome } from "@/hooks/store/use-home";
 // types
-import { TLinkOperations } from "./use-links";
+import type { TLinkOperations } from "./use-links";
 
 export type TProjectLinkDetail = {
   linkId: string;

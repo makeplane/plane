@@ -1,12 +1,12 @@
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { TDateRangeFilterFieldConfig, TFilterConditionNodeForDisplay, TFilterProperty } from "@plane/types";
+import type { TDateRangeFilterFieldConfig, TFilterConditionNodeForDisplay, TFilterProperty } from "@plane/types";
 import { cn, isValidDate, renderFormattedPayloadDate, toFilterArray } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 // local imports
-import { COMMON_FILTER_ITEM_BORDER_CLASSNAME } from "../../shared";
+import { COMMON_FILTER_ITEM_BORDER_CLASSNAME, EMPTY_FILTER_PLACEHOLDER_TEXT } from "../../shared";
 
 type TDateRangeFilterValueInputProps<P extends TFilterProperty> = {
   config: TDateRangeFilterFieldConfig<string>;
@@ -42,7 +42,7 @@ export const DateRangeFilterValueInput = observer(
         minDate={config.min}
         maxDate={config.max}
         mergeDates
-        placeholder={{ from: "--" }}
+        placeholder={{ from: EMPTY_FILTER_PLACEHOLDER_TEXT }}
         buttonVariant="transparent-with-text"
         buttonClassName={cn("rounded-none", {
           [COMMON_FILTER_ITEM_BORDER_CLASSNAME]: !isDisabled,

@@ -1,10 +1,10 @@
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { TDateFilterFieldConfig, TFilterConditionNodeForDisplay, TFilterProperty } from "@plane/types";
+import type { TDateFilterFieldConfig, TFilterConditionNodeForDisplay, TFilterProperty } from "@plane/types";
 import { cn, renderFormattedPayloadDate } from "@plane/utils";
 import { DateDropdown } from "@/components/dropdowns/date";
-import { COMMON_FILTER_ITEM_BORDER_CLASSNAME } from "../../shared";
+import { COMMON_FILTER_ITEM_BORDER_CLASSNAME, EMPTY_FILTER_PLACEHOLDER_TEXT } from "../../shared";
 
 type TSingleDateFilterValueInputProps<P extends TFilterProperty> = {
   config: TDateFilterFieldConfig<string>;
@@ -34,7 +34,7 @@ export const SingleDateFilterValueInput = observer(
         minDate={config.min}
         maxDate={config.max}
         icon={null}
-        placeholder="--"
+        placeholder={EMPTY_FILTER_PLACEHOLDER_TEXT}
         buttonVariant="transparent-with-text"
         isClearable={false}
         closeOnSelect

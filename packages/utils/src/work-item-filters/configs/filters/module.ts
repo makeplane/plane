@@ -53,8 +53,8 @@ export const getModuleFilterConfig =
     createFilterConfig<P, string>({
       id: key,
       label: "Module",
+      ...params,
       icon: params.filterIcon,
-      isEnabled: params.isEnabled,
       supportedOperatorConfigsMap: new Map([
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
           getModuleMultiSelectConfig(updatedParams)

@@ -1,5 +1,5 @@
 import { Download } from "lucide-react";
-import { IExportData } from "@plane/types";
+import type { IExportData } from "@plane/types";
 import { getDate, getFileURL, renderFormattedDate } from "@plane/utils";
 
 type RowData = IExportData;

@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 import { EIconSize } from "@plane/constants";
