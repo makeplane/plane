@@ -1,6 +1,7 @@
 "use client";
 
-import React, { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -8,16 +9,12 @@ import { useTheme } from "next-themes";
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
 import { SitesAuthService } from "@plane/services";
-import { IEmailCheckData } from "@plane/types";
+import type { IEmailCheckData } from "@plane/types";
 import { OAuthOptions } from "@plane/ui";
 // components
 // helpers
-import {
-  EAuthenticationErrorCodes,
-  EErrorAlertType,
-  TAuthErrorInfo,
-  authErrorHandler,
-} from "@/helpers/authentication.helper";
+import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
+import { EErrorAlertType, authErrorHandler, EAuthenticationErrorCodes } from "@/helpers/authentication.helper";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
 // types

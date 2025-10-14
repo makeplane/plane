@@ -1,6 +1,7 @@
 import React, { forwardRef } from "react";
 // plane imports
-import { type EditorRefApi, type IRichTextEditorProps, RichTextEditorWithRef, type TFileHandler } from "@plane/editor";
+import { RichTextEditorWithRef } from "@plane/editor";
+import type { EditorRefApi, IRichTextEditorProps, TFileHandler } from "@plane/editor";
 import type { MakeOptional } from "@plane/types";
 // helpers
 import { getEditorFileHandlers } from "@/helpers/editor.helper";

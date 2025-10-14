@@ -1,8 +1,8 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
-import { Briefcase } from "lucide-react";
+import { ProjectIcon } from "@plane/propel/icons";
 // components
 import { ProjectLogo } from "@/components/common/project-logo";
 // store
@@ -29,7 +29,7 @@ export const IssuesNavbarRoot: FC<Props> = observer((props) => {
           </span>
         ) : (
           <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-            <Briefcase className="h-4 w-4" />
+            <ProjectIcon className="h-4 w-4" />
           </span>
         )}
         <div className="line-clamp-1 max-w-[300px] overflow-hidden text-lg font-medium">

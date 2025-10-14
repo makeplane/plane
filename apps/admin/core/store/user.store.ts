@@ -1,7 +1,7 @@
 import { action, observable, runInAction, makeObservable } from "mobx";
 // plane internal packages
-import { EUserStatus } from "@plane/constants";
 import type { TUserStatus } from "@plane/constants";
+import { EUserStatus } from "@plane/constants";
 import { AuthService, UserService } from "@plane/services";
 import type { IUser } from "@plane/types";
 // root store

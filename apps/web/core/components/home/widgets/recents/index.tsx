@@ -3,10 +3,9 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Briefcase, FileText } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // plane types
-import { LayersIcon } from "@plane/propel/icons";
+import { PageIcon, ProjectIcon, WorkItemsIcon } from "@plane/propel/icons";
 import { TActivityEntityData, THomeWidgetProps, TRecentActivityFilterKeys } from "@plane/types";
 // plane ui
 // components
@@ -24,9 +23,9 @@ const WIDGET_KEY = EWidgetKeys.RECENT_ACTIVITY;
 const workspaceService = new WorkspaceService();
 const filters: { name: TRecentActivityFilterKeys; icon?: React.ReactNode; i18n_key: string }[] = [
   { name: "all item", i18n_key: "home.recents.filters.all" },
-  { name: "issue", icon: <LayersIcon className="w-4 h-4" />, i18n_key: "home.recents.filters.issues" },
-  { name: "page", icon: <FileText size={16} />, i18n_key: "home.recents.filters.pages" },
-  { name: "project", icon: <Briefcase size={16} />, i18n_key: "home.recents.filters.projects" },
+  { name: "issue", icon: <WorkItemsIcon className="w-4 h-4" />, i18n_key: "home.recents.filters.issues" },
+  { name: "page", icon: <PageIcon height={16} width={16} />, i18n_key: "home.recents.filters.pages" },
+  { name: "project", icon: <ProjectIcon height={16} width={16} />, i18n_key: "home.recents.filters.projects" },
 ];
 
 type TRecentWidgetProps = THomeWidgetProps & {

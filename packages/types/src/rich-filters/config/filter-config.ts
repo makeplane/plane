@@ -15,4 +15,6 @@ export type TFilterConfig<P extends TFilterProperty, V extends TFilterValue = TF
   isEnabled: boolean;
   allowMultipleFilters?: boolean;
   supportedOperatorConfigsMap: TOperatorConfigMap<V>;
+  rightContent?: React.ReactNode; // content to display on the right side of the filter option in the dropdown
+  tooltipContent?: React.ReactNode; // content to display when hovering over the applied filter item in the filter list
 };

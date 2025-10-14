@@ -15,10 +15,10 @@ import { cn } from "@plane/utils";
 // components
 import { CodeBlock } from "@/components/common/code-block";
 import { ConfirmDiscardModal } from "@/components/common/confirm-discard-modal";
-import { ControllerInput } from "@/components/common/controller-input";
 import type { TControllerInputFormField } from "@/components/common/controller-input";
-import { CopyField } from "@/components/common/copy-field";
+import { ControllerInput } from "@/components/common/controller-input";
 import type { TCopyField } from "@/components/common/copy-field";
+import { CopyField } from "@/components/common/copy-field";
 // hooks
 import { useInstance } from "@/hooks/store";
 

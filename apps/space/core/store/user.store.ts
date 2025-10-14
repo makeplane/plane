@@ -3,9 +3,10 @@ import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane imports
 import { UserService } from "@plane/services";
-import { ActorDetail, IUser } from "@plane/types";
+import type { ActorDetail, IUser } from "@plane/types";
 // store types
-import { ProfileStore, IProfileStore } from "@/store/profile.store";
+import type { IProfileStore } from "@/store/profile.store";
+import { ProfileStore } from "@/store/profile.store";
 // store
 import type { CoreRootStore } from "@/store/root.store";
 

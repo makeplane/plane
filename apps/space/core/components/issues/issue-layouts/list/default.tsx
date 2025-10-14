@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // types
-import {
+import type {
   GroupByColumnTypes,
   TGroupedIssues,
   IIssueDisplayProperties,
