@@ -2,8 +2,9 @@
 
 // components
 import { Button } from "@plane/propel/button";
-import { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
-import { GithubAuth, TIntegrationSteps } from "@/components/integration";
+import type { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
+import type { TIntegrationSteps } from "@/components/integration";
+import { GithubAuth } from "@/components/integration";
 // types
 
 type Props = {

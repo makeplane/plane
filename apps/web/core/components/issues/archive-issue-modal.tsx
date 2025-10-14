@@ -7,7 +7,7 @@ import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { TDeDupeIssue, TIssue } from "@plane/types";
+import type { TDeDupeIssue, TIssue } from "@plane/types";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";

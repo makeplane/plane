@@ -1,4 +1,4 @@
-import { AnalyticsTab } from "@plane/types";
+import type { AnalyticsTab } from "@plane/types";
 import { Overview } from "@/components/analytics/overview";
 import { WorkItems } from "@/components/analytics/work-items";
 

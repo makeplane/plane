@@ -3,7 +3,7 @@
 import React from "react";
 import { useParams } from "next/navigation";
 import useSWRInfinite from "swr/infinite";
-import { IWorkspaceIntegration } from "@plane/types";
+import type { IWorkspaceIntegration } from "@plane/types";
 // services
 // ui
 import { CustomSearchSelect } from "@plane/ui";

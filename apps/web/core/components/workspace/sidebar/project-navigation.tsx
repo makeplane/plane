@@ -1,13 +1,14 @@
 "use client";
 
-import React, { FC, useCallback, useMemo } from "react";
+import type { FC } from "react";
+import React, { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
-import { EUserProjectRoles } from "@plane/types";
+import type { EUserProjectRoles } from "@plane/types";
 // plane ui
 // components
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
@@ -175,7 +176,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
 
         return (
           <Link key={item.key} href={item.href} onClick={handleProjectClick}>
-            <SidebarNavItem className="pl-[18px]" isActive={!!isActive(item)}>
+            <SidebarNavItem isActive={!!isActive(item)}>
               <div className="flex items-center gap-1.5 py-[1px]">
                 <item.icon className={`flex-shrink-0 size-4 ${item.name === "Intake" ? "stroke-1" : "stroke-[1.5]"}`} />
                 <span className="text-xs font-medium">{t(item.i18n_key)}</span>

@@ -1,7 +1,7 @@
 // plane imports
-import { TSaveViewOptions, TUpdateViewOptions } from "@plane/constants";
-import { IWorkItemFilterInstance } from "@plane/shared-state";
-import { EIssuesStoreType, IIssueFilters, TWorkItemFilterExpression, TWorkItemFilterProperty } from "@plane/types";
+import type { TSaveViewOptions, TUpdateViewOptions } from "@plane/constants";
+import type { IWorkItemFilterInstance } from "@plane/shared-state";
+import type { EIssuesStoreType, IIssueFilters, TWorkItemFilterExpression, TWorkItemFilterProperty } from "@plane/types";
 
 export type TSharedWorkItemFiltersProps = {
   entityType: EIssuesStoreType; // entity type (project, cycle, workspace, teamspace, etc)

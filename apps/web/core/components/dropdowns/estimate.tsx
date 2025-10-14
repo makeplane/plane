@@ -1,4 +1,5 @@
-import { ReactNode, useRef, useState } from "react";
+import type { ReactNode } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
@@ -17,7 +18,7 @@ import { useDropdown } from "@/hooks/use-dropdown";
 import { DropdownButton } from "./buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 // types
-import { TDropdownProps } from "./types";
+import type { TDropdownProps } from "./types";
 
 type Props = TDropdownProps & {
   button?: ReactNode;

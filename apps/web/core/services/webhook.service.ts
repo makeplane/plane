@@ -1,6 +1,6 @@
 // api services
 import { API_BASE_URL } from "@plane/constants";
-import { IWebhook } from "@plane/types";
+import type { IWebhook } from "@plane/types";
 import { APIService } from "@/services/api.service";
 // helpers
 // types

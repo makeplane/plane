@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { ColumnDef, Row, RowData } from "@tanstack/react-table";
+import type { ColumnDef, Row, RowData } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -7,7 +7,7 @@ import { UserRound } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { ProjectIcon } from "@plane/propel/icons";
 // plane package imports
-import { AnalyticsTableDataMap, WorkItemInsightColumns } from "@plane/types";
+import type { AnalyticsTableDataMap, WorkItemInsightColumns } from "@plane/types";
 // plane web components
 import { Avatar } from "@plane/ui";
 import { getFileURL } from "@plane/utils";

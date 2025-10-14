@@ -1,5 +1,5 @@
-import { TWorkItemFilterCondition } from "@plane/shared-state";
-import { TFilterConditionNodeForDisplay, TFilterValue, TWorkItemFilterProperty } from "@plane/types";
+import type { TWorkItemFilterCondition } from "@plane/shared-state";
+import type { TFilterConditionNodeForDisplay, TFilterValue, TWorkItemFilterProperty } from "@plane/types";
 
 export const PROGRESS_STATS = [
   {

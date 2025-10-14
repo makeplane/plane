@@ -4,7 +4,8 @@ import { useParams, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { GLOBAL_VIEW_TRACKER_ELEMENTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
-import { EIssuesStoreType, EIssueLayoutTypes, STATIC_VIEW_TYPES } from "@plane/types";
+import type { EIssueLayoutTypes } from "@plane/types";
+import { EIssuesStoreType, STATIC_VIEW_TYPES } from "@plane/types";
 // components
 import { EmptyState } from "@/components/common/empty-state";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";

@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { ChevronDown, ListFilter } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TProjectFilters } from "@plane/types";
+import type { TProjectFilters } from "@plane/types";
 import { calculateTotalFilters } from "@plane/utils";
 // components
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";

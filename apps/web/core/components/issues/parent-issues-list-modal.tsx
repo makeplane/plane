@@ -9,7 +9,7 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
-import { ISearchIssueResponse } from "@plane/types";
+import type { ISearchIssueResponse } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
 import { generateWorkItemLink, getTabIndex } from "@plane/utils";

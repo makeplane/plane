@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Placement } from "@popperjs/core";
+import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Check, Component, Loader, Search, Tag } from "lucide-react";
@@ -8,7 +8,7 @@ import { getRandomLabelColor } from "@plane/constants";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { IIssueLabel } from "@plane/types";
+import type { IIssueLabel } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import { IssueLabelsList } from "@/components/ui/labels-list";

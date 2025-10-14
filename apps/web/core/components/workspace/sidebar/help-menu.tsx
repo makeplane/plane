@@ -65,15 +65,13 @@ export const HelpMenu: React.FC<WorkspaceHelpSectionProps> = observer(() => {
           maxHeight="lg"
           closeOnSelect
         >
-          <CustomMenu.MenuItem>
-            <a
-              href="https://go.plane.so/p-docs"
-              target="_blank"
-              className="flex items-center justify- gap-x-2 rounded text-xs hover:bg-custom-background-80"
-            >
+          <CustomMenu.MenuItem
+            onClick={() => window.open("https://go.plane.so/p-docs", "_blank", "noopener,noreferrer")}
+          >
+            <div className="flex items-center gap-x-2 rounded text-xs hover:bg-custom-background-80">
               <PageIcon className="h-3.5 w-3.5 text-custom-text-200" height={14} width={14} />
               <span className="text-xs">{t("documentation")}</span>
-            </a>
+            </div>
           </CustomMenu.MenuItem>
           {config?.intercom_app_id && config?.is_intercom_enabled && (
             <CustomMenu.MenuItem>
@@ -87,15 +85,11 @@ export const HelpMenu: React.FC<WorkspaceHelpSectionProps> = observer(() => {
               </button>
             </CustomMenu.MenuItem>
           )}
-          <CustomMenu.MenuItem>
-            <a
-              href="mailto:sales@plane.so"
-              target="_blank"
-              className="flex items-center justify- gap-x-2 rounded text-xs hover:bg-custom-background-80"
-            >
+          <CustomMenu.MenuItem onClick={() => window.open("mailto:sales@plane.so", "_blank", "noopener,noreferrer")}>
+            <div className="flex items-center gap-x-2 rounded text-xs hover:bg-custom-background-80">
               <User className="h-3.5 w-3.5 text-custom-text-200" size={14} />
               <span className="text-xs">{t("contact_sales")}</span>
-            </a>
+            </div>
           </CustomMenu.MenuItem>
           <div className="my-1 border-t border-custom-border-200" />
           <CustomMenu.MenuItem>
@@ -116,14 +110,12 @@ export const HelpMenu: React.FC<WorkspaceHelpSectionProps> = observer(() => {
               <span className="text-xs">{t("whats_new")}</span>
             </button>
           </CustomMenu.MenuItem>
-          <CustomMenu.MenuItem>
-            <a
-              href="https://go.plane.so/p-discord"
-              target="_blank"
-              className="flex items-center justify- gap-x-2 rounded text-xs hover:bg-custom-background-80"
-            >
+          <CustomMenu.MenuItem
+            onClick={() => window.open("https://go.plane.so/p-discord", "_blank", "noopener,noreferrer")}
+          >
+            <div className="flex items-center gap-x-2 rounded text-xs hover:bg-custom-background-80">
               <span className="text-xs">Discord</span>
-            </a>
+            </div>
           </CustomMenu.MenuItem>
           <div className="px-1 pt-2 mt-1 text-xs text-custom-text-200 border-t border-custom-border-200">
             <PlaneVersionNumber />

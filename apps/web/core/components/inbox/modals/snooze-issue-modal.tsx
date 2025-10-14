@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, Fragment, useState } from "react";
+import type { FC } from "react";
+import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { useTranslation } from "@plane/i18n";

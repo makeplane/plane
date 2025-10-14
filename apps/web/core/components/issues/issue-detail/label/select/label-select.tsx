@@ -6,7 +6,8 @@ import { Combobox } from "@headlessui/react";
 // plane imports
 import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EUserProjectRoles, IIssueLabel } from "@plane/types";
+import type { IIssueLabel } from "@plane/types";
+import { EUserProjectRoles } from "@plane/types";
 // helpers
 import { getTabIndex } from "@plane/utils";
 // hooks

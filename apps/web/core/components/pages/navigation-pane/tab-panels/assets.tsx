@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Download } from "lucide-react";
 // plane imports
-import { CORE_EXTENSIONS, type TEditorAsset } from "@plane/editor";
+import { CORE_EXTENSIONS } from "@plane/editor";
+import type { TEditorAsset } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { getEditorAssetDownloadSrc, getEditorAssetSrc } from "@plane/utils";
 // plane web imports

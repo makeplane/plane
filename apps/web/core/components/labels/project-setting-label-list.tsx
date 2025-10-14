@@ -6,15 +6,15 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IIssueLabel } from "@plane/types";
+import type { IIssueLabel } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import type { TLabelOperationsCallbacks } from "@/components/labels";
 import {
   CreateUpdateLabelInline,
   DeleteLabelModal,
   ProjectSettingLabelGroup,
   ProjectSettingLabelItem,
-  TLabelOperationsCallbacks,
 } from "@/components/labels";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";

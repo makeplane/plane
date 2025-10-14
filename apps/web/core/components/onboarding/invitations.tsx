@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { ROLE, MEMBER_TRACKER_EVENTS, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 // types
 import { Button } from "@plane/propel/button";
-import { IWorkspaceMemberInvitation } from "@plane/types";
+import type { IWorkspaceMemberInvitation } from "@plane/types";
 // ui
 import { Checkbox, Spinner } from "@plane/ui";
 import { truncateText } from "@plane/utils";
