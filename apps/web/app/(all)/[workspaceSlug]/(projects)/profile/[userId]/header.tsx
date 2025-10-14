@@ -3,8 +3,7 @@
 // ui
 import { FC } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { ChevronDown, PanelRight } from "lucide-react";
 import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -29,6 +28,7 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
   const { userProjectsData, type = undefined, showProfileIssuesFilter } = props;
   // router
   const { workspaceSlug, userId } = useParams();
+  const router = useRouter();
   // store hooks
   const { toggleProfileSidebar, profileSidebarCollapsed } = useAppTheme();
   const { data: currentUser } = useUser();
@@ -83,14 +83,12 @@ export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
           >
             <></>
             {tabsList.map((tab) => (
-              <CustomMenu.MenuItem className="flex items-center gap-2" key={tab.route}>
-                <Link
-                  key={tab.route}
-                  href={`/${workspaceSlug}/profile/${userId}/${tab.route}`}
-                  className="w-full text-custom-text-300"
-                >
-                  {t(tab.i18n_label)}
-                </Link>
+              <CustomMenu.MenuItem
+                className="flex items-center gap-2"
+                key={tab.route}
+                onClick={() => router.push(`/${workspaceSlug}/profile/${userId}/${tab.route}`)}
+              >
+                <span className="w-full text-custom-text-300">{t(tab.i18n_label)}</span>
               </CustomMenu.MenuItem>
             ))}
           </CustomMenu>
