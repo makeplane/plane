@@ -750,9 +750,9 @@ class DuplicateAssetEndpoint(BaseAPIView):
                     {"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND
                 )
 
-        storage = S3Storage()
+        storage = S3Storage(request=request)
         original_asset = FileAsset.objects.filter(
-            workspace=workspace, id=asset_id
+            workspace=workspace, id=asset_id, is_uploaded=True
         ).first()
 
         if not original_asset:
