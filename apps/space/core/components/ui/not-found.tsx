@@ -1,16 +1,15 @@
 "use client";
 
-import React from "react";
 import Image from "next/image";
 // images
-import Image404 from "@/public/404.svg";
+import Image404 from "@/app/assets/404.svg?url";
 
 export const PageNotFound = () => (
   <div className={`h-screen w-full overflow-hidden bg-custom-background-100`}>
     <div className="grid h-full place-items-center p-4">
       <div className="space-y-8 text-center">
         <div className="relative mx-auto h-60 w-60 lg:h-80 lg:w-80">
-          <Image src={Image404} layout="fill" alt="404- Page not found" />
+          <Image src={Image404} alt="404- Page not found" />
         </div>
         <div className="space-y-2">
           <h3 className="text-lg font-semibold">Oops! Something went wrong.</h3>
