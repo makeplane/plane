@@ -1,12 +1,12 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { PROGRESS_STATE_GROUPS_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TWorkItemFilterCondition } from "@plane/shared-state";
-import { ICycle } from "@plane/types";
+import type { TWorkItemFilterCondition } from "@plane/shared-state";
+import type { ICycle } from "@plane/types";
 import { LinearProgressIndicator, Loader } from "@plane/ui";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";

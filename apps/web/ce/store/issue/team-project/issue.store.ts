@@ -1,6 +1,7 @@
-import { IProjectIssues, ProjectIssues } from "@/store/issue/project";
-import { IIssueRootStore } from "@/store/issue/root.store";
-import { ITeamProjectWorkItemsFilter } from "./filter.store";
+import type { IProjectIssues } from "@/store/issue/project";
+import { ProjectIssues } from "@/store/issue/project";
+import type { IIssueRootStore } from "@/store/issue/root.store";
+import type { ITeamProjectWorkItemsFilter } from "./filter.store";
 
 // @ts-nocheck - This class will never be used, extending similar class to avoid type errors
 export type ITeamProjectWorkItems = IProjectIssues;

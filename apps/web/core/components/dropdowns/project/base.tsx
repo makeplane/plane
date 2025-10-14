@@ -1,4 +1,5 @@
-import { ReactNode, useRef, useState } from "react";
+import type { ReactNode } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search } from "lucide-react";
@@ -13,11 +14,11 @@ import { Logo } from "@/components/common/logo";
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
 // plane web imports
-import { TProject } from "@/plane-web/types";
+import type { TProject } from "@/plane-web/types";
 // local imports
 import { DropdownButton } from "../buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
-import { TDropdownProps } from "../types";
+import type { TDropdownProps } from "../types";
 
 type Props = TDropdownProps & {
   button?: ReactNode;

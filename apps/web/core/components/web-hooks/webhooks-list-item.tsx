@@ -1,10 +1,10 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { WORKSPACE_SETTINGS_TRACKER_ELEMENTS, WORKSPACE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
-import { IWebhook } from "@plane/types";
+import type { IWebhook } from "@plane/types";
 // hooks
 import { ToggleSwitch } from "@plane/ui";
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";

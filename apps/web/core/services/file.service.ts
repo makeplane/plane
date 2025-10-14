@@ -1,8 +1,8 @@
-import { AxiosRequestConfig } from "axios";
+import type { AxiosRequestConfig } from "axios";
 // plane types
 import { API_BASE_URL } from "@plane/constants";
 import { getFileMetaDataForUpload, generateFileUploadPayload } from "@plane/services";
-import { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
+import type { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
 import { getAssetIdFromUrl } from "@plane/utils";
 // helpers
 // services

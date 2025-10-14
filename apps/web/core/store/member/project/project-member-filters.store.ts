@@ -3,7 +3,8 @@ import { computedFn } from "mobx-utils";
 // types
 import type { IUserLite, TProjectMembership } from "@plane/types";
 // local imports
-import { IMemberFilters, sortProjectMembers } from "../utils";
+import type { IMemberFilters } from "../utils";
+import { sortProjectMembers } from "../utils";
 
 export interface IProjectMemberFiltersStore {
   // observables

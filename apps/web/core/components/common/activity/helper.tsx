@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import {
   Signal,
   RotateCcw,
@@ -27,7 +27,7 @@ import {
 // components
 import { ArchiveIcon, CycleIcon, DoubleCircleIcon, IntakeIcon, ModuleIcon } from "@plane/propel/icons";
 import { store } from "@/lib/store-context";
-import { TProjectActivity } from "@/plane-web/types";
+import type { TProjectActivity } from "@/plane-web/types";
 
 type ActivityIconMap = {
   [key: string]: ReactNode;

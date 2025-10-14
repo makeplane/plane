@@ -1,4 +1,5 @@
-import { FC, useState, useRef } from "react";
+import type { FC } from "react";
+import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import { MoreHorizontal, ArchiveIcon, ChevronRight, Settings } from "lucide-react";

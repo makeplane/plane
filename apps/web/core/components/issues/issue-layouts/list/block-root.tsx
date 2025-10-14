@@ -1,6 +1,7 @@
 "use client";
 
-import React, { FC, MutableRefObject, useEffect, useRef, useState } from "react";
+import type { FC, MutableRefObject } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
@@ -8,19 +9,20 @@ import { observer } from "mobx-react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
-import { EIssueServiceType, IIssueDisplayProperties, TIssue, TIssueMap } from "@plane/types";
+import type { IIssueDisplayProperties, TIssue, TIssueMap } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // components
 import { DropIndicator } from "@plane/ui";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { ListLoaderItemRow } from "@/components/ui/loader/layouts/list-layout-loader";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 import { HIGHLIGHT_CLASS, getIssueBlockId, isIssueNew } from "../utils";
 import { IssueBlock } from "./block";
-import { TRenderQuickActions } from "./list-view-types";
+import type { TRenderQuickActions } from "./list-view-types";
 
 type Props = {
   issueId: string;

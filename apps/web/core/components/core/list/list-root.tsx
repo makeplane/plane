@@ -1,4 +1,5 @@
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { Row, ERowVariant } from "@plane/ui";
 
 interface IListContainer {

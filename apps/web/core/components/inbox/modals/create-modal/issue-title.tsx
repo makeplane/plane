@@ -1,11 +1,11 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 import { Input } from "@plane/ui";
 // helpers
 import { getTabIndex } from "@plane/utils";

@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
 // types
-import { IWorkspaceIntegration, ISlackIntegration } from "@plane/types";
+import type { IWorkspaceIntegration, ISlackIntegration } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
 // fetch-keys

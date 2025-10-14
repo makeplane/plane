@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { Disclosure } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EUserWorkspaceRoles } from "@plane/types";
+import type { EUserWorkspaceRoles } from "@plane/types";
 import { cn, joinUrlPath } from "@plane/utils";
 // hooks
 import { useUserSettings } from "@/hooks/store/user";

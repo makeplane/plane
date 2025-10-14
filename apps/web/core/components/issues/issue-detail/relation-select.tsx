@@ -7,7 +7,7 @@ import { Pencil, X } from "lucide-react";
 // Plane
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { ISearchIssueResponse } from "@plane/types";
+import type { ISearchIssueResponse } from "@plane/types";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";

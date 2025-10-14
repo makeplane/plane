@@ -1,9 +1,10 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronDown, LucideIcon } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { IUserLite } from "@plane/types";
+import type { IUserLite } from "@plane/types";
 import { ComboDropDown } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
@@ -14,7 +15,7 @@ import { DropdownButton } from "../buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
 import { ButtonAvatars } from "./avatar";
 import { MemberOptions } from "./member-options";
-import { MemberDropdownProps } from "./types";
+import type { MemberDropdownProps } from "./types";
 
 type TMemberDropdownBaseProps = {
   getUserDetails: (userId: string) => IUserLite | undefined;

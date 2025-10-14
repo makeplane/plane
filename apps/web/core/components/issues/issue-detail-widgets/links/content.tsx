@@ -1,6 +1,7 @@
 "use client";
-import React, { FC } from "react";
-import { TIssueServiceType } from "@plane/types";
+import type { FC } from "react";
+import React from "react";
+import type { TIssueServiceType } from "@plane/types";
 // components
 import { LinkList } from "../../issue-detail/links";
 // helper

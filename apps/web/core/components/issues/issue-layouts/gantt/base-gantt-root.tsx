@@ -5,7 +5,8 @@ import { useParams } from "next/navigation";
 import { ALL_ISSUES, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { EIssuesStoreType, IBlockUpdateData, TIssue, EIssueLayoutTypes } from "@plane/types";
+import type { EIssuesStoreType, IBlockUpdateData, TIssue } from "@plane/types";
+import { EIssueLayoutTypes } from "@plane/types";
 import { renderFormattedPayloadDate } from "@plane/utils";
 // components
 import { ETimeLineTypeType, TimeLineTypeContext } from "@/components/gantt-chart/contexts";

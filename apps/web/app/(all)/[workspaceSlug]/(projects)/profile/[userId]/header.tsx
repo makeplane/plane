@@ -1,14 +1,14 @@
 "use client";
 
 // ui
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import { ChevronDown, PanelRight } from "lucide-react";
 import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { YourWorkIcon } from "@plane/propel/icons";
-import { IUserProfileProjectSegregation } from "@plane/types";
+import type { IUserProfileProjectSegregation } from "@plane/types";
 import { Breadcrumbs, Header, CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components

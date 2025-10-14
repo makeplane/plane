@@ -1,5 +1,5 @@
 // plane imports
-import { IFavorite } from "@plane/types";
+import type { IFavorite } from "@plane/types";
 // components
 import { getPageName } from "@plane/utils";
 import {

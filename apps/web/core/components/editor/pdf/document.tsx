@@ -1,6 +1,7 @@
 "use client";
 
-import { Document, Font, Page, PageProps } from "@react-pdf/renderer";
+import type { PageProps } from "@react-pdf/renderer";
+import { Document, Font, Page } from "@react-pdf/renderer";
 import { Html } from "react-pdf-html";
 // constants
 import { EDITOR_PDF_DOCUMENT_STYLESHEET } from "@/constants/editor";

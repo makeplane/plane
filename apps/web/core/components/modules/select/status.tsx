@@ -3,7 +3,8 @@
 import React from "react";
 
 // react hook form
-import { Controller, FieldError, Control } from "react-hook-form";
+import type { FieldError, Control } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { MODULE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { DoubleCircleIcon, ModuleStatusIcon } from "@plane/propel/icons";

@@ -1,4 +1,5 @@
-import { FC, useEffect, useRef } from "react";
+import type { FC } from "react";
+import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";

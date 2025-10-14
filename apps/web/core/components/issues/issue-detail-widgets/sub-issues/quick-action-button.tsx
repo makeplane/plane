@@ -1,12 +1,13 @@
 "use client";
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { WorkItemsIcon } from "@plane/propel/icons";
-import { TIssue, TIssueServiceType } from "@plane/types";
+import type { TIssue, TIssueServiceType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";

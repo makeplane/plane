@@ -1,9 +1,10 @@
 // plane imports
-import { SyntheticEvent, useMemo } from "react";
+import type { SyntheticEvent } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { CalendarCheck2, CalendarClock } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { IIssueDisplayProperties, TIssue } from "@plane/types";
+import type { IIssueDisplayProperties, TIssue } from "@plane/types";
 import { getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";

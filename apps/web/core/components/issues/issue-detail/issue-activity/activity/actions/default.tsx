@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { WorkItemsIcon } from "@plane/propel/icons";

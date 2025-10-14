@@ -8,7 +8,7 @@ import { useParams } from "next/navigation";
 // swr
 import { useFormContext, Controller } from "react-hook-form";
 import useSWR from "swr";
-import { IJiraImporterForm, IJiraMetadata } from "@plane/types";
+import type { IJiraImporterForm, IJiraMetadata } from "@plane/types";
 
 // react hook form
 

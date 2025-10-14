@@ -3,7 +3,7 @@
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { BarChart } from "@plane/propel/charts/bar-chart";
-import { IUserProfileData } from "@plane/types";
+import type { IUserProfileData } from "@plane/types";
 import { Loader, Card } from "@plane/ui";
 import { capitalizeFirstLetter } from "@plane/utils";
 // components

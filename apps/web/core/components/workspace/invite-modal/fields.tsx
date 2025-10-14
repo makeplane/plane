@@ -1,7 +1,8 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { Control, Controller, FieldArrayWithId, FormState } from "react-hook-form";
+import type { Control, FieldArrayWithId, FormState } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { X } from "lucide-react";
 // plane imports
 import { ROLE } from "@plane/constants";
@@ -10,7 +11,7 @@ import { CustomSelect, Input } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
-import { InvitationFormValues } from "@/hooks/use-workspace-invitation";
+import type { InvitationFormValues } from "@/hooks/use-workspace-invitation";
 
 type TInvitationFieldsProps = {
   workspaceSlug: string;

@@ -3,7 +3,7 @@
 import { observer } from "mobx-react";
 // types
 import { Button } from "@plane/propel/button";
-import { IWorkspaceIntegration } from "@plane/types";
+import type { IWorkspaceIntegration } from "@plane/types";
 // ui
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";

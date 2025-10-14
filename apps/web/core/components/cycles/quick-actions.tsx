@@ -15,7 +15,8 @@ import {
 import { useTranslation } from "@plane/i18n";
 import { ArchiveIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { ContextMenu, CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // helpers
 // hooks
