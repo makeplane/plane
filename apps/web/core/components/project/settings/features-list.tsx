@@ -3,12 +3,11 @@
 import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { PROJECT_TRACKER_ELEMENTS, PROJECT_TRACKER_EVENTS } from "@plane/constants";
+import { PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { IProject } from "@plane/types";
-import { ToggleSwitch } from "@plane/ui";
 // components
 import { SettingsHeading } from "@/components/settings/heading";
 // helpers
@@ -19,6 +18,7 @@ import { useUser } from "@/hooks/store/user";
 // plane web imports
 import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
 import { PROJECT_FEATURES_LIST } from "@/plane-web/constants/project/settings";
+import { ProjectFeatureToggle } from "./helper";
 
 type Props = {
   workspaceSlug: string;
@@ -96,12 +96,13 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
                     </p>
                   </div>
                 </div>
-                <ToggleSwitch
-                  value={Boolean(currentProjectDetails?.[featureItem.property as keyof IProject])}
-                  onChange={() => handleSubmit(featureItemKey, featureItem.property)}
-                  disabled={!featureItem.isEnabled || !isAdmin}
-                  size="sm"
-                  data-ph-element={PROJECT_TRACKER_ELEMENTS.TOGGLE_FEATURE}
+                <ProjectFeatureToggle
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  featureItem={featureItem}
+                  isEnabled={Boolean(currentProjectDetails?.[featureItem.property as keyof IProject])}
+                  handleSubmit={handleSubmit}
+                  isAdmin={isAdmin}
                 />
               </div>
               <div className="pl-14">
