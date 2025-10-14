@@ -45,7 +45,9 @@ class UserAssetsV2Endpoint(BaseAPIView):
             # Save the new avatar
             user.avatar_asset_id = asset_id
             user.save()
-            invalidate_cache_directly(path="/api/users/me/", url_params=False, user=True, request=request)
+            invalidate_cache_directly(
+                path="/api/users/me/", url_params=False, user=True, request=request
+            )
             invalidate_cache_directly(
                 path="/api/users/me/settings/",
                 url_params=False,
@@ -63,7 +65,9 @@ class UserAssetsV2Endpoint(BaseAPIView):
             # Save the new cover image
             user.cover_image_asset_id = asset_id
             user.save()
-            invalidate_cache_directly(path="/api/users/me/", url_params=False, user=True, request=request)
+            invalidate_cache_directly(
+                path="/api/users/me/", url_params=False, user=True, request=request
+            )
             invalidate_cache_directly(
                 path="/api/users/me/settings/",
                 url_params=False,
@@ -79,7 +83,9 @@ class UserAssetsV2Endpoint(BaseAPIView):
             user = User.objects.get(id=asset.user_id)
             user.avatar_asset_id = None
             user.save()
-            invalidate_cache_directly(path="/api/users/me/", url_params=False, user=True, request=request)
+            invalidate_cache_directly(
+                path="/api/users/me/", url_params=False, user=True, request=request
+            )
             invalidate_cache_directly(
                 path="/api/users/me/settings/",
                 url_params=False,
@@ -92,7 +98,9 @@ class UserAssetsV2Endpoint(BaseAPIView):
             user = User.objects.get(id=asset.user_id)
             user.cover_image_asset_id = None
             user.save()
-            invalidate_cache_directly(path="/api/users/me/", url_params=False, user=True, request=request)
+            invalidate_cache_directly(
+                path="/api/users/me/", url_params=False, user=True, request=request
+            )
             invalidate_cache_directly(
                 path="/api/users/me/settings/",
                 url_params=False,
@@ -152,7 +160,9 @@ class UserAssetsV2Endpoint(BaseAPIView):
         # Get the presigned URL
         storage = S3Storage(request=request)
         # Generate a presigned URL to share an S3 object
-        presigned_url = storage.generate_presigned_post(object_name=asset_key, file_type=type, file_size=size_limit)
+        presigned_url = storage.generate_presigned_post(
+            object_name=asset_key, file_type=type, file_size=size_limit
+        )
         # Return the presigned URL
         return Response(
             {
@@ -189,7 +199,9 @@ class UserAssetsV2Endpoint(BaseAPIView):
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
         # get the entity and save the asset id for the request field
-        self.entity_asset_delete(entity_type=asset.entity_type, asset=asset, request=request)
+        self.entity_asset_delete(
+            entity_type=asset.entity_type, asset=asset, request=request
+        )
         asset.save(update_fields=["is_deleted", "deleted_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -253,14 +265,18 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             workspace.logo = ""
             workspace.logo_asset_id = asset_id
             workspace.save()
-            invalidate_cache_directly(path="/api/workspaces/", url_params=False, user=False, request=request)
+            invalidate_cache_directly(
+                path="/api/workspaces/", url_params=False, user=False, request=request
+            )
             invalidate_cache_directly(
                 path="/api/users/me/workspaces/",
                 url_params=False,
                 user=True,
                 request=request,
             )
-            invalidate_cache_directly(path="/api/instances/", url_params=False, user=False, request=request)
+            invalidate_cache_directly(
+                path="/api/instances/", url_params=False, user=False, request=request
+            )
             return
 
         # Project Cover
@@ -287,14 +303,18 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
                 return
             workspace.logo_asset_id = None
             workspace.save()
-            invalidate_cache_directly(path="/api/workspaces/", url_params=False, user=False, request=request)
+            invalidate_cache_directly(
+                path="/api/workspaces/", url_params=False, user=False, request=request
+            )
             invalidate_cache_directly(
                 path="/api/users/me/workspaces/",
                 url_params=False,
                 user=True,
                 request=request,
             )
-            invalidate_cache_directly(path="/api/instances/", url_params=False, user=False, request=request)
+            invalidate_cache_directly(
+                path="/api/instances/", url_params=False, user=False, request=request
+            )
             return
         # Project Cover
         elif entity_type == FileAsset.EntityTypeContext.PROJECT_COVER:
@@ -355,13 +375,17 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             workspace=workspace,
             created_by=request.user,
             entity_type=entity_type,
-            **self.get_entity_id_field(entity_type=entity_type, entity_id=entity_identifier),
+            **self.get_entity_id_field(
+                entity_type=entity_type, entity_id=entity_identifier
+            ),
         )
 
         # Get the presigned URL
         storage = S3Storage(request=request)
         # Generate a presigned URL to share an S3 object
-        presigned_url = storage.generate_presigned_post(object_name=asset_key, file_type=type, file_size=size_limit)
+        presigned_url = storage.generate_presigned_post(
+            object_name=asset_key, file_type=type, file_size=size_limit
+        )
         # Return the presigned URL
         return Response(
             {
@@ -398,7 +422,9 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
         # get the entity and save the asset id for the request field
-        self.entity_asset_delete(entity_type=asset.entity_type, asset=asset, request=request)
+        self.entity_asset_delete(
+            entity_type=asset.entity_type, asset=asset, request=request
+        )
         asset.save(update_fields=["is_deleted", "deleted_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -561,7 +587,9 @@ class ProjectAssetEndpoint(BaseAPIView):
         # Get the presigned URL
         storage = S3Storage(request=request)
         # Generate a presigned URL to share an S3 object
-        presigned_url = storage.generate_presigned_post(object_name=asset_key, file_type=type, file_size=size_limit)
+        presigned_url = storage.generate_presigned_post(
+            object_name=asset_key, file_type=type, file_size=size_limit
+        )
         # Return the presigned URL
         return Response(
             {
@@ -591,7 +619,9 @@ class ProjectAssetEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def delete(self, request, slug, project_id, pk):
         # Get the asset
-        asset = FileAsset.objects.get(id=pk, workspace__slug=slug, project_id=project_id)
+        asset = FileAsset.objects.get(
+            id=pk, workspace__slug=slug, project_id=project_id
+        )
         # Check deleted assets
         asset.is_deleted = True
         asset.deleted_at = timezone.now()
@@ -602,7 +632,9 @@ class ProjectAssetEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, pk):
         # get the asset id
-        asset = FileAsset.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
+        asset = FileAsset.objects.get(
+            workspace__slug=slug, project_id=project_id, pk=pk
+        )
 
         # Check if the asset is uploaded
         if not asset.is_uploaded:
@@ -635,7 +667,9 @@ class ProjectBulkAssetEndpoint(BaseAPIView):
 
         # Check if the asset ids are provided
         if not asset_ids:
-            return Response({"error": "No asset ids provided."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "No asset ids provided."}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         # get the asset id
         assets = FileAsset.objects.filter(id__in=asset_ids, workspace__slug=slug)
@@ -689,7 +723,9 @@ class AssetCheckEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def get(self, request, slug, asset_id):
-        asset = FileAsset.all_objects.filter(id=asset_id, workspace__slug=slug, deleted_at__isnull=True).exists()
+        asset = FileAsset.all_objects.filter(
+            id=asset_id, workspace__slug=slug, deleted_at__isnull=True
+        ).exists()
         return Response({"exists": asset}, status=status.HTTP_200_OK)
 
 
@@ -736,7 +772,11 @@ class DuplicateAssetEndpoint(BaseAPIView):
         entity_id = request.data.get("entity_id", None)
         entity_type = request.data.get("entity_type", None)
 
-        if not entity_id or not entity_type or entity_type not in FileAsset.EntityTypeContext.values:
+        if (
+            not entity_id
+            or not entity_type
+            or entity_type not in FileAsset.EntityTypeContext.values
+        ):
             return Response(
                 {"error": "Invalid entity type or entity id"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -760,7 +800,9 @@ class DuplicateAssetEndpoint(BaseAPIView):
                 {"error": "Asset not found"}, status=status.HTTP_404_NOT_FOUND
             )
 
-        destination_key = f"{workspace.id}/{uuid.uuid4().hex}-{original_asset.attributes.get('name')}"
+        destination_key = (
+            f"{workspace.id}/{uuid.uuid4().hex}-{original_asset.attributes.get('name')}"
+        )
         duplicated_asset = FileAsset.objects.create(
             attributes={
                 "name": original_asset.attributes.get("name"),
@@ -780,7 +822,10 @@ class DuplicateAssetEndpoint(BaseAPIView):
         # Update the is_uploaded field for all newly created assets
         FileAsset.objects.filter(id=duplicated_asset.id).update(is_uploaded=True)
 
-        return Response(duplicated_asset.id, status=status.HTTP_200_OK)
+        return Response(
+            {"asset_id": str(duplicated_asset.id)}, status=status.HTTP_200_OK
+        )
+
 
 class WorkspaceAssetDownloadEndpoint(BaseAPIView):
     """Endpoint to generate a download link for an asset with content-disposition=attachment."""
