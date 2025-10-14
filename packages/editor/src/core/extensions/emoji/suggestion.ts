@@ -7,6 +7,7 @@ import { updateFloatingUIFloaterPosition } from "@/helpers/floating-ui";
 import { CommandListInstance, DROPDOWN_NAVIGATION_KEYS } from "@/helpers/tippy";
 // local imports
 import { type EmojiItem, EmojisListDropdown, EmojisListDropdownProps } from "./components/emojis-list";
+import type { ExtendedEmojiStorage } from "./emoji";
 
 const DEFAULT_EMOJIS = ["+1", "-1", "smile", "orange_heart", "eyes"];
 
@@ -54,16 +55,21 @@ export const emojiSuggestion: EmojiOptions["suggestion"] = {
       component?.destroy();
       component = null;
       (editor || editorRef)?.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.EMOJI);
+      const emojiStorage = editor?.storage.emoji as ExtendedEmojiStorage;
+      emojiStorage.forceOpen = false;
       cleanup();
     };
 
     return {
       onStart: (props) => {
         editorRef = props.editor;
+        const emojiStorage = props.editor.storage.emoji as ExtendedEmojiStorage;
+        const forceOpen = emojiStorage.forceOpen || false;
         component = new ReactRenderer<CommandListInstance, EmojisListDropdownProps>(EmojisListDropdown, {
           props: {
             ...props,
             onClose: () => handleClose(props.editor),
+            forceOpen,
           } satisfies EmojisListDropdownProps,
           editor: props.editor,
           className: "fixed z-[100]",
@@ -76,7 +82,9 @@ export const emojiSuggestion: EmojiOptions["suggestion"] = {
 
       onUpdate: (props) => {
         if (!component || !component.element) return;
-        component.updateProps(props);
+        const emojiStorage = props.editor.storage.emoji as ExtendedEmojiStorage;
+        const forceOpen = emojiStorage.forceOpen || false;
+        component.updateProps({ ...props, forceOpen });
         if (!props.clientRect) return;
         cleanup();
         cleanup = updateFloatingUIFloaterPosition(props.editor, component.element).cleanup;
