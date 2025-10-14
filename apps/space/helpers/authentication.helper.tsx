@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import Link from "next/link";
 // helpers
 import { SUPPORT_EMAIL } from "./common.helper";

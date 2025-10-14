@@ -11,7 +11,7 @@ import { Combobox } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // icon
-import { ContrastIcon, CycleGroupIcon } from "@plane/propel/icons";
+import { CycleGroupIcon, CycleIcon } from "@plane/propel/icons";
 import { TCycleGroups } from "@plane/types";
 // ui
 // store hooks
@@ -110,7 +110,7 @@ export const CycleOptions: FC<CycleOptionsProps> = observer((props) => {
       query: t("cycle.no_cycle"),
       content: (
         <div className="flex items-center gap-2">
-          <ContrastIcon className="h-3 w-3 flex-shrink-0" />
+          <CycleIcon className="h-3 w-3 flex-shrink-0" />
           <span className="flex-grow truncate">{t("cycle.no_cycle")}</span>
         </div>
       ),

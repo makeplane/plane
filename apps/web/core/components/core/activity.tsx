@@ -13,14 +13,22 @@ import {
   Users2Icon,
   ArchiveIcon,
   PaperclipIcon,
-  ContrastIcon,
   TriangleIcon,
   LayoutGridIcon,
   SignalMediumIcon,
   MessageSquareIcon,
   UsersIcon,
 } from "lucide-react";
-import { BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon, EpicIcon, Intake } from "@plane/propel/icons";
+import {
+  BlockedIcon,
+  BlockerIcon,
+  CycleIcon,
+  EpicIcon,
+  IntakeIcon,
+  ModuleIcon,
+  RelatedIcon,
+  WorkItemsIcon,
+} from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { IIssueActivity } from "@plane/types";
 import { renderFormattedDate, generateWorkItemLink, capitalizeFirstLetter } from "@plane/utils";
@@ -283,7 +291,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <LayersIcon width={12} height={12} className="text-custom-text-200" aria-hidden="true" />,
+    icon: <WorkItemsIcon width={12} height={12} className="text-custom-text-200" aria-hidden="true" />,
   },
   epic: {
     message: (activity) => {
@@ -462,7 +470,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <ContrastIcon size={12} className="text-custom-text-200" aria-hidden="true" />,
+    icon: <CycleIcon height={12} width={12} className="text-custom-text-200" aria-hidden="true" />,
   },
   modules: {
     message: (activity, showIssue, workspaceSlug) => {
@@ -509,7 +517,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <DiceIcon className="h-3 w-3 !text-custom-text-200" aria-hidden="true" />,
+    icon: <ModuleIcon className="h-3 w-3 !text-custom-text-200" aria-hidden="true" />,
   },
   name: {
     message: (activity, showIssue) => (
@@ -739,7 +747,7 @@ const activityDetails: {
         {activity.verb === "2" && ` from intake by marking a duplicate work item.`}
       </>
     ),
-    icon: <Intake className="size-3 text-custom-text-200" aria-hidden="true" />,
+    icon: <IntakeIcon className="size-3 text-custom-text-200" aria-hidden="true" />,
   },
 };
 

@@ -94,6 +94,7 @@ const WorkItemFilterRoot = observer((props: TWorkItemFilterProps) => {
     [deleteFilter, entityType, workItemEntityID]
   );
 
+  workItemLayoutFilter.configManager.setAreConfigsReady(workItemFiltersConfig.areAllConfigsInitialized);
   workItemLayoutFilter.configManager.registerAll(workItemFiltersConfig.configs);
 
   return <>{typeof children === "function" ? children({ filter: workItemLayoutFilter }) : children}</>;

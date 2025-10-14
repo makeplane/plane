@@ -26,7 +26,8 @@
   "dependencies": {
     "@plane/constants": "workspace:*",
     "@plane/types": "workspace:*",
-    "axios": "catalog:"
+    "axios": "catalog:",
+    "file-type": "^21.0.0"
   },
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",

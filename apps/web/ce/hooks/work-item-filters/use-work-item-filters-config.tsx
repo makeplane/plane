@@ -2,6 +2,7 @@ import { useCallback, useMemo } from "react";
 import {
   AtSign,
   Briefcase,
+  Calendar,
   CalendarCheck2,
   CalendarClock,
   CircleUserRound,
@@ -11,9 +12,9 @@ import {
 } from "lucide-react";
 // plane imports
 import {
-  ContrastIcon,
   CycleGroupIcon,
-  DiceIcon,
+  CycleIcon,
+  ModuleIcon,
   DoubleCircleIcon,
   PriorityIcon,
   StateGroupIcon,
@@ -32,6 +33,7 @@ import {
 import { Avatar, Logo } from "@plane/ui";
 import {
   getAssigneeFilterConfig,
+  getCreatedAtFilterConfig,
   getCreatedByFilterConfig,
   getCycleFilterConfig,
   getFileURL,
@@ -45,6 +47,8 @@ import {
   getStateGroupFilterConfig,
   getSubscriberFilterConfig,
   getTargetDateFilterConfig,
+  getUpdatedAtFilterConfig,
+  isLoaderReady,
 } from "@plane/utils";
 // store hooks
 import { useCycle } from "@/hooks/store/use-cycle";
@@ -72,18 +76,20 @@ export type TUseWorkItemFiltersConfigProps = {
 } & TWorkItemFiltersEntityProps;
 
 export type TWorkItemFiltersConfig = {
+  areAllConfigsInitialized: boolean;
   configs: TFilterConfig<TWorkItemFilterProperty, TFilterValue>[];
   configMap: {
     [key in TWorkItemFilterProperty]?: TFilterConfig<TWorkItemFilterProperty, TFilterValue>;
   };
   isFilterEnabled: (key: TWorkItemFilterProperty) => boolean;
+  members: IUserLite[];
 };
 
 export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps): TWorkItemFiltersConfig => {
   const { allowedFilters, cycleIds, labelIds, memberIds, moduleIds, projectId, projectIds, stateIds, workspaceSlug } =
     props;
   // store hooks
-  const { getProjectById } = useProject();
+  const { loader: projectLoader, getProjectById } = useProject();
   const { getCycleById } = useCycle();
   const { getLabelById } = useLabel();
   const { getModuleById } = useModule();
@@ -128,6 +134,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
         : [],
     [projectIds, getProjectById]
   );
+  const areAllConfigsInitialized = useMemo(() => isLoaderReady(projectLoader), [projectLoader]);
 
   /**
    * Checks if a filter is enabled based on the filters to show.
@@ -182,7 +189,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getCycleFilterConfig<TWorkItemFilterProperty>("cycle_id")({
         isEnabled: isFilterEnabled("cycle_id") && project?.cycle_view === true && cycles !== undefined,
-        filterIcon: ContrastIcon,
+        filterIcon: CycleIcon,
         getOptionIcon: (cycleGroup) => <CycleGroupIcon cycleGroup={cycleGroup} className="h-3.5 w-3.5 flex-shrink-0" />,
         cycles: cycles ?? [],
         ...operatorConfigs,
@@ -195,8 +202,8 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     () =>
       getModuleFilterConfig<TWorkItemFilterProperty>("module_id")({
         isEnabled: isFilterEnabled("module_id") && project?.module_view === true && modules !== undefined,
-        filterIcon: DiceIcon,
-        getOptionIcon: () => <DiceIcon className="h-3 w-3 flex-shrink-0" />,
+        filterIcon: ModuleIcon,
+        getOptionIcon: () => <ModuleIcon className="h-3 w-3 flex-shrink-0" />,
         modules: modules ?? [],
         ...operatorConfigs,
       }),
@@ -317,6 +324,28 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     [operatorConfigs]
   );
 
+  // created at filter config
+  const createdAtFilterConfig = useMemo(
+    () =>
+      getCreatedAtFilterConfig<TWorkItemFilterProperty>("created_at")({
+        isEnabled: true,
+        filterIcon: Calendar,
+        ...operatorConfigs,
+      }),
+    [operatorConfigs]
+  );
+
+  // updated at filter config
+  const updatedAtFilterConfig = useMemo(
+    () =>
+      getUpdatedAtFilterConfig<TWorkItemFilterProperty>("updated_at")({
+        isEnabled: true,
+        filterIcon: Calendar,
+        ...operatorConfigs,
+      }),
+    [operatorConfigs]
+  );
+
   // project filter config
   const projectFilterConfig = useMemo(
     () =>
@@ -331,6 +360,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
   );
 
   return {
+    areAllConfigsInitialized,
     configs: [
       stateFilterConfig,
       stateGroupFilterConfig,
@@ -343,6 +373,8 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       moduleFilterConfig,
       startDateFilterConfig,
       targetDateFilterConfig,
+      createdAtFilterConfig,
+      updatedAtFilterConfig,
       createdByFilterConfig,
       subscriberFilterConfig,
     ],
@@ -360,7 +392,10 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       priority: priorityFilterConfig,
       start_date: startDateFilterConfig,
       target_date: targetDateFilterConfig,
+      created_at: createdAtFilterConfig,
+      updated_at: updatedAtFilterConfig,
     },
     isFilterEnabled,
+    members: members ?? [],
   };
 };

@@ -1,6 +1,6 @@
 // plane imports
 import { MAX_FILE_SIZE } from "@plane/constants";
-import { TFileHandler } from "@plane/editor";
+import type { TFileHandler } from "@plane/editor";
 import { SitesFileService } from "@plane/services";
 import { getFileURL } from "@plane/utils";
 // services

@@ -6,10 +6,10 @@ import { Transition } from "@headlessui/react";
 import { Button } from "@plane/propel/button";
 import { IFilterInstance } from "@plane/shared-state";
 import { TExternalFilter, TFilterProperty } from "@plane/types";
-import { cn, EHeaderVariant, Header } from "@plane/ui";
+import { cn, EHeaderVariant, Header, Loader } from "@plane/ui";
 // local imports
-import { AddFilterButton, TAddFilterButtonProps } from "./add-filters-button";
-import { FilterItem } from "./filter-item";
+import { AddFilterButton, TAddFilterButtonProps } from "./add-filters/button";
+import { FilterItem } from "./filter-item/root";
 
 export type TFiltersRowProps<K extends TFilterProperty, E extends TExternalFilter> = {
   buttonConfig?: TAddFilterButtonProps<K, E>["buttonConfig"];
@@ -25,10 +25,17 @@ export type TFiltersRowProps<K extends TFilterProperty, E extends TExternalFilte
 
 export const FiltersRow = observer(
   <K extends TFilterProperty, E extends TExternalFilter>(props: TFiltersRowProps<K, E>) => {
-    const { buttonConfig, disabledAllOperations = false, filter, variant = "header", trackerElements } = props;
+    const {
+      buttonConfig,
+      disabledAllOperations: disabledAllOperationsProp = false,
+      filter,
+      variant = "header",
+      trackerElements,
+    } = props;
     // states
     const [isUpdating, setIsUpdating] = useState(false);
     // derived values
+    const disabledAllOperations = disabledAllOperationsProp || !filter.configManager.areConfigsReady;
     const hasAnyConditions = filter.allConditionsForDisplay.length > 0;
     const hasAvailableOperations =
       !disabledAllOperations && (filter.canClearFilters || filter.canSaveView || filter.canUpdateView);
@@ -140,19 +147,17 @@ export const FiltersRow = observer(
       </Header>
     );
 
-    return (
-      <Transition
-        show={filter.isVisible}
-        enter="transition-all duration-150 ease-out"
-        enterFrom="opacity-0 -translate-y-1"
-        enterTo="opacity-100 translate-y-0"
-        leave="transition-all duration-100 ease-in"
-        leaveFrom="opacity-100 translate-y-0"
-        leaveTo="opacity-0 -translate-y-1"
-      >
-        {variant === "modal" ? ModalVariant : HeaderVariant}
-      </Transition>
-    );
+    if (!filter.configManager.areConfigsReady && !hasAnyConditions) {
+      return (
+        <RowTransition show={filter.isVisible}>
+          <Loader>
+            <Loader.Item height="44px" width="100%" className={cn({ "rounded-none": variant === "header" })} />
+          </Loader>
+        </RowTransition>
+      );
+    }
+
+    return <RowTransition show={filter.isVisible}>{variant === "modal" ? ModalVariant : HeaderVariant}</RowTransition>;
   }
 );
 
@@ -172,6 +177,25 @@ const ElementTransition = observer((props: TElementTransitionProps) => (
     leave="transition ease-in duration-150"
     leaveFrom="opacity-100 scale-100"
     leaveTo="opacity-0 scale-95"
+  >
+    {props.children}
+  </Transition>
+));
+
+type TRowTransitionProps = {
+  children: React.ReactNode;
+  show: boolean;
+};
+
+const RowTransition = observer((props: TRowTransitionProps) => (
+  <Transition
+    show={props.show}
+    enter="transition-all duration-150 ease-out"
+    enterFrom="opacity-0 -translate-y-1"
+    enterTo="opacity-100 translate-y-0"
+    leave="transition-all duration-100 ease-in"
+    leaveFrom="opacity-100 translate-y-0"
+    leaveTo="opacity-0 -translate-y-1"
   >
     {props.children}
   </Transition>

@@ -3,7 +3,7 @@
 import { FC, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Layers } from "lucide-react";
+import { ViewsIcon } from "@plane/propel/icons";
 // types
 import { IProjectView } from "@plane/types";
 // components
@@ -35,7 +35,7 @@ export const ProjectViewListItem: FC<Props> = observer((props) => {
           {view?.logo_props?.in_use ? (
             <Logo logo={view?.logo_props} size={16} type="lucide" />
           ) : (
-            <Layers className="h-4 w-4 text-custom-text-300" />
+            <ViewsIcon className="h-4 w-4 text-custom-text-300" />
           )}
         </>
       }

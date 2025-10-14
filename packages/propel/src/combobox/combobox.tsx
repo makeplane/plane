@@ -1,15 +1,10 @@
 import * as React from "react";
-import { Command } from "../command/command";
-import { Popover } from "../popover/root";
+import { Combobox as BaseCombobox } from "@base-ui-components/react/combobox";
+import { Search } from "lucide-react";
 import { cn } from "../utils/classname";
 
-export interface ComboboxOption {
-  value: unknown;
-  query: string;
-  content: React.ReactNode;
-  disabled?: boolean;
-  tooltip?: string | React.ReactNode;
-}
+// Type definitions
+type TMaxHeight = "lg" | "md" | "rg" | "sm";
 
 export interface ComboboxProps {
   value?: string | string[];
@@ -27,19 +22,22 @@ export interface ComboboxButtonProps {
   disabled?: boolean;
   children?: React.ReactNode;
   className?: string;
+  ref?: React.Ref<HTMLButtonElement>;
 }
 
 export interface ComboboxOptionsProps {
   searchPlaceholder?: string;
   emptyMessage?: string;
   showSearch?: boolean;
-  showCheckIcon?: boolean;
   className?: string;
   children?: React.ReactNode;
-  maxHeight?: "lg" | "md" | "rg" | "sm";
+  maxHeight?: TMaxHeight;
   inputClassName?: string;
   optionsContainerClassName?: string;
   positionerClassName?: string;
+  searchQuery?: string;
+  onSearchQueryChange?: (query: string) => void;
+  onSearchQueryKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 export interface ComboboxOptionProps {
@@ -49,249 +47,175 @@ export interface ComboboxOptionProps {
   className?: string;
 }
 
-// Context for sharing state between components
-interface ComboboxContextType {
-  value: string | string[];
-  onValueChange?: (value: string | string[]) => void;
-  multiSelect: boolean;
-  maxSelections?: number;
-  disabled: boolean;
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  handleValueChange: (newValue: string) => void;
-  handleRemoveSelection: (valueToRemove: string) => void;
-}
+// Constants
+const MAX_HEIGHT_CLASSES: Record<TMaxHeight, string> = {
+  lg: "max-h-60",
+  md: "max-h-48",
+  rg: "max-h-36",
+  sm: "max-h-28",
+} as const;
 
-const ComboboxContext = React.createContext<ComboboxContextType | null>(null);
-
-function useComboboxContext() {
-  const context = React.useContext(ComboboxContext);
-  if (!context) {
-    throw new Error("Combobox components must be used within a Combobox");
-  }
-  return context;
-}
-
-function ComboboxComponent({
+// Root component
+function ComboboxRoot({
   value,
   defaultValue,
   onValueChange,
   multiSelect = false,
-  maxSelections,
   disabled = false,
-  open: openProp,
+  open,
   onOpenChange,
   children,
 }: ComboboxProps) {
-  // Controlled/uncontrolled value
-  const isControlledValue = value !== undefined;
-  const [internalValue, setInternalValue] = React.useState<string | string[]>(
-    (isControlledValue ? (value as string | string[]) : defaultValue) ?? (multiSelect ? [] : "")
-  );
-
-  // Controlled/uncontrolled open state
-  const isControlledOpen = openProp !== undefined;
-  const [internalOpen, setInternalOpen] = React.useState(false);
-  const open = isControlledOpen ? (openProp as boolean) : internalOpen;
-
-  const setOpen = React.useCallback(
-    (nextOpen: boolean) => {
-      if (!isControlledOpen) {
-        setInternalOpen(nextOpen);
-      }
-      onOpenChange?.(nextOpen);
-    },
-    [isControlledOpen, onOpenChange]
-  );
-
-  // Update internal value when prop changes
-  React.useEffect(() => {
-    if (isControlledValue) {
-      setInternalValue(value as string | string[]);
-    }
-  }, [isControlledValue, value]);
-
   const handleValueChange = React.useCallback(
-    (newValue: string) => {
-      if (multiSelect) {
-        // Functional update to avoid stale closures
-        if (!isControlledValue) {
-          setInternalValue((prev) => {
-            const currentValues = Array.isArray(prev) ? (prev as string[]) : [];
-            const isSelected = currentValues.includes(newValue);
-
-            if (!isSelected) {
-              if (maxSelections && currentValues.length >= maxSelections) {
-                return currentValues; // limit reached
-              }
-              const updated = [...currentValues, newValue];
-              onValueChange?.(updated);
-              return updated;
-            }
-
-            const updated = currentValues.filter((v) => v !== newValue);
-            onValueChange?.(updated);
-            return updated;
-          });
-        } else {
-          // Controlled value: compute next and notify only
-          const currentValues = Array.isArray(internalValue) ? (internalValue as string[]) : [];
-          const isSelected = currentValues.includes(newValue);
-          let updated: string[];
-          if (isSelected) {
-            updated = currentValues.filter((v) => v !== newValue);
-          } else {
-            if (maxSelections && currentValues.length >= maxSelections) {
-              return;
-            }
-            updated = [...currentValues, newValue];
-          }
-          onValueChange?.(updated);
-        }
-      } else {
-        if (!isControlledValue) {
-          setInternalValue(newValue);
-        }
-        onValueChange?.(newValue);
-        setOpen(false);
-      }
+    (newValue: string | string[]) => {
+      onValueChange?.(newValue);
     },
-    [multiSelect, isControlledValue, internalValue, maxSelections, onValueChange, setOpen]
-  );
-
-  const handleRemoveSelection = React.useCallback(
-    (valueToRemove: string) => {
-      if (!multiSelect) return;
-
-      if (!isControlledValue) {
-        setInternalValue((prev) => {
-          const currentValues = Array.isArray(prev) ? (prev as string[]) : [];
-          const updated = currentValues.filter((v) => v !== valueToRemove);
-          onValueChange?.(updated);
-          return updated;
-        });
-      } else {
-        const currentValues = Array.isArray(internalValue) ? (internalValue as string[]) : [];
-        const updated = currentValues.filter((v) => v !== valueToRemove);
-        onValueChange?.(updated);
-      }
-    },
-    [multiSelect, isControlledValue, internalValue, onValueChange]
-  );
-
-  const contextValue = React.useMemo<ComboboxContextType>(
-    () => ({
-      value: internalValue,
-      onValueChange,
-      multiSelect,
-      maxSelections,
-      disabled,
-      open,
-      setOpen,
-      handleValueChange,
-      handleRemoveSelection,
-    }),
-    [
-      internalValue,
-      onValueChange,
-      multiSelect,
-      maxSelections,
-      disabled,
-      open,
-      setOpen,
-      handleValueChange,
-      handleRemoveSelection,
-    ]
+    [onValueChange]
   );
 
   return (
-    <ComboboxContext.Provider value={contextValue}>
-      <Popover open={open} onOpenChange={setOpen}>
-        {children}
-      </Popover>
-    </ComboboxContext.Provider>
-  );
-}
-
-function ComboboxButton({ className, children, disabled = false }: ComboboxButtonProps) {
-  const { disabled: ctxDisabled, open } = useComboboxContext();
-  const isDisabled = disabled || ctxDisabled;
-  return (
-    <Popover.Button
-      disabled={isDisabled}
-      aria-disabled={isDisabled || undefined}
-      aria-haspopup="listbox"
-      aria-expanded={open}
-      className={className}
+    <BaseCombobox.Root
+      value={value}
+      defaultValue={defaultValue}
+      onValueChange={handleValueChange}
+      multiple={multiSelect}
+      disabled={disabled}
+      open={open}
+      onOpenChange={onOpenChange}
     >
       {children}
-    </Popover.Button>
+    </BaseCombobox.Root>
   );
 }
 
+// Trigger button component
+const ComboboxButton = React.forwardRef<HTMLButtonElement, ComboboxButtonProps>(
+  ({ className, children, disabled = false }, ref) => (
+    <BaseCombobox.Trigger ref={ref} disabled={disabled} className={className}>
+      {children}
+    </BaseCombobox.Trigger>
+  )
+);
+
+// Options popup component
 function ComboboxOptions({
   children,
   showSearch = false,
   searchPlaceholder,
-  maxHeight,
+  maxHeight = "lg",
   className,
   inputClassName,
   optionsContainerClassName,
-  emptyMessage,
+  emptyMessage = "No results found",
   positionerClassName,
+  searchQuery: controlledSearchQuery,
+  onSearchQueryChange,
+  onSearchQueryKeyDown,
 }: ComboboxOptionsProps) {
-  const { multiSelect } = useComboboxContext();
+  // const [searchQuery, setSearchQuery] = React.useState("");
+  const [internalSearchQuery, setInternalSearchQuery] = React.useState("");
+
+  const searchQuery = controlledSearchQuery !== undefined ? controlledSearchQuery : internalSearchQuery;
+
+  const setSearchQuery = React.useCallback(
+    (query: string) => {
+      if (onSearchQueryChange) {
+        onSearchQueryChange(query);
+      } else {
+        setInternalSearchQuery(query);
+      }
+    },
+    [onSearchQueryChange]
+  );
+
+  // Filter children based on search query
+  const filteredChildren = React.useMemo(() => {
+    if (!showSearch || !searchQuery) return children;
+
+    return React.Children.toArray(children).filter((child) => {
+      if (!React.isValidElement(child)) return true;
+
+      // Only filter ComboboxOption components, leave other elements (like additional content) unfiltered
+      if (child.type !== ComboboxOption) return true;
+
+      // Extract text content from child to search against
+      const getTextContent = (node: React.ReactNode): string => {
+        if (typeof node === "string") return node;
+        if (typeof node === "number") return String(node);
+        if (React.isValidElement(node) && node.props.children) {
+          return getTextContent(node.props.children);
+        }
+        if (Array.isArray(node)) {
+          return node.map(getTextContent).join(" ");
+        }
+        return "";
+      };
+
+      const textContent = getTextContent(child.props.children);
+      const value = child.props.value || "";
+
+      const searchLower = searchQuery.toLowerCase();
+      return textContent.toLowerCase().includes(searchLower) || String(value).toLowerCase().includes(searchLower);
+    });
+  }, [children, searchQuery, showSearch]);
+
   return (
-    <Popover.Panel sideOffset={8} className={cn(className)} positionerClassName={positionerClassName}>
-      <Command>
-        {showSearch && <Command.Input placeholder={searchPlaceholder} className={cn(inputClassName)} />}
-        <Command.List
-          className={cn(
-            {
-              "max-h-60": maxHeight === "lg",
-              "max-h-48": maxHeight === "md",
-              "max-h-36": maxHeight === "rg",
-              "max-h-28": maxHeight === "sm",
-            },
-            optionsContainerClassName
-          )}
-          role="listbox"
-          aria-multiselectable={multiSelect || undefined}
+    <BaseCombobox.Portal>
+      <BaseCombobox.Positioner sideOffset={8} className={positionerClassName}>
+        <BaseCombobox.Popup
+          className={cn("rounded-md border border-custom-border-200 bg-custom-background-100 p-1 shadow-lg", className)}
         >
-          {children}
-        </Command.List>
-        <Command.Empty>{emptyMessage ?? "No options found."}</Command.Empty>
-      </Command>
-    </Popover.Panel>
+          <div className="flex flex-col gap-1">
+            {showSearch && (
+              <div className="relative">
+                <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-custom-text-400" />
+                <input
+                  type="text"
+                  placeholder={searchPlaceholder}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={onSearchQueryKeyDown}
+                  className={cn(
+                    "w-full rounded border border-custom-border-100 bg-custom-background-90 py-1.5 pl-8 pr-2 text-sm outline-none placeholder:text-custom-text-400",
+                    inputClassName
+                  )}
+                />
+              </div>
+            )}
+            <BaseCombobox.List
+              className={cn("overflow-auto outline-none", MAX_HEIGHT_CLASSES[maxHeight], optionsContainerClassName)}
+            >
+              {filteredChildren}
+              {showSearch &&
+                emptyMessage &&
+                React.Children.count(
+                  React.Children.toArray(filteredChildren).filter(
+                    (child) => React.isValidElement(child) && child.type === ComboboxOption
+                  )
+                ) === 0 && <div className="px-2 py-1.5 text-sm text-custom-text-400">{emptyMessage}</div>}
+            </BaseCombobox.List>
+          </div>
+        </BaseCombobox.Popup>
+      </BaseCombobox.Positioner>
+    </BaseCombobox.Portal>
   );
 }
 
+// Individual option component
 function ComboboxOption({ value, children, disabled, className }: ComboboxOptionProps) {
-  const { handleValueChange, multiSelect, maxSelections, value: selectedValue } = useComboboxContext();
-
-  const stringValue = value;
-  const isSelected = React.useMemo(() => {
-    if (!multiSelect) return false;
-    return Array.isArray(selectedValue) ? (selectedValue as string[]).includes(stringValue) : false;
-  }, [multiSelect, selectedValue, stringValue]);
-
-  const reachedMax = React.useMemo(() => {
-    if (!multiSelect || !maxSelections) return false;
-    const currentLength = Array.isArray(selectedValue) ? (selectedValue as string[]).length : 0;
-    return currentLength >= maxSelections && !isSelected;
-  }, [multiSelect, maxSelections, selectedValue, isSelected]);
-
-  const isDisabled = disabled || reachedMax;
-
   return (
-    <Command.Item value={stringValue} disabled={isDisabled} onSelect={handleValueChange} className={className}>
+    <BaseCombobox.Item
+      value={value}
+      disabled={disabled}
+      className={cn("cursor-pointer rounded px-2 py-1.5 text-sm outline-none transition-colors", className)}
+    >
       {children}
-    </Command.Item>
+    </BaseCombobox.Item>
   );
 }
 
-// compound component
-const Combobox = Object.assign(ComboboxComponent, {
+// Compound component export
+const Combobox = Object.assign(ComboboxRoot, {
   Button: ComboboxButton,
   Options: ComboboxOptions,
   Option: ComboboxOption,

@@ -1,20 +1,22 @@
-import { Editor } from "@tiptap/core";
+import { FloatingOverlay } from "@floating-ui/react";
+import type { SuggestionProps } from "@tiptap/suggestion";
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
+// plane imports
+import { useOutsideClickDetector } from "@plane/hooks";
 // helpers
 import { DROPDOWN_NAVIGATION_KEYS, getNextValidIndex } from "@/helpers/tippy";
+// types
+import type { ISlashCommandItem } from "@/types";
 // components
-import { ISlashCommandItem } from "@/types";
 import { TSlashCommandSection } from "./command-items-list";
 import { CommandMenuItem } from "./command-menu-item";
 
-export type SlashCommandsMenuProps = {
-  editor: Editor;
-  items: TSlashCommandSection[];
-  command: (item: ISlashCommandItem) => void;
+export type SlashCommandsMenuProps = SuggestionProps<TSlashCommandSection, ISlashCommandItem> & {
+  onClose: () => void;
 };
 
 export const SlashCommandsMenu = forwardRef((props: SlashCommandsMenuProps, ref) => {
-  const { items: sections, command } = props;
+  const { items: sections, command, query, onClose } = props;
   // states
   const [selectedIndex, setSelectedIndex] = useState({
     section: 0,
@@ -91,7 +93,6 @@ export const SlashCommandsMenu = forwardRef((props: SlashCommandsMenuProps, ref)
   useImperativeHandle(ref, () => ({
     onKeyDown: ({ event }: { event: KeyboardEvent }) => {
       if (!DROPDOWN_NAVIGATION_KEYS.includes(event.key)) return false;
-      event.preventDefault();
 
       if (event.key === "Enter") {
         selectItem(selectedIndex.section, selectedIndex.item);
@@ -112,43 +113,64 @@ export const SlashCommandsMenu = forwardRef((props: SlashCommandsMenuProps, ref)
     },
   }));
 
+  useOutsideClickDetector(commandListContainer, onClose);
+
   const areSearchResultsEmpty = sections.map((s) => s.items?.length).reduce((acc, curr) => acc + curr, 0) === 0;
 
   if (areSearchResultsEmpty) return null;
 
   return (
-    <div
-      id="slash-command"
-      ref={commandListContainer}
-      className="z-10 max-h-80 min-w-[12rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg space-y-2"
-    >
-      {sections.map((section, sectionIndex) => (
-        <div key={section.key} className="space-y-2">
-          {section.title && <h6 className="text-xs font-semibold text-custom-text-300">{section.title}</h6>}
-          <div>
-            {section.items?.map((item, itemIndex) => (
-              <CommandMenuItem
-                key={item.key}
-                isSelected={sectionIndex === selectedIndex.section && itemIndex === selectedIndex.item}
-                item={item}
-                itemIndex={itemIndex}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  selectItem(sectionIndex, itemIndex);
-                }}
-                onMouseEnter={() =>
-                  setSelectedIndex({
-                    section: sectionIndex,
-                    item: itemIndex,
-                  })
-                }
-                sectionIndex={sectionIndex}
-              />
-            ))}
+    <>
+      {/* Backdrop */}
+      <FloatingOverlay
+        style={{
+          zIndex: 99,
+        }}
+        lockScroll
+      />
+      <div
+        id="slash-command"
+        ref={commandListContainer}
+        className="relative max-h-80 min-w-[12rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg space-y-2"
+        style={{
+          zIndex: 100,
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+        onMouseDown={(e) => {
+          e.stopPropagation();
+        }}
+      >
+        {sections.map((section, sectionIndex) => (
+          <div key={section.key} className="space-y-2">
+            {section.title && <h6 className="text-xs font-semibold text-custom-text-300">{section.title}</h6>}
+            <div>
+              {section.items?.map((item, itemIndex) => (
+                <CommandMenuItem
+                  key={item.key}
+                  isSelected={sectionIndex === selectedIndex.section && itemIndex === selectedIndex.item}
+                  item={item}
+                  itemIndex={itemIndex}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    selectItem(sectionIndex, itemIndex);
+                  }}
+                  onMouseEnter={() =>
+                    setSelectedIndex({
+                      section: sectionIndex,
+                      item: itemIndex,
+                    })
+                  }
+                  sectionIndex={sectionIndex}
+                  query={query}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    </>
   );
 });
 

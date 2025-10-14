@@ -8,6 +8,8 @@ catalog:
   "@atlaskit/pragmatic-drag-and-drop": 1.7.4
   "@atlaskit/pragmatic-drag-and-drop-auto-scroll": 1.4.0
   "@atlaskit/pragmatic-drag-and-drop-hitbox": 1.1.0
+  "@sentry/node": 10.5.0
+  "@sentry/profiling-node": 10.5.0
   axios: 1.12.0
   mobx: 6.12.0
   mobx-react: 9.1.1
@@ -22,9 +24,10 @@ catalog:
   react-dom: 18.3.1
   "@types/react": 18.3.11
   "@types/react-dom": 18.3.1
+  "@types/node": 22.12.0
   typescript: 5.8.3
   tsdown: 0.15.5
-  vite: 7.0.7
+  vite: 7.1.7
   uuid: 13.0.0
   "@tiptap/core": ^3.5.3
   "@tiptap/html": ^3.5.3
