@@ -66,7 +66,7 @@ export const HelpMenu: React.FC<WorkspaceHelpSectionProps> = observer(() => {
           closeOnSelect
         >
           <CustomMenu.MenuItem onClick={() => window.open("https://go.plane.so/p-docs", "_blank")}>
-            <div className="flex items-center gap-x-2 rounded text-xs">
+            <div className="flex items-center gap-x-2 rounded text-xs hover:bg-custom-background-80">
               <PageIcon className="h-3.5 w-3.5 text-custom-text-200" height={14} width={14} />
               <span className="text-xs">{t("documentation")}</span>
             </div>
@@ -84,7 +84,7 @@ export const HelpMenu: React.FC<WorkspaceHelpSectionProps> = observer(() => {
             </CustomMenu.MenuItem>
           )}
           <CustomMenu.MenuItem onClick={() => window.open("mailto:sales@plane.so", "_blank")}>
-            <div className="flex items-center gap-x-2 rounded text-xs">
+            <div className="flex items-center gap-x-2 rounded text-xs hover:bg-custom-background-80">
               <User className="h-3.5 w-3.5 text-custom-text-200" size={14} />
               <span className="text-xs">{t("contact_sales")}</span>
             </div>
@@ -109,7 +109,7 @@ export const HelpMenu: React.FC<WorkspaceHelpSectionProps> = observer(() => {
             </button>
           </CustomMenu.MenuItem>
           <CustomMenu.MenuItem onClick={() => window.open("https://go.plane.so/p-discord", "_blank")}>
-            <div className="flex items-center gap-x-2 rounded text-xs">
+            <div className="flex items-center gap-x-2 rounded text-xs hover:bg-custom-background-80">
               <span className="text-xs">Discord</span>
             </div>
           </CustomMenu.MenuItem>
