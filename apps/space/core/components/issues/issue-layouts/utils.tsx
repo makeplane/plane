@@ -1,10 +1,9 @@
 "use client";
 
 import { isNil } from "lodash-es";
-import { ContrastIcon } from "lucide-react";
 // types
 import { EIconSize, ISSUE_PRIORITIES } from "@plane/constants";
-import { CycleGroupIcon, ModuleIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
+import { CycleGroupIcon, CycleIcon, ModuleIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
 import type {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -76,7 +75,7 @@ const getCycleColumns = (cycleStore: ICycleStore): IGroupByColumn[] | undefined 
   cycleGroups.push({
     id: "None",
     name: "None",
-    icon: <ContrastIcon className="h-3.5 w-3.5" />,
+    icon: <CycleIcon className="h-3.5 w-3.5" />,
     payload: { cycle_id: null },
   });
 

@@ -13,7 +13,6 @@ import {
   Users2Icon,
   ArchiveIcon,
   PaperclipIcon,
-  ContrastIcon,
   TriangleIcon,
   LayoutGridIcon,
   SignalMediumIcon,
@@ -23,6 +22,7 @@ import {
 import {
   BlockedIcon,
   BlockerIcon,
+  CycleIcon,
   EpicIcon,
   IntakeIcon,
   ModuleIcon,
@@ -470,7 +470,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <ContrastIcon size={12} className="text-custom-text-200" aria-hidden="true" />,
+    icon: <CycleIcon height={12} width={12} className="text-custom-text-200" aria-hidden="true" />,
   },
   modules: {
     message: (activity, showIssue, workspaceSlug) => {

@@ -4,10 +4,9 @@ import { CSSProperties, FC } from "react";
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { clone, isNil, pull, uniq, concat } from "lodash-es";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
-import { ContrastIcon } from "lucide-react";
 // plane types
 import { EIconSize, ISSUE_PRIORITIES, STATE_GROUPS } from "@plane/constants";
-import { CycleGroupIcon, ISvgIcons, ModuleIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
+import { CycleGroupIcon, CycleIcon, ISvgIcons, ModuleIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
 import {
   EIssuesStoreType,
   GroupByColumnTypes,
@@ -172,7 +171,7 @@ const getCycleColumns = (): IGroupByColumn[] | undefined => {
   cycles.push({
     id: "None",
     name: "None",
-    icon: <ContrastIcon className="h-3.5 w-3.5" />,
+    icon: <CycleIcon className="h-3.5 w-3.5" />,
     payload: {},
   });
   return cycles;
