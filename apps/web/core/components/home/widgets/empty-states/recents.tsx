@@ -1,41 +1,44 @@
-import { History } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { PageIcon, ProjectIcon, WorkItemsIcon } from "@plane/propel/icons";
+import {
+  EmptyState,
+  NoteHorizontalStackIllustration,
+  ProjectHorizontalStackIllustration,
+  WorkItemHorizontalStackIllustration,
+} from "@plane/propel/empty-state";
 
 const getDisplayContent = (type: string) => {
   switch (type) {
     case "project":
       return {
-        icon: <ProjectIcon height={30} width={30} className="text-custom-text-400/40" />,
+        icon: <ProjectHorizontalStackIllustration className="size-20" />,
         text: "home.recents.empty.project",
       };
     case "page":
       return {
-        icon: <PageIcon height={30} width={30} className="text-custom-text-400/40" />,
+        icon: <NoteHorizontalStackIllustration className="size-20" />,
         text: "home.recents.empty.page",
       };
     case "issue":
       return {
-        icon: <WorkItemsIcon className="text-custom-text-400/40 w-[30px] h-[30px]" />,
+        icon: <WorkItemHorizontalStackIllustration className="size-20" />,
         text: "home.recents.empty.issue",
       };
     default:
       return {
-        icon: <History height={30} width={30} className="text-custom-text-400/40" />,
+        icon: <WorkItemHorizontalStackIllustration className="size-20" />,
         text: "home.recents.empty.default",
       };
   }
 };
+
 export const RecentsEmptyState = ({ type }: { type: string }) => {
   const { t } = useTranslation();
 
   const { icon, text } = getDisplayContent(type);
 
   return (
-    <div className="min-h-[120px] flex w-full justify-center py-6 bg-custom-border-100 rounded">
-      <div className="m-auto flex gap-2">
-        {icon} <div className="text-custom-text-400 text-sm text-center my-auto">{t(text)}</div>
-      </div>
+    <div className="flex items-center justify-center py-10 bg-custom-background-90 w-full">
+      <EmptyState asset={icon} description={t(text)} type="simple" />
     </div>
   );
 };
