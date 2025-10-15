@@ -1526,6 +1526,11 @@ export default {
         description: "Elementele de lucru care corespund filtrelor aplicate vor fi afișate aici.",
       },
     },
+    delete_view: {
+      title: "Sunteți sigur că doriți să ștergeți această vizualizare?",
+      content:
+        "Dacă confirmați, toate opțiunile de sortare, filtrare și afișare + aspectul pe care l-ați ales pentru această vizualizare vor fi șterse permanent fără nicio modalitate de a le restaura.",
+    },
   },
   workspace_settings: {
     label: "Setări spațiu de lucru",
@@ -2169,6 +2174,11 @@ export default {
         description:
           "Nicio perspectivă nu se potrivește criteriilor de căutare.\n Creează o nouă perspectivă în schimb.",
       },
+    },
+    delete_view: {
+      title: "Sunteți sigur că doriți să ștergeți această vizualizare?",
+      content:
+        "Dacă confirmați, toate opțiunile de sortare, filtrare și afișare + aspectul pe care l-ați ales pentru această vizualizare vor fi șterse permanent fără nicio modalitate de a le restaura.",
     },
   },
   project_page: {

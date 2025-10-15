@@ -1523,6 +1523,11 @@ export default {
         description: "Mục công việc phù hợp với bộ lọc, theo dõi tất cả chúng tại đây.",
       },
     },
+    delete_view: {
+      title: "Bạn có chắc chắn muốn xóa chế độ xem này không?",
+      content:
+        "Nếu bạn xác nhận, tất cả các tùy chọn sắp xếp, lọc và hiển thị + bố cục mà bạn đã chọn cho chế độ xem này sẽ bị xóa vĩnh viễn mà không có cách nào khôi phục.",
+    },
   },
   workspace_settings: {
     label: "Cài đặt không gian làm việc",
@@ -2167,6 +2172,11 @@ export default {
         title: "Không có chế độ xem phù hợp",
         description: "Không có chế độ xem phù hợp với tiêu chí tìm kiếm.\nTạo chế độ xem mới.",
       },
+    },
+    delete_view: {
+      title: "Bạn có chắc chắn muốn xóa chế độ xem này không?",
+      content:
+        "Nếu bạn xác nhận, tất cả các tùy chọn sắp xếp, lọc và hiển thị + bố cục mà bạn đã chọn cho chế độ xem này sẽ bị xóa vĩnh viễn mà không có cách nào khôi phục.",
     },
   },
   project_page: {

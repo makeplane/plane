@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
 import { GLOBAL_VIEW_TRACKER_EVENTS } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspaceView } from "@plane/types";
 // ui
@@ -28,7 +29,7 @@ export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { deleteGlobalView } = useGlobalView();
-
+  const { t } = useTranslation();
   const handleClose = () => onClose();
 
   const handleDeletion = async () => {
@@ -74,13 +75,8 @@ export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
       handleSubmit={handleDeletion}
       isSubmitting={isDeleteLoading}
       isOpen={isOpen}
-      title="Are you sure you want to delete this view?"
-      content={
-        <>
-          If you confirm, all the sort, filter, and display options + the layout you have chosen for this view will be
-          permanently deleted without any way to restore them.
-        </>
-      }
+      title={t("workspace_views.delete_view.title")}
+      content={<>{t("workspace_views.delete_view.content")}</>}
     />
   );
 });
