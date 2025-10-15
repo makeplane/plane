@@ -28,7 +28,7 @@ import {
   WorkItemHorizontalStackIllustration,
   WorklogHorizontalStackIllustration,
 } from "./horizontal-stack";
-import { InboxIllustration } from "./illustration";
+import { InboxIllustration, SearchIllustration } from "./illustration";
 import {
   ArchivedCycleVerticalStackIllustration,
   ArchivedModuleVerticalStackIllustration,
@@ -50,12 +50,8 @@ import {
   WorkItemVerticalStackIllustration,
 } from "./vertical-stack";
 
-
 // Horizontal Stack Asset Registry
-export const HORIZONTAL_STACK_ASSETS: Record<
-  HorizontalStackAssetType,
-  React.ComponentType<{ className?: string }>
-> = {
+export const HORIZONTAL_STACK_ASSETS: Record<HorizontalStackAssetType, React.ComponentType<{ className?: string }>> = {
   customer: CustomerHorizontalStackIllustration,
   epic: EpicHorizontalStackIllustration,
   estimate: EstimateHorizontalStackIllustration,
@@ -79,10 +75,7 @@ export const HORIZONTAL_STACK_ASSETS: Record<
 };
 
 // Vertical Stack Asset Registry
-export const VERTICAL_STACK_ASSETS: Record<
-  VerticalStackAssetType,
-  React.ComponentType<{ className?: string }>
-> = {
+export const VERTICAL_STACK_ASSETS: Record<VerticalStackAssetType, React.ComponentType<{ className?: string }>> = {
   "archived-cycle": ArchivedCycleVerticalStackIllustration,
   "archived-module": ArchivedModuleVerticalStackIllustration,
   "archived-work-item": ArchivedWorkItemVerticalStackIllustration,
@@ -106,6 +99,7 @@ export const VERTICAL_STACK_ASSETS: Record<
 // Illustration Asset Registry
 export const ILLUSTRATION_ASSETS: Record<IllustrationAssetType, React.ComponentType<{ className?: string }>> = {
   inbox: InboxIllustration,
+  search: SearchIllustration,
 };
 
 // Helper functions to get assets
