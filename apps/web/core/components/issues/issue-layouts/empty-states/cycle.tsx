@@ -7,12 +7,12 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ISearchIssueResponse } from "@plane/types";
 import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useCycle } from "@/hooks/store/use-cycle";
@@ -49,10 +49,6 @@ export const CycleEmptyState: React.FC = observer(() => {
   );
   const emptyFilterResolvedPath = useResolvedAssetPath({
     basePath: "/empty-state/empty-filters/",
-    additionalPath: additionalPath,
-  });
-  const noIssueResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/cycle-issues/",
     additionalPath: additionalPath,
   });
   const completedNoIssuesResolvedPath = useResolvedAssetPath({
@@ -94,39 +90,55 @@ export const CycleEmptyState: React.FC = observer(() => {
       />
       <div className="grid h-full w-full place-items-center">
         {isCompletedAndEmpty ? (
-          <DetailedEmptyState
+          // TODO: Empty state ux copy needs to be updated
+          <EmptyStateDetailed
+            assetKey="work-item"
             title={t("project_cycles.empty_state.completed_no_issues.title")}
             description={t("project_cycles.empty_state.completed_no_issues.description")}
-            assetPath={completedNoIssuesResolvedPath}
+            actions={[
+              {
+                label: t("project.cycles.cta_primary"),
+              },
+            ]}
           />
         ) : cycleWorkItemFilter?.hasActiveFilters ? (
-          <DetailedEmptyState
-            title={t("project_issues.empty_state.issues_empty_filter.title")}
-            assetPath={emptyFilterResolvedPath}
-            secondaryButton={{
-              text: t("project_issues.empty_state.issues_empty_filter.secondary_button.text"),
-              onClick: cycleWorkItemFilter?.clearFilters,
-              disabled: !canPerformEmptyStateActions || !cycleWorkItemFilter,
-            }}
+          <EmptyStateDetailed
+            assetKey="search"
+            title={t("common.search.title")}
+            description={t("common.search.description")}
+            actions={[
+              {
+                label: t("common.search.cta_secondary"),
+                onClick: cycleWorkItemFilter?.clearFilters,
+                disabled: !canPerformEmptyStateActions || !cycleWorkItemFilter,
+                variant: "outline-primary",
+              },
+            ]}
           />
         ) : (
-          <DetailedEmptyState
-            title={t("project_cycles.empty_state.no_issues.title")}
-            description={t("project_cycles.empty_state.no_issues.description")}
-            assetPath={noIssueResolvedPath}
-            primaryButton={{
-              text: t("project_cycles.empty_state.no_issues.primary_button.text"),
-              onClick: () => {
-                captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.CYCLE });
-                toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
+          <EmptyStateDetailed
+            assetKey="work-item"
+            title={t("project.cycle_work_items.title")}
+            description={t("project.cycle_work_items.description")}
+            actions={[
+              {
+                label: t("project.cycle_work_items.cta_primary"),
+                onClick: () => {
+                  captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.CYCLE });
+                  toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
+                },
+                disabled: !canPerformEmptyStateActions,
+                variant: "primary",
+                "data-ph-element": WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.CYCLE,
               },
-              disabled: !canPerformEmptyStateActions,
-            }}
-            secondaryButton={{
-              text: t("project_cycles.empty_state.no_issues.secondary_button.text"),
-              onClick: () => setCycleIssuesListModal(true),
-              disabled: !canPerformEmptyStateActions,
-            }}
+              {
+                label: t("project.cycle_work_items.cta_secondary"),
+                onClick: () => setCycleIssuesListModal(true),
+                disabled: !canPerformEmptyStateActions,
+                variant: "outline-primary",
+                "data-ph-element": WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.CYCLE,
+              },
+            ]}
           />
         )}
       </div>
