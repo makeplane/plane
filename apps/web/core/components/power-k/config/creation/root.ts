@@ -1,7 +1,8 @@
 // types
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // local imports
-import { TPowerKCreationCommandKeys, usePowerKCreationCommandsRecord } from "./command";
+import { usePowerKCreationCommandsRecord } from "./command";
+import type { TPowerKCreationCommandKeys } from "./command";
 
 export const usePowerKCreationCommands = (): TPowerKCommandConfig[] => {
   const optionsList: Record<TPowerKCreationCommandKeys, TPowerKCommandConfig> = usePowerKCreationCommandsRecord();

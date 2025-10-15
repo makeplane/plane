@@ -8,7 +8,7 @@ import { usePowerKMiscellaneousCommands } from "./miscellaneous-commands";
 import { usePowerKNavigationCommands } from "./navigation/root";
 import { usePowerKPreferencesCommands } from "./preferences-commands";
 
-export const usePowerKCommands = (): TPowerKCommandConfig[] => {
+export const useProjectsAppPowerKCommands = (): TPowerKCommandConfig[] => {
   const navigationCommands = usePowerKNavigationCommands();
   const creationCommands = usePowerKCreationCommands();
   const contextualCommands = usePowerKContextBasedActions();

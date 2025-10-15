@@ -1,4 +1,4 @@
-import { TPowerKCommandGroup } from "../../core/types";
+import type { TPowerKCommandGroup } from "../../core/types";
 
 export const POWER_K_GROUP_PRIORITY: Record<TPowerKCommandGroup, number> = {
   contextual: 1,

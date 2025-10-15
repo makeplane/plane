@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import { Triangle } from "lucide-react";
 // plane types
 import { useTranslation } from "@plane/i18n";
-import { EEstimateSystem, type TIssue } from "@plane/types";
+import { EEstimateSystem } from "@plane/types";
+import type { TIssue } from "@plane/types";
 import { Spinner } from "@plane/ui";
 import { convertMinutesToHoursMinutesString } from "@plane/utils";
 // hooks

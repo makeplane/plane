@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import type { IProjectView } from "@plane/types";
 import { Spinner } from "@plane/ui";
 // components
-import { TPowerKContext } from "@/components/power-k/core/types";
+import type { TPowerKContext } from "@/components/power-k/core/types";
 // hooks
 import { PowerKViewsMenu } from "@/components/power-k/menus/views";
 import { useProjectView } from "@/hooks/store/use-project-view";

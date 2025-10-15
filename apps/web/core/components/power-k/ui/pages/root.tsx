@@ -3,7 +3,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 // local imports
-import { TPowerKCommandConfig, TPowerKContext, TPowerKPageType } from "../../core/types";
+import type { TPowerKCommandConfig, TPowerKContext, TPowerKPageType } from "../../core/types";
 import { PowerKModalDefaultPage } from "./default";
 import { PowerKOpenEntityPages } from "./open-entity/root";
 import { PowerKAccountPreferencesPages } from "./preferences";

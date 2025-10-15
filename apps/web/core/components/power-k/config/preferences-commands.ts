@@ -3,7 +3,7 @@ import { useTheme } from "next-themes";
 import { Calendar, Earth, Languages, Palette } from "lucide-react";
 // plane imports
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { EStartOfTheWeek, TUserProfile } from "@plane/types";
+import type { EStartOfTheWeek, TUserProfile } from "@plane/types";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks

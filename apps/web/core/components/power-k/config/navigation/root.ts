@@ -1,7 +1,8 @@
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // local imports
-import { TPowerKNavigationCommandKeys, usePowerKNavigationCommandsRecord } from "./commands";
+import type { TPowerKNavigationCommandKeys } from "./commands";
+import { usePowerKNavigationCommandsRecord } from "./commands";
 
 export const usePowerKNavigationCommands = (): TPowerKCommandConfig[] => {
   const optionsList: Record<TPowerKNavigationCommandKeys, TPowerKCommandConfig> = usePowerKNavigationCommandsRecord();

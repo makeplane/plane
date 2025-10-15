@@ -2,15 +2,8 @@ import { BarChart2, Briefcase, FileText, Home, Inbox, Layers, PenSquare, Setting
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { ArchiveIcon, UserActivityIcon, LayersIcon, ContrastIcon, DiceIcon, Intake } from "@plane/propel/icons";
-import {
-  EUserProjectRoles,
-  EUserWorkspaceRoles,
-  ICycle,
-  IModule,
-  IPartialProject,
-  IProjectView,
-  IWorkspace,
-} from "@plane/types";
+import type { ICycle, IModule, IPartialProject, IProjectView, IWorkspace } from "@plane/types";
+import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 // components
 import type { TPowerKCommandConfig, TPowerKContext } from "@/components/power-k/core/types";
 import { handlePowerKNavigate } from "@/components/power-k/utils/navigation";

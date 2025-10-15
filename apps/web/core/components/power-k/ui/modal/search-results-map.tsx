@@ -3,7 +3,7 @@
 import { Briefcase, FileText, Layers, LayoutGrid } from "lucide-react";
 // plane imports
 import { ContrastIcon, DiceIcon } from "@plane/propel/icons";
-import {
+import type {
   IWorkspaceDefaultSearchResult,
   IWorkspaceIssueSearchResult,
   IWorkspacePageSearchResult,
@@ -24,7 +24,7 @@ export type TPowerKSearchResultGroupDetails = {
   title: string;
 };
 
-export const SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys, TPowerKSearchResultGroupDetails> = {
+export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys, TPowerKSearchResultGroupDetails> = {
   cycle: {
     icon: ContrastIcon,
     itemName: (cycle: IWorkspaceDefaultSearchResult) => (

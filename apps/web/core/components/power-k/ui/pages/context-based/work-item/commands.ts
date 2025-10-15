@@ -6,15 +6,8 @@ import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ContrastIcon, DiceIcon, DoubleCircleIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import {
-  EIssueServiceType,
-  EUserPermissions,
-  ICycle,
-  IIssueLabel,
-  IModule,
-  TIssue,
-  TIssuePriorities,
-} from "@plane/types";
+import type { ICycle, IIssueLabel, IModule, TIssue, TIssuePriorities } from "@plane/types";
+import { EIssueServiceType, EUserPermissions } from "@plane/types";
 import { copyTextToClipboard } from "@plane/utils";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";

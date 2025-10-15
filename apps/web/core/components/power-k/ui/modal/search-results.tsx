@@ -4,13 +4,13 @@ import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { IWorkspaceSearchResults } from "@plane/types";
+import type { IWorkspaceSearchResults } from "@plane/types";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // helpers
 import { openProjectAndScrollToSidebar } from "../../actions/helper";
 import { PowerKModalCommandItem } from "./command-item";
-import { SEARCH_RESULTS_GROUPS_MAP } from "./search-results-map";
+import { POWER_K_SEARCH_RESULTS_GROUPS_MAP } from "./search-results-map";
 
 type Props = {
   closePalette: () => void;
@@ -29,7 +29,7 @@ export const PowerKModalSearchResults: React.FC<Props> = observer((props) => {
     <>
       {Object.keys(results.results).map((key) => {
         const section = results.results[key as keyof typeof results.results];
-        const currentSection = SEARCH_RESULTS_GROUPS_MAP[key as keyof typeof SEARCH_RESULTS_GROUPS_MAP];
+        const currentSection = POWER_K_SEARCH_RESULTS_GROUPS_MAP[key as keyof typeof POWER_K_SEARCH_RESULTS_GROUPS_MAP];
 
         if (!currentSection) return null;
         if (section.length <= 0) return null;

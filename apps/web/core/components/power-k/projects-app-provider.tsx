@@ -12,7 +12,7 @@ import { IssueLevelModals } from "@/plane-web/components/command-palette/modals/
 import { ProjectLevelModals } from "@/plane-web/components/command-palette/modals/project-level";
 import { WorkspaceLevelModals } from "@/plane-web/components/command-palette/modals/workspace-level";
 // local imports
-import { usePowerKCommands } from "./config/commands";
+import { useProjectsAppPowerKCommands } from "./config/commands";
 import type { TPowerKCommandConfig, TPowerKContext } from "./core/types";
 import { GlobalShortcutsProvider } from "./global-shortcuts";
 import { ProjectsAppPowerKCommandsList } from "./ui/modal/commands-list";
@@ -33,7 +33,7 @@ export const ProjectsAppPowerKProvider = observer(() => {
   const { data: currentUser } = useUser();
   // derived values
   const { workspaceSlug, projectId, workItem: workItemIdentifier } = params;
-  const commands = usePowerKCommands();
+  const commands = useProjectsAppPowerKCommands();
   // Build command context from props and store
   const context: TPowerKContext = useMemo(
     () => ({

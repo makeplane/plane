@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { EUserPermissionsLevel } from "@plane/constants";
 // components
 import { useTranslation } from "@plane/i18n";
-import { TPowerKContext } from "@/components/power-k/core/types";
+import type { TPowerKContext } from "@/components/power-k/core/types";
 import { PowerKSettingsMenu } from "@/components/power-k/menus/settings";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";

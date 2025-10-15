@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TIssueEntityData, TIssueSearchResponse, TActivityEntityData } from "@plane/types";
+import type { TIssueEntityData, TIssueSearchResponse, TActivityEntityData } from "@plane/types";
 import { generateWorkItemLink } from "@plane/utils";
 // components
 // import { CommandPaletteEntityList } from "@/components/command-palette";
