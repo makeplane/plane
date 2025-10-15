@@ -43,7 +43,7 @@ export type VerticalStackAssetType =
   | "work-item";
 
 // Illustration Asset Types
-export type IllustrationAssetType = "inbox";
+export type IllustrationAssetType = "inbox" | "search";
 
 // Combined Asset Types for Compact (uses horizontal + illustration)
 export type CompactAssetType = HorizontalStackAssetType | IllustrationAssetType;
