@@ -4,6 +4,7 @@ import { HorizontalStackAssetsMap } from "./assets/horizontal-stack/constant";
 import { WorkItemVerticalStackIllustration } from "./assets/vertical-stack";
 import { VerticalStackAssetsMap } from "./assets/vertical-stack/constant";
 import { EmptyState, type EmptyStateProps } from "./empty-state";
+import { IllustrationMap } from "./assets/illustration/constant";
 
 const meta: Meta<EmptyStateProps> = {
   title: "Components/EmptyState",
@@ -90,6 +91,19 @@ export const VerticalStackAssets: Story = {
   render: () => (
     <div className="grid grid-cols-12 gap-6 w-full py-20">
       {VerticalStackAssetsMap.map((item) => (
+        <div key={item.title} className="flex flex-col items-center justify-center gap-3 p-4 col-span-3">
+          {item.asset}
+          <p className="text-sm text-custom-text-200">{item.title}</p>
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+export const IllustrationAssets: Story = {
+  render: () => (
+    <div className="grid grid-cols-12 gap-6 w-full py-20">
+      {IllustrationMap.map((item) => (
         <div key={item.title} className="flex flex-col items-center justify-center gap-3 p-4 col-span-3">
           {item.asset}
           <p className="text-sm text-custom-text-200">{item.title}</p>
