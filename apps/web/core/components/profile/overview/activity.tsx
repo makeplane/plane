@@ -19,6 +19,7 @@ import { useUser } from "@/hooks/store/user";
 import recentActivityEmptyState from "@/public/empty-state/recent_activity.svg";
 // services
 import { UserService } from "@/services/user.service";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 
 const userService = new UserService();
 
@@ -83,11 +84,7 @@ export const ProfileActivity = observer(() => {
               ))}
             </div>
           ) : (
-            <ProfileEmptyState
-              title={t("no_data_yet")}
-              description={t("profile.stats.recent_activity.empty")}
-              image={recentActivityEmptyState}
-            />
+            <EmptyStateCompact title={t("no_data_yet")} assetKey="unknown" assetClassName="size-20" />
           )
         ) : (
           <Loader className="space-y-5">
