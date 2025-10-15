@@ -23,7 +23,7 @@ export const OverviewListView: React.FC<TPageView> = observer((props) => {
   const { children, project, workspaceSlug } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState<TNameDescriptionLoader>("submitted");
-  const [activeTab, setActiveTab] = useState<"properties" | "activity">("activity");
+  const [activeTab, setActiveTab] = useState<"properties" | "activity">("properties");
 
   // store hooks
   const { overviewPeek } = useAppTheme();

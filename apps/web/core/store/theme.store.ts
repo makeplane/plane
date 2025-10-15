@@ -35,7 +35,7 @@ export class ThemeStore implements IThemeStore {
   isAnySidebarDropdownOpen: boolean | undefined = undefined;
   sidebarCollapsed: boolean | undefined = undefined;
   sidebarPeek: boolean | undefined = undefined;
-  overviewPeek: boolean | undefined = undefined;
+  overviewPeek: boolean | undefined = true;
   isExtendedSidebarOpened: boolean | undefined = undefined;
   isExtendedProjectSidebarOpened: boolean | undefined = undefined;
   profileSidebarCollapsed: boolean | undefined = undefined;
