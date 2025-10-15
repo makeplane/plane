@@ -6,9 +6,8 @@ import { Dialog, Transition } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@plane/propel/button";
-import { TDeDupeIssue, TIssue } from "@plane/types";
-// ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TDeDupeIssue, TIssue } from "@plane/types";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Placement } from "@popperjs/core";
+import type { Placement } from "@popperjs/core";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Loader, Search } from "lucide-react";
@@ -9,7 +9,8 @@ import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 // types
-import { EUserProjectRoles, IIssueLabel } from "@plane/types";
+import type { IIssueLabel } from "@plane/types";
+import { EUserProjectRoles } from "@plane/types";
 // components
 import { ComboDropDown } from "@plane/ui";
 // hooks

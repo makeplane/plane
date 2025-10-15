@@ -1,14 +1,16 @@
 "use client";
 
-import { useEffect, ReactNode } from "react";
+import type { ReactNode } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import useSWR from "swr";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IProject, IUserLite, IWorkspace } from "@plane/types";
-import { Loader, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IProject, IUserLite, IWorkspace } from "@plane/types";
+import { Loader, ToggleSwitch } from "@plane/ui";
 // constants
 import { PROJECT_MEMBERS } from "@/constants/fetch-keys";
 // hooks

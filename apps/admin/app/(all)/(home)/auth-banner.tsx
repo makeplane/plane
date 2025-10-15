@@ -1,7 +1,7 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { Info, X } from "lucide-react";
 // plane constants
-import { TAdminAuthErrorInfo } from "@plane/constants";
+import type { TAdminAuthErrorInfo } from "@plane/constants";
 
 type TAuthBanner = {
   bannerData: TAdminAuthErrorInfo | undefined;

@@ -59,8 +59,8 @@ export const getLabelFilterConfig =
     createFilterConfig<P, string>({
       id: key,
       label: "Label",
+      ...params,
       icon: params.filterIcon,
-      isEnabled: params.isEnabled,
       supportedOperatorConfigsMap: new Map([
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
           getLabelMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)

@@ -10,13 +10,13 @@ import { EIssueFilterType, ISSUE_LAYOUTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "
 // plane i18n
 import { useTranslation } from "@plane/i18n";
 // types
-import {
-  EIssuesStoreType,
+import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   TIssueLayouts,
   EIssueLayoutTypes,
 } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
 // components

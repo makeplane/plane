@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import { EIssueServiceType, TNameDescriptionLoader } from "@plane/types";
+import type { TNameDescriptionLoader } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 import { getTextContent } from "@plane/utils";
 // components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
@@ -30,7 +31,7 @@ import { IssueTitleInput } from "../title-input";
 import { IssueActivity } from "./issue-activity";
 import { IssueParentDetail } from "./parent";
 import { IssueReaction } from "./reactions";
-import { TIssueOperations } from "./root";
+import type { TIssueOperations } from "./root";
 // services init
 const workItemVersionService = new WorkItemVersionService();
 

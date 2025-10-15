@@ -111,6 +111,27 @@
     --color-sidebar-shadow-2xl: var(--color-shadow-2xl);
     --color-sidebar-shadow-3xl: var(--color-shadow-3xl);
     --color-sidebar-shadow-4xl: var(--color-shadow-4xl);
+
+    /* toast theme */
+    --color-toast-success-text: 178, 221, 181;
+    --color-toast-error-text: 206, 44, 49;
+    --color-toast-warning-text: 255, 186, 24;
+    --color-toast-info-text: 141, 164, 239;
+    --color-toast-loading-text: 255, 255, 255;
+    --color-toast-secondary-text: 185, 187, 198;
+    --color-toast-tertiary-text: 139, 141, 152;
+
+    --color-toast-success-background: 46, 46, 46;
+    --color-toast-error-background: 46, 46, 46;
+    --color-toast-warning-background: 46, 46, 46;
+    --color-toast-info-background: 46, 46, 46;
+    --color-toast-loading-background: 46, 46, 46;
+
+    --color-toast-success-border: 42, 126, 59;
+    --color-toast-error-border: 100, 23, 35;
+    --color-toast-warning-border: 79, 52, 34;
+    --color-toast-info-border: 58, 91, 199;
+    --color-toast-loading-border: 96, 100, 108;
   }
 
   [data-theme="light"],
@@ -221,27 +242,6 @@
     --color-border-200: 38, 38, 38; /* subtle border- 2 */
     --color-border-300: 46, 46, 46; /* strong border- 1 */
     --color-border-400: 58, 58, 58; /* strong border- 2 */
-
-    /* toast theme */
-    --color-toast-success-text: 178, 221, 181;
-    --color-toast-error-text: 206, 44, 49;
-    --color-toast-warning-text: 255, 186, 24;
-    --color-toast-info-text: 141, 164, 239;
-    --color-toast-loading-text: 255, 255, 255;
-    --color-toast-secondary-text: 185, 187, 198;
-    --color-toast-tertiary-text: 139, 141, 152;
-
-    --color-toast-success-background: 46, 46, 46;
-    --color-toast-error-background: 46, 46, 46;
-    --color-toast-warning-background: 46, 46, 46;
-    --color-toast-info-background: 46, 46, 46;
-    --color-toast-loading-background: 46, 46, 46;
-
-    --color-toast-success-border: 42, 126, 59;
-    --color-toast-error-border: 100, 23, 35;
-    --color-toast-warning-border: 79, 52, 34;
-    --color-toast-info-border: 58, 91, 199;
-    --color-toast-loading-border: 96, 100, 108;
   }
 
   [data-theme="dark-contrast"] {

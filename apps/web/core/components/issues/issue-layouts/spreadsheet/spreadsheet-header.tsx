@@ -3,13 +3,13 @@ import { useParams } from "next/navigation";
 // constants
 import { SPREADSHEET_SELECT_GROUP } from "@plane/constants";
 // ui
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 // components
 import { Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { MultipleSelectGroupAction } from "@/components/core/multiple-select";
 // hooks
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { SpreadsheetHeaderColumn } from "./spreadsheet-header-column";
 
 interface Props {

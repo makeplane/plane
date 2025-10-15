@@ -1,5 +1,5 @@
 import { pick } from "lodash-es";
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 import { rootStore } from "@/lib/store-context";
 import { persistence } from "../storage.sqlite";
 import { updateIssue } from "./load-issues";

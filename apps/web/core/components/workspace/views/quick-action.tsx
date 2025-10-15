@@ -4,8 +4,10 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, GLOBAL_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
-import { IWorkspaceView } from "@plane/types";
-import { CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IWorkspaceView } from "@plane/types";
+import type { TContextMenuItem } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
@@ -71,9 +73,7 @@ export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
           return (
             <CustomMenu.MenuItem
               key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 captureClick({
                   elementName: GLOBAL_VIEW_TRACKER_ELEMENTS.QUICK_ACTIONS,
                 });

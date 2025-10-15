@@ -1,4 +1,4 @@
-import { Metadata, Viewport } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 
 // styles

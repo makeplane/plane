@@ -4,13 +4,13 @@ import useSWR from "swr";
 import { EyeIcon, TriangleAlert } from "lucide-react";
 // plane imports
 import { Button } from "@plane/propel/button";
-import { TPageVersion } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TPageVersion } from "@plane/types";
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // helpers
-import { EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
 // local imports
-import { TVersionEditorProps } from "./editor";
+import type { TVersionEditorProps } from "./editor";
 
 type Props = {
   activeVersion: string | null;

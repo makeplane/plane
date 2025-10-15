@@ -1,3 +1,7 @@
+import { setupSentry } from "./instrument";
+setupSentry();
+
+// eslint-disable-next-line import/order
 import { logger } from "@plane/logger";
 import { Server } from "./server";
 
@@ -18,26 +22,26 @@ startServer();
 
 // Graceful shutdown on unhandled rejection
 process.on("unhandledRejection", async (err: Error) => {
-  logger.error(`UNHANDLED REJECTION! 💥 Shutting down...`, err);
+  logger.error(`UNHANDLED REJECTION!`, err);
   try {
-    if (server) {
-      await server.destroy();
-    }
+    // if (server) {
+    //   await server.destroy();
+    // }
   } finally {
-    logger.info("Exiting process...");
-    process.exit(1);
+    // logger.info("Exiting process...");
+    // process.exit(1);
   }
 });
 
 // Graceful shutdown on uncaught exception
 process.on("uncaughtException", async (err: Error) => {
-  logger.error(`UNCAUGHT EXCEPTION! 💥 Shutting down...`, err);
+  logger.error(`UNCAUGHT EXCEPTION!`, err);
   try {
-    if (server) {
-      await server.destroy();
-    }
+    // if (server) {
+    //   await server.destroy();
+    // }
   } finally {
-    logger.info("Exiting process...");
-    process.exit(1);
+    // logger.info("Exiting process...");
+    // process.exit(1);
   }
 });

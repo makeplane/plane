@@ -4,7 +4,7 @@ import { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // hooks
 import { useModule } from "@/hooks/store/use-module";
 import { useAppRouter } from "@/hooks/use-app-router";

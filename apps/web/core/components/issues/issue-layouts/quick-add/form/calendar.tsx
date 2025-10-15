@@ -1,6 +1,6 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
-import { TQuickAddIssueForm } from "../root";
+import type { TQuickAddIssueForm } from "../root";
 
 export const CalendarQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((props) => {
   const { ref, isOpen, projectDetail, register, onSubmit, isEpic } = props;

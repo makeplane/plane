@@ -2,7 +2,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { RefreshCw } from "lucide-react";
 // types
-import { TNameDescriptionLoader } from "@plane/types";
+import type { TNameDescriptionLoader } from "@plane/types";
 
 type Props = {
   isSubmitting: TNameDescriptionLoader;

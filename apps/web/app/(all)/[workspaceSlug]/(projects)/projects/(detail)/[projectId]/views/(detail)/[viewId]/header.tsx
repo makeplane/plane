@@ -3,7 +3,7 @@
 import { useCallback, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Layers, Lock } from "lucide-react";
+import { Lock } from "lucide-react";
 // plane constants
 import {
   EIssueFilterType,
@@ -15,15 +15,10 @@ import {
 } from "@plane/constants";
 // types
 import { Button } from "@plane/propel/button";
+import { ViewsIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import {
-  EIssuesStoreType,
-  EViewAccess,
-  ICustomSearchSelectOption,
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  EIssueLayoutTypes,
-} from "@plane/types";
+import type { ICustomSearchSelectOption, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+import { EIssuesStoreType, EViewAccess, EIssueLayoutTypes } from "@plane/types";
 // ui
 import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
@@ -119,7 +114,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
       return {
         value: _view.id,
         query: _view.name,
-        content: <SwitcherLabel logo_props={_view.logo_props} name={_view.name} LabelIcon={Layers} />,
+        content: <SwitcherLabel logo_props={_view.logo_props} name={_view.name} LabelIcon={ViewsIcon} />,
       };
     })
     .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
@@ -145,7 +140,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                 title={viewDetails?.name}
                 icon={
                   <Breadcrumbs.Icon>
-                    <SwitcherIcon logo_props={viewDetails.logo_props} LabelIcon={Layers} size={16} />
+                    <SwitcherIcon logo_props={viewDetails.logo_props} LabelIcon={ViewsIcon} size={16} />
                   </Breadcrumbs.Icon>
                 }
                 isLast

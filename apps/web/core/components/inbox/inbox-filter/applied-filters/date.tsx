@@ -1,8 +1,8 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 import { PAST_DURATION_FILTER_OPTIONS } from "@plane/constants";
-import { TInboxIssueFilterDateKeys } from "@plane/types";
+import type { TInboxIssueFilterDateKeys } from "@plane/types";
 // helpers
 import { Tag } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";

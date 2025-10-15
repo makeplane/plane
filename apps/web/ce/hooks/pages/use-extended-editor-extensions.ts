@@ -1,7 +1,7 @@
 import type { IEditorPropsExtended } from "@plane/editor";
 import type { TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 import type { TPageInstance } from "@/store/pages/base-page";
-import { EPageStoreType } from "../store";
+import type { EPageStoreType } from "../store";
 
 export type TExtendedEditorExtensionsHookParams = {
   workspaceSlug: string;

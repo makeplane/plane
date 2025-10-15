@@ -1,10 +1,11 @@
 "use client";
-import { FC, Fragment } from "react";
+import type { FC } from "react";
+import { Fragment } from "react";
 // react-form
-import { ColorResult, SketchPicker } from "react-color";
-import {
+import type { ColorResult } from "react-color";
+import { SketchPicker } from "react-color";
+import type {
   Control,
-  Controller,
   FieldError,
   FieldErrorsImpl,
   Merge,
@@ -12,11 +13,12 @@ import {
   UseFormSetValue,
   UseFormWatch,
 } from "react-hook-form";
+import { Controller } from "react-hook-form";
 // react-color
 // component
 import { Palette } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
-import { IUserTheme } from "@plane/types";
+import type { IUserTheme } from "@plane/types";
 import { Input } from "@plane/ui";
 // icons
 // types

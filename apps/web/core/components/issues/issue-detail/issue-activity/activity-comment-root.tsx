@@ -1,8 +1,9 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { E_SORT_ORDER, TActivityFilters, filterActivityOnSelectedFilters } from "@plane/constants";
-import { TCommentsOperations } from "@plane/types";
+import type { E_SORT_ORDER, TActivityFilters } from "@plane/constants";
+import { filterActivityOnSelectedFilters } from "@plane/constants";
+import type { TCommentsOperations } from "@plane/types";
 // components
 import { CommentCard } from "@/components/comments/card/root";
 // hooks

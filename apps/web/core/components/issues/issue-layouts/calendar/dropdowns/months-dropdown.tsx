@@ -9,11 +9,11 @@ import { Popover, Transition } from "@headlessui/react";
 import { getDate } from "@plane/utils";
 import { MONTHS_LIST } from "@/constants/calendar";
 import { useCalendarView } from "@/hooks/store/use-calendar-view";
-import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
-import { ICycleIssuesFilter } from "@/store/issue/cycle";
-import { IModuleIssuesFilter } from "@/store/issue/module";
-import { IProjectIssuesFilter } from "@/store/issue/project";
-import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
+import type { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
+import type { ICycleIssuesFilter } from "@/store/issue/cycle";
+import type { IModuleIssuesFilter } from "@/store/issue/module";
+import type { IProjectIssuesFilter } from "@/store/issue/project";
+import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 // helpers
 
 interface Props {

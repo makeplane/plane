@@ -56,8 +56,8 @@ export const getPriorityFilterConfig =
     createFilterConfig<P, TIssuePriorities>({
       id: key,
       label: "Priority",
+      ...params,
       icon: params.filterIcon,
-      isEnabled: params.isEnabled,
       supportedOperatorConfigsMap: new Map([
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
           getPriorityMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)

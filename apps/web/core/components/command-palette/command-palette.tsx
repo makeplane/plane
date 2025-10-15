@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useCallback, useEffect, FC, useMemo } from "react";
+import type { FC } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
 import { COMMAND_PALETTE_TRACKER_ELEMENTS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // components
 import { copyTextToClipboard } from "@plane/utils";
 import { CommandModal, ShortcutsModal } from "@/components/command-palette";

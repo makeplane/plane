@@ -9,15 +9,15 @@ import { Tooltip } from "@plane/propel/tooltip";
 // hooks
 import { useQueryParams } from "@/hooks/use-query-params";
 // plane web components
-import { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
+import type { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
 // store
-import { type EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
-import { TPageRootHandlers } from "../editor/page-root";
+import type { TPageRootHandlers } from "../editor/page-root";
 import { PageNavigationPaneTabPanelsRoot } from "./tab-panels/root";
 import { PageNavigationPaneTabsList } from "./tabs-list";
-import { INavigationPaneExtension } from "./types/extensions";
+import type { INavigationPaneExtension } from "./types/extensions";
 
 import {
   PAGE_NAVIGATION_PANE_TAB_KEYS,

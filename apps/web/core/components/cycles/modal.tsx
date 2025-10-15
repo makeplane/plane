@@ -3,9 +3,10 @@ import React, { useEffect, useState } from "react";
 import { mutate } from "swr";
 // types
 import { CYCLE_TRACKER_EVENTS } from "@plane/constants";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { CycleDateCheckData, ICycle, TCycleTabOptions } from "@plane/types";
 // ui
-import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import { renderFormattedPayloadDate } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";

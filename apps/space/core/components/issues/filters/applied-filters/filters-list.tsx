@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // types
 import { useTranslation } from "@plane/i18n";
-import { TFilters } from "@/types/issue";
+import type { TFilters } from "@/types/issue";
 // components
 import { AppliedPriorityFilters } from "./priority";
 import { AppliedStateFilters } from "./state";

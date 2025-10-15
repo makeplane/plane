@@ -1,17 +1,13 @@
 "use client";
 
-import { FC, useCallback, useEffect, useState } from "react";
+import type { FC } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { USER_TRACKER_EVENTS } from "@plane/constants";
-import {
-  EOnboardingSteps,
-  IWorkspaceMemberInvitation,
-  TOnboardingStep,
-  TOnboardingSteps,
-  TUserProfile,
-} from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IWorkspaceMemberInvitation, TOnboardingStep, TOnboardingSteps, TUserProfile } from "@plane/types";
+import { EOnboardingSteps } from "@plane/types";
 // helpers
 import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks

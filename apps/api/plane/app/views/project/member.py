@@ -48,7 +48,7 @@ class ProjectMemberViewSet(BaseViewSet):
         # Check if the members array is empty
         if not len(members):
             return Response(
-                {"error": "Atleast one member is required"},
+                {"error": "At least one member is required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

@@ -5,9 +5,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { LinkIcon, Signal, Trash2, UserMinus2, UserPlus2, Users } from "lucide-react";
 import { DoubleCircleIcon } from "@plane/propel/icons";
-import { EIssueServiceType, TIssue } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TIssue } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // hooks
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "@plane/utils";
 // hooks

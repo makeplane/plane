@@ -1,14 +1,17 @@
 "use client";
 
-import React, { FC, useMemo, useState } from "react";
+import type { FC } from "react";
+import React, { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 // types
 import { Button } from "@plane/propel/button";
-import { IFormattedInstanceConfiguration, TInstanceEmailConfigurationKeys } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IFormattedInstanceConfiguration, TInstanceEmailConfigurationKeys } from "@plane/types";
 // ui
-import { CustomSelect, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomSelect } from "@plane/ui";
 // components
-import { ControllerInput, TControllerInputFormField } from "@/components/common/controller-input";
+import type { TControllerInputFormField } from "@/components/common/controller-input";
+import { ControllerInput } from "@/components/common/controller-input";
 // hooks
 import { useInstance } from "@/hooks/store";
 // local components

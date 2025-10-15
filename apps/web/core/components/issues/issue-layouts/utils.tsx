@@ -1,15 +1,14 @@
 "use client";
 
-import { CSSProperties, FC } from "react";
+import type { CSSProperties, FC } from "react";
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { clone, isNil, pull, uniq, concat } from "lodash-es";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
-import { ContrastIcon } from "lucide-react";
 // plane types
 import { EIconSize, ISSUE_PRIORITIES, STATE_GROUPS } from "@plane/constants";
-import { CycleGroupIcon, DiceIcon, PriorityIcon, StateGroupIcon, ISvgIcons } from "@plane/propel/icons";
-import {
-  EIssuesStoreType,
+import type { ISvgIcons } from "@plane/propel/icons";
+import { CycleGroupIcon, CycleIcon, ModuleIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
+import type {
   GroupByColumnTypes,
   IGroupByColumn,
   TCycleGroups,
@@ -23,6 +22,7 @@ import {
   IIssueDisplayFilterOptions,
   TGetColumns,
 } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 // plane ui
 import { Avatar } from "@plane/ui";
 import { renderFormattedDate, getFileURL } from "@plane/utils";
@@ -172,7 +172,7 @@ const getCycleColumns = (): IGroupByColumn[] | undefined => {
   cycles.push({
     id: "None",
     name: "None",
-    icon: <ContrastIcon className="h-3.5 w-3.5" />,
+    icon: <CycleIcon className="h-3.5 w-3.5" />,
     payload: {},
   });
   return cycles;
@@ -192,14 +192,14 @@ const getModuleColumns = (): IGroupByColumn[] | undefined => {
     modules.push({
       id: module.id,
       name: module.name,
-      icon: <DiceIcon className="h-3.5 w-3.5" />,
+      icon: <ModuleIcon className="h-3.5 w-3.5" />,
       payload: { module_ids: [module.id] },
     });
   });
   modules.push({
     id: "None",
     name: "None",
-    icon: <DiceIcon className="h-3.5 w-3.5" />,
+    icon: <ModuleIcon className="h-3.5 w-3.5" />,
     payload: {},
   });
   return modules;

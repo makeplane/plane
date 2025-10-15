@@ -13,12 +13,8 @@ import { Input, PasswordStrengthIndicator } from "@plane/ui";
 // components
 import { getPasswordStrength } from "@plane/utils";
 // helpers
-import {
-  EAuthenticationErrorCodes,
-  EErrorAlertType,
-  TAuthErrorInfo,
-  authErrorHandler,
-} from "@/helpers/authentication.helper";
+import type { EAuthenticationErrorCodes, TAuthErrorInfo } from "@/helpers/authentication.helper";
+import { EErrorAlertType, authErrorHandler } from "@/helpers/authentication.helper";
 // services
 import { AuthService } from "@/services/auth.service";
 // local imports
