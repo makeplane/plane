@@ -1,8 +1,6 @@
 // icons
 import { EUserPermissions } from "@plane/constants";
-import { SettingIcon } from "@/components/icons/attachment";
-// types
-import type { Props } from "@/components/icons/types";
+import { SettingIcon } from "@plane/propel/icons";
 // constants
 
 export const PROJECT_SETTINGS = {
@@ -60,7 +58,7 @@ export const PROJECT_SETTINGS = {
     href: `/automations`,
     access: [EUserPermissions.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/automations/`,
-    Icon: SettingIcon,
+    Icon: <SettingIcon />,
   },
 };
 
@@ -70,7 +68,7 @@ export const PROJECT_SETTINGS_LINKS: {
   href: string;
   access: EUserPermissions[];
   highlight: (pathname: string, baseUrl: string) => boolean;
-  Icon: React.FC<Props>;
+  Icon: React.ReactNode;
 }[] = [
   PROJECT_SETTINGS["general"],
   PROJECT_SETTINGS["members"],

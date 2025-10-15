@@ -3,18 +3,16 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Trash } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
+import { FileIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
-// ui
 import { CustomMenu } from "@plane/ui";
 import { convertBytesToSize, getFileExtension, getFileName, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
-//
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import { getFileIcon } from "@/components/icons";
-// helpers
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
@@ -40,7 +38,6 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
   const attachment = attachmentId ? getAttachmentById(attachmentId) : undefined;
   const fileName = getFileName(attachment?.attributes.name ?? "");
   const fileExtension = getFileExtension(attachment?.attributes.name ?? "");
-  const fileIcon = getFileIcon(fileExtension, 18);
   const fileURL = getFileURL(attachment?.asset_url ?? "");
   // hooks
   const { isMobile } = usePlatformOS();
@@ -58,7 +55,9 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
       >
         <div className="group flex items-center justify-between gap-3 h-11 hover:bg-custom-background-90 pl-9 pr-2">
           <div className="flex items-center gap-3 text-sm truncate">
-            <div className="flex items-center gap-3">{fileIcon}</div>
+            <div className="flex items-center gap-3">
+              <FileIcon extension={fileExtension} size={18} />
+            </div>
             <Tooltip tooltipContent={`${fileName}.${fileExtension}`} isMobile={isMobile}>
               <p className="text-custom-text-200 font-medium truncate">{`${fileName}.${fileExtension}`}</p>
             </Tooltip>

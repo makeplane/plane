@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { AlertCircle, X } from "lucide-react";
 // ui
+import { FileIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import {
   convertBytesToSize,
@@ -15,9 +16,6 @@ import {
   renderFormattedDate,
   truncateText,
 } from "@plane/utils";
-// icons
-//
-import { getFileIcon } from "@/components/icons";
 // components
 import { IssueAttachmentDeleteModal } from "@/components/issues/attachment/delete-attachment-modal";
 // helpers
@@ -50,7 +48,6 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = observer((pro
   const attachment = attachmentId ? getAttachmentById(attachmentId) : undefined;
   const fileName = getFileName(attachment?.attributes.name ?? "");
   const fileExtension = getFileExtension(attachment?.asset_url ?? "");
-  const fileIcon = getFileIcon(fileExtension, 28);
   const fileURL = getFileURL(attachment?.asset_url ?? "");
   // hooks
   const { isMobile } = usePlatformOS();
@@ -70,7 +67,9 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = observer((pro
       <div className="flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-custom-border-200 bg-custom-background-100 px-4 py-2 text-sm">
         <Link href={fileURL ?? ""} target="_blank" rel="noopener noreferrer">
           <div className="flex items-center gap-3">
-            <div className="h-7 w-7">{fileIcon}</div>
+            <div className="h-7 w-7">
+              <FileIcon extension={fileExtension} size={28} />
+            </div>
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
                 <Tooltip tooltipContent={fileName} isMobile={isMobile}>

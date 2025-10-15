@@ -1,13 +1,11 @@
 "use client";
 
 import { observer } from "mobx-react";
+// plane imports
+import { FileIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { CircularProgressIndicator } from "@plane/ui";
 import { getFileExtension, truncateText } from "@plane/utils";
-// ui
-// icons
-import { getFileIcon } from "@/components/icons";
-// helpers
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
@@ -23,14 +21,15 @@ export const IssueAttachmentsUploadDetails: React.FC<Props> = observer((props) =
   // derived values
   const fileName = uploadStatus.name;
   const fileExtension = getFileExtension(uploadStatus.name ?? "");
-  const fileIcon = getFileIcon(fileExtension, 28);
   // hooks
   const { isMobile } = usePlatformOS();
 
   return (
     <div className="flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-custom-border-200 bg-custom-background-90 px-4 py-2 text-sm pointer-events-none">
       <div className="flex-shrink-0 flex items-center gap-3">
-        <div className="h-7 w-7">{fileIcon}</div>
+        <div className="h-7 w-7">
+          <FileIcon extension={fileExtension} size={28} />
+        </div>
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
             <Tooltip tooltipContent={fileName} isMobile={isMobile}>
