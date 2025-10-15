@@ -28,11 +28,14 @@ export const EmptyStateCompact: React.FC<CompactEmptyStateProps> = ({
 
           {actions && actions.length > 0 && (
             <div className="flex flex-col gap-4 sm:flex-row">
-              {actions.map((action, index) => (
-                <Button key={index} onClick={action.onClick} disabled={action.disabled} variant={action.variant}>
-                  {action.label}
-                </Button>
-              ))}
+              {actions.map((action, index) => {
+                const { label, variant, ...rest } = action;
+                return (
+                  <Button key={index} variant={variant} {...rest}>
+                    {label}
+                  </Button>
+                );
+              })}
             </div>
           )}
         </div>

@@ -1,11 +1,10 @@
 import type { TButtonVariant } from "../button/helper";
 import type { CompactAssetType, DetailedAssetType } from "./assets/asset-types";
 
-export interface ActionButton {
+export interface ActionButton extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
   label: string;
-  onClick: () => void;
   variant?: TButtonVariant;
-  disabled?: boolean;
+  [key: `data-${string}`]: string | undefined;
 }
 
 interface BaseEmptyStateCommonProps {
