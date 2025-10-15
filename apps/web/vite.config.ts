@@ -83,7 +83,7 @@ export default defineConfig(({ isSsrBuild }) => {
       // for workspace packages. Preserve them so Vite can resolve their exports
       // correctly instead of attempting to follow to source paths.
       preserveSymlinks: true,
-      dedupe: ["react", "react-dom"],
+      dedupe: ["react", "react-dom", "@headlessui/react"],
     },
     // No SSR-specific overrides needed; alias resolves to ESM build
   };
