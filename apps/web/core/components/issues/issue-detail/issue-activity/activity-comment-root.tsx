@@ -2,7 +2,7 @@ import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { E_SORT_ORDER, TActivityFilters } from "@plane/constants";
-import { filterActivityOnSelectedFilters } from "@plane/constants";
+import { EActivityFilterType, filterActivityOnSelectedFilters } from "@plane/constants";
 import type { TCommentsOperations } from "@plane/types";
 // components
 import { CommentCard } from "@/components/comments/card/root";
@@ -53,6 +53,13 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
 
   const filteredActivityAndComments = filterActivityOnSelectedFilters(activityAndComments, selectedFilters);
 
+  const BASE_ACTIVITY_FILTER_TYPES = [
+    EActivityFilterType.ACTIVITY,
+    EActivityFilterType.STATE,
+    EActivityFilterType.ASSIGNEE,
+    EActivityFilterType.DEFAULT,
+  ];
+
   return (
     <div>
       {filteredActivityAndComments.map((activityComment, index) => {
@@ -69,7 +76,7 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
             disabled={disabled}
             projectId={projectId}
           />
-        ) : activityComment.activity_type === "ACTIVITY" ? (
+        ) : BASE_ACTIVITY_FILTER_TYPES.includes(activityComment.activity_type as EActivityFilterType) ? (
           <IssueActivityItem
             activityId={activityComment.id}
             ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
