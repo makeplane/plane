@@ -100,7 +100,6 @@ const ProjectCyclesPage = observer(() => {
               assetKey="cycle"
               title={t("project.cycles.title")}
               description={t("project.cycles.description")}
-              rootClassName="bg-custom-background-90"
               actions={[
                 {
                   label: t("project.cycles.cta_primary"),
