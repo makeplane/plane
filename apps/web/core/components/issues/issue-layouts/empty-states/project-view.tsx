@@ -1,15 +1,12 @@
 import { observer } from "mobx-react";
-import { PlusIcon } from "lucide-react";
 // components
 import { EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EIssuesStoreType } from "@plane/types";
-import { EmptyState } from "@/components/common/empty-state";
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
-// assets
-import emptyIssue from "@/public/empty-state/issue.svg";
 
 export const ProjectViewEmptyState: React.FC = observer(() => {
   // store hooks
@@ -23,24 +20,21 @@ export const ProjectViewEmptyState: React.FC = observer(() => {
   );
 
   return (
-    <div className="grid h-full w-full place-items-center">
-      <EmptyState
-        title="View work items will appear here"
-        description="Work items help you track individual pieces of work. With work items, keep track of what's going on, who is working on it, and what's done."
-        image={emptyIssue}
-        primaryButton={
-          isCreatingIssueAllowed
-            ? {
-                text: "New work item",
-                icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
-                onClick: () => {
-                  captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.PROJECT_VIEW });
-                  toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
-                },
-              }
-            : undefined
-        }
-      />
-    </div>
+    <EmptyStateDetailed
+      assetKey="work-item"
+      title="View work items will appear here"
+      description="Work items help you track individual pieces of work. With work items, keep track of what's going on, who is working on it, and what's done."
+      actions={[
+        {
+          label: "New work item",
+          onClick: () => {
+            captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.PROJECT_VIEW });
+            toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
+          },
+          disabled: !isCreatingIssueAllowed,
+          variant: "primary",
+        },
+      ]}
+    />
   );
 });
