@@ -13,10 +13,10 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "tsc && tsdown",
     "dev": "tsdown --watch",
     "check:lint": "eslint . --max-warnings 20",
-    "check:types": "tsc --noEmit",
+    "check:types": "tsc",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
     "fix:lint": "eslint . --fix",
     "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",

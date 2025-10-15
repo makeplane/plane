@@ -148,7 +148,7 @@ export const EditorBubbleMenu: FC<Props> = (props) => {
       if (menuRef.current?.contains(e.target as Node)) return;
 
       function handleMouseMove() {
-        if (!editor.state.selection.empty) {
+        if (!editor?.state.selection.empty) {
           setIsSelecting(true);
           document.removeEventListener("mousemove", handleMouseMove);
         }
@@ -170,6 +170,8 @@ export const EditorBubbleMenu: FC<Props> = (props) => {
       document.removeEventListener("mousedown", handleMouseDown);
     };
   }, [editor]);
+
+  if (!editor) return null;
 
   return (
     <BubbleMenu {...bubbleMenuProps}>

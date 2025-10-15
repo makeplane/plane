@@ -42,7 +42,7 @@ export const TrackFileRestorationPlugin = (editor: Editor, restoreHandler: TFile
           const nodeType = node.type.name as keyof NodeFileMapType;
           const isAValidNode = NODE_FILE_MAP[nodeType];
           // if the node doesn't match, then return as no point in checking
-          if (!isAValidNode) return;
+          if (!isAValidNode || !nodeType) return;
           if (pos < 0 || pos > newState.doc.content.size) return;
           if (oldFileSources[nodeType]?.has(node.attrs.src)) return;
           // update assets list storage value

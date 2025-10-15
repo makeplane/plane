@@ -6,7 +6,7 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 import { updateFloatingUIFloaterPosition } from "@/helpers/floating-ui";
 import { CommandListInstance, DROPDOWN_NAVIGATION_KEYS } from "@/helpers/tippy";
 // types
-import { TMentionHandler } from "@/types";
+import type { TMentionHandler } from "@/types";
 // local components
 import { MentionsListDropdown, MentionsListDropdownProps } from "./mentions-list-dropdown";
 

@@ -2,8 +2,11 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "./base.json",
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
     "module": "Preserve",
     "moduleResolution": "bundler",
     "jsx": "react-jsx"
-  }
+  },
+  "exclude": ["dist", "build", "node_modules"]
 }
