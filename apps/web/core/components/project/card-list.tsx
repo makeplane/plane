@@ -1,3 +1,4 @@
+import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissionsLevel, EUserPermissions, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
@@ -5,6 +6,7 @@ import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { ContentWrapper } from "@plane/ui";
 // components
+import { calculateTotalFilters } from "@plane/utils";
 import { ProjectsLoader } from "@/components/ui/loader/projects-loader";
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
@@ -33,7 +35,7 @@ export const ProjectCardList = observer((props: TProjectCardListProps) => {
     filteredProjectIds: storeFilteredProjectIds,
     getProjectById,
   } = useProject();
-  const { currentWorkspaceDisplayFilters } = useProjectFilter();
+  const { currentWorkspaceDisplayFilters, currentWorkspaceFilters } = useProjectFilter();
   const { allowPermissions } = useUserPermissions();
 
   // derived values
@@ -73,8 +75,18 @@ export const ProjectCardList = observer((props: TProjectCardListProps) => {
   if (filteredProjectIds.length === 0)
     return (
       <EmptyStateDetailed
-        title={t("common.search.title")}
-        description={t("common.search.description")}
+        title={
+          currentWorkspaceDisplayFilters?.archived_projects &&
+          calculateTotalFilters(currentWorkspaceFilters ?? {}) === 0
+            ? t("workspace.projects_archived.title")
+            : t("common.search.title")
+        }
+        description={
+          currentWorkspaceDisplayFilters?.archived_projects &&
+          calculateTotalFilters(currentWorkspaceFilters ?? {}) === 0
+            ? t("workspace.projects_archived.description")
+            : t("common.search.description")
+        }
         assetKey="project"
         assetClassName="size-40"
       />
