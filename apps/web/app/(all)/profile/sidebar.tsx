@@ -21,8 +21,8 @@ import {
 import { PROFILE_ACTION_LINKS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { TOAST_TYPE, setToast } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
 // components
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";

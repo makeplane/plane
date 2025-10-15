@@ -7,9 +7,9 @@ import { useParams } from "next/navigation";
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { isEmptyHtmlString } from "@plane/utils";
 // helpers
@@ -19,7 +19,8 @@ import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 // local imports
 import { ConfirmIssueDiscard } from "../confirm-issue-discard";
-import { IssueFormRoot, type IssueFormProps } from "./form";
+import { IssueFormRoot } from "./form";
+import type { IssueFormProps } from "./form";
 
 export interface DraftIssueProps extends IssueFormProps {
   changesMade: Partial<TIssue> | null;

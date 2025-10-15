@@ -1,4 +1,4 @@
-import { FieldError, FieldValues } from "react-hook-form";
+import type { FieldError, FieldValues } from "react-hook-form";
 
 /**
  * Get a nested error from a form's errors object

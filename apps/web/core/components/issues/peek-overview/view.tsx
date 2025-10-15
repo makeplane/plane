@@ -1,9 +1,11 @@
-import { FC, useRef, useState } from "react";
+import type { FC } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import { EIssueServiceType, TNameDescriptionLoader } from "@plane/types";
+import type { TNameDescriptionLoader } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -14,7 +16,8 @@ import type { TIssueOperations } from "../issue-detail";
 import { IssueActivity } from "../issue-detail/issue-activity";
 import { IssueDetailWidgets } from "../issue-detail-widgets";
 import { IssuePeekOverviewError } from "./error";
-import { IssuePeekOverviewHeader, TPeekModes } from "./header";
+import type { TPeekModes } from "./header";
+import { IssuePeekOverviewHeader } from "./header";
 import { PeekOverviewIssueDetails } from "./issue-detail";
 import { IssuePeekOverviewLoader } from "./loader";
 import { PeekOverviewProperties } from "./properties";

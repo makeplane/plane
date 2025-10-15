@@ -1,6 +1,6 @@
 // plane constants
 import { EUserPermissions } from "@plane/constants";
-import { TIssueParams } from "@plane/types";
+import type { TIssueParams } from "@plane/types";
 // root store
 import { rootStore } from "@/lib/store-context";
 

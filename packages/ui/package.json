@@ -53,7 +53,6 @@
     "react-color": "^2.19.3",
     "react-day-picker": "9.5.0",
     "react-popper": "^2.3.0",
-    "sonner": "^1.4.41",
     "tailwind-merge": "^2.0.0",
     "use-font-face-observer": "^1.2.2"
   },
@@ -73,7 +72,7 @@
     "@storybook/react-webpack5": "^8.1.1",
     "@storybook/test": "^8.1.1",
     "@types/lodash-es": "catalog:",
-    "@types/node": "^20.5.2",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-color": "^3.0.9",
     "@types/react-dom": "catalog:",

@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EViewAccess, TViewFilterProps } from "@plane/types";
+import type { EViewAccess, TViewFilterProps } from "@plane/types";
 import { Tag } from "@plane/ui";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
 // components

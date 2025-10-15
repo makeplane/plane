@@ -60,8 +60,8 @@ export const getCycleFilterConfig =
     createFilterConfig<P, string>({
       id: key,
       label: "Cycle",
+      ...params,
       icon: params.filterIcon,
-      isEnabled: params.isEnabled,
       supportedOperatorConfigsMap: new Map([
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
           getCycleMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)

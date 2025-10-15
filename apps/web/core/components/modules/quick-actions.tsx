@@ -15,7 +15,9 @@ import {
 import { useTranslation } from "@plane/i18n";
 // ui
 import { ArchiveIcon } from "@plane/propel/icons";
-import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TContextMenuItem } from "@plane/ui";
+import { ContextMenu, CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // components
 import { ArchiveModuleModal, CreateUpdateModuleModal, DeleteModuleModal } from "@/components/modules";
@@ -197,9 +199,7 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
           return (
             <CustomMenu.MenuItem
               key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 captureClick({
                   elementName: MODULE_TRACKER_ELEMENTS.QUICK_ACTIONS,
                 });

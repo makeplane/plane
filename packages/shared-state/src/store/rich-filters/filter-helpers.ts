@@ -6,6 +6,7 @@ import {
   IFilterAdapter,
   LOGICAL_OPERATOR,
   TSupportedOperators,
+  TFilterConditionNode,
   TFilterExpression,
   TFilterValue,
   TFilterProperty,
@@ -43,9 +44,16 @@ export interface IFilterInstanceHelper<P extends TFilterProperty, E extends TExt
     condition: TFilterConditionPayload<P, V>,
     isNegation: boolean
   ) => TFilterExpression<P> | null;
+  handleConditionPropertyUpdate: (
+    expression: TFilterExpression<P>,
+    conditionId: string,
+    property: P,
+    operator: TSupportedOperators,
+    isNegation: boolean
+  ) => TFilterExpression<P> | null;
   // group operations
   restructureExpressionForOperatorChange: (
-    expression: TFilterExpression<P> | null,
+    expression: TFilterExpression<P>,
     conditionId: string,
     newOperator: TSupportedOperators,
     isNegation: boolean,
@@ -162,6 +170,28 @@ export class FilterInstanceHelper<P extends TFilterProperty, E extends TExternal
     isNegation
   ) => this._addConditionByOperator(expression, groupOperator, this._getConditionPayloadToAdd(condition, isNegation));
 
+  /**
+   * Updates the property and operator of a condition in the filter expression.
+   * This method updates the property, operator, resets the value, and handles negation properly.
+   * @param expression - The filter expression to operate on
+   * @param conditionId - The ID of the condition being updated
+   * @param property - The new property for the condition
+   * @param operator - The new operator for the condition
+   * @param isNegation - Whether the condition should be negated
+   * @returns The updated expression
+   */
+  handleConditionPropertyUpdate: IFilterInstanceHelper<P, E>["handleConditionPropertyUpdate"] = (
+    expression,
+    conditionId,
+    property,
+    operator,
+    isNegation
+  ) => {
+    const payload = { property, operator, value: undefined };
+
+    return this._updateCondition(expression, conditionId, payload, isNegation);
+  };
+
   // ------------ group operations ------------
 
   /**
@@ -177,17 +207,12 @@ export class FilterInstanceHelper<P extends TFilterProperty, E extends TExternal
     expression,
     conditionId,
     newOperator,
-    _isNegation,
+    isNegation,
     shouldResetValue
   ) => {
-    if (!expression) return null;
-
     const payload = shouldResetValue ? { operator: newOperator, value: undefined } : { operator: newOperator };
 
-    // Update the condition with the new operator
-    updateNodeInExpression(expression, conditionId, payload);
-
-    return expression;
+    return this._updateCondition(expression, conditionId, payload, isNegation);
   };
 
   // ------------ private helpers ------------
@@ -227,4 +252,24 @@ export class FilterInstanceHelper<P extends TFilterProperty, E extends TExternal
         return expression;
     }
   }
+
+  /**
+   * Updates a condition with the given payload and handles negation wrapping/unwrapping.
+   * @param expression - The filter expression to operate on
+   * @param conditionId - The ID of the condition being updated
+   * @param payload - The payload to update the condition with
+   * @param isNegation - Whether the condition should be negated
+   * @returns The updated expression with proper negation handling
+   */
+  private _updateCondition = (
+    expression: TFilterExpression<P>,
+    conditionId: string,
+    payload: Partial<TFilterConditionNode<P, TFilterValue>>,
+    _isNegation: boolean
+  ): TFilterExpression<P> | null => {
+    // Update the condition with the payload
+    updateNodeInExpression(expression, conditionId, payload);
+
+    return expression;
+  };
 }

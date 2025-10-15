@@ -1,6 +1,6 @@
 import { action, observable, makeObservable } from "mobx";
 // root store
-import { CoreRootStore } from "@/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 
 type TTheme = "dark" | "light";
 export interface IThemeStore {

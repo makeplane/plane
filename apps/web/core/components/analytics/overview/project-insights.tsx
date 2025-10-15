@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane package imports
 import { useTranslation } from "@plane/i18n";
-import { TChartData } from "@plane/types";
+import type { TChartData } from "@plane/types";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
 // services

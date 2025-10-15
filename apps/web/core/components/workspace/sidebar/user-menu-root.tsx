@@ -1,6 +1,7 @@
 "use client";
 
-import { Fragment, Ref, useState, useEffect } from "react";
+import type { Ref } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -12,7 +13,8 @@ import { Menu, Transition } from "@headlessui/react";
 // plane imports
 import { GOD_MODE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Avatar, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Avatar } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";

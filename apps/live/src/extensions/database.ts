@@ -38,7 +38,7 @@ const fetchDocument = async ({ context, documentName: pageId }: FetchPayloadWith
     // return binary data
     return binaryData;
   } catch (error) {
-    logger.error("Error in fetching document", error);
+    logger.error("DATABASE_EXTENSION: Error in fetching document", error);
     throw normalizeToError(error, `Failed to fetch document: ${pageId}`);
   }
 };
@@ -57,7 +57,7 @@ const storeDocument = async ({ context, state: pageBinaryData, documentName: pag
     };
     await service.updateDescriptionBinary(pageId, payload);
   } catch (error) {
-    logger.error("Error in updating document:", error);
+    logger.error("DATABASE_EXTENSION: Error in updating document:", error);
     throw normalizeToError(error, `Failed to update document: ${pageId}`);
   }
 };

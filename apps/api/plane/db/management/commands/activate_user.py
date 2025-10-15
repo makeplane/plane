@@ -31,4 +31,4 @@ class Command(BaseCommand):
         user.is_active = True
         user.save()
 
-        self.stdout.write(self.style.SUCCESS("User activated succesfully"))
+        self.stdout.write(self.style.SUCCESS("User activated successfully"))

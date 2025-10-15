@@ -1,22 +1,17 @@
 import { useMemo } from "react";
-import { ColumnDef, Row, RowData, Table } from "@tanstack/react-table";
+import type { ColumnDef, Row, RowData, Table } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane package imports
 import { Download } from "lucide-react";
-import {
-  ANALYTICS_X_AXIS_VALUES,
-  ANALYTICS_Y_AXIS_VALUES,
-  CHART_COLOR_PALETTES,
-  ChartXAxisDateGrouping,
-  EChartModels,
-} from "@plane/constants";
+import type { ChartXAxisDateGrouping } from "@plane/constants";
+import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES, CHART_COLOR_PALETTES, EChartModels } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { BarChart } from "@plane/propel/charts/bar-chart";
-import { TBarItem, TChart, TChartDatum, ChartXAxisProperty, ChartYAxisMetric } from "@plane/types";
+import type { TBarItem, TChart, TChartDatum, ChartXAxisProperty, ChartYAxisMetric } from "@plane/types";
 // plane web components
 import { generateExtendedColors, parseChartData } from "@/components/chart/utils";
 // hooks

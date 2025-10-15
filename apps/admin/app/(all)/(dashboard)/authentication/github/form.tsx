@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { isEmpty } from "lodash-es";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -8,14 +9,17 @@ import { Monitor } from "lucide-react";
 // plane internal packages
 import { API_BASE_URL } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/propel/button";
-import { IFormattedInstanceConfiguration, TInstanceGithubAuthenticationConfigurationKeys } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IFormattedInstanceConfiguration, TInstanceGithubAuthenticationConfigurationKeys } from "@plane/types";
+
 import { cn } from "@plane/utils";
 // components
 import { CodeBlock } from "@/components/common/code-block";
 import { ConfirmDiscardModal } from "@/components/common/confirm-discard-modal";
-import { ControllerInput, TControllerInputFormField } from "@/components/common/controller-input";
-import { CopyField, TCopyField } from "@/components/common/copy-field";
+import type { TControllerInputFormField } from "@/components/common/controller-input";
+import { ControllerInput } from "@/components/common/controller-input";
+import type { TCopyField } from "@/components/common/copy-field";
+import { CopyField } from "@/components/common/copy-field";
 // hooks
 import { useInstance } from "@/hooks/store";
 

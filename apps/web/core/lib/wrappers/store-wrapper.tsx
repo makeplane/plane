@@ -1,8 +1,10 @@
-import { ReactNode, useEffect, FC } from "react";
+import type { ReactNode, FC } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
-import { useTranslation, TLanguage } from "@plane/i18n";
+import type { TLanguage } from "@plane/i18n";
+import { useTranslation } from "@plane/i18n";
 // helpers
 import { applyTheme, unsetCustomCssVariables } from "@plane/utils";
 // hooks

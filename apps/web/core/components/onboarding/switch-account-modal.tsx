@@ -7,7 +7,7 @@ import { ArrowRightLeft } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // hooks
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";

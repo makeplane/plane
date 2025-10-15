@@ -2,18 +2,16 @@ import { useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { v4 as uuidv4 } from "uuid";
 // plane imports
-import { TSaveViewOptions, TUpdateViewOptions } from "@plane/constants";
-import { IWorkItemFilterInstance } from "@plane/shared-state";
-import { IIssueFilters, TWorkItemFilterExpression } from "@plane/types";
+import type { TSaveViewOptions, TUpdateViewOptions } from "@plane/constants";
+import type { IWorkItemFilterInstance } from "@plane/shared-state";
+import type { IIssueFilters, TWorkItemFilterExpression } from "@plane/types";
 // store hooks
 import { useWorkItemFilters } from "@/hooks/store/work-item-filters/use-work-item-filters";
 // plane web imports
-import {
-  TWorkItemFiltersEntityProps,
-  useWorkItemFiltersConfig,
-} from "@/plane-web/hooks/work-item-filters/use-work-item-filters-config";
+import type { TWorkItemFiltersEntityProps } from "@/plane-web/hooks/work-item-filters/use-work-item-filters-config";
+import { useWorkItemFiltersConfig } from "@/plane-web/hooks/work-item-filters/use-work-item-filters-config";
 // local imports
-import { TSharedWorkItemFiltersHOCProps, TSharedWorkItemFiltersProps } from "./shared";
+import type { TSharedWorkItemFiltersHOCProps, TSharedWorkItemFiltersProps } from "./shared";
 
 type TAdditionalWorkItemFiltersProps = {
   saveViewOptions?: TSaveViewOptions<TWorkItemFilterExpression>;
@@ -94,6 +92,7 @@ const WorkItemFilterRoot = observer((props: TWorkItemFilterProps) => {
     [deleteFilter, entityType, workItemEntityID]
   );
 
+  workItemLayoutFilter.configManager.setAreConfigsReady(workItemFiltersConfig.areAllConfigsInitialized);
   workItemLayoutFilter.configManager.registerAll(workItemFiltersConfig.configs);
 
   return <>{typeof children === "function" ? children({ filter: workItemLayoutFilter }) : children}</>;

@@ -1,19 +1,19 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { ArchiveRestore } from "lucide-react";
 // plane imports
 import { NOTIFICATION_TRACKER_ELEMENTS, NOTIFICATION_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ArchiveIcon } from "@plane/propel/icons";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 // store
-import { INotification } from "@/store/notifications/notification";
+import type { INotification } from "@/store/notifications/notification";
 // local imports
 import { NotificationItemOptionButton } from "./button";
 

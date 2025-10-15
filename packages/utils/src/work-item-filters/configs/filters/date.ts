@@ -1,8 +1,12 @@
 // plane imports
 import { TFilterProperty } from "@plane/types";
 // local imports
-import { createFilterConfig, TCreateFilterConfig, TCreateDateFilterParams } from "../../../rich-filters";
-import { getSupportedDateOperators } from "./shared";
+import {
+  createFilterConfig,
+  TCreateFilterConfig,
+  TCreateDateFilterParams,
+  getSupportedDateOperators,
+} from "../../../rich-filters";
 
 // ------------ Date filters ------------
 
@@ -18,8 +22,8 @@ export const getStartDateFilterConfig =
     createFilterConfig<P, Date>({
       id: key,
       label: "Start date",
+      ...params,
       icon: params.filterIcon,
-      isEnabled: params.isEnabled,
       allowMultipleFilters: true,
       supportedOperatorConfigsMap: getSupportedDateOperators(params),
     });
@@ -36,8 +40,44 @@ export const getTargetDateFilterConfig =
     createFilterConfig<P, Date>({
       id: key,
       label: "Target date",
+      ...params,
       icon: params.filterIcon,
-      isEnabled: params.isEnabled,
+      allowMultipleFilters: true,
+      supportedOperatorConfigsMap: getSupportedDateOperators(params),
+    });
+
+/**
+ * Get the created at filter config
+ * @template K - The filter key
+ * @param key - The filter key to use
+ * @returns A function that takes parameters and returns the created at filter config
+ */
+export const getCreatedAtFilterConfig =
+  <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateDateFilterParams> =>
+  (params: TCreateDateFilterParams) =>
+    createFilterConfig<P, Date>({
+      id: key,
+      label: "Created at",
+      ...params,
+      icon: params.filterIcon,
+      allowMultipleFilters: true,
+      supportedOperatorConfigsMap: getSupportedDateOperators(params),
+    });
+
+/**
+ * Get the updated at filter config
+ * @template K - The filter key
+ * @param key - The filter key to use
+ * @returns A function that takes parameters and returns the updated at filter config
+ */
+export const getUpdatedAtFilterConfig =
+  <P extends TFilterProperty>(key: P): TCreateFilterConfig<P, TCreateDateFilterParams> =>
+  (params: TCreateDateFilterParams) =>
+    createFilterConfig<P, Date>({
+      id: key,
+      label: "Updated at",
+      ...params,
+      icon: params.filterIcon,
       allowMultipleFilters: true,
       supportedOperatorConfigsMap: getSupportedDateOperators(params),
     });

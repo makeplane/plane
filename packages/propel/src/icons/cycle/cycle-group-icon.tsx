@@ -1,13 +1,12 @@
 import * as React from "react";
 import { CircleDotDashed, Circle } from "lucide-react";
 
+import { CycleIcon } from "../cycle-icon";
 import { CircleDotFullIcon } from "./circle-dot-full-icon";
-import { ContrastIcon } from "./contrast-icon";
-
 import { CYCLE_GROUP_COLORS, ICycleGroupIcon } from "./helper";
 
 const iconComponents = {
-  current: ContrastIcon,
+  current: CycleIcon,
   upcoming: CircleDotDashed,
   completed: CircleDotFullIcon,
   draft: Circle,
@@ -20,7 +19,7 @@ export const CycleGroupIcon: React.FC<ICycleGroupIcon> = ({
   height = "12px",
   width = "12px",
 }) => {
-  const CycleIconComponent = iconComponents[cycleGroup] || ContrastIcon;
+  const CycleIconComponent = iconComponents[cycleGroup] || CycleIcon;
 
   return (
     <CycleIconComponent

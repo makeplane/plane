@@ -1,9 +1,9 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 import { INBOX_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TInboxIssueStatus } from "@plane/types";
+import type { TInboxIssueStatus } from "@plane/types";
 // constants
 import { Tag } from "@plane/ui";
 // hooks

@@ -1,4 +1,4 @@
-import { LucideIcon } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 // plane ui
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";

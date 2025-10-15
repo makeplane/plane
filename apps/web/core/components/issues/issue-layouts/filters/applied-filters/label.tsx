@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 
 // icons
 import { X } from "lucide-react";
-import { IIssueLabel } from "@plane/types";
+import type { IIssueLabel } from "@plane/types";
 // types
 
 type Props = {

@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { Loader, setToast, TOAST_TYPE, ToggleSwitch } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Loader, ToggleSwitch } from "@plane/ui";
 // hooks
 import { useInstance } from "@/hooks/store";
 // components

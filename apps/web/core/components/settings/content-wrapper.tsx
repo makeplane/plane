@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { cn } from "@plane/utils";
 

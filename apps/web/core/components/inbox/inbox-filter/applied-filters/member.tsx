@@ -1,10 +1,10 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { X } from "lucide-react";
 // plane types
-import { TInboxIssueFilterMemberKeys } from "@plane/types";
+import type { TInboxIssueFilterMemberKeys } from "@plane/types";
 // plane ui
 import { Avatar, Tag } from "@plane/ui";
 // helpers

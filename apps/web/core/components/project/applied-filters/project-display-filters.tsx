@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 // types
 import { PROJECT_DISPLAY_FILTER_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TProjectAppliedDisplayFilterKeys } from "@plane/types";
+import type { TProjectAppliedDisplayFilterKeys } from "@plane/types";
 // constants
 
 type Props = {

@@ -1,9 +1,10 @@
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { LayoutPanelTop } from "lucide-react";
 // plane imports
 import { ETabIndices } from "@plane/constants";
-import { ISearchIssueResponse, TIssue } from "@plane/types";
+import type { ISearchIssueResponse, TIssue } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import { renderFormattedPayloadDate, getDate, getTabIndex } from "@plane/utils";
 // components

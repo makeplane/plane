@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 // plane package imports
 import { Expand, Shrink, X } from "lucide-react";
-import { ICycle, IModule } from "@plane/types";
+import type { ICycle, IModule } from "@plane/types";
 // icons
 
 type Props = {

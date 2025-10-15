@@ -7,8 +7,9 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EIssuesStoreType, EUserProjectRoles, ISearchIssueResponse } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { ISearchIssueResponse } from "@plane/types";
+import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";

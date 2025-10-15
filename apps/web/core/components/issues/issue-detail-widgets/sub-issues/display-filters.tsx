@@ -1,9 +1,10 @@
-import { FC, useMemo } from "react";
+import type { FC } from "react";
+import { useMemo } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { SlidersHorizontal } from "lucide-react";
 // plane imports
-import { IIssueDisplayFilterOptions, ILayoutDisplayFiltersOptions, IIssueDisplayProperties } from "@plane/types";
+import type { IIssueDisplayFilterOptions, ILayoutDisplayFiltersOptions, IIssueDisplayProperties } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import {

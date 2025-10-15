@@ -4,8 +4,7 @@ import { computedFn } from "mobx-utils";
 // plane constants
 import { ALL_ISSUES, ISSUE_PRIORITIES } from "@plane/constants";
 // types
-import {
-  EIssueServiceType,
+import type {
   TIssue,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
@@ -20,8 +19,8 @@ import {
   TPaginationData,
   TBulkOperationsPayload,
   IBlockUpdateDependencyData,
-  EIssueLayoutTypes,
 } from "@plane/types";
+import { EIssueServiceType, EIssueLayoutTypes } from "@plane/types";
 // helpers
 import { convertToISODateString } from "@plane/utils";
 // local-db
@@ -33,7 +32,7 @@ import { CycleService } from "@/services/cycle.service";
 import { IssueArchiveService, IssueService } from "@/services/issue";
 import { ModuleService } from "@/services/module.service";
 //
-import { IIssueRootStore } from "../root.store";
+import type { IIssueRootStore } from "../root.store";
 import {
   getDifference,
   getGroupIssueKeyActions,
@@ -42,7 +41,7 @@ import {
   getSortOrderToFilterEmptyValues,
   getSubGroupIssueKeyActions,
 } from "./base-issues-utils";
-import { IBaseIssueFilterStore } from "./issue-filter-helper.store";
+import type { IBaseIssueFilterStore } from "./issue-filter-helper.store";
 
 export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date";
 
@@ -1673,7 +1672,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   };
 
   /**
-   * This Method is used to get data of the issue based on the ids of the data for states, labels adn assignees
+   * This Method is used to get data of the issue based on the ids of the data for states, labels and assignees
    * @param dataType what type of data is being sent
    * @param dataIds id/ids of the data that is to be populated
    * @param order ascending or descending for arrays of data

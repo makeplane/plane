@@ -6,7 +6,7 @@ import { Checkbox } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 
 type Props = {
   className?: string;

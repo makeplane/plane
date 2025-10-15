@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 // icons
 import { CalendarCheck2, CalendarClock } from "lucide-react";
 // types
-import { TIssuePriorities, TWorkspaceDraftIssue } from "@plane/types";
+import type { TIssuePriorities, TWorkspaceDraftIssue } from "@plane/types";
 import { getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
 import { CycleDropdown } from "@/components/dropdowns/cycle";

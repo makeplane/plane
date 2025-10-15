@@ -4,7 +4,7 @@ import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check, ChevronDown } from "luci
 import { MODULE_ORDER_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
-import { TModuleOrderByOptions } from "@plane/types";
+import type { TModuleOrderByOptions } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
 // helpers

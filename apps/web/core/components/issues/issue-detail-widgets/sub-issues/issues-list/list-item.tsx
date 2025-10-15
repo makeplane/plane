@@ -5,7 +5,8 @@ import { ChevronRight, X, Pencil, Trash, Link as LinkIcon, Loader } from "lucide
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
-import { EIssueServiceType, EIssuesStoreType, TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
+import type { TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 import { ControlLink, CustomMenu } from "@plane/ui";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // helpers
@@ -185,9 +186,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
               <CustomMenu placement="bottom-end" ellipsis>
                 {canEdit && (
                   <CustomMenu.MenuItem
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
+                    onClick={() => {
                       handleIssueCrudState("update", parentIssueId, { ...issue });
                       toggleCreateIssueModal(true);
                     }}
@@ -200,9 +199,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
                 )}
 
                 <CustomMenu.MenuItem
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
+                  onClick={() => {
                     subIssueOperations.copyLink(workItemLink);
                   }}
                 >
@@ -214,9 +211,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
 
                 {canEdit && (
                   <CustomMenu.MenuItem
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
+                    onClick={() => {
                       if (issue.project_id)
                         subIssueOperations.removeSubIssue(workspaceSlug, issue.project_id, parentIssueId, issue.id);
                     }}
@@ -232,9 +227,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
 
                 {canEdit && (
                   <CustomMenu.MenuItem
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
+                    onClick={() => {
                       handleIssueCrudState("delete", parentIssueId, issue);
                       toggleDeleteIssueModal(issue.id);
                     }}

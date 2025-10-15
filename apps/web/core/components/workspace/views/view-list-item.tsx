@@ -51,9 +51,7 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
                 <div className="flex items-center gap-4">
                   <CustomMenu ellipsis>
                     <CustomMenu.MenuItem
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
+                      onClick={() => {
                         captureClick({
                           elementName: GLOBAL_VIEW_TRACKER_ELEMENTS.LIST_ITEM,
                         });
@@ -66,9 +64,7 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
                       </span>
                     </CustomMenu.MenuItem>
                     <CustomMenu.MenuItem
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
+                      onClick={() => {
                         captureClick({
                           elementName: GLOBAL_VIEW_TRACKER_ELEMENTS.LIST_ITEM,
                         });

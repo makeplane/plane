@@ -4,11 +4,8 @@ import type {
   DropTargetRecord,
   DragLocationHistory,
 } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
-import {
-  draggable,
-  dropTargetForElements,
-  ElementDragPayload,
-} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import type { ElementDragPayload } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
@@ -16,7 +13,7 @@ import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { createRoot } from "react-dom/client";
 // plane types
-import { InstructionType } from "@plane/types";
+import type { InstructionType } from "@plane/types";
 // plane ui
 import { DropIndicator } from "@plane/ui";
 // components

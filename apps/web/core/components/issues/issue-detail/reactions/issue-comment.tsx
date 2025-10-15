@@ -1,11 +1,12 @@
 "use client";
 
-import { FC, useMemo } from "react";
+import type { FC } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { IUser } from "@plane/types";
+import type { IUser } from "@plane/types";
 // components
-import { TOAST_TYPE, setToast } from "@plane/ui";
 import { cn, formatTextList } from "@plane/utils";
 // helper
 import { renderEmoji } from "@/helpers/emoji.helper";

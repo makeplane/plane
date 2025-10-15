@@ -1,11 +1,12 @@
 import { action, makeObservable, runInAction } from "mobx";
 // base class
-import { TLoader, IssuePaginationOptions, TIssuesResponse, ViewFlags, TBulkOperationsPayload } from "@plane/types";
+import type { TLoader, IssuePaginationOptions, TIssuesResponse, ViewFlags, TBulkOperationsPayload } from "@plane/types";
 // services
 // types
-import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
-import { IIssueRootStore } from "../root.store";
-import { IArchivedIssuesFilter } from "./filter.store";
+import type { IBaseIssuesStore } from "../helpers/base-issues.store";
+import { BaseIssuesStore } from "../helpers/base-issues.store";
+import type { IIssueRootStore } from "../root.store";
+import type { IArchivedIssuesFilter } from "./filter.store";
 
 export interface IArchivedIssues extends IBaseIssuesStore {
   // observable

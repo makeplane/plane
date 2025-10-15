@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, Fragment } from "react";
+import type { FC } from "react";
+import { Fragment } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
@@ -10,9 +11,10 @@ import { Dialog, Transition } from "@headlessui/react";
 // types
 import { MEMBER_TRACKER_EVENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
-import { IProject } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IProject } from "@plane/types";
 // ui
-import { Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { Input } from "@plane/ui";
 // constants
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";

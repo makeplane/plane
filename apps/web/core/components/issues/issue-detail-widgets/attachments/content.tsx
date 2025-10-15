@@ -1,7 +1,9 @@
 "use client";
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
-import { EIssueServiceType, TIssueServiceType } from "@plane/types";
+import type { TIssueServiceType } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // local imports
 import { IssueAttachmentItemList } from "../../attachment/attachment-item-list";
 import { useAttachmentOperations } from "./helper";

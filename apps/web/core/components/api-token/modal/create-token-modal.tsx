@@ -4,9 +4,10 @@ import React, { useState } from "react";
 import { mutate } from "swr";
 // plane imports
 import { PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { APITokenService } from "@plane/services";
-import { IApiToken } from "@plane/types";
-import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import type { IApiToken } from "@plane/types";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { renderFormattedDate, csvDownload } from "@plane/utils";
 // constants
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";

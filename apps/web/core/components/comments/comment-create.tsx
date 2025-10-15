@@ -1,4 +1,5 @@
-import { FC, useRef, useState } from "react";
+import type { FC } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm, Controller } from "react-hook-form";
 // plane imports

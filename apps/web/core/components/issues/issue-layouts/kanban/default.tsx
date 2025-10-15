@@ -1,8 +1,8 @@
-import { MutableRefObject } from "react";
+import type { MutableRefObject } from "react";
 import { observer } from "mobx-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
-import {
+import type {
   GroupByColumnTypes,
   IGroupByColumn,
   TGroupedIssues,
@@ -25,8 +25,9 @@ import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // types
 // parent components
 import { useWorkFlowFDragNDrop } from "@/plane-web/components/workflow";
-import { TRenderQuickActions } from "../list/list-view-types";
-import { getGroupByColumns, isWorkspaceLevel, GroupDropLocation, getApproximateCardHeight } from "../utils";
+import type { TRenderQuickActions } from "../list/list-view-types";
+import type { GroupDropLocation } from "../utils";
+import { getGroupByColumns, isWorkspaceLevel, getApproximateCardHeight } from "../utils";
 // components
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { KanbanGroup } from "./kanban-group";

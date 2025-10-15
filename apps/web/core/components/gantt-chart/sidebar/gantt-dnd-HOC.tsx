@@ -6,7 +6,8 @@ import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-d
 import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { observer } from "mobx-react";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { DropIndicator, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { DropIndicator } from "@plane/ui";
 import { HIGHLIGHT_WITH_LINE, highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
 
 type Props = {
