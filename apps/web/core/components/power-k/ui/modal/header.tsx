@@ -6,21 +6,19 @@ import { X, Search } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // local imports
-import type { TPowerKContextType, TPowerKPageType } from "../../core/types";
+import type { TPowerKContext, TPowerKPageType } from "../../core/types";
 import { POWER_K_MODAL_PAGE_DETAILS } from "./constants";
 import { PowerKModalContextIndicator } from "./context-indicator";
 
 type Props = {
-  searchTerm: string;
-  onSearchChange: (value: string) => void;
-  activeContext: TPowerKContextType | null;
-  showContextBasedActions: boolean;
-  handleClearContext: () => void;
   activePage: TPowerKPageType | null;
+  context: TPowerKContext;
+  onSearchChange: (value: string) => void;
+  searchTerm: string;
 };
 
 export const PowerKModalHeader: React.FC<Props> = (props) => {
-  const { activeContext, searchTerm, onSearchChange, showContextBasedActions, handleClearContext, activePage } = props;
+  const { context, searchTerm, onSearchChange, activePage } = props;
   // translation
   const { t } = useTranslation();
   // derived values
@@ -31,8 +29,11 @@ export const PowerKModalHeader: React.FC<Props> = (props) => {
   return (
     <div className="border-b border-custom-border-200">
       {/* Context Indicator */}
-      {showContextBasedActions && (
-        <PowerKModalContextIndicator activeContext={activeContext} handleClearContext={handleClearContext} />
+      {context.shouldShowContextBasedActions && (
+        <PowerKModalContextIndicator
+          activeContext={context.activeContext}
+          handleClearContext={() => context.setShouldShowContextBasedActions(false)}
+        />
       )}
 
       {/* Search Input */}

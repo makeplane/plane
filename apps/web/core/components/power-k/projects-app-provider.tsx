@@ -15,13 +15,13 @@ import { WorkspaceLevelModals } from "@/plane-web/components/command-palette/mod
 import { usePowerKCommands } from "./config/commands";
 import type { TPowerKCommandConfig, TPowerKContext } from "./core/types";
 import { GlobalShortcutsProvider } from "./global-shortcuts";
-import { CommandPaletteModal } from "./ui/modal/root";
+import { ProjectsAppPowerKCommandsList } from "./ui/modal/commands-list";
+import { ProjectsAppPowerKModalWrapper } from "./ui/modal/wrapper.tsx";
 
 /**
- * MobX-aware wrapper for the Command Palette modal
- * Connects the modal to the MobX store
+ * Projects App PowerK provider
  */
-export const CommandPaletteProvider = observer(() => {
+export const ProjectsAppPowerKProvider = observer(() => {
   // router
   const router = useAppRouter();
   const params = useParams();
@@ -68,7 +68,12 @@ export const CommandPaletteProvider = observer(() => {
         <ProjectLevelModals workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
       )}
       <IssueLevelModals workItemIdentifier={workItemIdentifier?.toString()} />
-      <CommandPaletteModal context={context} isOpen={isPowerKModalOpen} onClose={() => togglePowerKModal(false)} />
+      <ProjectsAppPowerKModalWrapper
+        commandsListComponent={ProjectsAppPowerKCommandsList}
+        context={context}
+        isOpen={isPowerKModalOpen}
+        onClose={() => togglePowerKModal(false)}
+      />
     </>
   );
 });

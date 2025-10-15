@@ -8,19 +8,20 @@ import { Dialog, Transition } from "@headlessui/react";
 import { usePowerK } from "@/hooks/store/use-power-k";
 // local imports
 import type { TPowerKCommandConfig, TPowerKContext } from "../../core/types";
-import { PowerKModalPagesList } from "../pages";
-import { PowerKContextBasedPagesList } from "../pages/context-based";
+import type { TPowerKCommandsListProps } from "./commands-list";
 import { PowerKModalFooter } from "./footer";
 import { PowerKModalHeader } from "./header";
-import { PowerKModalSearchMenu } from "./search-menu";
 
 type Props = {
+  commandsListComponent: React.FC<TPowerKCommandsListProps>;
   context: TPowerKContext;
+  hideFooter?: boolean;
   isOpen: boolean;
   onClose: () => void;
 };
 
-export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props) => {
+export const ProjectsAppPowerKModalWrapper = observer((props: Props) => {
+  const { commandsListComponent: CommandsListComponent, context, hideFooter = false, isOpen, onClose } = props;
   // states
   const [searchTerm, setSearchTerm] = useState("");
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
@@ -150,39 +151,30 @@ export const CommandPaletteModal = observer(({ context, isOpen, onClose }: Props
                   className="w-full"
                 >
                   <PowerKModalHeader
-                    searchTerm={searchTerm}
-                    onSearchChange={setSearchTerm}
-                    activeContext={context.activeContext}
-                    showContextBasedActions={context.shouldShowContextBasedActions}
-                    handleClearContext={() => context.setShouldShowContextBasedActions(false)}
                     activePage={activePage}
+                    context={context}
+                    onSearchChange={setSearchTerm}
+                    searchTerm={searchTerm}
                   />
                   <Command.List className="vertical-scrollbar scrollbar-sm max-h-96 overflow-scroll outline-none">
-                    <PowerKModalSearchMenu
+                    <CommandsListComponent
                       activePage={activePage}
                       context={context}
-                      isWorkspaceLevel={!context.params.projectId || isWorkspaceLevel}
+                      handleCommandSelect={handleCommandSelect}
+                      handlePageDataSelection={handlePageDataSelection}
+                      isWorkspaceLevel={isWorkspaceLevel}
                       searchTerm={searchTerm}
-                      updateSearchTerm={setSearchTerm}
-                    />
-                    <PowerKContextBasedPagesList
-                      activeContext={context.activeContext}
-                      activePage={activePage}
-                      handleSelection={handlePageDataSelection}
-                    />
-                    <PowerKModalPagesList
-                      activePage={activePage}
-                      context={context}
-                      onPageDataSelect={handlePageDataSelection}
-                      onCommandSelect={handleCommandSelect}
+                      setSearchTerm={setSearchTerm}
                     />
                   </Command.List>
                   {/* Footer hints */}
-                  <PowerKModalFooter
-                    isWorkspaceLevel={isWorkspaceLevel}
-                    projectId={context.params.projectId?.toString()}
-                    onWorkspaceLevelChange={setIsWorkspaceLevel}
-                  />
+                  {!hideFooter && (
+                    <PowerKModalFooter
+                      isWorkspaceLevel={isWorkspaceLevel}
+                      projectId={context.params.projectId?.toString()}
+                      onWorkspaceLevelChange={setIsWorkspaceLevel}
+                    />
+                  )}
                 </Command>
               </Dialog.Panel>
             </Transition.Child>

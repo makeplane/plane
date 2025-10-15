@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 // wrappers
-import { CommandPaletteProvider } from "@/components/power-k/modal-wrapper";
+import { ProjectsAppPowerKProvider } from "@/components/power-k/projects-app-provider";
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // layout
 import { ProfileLayoutSidebar } from "./sidebar";
@@ -16,7 +16,7 @@ export default function ProfileSettingsLayout(props: Props) {
 
   return (
     <>
-      <CommandPaletteProvider />
+      <ProjectsAppPowerKProvider />
       <AuthenticationWrapper>
         <div className="relative flex h-full w-full overflow-hidden rounded-lg border border-custom-border-200">
           <ProfileLayoutSidebar />
