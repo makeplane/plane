@@ -8,6 +8,7 @@ export * from "./link";
 export * from "./members";
 export * from "./note";
 export * from "./priority";
+export * from "./project";
 export * from "./settings";
 export * from "./state";
 export * from "./template";
