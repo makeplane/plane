@@ -74,12 +74,11 @@ export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
       handleSubmit={handleDeletion}
       isSubmitting={isDeleteLoading}
       isOpen={isOpen}
-      title="Delete view"
+      title="Are you sure you want to delete this view?"
       content={
         <>
-          Are you sure you want to delete view-{" "}
-          <span className="break-words font-medium text-custom-text-100">{data?.name}</span>? All of the data related to
-          the view will be permanently removed. This action cannot be undone.
+          If you confirm, all the sort, filter, and display options + the layout you have chosen for this view will be
+          permanently deleted without any way to restore them.
         </>
       }
     />
