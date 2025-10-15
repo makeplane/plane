@@ -18,7 +18,7 @@ export const EmptyStateDetailed: React.FC<DetailedEmptyStateProps> = ({
   const resolvedAsset = assetKey ? getDetailedAsset(assetKey, assetClassName) : asset;
 
   return (
-    <div className={cn("flex size-full items-center justify-center bg-custom-background-90", rootClassName)}>
+    <div className={cn("flex size-full items-center justify-center bg-custom-background-100", rootClassName)}>
       <div className={cn("flex max-w-[25rem] size-full flex-col justify-center gap-6 text-left", className)}>
         {resolvedAsset && <div className="flex max-w-40 items-center">{resolvedAsset}</div>}
 

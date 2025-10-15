@@ -17,7 +17,7 @@ export const EmptyStateCompact: React.FC<CompactEmptyStateProps> = ({
   const resolvedAsset = assetKey ? getCompactAsset(assetKey, assetClassName) : asset;
 
   return (
-    <div className={cn("flex size-full items-center justify-center bg-custom-background-90", rootClassName)}>
+    <div className={cn("flex size-full items-center justify-center bg-custom-background-100", rootClassName)}>
       <div
         className={cn("flex max-w-[25rem] size-full flex-col items-center justify-center gap-3 text-center", className)}
       >
