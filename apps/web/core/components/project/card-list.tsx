@@ -3,10 +3,9 @@ import Image from "next/image";
 // plane imports
 import { EUserPermissionsLevel, EUserPermissions, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { ContentWrapper } from "@plane/ui";
 // components
-import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { ProjectsLoader } from "@/components/ui/loader/projects-loader";
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
@@ -40,7 +39,6 @@ export const ProjectCardList = observer((props: TProjectCardListProps) => {
   const { allowPermissions } = useUserPermissions();
 
   // helper hooks
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/projects" });
   const resolvedFiltersImage = useResolvedAssetPath({
     basePath: "/empty-state/project/all-filters",
     extension: "svg",
@@ -65,22 +63,22 @@ export const ProjectCardList = observer((props: TProjectCardListProps) => {
 
   if (workspaceProjectIds?.length === 0 && !currentWorkspaceDisplayFilters?.archived_projects)
     return (
-      <DetailedEmptyState
+      <EmptyStateDetailed
         title={t("workspace_projects.empty_state.general.title")}
         description={t("workspace_projects.empty_state.general.description")}
-        assetPath={resolvedPath}
-        customPrimaryButton={
-          <ComicBoxButton
-            label={t("workspace_projects.empty_state.general.primary_button.text")}
-            title={t("workspace_projects.empty_state.general.primary_button.comic.title")}
-            description={t("workspace_projects.empty_state.general.primary_button.comic.description")}
-            onClick={() => {
+        assetKey="project"
+        assetClassName="size-40"
+        actions={[
+          {
+            label: t("workspace_projects.empty_state.general.primary_button.text"),
+            onClick: () => {
               toggleCreateProjectModal(true);
               captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON });
-            }}
-            disabled={!canPerformEmptyStateActions}
-          />
-        }
+            },
+            disabled: !canPerformEmptyStateActions,
+            variant: "primary",
+          },
+        ]}
       />
     );
 
