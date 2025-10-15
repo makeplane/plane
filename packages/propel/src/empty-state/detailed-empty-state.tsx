@@ -19,7 +19,7 @@ export const EmptyStateDetailed: React.FC<DetailedEmptyStateProps> = ({
 
   return (
     <div className={cn("flex size-full items-center justify-center", rootClassName)}>
-      <div className={cn("flex max-w-[25rem] flex-col justify-center gap-6 text-left", className)}>
+      <div className={cn("flex max-w-[25rem] size-full flex-col justify-center gap-6 text-left", className)}>
         {resolvedAsset && <div className="flex max-w-40 items-center">{resolvedAsset}</div>}
 
         <div className="flex flex-col gap-4">

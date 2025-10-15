@@ -18,7 +18,9 @@ export const EmptyStateCompact: React.FC<CompactEmptyStateProps> = ({
 
   return (
     <div className={cn("flex size-full items-center justify-center", rootClassName)}>
-      <div className={cn("flex max-w-[25rem] flex-col items-center justify-center gap-3 text-center", className)}>
+      <div
+        className={cn("flex max-w-[25rem] size-full flex-col items-center justify-center gap-3 text-center", className)}
+      >
         {resolvedAsset && <div className="flex max-w-40 items-center">{resolvedAsset}</div>}
 
         <div className="flex flex-col gap-4">
