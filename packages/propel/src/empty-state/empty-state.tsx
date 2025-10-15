@@ -13,7 +13,7 @@ type TEmptyStateType = "detailed" | "simple";
 
 export interface EmptyStateProps {
   asset?: React.ReactNode;
-  title: string;
+  title?: string;
   description?: string;
   actions?: ActionButton[];
   className?: string;
@@ -21,15 +21,17 @@ export interface EmptyStateProps {
 }
 
 const EmptyStateContent: React.FC<{
-  title: string;
+  title?: string;
   description?: string;
   actions?: ActionButton[];
 }> = ({ title, description, actions }) => (
   <div className="flex flex-col gap-4">
-    <div className="flex flex-col gap-2">
-      <h3 className="text-lg leading-7 font-semibold text-custom-text-100">{title}</h3>
-      {description && <p className="text-sm leading-5 text-custom-text-300">{description}</p>}
-    </div>
+    {(title || description) && (
+      <div className="flex flex-col gap-2">
+        {title && <h3 className="text-lg leading-7 font-semibold text-custom-text-100">{title}</h3>}
+        {description && <p className="text-sm leading-5 text-custom-text-300">{description}</p>}
+      </div>
+    )}
 
     {actions && actions.length > 0 && (
       <div className="flex flex-col sm:flex-row gap-4">
