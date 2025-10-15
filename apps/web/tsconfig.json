@@ -1,17 +1,19 @@
 {
-  "extends": "@plane/typescript-config/nextjs.json",
+  "extends": "@plane/typescript-config/react-router.json",
   "compilerOptions": {
     "baseUrl": ".",
+    "rootDirs": [".", "./.react-router/types"],
+    "types": ["node", "vite/client"],
     "paths": {
+      "@/app/*": ["app/*"],
       "@/*": ["core/*"],
       "@/helpers/*": ["helpers/*"],
       "@/public/*": ["public/*"],
       "@/styles/*": ["styles/*"],
       "@/plane-web/*": ["ce/*"]
     },
-    "plugins": [{ "name": "next" }],
     "strictNullChecks": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["**/*", "**/.server/**/*", "**/.client/**/*", ".react-router/types/**/*"],
   "exclude": ["node_modules"]
 }

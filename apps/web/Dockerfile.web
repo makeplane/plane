@@ -71,50 +71,16 @@ ENV TURBO_TELEMETRY_DISABLED=1
 RUN pnpm turbo run build --filter=web
 
 # *****************************************************************************
-# STAGE 3: Copy the project and start it
+# STAGE 3: Serve with nginx
 # *****************************************************************************
-FROM base AS runner
-WORKDIR /app
+FROM nginx:1.27-alpine AS production
 
-# Don't run production as root
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-USER nextjs
-
-
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=installer /app/apps/web/.next/standalone ./
-COPY --from=installer /app/apps/web/.next/static ./apps/web/.next/static
-COPY --from=installer /app/apps/web/public ./apps/web/public
-
-ARG NEXT_PUBLIC_API_BASE_URL=""
-ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
-
-ARG NEXT_PUBLIC_ADMIN_BASE_URL=""
-ENV NEXT_PUBLIC_ADMIN_BASE_URL=$NEXT_PUBLIC_ADMIN_BASE_URL
-
-ARG NEXT_PUBLIC_ADMIN_BASE_PATH="/god-mode"
-ENV NEXT_PUBLIC_ADMIN_BASE_PATH=$NEXT_PUBLIC_ADMIN_BASE_PATH
-
-ARG NEXT_PUBLIC_LIVE_BASE_URL=""
-ENV NEXT_PUBLIC_LIVE_BASE_URL=$NEXT_PUBLIC_LIVE_BASE_URL
-
-ARG NEXT_PUBLIC_LIVE_BASE_PATH="/live"
-ENV NEXT_PUBLIC_LIVE_BASE_PATH=$NEXT_PUBLIC_LIVE_BASE_PATH
-
-ARG NEXT_PUBLIC_SPACE_BASE_URL=""
-ENV NEXT_PUBLIC_SPACE_BASE_URL=$NEXT_PUBLIC_SPACE_BASE_URL
-
-ARG NEXT_PUBLIC_SPACE_BASE_PATH="/spaces"
-ENV NEXT_PUBLIC_SPACE_BASE_PATH=$NEXT_PUBLIC_SPACE_BASE_PATH
-
-ARG NEXT_PUBLIC_WEB_BASE_URL=""
-ENV NEXT_PUBLIC_WEB_BASE_URL=$NEXT_PUBLIC_WEB_BASE_URL
-
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV TURBO_TELEMETRY_DISABLED=1
+COPY apps/web/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY --from=installer /app/apps/web/build/client /usr/share/nginx/html
 
 EXPOSE 3000
 
-CMD ["node", "apps/web/server.js"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -fsS http://127.0.0.1:3000/ >/dev/null || exit 1
+
+CMD ["nginx", "-g", "daemon off;"]

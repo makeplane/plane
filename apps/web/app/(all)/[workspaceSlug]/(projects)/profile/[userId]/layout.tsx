@@ -2,6 +2,7 @@
 
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
+import { Outlet } from "react-router";
 import useSWR from "swr";
 // components
 import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -22,12 +23,7 @@ import { ProfileNavbar } from "./navbar";
 
 const userService = new UserService();
 
-type Props = {
-  children: React.ReactNode;
-};
-
-const UseProfileLayout: React.FC<Props> = observer((props) => {
-  const { children } = props;
+const UseProfileLayout: React.FC = observer(() => {
   // router
   const { workspaceSlug, userId } = useParams();
   const pathname = usePathname();
@@ -78,7 +74,9 @@ const UseProfileLayout: React.FC<Props> = observer((props) => {
               <div className="flex w-full flex-col md:h-full md:overflow-hidden">
                 <ProfileNavbar isAuthorized={!!isAuthorized} />
                 {isAuthorized || !isAuthorizedPath ? (
-                  <div className={`w-full overflow-hidden h-full`}>{children}</div>
+                  <div className={`w-full overflow-hidden h-full`}>
+                    <Outlet />
+                  </div>
                 ) : (
                   <div className="grid h-full w-full place-items-center text-custom-text-200">
                     {t("you_do_not_have_the_permission_to_access_this_page")}

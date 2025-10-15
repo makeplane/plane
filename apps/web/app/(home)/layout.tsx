@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Outlet } from "react-router";
 
 export const metadata: Metadata = {
   robots: {
@@ -14,6 +15,6 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export default function HomeLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+export default function HomeLayout() {
+  return <Outlet />;
 }

@@ -36,13 +36,14 @@
     "react-dom": "catalog:"
   },
   "dependencies": {
+    "@date-fns/tz": "^1.4.1",
     "@lifeomic/attempt": "^3.1.0",
     "@floating-ui/core": "^1.7.3",
     "@floating-ui/dom": "^1.7.1",
     "@floating-ui/react": "^0.26.4",
     "@floating-ui/react-dom": "^2.1.6",
     "@floating-ui/utils": "^0.2.10",
-    "@headlessui/react": "^1.7.3",
+    "@headlessui/react": "^1.7.19",
     "@hocuspocus/common": "3.2.5",
     "@hocuspocus/provider": "3.2.5",
     "@plane/constants": "workspace:*",

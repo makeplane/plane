@@ -1,7 +1,6 @@
 "use client";
 
 import { observer } from "mobx-react";
-import Head from "next/head";
 import { useParams } from "next/navigation";
 // i18n
 import { useTranslation } from "@plane/i18n";
@@ -29,11 +28,6 @@ const ProjectIssuesPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <Head>
-        <title>
-          {project?.name} - {t("issue.label", { count: 2 })}
-        </title>
-      </Head>
       <div className="h-full w-full">
         <ProjectLayoutRoot />
       </div>

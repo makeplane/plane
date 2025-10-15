@@ -1,6 +1,7 @@
 module.exports = {
   root: true,
   extends: ["@plane/eslint-config/next.js"],
+  ignorePatterns: ["build/**", "dist/**", ".vite/**"],
   rules: {
     "no-duplicate-imports": "off",
     "import/no-duplicates": ["error", { "prefer-inline": false }],

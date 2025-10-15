@@ -1,15 +1,18 @@
 "use client";
 
+import { Outlet } from "react-router";
 // components
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 import { ProjectArchivesHeader } from "../../header";
 
-export default function ProjectArchiveIssuesLayout({ children }: { children: React.ReactNode }) {
+export default function ProjectArchiveIssuesLayout() {
   return (
     <>
       <AppHeader header={<ProjectArchivesHeader activeTab="issues" />} />
-      <ContentWrapper>{children}</ContentWrapper>
+      <ContentWrapper>
+        <Outlet />
+      </ContentWrapper>
     </>
   );
 }

@@ -1,4 +1,4 @@
 // router from n-progress-bar
-import { useRouter } from "@/lib/b-progress";
+import { useRouter } from "next/navigation";
 
 export const useAppRouter = () => useRouter();

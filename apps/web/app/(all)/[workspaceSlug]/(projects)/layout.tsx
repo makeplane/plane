@@ -1,12 +1,13 @@
 "use client";
 
+import { Outlet } from "react-router";
 import { CommandPalette } from "@/components/command-palette";
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // plane web components
 import { WorkspaceAuthWrapper } from "@/plane-web/layouts/workspace-wrapper";
 import { ProjectAppSidebar } from "./_sidebar";
 
-export default function WorkspaceLayout({ children }: { children: React.ReactNode }) {
+export default function WorkspaceLayout() {
   return (
     <AuthenticationWrapper>
       <CommandPalette />
@@ -16,7 +17,7 @@ export default function WorkspaceLayout({ children }: { children: React.ReactNod
           <div className="relative flex size-full overflow-hidden">
             <ProjectAppSidebar />
             <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
-              {children}
+              <Outlet />
             </main>
           </div>
         </div>

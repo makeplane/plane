@@ -1,5 +1,5 @@
+import { lazy } from "react";
 import { observer } from "mobx-react";
-import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane package imports
@@ -15,7 +15,7 @@ import AnalyticsSectionWrapper from "../analytics-section-wrapper";
 import AnalyticsEmptyState from "../empty-state";
 import { ProjectInsightsLoader } from "../loaders";
 
-const RadarChart = dynamic(() =>
+const RadarChart = lazy(() =>
   import("@plane/propel/charts/radar-chart").then((mod) => ({
     default: mod.RadarChart,
   }))
