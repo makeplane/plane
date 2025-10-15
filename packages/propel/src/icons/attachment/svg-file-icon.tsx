@@ -6,13 +6,13 @@ export type SvgIconProps = {
 };
 
 export const SvgIcon: React.FC<SvgIconProps> = ({ width = 40, height = 40 }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} fill="none">
+  <svg width={width} height={height} xmlns="http://www.w3.org/2000/svg" fill="none">
     <path
       stroke="#D5D7DA"
-      stroke-width="1.5"
+      strokeWidth="1.5"
       d="M7.75 4A3.25 3.25 0 0 1 11 .75h16c.121 0 .238.048.323.134l10.793 10.793a.46.46 0 0 1 .134.323v24A3.25 3.25 0 0 1 35 39.25H11A3.25 3.25 0 0 1 7.75 36z"
     />
-    <path stroke="#D5D7DA" stroke-width="1.5" d="M27 .5V8a4 4 0 0 0 4 4h7.5" />
+    <path stroke="#D5D7DA" strokeWidth="1.5" d="M27 .5V8a4 4 0 0 0 4 4h7.5" />
     <rect width="28" height="16" x="1" y="18" fill="#7F56D9" rx="2" />
     <path
       fill="#fff"

@@ -56,7 +56,7 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
         <div className="group flex items-center justify-between gap-3 h-11 hover:bg-custom-background-90 pl-9 pr-2">
           <div className="flex items-center gap-3 text-sm truncate">
             <div className="flex items-center gap-3">
-              <FileIcon extension={fileExtension} size={18} />
+              <FileIcon extension={fileExtension} size={28} />
             </div>
             <Tooltip tooltipContent={`${fileName}.${fileExtension}`} isMobile={isMobile}>
               <p className="text-custom-text-200 font-medium truncate">{`${fileName}.${fileExtension}`}</p>

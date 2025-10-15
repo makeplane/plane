@@ -58,7 +58,7 @@ export const PROJECT_SETTINGS = {
     href: `/automations`,
     access: [EUserPermissions.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/automations/`,
-    Icon: <SettingIcon />,
+    Icon: SettingIcon,
   },
 };
 
@@ -68,7 +68,8 @@ export const PROJECT_SETTINGS_LINKS: {
   href: string;
   access: EUserPermissions[];
   highlight: (pathname: string, baseUrl: string) => boolean;
-  Icon: React.ReactNode;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Icon: React.FC<any>;
 }[] = [
   PROJECT_SETTINGS["general"],
   PROJECT_SETTINGS["members"],
