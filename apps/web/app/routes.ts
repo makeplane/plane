@@ -49,11 +49,11 @@ export default [
 
         // Profile (within workspace context)
         layout("./(all)/[workspaceSlug]/(projects)/profile/[userId]/layout.tsx", [
-          route(":workspaceSlug/profile/:userId", "./(all)/[workspaceSlug]/(projects)/profile/[userId]/page.tsx"),
+          route(":workspaceSlug/profile/:userId", "./(all)/[workspaceSlug]/(projects)/profile/[userId]/page.tsx"), // ✅
           route(
             ":workspaceSlug/profile/:userId/:profileViewId",
             "./(all)/[workspaceSlug]/(projects)/profile/[userId]/[profileViewId]/page.tsx"
-          ),
+          ), // ✅
           route(
             ":workspaceSlug/profile/:userId/activity",
             "./(all)/[workspaceSlug]/(projects)/profile/[userId]/activity/page.tsx"
@@ -224,15 +224,15 @@ export default [
       layout("./(all)/[workspaceSlug]/(settings)/layout.tsx", [
         // Workspace Settings
         layout("./(all)/[workspaceSlug]/(settings)/settings/(workspace)/layout.tsx", [
-          route(":workspaceSlug/settings", "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/page.tsx"),
+          route(":workspaceSlug/settings", "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/page.tsx"), // ✅
           route(
             ":workspaceSlug/settings/members",
             "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/members/page.tsx"
-          ),
+          ), // ✅
           route(
             ":workspaceSlug/settings/billing",
             "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/billing/page.tsx"
-          ),
+          ), // ✅
           route(
             ":workspaceSlug/settings/integrations",
             "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/integrations/page.tsx"
@@ -244,73 +244,73 @@ export default [
           route(
             ":workspaceSlug/settings/exports",
             "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/exports/page.tsx"
-          ),
+          ), // ✅
           route(
             ":workspaceSlug/settings/webhooks",
             "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/webhooks/page.tsx"
-          ),
+          ), // ✅
           route(
             ":workspaceSlug/settings/webhooks/:webhookId",
             "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/webhooks/[webhookId]/page.tsx"
-          ),
+          ), // ✅
         ]),
 
         // Account Settings
         layout("./(all)/[workspaceSlug]/(settings)/settings/account/layout.tsx", [
-          route(":workspaceSlug/settings/account", "./(all)/[workspaceSlug]/(settings)/settings/account/page.tsx"),
+          route(":workspaceSlug/settings/account", "./(all)/[workspaceSlug]/(settings)/settings/account/page.tsx"), // ✅
           route(
             ":workspaceSlug/settings/account/activity",
             "./(all)/[workspaceSlug]/(settings)/settings/account/activity/page.tsx"
-          ),
+          ), // ✅
           route(
             ":workspaceSlug/settings/account/preferences",
             "./(all)/[workspaceSlug]/(settings)/settings/account/preferences/page.tsx"
-          ),
+          ), // ✅
           route(
             ":workspaceSlug/settings/account/notifications",
             "./(all)/[workspaceSlug]/(settings)/settings/account/notifications/page.tsx"
-          ),
+          ), // ✅
           route(
             ":workspaceSlug/settings/account/security",
             "./(all)/[workspaceSlug]/(settings)/settings/account/security/page.tsx"
-          ),
+          ), // ✅
           route(
             ":workspaceSlug/settings/account/api-tokens",
             "./(all)/[workspaceSlug]/(settings)/settings/account/api-tokens/page.tsx"
-          ),
+          ), // ✅
         ]),
 
         // Project Settings - List
         layout("./(all)/[workspaceSlug]/(settings)/settings/projects/layout.tsx", [
-          route(":workspaceSlug/settings/projects", "./(all)/[workspaceSlug]/(settings)/settings/projects/page.tsx"),
+          route(":workspaceSlug/settings/projects", "./(all)/[workspaceSlug]/(settings)/settings/projects/page.tsx"), // ✅
           route(
             ":workspaceSlug/settings/projects/:projectId",
             "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/page.tsx"
-          ),
+          ), // ✅
           route(
             ":workspaceSlug/settings/projects/:projectId/members",
             "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/members/page.tsx"
-          ),
+          ), // ✅
           route(
             ":workspaceSlug/settings/projects/:projectId/features",
             "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/page.tsx"
-          ),
+          ), // ✅
           route(
             ":workspaceSlug/settings/projects/:projectId/states",
             "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/states/page.tsx"
-          ),
+          ), // ✅
           route(
             ":workspaceSlug/settings/projects/:projectId/labels",
             "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/labels/page.tsx"
-          ),
+          ), // ✅
           route(
             ":workspaceSlug/settings/projects/:projectId/estimates",
             "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/estimates/page.tsx"
-          ),
+          ), // ✅
           route(
             ":workspaceSlug/settings/projects/:projectId/automations",
             "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/automations/page.tsx"
-          ),
+          ), // ✅
         ]),
       ]),
     ]),
@@ -319,41 +319,32 @@ export default [
     // STANDALONE ROUTES - Outside workspace context
     // ==========================================================================
 
-    // Profile (outside workspace)
-    layout("./(all)/profile/layout.tsx", [
-      route("profile", "./(all)/profile/page.tsx"),
-      route("profile/appearance", "./(all)/profile/appearance/page.tsx"),
-      route("profile/activity", "./(all)/profile/activity/page.tsx"),
-      route("profile/notifications", "./(all)/profile/notifications/page.tsx"),
-      route("profile/security", "./(all)/profile/security/page.tsx"),
-    ]),
-
     // Onboarding
     layout("./(all)/onboarding/layout.tsx", [route("onboarding", "./(all)/onboarding/page.tsx")]),
 
     // Create Workspace
-    layout("./(all)/create-workspace/layout.tsx", [route("create-workspace", "./(all)/create-workspace/page.tsx")]),
+    layout("./(all)/create-workspace/layout.tsx", [route("create-workspace", "./(all)/create-workspace/page.tsx")]), // ✅
 
     // Sign Up
-    layout("./(all)/sign-up/layout.tsx", [route("sign-up", "./(all)/sign-up/page.tsx")]),
+    layout("./(all)/sign-up/layout.tsx", [route("sign-up", "./(all)/sign-up/page.tsx")]), // ✅
 
     // Invitations
-    layout("./(all)/invitations/layout.tsx", [route("invitations", "./(all)/invitations/page.tsx")]),
+    layout("./(all)/invitations/layout.tsx", [route("invitations", "./(all)/invitations/page.tsx")]), // ✅
 
     // Workspace Invitations
     layout("./(all)/workspace-invitations/layout.tsx", [
-      route("workspace-invitations", "./(all)/workspace-invitations/page.tsx"),
+      route("workspace-invitations", "./(all)/workspace-invitations/page.tsx"), // ✅
     ]),
 
     // Account Routes - Password Management
     layout("./(all)/accounts/forgot-password/layout.tsx", [
-      route("accounts/forgot-password", "./(all)/accounts/forgot-password/page.tsx"),
+      route("accounts/forgot-password", "./(all)/accounts/forgot-password/page.tsx"), // ✅
     ]),
     layout("./(all)/accounts/reset-password/layout.tsx", [
-      route("accounts/reset-password", "./(all)/accounts/reset-password/page.tsx"),
+      route("accounts/reset-password", "./(all)/accounts/reset-password/page.tsx"), // ✅
     ]),
     layout("./(all)/accounts/set-password/layout.tsx", [
-      route("accounts/set-password", "./(all)/accounts/set-password/page.tsx"),
+      route("accounts/set-password", "./(all)/accounts/set-password/page.tsx"), // ✅
     ]),
 
     // OAuth Installations

@@ -1,9 +1,8 @@
-import type { Metadata } from "next";
+import { Outlet } from "react-router";
+import type { Route } from "./+types/layout";
 
-export const metadata: Metadata = {
-  title: "Create Workspace",
-};
-
-export default function CreateWorkspaceLayout({ children }: { children: React.ReactNode }) {
-  return children;
+export default function CreateWorkspaceLayout() {
+  return <Outlet />;
 }
+
+export const meta: Route.MetaFunction = () => [{ title: "Create Workspace" }];

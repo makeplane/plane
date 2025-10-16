@@ -1,9 +1,9 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
+import { Outlet } from "react-router";
 // components
 import { getProjectActivePath } from "@/components/settings/helper";
 import { SettingsMobileNav } from "@/components/settings/mobile";
@@ -12,12 +12,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
 
-type Props = {
-  children: ReactNode;
-};
-
-const ProjectSettingsLayout = observer((props: Props) => {
-  const { children } = props;
+const ProjectSettingsLayout = observer(() => {
   // router
   const router = useAppRouter();
   const pathname = usePathname();
@@ -37,7 +32,9 @@ const ProjectSettingsLayout = observer((props: Props) => {
       <ProjectAuthWrapper workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()}>
         <div className="relative flex h-full w-full">
           <div className="hidden md:block">{projectId && <ProjectSettingsSidebar />}</div>
-          <div className="w-full h-full overflow-y-scroll md:pt-page-y">{children}</div>
+          <div className="w-full h-full overflow-y-scroll md:pt-page-y">
+            <Outlet />
+          </div>
         </div>
       </ProjectAuthWrapper>
     </>

@@ -1,9 +1,8 @@
-import type { Metadata } from "next";
+import { Outlet } from "react-router";
+import type { Route } from "./+types/layout";
 
-export const metadata: Metadata = {
-  title: "Set Password - Plane",
-};
-
-export default function SetPasswordLayout({ children }: { children: React.ReactNode }) {
-  return children;
+export default function SetPasswordLayout() {
+  return <Outlet />;
 }
+
+export const meta: Route.MetaFunction = () => [{ title: "Set Password - Plane" }];
