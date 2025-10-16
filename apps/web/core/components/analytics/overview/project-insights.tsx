@@ -1,4 +1,4 @@
-import { lazy } from "react";
+import { lazy, Suspense } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -65,29 +65,31 @@ const ProjectInsights = observer(() => {
       ) : (
         <div className="gap-8 lg:flex">
           {projectInsightsData && (
-            <RadarChart
-              className="h-[350px] w-full lg:w-3/5"
-              data={projectInsightsData}
-              dataKey="key"
-              radars={[
-                {
-                  key: "count",
-                  name: "Count",
-                  fill: "rgba(var(--color-primary-300))",
-                  stroke: "rgba(var(--color-primary-300))",
-                  fillOpacity: 0.6,
-                  dot: {
-                    r: 4,
-                    fillOpacity: 1,
+            <Suspense fallback={<ProjectInsightsLoader />}>
+              <RadarChart
+                className="h-[350px] w-full lg:w-3/5"
+                data={projectInsightsData}
+                dataKey="key"
+                radars={[
+                  {
+                    key: "count",
+                    name: "Count",
+                    fill: "rgba(var(--color-primary-300))",
+                    stroke: "rgba(var(--color-primary-300))",
+                    fillOpacity: 0.6,
+                    dot: {
+                      r: 4,
+                      fillOpacity: 1,
+                    },
                   },
-                },
-              ]}
-              margin={{ top: 0, right: 40, bottom: 10, left: 40 }}
-              showTooltip
-              angleAxis={{
-                key: "name",
-              }}
-            />
+                ]}
+                margin={{ top: 0, right: 40, bottom: 10, left: 40 }}
+                showTooltip
+                angleAxis={{
+                  key: "name",
+                }}
+              />
+            </Suspense>
           )}
           <div className="w-full lg:w-2/5">
             <div className="text-sm text-custom-text-300">{t("workspace_analytics.summary_of_projects")}</div>

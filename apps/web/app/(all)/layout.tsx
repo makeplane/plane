@@ -22,8 +22,6 @@ export const viewport: Viewport = {
 };
 
 export default function AppLayout() {
-  console.log("===============AppLayout with preload resources");
-
   return (
     <>
       <PreloadResources />
