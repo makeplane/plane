@@ -42,14 +42,42 @@ export const useProjectIssueTypes = (workspaceSlug: string | undefined, projectI
     }
   }, [workspaceSlug, projectId]);
 
+  const forceFetchIssueTypes = useCallback(async () => {
+    if (!workspaceSlug || !projectId) return;
+
+    // 首先检查缓存
+    const cacheKey = `${workspaceSlug}-${projectId}`;
+    
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const types = await projectIssueTypeService.fetchProjectIssueTypes(workspaceSlug, projectId);
+      setIssueTypes(types);
+      
+      // 更新缓存
+      const typesMap = types.reduce((acc, type) => {
+        acc[type.id] = type;
+        return acc;
+      }, {} as Record<string, TIssueType>);
+      projectIssueTypesCache.set(cacheKey, typesMap);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to fetch issue types");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [workspaceSlug, projectId]);
+
   useEffect(() => {
     fetchIssueTypes();
   }, [fetchIssueTypes]);
+
 
   return {
     issueTypes,
     isLoading,
     error,
     refetch: fetchIssueTypes,
+    forceRefetch: forceFetchIssueTypes,
   };
 };

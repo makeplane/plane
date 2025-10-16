@@ -62,6 +62,12 @@ export class ProjectIssueTypeService extends APIService {
     super(API_BASE_URL);
   }
 
+  // 添加缓存清除方法
+  clearCache(workspaceSlug: string, projectId: string): void {
+    const cacheKey = `${workspaceSlug}-${projectId}`;
+    projectIssueTypesCache.delete(cacheKey);
+  }
+
   async fetchProjectIssueTypes(workspaceSlug: string, projectId: string): Promise<TIssueType[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/`)
       .then((response) => response?.data)
@@ -69,4 +75,84 @@ export class ProjectIssueTypeService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  // 新增：创建工作项类型，请求风格与其他服务保持一致
+  async createProjectIssueType(
+    workspaceSlug: string,
+    projectId: string,
+    data: Partial<TIssueType>
+  ): Promise<TIssueType> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/`, data)
+      .then((response) => {
+        // 清除缓存以确保下次获取最新数据
+        this.clearCache(workspaceSlug, projectId);
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // 新增：删除工作项类型
+  async deleteProjectIssueType(workspaceSlug: string, projectId: string, issueTypeId: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${issueTypeId}/`)
+      .then((response) => {
+        // 清除缓存以确保下次获取最新数据
+        this.clearCache(workspaceSlug, projectId);
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data.msg;
+      });
+  }
+
+  // 新增：创建工作项类型属性
+  async createIssueTypeProperty(
+    workspaceSlug: string,
+    projectId: string,
+    issueTypeId: string,
+    data: Partial<TIssueTypeProperty>
+  ): Promise<TIssueTypeProperty> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${issueTypeId}/issue-properties/`, data)
+      .then((response) => {
+        // 清除缓存以确保下次获取最新数据（包含新属性）
+        this.clearCache(workspaceSlug, projectId);
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // 新增：获取工作项类型属性列表
+  async fetchIssueTypeProperties(
+    workspaceSlug: string,
+    projectId: string,
+    issueTypeId: string
+  ): Promise<TIssueTypeProperty[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${issueTypeId}/properties/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // 新增：删除工作项类型属性
+  async deleteIssueTypeProperty(
+    workspaceSlug: string,
+    projectId: string,
+    issueTypeId: string,
+    propertyId: string
+  ): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${issueTypeId}/issue-properties/${propertyId}/`)
+      .then((response) => {
+        // 清除缓存以确保下次获取最新数据
+        this.clearCache(workspaceSlug, projectId);
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+  
 }

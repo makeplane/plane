@@ -23,7 +23,7 @@ type TIssueDynamicPropertiesProps = {
   disabled?: boolean;
 };
 
-// 动态字段（编辑全屏模式）
+// 动态字段（编辑全屏模式，暂未使用）
 export const IssueDynamicProperties: React.FC<TIssueDynamicPropertiesProps> = observer((props) => {
   const { workspaceSlug, projectId, issueId, issueOperations, disabled = false } = props;
 
@@ -125,7 +125,7 @@ export const IssueDynamicProperties: React.FC<TIssueDynamicPropertiesProps> = ob
 
     // 根据property_type和is_multi渲染不同的输入组件
     if (property.property_type === "TEXT") {
-      if (property.is_multi || property.settings?.display_format === "multi-line") {
+      if (property.settings?.display_format === "multi-line") {
         return (
           <div className="w-full">
             <textarea
@@ -134,7 +134,7 @@ export const IssueDynamicProperties: React.FC<TIssueDynamicPropertiesProps> = ob
               className={`w-full rounded-md border-[0.5px] border-custom-border-200 bg-transparent px-3 py-2 text-sm placeholder-custom-text-400 outline-none focus:ring-1 focus:ring-theme resize-none ${
                 hasError ? "border-red-500" : ""
               }`}
-              rows={property.is_multi ? 4 : 2}
+              rows={4}
               disabled={disabled}
               onChange={(e) => updateLocalValue(property.id, e.target.value)}
               onBlur={(e) => saveDynamicProperty(property.id, e.target.value, property)}

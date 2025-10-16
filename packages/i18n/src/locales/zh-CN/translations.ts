@@ -643,6 +643,7 @@ export default {
     module: "模块",
     modules: "模块",
     labels: "标签",
+    work_type_types: "工作项类型",
     label: "标签",
     assignees: "负责人",
     assignee: "负责人",

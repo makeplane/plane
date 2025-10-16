@@ -482,6 +482,7 @@ export default {
     state: "State",
     state_groups: "State groups",
     state_group: "State group",
+    work_type_types: "Work Item Types",
     priorities: "Priorities",
     priority: "Priority",
     team_project: "Team project",

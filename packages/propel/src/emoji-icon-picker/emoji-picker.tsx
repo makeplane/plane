@@ -25,6 +25,8 @@ export const EmojiPicker: React.FC<TCustomEmojiPicker> = (props) => {
     iconType = "lucide",
     side = "bottom",
     align = "start",
+    // 新增：仅显示特定页签（如 ["icon"]）
+    tabsToShow,
   } = props;
 
   // side and align calculations
@@ -92,6 +94,19 @@ export const EmojiPicker: React.FC<TCustomEmojiPicker> = (props) => {
     [defaultIconColor, searchDisabled, searchPlaceholder, iconType, handleEmojiChange, handleIconChange]
   );
 
+  // 新增：根据 tabsToShow 过滤显示的页签
+  const filteredTabs = useMemo(() => {
+    if (!tabsToShow || tabsToShow.length === 0) return tabs;
+    const allowed = new Set(tabsToShow);
+    return tabs.filter((t) => allowed.has(t.key as typeof EmojiIconPickerTypes.EMOJI | typeof EmojiIconPickerTypes.ICON));
+  }, [tabs, tabsToShow]);
+
+  // 新增：纠正默认打开页签，若 defaultOpen 不在 filteredTabs 中，回退到第一个或 ICON
+  const effectiveDefaultOpen = useMemo(() => {
+    if (filteredTabs.some((t) => t.key === defaultOpen)) return defaultOpen;
+    return filteredTabs[0]?.key ?? EmojiIconPickerTypes.ICON;
+  }, [filteredTabs, defaultOpen]);
+
   return (
     <Popover open={isOpen} onOpenChange={handleToggle}>
       <Popover.Button className={cn("outline-none", buttonClassName)} disabled={disabled}>
@@ -107,9 +122,9 @@ export const EmojiPicker: React.FC<TCustomEmojiPicker> = (props) => {
         align={finalAlign}
         sideOffset={8}
       >
-        <Tabs.Root defaultValue={defaultOpen}>
-          <Tabs.List className="grid grid-cols-2 gap-1 px-3.5 pt-3">
-            {tabs.map((tab) => (
+        <Tabs.Root defaultValue={effectiveDefaultOpen}>
+          <Tabs.List className={cn("grid gap-1 px-3.5 pt-3", filteredTabs.length === 1 ? "grid-cols-1" : "grid-cols-2")}>
+            {filteredTabs.map((tab) => (
               <Tabs.Tab
                 key={tab.key}
                 value={tab.key}
@@ -124,7 +139,7 @@ export const EmojiPicker: React.FC<TCustomEmojiPicker> = (props) => {
               </Tabs.Tab>
             ))}
           </Tabs.List>
-          {tabs.map((tab) => (
+          {filteredTabs.map((tab) => (
             <Tabs.Panel key={tab.key} value={tab.key} className="h-80 overflow-hidden overflow-y-auto">
               {tab.content}
             </Tabs.Panel>

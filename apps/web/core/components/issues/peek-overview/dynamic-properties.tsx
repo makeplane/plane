@@ -225,15 +225,26 @@ export const PeekOverviewDynamicProperties: FC<IPeekOverviewDynamicProperties> =
       case "TEXT":
         return (
           <div className="w-full">
-            <AutoResizeTextarea
-              value={currentValue}
-              onChange={(e) => updateLocalValue(property.id, e.target.value)}
-              onBlur={(e) => saveDynamicProperty(property.id, e.target.value, property)}
-              className={textareaClassName}
-              placeholder="输入文本..."
-              minRows={property.is_multi ? 3 : 2}
-              maxRows={property.is_multi ? 10 : 6}
-            />
+            {property.settings.display_format === "multi-line" ? (
+              <AutoResizeTextarea
+                value={currentValue}
+                onChange={(e) => updateLocalValue(property.id, e.target.value)}
+                onBlur={(e) => saveDynamicProperty(property.id, e.target.value, property)}
+                className={textareaClassName}
+                placeholder="输入文本..."
+                minRows={3}
+                maxRows={10}
+              />
+            ) : (
+              <input
+                type="text"
+                value={currentValue}
+                onChange={(e) => updateLocalValue(property.id, e.target.value)}
+                onBlur={(e) => saveDynamicProperty(property.id, e.target.value, property)}
+                className={inputClassName}
+                placeholder="输入文本..."
+              />
+            )}
             {hasError && <p className="text-xs text-red-500 mt-1">{hasError}</p>}
           </div>
         );

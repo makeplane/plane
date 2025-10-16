@@ -69,7 +69,6 @@ export const ExportForm = (props: Props) => {
 
   // handlers
   const ExportCSVToMail = async (formData: FormData) => {
-    console.log(formData);
     setExportLoading(true);
     if (workspaceSlug && user) {
       const payload = {

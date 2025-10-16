@@ -38,6 +38,14 @@ export const PROJECT_SETTINGS = {
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/states/`,
     Icon: SettingIcon,
   },
+  types: {
+    key: "types",
+    i18n_label: "common.work_type_types", // 改为直接使用 work-item-types
+    href: `/work-item-types`,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/work-item-types/`,
+    Icon: SettingIcon,
+  },
   labels: {
     key: "labels",
     i18n_label: "common.labels",
@@ -76,6 +84,7 @@ export const PROJECT_SETTINGS_LINKS: {
   PROJECT_SETTINGS["members"],
   PROJECT_SETTINGS["features"],
   PROJECT_SETTINGS["states"],
+  PROJECT_SETTINGS["types"],
   PROJECT_SETTINGS["labels"],
   PROJECT_SETTINGS["estimates"],
   PROJECT_SETTINGS["automations"],

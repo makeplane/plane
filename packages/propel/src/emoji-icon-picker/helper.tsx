@@ -39,6 +39,8 @@ export type TCustomEmojiPicker = {
   theme?: "light" | "dark";
   side?: TSide;
   align?: TAlign;
+  // 新增：控制显示哪些页签（例如仅显示 ["icon"]）
+  tabsToShow?: TEmojiIconPickerTypes[];
 };
 
 export type TIconsListProps = {
