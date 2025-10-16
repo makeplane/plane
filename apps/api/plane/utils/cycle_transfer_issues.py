@@ -55,6 +55,13 @@ def transfer_cycle_issues(
         workspace__slug=slug, project_id=project_id, pk=new_cycle_id
     ).first()
 
+    # Check if new cycle is already completed
+    if new_cycle.end_date is not None and new_cycle.end_date < timezone.now():
+        return {
+            "success": False,
+            "error": "The cycle where the issues are transferred is already completed",
+        }
+
     # Get the old cycle with issue counts
     old_cycle = (
         Cycle.objects.filter(workspace__slug=slug, project_id=project_id, pk=cycle_id)
@@ -131,6 +138,12 @@ def transfer_cycle_issues(
         )
     )
     old_cycle = old_cycle.first()
+
+    if old_cycle is None:
+        return {
+            "success": False,
+            "error": "Source cycle not found",
+        }
 
     # Check if project uses estimates
     estimate_type = Project.objects.filter(
@@ -426,18 +439,13 @@ def transfer_cycle_issues(
     }
     current_cycle.save(update_fields=["progress_snapshot"])
 
-    # Check if new cycle is already completed
-    if new_cycle.end_date is not None and new_cycle.end_date < timezone.now():
-        return {
-            "error": "The cycle where the issues are transferred is already completed",
-            "status": 400,
-        }
-
     # Get issues to transfer (only incomplete issues)
     cycle_issues = CycleIssue.objects.filter(
         cycle_id=cycle_id,
         project_id=project_id,
         workspace__slug=slug,
+        issue__archived_at__isnull=True,
+        issue__is_draft=False,
         issue__state__group__in=["backlog", "unstarted", "started"],
     )
 
@@ -469,7 +477,7 @@ def transfer_cycle_issues(
         current_instance=json.dumps(
             {
                 "updated_cycle_issues": update_cycle_issue_activity,
-                "created_cycle_issues": "[]",
+                "created_cycle_issues": [],
             }
         ),
         epoch=int(timezone.now().timestamp()),
@@ -477,4 +485,4 @@ def transfer_cycle_issues(
         origin=base_host(request=request, is_app=True),
     )
 
-    return {"success": True, "status": 200}
+    return {"success": True}

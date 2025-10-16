@@ -1214,6 +1214,18 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                 {"error": "New Cycle Id is required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        
+        # check if the old cycle is completed or not if not completed then return error
+        old_cycle = Cycle.objects.get(
+            workspace__slug=slug,
+            project_id=project_id,
+            pk=cycle_id,
+        )
+        if old_cycle.end_date is not None and old_cycle.end_date < timezone.now():
+            return Response(
+                {"error": "The old cycle is not completed yet"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # Call the utility function to handle the transfer
         result = transfer_cycle_issues(
