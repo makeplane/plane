@@ -9,22 +9,28 @@ import { useEditor } from "@/hooks/use-editor";
 // plane editor extensions
 import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
-import { TCollaborativeEditorProps } from "@/types";
+import { TCollaborativeEditorHookProps } from "@/types";
 
-export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
+export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => {
   const {
+    onAssetChange,
+    onChange,
     onTransaction,
     disabledExtensions,
     editable,
-    editorClassName,
+    editorClassName = "",
     editorProps = {},
-    embedHandler,
-    extensions,
+    extendedEditorProps,
+    extensions = [],
     fileHandler,
+    flaggedExtensions,
     forwardedRef,
     handleEditorReady,
     id,
+    dragDropEnabled = true,
+    isTouchDevice,
     mentionHandler,
+    onEditorFocus,
     placeholder,
     realtimeConfig,
     serverHandler,
@@ -39,7 +45,6 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     () =>
       new HocuspocusProvider({
         name: id,
-        parameters: realtimeConfig.queryParams,
         // using user id as a token to verify the user on the server
         token: JSON.stringify(user),
         url: realtimeConfig.url,
@@ -75,6 +80,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
 
   const editor = useEditor({
     disabledExtensions,
+    extendedEditorProps,
     id,
     editable,
     editorProps,
@@ -83,25 +89,32 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorProps) => {
     extensions: [
       SideMenuExtension({
         aiEnabled: !disabledExtensions?.includes("ai"),
-        dragDropEnabled: true,
+        dragDropEnabled,
       }),
       HeadingListExtension,
       Collaboration.configure({
         document: provider.document,
       }),
-      ...(extensions ?? []),
+      ...extensions,
       ...DocumentEditorAdditionalExtensions({
         disabledExtensions,
-        embedConfig: embedHandler,
+        extendedEditorProps,
         fileHandler,
+        flaggedExtensions,
+        isEditable: editable,
         provider,
         userDetails: user,
       }),
     ],
     fileHandler,
+    flaggedExtensions,
     forwardedRef,
     handleEditorReady,
+    isTouchDevice,
     mentionHandler,
+    onAssetChange,
+    onChange,
+    onEditorFocus,
     onTransaction,
     placeholder,
     provider,

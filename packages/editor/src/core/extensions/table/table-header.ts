@@ -1,9 +1,12 @@
 import { mergeAttributes, Node } from "@tiptap/core";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
-export interface TableHeaderOptions {
-  HTMLAttributes: Record<string, any>;
-}
+// local imports
+import { DEFAULT_COLUMN_WIDTH } from "./table";
+
+type TableHeaderOptions = {
+  HTMLAttributes: Record<string, unknown>;
+};
 
 export const TableHeader = Node.create<TableHeaderOptions>({
   name: CORE_EXTENSIONS.TABLE_HEADER,
@@ -14,7 +17,7 @@ export const TableHeader = Node.create<TableHeaderOptions>({
     };
   },
 
-  content: "paragraph+",
+  content: "block+",
 
   addAttributes() {
     return {
@@ -25,7 +28,7 @@ export const TableHeader = Node.create<TableHeaderOptions>({
         default: 1,
       },
       colwidth: {
-        default: null,
+        default: [DEFAULT_COLUMN_WIDTH],
         parseHTML: (element) => {
           const colwidth = element.getAttribute("colwidth");
           const value = colwidth ? [parseInt(colwidth, 10)] : null;
@@ -35,6 +38,9 @@ export const TableHeader = Node.create<TableHeaderOptions>({
       },
       background: {
         default: "none",
+      },
+      hideContent: {
+        default: false,
       },
     };
   },
@@ -51,7 +57,8 @@ export const TableHeader = Node.create<TableHeaderOptions>({
     return [
       "th",
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
-        style: `background-color: ${node.attrs.background}`,
+        class: node.attrs.hideContent ? "content-hidden" : "",
+        style: `background-color: ${node.attrs.background};`,
       }),
       0,
     ];

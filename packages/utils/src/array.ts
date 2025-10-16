@@ -1,4 +1,4 @@
-import isEmpty from "lodash/isEmpty";
+import { isEmpty } from "lodash-es";
 import { IIssueLabel, IIssueLabelTree } from "@plane/types";
 
 /**
@@ -95,7 +95,6 @@ export const checkIfArraysHaveSameElements = (arr1: any[] | null, arr2: any[] | 
 
   return arr1.length === arr2.length && arr1.every((e) => arr2.includes(e));
 };
-
 
 type GroupedItems<T> = { [key: string]: T[] };
 

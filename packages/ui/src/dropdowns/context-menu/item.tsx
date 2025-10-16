@@ -2,7 +2,7 @@ import { ChevronRight } from "lucide-react";
 import React, { useState, useRef, useContext } from "react";
 import { usePopper } from "react-popper";
 // helpers
-import { cn } from "../../../helpers";
+import { cn } from "../../utils";
 // types
 import { TContextMenuItem, ContextMenuContext, Portal } from "./root";
 

@@ -1,4 +1,4 @@
-import range from "lodash/range";
+import { range } from "lodash-es";
 import React from "react";
 
 export const DropdownOptionsLoader = () => (

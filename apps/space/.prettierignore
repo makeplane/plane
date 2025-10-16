@@ -1,0 +1,7 @@
+.next
+.vercel
+.tubro
+out/
+dist/
+build/
+node_modules/

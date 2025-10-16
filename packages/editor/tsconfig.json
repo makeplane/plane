@@ -1,16 +1,19 @@
 {
+  "extends": "@plane/typescript-config/react-library.json",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "lib": ["ES2015", "DOM"],
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "target": "ES6",
+    "lib": ["ES2022", "DOM"],
+    "module": "ES2022",
+    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "strict": true,
+    "skipLibCheck": true,
     "sourceMap": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/core/*"],
-      "@/styles/*": ["src/styles/*"],
-      "@/plane-editor/*": ["src/ce/*"]
+      "@/*": ["./src/core/*"],
+      "@/styles/*": ["./src/styles/*"],
+      "@/plane-editor/*": ["./src/ce/*"]
     },
     "strictNullChecks": true,
     "allowSyntheticDefaultImports": true

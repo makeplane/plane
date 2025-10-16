@@ -4,6 +4,7 @@ import {
   IIssueDisplayProperties,
   IIssueFilterOptions,
   TIssue,
+  EIssuesStoreType,
 } from "@plane/types";
 
 export const ALL_ISSUES = "All Issues";
@@ -28,6 +29,7 @@ export enum EIssueGroupByToServerOptions {
   "target_date" = "target_date",
   "project" = "project_id",
   "created_by" = "created_by",
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   "team_project" = "project_id",
 }
 
@@ -42,28 +44,6 @@ export enum EIssueGroupBYServerToProperty {
   "target_date" = "target_date",
   "project_id" = "project_id",
   "created_by" = "created_by",
-}
-
-export enum EIssueServiceType {
-  ISSUES = "issues",
-  EPICS = "epics",
-  WORK_ITEMS = "work-items",
-}
-
-export enum EIssuesStoreType {
-  GLOBAL = "GLOBAL",
-  PROFILE = "PROFILE",
-  TEAM = "TEAM",
-  PROJECT = "PROJECT",
-  CYCLE = "CYCLE",
-  MODULE = "MODULE",
-  TEAM_VIEW = "TEAM_VIEW",
-  PROJECT_VIEW = "PROJECT_VIEW",
-  ARCHIVED = "ARCHIVED",
-  DRAFT = "DRAFT",
-  DEFAULT = "DEFAULT",
-  WORKSPACE_DRAFT = "WORKSPACE_DRAFT",
-  EPIC = "EPIC",
 }
 
 export enum EIssueCommentAccessSpecifier {
@@ -121,7 +101,8 @@ export type TCreateModalStoreTypes =
   | EIssuesStoreType.PROFILE
   | EIssuesStoreType.CYCLE
   | EIssuesStoreType.MODULE
-  | EIssuesStoreType.EPIC;
+  | EIssuesStoreType.EPIC
+  | EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS;
 
 export const ISSUE_GROUP_BY_OPTIONS: {
   key: TIssueGroupByOptions;

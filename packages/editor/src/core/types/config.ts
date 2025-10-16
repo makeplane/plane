@@ -1,13 +1,15 @@
-export type TReadOnlyFileHandler = {
-  checkIfAssetExists: (assetId: string) => Promise<boolean>;
-  getAssetSrc: (path: string) => Promise<string>;
-  restore: (assetSrc: string) => Promise<void>;
-};
+// plane imports
+import { TWebhookConnectionQueryParams } from "@plane/types";
+import { TExtendedFileHandler } from "@/plane-editor/types/config";
 
-export type TFileHandler = TReadOnlyFileHandler & {
+export type TFileHandler = {
   assetsUploadStatus: Record<string, number>; // blockId => progress percentage
   cancel: () => void;
+  checkIfAssetExists: (assetId: string) => Promise<boolean>;
   delete: (assetSrc: string) => Promise<void>;
+  getAssetDownloadSrc: (path: string) => Promise<string>;
+  getAssetSrc: (path: string) => Promise<string>;
+  restore: (assetSrc: string) => Promise<void>;
   upload: (blockId: string, file: File) => Promise<string>;
   validation: {
     /**
@@ -16,17 +18,35 @@ export type TFileHandler = TReadOnlyFileHandler & {
      */
     maxFileSize: number;
   };
-};
+} & TExtendedFileHandler;
 
 export type TEditorFontStyle = "sans-serif" | "serif" | "monospace";
 
-export type TEditorFontSize = "small-font" | "large-font";
+export type TEditorFontSize = "small-font" | "large-font" | "mobile-font";
 
-export type TEditorLineSpacing = "regular" | "small";
+export type TEditorLineSpacing = "regular" | "small" | "mobile-regular";
 
 export type TDisplayConfig = {
   fontStyle?: TEditorFontStyle;
   fontSize?: TEditorFontSize;
   lineSpacing?: TEditorLineSpacing;
   wideLayout?: boolean;
+};
+
+export type TUserDetails = {
+  color: string;
+  id: string;
+  name: string;
+  cookie?: string;
+};
+
+export type TRealtimeConfig = {
+  url: string;
+};
+
+export type IMarking = {
+  type: "heading";
+  level: number;
+  text: string;
+  sequence: number;
 };

@@ -25,6 +25,7 @@ When opening a new issue, please use a clear and concise title that follows this
 - For documentation: `📘 Docs: [short description]`
 
 **Examples:**
+
 - `🐛 Bug: API token expiry time not saving correctly`
 - `📘 Docs: Clarify RAM requirement for local setup`
 - `🚀 Feature: Allow custom time selection for token expiration`
@@ -47,7 +48,7 @@ This helps us triage and manage issues more efficiently.
 
 The project is a monorepo, with backend api and frontend in a single repo.
 
-The backend is a django project which is kept inside apiserver
+The backend is a django project which is kept inside apps/api
 
 1. Clone the repo
 
@@ -72,7 +73,7 @@ docker compose -f docker-compose-local.yml up
 4. Start web apps:
 
 ```bash
-yarn dev
+pnpm dev
 ```
 
 5. Open your browser to http://localhost:3001/god-mode/ and register yourself as instance admin
@@ -105,11 +106,13 @@ To ensure consistency throughout the source code, please keep these rules in min
 - **Improve documentation** - fix incomplete or missing [docs](https://docs.plane.so/), bad wording, examples or explanations.
 
 ## Contributing to language support
+
 This guide is designed to help contributors understand how to add or update translations in the application.
 
 ### Understanding translation structure
 
 #### File organization
+
 Translations are organized by language in the locales directory. Each language has its own folder containing JSON files for translations. Here's how it looks:
 
 ```
@@ -122,7 +125,9 @@ packages/i18n/src/locales/
     └── [language]/
         └── translations.json
 ```
+
 #### Nested structure
+
 To keep translations organized, we use a nested structure for keys. This makes it easier to manage and locate specific translations. For example:
 
 ```json
@@ -137,32 +142,37 @@ To keep translations organized, we use a nested structure for keys. This makes i
 ```
 
 ### Translation formatting guide
+
 We use [IntlMessageFormat](https://formatjs.github.io/docs/intl-messageformat/) to handle dynamic content, such as variables and pluralization. Here's how to format your translations:
 
 #### Examples
+
 - **Simple variables**
-    ```json
-    {
+
+  ```json
+  {
     "greeting": "Hello, {name}!"
-    }
-    ```
+  }
+  ```
 
 - **Pluralization**
-    ```json
-    {
+  ```json
+  {
     "items": "{count, plural, one {Work item} other {Work items}}"
-    }
-    ```
+  }
+  ```
 
 ### Contributing guidelines
 
 #### Updating existing translations
+
 1. Locate the key in `locales/<language>/translations.json`.
 
 2. Update the value while ensuring the key structure remains intact.
 3. Preserve any existing ICU formats (e.g., variables, pluralization).
 
 #### Adding new translation keys
+
 1. When introducing a new key, ensure it is added to **all** language files, even if translations are not immediately available. Use English as a placeholder if needed.
 
 2. Keep the nesting structure consistent across all languages.
@@ -170,48 +180,48 @@ We use [IntlMessageFormat](https://formatjs.github.io/docs/intl-messageformat/) 
 3. If the new key requires dynamic content (e.g., variables or pluralization), ensure the ICU format is applied uniformly across all languages.
 
 ### Adding new languages
+
 Adding a new language involves several steps to ensure it integrates seamlessly with the project. Follow these instructions carefully:
 
-1. **Update type definitions**
-Add the new language to the TLanguage type in the language definitions file:
+1.  **Update type definitions**
+    Add the new language to the TLanguage type in the language definitions file:
 
-    ```typescript
-    // types/language.ts
-    export type TLanguage = "en" | "fr" | "your-lang";
-    ```
+```ts
+      // packages/i18n/src/types/language.ts
+      export type TLanguage = "en" | "fr" | "your-lang";
+```
 
-2. **Add language configuration**
-Include the new language in the list of supported languages:
+1.  **Add language configuration**
+    Include the new language in the list of supported languages:
+```ts
+      // packages/i18n/src/constants/language.ts
+      export const SUPPORTED_LANGUAGES: ILanguageOption[] = [
+      { label: "English", value: "en" },
+      { label: "Your Language", value: "your-lang" }
+      ];
+```
 
-    ```typescript
-    // constants/language.ts
-    export const SUPPORTED_LANGUAGES: ILanguageOption[] = [
-    { label: "English", value: "en" },
-    { label: "Your Language", value: "your-lang" }
-    ];
-    ```
-
-3. **Create translation files**
-    1.  Create a new folder for your language under locales (e.g., `locales/your-lang/`).
+2.  **Create translation files**
+    1. Create a new folder for your language under locales (e.g., `locales/your-lang/`).
 
     2. Add a `translations.json` file inside the folder.
 
     3. Copy the structure from an existing translation file and translate all keys.
 
-4. **Update import logic**
-Modify the language import logic to include your new language:
-
-    ```typescript
-    private importLanguageFile(language: TLanguage): Promise<any> {
-    switch (language) {
-        case "your-lang":
-        return import("../locales/your-lang/translations.json");
-        // ...
-    }
-    }
-    ```
+3.  **Update import logic**
+    Modify the language import logic to include your new language:
+```ts
+      private importLanguageFile(language: TLanguage): Promise<any> {
+      switch (language) {
+          case "your-lang":
+          return import("../locales/your-lang/translations.json");
+          // ...
+      }
+      }
+```
 
 ### Quality checklist
+
 Before submitting your contribution, please ensure the following:
 
 - All translation keys exist in every language file.
@@ -222,6 +232,7 @@ Before submitting your contribution, please ensure the following:
 - There are no missing or untranslated keys.
 
 #### Pro tips
+
 - When in doubt, refer to the English translations for context.
 - Verify pluralization works with different numbers.
 - Ensure dynamic values (e.g., `{name}`) are correctly interpolated.

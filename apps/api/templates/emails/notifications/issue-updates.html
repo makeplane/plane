@@ -1,0 +1,243 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" >
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Updates on {{entity_type}}</title>
+    <style type="text/css" emogrify="no"> html { font-family: system-ui; } p, h1, h2, h3, h4, ol, ul { margin: 0; } h-full { height: 100%; } a:hover { color: #3358d4 !important; } </style>
+    <style> *[class="gmail-fix"] { display: none !important; } </style>
+    <style type="text/css" emogrify="no"> @media (max-width: 600px) { .gmx-killpill { content: " \03D1"; } } </style>
+  </head>
+  <body bgcolor="#ffffff" text="#3b3f44" link="#006399" yahoo="fix" style="background-color: #f7f9ff; margin: 20px" >
+    <div style=" width: 600px; table-layout: fixed; height: 100%; margin-left: auto; margin-right: auto; " >
+      <!-- Header --> 
+      <div>
+        <table style="width: 600px" cellspacing="0">
+          <tr>
+            <td>
+              <div style="margin-left: 30px; margin-bottom: 20px; margin-top: 20px" > <img src="https://media.docs.plane.so/logo/new-logo-white.png" width="150" border="0" /> </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <!-- Body --> 
+      <div style=" color: #1f2d5c; padding: 30px; border-radius: 4px; background-color: #fcfcfd; max-width: 100%; " >
+        <div>
+          <table style="width: 100%">
+            <tr>
+              <td>
+                <p style="font-size: 1rem; color: #1f2d5c; font-weight: 600"> {{ issue.issue_identifier }} updates </p>
+                <p style="font-size: 1rem; font-weight: 500; color: #1f2d5c; line-height: 28px"> {{workspace}}/<a target="_blank" style="color: #1f2d5c; text-decoration: none;" href="{{project_url}}">{{project}}</a>/<a style="color: #1f2d5c; text-decoration: none;" target="_blank" href="{{issue_url}}">{{issue.issue_identifier}}</a>: {{ issue.name }} </p>
+              </td>
+            </tr>
+          </table>
+          <hr style=" background-color: #f0f0f3; height: 1px; border: 0; margin-top: 15px; margin-bottom: 15px; " />
+          {% if actors_involved == 1 %} 
+          <p style="font-size: 1rem;color: #1f2d5c; line-height: 28px"> {{summary}} <span style="font-size: 1rem; font-weight: 700; line-height: 28px"> {% if data|length > 0 %} {{ data.0.actor_detail.first_name}} {{data.0.actor_detail.last_name}} {% else %} {{ comments.0.actor_detail.first_name}} {{comments.0.actor_detail.last_name}} {% endif %} </span>. </p>
+          {% else %} 
+          <p style="font-size: 1rem;color: #1f2d5c; line-height: 28px"> {{summary}} <span style="font-size: 1rem; font-weight: 700; line-height: 28px"> {% if data|length > 0 %} {{ data.0.actor_detail.first_name}} {{data.0.actor_detail.last_name}} {% else %} {{ comments.0.actor_detail.first_name}} {{comments.0.actor_detail.last_name}} {% endif %} </span>and others. </p>
+          {% endif %} <!-- {% if actors_involved == 1 %} {% if data|length > 0 and comments|length == 0 %} <p style="font-size: 1rem;color: #1f2d5c; line-height: 28px"> <span style="font-size: 1rem; font-weight: 700; line-height: 28px"> {{ data.0.actor_detail.first_name}} {{data.0.actor_detail.last_name }} </span> made {{total_updates}} {% if total_updates > 1 %}updates{% else %}update{% endif %} to the issue. </p> {% elif data|length == 0 and comments|length > 0 %} <p style="font-size: 1rem;color: #1f2d5c; line-height: 28px"> <span style="font-size: 1rem; font-weight: 700; line-height: 28px"> {{ comments.0.actor_detail.first_name}} {{comments.0.actor_detail.last_name }} </span> added {{total_comments}} new {% if total_comments > 1 %}comments{% else %}comment{% endif %}. </p> {% elif data|length > 0 and comments|length > 0 %} <p style="font-size: 1rem;color: #1f2d5c; line-height: 28px"> <span style="font-size: 1rem; font-weight: 700; line-height: 28px"> {{ data.0.actor_detail.first_name}} {{data.0.actor_detail.last_name }} </span> made {{total_updates}} {% if total_updates > 1 %}updates{% else %}update{% endif %} and added {{total_comments}} new {% if total_comments > 1 %}comments{% else %}comment{% endif %} on the issue. </p> {% endif %} {% else %} <p style="font-size: 1rem;color: #1f2d5c; line-height: 28px"> There are {{ total_updates }} new updates and {{total_comments}} new comments on the issue. </p> {% endif %} --> {% for update in data %} {% if update.changes.name %} <!-- Issue title updated --> 
+          <p style="font-size: 1rem; line-height: 28px; color: #1f2d5c"> The {{entity_type}} title has been updated to {{ issue.name}} </p>
+          {% endif %} <!-- Outer update Box start --> {% if data %} 
+          <div style=" background-color: #f7f9ff; border-radius: 8px; border-style: solid; border-width: 1px; border-color: #c1d0ff; padding: 20px; margin-top: 15px; max-width: 100%; " >
+            <!-- Block Heading --> 
+            <div style="padding-bottom: 20px">
+              <p style="font-size: 0.8rem; font-weight: 600; color: #121a26"> Updates </p>
+            </div>
+            <!-- Property Updates --> 
+            <div style=" background-color: white; max-width: 100%; overflow: hidden; overflow-wrap: break-word; word-wrap: break-word; padding-left: 15px; padding-bottom: 15px; border-radius: 8px; " >
+              <!-- action performer --> 
+              <table role="presentation" cellspacing="0" cellpadding="0" style="max-width: 100%" >
+                <tr style="border-radius: 8px; margin-top: 20px">
+                  <td style="width: 30px">
+                    {% if update.actor_detail.avatar_url %} <img src="{{ update.actor_detail.avatar_url }}" width="25" height="25" border="0" /> {% else %} 
+                    <table cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td style=" width: 25px; height: 25px; background-color: #4f3422; border-radius: 50%; text-align: center; " > <span style=" color: white; font-weight: 500; font-size: 13px; line-height: 25px; display: inline-block; " > {{ update.actor_detail.first_name.0 }} </span> </td>
+                      </tr>
+                    </table>
+                    {% endif %} 
+                  </td>
+                  <td style="padding-top: 20px; padding-bottom: 20px">
+                    <p style=" font-weight: 500; font-size: 0.8rem; color: #1c2024; width: fit-content; margin-left: 5px; " > {{ update.actor_detail.first_name }} {{ update.actor_detail.last_name }} </p>
+                  </td>
+                  <td>
+                    <p style=" font-weight: 500; font-size: 0.6rem; color: #80838d; margin-left: 10px; " > {{ update.activity_time }} </p>
+                  </td>
+                </tr>
+              </table>
+              {% if update.changes.target_date %} <!-- due date changed --> 
+              <table role="presentation" style="max-width: 100%; padding-bottom: 15px" >
+                <tr>
+                  <td> <img src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/due-date.png" width="12" height="12" border="0" style="display: block" /> </td>
+                  <td style="padding: 0px; text-align: center">
+                    <div>
+                      <p style=" padding: 0px; margin: 0px; font-size: 0.8rem; font-weight: 500; color: #525252; " > Due Date: </p>
+                    </div>
+                  </td>
+                  <td>
+                    {% if update.changes.target_date.new_value.0 %} 
+                    <p style=" font-size: 0.8rem; font-weight: 500; color: #171717; margin-left: 5px; padding: 0px; " > {{ update.changes.target_date.new_value.0 }} </p>
+                    {% else %} 
+                    <p style=" font-size: 0.8rem; font-weight: 500; color: #171717; margin-left: 5px; padding: 0px; text-decoration: line-through; " > {{ update.changes.target_date.old_value.0 }} </p>
+                    {% endif %} 
+                  </td>
+                </tr>
+              </table>
+              {% endif %} {% if update.changes.duplicate %} <!-- duplicate changed --> 
+              <table role="presentation" style="max-width: 100%; padding-bottom: 15px" >
+                <tr>
+                  <td> <img src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/duplicate.png" width="12" height="12" border="0" style="display: inline-block" /> <span style=" font-size: 0.8rem; font-weight: 500; color: #525252; " > Duplicate: </span> </td>
+                  {% if update.changes.duplicate.new_value.0 %} 
+                  <td style="padding-left: 5px;overflow-wrap: break-word;"> {% for duplicate in update.changes.duplicate.new_value|slice:":2" %} <span style=" font-size: 0.8rem; font-weight: 500; color: #3a5bc7; margin-right: 3px; padding-top: 0px; " > {{ duplicate }} </span> {% endfor %} </td>
+                  {% endif %} {% if update.changes.duplicate.new_value.2 %} 
+                  <td> <span style=" font-size: 0.8rem; font-weight: 500; color: #3a5bc7; margin-right: 3px; padding-top: 0px; " > +{{ update.changes.duplicate.new_value|length|add:"-2" }} more </span> </td>
+                  {% endif %} {% if update.changes.duplicate.old_value.0 %} 
+                  <td style="padding-left: 8px;"> {% for duplicate in update.changes.duplicate.old_value|slice:":2" %} <span style=" font-size: 0.8rem; font-weight: 500; color: #641723; margin-right: 3px; padding-top: 0px; text-decoration: line-through; " > {{ duplicate }} </span> {% endfor %} </td>
+                  {% endif %} {% if update.changes.duplicate.old_value.2 %} 
+                  <td> <span style=" font-size: 0.8rem; font-weight: 500; color: #641723; margin-right: 3px; padding-top: 0px; " > +{{ update.changes.duplicate.old_value|length|add:"-2" }} more </span> </td>
+                  {% endif %} 
+                </tr>
+              </table>
+              {% endif %} <!-- Assignee changed--> {% if update.changes.assignees %} 
+              <table role="presentation" style="padding-bottom: 15px; max-width: 100%; padding-right: 10px;" >
+                <tr>
+                  <td valign="top" style="white-space: nowrap; padding: 0px;"> <img src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/assignee.png" width="12" height="12" border="0" style="display: inline-block" /> <span style=" font-size: 0.8rem; font-weight: 500; color: #525252; padding-right: 5px; " > Assignee: </span> </td>
+                  <td style="overflow-wrap: anywhere;word-break: break-all; padding: 0px;"> {% if update.changes.assignees.new_value.0 %} <span style=" font-size: 0.8rem; color: #0d74ce; background-color: #e6f4fe; margin-right: 5px; padding-left: 4px; padding-right: 4px; padding-bottom: 2px; padding-top: 2px; font-weight: 500; border-radius: 2px; max-lines: 1; " > {{update.changes.assignees.new_value.0}} </span> {% endif %} {% if update.changes.assignees.new_value.1 %} <span style=" font-size: 0.8rem; font-weight: 500; color: #0d74ce; margin-left: 2px; margin-right: 5px; white-space: nowrap; padding: 0px; " > +{{ update.changes.assignees.new_value|length|add:"-1"}} more </span> {% endif %} {% if update.changes.assignees.old_value.0 %} <span style=" font-size: 0.8rem; padding-left: 4px; padding-right: 4px; padding-bottom: 2px; padding-top: 2px; font-weight: 500; text-decoration: line-through; color: #641723; background-color: #feebec; margin-right: 5px; border-radius: 2px; " > {{update.changes.assignees.old_value.0}} </span> {% endif %} {% if update.changes.assignees.old_value.1 %} <span style=" font-size: 0.8rem; font-weight: 500; color: #641723; margin-left: 2px; white-space: nowrap; " > +{{ update.changes.assignees.old_value|length|add:"-1"}} more </span> {% endif %} </td>
+                </tr>
+              </table>
+              {% endif %} {% if update.changes.labels %} <!-- Labels --> 
+              <table role="presentation" style="padding-bottom: 15px; max-width: 100%; padding-right: 10px;" >
+                <tr>
+                  <td valign="top" style="white-space: nowrap; padding: 0px;"> <img src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/labels.png" width="12" height="12" border="0" style="display: inline-block;" /> <span style=" font-size: 0.8rem; font-weight: 500; color: #525252; padding-right: 5px; " > Labels: </span> </td>
+                  <td style="overflow-wrap: anywhere;word-break: break-all; padding: 0px;"> {% if update.changes.labels.new_value.0 %} <span style=" font-size: 0.8rem; line-height: 1px; color: #0d74ce; background-color: #e6f4fe; margin-right: 5px; padding-left: 4px; padding-right: 4px; padding-bottom: 2px; padding-top: 2px; font-weight: 500; border-radius: 2px; max-lines: 1; " > {{update.changes.labels.new_value.0}} </span> {% endif %} {% if update.changes.labels.new_value.1 %} <span style=" font-size: 0.8rem; font-weight: 500; color: #0d74ce; margin-left: 2px; margin-right: 5px; white-space: nowrap; " > +{{ update.changes.labels.new_value|length|add:"-1"}} more </span> {% endif %} {% if update.changes.labels.old_value.0 %} <span style=" font-size: 0.8rem; padding-left: 4px; padding-right: 4px; padding-bottom: 2px; padding-top: 2px; font-weight: 500; text-decoration: line-through; color: #641723; background-color: #feebec; margin-right: 5px; border-radius: 2px; " > {{update.changes.labels.old_value.0}} </span> {% endif %} {% if update.changes.labels.old_value.1 %} <span style=" font-size: 0.8rem; font-weight: 500; color: #641723; margin-left: 2px; white-space: nowrap; " > +{{ update.changes.labels.old_value|length|add:"-1"}} more </span> {% endif %} </td>
+                </tr>
+              </table>
+              {% endif %} <!-- State changed --> {% if update.changes.state %} 
+              <table role="presentation" style="padding-bottom: 15px; max-width: 100%" >
+                <tr>
+                  <td> <img src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/state.png" width="12" height="12" border="0" style="display: block" /> </td>
+                  <td>
+                    <p style=" font-size: 0.8rem; font-weight: 500; color: #525252; " > State: </p>
+                  </td>
+                  {% if update.changes.state.old_value.0 == 'Backlog' or update.changes.state.old_value.0 == 'In Progress' or update.changes.state.old_value.0 == 'Done' or update.changes.state.old_value.0 == 'Cancelled' %} 
+                  <td> <img src="{% if update.changes.state.old_value.0 == 'Backlog' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/backlog.png{% endif %}{% if update.changes.state.old_value.0 == 'In Progress' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/in-progress.png{% endif %}{% if update.changes.state.old_value.0 == 'Done' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/done.png{% endif %}{% if update.changes.state.old_value.0 == 'Cancelled' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/cancelled.png{% endif %}" width="12" height="12" border="0" style="display: block; margin-left: 5px;" /> </td>
+                  {% endif %} 
+                  <td>
+                    <p style=" font-size: 0.8rem; font-weight: 500; color: #60646C; " > {{ update.changes.state.old_value.0 }} </p>
+                  </td>
+                  <td style="padding-left: 10px; padding-right: 10px;"> <img src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/forward-arrow.png" width="16" height="16" border="0" style="display: block;" /> </td>
+                  {% if update.changes.state.new_value|last == 'Backlog' or update.changes.state.new_value|last == 'In Progress' or update.changes.state.new_value|last == 'Done' or update.changes.state.new_value|last == 'Cancelled' %} 
+                  <td> <img src="{% if update.changes.state.new_value|last == 'Backlog' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/backlog.png{% elif update.changes.state.new_value|last == 'In Progress' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/in-progress.png{% elif update.changes.state.new_value|last == 'Todo' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/todo.png{% elif update.changes.state.new_value|last == 'Done' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/done.png{% elif update.changes.state.new_value|last == 'Cancelled' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/cancelled.png{% endif %}" width="12" height="12" border="0" style="display: block;" /> </td>
+                  {% endif %} 
+                  <td>
+                    <p style=" font-size: 0.8rem; font-weight: 500; color: #60646c; " > {{update.changes.state.new_value|last }} </p>
+                  </td>
+                </tr>
+              </table>
+              {% endif %} {% if update.changes.link %} <!-- Link Added --> 
+              <table role="presentation" style="padding-bottom: 15px; max-width: 100%" >
+                <tr>
+                  <td valign="top"> <img src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/link.png" width="12" height="12" border="0" style="display: block; margin-top: 3px;" /> </td>
+                  <td valign="top">
+                    <p style=" font-size: 0.8rem; font-weight: 500; color: #525252; margin-right: 5px; " > Links: </p>
+                  </td>
+                  <td>
+                    {% for link in update.changes.link.new_value %} <a href="{{link}}" style=" font-size: 0.8rem; font-weight: 600; color: #3a5bc7; display: block; padding-bottom: 5px; " > {{ link }} </a> {% endfor %} {% if update.changes.link.old_value|length > 0 %} {% if update.changes.link.old_value.0 != "None" %} 
+                    <p href="" style=" font-size: 0.8rem; font-weight: 500; color: #60646c; " > 2 Links were removed </p>
+                    {% endif %} {% endif %} 
+                  </td>
+                </tr>
+              </table>
+              {% endif %} {% if update.changes.priority %} <!-- Priority changed --> 
+              <table role="presentation" style="padding-bottom: 15px; max-width: 100%" >
+                <tr>
+                  <td> <img src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/priority.png" width="12" height="12" border="0" style="display: block; margin: 0px; padding: 0px" /> </td>
+                  <td>
+                    <p style=" font-size: 0.8rem; font-weight: 500; color: #525252; margin-right: 5px; " > Priority: </p>
+                  </td>
+                  <td>
+                    <p style=" font-size: 0.8rem; padding-left: 4px; padding-right: 4px; padding-bottom: 0px; font-weight: 500; border-radius: 2px; text-transform: capitalize; {% if update.changes.priority.old_value.0 == 'urgent' %}background-color: #FFDBDC; color: #CE2C31;{% endif %} {% if update.changes.priority.old_value.0 == 'high' %}background-color: #FFE2C7; color: #F04610;{% endif %} {% if update.changes.priority.old_value.0 == 'medium' %}background-color: #FEFBE9; color: #E2A336;{% endif %} {% if update.changes.priority.old_value.0 == 'low' %}background-color: #E9F6E9; color: #2A7E3B;{% endif %} " > {{ update.changes.priority.old_value.0 }} </p>
+                  </td>
+                  <td style="padding-left: 10px; padding-right: 10px;"> <img src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/forward-arrow.png" width="16" height="16" border="0" style="display: block;" /> </td>
+                  <td>
+                    <p style=" font-size: 0.8rem; padding-left: 4px; padding-right: 4px; padding-bottom: 0px; font-weight: 500; border-radius: 2px; text-transform: capitalize; {% if update.changes.priority.new_value|last == 'urgent' %}background-color: #FFDBDC; color: #CE2C31;{% endif %} {% if update.changes.priority.new_value|last == 'high' %}background-color: #FEEBEC; color: #CE2C31;{% endif %} {% if update.changes.priority.new_value|last == 'medium' %}background-color: #FEFBE9; color: #E2A336;{% endif %} {% if update.changes.priority.new_value|last == 'low' %}background-color: #E9F6E9; color: #2A7E3B;{% endif %} " > {{ update.changes.priority.new_value|last }} </p>
+                  </td>
+                </tr>
+              </table>
+              {% endif %} {% if update.changes.blocking.new_value %} <!-- Blocking changed --> 
+              <table role="presentation" style="padding-bottom: 15px; max-width: 100%" >
+                <tr style="overflow-wrap: break-word;">
+                  <td> <img src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/blocking.png" width="12" height="12" border="0" style="display: inline-block;" /> <span style=" font-size: 0.8rem; font-weight: 500; color: #525252; margin-right: 5px; " > Blocking: </span> </td>
+                  {% if update.changes.blocking.new_value.0 %} 
+                  <td style="padding-left: 5px;overflow-wrap: break-word;"> {% for blocking in update.changes.blocking.new_value|slice:":2" %} <span style=" font-size: 0.8rem; font-weight: 500; color: #3a5bc7; margin-right: 3px; padding-top: 0px; " > {{ blocking }} </span> {% endfor %} </td>
+                  {% endif %} {% if update.changes.blocking.new_value.2 %} 
+                  <td> <span style=" font-size: 0.8rem; font-weight: 500; color: #3a5bc7; margin-right: 3px; padding-top: 0px; " > +{{ update.changes.blocking.new_value|length|add:"-2" }} more </span> </td>
+                  {% endif %} {% if update.changes.blocking.old_value.0 %} 
+                  <td style="padding-left: 8px;"> {% for blocking in update.changes.blocking.old_value|slice:":2" %} <span style=" font-size: 0.8rem; font-weight: 500; color: #641723; margin-right: 3px; padding-top: 0px; text-decoration: line-through; " > {{ blocking }} </span> {% endfor %} </td>
+                  {% endif %} {% if update.changes.blocking.old_value.2 %} 
+                  <td> <span style=" font-size: 0.8rem; font-weight: 500; color: #641723; margin-right: 3px; padding-top: 0px; " > +{{ update.changes.blocking.old_value|length|add:"-2" }} more </span> </td>
+                  {% endif %} 
+                </tr>
+              </table>
+              {% endif %} 
+            </div>
+          </div>
+          {% endif %} <!-- Outer update Box end --> {% endfor %} {% if comments.0 %} <!-- Comments outer update Box --> 
+          <div style=" max-width: 100%; background-color: #f7f9ff; border-radius: 8px; border-style: solid; border-width: 1px; border-color: #c1d0ff; padding: 20px; margin-top: 15px; " >
+            <!-- Block Heading --> 
+            <p style="font-size: 0.8rem; font-weight: 600; color: #121a26; padding-bottom: 20px;"> Comments </p>
+            <!-- Comments --> {% for comment in comments %} 
+            <table cellspacing="0">
+              <tr style="border-radius: 8px">
+                <td valign="top">
+                  {% if comment.actor_detail.avatar_url %} <img src="{{ comment.actor_detail.avatar_url }}" width="25" height="25" border="0" /> {% else %} 
+                  <table cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td style=" width: 25px; height: 25px; background-color: #4f3422; border-radius: 50%; text-align: center; " > <span style=" color: white; font-weight: 500; font-size: 13px; line-height: 25px; display: inline-block; " > {{ comment.actor_detail.first_name.0 }} </span> </td>
+                    </tr>
+                  </table>
+                  {% endif %} 
+                </td>
+                <td style="padding-bottom: 15px">
+                  <table>
+                    <tr>
+                      <td>
+                        <p style=" font-weight: 500; font-size: 0.8rem; color: #1c2024; margin-left: 8px; " > {{ comment.actor_detail.first_name }} {{ comment.actor_detail.last_name }} </p>
+                      </td>
+                    </tr>
+                    {% for actor_comment in comment.actor_comments.new_value %} 
+                    <tr>
+                      <td>
+                        <div style=" padding: 6px 10px; margin-left: 10px; background-color: white; font-size: 0.8rem; color: #525252; margin-top: 5px; border-radius: 4px; overflow-x: scroll; max-width: 430px;" >
+                          <p> {{ actor_comment|safe }} </p>
+                        </div>
+                      </td>
+                    </tr>
+                    {% endfor %} 
+                  </table>
+                </td>
+              </tr>
+            </table>
+            {% endfor %} 
+          </div>
+          {% endif %} 
+        </div>
+        <a href="{{ issue_url }}" style="text-decoration: none;">
+          <div style=" max-width: min-content; white-space: nowrap; background-color: #3e63dd; padding: 10px 15px; border: 1px solid #2f4ba8; border-radius: 4px; margin-top: 15px; cursor: pointer; font-size: 0.8rem; color: white; " > View {{entity_type}} </div>
+        </a>
+      </div>
+      <!-- Footer --> 
+      <table style="width: 100%; padding: 20px; justify-content: center">
+        <tr>
+          <td>
+            <div style="font-size: 0.8rem; color: #1c2024">
+              This email was sent to <a href="mailto:{{receiver.email}}" style="color: #3a5bc7; font-weight: 500; text-decoration: none" >{{ receiver.email }}.</a > If you'd rather not receive this kind of email, <a href="{{ issue_url }}" style="color: #3a5bc7; text-decoration: none" >you can unsubscribe to the {{entity_type}}</a > or <a href="{{ user_preference }}" style="color: #3a5bc7; text-decoration: none" >manage your email preferences</a >. <!-- Github | LinkedIn | Twitter --> 
+              <div style="margin-top: 60px; float: right"> <a href="https://github.com/makeplane" target="_blank" style="margin-left: 10px; text-decoration: none" > <img src="https://creative-assets.mailinblue.com/editor/social-icons/rounded_colored/github_32px.png" width="25" height="25" border="0" style="display: inline-block" /> </a> <a href="https://www.linkedin.com/company/planepowers/" target="_blank" style="margin-left: 10px; text-decoration: none" > <img src="https://creative-assets.mailinblue.com/editor/social-icons/rounded_colored/linkedin_32px.png" width="25" height="25" border="0" style="display: inline-block" /> </a> <a href="https://twitter.com/planepowers" target="_blank" style="margin-left: 10px; text-decoration: none" > <img src="https://creative-assets.mailinblue.com/editor/social-icons/rounded_colored/twitter_32px.png" width="25" height="25" border="0" style="display: inline-block" /> </a> </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

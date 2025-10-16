@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 // plane imports
 import { TBottomSectionConfig, TContentVisibility, TTopSectionConfig } from "@plane/types";
-import { cn } from "@plane/utils";
+import { cn } from "../../utils/classname";
 
 const LAYOUT = {
   PADDING: 2,
@@ -252,8 +252,8 @@ export const CustomTreeMapContent: React.FC<any> = ({
                     {bottom.labelTruncated
                       ? truncateText(
                           label,
-                        availableTextWidth - calculateContentWidth(value, LAYOUT.TEXT.FONT_SIZES.SM) - 4,
-                        LAYOUT.TEXT.FONT_SIZES.SM
+                          availableTextWidth - calculateContentWidth(value, LAYOUT.TEXT.FONT_SIZES.SM) - 4,
+                          LAYOUT.TEXT.FONT_SIZES.SM
                         )
                       : label}
                   </tspan>

@@ -1,7 +1,7 @@
 import * as React from "react";
-import { cn } from "../../helpers";
-import { EHeaderVariant, getHeaderStyle, THeaderVariant } from "./helper";
 import { ERowVariant, Row } from "../row";
+import { cn } from "../utils";
+import { EHeaderVariant, getHeaderStyle, THeaderVariant } from "./helper";
 
 export interface HeaderProps {
   variant?: THeaderVariant;
@@ -38,7 +38,10 @@ const Header = (props: HeaderProps) => {
 
 const LeftItem = (props: HeaderProps) => (
   <div
-    className={cn("flex flex-wrap items-center gap-2 overflow-ellipsis whitespace-nowrap max-w-[80%]", props.className)}
+    className={cn(
+      "flex flex-wrap items-center gap-2 overflow-ellipsis whitespace-nowrap max-w-[80%] flex-grow",
+      props.className
+    )}
   >
     {props.children}
   </div>

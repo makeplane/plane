@@ -1,13 +1,13 @@
-import { Editor, Range, Extension } from "@tiptap/core";
+import { type Editor, Extension } from "@tiptap/core";
 import { ReactRenderer } from "@tiptap/react";
-import Suggestion, { SuggestionOptions } from "@tiptap/suggestion";
-import tippy, { Instance } from "tippy.js";
+import Suggestion, { type SuggestionOptions } from "@tiptap/suggestion";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
-import { CommandListInstance } from "@/helpers/tippy";
+import { updateFloatingUIFloaterPosition } from "@/helpers/floating-ui";
+import { CommandListInstance, DROPDOWN_NAVIGATION_KEYS } from "@/helpers/tippy";
 // types
-import { ISlashCommandItem, TEditorCommands, TExtensions, TSlashCommandSectionKeys } from "@/types";
+import { IEditorProps, ISlashCommandItem, TEditorCommands, TSlashCommandSectionKeys } from "@/types";
 // components
 import { getSlashCommandFilteredSections } from "./command-items-list";
 import { SlashCommandsMenu, SlashCommandsMenuProps } from "./command-menu";
@@ -27,20 +27,15 @@ const Command = Extension.create<SlashCommandOptions>({
     return {
       suggestion: {
         char: "/",
-        command: ({ editor, range, props }: { editor: Editor; range: Range; props: any }) => {
+        command: ({ editor, range, props }) => {
           props.command({ editor, range });
         },
         allow({ editor }: { editor: Editor }) {
           const { selection } = editor.state;
-
           const parentNode = selection.$from.node(selection.$from.depth);
           const blockType = parentNode.type.name;
 
           if (blockType === CORE_EXTENSIONS.CODE_BLOCK) {
-            return false;
-          }
-
-          if (editor.isActive(CORE_EXTENSIONS.TABLE)) {
             return false;
           }
 
@@ -53,68 +48,78 @@ const Command = Extension.create<SlashCommandOptions>({
     return [
       Suggestion({
         editor: this.editor,
+        render: () => {
+          let component: ReactRenderer<CommandListInstance, SlashCommandsMenuProps> | null = null;
+          let cleanup: () => void = () => {};
+          let editorRef: Editor | null = null;
+
+          const handleClose = (editor?: Editor) => {
+            component?.destroy();
+            component = null;
+            (editor || editorRef)?.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
+            cleanup();
+          };
+
+          return {
+            onStart: (props) => {
+              editorRef = props.editor;
+              // React renderer component, which wraps the actual dropdown component
+              component = new ReactRenderer<CommandListInstance, SlashCommandsMenuProps>(SlashCommandsMenu, {
+                props: {
+                  ...props,
+                  onClose: () => handleClose(props.editor),
+                } satisfies SlashCommandsMenuProps,
+                editor: props.editor,
+                className: "fixed z-[100]",
+              });
+              if (!props.clientRect) return;
+              props.editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
+              const element = component.element as HTMLElement;
+              cleanup = updateFloatingUIFloaterPosition(props.editor, element).cleanup;
+            },
+
+            onUpdate: (props) => {
+              if (!component || !component.element) return;
+              component.updateProps(props);
+              if (!props.clientRect) return;
+              const element = component.element as HTMLElement;
+              cleanup();
+              cleanup = updateFloatingUIFloaterPosition(props.editor, element).cleanup;
+            },
+
+            onKeyDown: ({ event }) => {
+              if ([...DROPDOWN_NAVIGATION_KEYS, "Escape"].includes(event.key)) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
+
+              if (event.key === "Escape") {
+                handleClose(this.editor);
+                return true;
+              }
+
+              return component?.ref?.onKeyDown({ event }) ?? false;
+            },
+
+            onExit: ({ editor }) => {
+              component?.element.remove();
+              handleClose(editor);
+            },
+          };
+        },
         ...this.options.suggestion,
       }),
     ];
   },
 });
 
-const renderItems = () => {
-  let component: ReactRenderer<CommandListInstance, SlashCommandsMenuProps> | null = null;
-  let popup: Instance | null = null;
-  return {
-    onStart: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {
-      component = new ReactRenderer<CommandListInstance, SlashCommandsMenuProps>(SlashCommandsMenu, {
-        props,
-        editor: props.editor,
-      });
-
-      const tippyContainer =
-        document.querySelector(".active-editor") ?? document.querySelector('[id^="editor-container"]');
-      // @ts-expect-error - Tippy types are incorrect
-      popup = tippy("body", {
-        getReferenceClientRect: props.clientRect,
-        appendTo: tippyContainer,
-        content: component.element,
-        showOnCreate: true,
-        interactive: true,
-        trigger: "manual",
-        placement: "bottom-start",
-      });
-    },
-    onUpdate: (props: { editor: Editor; clientRect?: (() => DOMRect | null) | null }) => {
-      component?.updateProps(props);
-
-      popup?.[0]?.setProps({
-        getReferenceClientRect: props.clientRect,
-      });
-    },
-    onKeyDown: (props: { event: KeyboardEvent }) => {
-      if (props.event.key === "Escape") {
-        popup?.[0].hide();
-        return true;
-      }
-      if (component?.ref?.onKeyDown(props)) {
-        return true;
-      }
-      return false;
-    },
-    onExit: () => {
-      popup?.[0].destroy();
-      component?.destroy();
-    },
-  };
-};
-
-export type TExtensionProps = {
+export type TExtensionProps = Pick<IEditorProps, "disabledExtensions" | "flaggedExtensions"> & {
   additionalOptions?: TSlashCommandAdditionalOption[];
-  disabledExtensions?: TExtensions[];
 };
 
 export const SlashCommands = (props: TExtensionProps) =>
   Command.configure({
     suggestion: {
       items: getSlashCommandFilteredSections(props),
-      render: renderItems,
     },
   });

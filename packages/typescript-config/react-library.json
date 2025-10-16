@@ -1,11 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "React Library",
   "extends": "./base.json",
   "compilerOptions": {
-    "lib": ["ES2015"],
-    "target": "ES6",
+    "module": "Preserve",
+    "moduleResolution": "bundler",
     "jsx": "react-jsx"
-  },
-  "exclude": ["node_modules"]
+  }
 }

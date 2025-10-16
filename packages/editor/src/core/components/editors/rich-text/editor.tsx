@@ -1,21 +1,23 @@
 import { forwardRef, useCallback } from "react";
 // components
 import { EditorWrapper } from "@/components/editors";
-import { EditorBubbleMenu } from "@/components/menus";
+import { BlockMenu, EditorBubbleMenu } from "@/components/menus";
 // extensions
 import { SideMenuExtension } from "@/extensions";
 // plane editor imports
-import { RichTextEditorAdditionalExtensions } from "@/plane-editor/extensions/rich-text/extensions";
+import { RichTextEditorAdditionalExtensions } from "@/plane-editor/extensions/rich-text-extensions";
 // types
-import { EditorRefApi, IRichTextEditor } from "@/types";
+import { EditorRefApi, IRichTextEditorProps } from "@/types";
 
-const RichTextEditor = (props: IRichTextEditor) => {
+const RichTextEditor: React.FC<IRichTextEditorProps> = (props) => {
   const {
+    bubbleMenuEnabled = true,
     disabledExtensions,
     dragDropEnabled,
-    fileHandler,
-    bubbleMenuEnabled = true,
     extensions: externalExtensions = [],
+    fileHandler,
+    flaggedExtensions,
+    extendedEditorProps,
   } = props;
 
   const getExtensions = useCallback(() => {
@@ -28,20 +30,27 @@ const RichTextEditor = (props: IRichTextEditor) => {
       ...RichTextEditorAdditionalExtensions({
         disabledExtensions,
         fileHandler,
+        flaggedExtensions,
+        extendedEditorProps,
       }),
     ];
 
     return extensions;
-  }, [dragDropEnabled, disabledExtensions, externalExtensions, fileHandler]);
+  }, [dragDropEnabled, disabledExtensions, externalExtensions, fileHandler, flaggedExtensions, extendedEditorProps]);
 
   return (
     <EditorWrapper {...props} extensions={getExtensions()}>
-      {(editor) => <>{editor && bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}</>}
+      {(editor) => (
+        <>
+          {editor && bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}
+          <BlockMenu editor={editor} flaggedExtensions={flaggedExtensions} disabledExtensions={disabledExtensions} />
+        </>
+      )}
     </EditorWrapper>
   );
 };
 
-const RichTextEditorWithRef = forwardRef<EditorRefApi, IRichTextEditor>((props, ref) => (
+const RichTextEditorWithRef = forwardRef<EditorRefApi, IRichTextEditorProps>((props, ref) => (
   <RichTextEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
 ));
 

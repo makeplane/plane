@@ -1,5 +1,5 @@
+import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/dist/cjs/entry-point/element/adapter.js";
 import React, { Fragment, useEffect, useMemo } from "react";
-import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { Draggable } from "./draggable";
 
 type TEnhancedData<T> = T & { __uuid__?: string };

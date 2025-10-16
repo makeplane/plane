@@ -3,17 +3,19 @@ import { Plugin } from "@tiptap/pm/state";
 import { find, registerCustomProtocol, reset } from "linkifyjs";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
+// helpers
+import { isValidHttpUrl } from "@/helpers/common";
 // local imports
 import { autolink } from "./helpers/autolink";
 import { clickHandler } from "./helpers/clickHandler";
 import { pasteHandler } from "./helpers/pasteHandler";
 
-export interface LinkProtocolOptions {
+type LinkProtocolOptions = {
   scheme: string;
   optionalSlashes?: boolean;
-}
+};
 
-export interface LinkOptions {
+type LinkOptions = {
   /**
    * If enabled, it adds links as you type.
    */
@@ -38,47 +40,25 @@ export interface LinkOptions {
   /**
    * A list of HTML attributes to be rendered.
    */
-  HTMLAttributes: Record<string, any>;
+  HTMLAttributes: Record<string, unknown>;
   /**
    * A validation function that modifies link verification for the auto linker.
    * @param url - The url to be validated.
    * @returns - True if the url is valid, false otherwise.
    */
   validate?: (url: string) => boolean;
-}
+};
 
 declare module "@tiptap/core" {
-  interface Commands<ReturnType> {
-    [CORE_EXTENSIONS.CUSTOM_LINK]: {
-      /**
-       * Set a link mark
-       */
-      setLink: (attributes: {
-        href: string;
-        target?: string | null;
-        rel?: string | null;
-        class?: string | null;
-      }) => ReturnType;
-      /**
-       * Toggle a link mark
-       */
-      toggleLink: (attributes: {
-        href: string;
-        target?: string | null;
-        rel?: string | null;
-        class?: string | null;
-      }) => ReturnType;
-      /**
-       * Unset a link mark
-       */
-      unsetLink: () => ReturnType;
-    };
+  interface Storage {
+    [CORE_EXTENSIONS.CUSTOM_LINK]: CustomLinkStorage;
   }
 }
 
 export type CustomLinkStorage = {
   isPreviewOpen: boolean;
   posToInsert: { from: number; to: number };
+  isBubbleMenuOpen: boolean;
 };
 
 export const CustomLinkExtension = Mark.create<LinkOptions, CustomLinkStorage>({
@@ -112,13 +92,14 @@ export const CustomLinkExtension = Mark.create<LinkOptions, CustomLinkStorage>({
       linkOnPaste: true,
       autolink: true,
       inclusive: false,
-      protocols: [],
+      protocols: ["http", "https"],
       HTMLAttributes: {
         target: "_blank",
         rel: "noopener noreferrer nofollow",
-        class: null,
+        class:
+          "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
       },
-      validate: undefined,
+      validate: (url: string) => isValidHttpUrl(url).isValid,
     };
   },
 

@@ -6,18 +6,18 @@ import { COLORS_LIST } from "@/constants/common";
 import { CalloutBlockColorSelector } from "./color-selector";
 import { CalloutBlockLogoSelector } from "./logo-selector";
 // types
-import { EAttributeNames, TCalloutBlockAttributes } from "./types";
+import { ECalloutAttributeNames, TCalloutBlockAttributes } from "./types";
 // utils
 import { updateStoredBackgroundColor } from "./utils";
 
-type Props = NodeViewProps & {
+export type CustomCalloutNodeViewProps = NodeViewProps & {
   node: NodeViewProps["node"] & {
     attrs: TCalloutBlockAttributes;
   };
   updateAttributes: (attrs: Partial<TCalloutBlockAttributes>) => void;
 };
 
-export const CustomCalloutBlock: React.FC<Props> = (props) => {
+export const CustomCalloutBlock: React.FC<CustomCalloutNodeViewProps> = (props) => {
   const { editor, node, updateAttributes } = props;
   // states
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
@@ -45,7 +45,7 @@ export const CustomCalloutBlock: React.FC<Props> = (props) => {
         toggleDropdown={() => setIsColorPickerOpen((prev) => !prev)}
         onSelect={(val) => {
           updateAttributes({
-            [EAttributeNames.BACKGROUND]: val,
+            [ECalloutAttributeNames.BACKGROUND]: val,
           });
           updateStoredBackgroundColor(val);
         }}

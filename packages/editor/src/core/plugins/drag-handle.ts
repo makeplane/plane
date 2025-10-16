@@ -16,11 +16,13 @@ const generalSelectors = [
   "blockquote",
   "h1.editor-heading-block, h2.editor-heading-block, h3.editor-heading-block, h4.editor-heading-block, h5.editor-heading-block, h6.editor-heading-block",
   "[data-type=horizontalRule]",
-  ".table-wrapper",
+  "table:not(.table-drag-preview)",
   ".issue-embed",
   ".image-component",
   ".image-upload-component",
   ".editor-callout-component",
+  ".editor-embed-component",
+  ".editor-drawio-component",
 ].join(", ");
 
 const maxScrollSpeed = 20;
@@ -65,7 +67,7 @@ const isScrollable = (node: HTMLElement | SVGElement) => {
   });
 };
 
-const getScrollParent = (node: HTMLElement | SVGElement) => {
+export const getScrollParent = (node: HTMLElement | SVGElement) => {
   if (scrollParentCache.has(node)) {
     return scrollParentCache.get(node);
   }
@@ -90,7 +92,7 @@ export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
 
   for (const elem of elements) {
     // Check for table wrapper first
-    if (elem.matches(".table-wrapper")) {
+    if (elem.matches("table:not(.table-drag-preview)")) {
       return elem;
     }
 
@@ -99,7 +101,12 @@ export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
     }
 
     // Skip table cells
-    if (elem.closest(".table-wrapper")) {
+    if (elem.closest("table")) {
+      continue;
+    }
+
+    // Skip elements inside .editor-embed-component
+    if (elem.closest(".editor-embed-component") && !elem.matches(".editor-embed-component")) {
       continue;
     }
 
@@ -137,6 +144,42 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
   let isDraggedOutsideWindow: "top" | "bottom" | boolean = false;
   let isMouseInsideWhileDragging = false;
   let currentScrollSpeed = 0;
+  let dragHandleElement: HTMLElement | null = null;
+
+  function scroll() {
+    if (!isDragging) {
+      currentScrollSpeed = 0;
+      return;
+    }
+
+    const scrollableParent = getScrollParent(dragHandleElement!);
+    if (!scrollableParent) return;
+
+    const scrollRegionUp = options.scrollThreshold.up;
+    const scrollRegionDown = window.innerHeight - options.scrollThreshold.down;
+
+    let targetScrollAmount = 0;
+
+    if (isDraggedOutsideWindow === "top") {
+      targetScrollAmount = -maxScrollSpeed * 5;
+    } else if (isDraggedOutsideWindow === "bottom") {
+      targetScrollAmount = maxScrollSpeed * 5;
+    } else if (lastClientY < scrollRegionUp) {
+      const ratio = easeOutQuadAnimation((scrollRegionUp - lastClientY) / options.scrollThreshold.up);
+      targetScrollAmount = -maxScrollSpeed * ratio;
+    } else if (lastClientY > scrollRegionDown) {
+      const ratio = easeOutQuadAnimation((lastClientY - scrollRegionDown) / options.scrollThreshold.down);
+      targetScrollAmount = maxScrollSpeed * ratio;
+    }
+
+    currentScrollSpeed += (targetScrollAmount - currentScrollSpeed) * acceleration;
+
+    if (Math.abs(currentScrollSpeed) > 0.1) {
+      scrollableParent.scrollBy({ top: currentScrollSpeed });
+    }
+
+    scrollAnimationFrame = requestAnimationFrame(scroll) as unknown as null;
+  }
 
   const handleClick = (event: MouseEvent, view: EditorView) => {
     handleNodeSelection(event, view, false, options);
@@ -164,42 +207,6 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
     view?.dom.classList.remove("dragging");
   };
 
-  function scroll() {
-    if (!isDragging) {
-      currentScrollSpeed = 0;
-      return;
-    }
-
-    const scrollableParent = getScrollParent(dragHandleElement);
-    if (!scrollableParent) return;
-
-    const scrollRegionUp = options.scrollThreshold.up;
-    const scrollRegionDown = window.innerHeight - options.scrollThreshold.down;
-
-    let targetScrollAmount = 0;
-
-    if (isDraggedOutsideWindow === "top") {
-      targetScrollAmount = -maxScrollSpeed * 5;
-    } else if (isDraggedOutsideWindow === "bottom") {
-      targetScrollAmount = maxScrollSpeed * 5;
-    } else if (lastClientY < scrollRegionUp) {
-      const ratio = easeOutQuadAnimation((scrollRegionUp - lastClientY) / options.scrollThreshold.up);
-      targetScrollAmount = -maxScrollSpeed * ratio;
-    } else if (lastClientY > scrollRegionDown) {
-      const ratio = easeOutQuadAnimation((lastClientY - scrollRegionDown) / options.scrollThreshold.down);
-      targetScrollAmount = maxScrollSpeed * ratio;
-    }
-
-    currentScrollSpeed += (targetScrollAmount - currentScrollSpeed) * acceleration;
-
-    if (Math.abs(currentScrollSpeed) > 0.1) {
-      scrollableParent.scrollBy({ top: currentScrollSpeed });
-    }
-
-    scrollAnimationFrame = requestAnimationFrame(scroll);
-  }
-
-  let dragHandleElement: HTMLElement | null = null;
   // drag handle view actions
   const showDragHandle = () => dragHandleElement?.classList.remove("drag-handle-hidden");
   const hideDragHandle = () => {
@@ -379,8 +386,9 @@ const handleNodeSelection = (
   let draggedNodePos = nodePosAtDOM(node, view, options);
   if (draggedNodePos == null || draggedNodePos < 0) return;
 
-  // Handle blockquote separately
-  if (node.matches("blockquote")) {
+  if (node.matches("table")) {
+    draggedNodePos = draggedNodePos - 2;
+  } else if (node.matches("blockquote")) {
     draggedNodePos = nodePosAtDOMForBlockQuotes(node, view);
     if (draggedNodePos === null || draggedNodePos === undefined) return;
   } else {

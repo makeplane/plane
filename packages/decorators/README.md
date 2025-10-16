@@ -17,7 +17,7 @@ This package is part of the Plane workspace and can be used by adding it to your
 ```json
 {
   "dependencies": {
-    "@plane/decorators": "*"
+    "@plane/decorators": "workspace:*"
   }
 }
 ```
@@ -52,11 +52,7 @@ userController.registerRoutes(router);
 ### WebSocket Controller
 
 ```typescript
-import {
-  Controller,
-  WebSocket,
-  BaseWebSocketController,
-} from "@plane/decorators";
+import { Controller, WebSocket, BaseWebSocketController } from "@plane/decorators";
 import { Request } from "express";
 import { WebSocket as WS } from "ws";
 

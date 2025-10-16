@@ -17,28 +17,51 @@
     "NEXT_PUBLIC_POSTHOG_KEY",
     "NEXT_PUBLIC_POSTHOG_HOST",
     "NEXT_PUBLIC_POSTHOG_DEBUG",
-    "NEXT_PUBLIC_SUPPORT_EMAIL"
+    "NEXT_PUBLIC_SUPPORT_EMAIL",
+    "ENABLE_EXPERIMENTAL_COREPACK"
   ],
+  "globalDependencies": ["pnpm-lock.yaml", "pnpm-workspace.yaml", ".npmrc"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "dist/**"]
+      "outputs": [".next/**", "dist/**", "build/**"]
     },
-    "develop": {
-      "cache": false,
-      "persistent": true,
-      "dependsOn": ["^build"]
+    "build-storybook": {
+      "dependsOn": ["^build"],
+      "outputs": ["storybook-static/**"]
     },
     "dev": {
+      "dependsOn": ["^build"],
       "cache": false,
-      "persistent": true,
-      "dependsOn": ["^build"]
+      "persistent": true
+    },
+    "check:types": {
+      "dependsOn": ["^build"],
+      "cache": false
+    },
+    "check:lint": {
+      "cache": false,
+      "inputs": ["**/*", "!**/.next/**", "!**/dist/**"]
+    },
+    "check:format": {
+      "cache": false
+    },
+    "check": {
+      "dependsOn": ["check:format", "check:lint", "check:types"],
+      "cache": false
+    },
+    "fix:lint": {
+      "cache": false
+    },
+    "fix:format": {
+      "cache": false
+    },
+    "fix": {
+      "dependsOn": ["fix:format", "fix:lint"],
+      "cache": false
     },
     "test": {
       "dependsOn": ["^build"],
-      "outputs": []
-    },
-    "lint": {
       "outputs": []
     },
     "start": {

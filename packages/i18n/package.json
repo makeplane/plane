@@ -1,22 +1,44 @@
 {
   "name": "@plane/i18n",
-  "version": "0.26.1",
+  "version": "1.0.0",
   "license": "AGPL-3.0",
   "description": "I18n shared across multiple apps internally",
   "private": true,
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
-    "lint": "eslint src --ext .ts,.tsx",
-    "lint:errors": "eslint src --ext .ts,.tsx --quiet"
+    "dev": "tsdown --watch",
+    "build": "tsdown",
+    "check:lint": "eslint . --max-warnings 2",
+    "check:types": "tsc --noEmit",
+    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "fix:lint": "eslint . --fix",
+    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "@plane/utils": "*",
-    "intl-messageformat": "^10.7.11"
+    "@plane/utils": "workspace:*",
+    "intl-messageformat": "^10.7.11",
+    "mobx": "catalog:",
+    "mobx-react": "catalog:",
+    "lodash-es": "catalog:",
+    "react": "catalog:"
   },
   "devDependencies": {
-    "@plane/eslint-config": "*",
-    "@types/node": "^22.5.4",
-    "typescript": "5.8.3"
-  }
+    "@plane/eslint-config": "workspace:*",
+    "@plane/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "@types/lodash-es": "catalog:",
+    "@types/react": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts"
 }

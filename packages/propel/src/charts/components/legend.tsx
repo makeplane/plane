@@ -2,7 +2,7 @@ import React from "react";
 import { LegendProps } from "recharts";
 // plane imports
 import { TChartLegend } from "@plane/types";
-import { cn } from "@plane/utils";
+import { cn } from "../../utils/classname";
 
 export const getLegendProps = (args: TChartLegend): LegendProps => {
   const { align, layout, verticalAlign } = args;
@@ -15,16 +15,16 @@ export const getLegendProps = (args: TChartLegend): LegendProps => {
       overflow: "hidden",
       ...(layout === "vertical"
         ? {
-          top: 0,
-          alignItems: "center",
-          height: "100%",
-        }
+            top: 0,
+            alignItems: "center",
+            height: "100%",
+          }
         : {
-          left: 0,
-          bottom: 0,
-          width: "100%",
-          justifyContent: "center",
-        }),
+            left: 0,
+            bottom: 0,
+            width: "100%",
+            justifyContent: "center",
+          }),
       ...args.wrapperStyles,
     },
     content: <CustomLegend {...args} />,
@@ -34,8 +34,8 @@ export const getLegendProps = (args: TChartLegend): LegendProps => {
 const CustomLegend = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> &
-  Pick<LegendProps, "payload" | "formatter" | "onClick" | "onMouseEnter" | "onMouseLeave"> &
-  TChartLegend
+    Pick<LegendProps, "payload" | "formatter" | "onClick" | "onMouseEnter" | "onMouseLeave"> &
+    TChartLegend
 >((props, ref) => {
   const { formatter, layout, onClick, onMouseEnter, onMouseLeave, payload } = props;
 

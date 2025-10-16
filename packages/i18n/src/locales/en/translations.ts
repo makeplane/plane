@@ -1,0 +1,2477 @@
+export default {
+  submit: "Submit",
+  cancel: "Cancel",
+  loading: "Loading",
+  error: "Error",
+  success: "Success",
+  warning: "Warning",
+  info: "Info",
+  close: "Close",
+  yes: "Yes",
+  no: "No",
+  ok: "OK",
+  name: "Name",
+  description: "Description",
+  search: "Search",
+  add_member: "Add member",
+  adding_members: "Adding members",
+  remove_member: "Remove member",
+  add_members: "Add members",
+  adding_member: "Adding members",
+  remove_members: "Remove members",
+  add: "Add",
+  adding: "Adding",
+  remove: "Remove",
+  add_new: "Add new",
+  remove_selected: "Remove selected",
+  first_name: "First name",
+  last_name: "Last name",
+  email: "Email",
+  display_name: "Display name",
+  role: "Role",
+  timezone: "Timezone",
+  avatar: "Avatar",
+  cover_image: "Cover image",
+  password: "Password",
+  change_cover: "Change cover",
+  language: "Language",
+  saving: "Saving",
+  save_changes: "Save changes",
+  deactivate_account: "Deactivate account",
+  deactivate_account_description:
+    "When deactivating an account, all of the data and resources within that account will be permanently removed and cannot be recovered.",
+  profile_settings: "Profile settings",
+  your_account: "Your account",
+  security: "Security",
+  activity: "Activity",
+  preferences: "Preferences",
+  language_and_time: "Language & Time",
+  notifications: "Notifications",
+  workspaces: "Workspaces",
+  create_workspace: "Create workspace",
+  invitations: "Invitations",
+  summary: "Summary",
+  assigned: "Assigned",
+  created: "Created",
+  subscribed: "Subscribed",
+  you_do_not_have_the_permission_to_access_this_page: "You do not have the permission to access this page.",
+  something_went_wrong_please_try_again: "Something went wrong. Please try again.",
+  load_more: "Load more",
+  select_or_customize_your_interface_color_scheme: "Select or customize your interface color scheme.",
+  timezone_setting: "Current timezone setting.",
+  language_setting: "Choose the language used in the user interface.",
+  settings_moved_to_preferences: "Timezone & Language settings have been moved to preferences.",
+  go_to_preferences: "Go to preferences",
+  theme: "Theme",
+  system_preference: "System preference",
+  light: "Light",
+  dark: "Dark",
+  light_contrast: "Light high contrast",
+  dark_contrast: "Dark high contrast",
+  custom: "Custom theme",
+  select_your_theme: "Select your theme",
+  customize_your_theme: "Customize your theme",
+  background_color: "Background color",
+  text_color: "Text color",
+  primary_color: "Primary(Theme) color",
+  sidebar_background_color: "Sidebar background color",
+  sidebar_text_color: "Sidebar text color",
+  set_theme: "Set theme",
+  enter_a_valid_hex_code_of_6_characters: "Enter a valid hex code of 6 characters",
+  background_color_is_required: "Background color is required",
+  text_color_is_required: "Text color is required",
+  primary_color_is_required: "Primary color is required",
+  sidebar_background_color_is_required: "Sidebar background color is required",
+  sidebar_text_color_is_required: "Sidebar text color is required",
+  updating_theme: "Updating theme",
+  theme_updated_successfully: "Theme updated successfully",
+  failed_to_update_the_theme: "Failed to update the theme",
+  email_notifications: "Email notifications",
+  stay_in_the_loop_on_issues_you_are_subscribed_to_enable_this_to_get_notified:
+    "Stay in the loop on Work items you are subscribed to. Enable this to get notified.",
+  email_notification_setting_updated_successfully: "Email notification setting updated successfully",
+  failed_to_update_email_notification_setting: "Failed to update email notification setting",
+  notify_me_when: "Notify me when",
+  property_changes: "Property changes",
+  property_changes_description:
+    "Notify me when work items' properties like assignees, priority, estimates or anything else changes.",
+  state_change: "State change",
+  state_change_description: "Notify me when the work items moves to a different state",
+  issue_completed: "Work item completed",
+  issue_completed_description: "Notify me only when a work item is completed",
+  comments: "Comments",
+  comments_description: "Notify me when someone leaves a comment on the work item",
+  mentions: "Mentions",
+  mentions_description: "Notify me only when someone mentions me in the comments or description",
+  old_password: "Old password",
+  general_settings: "General settings",
+  sign_out: "Sign out",
+  signing_out: "Signing out",
+  active_cycles: "Active cycles",
+  active_cycles_description:
+    "Monitor cycles across projects, track high-priority work items, and zoom in cycles that need attention.",
+  on_demand_snapshots_of_all_your_cycles: "On-demand snapshots of all your cycles",
+  upgrade: "Upgrade",
+  "10000_feet_view": "10,000-feet view of all active cycles.",
+  "10000_feet_view_description":
+    "Zoom out to see running cycles across all your projects at once instead of going from Cycle to Cycle in each project.",
+  get_snapshot_of_each_active_cycle: "Get a snapshot of each active cycle.",
+  get_snapshot_of_each_active_cycle_description:
+    "Track high-level metrics for all active cycles, see their state of progress, and get a sense of scope against deadlines.",
+  compare_burndowns: "Compare burndowns.",
+  compare_burndowns_description:
+    "Monitor how each of your teams are performing with a peek into each cycle's burndown report.",
+  quickly_see_make_or_break_issues: "Quickly see make-or-break work items.",
+  quickly_see_make_or_break_issues_description:
+    "Preview high-priority work items for each cycle against due dates. See all of them per cycle in one click.",
+  zoom_into_cycles_that_need_attention: "Zoom into cycles that need attention.",
+  zoom_into_cycles_that_need_attention_description:
+    "Investigate the state of any cycle that doesn't conform to expectations in one click.",
+  stay_ahead_of_blockers: "Stay ahead of blockers.",
+  stay_ahead_of_blockers_description:
+    "Spot challenges from one project to another and see inter-cycle dependencies that aren't obvious from any other view.",
+  analytics: "Analytics",
+  workspace_invites: "Workspace invites",
+  enter_god_mode: "Enter god mode",
+  workspace_logo: "Workspace logo",
+  new_issue: "New work item",
+  your_work: "Your work",
+  drafts: "Drafts",
+  projects: "Projects",
+  views: "Views",
+  workspace: "Workspace",
+  archives: "Archives",
+  settings: "Settings",
+  failed_to_move_favorite: "Failed to move favorite",
+  favorites: "Favorites",
+  no_favorites_yet: "No favorites yet",
+  create_folder: "Create folder",
+  new_folder: "New folder",
+  favorite_updated_successfully: "Favorite updated successfully",
+  favorite_created_successfully: "Favorite created successfully",
+  folder_already_exists: "Folder already exists",
+  folder_name_cannot_be_empty: "Folder name cannot be empty",
+  something_went_wrong: "Something went wrong",
+  failed_to_reorder_favorite: "Failed to reorder favorite",
+  favorite_removed_successfully: "Favorite removed successfully",
+  failed_to_create_favorite: "Failed to create favorite",
+  failed_to_rename_favorite: "Failed to rename favorite",
+  project_link_copied_to_clipboard: "Project link copied to clipboard",
+  link_copied: "Link copied",
+  add_project: "Add project",
+  create_project: "Create project",
+  failed_to_remove_project_from_favorites: "Couldn't remove the project from favorites. Please try again.",
+  project_created_successfully: "Project created successfully",
+  project_created_successfully_description: "Project created successfully. You can now start adding work items to it.",
+  project_name_already_taken: "The project name is already taken.",
+  project_identifier_already_taken: "The project identifier is already taken.",
+  project_cover_image_alt: "Project cover image",
+  name_is_required: "Name is required",
+  title_should_be_less_than_255_characters: "Title should be less than 255 characters",
+  project_name: "Project name",
+  project_id_must_be_at_least_1_character: "Project ID must at least be of 1 character",
+  project_id_must_be_at_most_5_characters: "Project ID must at most be of 5 characters",
+  project_id: "Project ID",
+  project_id_tooltip_content: "Helps you identify work items in the project uniquely. Max 5 characters.",
+  description_placeholder: "Description",
+  only_alphanumeric_non_latin_characters_allowed: "Only Alphanumeric & Non-latin characters are allowed.",
+  project_id_is_required: "Project ID is required",
+  project_id_allowed_char: "Only Alphanumeric & Non-latin characters are allowed.",
+  project_id_min_char: "Project ID must at least be of 1 character",
+  project_id_max_char: "Project ID must at most be of 5 characters",
+  project_description_placeholder: "Enter project description",
+  select_network: "Select network",
+  lead: "Lead",
+  date_range: "Date range",
+  private: "Private",
+  public: "Public",
+  accessible_only_by_invite: "Accessible only by invite",
+  anyone_in_the_workspace_except_guests_can_join: "Anyone in the workspace except Guests can join",
+  creating: "Creating",
+  creating_project: "Creating project",
+  adding_project_to_favorites: "Adding project to favorites",
+  project_added_to_favorites: "Project added to favorites",
+  couldnt_add_the_project_to_favorites: "Couldn't add the project to favorites. Please try again.",
+  removing_project_from_favorites: "Removing project from favorites",
+  project_removed_from_favorites: "Project removed from favorites",
+  couldnt_remove_the_project_from_favorites: "Couldn't remove the project from favorites. Please try again.",
+  add_to_favorites: "Add to favorites",
+  remove_from_favorites: "Remove from favorites",
+  publish_project: "Publish project",
+  publish: "Publish",
+  copy_link: "Copy link",
+  leave_project: "Leave project",
+  join_the_project_to_rearrange: "Join the project to rearrange",
+  drag_to_rearrange: "Drag to rearrange",
+  congrats: "Congrats!",
+  open_project: "Open project",
+  issues: "Work items",
+  cycles: "Cycles",
+  modules: "Modules",
+  pages: "Pages",
+  intake: "Intake",
+  time_tracking: "Time Tracking",
+  work_management: "Work management",
+  projects_and_issues: "Projects and work items",
+  projects_and_issues_description: "Toggle these on or off this project.",
+  cycles_description:
+    "Timebox work per project and adjust the time period as needed. One cycle can be 2 weeks, the next 1 week.",
+  modules_description: "Organize work into sub-projects with dedicated leads and assignees.",
+  views_description: "Save custom sorts, filters, and display options or share them with your team.",
+  pages_description: "Create and edit free-form content; notes, docs, anything.",
+  intake_description: "Let non-members share bugs, feedback, and suggestions; without disrupting your workflow.",
+  time_tracking_description: "Log time spent on work items and projects.",
+  work_management_description: "Manage your work and projects with ease.",
+  documentation: "Documentation",
+  message_support: "Message support",
+  contact_sales: "Contact sales",
+  hyper_mode: "Hyper Mode",
+  keyboard_shortcuts: "Keyboard shortcuts",
+  whats_new: "What's new?",
+  version: "Version",
+  we_are_having_trouble_fetching_the_updates: "We are having trouble fetching the updates.",
+  our_changelogs: "our changelogs",
+  for_the_latest_updates: "for the latest updates.",
+  please_visit: "Please visit",
+  docs: "Docs",
+  full_changelog: "Full changelog",
+  support: "Support",
+  discord: "Discord",
+  powered_by_plane_pages: "Powered by Plane Pages",
+  please_select_at_least_one_invitation: "Please select at least one invitation.",
+  please_select_at_least_one_invitation_description: "Please select at least one invitation to join the workspace.",
+  we_see_that_someone_has_invited_you_to_join_a_workspace: "We see that someone has invited you to join a workspace",
+  join_a_workspace: "Join a workspace",
+  we_see_that_someone_has_invited_you_to_join_a_workspace_description:
+    "We see that someone has invited you to join a workspace",
+  join_a_workspace_description: "Join a workspace",
+  accept_and_join: "Accept & Join",
+  go_home: "Go Home",
+  no_pending_invites: "No pending invites",
+  you_can_see_here_if_someone_invites_you_to_a_workspace: "You can see here if someone invites you to a workspace",
+  back_to_home: "Back to home",
+  workspace_name: "workspace-name",
+  deactivate_your_account: "Deactivate your account",
+  deactivate_your_account_description:
+    "Once deactivated, you can't be assigned work items and be billed for your workspace. To reactivate your account, you will need an invite to a workspace at this email address.",
+  deactivating: "Deactivating",
+  confirm: "Confirm",
+  confirming: "Confirming",
+  draft_created: "Draft created",
+  issue_created_successfully: "Work item created successfully",
+  draft_creation_failed: "Draft creation failed",
+  issue_creation_failed: "Work item creation failed",
+  draft_issue: "Draft work item",
+  issue_updated_successfully: "Work item updated successfully",
+  issue_could_not_be_updated: "Work item could not be updated",
+  create_a_draft: "Create a draft",
+  save_to_drafts: "Save to Drafts",
+  save: "Save",
+  update: "Update",
+  updating: "Updating",
+  create_new_issue: "Create new work item",
+  editor_is_not_ready_to_discard_changes: "Editor is not ready to discard changes",
+  failed_to_move_issue_to_project: "Failed to move work item to project",
+  create_more: "Create more",
+  add_to_project: "Add to project",
+  discard: "Discard",
+  duplicate_issue_found: "Duplicate work item found",
+  duplicate_issues_found: "Duplicate work items found",
+  no_matching_results: "No matching results",
+  title_is_required: "Title is required",
+  title: "Title",
+  state: "State",
+  priority: "Priority",
+  none: "None",
+  urgent: "Urgent",
+  high: "High",
+  medium: "Medium",
+  low: "Low",
+  members: "Members",
+  assignee: "Assignee",
+  assignees: "Assignees",
+  you: "You",
+  labels: "Labels",
+  create_new_label: "Create new label",
+  start_date: "Start date",
+  end_date: "End date",
+  due_date: "Due date",
+  estimate: "Estimate",
+  change_parent_issue: "Change parent work item",
+  remove_parent_issue: "Remove parent work item",
+  add_parent: "Add parent",
+  loading_members: "Loading members",
+  view_link_copied_to_clipboard: "View link copied to clipboard.",
+  required: "Required",
+  optional: "Optional",
+  Cancel: "Cancel",
+  edit: "Edit",
+  archive: "Archive",
+  restore: "Restore",
+  open_in_new_tab: "Open in new tab",
+  delete: "Delete",
+  deleting: "Deleting",
+  make_a_copy: "Make a copy",
+  move_to_project: "Move to project",
+  good: "Good",
+  morning: "morning",
+  afternoon: "afternoon",
+  evening: "evening",
+  show_all: "Show all",
+  show_less: "Show less",
+  no_data_yet: "No Data yet",
+  syncing: "Syncing",
+  add_work_item: "Add work item",
+  advanced_description_placeholder: "Press '/' for commands",
+  create_work_item: "Create work item",
+  attachments: "Attachments",
+  declining: "Declining",
+  declined: "Declined",
+  decline: "Decline",
+  unassigned: "Unassigned",
+  work_items: "Work items",
+  add_link: "Add link",
+  points: "Points",
+  no_assignee: "No assignee",
+  no_assignees_yet: "No assignees yet",
+  no_labels_yet: "No labels yet",
+  ideal: "Ideal",
+  current: "Current",
+  no_matching_members: "No matching members",
+  leaving: "Leaving",
+  removing: "Removing",
+  leave: "Leave",
+  refresh: "Refresh",
+  refreshing: "Refreshing",
+  refresh_status: "Refresh status",
+  prev: "Prev",
+  next: "Next",
+  re_generating: "Re-generating",
+  re_generate: "Re-generate",
+  re_generate_key: "Re-generate key",
+  export: "Export",
+  member: "{count, plural, one{# member} other{# members}}",
+  new_password_must_be_different_from_old_password: "New password must be different from old password",
+  edited: "edited",
+  bot: "Bot",
+  settings_description:
+    "Manage your account, workspace, and project preferences all in one place. Switch between tabs to easily configure.",
+  back_to_workspace: "Back to workspace",
+  project_view: {
+    sort_by: {
+      created_at: "Created at",
+      updated_at: "Updated at",
+      name: "Name",
+    },
+  },
+  toast: {
+    success: "Success!",
+    error: "Error!",
+  },
+  links: {
+    toasts: {
+      created: {
+        title: "Link created",
+        message: "The link has been successfully created",
+      },
+      not_created: {
+        title: "Link not created",
+        message: "The link could not be created",
+      },
+      updated: {
+        title: "Link updated",
+        message: "The link has been successfully updated",
+      },
+      not_updated: {
+        title: "Link not updated",
+        message: "The link could not be updated",
+      },
+      removed: {
+        title: "Link removed",
+        message: "The link has been successfully removed",
+      },
+      not_removed: {
+        title: "Link not removed",
+        message: "The link could not be removed",
+      },
+    },
+  },
+  home: {
+    empty: {
+      quickstart_guide: "Your quickstart guide",
+      not_right_now: "Not right now",
+      create_project: {
+        title: "Create a project",
+        description: "Most things start with a project in Plane.",
+        cta: "Get started",
+      },
+      invite_team: {
+        title: "Invite your team",
+        description: "Build, ship, and manage with coworkers.",
+        cta: "Get them in",
+      },
+      configure_workspace: {
+        title: "Set up your workspace.",
+        description: "Turn features on or off or go beyond that.",
+        cta: "Configure this workspace",
+      },
+      personalize_account: {
+        title: "Make Plane yours.",
+        description: "Choose your picture, colors, and more.",
+        cta: "Personalize now",
+      },
+      widgets: {
+        title: "It's Quiet Without Widgets, Turn Them On",
+        description: "It looks like all your widgets are turned off. Enable them\nnow to enhance your experience!",
+        primary_button: {
+          text: "Manage widgets",
+        },
+      },
+    },
+    quick_links: {
+      empty: "Save links to work things that you'd like handy.",
+      add: "Add quick Link",
+      title: "Quicklink",
+      title_plural: "Quicklinks",
+    },
+    recents: {
+      title: "Recents",
+      empty: {
+        project: "Your recent projects will appear here once you visit one.",
+        page: "Your recent pages will appear here once you visit one.",
+        issue: "Your recent work items will appear here once you visit one.",
+        default: "You don't have any recents yet.",
+      },
+      filters: {
+        all: "All",
+        projects: "Projects",
+        pages: "Pages",
+        issues: "Work items",
+      },
+    },
+    new_at_plane: {
+      title: "New at Plane",
+    },
+    quick_tutorial: {
+      title: "Quick tutorial",
+    },
+    widget: {
+      reordered_successfully: "Widget reordered successfully.",
+      reordering_failed: "Error occurred while reordering widget.",
+    },
+    manage_widgets: "Manage widgets",
+    title: "Home",
+    star_us_on_github: "Star us on GitHub",
+  },
+  link: {
+    modal: {
+      url: {
+        text: "URL",
+        required: "URL is invalid",
+        placeholder: "Type or paste a URL",
+      },
+      title: {
+        text: "Display title",
+        placeholder: "What you'd like to see this link as",
+      },
+    },
+  },
+  common: {
+    all: "All",
+    states: "States",
+    state: "State",
+    state_groups: "State groups",
+    state_group: "State group",
+    priorities: "Priorities",
+    priority: "Priority",
+    team_project: "Team project",
+    project: "Project",
+    cycle: "Cycle",
+    cycles: "Cycles",
+    module: "Module",
+    modules: "Modules",
+    labels: "Labels",
+    label: "Label",
+    admins: "Admins",
+    users: "Users",
+    guests: "Guests",
+    assignees: "Assignees",
+    assignee: "Assignee",
+    created_by: "Created by",
+    none: "None",
+    link: "Link",
+    estimates: "Estimates",
+    estimate: "Estimate",
+    created_at: "Created at",
+    completed_at: "Completed at",
+    layout: "Layout",
+    filters: "Filters",
+    display: "Display",
+    load_more: "Load more",
+    activity: "Activity",
+    analytics: "Analytics",
+    dates: "Dates",
+    success: "Success!",
+    something_went_wrong: "Something went wrong",
+    error: {
+      label: "Error!",
+      message: "Some error occurred. Please try again.",
+    },
+    group_by: "Group by",
+    epic: "Epic",
+    epics: "Epics",
+    work_item: "Work item",
+    work_items: "Work items",
+    sub_work_item: "Sub-work item",
+    add: "Add",
+    warning: "Warning",
+    updating: "Updating",
+    adding: "Adding",
+    update: "Update",
+    creating: "Creating",
+    create: "Create",
+    cancel: "Cancel",
+    description: "Description",
+    title: "Title",
+    attachment: "Attachment",
+    general: "General",
+    features: "Features",
+    automation: "Automation",
+    project_name: "Project name",
+    project_id: "Project ID",
+    project_timezone: "Project Timezone",
+    created_on: "Created on",
+    update_project: "Update project",
+    identifier_already_exists: "Identifier already exists",
+    add_more: "Add more",
+    defaults: "Defaults",
+    add_label: "Add label",
+    customize_time_range: "Customize time range",
+    loading: "Loading",
+    attachments: "Attachments",
+    property: "Property",
+    properties: "Properties",
+    parent: "Parent",
+    page: "Page",
+    remove: "Remove",
+    archiving: "Archiving",
+    archive: "Archive",
+    access: {
+      public: "Public",
+      private: "Private",
+    },
+    done: "Done",
+    sub_work_items: "Sub-work items",
+    comment: "Comment",
+    workspace_level: "Workspace level",
+    order_by: {
+      label: "Order by",
+      manual: "Manual",
+      last_created: "Last created",
+      last_updated: "Last updated",
+      start_date: "Start date",
+      due_date: "Due date",
+      asc: "Ascending",
+      desc: "Descending",
+      updated_on: "Updated on",
+    },
+    sort: {
+      asc: "Ascending",
+      desc: "Descending",
+      created_on: "Created on",
+      updated_on: "Updated on",
+    },
+    comments: "Comments",
+    updates: "Updates",
+    clear_all: "Clear all",
+    copied: "Copied!",
+    link_copied: "Link copied!",
+    link_copied_to_clipboard: "Link copied to clipboard",
+    copied_to_clipboard: "Work item link copied to clipboard",
+    is_copied_to_clipboard: "Work item is copied to clipboard",
+    no_links_added_yet: "No links added yet",
+    add_link: "Add link",
+    links: "Links",
+    go_to_workspace: "Go to workspace",
+    progress: "Progress",
+    optional: "Optional",
+    join: "Join",
+    go_back: "Go back",
+    continue: "Continue",
+    resend: "Resend",
+    relations: "Relations",
+    errors: {
+      default: {
+        title: "Error!",
+        message: "Something went wrong. Please try again.",
+      },
+      required: "This field is required",
+      entity_required: "{entity} is required",
+      restricted_entity: "{entity} is restricted",
+    },
+    update_link: "Update link",
+    attach: "Attach",
+    create_new: "Create new",
+    add_existing: "Add existing",
+    type_or_paste_a_url: "Type or paste a URL",
+    url_is_invalid: "URL is invalid",
+    display_title: "Display title",
+    link_title_placeholder: "What you'd like to see this link as",
+    url: "URL",
+    side_peek: "Side Peek",
+    modal: "Modal",
+    full_screen: "Full Screen",
+    close_peek_view: "Close the peek view",
+    toggle_peek_view_layout: "Toggle peek view layout",
+    options: "Options",
+    duration: "Duration",
+    today: "Today",
+    week: "Week",
+    month: "Month",
+    quarter: "Quarter",
+    press_for_commands: "Press '/' for commands",
+    click_to_add_description: "Click to add description",
+    on_track: "On-Track",
+    off_track: "Off-Track",
+    at_risk: "At risk",
+    timeline: "Timeline",
+    completion: "Completion",
+    upcoming: "Upcoming",
+    completed: "Completed",
+    in_progress: "In progress",
+    planned: "Planned",
+    paused: "Paused",
+    search: {
+      label: "Search",
+      placeholder: "Type to search",
+      no_matches_found: "No matches found",
+      no_matching_results: "No matching results",
+    },
+    actions: {
+      edit: "Edit",
+      make_a_copy: "Make a copy",
+      open_in_new_tab: "Open in new tab",
+      copy_link: "Copy link",
+      archive: "Archive",
+      restore: "Restore",
+      delete: "Delete",
+      remove_relation: "Remove relation",
+      subscribe: "Subscribe",
+      unsubscribe: "Unsubscribe",
+      clear_sorting: "Clear sorting",
+      show_weekends: "Show weekends",
+      enable: "Enable",
+      disable: "Disable",
+      copy_markdown: "Copy markdown",
+    },
+    name: "Name",
+    discard: "Discard",
+    confirm: "Confirm",
+    confirming: "Confirming",
+    read_the_docs: "Read the docs",
+    default: "Default",
+    active: "Active",
+    enabled: "Enabled",
+    disabled: "Disabled",
+    mandate: "Mandate",
+    mandatory: "Mandatory",
+    yes: "Yes",
+    no: "No",
+    please_wait: "Please wait",
+    enabling: "Enabling",
+    disabling: "Disabling",
+    beta: "Beta",
+    or: "or",
+    next: "Next",
+    back: "Back",
+    cancelling: "Cancelling",
+    configuring: "Configuring",
+    clear: "Clear",
+    import: "Import",
+    connect: "Connect",
+    authorizing: "Authorizing",
+    processing: "Processing",
+    no_data_available: "No data available",
+    from: "from {name}",
+    authenticated: "Authenticated",
+    select: "Select",
+    upgrade: "Upgrade",
+    add_seats: "Add Seats",
+    projects: "Projects",
+    workspace: "Workspace",
+    workspaces: "Workspaces",
+    team: "Team",
+    teams: "Teams",
+    entity: "Entity",
+    entities: "Entities",
+    task: "Task",
+    tasks: "Tasks",
+    section: "Section",
+    sections: "Sections",
+    edit: "Edit",
+    connecting: "Connecting",
+    connected: "Connected",
+    disconnect: "Disconnect",
+    disconnecting: "Disconnecting",
+    installing: "Installing",
+    install: "Install",
+    reset: "Reset",
+    live: "Live",
+    change_history: "Change History",
+    coming_soon: "Coming soon",
+    member: "Member",
+    members: "Members",
+    you: "You",
+    upgrade_cta: {
+      higher_subscription: "Upgrade to higher subscription",
+      talk_to_sales: "Talk to Sales",
+    },
+    category: "Category",
+    categories: "Categories",
+    saving: "Saving",
+    save_changes: "Save changes",
+    delete: "Delete",
+    deleting: "Deleting",
+    pending: "Pending",
+    invite: "Invite",
+    view: "View",
+    deactivated_user: "Deactivated user",
+    apply: "Apply",
+    applying: "Applying",
+    overview: "Overview",
+    no_of: "No. of {entity}",
+    resolved: "Resolved",
+  },
+  chart: {
+    x_axis: "X-axis",
+    y_axis: "Y-axis",
+    metric: "Metric",
+  },
+  form: {
+    title: {
+      required: "Title is required",
+      max_length: "Title should be less than {length} characters",
+    },
+  },
+  entity: {
+    grouping_title: "{entity} Grouping",
+    priority: "{entity} Priority",
+    all: "All {entity}",
+    drop_here_to_move: "Drop here to move the {entity}",
+    delete: {
+      label: "Delete {entity}",
+      success: "{entity} deleted successfully",
+      failed: "{entity} delete failed",
+    },
+    update: {
+      failed: "{entity} update failed",
+      success: "{entity} updated successfully",
+    },
+    link_copied_to_clipboard: "{entity} link copied to clipboard",
+    fetch: {
+      failed: "Error fetching {entity}",
+    },
+    add: {
+      success: "{entity} added successfully",
+      failed: "Error adding {entity}",
+    },
+    remove: {
+      success: "{entity} removed successfully",
+      failed: "Error removing {entity}",
+    },
+  },
+  epic: {
+    all: "All Epics",
+    label: "{count, plural, one {Epic} other {Epics}}",
+    new: "New Epic",
+    adding: "Adding epic",
+    create: {
+      success: "Epic created successfully",
+    },
+    add: {
+      press_enter: "Press 'Enter' to add another epic",
+      label: "Add Epic",
+    },
+    title: {
+      label: "Epic Title",
+      required: "Epic title is required.",
+    },
+  },
+  issue: {
+    label: "{count, plural, one {Work item} other {Work items}}",
+    all: "All Work items",
+    edit: "Edit work item",
+    title: {
+      label: "Work item title",
+      required: "Work item title is required.",
+    },
+    add: {
+      press_enter: "Press 'Enter' to add another work item",
+      label: "Add work item",
+      cycle: {
+        failed: "Work item could not be added to the cycle. Please try again.",
+        success: "{count, plural, one {Work item} other {Work items}} added to the cycle successfully.",
+        loading: "Adding {count, plural, one {work item} other {work items}} to the cycle",
+      },
+      assignee: "Add assignees",
+      start_date: "Add start date",
+      due_date: "Add due date",
+      parent: "Add parent work item",
+      sub_issue: "Add sub-work item",
+      relation: "Add relation",
+      link: "Add link",
+      existing: "Add existing work item",
+    },
+    remove: {
+      label: "Remove work item",
+      cycle: {
+        loading: "Removing work item from the cycle",
+        success: "Work item removed from the cycle successfully.",
+        failed: "Work item could not be removed from the cycle. Please try again.",
+      },
+      module: {
+        loading: "Removing work item from the module",
+        success: "Work item removed from the module successfully.",
+        failed: "Work item could not be removed from the module. Please try again.",
+      },
+      parent: {
+        label: "Remove parent work item",
+      },
+    },
+    new: "New Work item",
+    adding: "Adding work item",
+    create: {
+      success: "Work item created successfully",
+    },
+    priority: {
+      urgent: "Urgent",
+      high: "High",
+      medium: "Medium",
+      low: "Low",
+    },
+    display: {
+      properties: {
+        label: "Display Properties",
+        id: "ID",
+        issue_type: "Work item Type",
+        sub_issue_count: "Sub-work item count",
+        attachment_count: "Attachment count",
+        created_on: "Created on",
+        sub_issue: "Sub-work item",
+        work_item_count: "Work item count",
+      },
+      extra: {
+        show_sub_issues: "Show sub-work items",
+        show_empty_groups: "Show empty groups",
+      },
+    },
+    layouts: {
+      ordered_by_label: "This layout is ordered by",
+      list: "List",
+      kanban: "Board",
+      calendar: "Calendar",
+      spreadsheet: "Table",
+      gantt: "Timeline",
+      title: {
+        list: "List Layout",
+        kanban: "Board Layout",
+        calendar: "Calendar Layout",
+        spreadsheet: "Table Layout",
+        gantt: "Timeline Layout",
+      },
+    },
+    states: {
+      active: "Active",
+      backlog: "Backlog",
+    },
+    comments: {
+      placeholder: "Add comment",
+      switch: {
+        private: "Switch to private comment",
+        public: "Switch to public comment",
+      },
+      create: {
+        success: "Comment created successfully",
+        error: "Comment creation failed. Please try again later.",
+      },
+      update: {
+        success: "Comment updated successfully",
+        error: "Comment update failed. Please try again later.",
+      },
+      remove: {
+        success: "Comment removed successfully",
+        error: "Comment remove failed. Please try again later.",
+      },
+      upload: {
+        error: "Asset upload failed. Please try again later.",
+      },
+      copy_link: {
+        success: "Comment link copied to clipboard",
+        error: "Error copying comment link. Please try again later.",
+      },
+    },
+    empty_state: {
+      issue_detail: {
+        title: "Work item does not exist",
+        description: "The work item you are looking for does not exist, has been archived, or has been deleted.",
+        primary_button: {
+          text: "View other work items",
+        },
+      },
+    },
+    sibling: {
+      label: "Sibling work items",
+    },
+    archive: {
+      description: "Only completed or canceled\nwork items can be archived",
+      label: "Archive Work item",
+      confirm_message:
+        "Are you sure you want to archive the work item? All your archived work items can be restored later.",
+      success: {
+        label: "Archive success",
+        message: "Your archives can be found in project archives.",
+      },
+      failed: {
+        message: "Work item could not be archived. Please try again.",
+      },
+    },
+    restore: {
+      success: {
+        title: "Restore success",
+        message: "Your work item can be found in project work items.",
+      },
+      failed: {
+        message: "Work item could not be restored. Please try again.",
+      },
+    },
+    relation: {
+      relates_to: "Relates to",
+      duplicate: "Duplicate of",
+      blocked_by: "Blocked by",
+      blocking: "Blocking",
+    },
+    copy_link: "Copy work item link",
+    delete: {
+      label: "Delete work item",
+      error: "Error deleting work item",
+    },
+    subscription: {
+      actions: {
+        subscribed: "Work item subscribed successfully",
+        unsubscribed: "Work item unsubscribed successfully",
+      },
+    },
+    select: {
+      error: "Please select at least one work item",
+      empty: "No work items selected",
+      add_selected: "Add selected work items",
+      select_all: "Select all",
+      deselect_all: "Deselect all",
+    },
+    open_in_full_screen: "Open work item in full screen",
+  },
+  attachment: {
+    error: "File could not be attached. Try uploading again.",
+    only_one_file_allowed: "Only one file can be uploaded at a time.",
+    file_size_limit: "File must be of {size}MB or less in size.",
+    drag_and_drop: "Drag and drop anywhere to upload",
+    delete: "Delete attachment",
+  },
+  label: {
+    select: "Select label",
+    create: {
+      success: "Label created successfully",
+      failed: "Label creation failed",
+      already_exists: "Label already exists",
+      type: "Type to add a new label",
+    },
+  },
+  sub_work_item: {
+    update: {
+      success: "Sub-work item updated successfully",
+      error: "Error updating sub-work item",
+    },
+    remove: {
+      success: "Sub-work item removed successfully",
+      error: "Error removing sub-work item",
+    },
+    empty_state: {
+      sub_list_filters: {
+        title: "You don't have sub-work items that match the filters you've applied.",
+        description: "To see all sub-work items, clear all applied filters.",
+        action: "Clear filters",
+      },
+      list_filters: {
+        title: "You don't have work items that match the filters you've applied.",
+        description: "To see all work items, clear all applied filters.",
+        action: "Clear filters",
+      },
+    },
+  },
+  view: {
+    label: "{count, plural, one {View} other {Views}}",
+    create: {
+      label: "Create View",
+    },
+    update: {
+      label: "Update View",
+    },
+  },
+  inbox_issue: {
+    status: {
+      pending: {
+        title: "Pending",
+        description: "Pending",
+      },
+      declined: {
+        title: "Declined",
+        description: "Declined",
+      },
+      snoozed: {
+        title: "Snoozed",
+        description: "{days, plural, one{# day} other{# days}} to go",
+      },
+      accepted: {
+        title: "Accepted",
+        description: "Accepted",
+      },
+      duplicate: {
+        title: "Duplicate",
+        description: "Duplicate",
+      },
+    },
+    modals: {
+      decline: {
+        title: "Decline work item",
+        content: "Are you sure you want to decline work item {value}?",
+      },
+      delete: {
+        title: "Delete work item",
+        content: "Are you sure you want to delete work item {value}?",
+        success: "Work item deleted successfully",
+      },
+    },
+    errors: {
+      snooze_permission: "Only project admins can snooze/Un-snooze work items",
+      accept_permission: "Only project admins can accept work items",
+      decline_permission: "Only project admins can deny work items",
+    },
+    actions: {
+      accept: "Accept",
+      decline: "Decline",
+      snooze: "Snooze",
+      unsnooze: "Un snooze",
+      copy: "Copy work item link",
+      delete: "Delete",
+      open: "Open work item",
+      mark_as_duplicate: "Mark as duplicate",
+      move: "Move {value} to project work items",
+    },
+    source: {
+      "in-app": "in-app",
+    },
+    order_by: {
+      created_at: "Created at",
+      updated_at: "Updated at",
+      id: "ID",
+    },
+    label: "Intake",
+    page_label: "{workspace} - Intake",
+    modal: {
+      title: "Create intake work item",
+    },
+    tabs: {
+      open: "Open",
+      closed: "Closed",
+    },
+    empty_state: {
+      sidebar_open_tab: {
+        title: "No open work items",
+        description: "Find open work items here. Create new work item.",
+      },
+      sidebar_closed_tab: {
+        title: "No closed work items",
+        description: "All the work items whether accepted or declined can be found here.",
+      },
+      sidebar_filter: {
+        title: "No matching work items",
+        description: "No work item matches filter applied in intake. Create a new work item.",
+      },
+      detail: {
+        title: "Select a work item to view its details.",
+      },
+    },
+  },
+  workspace_creation: {
+    heading: "Create your workspace",
+    subheading: "To start using Plane, you need to create or join a workspace.",
+    form: {
+      name: {
+        label: "Name your workspace",
+        placeholder: "Something familiar and recognizable is always best.",
+      },
+      url: {
+        label: "Set your workspace's URL",
+        placeholder: "Type or paste a URL",
+        edit_slug: "You can only edit the slug of the URL",
+      },
+      organization_size: {
+        label: "How many people will use this workspace?",
+        placeholder: "Select a range",
+      },
+    },
+    errors: {
+      creation_disabled: {
+        title: "Only your instance admin can create workspaces",
+        description:
+          "If you know your instance admin's email address, click the button below to get in touch with them.",
+        request_button: "Request instance admin",
+      },
+      validation: {
+        name_alphanumeric: "Workspaces names can contain only (' '), ('-'), ('_') and alphanumeric characters.",
+        name_length: "Limit your name to 80 characters.",
+        url_alphanumeric: "URLs can contain only ('-') and alphanumeric characters.",
+        url_length: "Limit your URL to 48 characters.",
+        url_already_taken: "Workspace URL is already taken!",
+      },
+    },
+    request_email: {
+      subject: "Requesting a new workspace",
+      body: "Hi instance admin(s),\n\nPlease create a new workspace with the URL [/workspace-name] for [purpose of creating the workspace].\n\nThanks,\n{firstName} {lastName}\n{email}",
+    },
+    button: {
+      default: "Create workspace",
+      loading: "Creating workspace",
+    },
+    toast: {
+      success: {
+        title: "Success",
+        message: "Workspace created successfully",
+      },
+      error: {
+        title: "Error",
+        message: "Workspace could not be created. Please try again.",
+      },
+    },
+  },
+  workspace_dashboard: {
+    empty_state: {
+      general: {
+        title: "Overview of your projects, activity, and metrics",
+        description:
+          "Welcome to Plane, we are excited to have you here. Create your first project and track your work items, and this page will transform into a space that helps you progress. Admins will also see items which help their team progress.",
+        primary_button: {
+          text: "Build your first project",
+          comic: {
+            title: "Everything starts with a project in Plane",
+            description: "A project could be a product's roadmap, a marketing campaign, or launching a new car.",
+          },
+        },
+      },
+    },
+  },
+  workspace_analytics: {
+    label: "Analytics",
+    page_label: "{workspace} - Analytics",
+    open_tasks: "Total open tasks",
+    error: "There was some error in fetching the data.",
+    work_items_closed_in: "Work items closed in",
+    selected_projects: "Selected projects",
+    total_members: "Total members",
+    total_cycles: "Total cycles",
+    total_modules: "Total modules",
+    pending_work_items: {
+      title: "Pending work items",
+      empty_state: "Analysis of pending work items by co-workers appears here.",
+    },
+    work_items_closed_in_a_year: {
+      title: "Work items closed in a year",
+      empty_state: "Close work items to view analysis of the same in the form of a graph.",
+    },
+    most_work_items_created: {
+      title: "Most work items created",
+      empty_state: "Co-workers and the number of work items created by them appears here.",
+    },
+    most_work_items_closed: {
+      title: "Most work items closed",
+      empty_state: "Co-workers and the number of work items closed by them appears here.",
+    },
+    tabs: {
+      scope_and_demand: "Scope and Demand",
+      custom: "Custom Analytics",
+    },
+    total: "Total {entity}",
+    started_work_items: "Started {entity}",
+    backlog_work_items: "Backlog {entity}",
+    un_started_work_items: "Unstarted {entity}",
+    completed_work_items: "Completed {entity}",
+    project_insights: "Project Insights",
+    summary_of_projects: "Summary of Projects",
+    all_projects: "All Projects",
+    trend_on_charts: "Trend on charts",
+    active_projects: "Active Projects",
+    customized_insights: "Customized Insights",
+    created_vs_resolved: "Created vs Resolved",
+    empty_state: {
+      project_insights: {
+        title: "No data yet",
+        description: "Work items assigned to you, broken down by state, will show up here.",
+      },
+      created_vs_resolved: {
+        title: "No data yet",
+        description: "Work items created and resolved over time will show up here.",
+      },
+      customized_insights: {
+        title: "No data yet",
+        description: "Work items assigned to you, broken down by state, will show up here.",
+      },
+      general: {
+        title: "Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster",
+        description:
+          "See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your project runs on time.",
+        primary_button: {
+          text: "Start your first project",
+          comic: {
+            title: "Analytics works best with Cycles + Modules",
+            description:
+              "First, timebox your issues into Cycles and, if you can, group issues that span more than a cycle into Modules. Check out both on the left nav.",
+          },
+        },
+      },
+    },
+  },
+  workspace_projects: {
+    label: "{count, plural, one {Project} other {Projects}}",
+    create: {
+      label: "Add Project",
+    },
+    network: {
+      label: "Network",
+      private: {
+        title: "Private",
+        description: "Accessible only by invite",
+      },
+      public: {
+        title: "Public",
+        description: "Anyone in the workspace except Guests can join",
+      },
+    },
+    error: {
+      permission: "You don't have permission to perform this action.",
+      cycle_delete: "Failed to delete cycle",
+      module_delete: "Failed to delete module",
+      issue_delete: "Failed to delete work item",
+    },
+    state: {
+      backlog: "Backlog",
+      unstarted: "Unstarted",
+      started: "Started",
+      completed: "Completed",
+      cancelled: "Cancelled",
+    },
+    sort: {
+      manual: "Manual",
+      name: "Name",
+      created_at: "Created date",
+      members_length: "Number of members",
+    },
+    scope: {
+      my_projects: "My projects",
+      archived_projects: "Archived",
+    },
+    common: {
+      months_count: "{months, plural, one{# month} other{# months}}",
+    },
+    empty_state: {
+      general: {
+        title: "No active projects",
+        description:
+          "Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal. Create a new project or filter for archived projects.",
+        primary_button: {
+          text: "Start your first project",
+          comic: {
+            title: "Everything starts with a project in Plane",
+            description: "A project could be a product's roadmap, a marketing campaign, or launching a new car.",
+          },
+        },
+      },
+      no_projects: {
+        title: "No project",
+        description: "To create work items or manage your work, you need to create a project or be a part of one.",
+        primary_button: {
+          text: "Start your first project",
+          comic: {
+            title: "Everything starts with a project in Plane",
+            description: "A project could be a product's roadmap, a marketing campaign, or launching a new car.",
+          },
+        },
+      },
+      filter: {
+        title: "No matching projects",
+        description: "No projects detected with the matching criteria. \n Create a new project instead.",
+      },
+      search: {
+        description: "No projects detected with the matching criteria.\nCreate a new project instead",
+      },
+    },
+  },
+  workspace_views: {
+    add_view: "Add view",
+    empty_state: {
+      "all-issues": {
+        title: "No work items in the project",
+        description: "First project done! Now, slice your work into trackable pieces with work items. Let's go!",
+        primary_button: {
+          text: "Create new work item",
+        },
+      },
+      assigned: {
+        title: "No work items yet",
+        description: "Work items assigned to you can be tracked from here.",
+        primary_button: {
+          text: "Create new work item",
+        },
+      },
+      created: {
+        title: "No work items yet",
+        description: "All work items created by you come here, track them here directly.",
+        primary_button: {
+          text: "Create new work item",
+        },
+      },
+      subscribed: {
+        title: "No work items yet",
+        description: "Subscribe to work items you are interested in, track all of them here.",
+      },
+      "custom-view": {
+        title: "No work items yet",
+        description: "Work items that applies to the filters, track all of them here.",
+      },
+    },
+    delete_view: {
+      title: "Are you sure you want to delete this view?",
+      content:
+        "If you confirm, all the sort, filter, and display options + the layout you have chosen for this view will be permanently deleted without any way to restore them.",
+    },
+  },
+  account_settings: {
+    profile: {},
+    preferences: {
+      heading: "Preferences",
+      description: "Customize your app experience the way you work",
+    },
+    notifications: {
+      heading: "Email notifications",
+      description: "Stay in the loop on Work items you are subscribed to. Enable this to get notified.",
+    },
+    security: {
+      heading: "Security",
+    },
+    api_tokens: {
+      heading: "Personal Access Tokens",
+      description: "Generate secure API tokens to integrate your data with external systems and applications.",
+    },
+    activity: {
+      heading: "Activity",
+      description: "Track your recent actions and changes across all projects and work items.",
+    },
+  },
+  workspace_settings: {
+    label: "Workspace settings",
+    page_label: "{workspace} - General settings",
+    key_created: "Key created",
+    copy_key:
+      "Copy and save this secret key in Plane Pages. You can't see this key after you hit Close. A CSV file containing the key has been downloaded.",
+    token_copied: "Token copied to clipboard.",
+    settings: {
+      general: {
+        title: "General",
+        upload_logo: "Upload logo",
+        edit_logo: "Edit logo",
+        name: "Workspace name",
+        company_size: "Company size",
+        url: "Workspace URL",
+        update_workspace: "Update workspace",
+        delete_workspace: "Delete this workspace",
+        delete_workspace_description:
+          "When deleting a workspace, all of the data and resources within that workspace will be permanently removed and cannot be recovered.",
+        delete_btn: "Delete this workspace",
+        delete_modal: {
+          title: "Are you sure you want to delete this workspace?",
+          description: "You have an active trial to one of our paid plans. Please cancel it first to proceed.",
+          dismiss: "Dismiss",
+          cancel: "Cancel trial",
+          success_title: "Workspace deleted.",
+          success_message: "You will soon go to your profile page.",
+          error_title: "That didn't work.",
+          error_message: "Try again, please.",
+        },
+        errors: {
+          name: {
+            required: "Name is required",
+            max_length: "Workspace name should not exceed 80 characters",
+          },
+          company_size: {
+            required: "Company size is required",
+            select_a_range: "Select organization size",
+          },
+        },
+      },
+      members: {
+        title: "Members",
+        add_member: "Add member",
+        pending_invites: "Pending invites",
+        invitations_sent_successfully: "Invitations sent successfully",
+        leave_confirmation:
+          "Are you sure you want to leave the workspace? You will no longer have access to this workspace. This action cannot be undone.",
+        details: {
+          full_name: "Full name",
+          display_name: "Display name",
+          email_address: "Email address",
+          account_type: "Account type",
+          authentication: "Authentication",
+          joining_date: "Joining date",
+        },
+        modal: {
+          title: "Invite people to collaborate",
+          description: "Invite people to collaborate on your workspace.",
+          button: "Send invitations",
+          button_loading: "Sending invitations",
+          placeholder: "name@company.com",
+          errors: {
+            required: "We need an email address to invite them.",
+            invalid: "Email is invalid",
+          },
+        },
+      },
+      billing_and_plans: {
+        heading: "Billing & Plans",
+        description: "Choose your plan, manage subscriptions, and easily upgrade as your needs grow.",
+        title: "Billing & Plans",
+        current_plan: "Current plan",
+        free_plan: "You are currently using the free plan",
+        view_plans: "View plans",
+      },
+      exports: {
+        heading: "Exports",
+        description: "Export your project data in various formats and access your export history with download links.",
+        title: "Exports",
+        exporting: "Exporting",
+        previous_exports: "Previous exports",
+        export_separate_files: "Export the data into separate files",
+        exporting_projects: "Exporting project",
+        format: "Format",
+        modal: {
+          title: "Export to",
+          toasts: {
+            success: {
+              title: "Export successful",
+              message: "You will be able to download the exported {entity} from the previous export.",
+            },
+            error: {
+              title: "Export failed",
+              message: "Export was unsuccessful. Please try again.",
+            },
+          },
+        },
+      },
+      webhooks: {
+        heading: "Webhooks",
+        description: "Automate notifications to external services when project events occur.",
+        title: "Webhooks",
+        add_webhook: "Add webhook",
+        modal: {
+          title: "Create webhook",
+          details: "Webhook details",
+          payload: "Payload URL",
+          question: "Which events would you like to trigger this webhook?",
+          error: "URL is required",
+        },
+        secret_key: {
+          title: "Secret key",
+          message: "Generate a token to sign-in to the webhook payload",
+        },
+        options: {
+          all: "Send me everything",
+          individual: "Select individual events",
+        },
+        toasts: {
+          created: {
+            title: "Webhook created",
+            message: "The webhook has been successfully created",
+          },
+          not_created: {
+            title: "Webhook not created",
+            message: "The webhook could not be created",
+          },
+          updated: {
+            title: "Webhook updated",
+            message: "The webhook has been successfully updated",
+          },
+          not_updated: {
+            title: "Webhook not updated",
+            message: "The webhook could not be updated",
+          },
+          removed: {
+            title: "Webhook removed",
+            message: "The webhook has been successfully removed",
+          },
+          not_removed: {
+            title: "Webhook not removed",
+            message: "The webhook could not be removed",
+          },
+          secret_key_copied: {
+            message: "Secret key copied to clipboard.",
+          },
+          secret_key_not_copied: {
+            message: "Error occurred while copying secret key.",
+          },
+        },
+      },
+      api_tokens: {
+        title: "Personal Access Tokens",
+        add_token: "Add personal access token",
+        create_token: "Create token",
+        never_expires: "Never expires",
+        generate_token: "Generate token",
+        generating: "Generating",
+        delete: {
+          title: "Delete personal access token",
+          description:
+            "Any application using this token will no longer have the access to Plane data. This action cannot be undone.",
+          success: {
+            title: "Success!",
+            message: "The token has been successfully deleted",
+          },
+          error: {
+            title: "Error!",
+            message: "The token could not be deleted",
+          },
+        },
+      },
+    },
+    empty_state: {
+      api_tokens: {
+        title: "No personal access tokens created",
+        description:
+          "Plane APIs can be used to integrate your data in Plane with any external system. Create a token to get started.",
+      },
+      webhooks: {
+        title: "No webhooks added",
+        description: "Create webhooks to receive real-time updates and automate actions.",
+      },
+      exports: {
+        title: "No exports yet",
+        description: "Anytime you export, you will also have a copy here for reference.",
+      },
+      imports: {
+        title: "No imports yet",
+        description: "Find all your previous imports here and download them.",
+      },
+    },
+  },
+  profile: {
+    label: "Profile",
+    page_label: "Your work",
+    work: "Work",
+    details: {
+      joined_on: "Joined on",
+      time_zone: "Timezone",
+    },
+    stats: {
+      workload: "Workload",
+      overview: "Overview",
+      created: "Work items created",
+      assigned: "Work items assigned",
+      subscribed: "Work items subscribed",
+      state_distribution: {
+        title: "Work items by state",
+        empty: "Create work items to view the them by states in the graph for better analysis.",
+      },
+      priority_distribution: {
+        title: "Work items by Priority",
+        empty: "Create work items to view the them by priority in the graph for better analysis.",
+      },
+      recent_activity: {
+        title: "Recent activity",
+        empty: "We couldn't find data. Kindly view your inputs",
+        button: "Download today's activity",
+        button_loading: "Downloading",
+      },
+    },
+    actions: {
+      profile: "Profile",
+      security: "Security",
+      activity: "Activity",
+      preferences: "Preferences",
+      notifications: "Notifications",
+      "api-tokens": "Personal Access Tokens",
+    },
+    tabs: {
+      summary: "Summary",
+      assigned: "Assigned",
+      created: "Created",
+      subscribed: "Subscribed",
+      activity: "Activity",
+    },
+    empty_state: {
+      activity: {
+        title: "No activities yet",
+        description:
+          "Get started by creating a new work item! Add details and properties to it. Explore more in Plane to see your activity.",
+      },
+      assigned: {
+        title: "No work items are assigned to you",
+        description: "Work items assigned to you can be tracked from here.",
+      },
+      created: {
+        title: "No work items yet",
+        description: "All work items created by you come here, track them here directly.",
+      },
+      subscribed: {
+        title: "No work items yet",
+        description: "Subscribe to work items you are interested in, track all of them here.",
+      },
+    },
+  },
+  project_settings: {
+    general: {
+      enter_project_id: "Enter project ID",
+      please_select_a_timezone: "Please select a timezone",
+      archive_project: {
+        title: "Archive project",
+        description:
+          "Archiving a project will unlist your project from your side navigation although you will still be able to access it from your projects page. You can restore the project or delete it whenever you want.",
+        button: "Archive project",
+      },
+      delete_project: {
+        title: "Delete project",
+        description:
+          "When deleting a project, all of the data and resources within that project will be permanently removed and cannot be recovered.",
+        button: "Delete my project",
+      },
+      toast: {
+        success: "Project updated successfully",
+        error: "Project could not be updated. Please try again.",
+      },
+    },
+    members: {
+      label: "Members",
+      project_lead: "Project lead",
+      default_assignee: "Default assignee",
+      guest_super_permissions: {
+        title: "Grant view access to all work items for guest users:",
+        sub_heading: "This will allow guests to have view access to all the project work items.",
+      },
+      invite_members: {
+        title: "Invite members",
+        sub_heading: "Invite members to work on your project.",
+        select_co_worker: "Select co-worker",
+      },
+    },
+    states: {
+      heading: "States",
+      description: "Define and customize workflow states to track the progress of your work items.",
+      describe_this_state_for_your_members: "Describe this state for your members.",
+      empty_state: {
+        title: "No states available for the {groupKey} group",
+        description: "Please create a new state",
+      },
+    },
+    labels: {
+      heading: "Labels",
+      description: "Create custom labels to categorize and organize your work items",
+      label_title: "Label title",
+      label_title_is_required: "Label title is required",
+      label_max_char: "Label name should not exceed 255 characters",
+      toast: {
+        error: "Error while updating the label",
+      },
+    },
+    estimates: {
+      heading: "Estimates",
+      description: "Set up estimation systems to track and communicate the effort required for each work item.",
+      label: "Estimates",
+      title: "Enable estimates for my project",
+      enable_description: "They help you in communicating complexity and workload of the team.",
+      no_estimate: "No estimate",
+      new: "New estimate system",
+      create: {
+        custom: "Custom",
+        start_from_scratch: "Start from scratch",
+        choose_template: "Choose a template",
+        choose_estimate_system: "Choose an estimate system",
+        enter_estimate_point: "Enter estimate",
+        step: "Step {step} of {total}",
+        label: "Create estimate",
+      },
+      toasts: {
+        created: {
+          success: {
+            title: "Estimate created",
+            message: "The estimate has been created successfully",
+          },
+          error: {
+            title: "Estimate creation failed",
+            message: "We were unable to create the new estimate, please try again.",
+          },
+        },
+        updated: {
+          success: {
+            title: "Estimate modified",
+            message: "The estimate has been updated in your project.",
+          },
+          error: {
+            title: "Estimate modification failed",
+            message: "We were unable to modify the estimate, please try again",
+          },
+        },
+        enabled: {
+          success: {
+            title: "Success!",
+            message: "Estimates have been enabled.",
+          },
+        },
+        disabled: {
+          success: {
+            title: "Success!",
+            message: "Estimates have been disabled.",
+          },
+          error: {
+            title: "Error!",
+            message: "Estimate could not be disabled. Please try again",
+          },
+        },
+      },
+      validation: {
+        min_length: "Estimate needs to be greater than 0.",
+        unable_to_process: "We are unable to process your request, please try again.",
+        numeric: "Estimate needs to be a numeric value.",
+        character: "Estimate needs to be a character value.",
+        empty: "Estimate value cannot be empty.",
+        already_exists: "Estimate value already exists.",
+        unsaved_changes: "You have some unsaved changes, Please save them before clicking on done",
+        remove_empty: "Estimate can't be empty. Enter a value in each field or remove those you don't have values for.",
+      },
+      systems: {
+        points: {
+          label: "Points",
+          fibonacci: "Fibonacci",
+          linear: "Linear",
+          squares: "Squares",
+          custom: "Custom",
+        },
+        categories: {
+          label: "Categories",
+          t_shirt_sizes: "T-Shirt Sizes",
+          easy_to_hard: "Easy to hard",
+          custom: "Custom",
+        },
+        time: {
+          label: "Time",
+          hours: "Hours",
+        },
+      },
+    },
+    automations: {
+      label: "Automations",
+      heading: "Automations",
+      description:
+        "Configure automated actions to streamline your project management workflow and reduce manual tasks.",
+      "auto-archive": {
+        title: "Auto-archive closed work items",
+        description: "Plane will auto archive work items that have been completed or canceled.",
+        duration: "Auto-archive work items that are closed for",
+      },
+      "auto-close": {
+        title: "Auto-close work items",
+        description: "Plane will automatically close work items that haven't been completed or canceled.",
+        duration: "Auto-close work items that are inactive for",
+        auto_close_status: "Auto-close status",
+      },
+    },
+    empty_state: {
+      labels: {
+        title: "No labels yet",
+        description: "Create labels to help organize and filter work items in you project.",
+      },
+      estimates: {
+        title: "No estimate systems yet",
+        description: "Create a set of estimates to communicate the amount of work per work item.",
+        primary_button: "Add estimate system",
+      },
+    },
+  },
+  project_cycles: {
+    add_cycle: "Add cycle",
+    more_details: "More details",
+    cycle: "Cycle",
+    update_cycle: "Update cycle",
+    create_cycle: "Create cycle",
+    no_matching_cycles: "No matching cycles",
+    remove_filters_to_see_all_cycles: "Remove the filters to see all cycles",
+    remove_search_criteria_to_see_all_cycles: "Remove the search criteria to see all cycles",
+    only_completed_cycles_can_be_archived: "Only completed cycles can be archived",
+    start_date: "Start date",
+    end_date: "End date",
+    in_your_timezone: "In your timezone",
+    transfer_work_items: "Transfer {count} work items",
+    date_range: "Date range",
+    add_date: "Add date",
+    active_cycle: {
+      label: "Active cycle",
+      progress: "Progress",
+      chart: "Burndown chart",
+      priority_issue: "Priority work items",
+      assignees: "Assignees",
+      issue_burndown: "Work item burndown",
+      ideal: "Ideal",
+      current: "Current",
+      labels: "Labels",
+    },
+    upcoming_cycle: {
+      label: "Upcoming cycle",
+    },
+    completed_cycle: {
+      label: "Completed cycle",
+    },
+    status: {
+      days_left: "Days left",
+      completed: "Completed",
+      yet_to_start: "Yet to start",
+      in_progress: "In progress",
+      draft: "Draft",
+    },
+    action: {
+      restore: {
+        title: "Restore cycle",
+        success: {
+          title: "Cycle restored",
+          description: "The cycle has been restored.",
+        },
+        failed: {
+          title: "Cycle restore failed",
+          description: "The cycle could not be restored. Please try again.",
+        },
+      },
+      favorite: {
+        loading: "Adding cycle to favorites",
+        success: {
+          description: "Cycle added to favorites.",
+          title: "Success!",
+        },
+        failed: {
+          description: "Couldn't add the cycle to favorites. Please try again.",
+          title: "Error!",
+        },
+      },
+      unfavorite: {
+        loading: "Removing cycle from favorites",
+        success: {
+          description: "Cycle removed from favorites.",
+          title: "Success!",
+        },
+        failed: {
+          description: "Couldn't remove the cycle from favorites. Please try again.",
+          title: "Error!",
+        },
+      },
+      update: {
+        loading: "Updating cycle",
+        success: {
+          description: "Cycle updated successfully.",
+          title: "Success!",
+        },
+        failed: {
+          description: "Error updating the cycle. Please try again.",
+          title: "Error!",
+        },
+        error: {
+          already_exists:
+            "You already have a cycle on the given dates, if you want to create a draft cycle, you can do that by removing both the dates.",
+        },
+      },
+    },
+    empty_state: {
+      general: {
+        title: "Group and timebox your work in Cycles.",
+        description:
+          "Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team.",
+        primary_button: {
+          text: "Set your first cycle",
+          comic: {
+            title: "Cycles are repetitive time-boxes.",
+            description:
+              "A sprint, an iteration, and or any other term you use for weekly or fortnightly tracking of work is a cycle.",
+          },
+        },
+      },
+      no_issues: {
+        title: "No work items added to the cycle",
+        description: "Add or create work items you wish to timebox and deliver within this cycle",
+        primary_button: {
+          text: "Create new work item",
+        },
+        secondary_button: {
+          text: "Add existing work item",
+        },
+      },
+      completed_no_issues: {
+        title: "No work items in the cycle",
+        description:
+          "No work items in the cycle. Work items are either transferred or hidden. To see hidden work items if any, update your display properties accordingly.",
+      },
+      active: {
+        title: "No active cycle",
+        description:
+          "An active cycle includes any period that encompasses today's date within its range. Find the progress and details of the active cycle here.",
+      },
+      archived: {
+        title: "No archived cycles yet",
+        description: "To tidy up your project, archive completed cycles. Find them here once archived.",
+      },
+    },
+  },
+  project_issues: {
+    empty_state: {
+      no_issues: {
+        title: "Create a work item and assign it to someone, even yourself",
+        description:
+          "Think of work items as jobs, tasks, work, or JTBD. Which we like. A work item and its sub-work items are usually time-based actionables assigned to members of your team. Your team creates, assigns, and completes work items to move your project towards its goal.",
+        primary_button: {
+          text: "Create your first work item",
+          comic: {
+            title: "Work items are building blocks in Plane.",
+            description:
+              "Redesign the Plane UI, Rebrand the company, or Launch the new fuel injection system are examples of work items that likely have sub-work items.",
+          },
+        },
+      },
+      no_archived_issues: {
+        title: "No archived work items yet",
+        description:
+          "Manually or through automation, you can archive work items that are completed or cancelled. Find them here once archived.",
+        primary_button: {
+          text: "Set automation",
+        },
+      },
+      issues_empty_filter: {
+        title: "No work items found matching the filters applied",
+        secondary_button: {
+          text: "Clear all filters",
+        },
+      },
+    },
+  },
+  project_module: {
+    add_module: "Add Module",
+    update_module: "Update Module",
+    create_module: "Create Module",
+    archive_module: "Archive Module",
+    restore_module: "Restore Module",
+    delete_module: "Delete module",
+    empty_state: {
+      general: {
+        title: "Map your project milestones to Modules and track aggregated work easily.",
+        description:
+          "A group of work items that belong to a logical, hierarchical parent form a module. Think of them as a way to track work by project milestones. They have their own periods and deadlines as well as analytics to help you see how close or far you are from a milestone.",
+        primary_button: {
+          text: "Build your first module",
+          comic: {
+            title: "Modules help group work by hierarchy.",
+            description:
+              "A cart module, a chassis module, and a warehouse module are all good example of this grouping.",
+          },
+        },
+      },
+      no_issues: {
+        title: "No work items in the module",
+        description: "Create or add work items which you want to accomplish as part of this module",
+        primary_button: {
+          text: "Create new work items",
+        },
+        secondary_button: {
+          text: "Add an existing work item",
+        },
+      },
+      archived: {
+        title: "No archived Modules yet",
+        description: "To tidy up your project, archive completed or cancelled modules. Find them here once archived.",
+      },
+      sidebar: {
+        in_active: "This module isn't active yet.",
+        invalid_date: "Invalid date. Please enter valid date.",
+      },
+    },
+    quick_actions: {
+      archive_module: "Archive module",
+      archive_module_description: "Only completed or canceled\nmodule can be archived.",
+      delete_module: "Delete module",
+    },
+    toast: {
+      copy: {
+        success: "Module link copied to clipboard",
+      },
+      delete: {
+        success: "Module deleted successfully",
+        error: "Failed to delete module",
+      },
+    },
+  },
+  project_views: {
+    empty_state: {
+      general: {
+        title: "Save filtered views for your project. Create as many as you need",
+        description:
+          "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone’s views and choose whichever suits their needs best.",
+        primary_button: {
+          text: "Create your first view",
+          comic: {
+            title: "Views work atop Work item properties.",
+            description: "You can create a view from here with as many properties as filters as you see fit.",
+          },
+        },
+      },
+      filter: {
+        title: "No matching views",
+        description: "No views match the search criteria. \n Create a new view instead.",
+      },
+    },
+    delete_view: {
+      title: "Are you sure you want to delete this view?",
+      content:
+        "If you confirm, all the sort, filter, and display options + the layout you have chosen for this view will be permanently deleted without any way to restore them.",
+    },
+  },
+  project_page: {
+    empty_state: {
+      general: {
+        title:
+          "Write a note, a doc, or a full knowledge base. Get Galileo, Plane's AI assistant, to help you get started",
+        description:
+          "Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed work items, lay them out using a library of components, and keep them all in your project's context. To make short work of any doc, invoke Galileo, Plane's AI, with a shortcut or the click of a button.",
+        primary_button: {
+          text: "Create your first page",
+        },
+      },
+      private: {
+        title: "No private pages yet",
+        description: "Keep your private thoughts here. When you're ready to share, the team's just a click away.",
+        primary_button: {
+          text: "Create your first page",
+        },
+      },
+      public: {
+        title: "No public pages yet",
+        description: "See pages shared with everyone in your project right here.",
+        primary_button: {
+          text: "Create your first page",
+        },
+      },
+      archived: {
+        title: "No archived pages yet",
+        description: "Archive pages not on your radar. Access them here when needed.",
+      },
+    },
+  },
+  command_k: {
+    empty_state: {
+      search: {
+        title: "No results found",
+      },
+    },
+  },
+  issue_relation: {
+    empty_state: {
+      search: {
+        title: "No matching work items found",
+      },
+      no_issues: {
+        title: "No work items found",
+      },
+    },
+  },
+  issue_comment: {
+    empty_state: {
+      general: {
+        title: "No comments yet",
+        description: "Comments can be used as a discussion and follow-up space for the work items",
+      },
+    },
+  },
+  notification: {
+    label: "Inbox",
+    page_label: "{workspace} - Inbox",
+    options: {
+      mark_all_as_read: "Mark all as read",
+      mark_read: "Mark as read",
+      mark_unread: "Mark as unread",
+      refresh: "Refresh",
+      filters: "Inbox Filters",
+      show_unread: "Show unread",
+      show_snoozed: "Show snoozed",
+      show_archived: "Show archived",
+      mark_archive: "Archive",
+      mark_unarchive: "Un archive",
+      mark_snooze: "Snooze",
+      mark_unsnooze: "Un snooze",
+    },
+    toasts: {
+      read: "Notification marked as read",
+      unread: "Notification marked as unread",
+      archived: "Notification marked as archived",
+      unarchived: "Notification marked as un archived",
+      snoozed: "Notification snoozed",
+      unsnoozed: "Notification un snoozed",
+    },
+    empty_state: {
+      detail: {
+        title: "Select to view details.",
+      },
+      all: {
+        title: "No work items assigned",
+        description: "Updates for work items assigned to you can be \n seen here",
+      },
+      mentions: {
+        title: "No work items assigned",
+        description: "Updates for work items assigned to you can be \n seen here",
+      },
+    },
+    tabs: {
+      all: "All",
+      mentions: "Mentions",
+    },
+    filter: {
+      assigned: "Assigned to me",
+      created: "Created by me",
+      subscribed: "Subscribed by me",
+    },
+    snooze: {
+      "1_day": "1 day",
+      "3_days": "3 days",
+      "5_days": "5 days",
+      "1_week": "1 week",
+      "2_weeks": "2 weeks",
+      custom: "Custom",
+    },
+  },
+  active_cycle: {
+    empty_state: {
+      progress: {
+        title: "Add work items to the cycle to view it's progress",
+      },
+      chart: {
+        title: "Add work items to the cycle to view the burndown chart.",
+      },
+      priority_issue: {
+        title: "Observe high priority work items tackled in the cycle at a glance.",
+      },
+      assignee: {
+        title: "Add assignees to work items to see a breakdown of work by assignees.",
+      },
+      label: {
+        title: "Add labels to work items to see the breakdown of work by labels.",
+      },
+    },
+  },
+  disabled_project: {
+    empty_state: {
+      inbox: {
+        title: "Intake is not enabled for the project.",
+        description:
+          "Intake helps you manage incoming requests to your project and add them as work items in your workflow. Enable intake from project settings to manage requests.",
+        primary_button: {
+          text: "Manage features",
+        },
+      },
+      cycle: {
+        title: "Cycles is not enabled for this project.",
+        description:
+          "Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team. Enable the cycles feature for your project to start using them.",
+        primary_button: {
+          text: "Manage features",
+        },
+      },
+      module: {
+        title: "Modules are not enabled for the project.",
+        description:
+          "Modules are the building blocks of your project. Enable modules from project settings to start using them.",
+        primary_button: {
+          text: "Manage features",
+        },
+      },
+      page: {
+        title: "Pages are not enabled for the project.",
+        description:
+          "Pages are the building blocks of your project. Enable pages from project settings to start using them.",
+        primary_button: {
+          text: "Manage features",
+        },
+      },
+      view: {
+        title: "Views are not enabled for the project.",
+        description:
+          "Views are the building blocks of your project. Enable views from project settings to start using them.",
+        primary_button: {
+          text: "Manage features",
+        },
+      },
+    },
+  },
+  workspace_draft_issues: {
+    draft_an_issue: "Draft a work item",
+    empty_state: {
+      title: "Half-written work items, and soon, comments will show up here.",
+      description:
+        "To try this out, start adding a work item and leave it mid-way or create your first draft below. 😉",
+      primary_button: {
+        text: "Create your first draft",
+      },
+    },
+    delete_modal: {
+      title: "Delete draft",
+      description: "Are you sure you want to delete this draft? This can't be undone.",
+    },
+    toasts: {
+      created: {
+        success: "Draft created",
+        error: "Work item could not be created. Please try again.",
+      },
+      deleted: {
+        success: "Draft deleted",
+      },
+    },
+  },
+  stickies: {
+    title: "Your stickies",
+    placeholder: "click to type here",
+    all: "All stickies",
+    "no-data": "Jot down an idea, capture an aha, or record a brainwave. Add a sticky to get started.",
+    add: "Add sticky",
+    search_placeholder: "Search by title",
+    delete: "Delete sticky",
+    delete_confirmation: "Are you sure you want to delete this sticky?",
+    empty_state: {
+      simple: "Jot down an idea, capture an aha, or record a brainwave. Add a sticky to get started.",
+      general: {
+        title: "Stickies are quick notes and to-dos you take down on the fly.",
+        description:
+          "Capture your thoughts and ideas effortlessly by creating stickies that you can access anytime and from anywhere.",
+        primary_button: {
+          text: "Add sticky",
+        },
+      },
+      search: {
+        title: "That doesn't match any of your stickies.",
+        description: "Try a different term or let us know\nif you are sure your search is right. ",
+        primary_button: {
+          text: "Add sticky",
+        },
+      },
+    },
+    toasts: {
+      errors: {
+        wrong_name: "The sticky name cannot be longer than 100 characters.",
+        already_exists: "There already exists a sticky with no description",
+      },
+      created: {
+        title: "Sticky created",
+        message: "The sticky has been successfully created",
+      },
+      not_created: {
+        title: "Sticky not created",
+        message: "The sticky could not be created",
+      },
+      updated: {
+        title: "Sticky updated",
+        message: "The sticky has been successfully updated",
+      },
+      not_updated: {
+        title: "Sticky not updated",
+        message: "The sticky could not be updated",
+      },
+      removed: {
+        title: "Sticky removed",
+        message: "The sticky has been successfully removed",
+      },
+      not_removed: {
+        title: "Sticky not removed",
+        message: "The sticky could not be removed",
+      },
+    },
+  },
+  role_details: {
+    guest: {
+      title: "Guest",
+      description: "External members of organizations can be invited as guests.",
+    },
+    member: {
+      title: "Member",
+      description: "Ability to read, write, edit, and delete entities inside projects, cycles, and modules",
+    },
+    admin: {
+      title: "Admin",
+      description: "All permissions set to true within the workspace.",
+    },
+  },
+  user_roles: {
+    product_or_project_manager: "Product / Project Manager",
+    development_or_engineering: "Development / Engineering",
+    founder_or_executive: "Founder / Executive",
+    freelancer_or_consultant: "Freelancer / Consultant",
+    marketing_or_growth: "Marketing / Growth",
+    sales_or_business_development: "Sales / Business Development",
+    support_or_operations: "Support / Operations",
+    student_or_professor: "Student / Professor",
+    human_resources: "Human / Resources",
+    other: "Other",
+  },
+  importer: {
+    github: {
+      title: "Github",
+      description: "Import work items from GitHub repositories and sync them.",
+    },
+    jira: {
+      title: "Jira",
+      description: "Import work items and epics from Jira projects and epics.",
+    },
+  },
+  exporter: {
+    csv: {
+      title: "CSV",
+      description: "Export work items to a CSV file.",
+      short_description: "Export as csv",
+    },
+    excel: {
+      title: "Excel",
+      description: "Export work items to a Excel file.",
+      short_description: "Export as excel",
+    },
+    xlsx: {
+      title: "Excel",
+      description: "Export work items to a Excel file.",
+      short_description: "Export as excel",
+    },
+    json: {
+      title: "JSON",
+      description: "Export work items to a JSON file.",
+      short_description: "Export as json",
+    },
+  },
+  default_global_view: {
+    all_issues: "All work items",
+    assigned: "Assigned",
+    created: "Created",
+    subscribed: "Subscribed",
+  },
+  themes: {
+    theme_options: {
+      system_preference: {
+        label: "System preference",
+      },
+      light: {
+        label: "Light",
+      },
+      dark: {
+        label: "Dark",
+      },
+      light_contrast: {
+        label: "Light high contrast",
+      },
+      dark_contrast: {
+        label: "Dark high contrast",
+      },
+      custom: {
+        label: "Custom theme",
+      },
+    },
+  },
+  project_modules: {
+    status: {
+      backlog: "Backlog",
+      planned: "Planned",
+      in_progress: "In Progress",
+      paused: "Paused",
+      completed: "Completed",
+      cancelled: "Cancelled",
+    },
+    layout: {
+      list: "List layout",
+      board: "Gallery layout",
+      timeline: "Timeline layout",
+    },
+    order_by: {
+      name: "Name",
+      progress: "Progress",
+      issues: "Number of work items",
+      due_date: "Due date",
+      created_at: "Created date",
+      manual: "Manual",
+    },
+  },
+  cycle: {
+    label: "{count, plural, one {Cycle} other {Cycles}}",
+    no_cycle: "No cycle",
+  },
+  module: {
+    label: "{count, plural, one {Module} other {Modules}}",
+    no_module: "No module",
+  },
+  description_versions: {
+    last_edited_by: "Last edited by",
+    previously_edited_by: "Previously edited by",
+    edited_by: "Edited by",
+  },
+  self_hosted_maintenance_message: {
+    plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start:
+      "Plane didn't start up. This could be because one or more Plane services failed to start.",
+    choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure:
+      "Choose View Logs from setup.sh and Docker logs to be sure.",
+  },
+  page_navigation_pane: {
+    tabs: {
+      outline: {
+        label: "Outline",
+        empty_state: {
+          title: "Missing headings",
+          description: "Let's put some headings in this page to see them here.",
+        },
+      },
+      info: {
+        label: "Info",
+        document_info: {
+          words: "Words",
+          characters: "Characters",
+          paragraphs: "Paragraphs",
+          read_time: "Read time",
+        },
+        actors_info: {
+          edited_by: "Edited by",
+          created_by: "Created by",
+        },
+        version_history: {
+          label: "Version history",
+          current_version: "Current version",
+        },
+      },
+      assets: {
+        label: "Assets",
+        download_button: "Download",
+        empty_state: {
+          title: "Missing images",
+          description: "Add images to see them here.",
+        },
+      },
+    },
+    open_button: "Open navigation pane",
+    close_button: "Close navigation pane",
+    outline_floating_button: "Open outline",
+  },
+  project_members: {
+    full_name: "Full name",
+    display_name: "Display name",
+    email: "Email",
+    joining_date: "Joining date",
+    role: "Role",
+  },
+} as const;

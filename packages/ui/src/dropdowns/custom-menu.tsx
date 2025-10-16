@@ -6,9 +6,9 @@ import { usePopper } from "react-popper";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // helpers
-import { cn } from "../../helpers";
-// hooks
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
+import { cn } from "../utils";
+// hooks
 // types
 import {
   ICustomMenuDropdownProps,
@@ -186,7 +186,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
     <Menu.Items
       data-prevent-outside-click={!!portalElement}
       className={cn(
-        "fixed z-10 translate-y-0",
+        "fixed z-30 translate-y-0",
         menuItemsClassName
       )} /** translate-y-0 is a hack to create new stacking context. Required for safari  */
       static
@@ -222,7 +222,11 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
       tabIndex={tabIndex}
       className={cn("relative w-min text-left", className)}
       onKeyDownCapture={handleKeyDown}
-      onClick={handleOnClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        handleOnClick();
+      }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       data-main-menu="true"
@@ -414,7 +418,7 @@ const SubMenu: React.FC<ICustomSubMenuProps> = (props) => {
             style={styles.popper}
             {...attributes.popper}
             className={cn(
-              "fixed z-[20] min-w-[12rem] overflow-hidden rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 p-1 text-xs shadow-custom-shadow-lg",
+              "fixed z-30 min-w-[12rem] overflow-hidden rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 p-1 text-xs shadow-custom-shadow-lg",
               "ring-1 ring-black ring-opacity-5", // Additional styling to make it stand out
               contentClassName
             )}
