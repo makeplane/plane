@@ -37,6 +37,7 @@ export * from "./intake";
 export * from "./intake-icon";
 export * from "./layer-stack";
 export * from "./layers-icon";
+export * from "./layout";
 export * from "./lead-icon";
 export * from "./module";
 export * from "./module-icon";
