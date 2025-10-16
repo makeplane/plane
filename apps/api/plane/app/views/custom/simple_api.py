@@ -19,7 +19,7 @@ def temporary_create_issue_type(project: Project = None, project_id: str = None)
     bug_logo_props = {"icon": {"name": "Bug", "color": "#8e0119", "background_color": "#FFFFFF"}, "in_use": "icon"}
     property_logo_props = {"icon": {"name": "AlignLeft", "color": "#6d7b8a"}, "in_use": "icon"}
 
-    task_type = IssueType.objects.create(name="Task", workspace=project.workspace, description='任务',
+    task_type = IssueType.objects.create(name="Task", workspace=project.workspace, description='任务',is_default=True,
                                          logo_props=task_logo_props, )
     requirement_type = IssueType.objects.create(name="Requirement", workspace=project.workspace,
                                                 description='需求', logo_props=requirement_logo_props, )
