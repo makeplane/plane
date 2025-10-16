@@ -4,4 +4,4 @@ export * from "./gantt-icon";
 export * from "./grid-icon";
 export * from "./kanban-icon";
 export * from "./list-icon";
-export * from "./sheet-layout-icon";
+export * from "./sheet-icon";
