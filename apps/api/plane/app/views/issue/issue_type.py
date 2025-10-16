@@ -80,6 +80,10 @@ class IssueTypeViewSet(BaseAPIView):
 
     def delete(self, request, slug, project_id, issue_type_id):
         issue_type = IssueType.objects.get(pk=issue_type_id)
+        if issue_type.is_default:
+            return Response(
+                {"msg": "默认工作项类型不能删除"}, status=status.HTTP_400_BAD_REQUEST
+            )
         if Issue.objects.filter(type=issue_type).exists():
             return Response(
                 {"msg": "该工作项类型正在被使用,请先删除对应工作项"},

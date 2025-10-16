@@ -105,6 +105,7 @@ const WorkItemTypeCard = ({
   onDeleted?: () => void;
   onRefetch?: () => void;
 }) => {
+  console.log("🚀 ~ WorkItemTypeCard ~ issueType:", issueType);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isActionOpen, setIsActionOpen] = useState(false);
   const [isPropActionOpen, setIsPropActionOpen] = useState<string | null>(null);
@@ -112,6 +113,7 @@ const WorkItemTypeCard = ({
   const [isPropConfirmOpen, setIsPropConfirmOpen] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDeletingProperty, setIsDeletingProperty] = useState<string | null>(null);
+
   const { issueTypes, isLoading, error } = useProjectIssueTypes(workspaceSlug?.toString(), projectId?.toString());
   const toggleExpanded = () => {
     setIsExpanded(!isExpanded);
@@ -218,6 +220,7 @@ const WorkItemTypeCard = ({
               <button
                 type="button"
                 className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-custom-background-90"
+                disabled={issueType.is_default}
                 onClick={() => {
                   setIsActionOpen(false);
                   setIsConfirmOpen(true);

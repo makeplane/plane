@@ -8,6 +8,7 @@ export type TIssueTypeIconProps = {
 };
 
 export type TIssueTypeProperty = {
+  is_default: boolean | undefined;
   id: string;
   issue_type: string;
   display_name: string;

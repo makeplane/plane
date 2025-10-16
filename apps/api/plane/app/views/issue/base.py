@@ -390,13 +390,17 @@ class IssueViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
-        dynamic_properties = request.data.pop('dynamic_properties')
+        if 'dynamic_properties' in request.data:
+            dynamic_properties = request.data.pop('dynamic_properties')
+        else:
+            dynamic_properties = {}
 
+        type_id = request.data.get("type_id", None)
         serializer = IssueCreateSerializer(
             data=request.data,
             context={
                 "project_id": project_id,
-                "type_id": request.data['type_id'],
+                "type_id": type_id,
                 "workspace_id": project.workspace_id,
                 "default_assignee_id": project.default_assignee_id,
                 'dynamic_properties': dynamic_properties

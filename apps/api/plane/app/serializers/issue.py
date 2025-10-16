@@ -37,7 +37,7 @@ from plane.db.models import (
     IssueVersion,
     IssueDescriptionVersion,
     ProjectMember,
-    EstimatePoint, IssueTypeProperty, IssuePropertyValue,
+    EstimatePoint, IssueTypeProperty, IssuePropertyValue, ProjectIssueType,
 )
 from plane.utils.content_validator import (
     validate_html_content,
@@ -195,6 +195,9 @@ class IssueCreateSerializer(BaseSerializer):
 
         project_id = self.context["project_id"]
         type_id = self.context["type_id"]
+        if not type_id:
+            issue_type = ProjectIssueType.objects.get(project_id=project_id,issue_type__is_default=True).issue_type
+            type_id = issue_type.id
         workspace_id = self.context["workspace_id"]
         default_assignee_id = self.context["default_assignee_id"]
         # 动态字段
