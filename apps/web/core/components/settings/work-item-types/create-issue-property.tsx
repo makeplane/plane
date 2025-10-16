@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useParams } from "next/navigation";
+// icons
+import { Plus } from "lucide-react";
 // ui
 import { Button, CustomSelect, ToggleSwitch } from "@plane/ui";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -118,113 +120,118 @@ export const CreateIssuePropertyButton = ({ issueTypeId, onCreated, onClosed }: 
     }
   };
 
-  if (!isOpen) {
-    return (
-      <Button variant="neutral-primary" size="sm" onClick={open}>
+  return (
+    <>
+      <Button
+        variant="neutral-primary"
+        size="sm"
+        onClick={open}
+        className="bg-blue-100 hover:bg-blue-150 text-blue-700 border-blue-200 hover:border-blue-300"
+      >
+        <Plus className="h-4 w-4 mr-1.5 text-blue-700" />
         新增属性
       </Button>
-    );
-  }
-
-  return (
-    <div className="fixed inset-0 z-20 flex items-center justify-center bg-custom-backdrop bg-opacity-50">
-      <div className="relative mx-4 w-full max-w-xl rounded-lg border border-custom-border-200 bg-custom-background-100 p-5 shadow-custom-shadow-md">
-        <div className="flex items-center justify-between pb-3">
-          <h3 className="text-xl font-medium text-custom-text-100">新增属性</h3>
-          <button
-            onClick={close}
-            className="flex h-6 w-6 items-center justify-center rounded text-custom-text-400 hover:text-custom-text-200"
-          >
-            ×
-          </button>
-        </div>
-
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div>
-              <label className="mb-2 block text-sm font-medium text-custom-text-200">
-                属性名称 <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-                placeholder="输入属性名称"
-                className="w-full rounded-md border border-custom-border-300 bg-custom-background-100 px-3 py-2 text-sm text-custom-text-100 placeholder-custom-text-400 focus:border-custom-border-400 focus:outline-none"
-                autoFocus
-              />
-            </div>
-
-            <div>
-              <label className="mb-2 block text-sm font-medium text-custom-text-200">属性类型</label>
-              <CustomSelect
-                value={propertyType}
-                onChange={(value: TIssueTypeProperty["property_type"]) => setPropertyType(value)}
-                label={PROPERTY_TYPE_OPTIONS.find((option) => option.value === propertyType)?.label || "选择类型"}
-                placement="bottom-start"
-                optionsClassName="w-[16rem]"
-                buttonClassName="!w-[16rem]"
-                input
+      {isOpen && (
+        <div className="fixed inset-0 z-20 flex items-center justify-center bg-custom-backdrop bg-opacity-50">
+          <div className="relative mx-4 w-full max-w-xl rounded-lg border border-custom-border-200 bg-custom-background-100 p-5 shadow-custom-shadow-md">
+            <div className="flex items-center justify-between pb-3">
+              <h3 className="text-xl font-medium text-custom-text-100">新增属性</h3>
+              <button
+                onClick={close}
+                className="flex h-6 w-6 items-center justify-center rounded text-custom-text-400 hover:text-custom-text-200"
               >
-                {PROPERTY_TYPE_OPTIONS.map((option) => (
-                  <CustomSelect.Option key={option.value} value={option.value}>
-                    {option.label}
-                  </CustomSelect.Option>
-                ))}
-              </CustomSelect>
+                ×
+              </button>
             </div>
-          </div>
 
-          {propertyType === "TEXT" && (
-            <div className="rounded-md border border-custom-border-200 bg-custom-background-90 p-4">
-              <label className="mb-2 block text-sm font-medium text-custom-text-200">文本格式</label>
-              <div className="flex gap-6">
-                <label className="flex items-center gap-2 text-sm text-custom-text-300">
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-custom-text-200">
+                    属性名称 <span className="text-red-500">*</span>
+                  </label>
                   <input
-                    type="radio"
-                    name="text-format"
-                    className="h-4 w-4"
-                    checked={!textMulti}
-                    onChange={() => setTextMulti(false)}
+                    type="text"
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    placeholder="输入属性名称"
+                    className="w-full rounded-md border border-custom-border-300 bg-custom-background-100 px-3 py-2 text-sm text-custom-text-100 placeholder-custom-text-400 focus:border-custom-border-400 focus:outline-none"
+                    autoFocus
                   />
-                  单行
-                </label>
-                <label className="flex items-center gap-2 text-sm text-custom-text-300">
-                  <input
-                    type="radio"
-                    name="text-format"
-                    className="h-4 w-4"
-                    checked={textMulti}
-                    onChange={() => setTextMulti(true)}
-                  />
-                  段落（多行）
-                </label>
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-custom-text-200">属性类型</label>
+                  <CustomSelect
+                    value={propertyType}
+                    onChange={(value: TIssueTypeProperty["property_type"]) => setPropertyType(value)}
+                    label={PROPERTY_TYPE_OPTIONS.find((option) => option.value === propertyType)?.label || "选择类型"}
+                    placement="bottom-start"
+                    optionsClassName="w-[16rem]"
+                    buttonClassName="!w-[16rem]"
+                    input
+                  >
+                    {PROPERTY_TYPE_OPTIONS.map((option) => (
+                      <CustomSelect.Option key={option.value} value={option.value}>
+                        {option.label}
+                      </CustomSelect.Option>
+                    ))}
+                  </CustomSelect>
+                </div>
               </div>
-              <p className="mt-2 text-xs text-custom-text-400">选择“单行”适用于短文本，“段落”适用于较长描述。</p>
-            </div>
-          )}
 
-          <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-custom-text-200">是否必填</label>
-            <ToggleSwitch value={isRequired} onChange={setIsRequired} size="sm" />
+              {propertyType === "TEXT" && (
+                <div className="rounded-md border border-custom-border-200 bg-custom-background-90 p-4">
+                  <label className="mb-2 block text-sm font-medium text-custom-text-200">文本格式</label>
+                  <div className="flex gap-6">
+                    <label className="flex items-center gap-2 text-sm text-custom-text-300">
+                      <input
+                        type="radio"
+                        name="text-format"
+                        className="h-4 w-4"
+                        checked={!textMulti}
+                        onChange={() => setTextMulti(false)}
+                      />
+                      单行
+                    </label>
+                    <label className="flex items-center gap-2 text-sm text-custom-text-300">
+                      <input
+                        type="radio"
+                        name="text-format"
+                        className="h-4 w-4"
+                        checked={textMulti}
+                        onChange={() => setTextMulti(true)}
+                      />
+                      段落（多行）
+                    </label>
+                  </div>
+                  <p className="mt-2 text-xs text-custom-text-400">选择“单行”适用于短文本，“段落”适用于较长描述。</p>
+                </div>
+              )}
+
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium text-custom-text-200">是否必填</label>
+                <ToggleSwitch value={isRequired} onChange={setIsRequired} size="sm" />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-6">
+              <Button variant="neutral-primary" size="sm" onClick={close} disabled={submitting}>
+                取消
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={handleSubmit}
+                loading={submitting}
+                disabled={!displayName.trim()}
+              >
+                {submitting ? "创建中..." : "确定"}
+              </Button>
+            </div>
           </div>
         </div>
-
-        <div className="flex items-center justify-end gap-2 pt-6">
-          <Button variant="neutral-primary" size="sm" onClick={close} disabled={submitting}>
-            取消
-          </Button>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={handleSubmit}
-            loading={submitting}
-            disabled={!displayName.trim()}
-          >
-            {submitting ? "创建中..." : "确定"}
-          </Button>
-        </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 };

@@ -447,11 +447,11 @@ const WorkItemTypesSettingsPage = observer(() => {
         {workspaceSlug && projectId && (
           <div className="mt-8">
             {/* 加载提示：保留列表渲染，避免卸载导致展开状态丢失 */}
-            {isLoading && (
+            {/* {isLoading && (
               <div className="flex items-center justify-center py-2">
                 <Spinner />
               </div>
-            )}
+            )} */}
             {/* 错误状态（不卸载列表） */}
             {error && (
               <div className="text-center py-2">
