@@ -219,7 +219,6 @@ def transfer_cycle_issues(
                 "assignee_id": (
                     str(item["assignee_id"]) if item["assignee_id"] else None
                 ),
-                "avatar": item.get("avatar"),
                 "avatar_url": item.get("avatar_url"),
                 "total_estimates": item["total_estimates"],
                 "completed_estimates": item["completed_estimates"],
@@ -341,7 +340,6 @@ def transfer_cycle_issues(
         {
             "display_name": item["display_name"],
             "assignee_id": (str(item["assignee_id"]) if item["assignee_id"] else None),
-            "avatar": item.get("avatar"),
             "avatar_url": item.get("avatar_url"),
             "total_issues": item["total_issues"],
             "completed_issues": item["completed_issues"],
