@@ -489,7 +489,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 activeAdditionalPropertiesLength > 0 && "shadow-custom-shadow-xs"
               )}
             >
-              <div>
+              <div className="pb-3">
                 <IssueDefaultProperties
                   control={control}
                   id={data?.id}
@@ -505,7 +505,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 />
               </div>
               {showActionButtons && (
-                <div className="flex items-center justify-end gap-4 py-3" tabIndex={getIndex("create_more")}>
+                <div
+                  className="flex items-center justify-end gap-4 pb-3 pt-6 border-t-[0.5px] border-custom-border-200"
+                  tabIndex={getIndex("create_more")}
+                >
                   {!data?.id && (
                     <div
                       className="inline-flex items-center gap-1.5 cursor-pointer"
