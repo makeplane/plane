@@ -38,7 +38,7 @@
     "@floating-ui/dom": "^1.7.1",
     "@floating-ui/react": "^0.26.4",
     "@headlessui/react": "^1.7.3",
-    "@hocuspocus/provider": "3.2.5",
+    "@hocuspocus/provider": "2.15.2",
     "@plane/constants": "workspace:*",
     "@plane/hooks": "workspace:*",
     "@plane/types": "workspace:*",
