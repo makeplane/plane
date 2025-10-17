@@ -5,6 +5,7 @@ import { ISvgIcons } from "./type";
 interface IIconWrapper extends ISvgIcons {
   children: React.ReactNode;
   clipPathId?: string;
+  viewBox?: string;
 }
 
 export const IconWrapper: React.FC<IIconWrapper> = ({
@@ -13,12 +14,13 @@ export const IconWrapper: React.FC<IIconWrapper> = ({
   className = "text-current",
   children,
   clipPathId,
+  viewBox = "0 0 16 16",
   ...rest
 }) => (
   <svg
     width={width}
     height={height}
-    viewBox="0 0 16 16"
+    viewBox={viewBox}
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     className={className}
