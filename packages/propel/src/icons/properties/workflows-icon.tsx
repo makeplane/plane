@@ -1,23 +1,10 @@
 import * as React from "react";
 
+import { IconWrapper } from "../icon-wrapper";
 import { ISvgIcons } from "../type";
 
-export const WorkflowsPropertyIcon: React.FC<ISvgIcons> = ({
-  width = "16",
-  height = "16",
-  className = "text-current",
-  color = "currentColor",
-  ...rest
-}) => (
-  <svg
-    width={width}
-    height={height}
-    viewBox="0 0 16 16"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    className={className}
-    {...rest}
-  >
+export const WorkflowsPropertyIcon: React.FC<ISvgIcons> = ({ color = "currentColor", ...rest }) => (
+  <IconWrapper color={color} {...rest}>
     <path
       d="M6.70801 3.33301C6.70783 2.94196 6.39109 2.625 6 2.625H3.33301C2.94206 2.62518 2.62518 2.94206 2.625 3.33301V6C2.625 6.39109 2.94196 6.70783 3.33301 6.70801H6C6.3912 6.70801 6.70801 6.3912 6.70801 6V3.33301ZM7.95801 6C7.95801 7.08156 7.08156 7.95801 6 7.95801H3.33301C2.2516 7.95783 1.375 7.08145 1.375 6V3.33301C1.37518 2.25171 2.25171 1.37518 3.33301 1.375H6C7.08145 1.375 7.95783 2.2516 7.95801 3.33301V6Z"
       fill={color}
@@ -30,5 +17,5 @@ export const WorkflowsPropertyIcon: React.FC<ISvgIcons> = ({
       d="M13.3747 9.99967C13.3745 9.60862 13.0578 9.29167 12.6667 9.29167H9.99967C9.60873 9.29184 9.29184 9.60873 9.29167 9.99967V12.6667C9.29167 13.0578 9.60862 13.3745 9.99967 13.3747H12.6667C13.0579 13.3747 13.3747 13.0579 13.3747 12.6667V9.99967ZM14.6247 12.6667C14.6247 13.7482 13.7482 14.6247 12.6667 14.6247H9.99967C8.91827 14.6245 8.04167 13.7481 8.04167 12.6667V9.99967C8.04184 8.91838 8.91838 8.04184 9.99967 8.04167H12.6667C13.7481 8.04167 14.6245 8.91827 14.6247 9.99967V12.6667Z"
       fill={color}
     />
-  </svg>
+  </IconWrapper>
 );

@@ -1,4 +1,5 @@
 export type { ISvgIcons } from "./type";
+export * from "./icon-wrapper";
 export * from "./activity-icon";
 export * from "./add-icon";
 export * from "./ai-icon";
