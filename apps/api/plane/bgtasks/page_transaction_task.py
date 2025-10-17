@@ -1,5 +1,4 @@
 # Python imports
-import json
 import logging
 
 # Django imports
@@ -39,17 +38,16 @@ component_map = {
 }
 
 
-def extract_all_components(value):
+def extract_all_components(description_html):
     """
     Extracts all component types from the HTML value in a single pass.
     Returns a dict mapping component_type -> list of extracted entities.
     """
     try:
-        html = value.get("description_html")
-        if not html:
+        if not description_html:
             return {component: [] for component in component_map.keys()}
 
-        soup = BeautifulSoup(html, "html.parser")
+        soup = BeautifulSoup(description_html, "html.parser")
         results = {}
 
         for component, config in component_map.items():
@@ -80,19 +78,20 @@ def get_entity_details(component: str, mention: dict):
 
 
 @shared_task
-def page_transaction(new_value, old_value, page_id):
+def page_transaction(new_description_html, old_description_html, page_id):
     """
     Tracks changes in page content (mentions, embeds, etc.)
     and logs them in PageLog for audit and reference.
     """
     try:
         page = Page.objects.get(pk=page_id)
+
         has_existing_logs = PageLog.objects.filter(page_id=page_id).exists()
-        old_value = json.loads(old_value) if old_value else {}
+
 
         # Extract all components in a single pass (optimized)
-        old_components = extract_all_components(old_value)
-        new_components = extract_all_components(new_value)
+        old_components = extract_all_components(old_description_html)
+        new_components = extract_all_components(new_description_html)
 
         new_transactions = []
         deleted_transaction_ids = set()
@@ -125,6 +124,7 @@ def page_transaction(new_value, old_value, page_id):
                         updated_at=current_time,
                     )
                 )
+
 
         # Bulk insert and cleanup
         if new_transactions:
