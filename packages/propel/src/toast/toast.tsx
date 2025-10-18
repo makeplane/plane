@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Toast as BaseToast } from "@base-ui-components/react/toast";
 import { AlertTriangle, CheckCircle2, XCircle } from "lucide-react";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseIcon } from "../icons";
 // spinner
 import { CircularBarSpinner } from "../spinners/circular-bar-spinner";
 import { cn } from "../utils/classname";

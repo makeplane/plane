@@ -5,7 +5,7 @@ import { useState, Fragment, useEffect } from "react";
 import { TwitterPicker } from "react-color";
 import { Controller, useForm } from "react-hook-form";
 import { usePopper } from "react-popper";
-import { Plus,  Loader } from "lucide-react";
+import { Plus, Loader } from "lucide-react";
 import { Popover } from "@headlessui/react";
 import { CloseIcon } from "@plane/propel/icons";
 import type { IIssueLabel } from "@plane/types";

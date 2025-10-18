@@ -6,6 +6,7 @@ import type { LucideIcon } from "lucide-react";
 // plane helpers
 import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
+import type { ISvgIcons } from "@plane/propel/icons";
 import { CloseIcon } from "@plane/propel/icons";
 // types
 import type { IIssueLabel } from "@plane/types";
@@ -17,7 +18,7 @@ import { cn } from "@plane/utils";
 import { LabelName } from "./label-name";
 
 export interface ICustomMenuItem {
-  CustomIcon: LucideIcon;
+  CustomIcon: LucideIcon | React.FC<ISvgIcons>;
   onClick: (label: IIssueLabel) => void;
   isVisible: boolean;
   text: string;
