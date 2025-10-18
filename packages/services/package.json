@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "license": "AGPL-3.0",
   "private": true,
+  "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
     "./package.json": "./package.json"
   },
@@ -21,10 +22,17 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
+    "@borewit/text-codec": "0.1.1",
     "@plane/constants": "workspace:*",
     "@plane/types": "workspace:*",
+    "@tokenizer/inflate": "0.2.7",
     "axios": "catalog:",
-    "file-type": "^21.0.0"
+    "fflate": "0.8.2",
+    "file-type": "^21.0.0",
+    "ieee754": "1.2.1",
+    "strtok3": "10.3.4",
+    "token-types": "6.1.1",
+    "uint8array-extras": "1.5.0"
   },
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
@@ -32,7 +40,7 @@
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts"
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.cts"
 }

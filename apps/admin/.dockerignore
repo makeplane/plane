@@ -1,0 +1,5 @@
+# React Router - https://github.com/remix-run/react-router-templates/blob/dc79b1a065f59f3bfd840d4ef75cc27689b611e6/default/.dockerignore
+.react-router/
+build/
+node_modules/
+README.md
