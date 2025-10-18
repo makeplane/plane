@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { CalendarClock, ChevronDown, ChevronRight, Info, Plus, SquareUser, Users } from "lucide-react";
+import { ChevronDown, ChevronRight, Info, Plus, SquareUser } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import {
   MODULE_STATUS,
@@ -16,7 +16,7 @@ import {
 } from "@plane/constants";
 // plane types
 import { useTranslation } from "@plane/i18n";
-import { ModuleStatusIcon, WorkItemsIcon } from "@plane/propel/icons";
+import { MembersPropertyIcon, ModuleStatusIcon, WorkItemsIcon, StartDatePropertyIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // plane ui
@@ -303,7 +303,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
         <div className="flex flex-col gap-5 pb-6 pt-2.5">
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
-              <CalendarClock className="h-4 w-4" />
+              <StartDatePropertyIcon className="h-4 w-4" />
               <span className="text-base">{t("date_range")}</span>
             </div>
             <div className="h-7">
@@ -371,7 +371,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
           </div>
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
-              <Users className="h-4 w-4" />
+              <MembersPropertyIcon className="h-4 w-4" />
               <span className="text-base">{t("members")}</span>
             </div>
             <Controller

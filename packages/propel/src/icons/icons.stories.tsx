@@ -164,7 +164,9 @@ export const IconSizes: Story = {
     <div className="space-y-6">
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-custom-text-100">Icon Sizes</h3>
-        <p className="text-sm text-custom-text-300">Icons can be rendered in different sizes using width and height props.</p>
+        <p className="text-sm text-custom-text-300">
+          Icons can be rendered in different sizes using width and height props.
+        </p>
       </div>
 
       <div className="flex items-end gap-8">

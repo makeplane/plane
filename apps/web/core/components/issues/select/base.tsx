@@ -2,12 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Check, Component, Loader, Search, Tag } from "lucide-react";
+import { Check, Component, Loader, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 import { getRandomLabelColor } from "@plane/constants";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { LabelPropertyIcon } from "@plane/propel/icons";
 import type { IIssueLabel } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
@@ -181,7 +182,7 @@ export const WorkItemLabelSelectBase: React.FC<TWorkItemLabelSelectBaseProps> = 
               buttonClassName
             )}
           >
-            <Tag className="h-3 w-3 flex-shrink-0" />
+            <LabelPropertyIcon className="h-3 w-3 flex-shrink-0" />
             <span>{t("labels")}</span>
           </div>
         )}

@@ -1,4 +1,3 @@
-
 export * from "./boolean-icon";
 export * from "./dropdown-icon";
 export * from "./due-date-icon";

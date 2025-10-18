@@ -3,10 +3,9 @@ import {
   BoardLayoutIcon,
   CalendarLayoutIcon,
   SheetLayoutIcon,
-  TimelineLayoutIcon
-
+  TimelineLayoutIcon,
 } from "@plane/propel/icons";
-import type {ISvgIcons} from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/propel/icons";
 import { EIssueLayoutTypes } from "@plane/types";
 
 export const IssueLayoutIcon = ({
