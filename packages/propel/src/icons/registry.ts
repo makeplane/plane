@@ -1,4 +1,5 @@
 import { AddIcon } from "./actions/add-icon";
+import { CloseIcon } from "./actions/close-icon";
 import { DefaultIcon } from "./default-icon";
 import { BoardLayoutIcon } from "./layouts/board-icon";
 import { CalendarLayoutIcon } from "./layouts/calendar-icon";
@@ -107,6 +108,7 @@ export const ICON_REGISTRY = {
 
   // Action icons
   "action.add": AddIcon,
+  "action.close": CloseIcon,
 
   // Default fallback
   default: DefaultIcon,
