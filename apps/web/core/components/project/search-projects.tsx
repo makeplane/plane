@@ -3,11 +3,12 @@
 import type { FC } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { Search, X } from "lucide-react";
+import { Search} from "lucide-react";
 // plane hooks
 import { useOutsideClickDetector } from "@plane/hooks";
 // i18n
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon } from "@plane/propel/icons";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
@@ -74,7 +75,7 @@ export const ProjectSearch: FC = observer(() => {
               setIsSearchOpen(false);
             }}
           >
-            <X className="h-3 w-3" />
+            <CloseIcon className="h-3 w-3" />
           </button>
         )}
       </div>

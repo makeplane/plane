@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { xor } from "lodash-es";
 import { observer } from "mobx-react";
-import { Search, X } from "lucide-react";
+import { Search} from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane ui
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { CloseIcon } from "@plane/propel/icons";
 import { Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
@@ -108,7 +109,7 @@ export const ProjectMultiSelectModal: React.FC<Props> = observer((props) => {
                   <p className="text-xs truncate text-custom-text-300 group-hover:text-custom-text-200 transition-colors">
                     {projectDetails.identifier}
                   </p>
-                  <X className="size-3 flex-shrink-0 text-custom-text-400 group-hover:text-custom-text-200 transition-colors" />
+                  <CloseIcon className="size-3 flex-shrink-0 text-custom-text-400 group-hover:text-custom-text-200 transition-colors" />
                 </div>
               );
             })}

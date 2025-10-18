@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
 import { CYCLE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 
 type Props = {
@@ -34,7 +34,7 @@ export const AppliedStatusFilters: React.FC<Props> = observer((props) => {
                 className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
                 onClick={() => handleRemove(status)}
               >
-                <X size={10} strokeWidth={2} />
+                <CloseIcon height={10} width={10} strokeWidth={2} />
               </button>
             )}
           </div>

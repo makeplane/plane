@@ -3,9 +3,9 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { AlertCircle, Search, X } from "lucide-react";
+import { AlertCircle, Search } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-import { CycleIcon, TransferIcon } from "@plane/propel/icons";
+import { CycleIcon, TransferIcon, CloseIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssuesStoreType } from "@plane/types";
 import { useCycle } from "@/hooks/store/use-cycle";
@@ -116,7 +116,7 @@ export const TransferIssuesModal: React.FC<Props> = observer((props) => {
                       <h4 className="text-xl font-medium text-custom-text-100">Transfer work items</h4>
                     </div>
                     <button onClick={handleClose}>
-                      <X className="h-4 w-4" />
+                      <CloseIcon className="h-4 w-4" />
                     </button>
                   </div>
                   <div className="flex items-center gap-2 border-b border-custom-border-200 px-5 pb-3">

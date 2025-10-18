@@ -3,9 +3,10 @@
 import type { FC, FormEvent } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Check, Info, X } from "lucide-react";
+import { Check, Info } from "lucide-react";
 import { EEstimateSystem, MAX_ESTIMATE_POINT_INPUT_LENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
@@ -204,7 +205,7 @@ export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) =>
         onClick={handleClose}
         disabled={loader}
       >
-        <X size={14} className="text-custom-text-200" />
+        <CloseIcon height={14} width={14} className="text-custom-text-200" />
       </button>
     </form>
   );

@@ -4,11 +4,10 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import type { StaticImageData } from "next/image";
 import Image from "next/image";
-import { X } from "lucide-react";
 // plane imports
 import { PRODUCT_TOUR_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
-import { PlaneLockup } from "@plane/propel/icons";
+import { CloseIcon, PlaneLockup } from "@plane/propel/icons";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
@@ -144,7 +143,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
             className="fixed right-[9%] top-[19%] z-10 -translate-y-1/2 translate-x-1/2 cursor-pointer rounded-full border border-custom-text-100 p-1 sm:top-[11.5%] md:right-[24%] lg:right-[19%]"
             onClick={onComplete}
           >
-            <X className="h-3 w-3 text-custom-text-100" />
+            <CloseIcon className="h-3 w-3 text-custom-text-100" />
           </button>
           <TourSidebar step={step} setStep={setStep} />
           <div className="col-span-10 h-full overflow-hidden lg:col-span-7">

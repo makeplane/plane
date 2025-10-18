@@ -1,6 +1,6 @@
 import type { Editor } from "@tiptap/core";
 import { TableMap } from "@tiptap/pm/tables";
-import { ArrowLeft, ArrowRight, Copy, ToggleRight, Trash2, X, type LucideIcon } from "lucide-react";
+import { ArrowLeft, ArrowRight, Copy, ToggleRight, Trash2, type LucideIcon } from "lucide-react";
 // extensions
 import { findTable, getSelectedColumns } from "@/extensions/table/table/utilities/helpers";
 // local imports

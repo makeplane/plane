@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
 // plane imports
+import { CloseIcon } from "@plane/propel/icons";
 import type { IFilterInstance } from "@plane/shared-state";
 import type { TExternalFilter, TFilterProperty } from "@plane/types";
 
@@ -25,7 +25,7 @@ export const FilterItemCloseButton = observer(
         type="button"
         aria-label="Remove filter"
       >
-        <X className="size-3.5" />
+        <CloseIcon className="size-3.5" />
       </button>
     );
   }

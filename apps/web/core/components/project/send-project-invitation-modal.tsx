@@ -3,12 +3,13 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
-import { ChevronDown, Plus, X } from "lucide-react";
+import { ChevronDown, Plus } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
 import { ROLE, EUserPermissions, MEMBER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { CloseIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Avatar, CustomSelect, CustomSearchSelect } from "@plane/ui";
 // helpers
@@ -324,7 +325,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                   className="place-items-center self-center rounded"
                                   onClick={() => remove(index)}
                                 >
-                                  <X className="h-4 w-4 text-custom-text-200" />
+                                  <CloseIcon className="h-4 w-4 text-custom-text-200" />
                                 </button>
                               </div>
                             )}

@@ -1,8 +1,8 @@
 "use client";
 
-import { ChevronDown, X } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 // plane imports
-import { ModuleIcon } from "@plane/propel/icons";
+import { CloseIcon, ModuleIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // hooks
@@ -96,7 +96,7 @@ export const ModuleButtonContent: React.FC<ModuleButtonContentProps> = (props) =
                           onChange(newModuleIds);
                         }}
                       >
-                        <X className="h-2.5 w-2.5 text-custom-text-300 hover:text-red-500" />
+                        <CloseIcon className="h-2.5 w-2.5 text-custom-text-300 hover:text-red-500" />
                       </button>
                     </Tooltip>
                   )}

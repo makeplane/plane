@@ -4,7 +4,8 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
-import { Boxes, Check, Share2, Star, User2, X } from "lucide-react";
+import { Boxes, Check, Share2, Star, User2 } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { EmptySpace, EmptySpaceItem } from "@/components/ui/empty-space";
@@ -85,7 +86,7 @@ const WorkspaceInvitationPage = observer(() => {
               description="Your workspace is where you'll create projects, collaborate on your work items, and organize different streams of work in your Plane account."
             >
               <EmptySpaceItem Icon={Check} title="Accept" action={handleAccept} />
-              <EmptySpaceItem Icon={X} title="Ignore" action={handleReject} />
+              <EmptySpaceItem Icon={CloseIcon} title="Ignore" action={handleReject} />
             </EmptySpace>
           )
         ) : error || invitationDetail?.responded_at ? (

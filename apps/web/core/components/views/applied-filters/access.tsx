@@ -1,9 +1,9 @@
 import { observer } from "mobx-react";
 // icons
-import { X } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
+import { CloseIcon } from "@plane/propel/icons";
 // constants
 // helpers
-import { useTranslation } from "@plane/i18n";
 import type { EViewAccess } from "@plane/types";
 import { VIEW_ACCESS_SPECIFIERS } from "@/helpers/views.helper";
 
@@ -38,7 +38,7 @@ export const AppliedAccessFilters: React.FC<Props> = observer((props) => {
                 className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
                 onClick={() => handleRemove(access)}
               >
-                <X size={10} strokeWidth={2} />
+                <CloseIcon height={12} width={12} strokeWidth={2} />
               </button>
             )}
           </div>

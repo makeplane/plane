@@ -1,8 +1,9 @@
 import type { FC } from "react";
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { ListFilter, Search, X } from "lucide-react";
+import { ListFilter, Search } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon } from "@plane/propel/icons";
 import type { IIssueFilterOptions, IState } from "@plane/types";
 import { cn } from "@plane/utils";
 import {
@@ -65,7 +66,7 @@ export const SubIssueFilters: FC<TSubIssueFiltersProps> = observer((props) => {
               />
               {filtersSearchQuery !== "" && (
                 <button type="button" className="grid place-items-center" onClick={() => setFiltersSearchQuery("")}>
-                  <X className="text-custom-text-300" size={12} strokeWidth={2} />
+                  <CloseIcon className="text-custom-text-300" height={12} width={12} strokeWidth={2} />
                 </button>
               )}
             </div>

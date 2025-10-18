@@ -1,5 +1,5 @@
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 // components
 import { Logo } from "@/components/common/logo";
 // hooks
@@ -35,7 +35,7 @@ export const AppliedProjectFilters: React.FC<Props> = observer((props) => {
                 className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
                 onClick={() => handleRemove(projectId)}
               >
-                <X size={10} strokeWidth={2} />
+                <CloseIcon height={10} width={10} strokeWidth={2} />
               </button>
             )}
           </div>

@@ -1,9 +1,9 @@
 import type { Dispatch, SetStateAction } from "react";
 import React, { useState } from "react";
 import { useParams } from "next/navigation";
-import { X, Pencil } from "lucide-react";
-// types
+import { Pencil } from "lucide-react";
 import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
+// types
 import type { IIssueLabel } from "@plane/types";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";

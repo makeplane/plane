@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { X } from "lucide-react";
 import { useArgs } from "storybook/preview-api";
+import { CloseIcon } from "@plane/propel/icons";
 import { Dialog, EDialogWidth } from "./root";
 
 const meta = {
@@ -187,7 +187,7 @@ export const WithCloseButton: Story = {
                 <div className="flex items-start justify-between">
                   <Dialog.Title>Dialog with Close Button</Dialog.Title>
                   <button onClick={() => setOpen(false)} className="rounded-full p-1 hover:bg-gray-100">
-                    <X className="h-4 w-4" />
+                    <CloseIcon className="h-4 w-4" />
                   </button>
                 </div>
                 <div className="mt-4">

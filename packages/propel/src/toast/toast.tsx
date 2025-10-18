@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Toast as BaseToast } from "@base-ui-components/react/toast";
-import { AlertTriangle, CheckCircle2, X, XCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle2, XCircle } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 // spinner
 import { CircularBarSpinner } from "../spinners/circular-bar-spinner";
 import { cn } from "../utils/classname";
@@ -164,14 +165,14 @@ const ToastRender = ({ id, toast }: { id: React.Key; toast: BaseToast.Root.Toast
               className="absolute top-2 right-2.5 text-toast-text-secondary hover:text-toast-text-tertiary cursor-pointer"
               aria-label="Close"
             >
-              <X strokeWidth={1.5} width={14} height={14} />
+              <CloseIcon strokeWidth={1.5} width={14} height={14} />
             </BaseToast.Close>
           </div>
         </div>
       ) : (
         <>
           <BaseToast.Close className="absolute top-2 right-2.5 text-toast-text-secondary hover:text-toast-text-tertiary cursor-pointer">
-            <X strokeWidth={1.5} width={14} height={14} />
+            <CloseIcon strokeWidth={1.5} width={14} height={14} />
           </BaseToast.Close>
           <div className="w-full flex flex-col gap-2 p-2">
             <div className="flex items-center w-full">

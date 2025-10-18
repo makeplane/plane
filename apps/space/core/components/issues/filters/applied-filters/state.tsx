@@ -1,10 +1,9 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
 // plane imports
 import { EIconSize } from "@plane/constants";
-import { StateGroupIcon } from "@plane/propel/icons";
+import { CloseIcon, StateGroupIcon } from "@plane/propel/icons";
 // hooks
 import { useStates } from "@/hooks/store/use-state";
 
@@ -34,7 +33,7 @@ export const AppliedStateFilters: React.FC<Props> = observer((props) => {
               className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
               onClick={() => handleRemove(stateId)}
             >
-              <X size={10} strokeWidth={2} />
+              <CloseIcon height={10} width={10} strokeWidth={2} />
             </button>
           </div>
         );
