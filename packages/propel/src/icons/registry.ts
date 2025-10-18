@@ -1,12 +1,12 @@
 import { AddIcon } from "./actions/add-icon";
 import { DefaultIcon } from "./default-icon";
+import { BoardLayoutIcon } from "./layouts/board-icon";
 import { CalendarLayoutIcon } from "./layouts/calendar-icon";
 import { CardLayoutIcon } from "./layouts/card-icon";
-import { GanttLayoutIcon } from "./layouts/gantt-icon";
 import { GridLayoutIcon } from "./layouts/grid-icon";
-import { KanbanLayoutIcon } from "./layouts/kanban-icon";
 import { ListLayoutIcon } from "./layouts/list-icon";
 import { SheetLayoutIcon } from "./layouts/sheet-icon";
+import { TimelineLayoutIcon } from "./layouts/timeline-icon";
 import { CycleIcon } from "./project/cycle-icon";
 import { EpicIcon } from "./project/epic-icon";
 import { IntakeIcon } from "./project/intake-icon";
@@ -77,9 +77,9 @@ export const ICON_REGISTRY = {
   // Layout icons
   "layout.calendar": CalendarLayoutIcon,
   "layout.card": CardLayoutIcon,
-  "layout.gantt": GanttLayoutIcon,
+  "layout.timeline": TimelineLayoutIcon,
   "layout.grid": GridLayoutIcon,
-  "layout.kanban": KanbanLayoutIcon,
+  "layout.board": BoardLayoutIcon,
   "layout.list": ListLayoutIcon,
   "layout.sheet": SheetLayoutIcon,
 

@@ -31,9 +31,9 @@ export const SubBrandIconsMap = [
 export const LayoutIconsMap = [
   { icon: <Icon name="layout.calendar" />, title: "CalendarLayoutIcon" },
   { icon: <Icon name="layout.card" />, title: "CardLayoutIcon" },
-  { icon: <Icon name="layout.gantt" />, title: "GanttLayoutIcon" },
+  { icon: <Icon name="layout.timeline" />, title: "TimelineLayoutIcon" },
   { icon: <Icon name="layout.grid" />, title: "GridLayoutIcon" },
-  { icon: <Icon name="layout.kanban" />, title: "KanbanLayoutIcon" },
+  { icon: <Icon name="layout.board" />, title: "BoardLayoutIcon" },
   { icon: <Icon name="layout.list" />, title: "ListLayoutIcon" },
   { icon: <Icon name="layout.sheet" />, title: "SheetLayoutIcon" },
 ];

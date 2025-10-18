@@ -125,8 +125,8 @@ export const RegistryUsage: Story = {
             <p className="text-xs text-custom-text-300 text-center">project.cycle</p>
           </div>
           <div className="flex flex-col items-center justify-center gap-3 p-4 col-span-2">
-            <Icon name="layout.kanban" className="text-custom-text-200" />
-            <p className="text-xs text-custom-text-300 text-center">layout.kanban</p>
+            <Icon name="layout.board" className="text-custom-text-200" />
+            <p className="text-xs text-custom-text-300 text-center">layout.board</p>
           </div>
           <div className="flex flex-col items-center justify-center gap-3 p-4 col-span-2">
             <Icon name="property.priority" className="text-custom-text-200" />
