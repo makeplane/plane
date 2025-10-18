@@ -8,9 +8,10 @@ import { Loader, ToggleSwitch } from "@plane/ui";
 // hooks
 import { useInstance } from "@/hooks/store";
 // components
+import type { Route } from "./+types/page";
 import { InstanceEmailForm } from "./email-config-form";
 
-const InstanceEmailPage: React.FC = observer(() => {
+const InstanceEmailPage = observer<React.FC<Route.ComponentProps>>(() => {
   // store
   const { fetchInstanceConfigurations, formattedConfig, disableEmail } = useInstance();
 
@@ -90,5 +91,7 @@ const InstanceEmailPage: React.FC = observer(() => {
     </>
   );
 });
+
+export const meta: Route.MetaFunction = () => [{ title: "Email Settings - God Mode" }];
 
 export default InstanceEmailPage;

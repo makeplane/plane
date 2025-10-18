@@ -1,4 +1,4 @@
-import DOMPurify from "isomorphic-dompurify";
+import DOMPurify from "dompurify";
 import type { Content, JSONContent } from "@plane/types";
 
 /**

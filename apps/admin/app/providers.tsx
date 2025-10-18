@@ -2,22 +2,21 @@
 
 import { ThemeProvider } from "next-themes";
 import { SWRConfig } from "swr";
-// providers
-import { InstanceProvider } from "./instance.provider";
-import { StoreProvider } from "./store.provider";
-import { ToastWithTheme } from "./toast";
-import { UserProvider } from "./user.provider";
+import { InstanceProvider } from "./(all)/instance.provider";
+import { StoreProvider } from "./(all)/store.provider";
+import { ToastWithTheme } from "./(all)/toast";
+import { UserProvider } from "./(all)/user.provider";
 
 const DEFAULT_SWR_CONFIG = {
   refreshWhenHidden: false,
   revalidateIfStale: false,
   revalidateOnFocus: false,
   revalidateOnMount: true,
-  refreshInterval: 600000,
+  refreshInterval: 600_000,
   errorRetryCount: 3,
 };
 
-export default function InstanceLayout({ children }: { children: React.ReactNode }) {
+export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
       <ToastWithTheme />
