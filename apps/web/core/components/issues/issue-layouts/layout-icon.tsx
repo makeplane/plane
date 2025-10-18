@@ -1,19 +1,35 @@
-import type { LucideProps } from "lucide-react";
-import { List, Kanban, Calendar, Sheet, GanttChartSquare } from "lucide-react";
+import {
+  ListLayoutIcon,
+  BoardLayoutIcon,
+  CalendarLayoutIcon,
+  SheetLayoutIcon,
+  TimelineLayoutIcon
+
+} from "@plane/propel/icons";
+import type {ISvgIcons} from "@plane/propel/icons";
 import { EIssueLayoutTypes } from "@plane/types";
 
-export const IssueLayoutIcon = ({ layout, ...props }: { layout: EIssueLayoutTypes } & LucideProps) => {
+export const IssueLayoutIcon = ({
+  layout,
+  size,
+  ...props
+}: { layout: EIssueLayoutTypes; size?: number } & Omit<ISvgIcons, "width" | "height">) => {
+  const iconProps = {
+    ...props,
+    ...(size && { width: size, height: size }),
+  };
+
   switch (layout) {
     case EIssueLayoutTypes.LIST:
-      return <List {...props} />;
+      return <ListLayoutIcon {...iconProps} />;
     case EIssueLayoutTypes.KANBAN:
-      return <Kanban {...props} />;
+      return <BoardLayoutIcon {...iconProps} />;
     case EIssueLayoutTypes.CALENDAR:
-      return <Calendar {...props} />;
+      return <CalendarLayoutIcon {...iconProps} />;
     case EIssueLayoutTypes.SPREADSHEET:
-      return <Sheet {...props} />;
+      return <SheetLayoutIcon {...iconProps} />;
     case EIssueLayoutTypes.GANTT:
-      return <GanttChartSquare {...props} />;
+      return <TimelineLayoutIcon {...iconProps} />;
     default:
       return null;
   }

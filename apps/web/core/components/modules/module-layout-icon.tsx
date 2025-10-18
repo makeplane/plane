@@ -1,5 +1,5 @@
 import * as React from "react";
-import { GanttChartSquare, LayoutGrid, List } from "lucide-react";
+import { TimelineLayoutIcon, GridLayoutIcon, ListLayoutIcon } from "@plane/propel/icons";
 import type { TModuleLayoutOptions } from "@plane/types";
 import { cn } from "@plane/utils";
 
@@ -16,9 +16,9 @@ export const ModuleLayoutIcon: React.FC<ILayoutIcon> = (props) => {
 
   // get Layout icon
   const icons = {
-    list: List,
-    board: LayoutGrid,
-    gantt: GanttChartSquare,
+    list: ListLayoutIcon,
+    board: GridLayoutIcon,
+    gantt: TimelineLayoutIcon,
   };
   const Icon = icons[layoutType ?? "list"];
 
@@ -28,10 +28,10 @@ export const ModuleLayoutIcon: React.FC<ILayoutIcon> = (props) => {
     <>
       {withContainer ? (
         <div className={cn("flex items-center justify-center border rounded p-0.5 flex-shrink-0", containerClassName)}>
-          <Icon size={size} className={cn(className)} />
+          <Icon width={size} height={size} className={cn(className)} />
         </div>
       ) : (
-        <Icon size={size} className={cn("flex-shrink-0", className)} />
+        <Icon width={size} height={size} className={cn("flex-shrink-0", className)} />
       )}
     </>
   );

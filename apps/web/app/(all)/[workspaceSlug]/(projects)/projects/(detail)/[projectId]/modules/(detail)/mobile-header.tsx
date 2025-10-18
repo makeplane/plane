@@ -4,10 +4,11 @@ import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 // plane imports
 import { EIssueFilterType, ISSUE_LAYOUTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { CalendarLayoutIcon, BoardLayoutIcon, ListLayoutIcon } from "@plane/propel/icons";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, EIssueLayoutTypes } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
@@ -21,9 +22,9 @@ import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
 
 const SUPPORTED_LAYOUTS = [
-  { key: "list", i18n_title: "issue.layouts.list", icon: List },
-  { key: "kanban", i18n_title: "issue.layouts.kanban", icon: Kanban },
-  { key: "calendar", i18n_title: "issue.layouts.calendar", icon: Calendar },
+  { key: "list", i18n_title: "issue.layouts.list", icon: ListLayoutIcon },
+  { key: "kanban", i18n_title: "issue.layouts.kanban", icon: BoardLayoutIcon },
+  { key: "calendar", i18n_title: "issue.layouts.calendar", icon: CalendarLayoutIcon },
 ];
 
 export const ModuleIssuesMobileHeader = observer(() => {
