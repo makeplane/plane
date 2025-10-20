@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 // helpers
 import { SPACE_BASE_PATH } from "@plane/constants";
 // styles
-import "@/styles/globals.css";
+import "@plane/tailwind-config/global.css";
 // components
 import { AppProvider } from "./provider";
 
