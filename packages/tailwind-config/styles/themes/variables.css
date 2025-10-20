@@ -1,0 +1,470 @@
+/* CSS Custom Properties - Base Variables */
+@layer base {
+  :root {
+    color-scheme: light !important;
+
+    /* Primary Colors */
+    --color-primary-10: 229, 243, 250;
+    --color-primary-20: 216, 237, 248;
+    --color-primary-30: 199, 229, 244;
+    --color-primary-40: 169, 214, 239;
+    --color-primary-50: 144, 202, 234;
+    --color-primary-60: 109, 186, 227;
+    --color-primary-70: 75, 170, 221;
+    --color-primary-80: 41, 154, 214;
+    --color-primary-90: 34, 129, 180;
+    --color-primary-100: 0, 99, 153;
+    --color-primary-200: 0, 92, 143;
+    --color-primary-300: 0, 86, 133;
+    --color-primary-400: 0, 77, 117;
+    --color-primary-500: 0, 66, 102;
+    --color-primary-600: 0, 53, 82;
+    --color-primary-700: 0, 43, 66;
+    --color-primary-800: 0, 33, 51;
+    --color-primary-900: 0, 23, 36;
+
+    /* Error Colors */
+    --color-error-10: 255 252 252;
+    --color-error-20: 255 247 247;
+    --color-error-30: 255, 219, 220;
+    --color-error-100: 244 170 170;
+    --color-error-200: 220 62 62;
+    --color-error-500: 140 51 58;
+
+    /* Background Colors */
+    --color-background-100: 255, 255, 255; /* primary bg */
+    --color-background-90: 247, 247, 247; /* secondary bg */
+    --color-background-80: 232, 232, 232; /* tertiary bg */
+
+    --color-background-primary: var(--color-primary-10);
+    --color-background-error: var(--color-error-20);
+
+    /* Text Colors */
+    --color-text-100: 23, 23, 23; /* primary text */
+    --color-text-200: 58, 58, 58; /* secondary text */
+    --color-text-300: 82, 82, 82; /* tertiary text */
+    --color-text-350: 130, 130, 130;
+    --color-text-400: 163, 163, 163; /* placeholder text */
+
+    --color-text-primary: var(--color-primary-100);
+    --color-text-error: var(--color-error-200);
+
+    /* Scrollbar */
+    --color-scrollbar: 163, 163, 163; /* scrollbar thumb */
+
+    /* Border Colors */
+    --color-border-100: 245, 245, 245; /* subtle border= 1 */
+    --color-border-200: 229, 229, 229; /* subtle border- 2 */
+    --color-border-300: 212, 212, 212; /* strong border- 1 */
+    --color-border-400: 185, 185, 185; /* strong border- 2 */
+
+    --color-border-primary: var(--color-primary-40);
+    --color-border-error: var(--color-error-100);
+
+    /* Shadow Variables */
+    --color-shadow-2xs:
+      0px 0px 1px 0px rgba(23, 23, 23, 0.06), 0px 1px 2px 0px rgba(23, 23, 23, 0.06),
+      0px 1px 2px 0px rgba(23, 23, 23, 0.14);
+    --color-shadow-xs:
+      0px 1px 2px 0px rgba(0, 0, 0, 0.16), 0px 2px 4px 0px rgba(16, 24, 40, 0.12),
+      0px 1px 8px -1px rgba(16, 24, 40, 0.1);
+    --color-shadow-sm:
+      0px 1px 4px 0px rgba(0, 0, 0, 0.01), 0px 4px 8px 0px rgba(0, 0, 0, 0.02), 0px 1px 12px 0px rgba(0, 0, 0, 0.12);
+    --color-shadow-rg:
+      0px 3px 6px 0px rgba(0, 0, 0, 0.1), 0px 4px 4px 0px rgba(16, 24, 40, 0.08),
+      0px 1px 12px 0px rgba(16, 24, 40, 0.04);
+    --color-shadow-md:
+      0px 4px 8px 0px rgba(0, 0, 0, 0.12), 0px 6px 12px 0px rgba(16, 24, 40, 0.12),
+      0px 1px 16px 0px rgba(16, 24, 40, 0.12);
+    --color-shadow-lg:
+      0px 6px 12px 0px rgba(0, 0, 0, 0.12), 0px 8px 16px 0px rgba(0, 0, 0, 0.12),
+      0px 1px 24px 0px rgba(16, 24, 40, 0.12);
+    --color-shadow-xl:
+      0px 0px 18px 0px rgba(0, 0, 0, 0.16), 0px 0px 24px 0px rgba(16, 24, 40, 0.16),
+      0px 0px 52px 0px rgba(16, 24, 40, 0.16);
+    --color-shadow-2xl:
+      0px 8px 16px 0px rgba(0, 0, 0, 0.12), 0px 12px 24px 0px rgba(16, 24, 40, 0.12),
+      0px 1px 32px 0px rgba(16, 24, 40, 0.12);
+    --color-shadow-3xl:
+      0px 12px 24px 0px rgba(0, 0, 0, 0.12), 0px 16px 32px 0px rgba(0, 0, 0, 0.12),
+      0px 1px 48px 0px rgba(16, 24, 40, 0.12);
+    --color-shadow-4xl: 0px 8px 40px 0px rgba(0, 0, 61, 0.05), 0px 12px 32px -16px rgba(0, 0, 0, 0.05);
+    --color-shadow-custom: 2px 2px 8px 2px rgba(234, 231, 250, 0.3);
+
+    /* Sidebar Colors */
+    --color-sidebar-background-100: var(--color-background-100); /* primary sidebar bg */
+    --color-sidebar-background-90: var(--color-background-90); /* secondary sidebar bg */
+    --color-sidebar-background-80: var(--color-background-80); /* tertiary sidebar bg */
+
+    --color-sidebar-text-100: var(--color-text-100); /* primary sidebar text */
+    --color-sidebar-text-200: var(--color-text-200); /* secondary sidebar text */
+    --color-sidebar-text-300: var(--color-text-300); /* tertiary sidebar text */
+    --color-sidebar-text-400: var(--color-text-400); /* sidebar placeholder text */
+
+    --color-sidebar-border-100: var(--color-border-100); /* subtle sidebar border= 1 */
+    --color-sidebar-border-200: var(--color-border-100); /* subtle sidebar border- 2 */
+    --color-sidebar-border-300: var(--color-border-100); /* strong sidebar border- 1 */
+    --color-sidebar-border-400: var(--color-border-100); /* strong sidebar border- 2 */
+
+    --color-sidebar-shadow-2xs: var(--color-shadow-2xs);
+    --color-sidebar-shadow-xs: var(--color-shadow-xs);
+    --color-sidebar-shadow-sm: var(--color-shadow-sm);
+    --color-sidebar-shadow-rg: var(--color-shadow-rg);
+    --color-sidebar-shadow-md: var(--color-shadow-md);
+    --color-sidebar-shadow-lg: var(--color-shadow-lg);
+    --color-sidebar-shadow-xl: var(--color-shadow-xl);
+    --color-sidebar-shadow-2xl: var(--color-shadow-2xl);
+    --color-sidebar-shadow-3xl: var(--color-shadow-3xl);
+    --color-sidebar-shadow-4xl: var(--color-shadow-4xl);
+
+    /* PI Colors */
+    --color-pi-50: var(--color-background-90);
+    --color-pi-100: var(--color-background-90);
+    --color-pi-200: var(--color-primary-200);
+    --color-pi-300: var(--color-primary-200);
+    --color-pi-400: var(--color-primary-200);
+    --color-pi-500: var(--color-primary-200);
+    --color-pi-600: 151, 150, 246;
+    --color-pi-700: var(--color-primary-100);
+    --color-pi-800: 57, 56, 149;
+    --color-pi-900: 30, 29, 78;
+    --color-pi-950: 14, 14, 37;
+
+    /* Plane Subscriptions */
+    --color-subscription-free-200: 69, 80, 104;
+    --color-subscription-free-400: 51, 59, 77;
+
+    --color-subscription-one-200: 101, 42, 14;
+    --color-subscription-one-400: 90, 37, 12;
+
+    --color-subscription-pro-200: 32, 128, 138;
+    --color-subscription-pro-400: 24, 96, 104;
+
+    --color-subscription-business-200: 142, 33, 87;
+    --color-subscription-business-400: 103, 24, 63;
+
+    --color-subscription-enterprise-200: 86, 5, 145;
+    --color-subscription-enterprise-400: 73, 4, 123;
+
+    /* Toast Theme */
+    --color-toast-success-text: 178, 221, 181;
+    --color-toast-error-text: 206, 44, 49;
+    --color-toast-warning-text: 255, 186, 24;
+    --color-toast-info-text: 141, 164, 239;
+    --color-toast-loading-text: 255, 255, 255;
+    --color-toast-secondary-text: 185, 187, 198;
+    --color-toast-tertiary-text: 139, 141, 152;
+
+    --color-toast-success-background: 46, 46, 46;
+    --color-toast-error-background: 46, 46, 46;
+    --color-toast-warning-background: 46, 46, 46;
+    --color-toast-info-background: 46, 46, 46;
+    --color-toast-loading-background: 46, 46, 46;
+
+    --color-toast-success-border: 42, 126, 59;
+    --color-toast-error-border: 100, 23, 35;
+    --color-toast-warning-border: 79, 52, 34;
+    --color-toast-info-border: 58, 91, 199;
+    --color-toast-loading-border: 96, 100, 108;
+
+    /* Primitive Colors - Neutral Light */
+    --neutral-light-100: 250, 250, 250;
+    --neutral-light-200: 245, 245, 245;
+    --neutral-light-300: 240, 240, 240;
+    --neutral-light-400: 235, 235, 235;
+    --neutral-light-500: 230, 230, 230;
+    --neutral-light-600: 219, 219, 219;
+    --neutral-light-700: 209, 209, 209;
+    --neutral-light-800: 133, 133, 133;
+    --neutral-light-900: 112, 112, 112;
+    --neutral-light-1000: 87, 87, 87;
+    --neutral-light-1100: 66, 66, 66;
+    --neutral-light-1200: 31, 31, 31;
+
+    /* Primitive Colors - Neutral Dark */
+    --neutral-dark-100: 23, 23, 23;
+    --neutral-dark-200: 26, 26, 26;
+    --neutral-dark-300: 31, 31, 31;
+    --neutral-dark-400: 36, 36, 36;
+    --neutral-dark-500: 46, 47, 48;
+    --neutral-dark-600: 56, 56, 56;
+    --neutral-dark-700: 71, 71, 71;
+    --neutral-dark-800: 158, 158, 158;
+    --neutral-dark-900: 173, 173, 173;
+    --neutral-dark-1000: 189, 189, 189;
+    --neutral-dark-1100: 204, 204, 204;
+    --neutral-dark-1200: 230, 230, 230;
+
+    /* Primitive Colors - Brand Light */
+    --brand-light-100: 249, 253, 255;
+    --brand-light-200: 245, 251, 255;
+    --brand-light-300: 235, 245, 255;
+    --brand-light-400: 219, 237, 255;
+    --brand-light-500: 196, 226, 255;
+    --brand-light-600: 163, 209, 255;
+    --brand-light-700: 122, 184, 255;
+    --brand-light-default: 0, 153, 255;
+    --brand-light-900: 0, 133, 217;
+    --brand-light-1000: 0, 92, 153;
+    --brand-light-1100: 0, 61, 102;
+    --brand-light-1200: 0, 41, 68;
+
+    /* Primitive Colors - Brand Dark */
+    --brand-dark-100: 8, 28, 43;
+    --brand-dark-200: 13, 41, 61;
+    --brand-dark-300: 20, 61, 92;
+    --brand-dark-400: 33, 87, 133;
+    --brand-dark-500: 38, 99, 153;
+    --brand-dark-default: 61, 158, 245;
+    --brand-dark-700: 102, 184, 255;
+    --brand-dark-800: 143, 209, 255;
+    --brand-dark-900: 184, 229, 255;
+    --brand-dark-1000: 214, 241, 255;
+    --brand-dark-1100: 235, 248, 255;
+    --brand-dark-1200: 245, 252, 255;
+
+    /* Primitive Colors - Green Light */
+    --green-light-100: 247, 254, 248;
+    --green-light-200: 234, 250, 235;
+    --green-light-300: 216, 244, 219;
+    --green-light-400: 181, 231, 186;
+    --green-light-500: 115, 245, 137;
+    --green-light-600: 99, 230, 124;
+    --green-light-700: 84, 212, 107;
+    --green-light-800: 64, 191, 87;
+    --green-light-900: 51, 163, 70;
+    --green-light-1000: 47, 125, 63;
+    --green-light-1100: 26, 71, 35;
+
+    /* Primitive Colors - Green Dark */
+    --green-dark-100: 26, 71, 35;
+    --green-dark-200: 47, 125, 63;
+    --green-dark-300: 51, 163, 70;
+    --green-dark-400: 64, 191, 87;
+    --green-dark-500: 84, 212, 107;
+    --green-dark-600: 99, 230, 124;
+    --green-dark-700: 115, 245, 137;
+    --green-dark-800: 181, 231, 186;
+    --green-dark-900: 216, 244, 219;
+    --green-dark-1000: 234, 250, 235;
+    --green-dark-1100: 247, 254, 248;
+
+    /* Primitive Colors - Amber Light */
+    --amber-light-100: 255, 251, 245;
+    --amber-light-200: 255, 244, 227;
+    --amber-light-300: 255, 232, 194;
+    --amber-light-400: 255, 209, 150;
+    --amber-light-500: 255, 191, 102;
+    --amber-light-600: 255, 170, 51;
+    --amber-light-700: 255, 150, 0;
+    --amber-light-800: 230, 125, 0;
+    --amber-light-900: 191, 102, 0;
+    --amber-light-1000: 153, 82, 0;
+    --amber-light-1100: 102, 54, 0;
+
+    /* Primitive Colors - Amber Dark */
+    --amber-dark-100: 102, 54, 0;
+    --amber-dark-200: 153, 82, 0;
+    --amber-dark-300: 191, 102, 0;
+    --amber-dark-400: 230, 125, 0;
+    --amber-dark-500: 255, 150, 0;
+    --amber-dark-600: 255, 170, 51;
+    --amber-dark-700: 255, 191, 102;
+    --amber-dark-800: 255, 209, 150;
+    --amber-dark-900: 255, 232, 194;
+    --amber-dark-1000: 255, 244, 227;
+    --amber-dark-1100: 255, 251, 245;
+
+    /* Primitive Colors - Red Light */
+    --red-light-100: 255, 247, 247;
+    --red-light-200: 255, 240, 240;
+    --red-light-300: 255, 227, 227;
+    --red-light-400: 255, 209, 209;
+    --red-light-500: 255, 179, 179;
+    --red-light-600: 247, 148, 148;
+    --red-light-700: 230, 115, 115;
+    --red-light-800: 214, 97, 97;
+    --red-light-900: 191, 84, 84;
+    --red-light-1000: 163, 77, 77;
+    --red-light-1100: 138, 64, 64;
+
+    /* Primitive Colors - Red Dark */
+    --red-dark-100: 102, 41, 41;
+    --red-dark-200: 163, 77, 77;
+    --red-dark-300: 191, 84, 84;
+    --red-dark-400: 214, 97, 97;
+    --red-dark-500: 230, 115, 115;
+    --red-dark-600: 247, 148, 148;
+    --red-dark-700: 255, 179, 179;
+    --red-dark-800: 255, 209, 209;
+    --red-dark-900: 255, 227, 227;
+    --red-dark-1000: 255, 240, 240;
+    --red-dark-1100: 255, 247, 247;
+
+    /* Primitive Colors - Blue Light */
+    --blue-light-100: 255, 247, 247;
+    --blue-light-200: 255, 240, 240;
+    --blue-light-300: 255, 227, 227;
+    --blue-light-400: 255, 209, 209;
+    --blue-light-500: 255, 179, 179;
+    --blue-light-600: 247, 148, 148;
+    --blue-light-700: 230, 115, 115;
+    --blue-light-800: 214, 97, 97;
+    --blue-light-900: 191, 84, 84;
+    --blue-light-1000: 163, 77, 77;
+    --blue-light-1100: 138, 64, 64;
+
+    /* Primitive Colors - Blue Dark */
+    --blue-dark-100: 138, 64, 64;
+    --blue-dark-200: 163, 77, 77;
+    --blue-dark-300: 191, 84, 84;
+    --blue-dark-400: 214, 97, 97;
+    --blue-dark-500: 230, 115, 115;
+    --blue-dark-600: 247, 148, 148;
+    --blue-dark-700: 255, 179, 179;
+    --blue-dark-800: 255, 209, 209;
+    --blue-dark-900: 255, 227, 227;
+    --blue-dark-1000: 255, 240, 240;
+    --blue-dark-1100: 255, 247, 247;
+
+    /* Extended Palette - Purple */
+    --extended-palette-purple-25: 254, 252, 255;
+    --extended-palette-purple-50: 249, 245, 255;
+    --extended-palette-purple-100: 241, 234, 255;
+    --extended-palette-purple-200: 229, 219, 255;
+    --extended-palette-purple-300: 217, 204, 255;
+    --extended-palette-purple-400: 204, 189, 255;
+    --extended-palette-purple-500: 192, 177, 255;
+    --extended-palette-purple-600: 178, 163, 255;
+    --extended-palette-purple-700: 142, 130, 204;
+    --extended-palette-purple-800: 114, 104, 163;
+    --extended-palette-purple-900: 79, 72, 112;
+    --extended-palette-purple-950: 50, 45, 71;
+
+    /* Extended Palette - Crimson */
+    --extended-palette-crimson-25: 255, 251, 250;
+    --extended-palette-crimson-50: 255, 242, 237;
+    --extended-palette-crimson-100: 255, 223, 214;
+    --extended-palette-crimson-200: 255, 198, 181;
+    --extended-palette-crimson-300: 255, 173, 148;
+    --extended-palette-crimson-400: 255, 148, 115;
+    --extended-palette-crimson-500: 237, 123, 90;
+    --extended-palette-crimson-600: 209, 100, 71;
+    --extended-palette-crimson-700: 181, 83, 59;
+    --extended-palette-crimson-800: 153, 70, 50;
+    --extended-palette-crimson-900: 107, 49, 35;
+    --extended-palette-crimson-950: 69, 32, 23;
+
+    /* Extended Palette - Pink */
+    --extended-palette-pink-25: 255, 250, 253;
+    --extended-palette-pink-50: 252, 240, 249;
+    --extended-palette-pink-100: 249, 224, 243;
+    --extended-palette-pink-200: 243, 198, 232;
+    --extended-palette-pink-300: 237, 173, 220;
+    --extended-palette-pink-400: 232, 148, 209;
+    --extended-palette-pink-500: 226, 128, 199;
+    --extended-palette-pink-600: 220, 107, 188;
+    --extended-palette-pink-700: 176, 86, 150;
+    --extended-palette-pink-800: 141, 69, 120;
+    --extended-palette-pink-900: 98, 48, 84;
+    --extended-palette-pink-950: 63, 31, 54;
+
+    /* Extended Palette - Yellow */
+    --extended-palette-yellow-25: 255, 253, 250;
+    --extended-palette-yellow-50: 255, 249, 237;
+    --extended-palette-yellow-100: 255, 241, 219;
+    --extended-palette-yellow-200: 255, 229, 184;
+    --extended-palette-yellow-300: 255, 217, 148;
+    --extended-palette-yellow-400: 255, 205, 112;
+    --extended-palette-yellow-500: 255, 195, 84;
+    --extended-palette-yellow-600: 255, 183, 48;
+    --extended-palette-yellow-700: 255, 174, 28;
+    --extended-palette-yellow-800: 204, 139, 23;
+    --extended-palette-yellow-900: 140, 96, 16;
+    --extended-palette-yellow-950: 89, 61, 10;
+
+    /* Extended Palette - Grey */
+    --extended-palette-grey-25: 250, 250, 250;
+    --extended-palette-grey-50: 237, 237, 237;
+    --extended-palette-grey-100: 224, 224, 224;
+    --extended-palette-grey-200: 199, 199, 199;
+    --extended-palette-grey-300: 179, 179, 179;
+    --extended-palette-grey-400: 158, 158, 158;
+    --extended-palette-grey-500: 143, 143, 143;
+    --extended-palette-grey-600: 128, 128, 128;
+    --extended-palette-grey-700: 105, 105, 105;
+    --extended-palette-grey-800: 82, 82, 82;
+    --extended-palette-grey-900: 56, 56, 56;
+    --extended-palette-grey-950: 36, 36, 36;
+
+    /* Extended Palette - Indigo */
+    --extended-palette-indigo-25: 250, 251, 255;
+    --extended-palette-indigo-50: 240, 244, 255;
+    --extended-palette-indigo-100: 224, 232, 255;
+    --extended-palette-indigo-200: 199, 214, 255;
+    --extended-palette-indigo-300: 173, 196, 255;
+    --extended-palette-indigo-400: 148, 178, 255;
+    --extended-palette-indigo-500: 128, 163, 255;
+    --extended-palette-indigo-600: 107, 148, 255;
+    --extended-palette-indigo-700: 86, 118, 204;
+    --extended-palette-indigo-800: 69, 95, 163;
+    --extended-palette-indigo-900: 48, 66, 112;
+    --extended-palette-indigo-950: 31, 42, 71;
+
+    /* Extended Palette - Emerald */
+    --extended-palette-emerald-25: 250, 255, 251;
+    --extended-palette-emerald-50: 237, 252, 240;
+    --extended-palette-emerald-100: 219, 247, 224;
+    --extended-palette-emerald-200: 184, 238, 199;
+    --extended-palette-emerald-300: 148, 229, 173;
+    --extended-palette-emerald-400: 112, 219, 148;
+    --extended-palette-emerald-500: 84, 209, 128;
+    --extended-palette-emerald-600: 56, 199, 107;
+    --extended-palette-emerald-700: 45, 163, 88;
+    --extended-palette-emerald-800: 36, 130, 70;
+    --extended-palette-emerald-900: 25, 89, 48;
+    --extended-palette-emerald-950: 16, 57, 31;
+
+    /* Extended Palette - Orange */
+    --extended-palette-orange-25: 255, 251, 250;
+    --extended-palette-orange-50: 255, 245, 242;
+    --extended-palette-orange-100: 255, 232, 224;
+    --extended-palette-orange-200: 255, 209, 199;
+    --extended-palette-orange-300: 255, 186, 173;
+    --extended-palette-orange-400: 255, 163, 148;
+    --extended-palette-orange-500: 255, 143, 128;
+    --extended-palette-orange-600: 255, 120, 107;
+    --extended-palette-orange-700: 255, 97, 84;
+    --extended-palette-orange-800: 204, 78, 67;
+    --extended-palette-orange-900: 140, 54, 46;
+    --extended-palette-orange-950: 89, 34, 29;
+
+    /* Extended Palette - Sun */
+    --extended-palette-sun-25: 253, 254, 245;
+    --extended-palette-sun-50: 249, 252, 227;
+    --extended-palette-sun-100: 246, 250, 214;
+    --extended-palette-sun-200: 240, 246, 194;
+    --extended-palette-sun-300: 229, 238, 163;
+    --extended-palette-sun-400: 221, 231, 143;
+    --extended-palette-sun-500: 208, 219, 117;
+    --extended-palette-sun-600: 189, 200, 92;
+    --extended-palette-sun-700: 161, 170, 66;
+    --extended-palette-sun-800: 124, 131, 41;
+    --extended-palette-sun-900: 77, 81, 20;
+    --extended-palette-sun-950: 41, 43, 10;
+
+    /* Extended Palette - Atmos */
+    --extended-palette-atmos-25: 253, 245, 255;
+    --extended-palette-atmos-50: 249, 227, 255;
+    --extended-palette-atmos-100: 246, 214, 255;
+    --extended-palette-atmos-200: 240, 194, 255;
+    --extended-palette-atmos-300: 229, 163, 255;
+    --extended-palette-atmos-400: 221, 143, 255;
+    --extended-palette-atmos-500: 208, 117, 255;
+    --extended-palette-atmos-600: 189, 92, 255;
+    --extended-palette-atmos-700: 161, 66, 217;
+    --extended-palette-atmos-800: 124, 41, 168;
+    --extended-palette-atmos-900: 77, 20, 105;
+    --extended-palette-atmos-950: 41, 10, 56;
+  }
+}

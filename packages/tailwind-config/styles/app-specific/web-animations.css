@@ -1,0 +1,161 @@
+/* Web App Specific Animations and Styles */
+@layer utilities {
+  @keyframes slide-up {
+    from {
+      transform: translateY(10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.3s ease-out forwards;
+  }
+}
+
+/* Additional web-specific animations that were in the web app */
+@keyframes slideInFromBottom {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInFromTop {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideOutDown {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Lock icon animations specific to web app */
+@keyframes textSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-8px);
+    max-width: 0px;
+  }
+  40% {
+    opacity: 0.7;
+    max-width: 60px;
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+    max-width: 60px;
+  }
+}
+
+@keyframes textFadeOut {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+}
+
+@keyframes lockIconAnimation {
+  0% {
+    transform: rotate(-5deg) scale(1);
+  }
+  25% {
+    transform: rotate(0deg) scale(1.15);
+  }
+  50% {
+    transform: rotate(5deg) scale(1.08);
+  }
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+@keyframes unlockIconAnimation {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  40% {
+    transform: rotate(-8deg) scale(1.15);
+  }
+  80% {
+    transform: rotate(3deg) scale(1.05);
+  }
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+@keyframes highlight {
+  0% {
+    background-color: rgba(var(--color-background-90), 1);
+    border-radius: 4px;
+  }
+  100% {
+    background-color: transparent;
+    border-radius: 4px;
+  }
+}
+
+.animate-text-slide-in {
+  animation: textSlideIn 400ms ease-out forwards;
+}
+
+.animate-text-fade-out {
+  animation: textFadeOut 600ms ease-in 300ms forwards;
+}
+
+.animate-lock-icon {
+  animation: lockIconAnimation 600ms ease-out forwards;
+}
+
+.animate-unlock-icon {
+  animation: unlockIconAnimation 600ms ease-out forwards;
+}
+
+.animate-fade-out {
+  animation: fadeOut 500ms ease-in 100ms forwards;
+}
