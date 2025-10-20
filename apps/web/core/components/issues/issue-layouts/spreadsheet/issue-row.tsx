@@ -253,9 +253,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
     sequenceId: issueDetail?.sequence_id,
     isEpic,
   });
-  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId } = useParams();
-  const projectId2 = routerProjectId?.toString();
-  const projectIssueTypesMap = projectIssueTypesCache.get(projectId2 ?? "");
+  const projectIssueTypesMap = projectIssueTypesCache.get(issueDetail?.project_id ?? "");
 
   return (
     <>
