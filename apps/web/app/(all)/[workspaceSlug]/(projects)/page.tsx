@@ -11,17 +11,28 @@ import { WorkspaceHomeView } from "@/components/home";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // local components
 import { WorkspaceDashboardHeader } from "./header";
+import { ProjectIssueTypeService } from "@/services/project/project-issue-type.service";
+import { useEffect } from "react";
 
 const WorkspaceDashboardPage = observer(() => {
   const { currentWorkspace } = useWorkspace();
-  
+
   const { t } = useTranslation();
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - ${t("home.title")}` : undefined;
+  const workspaceSlug = currentWorkspace?.name || "";
+  // 整个工作区加载issue type
+  useEffect(() => {
+    const ws = workspaceSlug?.toString();
+    if (!ws) return;
+
+    const svc = new ProjectIssueTypeService();
+    svc.fetchWorkSpaceIssueTypes(ws);
+  }, [workspaceSlug]);
 
   return (
     <>
-    {/* 这个是首页顶部的面包屑和右侧的按钮 */}
+      {/* 这个是首页顶部的面包屑和右侧的按钮 */}
       <AppHeader header={<WorkspaceDashboardHeader />} />
       <ContentWrapper>
         {/* 这里是tab页上展示的名称 */}

@@ -65,17 +65,44 @@ export class ProjectIssueTypeService extends APIService {
 
   // 添加缓存清除方法
   clearCache(workspaceSlug: string, projectId: string): void {
-    const cacheKey = `${workspaceSlug}-${projectId}`;
+    const cacheKey = projectId;
     projectIssueTypesCache.delete(cacheKey);
   }
 
   async fetchProjectIssueTypes(workspaceSlug: string, projectId: string): Promise<TIssueType[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/`)
-      .then((response) => response?.data)
+      .then((response) => {
+        response?.data.forEach((t:any) => {
+          if (t?.id) {
+            const map = projectIssueTypesCache.get(projectId) || {};
+            map[t.id] = t;
+            projectIssueTypesCache.set(projectId, map);
+          }
+        });
+        return response?.data
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
   }
+  
+  async fetchWorkSpaceIssueTypes(workspaceSlug: string): Promise<TIssueType[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/issue-types/`)
+      .then((response) => {
+        response?.data.forEach((t:any) => {
+          if (t?.id) {
+            const map = projectIssueTypesCache.get(t.project_id) || {};
+            map[t.id] = t;
+            projectIssueTypesCache.set(t.project_id, map);
+          }
+        });
+        return response?.data
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
 
   // 新增：创建工作项类型，请求风格与其他服务保持一致
   async createProjectIssueType(

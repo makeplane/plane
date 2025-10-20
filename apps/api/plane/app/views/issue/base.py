@@ -1,6 +1,7 @@
 # Python imports
 import copy
 import json
+import time
 
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -72,6 +73,7 @@ from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.utils.timezone_converter import user_timezone_converter
+from plane.settings.redis import redis_instance
 
 from .. import BaseAPIView, BaseViewSet
 
@@ -620,6 +622,11 @@ class IssueViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], creator=True, model=Issue)
     def partial_update(self, request, slug, project_id, pk=None):
+        redis_client = redis_instance()
+        lock_id = f"{project_id}-{pk}"
+        while redis_client.set(lock_id, "true", nx=True, ex=5) is None:
+            time.sleep(0.1)
+
         queryset = self.get_queryset()
         queryset = self.apply_annotations(queryset)
         issue = (
@@ -662,6 +669,7 @@ class IssueViewSet(BaseViewSet):
         )
 
         if not issue:
+            redis_client.delete(lock_id)
             return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
 
         current_instance = json.dumps(IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder)
@@ -724,7 +732,9 @@ class IssueViewSet(BaseViewSet):
                 issue_id=str(serializer.data.get("id", None)),
                 user_id=request.user.id,
             )
+            redis_client.delete(lock_id)
             return Response(status=status.HTTP_204_NO_CONTENT)
+        redis_client.delete(lock_id)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def _record_dynamic_properties_activity(self, current_dynamic_properties, new_dynamic_properties, issue_id,

@@ -92,8 +92,7 @@ export const PeekOverviewIssueDetails: FC<Props> = observer((props) => {
         : "<p></p>"
       : undefined;
 
-  const { projectId: routerProjectId } = useParams();
-  const projectId = routerProjectId?.toString();
+  const projectId = issue.project_id;
   const projectIssueTypesMap = projectIssueTypesCache.get(projectId ?? "");
 
   return (

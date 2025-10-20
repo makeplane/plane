@@ -98,6 +98,36 @@ class IssueTypeWithPropertySerializer(BaseSerializer):
         read_only_fields = ["workspace", "created_at", "updated_at"]
 
 
+class WorkspaceIssueTypeWithPropertySerializer(BaseSerializer):
+    properties = IssueTypePropertySerializer(many=True, read_only=True)
+    project_id = serializers.SerializerMethodField()
+
+
+    def get_project_id(self,obj:IssueType):
+        return obj.project_issue_types.first().project_id
+
+    class Meta:
+        model = IssueType
+        fields = [
+            "id",
+            "name",
+            "description",
+            "logo_props",
+            "is_epic",
+            "is_default",
+            "is_active",
+            "level",
+            "external_source",
+            "external_id",
+            "workspace",
+            "created_at",
+            "updated_at",
+            "properties",
+            "project_id"
+        ]
+        read_only_fields = ["workspace", "created_at", "updated_at"]
+
+
 class IssuePropertyValueSerializer(BaseSerializer):
     property = IssueTypePropertySerializer(read_only=True)
     property_id = serializers.PrimaryKeyRelatedField(

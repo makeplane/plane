@@ -27,7 +27,6 @@ const ProjectIssuesPage = observer(() => {
   // derived values
   const project = getProjectById(projectId.toString());
   const pageTitle = project?.name ? `${project?.name} - ${t("issue.label", { count: 2 })}` : undefined; // Count is for pluralization
-  const [projectIssueTypesMap, setProjectIssueTypesMap] = useState<Record<string, TIssueType> | undefined>(undefined);
   const { workspaceSlug } = useParams();
   useEffect(() => {
     const ws = workspaceSlug?.toString();
@@ -35,19 +34,7 @@ const ProjectIssuesPage = observer(() => {
     if (!ws || !pid) return;
 
     const svc = new ProjectIssueTypeService();
-    svc
-      .fetchProjectIssueTypes(ws, pid)
-      .then((list) => {
-        const map: Record<string, TIssueType> = {};
-        list?.forEach((t) => {
-          if (t?.id) map[t.id] = t;
-        });
-        projectIssueTypesCache.set(pid, map);
-        setProjectIssueTypesMap(map);
-      })
-      .catch(() => {
-        // 静默失败，不影响页面其他功能
-      });
+    svc.fetchProjectIssueTypes(ws, pid);
   }, [workspaceSlug, projectId]);
 
   return (

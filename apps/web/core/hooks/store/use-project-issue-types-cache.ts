@@ -7,7 +7,7 @@ export const useProjectIssueTypesFromCache = (workspaceSlug: string | undefined,
   const getCachedIssueTypes = useCallback(() => {
     if (!workspaceSlug || !projectId) return;
 
-    const cacheKey = `${workspaceSlug}-${projectId}`;
+    const cacheKey = projectId;
     const cachedTypes = projectIssueTypesCache.get(cacheKey);
     
     if (cachedTypes) {

@@ -13,7 +13,7 @@ export const useProjectIssueTypes = (workspaceSlug: string | undefined, projectI
     if (!workspaceSlug || !projectId) return;
 
     // 首先检查缓存
-    const cacheKey = `${workspaceSlug}-${projectId}`;
+    const cacheKey = projectId;
     const cachedTypes = projectIssueTypesCache.get(cacheKey);
     
     if (cachedTypes) {
@@ -46,7 +46,7 @@ export const useProjectIssueTypes = (workspaceSlug: string | undefined, projectI
     if (!workspaceSlug || !projectId) return;
 
     // 首先检查缓存
-    const cacheKey = `${workspaceSlug}-${projectId}`;
+    const cacheKey = projectId;
     
     setIsLoading(true);
     setError(null);

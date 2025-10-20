@@ -2,6 +2,7 @@ import { FC, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
+import { Button } from "@plane/propel/button";
 // components
 import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";
 import { SidebarDropdown } from "@/components/workspace/sidebar/dropdown";
@@ -9,9 +10,9 @@ import { HelpMenu } from "@/components/workspace/sidebar/help-menu";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useAppRail } from "@/hooks/use-app-rail";
+import { useTranslation } from "@plane/i18n";
 import useSize from "@/hooks/use-window-size";
 // plane web components
-import { WorkspaceEditionBadge } from "@/plane-web/components/workspace/edition-badge";
 
 type TSidebarWrapperProps = {
   title: string;
@@ -27,6 +28,7 @@ export const SidebarWrapper: FC<TSidebarWrapperProps> = observer((props) => {
   const windowSize = useSize();
   // refs
   const ref = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
 
   useOutsideClickDetector(ref, () => {
     if (sidebarCollapsed === false && window.innerWidth < 768) {
@@ -61,7 +63,15 @@ export const SidebarWrapper: FC<TSidebarWrapperProps> = observer((props) => {
       </div>
       {/* Help Section */}
       <div className="flex items-center justify-between p-3 border-t border-custom-border-200 bg-custom-sidebar-background-100 h-12">
-        <WorkspaceEditionBadge />
+        <Button
+          tabIndex={-1}
+          variant="accent-primary"
+          className="w-fit min-w-24 cursor-pointer rounded-2xl px-2 py-1 text-center text-sm font-medium outline-none"
+          aria-haspopup="dialog"
+          aria-label={t("aria_labels.projects_sidebar.edition_badge")}
+        >
+          KAIFA
+        </Button>
         <div className="flex items-center gap-2">
           {!shouldRenderAppRail && <HelpMenu />}
           {!isAppRailEnabled && <AppSidebarToggleButton />}

@@ -1,6 +1,8 @@
 # Django imports
 from django.db import transaction
 from django.shortcuts import get_object_or_404
+from collections import defaultdict
+
 
 # Third party imports
 from rest_framework import status
@@ -14,7 +16,9 @@ from plane.app.serializers.issue_type import (
     ProjectIssueTypeSerializer,
     IssueTypePropertySerializer,
     IssuePropertyValueSerializer,
-    IssuePropertyValueBulkSerializer, IssueTypeWithPropertySerializer,
+    IssuePropertyValueBulkSerializer,
+    IssueTypeWithPropertySerializer,
+    WorkspaceIssueTypeWithPropertySerializer
 )
 from plane.db.models import (
     IssueType,
@@ -68,6 +72,21 @@ class ProjectIssueTypeListCreateAPIEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class WorkspaceIssueTypeApiView(BaseAPIView):
+    model = IssueType
+
+    def get_queryset(self):
+        return IssueType.objects.filter(project_issue_types__deleted_at__isnull=True)
+
+    def get(self, request, slug: str):
+        queryset = self.get_queryset().filter(workspace__slug=slug)
+        serializer = WorkspaceIssueTypeWithPropertySerializer(queryset, many=True)
+        result = defaultdict(list)
+        for data in serializer.data:
+            result[data['project_id']].append(data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class IssueTypeViewSet(BaseAPIView):
     model = IssueType
 
@@ -94,7 +113,6 @@ class IssueTypeViewSet(BaseAPIView):
         ).delete()
         issue_type.delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 
 class IssueTypePropertyListCreateAPIEndpoint(BaseAPIView):
@@ -137,10 +155,11 @@ class IssueTypePropertyListCreateAPIEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class IssueTypePropertyViewSet(BaseAPIView):
     model = IssueTypeProperty
 
-    def delete(self, request, slug, project_id, issue_type_id,property_id):
+    def delete(self, request, slug, project_id, issue_type_id, property_id):
         property_obj = IssueTypeProperty.objects.get(pk=property_id)
 
         property_obj.delete(soft=False)
