@@ -25,12 +25,12 @@ export type TBasePage = TPage & {
   update: (pageData: Partial<TPage>) => Promise<Partial<TPage> | undefined>;
   updateTitle: (title: string) => void;
   updateDescription: (document: TDocumentPayload) => Promise<void>;
-  makePublic: (shouldSync?: boolean) => Promise<void>;
-  makePrivate: (shouldSync?: boolean) => Promise<void>;
-  lock: (shouldSync?: boolean) => Promise<void>;
-  unlock: (shouldSync?: boolean) => Promise<void>;
-  archive: (shouldSync?: boolean) => Promise<void>;
-  restore: (shouldSync?: boolean) => Promise<void>;
+  makePublic: (params: { shouldSync?: boolean }) => Promise<void>;
+  makePrivate: (params: { shouldSync?: boolean }) => Promise<void>;
+  lock: (params: { shouldSync?: boolean; recursive?: boolean }) => Promise<void>;
+  unlock: (params: { shouldSync?: boolean; recursive?: boolean }) => Promise<void>;
+  archive: (params: { shouldSync?: boolean; archived_at?: string | null }) => Promise<void>;
+  restore: (params: { shouldSync?: boolean }) => Promise<void>;
   updatePageLogo: (value: TChangeHandlerProps) => Promise<void>;
   addToFavorites: () => Promise<void>;
   removePageFromFavorites: () => Promise<void>;
@@ -361,7 +361,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
   /**
    * @description lock the page
    */
-  lock = async (shouldSync: boolean = true) => {
+  lock = async ({ shouldSync = true }) => {
     const pageIsLocked = this.is_locked;
     runInAction(() => (this.is_locked = true));
 
@@ -378,7 +378,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
   /**
    * @description unlock the page
    */
-  unlock = async (shouldSync: boolean = true) => {
+  unlock = async ({ shouldSync = true }) => {
     const pageIsLocked = this.is_locked;
     runInAction(() => (this.is_locked = false));
 
@@ -395,12 +395,12 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
   /**
    * @description archive the page
    */
-  archive = async (shouldSync: boolean = true) => {
+  archive = async ({ shouldSync = true, archived_at }: { shouldSync?: boolean; archived_at?: string | null }) => {
     if (!this.id) return undefined;
 
     try {
       runInAction(() => {
-        this.archived_at = new Date().toISOString();
+        this.archived_at = archived_at ?? new Date().toISOString();
       });
 
       if (this.rootStore.favorite.entityMap[this.id]) this.rootStore.favorite.removeFavoriteFromStore(this.id);
@@ -422,7 +422,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
   /**
    * @description restore the page
    */
-  restore = async (shouldSync: boolean = true) => {
+  restore = async ({ shouldSync = true }: { shouldSync?: boolean }) => {
     const archivedAtBeforeRestore = this.archived_at;
 
     try {
@@ -438,6 +438,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
       runInAction(() => {
         this.archived_at = archivedAtBeforeRestore;
       });
+      throw error;
     }
   };
 
