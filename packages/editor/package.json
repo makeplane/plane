@@ -1,6 +1,6 @@
 {
   "name": "@plane/editor",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Core Editor that powers Plane",
   "license": "AGPL-3.0",
   "private": true,

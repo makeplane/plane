@@ -1,6 +1,6 @@
 {
   "name": "live",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "AGPL-3.0",
   "description": "A realtime collaborative server powers Plane's rich text editor",
   "main": "./dist/start.js",
