@@ -16,12 +16,12 @@ type CollaborativeActionEvent =
   | { type: "receivedMessageFromServer"; message: TDocumentEventsClient };
 
 type Props = {
-  editorRef?: EditorRefApi | null;
   page: TPageInstance;
 };
 
 export const useCollaborativePageActions = (props: Props) => {
-  const { editorRef, page } = props;
+  const { page } = props;
+  const editorRef = page.editor.editorRef;
   // currentUserAction local state to track if the current action is being processed, a
   // local action is basically the action performed by the current user to avoid double operations
   const [currentActionBeingProcessed, setCurrentActionBeingProcessed] = useState<TDocumentEventsClient | null>(null);
@@ -67,7 +67,6 @@ export const useCollaborativePageActions = (props: Props) => {
         if (isPerformedByCurrentUser) {
           const serverEventName = getServerEventName(clientAction);
           if (serverEventName) {
-            console.log("send event to server");
             editorRef?.emitRealTimeUpdate(serverEventName);
           }
         }
