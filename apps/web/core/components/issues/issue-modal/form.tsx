@@ -319,7 +319,9 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     {
       name: watch("name"),
       description_html: getTextContent(watch("description_html")),
-    }
+      issueId: data?.id,
+    },
+    !data?.id // is_creation_modal
   );
 
   // executing this useEffect when the parent_id coming from the component prop

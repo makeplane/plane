@@ -6,6 +6,7 @@ export type TDuplicateIssuePayload = {
   issue_id?: string;
   project_id?: string;
   description_stripped?: string;
+  is_creation_modal?: boolean;
 };
 
 export type TDeDupeIssue = {

@@ -99,7 +99,8 @@ export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) 
     {
       name: formData?.name,
       description_html: formData?.description_html,
-    }
+    },
+    true
   );
 
   const handleEscKeyDown = (event: KeyboardEvent) => {
