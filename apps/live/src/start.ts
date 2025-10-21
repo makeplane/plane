@@ -24,11 +24,29 @@ startServer();
 // Handle process signals
 process.on("SIGTERM", async () => {
   logger.info("Received SIGTERM signal. Initiating graceful shutdown...");
+  try {
+    if (server) {
+      await server.destroy();
+    }
+    logger.info("Server shut down gracefully");
+  } catch (error) {
+    logger.error("Error during graceful shutdown:", error);
+    process.exit(1);
+  }
   process.exit(0);
 });
 
 process.on("SIGINT", async () => {
   logger.info("Received SIGINT signal. Killing node process...");
+  try {
+    if (server) {
+      await server.destroy();
+    }
+    logger.info("Server shut down gracefully");
+  } catch (error) {
+    logger.error("Error during graceful shutdown:", error);
+    process.exit(1);
+  }
   process.exit(1);
 });
 
