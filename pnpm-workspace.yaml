@@ -29,8 +29,8 @@ catalog:
   tsdown: 0.15.5
   vite: 7.1.11
   uuid: 13.0.0
-  "@tiptap/core": ^3.5.3
-  "@tiptap/html": ^3.5.3
+  "@tiptap/core": ^2.22.3
+  "@tiptap/html": ^2.22.3
 
 onlyBuiltDependencies:
 - turbo

@@ -1,4 +1,4 @@
-import type { EmojiOptions } from "@tiptap/extension-emoji";
+import type { EmojiOptions, EmojiStorage } from "@tiptap/extension-emoji";
 import { ReactRenderer, type Editor } from "@tiptap/react";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
@@ -12,7 +12,7 @@ const DEFAULT_EMOJIS = ["+1", "-1", "smile", "orange_heart", "eyes"];
 
 export const emojiSuggestion: EmojiOptions["suggestion"] = {
   items: ({ editor, query }: { editor: Editor; query: string }): EmojiItem[] => {
-    const { emojis, isSupported } = editor.storage.emoji;
+    const { emojis, isSupported } = editor.storage.emoji as EmojiStorage;
     const filteredEmojis = emojis.filter((emoji) => {
       const hasEmoji = !!emoji?.emoji;
       const hasFallbackImage = !!emoji?.fallbackImage;
@@ -79,7 +79,7 @@ export const emojiSuggestion: EmojiOptions["suggestion"] = {
         component.updateProps(props);
         if (!props.clientRect) return;
         cleanup();
-        cleanup = updateFloatingUIFloaterPosition(props.editor, component.element).cleanup;
+        cleanup = updateFloatingUIFloaterPosition(props.editor, component.element as HTMLElement).cleanup;
       },
       onKeyDown: ({ event }) => {
         if ([...DROPDOWN_NAVIGATION_KEYS, "Escape"].includes(event.key)) {
