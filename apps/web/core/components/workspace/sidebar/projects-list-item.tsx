@@ -87,18 +87,18 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   // toggle project list open
   const setIsProjectListOpen = (value: boolean) => toggleProjectListOpen(projectId, value);
   // auth
-  const isAdmin = allowPermissions(
-    [EUserPermissions.ADMIN],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug.toString(),
-    project?.id
-  );
-  const isAuthorized = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug.toString(),
-    project?.id
-  );
+  const ws = workspaceSlug?.toString();
+  const isAdmin = ws
+    ? allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, ws, project?.id)
+    : false;
+  const isAuthorized = ws
+    ? allowPermissions(
+        [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+        EUserPermissionsLevel.PROJECT,
+        ws,
+        project?.id
+      )
+    : false;
 
   const handleLeaveProject = () => {
     setLeaveProjectModal(true);
@@ -404,7 +404,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
             {isProjectListOpen && (
               <Disclosure.Panel as="div" className="relative flex flex-col gap-0.5 mt-1 pl-6 mb-1.5">
                 <div className="absolute left-[15px] top-0 bottom-1 w-[1px] bg-custom-border-200" />
-                <ProjectNavigationRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
+                {ws && <ProjectNavigationRoot workspaceSlug={ws} projectId={projectId.toString()} />}
               </Disclosure.Panel>
             )}
           </Transition>

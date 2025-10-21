@@ -10,9 +10,9 @@ import { PlaneLockup } from "@plane/propel/icons";
 // helpers
 // images
 // assets
-import PlaneBackgroundPatternDark from "@/public/auth/background-pattern-dark.svg";
-import PlaneBackgroundPattern from "@/public/auth/background-pattern.svg";
-import PlaneTakeOffImage from "@/public/plane-takeoff.png";
+import PlaneBackgroundPatternDark from "@/app/assets/auth/background-pattern-dark.svg";
+import PlaneBackgroundPattern from "@/app/assets/auth/background-pattern.svg";
+import PlaneTakeOffImage from "@/app/assets/images/plane-takeoff.png";
 
 export const InstanceNotReady: FC = () => {
   const { resolvedTheme } = useTheme();

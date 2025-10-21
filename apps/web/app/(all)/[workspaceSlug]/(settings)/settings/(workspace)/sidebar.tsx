@@ -37,13 +37,14 @@ export const WorkspaceActionIcons = ({
 
 type TWorkspaceSettingsSidebarProps = {
   isMobile?: boolean;
+  workspaceSlug: string;
 };
 
 export const WorkspaceSettingsSidebar = (props: TWorkspaceSettingsSidebarProps) => {
-  const { isMobile = false } = props;
+  const { isMobile = false, workspaceSlug } = props;
   // router
   const pathname = usePathname();
-  const { workspaceSlug } = useParams(); // store hooks
+  // store hooks
   const { allowPermissions } = useUserPermissions();
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
@@ -55,7 +56,7 @@ export const WorkspaceSettingsSidebar = (props: TWorkspaceSettingsSidebarProps) 
           isAdmin || ![WORKSPACE_SETTINGS_CATEGORY.FEATURES, WORKSPACE_SETTINGS_CATEGORY.DEVELOPER].includes(category)
       )}
       groupedSettings={GROUPED_WORKSPACE_SETTINGS}
-      workspaceSlug={workspaceSlug.toString()}
+      workspaceSlug={workspaceSlug}
       isActive={(data: { href: string }) =>
         data.href === "/settings"
           ? pathname === `/${workspaceSlug}${data.href}/`
@@ -63,8 +64,8 @@ export const WorkspaceSettingsSidebar = (props: TWorkspaceSettingsSidebarProps) 
       }
       shouldRender={(data: { key: string; access?: EUserWorkspaceRoles[] | undefined }) =>
         data.access
-          ? shouldRenderSettingLink(workspaceSlug.toString(), data.key) &&
-            allowPermissions(data.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString())
+          ? shouldRenderSettingLink(workspaceSlug, data.key) &&
+            allowPermissions(data.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug)
           : false
       }
       actionIcons={WorkspaceActionIcons}

@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import type { ColumnDef, Row, RowData } from "@tanstack/react-table";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { UserRound } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
@@ -19,6 +18,7 @@ import { AnalyticsService } from "@/services/analytics.service";
 // plane web components
 import { exportCSV } from "../export";
 import { InsightTable } from "../insight-table";
+import { useAnalyticsWorkspace } from "../analytics-context";
 
 const analyticsService = new AnalyticsService();
 
@@ -33,9 +33,8 @@ declare module "@tanstack/react-table" {
 }
 
 const WorkItemsInsightTable = observer(() => {
-  // router
-  const params = useParams();
-  const workspaceSlug = params.workspaceSlug.toString();
+  // context
+  const { workspaceSlug } = useAnalyticsWorkspace();
   const { t } = useTranslation();
   // store hooks
   const { getProjectById } = useProject();

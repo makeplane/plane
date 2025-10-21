@@ -25,9 +25,17 @@ const IntercomProvider: FC<IntercomProviderProps> = observer((props) => {
     else hide();
   }, [isIntercomToggle]);
 
-  onHide(() => {
-    toggleIntercom(false);
-  });
+  useEffect(() => {
+    // Register the onHide callback - must be in useEffect to avoid calling during render
+    const unsubscribe = onHide(() => {
+      toggleIntercom(false);
+    });
+
+    // onHide doesn't return an unsubscribe function, but we register once
+    return () => {
+      // Cleanup if needed
+    };
+  }, [toggleIntercom]);
 
   useEffect(() => {
     if (user && config?.is_intercom_enabled && config.intercom_app_id) {

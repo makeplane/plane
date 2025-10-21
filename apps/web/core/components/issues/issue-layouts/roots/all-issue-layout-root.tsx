@@ -19,7 +19,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 // public imports
-import emptyView from "@/public/empty-state/view.svg";
+import emptyView from "@/app/assets/empty-state/view.svg";
 
 type Props = {
   isDefaultView: boolean;

@@ -23,8 +23,8 @@ import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
 // hooks
 import { useUser } from "@/hooks/store/user";
 // assets
-import GithubLogo from "@/public/services/github.png";
-import JiraLogo from "@/public/services/jira.svg";
+import GithubLogo from "@/app/assets/services/github.png";
+import JiraLogo from "@/app/assets/services/jira.svg";
 // services
 import { IntegrationService } from "@/services/integrations";
 

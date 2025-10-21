@@ -1,7 +1,7 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import type { Route } from "./+types/page";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { ArchivedIssuesHeader } from "@/components/issues/archived-issues-header";
@@ -9,13 +9,13 @@ import { ArchivedIssueLayoutRoot } from "@/components/issues/issue-layouts/roots
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 
-const ProjectArchivedIssuesPage = observer(() => {
+function ProjectArchivedIssuesPage({ params }: Route.ComponentProps) {
   // router
-  const { projectId } = useParams();
+  const { projectId } = params;
   // store hooks
   const { getProjectById } = useProject();
   // derived values
-  const project = projectId ? getProjectById(projectId.toString()) : undefined;
+  const project = getProjectById(projectId);
   const pageTitle = project?.name && `${project?.name} - Archived work items`;
 
   return (
@@ -27,6 +27,6 @@ const ProjectArchivedIssuesPage = observer(() => {
       </div>
     </>
   );
-});
+}
 
-export default ProjectArchivedIssuesPage;
+export default observer(ProjectArchivedIssuesPage);

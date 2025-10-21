@@ -57,6 +57,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
 
   const { workspaceSlug } = useParams();
+  const ws = workspaceSlug?.toString();
 
   const { baseTabIndex } = getTabIndex(undefined, isMobile);
 
@@ -66,13 +67,13 @@ export const ParentIssuesListModal: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    if (!isOpen || !workspaceSlug || !projectId) return;
+    if (!isOpen || !ws || !projectId) return;
 
     setIsSearching(true);
     setIsLoading(true);
 
     projectService
-      .projectIssuesSearch(workspaceSlug as string, projectId as string, {
+      .projectIssuesSearch(ws as string, projectId as string, {
         search: debouncedSearchTerm,
         parent: searchEpic ? undefined : true,
         issue_id: issueId,
@@ -198,7 +199,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                                 </div>
                                 <a
                                   href={generateWorkItemLink({
-                                    workspaceSlug: workspaceSlug.toString(),
+                                    workspaceSlug: ws ?? "",
                                     projectId: issue?.project_id,
                                     issueId: issue?.id,
                                     projectIdentifier: issue.project__identifier,

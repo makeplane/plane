@@ -40,10 +40,12 @@ export const SidebarUserMenuItem: FC<SidebarUserMenuItemProps> = observer((props
 
   const isActive = pathname === item.href;
 
+  const ws = workspaceSlug?.toString();
+  if (!ws) return null;
   if (item.key === "drafts" && draftIssueCount === 0) return null;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!allowPermissions(item.access as any, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString())) return null;
+  if (!allowPermissions(item.access as any, EUserPermissionsLevel.WORKSPACE, ws)) return null;
 
   const handleLinkClick = (itemKey: string) => {
     if (window.innerWidth < 768) {
@@ -64,7 +66,7 @@ export const SidebarUserMenuItem: FC<SidebarUserMenuItemProps> = observer((props
           <item.Icon className="size-4 flex-shrink-0" />
           <p className="text-sm leading-5 font-medium">{t(item.labelTranslationKey)}</p>
         </div>
-        {item.key === "notifications" && <NotificationAppSidebarOption workspaceSlug={workspaceSlug.toString()} />}
+        {item.key === "notifications" && <NotificationAppSidebarOption workspaceSlug={ws} />}
       </SidebarNavItem>
     </Link>
   );

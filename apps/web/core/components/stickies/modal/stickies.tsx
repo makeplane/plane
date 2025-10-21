@@ -18,10 +18,11 @@ export const Stickies = observer((props: TProps) => {
   const { handleClose } = props;
   // navigation
   const { workspaceSlug } = useParams();
+  if (!workspaceSlug) return null;
   // store hooks
   const { creatingSticky, toggleShowNewSticky } = useSticky();
   // sticky operations
-  const { stickyOperations } = useStickyOperations({ workspaceSlug: workspaceSlug?.toString() });
+  const { stickyOperations } = useStickyOperations({ workspaceSlug: workspaceSlug.toString() });
 
   return (
     <div className="p-6 pb-0 min-h-[620px]">

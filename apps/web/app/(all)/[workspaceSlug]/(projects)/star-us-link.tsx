@@ -8,8 +8,8 @@ import { useTranslation } from "@plane/i18n";
 // helpers
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 // public imports
-import githubBlackImage from "@/public/logos/github-black.png";
-import githubWhiteImage from "@/public/logos/github-white.png";
+import githubBlackImage from "@/app/assets/logos/github-black.png";
+import githubWhiteImage from "@/app/assets/logos/github-white.png";
 
 export const StarUsOnGitHubLink = () => {
   // plane hooks

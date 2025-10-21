@@ -2,7 +2,6 @@
 
 import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // icons
 import { ChartNoAxesColumn, PanelRight, SlidersHorizontal } from "lucide-react";
 // plane imports
@@ -45,15 +44,19 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
-export const ModuleIssuesHeader: React.FC = observer(() => {
+type Props = {
+  workspaceSlug: string;
+  projectId: string;
+  moduleId: string;
+};
+
+export const ModuleIssuesHeader: React.FC<Props> = observer(({ workspaceSlug, projectId, moduleId }) => {
   // refs
   const parentRef = useRef<HTMLDivElement>(null);
   // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId, moduleId: routerModuleId } = useParams();
-  const moduleId = routerModuleId ? routerModuleId.toString() : undefined;
   // hooks
   const { isMobile } = usePlatformOS();
   // store hooks
@@ -84,24 +87,21 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
 
   const handleLayoutChange = useCallback(
     (layout: EIssueLayoutTypes) => {
-      if (!projectId) return;
-      updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, { layout: layout });
+      updateFilters(projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout });
     },
     [projectId, updateFilters]
   );
 
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!projectId) return;
-      updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
+      updateFilters(projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
     },
     [projectId, updateFilters]
   );
 
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
-      if (!projectId) return;
-      updateFilters(projectId.toString(), EIssueFilterType.DISPLAY_PROPERTIES, property);
+      updateFilters(projectId, EIssueFilterType.DISPLAY_PROPERTIES, property);
     },
     [projectId, updateFilters]
   );
@@ -131,14 +131,14 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
           <div className="flex items-center gap-2">
             <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
               <CommonProjectBreadcrumbs
-                workspaceSlug={workspaceSlug?.toString() ?? ""}
-                projectId={projectId?.toString() ?? ""}
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
                 featureKey={EProjectFeatureKey.MODULES}
               />
               <Breadcrumbs.Item
                 component={
                   <BreadcrumbNavigationSearchDropdown
-                    selectedItem={moduleId?.toString() ?? ""}
+                    selectedItem={moduleId}
                     navigationItems={switcherOptions}
                     onChange={(value: string) => {
                       router.push(`/${workspaceSlug}/projects/${projectId}/modules/${value}`);
@@ -252,8 +252,8 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
             <ModuleQuickActions
               parentRef={parentRef}
               moduleId={moduleId}
-              projectId={projectId.toString()}
-              workspaceSlug={workspaceSlug.toString()}
+              projectId={projectId}
+              workspaceSlug={workspaceSlug}
               customClassName="flex-shrink-0 flex items-center justify-center bg-custom-background-80/70 rounded size-[26px]"
             />
           )}

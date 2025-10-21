@@ -28,19 +28,24 @@ export interface IPagesHeaderProps {
 
 const storeType = EPageStoreType.PROJECT;
 
-export const PageDetailsHeader = observer(() => {
+type Props = {
+  workspaceSlug: string;
+  projectId: string;
+  pageId: string;
+};
+
+export const PageDetailsHeader = observer(({ workspaceSlug, projectId, pageId }: Props) => {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, pageId, projectId } = useParams();
   // store hooks
   const { loader } = useProject();
   const { getPageById, getCurrentProjectPageIds } = usePageStore(storeType);
   const page = usePage({
-    pageId: pageId?.toString() ?? "",
+    pageId: pageId,
     storeType,
   });
   // derived values
-  const projectPageIds = getCurrentProjectPageIds(projectId?.toString());
+  const projectPageIds = getCurrentProjectPageIds(projectId);
 
   const switcherOptions = projectPageIds
     .map((id) => {
@@ -67,15 +72,15 @@ export const PageDetailsHeader = observer(() => {
         <div>
           <Breadcrumbs isLoading={loader === "init-loader"}>
             <CommonProjectBreadcrumbs
-              workspaceSlug={workspaceSlug?.toString()}
-              projectId={projectId?.toString()}
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
               featureKey={EProjectFeatureKey.PAGES}
             />
 
             <Breadcrumbs.Item
               component={
                 <BreadcrumbNavigationSearchDropdown
-                  selectedItem={pageId?.toString() ?? ""}
+                  selectedItem={pageId}
                   navigationItems={switcherOptions}
                   onChange={(value: string) => {
                     router.push(`/${workspaceSlug}/projects/${projectId}/pages/${value}`);

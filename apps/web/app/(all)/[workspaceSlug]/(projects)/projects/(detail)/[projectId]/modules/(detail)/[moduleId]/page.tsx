@@ -1,7 +1,7 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import type { Route } from "./+types/page";
 import useSWR from "swr";
 // components
 import { cn } from "@plane/utils";
@@ -16,12 +16,12 @@ import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useLocalStorage from "@/hooks/use-local-storage";
 // assets
-import emptyModule from "@/public/empty-state/module.svg";
+import emptyModule from "@/app/assets/empty-state/module.svg";
 
-const ModuleIssuesPage = observer(() => {
+const ModuleIssuesPage: React.FC<Route.ComponentProps> = observer(({ params }) => {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId, moduleId } = useParams();
+  const { workspaceSlug, projectId, moduleId } = params;
   // store hooks
   const { fetchModuleDetails, getModuleById } = useModule();
   const { getProjectById } = useProject();

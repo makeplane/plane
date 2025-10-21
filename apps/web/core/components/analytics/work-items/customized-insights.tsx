@@ -1,5 +1,4 @@
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 // plane package imports
 import { useTranslation } from "@plane/i18n";
@@ -10,10 +9,11 @@ import { cn } from "@plane/utils";
 import AnalyticsSectionWrapper from "../analytics-section-wrapper";
 import { AnalyticsSelectParams } from "../select/analytics-params";
 import PriorityChart from "./priority-chart";
+import { useAnalyticsWorkspace } from "../analytics-context";
 
 const CustomizedInsights = observer(({ peekView, isEpic }: { peekView?: boolean; isEpic?: boolean }) => {
   const { t } = useTranslation();
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug } = useAnalyticsWorkspace();
   const { control, watch, setValue } = useForm<IAnalyticsParams>({
     defaultValues: {
       x_axis: ChartXAxisProperty.PRIORITY,
@@ -37,7 +37,7 @@ const CustomizedInsights = observer(({ peekView, isEpic }: { peekView?: boolean;
           control={control}
           setValue={setValue}
           params={params}
-          workspaceSlug={workspaceSlug.toString()}
+          workspaceSlug={workspaceSlug}
           isEpic={isEpic}
         />
       }

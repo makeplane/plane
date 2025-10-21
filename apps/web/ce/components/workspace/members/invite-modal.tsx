@@ -2,7 +2,6 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { IWorkspaceBulkInviteFormData } from "@plane/types";
@@ -18,14 +17,13 @@ export type TSendWorkspaceInvitationModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: IWorkspaceBulkInviteFormData) => Promise<void> | undefined;
+  workspaceSlug: string;
 };
 
 export const SendWorkspaceInvitationModal: React.FC<TSendWorkspaceInvitationModalProps> = observer((props) => {
-  const { isOpen, onClose, onSubmit } = props;
+  const { isOpen, onClose, onSubmit, workspaceSlug } = props;
   // store hooks
   const { t } = useTranslation();
-  // router
-  const { workspaceSlug } = useParams();
   // derived values
   const { control, fields, formState, remove, onFormSubmit, handleClose, appendField } = useWorkspaceInvitationActions({
     onSubmit,
@@ -48,7 +46,7 @@ export const SendWorkspaceInvitationModal: React.FC<TSendWorkspaceInvitationModa
         className="p-5"
       >
         <InvitationFields
-          workspaceSlug={workspaceSlug.toString()}
+          workspaceSlug={workspaceSlug}
           fields={fields}
           control={control}
           formState={formState}

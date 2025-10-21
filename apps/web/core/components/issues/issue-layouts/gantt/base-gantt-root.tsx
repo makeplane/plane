@@ -92,15 +92,19 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
         start_date?: string;
         target_date?: string;
       }[]
-    ) =>
-      issues.updateIssueDates(workspaceSlug.toString(), updates, projectId.toString()).catch(() => {
+    ) => {
+      const ws = workspaceSlug?.toString();
+      const pid = projectId?.toString();
+      if (!ws || !pid) return Promise.reject();
+      return issues.updateIssueDates(ws, updates, pid).catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("toast.error"),
           message: "Error while updating work item dates, Please try again Later",
         });
-      }),
-    [issues, projectId, workspaceSlug]
+      });
+    },
+    [issues, projectId, workspaceSlug, t]
   );
 
   const quickAdd =

@@ -9,8 +9,8 @@ import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
 // assets
-import AllFiltersImage from "@/public/empty-state/cycle/all-filters.svg";
-import NameFilterImage from "@/public/empty-state/cycle/name-filter.svg";
+import AllFiltersImage from "@/app/assets/empty-state/cycle/all-filters.svg";
+import NameFilterImage from "@/app/assets/empty-state/cycle/name-filter.svg";
 
 export interface IArchivedCyclesView {
   workspaceSlug: string;

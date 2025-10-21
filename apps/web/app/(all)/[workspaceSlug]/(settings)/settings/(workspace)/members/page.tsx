@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { Search } from "lucide-react";
+import type { Route } from "./+types/page";
 // types
 import {
   EUserPermissions,
@@ -33,12 +33,11 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { BillingActionsButton } from "@/plane-web/components/workspace/billing/billing-actions-button";
 import { SendWorkspaceInvitationModal } from "@/plane-web/components/workspace/members/invite-modal";
 
-const WorkspaceMembersSettingsPage = observer(() => {
+const WorkspaceMembersSettingsPage = observer(({ params }: Route.ComponentProps) => {
   // states
   const [inviteModal, setInviteModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug } = params;
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const {
@@ -116,6 +115,7 @@ const WorkspaceMembersSettingsPage = observer(() => {
         isOpen={inviteModal}
         onClose={() => setInviteModal(false)}
         onSubmit={handleWorkspaceInvite}
+        workspaceSlug={workspaceSlug}
       />
       <section
         className={cn("w-full h-full", {

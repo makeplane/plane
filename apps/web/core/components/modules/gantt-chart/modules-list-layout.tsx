@@ -41,6 +41,7 @@ export const ModulesListGanttChartView: React.FC = observer(() => {
     if (blockUpdate.start_date) payload.start_date = blockUpdate.start_date;
     if (blockUpdate.target_date) payload.target_date = blockUpdate.target_date;
 
+    if (!workspaceSlug || !projectId) return;
     await updateModuleDetails(workspaceSlug.toString(), projectId.toString(), blockUpdate.id, payload);
   };
 

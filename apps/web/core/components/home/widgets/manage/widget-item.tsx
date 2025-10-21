@@ -135,7 +135,10 @@ export const WidgetItem: FC<Props> = observer((props) => {
         </div>
         <ToggleSwitch
           value={widget.is_enabled}
-          onChange={() => handleToggle(workspaceSlug.toString(), widget.key, !widget.is_enabled)}
+          onChange={() => {
+            const ws = workspaceSlug?.toString();
+            if (ws) handleToggle(ws, widget.key, !widget.is_enabled);
+          }}
         />
       </div>
       {isLastChild && <DropIndicator isVisible={instruction === "reorder-below"} />}

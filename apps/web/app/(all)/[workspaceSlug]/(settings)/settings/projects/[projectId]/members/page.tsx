@@ -1,7 +1,7 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import type { Route } from "./+types/page";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -19,9 +19,9 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { ProjectTeamspaceList } from "@/plane-web/components/projects/teamspaces/teamspace-list";
 import { getProjectSettingsPageLabelI18nKey } from "@/plane-web/helpers/project-settings";
 
-const MembersSettingsPage = observer(() => {
-  // router
-  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId } = useParams();
+const MembersSettingsPage: React.FC<Route.ComponentProps> = observer(({ params }) => {
+  // router params
+  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId } = params;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -46,9 +46,13 @@ const MembersSettingsPage = observer(() => {
     <SettingsContentWrapper size="lg">
       <PageHead title={pageTitle} />
       <SettingsHeading title={t(getProjectSettingsPageLabelI18nKey("members", "common.members"))} />
-      <ProjectSettingsMemberDefaults projectId={projectId} workspaceSlug={workspaceSlug} />
-      <ProjectTeamspaceList projectId={projectId} workspaceSlug={workspaceSlug} />
-      <ProjectMemberList projectId={projectId} workspaceSlug={workspaceSlug} />
+      {projectId && workspaceSlug && (
+        <>
+          <ProjectSettingsMemberDefaults projectId={projectId} workspaceSlug={workspaceSlug} />
+          <ProjectTeamspaceList projectId={projectId} workspaceSlug={workspaceSlug} />
+          <ProjectMemberList projectId={projectId} workspaceSlug={workspaceSlug} />
+        </>
+      )}
     </SettingsContentWrapper>
   );
 });

@@ -37,6 +37,7 @@ export const CommentsWrapper: FC<TCommentsWrapper> = observer((props) => {
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
+  if (!workspaceSlug) return null;
   const renderCommentCreate = useMemo(
     () =>
       isEditingAllowed && (

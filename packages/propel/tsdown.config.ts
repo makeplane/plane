@@ -39,8 +39,11 @@ export default defineConfig({
   exports: {
     customExports: (out) => ({
       ...out,
+      "./styles/fonts.css": "./dist/styles/fonts/index.css",
       "./styles/fonts": "./dist/styles/fonts/index.css",
+      // Export both with and without .css for Vite compatibility
       "./styles/react-day-picker": "./dist/styles/react-day-picker.css",
+      "./styles/react-day-picker.css": "./dist/styles/react-day-picker.css",
     }),
   },
   copy: ["src/styles"],

@@ -19,8 +19,8 @@ import { useModule } from "@/hooks/store/use-module";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-import AllFiltersImage from "@/public/empty-state/module/all-filters.svg";
-import NameFilterImage from "@/public/empty-state/module/name-filter.svg";
+import AllFiltersImage from "@/app/assets/empty-state/module/all-filters.svg";
+import NameFilterImage from "@/app/assets/empty-state/module/name-filter.svg";
 
 export const ModulesListView: React.FC = observer(() => {
   // router

@@ -29,9 +29,9 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
 // images
-import PlaneBlackLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
-import PlaneWhiteLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
-import WorkSpaceNotAvailable from "@/public/workspace/workspace-not-available.png";
+import PlaneBlackLogo from "@/app/assets/plane-logos/black-horizontal-with-blue-logo.png";
+import PlaneWhiteLogo from "@/app/assets/plane-logos/white-horizontal-with-blue-logo.png";
+import WorkSpaceNotAvailable from "@/app/assets/workspace/workspace-not-available.png";
 
 interface IWorkspaceAuthWrapper {
   children: ReactNode;

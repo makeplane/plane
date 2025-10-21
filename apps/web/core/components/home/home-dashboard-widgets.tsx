@@ -66,8 +66,8 @@ export const DashboardWidgets = observer(() => {
   const noWidgetsResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/dashboard/widgets" });
 
   // derived values
-  const isWikiApp = pathname.includes(`/${workspaceSlug.toString()}/pages`);
   if (!workspaceSlug) return null;
+  const isWikiApp = pathname.includes(`/${workspaceSlug.toString()}/pages`);
   if (loading || loader !== "loaded") return <HomeLoader />;
 
   return (

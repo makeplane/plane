@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import type { Route } from "./+types/page";
 import useSWR from "swr";
 // plane types
 import { getButtonStyling } from "@plane/propel/button";
@@ -35,10 +35,10 @@ const projectPageVersionService = new ProjectPageVersionService();
 
 const storeType = EPageStoreType.PROJECT;
 
-const PageDetailsPage = observer(() => {
+const PageDetailsPage: React.FC<Route.ComponentProps> = observer(({ params }) => {
+  const { workspaceSlug, projectId, pageId } = params;
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId, pageId } = useParams();
   // store hooks
   const { createPage, fetchPageDetails } = usePageStore(storeType);
   const page = usePage({

@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS } from "@plane/constants";
 import type { EUserWorkspaceRoles } from "@plane/types";
@@ -13,17 +12,19 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { ExtendedSidebarItem } from "@/plane-web/components/workspace/sidebar/extended-sidebar-item";
 import { ExtendedSidebarWrapper } from "./extended-sidebar-wrapper";
 
-export const ExtendedAppSidebar = observer(() => {
+type ExtendedAppSidebarProps = {
+  workspaceSlug: string;
+};
+
+export const ExtendedAppSidebar = observer(({ workspaceSlug }: ExtendedAppSidebarProps) => {
   // refs
   const extendedSidebarRef = useRef<HTMLDivElement | null>(null);
-  // routers
-  const { workspaceSlug } = useParams();
   // store hooks
   const { isExtendedSidebarOpened, toggleExtendedSidebar } = useAppTheme();
   const { updateSidebarPreference, getNavigationPreferences } = useWorkspace();
 
   // derived values
-  const currentWorkspaceNavigationPreferences = getNavigationPreferences(workspaceSlug.toString());
+  const currentWorkspaceNavigationPreferences = getNavigationPreferences(workspaceSlug);
 
   const sortedNavigationItems = useMemo(
     () =>
@@ -107,6 +108,7 @@ export const ExtendedAppSidebar = observer(() => {
       {sortedNavigationItems.map((item, index) => (
         <ExtendedSidebarItem
           key={item.key}
+          workspaceSlug={workspaceSlug}
           item={item}
           isLastChild={index === sortedNavigationItems.length - 1}
           handleOnNavigationItemDrop={handleOnNavigationItemDrop}

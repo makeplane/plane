@@ -29,6 +29,7 @@ export const StickiesTruncated = observer((props: StickiesTruncatedProps) => {
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
+  if (!workspaceSlug) return null;
   return (
     <ContentOverflowWrapper
       maxHeight={620}
@@ -46,7 +47,7 @@ export const StickiesTruncated = observer((props: StickiesTruncatedProps) => {
         </Link>
       }
     >
-      <StickiesLayout workspaceSlug={workspaceSlug?.toString()} />
+      <StickiesLayout workspaceSlug={workspaceSlug.toString()} />
     </ContentOverflowWrapper>
   );
 });

@@ -1,8 +1,8 @@
 packages:
-- apps/*
-- packages/*
-- "!apps/api"
-- "!apps/proxy"
+  - apps/*
+  - packages/*
+  - "!apps/api"
+  - "!apps/proxy"
 
 catalog:
   "@atlaskit/pragmatic-drag-and-drop": 1.7.4
@@ -33,5 +33,5 @@ catalog:
   "@tiptap/html": ^3.5.3
 
 onlyBuiltDependencies:
-- turbo
-- sharp
+  - turbo
+  - sharp

@@ -1,6 +1,5 @@
 import { observer } from "mobx-react";
 import dynamic from "next/dynamic";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane package imports
 import { useTranslation } from "@plane/i18n";
@@ -12,6 +11,7 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { AnalyticsService } from "@/services/analytics.service";
 // plane web components
 import AnalyticsSectionWrapper from "../analytics-section-wrapper";
+import { useAnalyticsWorkspace } from "../analytics-context";
 import AnalyticsEmptyState from "../empty-state";
 import { ProjectInsightsLoader } from "../loaders";
 
@@ -24,9 +24,8 @@ const RadarChart = dynamic(() =>
 const analyticsService = new AnalyticsService();
 
 const ProjectInsights = observer(() => {
-  const params = useParams();
+  const { workspaceSlug } = useAnalyticsWorkspace();
   const { t } = useTranslation();
-  const workspaceSlug = params.workspaceSlug.toString();
   const { selectedDuration, selectedDurationLabel, selectedProjects, selectedCycle, selectedModule, isPeekView } =
     useAnalytics();
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics/empty-chart-radar" });

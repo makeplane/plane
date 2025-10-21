@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 // image
-import PDFFileIcon from "@/public/attachment/pdf-icon.png";
+import PDFFileIcon from "@/app/assets/attachment/pdf-icon.png";
 // type
 import type { ImageIconPros } from "../types";
 

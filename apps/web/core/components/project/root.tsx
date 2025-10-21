@@ -20,6 +20,7 @@ import { ProjectCardList } from "./card-list";
 export const ProjectRoot = observer(() => {
   const { currentWorkspace } = useWorkspace();
   const { workspaceSlug } = useParams();
+  const ws = workspaceSlug?.toString();
   const pathname = usePathname();
   const { t } = useTranslation();
   // store
@@ -44,37 +45,38 @@ export const ProjectRoot = observer(() => {
 
   const handleRemoveFilter = useCallback(
     (key: keyof TProjectFilters, value: string | null) => {
-      if (!workspaceSlug) return;
+      if (!ws) return;
       let newValues = currentWorkspaceFilters?.[key] ?? [];
 
       if (!value) newValues = [];
       else newValues = newValues.filter((val) => val !== value);
 
-      updateFilters(workspaceSlug.toString(), { [key]: newValues });
+      updateFilters(ws, { [key]: newValues });
     },
-    [currentWorkspaceFilters, updateFilters, workspaceSlug]
+    [currentWorkspaceFilters, updateFilters, ws]
   );
 
   const handleRemoveDisplayFilter = useCallback(
     (key: TProjectAppliedDisplayFilterKeys) => {
-      if (!workspaceSlug) return;
-      updateDisplayFilters(workspaceSlug.toString(), { [key]: false });
+      if (!ws) return;
+      updateDisplayFilters(ws, { [key]: false });
     },
-    [updateDisplayFilters, workspaceSlug]
+    [updateDisplayFilters, ws]
   );
 
   const handleClearAllFilters = useCallback(() => {
-    if (!workspaceSlug) return;
-    clearAllFilters(workspaceSlug.toString());
-    clearAllAppliedDisplayFilters(workspaceSlug.toString());
-    if (isArchived) updateDisplayFilters(workspaceSlug.toString(), { archived_projects: true });
-  }, [clearAllFilters, clearAllAppliedDisplayFilters, workspaceSlug]);
+    if (!ws) return;
+    clearAllFilters(ws);
+    clearAllAppliedDisplayFilters(ws);
+    if (isArchived) updateDisplayFilters(ws, { archived_projects: true });
+  }, [clearAllFilters, clearAllAppliedDisplayFilters, ws]);
 
   useEffect(() => {
+    if (!ws) return;
     isArchived
-      ? updateDisplayFilters(workspaceSlug.toString(), { archived_projects: true })
-      : updateDisplayFilters(workspaceSlug.toString(), { archived_projects: false });
-  }, [pathname]);
+      ? updateDisplayFilters(ws, { archived_projects: true })
+      : updateDisplayFilters(ws, { archived_projects: false });
+  }, [pathname, ws]);
 
   return (
     <>

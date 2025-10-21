@@ -35,7 +35,8 @@ export const SidebarMenuItems = observer(() => {
   // translation
   const { t } = useTranslation();
   // derived values
-  const currentWorkspaceNavigationPreferences = getNavigationPreferences(workspaceSlug.toString());
+  const ws = workspaceSlug?.toString();
+  const currentWorkspaceNavigationPreferences = ws ? getNavigationPreferences(ws) : undefined;
 
   const toggleListDisclosure = (isOpen: boolean) => {
     toggleWorkspaceMenu(isOpen);

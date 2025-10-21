@@ -10,6 +10,6 @@ import { BaseKanBanRoot } from "../base-kanban-root";
 
 export const ProjectViewKanBanLayout: React.FC = observer(() => {
   const { viewId } = useParams();
-
+  if (!viewId) return null;
   return <BaseKanBanRoot QuickActions={ProjectIssueQuickActions} viewId={viewId.toString()} />;
 });

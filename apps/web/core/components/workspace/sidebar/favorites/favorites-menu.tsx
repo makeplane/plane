@@ -52,8 +52,10 @@ export const SidebarFavoritesMenu = observer(() => {
   const containerRef = useRef<HTMLDivElement>(null);
   const elementRef = useRef<HTMLDivElement>(null);
 
+  const ws = workspaceSlug?.toString();
   const handleMoveToFolder = (sourceId: string, destinationId: string) => {
-    moveFavoriteToFolder(workspaceSlug.toString(), sourceId, {
+    if (!ws) return;
+    moveFavoriteToFolder(ws, sourceId, {
       parent: destinationId,
     }).catch(() => {
       setToast({
@@ -105,7 +107,8 @@ export const SidebarFavoritesMenu = observer(() => {
   };
 
   const handleRemoveFromFavorites = (favorite: IFavorite) => {
-    deleteFavorite(workspaceSlug.toString(), favorite.id)
+    if (!ws) return;
+    deleteFavorite(ws, favorite.id)
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -123,7 +126,8 @@ export const SidebarFavoritesMenu = observer(() => {
   };
 
   const handleRemoveFromFavoritesFolder = (favoriteId: string) => {
-    removeFromFavoriteFolder(workspaceSlug.toString(), favoriteId).catch(() => {
+    if (!ws) return;
+    removeFromFavoriteFolder(ws, favoriteId).catch(() => {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("error"),
@@ -134,7 +138,8 @@ export const SidebarFavoritesMenu = observer(() => {
 
   const handleReorder = useCallback(
     (favoriteId: string, droppedFavId: string, edge: string | undefined) => {
-      reOrderFavorite(workspaceSlug.toString(), favoriteId, droppedFavId, edge).catch(() => {
+      if (!ws) return;
+      reOrderFavorite(ws, favoriteId, droppedFavId, edge).catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: t("error"),
@@ -142,7 +147,7 @@ export const SidebarFavoritesMenu = observer(() => {
         });
       });
     },
-    [workspaceSlug, reOrderFavorite, t]
+    [ws, reOrderFavorite, t]
   );
 
   useEffect(() => {
@@ -264,7 +269,7 @@ export const SidebarFavoritesMenu = observer(() => {
                         />
                       ) : (
                         <FavoriteRoot
-                          workspaceSlug={workspaceSlug.toString()}
+                          workspaceSlug={ws ?? ""}
                           favorite={fav}
                           isLastChild={index === length - 1}
                           parentId={undefined}

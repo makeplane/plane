@@ -17,7 +17,7 @@ import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // assets
-import JiraLogo from "@/public/services/jira.svg";
+import JiraLogo from "@/app/assets/services/jira.svg";
 // services
 import { JiraImporterService } from "@/services/integrations";
 // components

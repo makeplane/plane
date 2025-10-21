@@ -9,7 +9,7 @@ import { Button } from "@plane/propel/button";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // assets
-import Unauthorized from "@/public/auth/unauthorized.svg";
+import Unauthorized from "@/app/assets/auth/unauthorized.svg";
 
 type Props = {
   projectId?: string;

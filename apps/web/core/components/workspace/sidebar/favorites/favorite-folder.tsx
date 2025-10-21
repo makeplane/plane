@@ -48,6 +48,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
   const { getGroupedFavorites } = useFavorite();
   const { isMobile } = usePlatformOS();
   const { workspaceSlug } = useParams();
+  const ws = workspaceSlug?.toString();
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -268,17 +269,18 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                 leaveTo="transform scale-95 opacity-0"
               >
                 <Disclosure.Panel as="div" className="flex flex-col gap-0.5 mt-1 px-2">
-                  {orderBy(favorite.children, "sequence", "desc").map((child, index) => (
-                    <FavoriteRoot
-                      key={child.id}
-                      workspaceSlug={workspaceSlug.toString()}
-                      favorite={child}
-                      isLastChild={index === favorite.children.length - 1}
-                      parentId={favorite.id}
-                      handleRemoveFromFavorites={handleRemoveFromFavorites}
-                      handleDrop={handleDrop}
-                    />
-                  ))}
+                  {ws &&
+                    orderBy(favorite.children, "sequence", "desc").map((child, index) => (
+                      <FavoriteRoot
+                        key={child.id}
+                        workspaceSlug={ws}
+                        favorite={child}
+                        isLastChild={index === favorite.children.length - 1}
+                        parentId={favorite.id}
+                        handleRemoveFromFavorites={handleRemoveFromFavorites}
+                        handleDrop={handleDrop}
+                      />
+                    ))}
                 </Disclosure.Panel>
               </Transition>
             )}

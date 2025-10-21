@@ -1,5 +1,9 @@
 "use client";
 
+import type { Route } from "./+types/page";
+
+export const meta: Route.MetaFunction = () => [{ title: "Invitations" }];
+
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -30,7 +34,7 @@ import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
 // images
-import emptyInvitation from "@/public/empty-state/invitation.svg";
+import emptyInvitation from "@/app/assets/empty-state/invitation.svg";
 
 const workspaceService = new WorkspaceService();
 

@@ -15,11 +15,11 @@ import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUser } from "@/hooks/store/user";
 // assets
-import CyclesTour from "@/public/onboarding/cycles.webp";
-import IssuesTour from "@/public/onboarding/issues.webp";
-import ModulesTour from "@/public/onboarding/modules.webp";
-import PagesTour from "@/public/onboarding/pages.webp";
-import ViewsTour from "@/public/onboarding/views.webp";
+import CyclesTour from "@/app/assets/onboarding/cycles.webp";
+import IssuesTour from "@/app/assets/onboarding/issues.webp";
+import ModulesTour from "@/app/assets/onboarding/modules.webp";
+import PagesTour from "@/app/assets/onboarding/pages.webp";
+import ViewsTour from "@/app/assets/onboarding/views.webp";
 // local imports
 import { TourSidebar } from "./sidebar";
 
@@ -33,7 +33,7 @@ const TOUR_STEPS: {
   key: TTourSteps;
   title: string;
   description: string;
-  image: StaticImageData;
+  image: StaticImageData | string;
   prevStep?: TTourSteps;
   nextStep?: TTourSteps;
 }[] = [

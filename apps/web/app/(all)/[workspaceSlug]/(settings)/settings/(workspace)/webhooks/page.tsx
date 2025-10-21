@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import type { Route } from "./+types/page";
 import useSWR from "swr";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, WORKSPACE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
@@ -22,11 +22,11 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
-const WebhooksListPage = observer(() => {
+const WebhooksListPage: React.FC<Route.ComponentProps> = observer(({ params }) => {
   // states
   const [showCreateWebhookModal, setShowCreateWebhookModal] = useState(false);
   // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug } = params;
   // plane hooks
   const { t } = useTranslation();
   // mobx store

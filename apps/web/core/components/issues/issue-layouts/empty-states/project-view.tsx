@@ -9,7 +9,7 @@ import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
 // assets
-import emptyIssue from "@/public/empty-state/issue.svg";
+import emptyIssue from "@/app/assets/empty-state/issue.svg";
 
 export const ProjectViewEmptyState: React.FC = observer(() => {
   // store hooks

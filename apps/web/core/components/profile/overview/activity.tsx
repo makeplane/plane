@@ -16,7 +16,7 @@ import { USER_PROFILE_ACTIVITY } from "@/constants/fetch-keys";
 // hooks
 import { useUser } from "@/hooks/store/user";
 // assets
-import recentActivityEmptyState from "@/public/empty-state/recent_activity.svg";
+import recentActivityEmptyState from "@/app/assets/empty-state/recent_activity.svg";
 // services
 import { UserService } from "@/services/user.service";
 

@@ -161,15 +161,19 @@
       "require": "./dist/utils/index.js"
     },
     "./package.json": "./package.json",
+    "./styles/fonts.css": "./dist/styles/fonts/index.css",
     "./styles/fonts": "./dist/styles/fonts/index.css",
-    "./styles/react-day-picker": "./dist/styles/react-day-picker.css"
+    "./styles/react-day-picker": "./dist/styles/react-day-picker.css",
+    "./styles/react-day-picker.css": "./dist/styles/react-day-picker.css"
   },
   "dependencies": {
     "@base-ui-components/react": "1.0.0-beta.3",
+    "@base-ui-components/utils": "^0.1.2",
     "@plane/constants": "workspace:*",
     "@plane/hooks": "workspace:*",
     "@plane/types": "workspace:*",
     "@tanstack/react-table": "^8.21.3",
+    "@tanstack/table-core": "^8.21.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -178,6 +182,10 @@
     "react": "catalog:",
     "react-day-picker": "9.5.0",
     "react-dom": "catalog:",
+    "@floating-ui/react-dom": "^2.0.8",
+    "@floating-ui/dom": "^1.6.8",
+    "@floating-ui/utils": "^0.2.8",
+    "tabbable": "^6.2.0",
     "recharts": "^2.15.1",
     "tailwind-merge": "^3.3.1",
     "use-font-face-observer": "^1.3.0"

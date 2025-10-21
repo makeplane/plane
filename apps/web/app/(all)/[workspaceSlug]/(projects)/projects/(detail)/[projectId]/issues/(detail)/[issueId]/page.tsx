@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import type { Route } from "./+types/page";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
@@ -12,17 +12,17 @@ import { LogoSpinner } from "@/components/common/logo-spinner";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // assets
-import emptyIssueDark from "@/public/empty-state/search/issues-dark.webp";
-import emptyIssueLight from "@/public/empty-state/search/issues-light.webp";
+import emptyIssueDark from "@/app/assets/empty-state/search/issues-dark.webp";
+import emptyIssueLight from "@/app/assets/empty-state/search/issues-light.webp";
 // services
 import { IssueService } from "@/services/issue/issue.service";
 
 const issueService = new IssueService();
 
-const IssueDetailsPage = observer(() => {
+const IssueDetailsPage: React.FC<Route.ComponentProps> = observer(({ params }) => {
   const router = useAppRouter();
   const { t } = useTranslation();
-  const { workspaceSlug, projectId, issueId } = useParams();
+  const { workspaceSlug, projectId, issueId } = params;
   const { resolvedTheme } = useTheme();
 
   const { data, isLoading, error } = useSWR(

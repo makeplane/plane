@@ -14,13 +14,16 @@ export const ProfileIssuesListLayout: FC = observer(() => {
   // store
   const { allowPermissions } = useUserPermissions();
 
-  const canEditPropertiesBasedOnProject = (projectId: string) =>
-    allowPermissions(
+  const ws = workspaceSlug?.toString();
+  const canEditPropertiesBasedOnProject = (projectId: string) => {
+    if (!ws) return false;
+    return allowPermissions(
       [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
       EUserPermissionsLevel.PROJECT,
-      workspaceSlug.toString(),
+      ws,
       projectId
     );
+  };
 
   return (
     <BaseListRoot

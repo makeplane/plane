@@ -10,6 +10,6 @@ import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
 
 export const ProjectViewSpreadsheetLayout: React.FC = observer(() => {
   const { viewId } = useParams();
-
+  if (!viewId) return null;
   return <BaseSpreadsheetRoot QuickActions={ProjectIssueQuickActions} viewId={viewId.toString()} />;
 });

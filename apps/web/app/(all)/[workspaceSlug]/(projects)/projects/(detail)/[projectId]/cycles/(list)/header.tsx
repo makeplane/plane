@@ -2,7 +2,6 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // ui
 import { EProjectFeatureKey, EUserPermissions, EUserPermissionsLevel, CYCLE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -17,12 +16,14 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
-// constants
 
-export const CyclesListHeader: FC = observer(() => {
+type Props = {
+  workspaceSlug: string;
+};
+
+export const CyclesListHeader: FC<Props> = observer(({ workspaceSlug }) => {
   // router
   const router = useAppRouter();
-  const { workspaceSlug } = useParams();
 
   // store hooks
   const { toggleCreateCycleModal } = useCommandPalette();
@@ -40,7 +41,7 @@ export const CyclesListHeader: FC = observer(() => {
       <Header.LeftItem>
         <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
           <CommonProjectBreadcrumbs
-            workspaceSlug={workspaceSlug?.toString()}
+            workspaceSlug={workspaceSlug}
             projectId={currentProjectDetails?.id ?? ""}
             featureKey={EProjectFeatureKey.CYCLES}
             isLast

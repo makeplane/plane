@@ -55,10 +55,10 @@ export const TransferIssuesModal: React.FC<Props> = observer((props) => {
 
   /**To update issue counts in target cycle and current cycle */
   const getCycleDetails = async (newCycleId: string) => {
-    const cyclesFetch = [
-      fetchActiveCycleProgress(workspaceSlug.toString(), projectId.toString(), cycleId),
-      fetchActiveCycleProgress(workspaceSlug.toString(), projectId.toString(), newCycleId),
-    ];
+    const ws = workspaceSlug?.toString();
+    const pid = projectId?.toString();
+    if (!ws || !pid) return;
+    const cyclesFetch = [fetchActiveCycleProgress(ws, pid, cycleId), fetchActiveCycleProgress(ws, pid, newCycleId)];
     await Promise.all(cyclesFetch).catch((error) => {
       setToast({
         type: TOAST_TYPE.ERROR,

@@ -38,7 +38,7 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
   } = useMember();
   // derived values
   const invitationDetails = getWorkspaceInvitationDetails(invitationId);
-  const currentWorkspaceMemberInfo = workspaceInfoBySlug(workspaceSlug.toString());
+  const currentWorkspaceMemberInfo = workspaceSlug ? workspaceInfoBySlug(workspaceSlug.toString()) : undefined;
   const currentWorkspaceRole = currentWorkspaceMemberInfo?.role;
   // is the current logged in user admin
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);

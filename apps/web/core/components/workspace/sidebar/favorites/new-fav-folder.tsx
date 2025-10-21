@@ -34,6 +34,7 @@ export const NewFavoriteFolder = observer((props: TProps) => {
 
   // ref
   const ref = useRef(null);
+  const ws = workspaceSlug?.toString();
 
   // form info
   const { handleSubmit, control, setValue, setFocus } = useForm<TForm>({
@@ -44,6 +45,7 @@ export const NewFavoriteFolder = observer((props: TProps) => {
   });
 
   const handleAddNewFolder: SubmitHandler<TForm> = (formData) => {
+    if (!ws) return;
     if (existingFolders.includes(formData.name))
       return setToast({
         type: TOAST_TYPE.ERROR,
@@ -65,7 +67,7 @@ export const NewFavoriteFolder = observer((props: TProps) => {
         message: t("folder_name_cannot_be_empty"),
       });
 
-    addFavorite(workspaceSlug.toString(), formData)
+    addFavorite(ws, formData)
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
@@ -85,7 +87,7 @@ export const NewFavoriteFolder = observer((props: TProps) => {
   };
 
   const handleRenameFolder: SubmitHandler<TForm> = (formData) => {
-    if (!favoriteId) return;
+    if (!ws || !favoriteId) return;
     if (existingFolders.includes(formData.name))
       return setToast({
         type: TOAST_TYPE.ERROR,
@@ -103,7 +105,7 @@ export const NewFavoriteFolder = observer((props: TProps) => {
         message: t("folder_name_cannot_be_empty"),
       });
 
-    updateFavorite(workspaceSlug.toString(), favoriteId, payload)
+    updateFavorite(ws, favoriteId, payload)
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,

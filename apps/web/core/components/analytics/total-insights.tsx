@@ -1,6 +1,5 @@
 // plane package imports
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 import type { IInsightField } from "@plane/constants";
 import { ANALYTICS_INSIGHTS_FIELDS } from "@plane/constants";
@@ -13,6 +12,7 @@ import { useAnalytics } from "@/hooks/store/use-analytics";
 import { AnalyticsService } from "@/services/analytics.service";
 // local imports
 import InsightCard from "./insight-card";
+import { useAnalyticsWorkspace } from "./analytics-context";
 
 const analyticsService = new AnalyticsService();
 
@@ -48,8 +48,7 @@ const TotalInsights: React.FC<{
   analyticsType: TAnalyticsTabsBase;
   peekView?: boolean;
 }> = observer(({ analyticsType, peekView }) => {
-  const params = useParams();
-  const workspaceSlug = params.workspaceSlug.toString();
+  const { workspaceSlug } = useAnalyticsWorkspace();
   const { t } = useTranslation();
   const { selectedDuration, selectedProjects, selectedCycle, selectedModule, isPeekView, isEpic } = useAnalytics();
   const { data: totalInsightsData, isLoading } = useSWR(

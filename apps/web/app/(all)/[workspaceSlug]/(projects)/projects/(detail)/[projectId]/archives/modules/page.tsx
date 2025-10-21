@@ -1,20 +1,20 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import type { Route } from "./+types/page";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { ArchivedModuleLayoutRoot, ArchivedModulesHeader } from "@/components/modules";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 
-const ProjectArchivedModulesPage = observer(() => {
+function ProjectArchivedModulesPage({ params }: Route.ComponentProps) {
   // router
-  const { projectId } = useParams();
+  const { projectId } = params;
   // store hooks
   const { getProjectById } = useProject();
   // derived values
-  const project = projectId ? getProjectById(projectId.toString()) : undefined;
+  const project = getProjectById(projectId);
   const pageTitle = project?.name && `${project?.name} - Archived modules`;
 
   return (
@@ -26,6 +26,6 @@ const ProjectArchivedModulesPage = observer(() => {
       </div>
     </>
   );
-});
+}
 
-export default ProjectArchivedModulesPage;
+export default observer(ProjectArchivedModulesPage);

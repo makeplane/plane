@@ -8,10 +8,10 @@ import { useTheme } from "next-themes";
 import { API_BASE_URL } from "@plane/constants";
 import { OAuthOptions } from "@plane/ui";
 // assets
-import GithubLightLogo from "/public/logos/github-black.png";
-import GithubDarkLogo from "/public/logos/github-dark.svg";
-import GitlabLogo from "/public/logos/gitlab-logo.svg";
-import GoogleLogo from "/public/logos/google-logo.svg";
+import GithubLightLogo from "@/app/assets/logos/github-black.png";
+import GithubDarkLogo from "@/app/assets/logos/github-dark.svg";
+import GitlabLogo from "@/app/assets/logos/gitlab-logo.svg";
+import GoogleLogo from "@/app/assets/logos/google-logo.svg";
 // helpers
 import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
 import {

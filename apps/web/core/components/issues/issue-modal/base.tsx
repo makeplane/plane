@@ -76,8 +76,8 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   // current store details
   const { createIssue, updateIssue } = useIssuesActions(storeType);
   // derived values
-  const routerProjectIdentifier = workItem?.toString().split("-")[0];
-  const projectIdFromRouter = getProjectByIdentifier(routerProjectIdentifier)?.id;
+  const routerProjectIdentifier = workItem ? workItem.toString().split("-")[0] : undefined;
+  const projectIdFromRouter = routerProjectIdentifier ? getProjectByIdentifier(routerProjectIdentifier)?.id : undefined;
   const projectId = data?.project_id ?? routerProjectId?.toString() ?? projectIdFromRouter;
 
   const fetchIssueDetail = async (issueId: string | undefined) => {
@@ -170,7 +170,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       // use the project issue store to create issues
       else if (
         (payload.cycle_id !== cycleId && storeType === EIssuesStoreType.CYCLE) ||
-        (!payload.module_ids?.includes(moduleId?.toString()) && storeType === EIssuesStoreType.MODULE)
+        (!payload.module_ids?.includes(moduleId ? moduleId.toString() : "") && storeType === EIssuesStoreType.MODULE)
       ) {
         response = await projectIssues.createIssue(workspaceSlug.toString(), payload.project_id, payload);
       } // else just use the existing store type's create method
@@ -205,7 +205,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
         if (
           payload.module_ids &&
           payload.module_ids.length > 0 &&
-          (!payload.module_ids.includes(moduleId?.toString()) || storeType !== EIssuesStoreType.MODULE)
+          (!payload.module_ids.includes(moduleId ? moduleId.toString() : "") || storeType !== EIssuesStoreType.MODULE)
         ) {
           await addIssueToModule(response, payload.module_ids);
         }
@@ -283,7 +283,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       if (
         payload.module_ids &&
         payload.module_ids.length > 0 &&
-        (!payload.module_ids.includes(moduleId?.toString()) || storeType !== EIssuesStoreType.MODULE)
+        (!payload.module_ids.includes(moduleId ? moduleId.toString() : "") || storeType !== EIssuesStoreType.MODULE)
       ) {
         await addIssueToModule(data as TBaseIssue, payload.module_ids);
       }

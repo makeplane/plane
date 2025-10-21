@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 // constants
 import {
   EPageAccess,
@@ -25,12 +25,16 @@ import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/com
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
-export const PagesListHeader = observer(() => {
+type Props = {
+  workspaceSlug: string;
+  projectId: string;
+};
+
+export const PagesListHeader = observer(({ workspaceSlug, projectId }: Props) => {
   // states
   const [isCreatingPage, setIsCreatingPage] = useState(false);
   // router
   const router = useRouter();
-  const { workspaceSlug } = useParams();
   const searchParams = useSearchParams();
   const pageType = searchParams.get("type");
   // store hooks
@@ -53,7 +57,7 @@ export const PagesListHeader = observer(() => {
             state: "SUCCESS",
           },
         });
-        const pageId = `/${workspaceSlug}/projects/${currentProjectDetails?.id}/pages/${res?.id}`;
+        const pageId = `/${workspaceSlug}/projects/${projectId}/pages/${res?.id}`;
         router.push(pageId);
       })
       .catch((err) => {
@@ -77,8 +81,8 @@ export const PagesListHeader = observer(() => {
       <Header.LeftItem>
         <Breadcrumbs isLoading={loader === "init-loader"}>
           <CommonProjectBreadcrumbs
-            workspaceSlug={workspaceSlug?.toString() ?? ""}
-            projectId={currentProjectDetails?.id?.toString() ?? ""}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
             featureKey={EProjectFeatureKey.PAGES}
             isLast
           />

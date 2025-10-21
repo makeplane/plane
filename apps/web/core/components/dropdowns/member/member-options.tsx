@@ -85,6 +85,9 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
     }
   };
 
+  const ws = workspaceSlug?.toString();
+  const isSuspended = (uid: string) => (ws ? isUserSuspended(uid, ws) : false);
+
   const options = memberIds
     ?.map((userId) => {
       const userDetails = getUserDetails(userId);
@@ -94,18 +97,13 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
         content: (
           <div className="flex items-center gap-2">
             <div className="w-4">
-              {isUserSuspended(userId, workspaceSlug?.toString()) ? (
+              {isSuspended(userId) ? (
                 <SuspendedUserIcon className="h-3.5 w-3.5 text-custom-text-400" />
               ) : (
                 <Avatar name={userDetails?.display_name} src={getFileURL(userDetails?.avatar_url ?? "")} />
               )}
             </div>
-            <span
-              className={cn(
-                "flex-grow truncate",
-                isUserSuspended(userId, workspaceSlug?.toString()) ? "text-custom-text-400" : ""
-              )}
-            >
+            <span className={cn("flex-grow truncate", isSuspended(userId) ? "text-custom-text-400" : "")}>
               {currentUser?.id === userId ? t("you") : userDetails?.display_name}
             </span>
           </div>
@@ -157,18 +155,16 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
                           "flex w-full select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5",
                           active && "bg-custom-background-80",
                           selected ? "text-custom-text-100" : "text-custom-text-200",
-                          isUserSuspended(option.value, workspaceSlug?.toString())
-                            ? "cursor-not-allowed"
-                            : "cursor-pointer"
+                          isSuspended(option.value) ? "cursor-not-allowed" : "cursor-pointer"
                         )
                       }
-                      disabled={isUserSuspended(option.value, workspaceSlug?.toString())}
+                      disabled={isSuspended(option.value)}
                     >
                       {({ selected }) => (
                         <>
                           <span className="flex-grow truncate">{option.content}</span>
                           {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
-                          {isUserSuspended(option.value, workspaceSlug?.toString()) && (
+                          {isSuspended(option.value) && (
                             <Pill variant={EPillVariant.DEFAULT} size={EPillSize.XS} className="border-none">
                               Suspended
                             </Pill>

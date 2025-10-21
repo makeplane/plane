@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 // image
-import SvgFileIcon from "@/public/attachment/svg-icon.png";
+import SvgFileIcon from "@/app/assets/attachment/svg-icon.png";
 // type
 import type { ImageIconPros } from "../types";
 

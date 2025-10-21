@@ -47,6 +47,7 @@ export const StickyActionBar = observer(() => {
     setIsExpanded(false);
   });
 
+  const ws = workspaceSlug?.toString();
   return (
     <div
       ref={ref}
@@ -63,14 +64,14 @@ export const StickyActionBar = observer(() => {
             <RecentStickyIcon className="size-5 rotate-90 text-custom-text-350" />
           </button>
         </Tooltip>
-        {recentStickyId && (
+        {recentStickyId && ws && (
           <Tooltip
             className="scale-75 -mr-30 translate-x-10"
             tooltipContent={
               <div className="-m-2 max-h-[150px]">
                 <StickyNote
                   className={"w-[290px]"}
-                  workspaceSlug={workspaceSlug.toString()}
+                  workspaceSlug={ws}
                   stickyId={newSticky ? activeStickyId : recentStickyId || ""}
                 />
                 <div
@@ -126,11 +127,11 @@ export const StickyActionBar = observer(() => {
           newSticky || showRecentSticky ? "translate-y-[0%] min-h-[300px]" : "translate-y-[100%] h-0"
         )}
       >
-        {(newSticky || (showRecentSticky && recentStickyId)) && (
+        {ws && (newSticky || (showRecentSticky && recentStickyId)) && (
           <StickyNote
             className={"w-[290px]"}
             onClose={() => (newSticky ? setNewSticky(false) : setShowRecentSticky(false))}
-            workspaceSlug={workspaceSlug.toString()}
+            workspaceSlug={ws}
             stickyId={newSticky ? activeStickyId : recentStickyId || ""}
           />
         )}

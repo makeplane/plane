@@ -1,7 +1,6 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
 import { ArchiveIcon, WorkItemsIcon } from "@plane/propel/icons";
@@ -20,16 +19,20 @@ import { IssueService } from "@/services/issue";
 
 const issueService = new IssueService();
 
-export const ProjectArchivedIssueDetailsHeader = observer(() => {
-  // router
-  const { workspaceSlug, projectId, archivedIssueId } = useParams();
+type ProjectArchivedIssueDetailsHeaderProps = {
+  workspaceSlug: string;
+  projectId: string;
+  archivedIssueId: string;
+};
+
+export const ProjectArchivedIssueDetailsHeader = observer(({ workspaceSlug, projectId, archivedIssueId }: ProjectArchivedIssueDetailsHeaderProps) => {
   // store hooks
   const { currentProjectDetails, loader } = useProject();
 
   const { data: issueDetails } = useSWR(
-    workspaceSlug && projectId && archivedIssueId ? ISSUE_DETAILS(archivedIssueId.toString()) : null,
+    workspaceSlug && projectId && archivedIssueId ? ISSUE_DETAILS(archivedIssueId) : null,
     workspaceSlug && projectId && archivedIssueId
-      ? () => issueService.retrieve(workspaceSlug.toString(), projectId.toString(), archivedIssueId.toString())
+      ? () => issueService.retrieve(workspaceSlug, projectId, archivedIssueId)
       : null
   );
 
@@ -37,7 +40,7 @@ export const ProjectArchivedIssueDetailsHeader = observer(() => {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs isLoading={loader === "init-loader"}>
-          <ProjectBreadcrumb workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+          <ProjectBreadcrumb workspaceSlug={workspaceSlug} projectId={projectId} />
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink
@@ -70,11 +73,7 @@ export const ProjectArchivedIssueDetailsHeader = observer(() => {
         </Breadcrumbs>
       </Header.LeftItem>
       <Header.RightItem>
-        <IssueDetailQuickActions
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={projectId.toString()}
-          issueId={archivedIssueId.toString()}
-        />
+        <IssueDetailQuickActions workspaceSlug={workspaceSlug} projectId={projectId} issueId={archivedIssueId} />
       </Header.RightItem>
     </Header>
   );

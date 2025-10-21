@@ -7,7 +7,7 @@ import Link from "next/link";
 // ui
 import { Button } from "@plane/propel/button";
 // images
-import Image404 from "@/public/404.svg";
+import Image404 from "@/app/assets/404.svg";
 
 export const metadata: Metadata = {
   title: "404 - Page Not Found",

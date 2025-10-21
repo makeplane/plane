@@ -2,7 +2,7 @@
 
 import { observer } from "mobx-react";
 import Head from "next/head";
-import { useParams } from "next/navigation";
+import type { Route } from "./+types/page";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // components
@@ -11,8 +11,8 @@ import { ProjectLayoutRoot } from "@/components/issues/issue-layouts/roots/proje
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 
-const ProjectIssuesPage = observer(() => {
-  const { projectId } = useParams();
+const ProjectIssuesPage: React.FC<Route.ComponentProps> = observer(({ params }) => {
+  const { projectId } = params;
   // i18n
   const { t } = useTranslation();
   // store
