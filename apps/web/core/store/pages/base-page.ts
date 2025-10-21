@@ -315,7 +315,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
   /**
    * @description make the page public
    */
-  makePublic = async (shouldSync: boolean = true) => {
+  makePublic = async ({ shouldSync = true }) => {
     const pageAccess = this.access;
     runInAction(() => {
       this.access = EPageAccess.PUBLIC;
@@ -338,7 +338,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
   /**
    * @description make the page private
    */
-  makePrivate = async (shouldSync: boolean = true) => {
+  makePrivate = async ({ shouldSync = true }) => {
     const pageAccess = this.access;
     runInAction(() => {
       this.access = EPageAccess.PRIVATE;

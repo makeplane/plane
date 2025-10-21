@@ -1,38 +1,34 @@
-import { type Hocuspocus } from "@hocuspocus/server";
-import { createRealtimeEvent } from "@plane/editor";
+import { Hocuspocus } from "@hocuspocus/server";
+import { BroadcastedEvent } from "@plane/editor";
 import { logger } from "@plane/logger";
-import type { FetchPayloadWithContext, StorePayloadWithContext } from "@/types";
-import { broadcastMessageToPage } from "./broadcast-message";
+import { Redis } from "@/extensions/redis";
+import { AppError } from "@/lib/errors";
 
-// Helper to broadcast error to frontend
-export const broadcastError = async (
+export const broadcastMessageToPage = async (
   hocuspocusServerInstance: Hocuspocus,
-  pageId: string,
-  errorMessage: string,
-  errorType: "fetch" | "store",
-  context: FetchPayloadWithContext["context"] | StorePayloadWithContext["context"],
-  errorCode?: "content_too_large" | "page_locked" | "page_archived",
-  shouldDisconnect?: boolean
-) => {
-  try {
-    const errorEvent = createRealtimeEvent({
-      action: "error",
-      page_id: pageId,
-      parent_id: undefined,
-      descendants_ids: [],
-      data: {
-        error_message: errorMessage,
-        error_type: errorType,
-        error_code: errorCode,
-        should_disconnect: shouldDisconnect,
-        user_id: context.userId || "",
-      },
-      workspace_slug: context.workspaceSlug || "",
-      user_id: context.userId || "",
+  documentName: string,
+  eventData: BroadcastedEvent
+): Promise<boolean> => {
+  if (!hocuspocusServerInstance || !hocuspocusServerInstance.documents) {
+    const appError = new AppError("HocusPocus server not available or initialized", {
+      context: { operation: "broadcastMessageToPage", documentName },
     });
+    logger.error("Error while broadcasting message:", appError);
+    return false;
+  }
 
-    await broadcastMessageToPage(hocuspocusServerInstance, pageId, errorEvent);
-  } catch (broadcastError) {
-    logger.error("Error broadcasting error message to frontend:", broadcastError);
+  const redisExtension = hocuspocusServerInstance.configuration.extensions.find((ext) => ext instanceof Redis);
+
+  if (!redisExtension) {
+    logger.error("BROADCAST_MESSAGE_TO_PAGE: Redis extension not found");
+    return false;
+  }
+
+  try {
+    await redisExtension.broadcastToDocument(documentName, eventData);
+    return true;
+  } catch (error) {
+    logger.error(`BROADCAST_MESSAGE_TO_PAGE: Error broadcasting to ${documentName}:`, error);
+    return false;
   }
 };

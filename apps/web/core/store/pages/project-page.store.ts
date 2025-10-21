@@ -57,7 +57,7 @@ export interface IProjectPageStore {
     options?: { trackVisit?: boolean }
   ) => Promise<TPage | undefined>;
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
-  removePage: (pageId: string) => Promise<void>;
+  removePage: (params: { pageId: string; shouldSync?: boolean }) => Promise<void>;
   movePage: (workspaceSlug: string, projectId: string, pageId: string, newProjectId: string) => Promise<void>;
 }
 
@@ -321,7 +321,7 @@ export class ProjectPageStore implements IProjectPageStore {
    * @description delete a page
    * @param {string} pageId
    */
-  removePage = async (pageId: string) => {
+  removePage = async ({ pageId, shouldSync = true }: { pageId: string; shouldSync?: boolean }) => {
     try {
       const { workspaceSlug, projectId } = this.store.router;
       if (!workspaceSlug || !projectId || !pageId) return undefined;

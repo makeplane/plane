@@ -1,7 +1,9 @@
 import { useCallback, useMemo } from "react";
 // plane imports
 import type { EventToPayloadMap } from "@plane/editor";
-import { setToast, TOAST_TYPE, dismissToast } from "@plane/propel/toast";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+// types
+import type { IUserLite } from "@plane/types";
 // components
 import type { TEditorBodyHandlers } from "@/components/pages/editor/editor-body";
 // hooks
@@ -11,7 +13,6 @@ import type { EPageStoreType } from "@/plane-web/hooks/store";
 import { usePageStore } from "@/plane-web/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
-import type { IUserLite } from "@plane/types";
 
 // Type for page update handlers with proper typing for action data
 export type PageUpdateHandler<T extends keyof EventToPayloadMap = keyof EventToPayloadMap> = (params: {
@@ -44,8 +45,6 @@ export const useRealtimePageEvents = ({
   const { removePage, getPageById } = usePageStore(storeType);
 
   const { data: currentUser } = useUser();
-  // derived values
-  const { editorRef } = page.editor;
 
   // Helper function to safely get user display text
   const getUserDisplayText = useCallback(
@@ -129,137 +128,6 @@ export const useRealtimePageEvents = ({
           pageInstance?.mutateProperties(rest);
         });
       },
-      moved_internally: ({ pageIds, data }) => {
-        pageIds.forEach((pageId) => {
-          const pageItem = getPageById(pageId);
-          if (data.sub_pages_count !== undefined) {
-            // Handle parent page sub-pages count update
-            const currentSubPageCount = pageItem?.sub_pages_count ?? (data.sub_pages_count === -1 ? 1 : -1);
-            pageItem?.mutateProperties({
-              sub_pages_count: currentSubPageCount + data.sub_pages_count,
-            });
-          } else if (data.parent_id !== undefined) {
-            // Handle page parent change
-            pageItem?.mutateProperties({ parent_id: data.parent_id });
-            if (pageItem?.id === page.id) {
-              setToast({
-                type: TOAST_TYPE.SUCCESS,
-                title: "This page has been moved",
-                message: "This page has been moved to a new parent page",
-              });
-            }
-          }
-        });
-      },
-      published: ({ data }) => {
-        const pagesToPublish = data.published_pages;
-        pagesToPublish?.forEach(({ page_id: pageId, anchor }) => {
-          const pageItem = getPageById(pageId);
-          pageItem?.mutateProperties({ anchor: anchor });
-        });
-      },
-      unpublished: ({ pageIds }) => {
-        pageIds.forEach((pageId) => {
-          const pageItem = getPageById(pageId);
-          pageItem?.mutateProperties({ anchor: null });
-        });
-      },
-      "collaborators-updated": ({ pageIds, data }) => {
-        pageIds.forEach((pageId: string) => {
-          const pageItem = getPageById(pageId);
-          const collaborators = data.users;
-          if (pageItem && collaborators) {
-            const collaboratorsForPageStore: TCollaborator[] = collaborators.map((col) => ({
-              name: col.name,
-              color: col.color,
-              id: col.id,
-              clientId: col.clientId,
-            }));
-            pageItem.updateCollaborators(collaboratorsForPageStore);
-          }
-        });
-      },
-      restored: ({ data }) => {
-        if (page.id) {
-          let descriptionHTML: string | null = null;
-          if (page?.restoration.versionId) {
-            descriptionHTML = page.restoration.descriptionHTML;
-            if (!editorRef) {
-              page?.setVersionToBeRestored(null, null);
-              page?.setRestorationStatus(false);
-              dismissToast("restoring-version");
-              setToast({
-                type: TOAST_TYPE.ERROR,
-                title: "Page version failed to restore.",
-              });
-              return;
-            }
-            editorRef?.clearEditor(true);
-
-            page?.setVersionToBeRestored(null, null);
-            page?.setRestorationStatus(false);
-            if (descriptionHTML) {
-              editorRef?.setEditorValue(descriptionHTML);
-            }
-
-            dismissToast("restoring-version");
-            setToast({
-              type: TOAST_TYPE.SUCCESS,
-              title: "Page version restored.",
-            });
-
-            return;
-          }
-        }
-        // delete the pages from the store
-        const { deleted_page_ids } = data;
-
-        deleted_page_ids?.forEach((pageId) => {
-          const pageItem = getPageById(pageId);
-          if (pageItem)
-            Promise.resolve(removePage({ pageId, shouldSync: false })).then(() => {
-              if (page.id === pageId) {
-                router.push(handlers.getRedirectionLink());
-              }
-            });
-          else if (page.id === pageId) router.push(handlers.getRedirectionLink());
-        });
-      },
-      shared: async ({ data }) => {
-        const { users_and_access } = data;
-        for (const user of users_and_access) {
-          const { user_id, access, page_id: pageIds } = user;
-          for (const pageId of pageIds) {
-            const pageItem = getPageById(pageId);
-            if (pageItem) {
-              pageItem.appendSharedUsers([
-                {
-                  user_id,
-                  access,
-                },
-              ]);
-              if (currentUser?.id === user_id) {
-                pageItem.setSharedAccess(access);
-              }
-            }
-          }
-        }
-      },
-      unshared: async ({ data }) => {
-        const { users_and_access } = data;
-        for (const user of users_and_access) {
-          const { user_id, page_id: pageIds } = user;
-          for (const pageId of pageIds) {
-            const pageItem = getPageById(pageId);
-            if (pageItem) {
-              pageItem.removeSharedUser(user_id);
-              if (currentUser?.id === user_id) {
-                pageItem.setSharedAccess(null);
-              }
-            }
-          }
-        }
-      },
       error: ({ pageIds, data }) => {
         const errorType = data.error_type;
         const errorMessage = data.error_message || "An error occurred";
@@ -292,17 +160,7 @@ export const useRealtimePageEvents = ({
       },
       ...customRealtimeEventHandlers,
     }),
-    [
-      getPageById,
-      page,
-      editorRef,
-      router,
-      getUserDisplayText,
-      removePage,
-      currentUser,
-      customRealtimeEventHandlers,
-      handlers,
-    ]
+    [getPageById, page, router, getUserDisplayText, removePage, currentUser, customRealtimeEventHandlers, handlers]
   );
 
   // The main function that will be returned from this hook
