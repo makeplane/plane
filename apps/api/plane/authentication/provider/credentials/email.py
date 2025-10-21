@@ -39,6 +39,9 @@ class EmailProvider(CredentialAdapter):
         if self.is_signup:
             # Check if the user already exists
             if User.objects.filter(email=self.key).exists():
+                self.logger.warning("User already exists", extra={
+                    "email": self.key,
+                })
                 raise AuthenticationException(
                     error_message="USER_ALREADY_EXIST",
                     error_code=AUTHENTICATION_ERROR_CODES["USER_ALREADY_EXIST"],
@@ -62,6 +65,9 @@ class EmailProvider(CredentialAdapter):
 
             # User does not exists
             if not user:
+                self.logger.warning("User does not exist", extra={
+                    "email": self.key,
+                })
                 raise AuthenticationException(
                     error_message="USER_DOES_NOT_EXIST",
                     error_code=AUTHENTICATION_ERROR_CODES["USER_DOES_NOT_EXIST"],
@@ -70,6 +76,9 @@ class EmailProvider(CredentialAdapter):
 
             # Check user password
             if not user.check_password(self.code):
+                self.logger.warning("Authentication failed", extra={
+                    "email": self.key,
+                })
                 raise AuthenticationException(
                     error_message=(
                         "AUTHENTICATION_FAILED_SIGN_UP" if self.is_signup else "AUTHENTICATION_FAILED_SIGN_IN"
