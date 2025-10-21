@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane package imports
 import { useTranslation } from "@plane/i18n";
@@ -16,6 +15,7 @@ import { AnalyticsService } from "@/services/analytics.service";
 import AnalyticsSectionWrapper from "../analytics-section-wrapper";
 import AnalyticsEmptyState from "../empty-state";
 import { ChartLoader } from "../loaders";
+import { useAnalyticsWorkspace } from "../analytics-context";
 
 const analyticsService = new AnalyticsService();
 const CreatedVsResolved = observer(() => {
@@ -28,9 +28,8 @@ const CreatedVsResolved = observer(() => {
     isPeekView,
     isEpic,
   } = useAnalytics();
-  const params = useParams();
   const { t } = useTranslation();
-  const workspaceSlug = params.workspaceSlug.toString();
+  const { workspaceSlug } = useAnalyticsWorkspace();
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics/empty-chart-area" });
   const { data: createdVsResolvedData, isLoading: isCreatedVsResolvedLoading } = useSWR(
     `created-vs-resolved-${workspaceSlug}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${isPeekView}-${isEpic}`,

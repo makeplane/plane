@@ -2,7 +2,6 @@
 
 import { useCallback, useRef } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { Lock } from "lucide-react";
 // plane constants
 import {
@@ -37,13 +36,17 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
-export const ProjectViewIssuesHeader: React.FC = observer(() => {
+type Props = {
+  workspaceSlug: string;
+  projectId: string;
+  viewId: string;
+};
+
+export const ProjectViewIssuesHeader: React.FC<Props> = observer(({ workspaceSlug, projectId, viewId }) => {
   // refs
   const parentRef = useRef(null);
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId, viewId: routerViewId } = useParams();
-  const viewId = routerViewId ? routerViewId.toString() : undefined;
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },
@@ -58,47 +61,26 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
 
   const handleLayoutChange = useCallback(
     (layout: EIssueLayoutTypes) => {
-      if (!workspaceSlug || !projectId || !viewId) return;
-      updateFilters(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        EIssueFilterType.DISPLAY_FILTERS,
-        { layout: layout },
-        viewId.toString()
-      );
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, viewId);
     },
     [workspaceSlug, projectId, viewId, updateFilters]
   );
 
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug || !projectId || !viewId) return;
-      updateFilters(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        EIssueFilterType.DISPLAY_FILTERS,
-        updatedDisplayFilter,
-        viewId.toString()
-      );
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, viewId);
     },
     [workspaceSlug, projectId, viewId, updateFilters]
   );
 
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
-      if (!workspaceSlug || !projectId || !viewId) return;
-      updateFilters(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        EIssueFilterType.DISPLAY_PROPERTIES,
-        property,
-        viewId.toString()
-      );
+      updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property, viewId);
     },
     [workspaceSlug, projectId, viewId, updateFilters]
   );
 
-  const viewDetails = viewId ? getViewById(viewId.toString()) : null;
+  const viewDetails = getViewById(viewId);
 
   const canUserCreateIssue = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -124,15 +106,15 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
       <Header.LeftItem>
         <Breadcrumbs isLoading={loader === "init-loader"}>
           <CommonProjectBreadcrumbs
-            workspaceSlug={workspaceSlug?.toString() ?? ""}
-            projectId={projectId?.toString() ?? ""}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
             featureKey={EProjectFeatureKey.VIEWS}
           />
 
           <Breadcrumbs.Item
             component={
               <BreadcrumbNavigationSearchDropdown
-                selectedItem={viewId?.toString() ?? ""}
+                selectedItem={viewId}
                 navigationItems={switcherOptions}
                 onChange={(value: string) => {
                   router.push(`/${workspaceSlug}/projects/${projectId}/views/${value}`);
@@ -208,9 +190,9 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
           <ViewQuickActions
             parentRef={parentRef}
             customClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-custom-background-80/70 rounded"
-            projectId={projectId.toString()}
+            projectId={projectId}
             view={viewDetails}
-            workspaceSlug={workspaceSlug.toString()}
+            workspaceSlug={workspaceSlug}
           />
         </div>
       </Header.RightItem>

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import type { Route } from "./+types/page";
 // plane imports
 import { EUserPermissionsLevel, CYCLE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -26,7 +26,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
-const ProjectCyclesPage = observer(() => {
+const ProjectCyclesPage: React.FC<Route.ComponentProps> = observer(({ params }) => {
   // states
   const [createModal, setCreateModal] = useState(false);
   // store hooks
@@ -34,7 +34,7 @@ const ProjectCyclesPage = observer(() => {
   const { getProjectById, currentProjectDetails } = useProject();
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug, projectId } = params;
   // plane hooks
   const { t } = useTranslation();
   // cycle filters hook

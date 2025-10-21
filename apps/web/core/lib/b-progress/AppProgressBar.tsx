@@ -1,6 +1,2 @@
-import { useRouter as useBProgressRouter } from "@bprogress/next";
-
-export function useRouter() {
-  const router = useBProgressRouter();
-  return router;
-}
+// If you need navigation, use React Router's useNavigate directly:
+// import { useNavigate } from "react-router";

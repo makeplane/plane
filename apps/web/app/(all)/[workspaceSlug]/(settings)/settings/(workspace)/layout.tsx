@@ -3,6 +3,7 @@
 import type { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
+import type { Route } from "./+types/layout";
 // constants
 import { WORKSPACE_SETTINGS_ACCESS } from "@plane/constants";
 import type { EUserWorkspaceRoles } from "@plane/types";
@@ -15,19 +16,17 @@ import { useUserPermissions } from "@/hooks/store/user";
 // local components
 import { WorkspaceSettingsSidebar } from "./sidebar";
 
-export interface IWorkspaceSettingLayout {
-  children: ReactNode;
-}
+type Props = Route.ComponentProps & { children: ReactNode };
 
-const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => {
-  const { children } = props;
+const WorkspaceSettingLayout: FC<Props> = observer(({ children, params }) => {
+  const { workspaceSlug } = params;
   // store hooks
   const { workspaceUserInfo, getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   // next hooks
   const pathname = usePathname();
   // derived values
-  const { workspaceSlug, accessKey } = pathnameToAccessKey(pathname);
-  const userWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug.toString());
+  const { accessKey } = pathnameToAccessKey(pathname);
+  const userWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
 
   let isAuthorized: boolean | string = false;
   if (pathname && workspaceSlug && userWorkspaceRole) {
@@ -37,7 +36,7 @@ const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => 
   return (
     <>
       <SettingsMobileNav
-        hamburgerContent={WorkspaceSettingsSidebar}
+        hamburgerContent={(props) => <WorkspaceSettingsSidebar {...props} workspaceSlug={workspaceSlug} />}
         activePath={getWorkspaceActivePath(pathname) || ""}
       />
       <div className="inset-y-0 flex flex-row w-full h-full">
@@ -45,7 +44,7 @@ const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => 
           <NotAuthorizedView section="settings" className="h-auto" />
         ) : (
           <div className="relative flex h-full w-full">
-            <div className="hidden md:block">{<WorkspaceSettingsSidebar />}</div>
+            <div className="hidden md:block">{<WorkspaceSettingsSidebar workspaceSlug={workspaceSlug} />}</div>
             <div className="w-full h-full overflow-y-scroll md:pt-page-y">{children}</div>
           </div>
         )}

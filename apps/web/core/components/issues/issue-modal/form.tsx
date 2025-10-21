@@ -153,9 +153,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   } = methods;
 
   const projectId = watch("project_id");
+  const ws = workspaceSlug?.toString();
   const activeAdditionalPropertiesLength = getActiveAdditionalPropertiesLength({
     projectId: projectId,
-    workspaceSlug: workspaceSlug?.toString(),
+    workspaceSlug: ws ?? "",
     watch: watch,
   });
 
@@ -177,7 +178,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
         reset(getUpdateFormDataForReset(projectId, getValues()));
       }
     }
-    if (projectId && routeProjectId !== projectId) fetchCycles(workspaceSlug?.toString(), projectId);
+    if (projectId && routeProjectId !== projectId && ws) fetchCycles(ws, projectId);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
@@ -205,9 +206,9 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   }, [data, projectId]);
 
   useEffect(() => {
-    if (workItemTemplateId && editorRef.current) {
+    if (workItemTemplateId && editorRef.current && ws) {
       handleTemplateChange({
-        workspaceSlug: workspaceSlug?.toString(),
+        workspaceSlug: ws,
         reset,
         editorRef,
       });
@@ -227,10 +228,11 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     }
 
     // check for required properties validation
+    if (!ws) return;
     if (
       !handlePropertyValuesValidation({
         projectId: projectId,
-        workspaceSlug: workspaceSlug?.toString(),
+        workspaceSlug: ws,
         watch: watch,
       })
     )
@@ -252,9 +254,9 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     await onSubmit(submitData, is_draft_issue)
       .then(() => {
         setGptAssistantModal(false);
-        if (isCreateMoreToggleEnabled && workItemTemplateId) {
+        if (isCreateMoreToggleEnabled && workItemTemplateId && ws) {
           handleTemplateChange({
-            workspaceSlug: workspaceSlug?.toString(),
+            workspaceSlug: ws,
             reset,
             editorRef,
           });
@@ -275,18 +277,18 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   };
 
   const handleMoveToProjects = async () => {
-    if (!data?.id || !data?.project_id || !data) return;
+    if (!data?.id || !data?.project_id || !data || !ws) return;
     setIsMoving(true);
     try {
       await handleCreateUpdatePropertyValues({
         issueId: data.id,
         issueTypeId: data.type_id,
         projectId: data.project_id,
-        workspaceSlug: workspaceSlug?.toString(),
+        workspaceSlug: ws,
         isDraft: true,
       });
 
-      await moveIssue(workspaceSlug.toString(), data.id, {
+      await moveIssue(ws, data.id, {
         ...data,
         ...getValues(),
       } as TWorkspaceDraftIssue);
@@ -336,9 +338,9 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
     const stateDetails = getStateById(issue.state_id);
 
-    setSelectedParentIssue(
-      convertWorkItemDataToSearchResponse(workspaceSlug?.toString(), issue, projectDetails, stateDetails)
-    );
+    if (ws) {
+      setSelectedParentIssue(convertWorkItemDataToSearchResponse(ws, issue, projectDetails, stateDetails));
+    }
   }, [watch, getIssueById, getProjectById, selectedParentIssue, getStateById]);
 
   // executing this useEffect when isDirty changes
@@ -417,7 +419,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 </div>
                 {duplicateIssues.length > 0 && (
                   <DeDupeButtonRoot
-                    workspaceSlug={workspaceSlug?.toString()}
+                    workspaceSlug={ws ?? ""}
                     isDuplicateModalOpen={isDuplicateModalOpen}
                     label={
                       duplicateIssues.length === 1
@@ -464,7 +466,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   editorRef={editorRef}
                   submitBtnRef={submitBtnRef}
                   gptAssistantModal={gptAssistantModal}
-                  workspaceSlug={workspaceSlug?.toString()}
+                  workspaceSlug={ws ?? ""}
                   projectId={projectId}
                   handleFormChange={handleFormChange}
                   handleDescriptionHTMLDataChange={(description_html) =>
@@ -480,7 +482,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 isDraft={isDraft}
                 workItemId={data?.id ?? data?.sourceIssueId}
                 projectId={projectId}
-                workspaceSlug={workspaceSlug?.toString()}
+                workspaceSlug={ws ?? ""}
               />
             </div>
             <div
@@ -494,7 +496,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   control={control}
                   id={data?.id}
                   projectId={projectId}
-                  workspaceSlug={workspaceSlug?.toString()}
+                  workspaceSlug={ws ?? ""}
                   selectedParentIssue={selectedParentIssue}
                   startDate={watch("start_date")}
                   targetDate={watch("target_date")}
@@ -580,7 +582,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
             style={{ maxHeight: formRef?.current?.offsetHeight ? `${formRef.current.offsetHeight}px` : "436px" }}
           >
             <DuplicateModalRoot
-              workspaceSlug={workspaceSlug.toString()}
+              workspaceSlug={ws ?? ""}
               issues={duplicateIssues}
               handleDuplicateIssueModal={handleDuplicateIssueModal}
             />

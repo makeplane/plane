@@ -14,7 +14,11 @@ import { useAppRail } from "@/hooks/use-app-rail";
 import { ExtendedAppSidebar } from "./extended-sidebar";
 import { AppSidebar } from "./sidebar";
 
-export const ProjectAppSidebar: FC = observer(() => {
+type Props = {
+  workspaceSlug: string;
+};
+
+export const ProjectAppSidebar: FC<Props> = observer(({ workspaceSlug }) => {
   // store hooks
   const {
     sidebarCollapsed,
@@ -51,7 +55,7 @@ export const ProjectAppSidebar: FC = observer(() => {
         togglePeek={toggleSidebarPeek}
         extendedSidebar={
           <>
-            <ExtendedAppSidebar />
+            <ExtendedAppSidebar workspaceSlug={workspaceSlug} />
           </>
         }
         isAnyExtendedSidebarExpanded={isAnyExtendedSidebarOpen}

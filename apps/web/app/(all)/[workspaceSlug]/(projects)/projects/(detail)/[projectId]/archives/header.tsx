@@ -1,8 +1,6 @@
 "use client";
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { ArchiveIcon, CycleIcon, ModuleIcon, WorkItemsIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType } from "@plane/types";
@@ -20,13 +18,15 @@ import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs/project";
 
 type TProps = {
   activeTab: "issues" | "cycles" | "modules";
+  workspaceSlug: string;
+  projectId: string;
 };
 
 const PROJECT_ARCHIVES_BREADCRUMB_LIST: {
   [key: string]: {
     label: string;
     href: string;
-    icon: React.FC<React.SVGAttributes<SVGElement> & { className?: string }>;
+    icon: React.FC<React.ComponentProps<"svg">>;
   };
 } = {
   issues: {
@@ -46,11 +46,10 @@ const PROJECT_ARCHIVES_BREADCRUMB_LIST: {
   },
 };
 
-export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
-  const { activeTab } = props;
+export const ProjectArchivesHeader: React.FC<TProps> = observer((props) => {
+  const { activeTab, workspaceSlug, projectId } = props;
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const {
     issues: { getGroupIssueCount },
@@ -69,7 +68,7 @@ export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
       <Header.LeftItem>
         <div className="flex items-center gap-2.5">
           <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-            <ProjectBreadcrumb workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <ProjectBreadcrumb workspaceSlug={workspaceSlug} projectId={projectId} />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink

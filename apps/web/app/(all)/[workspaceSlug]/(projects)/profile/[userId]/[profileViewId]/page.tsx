@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useParams } from "next/navigation";
+import type { Route } from "./+types/page";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { ProfileIssuesPage } from "@/components/profile/profile-issues";
@@ -12,10 +12,16 @@ const ProfilePageHeader = {
   subscribed: "Profile - Subscribed",
 };
 
-const ProfileIssuesTypePage = () => {
-  const { profileViewId } = useParams() as { profileViewId: "assigned" | "subscribed" | "created" | undefined };
+function isValidProfileViewId(viewId: string): viewId is keyof typeof ProfilePageHeader {
+  return viewId in ProfilePageHeader;
+}
 
-  if (!profileViewId) return null;
+export default function ProfileIssuesTypePage({ params }: Route.ComponentProps) {
+  const { profileViewId } = params;
+
+  if (!isValidProfileViewId(profileViewId)) {
+    return null;
+  }
 
   const header = ProfilePageHeader[profileViewId];
 
@@ -26,5 +32,3 @@ const ProfileIssuesTypePage = () => {
     </>
   );
 };
-
-export default ProfileIssuesTypePage;

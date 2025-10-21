@@ -49,7 +49,11 @@ export const FilterDisplayProperties: React.FC<Props> = observer((props) => {
       case "modules":
         return !moduleViewDisabled;
       default:
-        return shouldRenderDisplayProperty({ workspaceSlug: workspaceSlug?.toString(), projectId, key: property.key });
+        return shouldRenderDisplayProperty({
+          workspaceSlug: workspaceSlug?.toString() ?? "",
+          projectId,
+          key: property.key,
+        });
     }
   }).map((property) => {
     if (isEpic && property.key === "sub_issue_count") {

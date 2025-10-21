@@ -8,7 +8,7 @@ import { capitalizeFirstLetter } from "@plane/utils";
 // components
 import { ProfileEmptyState } from "@/components/ui/profile-empty-state";
 // assets
-import stateGraph from "@/public/empty-state/state_graph.svg";
+import stateGraph from "@/app/assets/empty-state/state_graph.svg";
 
 type Props = {
   stateDistribution: IUserStateDistribution[];

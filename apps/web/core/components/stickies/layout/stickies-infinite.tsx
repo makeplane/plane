@@ -27,19 +27,19 @@ export const StickiesInfinite = observer(() => {
   );
 
   const handleLoadMore = () => {
-    if (loader === "pagination") return;
-    fetchNextWorkspaceStickies(workspaceSlug?.toString());
+    if (loader === "pagination" || !workspaceSlug) return;
+    fetchNextWorkspaceStickies(workspaceSlug.toString());
   };
 
   const hasNextPage = paginationInfo?.next_page_results && paginationInfo?.next_cursor !== undefined;
   const shouldObserve = hasNextPage && loader !== "pagination";
-  const workspaceStickies = getWorkspaceStickyIds(workspaceSlug?.toString());
+  const workspaceStickies = getWorkspaceStickyIds(workspaceSlug ? workspaceSlug.toString() : "");
   useIntersectionObserver(containerRef, shouldObserve ? elementRef : null, handleLoadMore);
 
   return (
     <ContentWrapper ref={containerRef} className="space-y-4">
       <StickiesLayout
-        workspaceSlug={workspaceSlug.toString()}
+        workspaceSlug={workspaceSlug ? workspaceSlug.toString() : ""}
         intersectionElement={
           hasNextPage &&
           workspaceStickies?.length >= STICKIES_PER_PAGE && (

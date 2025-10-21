@@ -7,7 +7,7 @@ import { getFileURL } from "@plane/utils";
 // components
 import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
 // public
-import emptyMembers from "@/public/empty-state/empty_members.svg";
+import emptyMembers from "@/app/assets/empty-state/empty_members.svg";
 
 export type TAssigneeData = {
   id: string | undefined;

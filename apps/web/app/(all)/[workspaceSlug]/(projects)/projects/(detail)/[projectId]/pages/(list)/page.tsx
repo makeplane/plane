@@ -1,7 +1,8 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams, useSearchParams } from "next/navigation";
+import type { Route } from "./+types/page";
+import { useSearchParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -20,12 +21,12 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
 import { EPageStoreType } from "@/plane-web/hooks/store";
 
-const ProjectPagesPage = observer(() => {
+const ProjectPagesPage: React.FC<Route.ComponentProps> = observer(({ params }) => {
   // router
   const router = useAppRouter();
   const searchParams = useSearchParams();
   const type = searchParams.get("type");
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug, projectId } = params;
   // plane hooks
   const { t } = useTranslation();
   // store hooks

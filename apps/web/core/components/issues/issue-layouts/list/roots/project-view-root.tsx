@@ -10,6 +10,6 @@ import { BaseListRoot } from "../base-list-root";
 
 export const ProjectViewListLayout: React.FC = observer(() => {
   const { viewId } = useParams();
-
+  if (!viewId) return null;
   return <BaseListRoot QuickActions={ProjectIssueQuickActions} viewId={viewId.toString()} />;
 });

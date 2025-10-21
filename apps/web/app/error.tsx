@@ -7,8 +7,8 @@ import { Button } from "@plane/propel/button";
 import { useAppRouter } from "@/hooks/use-app-router";
 import DefaultLayout from "@/layouts/default-layout";
 // images
-import maintenanceModeDarkModeImage from "@/public/instance/maintenance-mode-dark.svg";
-import maintenanceModeLightModeImage from "@/public/instance/maintenance-mode-light.svg";
+import maintenanceModeDarkModeImage from "@/app/assets/instance/maintenance-mode-dark.svg";
+import maintenanceModeLightModeImage from "@/app/assets/instance/maintenance-mode-light.svg";
 
 const linkMap = [
   {

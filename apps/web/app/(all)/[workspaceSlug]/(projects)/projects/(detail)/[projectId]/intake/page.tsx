@@ -1,6 +1,7 @@
 "use client";
 import { observer } from "mobx-react";
-import { useParams, useSearchParams } from "next/navigation";
+import type { Route } from "./+types/page";
+import { useSearchParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -15,10 +16,10 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
-const ProjectInboxPage = observer(() => {
+const ProjectInboxPage: React.FC<Route.ComponentProps> = observer(({ params }) => {
   /// router
   const router = useAppRouter();
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug, projectId } = params;
   const searchParams = useSearchParams();
   const navigationTab = searchParams.get("currentTab");
   const inboxIssueId = searchParams.get("inboxIssueId");

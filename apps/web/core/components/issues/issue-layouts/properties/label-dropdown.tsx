@@ -146,7 +146,7 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
   };
 
   const handleAddLabel = async (labelName: string) => {
-    if (!projectId) return;
+    if (!projectId || !workspaceSlug) return;
     setSubmitting(true);
     const label = await createLabel(workspaceSlug, projectId, { name: labelName, color: getRandomLabelColor() });
     onChange([...value, label.id]);

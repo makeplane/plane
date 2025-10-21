@@ -41,10 +41,17 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
   // derived values
   const isEditable = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/project-settings/labels" });
+  const ws = workspaceSlug?.toString();
+  const pid = projectId?.toString();
   const labelOperationsCallbacks: TLabelOperationsCallbacks = {
-    createLabel: (data: Partial<IIssueLabel>) => createLabel(workspaceSlug?.toString(), projectId?.toString(), data),
-    updateLabel: (labelId: string, data: Partial<IIssueLabel>) =>
-      updateLabel(workspaceSlug?.toString(), projectId?.toString(), labelId, data),
+    createLabel: async (data: Partial<IIssueLabel>) => {
+      if (!ws || !pid) throw new Error("Missing workspace or project id");
+      return createLabel(ws, pid, data);
+    },
+    updateLabel: async (labelId: string, data: Partial<IIssueLabel>) => {
+      if (!ws || !pid) throw new Error("Missing workspace or project id");
+      return updateLabel(ws, pid, labelId, data);
+    },
   };
 
   const newLabel = () => {

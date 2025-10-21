@@ -21,6 +21,7 @@ import { ProjectViewListItem } from "./view-list-item";
 
 export const ProjectViewsList = observer(() => {
   const { projectId } = useParams();
+  if (!projectId) return null;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -28,8 +29,8 @@ export const ProjectViewsList = observer(() => {
   const { getProjectViews, getFilteredProjectViews, loader } = useProjectView();
   const { allowPermissions } = useUserPermissions();
   // derived values
-  const projectViews = getProjectViews(projectId?.toString());
-  const filteredProjectViews = getFilteredProjectViews(projectId?.toString());
+  const projectViews = getProjectViews(projectId.toString());
+  const filteredProjectViews = getFilteredProjectViews(projectId.toString());
   const canPerformEmptyStateActions = allowPermissions(
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER, EUserProjectRoles.GUEST],
     EUserPermissionsLevel.PROJECT

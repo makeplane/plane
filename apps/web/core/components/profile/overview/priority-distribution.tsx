@@ -9,7 +9,7 @@ import { capitalizeFirstLetter } from "@plane/utils";
 // components
 import { ProfileEmptyState } from "@/components/ui/profile-empty-state";
 // assets
-import emptyBarGraph from "@/public/empty-state/empty_bar_graph.svg";
+import emptyBarGraph from "@/app/assets/empty-state/empty_bar_graph.svg";
 
 type Props = {
   userProfile: IUserProfileData | undefined;

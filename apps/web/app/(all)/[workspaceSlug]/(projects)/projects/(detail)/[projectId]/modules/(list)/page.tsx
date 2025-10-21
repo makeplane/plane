@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import type { Route } from "./+types/page";
 // types
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -21,10 +21,10 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
-const ProjectModulesPage = observer(() => {
+const ProjectModulesPage: React.FC<Route.ComponentProps> = observer(({ params }) => {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug, projectId } = params;
   // plane hooks
   const { t } = useTranslation();
   // store

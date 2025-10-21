@@ -1,5 +1,5 @@
-@import "@plane/propel/styles/fonts";
-@import "@plane/editor/styles";
+@import "@plane/propel/styles/fonts.css";
+@import "@plane/editor/styles.css";
 
 @tailwind base;
 @tailwind components;

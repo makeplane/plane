@@ -2,7 +2,7 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import type { Route } from "./+types/page";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -20,11 +20,9 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { CustomAutomationsRoot } from "@/plane-web/components/automations/root";
 
-const AutomationSettingsPage = observer(() => {
-  // router
-  const { workspaceSlug: workspaceSlugParam, projectId: projectIdParam } = useParams();
-  const workspaceSlug = workspaceSlugParam?.toString();
-  const projectId = projectIdParam?.toString();
+const AutomationSettingsPage: React.FC<Route.ComponentProps> = observer(({ params }) => {
+  // router params
+  const { workspaceSlug, projectId } = params;
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentProjectDetails: projectDetails, updateProject } = useProject();
@@ -64,7 +62,7 @@ const AutomationSettingsPage = observer(() => {
         <AutoArchiveAutomation handleChange={handleChange} />
         <AutoCloseAutomation handleChange={handleChange} />
       </section>
-      <CustomAutomationsRoot projectId={projectId} workspaceSlug={workspaceSlug} />
+      {projectId && workspaceSlug && <CustomAutomationsRoot projectId={projectId} workspaceSlug={workspaceSlug} />}
     </SettingsContentWrapper>
   );
 });

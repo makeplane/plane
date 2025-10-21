@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/common/empty-state";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // images
-import emptyIssue from "@/public/empty-state/issue.svg";
+import emptyIssue from "@/app/assets/empty-state/issue.svg";
 
 type TIssuePeekOverviewError = {
   removeRoutePeekId: () => void;

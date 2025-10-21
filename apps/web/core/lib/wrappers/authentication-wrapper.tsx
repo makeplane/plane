@@ -1,6 +1,7 @@
 "use client";
 
 import type { FC, ReactNode } from "react";
+import { useEffect, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams, usePathname } from "next/navigation";
 import useSWR from "swr";
@@ -51,7 +52,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
       currentUserProfile?.onboarding_step?.workspace_join) ||
     false;
 
-  const getWorkspaceRedirectionUrl = (): string => {
+  const getWorkspaceRedirectionUrl = useCallback((): string => {
     let redirectionRoute = "/create-workspace";
 
     // validating the nextPath from the router query
@@ -72,8 +73,62 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
     if (isCurrentWorkspaceValid >= 0) redirectionRoute = `/${currentWorkspaceSlug}`;
 
     return redirectionRoute;
-  };
+  }, [
+    nextPath,
+    currentUserSettings?.workspace?.last_workspace_slug,
+    currentUserSettings?.workspace?.fallback_workspace_slug,
+    workspaces,
+  ]);
 
+  // Handle redirects in useEffect to avoid state updates during render
+  // This MUST be called before any conditional returns (Rules of Hooks)
+  useEffect(() => {
+    if (pageType === EPageTypes.PUBLIC) return;
+
+    if (pageType === EPageTypes.NON_AUTHENTICATED) {
+      if (currentUser?.id) {
+        if (currentUserProfile?.id && isUserOnboard) {
+          const currentRedirectRoute = getWorkspaceRedirectionUrl();
+          router.push(currentRedirectRoute);
+        } else {
+          router.push("/onboarding");
+        }
+      }
+      return;
+    }
+
+    if (pageType === EPageTypes.ONBOARDING) {
+      if (!currentUser?.id) {
+        router.push(`/${pathname ? `?next_path=${pathname}` : ``}`);
+      } else if (currentUser && currentUserProfile?.id && isUserOnboard) {
+        const currentRedirectRoute = getWorkspaceRedirectionUrl();
+        router.replace(currentRedirectRoute);
+      }
+      return;
+    }
+
+    if (pageType === EPageTypes.SET_PASSWORD) {
+      if (!currentUser?.id) {
+        router.push(`/${pathname ? `?next_path=${pathname}` : ``}`);
+      } else if (currentUser && !currentUser?.is_password_autoset && currentUserProfile?.id && isUserOnboard) {
+        const currentRedirectRoute = getWorkspaceRedirectionUrl();
+        router.push(currentRedirectRoute);
+      }
+      return;
+    }
+
+    if (pageType === EPageTypes.AUTHENTICATED) {
+      if (currentUser?.id) {
+        if (!currentUserProfile || !currentUserProfile?.id || !isUserOnboard) {
+          router.push(`/onboarding`);
+        }
+      } else {
+        router.push(`/${pathname ? `?next_path=${pathname}` : ``}`);
+      }
+    }
+  }, [pageType, currentUser?.id, currentUserProfile?.id, isUserOnboard, pathname, router, getWorkspaceRedirectionUrl]);
+
+  // Early return for loading state - this is after all hooks
   if ((isUserSWRLoading || isUserLoading || workspacesLoader) && !currentUser?.id)
     return (
       <div className="relative flex h-screen w-full items-center justify-center">
@@ -86,39 +141,51 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
   if (pageType === EPageTypes.NON_AUTHENTICATED) {
     if (!currentUser?.id) return <>{children}</>;
     else {
-      if (currentUserProfile?.id && isUserOnboard) {
-        const currentRedirectRoute = getWorkspaceRedirectionUrl();
-        router.push(currentRedirectRoute);
-        return <></>;
-      } else {
-        router.push("/onboarding");
-        return <></>;
-      }
+      // Will redirect in useEffect
+      return (
+        <div className="relative flex h-screen w-full items-center justify-center">
+          <LogoSpinner />
+        </div>
+      );
     }
   }
 
   if (pageType === EPageTypes.ONBOARDING) {
     if (!currentUser?.id) {
-      router.push(`/${pathname ? `?next_path=${pathname}` : ``}`);
-      return <></>;
+      // Will redirect in useEffect
+      return (
+        <div className="relative flex h-screen w-full items-center justify-center">
+          <LogoSpinner />
+        </div>
+      );
     } else {
       if (currentUser && currentUserProfile?.id && isUserOnboard) {
-        const currentRedirectRoute = getWorkspaceRedirectionUrl();
-        router.replace(currentRedirectRoute);
-        return <></>;
+        // Will redirect in useEffect
+        return (
+          <div className="relative flex h-screen w-full items-center justify-center">
+            <LogoSpinner />
+          </div>
+        );
       } else return <>{children}</>;
     }
   }
 
   if (pageType === EPageTypes.SET_PASSWORD) {
     if (!currentUser?.id) {
-      router.push(`/${pathname ? `?next_path=${pathname}` : ``}`);
-      return <></>;
+      // Will redirect in useEffect
+      return (
+        <div className="relative flex h-screen w-full items-center justify-center">
+          <LogoSpinner />
+        </div>
+      );
     } else {
       if (currentUser && !currentUser?.is_password_autoset && currentUserProfile?.id && isUserOnboard) {
-        const currentRedirectRoute = getWorkspaceRedirectionUrl();
-        router.push(currentRedirectRoute);
-        return <></>;
+        // Will redirect in useEffect
+        return (
+          <div className="relative flex h-screen w-full items-center justify-center">
+            <LogoSpinner />
+          </div>
+        );
       } else return <>{children}</>;
     }
   }
@@ -127,12 +194,20 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
     if (currentUser?.id) {
       if (currentUserProfile && currentUserProfile?.id && isUserOnboard) return <>{children}</>;
       else {
-        router.push(`/onboarding`);
-        return <></>;
+        // Will redirect in useEffect
+        return (
+          <div className="relative flex h-screen w-full items-center justify-center">
+            <LogoSpinner />
+          </div>
+        );
       }
     } else {
-      router.push(`/${pathname ? `?next_path=${pathname}` : ``}`);
-      return <></>;
+      // Will redirect in useEffect
+      return (
+        <div className="relative flex h-screen w-full items-center justify-center">
+          <LogoSpinner />
+        </div>
+      );
     }
   }
 

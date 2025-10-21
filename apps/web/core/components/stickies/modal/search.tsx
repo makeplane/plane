@@ -38,6 +38,7 @@ export const StickySearch: FC = observer(() => {
   };
 
   const fetchStickies = async () => {
+    if (!workspaceSlug) return;
     await fetchWorkspaceStickies(workspaceSlug.toString());
   };
 

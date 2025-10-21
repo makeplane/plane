@@ -34,9 +34,12 @@ import {
   handleAdditionalKeyDownEvents,
 } from "@/plane-web/helpers/command-palette";
 
-export const CommandPalette: FC = observer(() => {
+type Props = { workspaceSlug?: string; projectId?: string };
+export const CommandPalette: FC<Props> = observer(({ workspaceSlug: wsProp, projectId: pidProp }) => {
   // router params
-  const { workspaceSlug, projectId: paramsProjectId, workItem } = useParams();
+  const { workItem } = useParams();
+  const workspaceSlug = wsProp;
+  const paramsProjectId = pidProp;
   // store hooks
   const { fetchIssueWithIdentifier } = useIssueDetail();
   const { toggleSidebar, toggleExtendedSidebar } = useAppTheme();
@@ -49,15 +52,16 @@ export const CommandPalette: FC = observer(() => {
   const projectIdentifier = workItem?.toString().split("-")[0];
   const sequence_id = workItem?.toString().split("-")[1];
 
+  const wsForFetch = workspaceSlug;
+  const canFetchIssue = Boolean(wsForFetch && projectIdentifier && sequence_id && workItem);
   const { data: issueDetails } = useSWR(
-    workspaceSlug && workItem ? `ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}` : null,
-    workspaceSlug && workItem
-      ? () => fetchIssueWithIdentifier(workspaceSlug.toString(), projectIdentifier, sequence_id)
-      : null
+    canFetchIssue ? `ISSUE_DETAIL_${wsForFetch!}_${projectIdentifier!}_${sequence_id!}` : null,
+    canFetchIssue ? () => fetchIssueWithIdentifier(wsForFetch!, projectIdentifier!, sequence_id!) : null
   );
 
   const issueId = issueDetails?.id;
-  const projectId = paramsProjectId?.toString() ?? issueDetails?.project_id;
+  const projectId: string | undefined =
+    paramsProjectId ?? (issueDetails?.project_id?.toString?.() as string | undefined);
 
   const canPerformWorkspaceMemberActions = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -66,13 +70,13 @@ export const CommandPalette: FC = observer(() => {
   const canPerformProjectMemberActions = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT,
-    workspaceSlug?.toString(),
+    workspaceSlug,
     projectId
   );
   const canPerformProjectAdminActions = allowPermissions(
     [EUserPermissions.ADMIN],
     EUserPermissionsLevel.PROJECT,
-    workspaceSlug?.toString(),
+    workspaceSlug,
     projectId
   );
 
@@ -259,12 +263,12 @@ export const CommandPalette: FC = observer(() => {
   return (
     <>
       <ShortcutsModal isOpen={isShortcutModalOpen} onClose={() => toggleShortcutModal(false)} />
-      {workspaceSlug && <WorkspaceLevelModals workspaceSlug={workspaceSlug.toString()} />}
+      {workspaceSlug && <WorkspaceLevelModals workspaceSlug={workspaceSlug} />}
       {workspaceSlug && projectId && (
-        <ProjectLevelModals workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
+        <ProjectLevelModals workspaceSlug={workspaceSlug} projectId={projectId.toString()} />
       )}
-      <IssueLevelModals projectId={projectId} issueId={issueId} />
-      <CommandModal />
+      <IssueLevelModals projectId={projectId ?? undefined} issueId={issueId} />
+      <CommandModal workspaceSlug={workspaceSlug} projectId={projectId ?? undefined} />
     </>
   );
 });

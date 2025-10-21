@@ -19,7 +19,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // images
-import emptyIssue from "@/public/empty-state/issue.svg";
+import emptyIssue from "@/app/assets/empty-state/issue.svg";
 // local components
 import { IssuePeekOverview } from "../peek-overview";
 import { IssueMainContent } from "./main-content";

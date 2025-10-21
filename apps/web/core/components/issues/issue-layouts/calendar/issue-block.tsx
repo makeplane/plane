@@ -57,7 +57,10 @@ export const CalendarIssueBlock = observer(
     const projectIdentifier = getProjectIdentifierById(issue?.project_id);
 
     // handlers
-    const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug.toString(), issue, isMobile);
+    const handleIssuePeekOverview = (issue: TIssue) => {
+      const ws = workspaceSlug?.toString();
+      if (ws) handleRedirection(ws, issue, isMobile);
+    };
 
     useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
 

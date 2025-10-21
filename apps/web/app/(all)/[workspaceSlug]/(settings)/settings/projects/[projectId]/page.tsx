@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import type { Route } from "./+types/page";
 import useSWR from "swr";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -19,12 +19,12 @@ import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 
-const ProjectSettingsPage = observer(() => {
+const ProjectSettingsPage: React.FC<Route.ComponentProps> = observer(({ params }) => {
   // states
   const [selectProject, setSelectedProject] = useState<string | null>(null);
   const [archiveProject, setArchiveProject] = useState<boolean>(false);
-  // router
-  const { workspaceSlug, projectId } = useParams();
+  // router params
+  const { workspaceSlug, projectId } = params;
   // store hooks
   const { currentProjectDetails, fetchProjectDetails } = useProject();
   const { allowPermissions } = useUserPermissions();
@@ -33,15 +33,10 @@ const ProjectSettingsPage = observer(() => {
   // TODO: removed this API if not necessary
   const { isLoading } = useSWR(
     workspaceSlug && projectId ? `PROJECT_DETAILS_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchProjectDetails(workspaceSlug.toString(), projectId.toString()) : null
+    workspaceSlug && projectId ? () => fetchProjectDetails(workspaceSlug, projectId) : null
   );
   // derived values
-  const isAdmin = allowPermissions(
-    [EUserPermissions.ADMIN],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug.toString(),
-    projectId.toString()
-  );
+  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
 
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - General Settings` : undefined;
 
@@ -51,8 +46,8 @@ const ProjectSettingsPage = observer(() => {
       {currentProjectDetails && workspaceSlug && projectId && (
         <>
           <ArchiveRestoreProjectModal
-            workspaceSlug={workspaceSlug.toString()}
-            projectId={projectId.toString()}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
             isOpen={archiveProject}
             onClose={() => setArchiveProject(false)}
             archive
@@ -69,8 +64,8 @@ const ProjectSettingsPage = observer(() => {
         {currentProjectDetails && workspaceSlug && projectId && !isLoading ? (
           <ProjectDetailsForm
             project={currentProjectDetails}
-            workspaceSlug={workspaceSlug.toString()}
-            projectId={projectId.toString()}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
             isAdmin={isAdmin}
           />
         ) : (

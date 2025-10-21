@@ -8,6 +8,7 @@ import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } fro
 import { useTranslation } from "@plane/i18n";
 import { Tabs } from "@plane/ui";
 import type { TabItem } from "@plane/ui";
+import type { Route } from "./+types/page";
 // components
 import AnalyticsFilterActions from "@/components/analytics/analytics-filter-actions";
 import { PageHead } from "@/components/core/page-title";
@@ -21,18 +22,11 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { getAnalyticsTabs } from "@/plane-web/components/analytics/tabs";
+import { AnalyticsWorkspaceProvider } from "@/components/analytics/analytics-context";
 
-type Props = {
-  params: {
-    tabId: string;
-    workspaceSlug: string;
-  };
-};
-
-const AnalyticsPage = observer((props: Props) => {
+function AnalyticsPage({ params }: Route.ComponentProps) {
   // props
-  const { params } = props;
-  const { tabId } = params;
+  const { tabId, workspaceSlug } = params;
 
   // hooks
   const router = useRouter();
@@ -82,18 +76,20 @@ const AnalyticsPage = observer((props: Props) => {
         <>
           {workspaceProjectIds.length > 0 || loader === "init-loader" ? (
             <div className="flex h-full overflow-hidden bg-custom-background-100 justify-between items-center  ">
-              <Tabs
-                tabs={tabs}
-                storageKey={`analytics-page-${currentWorkspace?.id}`}
-                defaultTab={defaultTab}
-                size="md"
-                tabListContainerClassName="px-6 py-2 border-b border-custom-border-200 flex items-center justify-between"
-                tabListClassName="my-2 w-auto"
-                tabClassName="px-3"
-                tabPanelClassName="h-full overflow-hidden overflow-y-auto px-2"
-                storeInLocalStorage={false}
-                actions={<AnalyticsFilterActions />}
-              />
+              <AnalyticsWorkspaceProvider workspaceSlug={workspaceSlug}>
+                <Tabs
+                  tabs={tabs}
+                  storageKey={`analytics-page-${currentWorkspace?.id}`}
+                  defaultTab={defaultTab}
+                  size="md"
+                  tabListContainerClassName="px-6 py-2 border-b border-custom-border-200 flex items-center justify-between"
+                  tabListClassName="my-2 w-auto"
+                  tabClassName="px-3"
+                  tabPanelClassName="h-full overflow-hidden overflow-y-auto px-2"
+                  storeInLocalStorage={false}
+                  actions={<AnalyticsFilterActions />}
+                />
+              </AnalyticsWorkspaceProvider>
             </div>
           ) : (
             <DetailedEmptyState
@@ -118,6 +114,6 @@ const AnalyticsPage = observer((props: Props) => {
       )}
     </>
   );
-});
+}
 
-export default AnalyticsPage;
+export default observer(AnalyticsPage);

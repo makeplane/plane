@@ -11,8 +11,8 @@ import { SelectRepository, SelectChannel } from "@/components/integration";
 // constants
 import { PROJECT_GITHUB_REPOSITORY } from "@/constants/fetch-keys";
 // icons
-import GithubLogo from "@/public/logos/github-square.png";
-import SlackLogo from "@/public/services/slack.png";
+import GithubLogo from "@/app/assets/logos/github-square.png";
+import SlackLogo from "@/app/assets/services/slack.png";
 import { ProjectService } from "@/services/project";
 // types
 

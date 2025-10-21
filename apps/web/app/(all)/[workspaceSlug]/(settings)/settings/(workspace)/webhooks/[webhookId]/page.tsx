@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import type { Route } from "./+types/page";
 import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel, WORKSPACE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -19,11 +19,11 @@ import { useWebhook } from "@/hooks/store/use-webhook";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 
-const WebhookDetailsPage = observer(() => {
+const WebhookDetailsPage: React.FC<Route.ComponentProps> = observer(({ params }) => {
   // states
   const [deleteWebhookModal, setDeleteWebhookModal] = useState(false);
   // router
-  const { workspaceSlug, webhookId } = useParams();
+  const { workspaceSlug, webhookId } = params;
   // mobx store
   const { currentWebhook, fetchWebhookById, updateWebhook } = useWebhook();
   const { currentWorkspace } = useWorkspace();

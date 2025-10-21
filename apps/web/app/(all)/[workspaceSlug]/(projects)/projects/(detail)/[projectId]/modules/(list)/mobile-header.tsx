@@ -9,7 +9,12 @@ import { ModuleLayoutIcon } from "@/components/modules";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { useProject } from "@/hooks/store/use-project";
 
-export const ModulesListMobileHeader = observer(() => {
+type Props = {
+  workspaceSlug: string;
+  projectId: string;
+};
+
+export const ModulesListMobileHeader = observer(({ workspaceSlug, projectId }: Props) => {
   const { currentProjectDetails } = useProject();
   const { updateDisplayFilters } = useModuleFilter();
   const { t } = useTranslation();

@@ -18,6 +18,7 @@ type TProjectSettingsSidebarProps = {
 export const ProjectSettingsSidebar = observer((props: TProjectSettingsSidebarProps) => {
   const { isMobile = false } = props;
   const { workspaceSlug } = useParams();
+  const ws = workspaceSlug?.toString();
   // store hooks
   const { joinedProjectIds, projectMap } = useProject();
 
@@ -35,7 +36,7 @@ export const ProjectSettingsSidebar = observer((props: TProjectSettingsSidebarPr
       groupedSettings={{
         [PROJECT_SETTINGS_CATEGORY.PROJECTS]: groupedProject,
       }}
-      workspaceSlug={workspaceSlug.toString()}
+      workspaceSlug={ws ?? ""}
       isActive={false}
       appendItemsToTitle={(key: string) => {
         const role = projectMap[key].member_role;

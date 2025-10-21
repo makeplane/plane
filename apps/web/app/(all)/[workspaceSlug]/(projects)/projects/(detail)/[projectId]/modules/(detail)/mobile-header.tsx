@@ -2,7 +2,6 @@
 
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // icons
 import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
 // plane imports
@@ -26,13 +25,13 @@ const SUPPORTED_LAYOUTS = [
   { key: "calendar", i18n_title: "issue.layouts.calendar", icon: Calendar },
 ];
 
-export const ModuleIssuesMobileHeader = observer(() => {
-  // router
-  const { workspaceSlug, projectId, moduleId } = useParams() as {
-    workspaceSlug: string;
-    projectId: string;
-    moduleId: string;
-  };
+type Props = {
+  workspaceSlug: string;
+  projectId: string;
+  moduleId: string;
+};
+
+export const ModuleIssuesMobileHeader = observer(({ workspaceSlug, projectId, moduleId }: Props) => {
   // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // plane hooks
@@ -45,11 +44,10 @@ export const ModuleIssuesMobileHeader = observer(() => {
   } = useIssues(EIssuesStoreType.MODULE);
   // derived values
   const activeLayout = issueFilters?.displayFilters?.layout;
-  const moduleDetails = moduleId ? getModuleById(moduleId.toString()) : undefined;
+  const moduleDetails = getModuleById(moduleId);
 
   const handleLayoutChange = useCallback(
     (layout: EIssueLayoutTypes) => {
-      if (!workspaceSlug || !projectId) return;
       updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, moduleId);
     },
     [workspaceSlug, projectId, moduleId, updateFilters]
@@ -57,7 +55,6 @@ export const ModuleIssuesMobileHeader = observer(() => {
 
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug || !projectId) return;
       updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, moduleId);
     },
     [workspaceSlug, projectId, moduleId, updateFilters]
@@ -65,7 +62,6 @@ export const ModuleIssuesMobileHeader = observer(() => {
 
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
-      if (!workspaceSlug || !projectId) return;
       updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property, moduleId);
     },
     [workspaceSlug, projectId, moduleId, updateFilters]

@@ -1,6 +1,6 @@
 "use client";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import type { Route } from "./+types/page";
 import useSWR from "swr";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -20,9 +20,9 @@ import { IntegrationService } from "@/services/integrations";
 
 const integrationService = new IntegrationService();
 
-const WorkspaceIntegrationsPage = observer(() => {
+const WorkspaceIntegrationsPage: React.FC<Route.ComponentProps> = observer(({ params }) => {
   // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug } = params;
   // store hooks
   const { currentWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();

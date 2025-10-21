@@ -2,7 +2,6 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import {
   EIssueFilterType,
@@ -30,13 +29,16 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { GlobalViewLayoutSelection } from "@/plane-web/components/views/helper";
 
-export const GlobalIssuesHeader = observer(() => {
+type Props = {
+  workspaceSlug: string;
+  globalViewId?: string;
+};
+
+export const GlobalIssuesHeader = observer(({ workspaceSlug, globalViewId }: Props) => {
   // states
   const [createViewModal, setCreateViewModal] = useState(false);
   // router
   const router = useAppRouter();
-  const { workspaceSlug, globalViewId: routerGlobalViewId } = useParams();
-  const globalViewId = routerGlobalViewId ? routerGlobalViewId.toString() : undefined;
   // store hooks
   const {
     issuesFilter: { filters, updateFilters },
@@ -44,43 +46,31 @@ export const GlobalIssuesHeader = observer(() => {
   const { getViewDetailsById, currentWorkspaceViews } = useGlobalView();
   const { t } = useTranslation();
 
-  const issueFilters = globalViewId ? filters[globalViewId.toString()] : undefined;
+  const issueFilters = globalViewId ? filters[globalViewId] : undefined;
 
   const activeLayout = issueFilters?.displayFilters?.layout;
   const viewDetails = globalViewId ? getViewDetailsById(globalViewId) : undefined;
 
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug || !globalViewId) return;
-      updateFilters(
-        workspaceSlug.toString(),
-        undefined,
-        EIssueFilterType.DISPLAY_FILTERS,
-        updatedDisplayFilter,
-        globalViewId
-      );
+      if (!globalViewId) return;
+      updateFilters(workspaceSlug, undefined, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, globalViewId);
     },
     [workspaceSlug, updateFilters, globalViewId]
   );
 
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
-      if (!workspaceSlug || !globalViewId) return;
-      updateFilters(workspaceSlug.toString(), undefined, EIssueFilterType.DISPLAY_PROPERTIES, property, globalViewId);
+      if (!globalViewId) return;
+      updateFilters(workspaceSlug, undefined, EIssueFilterType.DISPLAY_PROPERTIES, property, globalViewId);
     },
     [workspaceSlug, updateFilters, globalViewId]
   );
 
   const handleLayoutChange = useCallback(
     (layout: EIssueLayoutTypes) => {
-      if (!workspaceSlug || !globalViewId) return;
-      updateFilters(
-        workspaceSlug.toString(),
-        undefined,
-        EIssueFilterType.DISPLAY_FILTERS,
-        { layout: layout },
-        globalViewId
-      );
+      if (!globalViewId) return;
+      updateFilters(workspaceSlug, undefined, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, globalViewId);
     },
     [workspaceSlug, updateFilters, globalViewId]
   );

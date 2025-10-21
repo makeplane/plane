@@ -26,6 +26,8 @@ export const ProjectViewListItem: FC<Props> = observer((props) => {
   const parentRef = useRef(null);
   // router
   const { workspaceSlug, projectId } = useParams();
+  const ws = workspaceSlug?.toString();
+  const pid = projectId?.toString();
   // store hooks
   const { isMobile } = usePlatformOS();
 
@@ -45,12 +47,7 @@ export const ProjectViewListItem: FC<Props> = observer((props) => {
       actionableItems={<ViewListItemAction parentRef={parentRef} view={view} />}
       quickActionElement={
         <div className="block md:hidden">
-          <ViewQuickActions
-            parentRef={parentRef}
-            projectId={projectId.toString()}
-            view={view}
-            workspaceSlug={workspaceSlug.toString()}
-          />
+          {ws && pid && <ViewQuickActions parentRef={parentRef} projectId={pid} view={view} workspaceSlug={ws} />}
         </div>
       }
       isMobile={isMobile}

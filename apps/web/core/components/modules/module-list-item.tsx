@@ -28,6 +28,8 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
+  const ws = workspaceSlug?.toString();
+  const pid = projectId?.toString();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   // store hooks
@@ -96,12 +98,9 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
       actionableItems={<ModuleListItemAction moduleId={moduleId} moduleDetails={moduleDetails} parentRef={parentRef} />}
       quickActionElement={
         <div className="block md:hidden">
-          <ModuleQuickActions
-            parentRef={parentRef}
-            moduleId={moduleId}
-            projectId={projectId.toString()}
-            workspaceSlug={workspaceSlug.toString()}
-          />
+          {ws && pid && (
+            <ModuleQuickActions parentRef={parentRef} moduleId={moduleId} projectId={pid} workspaceSlug={ws} />
+          )}
         </div>
       }
       isMobile={isMobile}

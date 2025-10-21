@@ -5,7 +5,7 @@ import { useTranslation } from "@plane/i18n";
 // components
 import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
 // public
-import emptyLabel from "@/public/empty-state/empty_label.svg";
+import emptyLabel from "@/app/assets/empty-state/empty_label.svg";
 
 export type TLabelData = {
   id: string | undefined;

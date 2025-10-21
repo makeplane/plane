@@ -3,7 +3,6 @@
 import { Command } from "cmdk";
 // hooks
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import { WORKSPACE_SETTINGS_LINKS, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
@@ -17,14 +16,13 @@ import { shouldRenderSettingLink } from "@/plane-web/helpers/workspace.helper";
 
 type Props = {
   closePalette: () => void;
+  workspaceSlug: string;
 };
 
 export const CommandPaletteWorkspaceSettingsActions: React.FC<Props> = (props) => {
-  const { closePalette } = props;
+  const { closePalette, workspaceSlug } = props;
   // router
   const router = useAppRouter();
-  // router params
-  const { workspaceSlug } = useParams();
   // mobx store
   const { t } = useTranslation();
   const { allowPermissions } = useUserPermissions();
@@ -39,8 +37,8 @@ export const CommandPaletteWorkspaceSettingsActions: React.FC<Props> = (props) =
     <>
       {WORKSPACE_SETTINGS_LINKS.map(
         (setting) =>
-          allowPermissions(setting.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString()) &&
-          shouldRenderSettingLink(workspaceSlug.toString(), setting.key) && (
+          allowPermissions(setting.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug) &&
+          shouldRenderSettingLink(workspaceSlug, setting.key) && (
             <Command.Item
               key={setting.key}
               onSelect={() => redirect(`/${workspaceSlug}${setting.href}`)}

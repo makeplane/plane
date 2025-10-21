@@ -1,5 +1,9 @@
 "use client";
 
+import type { Route } from "./+types/page";
+
+export const meta: Route.MetaFunction = () => [{ title: "Reset Password - Plane" }];
+
 // plane imports
 import { EAuthModes } from "@plane/constants";
 // components

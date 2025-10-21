@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 // image
-import ZipFileIcon from "@/public/attachment/zip-icon.png";
+import ZipFileIcon from "@/app/assets/attachment/zip-icon.png";
 // type
 import type { ImageIconPros } from "../types";
 

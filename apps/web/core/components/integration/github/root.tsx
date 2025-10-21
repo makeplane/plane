@@ -24,7 +24,7 @@ import { APP_INTEGRATIONS, IMPORTER_SERVICES_LIST, WORKSPACE_INTEGRATIONS } from
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // images
-import GithubLogo from "@/public/services/github.png";
+import GithubLogo from "@/app/assets/services/github.png";
 // services
 import { IntegrationService, GithubIntegrationService } from "@/services/integrations";
 

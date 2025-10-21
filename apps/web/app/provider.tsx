@@ -1,7 +1,8 @@
 "use client";
 
 import type { FC, ReactNode } from "react";
-import { AppProgressProvider as ProgressProvider } from "@bprogress/next";
+import { ProgressProvider } from "@bprogress/react";
+import { ReactRouterProgressProvider } from "@/lib/b-progress";
 import dynamic from "next/dynamic";
 import { useTheme, ThemeProvider } from "next-themes";
 import { SWRConfig } from "swr";
@@ -36,28 +37,28 @@ export const AppProvider: FC<IAppProvider> = (props) => {
   // themes
   return (
     <>
-      <ProgressProvider
-        height="4px"
-        color="rgb(var(--color-primary-100))"
-        options={{ showSpinner: false }}
-        shallowRouting
-      >
-        <StoreProvider>
-          <ThemeProvider themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]} defaultTheme="system">
-            <TranslationProvider>
-              <ToastWithTheme />
-              <StoreWrapper>
-                <InstanceWrapper>
-                  <IntercomProvider>
-                    <PostHogProvider>
-                      <SWRConfig value={WEB_SWR_CONFIG}>{children}</SWRConfig>
-                    </PostHogProvider>
-                  </IntercomProvider>
-                </InstanceWrapper>
-              </StoreWrapper>
-            </TranslationProvider>
-          </ThemeProvider>
-        </StoreProvider>
+      <ProgressProvider>
+        <ReactRouterProgressProvider>
+          <StoreProvider>
+            <ThemeProvider
+              themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]}
+              defaultTheme="system"
+            >
+              <TranslationProvider>
+                <ToastWithTheme />
+                <StoreWrapper>
+                  <InstanceWrapper>
+                    <IntercomProvider>
+                      <PostHogProvider>
+                        <SWRConfig value={WEB_SWR_CONFIG}>{children}</SWRConfig>
+                      </PostHogProvider>
+                    </IntercomProvider>
+                  </InstanceWrapper>
+                </StoreWrapper>
+              </TranslationProvider>
+            </ThemeProvider>
+          </StoreProvider>
+        </ReactRouterProgressProvider>
       </ProgressProvider>
     </>
   );

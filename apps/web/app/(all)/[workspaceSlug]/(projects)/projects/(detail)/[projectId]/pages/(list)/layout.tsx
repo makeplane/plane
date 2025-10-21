@@ -1,17 +1,20 @@
-"use client";
-
-import type { ReactNode } from "react";
+import { Outlet } from "react-router";
+import type { Route } from "../../../+types/layout";
 // components
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 // local components
 import { PagesListHeader } from "./header";
 
-export default function ProjectPagesListLayout({ children }: { children: ReactNode }) {
+export default function ProjectPagesListLayout({ params }: Route.ComponentProps) {
+  const { workspaceSlug, projectId } = params;
+
   return (
     <>
-      <AppHeader header={<PagesListHeader />} />
-      <ContentWrapper>{children}</ContentWrapper>
+      <AppHeader header={<PagesListHeader workspaceSlug={workspaceSlug} projectId={projectId} />} />
+      <ContentWrapper>
+        <Outlet />
+      </ContentWrapper>
     </>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { EProjectFeatureKey, EUserPermissions, EUserPermissionsLevel, MODULE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -19,10 +18,14 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 // constants
 
-export const ModulesListHeader: React.FC = observer(() => {
+type Props = {
+  workspaceSlug: string;
+  projectId: string;
+};
+
+export const ModulesListHeader: React.FC<Props> = observer(({ workspaceSlug, projectId }) => {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
   // store hooks
   const { toggleCreateModuleModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
@@ -43,8 +46,8 @@ export const ModulesListHeader: React.FC = observer(() => {
         <div>
           <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
             <CommonProjectBreadcrumbs
-              workspaceSlug={workspaceSlug?.toString() ?? ""}
-              projectId={projectId?.toString() ?? ""}
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
               featureKey={EProjectFeatureKey.MODULES}
               isLast
             />

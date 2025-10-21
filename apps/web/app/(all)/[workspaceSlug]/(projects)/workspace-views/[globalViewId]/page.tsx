@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import type { Route } from "./+types/page";
 // plane imports
 import { DEFAULT_GLOBAL_VIEWS_LIST } from "@plane/constants";
 // components
@@ -11,9 +11,9 @@ import { AllIssueLayoutRoot } from "@/components/issues/issue-layouts/roots/all-
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 
-const GlobalViewIssuesPage = observer(() => {
+const GlobalViewIssuesPage: React.FC<Route.ComponentProps> = observer(({ params }) => {
   // router
-  const { globalViewId } = useParams();
+  const { globalViewId } = params;
   // store hooks
   const { currentWorkspace } = useWorkspace();
   // states

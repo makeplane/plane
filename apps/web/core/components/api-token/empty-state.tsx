@@ -5,7 +5,7 @@ import Image from "next/image";
 // ui
 import { Button } from "@plane/propel/button";
 // assets
-import emptyApiTokens from "@/public/empty-state/api-token.svg";
+import emptyApiTokens from "@/app/assets/empty-state/api-token.svg";
 
 type Props = {
   onClick: () => void;

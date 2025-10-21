@@ -1,5 +1,5 @@
 import { isEmpty } from "lodash-es";
-import { autorun, makeObservable, observable } from "mobx";
+import { reaction, runInAction, makeObservable, observable } from "mobx";
 // types
 import type { ICycle, IIssueLabel, IModule, IProject, IState, IUserLite, TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
@@ -204,28 +204,118 @@ export class IssueRootStore implements IIssueRootStore {
     this.serviceType = serviceType;
     this.rootStore = rootStore;
 
-    autorun(() => {
-      if (rootStore?.user?.data?.id) this.currentUserId = rootStore?.user?.data?.id;
-      if (this.workspaceSlug !== rootStore.router.workspaceSlug) this.workspaceSlug = rootStore.router.workspaceSlug;
-      if (this.teamspaceId !== rootStore.router.teamspaceId) this.teamspaceId = rootStore.router.teamspaceId;
-      if (this.projectId !== rootStore.router.projectId) this.projectId = rootStore.router.projectId;
-      if (this.cycleId !== rootStore.router.cycleId) this.cycleId = rootStore.router.cycleId;
-      if (this.moduleId !== rootStore.router.moduleId) this.moduleId = rootStore.router.moduleId;
-      if (this.viewId !== rootStore.router.viewId) this.viewId = rootStore.router.viewId;
-      if (this.globalViewId !== rootStore.router.globalViewId) this.globalViewId = rootStore.router.globalViewId;
-      if (this.userId !== rootStore.router.userId) this.userId = rootStore.router.userId;
-      if (!isEmpty(rootStore?.state?.stateMap)) this.stateMap = rootStore?.state?.stateMap;
-      if (!isEmpty(rootStore?.state?.projectStates)) this.stateDetails = rootStore?.state?.projectStates;
-      if (!isEmpty(rootStore?.state?.workspaceStates)) this.workspaceStateDetails = rootStore?.state?.workspaceStates;
-      if (!isEmpty(rootStore?.label?.labelMap)) this.labelMap = rootStore?.label?.labelMap;
-      if (!isEmpty(rootStore?.memberRoot?.workspace?.workspaceMemberMap))
-        this.workSpaceMemberRolesMap = rootStore?.memberRoot?.workspace?.memberMap || undefined;
-      if (!isEmpty(rootStore?.memberRoot?.memberMap)) this.memberMap = rootStore?.memberRoot?.memberMap || undefined;
-      if (!isEmpty(rootStore?.projectRoot?.project?.projectMap))
-        this.projectMap = rootStore?.projectRoot?.project?.projectMap;
-      if (!isEmpty(rootStore?.module?.moduleMap)) this.moduleMap = rootStore?.module?.moduleMap;
-      if (!isEmpty(rootStore?.cycle?.cycleMap)) this.cycleMap = rootStore?.cycle?.cycleMap;
-    });
+    // initialize values asynchronously to avoid updates during render
+    const setAsync = (fn: () => void) => queueMicrotask(fn);
+
+    setAsync(() =>
+      runInAction(() => {
+        if (rootStore?.user?.data?.id) this.currentUserId = rootStore?.user?.data?.id;
+        this.workspaceSlug = rootStore.router.workspaceSlug;
+        this.teamspaceId = rootStore.router.teamspaceId;
+        this.projectId = rootStore.router.projectId;
+        this.cycleId = rootStore.router.cycleId;
+        this.moduleId = rootStore.router.moduleId;
+        this.viewId = rootStore.router.viewId;
+        this.globalViewId = rootStore.router.globalViewId;
+        this.userId = rootStore.router.userId;
+
+        if (!isEmpty(rootStore?.state?.stateMap)) this.stateMap = rootStore?.state?.stateMap;
+        if (!isEmpty(rootStore?.state?.projectStates)) this.stateDetails = rootStore?.state?.projectStates;
+        if (!isEmpty(rootStore?.state?.workspaceStates)) this.workspaceStateDetails = rootStore?.state?.workspaceStates;
+        if (!isEmpty(rootStore?.label?.labelMap)) this.labelMap = rootStore?.label?.labelMap;
+        if (!isEmpty(rootStore?.memberRoot?.workspace?.workspaceMemberMap))
+          this.workSpaceMemberRolesMap = rootStore?.memberRoot?.workspace?.memberMap || undefined;
+        if (!isEmpty(rootStore?.memberRoot?.memberMap)) this.memberMap = rootStore?.memberRoot?.memberMap || undefined;
+        if (!isEmpty(rootStore?.projectRoot?.project?.projectMap))
+          this.projectMap = rootStore?.projectRoot?.project?.projectMap;
+        if (!isEmpty(rootStore?.module?.moduleMap)) this.moduleMap = rootStore?.module?.moduleMap;
+        if (!isEmpty(rootStore?.cycle?.cycleMap)) this.cycleMap = rootStore?.cycle?.cycleMap;
+      })
+    );
+
+    // reactions to keep values in sync without violating strict-mode
+    reaction(
+      () => rootStore?.user?.data?.id,
+      (id) => setAsync(() => runInAction(() => void (this.currentUserId = id)))
+    );
+
+    reaction(
+      () => rootStore.router.workspaceSlug,
+      (v) => setAsync(() => runInAction(() => void (this.workspaceSlug = v)))
+    );
+    reaction(
+      () => rootStore.router.teamspaceId,
+      (v) => setAsync(() => runInAction(() => void (this.teamspaceId = v)))
+    );
+    reaction(
+      () => rootStore.router.projectId,
+      (v) => setAsync(() => runInAction(() => void (this.projectId = v)))
+    );
+    reaction(
+      () => rootStore.router.cycleId,
+      (v) => setAsync(() => runInAction(() => void (this.cycleId = v)))
+    );
+    reaction(
+      () => rootStore.router.moduleId,
+      (v) => setAsync(() => runInAction(() => void (this.moduleId = v)))
+    );
+    reaction(
+      () => rootStore.router.viewId,
+      (v) => setAsync(() => runInAction(() => void (this.viewId = v)))
+    );
+    reaction(
+      () => rootStore.router.globalViewId,
+      (v) => setAsync(() => runInAction(() => void (this.globalViewId = v)))
+    );
+    reaction(
+      () => rootStore.router.userId,
+      (v) => setAsync(() => runInAction(() => void (this.userId = v)))
+    );
+
+    reaction(
+      () => rootStore?.state?.stateMap,
+      (map) => setAsync(() => runInAction(() => void (this.stateMap = isEmpty(map) ? this.stateMap : map)))
+    );
+    reaction(
+      () => rootStore?.state?.projectStates,
+      (list) => setAsync(() => runInAction(() => void (this.stateDetails = isEmpty(list) ? this.stateDetails : list)))
+    );
+    reaction(
+      () => rootStore?.state?.workspaceStates,
+      (list) =>
+        setAsync(() =>
+          runInAction(() => void (this.workspaceStateDetails = isEmpty(list) ? this.workspaceStateDetails : list))
+        )
+    );
+    reaction(
+      () => rootStore?.label?.labelMap,
+      (map) => setAsync(() => runInAction(() => void (this.labelMap = isEmpty(map) ? this.labelMap : map)))
+    );
+    reaction(
+      () => rootStore?.memberRoot?.workspace?.workspaceMemberMap,
+      () =>
+        setAsync(() =>
+          runInAction(() => {
+            this.workSpaceMemberRolesMap = rootStore?.memberRoot?.workspace?.memberMap || undefined;
+          })
+        )
+    );
+    reaction(
+      () => rootStore?.memberRoot?.memberMap,
+      (map) => setAsync(() => runInAction(() => void (this.memberMap = isEmpty(map) ? this.memberMap : map)))
+    );
+    reaction(
+      () => rootStore?.projectRoot?.project?.projectMap,
+      (map) => setAsync(() => runInAction(() => void (this.projectMap = isEmpty(map) ? this.projectMap : map)))
+    );
+    reaction(
+      () => rootStore?.module?.moduleMap,
+      (map) => setAsync(() => runInAction(() => void (this.moduleMap = isEmpty(map) ? this.moduleMap : map)))
+    );
+    reaction(
+      () => rootStore?.cycle?.cycleMap,
+      (map) => setAsync(() => runInAction(() => void (this.cycleMap = isEmpty(map) ? this.cycleMap : map)))
+    );
 
     this.issues = new IssueStore();
 

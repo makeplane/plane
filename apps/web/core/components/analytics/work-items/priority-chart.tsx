@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import type { ColumnDef, Row, RowData, Table } from "@tanstack/react-table";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane package imports
@@ -24,6 +23,7 @@ import { exportCSV } from "../export";
 import { DataTable } from "../insight-table/data-table";
 import { ChartLoader } from "../loaders";
 import { generateBarColor } from "./utils";
+import { useAnalyticsWorkspace } from "../analytics-context";
 
 declare module "@tanstack/react-table" {
   interface ColumnMeta<TData extends RowData, TValue> {
@@ -51,9 +51,8 @@ const PriorityChart = observer((props: Props) => {
   const { selectedDuration, selectedProjects, selectedCycle, selectedModule, isPeekView, isEpic } = useAnalytics();
   const { workspaceStates } = useProjectState();
   const { resolvedTheme } = useTheme();
-  // router
-  const params = useParams();
-  const workspaceSlug = params.workspaceSlug.toString();
+  // context
+  const { workspaceSlug } = useAnalyticsWorkspace();
 
   const { data: priorityChartData, isLoading: priorityChartLoading } = useSWR(
     `customized-insights-chart-${workspaceSlug}-${selectedDuration}-

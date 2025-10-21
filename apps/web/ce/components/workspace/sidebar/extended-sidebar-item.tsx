@@ -5,7 +5,7 @@ import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-d
 import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Pin, PinOff } from "lucide-react";
 // plane imports
 import type { IWorkspaceSidebarNavigationItem } from "@plane/constants";
@@ -26,6 +26,7 @@ import { UpgradeBadge } from "../upgrade-badge";
 import { getSidebarNavigationItemIcon } from "./helper";
 
 type TExtendedSidebarItemProps = {
+  workspaceSlug: string;
   item: IWorkspaceSidebarNavigationItem;
   handleOnNavigationItemDrop?: (
     sourceId: string | undefined,
@@ -38,7 +39,14 @@ type TExtendedSidebarItemProps = {
 };
 
 export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((props) => {
-  const { item, handleOnNavigationItemDrop, disableDrag = false, disableDrop = false, isLastChild } = props;
+  const {
+    workspaceSlug,
+    item,
+    handleOnNavigationItemDrop,
+    disableDrag = false,
+    disableDrop = false,
+    isLastChild,
+  } = props;
   const { t } = useTranslation();
   // states
   const [isDragging, setIsDragging] = useState(false);
@@ -49,7 +57,6 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
 
   // nextjs hooks
   const pathname = usePathname();
-  const { workspaceSlug } = useParams();
   // store hooks
   const { getNavigationPreferences, updateSidebarPreference } = useWorkspace();
   const { toggleExtendedSidebar } = useAppTheme();
@@ -57,19 +64,17 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
   const { allowPermissions } = useUserPermissions();
 
   // derived values
-  const sidebarPreference = getNavigationPreferences(workspaceSlug.toString());
+  const sidebarPreference = getNavigationPreferences(workspaceSlug);
   const isPinned = sidebarPreference?.[item.key]?.is_pinned;
 
   const handleLinkClick = () => toggleExtendedSidebar(true);
 
-  if (!allowPermissions(item.access as any, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString())) {
+  if (!allowPermissions(item.access as any, EUserPermissionsLevel.WORKSPACE, workspaceSlug)) {
     return null;
   }
 
   const itemHref =
-    item.key === "your_work"
-      ? `/${workspaceSlug.toString()}${item.href}${data?.id}`
-      : `/${workspaceSlug.toString()}${item.href}`;
+    item.key === "your_work" ? `/${workspaceSlug}${item.href}${data?.id}` : `/${workspaceSlug}${item.href}`;
   const isActive = itemHref === pathname;
 
   const pinNavigationItem = (workspaceSlug: string, key: string) => {
@@ -202,14 +207,14 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
               <Tooltip tooltipContent="Unpin">
                 <PinOff
                   className="size-3.5 flex-shrink-0 hover:text-custom-text-300 outline-none text-custom-text-400"
-                  onClick={() => unPinNavigationItem(workspaceSlug.toString(), item.key)}
+                  onClick={() => unPinNavigationItem(workspaceSlug, item.key)}
                 />
               </Tooltip>
             ) : (
               <Tooltip tooltipContent="Pin">
                 <Pin
                   className="size-3.5 flex-shrink-0 hover:text-custom-text-300 outline-none text-custom-text-400"
-                  onClick={() => pinNavigationItem(workspaceSlug.toString(), item.key)}
+                  onClick={() => pinNavigationItem(workspaceSlug, item.key)}
                 />
               </Tooltip>
             )}

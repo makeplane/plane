@@ -1,7 +1,6 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { EProjectFeatureKey } from "@plane/constants";
 import { Breadcrumbs, Header } from "@plane/ui";
@@ -14,30 +13,34 @@ import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
-export const ProjectIssueDetailsHeader = observer(() => {
+type ProjectIssueDetailsHeaderProps = {
+  workspaceSlug: string;
+  workItem: string;
+};
+
+export const ProjectIssueDetailsHeader = observer(({ workspaceSlug, workItem }: ProjectIssueDetailsHeaderProps) => {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, workItem } = useParams();
   // store hooks
   const { getProjectById, loader } = useProject();
   const {
     issue: { getIssueById, getIssueIdByIdentifier },
   } = useIssueDetail();
   // derived values
-  const issueId = getIssueIdByIdentifier(workItem?.toString());
-  const issueDetails = issueId ? getIssueById(issueId.toString()) : undefined;
+  const issueId = getIssueIdByIdentifier(workItem);
+  const issueDetails = issueId ? getIssueById(issueId) : undefined;
   const projectId = issueDetails ? issueDetails?.project_id : undefined;
-  const projectDetails = projectId ? getProjectById(projectId?.toString()) : undefined;
+  const projectDetails = projectId ? getProjectById(projectId) : undefined;
 
-  if (!workspaceSlug || !projectId || !issueId) return null;
+  if (!projectId || !issueId) return null;
 
   return (
     <Header>
       <Header.LeftItem>
         <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
           <CommonProjectBreadcrumbs
-            workspaceSlug={workspaceSlug?.toString()}
-            projectId={projectId?.toString()}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
             featureKey={EProjectFeatureKey.WORK_ITEMS}
           />
           <Breadcrumbs.Item

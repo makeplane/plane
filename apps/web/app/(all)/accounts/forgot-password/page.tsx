@@ -1,5 +1,9 @@
 "use client";
 
+import type { Route } from "./+types/page";
+
+export const meta: Route.MetaFunction = () => [{ title: "Forgot Password - Plane" }];
+
 import { observer } from "mobx-react";
 // components
 import { ForgotPasswordForm } from "@/components/account/auth-forms/forgot-password";

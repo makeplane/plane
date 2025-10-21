@@ -4,9 +4,9 @@ import Image from "next/image";
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
 // images
-import ProjectNotAuthorizedImg from "@/public/auth/project-not-authorized.svg";
-import Unauthorized from "@/public/auth/unauthorized.svg";
-import WorkspaceNotAuthorizedImg from "@/public/auth/workspace-not-authorized.svg";
+import ProjectNotAuthorizedImg from "@/app/assets/auth/project-not-authorized.svg";
+import Unauthorized from "@/app/assets/auth/unauthorized.svg";
+import WorkspaceNotAuthorizedImg from "@/app/assets/auth/workspace-not-authorized.svg";
 
 type Props = {
   actionButton?: React.ReactNode;

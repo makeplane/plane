@@ -12,7 +12,12 @@ import { ViewOrderByDropdown } from "@/components/views/filters/order-by";
 import { useMember } from "@/hooks/store/use-member";
 import { useProjectView } from "@/hooks/store/use-project-view";
 
-export const ViewMobileHeader = observer(() => {
+type Props = {
+  workspaceSlug: string;
+  projectId: string;
+};
+
+export const ViewMobileHeader = observer(({ workspaceSlug, projectId }: Props) => {
   // store hooks
   const { filters, updateFilters } = useProjectView();
   const {

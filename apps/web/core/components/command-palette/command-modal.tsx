@@ -51,10 +51,12 @@ import { WorkspaceService } from "@/plane-web/services";
 
 const workspaceService = new WorkspaceService();
 
-export const CommandModal: React.FC = observer(() => {
+type Props = { workspaceSlug?: string; projectId?: string };
+export const CommandModal: React.FC<Props> = observer(({ workspaceSlug: wsProp, projectId: projectIdProp }) => {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId: routerProjectId, workItem } = useParams();
+  const { workItem, projectId: routerProjectId } = useParams();
+  const workspaceSlug = wsProp ?? undefined;
   // states
   const [placeholder, setPlaceholder] = useState("Type a command or search...");
   const [resultsCount, setResultsCount] = useState(0);
@@ -81,17 +83,17 @@ export const CommandModal: React.FC = observer(() => {
   const projectIdentifier = workItem?.toString().split("-")[0];
   const sequence_id = workItem?.toString().split("-")[1];
   // fetch work item details using identifier
+  const canFetchIssue = Boolean(workspaceSlug && projectIdentifier && sequence_id && workItem);
   const { data: workItemDetailsSWR } = useSWR(
-    workspaceSlug && workItem ? `ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}` : null,
-    workspaceSlug && workItem
-      ? () => fetchIssueWithIdentifier(workspaceSlug.toString(), projectIdentifier, sequence_id)
-      : null
+    canFetchIssue ? `ISSUE_DETAIL_${workspaceSlug!}_${projectIdentifier!}_${sequence_id!}` : null,
+    canFetchIssue ? () => fetchIssueWithIdentifier(workspaceSlug!, projectIdentifier!, sequence_id!) : null
   );
 
   // derived values
   const issueDetails = workItemDetailsSWR ? getIssueById(workItemDetailsSWR?.id) : null;
   const issueId = issueDetails?.id;
-  const projectId = issueDetails?.project_id ?? routerProjectId;
+  const projectId: string | undefined =
+    (issueDetails?.project_id?.toString?.() as string | undefined) ?? projectIdProp ?? routerProjectId?.toString();
   const page = pages[pages.length - 1];
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const { baseTabIndex } = getTabIndex(undefined, isMobile);
@@ -133,7 +135,7 @@ export const CommandModal: React.FC = observer(() => {
       if (debouncedSearchTerm) {
         setIsSearching(true);
         workspaceService
-          .searchWorkspace(workspaceSlug.toString(), {
+          .searchWorkspace(workspaceSlug, {
             ...(projectId ? { project_id: projectId.toString() } : {}),
             search: debouncedSearchTerm,
             workspace_search: !projectId ? true : isWorkspaceLevel,
@@ -433,7 +435,10 @@ export const CommandModal: React.FC = observer(() => {
 
                       {/* workspace settings actions */}
                       {page === "settings" && workspaceSlug && (
-                        <CommandPaletteWorkspaceSettingsActions closePalette={closePalette} />
+                        <CommandPaletteWorkspaceSettingsActions
+                          closePalette={closePalette}
+                          workspaceSlug={workspaceSlug?.toString() ?? ""}
+                        />
                       )}
 
                       {/* issue details page actions */}

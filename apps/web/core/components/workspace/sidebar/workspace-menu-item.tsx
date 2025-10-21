@@ -42,7 +42,9 @@ export const SidebarWorkspaceMenuItem: FC<SidebarWorkspaceMenuItemProps> = obser
     }
   };
 
-  if (!allowPermissions(item.access as any, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString())) {
+  const ws = workspaceSlug?.toString();
+  if (!ws) return null;
+  if (!allowPermissions(item.access as any, EUserPermissionsLevel.WORKSPACE, ws)) {
     return null;
   }
 

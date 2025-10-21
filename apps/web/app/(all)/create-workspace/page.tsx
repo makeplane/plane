@@ -1,5 +1,9 @@
 "use client";
 
+import type { Route } from "./+types/page";
+
+export const meta: Route.MetaFunction = () => [{ title: "Create Workspace" }];
+
 import { useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
@@ -19,7 +23,7 @@ import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // plane web helpers
 import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
 // images
-import WorkspaceCreationDisabled from "@/public/workspace/workspace-creation-disabled.png";
+import WorkspaceCreationDisabled from "@/app/assets/workspace/workspace-creation-disabled.png";
 
 const CreateWorkspacePage = observer(() => {
   const { t } = useTranslation();
