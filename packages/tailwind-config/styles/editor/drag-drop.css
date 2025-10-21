@@ -35,7 +35,10 @@
 }
 /* end ai handle */
 
-.ProseMirror:not(.dragging) .ProseMirror-selectednode:not(.node-imageComponent):not(.node-image):not(.table-wrapper) {
+.ProseMirror:not(.dragging)
+  .ProseMirror-selectednode:not(.node-imageComponent):not(.node-image):not(
+    .table-wrapper
+  ) {
   position: relative;
   cursor: grab;
   outline: none !important;
@@ -102,8 +105,8 @@ ol > li:nth-child(n + 100).ProseMirror-selectednode:not(.dragging)::after {
   margin-left: -35px;
 }
 
-.ProseMirror node-image,
-.ProseMirror node-imageComponent {
+.ProseMirror .node-image,
+.ProseMirror .node-imageComponent {
   transition: filter 0.1s ease-in-out;
   cursor: pointer;
 
