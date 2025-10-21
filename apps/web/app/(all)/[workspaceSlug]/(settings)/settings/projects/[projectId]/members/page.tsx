@@ -1,7 +1,6 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -19,17 +18,20 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { ProjectTeamspaceList } from "@/plane-web/components/projects/teamspaces/teamspace-list";
 import { getProjectSettingsPageLabelI18nKey } from "@/plane-web/helpers/project-settings";
 
-const MembersSettingsPage = observer(() => {
-  // router
-  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId } = useParams();
+type MembersSettingsPageProps = {
+  params: {
+    workspaceSlug: string;
+    projectId: string;
+  };
+};
+
+function MembersSettingsPage({ params }: MembersSettingsPageProps) {
+  const { workspaceSlug, projectId } = params;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
   const { currentProjectDetails } = useProject();
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
-  // derived values
-  const projectId = routerProjectId?.toString();
-  const workspaceSlug = routerWorkspaceSlug?.toString();
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Members` : undefined;
   const isProjectMemberOrAdmin = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -51,6 +53,6 @@ const MembersSettingsPage = observer(() => {
       <ProjectMemberList projectId={projectId} workspaceSlug={workspaceSlug} />
     </SettingsContentWrapper>
   );
-});
+}
 
-export default MembersSettingsPage;
+export default observer(MembersSettingsPage);

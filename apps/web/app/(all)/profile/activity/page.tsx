@@ -16,7 +16,7 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 const PER_PAGE = 100;
 
-const ProfileActivityPage = observer(() => {
+function ProfileActivityPage() {
   // states
   const [pageCount, setPageCount] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -76,6 +76,6 @@ const ProfileActivityPage = observer(() => {
       </ProfileSettingContentWrapper>
     </>
   );
-});
+}
 
-export default ProfileActivityPage;
+export default observer(ProfileActivityPage);

@@ -1,7 +1,7 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import useSWR from "swr";
 // components
 import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -22,14 +22,16 @@ import { ProfileNavbar } from "./navbar";
 
 const userService = new UserService();
 
-type Props = {
+type UseProfileLayoutProps = {
   children: React.ReactNode;
+  params: {
+    workspaceSlug: string;
+    userId: string;
+  };
 };
 
-const UseProfileLayout: React.FC<Props> = observer((props) => {
-  const { children } = props;
-  // router
-  const { workspaceSlug, userId } = useParams();
+function UseProfileLayout({ children, params }: UseProfileLayoutProps) {
+  const { workspaceSlug, userId } = params;
   const pathname = usePathname();
   // store hooks
   const { allowPermissions } = useUserPermissions();
@@ -43,11 +45,8 @@ const UseProfileLayout: React.FC<Props> = observer((props) => {
   const windowSize = useSize();
   const isSmallerScreen = windowSize[0] >= 768;
 
-  const { data: userProjectsData } = useSWR(
-    workspaceSlug && userId ? USER_PROFILE_PROJECT_SEGREGATION(workspaceSlug.toString(), userId.toString()) : null,
-    workspaceSlug && userId
-      ? () => userService.getUserProfileProjectsSegregation(workspaceSlug.toString(), userId.toString())
-      : null
+  const { data: userProjectsData } = useSWR(USER_PROFILE_PROJECT_SEGREGATION(workspaceSlug, userId), () =>
+    userService.getUserProfileProjectsSegregation(workspaceSlug, userId)
   );
   // derived values
   const isAuthorizedPath =
@@ -93,6 +92,6 @@ const UseProfileLayout: React.FC<Props> = observer((props) => {
       </div>
     </>
   );
-});
+}
 
-export default UseProfileLayout;
+export default observer(UseProfileLayout);

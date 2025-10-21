@@ -22,7 +22,7 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 const apiTokenService = new APITokenService();
 
-const ApiTokensPage = observer(() => {
+function ApiTokensPage() {
   // states
   const [isCreateTokenModalOpen, setIsCreateTokenModalOpen] = useState(false);
   // router
@@ -107,6 +107,6 @@ const ApiTokensPage = observer(() => {
       </section>
     </div>
   );
-});
+}
 
-export default ApiTokensPage;
+export default observer(ApiTokensPage);

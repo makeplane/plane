@@ -2,7 +2,6 @@
 
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane imports
@@ -24,10 +23,17 @@ import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
 import emptyIssueDark from "@/public/empty-state/search/issues-dark.webp";
 import emptyIssueLight from "@/public/empty-state/search/issues-light.webp";
 
-const IssueDetailsPage = observer(() => {
+type IssueDetailsPageProps = {
+  params: {
+    workspaceSlug: string;
+    workItem: string;
+  };
+};
+
+function IssueDetailsPage({ params }: IssueDetailsPageProps) {
+  const { workspaceSlug, workItem } = params;
   // router
   const router = useAppRouter();
-  const { workspaceSlug, workItem } = useParams();
   // hooks
   const { resolvedTheme } = useTheme();
   // store hooks
@@ -39,27 +45,23 @@ const IssueDetailsPage = observer(() => {
   const { getProjectById } = useProject();
   const { toggleIssueDetailSidebar, issueDetailSidebarCollapsed } = useAppTheme();
 
-  const projectIdentifier = workItem?.toString().split("-")[0];
-  const sequence_id = workItem?.toString().split("-")[1];
+  const [projectIdentifier, sequence_id] = workItem.split("-");
 
   // fetching issue details
-  const { data, isLoading, error } = useSWR(
-    workspaceSlug && workItem ? `ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}` : null,
-    workspaceSlug && workItem
-      ? () => fetchIssueWithIdentifier(workspaceSlug.toString(), projectIdentifier, sequence_id)
-      : null
+  const { data, isLoading, error } = useSWR(`ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}`, () =>
+    fetchIssueWithIdentifier(workspaceSlug, projectIdentifier, sequence_id)
   );
   const issueId = data?.id;
   const projectId = data?.project_id;
   // derived values
-  const issue = getIssueById(issueId?.toString() || "") || undefined;
+  const issue = getIssueById(issueId || "") || undefined;
   const project = (issue?.project_id && getProjectById(issue?.project_id)) || undefined;
   const issueLoader = !issue || isLoading;
   const pageTitle = project && issue ? `${project?.identifier}-${issue?.sequence_id} ${issue?.name}` : undefined;
 
   useWorkItemProperties(
     projectId,
-    workspaceSlug.toString(),
+    workspaceSlug,
     issueId,
     issue?.is_epic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES
   );
@@ -113,14 +115,13 @@ const IssueDetailsPage = observer(() => {
           </div>
         </Loader>
       ) : (
-        workspaceSlug &&
         projectId &&
         issueId && (
-          <ProjectAuthWrapper workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()}>
+          <ProjectAuthWrapper workspaceSlug={workspaceSlug} projectId={projectId}>
             <IssueDetailRoot
-              workspaceSlug={workspaceSlug.toString()}
-              projectId={projectId.toString()}
-              issueId={issueId.toString()}
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              issueId={issueId}
               is_archived={!!issue?.archived_at}
             />
           </ProjectAuthWrapper>
@@ -128,6 +129,6 @@ const IssueDetailsPage = observer(() => {
       )}
     </>
   );
-});
+}
 
-export default IssueDetailsPage;
+export default observer(IssueDetailsPage);

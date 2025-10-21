@@ -1,6 +1,6 @@
 "use client";
 import { observer } from "mobx-react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -15,10 +15,17 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
-const ProjectInboxPage = observer(() => {
+type ProjectInboxPageProps = {
+  params: {
+    workspaceSlug: string;
+    projectId: string;
+  };
+};
+
+function ProjectInboxPage({ params }: ProjectInboxPageProps) {
+  const { workspaceSlug, projectId } = params;
   /// router
   const router = useAppRouter();
-  const { workspaceSlug, projectId } = useParams();
   const searchParams = useSearchParams();
   const navigationTab = searchParams.get("currentTab");
   const inboxIssueId = searchParams.get("inboxIssueId");
@@ -72,15 +79,15 @@ const ProjectInboxPage = observer(() => {
       <PageHead title={pageTitle} />
       <div className="w-full h-full overflow-hidden">
         <InboxIssueRoot
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={projectId.toString()}
-          inboxIssueId={inboxIssueId?.toString() || undefined}
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          inboxIssueId={inboxIssueId || undefined}
           inboxAccessible={currentProjectDetails?.inbox_view || false}
           navigationTab={currentNavigationTab}
         />
       </div>
     </div>
   );
-});
+}
 
-export default ProjectInboxPage;
+export default observer(ProjectInboxPage);

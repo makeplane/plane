@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 // components
 import { getProjectActivePath } from "@/components/settings/helper";
 import { SettingsMobileNav } from "@/components/settings/mobile";
@@ -12,16 +12,19 @@ import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
 
-type Props = {
+type ProjectSettingsLayoutProps = {
   children: ReactNode;
+  params: {
+    workspaceSlug: string;
+    projectId?: string;
+  };
 };
 
-const ProjectSettingsLayout = observer((props: Props) => {
-  const { children } = props;
+function ProjectSettingsLayout({ children, params }: ProjectSettingsLayoutProps) {
+  const { workspaceSlug, projectId } = params;
   // router
   const router = useAppRouter();
   const pathname = usePathname();
-  const { workspaceSlug, projectId } = useParams();
   const { joinedProjectIds } = useProject();
 
   useEffect(() => {
@@ -34,14 +37,22 @@ const ProjectSettingsLayout = observer((props: Props) => {
   return (
     <>
       <SettingsMobileNav hamburgerContent={ProjectSettingsSidebar} activePath={getProjectActivePath(pathname) || ""} />
-      <ProjectAuthWrapper workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()}>
+      {projectId ? (
+        <ProjectAuthWrapper workspaceSlug={workspaceSlug} projectId={projectId}>
+          <div className="relative flex h-full w-full">
+            <div className="hidden md:block">
+              <ProjectSettingsSidebar />
+            </div>
+            <div className="w-full h-full overflow-y-scroll md:pt-page-y">{children}</div>
+          </div>
+        </ProjectAuthWrapper>
+      ) : (
         <div className="relative flex h-full w-full">
-          <div className="hidden md:block">{projectId && <ProjectSettingsSidebar />}</div>
           <div className="w-full h-full overflow-y-scroll md:pt-page-y">{children}</div>
         </div>
-      </ProjectAuthWrapper>
+      )}
     </>
   );
-});
+}
 
-export default ProjectSettingsLayout;
+export default observer(ProjectSettingsLayout);

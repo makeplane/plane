@@ -1,7 +1,6 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
@@ -14,8 +13,15 @@ import { SettingsHeading } from "@/components/settings/heading";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 
-const StatesSettingsPage = observer(() => {
-  const { workspaceSlug, projectId } = useParams();
+type StatesSettingsPageProps = {
+  params: {
+    workspaceSlug: string;
+    projectId: string;
+  };
+};
+
+function StatesSettingsPage({ params }: StatesSettingsPageProps) {
+  const { workspaceSlug, projectId } = params;
   // store
   const { currentProjectDetails } = useProject();
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
@@ -42,12 +48,10 @@ const StatesSettingsPage = observer(() => {
           title={t("project_settings.states.heading")}
           description={t("project_settings.states.description")}
         />
-        {workspaceSlug && projectId && (
-          <ProjectStateRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
-        )}
+        <ProjectStateRoot workspaceSlug={workspaceSlug} projectId={projectId} />
       </div>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default StatesSettingsPage;
+export default observer(StatesSettingsPage);

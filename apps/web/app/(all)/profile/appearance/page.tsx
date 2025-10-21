@@ -20,7 +20,7 @@ import { ProfileSettingContentWrapper } from "@/components/profile/profile-setti
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 
-const ProfileAppearancePage = observer(() => {
+function ProfileAppearancePage() {
   const { t } = useTranslation();
   const { setTheme } = useTheme();
   // states
@@ -86,6 +86,6 @@ const ProfileAppearancePage = observer(() => {
       )}
     </>
   );
-});
+}
 
-export default ProfileAppearancePage;
+export default observer(ProfileAppearancePage);

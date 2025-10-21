@@ -1,4 +1,7 @@
 import { ProjectPageRoot } from "@/plane-web/components/projects/page";
 
-const ProjectsPage = () => <ProjectPageRoot />;
+function ProjectsPage() {
+  return <ProjectPageRoot />;
+}
+
 export default ProjectsPage;

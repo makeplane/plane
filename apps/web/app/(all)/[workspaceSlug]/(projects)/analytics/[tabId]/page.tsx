@@ -22,16 +22,14 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { getAnalyticsTabs } from "@/plane-web/components/analytics/tabs";
 
-type Props = {
+type AnalyticsPageProps = {
   params: {
     tabId: string;
     workspaceSlug: string;
   };
 };
 
-const AnalyticsPage = observer((props: Props) => {
-  // props
-  const { params } = props;
+function AnalyticsPage({ params }: AnalyticsPageProps) {
   const { tabId } = params;
 
   // hooks
@@ -118,6 +116,6 @@ const AnalyticsPage = observer((props: Props) => {
       )}
     </>
   );
-});
+}
 
-export default AnalyticsPage;
+export default observer(AnalyticsPage);

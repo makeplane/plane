@@ -2,7 +2,6 @@
 
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // types
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -21,10 +20,17 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
-const ProjectModulesPage = observer(() => {
+type ProjectModulesPageProps = {
+  params: {
+    workspaceSlug: string;
+    projectId: string;
+  };
+};
+
+function ProjectModulesPage({ params }: ProjectModulesPageProps) {
+  const { workspaceSlug, projectId } = params;
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId } = useParams();
   // plane hooks
   const { t } = useTranslation();
   // store
@@ -33,25 +39,23 @@ const ProjectModulesPage = observer(() => {
     useModuleFilter();
   const { allowPermissions } = useUserPermissions();
   // derived values
-  const project = projectId ? getProjectById(projectId.toString()) : undefined;
+  const project = getProjectById(projectId);
   const pageTitle = project?.name ? `${project?.name} - Modules` : undefined;
   const canPerformEmptyStateActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/disabled-feature/modules" });
 
   const handleRemoveFilter = useCallback(
     (key: keyof TModuleFilters, value: string | null) => {
-      if (!projectId) return;
       let newValues = currentProjectFilters?.[key] ?? [];
 
       if (!value) newValues = [];
       else newValues = newValues.filter((val) => val !== value);
 
-      updateFilters(projectId.toString(), { [key]: newValues });
+      updateFilters(projectId, { [key]: newValues });
     },
     [currentProjectFilters, projectId, updateFilters]
   );
 
-  if (!workspaceSlug || !projectId) return <></>;
 
   // No access to
   if (currentProjectDetails?.module_view === false)
@@ -80,11 +84,10 @@ const ProjectModulesPage = observer(() => {
           <ModuleAppliedFiltersList
             appliedFilters={currentProjectFilters ?? {}}
             isFavoriteFilterApplied={currentProjectDisplayFilters?.favorites ?? false}
-            handleClearAllFilters={() => clearAllFilters(`${projectId}`)}
+            handleClearAllFilters={() => clearAllFilters(projectId)}
             handleRemoveFilter={handleRemoveFilter}
             handleDisplayFiltersUpdate={(val) => {
-              if (!projectId) return;
-              updateDisplayFilters(projectId.toString(), val);
+              updateDisplayFilters(projectId, val);
             }}
             alwaysAllowEditing
           />
@@ -93,6 +96,6 @@ const ProjectModulesPage = observer(() => {
       </div>
     </>
   );
-});
+}
 
-export default ProjectModulesPage;
+export default observer(ProjectModulesPage);

@@ -2,7 +2,6 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -20,11 +19,15 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { CustomAutomationsRoot } from "@/plane-web/components/automations/root";
 
-const AutomationSettingsPage = observer(() => {
-  // router
-  const { workspaceSlug: workspaceSlugParam, projectId: projectIdParam } = useParams();
-  const workspaceSlug = workspaceSlugParam?.toString();
-  const projectId = projectIdParam?.toString();
+type AutomationSettingsPageProps = {
+  params: {
+    workspaceSlug: string;
+    projectId: string;
+  };
+};
+
+function AutomationSettingsPage({ params }: AutomationSettingsPageProps) {
+  const { workspaceSlug, projectId } = params;
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentProjectDetails: projectDetails, updateProject } = useProject();
@@ -37,7 +40,7 @@ const AutomationSettingsPage = observer(() => {
   const handleChange = async (formData: Partial<IProject>) => {
     if (!workspaceSlug || !projectId || !projectDetails) return;
 
-    await updateProject(workspaceSlug.toString(), projectId.toString(), formData).catch(() => {
+    await updateProject(workspaceSlug, projectId, formData).catch(() => {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
@@ -67,6 +70,6 @@ const AutomationSettingsPage = observer(() => {
       <CustomAutomationsRoot projectId={projectId} workspaceSlug={workspaceSlug} />
     </SettingsContentWrapper>
   );
-});
+}
 
-export default AutomationSettingsPage;
+export default observer(AutomationSettingsPage);

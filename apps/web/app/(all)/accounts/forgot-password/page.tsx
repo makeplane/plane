@@ -10,15 +10,17 @@ import { EAuthModes, EPageTypes } from "@/helpers/authentication.helper";
 import DefaultLayout from "@/layouts/default-layout";
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 
-const ForgotPasswordPage = observer(() => (
-  <DefaultLayout>
-    <AuthenticationWrapper pageType={EPageTypes.NON_AUTHENTICATED}>
-      <div className="relative z-10 flex flex-col items-center w-screen h-screen overflow-hidden overflow-y-auto pt-6 pb-10 px-8">
-        <AuthHeader type={EAuthModes.SIGN_IN} />
-        <ForgotPasswordForm />
-      </div>
-    </AuthenticationWrapper>
-  </DefaultLayout>
-));
+function ForgotPasswordPage() {
+  return (
+    <DefaultLayout>
+      <AuthenticationWrapper pageType={EPageTypes.NON_AUTHENTICATED}>
+        <div className="relative z-10 flex flex-col items-center w-screen h-screen overflow-hidden overflow-y-auto pt-6 pb-10 px-8">
+          <AuthHeader type={EAuthModes.SIGN_IN} />
+          <ForgotPasswordForm />
+        </div>
+      </AuthenticationWrapper>
+    </DefaultLayout>
+  );
+}
 
-export default ForgotPasswordPage;
+export default observer(ForgotPasswordPage);

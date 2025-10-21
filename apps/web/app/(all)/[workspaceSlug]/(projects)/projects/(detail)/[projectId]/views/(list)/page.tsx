@@ -2,7 +2,6 @@
 
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // components
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -23,10 +22,17 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
-const ProjectViewsPage = observer(() => {
+type ProjectViewsPageProps = {
+  params: {
+    workspaceSlug: string;
+    projectId: string;
+  };
+};
+
+function ProjectViewsPage({ params }: ProjectViewsPageProps) {
+  const { workspaceSlug, projectId } = params;
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId } = useParams();
   // plane hooks
   const { t } = useTranslation();
   // store
@@ -34,7 +40,7 @@ const ProjectViewsPage = observer(() => {
   const { filters, updateFilters, clearAllFilters } = useProjectView();
   const { allowPermissions } = useUserPermissions();
   // derived values
-  const project = projectId ? getProjectById(projectId.toString()) : undefined;
+  const project = getProjectById(projectId);
   const pageTitle = project?.name ? `${project?.name} - Views` : undefined;
   const canPerformEmptyStateActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/disabled-feature/views" });
@@ -57,8 +63,6 @@ const ProjectViewsPage = observer(() => {
   );
 
   const isFiltersApplied = calculateTotalFilters(filters?.filters ?? {}) !== 0;
-
-  if (!workspaceSlug || !projectId) return <></>;
 
   // No access to
   if (currentProjectDetails?.issue_views_view === false)
@@ -95,6 +99,6 @@ const ProjectViewsPage = observer(() => {
       <ProjectViewsList />
     </>
   );
-});
+}
 
-export default ProjectViewsPage;
+export default observer(ProjectViewsPage);

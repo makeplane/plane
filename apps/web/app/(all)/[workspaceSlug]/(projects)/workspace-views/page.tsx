@@ -14,7 +14,7 @@ import { GlobalViewsList } from "@/components/workspace/views/views-list";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 
-const WorkspaceViewsPage = observer(() => {
+function WorkspaceViewsPage() {
   const [query, setQuery] = useState("");
   // store
   const { currentWorkspace } = useWorkspace();
@@ -47,6 +47,6 @@ const WorkspaceViewsPage = observer(() => {
       </div>
     </>
   );
-});
+}
 
-export default WorkspaceViewsPage;
+export default observer(WorkspaceViewsPage);

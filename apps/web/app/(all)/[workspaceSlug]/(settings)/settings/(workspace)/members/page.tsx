@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { Search } from "lucide-react";
 // types
 import {
@@ -33,12 +32,17 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { BillingActionsButton } from "@/plane-web/components/workspace/billing/billing-actions-button";
 import { SendWorkspaceInvitationModal } from "@/plane-web/components/workspace/members/invite-modal";
 
-const WorkspaceMembersSettingsPage = observer(() => {
+type WorkspaceMembersSettingsPageProps = {
+  params: {
+    workspaceSlug: string;
+  };
+};
+
+function WorkspaceMembersSettingsPage({ params }: WorkspaceMembersSettingsPageProps) {
+  const { workspaceSlug } = params;
   // states
   const [inviteModal, setInviteModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  // router
-  const { workspaceSlug } = useParams();
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const {
@@ -55,9 +59,8 @@ const WorkspaceMembersSettingsPage = observer(() => {
   );
 
   const handleWorkspaceInvite = (data: IWorkspaceBulkInviteFormData) => {
-    if (!workspaceSlug) return;
 
-    return inviteMembersToWorkspace(workspaceSlug.toString(), data)
+    return inviteMembersToWorkspace(workspaceSlug, data)
       .then(() => {
         setInviteModal(false);
         captureSuccess({
@@ -162,6 +165,6 @@ const WorkspaceMembersSettingsPage = observer(() => {
       </section>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default WorkspaceMembersSettingsPage;
+export default observer(WorkspaceMembersSettingsPage);

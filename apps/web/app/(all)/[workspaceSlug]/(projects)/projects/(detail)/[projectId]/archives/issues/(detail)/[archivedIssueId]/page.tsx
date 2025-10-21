@@ -1,7 +1,6 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
 import { Loader } from "@plane/ui";
@@ -13,10 +12,16 @@ import { IssueDetailRoot } from "@/components/issues/issue-detail";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 
-const ArchivedIssueDetailsPage = observer(() => {
-  // router
-  const { workspaceSlug, projectId, archivedIssueId } = useParams();
-  // states
+type ArchivedIssueDetailsPageProps = {
+  params: {
+    workspaceSlug: string;
+    projectId: string;
+    archivedIssueId: string;
+  };
+};
+
+function ArchivedIssueDetailsPage({ params }: ArchivedIssueDetailsPageProps) {
+  const { workspaceSlug, projectId, archivedIssueId } = params;
   // hooks
   const {
     fetchIssue,
@@ -25,18 +30,13 @@ const ArchivedIssueDetailsPage = observer(() => {
 
   const { getProjectById } = useProject();
 
-  const { isLoading } = useSWR(
-    workspaceSlug && projectId && archivedIssueId
-      ? `ARCHIVED_ISSUE_DETAIL_${workspaceSlug}_${projectId}_${archivedIssueId}`
-      : null,
-    workspaceSlug && projectId && archivedIssueId
-      ? () => fetchIssue(workspaceSlug.toString(), projectId.toString(), archivedIssueId.toString())
-      : null
+  const { isLoading } = useSWR(`ARCHIVED_ISSUE_DETAIL_${workspaceSlug}_${projectId}_${archivedIssueId}`, () =>
+    fetchIssue(workspaceSlug, projectId, archivedIssueId)
   );
 
   // derived values
-  const issue = archivedIssueId ? getIssueById(archivedIssueId.toString()) : undefined;
-  const project = issue ? getProjectById(issue?.project_id ?? "") : undefined;
+  const issue = getIssueById(archivedIssueId);
+  const project = issue ? getProjectById(issue.project_id ?? "") : undefined;
   const pageTitle = project && issue ? `${project?.identifier}-${issue?.sequence_id} ${issue?.name}` : undefined;
 
   if (!issue) return <></>;
@@ -64,19 +64,17 @@ const ArchivedIssueDetailsPage = observer(() => {
       ) : (
         <div className="flex h-full overflow-hidden">
           <div className="h-full w-full space-y-3 divide-y-2 divide-custom-border-200 overflow-y-auto">
-            {workspaceSlug && projectId && archivedIssueId && (
-              <IssueDetailRoot
-                workspaceSlug={workspaceSlug.toString()}
-                projectId={projectId.toString()}
-                issueId={archivedIssueId.toString()}
-                is_archived
-              />
-            )}
+            <IssueDetailRoot
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              issueId={archivedIssueId}
+              is_archived
+            />
           </div>
         </div>
       )}
     </>
   );
-});
+}
 
-export default ArchivedIssueDetailsPage;
+export default observer(ArchivedIssueDetailsPage);

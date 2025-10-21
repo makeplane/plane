@@ -1,7 +1,7 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -20,31 +20,43 @@ import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
 import { EPageStoreType } from "@/plane-web/hooks/store";
 
-const ProjectPagesPage = observer(() => {
+type ProjectPagesPageProps = {
+  params: {
+    workspaceSlug: string;
+    projectId: string;
+  };
+};
+
+function getPageType(type: string | null): TPageNavigationTabs {
+  switch (type) {
+    case "private":
+      return "private";
+    case "archived":
+      return "archived";
+    default:
+      return "public";
+  }
+};
+
+function ProjectPagesPage({ params }: ProjectPagesPageProps) {
+  const { workspaceSlug, projectId } = params;
   // router
   const router = useAppRouter();
   const searchParams = useSearchParams();
   const type = searchParams.get("type");
-  const { workspaceSlug, projectId } = useParams();
   // plane hooks
   const { t } = useTranslation();
   // store hooks
   const { getProjectById, currentProjectDetails } = useProject();
   const { allowPermissions } = useUserPermissions();
   // derived values
-  const project = projectId ? getProjectById(projectId.toString()) : undefined;
+  const project = getProjectById(projectId);
   const pageTitle = project?.name ? `${project?.name} - Pages` : undefined;
+  const pageType = getPageType(type);
   const canPerformEmptyStateActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/disabled-feature/pages" });
 
-  const currentPageType = (): TPageNavigationTabs => {
-    const pageType = type?.toString();
-    if (pageType === "private") return "private";
-    if (pageType === "archived") return "archived";
-    return "public";
-  };
 
-  if (!workspaceSlug || !projectId) return <></>;
 
   // No access to cycle
   if (currentProjectDetails?.page_view === false)
@@ -68,15 +80,15 @@ const ProjectPagesPage = observer(() => {
     <>
       <PageHead title={pageTitle} />
       <PagesListView
-        pageType={currentPageType()}
-        projectId={projectId.toString()}
+        pageType={pageType}
+        projectId={projectId}
         storeType={EPageStoreType.PROJECT}
-        workspaceSlug={workspaceSlug.toString()}
+        workspaceSlug={workspaceSlug}
       >
-        <PagesListRoot pageType={currentPageType()} storeType={EPageStoreType.PROJECT} />
+        <PagesListRoot pageType={pageType} storeType={EPageStoreType.PROJECT} />
       </PagesListView>
     </>
   );
-});
+}
 
-export default ProjectPagesPage;
+export default observer(ProjectPagesPage);

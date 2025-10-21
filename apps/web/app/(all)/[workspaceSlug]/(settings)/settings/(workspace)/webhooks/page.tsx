@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, WORKSPACE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
@@ -22,11 +21,16 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
-const WebhooksListPage = observer(() => {
+type WebhooksListPageProps = {
+  params: {
+    workspaceSlug: string;
+  };
+};
+
+function WebhooksListPage({ params }: WebhooksListPageProps) {
+  const { workspaceSlug } = params;
   // states
   const [showCreateWebhookModal, setShowCreateWebhookModal] = useState(false);
-  // router
-  const { workspaceSlug } = useParams();
   // plane hooks
   const { t } = useTranslation();
   // mobx store
@@ -38,8 +42,8 @@ const WebhooksListPage = observer(() => {
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/workspace-settings/webhooks" });
 
   useSWR(
-    workspaceSlug && canPerformWorkspaceAdminActions ? `WEBHOOKS_LIST_${workspaceSlug}` : null,
-    workspaceSlug && canPerformWorkspaceAdminActions ? () => fetchWebhooks(workspaceSlug.toString()) : null
+    canPerformWorkspaceAdminActions ? `WEBHOOKS_LIST_${workspaceSlug}` : null,
+    canPerformWorkspaceAdminActions ? () => fetchWebhooks(workspaceSlug) : null
   );
 
   const pageTitle = currentWorkspace?.name
@@ -112,6 +116,6 @@ const WebhooksListPage = observer(() => {
       </div>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default WebhooksListPage;
+export default observer(WebhooksListPage);

@@ -2,7 +2,6 @@
 
 import { observer } from "mobx-react";
 import Head from "next/head";
-import { useParams } from "next/navigation";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // components
@@ -11,19 +10,22 @@ import { ProjectLayoutRoot } from "@/components/issues/issue-layouts/roots/proje
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 
-const ProjectIssuesPage = observer(() => {
-  const { projectId } = useParams();
+type ProjectIssuesPageProps = {
+  params: {
+    workspaceSlug: string;
+    projectId: string;
+  };
+};
+
+function ProjectIssuesPage({ params }: ProjectIssuesPageProps) {
+  const { projectId } = params;
   // i18n
   const { t } = useTranslation();
   // store
   const { getProjectById } = useProject();
 
-  if (!projectId) {
-    return <></>;
-  }
-
   // derived values
-  const project = getProjectById(projectId.toString());
+  const project = getProjectById(projectId);
   const pageTitle = project?.name ? `${project?.name} - ${t("issue.label", { count: 2 })}` : undefined; // Count is for pluralization
 
   return (
@@ -39,6 +41,6 @@ const ProjectIssuesPage = observer(() => {
       </div>
     </>
   );
-});
+}
 
-export default ProjectIssuesPage;
+export default observer(ProjectIssuesPage);

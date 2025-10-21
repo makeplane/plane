@@ -1,6 +1,6 @@
 "use client";
 
-import type { FC, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // constants
@@ -15,11 +15,11 @@ import { useUserPermissions } from "@/hooks/store/user";
 // local components
 import { WorkspaceSettingsSidebar } from "./sidebar";
 
-export interface IWorkspaceSettingLayout {
+type WorkspaceSettingLayoutProps = {
   children: ReactNode;
-}
+};
 
-const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => {
+function WorkspaceSettingLayout(props: WorkspaceSettingLayoutProps) {
   const { children } = props;
   // store hooks
   const { workspaceUserInfo, getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
@@ -27,10 +27,10 @@ const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => 
   const pathname = usePathname();
   // derived values
   const { workspaceSlug, accessKey } = pathnameToAccessKey(pathname);
-  const userWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug.toString());
+  const userWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
 
   let isAuthorized: boolean | string = false;
-  if (pathname && workspaceSlug && userWorkspaceRole) {
+  if (pathname && userWorkspaceRole) {
     isAuthorized = WORKSPACE_SETTINGS_ACCESS[accessKey]?.includes(userWorkspaceRole as EUserWorkspaceRoles);
   }
 
@@ -52,6 +52,6 @@ const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => 
       </div>
     </>
   );
-});
+}
 
-export default WorkspaceSettingLayout;
+export default observer(WorkspaceSettingLayout);

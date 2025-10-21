@@ -10,11 +10,11 @@ import { SettingsMobileNav } from "@/components/settings/mobile";
 // local imports
 import { ProfileSidebar } from "./sidebar";
 
-type Props = {
+type ProfileSettingsLayoutProps = {
   children: ReactNode;
 };
 
-const ProfileSettingsLayout = observer((props: Props) => {
+function ProfileSettingsLayout(props: ProfileSettingsLayoutProps) {
   const { children } = props;
   // router
   const pathname = usePathname();
@@ -32,6 +32,6 @@ const ProfileSettingsLayout = observer((props: Props) => {
       </div>
     </>
   );
-});
+}
 
-export default ProfileSettingsLayout;
+export default observer(ProfileSettingsLayout);

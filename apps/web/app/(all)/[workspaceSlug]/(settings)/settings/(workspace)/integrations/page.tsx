@@ -1,6 +1,5 @@
 "use client";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -20,9 +19,8 @@ import { IntegrationService } from "@/services/integrations";
 
 const integrationService = new IntegrationService();
 
-const WorkspaceIntegrationsPage = observer(() => {
-  // router
-  const { workspaceSlug } = useParams();
+
+function WorkspaceIntegrationsPage() {
   // store hooks
   const { currentWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
@@ -30,8 +28,8 @@ const WorkspaceIntegrationsPage = observer(() => {
   // derived values
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Integrations` : undefined;
-  const { data: appIntegrations } = useSWR(workspaceSlug && isAdmin ? APP_INTEGRATIONS : null, () =>
-    workspaceSlug && isAdmin ? integrationService.getAppIntegrationsList() : null
+  const { data: appIntegrations } = useSWR(isAdmin ? APP_INTEGRATIONS : null, () =>
+    isAdmin ? integrationService.getAppIntegrationsList() : null
   );
 
   if (!isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
@@ -53,6 +51,6 @@ const WorkspaceIntegrationsPage = observer(() => {
       </section>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default WorkspaceIntegrationsPage;
+export default observer(WorkspaceIntegrationsPage);

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 // ui
 import { LogoSpinner } from "@/components/common/logo-spinner";
 // services
@@ -10,9 +10,14 @@ import { AppInstallationService } from "@/services/app_installation.service";
 // services
 const appInstallationService = new AppInstallationService();
 
-export default function AppPostInstallation() {
-  // params
-  const { provider } = useParams();
+type AppPostInstallationProps = {
+  params: {
+    provider: string;
+  };
+};
+
+export default function AppPostInstallation({ params }: AppPostInstallationProps) {
+  const { provider } = params;
   // query params
   const searchParams = useSearchParams();
   const installation_id = searchParams.get("installation_id");

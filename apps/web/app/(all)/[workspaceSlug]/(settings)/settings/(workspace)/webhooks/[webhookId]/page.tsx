@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel, WORKSPACE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -19,11 +18,17 @@ import { useWebhook } from "@/hooks/store/use-webhook";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 
-const WebhookDetailsPage = observer(() => {
+type WebhookDetailsPageProps = {
+  params: {
+    workspaceSlug: string;
+    webhookId: string;
+  };
+};
+
+function WebhookDetailsPage({ params }: WebhookDetailsPageProps) {
+  const { workspaceSlug, webhookId } = params;
   // states
   const [deleteWebhookModal, setDeleteWebhookModal] = useState(false);
-  // router
-  const { workspaceSlug, webhookId } = useParams();
   // mobx store
   const { currentWebhook, fetchWebhookById, updateWebhook } = useWebhook();
   const { currentWorkspace } = useWorkspace();
@@ -39,10 +44,8 @@ const WebhookDetailsPage = observer(() => {
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Webhook` : undefined;
 
   useSWR(
-    workspaceSlug && webhookId && isAdmin ? `WEBHOOK_DETAILS_${workspaceSlug}_${webhookId}` : null,
-    workspaceSlug && webhookId && isAdmin
-      ? () => fetchWebhookById(workspaceSlug.toString(), webhookId.toString())
-      : null
+    isAdmin ? `WEBHOOK_DETAILS_${workspaceSlug}_${webhookId}` : null,
+    isAdmin ? () => fetchWebhookById(workspaceSlug, webhookId) : null
   );
 
   const handleUpdateWebhook = async (formData: IWebhook) => {
@@ -56,7 +59,7 @@ const WebhookDetailsPage = observer(() => {
       issue: formData?.issue,
       issue_comment: formData?.issue_comment,
     };
-    await updateWebhook(workspaceSlug.toString(), formData.id, payload)
+    await updateWebhook(workspaceSlug, formData.id, payload)
       .then(() => {
         captureSuccess({
           eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_updated,
@@ -115,6 +118,6 @@ const WebhookDetailsPage = observer(() => {
       </div>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default WebhookDetailsPage;
+export default observer(WebhookDetailsPage);

@@ -1,7 +1,6 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // components
@@ -10,8 +9,14 @@ import { NotificationsRoot } from "@/components/workspace-notifications";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 
-const WorkspaceDashboardPage = observer(() => {
-  const { workspaceSlug } = useParams();
+type WorkspaceDashboardPageProps = {
+  params: {
+    workspaceSlug: string;
+  };
+};
+
+function WorkspaceDashboardPage({ params }: WorkspaceDashboardPageProps) {
+  const { workspaceSlug } = params;
   // plane hooks
   const { t } = useTranslation();
   // hooks
@@ -24,9 +29,9 @@ const WorkspaceDashboardPage = observer(() => {
   return (
     <>
       <PageHead title={pageTitle} />
-      <NotificationsRoot workspaceSlug={workspaceSlug?.toString()} />
+      <NotificationsRoot workspaceSlug={workspaceSlug} />
     </>
   );
-});
+}
 
-export default WorkspaceDashboardPage;
+export default observer(WorkspaceDashboardPage);

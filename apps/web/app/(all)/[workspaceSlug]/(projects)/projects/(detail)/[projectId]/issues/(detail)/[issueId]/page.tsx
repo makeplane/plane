@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
@@ -19,17 +18,22 @@ import { IssueService } from "@/services/issue/issue.service";
 
 const issueService = new IssueService();
 
-const IssueDetailsPage = observer(() => {
+type IssueDetailsPageProps = {
+  params: {
+    workspaceSlug: string;
+    projectId: string;
+    issueId: string;
+  };
+};
+
+function IssueDetailsPage({ params }: IssueDetailsPageProps) {
+  const { workspaceSlug, projectId, issueId } = params;
   const router = useAppRouter();
   const { t } = useTranslation();
-  const { workspaceSlug, projectId, issueId } = useParams();
   const { resolvedTheme } = useTheme();
 
-  const { data, isLoading, error } = useSWR(
-    workspaceSlug && projectId && issueId ? `ISSUE_DETAIL_META_${workspaceSlug}_${projectId}_${issueId}` : null,
-    workspaceSlug && projectId && issueId
-      ? () => issueService.getIssueMetaFromURL(workspaceSlug.toString(), projectId.toString(), issueId.toString())
-      : null
+  const { data, isLoading, error } = useSWR(`ISSUE_DETAIL_META_${workspaceSlug}_${projectId}_${issueId}`, () =>
+    issueService.getIssueMetaFromURL(workspaceSlug, projectId, issueId)
   );
 
   useEffect(() => {
@@ -59,6 +63,6 @@ const IssueDetailsPage = observer(() => {
       )}
     </div>
   );
-});
+}
 
-export default IssueDetailsPage;
+export default observer(IssueDetailsPage);

@@ -1,19 +1,19 @@
 "use client";
 
-import { useParams } from "next/navigation";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { WorkspaceDraftIssuesRoot } from "@/components/issues/workspace-draft";
 
-const WorkspaceDraftPage = () => {
-  // router
-  const { workspaceSlug: routeWorkspaceSlug } = useParams();
+type WorkspaceDraftPageProps = {
+  params: {
+    workspaceSlug: string;
+  };
+};
+
+function WorkspaceDraftPage({ params }: WorkspaceDraftPageProps) {
+  const { workspaceSlug } = params;
   const pageTitle = "Workspace Draft";
 
-  // derived values
-  const workspaceSlug = (routeWorkspaceSlug as string) || undefined;
-
-  if (!workspaceSlug) return null;
   return (
     <>
       <PageHead title={pageTitle} />
@@ -22,6 +22,6 @@ const WorkspaceDraftPage = () => {
       </div>
     </>
   );
-};
+}
 
 export default WorkspaceDraftPage;

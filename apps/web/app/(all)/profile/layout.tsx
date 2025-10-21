@@ -8,11 +8,11 @@ import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // layout
 import { ProfileLayoutSidebar } from "./sidebar";
 
-type Props = {
+type ProfileSettingsLayoutProps = {
   children: ReactNode;
 };
 
-export default function ProfileSettingsLayout(props: Props) {
+export default function ProfileSettingsLayout(props: ProfileSettingsLayoutProps) {
   const { children } = props;
 
   return (

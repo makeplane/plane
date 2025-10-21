@@ -21,7 +21,7 @@ import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.hel
 // images
 import WorkspaceCreationDisabled from "@/public/workspace/workspace-creation-disabled.png";
 
-const CreateWorkspacePage = observer(() => {
+function CreateWorkspacePage() {
   const { t } = useTranslation();
   // router
   const router = useAppRouter();
@@ -103,6 +103,6 @@ const CreateWorkspacePage = observer(() => {
       </div>
     </AuthenticationWrapper>
   );
-});
+}
 
-export default CreateWorkspacePage;
+export default observer(CreateWorkspacePage);
