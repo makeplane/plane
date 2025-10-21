@@ -252,7 +252,7 @@
 }
 
 /* keep a static padding of 96px for wide layouts for container width <912px */
-@container page-toolbar-container (max-width: 912) {
+@container page-toolbar-container (max-width: 912px) {
   .page-toolbar-content.wide-layout {
     padding-left: var(--wide-content-margin) !important;
   }

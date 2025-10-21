@@ -1,6 +1,6 @@
 /* Tags Input Component Styles */
 .tags-input-container {
-  border: 2px solid #000;
+  border: 2px solid rgba(var(--color-border-200));
   padding: 0.5em;
   border-radius: 3px;
   width: min(80vw, 600px);
@@ -12,7 +12,7 @@
 }
 
 .tag-item {
-  background-color: rgb(218, 216, 216);
+  background-color: rgba(var(--color-background-80));
   display: inline-block;
   padding: 0.5em 0.75em;
   border-radius: 20px;
@@ -21,8 +21,8 @@
 .tag-item .close {
   height: 20px;
   width: 20px;
-  background-color: rgb(48, 48, 48);
-  color: #fff;
+  background-color: rgba(var(--color-background-90));
+  color: rgba(var(--color-text-100));
   border-radius: 50%;
   display: inline-flex;
   justify-content: center;

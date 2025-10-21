@@ -55,8 +55,8 @@ module.exports = {
       900: convertToRGB("--color-background-900"),
       1000: "rgb(0, 0, 0)",
       overlay: convertToRGBA("--color-background-80", 0.95),
-      primary: convertToRGB(" --color-background-primary"),
-      error: convertToRGB(" --color-background-error"),
+      primary: convertToRGB("--color-background-primary"),
+      error: convertToRGB("--color-background-error"),
       DEFAULT: convertToRGB("--color-background-100"),
     },
 

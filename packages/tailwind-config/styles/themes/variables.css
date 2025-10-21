@@ -24,12 +24,12 @@
     --color-primary-900: 0, 23, 36;
 
     /* Error Colors */
-    --color-error-10: 255 252 252;
-    --color-error-20: 255 247 247;
+    --color-error-10: 255, 252, 252;
+    --color-error-20: 255, 247, 247;
     --color-error-30: 255, 219, 220;
-    --color-error-100: 244 170 170;
-    --color-error-200: 220 62 62;
-    --color-error-500: 140 51 58;
+    --color-error-100: 244, 170, 170;
+    --color-error-200: 220, 62, 62;
+    --color-error-500: 140, 51, 58;
 
     /* Background Colors */
     --color-background-100: 255, 255, 255; /* primary bg */

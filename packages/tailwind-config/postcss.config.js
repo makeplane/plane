@@ -2,7 +2,7 @@ module.exports = {
   plugins: {
     "postcss-import": {
       resolve: function (id, basedir) {
-        // Handle package imports like @plane/propel/styles/fonts
+        // Handle package imports like @plane/tailwind-config
         if (id.startsWith("@plane/")) {
           return require.resolve(id);
         }

@@ -1150,6 +1150,10 @@ importers:
         version: 5.8.3
 
   packages/tailwind-config:
+    dependencies:
+      postcss-import:
+        specifier: ^16.1.1
+        version: 16.1.1(postcss@8.5.6)
     devDependencies:
       '@tailwindcss/container-queries':
         specifier: ^0.1.1
@@ -1163,9 +1167,6 @@ importers:
       postcss:
         specifier: ^8.4.38
         version: 8.5.6
-      postcss-import:
-        specifier: ^16.1.1
-        version: 16.1.1(postcss@8.5.6)
       tailwindcss:
         specifier: ^3.4.17
         version: 3.4.17
@@ -11828,7 +11829,7 @@ snapshots:
   camel-case@4.1.2:
     dependencies:
       pascal-case: 3.1.2
-      tslib: 2.5.3
+      tslib: 2.8.1
 
   camelcase-css@2.0.1: {}
 
@@ -11837,7 +11838,7 @@ snapshots:
   capital-case@1.0.4:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.5.3
+      tslib: 2.8.1
       upper-case-first: 2.0.2
 
   case-sensitive-paths-webpack-plugin@2.4.0: {}
@@ -11879,7 +11880,7 @@ snapshots:
       path-case: 3.0.4
       sentence-case: 3.0.4
       snake-case: 3.0.4
-      tslib: 2.5.3
+      tslib: 2.8.1
 
   character-entities@2.0.2: {}
 
@@ -12012,7 +12013,7 @@ snapshots:
   constant-case@3.0.4:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.5.3
+      tslib: 2.8.1
       upper-case: 2.0.2
 
   constants-browserify@1.0.0: {}
@@ -12330,7 +12331,7 @@ snapshots:
   dot-case@3.0.4:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.5.3
+      tslib: 2.8.1
 
   dotenv@16.0.3: {}
 
@@ -13208,7 +13209,7 @@ snapshots:
   header-case@2.0.4:
     dependencies:
       capital-case: 1.0.4
-      tslib: 2.5.3
+      tslib: 2.8.1
 
   helmet@7.2.0: {}
 
@@ -13735,7 +13736,7 @@ snapshots:
 
   lower-case@2.0.2:
     dependencies:
-      tslib: 2.5.3
+      tslib: 2.8.1
 
   lowlight@2.9.0:
     dependencies:
@@ -14100,7 +14101,7 @@ snapshots:
   no-case@3.0.4:
     dependencies:
       lower-case: 2.0.2
-      tslib: 2.5.3
+      tslib: 2.8.1
 
   node-abi@3.75.0:
     dependencies:
@@ -14276,7 +14277,7 @@ snapshots:
   param-case@3.0.4:
     dependencies:
       dot-case: 3.0.4
-      tslib: 2.5.3
+      tslib: 2.8.1
 
   parent-module@1.0.1:
     dependencies:
@@ -14300,14 +14301,14 @@ snapshots:
   pascal-case@3.1.2:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.5.3
+      tslib: 2.8.1
 
   path-browserify@1.0.1: {}
 
   path-case@3.0.4:
     dependencies:
       dot-case: 3.0.4
-      tslib: 2.5.3
+      tslib: 2.8.1
 
   path-exists@4.0.0: {}
 
@@ -15175,7 +15176,7 @@ snapshots:
   sentence-case@3.0.4:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.5.3
+      tslib: 2.8.1
       upper-case-first: 2.0.2
 
   serialize-javascript@6.0.2:
@@ -15294,7 +15295,7 @@ snapshots:
   snake-case@3.0.4:
     dependencies:
       dot-case: 3.0.4
-      tslib: 2.5.3
+      tslib: 2.8.1
 
   source-map-js@1.2.1: {}
 
@@ -15881,11 +15882,11 @@ snapshots:
 
   upper-case-first@2.0.2:
     dependencies:
-      tslib: 2.5.3
+      tslib: 2.8.1
 
   upper-case@2.0.2:
     dependencies:
-      tslib: 2.5.3
+      tslib: 2.8.1
 
   uri-js@4.4.1:
     dependencies:

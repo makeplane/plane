@@ -150,7 +150,6 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
   cursor: pointer;
   width: 0.8rem;
   height: 0.8rem;
-  position: relative;
   border: 1.5px solid rgb(var(--color-text-100));
   margin-right: 0.2rem;
   margin-top: 0.15rem;
@@ -225,7 +224,6 @@ ul[data-type="taskList"] li[data-checked="true"] {
 }
 
 .resize-cursor {
-  cursor: ew-resize;
   cursor: col-resize;
 }
 

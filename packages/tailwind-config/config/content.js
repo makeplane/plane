@@ -4,7 +4,7 @@
  */
 
 module.exports = {
-  relative: true,
+  relative: false,
   files: [
     // App directories
     "./app/**/*.{js,ts,jsx,tsx}",
