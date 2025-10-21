@@ -1,0 +1,89 @@
+/* Inter Font Family */
+/* inter-200 - latin */
+@font-face {
+  font-display: swap;
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 200;
+  src: url("~@plane/tailwind-config/fonts/Inter/inter-v13-latin-200.woff2") format("woff2");
+}
+
+/* inter-300 - latin */
+@font-face {
+  font-display: swap;
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 300;
+  src: url("~@plane/tailwind-config/fonts/Inter/inter-v13-latin-300.woff2") format("woff2");
+}
+
+/* inter-regular - latin */
+@font-face {
+  font-display: swap;
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 405;
+  src: url("~@plane/tailwind-config/fonts/Inter/inter-v13-latin-regular.woff2") format("woff2");
+}
+
+/* inter-500 - latin */
+@font-face {
+  font-display: swap;
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 500;
+  src: url("~@plane/tailwind-config/fonts/Inter/inter-v13-latin-500.woff2") format("woff2");
+}
+
+/* inter-600 - latin */
+@font-face {
+  font-display: swap;
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 600;
+  src: url("~@plane/tailwind-config/fonts/Inter/inter-v13-latin-600.woff2") format("woff2");
+}
+
+/* inter-700 - latin */
+@font-face {
+  font-display: swap;
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 700;
+  src: url("~@plane/tailwind-config/fonts/Inter/inter-v13-latin-700.woff2") format("woff2");
+}
+
+/* inter-800 - latin */
+@font-face {
+  font-display: swap;
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 800;
+  src: url("~@plane/tailwind-config/fonts/Inter/inter-v13-latin-800.woff2") format("woff2");
+}
+
+/* Material Symbols Rounded Font */
+/* material-symbols-rounded-regular - latin */
+@font-face {
+  font-display: swap;
+  font-family: "Material Symbols Rounded";
+  font-style: normal;
+  font-weight: 400;
+  src: url("~@plane/tailwind-config/fonts/Material-Symbols-Rounded/material-symbols-rounded-v168-latin-regular.woff2") format("woff2");
+}
+
+.material-symbols-rounded {
+  font-family: "Material Symbols Rounded";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+}

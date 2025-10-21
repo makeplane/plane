@@ -5,6 +5,9 @@
   "description": "common tailwind configuration across monorepo",
   "main": "tailwind.config.js",
   "private": true,
+  "dependencies": {
+    "postcss-import": "^16.1.1"
+  },
   "devDependencies": {
     "@tailwindcss/container-queries": "^0.1.1",
     "@tailwindcss/typography": "^0.5.9",

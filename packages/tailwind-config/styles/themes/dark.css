@@ -1,0 +1,150 @@
+/* Dark Theme Styles */
+@layer base {
+  [data-theme="dark"],
+  [data-theme="dark-contrast"] {
+    color-scheme: dark !important;
+
+    --color-primary-10: 8, 31, 43;
+    --color-primary-20: 10, 37, 51;
+    --color-primary-30: 13, 49, 69;
+    --color-primary-40: 16, 58, 81;
+    --color-primary-50: 18, 68, 94;
+    --color-primary-60: 23, 86, 120;
+    --color-primary-70: 28, 104, 146;
+    --color-primary-80: 31, 116, 163;
+    --color-primary-90: 34, 129, 180;
+    --color-primary-100: 40, 146, 204;
+    --color-primary-200: 41, 154, 214;
+    --color-primary-300: 75, 170, 221;
+    --color-primary-400: 109, 186, 227;
+    --color-primary-500: 144, 202, 234;
+    --color-primary-600: 169, 214, 239;
+    --color-primary-700: 199, 229, 244;
+    --color-primary-800: 216, 237, 248;
+    --color-primary-900: 229, 243, 250;
+
+    --color-background-100: 25, 25, 25; /* primary bg */
+    --color-background-90: 32, 32, 32; /* secondary bg */
+    --color-background-80: 44, 44, 44; /* tertiary bg */
+
+    --color-background-primary: var(--color-background-90);
+    --color-background-error: var(--color-background-90);
+
+    --color-text-primary: var(--color-primary-40);
+    --color-text-error: var(--color-error-100);
+
+    --color-border-primary: var(--color-primary-200);
+    --color-border-error: var(--color-error-500);
+
+    --color-shadow-2xs: 0px 0px 1px 0px rgba(0, 0, 0, 0.15), 0px 1px 3px 0px rgba(0, 0, 0, 0.5);
+    --color-shadow-xs: 0px 0px 2px 0px rgba(0, 0, 0, 0.2), 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
+    --color-shadow-sm: 0px 0px 4px 0px rgba(0, 0, 0, 0.2), 0px 2px 6px 0px rgba(0, 0, 0, 0.5);
+    --color-shadow-rg: 0px 0px 6px 0px rgba(0, 0, 0, 0.2), 0px 4px 6px 0px rgba(0, 0, 0, 0.5);
+    --color-shadow-md: 0px 2px 8px 0px rgba(0, 0, 0, 0.2), 0px 4px 8px 0px rgba(0, 0, 0, 0.5);
+    --color-shadow-lg: 0px 4px 12px 0px rgba(0, 0, 0, 0.25), 0px 4px 10px 0px rgba(0, 0, 0, 0.55);
+    --color-shadow-xl: 0px 0px 14px 0px rgba(0, 0, 0, 0.25), 0px 6px 10px 0px rgba(0, 0, 0, 0.55);
+    --color-shadow-2xl: 0px 0px 18px 0px rgba(0, 0, 0, 0.25), 0px 8px 12px 0px rgba(0, 0, 0, 0.6);
+    --color-shadow-3xl: 0px 4px 24px 0px rgba(0, 0, 0, 0.3), 0px 12px 40px 0px rgba(0, 0, 0, 0.65);
+
+    /* pi */
+    --color-pi-50: var(--color-background-90);
+    --color-pi-100: var(--color-background-90);
+    --color-pi-200: var(--color-primary-200);
+    --color-pi-300: var(--color-primary-200);
+    --color-pi-400: var(--color-primary-200);
+    --color-pi-500: var(--color-primary-200);
+    --color-pi-600: 151, 150, 246;
+    --color-pi-700: var(--color-primary-100);
+    --color-pi-800: 57, 56, 149;
+    --color-pi-900: 30, 29, 78;
+    --color-pi-950: 14, 14, 37;
+
+    /* Plane subscriptions */
+    --color-subscription-free-200: 206, 213, 232;
+    --color-subscription-free-400: 152, 166, 206;
+
+    --color-subscription-one-200: 255, 148, 153;
+    --color-subscription-one-400: 200, 118, 121;
+
+    --color-subscription-pro-200: 12, 170, 192;
+    --color-subscription-pro-400: 9, 130, 154;
+
+    --color-subscription-business-200: 206, 34, 119;
+    --color-subscription-business-400: 140, 23, 81;
+
+    --color-subscription-enterprise-200: 182, 71, 255;
+    --color-subscription-enterprise-400: 134, 11, 203;
+  }
+
+  [data-theme="dark"] {
+    --color-text-100: 229, 229, 229; /* primary text */
+    --color-text-200: 163, 163, 163; /* secondary text */
+    --color-text-300: 115, 115, 115; /* tertiary text */
+    --color-text-350: 130, 130, 130;
+    --color-text-400: 82, 82, 82; /* placeholder text */
+
+    --color-scrollbar: 82, 82, 82; /* scrollbar thumb */
+
+    --color-border-100: 34, 34, 34; /* subtle border= 1 */
+    --color-border-200: 38, 38, 38; /* subtle border- 2 */
+    --color-border-300: 46, 46, 46; /* strong border- 1 */
+    --color-border-400: 58, 58, 58; /* strong border- 2 */
+
+    /* onboarding colors */
+    --gradient-onboarding-100: linear-gradient(106deg, #18191b 25.17%, #18191b 99.34%);
+    --gradient-onboarding-200: linear-gradient(129deg, rgba(47, 49, 53, 0.8) -22.23%, rgba(33, 34, 37, 0.8) 62.98%);
+    --gradient-onboarding-300: linear-gradient(167deg, rgba(47, 49, 53, 0.45) 19.22%, #212225 98.48%);
+
+    --color-onboarding-text-100: 237, 238, 240;
+    --color-onboarding-text-200: 176, 180, 187;
+    --color-onboarding-text-300: 118, 123, 132;
+    --color-onboarding-text-400: 105, 110, 119;
+
+    --color-onboarding-background-100: 54, 58, 64;
+    --color-onboarding-background-200: 40, 42, 45;
+    --color-onboarding-background-300: 40, 42, 45;
+    --color-onboarding-background-400: 67, 72, 79;
+
+    --color-onboarding-border-100: 54, 58, 64;
+    --color-onboarding-border-200: 54, 58, 64;
+    --color-onboarding-border-300: 34, 35, 38, 0.5;
+
+    --color-onboarding-shadow-sm: 0px 4px 20px 0px rgba(39, 44, 56, 0.1);
+
+    /* toast theme */
+    --color-toast-success-text: 178, 221, 181;
+    --color-toast-error-text: 206, 44, 49;
+    --color-toast-warning-text: 255, 186, 24;
+    --color-toast-info-text: 141, 164, 239;
+    --color-toast-loading-text: 255, 255, 255;
+    --color-toast-secondary-text: 185, 187, 198;
+    --color-toast-tertiary-text: 139, 141, 152;
+
+    --color-toast-success-background: 46, 46, 46;
+    --color-toast-error-background: 46, 46, 46;
+    --color-toast-warning-background: 46, 46, 46;
+    --color-toast-info-background: 46, 46, 46;
+    --color-toast-loading-background: 46, 46, 46;
+
+    --color-toast-success-border: 42, 126, 59;
+    --color-toast-error-border: 100, 23, 35;
+    --color-toast-warning-border: 79, 52, 34;
+    --color-toast-info-border: 58, 91, 199;
+    --color-toast-loading-border: 96, 100, 108;
+  }
+
+  [data-theme="dark-contrast"] {
+    --color-text-100: 250, 250, 250; /* primary text */
+    --color-text-200: 241, 241, 241; /* secondary text */
+    --color-text-300: 212, 212, 212; /* tertiary text */
+    --color-text-350: 190, 190, 190;
+    --color-text-400: 115, 115, 115; /* placeholder text */
+
+    --color-scrollbar: 115, 115, 115; /* scrollbar thumb */
+
+    --color-border-100: 245, 245, 245; /* subtle border= 1 */
+    --color-border-200: 229, 229, 229; /* subtle border- 2 */
+    --color-border-300: 212, 212, 212; /* strong border- 1 */
+    --color-border-400: 185, 185, 185; /* strong border- 2 */
+  }
+}

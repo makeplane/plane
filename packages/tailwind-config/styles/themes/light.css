@@ -1,0 +1,132 @@
+/* Light Theme Styles */
+@layer base {
+  [data-theme="light"],
+  [data-theme="light-contrast"] {
+    color-scheme: light !important;
+
+    --color-background-100: 255, 255, 255; /* primary bg */
+    --color-background-90: 247, 247, 247; /* secondary bg */
+    --color-background-80: 232, 232, 232; /* tertiary bg */
+
+    /* pi */
+    --color-pi-50: var(--color-background-90);
+    --color-pi-100: var(--color-background-90);
+    --color-pi-200: var(--color-primary-200);
+    --color-pi-300: var(--color-primary-200);
+    --color-pi-400: var(--color-primary-200);
+    --color-pi-500: var(--color-primary-200);
+    --color-pi-600: 151, 150, 246;
+    --color-pi-700: var(--color-primary-100);
+    --color-pi-800: 57, 56, 149;
+    --color-pi-900: 30, 29, 78;
+    --color-pi-950: 14, 14, 37;
+
+    /* Plane subscriptions */
+    --color-subscription-free-200: 69, 80, 104;
+    --color-subscription-free-400: 51, 59, 77;
+
+    --color-subscription-one-200: 101, 42, 14;
+    --color-subscription-one-400: 90, 37, 12;
+
+    --color-subscription-pro-200: 32, 128, 138;
+    --color-subscription-pro-400: 24, 96, 104;
+
+    --color-subscription-business-200: 142, 33, 87;
+    --color-subscription-business-400: 103, 24, 63;
+
+    --color-subscription-enterprise-200: 86, 5, 145;
+    --color-subscription-enterprise-400: 73, 4, 123;
+  }
+
+  [data-theme="light"] {
+    --color-text-100: 23, 23, 23; /* primary text */
+    --color-text-200: 58, 58, 58; /* secondary text */
+    --color-text-300: 82, 82, 82; /* tertiary text */
+    --color-text-350: 130, 130, 130;
+    --color-text-400: 163, 163, 163; /* placeholder text */
+
+    --color-scrollbar: 163, 163, 163; /* scrollbar thumb */
+
+    --color-border-100: 245, 245, 245; /* subtle border= 1 */
+    --color-border-200: 229, 229, 229; /* subtle border- 2 */
+    --color-border-300: 212, 212, 212; /* strong border- 1 */
+    --color-border-400: 185, 185, 185; /* strong border- 2 */
+
+    /* onboarding colors */
+    --gradient-onboarding-100: linear-gradient(106deg, #f2f6ff 29.8%, #e1eaff 99.34%);
+    --gradient-onboarding-200: linear-gradient(129deg, rgba(255, 255, 255, 0) -22.23%, rgba(255, 255, 255, 0.8) 62.98%);
+    --gradient-onboarding-300: linear-gradient(164deg, #fff 4.25%, rgba(255, 255, 255, 0.06) 93.5%);
+    --gradient-onboarding-400: linear-gradient(129deg, rgba(255, 255, 255, 0) -22.23%, rgba(255, 255, 255, 0.8) 62.98%);
+
+    --color-onboarding-text-100: 23, 23, 23;
+    --color-onboarding-text-200: 58, 58, 58;
+    --color-onboarding-text-300: 82, 82, 82;
+    --color-onboarding-text-400: 163, 163, 163;
+
+    --color-onboarding-background-100: 236, 241, 255;
+    --color-onboarding-background-200: 255, 255, 255;
+    --color-onboarding-background-300: 236, 241, 255;
+    --color-onboarding-background-400: 177, 206, 250;
+
+    --color-onboarding-border-100: 229, 229, 229;
+    --color-onboarding-border-200: 217, 228, 255;
+    --color-onboarding-border-300: 229, 229, 229, 0.5;
+
+    --color-onboarding-shadow-sm: 0px 4px 20px 0px rgba(126, 139, 171, 0.1);
+
+    /* toast theme */
+    --color-toast-success-text: 62, 155, 79;
+    --color-toast-error-text: var(--color-error-200);
+    --color-toast-warning-text: 255, 186, 24;
+    --color-toast-info-text: 51, 88, 212;
+    --color-toast-loading-text: 28, 32, 36;
+    --color-toast-secondary-text: 128, 131, 141;
+    --color-toast-tertiary-text: 96, 100, 108;
+
+    --color-toast-success-background: 253, 253, 254;
+    --color-toast-error-background: var(--color-error-10);
+    --color-toast-warning-background: 254, 253, 251;
+    --color-toast-info-background: 253, 253, 254;
+    --color-toast-loading-background: 253, 253, 254;
+
+    --color-toast-success-border: 218, 241, 219;
+    --color-toast-error-border: var(--color-error-30);
+    --color-toast-warning-border: 255, 247, 194;
+    --color-toast-info-border: 210, 222, 255;
+    --color-toast-loading-border: 224, 225, 230;
+  }
+
+  [data-theme="light-contrast"] {
+    --color-text-100: 11, 11, 11; /* primary text */
+    --color-text-200: 38, 38, 38; /* secondary text */
+    --color-text-300: 58, 58, 58; /* tertiary text */
+    --color-text-350: 80, 80, 80;
+    --color-text-400: 115, 115, 115; /* placeholder text */
+
+    --color-scrollbar: 115, 115, 115; /* scrollbar thumb */
+
+    --color-border-100: 34, 34, 34; /* subtle border= 1 */
+    --color-border-200: 38, 38, 38; /* subtle border- 2 */
+    --color-border-300: 46, 46, 46; /* strong border- 1 */
+    --color-border-400: 58, 58, 58; /* strong border- 2 */
+  }
+
+  [data-theme="light"],
+  [data-theme="dark"],
+  [data-theme="light-contrast"],
+  [data-theme="dark-contrast"] {
+    --color-sidebar-background-100: var(--color-background-100); /* primary sidebar bg */
+    --color-sidebar-background-90: var(--color-background-90); /* secondary sidebar bg */
+    --color-sidebar-background-80: var(--color-background-80); /* tertiary sidebar bg */
+
+    --color-sidebar-text-100: var(--color-text-100); /* primary sidebar text */
+    --color-sidebar-text-200: var(--color-text-200); /* secondary sidebar text */
+    --color-sidebar-text-300: var(--color-text-300); /* tertiary sidebar text */
+    --color-sidebar-text-400: var(--color-text-400); /* sidebar placeholder text */
+
+    --color-sidebar-border-100: var(--color-border-100); /* subtle sidebar border= 1 */
+    --color-sidebar-border-200: var(--color-border-200); /* subtle sidebar border- 2 */
+    --color-sidebar-border-300: var(--color-border-300); /* strong sidebar border- 1 */
+    --color-sidebar-border-400: var(--color-border-400); /* strong sidebar border- 2 */
+  }
+}

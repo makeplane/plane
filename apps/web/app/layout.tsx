@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 
 // styles
-import "@/styles/globals.css";
+import "@plane/tailwind-config/global.css";
 
 import { SITE_DESCRIPTION, SITE_NAME } from "@plane/constants";
 

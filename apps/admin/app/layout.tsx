@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 // plane imports
 import { ADMIN_BASE_PATH } from "@plane/constants";
 // styles
-import "@/styles/globals.css";
+import "@plane/tailwind-config/global.css";
 
 export const metadata: Metadata = {
   title: "Plane | Simple, extensible, open-source project management tool.",

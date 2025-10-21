@@ -1,0 +1,22 @@
+/* Main entry point for all styles */
+@import "./fonts.css";
+@import "./base/reset.css";
+@import "./base/typography.css";
+@import "./base/scrollbar.css";
+@import "./themes/variables.css";
+@import "./themes/light.css";
+@import "./themes/dark.css";
+@import "./themes/editor-colors.css";
+@import "./components/emoji-picker.css";
+@import "./components/command-palette.css";
+@import "./components/spinner.css";
+@import "./components/tags-input.css";
+@import "./components/utility-classes.css";
+@import "./app-specific/web-animations.css";
+
+/* Editor styles */
+@import "./editor/variables.css";
+@import "./editor/editor.css";
+@import "./editor/table.css";
+@import "./editor/github-dark.css";
+@import "./editor/drag-drop.css";
