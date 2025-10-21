@@ -59,8 +59,6 @@ export const onAuthenticate = async ({
   context.projectId = requestParameters.get("projectId");
   context.userId = userId;
   context.workspaceSlug = requestParameters.get("workspaceSlug");
-  context.parentId = requestParameters.get("parentPageId");
-  context.teamspaceId = requestParameters.get("teamspaceId");
 
   return await handleAuthentication({
     cookie: context.cookie,
