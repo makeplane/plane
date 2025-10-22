@@ -6,11 +6,11 @@ import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
-import { ProjectFeaturesList } from "@/components/project/settings/features-list";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
+import { ProjectFeaturesList } from "@/plane-web/components/projects/settings/features-list";
 
 const FeaturesSettingsPage = observer(() => {
   const { workspaceSlug, projectId } = useParams();
