@@ -1,4 +1,4 @@
-import { Placeholder } from "@tiptap/extensions";
+import { Placeholder } from "@tiptap/extension-placeholder";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // types
