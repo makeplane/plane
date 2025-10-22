@@ -74,6 +74,12 @@ const navigation = (workspaceSlug: string, projectId: string) => [
     Icon: LayersIcon,
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
   },
+   {
+    name: "Views",
+    href: `/${workspaceSlug}/projects/${projectId}/views`,
+    Icon: LayersIcon, 
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+  },
 ];
 
 export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
