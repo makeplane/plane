@@ -871,6 +871,8 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
             module_id=module_id,
             issue_id=issue_id,
         )
+        # Get module name before deletion
+        module_name = module_issue.module.name
         module_issue.delete()
         issue_activity.delay(
             type="module.activity.deleted",
@@ -878,7 +880,7 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
             actor_id=str(request.user.id),
             issue_id=str(issue_id),
             project_id=str(project_id),
-            current_instance=None,
+            current_instance=json.dumps({"module_name": module_name}),
             epoch=int(timezone.now().timestamp()),
         )
         return Response(status=status.HTTP_204_NO_CONTENT)

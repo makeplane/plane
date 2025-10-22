@@ -899,8 +899,7 @@ def delete_module_issue_activity(
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else None
     current_instance = json.loads(current_instance) if current_instance is not None else None
-    module_name = current_instance.get("module_name") if current_instance is not None else ""
-
+    module_name = current_instance.get("module_name")
     current_issue = Issue.objects.filter(pk=issue_id).first()
     if current_issue:
         current_issue.updated_at = timezone.now()
