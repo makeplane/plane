@@ -11,7 +11,7 @@ export * from "./parent-icon";
 export * from "./priority-icon";
 export * from "./relates-to-icon";
 export * from "./relation-icon";
-export * from "./scrope-icon";
+export * from "./scope-icon";
 export * from "./start-date-icon";
 export * from "./state-icon";
 export * from "./user-circle-icon";
