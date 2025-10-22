@@ -3,7 +3,7 @@ import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { ListFilter, Search} from "lucide-react";
+import { ListFilter, Search } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { CloseIcon } from "@plane/propel/icons";
 // plane helpers

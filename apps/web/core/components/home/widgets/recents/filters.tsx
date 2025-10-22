@@ -2,8 +2,8 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { ChevronDown } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import type { TRecentActivityFilterKeys } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -41,7 +41,9 @@ export const FiltersDropdown: FC<TFiltersDropdown> = observer((props) => {
       customButton={
         <button className="flex hover:bg-custom-background-80 px-2 py-1 rounded gap-1 capitalize border border-custom-border-200">
           <span className="font-medium text-sm my-auto"> {t(title || "")}</span>
-          <ChevronDown className={cn("size-3 my-auto text-custom-text-300 hover:text-custom-text-200 duration-300")} />
+          <ChevronDownIcon
+            className={cn("size-3 my-auto text-custom-text-300 hover:text-custom-text-200 duration-300")}
+          />
         </button>
       }
       customButtonClassName="flex justify-center"

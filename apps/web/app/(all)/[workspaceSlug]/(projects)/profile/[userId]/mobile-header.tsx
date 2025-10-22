@@ -3,12 +3,12 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// icons
-import { ChevronDown } from "lucide-react";
 // plane constants
 import { EIssueFilterType, ISSUE_LAYOUTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 // plane i18n
 import { useTranslation } from "@plane/i18n";
+// icons
+import { ChevronDownIcon } from "@plane/propel/icons";
 // types
 import type {
   IIssueDisplayFilterOptions,
@@ -88,7 +88,7 @@ export const ProfileIssuesMobileHeader = observer(() => {
         customButton={
           <div className="flex flex-center text-sm text-custom-text-200">
             {t("common.layout")}
-            <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200 my-auto" strokeWidth={2} />
+            <ChevronDownIcon className="ml-2  h-4 w-4 text-custom-text-200 my-auto" strokeWidth={2} />
           </div>
         }
         customButtonClassName="flex flex-center text-custom-text-200 text-sm"
@@ -117,7 +117,7 @@ export const ProfileIssuesMobileHeader = observer(() => {
           menuButton={
             <div className="flex flex-center text-sm text-custom-text-200">
               {t("common.display")}
-              <ChevronDown className="ml-2 h-4 w-4 text-custom-text-200" strokeWidth={2} />
+              <ChevronDownIcon className="ml-2 h-4 w-4 text-custom-text-200" strokeWidth={2} />
             </div>
           }
         >

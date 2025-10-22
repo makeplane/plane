@@ -3,13 +3,13 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
-import { ChevronDown, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
 import { ROLE, EUserPermissions, MEMBER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Avatar, CustomSelect, CustomSearchSelect } from "@plane/ui";
 // helpers
@@ -251,7 +251,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                         ) : (
                                           <div className="flex items-center gap-2 py-0.5">Select co-worker</div>
                                         )}
-                                        <ChevronDown className="h-3 w-3" aria-hidden="true" />
+                                        <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
                                       </button>
                                     }
                                     onChange={(val: string) => {
@@ -292,7 +292,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                         <span className="capitalize">
                                           {field.value ? ROLE[field.value] : "Select role"}
                                         </span>
-                                        <ChevronDown className="h-3 w-3" aria-hidden="true" />
+                                        <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
                                       </div>
                                     }
                                     input

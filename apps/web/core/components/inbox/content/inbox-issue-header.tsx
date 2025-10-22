@@ -3,23 +3,12 @@
 import type { FC } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import {
-  CircleCheck,
-  CircleX,
-  ChevronDown,
-  ChevronUp,
-  Clock,
-  ExternalLink,
-  FileStack,
-  Link,
-  Trash2,
-  MoveRight,
-  Copy,
-} from "lucide-react";
+import { CircleCheck, CircleX, Clock, ExternalLink, FileStack, Link, Trash2, MoveRight, Copy } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { EInboxIssueStatus } from "@plane/types";
@@ -308,14 +297,14 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                 className="rounded border border-custom-border-200 p-1.5"
                 onClick={() => handleInboxIssueNavigation("prev")}
               >
-                <ChevronUp size={14} strokeWidth={2} />
+                <ChevronUpIcon height={14} width={14} strokeWidth={2} />
               </button>
               <button
                 type="button"
                 className="rounded border border-custom-border-200 p-1.5"
                 onClick={() => handleInboxIssueNavigation("next")}
               >
-                <ChevronDown size={14} strokeWidth={2} />
+                <ChevronDownIcon height={14} width={14} strokeWidth={2} />
               </button>
             </div>
           )}

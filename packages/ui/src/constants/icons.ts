@@ -35,10 +35,6 @@ import {
   Check,
   CheckCircle,
   CheckSquare,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  ChevronUp,
   Clipboard,
   Clock,
   Cloud,
@@ -155,6 +151,7 @@ import {
   Search,
   User,
 } from "lucide-react";
+import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon } from "@plane/propel/icons";
 
 export const MATERIAL_ICONS_LIST = [
   {
@@ -800,10 +797,10 @@ export const LUCIDE_ICONS_LIST = [
   { name: "Check", element: Check },
   { name: "CheckCircle", element: CheckCircle },
   { name: "CheckSquare", element: CheckSquare },
-  { name: "ChevronDown", element: ChevronDown },
-  { name: "ChevronLeft", element: ChevronLeft },
-  { name: "ChevronRight", element: ChevronRight },
-  { name: "ChevronUp", element: ChevronUp },
+  { name: "ChevronDown", element: ChevronDownIcon },
+  { name: "ChevronLeft", element: ChevronLeftIcon },
+  { name: "ChevronRight", element: ChevronRightIcon },
+  { name: "ChevronUp", element: ChevronUpIcon },
   { name: "Clipboard", element: Clipboard },
   { name: "Clock", element: Clock },
   { name: "Cloud", element: Cloud },

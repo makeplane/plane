@@ -1,11 +1,11 @@
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronDown, ChevronUp } from "lucide-react";
 // types
 import { WORKSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 import type { IWorkspace } from "@plane/types";
 // ui
 import { Collapsible } from "@plane/ui";
@@ -42,7 +42,7 @@ export const DeleteWorkspaceSection: FC<TDeleteWorkspace> = observer((props) => 
                 <span className="text-lg tracking-tight">
                   {t("workspace_settings.settings.general.delete_workspace")}
                 </span>
-                {isOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                {isOpen ? <ChevronUpIcon className="h-5 w-5" /> : <ChevronDownIcon className="h-5 w-5" />}
               </>
             }
           >

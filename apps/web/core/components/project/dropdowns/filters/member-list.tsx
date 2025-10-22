@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronDown } from "lucide-react";
 // plane imports
 import { Button } from "@plane/propel/button";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 // plane ui
 import { CustomMenu } from "@plane/ui";
@@ -93,7 +93,7 @@ export const MemberListFiltersDropdown: React.FC<Props> = observer((props) => {
         <div className="relative">
           <Button variant="neutral-primary" size="sm" className="flex items-center gap-2">
             <span>Filters</span>
-            <ChevronDown className="h-3 w-3" />
+            <ChevronDownIcon className="h-3 w-3" />
           </Button>
           {appliedFiltersCount > 0 && (
             <div className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-custom-primary-100" />

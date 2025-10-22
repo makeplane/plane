@@ -1,12 +1,13 @@
 import type { Dispatch, SetStateAction } from "react";
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronDown, Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
+import { ChevronDownIcon } from "@plane/propel/icons";
 // store
 // icons
 // types
-import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import type { IIssueLabel } from "@plane/types";
 // components
 import { captureClick } from "@/helpers/event-tracker.helper";
@@ -121,7 +122,7 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
 
                       <Disclosure.Button>
                         <span>
-                          <ChevronDown
+                          <ChevronDownIcon
                             className={`h-4 w-4 text-custom-sidebar-text-400 ${!open ? "rotate-90 transform" : ""}`}
                           />
                         </span>

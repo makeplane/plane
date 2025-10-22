@@ -11,10 +11,11 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { orderBy } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronRight, FolderPlus } from "lucide-react";
+import { FolderPlus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import { IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { ChevronRightIcon } from "@plane/propel/icons";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -225,7 +226,7 @@ export const SidebarFavoritesMenu = observer(() => {
                   : "aria_labels.projects_sidebar.open_favorites_menu"
               )}
             >
-              <ChevronRight
+              <ChevronRightIcon
                 className={cn("flex-shrink-0 size-3 transition-all", {
                   "rotate-90": isFavoriteMenuOpen,
                 })}

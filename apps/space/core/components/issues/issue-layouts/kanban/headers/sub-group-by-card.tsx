@@ -1,7 +1,8 @@
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
-import { Circle, ChevronDown, ChevronUp } from "lucide-react";
+import { Circle } from "lucide-react";
+import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 // mobx
 
 interface IHeaderSubGroupByCard {
@@ -20,7 +21,7 @@ export const HeaderSubGroupByCard: FC<IHeaderSubGroupByCard> = observer((props) 
       onClick={() => toggleExpanded()}
     >
       <div className="flex h-[20px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80">
-        {isExpanded ? <ChevronUp width={14} strokeWidth={2} /> : <ChevronDown width={14} strokeWidth={2} />}
+        {isExpanded ? <ChevronUpIcon width={14} strokeWidth={2} /> : <ChevronDownIcon width={14} strokeWidth={2} />}
       </div>
 
       <div className="flex h-[20px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded-sm">

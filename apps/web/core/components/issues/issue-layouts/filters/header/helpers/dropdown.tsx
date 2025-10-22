@@ -3,12 +3,11 @@
 import React, { Fragment, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { usePopper } from "react-popper";
-// icons
-import { ChevronUp } from "lucide-react";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
 import { Button } from "@plane/propel/button";
+import { ChevronUpIcon } from "@plane/propel/icons";
 
 type Props = {
   children: React.ReactNode;
@@ -63,7 +62,12 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
                       size="sm"
                       prependIcon={icon}
                       appendIcon={
-                        <ChevronUp className={`transition-all ${open ? "" : "rotate-180"}`} size={14} strokeWidth={2} />
+                        <ChevronUpIcon
+                          className={`transition-all ${open ? "" : "rotate-180"}`}
+                          height={14}
+                          width={14}
+                          strokeWidth={2}
+                        />
                       }
                       tabIndex={tabIndex}
                       className="relative"

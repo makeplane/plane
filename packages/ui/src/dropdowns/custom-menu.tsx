@@ -1,10 +1,11 @@
 import { Menu } from "@headlessui/react";
-import { ChevronDown, ChevronRight, MoreHorizontal } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import * as React from "react";
 import ReactDOM from "react-dom";
 import { usePopper } from "react-popper";
-// plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
+import { ChevronDownIcon, ChevronRightIcon } from "@plane/propel/icons";
+// plane helpers
 // helpers
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 import { cn } from "../utils";
@@ -283,7 +284,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
                     aria-label={ariaLabel}
                   >
                     {label}
-                    {!noChevron && <ChevronDown className="h-3.5 w-3.5" />}
+                    {!noChevron && <ChevronDownIcon className="h-3.5 w-3.5" />}
                   </button>
                 </Menu.Button>
               )}
@@ -405,7 +406,7 @@ const SubMenu: React.FC<ICustomSubMenuProps> = (props) => {
               onClick={handleClick}
             >
               <span className="flex-1">{trigger}</span>
-              <ChevronRight className="h-3.5 w-3.5 flex-shrink-0" />
+              <ChevronRightIcon className="h-3.5 w-3.5 flex-shrink-0" />
             </div>
           )}
         </Menu.Item>
@@ -499,7 +500,7 @@ const SubMenuTrigger: React.FC<ICustomSubMenuTriggerProps> = (props) => {
           )}
         >
           <span className="flex-1">{children}</span>
-          <ChevronRight className="h-3.5 w-3.5 flex-shrink-0" />
+          <ChevronRightIcon className="h-3.5 w-3.5 flex-shrink-0" />
         </div>
       )}
     </Menu.Item>
