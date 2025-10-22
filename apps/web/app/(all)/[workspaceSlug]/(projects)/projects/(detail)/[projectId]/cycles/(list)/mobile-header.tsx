@@ -3,7 +3,8 @@
 import type React from "react";
 import { observer } from "mobx-react";
 // ui
-import { TimelineLayoutIcon, GridLayoutIcon, ListLayoutIcon, ISvgIcons } from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/propel/icons";
+import { TimelineLayoutIcon, GridLayoutIcon, ListLayoutIcon } from "@plane/propel/icons";
 // plane package imports
 import type { TCycleLayoutOptions } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
