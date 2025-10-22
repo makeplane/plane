@@ -101,7 +101,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
             fullWidth && "w-full"
           )}
         >
-          <LabelPropertyIcon className="h-3.5 w-3.5" strokeWidth={2} />
+          <LabelPropertyIcon className="h-3.5 w-3.5" />
           {placeholderText}
         </div>
       </Tooltip>

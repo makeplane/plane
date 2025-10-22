@@ -3,7 +3,7 @@
 import type React from "react";
 import { observer } from "mobx-react";
 // ui
-import { TimelineLayoutIcon, GridLayoutIcon, ListLayoutIcon } from "@plane/propel/icons";
+import { TimelineLayoutIcon, GridLayoutIcon, ListLayoutIcon, ISvgIcons } from "@plane/propel/icons";
 // plane package imports
 import type { TCycleLayoutOptions } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
@@ -13,7 +13,7 @@ import { useProject } from "@/hooks/store/use-project";
 
 const CYCLE_VIEW_LAYOUTS: {
   key: TCycleLayoutOptions;
-  icon: React.FC<React.SVGProps<SVGSVGElement>>;
+  icon: React.FC<ISvgIcons>;
   title: string;
 }[] = [
   {
