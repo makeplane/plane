@@ -169,12 +169,17 @@ class IssueExportSchema(ExportSchema):
     def prepare_cycle_start_date(self, i):
         cycles_dict = self.context.get("cycles_dict") or {}
         last_cycle = cycles_dict.get(i.id)
-        return last_cycle.cycle.start_date if last_cycle else None
+        if last_cycle and last_cycle.cycle.start_date:
+            return self._format_date(last_cycle.cycle.start_date)
+        return ""
+
 
     def prepare_cycle_end_date(self, i):
         cycles_dict = self.context.get("cycles_dict") or {}
         last_cycle = cycles_dict.get(i.id)
-        return last_cycle.cycle.end_date if last_cycle else None
+        if last_cycle and last_cycle.cycle.end_date:
+            return self._format_date(last_cycle.cycle.end_date)
+        return ""
 
     def prepare_parent(self, i):
         if not i.parent:

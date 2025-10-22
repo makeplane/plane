@@ -1154,7 +1154,10 @@ def create_comment_reaction_activity(
             .values_list("id", "comment__id")
             .first()
         )
-        comment = IssueComment.objects.get(pk=comment_id, project_id=project_id)
+        comment = IssueComment.objects.filter(pk=comment_id, project_id=project_id).first()
+        if comment is None:
+            return
+
         if comment is not None and comment_reaction_id is not None and comment_id is not None:
             issue_activities.append(
                 IssueActivity(
