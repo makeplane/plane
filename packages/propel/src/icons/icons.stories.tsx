@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
   ActionsIconsMap,
+  ArrowsIconsMap,
   LayoutIconsMap,
   ProjectIconsMap,
   PropertyIconsMap,
@@ -95,6 +96,18 @@ export const AllIcons: Story = {
         <h3 className="text-lg font-semibold text-custom-text-100">Actions Icons</h3>
         <div className="grid grid-cols-12 gap-6 w-full">
           {ActionsIconsMap.map((item) => (
+            <div key={item.title} className="flex flex-col items-center justify-center gap-3 p-4 col-span-2">
+              <div className="text-custom-text-200">{item.icon}</div>
+              <p className="text-xs text-custom-text-300 text-center">{item.title}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-custom-text-100">Arrows Icons</h3>
+        <div className="grid grid-cols-12 gap-6 w-full">
+          {ArrowsIconsMap.map((item) => (
             <div key={item.title} className="flex flex-col items-center justify-center gap-3 p-4 col-span-2">
               <div className="text-custom-text-200">{item.icon}</div>
               <p className="text-xs text-custom-text-300 text-center">{item.title}</p>
