@@ -21,15 +21,9 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { getAnalyticsTabs } from "@/plane-web/components/analytics/tabs";
+import type { Route } from "./+types/layout";
 
-type Props = {
-  params: {
-    tabId: string;
-    workspaceSlug: string;
-  };
-};
-
-const AnalyticsPage = observer((props: Props) => {
+const AnalyticsPage = observer((props: Route.ComponentProps) => {
   // props
   const { params } = props;
   const { tabId } = params;

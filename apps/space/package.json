@@ -20,7 +20,7 @@
     "@babel/runtime": "7.26.10",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@headlessui/react": "^1.7.13",
+    "@headlessui/react": "^1.7.19",
     "@plane/constants": "workspace:*",
     "@plane/editor": "workspace:*",
     "@plane/i18n": "workspace:*",

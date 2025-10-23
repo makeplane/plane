@@ -2,6 +2,7 @@
 
 // component
 import { useParams } from "next/navigation";
+import { Outlet } from "react-router";
 import useSWR from "swr";
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
@@ -10,7 +11,7 @@ import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 // local components
 import { PageDetailsHeader } from "./header";
 
-export default function ProjectPageDetailsLayout({ children }: { children: React.ReactNode }) {
+export default function ProjectPageDetailsLayout() {
   const { workspaceSlug, projectId } = useParams();
   const { fetchPagesList } = usePageStore(EPageStoreType.PROJECT);
   // fetching pages list
@@ -21,7 +22,9 @@ export default function ProjectPageDetailsLayout({ children }: { children: React
   return (
     <>
       <AppHeader header={<PageDetailsHeader />} />
-      <ContentWrapper>{children}</ContentWrapper>
+      <ContentWrapper>
+        <Outlet />
+      </ContentWrapper>
     </>
   );
 }

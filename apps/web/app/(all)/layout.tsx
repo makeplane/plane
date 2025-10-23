@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-
+import { Outlet } from "react-router";
 import { PreloadResources } from "./layout.preload";
 
 // styles
@@ -21,11 +21,11 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+export default function AppLayout() {
   return (
     <>
       <PreloadResources />
-      {children}
+      <Outlet />
     </>
   );
 }

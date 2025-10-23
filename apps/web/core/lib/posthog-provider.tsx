@@ -1,9 +1,8 @@
 "use client";
 
 import type { FC, ReactNode } from "react";
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { observer } from "mobx-react";
-import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider } from "posthog-js/react";
@@ -17,7 +16,7 @@ import { useInstance } from "@/hooks/store/use-instance";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 // dynamic imports
-const PostHogPageView = dynamic(() => import("@/lib/posthog-view"), { ssr: false });
+const PostHogPageView = lazy(() => import("@/lib/posthog-view"));
 
 export interface IPosthogWrapper {
   children: ReactNode;
@@ -99,7 +98,9 @@ const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
   if (is_posthog_enabled)
     return (
       <PHProvider client={posthog}>
-        <PostHogPageView />
+        <Suspense>
+          <PostHogPageView />
+        </Suspense>
         {children}
       </PHProvider>
     );

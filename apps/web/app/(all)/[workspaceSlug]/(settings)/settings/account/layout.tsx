@@ -1,8 +1,8 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
+import { Outlet } from "react-router";
 // components
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { getProfileActivePath } from "@/components/settings/helper";
@@ -10,12 +10,7 @@ import { SettingsMobileNav } from "@/components/settings/mobile";
 // local imports
 import { ProfileSidebar } from "./sidebar";
 
-type Props = {
-  children: ReactNode;
-};
-
-const ProfileSettingsLayout = observer((props: Props) => {
-  const { children } = props;
+const ProfileSettingsLayout = observer(() => {
   // router
   const pathname = usePathname();
 
@@ -27,7 +22,9 @@ const ProfileSettingsLayout = observer((props: Props) => {
           <ProfileSidebar />
         </div>
         <div className="w-full h-full overflow-y-scroll md:pt-page-y">
-          <SettingsContentWrapper>{children}</SettingsContentWrapper>
+          <SettingsContentWrapper>
+            <Outlet />
+          </SettingsContentWrapper>
         </div>
       </div>
     </>

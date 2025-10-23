@@ -41,7 +41,8 @@
     "@blueprintjs/core": "^4.16.3",
     "@blueprintjs/icons": "^4.16.0",
     "@blueprintjs/popover2": "^1.13.3",
-    "@headlessui/react": "^1.7.3",
+    "@date-fns/tz": "^1.4.1",
+    "@headlessui/react": "^1.7.19",
     "@icons/material": "^0.2.4",
     "@juggle/resize-observer": "^3.4.0",
     "@plane/constants": "workspace:*",
@@ -105,7 +106,8 @@
     "upper-case": "^2.0.2",
     "upper-case-first": "^2.0.2",
     "use-font-face-observer": "^1.2.2",
-    "warning": "^4.0.3"
+    "warning": "^4.0.3",
+    "reselect": "^5.1.1"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.4.0",

@@ -1,5 +1,9 @@
 .next
+.react-router
+.vite
 .turbo
 out/
 dist/
 build/
+node_modules
+pnpm-lock.yaml
