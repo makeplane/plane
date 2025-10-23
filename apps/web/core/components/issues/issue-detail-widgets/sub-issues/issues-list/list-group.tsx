@@ -1,8 +1,10 @@
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronRight, CircleDashed } from "lucide-react";
 import { ALL_ISSUES } from "@plane/constants";
-import { EIssuesStoreType, IGroupByColumn, TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
+import type { IGroupByColumn, TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 import { Collapsible } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { SubIssuesListItem } from "./list-item";
@@ -13,7 +15,7 @@ interface TSubIssuesListGroupProps {
   workspaceSlug: string;
   group: IGroupByColumn;
   serviceType: TIssueServiceType;
-  disabled: boolean;
+  canEdit: boolean;
   parentIssueId: string;
   rootIssueId: string;
   handleIssueCrudState: (
@@ -30,7 +32,7 @@ export const SubIssuesListGroup: FC<TSubIssuesListGroupProps> = observer((props)
   const {
     group,
     serviceType,
-    disabled,
+    canEdit,
     parentIssueId,
     rootIssueId,
     projectId,
@@ -73,25 +75,22 @@ export const SubIssuesListGroup: FC<TSubIssuesListGroupProps> = observer((props)
         }
         buttonClassName={cn("hidden", !isAllIssues && "block")}
       >
-        {/* Work items list */}
-        <div className="pl-2">
-          {workItemIds?.map((workItemId) => (
-            <SubIssuesListItem
-              key={workItemId}
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              parentIssueId={parentIssueId}
-              rootIssueId={rootIssueId}
-              issueId={workItemId}
-              disabled={disabled}
-              handleIssueCrudState={handleIssueCrudState}
-              subIssueOperations={subIssueOperations}
-              issueServiceType={serviceType}
-              spacingLeft={spacingLeft}
-              storeType={storeType}
-            />
-          ))}
-        </div>
+        {workItemIds?.map((workItemId) => (
+          <SubIssuesListItem
+            key={workItemId}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            parentIssueId={parentIssueId}
+            rootIssueId={rootIssueId}
+            issueId={workItemId}
+            canEdit={canEdit}
+            handleIssueCrudState={handleIssueCrudState}
+            subIssueOperations={subIssueOperations}
+            issueServiceType={serviceType}
+            spacingLeft={spacingLeft}
+            storeType={storeType}
+          />
+        ))}
       </Collapsible>
     </>
   );

@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useCallback, useEffect, FC, useMemo } from "react";
+import type { FC } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
 import { COMMAND_PALETTE_TRACKER_ELEMENTS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // components
 import { copyTextToClipboard } from "@plane/utils";
 import { CommandModal, ShortcutsModal } from "@/components/command-palette";
@@ -38,7 +39,7 @@ export const CommandPalette: FC = observer(() => {
   const { workspaceSlug, projectId: paramsProjectId, workItem } = useParams();
   // store hooks
   const { fetchIssueWithIdentifier } = useIssueDetail();
-  const { toggleSidebar } = useAppTheme();
+  const { toggleSidebar, toggleExtendedSidebar } = useAppTheme();
   const { platform } = usePlatformOS();
   const { data: currentUser, canPerformAnyCreateAction } = useUser();
   const { toggleCommandPaletteModal, isShortcutModalOpen, toggleShortcutModal, isAnyModalOpen } = useCommandPalette();
@@ -197,6 +198,7 @@ export const CommandPalette: FC = observer(() => {
         } else if (keyPressed === "b") {
           e.preventDefault();
           toggleSidebar();
+          toggleExtendedSidebar(false);
         }
       } else if (!isAnyModalOpen) {
         captureClick({ elementName: COMMAND_PALETTE_TRACKER_ELEMENTS.COMMAND_PALETTE_SHORTCUT_KEY });
@@ -242,6 +244,7 @@ export const CommandPalette: FC = observer(() => {
       toggleCommandPaletteModal,
       toggleShortcutModal,
       toggleSidebar,
+      toggleExtendedSidebar,
       workspaceSlug,
     ]
   );

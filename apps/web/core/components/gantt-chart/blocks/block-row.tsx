@@ -6,7 +6,7 @@ import type { IBlockUpdateData, IGanttBlock } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 //
 import { BLOCK_HEIGHT, SIDEBAR_WIDTH } from "../constants";

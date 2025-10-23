@@ -1,14 +1,13 @@
-import orderBy from "lodash/orderBy";
-import set from "lodash/set";
-import unset from "lodash/unset";
+import { unset, orderBy, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { IEstimate as IEstimateType, IEstimateFormData, TEstimateSystemKeys } from "@plane/types";
+import type { IEstimate as IEstimateType, IEstimateFormData, TEstimateSystemKeys } from "@plane/types";
 // plane web services
 import estimateService from "@/plane-web/services/project/estimate.service";
 // plane web store
-import { IEstimate, Estimate } from "@/plane-web/store/estimates/estimate";
+import type { IEstimate } from "@/plane-web/store/estimates/estimate";
+import { Estimate } from "@/plane-web/store/estimates/estimate";
 // store
 import type { CoreRootStore } from "../root.store";
 

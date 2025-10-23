@@ -1,6 +1,7 @@
 "use client";
 
-import { Dispatch, MouseEvent, MutableRefObject, SetStateAction, useRef, useState } from "react";
+import type { Dispatch, MouseEvent, MutableRefObject, SetStateAction } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronRight, MoreHorizontal } from "lucide-react";
@@ -9,7 +10,8 @@ import { SPREADSHEET_SELECT_GROUP } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { Tooltip } from "@plane/propel/tooltip";
-import { EIssueServiceType, IIssueDisplayProperties, TIssue } from "@plane/types";
+import type { IIssueDisplayProperties, TIssue } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // ui
 import { ControlLink, Row } from "@plane/ui";
 import { cn, generateWorkItemLink } from "@plane/utils";
@@ -22,12 +24,12 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // local components
-import { TRenderQuickActions } from "../list/list-view-types";
+import type { TRenderQuickActions } from "../list/list-view-types";
 import { isIssueNew } from "../utils";
 import { IssueColumn } from "./issue-column";
 
@@ -258,7 +260,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
         id={`issue-${issueId}`}
         ref={cellRef}
         tabIndex={0}
-        className="relative md:sticky left-0 z-10 group/list-block bg-custom-background-100"
+        className="relative md:sticky left-0 z-10 group/list-block bg-custom-background-100 min-w-60 max-w-[30vw]"
       >
         <ControlLink
           href={workItemLink}
@@ -268,7 +270,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
         >
           <Row
             className={cn(
-              "group clickable cursor-pointer h-11 w-[28rem] flex items-center text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200 bg-transparent group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10",
+              "group clickable cursor-pointer h-11 w-full flex items-center text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200 bg-transparent group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10",
               {
                 "border-b-[0.5px]": !getIsIssuePeeked(issueDetail.id),
                 "border border-custom-primary-70 hover:border-custom-primary-70":

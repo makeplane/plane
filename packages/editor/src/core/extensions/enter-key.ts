@@ -1,8 +1,6 @@
 import { Extension } from "@tiptap/core";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
-// helpers
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 
 export const EnterKeyExtension = (onEnterKeyPress?: () => void) =>
   Extension.create({
@@ -11,7 +9,7 @@ export const EnterKeyExtension = (onEnterKeyPress?: () => void) =>
     addKeyboardShortcuts(this) {
       return {
         Enter: () => {
-          const { activeDropbarExtensions } = getExtensionStorage(this.editor, CORE_EXTENSIONS.UTILITY);
+          const { activeDropbarExtensions } = this.editor.storage.utility;
 
           if (activeDropbarExtensions.length === 0) {
             onEnterKeyPress?.();

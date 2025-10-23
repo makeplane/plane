@@ -4,7 +4,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { EProjectFeatureKey, PROJECT_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
-import { Breadcrumbs, Button, Header } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { ViewListHeader } from "@/components/views/view-list-header";
 // hooks

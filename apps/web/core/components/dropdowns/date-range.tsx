@@ -1,16 +1,18 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { Placement } from "@popperjs/core";
+import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
-import { DateRange, Matcher } from "react-day-picker";
+import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { ArrowRight, CalendarCheck2, CalendarDays, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // ui
-import { ComboDropDown, Calendar } from "@plane/ui";
+import type { DateRange, Matcher } from "@plane/propel/calendar";
+import { Calendar } from "@plane/propel/calendar";
+import { ComboDropDown } from "@plane/ui";
 import { cn, renderFormattedDate } from "@plane/utils";
 // helpers
 // hooks
@@ -20,7 +22,7 @@ import { useDropdown } from "@/hooks/use-dropdown";
 import { DropdownButton } from "./buttons";
 import { MergedDateDisplay } from "./merged-date";
 // types
-import { TButtonVariants } from "./types";
+import type { TButtonVariants } from "./types";
 
 type Props = {
   applyButtonText?: string;
@@ -59,6 +61,8 @@ type Props = {
   renderPlaceholder?: boolean;
   customTooltipContent?: React.ReactNode;
   customTooltipHeading?: string;
+  defaultOpen?: boolean;
+  renderInPortal?: boolean;
 };
 
 export const DateRangeDropdown: React.FC<Props> = observer((props) => {
@@ -93,9 +97,11 @@ export const DateRangeDropdown: React.FC<Props> = observer((props) => {
     renderPlaceholder = true,
     customTooltipContent,
     customTooltipHeading,
+    defaultOpen = false,
+    renderInPortal = false,
   } = props;
   // states
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   const [dateRange, setDateRange] = useState<DateRange>(value);
   // hooks
   const { data } = useUserProfile();
@@ -193,7 +199,9 @@ export const DateRangeDropdown: React.FC<Props> = observer((props) => {
               renderPlaceholder && (
                 <>
                   <span className="text-custom-text-400">{placeholder.from}</span>
-                  <ArrowRight className="h-3 w-3 flex-shrink-0 text-custom-text-400" />
+                  {placeholder.from && placeholder.to && (
+                    <ArrowRight className="h-3 w-3 flex-shrink-0 text-custom-text-400" />
+                  )}
                   <span className="text-custom-text-400">{placeholder.to}</span>
                 </>
               )
@@ -247,6 +255,34 @@ export const DateRangeDropdown: React.FC<Props> = observer((props) => {
     </button>
   );
 
+  const comboOptions = (
+    <Combobox.Options data-prevent-outside-click static>
+      <div
+        className="my-1 bg-custom-background-100 shadow-custom-shadow-rg border-[0.5px] border-custom-border-300 rounded-md overflow-hidden z-30"
+        ref={setPopperElement}
+        style={styles.popper}
+        {...attributes.popper}
+      >
+        <Calendar
+          className="rounded-md border border-custom-border-200 p-3"
+          captionLayout="dropdown"
+          selected={dateRange}
+          onSelect={(val: DateRange | undefined) => {
+            onSelect?.(val);
+          }}
+          mode="range"
+          disabled={disabledDays}
+          showOutsideDays
+          fixedWeeks
+          weekStartsOn={startOfWeek}
+          initialFocus
+        />
+      </div>
+    </Combobox.Options>
+  );
+
+  const Options = renderInPortal ? createPortal(comboOptions, document.body) : comboOptions;
+
   return (
     <ComboDropDown
       as="div"
@@ -262,31 +298,7 @@ export const DateRangeDropdown: React.FC<Props> = observer((props) => {
       disabled={disabled}
       renderByDefault={renderByDefault}
     >
-      {isOpen && (
-        <Combobox.Options className="fixed z-10" static>
-          <div
-            className="my-1 bg-custom-background-100 shadow-custom-shadow-rg border-[0.5px] border-custom-border-300 rounded-md overflow-hidden"
-            ref={setPopperElement}
-            style={styles.popper}
-            {...attributes.popper}
-          >
-            <Calendar
-              captionLayout="dropdown"
-              classNames={{ root: `p-3 rounded-md` }}
-              selected={dateRange}
-              onSelect={(val) => {
-                onSelect?.(val);
-              }}
-              mode="range"
-              disabled={disabledDays}
-              showOutsideDays
-              fixedWeeks
-              weekStartsOn={startOfWeek}
-              initialFocus
-            />
-          </div>
-        </Combobox.Options>
-      )}
+      {isOpen && Options}
     </ComboDropDown>
   );
 });

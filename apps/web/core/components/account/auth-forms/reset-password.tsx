@@ -8,16 +8,13 @@ import { Eye, EyeOff } from "lucide-react";
 // ui
 import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, Input, PasswordStrengthIndicator } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Input, PasswordStrengthIndicator } from "@plane/ui";
 // components
 import { getPasswordStrength } from "@plane/utils";
 // helpers
-import {
-  EAuthenticationErrorCodes,
-  EErrorAlertType,
-  TAuthErrorInfo,
-  authErrorHandler,
-} from "@/helpers/authentication.helper";
+import type { EAuthenticationErrorCodes, TAuthErrorInfo } from "@/helpers/authentication.helper";
+import { EErrorAlertType, authErrorHandler } from "@/helpers/authentication.helper";
 // services
 import { AuthService } from "@/services/auth.service";
 // local imports

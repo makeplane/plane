@@ -1,11 +1,12 @@
 import { computedFn } from "mobx-utils";
-import { EUserProjectRoles } from "@plane/types";
+import type { EUserProjectRoles } from "@plane/types";
 // plane imports
 // plane web imports
 import type { RootStore } from "@/plane-web/store/root.store";
 // store
 import type { IMemberRootStore } from "@/store/member";
-import { BaseProjectMemberStore, IBaseProjectMemberStore } from "@/store/member/base-project-member.store";
+import type { IBaseProjectMemberStore } from "@/store/member/project/base-project-member.store";
+import { BaseProjectMemberStore } from "@/store/member/project/base-project-member.store";
 
 export type IProjectMemberStore = IBaseProjectMemberStore;
 

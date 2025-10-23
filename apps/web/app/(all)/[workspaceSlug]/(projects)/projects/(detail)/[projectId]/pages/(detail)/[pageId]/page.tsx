@@ -6,16 +6,18 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane types
-import { EFileAssetType, TSearchEntityRequestPayload, TWebhookConnectionQueryParams } from "@plane/types";
+import { getButtonStyling } from "@plane/propel/button";
+import type { TSearchEntityRequestPayload, TWebhookConnectionQueryParams } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
 // plane ui
-import { getButtonStyling } from "@plane/ui";
 // plane utils
 import { cn } from "@plane/utils";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { PageHead } from "@/components/core/page-title";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
-import { PageRoot, TPageRootConfig, TPageRootHandlers } from "@/components/pages/editor/page-root";
+import type { TPageRootConfig, TPageRootHandlers } from "@/components/pages/editor/page-root";
+import { PageRoot } from "@/components/pages/editor/page-root";
 // hooks
 import { useEditorConfig } from "@/hooks/editor";
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";

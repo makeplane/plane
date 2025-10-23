@@ -3,8 +3,9 @@
 import React, { useState } from "react";
 // plane imports
 import { MEMBER_TRACKER_ELEMENTS, MEMBER_TRACKER_EVENTS, ROLE } from "@plane/constants";
-import { IWorkspaceMemberInvitation } from "@plane/types";
-import { Button, Checkbox, Spinner } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import type { IWorkspaceMemberInvitation } from "@plane/types";
+import { Checkbox, Spinner } from "@plane/ui";
 import { truncateText } from "@plane/utils";
 // constants
 import { WorkspaceLogo } from "@/components/workspace/logo";

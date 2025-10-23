@@ -1,6 +1,7 @@
 "use client";
-import React, { FC } from "react";
-import { TIssue } from "@plane/types";
+import type { FC } from "react";
+import React from "react";
+import type { TIssue } from "@plane/types";
 
 export interface EpicModalProps {
   data?: Partial<TIssue>;

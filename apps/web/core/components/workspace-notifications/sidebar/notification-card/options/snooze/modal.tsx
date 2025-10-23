@@ -1,13 +1,15 @@
 "use client";
 
-import { Fragment, FC } from "react";
+import type { FC } from "react";
+import { Fragment } from "react";
 import { useParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { X } from "lucide-react";
 import { Transition, Dialog } from "@headlessui/react";
 // plane imports
 import { allTimeIn30MinutesInterval12HoursFormat } from "@plane/constants";
-import { Button, CustomSelect } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { CustomSelect } from "@plane/ui";
 // components
 import { getDate } from "@plane/utils";
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -195,7 +197,6 @@ export const NotificationSnoozeModal: FC<TNotificationSnoozeModal> = (props) => 
                                 )}
                               </div>
                             }
-                            optionsClassName="w-full"
                             input
                           >
                             <div className="mb-2 flex h-9 w-full overflow-hidden rounded">

@@ -1,14 +1,14 @@
 "use client";
 
 import React, { Fragment, useState } from "react";
-import { Placement } from "@popperjs/core";
+import type { Placement } from "@popperjs/core";
 import { usePopper } from "react-popper";
 // icons
 import { ChevronUp } from "lucide-react";
 // headless ui
 import { Popover, Transition } from "@headlessui/react";
 // ui
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 
 type Props = {
   children: React.ReactNode;

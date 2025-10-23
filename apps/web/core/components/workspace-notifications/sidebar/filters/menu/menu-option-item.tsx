@@ -1,10 +1,10 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Check } from "lucide-react";
 // plane imports
-import { ENotificationFilterType } from "@plane/constants";
+import type { ENotificationFilterType } from "@plane/constants";
 // helpers
 import { cn } from "@plane/utils";
 // hooks

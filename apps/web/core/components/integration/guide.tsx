@@ -12,9 +12,9 @@ import { RefreshCw } from "lucide-react";
 import { IMPORTERS_LIST } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
-import { IImporterService } from "@plane/types";
+import { Button } from "@plane/propel/button";
+import type { IImporterService } from "@plane/types";
 // ui
-import { Button } from "@plane/ui";
 // components
 import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "@/components/integration";
 import { ImportExportSettingsLoader } from "@/components/ui/loader/settings/import-and-export";

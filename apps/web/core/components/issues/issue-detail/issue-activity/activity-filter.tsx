@@ -1,9 +1,11 @@
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { Check, ListFilter } from "lucide-react";
-import { TActivityFilters, TActivityFilterOption } from "@plane/constants";
+import type { TActivityFilters, TActivityFilterOption } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, PopoverMenu } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { PopoverMenu } from "@plane/ui";
 // helper
 import { cn } from "@plane/utils";
 // constants

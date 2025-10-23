@@ -7,28 +7,18 @@ import { ChevronDown } from "lucide-react";
 // plane imports
 import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import {
-  EIssuesStoreType,
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  IIssueFilterOptions,
-  EIssueLayoutTypes,
-} from "@plane/types";
-import { isIssueFilterActive } from "@plane/utils";
+import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
 import { WorkItemsModal } from "@/components/analytics/work-items/modal";
 import {
   DisplayFiltersSelection,
-  FilterSelection,
   FiltersDropdown,
   MobileLayoutSelection,
 } from "@/components/issues/issue-layouts/filters";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
-import { useLabel } from "@/hooks/store/use-label";
-import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
-import { useProjectState } from "@/hooks/store/use-project-state";
 
 export const ProjectIssuesMobileHeader = observer(() => {
   // i18n
@@ -39,16 +29,11 @@ export const ProjectIssuesMobileHeader = observer(() => {
     projectId: string;
   };
   const { currentProjectDetails } = useProject();
-  const { projectStates } = useProjectState();
-  const { projectLabels } = useLabel();
 
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.PROJECT);
-  const {
-    project: { projectMemberIds },
-  } = useMember();
   const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleLayoutChange = useCallback(
@@ -57,27 +42,6 @@ export const ProjectIssuesMobileHeader = observer(() => {
       updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout });
     },
     [workspaceSlug, projectId, updateFilters]
-  );
-
-  const handleFiltersUpdate = useCallback(
-    (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !projectId) return;
-      const newValues = issueFilters?.filters?.[key] ?? [];
-
-      if (Array.isArray(value)) {
-        // this validation is majorly for the filter start_date, target_date custom
-        value.forEach((val) => {
-          if (!newValues.includes(val)) newValues.push(val);
-          else newValues.splice(newValues.indexOf(val), 1);
-        });
-      } else {
-        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-        else newValues.push(value);
-      }
-
-      updateFilters(workspaceSlug, projectId, EIssueFilterType.FILTERS, { [key]: newValues });
-    },
-    [workspaceSlug, projectId, issueFilters, updateFilters]
   );
 
   const handleDisplayFilters = useCallback(
@@ -110,34 +74,6 @@ export const ProjectIssuesMobileHeader = observer(() => {
         />
         <div className="flex flex-grow items-center justify-center border-l border-custom-border-200 text-sm text-custom-text-200">
           <FiltersDropdown
-            title={t("common.filters")}
-            placement="bottom-end"
-            menuButton={
-              <span className="flex items-center text-sm text-custom-text-200">
-                {t("common.filters")}
-                <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200" />
-              </span>
-            }
-            isFiltersApplied={isIssueFilterActive(issueFilters)}
-          >
-            <FilterSelection
-              filters={issueFilters?.filters ?? {}}
-              handleFiltersUpdate={handleFiltersUpdate}
-              displayFilters={issueFilters?.displayFilters ?? {}}
-              handleDisplayFiltersUpdate={handleDisplayFilters}
-              layoutDisplayFiltersOptions={
-                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[activeLayout] : undefined
-              }
-              labels={projectLabels}
-              memberIds={projectMemberIds ?? undefined}
-              states={projectStates}
-              cycleViewDisabled={!currentProjectDetails?.cycle_view}
-              moduleViewDisabled={!currentProjectDetails?.module_view}
-            />
-          </FiltersDropdown>
-        </div>
-        <div className="flex flex-grow items-center justify-center border-l border-custom-border-200 text-sm text-custom-text-200">
-          <FiltersDropdown
             title={t("common.display")}
             placement="bottom-end"
             menuButton={
@@ -149,7 +85,7 @@ export const ProjectIssuesMobileHeader = observer(() => {
           >
             <DisplayFiltersSelection
               layoutDisplayFiltersOptions={
-                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues[activeLayout] : undefined
+                activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.layoutOptions[activeLayout] : undefined
               }
               displayFilters={issueFilters?.displayFilters ?? {}}
               handleDisplayFiltersUpdate={handleDisplayFilters}

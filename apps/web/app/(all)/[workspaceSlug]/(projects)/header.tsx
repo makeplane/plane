@@ -1,10 +1,12 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { Home, Shapes } from "lucide-react";
+import { Shapes } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Breadcrumbs, Button, Header } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { HomeIcon } from "@plane/propel/icons";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
@@ -26,7 +28,10 @@ export const WorkspaceDashboardHeader = observer(() => {
             <Breadcrumbs>
               <Breadcrumbs.Item
                 component={
-                  <BreadcrumbLink label={t("home.title")} icon={<Home className="h-4 w-4 text-custom-text-300" />} />
+                  <BreadcrumbLink
+                    label={t("home.title")}
+                    icon={<HomeIcon className="h-4 w-4 text-custom-text-300" />}
+                  />
                 }
               />
             </Breadcrumbs>

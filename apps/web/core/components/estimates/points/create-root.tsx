@@ -1,12 +1,14 @@
 "use client";
 
-import { Dispatch, FC, SetStateAction, useCallback, useState } from "react";
+import type { Dispatch, FC, SetStateAction } from "react";
+import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 // plane imports
 import { estimateCount } from "@plane/constants";
-import { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeError } from "@plane/types";
-import { Button, Sortable } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeError } from "@plane/types";
+import { Sortable } from "@plane/ui";
 // local imports
 import { EstimatePointCreate } from "./create";
 import { EstimatePointItemPreview } from "./preview";

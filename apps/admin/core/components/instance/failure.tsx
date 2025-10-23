@@ -1,9 +1,9 @@
 "use client";
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 // assets
 import { AuthHeader } from "@/app/(all)/(home)/auth-header";
 import InstanceFailureDarkImage from "@/public/instance/instance-failure-dark.svg";

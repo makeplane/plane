@@ -2,12 +2,12 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-import { FileText, HelpCircle, MessagesSquare, User } from "lucide-react";
+import { HelpCircle, MessagesSquare, User } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { PageIcon } from "@plane/propel/icons";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
-import { CustomMenu, ToggleSwitch } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { ProductUpdatesModal } from "@/components/global";
@@ -16,7 +16,6 @@ import { ProductUpdatesModal } from "@/components/global";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useInstance } from "@/hooks/store/use-instance";
 import { useTransient } from "@/hooks/store/use-transient";
-import { useUserSettings } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { PlaneVersionNumber } from "@/plane-web/components/global";
@@ -26,14 +25,12 @@ export interface WorkspaceHelpSectionProps {
 }
 
 export const HelpMenu: React.FC<WorkspaceHelpSectionProps> = observer(() => {
-  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { t } = useTranslation();
   const { toggleShortcutModal } = useCommandPalette();
   const { isMobile } = usePlatformOS();
   const { config } = useInstance();
   const { isIntercomToggle, toggleIntercom } = useTransient();
-  const { canUseLocalDB, toggleLocalDB } = useUserSettings();
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   const [isProductUpdatesModalOpen, setProductUpdatesModalOpen] = useState(false);
@@ -68,15 +65,13 @@ export const HelpMenu: React.FC<WorkspaceHelpSectionProps> = observer(() => {
           maxHeight="lg"
           closeOnSelect
         >
-          <CustomMenu.MenuItem>
-            <a
-              href="https://go.plane.so/p-docs"
-              target="_blank"
-              className="flex items-center justify- gap-x-2 rounded text-xs hover:bg-custom-background-80"
-            >
-              <FileText className="h-3.5 w-3.5 text-custom-text-200" size={14} />
+          <CustomMenu.MenuItem
+            onClick={() => window.open("https://go.plane.so/p-docs", "_blank", "noopener,noreferrer")}
+          >
+            <div className="flex items-center gap-x-2 rounded text-xs hover:bg-custom-background-80">
+              <PageIcon className="h-3.5 w-3.5 text-custom-text-200" height={14} width={14} />
               <span className="text-xs">{t("documentation")}</span>
-            </a>
+            </div>
           </CustomMenu.MenuItem>
           {config?.intercom_app_id && config?.is_intercom_enabled && (
             <CustomMenu.MenuItem>
@@ -90,32 +85,13 @@ export const HelpMenu: React.FC<WorkspaceHelpSectionProps> = observer(() => {
               </button>
             </CustomMenu.MenuItem>
           )}
-          <CustomMenu.MenuItem>
-            <a
-              href="mailto:sales@plane.so"
-              target="_blank"
-              className="flex items-center justify- gap-x-2 rounded text-xs hover:bg-custom-background-80"
-            >
+          <CustomMenu.MenuItem onClick={() => window.open("mailto:sales@plane.so", "_blank", "noopener,noreferrer")}>
+            <div className="flex items-center gap-x-2 rounded text-xs hover:bg-custom-background-80">
               <User className="h-3.5 w-3.5 text-custom-text-200" size={14} />
               <span className="text-xs">{t("contact_sales")}</span>
-            </a>
-          </CustomMenu.MenuItem>
-          <div className="my-1 border-t border-custom-border-200" />
-          <CustomMenu.MenuItem>
-            <div
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-              className="flex w-full items-center justify-between text-xs hover:bg-custom-background-80"
-            >
-              <span className="racking-tight">{t("hyper_mode")}</span>
-              <ToggleSwitch
-                value={canUseLocalDB}
-                onChange={() => toggleLocalDB(workspaceSlug?.toString(), projectId?.toString())}
-              />
             </div>
           </CustomMenu.MenuItem>
+          <div className="my-1 border-t border-custom-border-200" />
           <CustomMenu.MenuItem>
             <button
               type="button"
@@ -134,14 +110,12 @@ export const HelpMenu: React.FC<WorkspaceHelpSectionProps> = observer(() => {
               <span className="text-xs">{t("whats_new")}</span>
             </button>
           </CustomMenu.MenuItem>
-          <CustomMenu.MenuItem>
-            <a
-              href="https://go.plane.so/p-discord"
-              target="_blank"
-              className="flex items-center justify- gap-x-2 rounded text-xs hover:bg-custom-background-80"
-            >
+          <CustomMenu.MenuItem
+            onClick={() => window.open("https://go.plane.so/p-discord", "_blank", "noopener,noreferrer")}
+          >
+            <div className="flex items-center gap-x-2 rounded text-xs hover:bg-custom-background-80">
               <span className="text-xs">Discord</span>
-            </a>
+            </div>
           </CustomMenu.MenuItem>
           <div className="px-1 pt-2 mt-1 text-xs text-custom-text-200 border-t border-custom-border-200">
             <PlaneVersionNumber />

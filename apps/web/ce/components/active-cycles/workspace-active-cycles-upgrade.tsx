@@ -7,7 +7,8 @@ import { AlertOctagon, BarChart4, CircleDashed, Folder, Microscope, Search } fro
 // plane imports
 import { MARKETING_PRICING_PAGE_LINK } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ContentWrapper, getButtonStyling } from "@plane/ui";
+import { getButtonStyling } from "@plane/propel/button";
+import { ContentWrapper } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { ProIcon } from "@/components/common/pro-icon";

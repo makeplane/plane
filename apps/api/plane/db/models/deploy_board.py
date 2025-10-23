@@ -25,14 +25,10 @@ class DeployBoard(WorkspaceBaseModel):
 
     entity_identifier = models.UUIDField(null=True)
     entity_name = models.CharField(max_length=30, null=True, blank=True)
-    anchor = models.CharField(
-        max_length=255, default=get_anchor, unique=True, db_index=True
-    )
+    anchor = models.CharField(max_length=255, default=get_anchor, unique=True, db_index=True)
     is_comments_enabled = models.BooleanField(default=False)
     is_reactions_enabled = models.BooleanField(default=False)
-    intake = models.ForeignKey(
-        "db.Intake", related_name="publish_intake", on_delete=models.SET_NULL, null=True
-    )
+    intake = models.ForeignKey("db.Intake", related_name="publish_intake", on_delete=models.SET_NULL, null=True)
     is_votes_enabled = models.BooleanField(default=False)
     view_props = models.JSONField(default=dict)
     is_activity_enabled = models.BooleanField(default=True)

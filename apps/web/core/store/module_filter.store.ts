@@ -1,8 +1,8 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { action, computed, observable, makeObservable, runInAction, reaction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { TModuleDisplayFilters, TModuleFilters, TModuleFiltersByState } from "@plane/types";
+import type { TModuleDisplayFilters, TModuleFilters, TModuleFiltersByState } from "@plane/types";
 // helpers
 import { storage } from "@/lib/local-storage";
 // store

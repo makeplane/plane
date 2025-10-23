@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useRef, useState } from "react";
+import type { FC } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
@@ -66,6 +67,7 @@ export const CommentCard: FC<TCommentCard> = observer((props) => {
           isEditing
           readOnlyEditorRef={readOnlyEditorRef.current}
           setIsEditing={setIsEditing}
+          projectId={projectId}
           workspaceId={workspaceId}
           workspaceSlug={workspaceSlug}
         />

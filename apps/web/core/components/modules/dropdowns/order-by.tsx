@@ -3,9 +3,10 @@
 import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check, ChevronDown } from "lucide-react";
 import { MODULE_ORDER_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TModuleOrderByOptions } from "@plane/types";
+import { getButtonStyling } from "@plane/propel/button";
+import type { TModuleOrderByOptions } from "@plane/types";
 // ui
-import { CustomMenu, getButtonStyling } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // types

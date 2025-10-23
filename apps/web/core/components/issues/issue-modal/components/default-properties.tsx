@@ -2,13 +2,14 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { Control, Controller } from "react-hook-form";
+import type { Control } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { LayoutPanelTop } from "lucide-react";
 // plane imports
 import { ETabIndices, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
-import { ISearchIssueResponse, TIssue } from "@plane/types";
+import type { ISearchIssueResponse, TIssue } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
@@ -42,7 +43,6 @@ type TIssueDefaultPropertiesProps = {
   parentId: string | null;
   isDraft: boolean;
   handleFormChange: () => void;
-  setLabelModal: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedParentIssue: (issue: ISearchIssueResponse) => void;
 };
 
@@ -58,7 +58,6 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
     parentId,
     isDraft,
     handleFormChange,
-    setLabelModal,
     setSelectedParentIssue,
   } = props;
   // states
@@ -74,7 +73,8 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
 
   const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
 
-  const canCreateLabel = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
+  const canCreateLabel =
+    projectId && allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
 
   const minDate = getDate(startDate);
   minDate?.setDate(minDate.getDate());
@@ -147,7 +147,6 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
         render={({ field: { value, onChange } }) => (
           <div className="h-7">
             <IssueLabelSelect
-              setIsOpen={setLabelModal}
               value={value}
               onChange={(labelIds) => {
                 onChange(labelIds);
@@ -155,7 +154,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
               }}
               projectId={projectId ?? undefined}
               tabIndex={getIndex("label_ids")}
-              createLabelEnabled={canCreateLabel}
+              createLabelEnabled={!!canCreateLabel}
             />
           </div>
         )}

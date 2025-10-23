@@ -1,37 +1,67 @@
 import { enableStaticRendering } from "mobx-react";
 // plane imports
 import { FALLBACK_LANGUAGE, LANGUAGE_STORAGE_KEY } from "@plane/i18n";
+import type { IWorkItemFilterStore } from "@plane/shared-state";
+import { WorkItemFilterStore } from "@plane/shared-state";
 // plane web store
-import { AnalyticsStore, IAnalyticsStore } from "@/plane-web/store/analytics.store";
-import { CommandPaletteStore, ICommandPaletteStore } from "@/plane-web/store/command-palette.store";
+import type { IAnalyticsStore } from "@/plane-web/store/analytics.store";
+import { AnalyticsStore } from "@/plane-web/store/analytics.store";
+import type { ICommandPaletteStore } from "@/plane-web/store/command-palette.store";
+import { CommandPaletteStore } from "@/plane-web/store/command-palette.store";
 import type { RootStore } from "@/plane-web/store/root.store";
-import { IStateStore, StateStore } from "@/plane-web/store/state.store";
+import type { IStateStore } from "@/plane-web/store/state.store";
+import { StateStore } from "@/plane-web/store/state.store";
 // stores
-import { CycleStore, ICycleStore } from "./cycle.store";
-import { CycleFilterStore, ICycleFilterStore } from "./cycle_filter.store";
-import { DashboardStore, IDashboardStore } from "./dashboard.store";
-import { EditorAssetStore, IEditorAssetStore } from "./editor/asset.store";
-import { IProjectEstimateStore, ProjectEstimateStore } from "./estimates/project-estimate.store";
-import { FavoriteStore, IFavoriteStore } from "./favorite.store";
-import { GlobalViewStore, IGlobalViewStore } from "./global-view.store";
-import { IProjectInboxStore, ProjectInboxStore } from "./inbox/project-inbox.store";
-import { InstanceStore, IInstanceStore } from "./instance.store";
-import { IIssueRootStore, IssueRootStore } from "./issue/root.store";
-import { ILabelStore, LabelStore } from "./label.store";
-import { IMemberRootStore, MemberRootStore } from "./member";
-import { IModuleStore, ModulesStore } from "./module.store";
-import { IModuleFilterStore, ModuleFilterStore } from "./module_filter.store";
-import { IMultipleSelectStore, MultipleSelectStore } from "./multiple_select.store";
-import { IWorkspaceNotificationStore, WorkspaceNotificationStore } from "./notifications/workspace-notifications.store";
-import { IProjectPageStore, ProjectPageStore } from "./pages/project-page.store";
-import { IProjectRootStore, ProjectRootStore } from "./project";
-import { IProjectViewStore, ProjectViewStore } from "./project-view.store";
-import { RouterStore, IRouterStore } from "./router.store";
-import { IStickyStore, StickyStore } from "./sticky/sticky.store";
-import { ThemeStore, IThemeStore } from "./theme.store";
-import { ITransientStore, TransientStore } from "./transient.store";
-import { IUserStore, UserStore } from "./user";
-import { IWorkspaceRootStore, WorkspaceRootStore } from "./workspace";
+import type { ICycleStore } from "./cycle.store";
+import { CycleStore } from "./cycle.store";
+import type { ICycleFilterStore } from "./cycle_filter.store";
+import { CycleFilterStore } from "./cycle_filter.store";
+import type { IDashboardStore } from "./dashboard.store";
+import { DashboardStore } from "./dashboard.store";
+import type { IEditorAssetStore } from "./editor/asset.store";
+import { EditorAssetStore } from "./editor/asset.store";
+import type { IProjectEstimateStore } from "./estimates/project-estimate.store";
+import { ProjectEstimateStore } from "./estimates/project-estimate.store";
+import type { IFavoriteStore } from "./favorite.store";
+import { FavoriteStore } from "./favorite.store";
+import type { IGlobalViewStore } from "./global-view.store";
+import { GlobalViewStore } from "./global-view.store";
+import type { IProjectInboxStore } from "./inbox/project-inbox.store";
+import { ProjectInboxStore } from "./inbox/project-inbox.store";
+import type { IInstanceStore } from "./instance.store";
+import { InstanceStore } from "./instance.store";
+import type { IIssueRootStore } from "./issue/root.store";
+import { IssueRootStore } from "./issue/root.store";
+import type { ILabelStore } from "./label.store";
+import { LabelStore } from "./label.store";
+import type { IMemberRootStore } from "./member";
+import { MemberRootStore } from "./member";
+import type { IModuleStore } from "./module.store";
+import { ModulesStore } from "./module.store";
+import type { IModuleFilterStore } from "./module_filter.store";
+import { ModuleFilterStore } from "./module_filter.store";
+import type { IMultipleSelectStore } from "./multiple_select.store";
+import { MultipleSelectStore } from "./multiple_select.store";
+import type { IWorkspaceNotificationStore } from "./notifications/workspace-notifications.store";
+import { WorkspaceNotificationStore } from "./notifications/workspace-notifications.store";
+import type { IProjectPageStore } from "./pages/project-page.store";
+import { ProjectPageStore } from "./pages/project-page.store";
+import type { IProjectRootStore } from "./project";
+import { ProjectRootStore } from "./project";
+import type { IProjectViewStore } from "./project-view.store";
+import { ProjectViewStore } from "./project-view.store";
+import type { IRouterStore } from "./router.store";
+import { RouterStore } from "./router.store";
+import type { IStickyStore } from "./sticky/sticky.store";
+import { StickyStore } from "./sticky/sticky.store";
+import type { IThemeStore } from "./theme.store";
+import { ThemeStore } from "./theme.store";
+import type { ITransientStore } from "./transient.store";
+import { TransientStore } from "./transient.store";
+import type { IUserStore } from "./user";
+import { UserStore } from "./user";
+import type { IWorkspaceRootStore } from "./workspace";
+import { WorkspaceRootStore } from "./workspace";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -64,6 +94,7 @@ export class CoreRootStore {
   transient: ITransientStore;
   stickyStore: IStickyStore;
   editorAssetStore: IEditorAssetStore;
+  workItemFilters: IWorkItemFilterStore;
 
   constructor() {
     this.router = new RouterStore();
@@ -94,6 +125,7 @@ export class CoreRootStore {
     this.stickyStore = new StickyStore();
     this.editorAssetStore = new EditorAssetStore();
     this.analytics = new AnalyticsStore();
+    this.workItemFilters = new WorkItemFilterStore();
   }
 
   resetOnSignOut() {
@@ -126,5 +158,6 @@ export class CoreRootStore {
     this.transient = new TransientStore();
     this.stickyStore = new StickyStore();
     this.editorAssetStore = new EditorAssetStore();
+    this.workItemFilters = new WorkItemFilterStore();
   }
 }

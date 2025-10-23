@@ -1,8 +1,11 @@
-import { FC, useRef, useState } from "react";
+import type { FC } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 // plane imports
-import { EIssueServiceType, TNameDescriptionLoader } from "@plane/types";
+import type { EditorRefApi } from "@plane/editor";
+import type { TNameDescriptionLoader } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -13,7 +16,8 @@ import type { TIssueOperations } from "../issue-detail";
 import { IssueActivity } from "../issue-detail/issue-activity";
 import { IssueDetailWidgets } from "../issue-detail-widgets";
 import { IssuePeekOverviewError } from "./error";
-import { IssuePeekOverviewHeader, TPeekModes } from "./header";
+import type { TPeekModes } from "./header";
+import { IssuePeekOverviewHeader } from "./header";
 import { PeekOverviewIssueDetails } from "./issue-detail";
 import { IssuePeekOverviewLoader } from "./loader";
 import { PeekOverviewProperties } from "./properties";
@@ -53,6 +57,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   const [isEditIssueModalOpen, setIsEditIssueModalOpen] = useState(false);
   // ref
   const issuePeekOverviewRef = useRef<HTMLDivElement>(null);
+  const editorRef = useRef<EditorRefApi>(null);
   // store hooks
   const {
     setPeekIssue,
@@ -80,8 +85,9 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   usePeekOverviewOutsideClickDetector(
     issuePeekOverviewRef,
     () => {
+      const isAnyDropbarOpen = editorRef.current?.isAnyDropbarOpen();
       if (!embedIssue) {
-        if (!isAnyModalOpen && !isAnyEpicModalOpen && !isAnyLocalModalOpen) {
+        if (!isAnyModalOpen && !isAnyEpicModalOpen && !isAnyLocalModalOpen && !isAnyDropbarOpen) {
           removeRoutePeekId();
         }
       }
@@ -90,10 +96,10 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   );
 
   const handleKeyDown = () => {
-    const slashCommandDropdownElement = document.querySelector("#slash-command");
     const editorImageFullScreenModalElement = document.querySelector(".editor-image-full-screen-modal");
     const dropdownElement = document.activeElement?.tagName === "INPUT";
-    if (!isAnyModalOpen && !slashCommandDropdownElement && !dropdownElement && !editorImageFullScreenModalElement) {
+    const isAnyDropbarOpen = editorRef.current?.isAnyDropbarOpen();
+    if (!isAnyModalOpen && !dropdownElement && !isAnyDropbarOpen && !editorImageFullScreenModalElement) {
       removeRoutePeekId();
       const issueElement = document.getElementById(`issue-${issueId}`);
       if (issueElement) issueElement?.focus();
@@ -166,6 +172,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                 {["side-peek", "modal"].includes(peekMode) ? (
                   <div className="relative flex flex-col gap-3 px-8 py-5 space-y-3">
                     <PeekOverviewIssueDetails
+                      editorRef={editorRef}
                       workspaceSlug={workspaceSlug}
                       projectId={projectId}
                       issueId={issueId}
@@ -206,6 +213,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                     <div className="relative h-full w-full space-y-6 overflow-auto p-4 py-5">
                       <div className="space-y-3">
                         <PeekOverviewIssueDetails
+                          editorRef={editorRef}
                           workspaceSlug={workspaceSlug}
                           projectId={projectId}
                           issueId={issueId}

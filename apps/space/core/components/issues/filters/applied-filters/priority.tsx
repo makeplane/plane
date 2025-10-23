@@ -1,7 +1,8 @@
 "use client";
 
 import { X } from "lucide-react";
-import { PriorityIcon, type TIssuePriorities } from "@plane/propel/icons";
+import { PriorityIcon } from "@plane/propel/icons";
+import type { TIssuePriorities } from "@plane/propel/icons";
 
 type Props = {
   handleRemove: (val: string) => void;

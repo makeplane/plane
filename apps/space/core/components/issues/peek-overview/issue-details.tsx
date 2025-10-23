@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { RichTextEditor } from "@/components/editor/rich-text-editor";
 import { usePublish } from "@/hooks/store/publish";
 // types
-import { IIssue } from "@/types/issue";
+import type { IIssue } from "@/types/issue";
 // local imports
 import { IssueReactions } from "./issue-reaction";
 
@@ -25,18 +25,12 @@ export const PeekOverviewIssueDetails: React.FC<Props> = observer((props) => {
         {project_details?.identifier}-{issueDetails?.sequence_id}
       </h6>
       <h4 className="break-words text-2xl font-medium">{issueDetails.name}</h4>
-      {description !== "" && description !== "<p></p>" && (
+      {description && description !== "" && description !== "<p></p>" && (
         <RichTextEditor
           editable={false}
           anchor={anchor}
           id={issueDetails.id}
-          initialValue={
-            !description ||
-            description === "" ||
-            (typeof description === "object" && Object.keys(description).length === 0)
-              ? "<p></p>"
-              : description
-          }
+          initialValue={description}
           workspaceId={workspaceID?.toString() ?? ""}
         />
       )}

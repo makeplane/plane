@@ -5,12 +5,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { AlertCircle, Search, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-import { ContrastIcon, TransferIcon } from "@plane/propel/icons";
+import { CycleIcon, TransferIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssuesStoreType } from "@plane/types";
-// hooks
-// ui
-//icons
-import { TOAST_TYPE, setToast } from "@plane/ui";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssues } from "@/hooks/store/use-issues";
 //icons
@@ -150,7 +147,7 @@ export const TransferIssuesModal: React.FC<Props> = observer((props) => {
                                 handleClose();
                               }}
                             >
-                              <ContrastIcon className="h-5 w-5" />
+                              <CycleIcon className="h-5 w-5" />
                               <div className="flex w-full justify-between truncate">
                                 <span className="truncate">{cycleDetails?.name}</span>
                                 {cycleDetails.status && (

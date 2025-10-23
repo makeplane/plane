@@ -44,6 +44,7 @@ x-mq-env: &mq-env # RabbitMQ Settings
 
 x-live-env: &live-env
   API_BASE_URL: ${API_BASE_URL:-http://api:8000}
+  LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY:-2FiJk1U2aiVPEQtzLehYGlTSnTnrs7LW}
 
 x-app-env: &app-env
   WEB_URL: ${WEB_URL:-http://localhost}
@@ -56,6 +57,7 @@ x-app-env: &app-env
   AMQP_URL: ${AMQP_URL:-amqp://plane:plane@plane-mq:5672/plane}
   API_KEY_RATE_LIMIT: ${API_KEY_RATE_LIMIT:-60/minute}
   MINIO_ENDPOINT_SSL: ${MINIO_ENDPOINT_SSL:-0}
+  LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY:-2FiJk1U2aiVPEQtzLehYGlTSnTnrs7LW}
 
 services:
   web:
@@ -180,7 +182,7 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   plane-redis:
-    image: valkey/valkey:7.2.5-alpine
+    image: valkey/valkey:7.2.11-alpine
     deploy:
       replicas: 1
       restart_policy:

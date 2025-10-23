@@ -1,4 +1,5 @@
-import { FC, useRef, useState } from "react";
+import type { FC } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm, Controller } from "react-hook-form";
 // plane imports
@@ -114,6 +115,7 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
                 id={"add_comment_" + entityId}
                 value={"<p></p>"}
                 workspaceSlug={workspaceSlug}
+                projectId={projectId}
                 onEnterKeyPress={(e) => {
                   if (!isEmpty && !isSubmitting) {
                     handleSubmit(onSubmit)(e);

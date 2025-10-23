@@ -1,6 +1,7 @@
 "use client";
 
-import React, { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import React, { useEffect, useState } from "react";
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
@@ -8,7 +9,7 @@ import { Settings } from "lucide-react";
 // plane imports
 import { THEME_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 

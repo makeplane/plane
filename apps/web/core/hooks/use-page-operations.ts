@@ -2,8 +2,8 @@ import { useMemo } from "react";
 // plane imports
 import { IS_FAVORITE_MENU_OPEN, PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EPageAccess } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 import { copyUrlToClipboard } from "@plane/utils";
 // helpers
 import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
@@ -25,7 +25,6 @@ export type TPageOperations = {
 };
 
 type Props = {
-  editorRef?: EditorRefApi | null;
   page: TPageInstance;
 };
 

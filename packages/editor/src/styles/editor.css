@@ -205,7 +205,7 @@ ul[data-type="taskList"] li[data-checked="true"] {
 /* Overwrite tippy-box original max-width */
 
 .tippy-box {
-  max-width: 600px !important;
+  max-width: 800px !important;
 }
 
 .fade-in {

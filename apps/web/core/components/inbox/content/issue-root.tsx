@@ -1,12 +1,15 @@
 "use client";
 
-import { Dispatch, SetStateAction, useEffect, useMemo, useRef } from "react";
+import type { Dispatch, SetStateAction } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
-import { EInboxIssueSource, TIssue, TNameDescriptionLoader } from "@plane/types";
-import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TIssue, TNameDescriptionLoader } from "@plane/types";
+import { EInboxIssueSource } from "@plane/types";
+import { Loader } from "@plane/ui";
 import { getTextContent } from "@plane/utils";
 // components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";

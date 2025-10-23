@@ -1,8 +1,9 @@
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { Circle, ChevronDown, ChevronUp } from "lucide-react";
 // Plane
-import { TIssueGroupByOptions, TIssueKanbanFilters } from "@plane/types";
+import type { TIssueGroupByOptions, TIssueKanbanFilters } from "@plane/types";
 // Plane-web
 import { WorkFlowGroupTree } from "@/plane-web/components/workflow";
 // mobx

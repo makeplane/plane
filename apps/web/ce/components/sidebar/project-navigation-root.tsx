@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 // components
 import { ProjectNavigation } from "@/components/workspace/sidebar/project-navigation";
 

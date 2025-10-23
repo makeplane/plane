@@ -1,13 +1,15 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Check } from "lucide-react";
 // plane imports
 import { ONBOARDING_TRACKER_ELEMENTS, USER_TRACKER_EVENTS, USE_CASES } from "@plane/constants";
-import { EOnboardingSteps, TUserProfile } from "@plane/types";
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TUserProfile } from "@plane/types";
+import { EOnboardingSteps } from "@plane/types";
 import { cn } from "@plane/utils";
 // helpers
 import { captureError, captureSuccess, captureView } from "@/helpers/event-tracker.helper";
@@ -15,7 +17,7 @@ import { captureError, captureSuccess, captureView } from "@/helpers/event-track
 import { useUserProfile } from "@/hooks/store/user";
 // local imports
 import { CommonOnboardingHeader } from "../common";
-import { TProfileSetupFormValues } from "../profile/root";
+import type { TProfileSetupFormValues } from "../profile/root";
 
 type Props = {
   handleStepChange: (step: EOnboardingSteps, skipInvites?: boolean) => void;

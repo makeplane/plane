@@ -1,10 +1,11 @@
 "use client";
 
-import { FC, useMemo, useState } from "react";
-import sortBy from "lodash/sortBy";
+import type { FC } from "react";
+import { useMemo, useState } from "react";
+import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
 // plane types
-import { TInboxIssueFilterMemberKeys } from "@plane/types";
+import type { TInboxIssueFilterMemberKeys } from "@plane/types";
 // plane ui
 import { Avatar, Loader } from "@plane/ui";
 // components

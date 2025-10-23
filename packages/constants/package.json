@@ -1,21 +1,8 @@
 {
   "name": "@plane/constants",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "license": "AGPL-3.0",
-  "files": [
-    "dist/**/*"
-  ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "require": "./dist/index.js",
-      "import": "./dist/index.js"
-    }
-  },
   "scripts": {
     "dev": "tsdown --watch",
     "build": "tsdown",
@@ -32,9 +19,19 @@
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@types/node": "^22.5.4",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
   }
 }

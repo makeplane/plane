@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, FC } from "react";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Pencil } from "lucide-react";
@@ -13,14 +14,15 @@ import {
   WORKSPACE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IWorkspace } from "@plane/types";
-import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IWorkspace } from "@plane/types";
+import { CustomSelect, Input } from "@plane/ui";
 import { copyUrlToClipboard, getFileURL } from "@plane/utils";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { WorkspaceImageUploadModal } from "@/components/core/modals/workspace-image-upload-modal";
 // helpers
-// hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -241,7 +243,6 @@ export const WorkspaceDetails: FC = observer(() => {
                       ORGANIZATION_SIZE.find((c) => c === value) ??
                       t("workspace_settings.settings.general.errors.company_size.select_a_range")
                     }
-                    optionsClassName="w-full"
                     buttonClassName="!border-[0.5px] !border-custom-border-200 !shadow-none"
                     input
                     disabled={!isAdmin}

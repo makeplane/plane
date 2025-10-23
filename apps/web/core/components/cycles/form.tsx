@@ -6,9 +6,10 @@ import { Controller, useForm } from "react-hook-form";
 import { ETabIndices } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
-import { ICycle } from "@plane/types";
+import { Button } from "@plane/propel/button";
+import type { ICycle } from "@plane/types";
 // ui
-import { Button, Input, TextArea } from "@plane/ui";
+import { Input, TextArea } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";

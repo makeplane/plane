@@ -48,6 +48,8 @@ from plane.db.models import (
 )
 from plane.license.utils.instance_value import get_email_configuration
 from plane.utils.exception_logger import log_exception
+from plane.settings.mongo import MongoConnection
+
 
 SERIALIZER_MAPPER = {
     "project": ProjectSerializer,
@@ -80,15 +82,63 @@ logger = logging.getLogger("plane.worker")
 def get_issue_prefetches():
     return [
         Prefetch("label_issue", queryset=IssueLabel.objects.select_related("label")),
-        Prefetch(
-            "issue_assignee", queryset=IssueAssignee.objects.select_related("assignee")
-        ),
+        Prefetch("issue_assignee", queryset=IssueAssignee.objects.select_related("assignee")),
     ]
 
 
-def get_model_data(
-    event: str, event_id: Union[str, List[str]], many: bool = False
-) -> Dict[str, Any]:
+
+def save_webhook_log(
+    webhook: Webhook,
+    request_method: str,
+    request_headers: str,
+    request_body: str,
+    response_status: str,
+    response_headers: str,
+    response_body: str,
+    retry_count: int,
+    event_type: str,
+) -> None:
+
+    # webhook_logs
+    mongo_collection = MongoConnection.get_collection("webhook_logs")
+    
+    log_data = {
+        "workspace_id": str(webhook.workspace_id),
+        "webhook": str(webhook.id),
+        "event_type": str(event_type),
+        "request_method": str(request_method),
+        "request_headers": str(request_headers),
+        "request_body": str(request_body),
+        "response_status": str(response_status),
+        "response_headers": str(response_headers),
+        "response_body": str(response_body),
+        "retry_count": retry_count,
+    }
+
+    mongo_save_success = False
+    if mongo_collection is not None:
+        try:
+            # insert the log data into the mongo collection
+            mongo_collection.insert_one(log_data)
+            logger.info("Webhook log saved successfully to mongo")
+            mongo_save_success = True
+        except Exception as e:
+            log_exception(e)
+            logger.error(f"Failed to save webhook log: {e}")
+            mongo_save_success = False
+
+    # if the mongo save is not successful, save the log data into the database
+    if not mongo_save_success:
+        try:
+            # insert the log data into the database
+            WebhookLog.objects.create(**log_data)
+            logger.info("Webhook log saved successfully to database")
+        except Exception as e:
+            log_exception(e)
+            logger.error(f"Failed to save webhook log: {e}")
+
+
+def get_model_data(event: str, event_id: Union[str, List[str]], many: bool = False) -> Dict[str, Any]:
     """
     Retrieve and serialize model data based on the event type.
 
@@ -125,15 +175,9 @@ def get_model_data(
                 queryset = queryset.prefetch_related(*issue_prefetches)
             else:
                 issue_id = queryset.id
-                queryset = (
-                    model.objects.filter(pk=issue_id)
-                    .prefetch_related(*issue_prefetches)
-                    .first()
-                )
+                queryset = model.objects.filter(pk=issue_id).prefetch_related(*issue_prefetches).first()
 
-            return serializer(
-                queryset, many=many, context={"expand": ["labels", "assignees"]}
-            ).data
+            return serializer(queryset, many=many, context={"expand": ["labels", "assignees"]}).data
         else:
             return serializer(queryset, many=many).data
     except ObjectDoesNotExist:
@@ -141,9 +185,7 @@ def get_model_data(
 
 
 @shared_task
-def send_webhook_deactivation_email(
-    webhook_id: str, receiver_id: str, current_site: str, reason: str
-) -> None:
+def send_webhook_deactivation_email(webhook_id: str, receiver_id: str, current_site: str, reason: str) -> None:
     """
     Send an email notification when a webhook is deactivated.
 
@@ -177,9 +219,7 @@ def send_webhook_deactivation_email(
             "message": message,
             "webhook_url": f"{current_site}/{str(webhook.workspace.slug)}/settings/webhooks/{str(webhook.id)}",
         }
-        html_content = render_to_string(
-            "emails/notifications/webhook-deactivate.html", context
-        )
+        html_content = render_to_string("emails/notifications/webhook-deactivate.html", context)
         text_content = strip_tags(html_content)
 
         # Set the email connection
@@ -248,17 +288,9 @@ def webhook_send_task(
         }
 
         # # Your secret key
-        event_data = (
-            json.loads(json.dumps(event_data, cls=DjangoJSONEncoder))
-            if event_data is not None
-            else None
-        )
+        event_data = json.loads(json.dumps(event_data, cls=DjangoJSONEncoder)) if event_data is not None else None
 
-        activity = (
-            json.loads(json.dumps(activity, cls=DjangoJSONEncoder))
-            if activity is not None
-            else None
-        )
+        activity = json.loads(json.dumps(activity, cls=DjangoJSONEncoder)) if activity is not None else None
 
         action = {
             "POST": "create",
@@ -295,32 +327,30 @@ def webhook_send_task(
         response = requests.post(webhook.url, headers=headers, json=payload, timeout=30)
 
         # Log the webhook request
-        WebhookLog.objects.create(
-            workspace_id=str(webhook.workspace_id),
-            webhook=str(webhook.id),
-            event_type=str(event),
-            request_method=str(action),
-            request_headers=str(headers),
-            request_body=str(payload),
-            response_status=str(response.status_code),
-            response_headers=str(response.headers),
-            response_body=str(response.text),
-            retry_count=str(self.request.retries),
+        save_webhook_log(
+            webhook=webhook,
+            request_method=action,
+            request_headers=headers,
+            request_body=payload,
+            response_status=response.status_code,
+            response_headers=response.headers,
+            response_body=response.text,
+            retry_count=self.request.retries,
+            event_type=event,
         )
         logger.info(f"Webhook {webhook.id} sent successfully")
     except requests.RequestException as e:
         # Log the failed webhook request
-        WebhookLog.objects.create(
-            workspace_id=str(webhook.workspace_id),
-            webhook=str(webhook.id),
-            event_type=str(event),
-            request_method=str(action),
-            request_headers=str(headers),
-            request_body=str(payload),
+        save_webhook_log(
+            webhook=webhook,
+            request_method=action,
+            request_headers=headers,
+            request_body=payload,
             response_status=500,
             response_headers="",
             response_body=str(e),
-            retry_count=str(self.request.retries),
+            retry_count=self.request.retries,
+            event_type=event,
         )
         logger.error(f"Webhook {webhook.id} failed with error: {e}")
         # Retry logic
@@ -405,11 +435,7 @@ def webhook_activity(
                 webhook_id=webhook.id,
                 slug=slug,
                 event=event,
-                event_data=(
-                    {"id": event_id}
-                    if verb == "deleted"
-                    else get_model_data(event=event, event_id=event_id)
-                ),
+                event_data=({"id": event_id} if verb == "deleted" else get_model_data(event=event, event_id=event_id)),
                 action=verb,
                 current_site=current_site,
                 activity={
@@ -433,9 +459,7 @@ def webhook_activity(
 
 
 @shared_task
-def model_activity(
-    model_name, model_id, requested_data, current_instance, actor_id, slug, origin=None
-):
+def model_activity(model_name, model_id, requested_data, current_instance, actor_id, slug, origin=None):
     """Function takes in two json and computes differences between keys of both the json"""
     if current_instance is None:
         webhook_activity.delay(
@@ -454,9 +478,7 @@ def model_activity(
         return
 
     # Load the current instance
-    current_instance = (
-        json.loads(current_instance) if current_instance is not None else None
-    )
+    current_instance = json.loads(current_instance) if current_instance is not None else None
 
     # Loop through all keys in requested data and check the current value and requested value
     for key in requested_data:

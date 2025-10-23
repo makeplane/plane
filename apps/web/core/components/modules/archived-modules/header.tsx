@@ -1,4 +1,5 @@
-import { FC, useCallback, useRef, useState } from "react";
+import type { FC } from "react";
+import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons

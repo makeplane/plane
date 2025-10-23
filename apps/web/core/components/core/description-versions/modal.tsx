@@ -4,19 +4,11 @@ import { ChevronLeft, ChevronRight, Copy } from "lucide-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
+import { Button, getButtonStyling } from "@plane/propel/button";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { TDescriptionVersion } from "@plane/types";
-import {
-  Avatar,
-  Button,
-  EModalPosition,
-  EModalWidth,
-  getButtonStyling,
-  Loader,
-  ModalCore,
-  setToast,
-  TOAST_TYPE,
-} from "@plane/ui";
+import type { TDescriptionVersion } from "@plane/types";
+import { Avatar, EModalPosition, EModalWidth, Loader, ModalCore } from "@plane/ui";
 import { calculateTimeAgo, cn, copyTextToClipboard, getFileURL } from "@plane/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";

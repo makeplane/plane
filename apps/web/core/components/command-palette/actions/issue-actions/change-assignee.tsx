@@ -5,7 +5,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Check } from "lucide-react";
 // plane types
-import { EIssueServiceType, TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // plane ui
 import { Avatar } from "@plane/ui";
 // helpers

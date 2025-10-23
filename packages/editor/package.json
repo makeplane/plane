@@ -1,29 +1,27 @@
 {
   "name": "@plane/editor",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Core Editor that powers Plane",
   "license": "AGPL-3.0",
   "private": true,
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.cts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
     "./lib": {
-      "require": "./dist/lib.js",
-      "types": "./dist/lib.d.mts",
-      "import": "./dist/lib.mjs"
+      "import": "./dist/lib.js",
+      "require": "./dist/lib.cjs"
     },
+    "./package.json": "./package.json",
     "./styles": "./dist/styles/index.css"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "tsc && tsdown",
     "dev": "tsdown --watch",
     "check:lint": "eslint . --max-warnings 30",
     "check:types": "tsc --noEmit",
@@ -40,13 +38,13 @@
     "@floating-ui/dom": "^1.7.1",
     "@floating-ui/react": "^0.26.4",
     "@headlessui/react": "^1.7.3",
-    "@hocuspocus/provider": "^2.15.0",
+    "@hocuspocus/provider": "2.15.2",
     "@plane/constants": "workspace:*",
     "@plane/hooks": "workspace:*",
     "@plane/types": "workspace:*",
     "@plane/ui": "workspace:*",
     "@plane/utils": "workspace:*",
-    "@tiptap/core": "^2.22.3",
+    "@tiptap/core": "catalog:",
     "@tiptap/extension-blockquote": "^2.22.3",
     "@tiptap/extension-character-count": "^2.22.3",
     "@tiptap/extension-collaboration": "^2.22.3",
@@ -60,7 +58,7 @@
     "@tiptap/extension-text-align": "^2.22.3",
     "@tiptap/extension-text-style": "^2.22.3",
     "@tiptap/extension-underline": "^2.22.3",
-    "@tiptap/html": "^2.22.3",
+    "@tiptap/html": "catalog:",
     "@tiptap/pm": "^2.22.3",
     "@tiptap/react": "^2.22.3",
     "@tiptap/starter-kit": "^2.22.3",
@@ -85,7 +83,7 @@
     "@plane/eslint-config": "workspace:*",
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@types/node": "18.15.3",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "postcss": "^8.4.38",

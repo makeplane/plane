@@ -1,12 +1,13 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { EProjectFeatureKey, EUserPermissions, EUserPermissionsLevel, CYCLE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Breadcrumbs, Button, Header } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { CyclesViewHeader } from "@/components/cycles/cycles-view-header";
 // hooks

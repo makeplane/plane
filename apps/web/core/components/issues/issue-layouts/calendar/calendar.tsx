@@ -5,21 +5,17 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 // plane constants
-import { EIssueFilterType } from "@plane/constants";
+import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
 // types
-import {
-  EIssuesStoreType,
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  IIssueFilterOptions,
+import type {
   TGroupedIssues,
   TIssue,
-  TIssueKanbanFilters,
   TIssueMap,
   TPaginationData,
   ICalendarWeek,
-  EIssueLayoutTypes,
+  TSupportedFilterForUpdate,
 } from "@plane/types";
+import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // ui
 import { Spinner } from "@plane/ui";
 import { renderFormattedPayloadDate, cn } from "@plane/utils";
@@ -30,15 +26,15 @@ import { MONTHS_LIST } from "@/constants/calendar";
 import { useIssues } from "@/hooks/store/use-issues";
 import useSize from "@/hooks/use-window-size";
 // store
-import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
-import { ICycleIssuesFilter } from "@/store/issue/cycle";
-import { ICalendarStore } from "@/store/issue/issue_calendar_view.store";
-import { IModuleIssuesFilter } from "@/store/issue/module";
-import { IProjectIssuesFilter } from "@/store/issue/project";
-import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
+import type { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
+import type { ICycleIssuesFilter } from "@/store/issue/cycle";
+import type { ICalendarStore } from "@/store/issue/issue_calendar_view.store";
+import type { IModuleIssuesFilter } from "@/store/issue/module";
+import type { IProjectIssuesFilter } from "@/store/issue/project";
+import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 // local imports
 import { IssueLayoutHOC } from "../issue-layout-HOC";
-import { TRenderQuickActions } from "../list/list-view-types";
+import type { TRenderQuickActions } from "../list/list-view-types";
 import { CalendarHeader } from "./header";
 import { CalendarIssueBlocks } from "./issue-blocks";
 import { CalendarWeekDays } from "./week-days";
@@ -71,8 +67,8 @@ type Props = {
   readOnly?: boolean;
   updateFilters?: (
     projectId: string,
-    filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+    filterType: TSupportedFilterTypeForUpdate,
+    filters: TSupportedFilterForUpdate
   ) => Promise<void>;
   canEditProperties: (projectId: string | undefined) => boolean;
   isEpic?: boolean;

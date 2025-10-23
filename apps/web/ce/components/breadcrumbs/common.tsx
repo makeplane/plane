@@ -1,8 +1,8 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 // plane imports
-import { EProjectFeatureKey } from "@plane/constants";
+import type { EProjectFeatureKey } from "@plane/constants";
 // local components
 import { ProjectBreadcrumb } from "./project";
 import { ProjectFeatureBreadcrumb } from "./project-feature";

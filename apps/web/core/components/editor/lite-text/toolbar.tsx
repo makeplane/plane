@@ -1,18 +1,20 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
-import { Globe2, Lock, LucideIcon } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { Globe2, Lock } from "lucide-react";
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // editor
 import type { EditorRefApi } from "@plane/editor";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // ui
+import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
-import { Button } from "@plane/ui";
 // constants
 import { cn } from "@plane/utils";
-import { TOOLBAR_ITEMS, ToolbarMenuItem } from "@/constants/editor";
+import type { ToolbarMenuItem } from "@/constants/editor";
+import { TOOLBAR_ITEMS } from "@/constants/editor";
 // helpers
 
 type Props = {

@@ -3,11 +3,12 @@ import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Briefcase, Check, Hotel, Users, X } from "lucide-react";
+import { Check, Hotel, Users, X } from "lucide-react";
 // plane ui
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { ProjectIcon } from "@plane/propel/icons";
 import { cn, getFileURL } from "@plane/utils";
 // helpers
 // hooks
@@ -47,7 +48,7 @@ export const NoProjectsEmptyState = observer(() => {
       id: "create-project",
       title: "home.empty.create_project.title",
       description: "home.empty.create_project.description",
-      icon: <Briefcase className="size-4" />,
+      icon: <ProjectIcon className="size-4" />,
       flag: "projects",
       cta: {
         text: "home.empty.create_project.cta",

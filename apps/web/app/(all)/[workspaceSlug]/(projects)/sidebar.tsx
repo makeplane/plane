@@ -1,5 +1,5 @@
-import { FC } from "react";
-import isEmpty from "lodash/isEmpty";
+import type { FC } from "react";
+import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 // plane helpers
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";

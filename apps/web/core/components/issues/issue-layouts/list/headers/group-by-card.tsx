@@ -6,9 +6,10 @@ import { useParams } from "next/navigation";
 import { CircleDashed, Plus } from "lucide-react";
 // types
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
-import { TIssue, ISearchIssueResponse, TIssueGroupByOptions } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TIssue, ISearchIssueResponse, TIssueGroupByOptions } from "@plane/types";
 // ui
-import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
@@ -17,7 +18,7 @@ import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // constants
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // plane-web
 import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
 // Plane-web
@@ -116,7 +117,9 @@ export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
         >
           <div className="inline-block line-clamp-1 truncate font-medium text-custom-text-100">{title}</div>
           <div className="pl-2 text-sm font-medium text-custom-text-300">{count || 0}</div>
-          <WorkFlowGroupTree groupBy={groupBy} groupId={groupID} />
+          <div className="px-2.5">
+            <WorkFlowGroupTree groupBy={groupBy} groupId={groupID} />
+          </div>
         </div>
 
         {!disableIssueCreation &&

@@ -1,4 +1,4 @@
-import range from "lodash/range";
+import { range } from "lodash-es";
 
 export const EmailSettingsLoader = () => (
   <div className="mx-auto mt-8 h-full w-full overflow-y-auto px-6 lg:px-20 pb- animate-pulse">

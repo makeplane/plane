@@ -1,9 +1,9 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 // types
-import { IProject } from "@plane/types";
+import type { IProject } from "@plane/types";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 
@@ -48,7 +48,7 @@ export const ArchiveTabsList: FC = observer(() => {
           tab.shouldRender(projectDetails) && (
             <Link key={tab.key} href={`/${workspaceSlug}/projects/${projectId}/archives/${tab.key}`}>
               <span
-                className={`flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 py-3 px-4 text-sm font-medium outline-none ${
+                className={`flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 py-4 px-4 text-sm font-medium outline-none ${
                   pathname.includes(tab.key)
                     ? "border-custom-primary-100 text-custom-primary-100"
                     : "border-transparent hover:border-custom-border-200 text-custom-text-300 hover:text-custom-text-400"

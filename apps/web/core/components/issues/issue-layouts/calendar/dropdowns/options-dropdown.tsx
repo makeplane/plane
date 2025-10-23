@@ -9,26 +9,21 @@ import { Popover, Transition } from "@headlessui/react";
 // hooks
 // ui
 // icons
+import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
 import { EIssueFilterType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import {
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  IIssueFilterOptions,
-  TCalendarLayouts,
-  TIssueKanbanFilters,
-} from "@plane/types";
+import type { TCalendarLayouts, TSupportedFilterForUpdate } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 // types
 // constants
 import { CALENDAR_LAYOUTS } from "@/constants/calendar";
 import { useCalendarView } from "@/hooks/store/use-calendar-view";
 import useSize from "@/hooks/use-window-size";
-import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
-import { ICycleIssuesFilter } from "@/store/issue/cycle";
-import { IModuleIssuesFilter } from "@/store/issue/module";
-import { IProjectIssuesFilter } from "@/store/issue/project";
-import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
+import type { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
+import type { ICycleIssuesFilter } from "@/store/issue/cycle";
+import type { IModuleIssuesFilter } from "@/store/issue/module";
+import type { IProjectIssuesFilter } from "@/store/issue/project";
+import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 
 interface ICalendarHeader {
   issuesFilterStore:
@@ -39,8 +34,8 @@ interface ICalendarHeader {
     | IProjectEpicsFilter;
   updateFilters?: (
     projectId: string,
-    filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+    filterType: TSupportedFilterTypeForUpdate,
+    filters: TSupportedFilterForUpdate
   ) => Promise<void>;
 }
 

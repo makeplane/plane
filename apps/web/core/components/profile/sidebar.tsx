@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useEffect, useRef } from "react";
+import type { FC } from "react";
+import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -13,7 +14,7 @@ import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
-import { IUserProfileProjectSegregation } from "@plane/types";
+import type { IUserProfileProjectSegregation } from "@plane/types";
 // plane ui
 import { Loader } from "@plane/ui";
 import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
@@ -119,7 +120,7 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
                   className="h-full w-full rounded object-cover"
                 />
               ) : (
-                <div className="flex h-[52px] w-[52px] items-center justify-center rounded bg-custom-background-90 capitalize text-custom-text-100">
+                <div className="flex h-[52px] w-[52px] items-center justify-center rounded bg-[#028375] capitalize text-white">
                   {userData?.first_name?.[0]}
                 </div>
               )}

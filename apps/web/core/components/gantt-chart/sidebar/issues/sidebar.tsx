@@ -1,6 +1,7 @@
 "use client";
 
-import { RefObject, useState } from "react";
+import type { RefObject } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import type { IBlockUpdateData } from "@plane/types";
@@ -11,7 +12,7 @@ import { GanttLayoutListItemLoader } from "@/components/ui/loader/layouts/gantt-
 //hooks
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // local imports
 import { useTimeLineChart } from "../../../../hooks/use-timeline-chart";
 import { ETimeLineTypeType } from "../../contexts";

@@ -1,21 +1,21 @@
 "use client";
 
-import { FC, useCallback, useMemo } from "react";
-import isEmpty from "lodash/isEmpty";
-import isEqual from "lodash/isEqual";
+import type { FC } from "react";
+import { useMemo } from "react";
+import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
-import { EIssueFilterType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EIssuesStoreType, ICycle, IIssueFilterOptions, TCyclePlotType, TProgressSnapshot } from "@plane/types";
+import type { ICycle, TCyclePlotType, TProgressSnapshot } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 import { getDate } from "@plane/utils";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
-import { useIssues } from "@/hooks/store/use-issues";
 // plane web components
+import { useWorkItemFilters } from "@/hooks/store/work-item-filters/use-work-item-filters";
 import { SidebarChartRoot } from "@/plane-web/components/cycles";
 // local imports
 import { CycleProgressStats } from "./progress-stats";
@@ -60,23 +60,23 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
   // router
   const searchParams = useSearchParams();
   const peekCycle = searchParams.get("peekCycle") || undefined;
-  const { getPlotTypeByCycleId, getEstimateTypeByCycleId, getCycleById } = useCycle();
-  const {
-    issuesFilter: { issueFilters, updateFilters },
-  } = useIssues(EIssuesStoreType.CYCLE);
+  // plane hooks
   const { t } = useTranslation();
-
+  // store hooks
+  const { getPlotTypeByCycleId, getEstimateTypeByCycleId, getCycleById } = useCycle();
+  const { getFilter, updateFilterValueFromSidebar } = useWorkItemFilters();
   // derived values
+  const cycleFilter = getFilter(EIssuesStoreType.CYCLE, cycleId);
+  const selectedAssignees = cycleFilter?.findFirstConditionByPropertyAndOperator("assignee_id", "in");
+  const selectedLabels = cycleFilter?.findFirstConditionByPropertyAndOperator("label_id", "in");
+  const selectedStateGroups = cycleFilter?.findFirstConditionByPropertyAndOperator("state_group", "in");
   const cycleDetails = validateCycleSnapshot(getCycleById(cycleId));
   const plotType: TCyclePlotType = getPlotTypeByCycleId(cycleId);
   const estimateType = getEstimateTypeByCycleId(cycleId);
-
   const totalIssues = cycleDetails?.total_issues || 0;
   const totalEstimatePoints = cycleDetails?.total_estimate_points || 0;
-
   const chartDistributionData =
     estimateType === "points" ? cycleDetails?.estimate_distribution : cycleDetails?.distribution || undefined;
-
   const groupedIssues = useMemo(
     () => ({
       backlog:
@@ -92,43 +92,11 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
     }),
     [estimateType, cycleDetails]
   );
-
   const cycleStartDate = getDate(cycleDetails?.start_date);
   const cycleEndDate = getDate(cycleDetails?.end_date);
   const isCycleStartDateValid = cycleStartDate && cycleStartDate <= new Date();
   const isCycleEndDateValid = cycleStartDate && cycleEndDate && cycleEndDate >= cycleStartDate;
   const isCycleDateValid = isCycleStartDateValid && isCycleEndDateValid;
-
-  const handleFiltersUpdate = useCallback(
-    (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !projectId) return;
-
-      let newValues = issueFilters?.filters?.[key] ?? [];
-
-      if (Array.isArray(value)) {
-        if (key === "state") {
-          if (isEqual(newValues, value)) newValues = [];
-          else newValues = value;
-        } else {
-          value.forEach((val) => {
-            if (!newValues.includes(val)) newValues.push(val);
-            else newValues.splice(newValues.indexOf(val), 1);
-          });
-        }
-      } else {
-        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
-        else newValues.push(value);
-      }
-      updateFilters(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        EIssueFilterType.FILTERS,
-        { [key]: newValues },
-        cycleId
-      );
-    },
-    [workspaceSlug, projectId, cycleId, issueFilters, updateFilters]
-  );
 
   if (!cycleDetails) return <></>;
   return (
@@ -159,7 +127,6 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
                 </div>
               </div>
             )}
-
             <Transition show={open}>
               <Disclosure.Panel className="flex flex-col divide-y divide-custom-border-200">
                 {cycleStartDate && cycleEndDate ? (
@@ -172,16 +139,24 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
                       <div className="w-full py-4">
                         <CycleProgressStats
                           cycleId={cycleId}
-                          plotType={plotType}
                           distribution={chartDistributionData}
                           groupedIssues={groupedIssues}
-                          totalIssuesCount={estimateType === "points" ? totalEstimatePoints || 0 : totalIssues || 0}
-                          isEditable={Boolean(!peekCycle)}
-                          size="xs"
-                          roundedTab={false}
+                          handleFiltersUpdate={updateFilterValueFromSidebar.bind(
+                            updateFilterValueFromSidebar,
+                            EIssuesStoreType.CYCLE,
+                            cycleId
+                          )}
+                          isEditable={Boolean(!peekCycle) && cycleFilter !== undefined}
                           noBackground={false}
-                          filters={issueFilters}
-                          handleFiltersUpdate={handleFiltersUpdate}
+                          plotType={plotType}
+                          roundedTab={false}
+                          selectedFilters={{
+                            assignees: selectedAssignees,
+                            labels: selectedLabels,
+                            stateGroups: selectedStateGroups,
+                          }}
+                          size="xs"
+                          totalIssuesCount={estimateType === "points" ? totalEstimatePoints || 0 : totalIssues || 0}
                         />
                       </div>
                     )}

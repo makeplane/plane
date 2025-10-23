@@ -1,12 +1,15 @@
 "use client";
 
-import { FC, useEffect, useMemo, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 // plane internal packages
-import { API_BASE_URL, EAdminAuthErrorCodes, TAdminAuthErrorInfo } from "@plane/constants";
+import type { EAdminAuthErrorCodes, TAdminAuthErrorInfo } from "@plane/constants";
+import { API_BASE_URL } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { AuthService } from "@plane/services";
-import { Button, Input, Spinner } from "@plane/ui";
+import { Input, Spinner } from "@plane/ui";
 // components
 import { Banner } from "@/components/common/banner";
 // local components

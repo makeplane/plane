@@ -2,9 +2,9 @@ import { useFormContext } from "react-hook-form";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IProject } from "@plane/types";
+import { Button } from "@plane/propel/button";
+import type { IProject } from "@plane/types";
 // ui
-import { Button } from "@plane/ui";
 // helpers
 import { getTabIndex } from "@plane/utils";
 

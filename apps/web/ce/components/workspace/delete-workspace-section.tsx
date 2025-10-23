@@ -1,12 +1,14 @@
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 // types
 import { WORKSPACE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IWorkspace } from "@plane/types";
+import { Button } from "@plane/propel/button";
+import type { IWorkspace } from "@plane/types";
 // ui
-import { Button, Collapsible } from "@plane/ui";
+import { Collapsible } from "@plane/ui";
 import { DeleteWorkspaceModal } from "./delete-workspace-modal";
 // components
 

@@ -9,9 +9,9 @@ import { mutate } from "swr";
 // icons
 import { ArrowLeft, Check, List, Settings, Users } from "lucide-react";
 // types
-import { IJiraImporterForm } from "@plane/types";
+import { Button } from "@plane/propel/button";
+import type { IJiraImporterForm } from "@plane/types";
 // ui
-import { Button } from "@plane/ui";
 // fetch keys
 import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
 // hooks
@@ -21,15 +21,8 @@ import JiraLogo from "@/public/services/jira.svg";
 // services
 import { JiraImporterService } from "@/services/integrations";
 // components
-import {
-  JiraGetImportDetail,
-  JiraProjectDetail,
-  JiraImportUsers,
-  JiraConfirmImport,
-  jiraFormDefaultValues,
-  TJiraIntegrationSteps,
-  IJiraIntegrationData,
-} from ".";
+import type { TJiraIntegrationSteps, IJiraIntegrationData } from ".";
+import { JiraGetImportDetail, JiraProjectDetail, JiraImportUsers, JiraConfirmImport, jiraFormDefaultValues } from ".";
 
 const integrationWorkflowData: Array<{
   title: string;

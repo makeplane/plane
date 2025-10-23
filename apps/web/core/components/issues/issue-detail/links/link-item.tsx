@@ -1,19 +1,21 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Pencil, Trash2, Copy, Link } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { EIssueServiceType, TIssueServiceType } from "@plane/types";
+import type { TIssueServiceType } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // ui
-import { TOAST_TYPE, setToast, CustomMenu } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 import { calculateTimeAgo, copyTextToClipboard } from "@plane/utils";
 // helpers
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { TLinkOperationsModal } from "./create-update-link-modal";
+import type { TLinkOperationsModal } from "./create-update-link-modal";
 
 type TIssueLinkItem = {
   linkId: string;
@@ -95,9 +97,7 @@ export const IssueLinkItem: FC<TIssueLinkItem> = observer((props) => {
           >
             <CustomMenu.MenuItem
               className="flex items-center gap-2"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 toggleIssueLinkModal(true);
               }}
             >
@@ -106,9 +106,7 @@ export const IssueLinkItem: FC<TIssueLinkItem> = observer((props) => {
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem
               className="flex items-center gap-2"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 linkOperations.remove(linkDetail.id);
               }}
             >

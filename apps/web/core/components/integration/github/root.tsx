@@ -8,9 +8,9 @@ import { useForm } from "react-hook-form";
 import useSWR, { mutate } from "swr";
 import { ArrowLeft, Check, List, Settings, UploadCloud, Users } from "lucide-react";
 // types
-import { IGithubRepoCollaborator, IGithubServiceImportFormData } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IGithubRepoCollaborator, IGithubServiceImportFormData } from "@plane/types";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import {
   GithubImportConfigure,

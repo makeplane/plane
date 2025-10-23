@@ -1,14 +1,17 @@
 "use client";
 
-import React, { useEffect, useState, useRef, Fragment, Ref } from "react";
-import { Placement } from "@popperjs/core";
+import type { Ref } from "react";
+import React, { useEffect, useState, useRef, Fragment } from "react";
+import type { Placement } from "@popperjs/core";
 import { Controller, useForm } from "react-hook-form"; // services
 import { usePopper } from "react-popper";
 import { AlertCircle } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Input } from "@plane/ui";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";
 // services

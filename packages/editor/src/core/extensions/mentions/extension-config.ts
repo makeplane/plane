@@ -39,10 +39,6 @@ export const CustomMentionExtensionConfig = Mention.extend<TMentionExtensionOpti
     return ["mention-component", mergeAttributes(HTMLAttributes)];
   },
 
-  HTMLAttributes: {
-    class: "mention",
-  },
-
   renderText({ node }) {
     return getMentionDisplayText(this.options, node);
   },

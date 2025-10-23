@@ -1,13 +1,8 @@
-import concat from "lodash/concat";
-import pull from "lodash/pull";
-import set from "lodash/set";
-import uniq from "lodash/uniq";
-import update from "lodash/update";
+import { pull, concat, uniq, set, update } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-// types
-import {
-  EIssueServiceType,
+// Plane Imports
+import type {
   TIssue,
   TIssueSubIssues,
   TIssueSubIssuesStateDistributionMap,
@@ -16,12 +11,14 @@ import {
   TIssueServiceType,
   TLoader,
 } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // services
 import { updatePersistentLayer } from "@/local-db/utils/utils";
 import { IssueService } from "@/services/issue";
 // store
-import { IIssueDetail } from "./root.store";
-import { IWorkItemSubIssueFiltersStore, WorkItemSubIssueFiltersStore } from "./sub_issues_filter.store";
+import type { IIssueDetail } from "./root.store";
+import type { IWorkItemSubIssueFiltersStore } from "./sub_issues_filter.store";
+import { WorkItemSubIssueFiltersStore } from "./sub_issues_filter.store";
 
 export interface IIssueSubIssuesStoreActions {
   fetchSubIssues: (workspaceSlug: string, projectId: string, parentIssueId: string) => Promise<TIssueSubIssues>;
@@ -126,7 +123,6 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
 
   fetchSubIssues = async (workspaceSlug: string, projectId: string, parentIssueId: string) => {
     this.loader = "init-loader";
-
     const response = await this.issueService.subIssues(workspaceSlug, projectId, parentIssueId);
 
     const subIssuesStateDistribution = response?.state_distribution ?? {};

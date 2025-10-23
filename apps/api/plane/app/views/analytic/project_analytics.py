@@ -42,12 +42,8 @@ class ProjectAdvanceAnalyticsEndpoint(ProjectAdvanceAnalyticsBaseView):
         def get_filtered_count() -> int:
             if self.filters["analytics_date_range"]:
                 return queryset.filter(
-                    created_at__gte=self.filters["analytics_date_range"]["current"][
-                        "gte"
-                    ],
-                    created_at__lte=self.filters["analytics_date_range"]["current"][
-                        "lte"
-                    ],
+                    created_at__gte=self.filters["analytics_date_range"]["current"]["gte"],
+                    created_at__lte=self.filters["analytics_date_range"]["current"]["lte"],
                 ).count()
             return queryset.count()
 
@@ -55,42 +51,30 @@ class ProjectAdvanceAnalyticsEndpoint(ProjectAdvanceAnalyticsBaseView):
             "count": get_filtered_count(),
         }
 
-    def get_work_items_stats(
-        self, project_id, cycle_id=None, module_id=None
-    ) -> Dict[str, Dict[str, int]]:
+    def get_work_items_stats(self, project_id, cycle_id=None, module_id=None) -> Dict[str, Dict[str, int]]:
         """
         Returns work item stats for the workspace, or filtered by cycle_id or module_id if provided.
         """
         base_queryset = None
         if cycle_id is not None:
-            cycle_issues = CycleIssue.objects.filter(
-                **self.filters["base_filters"], cycle_id=cycle_id
-            ).values_list("issue_id", flat=True)
+            cycle_issues = CycleIssue.objects.filter(**self.filters["base_filters"], cycle_id=cycle_id).values_list(
+                "issue_id", flat=True
+            )
             base_queryset = Issue.issue_objects.filter(id__in=cycle_issues)
         elif module_id is not None:
-            module_issues = ModuleIssue.objects.filter(
-                **self.filters["base_filters"], module_id=module_id
-            ).values_list("issue_id", flat=True)
+            module_issues = ModuleIssue.objects.filter(**self.filters["base_filters"], module_id=module_id).values_list(
+                "issue_id", flat=True
+            )
             base_queryset = Issue.issue_objects.filter(id__in=module_issues)
         else:
-            base_queryset = Issue.issue_objects.filter(
-                **self.filters["base_filters"], project_id=project_id
-            )
+            base_queryset = Issue.issue_objects.filter(**self.filters["base_filters"], project_id=project_id)
 
         return {
             "total_work_items": self.get_filtered_counts(base_queryset),
-            "started_work_items": self.get_filtered_counts(
-                base_queryset.filter(state__group="started")
-            ),
-            "backlog_work_items": self.get_filtered_counts(
-                base_queryset.filter(state__group="backlog")
-            ),
-            "un_started_work_items": self.get_filtered_counts(
-                base_queryset.filter(state__group="unstarted")
-            ),
-            "completed_work_items": self.get_filtered_counts(
-                base_queryset.filter(state__group="completed")
-            ),
+            "started_work_items": self.get_filtered_counts(base_queryset.filter(state__group="started")),
+            "backlog_work_items": self.get_filtered_counts(base_queryset.filter(state__group="backlog")),
+            "un_started_work_items": self.get_filtered_counts(base_queryset.filter(state__group="unstarted")),
+            "completed_work_items": self.get_filtered_counts(base_queryset.filter(state__group="completed")),
         }
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
@@ -101,9 +85,7 @@ class ProjectAdvanceAnalyticsEndpoint(ProjectAdvanceAnalyticsBaseView):
         cycle_id = request.GET.get("cycle_id", None)
         module_id = request.GET.get("module_id", None)
         return Response(
-            self.get_work_items_stats(
-                cycle_id=cycle_id, module_id=module_id, project_id=project_id
-            ),
+            self.get_work_items_stats(cycle_id=cycle_id, module_id=module_id, project_id=project_id),
             status=status.HTTP_200_OK,
         )
 
@@ -116,9 +98,7 @@ class ProjectAdvanceAnalyticsStatsEndpoint(ProjectAdvanceAnalyticsBaseView):
         # Apply date range filter if available
         if self.filters["chart_period_range"]:
             start_date, end_date = self.filters["chart_period_range"]
-            base_queryset = base_queryset.filter(
-                created_at__date__gte=start_date, created_at__date__lte=end_date
-            )
+            base_queryset = base_queryset.filter(created_at__date__gte=start_date, created_at__date__lte=end_date)
 
         return (
             base_queryset.values("project_id", "project__name")
@@ -132,24 +112,20 @@ class ProjectAdvanceAnalyticsStatsEndpoint(ProjectAdvanceAnalyticsBaseView):
             .order_by("project_id")
         )
 
-    def get_work_items_stats(
-        self, project_id, cycle_id=None, module_id=None
-    ) -> Dict[str, Dict[str, int]]:
+    def get_work_items_stats(self, project_id, cycle_id=None, module_id=None) -> Dict[str, Dict[str, int]]:
         base_queryset = None
         if cycle_id is not None:
-            cycle_issues = CycleIssue.objects.filter(
-                **self.filters["base_filters"], cycle_id=cycle_id
-            ).values_list("issue_id", flat=True)
+            cycle_issues = CycleIssue.objects.filter(**self.filters["base_filters"], cycle_id=cycle_id).values_list(
+                "issue_id", flat=True
+            )
             base_queryset = Issue.issue_objects.filter(id__in=cycle_issues)
         elif module_id is not None:
-            module_issues = ModuleIssue.objects.filter(
-                **self.filters["base_filters"], module_id=module_id
-            ).values_list("issue_id", flat=True)
+            module_issues = ModuleIssue.objects.filter(**self.filters["base_filters"], module_id=module_id).values_list(
+                "issue_id", flat=True
+            )
             base_queryset = Issue.issue_objects.filter(id__in=module_issues)
         else:
-            base_queryset = Issue.issue_objects.filter(
-                **self.filters["base_filters"], project_id=project_id
-            )
+            base_queryset = Issue.issue_objects.filter(**self.filters["base_filters"], project_id=project_id)
         return (
             base_queryset.annotate(display_name=F("assignees__display_name"))
             .annotate(assignee_id=F("assignees__id"))
@@ -166,30 +142,18 @@ class ProjectAdvanceAnalyticsStatsEndpoint(ProjectAdvanceAnalyticsBaseView):
                         ),
                     ),
                     # If `avatar_asset` is None, fall back to using `avatar` field directly
-                    When(
-                        assignees__avatar_asset__isnull=True, then="assignees__avatar"
-                    ),
+                    When(assignees__avatar_asset__isnull=True, then="assignees__avatar"),
                     default=Value(None),
                     output_field=models.CharField(),
                 )
             )
             .values("display_name", "assignee_id", "avatar_url")
             .annotate(
-                cancelled_work_items=Count(
-                    "id", filter=Q(state__group="cancelled"), distinct=True
-                ),
-                completed_work_items=Count(
-                    "id", filter=Q(state__group="completed"), distinct=True
-                ),
-                backlog_work_items=Count(
-                    "id", filter=Q(state__group="backlog"), distinct=True
-                ),
-                un_started_work_items=Count(
-                    "id", filter=Q(state__group="unstarted"), distinct=True
-                ),
-                started_work_items=Count(
-                    "id", filter=Q(state__group="started"), distinct=True
-                ),
+                cancelled_work_items=Count("id", filter=Q(state__group="cancelled"), distinct=True),
+                completed_work_items=Count("id", filter=Q(state__group="completed"), distinct=True),
+                backlog_work_items=Count("id", filter=Q(state__group="backlog"), distinct=True),
+                un_started_work_items=Count("id", filter=Q(state__group="unstarted"), distinct=True),
+                started_work_items=Count("id", filter=Q(state__group="started"), distinct=True),
             )
             .order_by("display_name")
         )
@@ -204,9 +168,7 @@ class ProjectAdvanceAnalyticsStatsEndpoint(ProjectAdvanceAnalyticsBaseView):
             cycle_id = request.GET.get("cycle_id", None)
             module_id = request.GET.get("module_id", None)
             return Response(
-                self.get_work_items_stats(
-                    project_id=project_id, cycle_id=cycle_id, module_id=module_id
-                ),
+                self.get_work_items_stats(project_id=project_id, cycle_id=cycle_id, module_id=module_id),
                 status=status.HTTP_200_OK,
             )
 
@@ -214,23 +176,19 @@ class ProjectAdvanceAnalyticsStatsEndpoint(ProjectAdvanceAnalyticsBaseView):
 
 
 class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
-    def work_item_completion_chart(
-        self, project_id, cycle_id=None, module_id=None
-    ) -> Dict[str, Any]:
+    def work_item_completion_chart(self, project_id, cycle_id=None, module_id=None) -> Dict[str, Any]:
         # Get the base queryset
         queryset = (
             Issue.issue_objects.filter(**self.filters["base_filters"])
             .filter(project_id=project_id)
             .select_related("workspace", "state", "parent")
-            .prefetch_related(
-                "assignees", "labels", "issue_module__module", "issue_cycle__cycle"
-            )
+            .prefetch_related("assignees", "labels", "issue_module__module", "issue_cycle__cycle")
         )
 
         if cycle_id is not None:
-            cycle_issues = CycleIssue.objects.filter(
-                **self.filters["base_filters"], cycle_id=cycle_id
-            ).values_list("issue_id", flat=True)
+            cycle_issues = CycleIssue.objects.filter(**self.filters["base_filters"], cycle_id=cycle_id).values_list(
+                "issue_id", flat=True
+            )
             cycle = Cycle.objects.filter(id=cycle_id).first()
             if cycle and cycle.start_date:
                 start_date = cycle.start_date.date()
@@ -240,9 +198,9 @@ class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
             queryset = cycle_issues
 
         elif module_id is not None:
-            module_issues = ModuleIssue.objects.filter(
-                **self.filters["base_filters"], module_id=module_id
-            ).values_list("issue_id", flat=True)
+            module_issues = ModuleIssue.objects.filter(**self.filters["base_filters"], module_id=module_id).values_list(
+                "issue_id", flat=True
+            )
             module = Module.objects.filter(id=module_id).first()
             if module and module.start_date:
                 start_date = module.start_date
@@ -264,9 +222,7 @@ class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
                 queryset.values("created_at__date")
                 .annotate(
                     created_count=Count("id"),
-                    completed_count=Count(
-                        "id", filter=Q(issue__state__group="completed")
-                    ),
+                    completed_count=Count("id", filter=Q(issue__state__group="completed")),
                 )
                 .order_by("created_at__date")
             )
@@ -285,9 +241,7 @@ class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
             current_date = start_date
             while current_date <= end_date:
                 date_str = current_date.strftime("%Y-%m-%d")
-                stats = stats_dict.get(
-                    date_str, {"created_count": 0, "completed_count": 0}
-                )
+                stats = stats_dict.get(date_str, {"created_count": 0, "completed_count": 0})
                 data.append(
                     {
                         "key": date_str,
@@ -302,9 +256,7 @@ class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
             # Apply date range filter if available
             if self.filters["chart_period_range"]:
                 start_date, end_date = self.filters["chart_period_range"]
-                queryset = queryset.filter(
-                    created_at__date__gte=start_date, created_at__date__lte=end_date
-                )
+                queryset = queryset.filter(created_at__date__gte=start_date, created_at__date__lte=end_date)
 
             # Annotate by month and count
             monthly_stats = (
@@ -335,9 +287,7 @@ class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
 
             while current_month <= last_month:
                 date_str = current_month.strftime("%Y-%m-%d")
-                stats = stats_dict.get(
-                    date_str, {"created_count": 0, "completed_count": 0}
-                )
+                stats = stats_dict.get(date_str, {"created_count": 0, "completed_count": 0})
                 data.append(
                     {
                         "key": date_str,
@@ -349,9 +299,7 @@ class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
                 )
                 # Move to next month
                 if current_month.month == 12:
-                    current_month = current_month.replace(
-                        year=current_month.year + 1, month=1
-                    )
+                    current_month = current_month.replace(year=current_month.year + 1, month=1)
                 else:
                     current_month = current_month.replace(month=current_month.month + 1)
 
@@ -376,16 +324,14 @@ class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
                 Issue.issue_objects.filter(**self.filters["base_filters"])
                 .filter(project_id=project_id)
                 .select_related("workspace", "state", "parent")
-                .prefetch_related(
-                    "assignees", "labels", "issue_module__module", "issue_cycle__cycle"
-                )
+                .prefetch_related("assignees", "labels", "issue_module__module", "issue_cycle__cycle")
             )
 
             # Apply cycle/module filters if present
             if cycle_id is not None:
-                cycle_issues = CycleIssue.objects.filter(
-                    **self.filters["base_filters"], cycle_id=cycle_id
-                ).values_list("issue_id", flat=True)
+                cycle_issues = CycleIssue.objects.filter(**self.filters["base_filters"], cycle_id=cycle_id).values_list(
+                    "issue_id", flat=True
+                )
                 queryset = queryset.filter(id__in=cycle_issues)
 
             elif module_id is not None:
@@ -397,9 +343,7 @@ class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
             # Apply date range filter if available
             if self.filters["chart_period_range"]:
                 start_date, end_date = self.filters["chart_period_range"]
-                queryset = queryset.filter(
-                    created_at__date__gte=start_date, created_at__date__lte=end_date
-                )
+                queryset = queryset.filter(created_at__date__gte=start_date, created_at__date__lte=end_date)
 
             return Response(
                 build_analytics_chart(queryset, x_axis, group_by),
@@ -412,9 +356,7 @@ class ProjectAdvanceAnalyticsChartEndpoint(ProjectAdvanceAnalyticsBaseView):
             module_id = request.GET.get("module_id", None)
 
             return Response(
-                self.work_item_completion_chart(
-                    project_id=project_id, cycle_id=cycle_id, module_id=module_id
-                ),
+                self.work_item_completion_chart(project_id=project_id, cycle_id=cycle_id, module_id=module_id),
                 status=status.HTTP_200_OK,
             )
 

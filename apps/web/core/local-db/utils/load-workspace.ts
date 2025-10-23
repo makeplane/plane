@@ -1,6 +1,5 @@
-import { difference } from "lodash";
-import { API_BASE_URL } from "@plane/constants";
-import { IEstimate, IEstimatePoint, IWorkspaceMember, TIssue } from "@plane/types";
+import { difference } from "lodash-es";
+import type { IEstimate, IEstimatePoint, IWorkspaceMember, TIssue } from "@plane/types";
 import { EstimateService } from "@/plane-web/services/project/estimate.service";
 import { CycleService } from "@/services/cycle.service";
 import { IssueLabelService } from "@/services/issue/issue_label.service";
@@ -9,15 +8,8 @@ import { ProjectStateService } from "@/services/project";
 import { WorkspaceService } from "@/services/workspace.service";
 import { persistence } from "../storage.sqlite";
 import { updateIssue } from "./load-issues";
-import {
-  cycleSchema,
-  estimatePointSchema,
-  labelSchema,
-  memberSchema,
-  moduleSchema,
-  Schema,
-  stateSchema,
-} from "./schemas";
+import type { Schema } from "./schemas";
+import { cycleSchema, estimatePointSchema, labelSchema, memberSchema, moduleSchema, stateSchema } from "./schemas";
 import { log } from "./utils";
 
 const stageInserts = async (table: string, schema: Schema, data: any) => {
@@ -99,7 +91,7 @@ export const getEstimatePoints = async (workspaceSlug: string) => {
 };
 
 export const getMembers = async (workspaceSlug: string) => {
-  const workspaceService = new WorkspaceService(API_BASE_URL);
+  const workspaceService = new WorkspaceService();
   const members = await workspaceService.fetchWorkspaceMembers(workspaceSlug);
   const objects = members.map((member: IWorkspaceMember) => member.member);
   return objects;

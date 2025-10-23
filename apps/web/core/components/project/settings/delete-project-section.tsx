@@ -5,9 +5,10 @@ import { ChevronRight, ChevronUp } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // types
 import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
-import { IProject } from "@plane/types";
+import { Button } from "@plane/propel/button";
+import type { IProject } from "@plane/types";
 // ui
-import { Button, Loader } from "@plane/ui";
+import { Loader } from "@plane/ui";
 
 export interface IDeleteProjectSection {
   projectDetails: IProject;

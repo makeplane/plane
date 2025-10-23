@@ -5,9 +5,11 @@ import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 // types
 import { PROJECT_VIEW_TRACKER_EVENTS } from "@plane/constants";
-import { IProjectView } from "@plane/types";
+import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IProjectView } from "@plane/types";
 // ui
-import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { AlertModalCore } from "@plane/ui";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
@@ -28,7 +30,7 @@ export const DeleteProjectViewModal: React.FC<Props> = observer((props) => {
   const router = useRouter();
   // store hooks
   const { deleteView } = useProjectView();
-
+  const { t } = useTranslation();
   const handleClose = () => {
     onClose();
     setIsDeleteLoading(false);
@@ -79,14 +81,8 @@ export const DeleteProjectViewModal: React.FC<Props> = observer((props) => {
       handleSubmit={handleDeleteView}
       isSubmitting={isDeleteLoading}
       isOpen={isOpen}
-      title="Delete view"
-      content={
-        <>
-          Are you sure you want to delete view-{" "}
-          <span className="break-all font-medium text-custom-text-100">{data?.name}</span>? All of the data related to
-          the view will be permanently removed. This action cannot be undone.
-        </>
-      }
+      title={t("project_views.delete_view.title")}
+      content={<>{t("project_views.delete_view.content")}</>}
     />
   );
 });
