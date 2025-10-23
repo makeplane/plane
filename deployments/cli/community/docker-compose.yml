@@ -94,7 +94,7 @@ services:
   live:
     image: artifacts.plane.so/makeplane/plane-live:${APP_RELEASE:-stable}
     environment:
-      <<: [*live-env]
+      <<: [*live-env, *redis-env]
     deploy:
       replicas: ${LIVE_REPLICAS:-1}
       restart_policy:
