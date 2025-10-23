@@ -316,7 +316,7 @@ def webhook_send_task(
             signature = hmac_signature.hexdigest()
             headers["X-Plane-Signature"] = signature
     except Exception as e:
-        log_exception(e, warning=True)
+        log_exception(e)
         logger.error(f"Failed to send webhook: {e}")
         return
 
@@ -366,7 +366,7 @@ def webhook_send_task(
         raise requests.RequestException()
 
     except Exception as e:
-        log_exception(e, warning=True)
+        log_exception(e)
         return
 
 
@@ -452,7 +452,7 @@ def webhook_activity(
             return
         if settings.DEBUG:
             print(e)
-        log_exception(e, warning=True)
+        log_exception(e)
         return
 
 
