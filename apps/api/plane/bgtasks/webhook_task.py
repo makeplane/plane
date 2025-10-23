@@ -86,7 +86,6 @@ def get_issue_prefetches():
     ]
 
 
-
 def save_webhook_log(
     webhook: Webhook,
     request_method: str,
@@ -98,10 +97,9 @@ def save_webhook_log(
     retry_count: int,
     event_type: str,
 ) -> None:
-
     # webhook_logs
     mongo_collection = MongoConnection.get_collection("webhook_logs")
-    
+
     log_data = {
         "workspace_id": str(webhook.workspace_id),
         "webhook": str(webhook.id),
@@ -318,7 +316,7 @@ def webhook_send_task(
             signature = hmac_signature.hexdigest()
             headers["X-Plane-Signature"] = signature
     except Exception as e:
-        log_exception(e)
+        log_exception(e, warning=True)
         logger.error(f"Failed to send webhook: {e}")
         return
 
@@ -368,7 +366,7 @@ def webhook_send_task(
         raise requests.RequestException()
 
     except Exception as e:
-        log_exception(e)
+        log_exception(e, warning=True)
         return
 
 
