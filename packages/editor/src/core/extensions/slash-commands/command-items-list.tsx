@@ -33,6 +33,7 @@ import {
   insertImage,
   insertCallout,
   setText,
+  openEmojiPicker,
 } from "@/helpers/editor-commands";
 // plane editor extensions
 import { coreEditorAdditionalSlashCommandOptions } from "@/plane-editor/extensions";
@@ -198,7 +199,7 @@ export const getSlashCommandFilteredSections =
             searchTerms: ["emoji", "icons", "reaction", "emoticon", "emotags"],
             icon: <Smile className="size-3.5" />,
             command: ({ editor, range }) => {
-              editor.chain().focus().insertContentAt(range, "<p>:</p>").run();
+              openEmojiPicker(editor, range);
             },
           },
         ],

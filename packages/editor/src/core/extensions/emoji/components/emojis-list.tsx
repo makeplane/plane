@@ -19,10 +19,11 @@ export type EmojiListRef = {
 
 export type EmojisListDropdownProps = SuggestionProps<EmojiItem, { name: string }> & {
   onClose: () => void;
+  forceOpen?: boolean;
 };
 
 export const EmojisListDropdown = forwardRef<EmojiListRef, EmojisListDropdownProps>((props, ref) => {
-  const { items, command, query, onClose } = props;
+  const { items, command, query, onClose, forceOpen = false } = props;
   // states
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [isVisible, setIsVisible] = useState(false);
@@ -41,7 +42,13 @@ export const EmojisListDropdown = forwardRef<EmojiListRef, EmojisListDropdownPro
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent): boolean => {
-      if (query.length <= 0) {
+      // Allow keyboard navigation if we have items to show
+      if (items.length === 0) {
+        return false;
+      }
+
+      // Don't handle keyboard if modal shouldn't be visible (query empty without forceOpen)
+      if (query.length === 0 && !forceOpen) {
         return false;
       }
 
@@ -62,7 +69,7 @@ export const EmojisListDropdown = forwardRef<EmojiListRef, EmojisListDropdownPro
 
       return false;
     },
-    [query.length, items.length, selectItem, selectedIndex]
+    [items.length, query.length, forceOpen, selectItem, selectedIndex]
   );
 
   // Show animation
@@ -101,7 +108,7 @@ export const EmojisListDropdown = forwardRef<EmojiListRef, EmojisListDropdownPro
 
   useOutsideClickDetector(dropdownContainerRef, onClose);
 
-  if (query.length <= 0) return null;
+  if (query.length === 0 && !forceOpen) return null;
 
   return (
     <>
