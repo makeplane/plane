@@ -1,5 +1,3 @@
-import DOMPurify from "dompurify";
-
 export const addSpaceIfCamelCase = (str: string) => str.replace(/([a-z])([A-Z])/g, "$1 $2");
 
 const fallbackCopyTextToClipboard = (text: string) => {
