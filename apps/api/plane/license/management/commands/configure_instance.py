@@ -187,6 +187,30 @@ class Command(BaseCommand):
                 "category": "INTERCOM",
                 "is_encrypted": False,
             },
+            {
+                "key": "IS_GITEA_ENABLED",
+                "value": os.environ.get("IS_GITEA_ENABLED", "0"),
+                "category": "GITEA",
+                "is_encrypted": False,
+            },
+            {
+                "key": "GITEA_HOST",
+                "value": os.environ.get("GITEA_HOST"),
+                "category": "GITEA",
+                "is_encrypted": False,
+            },
+            {
+                "key": "GITEA_CLIENT_ID",
+                "value": os.environ.get("GITEA_CLIENT_ID"),
+                "category": "GITEA",
+                "is_encrypted": False,
+            },
+            {
+                "key": "GITEA_CLIENT_SECRET",
+                "value": os.environ.get("GITEA_CLIENT_SECRET"),
+                "category": "GITEA",
+                "is_encrypted": True,
+            },
         ]
 
         for item in config_keys:
@@ -203,7 +227,7 @@ class Command(BaseCommand):
             else:
                 self.stdout.write(self.style.WARNING(f"{obj.key} configuration already exists"))
 
-        keys = ["IS_GOOGLE_ENABLED", "IS_GITHUB_ENABLED", "IS_GITLAB_ENABLED"]
+        keys = ["IS_GOOGLE_ENABLED", "IS_GITHUB_ENABLED", "IS_GITLAB_ENABLED", "IS_GITEA_ENABLED"]
         if not InstanceConfiguration.objects.filter(key__in=keys).exists():
             for key in keys:
                 if key == "IS_GOOGLE_ENABLED":
@@ -282,6 +306,48 @@ class Command(BaseCommand):
                         is_encrypted=False,
                     )
                     self.stdout.write(self.style.SUCCESS(f"{key} loaded with value from environment variable."))
+                if key == "IS_GITEA_ENABLED":
+                    GITEA_HOST, GITEA_CLIENT_ID, GITEA_CLIENT_SECRET = (
+                        get_configuration_value(
+                            [
+                                {
+                                    "key": "GITEA_HOST",
+                                    "default": os.environ.get(
+                                        "GITEA_HOST", ""
+                                    ),
+                                },
+                                {
+                                    "key": "GITEA_CLIENT_ID",
+                                    "default": os.environ.get("GITEA_CLIENT_ID", ""),
+                                },
+                                {
+                                    "key": "GITEA_CLIENT_SECRET",
+                                    "default": os.environ.get(
+                                        "GITEA_CLIENT_SECRET", ""
+                                    ),
+                                },
+                            ]
+                        )
+                    )
+                    if (
+                        bool(GITEA_HOST)
+                        and bool(GITEA_CLIENT_ID)
+                        and bool(GITEA_CLIENT_SECRET)
+                    ):
+                        value = "1"
+                    else:
+                        value = "0"
+                    InstanceConfiguration.objects.create(
+                        key="IS_GITEA_ENABLED",
+                        value=value,
+                        category="AUTHENTICATION",
+                        is_encrypted=False,
+                    )
+                    self.stdout.write(
+                        self.style.SUCCESS(
+                            f"{key} loaded with value from environment variable."
+                        )
+                    )
         else:
             for key in keys:
                 self.stdout.write(self.style.WARNING(f"{key} configuration already exists"))
