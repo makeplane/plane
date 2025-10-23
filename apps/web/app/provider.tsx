@@ -13,16 +13,13 @@ import { resolveGeneralTheme } from "@plane/utils";
 // polyfills
 import "@/lib/polyfills";
 // mobx store provider
-import IntercomProvider from "@/lib/intercom-provider";
-import PostHogProvider from "@/lib/posthog-provider";
 import { StoreProvider } from "@/lib/store-context";
 // wrappers
 import { InstanceWrapper } from "@/lib/wrappers/instance-wrapper";
-import StoreWrapper from "@/lib/wrappers/store-wrapper";
 // lazy imports
-// const StoreWrapper = lazy(() => import("@/lib/wrappers/store-wrapper"));
-// const PostHogProvider = lazy(() => import("@/lib/posthog-provider"));
-// const IntercomProvider = lazy(() => import("@/lib/intercom-provider"));
+const StoreWrapper = lazy(() => import("@/lib/wrappers/store-wrapper"));
+const PostHogProvider = lazy(() => import("@/lib/posthog-provider"));
+const IntercomProvider = lazy(() => import("@/lib/intercom-provider"));
 
 export interface IAppProvider {
   children: ReactNode;
@@ -43,11 +40,13 @@ export const AppProvider: FC<IAppProvider> = (props) => {
           <ToastWithTheme />
           <StoreWrapper>
             <InstanceWrapper>
-              <IntercomProvider>
-                <PostHogProvider>
-                  <SWRConfig value={WEB_SWR_CONFIG}>{children}</SWRConfig>
-                </PostHogProvider>
-              </IntercomProvider>
+              <Suspense>
+                <IntercomProvider>
+                  <PostHogProvider>
+                    <SWRConfig value={WEB_SWR_CONFIG}>{children}</SWRConfig>
+                  </PostHogProvider>
+                </IntercomProvider>
+              </Suspense>
             </InstanceWrapper>
           </StoreWrapper>
         </TranslationProvider>
