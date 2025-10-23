@@ -1,0 +1,13 @@
+{
+  "name": "@plane/oxlint-config",
+  "private": true,
+  "version": "1.0.0",
+  "license": "AGPL-3.0",
+  "files": [
+    "library.js"
+  ],
+  "devDependencies": {
+    "oxlint": "^1.23.0",
+    "typescript": "catalog:"
+  }
+}
