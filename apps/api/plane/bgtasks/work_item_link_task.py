@@ -175,7 +175,7 @@ def crawl_work_item_link_title(id: str, url: str) -> None:
     try:
         issue_link = IssueLink.objects.get(id=id)
     except IssueLink.DoesNotExist:
-        logger.info("IssueLink not found")
+        logger.warning("IssueLink not found")
         return
 
     issue_link.metadata = meta_data
