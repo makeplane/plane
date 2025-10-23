@@ -29,6 +29,7 @@ interface Props {
   optionsClassName?: string;
   placement: Placement | undefined;
   referenceElement: HTMLButtonElement | null;
+  selectedMemberIds?: string[];
 }
 
 export const MemberOptions: React.FC<Props> = observer((props: Props) => {
@@ -40,6 +41,7 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
     optionsClassName = "",
     placement,
     referenceElement,
+    selectedMemberIds = [],
   } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -85,8 +87,14 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
     }
   };
 
+  const selectedMemberIdsSet = new Set(selectedMemberIds);
+
   const options = memberIds
     ?.map((userId) => {
+      const isSuspended = isUserSuspended(userId, workspaceSlug?.toString());
+
+      if (isSuspended && !selectedMemberIdsSet.has(userId)) return null;
+
       const userDetails = getUserDetails(userId);
       return {
         value: userId,
@@ -94,25 +102,30 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
         content: (
           <div className="flex items-center gap-2">
             <div className="w-4">
-              {isUserSuspended(userId, workspaceSlug?.toString()) ? (
+              {isSuspended ? (
                 <SuspendedUserIcon className="h-3.5 w-3.5 text-custom-text-400" />
               ) : (
                 <Avatar name={userDetails?.display_name} src={getFileURL(userDetails?.avatar_url ?? "")} />
               )}
             </div>
             <span
-              className={cn(
-                "flex-grow truncate",
-                isUserSuspended(userId, workspaceSlug?.toString()) ? "text-custom-text-400" : ""
-              )}
+              className={cn("flex-grow truncate", isSuspended ? "text-custom-text-400" : "")}
             >
               {currentUser?.id === userId ? t("you") : userDetails?.display_name}
             </span>
           </div>
         ),
+        isSuspended,
       };
     })
-    .filter((o) => !!o);
+    .filter((o): o is NonNullable<typeof o> => !!o)
+    ?.sort((a, b) => {
+      const isASelected = selectedMemberIdsSet.has(a.value);
+      const isBSelected = selectedMemberIdsSet.has(b.value);
+
+      if (isASelected === isBSelected) return 0;
+      return isASelected ? -1 : 1;
+    });
 
   const filteredOptions =
     query === "" ? options : options?.filter((o) => o?.query.toLowerCase().includes(query.toLowerCase()));
@@ -157,18 +170,16 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
                           "flex w-full select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5",
                           active && "bg-custom-background-80",
                           selected ? "text-custom-text-100" : "text-custom-text-200",
-                          isUserSuspended(option.value, workspaceSlug?.toString())
-                            ? "cursor-not-allowed"
-                            : "cursor-pointer"
+                          option.isSuspended && !selected ? "cursor-not-allowed" : "cursor-pointer"
                         )
                       }
-                      disabled={isUserSuspended(option.value, workspaceSlug?.toString())}
+                      disabled={option.isSuspended && !selectedMemberIdsSet.has(option.value)}
                     >
                       {({ selected }) => (
                         <>
                           <span className="flex-grow truncate">{option.content}</span>
                           {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
-                          {isUserSuspended(option.value, workspaceSlug?.toString()) && (
+                          {option.isSuspended && (
                             <Pill variant={EPillVariant.DEFAULT} size={EPillSize.XS} className="border-none">
                               Suspended
                             </Pill>

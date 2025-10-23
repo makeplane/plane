@@ -177,6 +177,7 @@ export const MemberDropdownBase: React.FC<TMemberDropdownBaseProps> = observer((
           optionsClassName={optionsClassName}
           placement={placement}
           referenceElement={referenceElement}
+          selectedMemberIds={Array.isArray(value) ? value : value ? [value] : []}
         />
       )}
     </ComboDropDown>
