@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
 import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
@@ -25,7 +26,7 @@ const SUPPORTED_LAYOUTS = [
   { key: "calendar", titleTranslationKey: "issue.layouts.calendar", icon: Calendar },
 ];
 
-export const CycleIssuesMobileHeader = () => {
+export const CycleIssuesMobileHeader = observer(() => {
   // router
   const { workspaceSlug, projectId, cycleId } = useParams();
   // states
@@ -151,4 +152,4 @@ export const CycleIssuesMobileHeader = () => {
       </div>
     </>
   );
-};
+});
