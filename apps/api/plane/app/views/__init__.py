@@ -107,6 +107,7 @@ from .asset.v2 import (
     ProjectAssetEndpoint,
     ProjectBulkAssetEndpoint,
     AssetCheckEndpoint,
+    DuplicateAssetEndpoint,
     WorkspaceAssetDownloadEndpoint,
     ProjectAssetDownloadEndpoint,
 )
