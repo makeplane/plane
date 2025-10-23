@@ -1,6 +1,7 @@
 # Python imports
 import os
 import uuid
+import logging
 
 # Django imports
 from django.utils import timezone
@@ -19,6 +20,7 @@ from plane.utils.host import base_host
 from plane.utils.ip_address import get_client_ip
 
 
+
 class Adapter:
     """Common interface for all auth providers"""
 
@@ -28,6 +30,7 @@ class Adapter:
         self.callback = callback
         self.token_data = None
         self.user_data = None
+        self.logger = logging.getLogger("plane.authentication")
 
     def get_user_token(self, data, headers=None):
         raise NotImplementedError
@@ -50,6 +53,7 @@ class Adapter:
     def sanitize_email(self, email):
         # Check if email is present
         if not email:
+            self.logger.error(f"Email is not present: {email}")
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["INVALID_EMAIL"],
                 error_message="INVALID_EMAIL",
@@ -63,6 +67,7 @@ class Adapter:
         try:
             validate_email(email)
         except ValidationError:
+            self.logger.warning(f"Email is not valid: {email}")
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["INVALID_EMAIL"],
                 error_message="INVALID_EMAIL",
@@ -75,6 +80,7 @@ class Adapter:
         """Validate password strength"""
         results = zxcvbn(self.code)
         if results["score"] < 3:
+            self.logger.warning(f"Password is not strong enough: {email}")
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["INVALID_PASSWORD"],
                 error_message="INVALID_PASSWORD",
@@ -92,6 +98,7 @@ class Adapter:
 
         # Check if sign up is disabled and invite is present or not
         if ENABLE_SIGNUP == "0" and not WorkspaceMemberInvite.objects.filter(email=email).exists():
+            self.logger.warning(f"Sign up is disabled and invite is not present: {email}")
             # Raise exception
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["SIGNUP_DISABLED"],
