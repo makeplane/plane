@@ -1696,14 +1696,16 @@ class IssueActivityDetailAPIEndpoint(BaseAPIView):
         Excludes comment, vote, reaction, and draft activities.
         """
         issue_activity = (
-            IssueActivity.objects.filter(issue_id=issue_id, workspace__slug=slug, project_id=project_id)
-            .filter(
-                ~Q(field__in=["comment", "vote", "reaction", "draft"]),
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
+            (
+                IssueActivity.objects.filter(issue_id=issue_id, workspace__slug=slug, project_id=project_id, id=pk)
+                .filter(
+                    ~Q(field__in=["comment", "vote", "reaction", "draft"]),
+                    project__project_projectmember__member=self.request.user,
+                    project__project_projectmember__is_active=True,
+                )
+                .filter(project__archived_at__isnull=True)
+                .select_related("actor", "workspace", "issue", "project")
             )
-            .filter(project__archived_at__isnull=True)
-            .select_related("actor", "workspace", "issue", "project")
             .order_by(request.GET.get("order_by", "created_at"))
             .first()
         )
