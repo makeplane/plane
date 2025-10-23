@@ -4,6 +4,7 @@ import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { LinkIcon, Signal, Trash2, UserMinus2, UserPlus2, Users } from "lucide-react";
+// plane imports
 import { DoubleCircleIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
@@ -14,6 +15,7 @@ import { copyTextToClipboard } from "@plane/utils";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { usePowerK } from "@/hooks/store/use-power-k";
 import { useUser } from "@/hooks/store/user";
 
 type Props = {
@@ -31,7 +33,8 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = useParams();
   // hooks
   const { updateIssue } = useIssueDetail(issueDetails?.is_epic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
-  const { toggleCommandPaletteModal, toggleDeleteIssueModal } = useCommandPalette();
+  const { togglePowerKModal } = usePowerK();
+  const { toggleDeleteIssueModal } = useCommandPalette();
   const { data: currentUser } = useUser();
   // derived values
   const issueId = issueDetails?.id;
@@ -59,7 +62,7 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
   };
 
   const deleteIssue = () => {
-    toggleCommandPaletteModal(false);
+    togglePowerKModal(false);
     toggleDeleteIssueModal(true);
   };
 

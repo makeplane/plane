@@ -12,7 +12,7 @@ import { SettingsSidebar } from "@/components/settings/sidebar";
 import { useUserPermissions } from "@/hooks/store/user";
 import { shouldRenderSettingLink } from "@/plane-web/helpers/workspace.helper";
 
-const ICONS = {
+export const WORKSPACE_SETTINGS_ICONS = {
   general: Building,
   members: Users,
   export: ArrowUpToLine,
@@ -30,7 +30,7 @@ export const WorkspaceActionIcons = ({
   className?: string;
 }) => {
   if (type === undefined) return null;
-  const Icon = ICONS[type as keyof typeof ICONS];
+  const Icon = WORKSPACE_SETTINGS_ICONS[type as keyof typeof WORKSPACE_SETTINGS_ICONS];
   if (!Icon) return null;
   return <Icon size={size} className={className} strokeWidth={2} />;
 };

@@ -3,6 +3,7 @@ import { computedFn } from "mobx-utils";
 import type { TCreateModalStoreTypes, TCreatePageModal } from "@plane/constants";
 import { DEFAULT_CREATE_PAGE_MODAL_DATA, EPageAccess } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
+import { store } from "@/lib/store-context";
 
 export interface ModalData {
   store: EIssuesStoreType;
@@ -11,8 +12,6 @@ export interface ModalData {
 
 export interface IBaseCommandPaletteStore {
   // observables
-  isCommandPaletteOpen: boolean;
-  isShortcutModalOpen: boolean;
   isCreateProjectModalOpen: boolean;
   isCreateCycleModalOpen: boolean;
   isCreateModuleModalOpen: boolean;
@@ -27,8 +26,6 @@ export interface IBaseCommandPaletteStore {
   projectListOpenMap: Record<string, boolean>;
   getIsProjectListOpen: (projectId: string) => boolean;
   // toggle actions
-  toggleCommandPaletteModal: (value?: boolean) => void;
-  toggleShortcutModal: (value?: boolean) => void;
   toggleCreateProjectModal: (value?: boolean) => void;
   toggleCreateCycleModal: (value?: boolean) => void;
   toggleCreateViewModal: (value?: boolean) => void;
@@ -43,8 +40,6 @@ export interface IBaseCommandPaletteStore {
 
 export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStore {
   // observables
-  isCommandPaletteOpen: boolean = false;
-  isShortcutModalOpen: boolean = false;
   isCreateProjectModalOpen: boolean = false;
   isCreateCycleModalOpen: boolean = false;
   isCreateModuleModalOpen: boolean = false;
@@ -61,8 +56,6 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   constructor() {
     makeObservable(this, {
       // observable
-      isCommandPaletteOpen: observable.ref,
-      isShortcutModalOpen: observable.ref,
       isCreateProjectModalOpen: observable.ref,
       isCreateCycleModalOpen: observable.ref,
       isCreateModuleModalOpen: observable.ref,
@@ -75,10 +68,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
       createWorkItemAllowedProjectIds: observable,
       allStickiesModal: observable,
       projectListOpenMap: observable,
-      // projectPages: computed,
       // toggle actions
-      toggleCommandPaletteModal: action,
-      toggleShortcutModal: action,
       toggleCreateProjectModal: action,
       toggleCreateCycleModal: action,
       toggleCreateViewModal: action,
@@ -103,7 +93,7 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
         this.isCreateProjectModalOpen ||
         this.isCreateModuleModalOpen ||
         this.isCreateViewModalOpen ||
-        this.isShortcutModalOpen ||
+        store.powerK.isShortcutsListModalOpen ||
         this.isBulkDeleteIssueModalOpen ||
         this.isDeleteIssueModalOpen ||
         this.createPageModal.isOpen ||
@@ -121,32 +111,6 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   toggleProjectListOpen = (projectId: string, value?: boolean) => {
     if (value !== undefined) this.projectListOpenMap[projectId] = value;
     else this.projectListOpenMap[projectId] = !this.projectListOpenMap[projectId];
-  };
-
-  /**
-   * Toggles the command palette modal
-   * @param value
-   * @returns
-   */
-  toggleCommandPaletteModal = (value?: boolean) => {
-    if (value !== undefined) {
-      this.isCommandPaletteOpen = value;
-    } else {
-      this.isCommandPaletteOpen = !this.isCommandPaletteOpen;
-    }
-  };
-
-  /**
-   * Toggles the shortcut modal
-   * @param value
-   * @returns
-   */
-  toggleShortcutModal = (value?: boolean) => {
-    if (value !== undefined) {
-      this.isShortcutModalOpen = value;
-    } else {
-      this.isShortcutModalOpen = !this.isShortcutModalOpen;
-    }
   };
 
   /**

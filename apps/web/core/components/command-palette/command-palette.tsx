@@ -17,6 +17,7 @@ import { captureClick } from "@/helpers/event-tracker.helper";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { usePowerK } from "@/hooks/store/use-power-k";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
@@ -36,27 +37,27 @@ import {
 
 export const CommandPalette: FC = observer(() => {
   // router params
-  const { workspaceSlug, projectId: paramsProjectId, workItem } = useParams();
+  const { workspaceSlug, projectId: paramsProjectId, workItem: workItemIdentifier } = useParams();
   // store hooks
   const { fetchIssueWithIdentifier } = useIssueDetail();
   const { toggleSidebar, toggleExtendedSidebar } = useAppTheme();
   const { platform } = usePlatformOS();
   const { data: currentUser, canPerformAnyCreateAction } = useUser();
-  const { toggleCommandPaletteModal, isShortcutModalOpen, toggleShortcutModal, isAnyModalOpen } = useCommandPalette();
+  const { togglePowerKModal, isShortcutsListModalOpen, toggleShortcutsListModal } = usePowerK();
+  const { isAnyModalOpen } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
 
   // derived values
-  const projectIdentifier = workItem?.toString().split("-")[0];
-  const sequence_id = workItem?.toString().split("-")[1];
+  const projectIdentifier = workItemIdentifier?.toString().split("-")[0];
+  const sequence_id = workItemIdentifier?.toString().split("-")[1];
 
   const { data: issueDetails } = useSWR(
-    workspaceSlug && workItem ? `ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}` : null,
-    workspaceSlug && workItem
+    workspaceSlug && workItemIdentifier ? `ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}` : null,
+    workspaceSlug && workItemIdentifier
       ? () => fetchIssueWithIdentifier(workspaceSlug.toString(), projectIdentifier, sequence_id)
       : null
   );
 
-  const issueId = issueDetails?.id;
   const projectId = paramsProjectId?.toString() ?? issueDetails?.project_id;
 
   const canPerformWorkspaceMemberActions = allowPermissions(
@@ -77,7 +78,7 @@ export const CommandPalette: FC = observer(() => {
   );
 
   const copyIssueUrlToClipboard = useCallback(() => {
-    if (!workItem) return;
+    if (!workItemIdentifier) return;
 
     const url = new URL(window.location.href);
     copyTextToClipboard(url.href)
@@ -93,7 +94,7 @@ export const CommandPalette: FC = observer(() => {
           title: "Some error occurred",
         });
       });
-  }, [workItem]);
+  }, [workItemIdentifier]);
 
   // auth
   const performProjectCreateActions = useCallback(
@@ -171,7 +172,7 @@ export const CommandPalette: FC = observer(() => {
 
       if (cmdClicked && keyPressed === "k" && !isAnyModalOpen) {
         e.preventDefault();
-        toggleCommandPaletteModal(true);
+        togglePowerKModal(true);
       }
 
       // if on input, textarea or editor, don't do anything
@@ -184,7 +185,7 @@ export const CommandPalette: FC = observer(() => {
 
       if (shiftClicked && (keyPressed === "?" || keyPressed === "/") && !isAnyModalOpen) {
         e.preventDefault();
-        toggleShortcutModal(true);
+        toggleShortcutsListModal(true);
       }
 
       if (deleteKey) {
@@ -241,8 +242,8 @@ export const CommandPalette: FC = observer(() => {
       performWorkspaceCreateActions,
       projectId,
       shortcutsList,
-      toggleCommandPaletteModal,
-      toggleShortcutModal,
+      togglePowerKModal,
+      toggleShortcutsListModal,
       toggleSidebar,
       toggleExtendedSidebar,
       workspaceSlug,
@@ -258,12 +259,12 @@ export const CommandPalette: FC = observer(() => {
 
   return (
     <>
-      <ShortcutsModal isOpen={isShortcutModalOpen} onClose={() => toggleShortcutModal(false)} />
+      <ShortcutsModal isOpen={isShortcutsListModalOpen} onClose={() => toggleShortcutsListModal(false)} />
       {workspaceSlug && <WorkspaceLevelModals workspaceSlug={workspaceSlug.toString()} />}
       {workspaceSlug && projectId && (
         <ProjectLevelModals workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
       )}
-      <IssueLevelModals projectId={projectId} issueId={issueId} />
+      <IssueLevelModals workItemIdentifier={workItemIdentifier?.toString()} />
       <CommandModal />
     </>
   );
