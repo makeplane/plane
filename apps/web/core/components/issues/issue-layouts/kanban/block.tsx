@@ -34,7 +34,6 @@ import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-st
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { IssueProperties } from "../properties/all-properties";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
-import { getIssueBlockId } from "../utils";
 import { projectIssueTypesCache } from "@/services/project";
 import * as LucideIcons from "lucide-react";
 

@@ -78,7 +78,9 @@ export interface IssueFormProps {
   isProjectSelectionDisabled?: boolean;
   showActionButtons?: boolean;
   dataResetProperties?: any[];
+    storeType: EIssuesStoreType;
 }
+
 
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const { t } = useTranslation();
@@ -105,6 +107,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     isProjectSelectionDisabled = false,
     showActionButtons = true,
     dataResetProperties = [],
+    storeType,
   } = props;
 
   // states
@@ -406,27 +409,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
 
   return (
     <FormProvider {...methods}>
-      <div className="group relative flex flex-col gap-2.5">
-        <div className="relative">
-          <form ref={formRef} onSubmit={handleSubmit((data) => handleFormSubmit(data, false))}>
-            <div className="space-y-5 p-5 bg-custom-background-100">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xl font-medium text-custom-text-200">{modalTitle}</h3>
-              </div>
-              <div className="space-y-3">
-                <div className="flex items-center gap-x-2">
-                  {!isProjectSelectionDisabled && (
-                    <IssueProjectSelect control={control} handleFormChange={handleFormChange} />
-                  )}
-                  <ChevronRight className="h-3 w-3 text-custom-text-400 flex-shrink-0" />
-
-                  <IssueTypeSelect
-                    control={control}
-                    projectId={projectId}
-                    handleFormChange={handleFormChange}
-                    renderChevron
-                  />
-                  {workItemTemplateId && (
       <div className="flex gap-2 bg-transparent">
         <div className="rounded-lg w-full">
           <form
@@ -458,18 +440,14 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                       projectId={projectId}
                       typeId={watch("type_id")}
                       handleModalClose={() => {
-                        if (isCreateMoreToggleEnabled) {
-                          reset({
-                            ...DEFAULT_WORK_ITEM_FORM_VALUES,
-                            project_id: getValues<"project_id">("project_id"),
-                            type_id: getValues<"type_id">("type_id"),
-                            dynamic_properties: {},
-                          });
-                          editorRef?.current?.clearEditor();
+                        if (handleDraftAndClose) {
+                          handleDraftAndClose();
                         } else {
                           onClose();
                         }
                       }}
+                      handleFormChange={handleFormChange}
+                      renderChevron
                     />
                   )}
                 </div>
@@ -559,7 +537,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 activeAdditionalPropertiesLength > 0 && "shadow-custom-shadow-xs"
               )}
             >
-              <div className="pb-3">
+              <div className="pb-3 border-b-[0.5px] border-custom-border-200">
                 <IssueDefaultProperties
                   control={control}
                   id={data?.id}

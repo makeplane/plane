@@ -42,6 +42,6 @@ urlpatterns = [
     *webhook_urls,
     *timezone_urls,
     *custom_urls,
-    *issue_type_urls
+    *issue_type_urls,
     *exporter_urls,
 ]

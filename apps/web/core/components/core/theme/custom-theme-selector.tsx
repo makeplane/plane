@@ -10,7 +10,7 @@ import { Button } from "@plane/propel/button";
 import { setPromiseToast } from "@plane/propel/toast";
 import type { IUserTheme } from "@plane/types";
 // ui
-import { InputColorPicker, setPromiseToast } from "@plane/ui";
+import { InputColorPicker } from "@plane/ui";
 // hooks
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 import { useUserProfile } from "@/hooks/store/user";
