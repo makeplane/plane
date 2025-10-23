@@ -57,6 +57,7 @@ x-app-env: &app-env
   AMQP_URL: ${AMQP_URL:-amqp://plane:plane@plane-mq:5672/plane}
   API_KEY_RATE_LIMIT: ${API_KEY_RATE_LIMIT:-60/minute}
   MINIO_ENDPOINT_SSL: ${MINIO_ENDPOINT_SSL:-0}
+  LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY:-2FiJk1U2aiVPEQtzLehYGlTSnTnrs7LW}
 
 services:
   web:
