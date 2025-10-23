@@ -50,13 +50,6 @@ export const checkEmailValidity = (email: string): boolean => {
   return isEmailValid;
 };
 
-export const isEmptyHtmlString = (htmlString: string, allowedHTMLTags: string[] = []) => {
-  // Remove HTML tags using regex
-  const cleanText = DOMPurify.sanitize(htmlString, { ALLOWED_TAGS: allowedHTMLTags });
-  // Trim the string and check if it's empty
-  return cleanText.trim() === "";
-};
-
 export const replaceUnderscoreIfSnakeCase = (str: string) => str.replace(/_/g, " ");
 
 export const capitalizeFirstLetter = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
