@@ -1,0 +1,167 @@
+name: Docker build and smoke test for apps
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: ["preview"]
+    paths:
+      - "apps/web/**"
+      - "apps/space/**"
+      - "apps/admin/**"
+      - "apps/live/**"
+      - "packages/**"
+      - "turbo.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - ".github/workflows/docker-smoke.yml"
+  push:
+    branches: ["preview"]
+    paths:
+      - "apps/web/**"
+      - "apps/space/**"
+      - "apps/admin/**"
+      - "apps/live/**"
+      - "packages/**"
+      - "turbo.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - ".github/workflows/docker-smoke.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docker-smoke-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  determine-matrix:
+    name: Determine matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.build-matrix.outputs.matrix }}
+      has_targets: ${{ steps.build-matrix.outputs.has_targets }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed paths
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            web:
+              - 'apps/web/**'
+            space:
+              - 'apps/space/**'
+            admin:
+              - 'apps/admin/**'
+            live:
+              - 'apps/live/**'
+            common:
+              - 'turbo.json'
+              - 'pnpm-lock.yaml'
+              - 'pnpm-workspace.yaml'
+              - '.github/workflows/docker-smoke.yml'
+              - 'packages/**'
+
+      - name: Build matrix
+        id: build-matrix
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const include = [];
+            const eventName = context.eventName;
+            const anyCommon = '${{ steps.changes.outputs.common }}' === 'true';
+            const changed = {
+              web: '${{ steps.changes.outputs.web }}' === 'true',
+              space: '${{ steps.changes.outputs.space }}' === 'true',
+              admin: '${{ steps.changes.outputs.admin }}' === 'true',
+              live: '${{ steps.changes.outputs.live }}' === 'true',
+            };
+            const add = (name, dockerfile, image, container, port, path, env_flags = "") => include.push({ name, dockerfile, image, container, host_port: port, path, env_flags });
+            const buildAll = anyCommon || eventName === 'push' || eventName === 'workflow_dispatch';
+            if (buildAll || changed.web) add('web', 'apps/web/Dockerfile.web', 'plane-web:ci-smoke', 'plane-web-ci', 3001, '/');
+            if (buildAll || changed.space) add('space', 'apps/space/Dockerfile.space', 'plane-space:ci-smoke', 'plane-space-ci', 3002, '/spaces');
+            if (buildAll || changed.admin) add('admin', 'apps/admin/Dockerfile.admin', 'plane-admin:ci-smoke', 'plane-admin-ci', 3003, '/god-mode');
+            if (buildAll || changed.live) add('live', 'apps/live/Dockerfile.live', 'plane-live:ci-smoke', 'plane-live-ci', 3004, '/live/health', '-e NODE_ENV=production -e LIVE_BASE_PATH=/live');
+            const hasTargets = include.length > 0;
+            if (!hasTargets) {
+              core.warning('No changes detected for any app. Matrix is empty. Skipping smoke tests.');
+            }
+            core.setOutput('matrix', JSON.stringify({ include }));
+            core.setOutput('has_targets', String(hasTargets));
+  smoke:
+    name: Build and smoke test ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    needs: determine-matrix
+    if: ${{ needs.determine-matrix.outputs.has_targets == 'true' }}
+    timeout-minutes: 25
+
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.determine-matrix.outputs.matrix) }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Show Docker version
+        run: |
+          docker version
+          docker info
+
+      - name: Run scripts/smoke.sh for ${{ matrix.name }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          svc="${{ matrix.name }}"
+          case "$svc" in
+            web)
+              export WEB_PORT=${{ matrix.host_port }}
+              export WEB_PATH='${{ matrix.path }}'
+              ;;
+            admin)
+              export ADMIN_PORT=${{ matrix.host_port }}
+              export ADMIN_PATH='${{ matrix.path }}'
+              export ADMIN_BASE_PATH='/god-mode'
+              ;;
+            space)
+              export SPACE_PORT=${{ matrix.host_port }}
+              export SPACE_PATH='${{ matrix.path }}'
+              export SPACE_BASE_PATH='/spaces'
+              ;;
+            live)
+              export LIVE_PORT=${{ matrix.host_port }}
+              export LIVE_PATH='${{ matrix.path }}'
+              export LIVE_BASE_PATH='/live'
+              ;;
+          esac
+          export MAX_WAIT=120
+          export SLEEP_INTERVAL=2
+          export NODE_ENV=production
+          set +e
+          output="$(bash scripts/smoke.sh up --services "$svc")"
+          status=$?
+          set -e
+          echo "$output"
+          if [ $status -ne 0 ]; then
+            echo "smoke.sh exited non-zero ($status)"
+            exit $status
+          fi
+          if echo "$output" | grep -qi "failure(s)"; then
+            echo "::group::Container logs ($svc)"
+            docker ps -a || true
+            docker logs "plane-${svc}-smoke" || true
+            echo "::endgroup::"
+            exit 1
+          fi
+
+      - name: Cleanup smoke containers (${{ matrix.name }})
+        if: always()
+        run: |
+          bash scripts/smoke.sh down
