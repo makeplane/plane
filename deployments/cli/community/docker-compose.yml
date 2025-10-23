@@ -44,6 +44,7 @@ x-mq-env: &mq-env # RabbitMQ Settings
 
 x-live-env: &live-env
   API_BASE_URL: ${API_BASE_URL:-http://api:8000}
+  LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY:-2FiJk1U2aiVPEQtzLehYGlTSnTnrs7LW}
 
 x-app-env: &app-env
   WEB_URL: ${WEB_URL:-http://localhost}
