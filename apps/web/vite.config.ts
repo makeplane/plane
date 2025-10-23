@@ -49,27 +49,6 @@ export default defineConfig(({ isSsrBuild }) => {
     plugins: [reactRouter(), tsconfigPaths({ projects: [path.resolve(__dirname, "tsconfig.json")] })],
     resolve: {
       alias: {
-        // Tiptap prosemirror compatibility
-        "@tiptap/pm/state": "prosemirror-state",
-        "@tiptap/pm/view": "prosemirror-view",
-        "@tiptap/pm/model": "prosemirror-model",
-        "@tiptap/pm/transform": "prosemirror-transform",
-        "@tiptap/pm/keymap": "prosemirror-keymap",
-        "@tiptap/pm/commands": "prosemirror-commands",
-        "@tiptap/pm/schema-list": "prosemirror-schema-list",
-        "@tiptap/pm/tables": "prosemirror-tables",
-        // lodash compatibility
-        lodash: "lodash-es",
-        // Victory vendor compatibility
-        "victory-vendor/d3-scale": "d3-scale",
-        "victory-vendor/d3-shape": "d3-shape",
-        "victory-vendor/d3-array": "d3-array",
-        "victory-vendor/d3-interpolate": "d3-interpolate",
-        "victory-vendor/d3-time": "d3-time",
-        "victory-vendor/d3-color": "d3-color",
-        "victory-vendor/d3-format": "d3-format",
-        "victory-vendor/d3-time-format": "d3-time-format",
-        "victory-vendor/d3-path": "d3-path",
         // swc helpers compatibility
         "@swc/helpers/_/_define_property": "@swc/helpers/esm/_define_property.js",
         "@swc/helpers/_/_ts_decorate": "@swc/helpers/esm/_ts_decorate.js",

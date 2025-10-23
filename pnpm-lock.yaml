@@ -42,6 +42,9 @@ catalogs:
     axios:
       specifier: 1.12.0
       version: 1.12.0
+    lodash:
+      specifier: 4.17.21
+      version: 4.17.21
     lodash-es:
       specifier: 4.17.21
       version: 4.17.21
@@ -788,6 +791,9 @@ importers:
       '@tanstack/virtual-core':
         specifier: ^3.13.12
         version: 3.13.12
+      '@tiptap/pm':
+        specifier: ^3.6.2
+        version: 3.6.2
       '@vercel/edge':
         specifier: 1.2.2
         version: 1.2.2
@@ -1016,6 +1022,9 @@ importers:
       linebreak:
         specifier: ^1.1.0
         version: 1.1.0
+      lodash:
+        specifier: 'catalog:'
+        version: 4.17.21
       lodash-es:
         specifier: 'catalog:'
         version: 4.17.21
@@ -1217,6 +1226,9 @@ importers:
       uuid:
         specifier: 'catalog:'
         version: 13.0.0
+      victory-vendor:
+        specifier: ^36.9.2
+        version: 36.9.2
       warning:
         specifier: ^4.0.3
         version: 4.0.3
