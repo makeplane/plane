@@ -1,9 +1,9 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // components
 import { LabelListItem } from "./label-list-item";
 // types
-import { TLabelOperations } from "./root";
+import type { TLabelOperations } from "./root";
 
 type TLabelList = {
   workspaceSlug: string;

@@ -19,7 +19,8 @@ import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 // local imports
 import { ConfirmIssueDiscard } from "../confirm-issue-discard";
-import { IssueFormRoot, type IssueFormProps } from "./form";
+import { IssueFormRoot } from "./form";
+import type { IssueFormProps } from "./form";
 
 export interface DraftIssueProps extends IssueFormProps {
   changesMade: Partial<TIssue> | null;

@@ -1349,6 +1349,11 @@ export default {
         description: "Work items that applies to the filters, track all of them here.",
       },
     },
+    delete_view: {
+      title: "Are you sure you want to delete this view?",
+      content:
+        "If you confirm, all the sort, filter, and display options + the layout you have chosen for this view will be permanently deleted without any way to restore them.",
+    },
   },
   account_settings: {
     profile: {},
@@ -2032,6 +2037,11 @@ export default {
         title: "No matching views",
         description: "No views match the search criteria. \n Create a new view instead.",
       },
+    },
+    delete_view: {
+      title: "Are you sure you want to delete this view?",
+      content:
+        "If you confirm, all the sort, filter, and display options + the layout you have chosen for this view will be permanently deleted without any way to restore them.",
     },
   },
   project_page: {

@@ -21,7 +21,8 @@ import { EPageAccess, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 // plane ui
 import { ArchiveIcon } from "@plane/propel/icons";
-import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { ContextMenu, CustomMenu } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { DeletePageModal } from "@/components/pages/modals/delete-page-modal";
@@ -32,7 +33,7 @@ import { usePageOperations } from "@/hooks/use-page-operations";
 // plane web components
 import { MovePageModal } from "@/plane-web/components/pages";
 // plane web hooks
-import { EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
 import { usePageFlag } from "@/plane-web/hooks/use-page-flag";
 // store types
 import type { TPageInstance } from "@/store/pages/base-page";
@@ -53,7 +54,6 @@ export type TPageActions =
   | "move";
 
 type Props = {
-  editorRef?: EditorRefApi | null;
   extraOptions?: (TContextMenuItem & { key: TPageActions })[];
   optionsOrder: TPageActions[];
   page: TPageInstance;
@@ -62,7 +62,7 @@ type Props = {
 };
 
 export const PageActions: React.FC<Props> = observer((props) => {
-  const { editorRef, extraOptions, optionsOrder, page, parentRef, storeType } = props;
+  const { extraOptions, optionsOrder, page, parentRef, storeType } = props;
   // states
   const [deletePageModal, setDeletePageModal] = useState(false);
   const [movePageModal, setMovePageModal] = useState(false);
@@ -74,7 +74,6 @@ export const PageActions: React.FC<Props> = observer((props) => {
   });
   // page operations
   const { pageOperations } = usePageOperations({
-    editorRef,
     page,
   });
   // derived values

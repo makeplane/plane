@@ -1,11 +1,11 @@
-import { type Editor, type Range, Extension } from "@tiptap/core";
+import { type Editor, Extension } from "@tiptap/core";
 import { ReactRenderer } from "@tiptap/react";
 import Suggestion, { type SuggestionOptions } from "@tiptap/suggestion";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { updateFloatingUIFloaterPosition } from "@/helpers/floating-ui";
-import { CommandListInstance } from "@/helpers/tippy";
+import { CommandListInstance, DROPDOWN_NAVIGATION_KEYS } from "@/helpers/tippy";
 // types
 import { IEditorProps, ISlashCommandItem, TEditorCommands, TSlashCommandSectionKeys } from "@/types";
 // components
@@ -27,7 +27,7 @@ const Command = Extension.create<SlashCommandOptions>({
     return {
       suggestion: {
         char: "/",
-        command: ({ editor, range, props }: { editor: Editor; range: Range; props: any }) => {
+        command: ({ editor, range, props }) => {
           props.command({ editor, range });
         },
         allow({ editor }: { editor: Editor }) {
@@ -50,56 +50,60 @@ const Command = Extension.create<SlashCommandOptions>({
         editor: this.editor,
         render: () => {
           let component: ReactRenderer<CommandListInstance, SlashCommandsMenuProps> | null = null;
+          let cleanup: () => void = () => {};
+          let editorRef: Editor | null = null;
+
+          const handleClose = (editor?: Editor) => {
+            component?.destroy();
+            component = null;
+            (editor || editorRef)?.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
+            cleanup();
+          };
 
           return {
             onStart: (props) => {
-              // Track active dropdown
-              props.editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
+              editorRef = props.editor;
+              // React renderer component, which wraps the actual dropdown component
               component = new ReactRenderer<CommandListInstance, SlashCommandsMenuProps>(SlashCommandsMenu, {
-                props,
+                props: {
+                  ...props,
+                  onClose: () => handleClose(props.editor),
+                } satisfies SlashCommandsMenuProps,
                 editor: props.editor,
+                className: "fixed z-[100]",
               });
-
-              if (!props.clientRect) {
-                return;
-              }
-
+              if (!props.clientRect) return;
+              props.editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
               const element = component.element as HTMLElement;
-              element.style.position = "absolute";
-              element.style.zIndex = "100";
-              document.body.appendChild(element);
-
-              updateFloatingUIFloaterPosition(props.editor, element);
+              cleanup = updateFloatingUIFloaterPosition(props.editor, element).cleanup;
             },
 
             onUpdate: (props) => {
               if (!component || !component.element) return;
-
               component.updateProps(props);
-
-              if (!props.clientRect) {
-                return;
-              }
-
+              if (!props.clientRect) return;
               const element = component.element as HTMLElement;
-              updateFloatingUIFloaterPosition(props.editor, element);
+              cleanup();
+              cleanup = updateFloatingUIFloaterPosition(props.editor, element).cleanup;
             },
 
-            onKeyDown: (props) => {
-              if (props.event.key === "Escape") {
-                component?.destroy();
-                component = null;
+            onKeyDown: ({ event }) => {
+              if ([...DROPDOWN_NAVIGATION_KEYS, "Escape"].includes(event.key)) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
+
+              if (event.key === "Escape") {
+                handleClose(this.editor);
                 return true;
               }
 
-              return component?.ref?.onKeyDown(props) ?? false;
+              return component?.ref?.onKeyDown({ event }) ?? false;
             },
 
             onExit: ({ editor }) => {
-              // Remove from active dropdowns
-              editor?.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.SLASH_COMMANDS);
-              component?.destroy();
-              component = null;
+              component?.element.remove();
+              handleClose(editor);
             },
           };
         },

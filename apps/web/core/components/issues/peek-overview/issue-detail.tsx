@@ -1,9 +1,10 @@
 "use-client";
-import { FC, useEffect, useRef } from "react";
+import type { FC } from "react";
+import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import { TNameDescriptionLoader } from "@plane/types";
+import type { TNameDescriptionLoader } from "@plane/types";
 // components
 import { getTextContent } from "@plane/utils";
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";

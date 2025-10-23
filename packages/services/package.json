@@ -1,6 +1,6 @@
 {
   "name": "@plane/services",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "AGPL-3.0",
   "private": true,
   "exports": {
@@ -23,7 +23,8 @@
   "dependencies": {
     "@plane/constants": "workspace:*",
     "@plane/types": "workspace:*",
-    "axios": "catalog:"
+    "axios": "catalog:",
+    "file-type": "^21.0.0"
   },
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",

@@ -4,7 +4,8 @@ import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
 // plane imports
 import { SitesFileService, SitesIssueService } from "@plane/services";
-import { EFileAssetType, TFileSignedURLResponse, TIssuePublicComment } from "@plane/types";
+import type { TFileSignedURLResponse, TIssuePublicComment } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
 // store
 import type { CoreRootStore } from "@/store/root.store";
 // types

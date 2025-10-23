@@ -2,9 +2,9 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Briefcase } from "lucide-react";
 import { EEstimateSystem } from "@plane/constants";
-import { ChartYAxisMetric } from "@plane/types";
+import { ProjectIcon } from "@plane/propel/icons";
+import type { ChartYAxisMetric } from "@plane/types";
 // plane package imports
 import { CustomSelect } from "@plane/ui";
 // hooks
@@ -44,7 +44,7 @@ export const SelectYAxis: React.FC<Props> = observer(({ value, onChange, hiddenO
       value={value}
       label={
         <div className="flex items-center gap-2">
-          <Briefcase className="h-3 w-3" />
+          <ProjectIcon className="h-3 w-3" />
           <span>{options.find((v) => v.value === value)?.label ?? "Add Metric"}</span>
         </div>
       }

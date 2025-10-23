@@ -22,7 +22,7 @@ import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/iss
 //
 import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-stats";
 import { getBlockViewDetails } from "../utils";
-import { GanttStoreType } from "./base-gantt-root";
+import type { GanttStoreType } from "./base-gantt-root";
 import { projectIssueTypesCache } from "@/services/project";
 import * as LucideIcons from "lucide-react";
 

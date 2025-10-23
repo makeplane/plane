@@ -101,13 +101,15 @@ export const WORK_ITEM_FILTER_PROPERTY_KEYS = [
   "module_id",
   "project_id",
   "type_id",
+  "created_at",
+  "updated_at",
 ] as const;
 export type TWorkItemFilterProperty = (typeof WORK_ITEM_FILTER_PROPERTY_KEYS)[number];
 
 export type TWorkItemFilterConditionKey = `${TWorkItemFilterProperty}__${TSupportedOperators}`;
 
 export type TWorkItemFilterConditionData = Partial<{
-  [K in TWorkItemFilterConditionKey]: string;
+  [K in TWorkItemFilterConditionKey]: string | boolean | number;
 }>;
 
 export type TWorkItemFilterAndGroup = {

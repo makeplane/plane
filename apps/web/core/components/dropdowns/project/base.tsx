@@ -1,10 +1,12 @@
-import { ReactNode, useRef, useState } from "react";
+import type { ReactNode } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Briefcase, Check, ChevronDown, Search } from "lucide-react";
+import { Check, ChevronDown, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { ProjectIcon } from "@plane/propel/icons";
 import { ComboDropDown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
@@ -12,11 +14,11 @@ import { Logo } from "@/components/common/logo";
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
 // plane web imports
-import { TProject } from "@/plane-web/types";
+import type { TProject } from "@/plane-web/types";
 // local imports
 import { DropdownButton } from "../buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
-import { TDropdownProps } from "../types";
+import type { TDropdownProps } from "../types";
 
 type Props = TDropdownProps & {
   button?: ReactNode;
@@ -154,7 +156,7 @@ export const ProjectDropdownBase: React.FC<Props> = observer((props) => {
               return projectDetails?.logo_props ? renderIcon(projectDetails.logo_props) : null;
             })
           ) : (
-            <Briefcase className="size-3 text-custom-text-300" />
+            <ProjectIcon className="size-3 text-custom-text-300" />
           )}
         </div>
       );

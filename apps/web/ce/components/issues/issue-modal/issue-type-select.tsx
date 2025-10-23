@@ -2,11 +2,12 @@
 
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { Control, Controller } from "react-hook-form";
+import {  Controller } from "react-hook-form";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
+import type { Control } from "react-hook-form";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -14,6 +15,7 @@ import { LayersIcon } from "@plane/propel/icons";
 import { ComboDropDown } from "@plane/ui";
 import { cn, getTabIndex } from "@plane/utils";
 // types
+import type { TBulkIssueProperties, TIssue } from "@plane/types";
 import { TBulkIssueProperties, TIssue } from "@plane/types";
 import type { EditorRefApi } from "@plane/editor";
 // hooks

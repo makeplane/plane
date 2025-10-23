@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, Fragment, useState } from "react";
+import type { FC } from "react";
+import { Fragment, useState } from "react";
 // components
 import { observer } from "mobx-react";
 import { EUserPermissionsLevel } from "@plane/constants";

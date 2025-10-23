@@ -11,41 +11,33 @@ import type {
   TWorkItemWidgets,
 } from "@plane/types";
 // plane web store
-import {
-  type IIssueActivityStore,
-  IssueActivityStore,
-  type IIssueActivityStoreActions,
-  type TActivityLoader,
+import { IssueActivityStore } from "@/plane-web/store/issue/issue-details/activity.store";
+import type {
+  IIssueActivityStore,
+  IIssueActivityStoreActions,
+  TActivityLoader,
 } from "@/plane-web/store/issue/issue-details/activity.store";
 import type { RootStore } from "@/plane-web/store/root.store";
 import type { TIssueRelationTypes } from "@/plane-web/types";
 import type { IIssueRootStore } from "../root.store";
-import {
-  type IIssueAttachmentStore,
-  IssueAttachmentStore,
-  type IIssueAttachmentStoreActions,
-} from "./attachment.store";
-import {
-  type IIssueCommentStore,
-  IssueCommentStore,
-  type IIssueCommentStoreActions,
-  type TCommentLoader,
-} from "./comment.store";
-import {
-  type IIssueCommentReactionStore,
-  IssueCommentReactionStore,
-  type IIssueCommentReactionStoreActions,
-} from "./comment_reaction.store";
-import { type IIssueStore, IssueStore, type IIssueStoreActions } from "./issue.store";
-import { type IIssueLinkStore, IssueLinkStore, type IIssueLinkStoreActions } from "./link.store";
-import { type IIssueReactionStore, IssueReactionStore, type IIssueReactionStoreActions } from "./reaction.store";
-import { type IIssueRelationStore, IssueRelationStore, type IIssueRelationStoreActions } from "./relation.store";
-import { type IIssueSubIssuesStore, IssueSubIssuesStore, type IIssueSubIssuesStoreActions } from "./sub_issues.store";
-import {
-  type IIssueSubscriptionStore,
-  IssueSubscriptionStore,
-  type IIssueSubscriptionStoreActions,
-} from "./subscription.store";
+import { IssueAttachmentStore } from "./attachment.store";
+import type { IIssueAttachmentStore, IIssueAttachmentStoreActions } from "./attachment.store";
+import { IssueCommentStore } from "./comment.store";
+import type { IIssueCommentStore, IIssueCommentStoreActions, TCommentLoader } from "./comment.store";
+import { IssueCommentReactionStore } from "./comment_reaction.store";
+import type { IIssueCommentReactionStore, IIssueCommentReactionStoreActions } from "./comment_reaction.store";
+import { IssueStore } from "./issue.store";
+import type { IIssueStore, IIssueStoreActions } from "./issue.store";
+import { IssueLinkStore } from "./link.store";
+import type { IIssueLinkStore, IIssueLinkStoreActions } from "./link.store";
+import { IssueReactionStore } from "./reaction.store";
+import type { IIssueReactionStore, IIssueReactionStoreActions } from "./reaction.store";
+import { IssueRelationStore } from "./relation.store";
+import type { IIssueRelationStore, IIssueRelationStoreActions } from "./relation.store";
+import { IssueSubIssuesStore } from "./sub_issues.store";
+import type { IIssueSubIssuesStore, IIssueSubIssuesStoreActions } from "./sub_issues.store";
+import { IssueSubscriptionStore } from "./subscription.store";
+import type { IIssueSubscriptionStore, IIssueSubscriptionStoreActions } from "./subscription.store";
 
 export type TPeekIssue = {
   workspaceSlug: string;

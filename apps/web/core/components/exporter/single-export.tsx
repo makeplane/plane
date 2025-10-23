@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, FC } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 // ui
 import { Button } from "@plane/propel/button";
-import { IExportData } from "@plane/types";
+import type { IExportData } from "@plane/types";
 // helpers
 import { getDate, renderFormattedDate } from "@plane/utils";
 // types

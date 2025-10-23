@@ -2,17 +2,17 @@ import { sortBy, cloneDeep, update, set } from "lodash-es";
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { TFetchStatus, TLoader, TProjectAnalyticsCount, TProjectAnalyticsCountParams } from "@plane/types";
+import type { TFetchStatus, TLoader, TProjectAnalyticsCount, TProjectAnalyticsCountParams } from "@plane/types";
 // helpers
 import { orderProjects, shouldFilterProject } from "@plane/utils";
 // services
-import { TProject, TPartialProject } from "@/plane-web/types/projects";
+import type { TProject, TPartialProject } from "@/plane-web/types/projects";
 import { IssueLabelService, IssueService } from "@/services/issue";
 import { ProjectService, ProjectStateService, ProjectArchiveService } from "@/services/project";
 // store
 import type { CoreRootStore } from "../root.store";
 
-type ProjectOverviewCollapsible = "links" | "attachments";
+type ProjectOverviewCollapsible = "links" | "attachments" | "milestones";
 
 export interface IProjectStore {
   // observables

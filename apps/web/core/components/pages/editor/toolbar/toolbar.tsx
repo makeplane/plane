@@ -8,7 +8,8 @@ import { Tooltip } from "@plane/propel/tooltip";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // constants
-import { TOOLBAR_ITEMS, TYPOGRAPHY_ITEMS, ToolbarMenuItem } from "@/constants/editor";
+import type { ToolbarMenuItem } from "@/constants/editor";
+import { TOOLBAR_ITEMS, TYPOGRAPHY_ITEMS } from "@/constants/editor";
 // local imports
 import { ColorDropdown } from "./color-dropdown";
 

@@ -2,13 +2,14 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { Control, Controller } from "react-hook-form";
+import type { Control } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { LayoutPanelTop } from "lucide-react";
 // plane imports
 import { ETabIndices, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
-import { ISearchIssueResponse, TIssue } from "@plane/types";
+import type { ISearchIssueResponse, TIssue } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";

@@ -14,7 +14,8 @@ import { getPasswordStrength } from "@plane/utils";
 import { PageHead } from "@/components/core/page-title";
 import { ProfileSettingContentHeader } from "@/components/profile/profile-setting-content-header";
 // helpers
-import { authErrorHandler, type EAuthenticationErrorCodes } from "@/helpers/authentication.helper";
+import { authErrorHandler } from "@/helpers/authentication.helper";
+import type { EAuthenticationErrorCodes } from "@/helpers/authentication.helper";
 // hooks
 import { useUser } from "@/hooks/store/user";
 // services

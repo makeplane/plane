@@ -15,7 +15,7 @@ import {
   PanelLeft,
   MoveRight,
 } from "lucide-react";
-import { TNameDescriptionLoader } from "@plane/types";
+import type { TNameDescriptionLoader } from "@plane/types";
 import { Header, CustomMenu, EHeaderVariant } from "@plane/ui";
 import { cn, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
 // components

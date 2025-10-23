@@ -1,6 +1,6 @@
 import { observable, makeObservable, computed } from "mobx";
 // types
-import {
+import type {
   IWorkspaceLite,
   TProjectDetails,
   TPublishEntityType,

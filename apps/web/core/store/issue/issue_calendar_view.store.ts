@@ -1,10 +1,13 @@
-import { observable, action, makeObservable, runInAction, computed } from "mobx";
+import { observable, action, makeObservable, runInAction, computed, reaction } from "mobx";
 
 // helpers
 import { computedFn } from "mobx-utils";
-import { ICalendarPayload, ICalendarWeek } from "@plane/types";
+import type { ICalendarPayload, ICalendarWeek } from "@plane/types";
+import { EStartOfTheWeek } from "@plane/types";
 import { generateCalendarData, getWeekNumberOfDate } from "@plane/utils";
 // types
+import type { IIssueRootStore } from "./root.store";
+
 export interface ICalendarStore {
   calendarFilters: {
     activeMonthDate: Date;
@@ -15,6 +18,7 @@ export interface ICalendarStore {
   // action
   updateCalendarFilters: (filters: Partial<{ activeMonthDate: Date; activeWeekDate: Date }>) => void;
   updateCalendarPayload: (date: Date) => void;
+  regenerateCalendar: () => void;
 
   // computed
   allWeeksOfActiveMonth:
@@ -38,8 +42,10 @@ export class CalendarStore implements ICalendarStore {
     activeWeekDate: new Date(),
   };
   calendarPayload: ICalendarPayload | null = null;
+  // root store
+  rootStore;
 
-  constructor() {
+  constructor(_rootStore: IIssueRootStore) {
     makeObservable(this, {
       loader: observable.ref,
       error: observable.ref,
@@ -51,6 +57,7 @@ export class CalendarStore implements ICalendarStore {
       // actions
       updateCalendarFilters: action,
       updateCalendarPayload: action,
+      regenerateCalendar: action,
 
       //computed
       allWeeksOfActiveMonth: computed,
@@ -58,7 +65,17 @@ export class CalendarStore implements ICalendarStore {
       allDaysOfActiveWeek: computed,
     });
 
+    this.rootStore = _rootStore;
     this.initCalendar();
+
+    // Watch for changes in startOfWeek preference and regenerate calendar
+    reaction(
+      () => this.rootStore.rootStore.user.userProfile.data?.start_of_the_week,
+      () => {
+        // Regenerate calendar when startOfWeek preference changes
+        this.regenerateCalendar();
+      }
+    );
   }
 
   get allWeeksOfActiveMonth() {
@@ -138,14 +155,32 @@ export class CalendarStore implements ICalendarStore {
     if (!this.calendarPayload) return null;
 
     const nextDate = new Date(date);
+    const startOfWeek = this.rootStore.rootStore.user.userProfile.data?.start_of_the_week ?? EStartOfTheWeek.SUNDAY;
 
     runInAction(() => {
-      this.calendarPayload = generateCalendarData(this.calendarPayload, nextDate);
+      this.calendarPayload = generateCalendarData(this.calendarPayload, nextDate, startOfWeek);
     });
   };
 
   initCalendar = () => {
-    const newCalendarPayload = generateCalendarData(null, new Date());
+    const startOfWeek = this.rootStore.rootStore.user.userProfile.data?.start_of_the_week ?? EStartOfTheWeek.SUNDAY;
+    const newCalendarPayload = generateCalendarData(null, new Date(), startOfWeek);
+
+    runInAction(() => {
+      this.calendarPayload = newCalendarPayload;
+    });
+  };
+
+  /**
+   * Force complete regeneration of calendar data
+   * This should be called when startOfWeek preference changes
+   */
+  regenerateCalendar = () => {
+    const startOfWeek = this.rootStore.rootStore.user.userProfile.data?.start_of_the_week ?? EStartOfTheWeek.SUNDAY;
+    const { activeMonthDate } = this.calendarFilters;
+
+    // Force complete regeneration by passing null to clear all cached data
+    const newCalendarPayload = generateCalendarData(null, activeMonthDate, startOfWeek);
 
     runInAction(() => {
       this.calendarPayload = newCalendarPayload;

@@ -29,14 +29,21 @@ export const createFilterConfig = <P extends TFilterProperty, V extends TFilterV
 export type TCreateFilterConfigParams = Omit<TBaseFilterFieldConfig, "isOperatorEnabled"> & {
   isEnabled: boolean;
   allowedOperators: Set<TSupportedOperators>;
+  rightContent?: React.ReactNode; // content to display on the right side of the filter option in the dropdown
+  tooltipContent?: React.ReactNode; // content to display when hovering over the applied filter item in the filter list
 };
+
+/**
+ * Type for filter icon type
+ */
+export type TFilterIconType = string | number | boolean | object | undefined;
 
 /**
  * Icon configuration for filters and their options.
  * - filterIcon: Optional icon for the filter
  * - getOptionIcon: Function to get icon for specific option values
  */
-export interface IFilterIconConfig<T extends string | number | boolean | object | undefined = undefined> {
+export interface IFilterIconConfig<T extends TFilterIconType = undefined> {
   filterIcon?: React.FC<React.SVGAttributes<SVGElement>>;
   getOptionIcon?: (value: T) => React.ReactNode;
 }

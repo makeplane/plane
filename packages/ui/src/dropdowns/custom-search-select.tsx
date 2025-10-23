@@ -139,14 +139,14 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                 <Combobox.Options data-prevent-outside-click static>
                   <div
                     className={cn(
-                      "my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-48 whitespace-nowrap z-30",
+                      "my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-48 whitespace-nowrap z-30",
                       optionsClassName
                     )}
                     ref={setPopperElement}
                     style={styles.popper}
                     {...attributes.popper}
                   >
-                    <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
+                    <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2 mx-2">
                       <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
                       <Combobox.Input
                         className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
@@ -157,12 +157,13 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                       />
                     </div>
                     <div
-                      className={cn("mt-2 space-y-1 overflow-y-scroll", {
+                      className={cn("mt-2 px-2 space-y-1 overflow-y-scroll vertical-scrollbar scrollbar-xs", {
+                        "max-h-96": maxHeight === "2xl",
+                        "max-h-80": maxHeight === "xl",
                         "max-h-60": maxHeight === "lg",
                         "max-h-48": maxHeight === "md",
                         "max-h-36": maxHeight === "rg",
                         "max-h-28": maxHeight === "sm",
-                        "max-h-full": maxHeight === "full",
                       })}
                     >
                       {filteredOptions ? (

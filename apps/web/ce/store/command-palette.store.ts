@@ -1,6 +1,7 @@
 import { computed, makeObservable } from "mobx";
 // types / constants
-import { BaseCommandPaletteStore, IBaseCommandPaletteStore } from "@/store/base-command-palette.store";
+import type { IBaseCommandPaletteStore } from "@/store/base-command-palette.store";
+import { BaseCommandPaletteStore } from "@/store/base-command-palette.store";
 
 export interface ICommandPaletteStore extends IBaseCommandPaletteStore {
   // computed

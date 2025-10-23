@@ -2,7 +2,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { CalendarCheck2 } from "lucide-react";
 // types
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";

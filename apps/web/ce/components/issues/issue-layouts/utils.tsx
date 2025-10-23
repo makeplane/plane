@@ -1,9 +1,8 @@
-import { FC } from "react";
+import type { FC } from "react";
 import {
   CalendarCheck2,
   CalendarClock,
   CalendarDays,
-  ContrastIcon,
   LayersIcon,
   Link2,
   Paperclip,
@@ -13,8 +12,9 @@ import {
   Users,
 } from "lucide-react";
 // types
-import { DiceIcon, DoubleCircleIcon, ISvgIcons } from "@plane/propel/icons";
-import { IGroupByColumn, IIssueDisplayProperties, TGetColumns, TSpreadsheetColumn } from "@plane/types";
+import type { ISvgIcons } from "@plane/propel/icons";
+import { CycleIcon, DoubleCircleIcon, ModuleIcon } from "@plane/propel/icons";
+import type { IGroupByColumn, IIssueDisplayProperties, TGetColumns, TSpreadsheetColumn } from "@plane/types";
 // components
 import {
   SpreadsheetAssigneeColumn,
@@ -71,8 +71,8 @@ export const SpreadSheetPropertyIconMap: Record<string, FC<ISvgIcons>> = {
   CalenderCheck2: CalendarCheck2,
   Triangle: Triangle,
   Tag: Tag,
-  DiceIcon: DiceIcon,
-  ContrastIcon: ContrastIcon,
+  ModuleIcon: ModuleIcon,
+  ContrastIcon: CycleIcon,
   Signal: Signal,
   CalendarClock: CalendarClock,
   DoubleCircleIcon: DoubleCircleIcon,

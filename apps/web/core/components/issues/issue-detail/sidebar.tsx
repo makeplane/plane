@@ -16,7 +16,7 @@ import {
 // i18n
 import { useTranslation } from "@plane/i18n";
 // ui
-import { ContrastIcon, DiceIcon, DoubleCircleIcon } from "@plane/propel/icons";
+import { CycleIcon, DoubleCircleIcon, ModuleIcon } from "@plane/propel/icons";
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -284,7 +284,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             {projectDetails?.module_view && (
               <div className="flex min-h-8 gap-2">
                 <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
-                  <DiceIcon className="h-4 w-4 flex-shrink-0" />
+                  <ModuleIcon className="h-4 w-4 flex-shrink-0" />
                   <span>{t("common.modules")}</span>
                 </div>
                 <IssueModuleSelect
@@ -301,7 +301,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             {projectDetails?.cycle_view && (
               <div className="flex h-8 items-center gap-2">
                 <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-                  <ContrastIcon className="h-4 w-4 flex-shrink-0" />
+                  <CycleIcon className="h-4 w-4 flex-shrink-0" />
                   <span>{t("common.cycle")}</span>
                 </div>
                 <IssueCycleSelect

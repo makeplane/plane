@@ -4,14 +4,8 @@ import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import {
-  EIssueServiceType,
-  EIssuesStoreType,
-  GroupByColumnTypes,
-  TIssue,
-  TIssueServiceType,
-  TSubIssueOperations,
-} from "@plane/types";
+import type { GroupByColumnTypes, TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 // hooks
 import { SectionEmptyState } from "@/components/empty-state/section-empty-state-root";
 import { getGroupByColumns, isWorkspaceLevel } from "@/components/issues/issue-layouts/utils";

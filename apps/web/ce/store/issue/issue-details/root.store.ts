@@ -1,10 +1,8 @@
 import { makeObservable } from "mobx";
-import { TIssueServiceType } from "@plane/types";
-import {
-  IssueDetail as IssueDetailCore,
-  IIssueDetail as IIssueDetailCore,
-} from "@/store/issue/issue-details/root.store";
-import { IIssueRootStore } from "@/store/issue/root.store";
+import type { TIssueServiceType } from "@plane/types";
+import type { IIssueDetail as IIssueDetailCore } from "@/store/issue/issue-details/root.store";
+import { IssueDetail as IssueDetailCore } from "@/store/issue/issue-details/root.store";
+import type { IIssueRootStore } from "@/store/issue/root.store";
 
 export type IIssueDetail = IIssueDetailCore;
 

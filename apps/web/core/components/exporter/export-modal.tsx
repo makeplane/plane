@@ -8,9 +8,10 @@ import { Dialog, Transition } from "@headlessui/react";
 // types
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { IUser, IImporterService } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IUser, IImporterService } from "@plane/types";
 // ui
-import { CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomSearchSelect } from "@plane/ui";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";

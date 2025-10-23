@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 // constants
 // helpers
 import { useTranslation } from "@plane/i18n";
-import { EViewAccess } from "@plane/types";
+import type { EViewAccess } from "@plane/types";
 import { VIEW_ACCESS_SPECIFIERS } from "@/helpers/views.helper";
 
 type Props = {

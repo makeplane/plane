@@ -1,9 +1,10 @@
 "use client";
 
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { TStateOperationsCallbacks } from "@plane/types";
+import type { TStateOperationsCallbacks } from "@plane/types";
 import { cn } from "@plane/utils";
 
 type TStateMarksAsDefault = {

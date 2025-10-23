@@ -5,7 +5,7 @@ import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check, ChevronDown } from "luci
 import { VIEW_SORT_BY_OPTIONS, VIEW_SORTING_KEY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
-import { TViewFiltersSortBy, TViewFiltersSortKey } from "@plane/types";
+import type { TViewFiltersSortBy, TViewFiltersSortKey } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
 // constants

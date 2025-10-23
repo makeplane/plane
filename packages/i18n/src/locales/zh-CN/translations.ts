@@ -1500,6 +1500,10 @@ export default {
         description: "符合筛选条件的工作项，在这里跟踪所有这些工作项。",
       },
     },
+    delete_view: {
+      title: "您确定要删除此视图吗？",
+      content: "如果您确认，您为此视图选择的所有排序、筛选和显示选项 + 布局将被永久删除，无法恢复。",
+    },
   },
   workspace_settings: {
     label: "工作区设置",
@@ -2109,6 +2113,10 @@ export default {
         title: "没有匹配的视图",
         description: "没有符合搜索条件的视图。\n创建一个新视图。",
       },
+    },
+    delete_view: {
+      title: "您确定要删除此视图吗？",
+      content: "如果您确认，您为此视图选择的所有排序、筛选和显示选项 + 布局将被永久删除，无法恢复。",
     },
   },
   project_page: {

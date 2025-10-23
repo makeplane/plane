@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 // types
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
-import { IIssueDisplayProperties, TIssue } from "@plane/types";
+import type { IIssueDisplayProperties, TIssue } from "@plane/types";
 // hooks
 import { captureSuccess } from "@/helpers/event-tracker.helper";
 // components

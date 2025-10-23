@@ -2,7 +2,8 @@
 
 import { observer } from "mobx-react";
 // icons
-import { LucideIcon, Users } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { Users } from "lucide-react";
 // plane ui
 import { Avatar, AvatarGroup } from "@plane/ui";
 // plane utils
@@ -10,7 +11,7 @@ import { cn } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 //
-import { TPublicMember } from "@/types/member";
+import type { TPublicMember } from "@/types/member";
 
 type Props = {
   memberIds: string[];

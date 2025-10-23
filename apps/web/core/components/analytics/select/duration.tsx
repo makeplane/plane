@@ -1,12 +1,13 @@
 // plane package imports
-import React, { ReactNode } from "react";
+import type { ReactNode } from "react";
+import React from "react";
 import { Calendar } from "lucide-react";
 // plane package imports
 import { ANALYTICS_DURATION_FILTER_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CustomSearchSelect } from "@plane/ui";
 // types
-import { TDropdownProps } from "@/components/dropdowns/types";
+import type { TDropdownProps } from "@/components/dropdowns/types";
 
 type Props = TDropdownProps & {
   value: string | null;

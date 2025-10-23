@@ -2,6 +2,7 @@
 import type { IncomingHttpHeaders } from "http";
 import type { TUserDetails } from "@plane/editor";
 import { logger } from "@plane/logger";
+import { AppError } from "@/lib/errors";
 // services
 import { UserService } from "@/services/user.service";
 // types
@@ -35,8 +36,10 @@ export const onAuthenticate = async ({
     userId = parsedToken.id;
     cookie = parsedToken.cookie;
   } catch (error) {
-    // If token parsing fails, fallback to request headers
-    logger.error("Token parsing failed, using request headers:", error);
+    const appError = new AppError(error, {
+      context: { operation: "onAuthenticate" },
+    });
+    logger.error("Token parsing failed, using request headers", appError);
   } finally {
     // If cookie is still not found, fallback to request headers
     if (!cookie) {
@@ -45,7 +48,9 @@ export const onAuthenticate = async ({
   }
 
   if (!cookie || !userId) {
-    throw new Error("Credentials not provided");
+    const appError = new AppError("Credentials not provided", { code: "AUTH_MISSING_CREDENTIALS" });
+    logger.error("Credentials not provided", appError);
+    throw appError;
   }
 
   // set cookie in context, so it can be used throughout the ws connection
@@ -67,7 +72,7 @@ export const handleAuthentication = async ({ cookie, userId }: { cookie: string;
     const userService = new UserService();
     const user = await userService.currentUser(cookie);
     if (user.id !== userId) {
-      throw new Error("Authentication unsuccessful!");
+      throw new AppError("Authentication unsuccessful: User ID mismatch", { code: "AUTH_USER_MISMATCH" });
     }
 
     return {
@@ -76,7 +81,11 @@ export const handleAuthentication = async ({ cookie, userId }: { cookie: string;
         name: user.display_name,
       },
     };
-  } catch (_error) {
-    throw Error("Authentication unsuccessful!");
+  } catch (error) {
+    const appError = new AppError(error, {
+      context: { operation: "handleAuthentication" },
+    });
+    logger.error("Authentication failed", appError);
+    throw new AppError("Authentication unsuccessful", { code: appError.code });
   }
 };

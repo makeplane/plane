@@ -1,4 +1,4 @@
-import { TDropdownProps } from "../types";
+import type { TDropdownProps } from "../types";
 
 export type MemberDropdownProps = TDropdownProps & {
   button?: React.ReactNode;

@@ -7,10 +7,10 @@ import { Disclosure } from "@headlessui/react";
 import { ROLE, EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { SuspendedUserIcon } from "@plane/propel/icons";
 import { Pill, EPillVariant, EPillSize } from "@plane/propel/pill";
-import { IUser, IWorkspaceMember } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IUser, IWorkspaceMember } from "@plane/types";
 // plane ui
-import { CustomSelect, PopoverMenu, TOAST_TYPE, cn, setToast } from "@plane/ui";
-// constants
+import { CustomSelect, PopoverMenu, cn } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
@@ -49,33 +49,24 @@ export const NameColumn: React.FC<NameProps> = (props) => {
         <div className="relative group">
           <div className="flex items-center gap-x-4 gap-y-2 w-72 justify-between">
             <div className="flex items-center gap-x-2 gap-y-2 flex-1">
-              {avatar_url && avatar_url.trim() !== "" ? (
+              {isSuspended ? (
+                <div className="bg-custom-background-80 rounded-full p-0.5">
+                  <SuspendedUserIcon className="h-4 w-4 text-custom-text-400" />
+                </div>
+              ) : avatar_url && avatar_url.trim() !== "" ? (
                 <Link href={`/${workspaceSlug}/profile/${id}`}>
                   <span className="relative flex h-6 w-6 items-center justify-center rounded-full capitalize text-white">
-                    {isSuspended ? (
-                      <SuspendedUserIcon className="h-4 w-4 text-custom-text-400" />
-                    ) : (
-                      <img
-                        src={getFileURL(avatar_url)}
-                        className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
-                        alt={display_name || email}
-                      />
-                    )}
+                    <img
+                      src={getFileURL(avatar_url)}
+                      className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
+                      alt={display_name || email}
+                    />
                   </span>
                 </Link>
               ) : (
                 <Link href={`/${workspaceSlug}/profile/${id}`}>
-                  <span
-                    className={cn(
-                      "relative flex h-4 w-4 text-xs items-center justify-center rounded-full  capitalize text-white",
-                      isSuspended ? "bg-custom-background-80" : "bg-gray-700"
-                    )}
-                  >
-                    {isSuspended ? (
-                      <SuspendedUserIcon className="h-4 w-4 text-custom-text-400" />
-                    ) : (
-                      (email ?? display_name ?? "?")[0]
-                    )}
+                  <span className="relative flex h-4 w-4 text-xs items-center justify-center rounded-full  capitalize text-white bg-gray-700">
+                    {(email ?? display_name ?? "?")[0]}
                   </span>
                 </Link>
               )}

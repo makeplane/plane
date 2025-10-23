@@ -1,7 +1,7 @@
-import { FC } from "react";
+import type { FC } from "react";
 import Link from "next/link";
 // types
-import { TPageNavigationTabs } from "@plane/types";
+import type { TPageNavigationTabs } from "@plane/types";
 // helpers
 import { cn } from "@plane/utils";
 

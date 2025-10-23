@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Search, X } from "lucide-react";
 // plane imports
-import { TCycleFilters, TCycleGroups } from "@plane/types";
+import type { TCycleFilters, TCycleGroups } from "@plane/types";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports

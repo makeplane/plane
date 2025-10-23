@@ -1,12 +1,11 @@
-import { FC, MutableRefObject } from "react";
+import type { FC, MutableRefObject } from "react";
 // components
-import { TIssue, IIssueDisplayProperties, TIssueMap, TGroupedIssues } from "@plane/types";
+import type { TIssue, IIssueDisplayProperties, TIssueMap, TGroupedIssues } from "@plane/types";
 // hooks
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // types
 import { IssueBlockRoot } from "./block-root";
-import { TRenderQuickActions } from "./list-view-types";
-import type { TIssueType } from "@/services/project";
+import type { TRenderQuickActions } from "./list-view-types";
 
 interface Props {
   issueIds: string[] | undefined;

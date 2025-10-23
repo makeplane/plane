@@ -3,21 +3,20 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { Layers } from "lucide-react";
 // plane imports
 import { ETabIndices, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
-import {
-  EViewAccess,
+import { ViewsIcon } from "@plane/propel/icons";
+import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IProjectView,
   EIssueLayoutTypes,
-  EIssuesStoreType,
   IIssueFilters,
 } from "@plane/types";
+import { EViewAccess, EIssuesStoreType } from "@plane/types";
 import { Input, TextArea } from "@plane/ui";
 import { getComputedDisplayFilters, getComputedDisplayProperties, getTabIndex } from "@plane/utils";
 // components
@@ -123,7 +122,7 @@ export const ProjectViewForm: React.FC<Props> = observer((props) => {
                     {logoValue?.in_use ? (
                       <Logo logo={logoValue} size={18} type="lucide" />
                     ) : (
-                      <Layers className="h-4 w-4 text-custom-text-300" />
+                      <ViewsIcon className="h-4 w-4 text-custom-text-300" />
                     )}
                   </>
                 </span>

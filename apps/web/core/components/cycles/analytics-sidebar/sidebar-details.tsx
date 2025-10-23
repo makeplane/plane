@@ -1,12 +1,14 @@
 "use client";
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
-import { LayersIcon, SquareUser, Users } from "lucide-react";
+import { SquareUser, Users } from "lucide-react";
 // plane types
 import { EEstimateSystem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ICycle } from "@plane/types";
+import { WorkItemsIcon } from "@plane/propel/icons";
+import type { ICycle } from "@plane/types";
 // plane ui
 import { Avatar, AvatarGroup, TextArea } from "@plane/ui";
 // helpers
@@ -115,7 +117,7 @@ export const CycleSidebarDetails: FC<Props> = observer((props) => {
 
         <div className="flex items-center justify-start gap-1">
           <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
-            <LayersIcon className="h-4 w-4" />
+            <WorkItemsIcon className="h-4 w-4" />
             <span className="text-base">{t("work_items")}</span>
           </div>
           <div className="flex w-3/5 items-center">
@@ -129,7 +131,7 @@ export const CycleSidebarDetails: FC<Props> = observer((props) => {
         {isEstimatePointValid && !isCompleted && (
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
-              <LayersIcon className="h-4 w-4" />
+              <WorkItemsIcon className="h-4 w-4" />
               <span className="text-base">{t("points")}</span>
             </div>
             <div className="flex w-3/5 items-center">

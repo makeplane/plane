@@ -1,5 +1,7 @@
+import { logger } from "@plane/logger";
 import { TPage } from "@plane/types";
 // services
+import { AppError } from "@/lib/errors";
 import { APIService } from "../api.service";
 
 export type TPageDescriptionPayload = {
@@ -21,7 +23,11 @@ export abstract class PageCoreService extends APIService {
     })
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response?.data;
+        const appError = new AppError(error, {
+          context: { operation: "fetchDetails", pageId },
+        });
+        logger.error("Failed to fetch page details", appError);
+        throw appError;
       });
   }
 
@@ -35,7 +41,11 @@ export abstract class PageCoreService extends APIService {
     })
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response?.data;
+        const appError = new AppError(error, {
+          context: { operation: "fetchDescriptionBinary", pageId },
+        });
+        logger.error("Failed to fetch page description binary", appError);
+        throw appError;
       });
   }
 
@@ -50,7 +60,7 @@ export abstract class PageCoreService extends APIService {
 
     // Early abort check
     if (abortSignal?.aborted) {
-      throw new DOMException("Aborted", "AbortError");
+      throw new AppError(new DOMException("Aborted", "AbortError"));
     }
 
     // Create an abort listener that will reject the pending promise
@@ -58,7 +68,7 @@ export abstract class PageCoreService extends APIService {
     const abortPromise = new Promise((_, reject) => {
       if (abortSignal) {
         abortListener = () => {
-          reject(new DOMException("Aborted", "AbortError"));
+          reject(new AppError(new DOMException("Aborted", "AbortError")));
         };
         abortSignal.addEventListener("abort", abortListener);
       }
@@ -66,16 +76,22 @@ export abstract class PageCoreService extends APIService {
 
     try {
       return await Promise.race([
-        this.patch(`${this.basePath}/pages/${pageId}`, data, {
+        this.patch(`${this.basePath}/pages/${pageId}/`, data, {
           headers: this.getHeader(),
           signal: abortSignal,
         })
           .then((response) => response?.data)
           .catch((error) => {
-            if (error.name === "AbortError") {
-              throw new DOMException("Aborted", "AbortError");
+            const appError = new AppError(error, {
+              context: { operation: "updatePageProperties", pageId },
+            });
+
+            if (appError.code === "ABORT_ERROR") {
+              throw appError;
             }
-            throw error;
+
+            logger.error("Failed to update page properties", appError);
+            throw appError;
           }),
         abortPromise,
       ]);
@@ -93,7 +109,11 @@ export abstract class PageCoreService extends APIService {
     })
       .then((response) => response?.data)
       .catch((error) => {
-        throw error;
+        const appError = new AppError(error, {
+          context: { operation: "updateDescriptionBinary", pageId },
+        });
+        logger.error("Failed to update page description binary", appError);
+        throw appError;
       });
   }
 }

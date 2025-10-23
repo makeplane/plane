@@ -6,7 +6,7 @@ import { X } from "lucide-react";
 // plane imports
 import { EIconSize } from "@plane/constants";
 import { StateGroupIcon } from "@plane/propel/icons";
-import { IState } from "@plane/types";
+import type { IState } from "@plane/types";
 
 type Props = {
   handleRemove: (val: string) => void;

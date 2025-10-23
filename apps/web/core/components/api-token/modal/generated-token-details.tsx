@@ -4,7 +4,7 @@ import { Copy } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
-import { IApiToken } from "@plane/types";
+import type { IApiToken } from "@plane/types";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/ui";
 import { renderFormattedDate, renderFormattedTime, copyTextToClipboard } from "@plane/utils";

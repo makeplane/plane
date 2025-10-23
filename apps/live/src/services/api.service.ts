@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import { env } from "@/env";
+import { AppError } from "@/lib/errors";
 
 export abstract class APIService {
   protected baseURL: string;
@@ -13,6 +14,16 @@ export abstract class APIService {
       withCredentials: true,
       timeout: 20000,
     });
+    this.setupInterceptors();
+  }
+
+  private setupInterceptors() {
+    this.axiosInstance.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        return Promise.reject(new AppError(error));
+      }
+    );
   }
 
   setHeader(key: string, value: string) {

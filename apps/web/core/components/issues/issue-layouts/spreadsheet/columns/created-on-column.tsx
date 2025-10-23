@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 // types
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 // helpers
 import { Row } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";

@@ -6,7 +6,7 @@ import { ISSUE_DISPLAY_PROPERTIES } from "@plane/constants";
 // plane i18n
 import { useTranslation } from "@plane/i18n";
 // types
-import { IIssueDisplayProperties } from "@plane/types";
+import type { IIssueDisplayProperties } from "@plane/types";
 // plane web helpers
 import { shouldRenderDisplayProperty } from "@/plane-web/helpers/issue-filter.helper";
 // components

@@ -1,11 +1,11 @@
 import { pull, concat, update, uniq, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // Plane Imports
-import { TIssueComment, TIssueCommentMap, TIssueCommentIdMap, TIssueServiceType } from "@plane/types";
+import type { TIssueComment, TIssueCommentMap, TIssueCommentIdMap, TIssueServiceType } from "@plane/types";
 // services
 import { IssueCommentService } from "@/services/issue";
 // types
-import { IIssueDetail } from "./root.store";
+import type { IIssueDetail } from "./root.store";
 
 export type TCommentLoader = "fetch" | "create" | "update" | "delete" | "mutate" | undefined;
 

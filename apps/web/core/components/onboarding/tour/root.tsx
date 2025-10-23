@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Image, { StaticImageData } from "next/image";
+import type { StaticImageData } from "next/image";
+import Image from "next/image";
 import { X } from "lucide-react";
 // plane imports
 import { PRODUCT_TOUR_TRACKER_ELEMENTS } from "@plane/constants";

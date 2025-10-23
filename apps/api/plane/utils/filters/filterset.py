@@ -163,6 +163,7 @@ class IssueFilterSet(BaseFilterSet):
             "start_date": ["exact", "range"],
             "target_date": ["exact", "range"],
             "created_at": ["exact", "range"],
+            "updated_at": ["exact", "range"],
             "is_draft": ["exact"],
             "priority": ["exact", "in"],
         }

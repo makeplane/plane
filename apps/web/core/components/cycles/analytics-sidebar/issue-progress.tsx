@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useMemo } from "react";
+import type { FC } from "react";
+import { useMemo } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
@@ -8,7 +9,8 @@ import { ChevronUp, ChevronDown } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EIssuesStoreType, ICycle, TCyclePlotType, TProgressSnapshot } from "@plane/types";
+import type { ICycle, TCyclePlotType, TProgressSnapshot } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 import { getDate } from "@plane/utils";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";

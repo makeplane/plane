@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Toast, setToast, updateToast, setPromiseToast, TOAST_TYPE } from "./toast";
 
@@ -153,9 +154,19 @@ export const WithActionItems: Story = {
               title: "File uploaded",
               message: "Your file has been uploaded successfully.",
               actionItems: (
-                <button className="rounded bg-blue-500 px-3 py-1 text-xs text-white hover:bg-blue-600">
-                  View File
-                </button>
+                <div className="flex items-center gap-1 text-xs text-custom-text-200">
+                  <a
+                    href="#"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-medium rounded"
+                  >
+                    {`View work item`}
+                  </a>
+                  <button className="cursor-pointer hidden group-hover:flex px-2 py-1 text-custom-text-300 hover:text-custom-text-200 hover:bg-custom-background-90 rounded">
+                    Copy link
+                  </button>
+                </div>
               ),
             })
           }

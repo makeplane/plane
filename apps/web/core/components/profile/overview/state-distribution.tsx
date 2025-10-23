@@ -2,7 +2,7 @@
 import { STATE_GROUPS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { PieChart } from "@plane/propel/charts/pie-chart";
-import { IUserProfileData, IUserStateDistribution } from "@plane/types";
+import type { IUserProfileData, IUserStateDistribution } from "@plane/types";
 import { Card } from "@plane/ui";
 import { capitalizeFirstLetter } from "@plane/utils";
 // components

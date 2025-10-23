@@ -6,10 +6,12 @@
     "description_html": "<p class=\"editor-paragraph-block\">Hey there! This demo project is your playground to get hands-on with Plane. We've set this up so you can click around and see how everything works without worrying about breaking anything.</p><p class=\"editor-paragraph-block\">Each work item is designed to make you familiar with the basics of using Plane. Just follow along card by card at your own pace.</p><p class=\"editor-paragraph-block\">First thing to try</p><ol class=\"list-decimal pl-7 space-y-[--list-spacing-y] tight\" data-tight=\"true\"><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Look in the <strong>Properties</strong> section below where it says <strong>State: Todo</strong>.</p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Click on it and change it to <strong>Done</strong> from the dropdown. Alternatively, you can drag and drop the card to the Done column.</p></li></ol>",
     "description_stripped": "Hey there! This demo project is your playground to get hands-on with Plane. We've set this up so you can click around and see how everything works without worrying about breaking anything.Each work item is designed to make you familiar with the basics of using Plane. Just follow along card by card at your own pace.First thing to tryLook in the Properties section below where it says State: Todo.Click on it and change it to Done from the dropdown. Alternatively, you can drag and drop the card to the Done column.",
     "sort_order": 1000,
-    "state_id": 3,
+    "state_id": 4,
     "labels": [],
-    "priority": "none",
-    "project_id": 1
+    "priority": "urgent",
+    "project_id": 1,
+    "cycle_id": 1,
+    "module_ids": [1]
   },
   {
     "id": 2,
@@ -19,8 +21,10 @@
     "sort_order": 2000,
     "state_id": 2,
     "labels": [2],
-    "priority": "none",
-    "project_id": 1
+    "priority": "high",
+    "project_id": 1,
+    "cycle_id": 1,
+    "module_ids": [1]
   },
   {
     "id": 3,
@@ -31,8 +35,10 @@
     "sort_order": 3000,
     "state_id": 1,
     "labels": [],
-    "priority": "none",
-    "project_id": 1
+    "priority": "high",
+    "project_id": 1,
+    "cycle_id": 1,
+    "module_ids": [1, 2]
   },
   {
     "id": 4,
@@ -41,10 +47,12 @@
     "description_html": "<p class=\"editor-paragraph-block\">A work item is the fundamental building block of your project. Think of these as the actionable tasks that move your project forward.</p><p class=\"editor-paragraph-block\">Ready to add something to your project's to-do list? Here's how:</p><ol class=\"list-decimal pl-7 space-y-[--list-spacing-y] tight\" data-tight=\"true\"><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Click the <strong>Add work item</strong> button in the top-right corner of the Work Items page.</p><image-component src=\"https://media.docs.plane.so/seed_assets/41.png\" width=\"1085.380859375px\" height=\"482.53758375605696px\" id=\"ba055bc3-4162-4750-9ad4-9434fc0e7121\" aspectratio=\"2.249318801089918\"></image-component></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Give your task a clear title and add any details in the description.</p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Set up the essentials:</p><ul class=\"list-disc pl-7 space-y-[--list-spacing-y] tight\" data-tight=\"true\"><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Assign it to a team member (or yourself!)</p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Choose a priority level</p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Add start and due dates if there's a timeline</p></li></ul></li></ol><div data-emoji-unicode=\"128161\" data-emoji-url=\"https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f4a1.png\" data-logo-in-use=\"emoji\" data-background=\"green\" data-block-type=\"callout-component\"><p class=\"editor-paragraph-block\"><strong>Tip:</strong> Save time by using the keyboard shortcut <strong>C</strong> from anywhere in your project to quickly create a new work item!</p></div><div class=\"py-4 border-custom-border-400\" data-type=\"horizontalRule\"><div></div></div><p class=\"editor-paragraph-block\">Want to dive deeper into all the things you can do with work items? Check out our <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer\" href=\"https://docs.plane.so/core-concepts/issues/overview\">documentation</a>.</p>",
     "description_stripped": "A work item is the fundamental building block of your project. Think of these as the actionable tasks that move your project forward.Ready to add something to your project's to-do list? Here's how:Click the Add work item button in the top-right corner of the Work Items page.Give your task a clear title and add any details in the description.Set up the essentials:Assign it to a team member (or yourself!)Choose a priority levelAdd start and due dates if there's a timelineTip: Save time by using the keyboard shortcut C from anywhere in your project to quickly create a new work item!Want to dive deeper into all the things you can do with work items? Check out our documentation.",
     "sort_order": 4000,
-    "state_id": 1,
+    "state_id": 3,
     "labels": [2],
-    "priority": "none",
-    "project_id": 1
+    "priority": "high",
+    "project_id": 1,
+    "cycle_id": 1,
+    "module_ids": [1, 2]
   },
   {
     "id": 5,
@@ -53,10 +61,12 @@
     "description_html": "<p class=\"editor-paragraph-block\">Plane offers multiple ways to look at your work items depending on what you need to see. Let's explore how to change views and customize them!</p><image-component src=\"https://media.docs.plane.so/seed_assets/51.png\" aspectratio=\"4.489130434782608\"></image-component><h2 class=\"editor-heading-block\">Switch between layouts</h2><ol class=\"list-decimal pl-7 space-y-[--list-spacing-y] tight\" data-tight=\"true\"><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Look at the top toolbar in your project. You'll see several layout icons.</p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Click any of these icons to instantly switch between layouts.</p></li></ol><div data-emoji-unicode=\"128161\" data-emoji-url=\"https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f4a1.png\" data-logo-in-use=\"emoji\" data-background=\"green\" data-block-type=\"callout-component\"><p class=\"editor-paragraph-block\"><strong>Tip:</strong> Different layouts work best for different needs. Try Board view for tracking progress, Calendar for deadline management, and Gantt for timeline planning! See <a target=\"_blank\" rel=\"noopener noreferrer nofollow\" class=\"text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer\" href=\"https://docs.plane.so/core-concepts/issues/layouts\"><strong>Layouts</strong></a> for more info.</p></div><h2 class=\"editor-heading-block\">Filter and display options</h2><p class=\"editor-paragraph-block\">Need to focus on specific work?</p><ol class=\"list-decimal pl-7 space-y-[--list-spacing-y] tight\" data-tight=\"true\"><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Click the <strong>Filters</strong> dropdown in the toolbar. Select criteria and choose which items to show.</p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Click the <strong>Display</strong> dropdown to tailor how the information appears in your layout</p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Created the perfect setup? Save it for later by clicking the the <strong>Save View</strong> button.</p></li><li class=\"not-prose space-y-2\"><p class=\"editor-paragraph-block\">Access saved views anytime from the <strong>Views</strong> section in your sidebar.</p></li></ol>",
     "description_stripped": "Plane offers multiple ways to look at your work items depending on what you need to see. Let's explore how to change views and customize them!Switch between layoutsLook at the top toolbar in your project. You'll see several layout icons.Click any of these icons to instantly switch between layouts.Tip: Different layouts work best for different needs. Try Board view for tracking progress, Calendar for deadline management, and Gantt for timeline planning! See Layouts for more info.Filter and display optionsNeed to focus on specific work?Click the Filters dropdown in the toolbar. Select criteria and choose which items to show.Click the Display dropdown to tailor how the information appears in your layoutCreated the perfect setup? Save it for later by clicking the the Save View button.Access saved views anytime from the Views section in your sidebar.",
     "sort_order": 5000,
-    "state_id": 1,
+    "state_id": 3,
     "labels": [],
     "priority": "none",
-    "project_id": 1
+    "project_id": 1,
+    "cycle_id": 2,
+    "module_ids": [2]
   },
   {
     "id": 6,
@@ -67,8 +77,10 @@
     "sort_order": 6000,
     "state_id": 1,
     "labels": [2],
-    "priority": "none",
-    "project_id": 1
+    "priority": "low",
+    "project_id": 1,
+    "cycle_id": 2,
+    "module_ids": [2, 3]
   },
   {
     "id": 7,
@@ -80,6 +92,8 @@
     "state_id": 1,
     "labels": [],
     "priority": "none",
-    "project_id": 1
+    "project_id": 1,
+    "cycle_id": 2,
+    "module_ids": [2, 3]
   }
 ]

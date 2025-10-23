@@ -6,7 +6,8 @@ import { useParams } from "next/navigation";
 // plane imports
 import { GLOBAL_VIEW_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { EIssuesStoreType, IWorkspaceView } from "@plane/types";
+import type { IWorkspaceView } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";

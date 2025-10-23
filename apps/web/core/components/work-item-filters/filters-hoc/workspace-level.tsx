@@ -3,9 +3,10 @@ import { isEqual, cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
 import { DEFAULT_GLOBAL_VIEWS_LIST, EUserPermissionsLevel, GLOBAL_VIEW_TRACKER_EVENTS } from "@plane/constants";
-import { EUserProjectRoles, EViewAccess, IWorkspaceView, TWorkItemFilterExpression } from "@plane/types";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { IWorkspaceView, TWorkItemFilterExpression } from "@plane/types";
+import { EUserProjectRoles, EViewAccess } from "@plane/types";
 // components
-import { setToast, TOAST_TYPE } from "@plane/ui";
 import { removeNillKeys } from "@/components/issues/issue-layouts/utils";
 import { CreateUpdateWorkspaceViewModal } from "@/components/workspace/views/modal";
 // hooks
@@ -17,7 +18,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { WorkItemFiltersHOC } from "./base";
-import { TEnableSaveViewProps, TEnableUpdateViewProps, TSharedWorkItemFiltersHOCProps } from "./shared";
+import type { TEnableSaveViewProps, TEnableUpdateViewProps, TSharedWorkItemFiltersHOCProps } from "./shared";
 
 type TWorkspaceLevelWorkItemFiltersHOCProps = TSharedWorkItemFiltersHOCProps & {
   workspaceSlug: string;

@@ -6,7 +6,7 @@ import { INBOX_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { cn, findHowManyDaysLeft } from "@plane/utils";
 // store
-import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
+import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 import { ICON_PROPERTIES, InboxStatusIcon } from "./inbox-status-icon";
 
 type Props = {

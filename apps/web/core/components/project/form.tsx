@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Info, Lock } from "lucide-react";
 import { NETWORK_CHOICES, PROJECT_TRACKER_ELEMENTS, PROJECT_TRACKER_EVENTS } from "@plane/constants";
@@ -8,9 +9,10 @@ import { useTranslation } from "@plane/i18n";
 // plane imports
 import { Button } from "@plane/propel/button";
 import { EmojiPicker } from "@plane/propel/emoji-icon-picker";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { IProject, IWorkspace } from "@plane/types";
-import { CustomSelect, Input, TextArea, TOAST_TYPE, setToast, EmojiIconPickerTypes } from "@plane/ui";
+import type { IProject, IWorkspace } from "@plane/types";
+import { CustomSelect, Input, TextArea, EmojiIconPickerTypes } from "@plane/ui";
 import { renderFormattedDate, getFileURL } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";

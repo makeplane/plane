@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { ChevronDown, ListFilter } from "lucide-react";
 // plane imports
 import { getButtonStyling } from "@plane/propel/button";

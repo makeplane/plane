@@ -3,11 +3,11 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
 // types
-import { TIssueAttachment, TIssueAttachmentMap, TIssueAttachmentIdMap, TIssueServiceType } from "@plane/types";
+import type { TIssueAttachment, TIssueAttachmentMap, TIssueAttachmentIdMap, TIssueServiceType } from "@plane/types";
 // services
 import { IssueAttachmentService } from "@/services/issue";
-import { IIssueRootStore } from "../root.store";
-import { IIssueDetail } from "./root.store";
+import type { IIssueRootStore } from "../root.store";
+import type { IIssueDetail } from "./root.store";
 
 export type TAttachmentUploadStatus = {
   id: string;
