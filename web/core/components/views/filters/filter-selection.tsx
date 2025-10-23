@@ -11,6 +11,7 @@ import { EViewAccess } from "@/constants/views";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { FilterByAccess } from "@/plane-web/components/views/filters/access-filter";
+import { useParams, usePathname } from "next/navigation";
 
 type Props = {
   filters: TViewFilters;
@@ -24,6 +25,10 @@ export const ViewFiltersSelection: React.FC<Props> = observer((props) => {
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
   // store
   const { isMobile } = usePlatformOS();
+  const { workspaceSlug, projectId } = useParams();
+  const pathname = usePathname();
+  const isProjectViewsPage = workspaceSlug && projectId && pathname?.includes("/views");
+
 
   // handles filter update
   const handleFilters = (key: keyof TViewFilterProps, value: boolean | string | EViewAccess | string[]) => {
@@ -104,6 +109,7 @@ export const ViewFiltersSelection: React.FC<Props> = observer((props) => {
         </div>
 
         {/* created by */}
+        {!isProjectViewsPage && (
         <div className="py-2">
           <FilterCreatedBy
             appliedFilters={filters.filters?.owned_by ?? null}
@@ -112,6 +118,7 @@ export const ViewFiltersSelection: React.FC<Props> = observer((props) => {
             memberIds={memberIds}
           />
         </div>
+        )}
       </div>
     </div>
   );

@@ -68,8 +68,15 @@ const ProjectViewsPage = observer(() => {
         <Header variant={EHeaderVariant.TERNARY}>
           <ViewAppliedFiltersList
             appliedFilters={filters.filters ?? {}}
-            handleClearAllFilters={clearAllFilters}
-            handleRemoveFilter={handleRemoveFilter}
+            handleClearAllFilters={() => {
+            const ownedBy = filters.filters?.owned_by;
+            clearAllFilters();
+            if (ownedBy) updateFilters("filters", { owned_by: ownedBy });
+            }}
+            handleRemoveFilter={(key, value) => {
+            if (key === "owned_by") return;
+            handleRemoveFilter(key, value);
+            }}
             alwaysAllowEditing
           />
         </Header>

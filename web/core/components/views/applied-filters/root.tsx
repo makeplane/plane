@@ -8,6 +8,7 @@ import { EViewAccess } from "@/constants/views";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "@/helpers/string.helper";
 import { AppliedAccessFilters } from "./access";
+import { useParams, usePathname } from "next/navigation";
 // types
 
 type Props = {
@@ -23,6 +24,10 @@ const VIEW_ACCESS_FILTERS = ["view_type"];
 
 export const ViewAppliedFiltersList: React.FC<Props> = (props) => {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, alwaysAllowEditing } = props;
+
+  const { workspaceSlug, projectId } = useParams();
+  const pathname = usePathname();
+  const isProjectViewsPage = workspaceSlug && projectId && pathname?.includes("/views");
 
   if (!appliedFilters) return null;
   if (Object.keys(appliedFilters).length === 0) return null;
@@ -61,7 +66,8 @@ export const ViewAppliedFiltersList: React.FC<Props> = (props) => {
                 values={Array.isArray(value) ? (value as string[]) : []}
               />
             )}
-            {isEditingAllowed && (
+            {isEditingAllowed && 
+             !(isProjectViewsPage && filterKey === "owned_by") && (
               <button
                 type="button"
                 className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
