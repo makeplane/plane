@@ -871,8 +871,8 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
             module_id=module_id,
             issue_id=issue_id,
         )
-        # Get module name before deletion
-        module_name = module_issue.module.name
+
+        module_name = module_issue.module.name if module_issue.module is not None else ""
         module_issue.delete()
         issue_activity.delay(
             type="module.activity.deleted",
