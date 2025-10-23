@@ -152,3 +152,5 @@ export const CycleIssuesMobileHeader = () => {
     </>
   );
 };
+
+export const CycleIssuesMobileHeader = observer(CycleIssuesMobileHeaderComponent);
