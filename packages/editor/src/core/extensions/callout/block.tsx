@@ -1,5 +1,6 @@
 import { NodeViewContent, NodeViewProps, NodeViewWrapper } from "@tiptap/react";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
+import { v4 as uuidv4 } from "uuid";
 // constants
 import { COLORS_LIST } from "@/constants/common";
 // local components
@@ -22,11 +23,14 @@ export const CustomCalloutBlock: React.FC<CustomCalloutNodeViewProps> = (props) 
   // states
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
+  // unique id
+  const uniqueId = useMemo(() => uuidv4(), []);
   // derived values
   const activeBackgroundColor = COLORS_LIST.find((c) => node.attrs["data-background"] === c.key)?.backgroundColor;
 
   return (
     <NodeViewWrapper
+      key={`callout-block-${uniqueId}`}
       className="editor-callout-component group/callout-node relative bg-custom-background-90 rounded-lg text-custom-text-100 p-4 my-2 flex items-start gap-4 transition-colors duration-500 break-words"
       style={{
         backgroundColor: activeBackgroundColor,

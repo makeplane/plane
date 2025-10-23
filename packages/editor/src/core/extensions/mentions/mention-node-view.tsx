@@ -17,7 +17,10 @@ export const MentionNodeView: React.FC<MentionNodeViewProps> = (props) => {
   } = props;
 
   return (
-    <NodeViewWrapper className="mention-component inline w-fit">
+    <NodeViewWrapper
+      key={`mention-node-view-${attrs[EMentionComponentAttributeNames.ENTITY_IDENTIFIER]}`}
+      className="mention-component inline w-fit"
+    >
       {(extension.options as TMentionExtensionOptions).renderComponent({
         entity_identifier: attrs[EMentionComponentAttributeNames.ENTITY_IDENTIFIER] ?? "",
         entity_name: attrs[EMentionComponentAttributeNames.ENTITY_NAME] ?? "user_mention",
