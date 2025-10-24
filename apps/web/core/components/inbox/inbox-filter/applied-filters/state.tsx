@@ -2,9 +2,8 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
 import { EIconSize } from "@plane/constants";
-import { StateGroupIcon } from "@plane/propel/icons";
+import { StateGroupIcon, CloseIcon } from "@plane/propel/icons";
 import { Tag } from "@plane/ui";
 // hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
@@ -40,7 +39,7 @@ export const InboxIssueAppliedFiltersState: FC = observer(() => {
               className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
               onClick={() => handleInboxIssueFilters("state", handleFilterValue(optionDetail?.id))}
             >
-              <X className={`w-3 h-3`} />
+              <CloseIcon className={`w-3 h-3`} />
             </div>
           </div>
         );
@@ -50,7 +49,7 @@ export const InboxIssueAppliedFiltersState: FC = observer(() => {
         className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
         onClick={clearFilter}
       >
-        <X className={`w-3 h-3`} />
+        <CloseIcon className={`w-3 h-3`} />
       </div>
     </Tag>
   );

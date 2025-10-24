@@ -3,11 +3,10 @@
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// icons
-import { Calendar, ChevronDown, Kanban, List } from "lucide-react";
 // plane imports
 import { EIssueFilterType, ISSUE_LAYOUTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { CalendarLayoutIcon, BoardLayoutIcon, ListLayoutIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, EIssueLayoutTypes } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
@@ -21,9 +20,9 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 
 const SUPPORTED_LAYOUTS = [
-  { key: "list", titleTranslationKey: "issue.layouts.list", icon: List },
-  { key: "kanban", titleTranslationKey: "issue.layouts.kanban", icon: Kanban },
-  { key: "calendar", titleTranslationKey: "issue.layouts.calendar", icon: Calendar },
+  { key: "list", titleTranslationKey: "issue.layouts.list", icon: ListLayoutIcon },
+  { key: "kanban", titleTranslationKey: "issue.layouts.kanban", icon: BoardLayoutIcon },
+  { key: "calendar", titleTranslationKey: "issue.layouts.calendar", icon: CalendarLayoutIcon },
 ];
 
 export const CycleIssuesMobileHeader = observer(() => {
@@ -124,7 +123,7 @@ export const CycleIssuesMobileHeader = observer(() => {
             menuButton={
               <span className="flex items-center text-custom-text-200 text-sm">
                 {t("common.display")}
-                <ChevronDown className="text-custom-text-200 h-4 w-4 ml-2" />
+                <ChevronDownIcon className="text-custom-text-200 h-4 w-4 ml-2" />
               </span>
             }
           >

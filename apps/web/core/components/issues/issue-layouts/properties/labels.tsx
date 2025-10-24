@@ -3,11 +3,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
-import { Tags } from "lucide-react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // i18n
 import { useTranslation } from "@plane/i18n";
+import { LabelPropertyIcon } from "@plane/propel/icons";
 // types
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IIssueLabel } from "@plane/types";
@@ -101,7 +101,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
             fullWidth && "w-full"
           )}
         >
-          <Tags className="h-3.5 w-3.5" strokeWidth={2} />
+          <LabelPropertyIcon className="h-3.5 w-3.5" strokeWidth={2} />
           {placeholderText}
         </div>
       </Tooltip>

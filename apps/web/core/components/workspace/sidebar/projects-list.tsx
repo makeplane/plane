@@ -6,11 +6,12 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { ChevronRight, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { ChevronRightIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { Loader } from "@plane/ui";
@@ -193,7 +194,7 @@ export const SidebarProjectsList: FC = observer(() => {
                       : "aria_labels.projects_sidebar.open_projects_menu"
                   )}
                 >
-                  <ChevronRight
+                  <ChevronRightIcon
                     className={cn("flex-shrink-0 size-3 transition-all", {
                       "rotate-90": isAllProjectsListOpen,
                     })}

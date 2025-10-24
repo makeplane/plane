@@ -3,12 +3,13 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { ChevronDown, CircleUserRound, InfoIcon } from "lucide-react";
+import { CircleUserRound, InfoIcon } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { PROFILE_SETTINGS_TRACKER_ELEMENTS, PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, getButtonStyling } from "@plane/propel/button";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import type { IUser, TUserProfile } from "@plane/types";
 import { Input } from "@plane/ui";
@@ -376,7 +377,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
           <>
             <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">
               <span className="text-lg font-medium tracking-tight">{t("deactivate_account")}</span>
-              <ChevronDown className={`h-5 w-5 transition-all ${open ? "rotate-180" : ""}`} />
+              <ChevronDownIcon className={`h-5 w-5 transition-all ${open ? "rotate-180" : ""}`} />
             </Disclosure.Button>
             <Transition
               show={open}

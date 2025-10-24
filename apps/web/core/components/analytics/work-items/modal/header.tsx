@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 // plane package imports
-import { Expand, Shrink, X } from "lucide-react";
+import { Expand, Shrink } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 import type { ICycle, IModule } from "@plane/types";
 // icons
 
@@ -34,7 +35,7 @@ export const WorkItemsModalHeader: React.FC<Props> = observer((props) => {
           className="grid place-items-center p-1 text-custom-text-200 hover:text-custom-text-100"
           onClick={handleClose}
         >
-          <X size={14} strokeWidth={2} />
+          <CloseIcon height={14} width={14} strokeWidth={2} />
         </button>
       </div>
     </div>

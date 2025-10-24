@@ -4,7 +4,8 @@ import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { AlertCircle, X } from "lucide-react";
+import { AlertCircle } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
 import {
@@ -98,7 +99,7 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = observer((pro
 
         {!disabled && (
           <button type="button" onClick={() => setIsDeleteIssueAttachmentModalOpen(true)}>
-            <X className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" />
+            <CloseIcon className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" />
           </button>
         )}
       </div>

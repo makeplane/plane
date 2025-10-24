@@ -5,7 +5,7 @@ import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { CommandIcon, FolderPlus, Search, Settings, X } from "lucide-react";
+import { CommandIcon, FolderPlus, Search, Settings } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
 import {
@@ -16,7 +16,7 @@ import {
   WORKSPACE_DEFAULT_SEARCH_RESULT,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { WorkItemsIcon } from "@plane/propel/icons";
+import { CloseIcon, WorkItemsIcon } from "@plane/propel/icons";
 import type { IWorkspaceSearchResults } from "@plane/types";
 import { Loader, ToggleSwitch } from "@plane/ui";
 import { cn, getTabIndex } from "@plane/utils";
@@ -270,8 +270,9 @@ export const CommandModal: React.FC = observer(() => {
                                   textContainerClassName="text-sm text-custom-primary-200"
                                 />
                               )}
-                              <X
-                                size={12}
+                              <CloseIcon
+                                height={12}
+                                width={12}
                                 strokeWidth={2}
                                 className="flex-shrink-0 cursor-pointer"
                                 onClick={() => {

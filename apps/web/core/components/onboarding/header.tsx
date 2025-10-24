@@ -2,9 +2,8 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { ChevronLeft } from "lucide-react";
 // plane imports
-import { PlaneLockup } from "@plane/propel/icons";
+import { PlaneLockup, ChevronLeftIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TOnboardingStep } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
@@ -75,7 +74,7 @@ export const OnboardingHeader: FC<OnboardingHeaderProps> = observer((props) => {
         <div className="flex items-center gap-2.5">
           {canGoBack && (
             <button onClick={handleStepBack} className="cursor-pointer" type="button" disabled={!canGoBack}>
-              <ChevronLeft className="size-6 text-custom-text-400" />
+              <ChevronLeftIcon className="size-6 text-custom-text-400" />
             </button>
           )}
           <PlaneLockup height={20} width={95} className="text-custom-text-100" />

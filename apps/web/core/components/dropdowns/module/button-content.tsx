@@ -1,8 +1,7 @@
 "use client";
 
-import { ChevronDown, X } from "lucide-react";
 // plane imports
-import { ModuleIcon } from "@plane/propel/icons";
+import { CloseIcon, ModuleIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // hooks
@@ -96,7 +95,7 @@ export const ModuleButtonContent: React.FC<ModuleButtonContentProps> = (props) =
                           onChange(newModuleIds);
                         }}
                       >
-                        <X className="h-2.5 w-2.5 text-custom-text-300 hover:text-red-500" />
+                        <CloseIcon className="h-2.5 w-2.5 text-custom-text-300 hover:text-red-500" />
                       </button>
                     </Tooltip>
                   )}
@@ -111,7 +110,7 @@ export const ModuleButtonContent: React.FC<ModuleButtonContentProps> = (props) =
           </>
         )}
         {dropdownArrow && (
-          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+          <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
       </>
     );
@@ -123,7 +122,7 @@ export const ModuleButtonContent: React.FC<ModuleButtonContentProps> = (props) =
           <span className="flex-grow truncate text-left">{value ? getModuleById(value)?.name : placeholder}</span>
         )}
         {dropdownArrow && (
-          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+          <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
       </>
     );

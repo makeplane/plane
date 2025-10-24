@@ -2,11 +2,22 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { Signal, Tag, Triangle, LayoutPanelTop, CalendarClock, CalendarCheck2, Users, UserCircle2 } from "lucide-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // ui icons
-import { CycleIcon, DoubleCircleIcon, ModuleIcon } from "@plane/propel/icons";
+import {
+  CycleIcon,
+  StatePropertyIcon,
+  ModuleIcon,
+  MembersPropertyIcon,
+  PriorityPropertyIcon,
+  StartDatePropertyIcon,
+  DueDatePropertyIcon,
+  LabelPropertyIcon,
+  UserCirclePropertyIcon,
+  EstimatePropertyIcon,
+  ParentPropertyIcon,
+} from "@plane/propel/icons";
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -69,7 +80,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         {/* state */}
         <div className="flex w-full items-center gap-3 h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
+            <StatePropertyIcon className="h-4 w-4 flex-shrink-0" />
             <span>{t("common.state")}</span>
           </div>
           <StateDropdown
@@ -89,7 +100,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         {/* assignee */}
         <div className="flex w-full items-center gap-3 h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <Users className="h-4 w-4 flex-shrink-0" />
+            <MembersPropertyIcon className="h-4 w-4 flex-shrink-0" />
             <span>{t("common.assignees")}</span>
           </div>
           <MemberDropdown
@@ -112,7 +123,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         {/* priority */}
         <div className="flex w-full items-center gap-3 h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <Signal className="h-4 w-4 flex-shrink-0" />
+            <PriorityPropertyIcon className="h-4 w-4 flex-shrink-0" />
             <span>{t("common.priority")}</span>
           </div>
           <PriorityDropdown
@@ -130,7 +141,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         {createdByDetails && (
           <div className="flex w-full items-center gap-3 h-8">
             <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-              <UserCircle2 className="h-4 w-4 flex-shrink-0" />
+              <UserCirclePropertyIcon className="h-4 w-4 flex-shrink-0" />
               <span>{t("common.created_by")}</span>
             </div>
             <div className="w-full h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-sm justify-between cursor-not-allowed">
@@ -148,7 +159,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         {/* start date */}
         <div className="flex w-full items-center gap-3 h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <CalendarClock className="h-4 w-4 flex-shrink-0" />
+            <StartDatePropertyIcon className="h-4 w-4 flex-shrink-0" />
             <span>{t("common.order_by.start_date")}</span>
           </div>
           <DateDropdown
@@ -175,7 +186,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         {/* due date */}
         <div className="flex w-full items-center gap-3 h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <CalendarCheck2 className="h-4 w-4 flex-shrink-0" />
+            <DueDatePropertyIcon className="h-4 w-4 flex-shrink-0" />
             <span>{t("common.order_by.due_date")}</span>
           </div>
           <DateDropdown
@@ -206,7 +217,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         {isEstimateEnabled && (
           <div className="flex w-full items-center gap-3 h-8">
             <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-              <Triangle className="h-4 w-4 flex-shrink-0" />
+              <EstimatePropertyIcon className="h-4 w-4 flex-shrink-0" />
               <span>{t("common.estimate")}</span>
             </div>
             <EstimateDropdown
@@ -263,7 +274,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         {/* parent */}
         <div className="flex w-full items-center gap-3 h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <LayoutPanelTop className="h-4 w-4 flex-shrink-0" />
+            <ParentPropertyIcon className="h-4 w-4 flex-shrink-0" />
             <p>{t("common.parent")}</p>
           </div>
           <IssueParentSelectRoot
@@ -279,7 +290,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         {/* label */}
         <div className="flex w-full items-center gap-3 min-h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <Tag className="h-4 w-4 flex-shrink-0" />
+            <LabelPropertyIcon className="h-4 w-4 flex-shrink-0" />
             <span>{t("common.labels")}</span>
           </div>
           <div className="flex w-full flex-col gap-3 truncate">

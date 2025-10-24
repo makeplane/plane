@@ -4,7 +4,7 @@ import type { FC } from "react";
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { ArrowRight, ChevronRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 // Plane Imports
 import {
   CYCLE_TRACKER_EVENTS,
@@ -14,6 +14,7 @@ import {
   CYCLE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { ChevronRightIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ICycle } from "@plane/types";
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
@@ -160,7 +161,7 @@ export const CycleSidebarHeader: FC<Props> = observer((props) => {
             className="flex size-4 items-center justify-center rounded-full bg-custom-border-200"
             onClick={() => handleClose()}
           >
-            <ChevronRight className="h-3 w-3 stroke-2 text-white" />
+            <ChevronRightIcon className="h-3 w-3 stroke-2 text-white" />
           </button>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { X } from "lucide-react";
 import { useArgs } from "storybook/preview-api";
+import { CloseIcon } from "@plane/propel/icons";
 import { Popover } from "./root";
 
 // cannot use satifies here because base-ui does not have portable types.
@@ -70,7 +70,7 @@ export const Controlled: Story = {
             <div className="flex items-start justify-between">
               <h3 className="text-sm font-semibold">Controlled State</h3>
               <button onClick={() => setOpen(false)} className="rounded-full p-1 hover:bg-gray-100">
-                <X className="h-4 w-4" />
+                <CloseIcon className="h-4 w-4" />
               </button>
             </div>
             <p className="mt-2 text-sm text-gray-600">Current state: {open ? "Open" : "Closed"}</p>

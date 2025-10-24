@@ -1,11 +1,10 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
 // ui
 import { MODULE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ModuleStatusIcon } from "@plane/propel/icons";
+import { CloseIcon, ModuleStatusIcon } from "@plane/propel/icons";
 // constants
 
 type Props = {
@@ -34,7 +33,7 @@ export const AppliedStatusFilters: React.FC<Props> = observer((props) => {
                 className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
                 onClick={() => handleRemove(status)}
               >
-                <X size={10} strokeWidth={2} />
+                <CloseIcon height={10} width={10} strokeWidth={2} />
               </button>
             )}
           </div>

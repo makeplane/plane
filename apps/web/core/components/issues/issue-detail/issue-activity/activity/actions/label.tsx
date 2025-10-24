@@ -1,6 +1,6 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { Tag } from "lucide-react";
+import { LabelPropertyIcon } from "@plane/propel/icons";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useLabel } from "@/hooks/store/use-label";
@@ -24,7 +24,7 @@ export const IssueLabelActivity: FC<TIssueLabelActivity> = observer((props) => {
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<Tag size={14} className="text-custom-text-200" aria-hidden="true" />}
+      icon={<LabelPropertyIcon height={14} width={14} className="text-custom-text-200" />}
       activityId={activityId}
       ends={ends}
     >

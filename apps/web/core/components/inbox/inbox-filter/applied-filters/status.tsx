@@ -1,8 +1,8 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
 import { INBOX_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon } from "@plane/propel/icons";
 import type { TInboxIssueStatus } from "@plane/types";
 // constants
 import { Tag } from "@plane/ui";
@@ -39,7 +39,7 @@ export const InboxIssueAppliedFiltersStatus: FC = observer(() => {
                 className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
                 onClick={() => handleInboxIssueFilters("status", handleFilterValue(optionDetail?.status))}
               >
-                <X className={`w-3 h-3`} />
+                <CloseIcon className={`w-3 h-3`} />
               </div>
             )}
           </div>

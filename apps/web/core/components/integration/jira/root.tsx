@@ -7,9 +7,10 @@ import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { mutate } from "swr";
 // icons
-import { ArrowLeft, Check, List, Settings, Users } from "lucide-react";
-// types
+import { ArrowLeft, Check, List, Settings } from "lucide-react";
 import { Button } from "@plane/propel/button";
+import { MembersPropertyIcon } from "@plane/propel/icons";
+// types
 import type { IJiraImporterForm } from "@plane/types";
 // ui
 // fetch keys
@@ -42,7 +43,7 @@ const integrationWorkflowData: Array<{
   {
     title: "Users",
     key: "import-users",
-    icon: Users,
+    icon: MembersPropertyIcon,
   },
   {
     title: "Confirm",

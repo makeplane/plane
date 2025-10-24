@@ -4,11 +4,11 @@ import type { FC } from "react";
 import { Fragment } from "react";
 import { useParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
-import { X } from "lucide-react";
 import { Transition, Dialog } from "@headlessui/react";
 // plane imports
 import { allTimeIn30MinutesInterval12HoursFormat } from "@plane/constants";
 import { Button } from "@plane/propel/button";
+import { CloseIcon } from "@plane/propel/icons";
 import { CustomSelect } from "@plane/ui";
 // components
 import { getDate } from "@plane/utils";
@@ -147,7 +147,7 @@ export const NotificationSnoozeModal: FC<TNotificationSnoozeModal> = (props) => 
 
                     <div>
                       <button type="button" onClick={handleClose}>
-                        <X className="h-5 w-5 text-custom-text-100" />
+                        <CloseIcon className="h-5 w-5 text-custom-text-100" />
                       </button>
                     </div>
                   </div>

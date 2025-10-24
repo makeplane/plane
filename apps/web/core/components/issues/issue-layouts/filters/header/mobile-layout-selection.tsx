@@ -1,7 +1,7 @@
-import { ChevronDown } from "lucide-react";
 import { ISSUE_LAYOUTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import type { EIssueLayoutTypes } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import { IssueLayoutIcon } from "../../layout-icon";
@@ -26,12 +26,12 @@ export const MobileLayoutSelection = ({
         activeLayout ? (
           <Button variant="neutral-primary" size="sm" className="relative px-2">
             <IssueLayoutIcon layout={activeLayout} size={14} strokeWidth={2} className={`h-3.5 w-3.5`} />
-            <ChevronDown className="size-3 text-custom-text-200 my-auto" strokeWidth={2} />
+            <ChevronDownIcon className="size-3 text-custom-text-200 my-auto" strokeWidth={2} />
           </Button>
         ) : (
           <div className="flex flex-start text-sm text-custom-text-200">
             {t("common.layout")}
-            <ChevronDown className="ml-2  h-4 w-4 text-custom-text-200 my-auto" strokeWidth={2} />
+            <ChevronDownIcon className="ml-2  h-4 w-4 text-custom-text-200 my-auto" strokeWidth={2} />
           </div>
         )
       }

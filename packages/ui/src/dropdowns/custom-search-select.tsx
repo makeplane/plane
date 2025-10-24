@@ -1,10 +1,11 @@
 import { Combobox } from "@headlessui/react";
-import { Check, ChevronDown, Info, Search } from "lucide-react";
+import { Check, Info, Search } from "lucide-react";
 import React, { useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
-// plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
+import { ChevronDownIcon } from "@plane/propel/icons";
+// plane imports
 // local imports
 import { Tooltip } from "@plane/propel/tooltip";
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
@@ -129,7 +130,7 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                 >
                   {label}
                   {!noChevron && !disabled && (
-                    <ChevronDown className={cn("h-3 w-3 flex-shrink-0", chevronClassName)} aria-hidden="true" />
+                    <ChevronDownIcon className={cn("h-3 w-3 flex-shrink-0", chevronClassName)} aria-hidden="true" />
                   )}
                 </button>
               </Combobox.Button>

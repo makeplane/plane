@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useCallback, useMemo } from "react";
-import { Lock, ChevronDown } from "lucide-react";
+import { Lock } from "lucide-react";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { PasswordInput, PasswordStrengthIndicator } from "@plane/ui";
 import { cn } from "@plane/utils";
 
@@ -93,7 +94,7 @@ export const SetPasswordRoot: React.FC<SetPasswordRootProps> = ({
           <span>{`(Optional)`}</span>
         </div>
         <div className="flex items-center gap-2 text-custom-text-400">
-          <ChevronDown className={chevronIconClasses} />
+          <ChevronDownIcon className={chevronIconClasses} />
         </div>
       </div>
 

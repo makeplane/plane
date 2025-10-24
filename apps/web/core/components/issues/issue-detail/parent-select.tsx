@@ -3,9 +3,10 @@
 import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { Pencil, X } from "lucide-react";
-// plane imports
+import { Pencil } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon } from "@plane/propel/icons";
+// plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // hooks
@@ -109,7 +110,7 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
                     handleRemoveSubIssue(workspaceSlug, projectId, parentIssue.id, issueId);
                   }}
                 >
-                  <X className="h-2.5 w-2.5 text-custom-text-300 hover:text-red-500" />
+                  <CloseIcon className="h-2.5 w-2.5 text-custom-text-300 hover:text-red-500" />
                 </span>
               </Tooltip>
             )}

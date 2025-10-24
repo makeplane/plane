@@ -1,9 +1,10 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { ChevronRight, X, Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
-// plane imports
+import { Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon, ChevronRightIcon } from "@plane/propel/icons";
+// plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
 import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
@@ -133,7 +134,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
                         setSubIssueHelpers(parentIssueId, "issue_visibility", issueId);
                       }}
                     >
-                      <ChevronRight
+                      <ChevronRightIcon
                         className={cn("size-3.5 transition-all", {
                           "rotate-90": subIssueHelpers.issue_visibility.includes(issue.id),
                         })}
@@ -217,7 +218,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
                     }}
                   >
                     <div className="flex items-center gap-2">
-                      <X className="h-3.5 w-3.5" strokeWidth={2} />
+                      <CloseIcon className="h-3.5 w-3.5" strokeWidth={2} />
                       {issueServiceType === EIssueServiceType.ISSUES
                         ? t("issue.remove.parent.label")
                         : t("issue.remove.label")}

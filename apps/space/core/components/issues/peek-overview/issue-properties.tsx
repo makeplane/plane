@@ -2,10 +2,9 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { CalendarCheck2, Signal } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { DoubleCircleIcon, StateGroupIcon } from "@plane/propel/icons";
+import { StatePropertyIcon, StateGroupIcon, PriorityPropertyIcon, DueDatePropertyIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { cn, getIssuePriorityFilters } from "@plane/utils";
 // components
@@ -66,7 +65,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = observer(({ issueDet
       <div className={`space-y-2 ${mode === "full" ? "pt-3" : ""}`}>
         <div className="flex items-center gap-3 h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <DoubleCircleIcon className="size-4 flex-shrink-0" />
+            <StatePropertyIcon className="size-4 flex-shrink-0" />
             <span>State</span>
           </div>
           <div className="w-3/4 flex items-center gap-1.5 py-0.5 text-sm">
@@ -77,7 +76,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = observer(({ issueDet
 
         <div className="flex items-center gap-3 h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <Signal className="size-4 flex-shrink-0" />
+            <PriorityPropertyIcon className="size-4 flex-shrink-0" />
             <span>Priority</span>
           </div>
           <div className="w-3/4">
@@ -106,7 +105,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = observer(({ issueDet
 
         <div className="flex items-center gap-3 h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <CalendarCheck2 className="size-4 flex-shrink-0" />
+            <DueDatePropertyIcon className="size-4 flex-shrink-0" />
             <span>Due date</span>
           </div>
           <div>
@@ -116,7 +115,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = observer(({ issueDet
                   "text-red-500": shouldHighlightIssueDueDate(issueDetails.target_date, state?.group),
                 })}
               >
-                <CalendarCheck2 className="size-3" />
+                <DueDatePropertyIcon className="size-3" />
                 {renderFormattedDate(issueDetails.target_date)}
               </div>
             ) : (

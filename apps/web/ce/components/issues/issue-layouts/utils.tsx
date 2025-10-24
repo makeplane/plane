@@ -1,19 +1,18 @@
 import type { FC } from "react";
-import {
-  CalendarCheck2,
-  CalendarClock,
-  CalendarDays,
-  LayersIcon,
-  Link2,
-  Paperclip,
-  Signal,
-  Tag,
-  Triangle,
-  Users,
-} from "lucide-react";
+import { CalendarDays, LayersIcon, Link2, Paperclip } from "lucide-react";
 // types
 import type { ISvgIcons } from "@plane/propel/icons";
-import { CycleIcon, DoubleCircleIcon, ModuleIcon } from "@plane/propel/icons";
+import {
+  CycleIcon,
+  StatePropertyIcon,
+  ModuleIcon,
+  MembersPropertyIcon,
+  DueDatePropertyIcon,
+  EstimatePropertyIcon,
+  LabelPropertyIcon,
+  PriorityPropertyIcon,
+  StartDatePropertyIcon,
+} from "@plane/propel/icons";
 import type { IGroupByColumn, IIssueDisplayProperties, TGetColumns, TSpreadsheetColumn } from "@plane/types";
 // components
 import {
@@ -66,16 +65,16 @@ export const getScopeMemberIds = ({ isWorkspaceLevel, projectId }: TGetColumns):
 export const getTeamProjectColumns = (): IGroupByColumn[] | undefined => undefined;
 
 export const SpreadSheetPropertyIconMap: Record<string, FC<ISvgIcons>> = {
-  Users: Users,
+  MembersPropertyIcon: MembersPropertyIcon,
   CalenderDays: CalendarDays,
-  CalenderCheck2: CalendarCheck2,
-  Triangle: Triangle,
-  Tag: Tag,
+  DueDatePropertyIcon: DueDatePropertyIcon,
+  EstimatePropertyIcon: EstimatePropertyIcon,
+  LabelPropertyIcon: LabelPropertyIcon,
   ModuleIcon: ModuleIcon,
   ContrastIcon: CycleIcon,
-  Signal: Signal,
-  CalendarClock: CalendarClock,
-  DoubleCircleIcon: DoubleCircleIcon,
+  PriorityPropertyIcon: PriorityPropertyIcon,
+  StartDatePropertyIcon: StartDatePropertyIcon,
+  StatePropertyIcon: StatePropertyIcon,
   Link2: Link2,
   Paperclip: Paperclip,
   LayersIcon: LayersIcon,

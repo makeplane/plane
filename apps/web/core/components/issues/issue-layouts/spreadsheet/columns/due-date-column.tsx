@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { CalendarCheck2 } from "lucide-react";
+import { DueDatePropertyIcon } from "@plane/propel/icons";
 // types
 import type { TIssue } from "@plane/types";
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
@@ -42,7 +42,7 @@ export const SpreadsheetDueDateColumn: React.FC<Props> = observer((props: Props)
         }}
         disabled={disabled}
         placeholder="Due date"
-        icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+        icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
         buttonVariant="transparent-with-text"
         buttonContainerClassName="w-full"
         buttonClassName={cn(

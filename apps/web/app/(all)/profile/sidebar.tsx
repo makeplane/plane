@@ -5,22 +5,12 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 // icons
-import {
-  ChevronLeft,
-  LogOut,
-  MoveLeft,
-  Activity,
-  Bell,
-  CircleUser,
-  KeyRound,
-  Settings2,
-  CirclePlus,
-  Mails,
-} from "lucide-react";
+import { LogOut, MoveLeft, Activity, Bell, CircleUser, KeyRound, Settings2, CirclePlus, Mails } from "lucide-react";
 // plane imports
 import { PROFILE_ACTION_LINKS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { ChevronLeftIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn, getFileURL } from "@plane/utils";
@@ -141,7 +131,7 @@ export const ProfileLayoutSidebar = observer(() => {
             }`}
           >
             <span className="grid h-5 w-5 flex-shrink-0 place-items-center">
-              <ChevronLeft className="h-5 w-5" strokeWidth={1} />
+              <ChevronLeftIcon className="h-5 w-5" strokeWidth={1} />
             </span>
             {!sidebarCollapsed && (
               <h4 className="truncate text-lg font-semibold text-custom-text-200">{t("profile_settings")}</h4>

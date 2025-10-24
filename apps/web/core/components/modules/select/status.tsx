@@ -7,7 +7,7 @@ import type { FieldError, Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import { MODULE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { DoubleCircleIcon, ModuleStatusIcon } from "@plane/propel/icons";
+import { StatePropertyIcon, ModuleStatusIcon } from "@plane/propel/icons";
 import type { IModule } from "@plane/types";
 // ui
 import { CustomSelect } from "@plane/ui";
@@ -37,7 +37,7 @@ export const ModuleStatusSelect: React.FC<Props> = ({ control, error, tabIndex }
                 {value ? (
                   <ModuleStatusIcon status={value} />
                 ) : (
-                  <DoubleCircleIcon className={`h-3 w-3 ${error ? "text-red-500" : "text-custom-text-200"}`} />
+                  <StatePropertyIcon className={`h-3 w-3 ${error ? "text-red-500" : "text-custom-text-200"}`} />
                 )}
                 {(selectedValue && t(selectedValue?.i18n_label)) ?? (
                   <span className={`${error ? "text-red-500" : "text-custom-text-200"}`}>Status</span>

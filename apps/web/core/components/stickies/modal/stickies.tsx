@@ -1,8 +1,8 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Plus, X } from "lucide-react";
+import { Plus } from "lucide-react";
 // plane ui
-import { RecentStickyIcon } from "@plane/propel/icons";
+import { RecentStickyIcon, CloseIcon } from "@plane/propel/icons";
 // hooks
 import { useSticky } from "@/hooks/use-stickies";
 // components
@@ -60,7 +60,7 @@ export const Stickies = observer((props: TProps) => {
               onClick={handleClose}
               className="flex-shrink-0 grid place-items-center text-custom-text-300 hover:text-custom-text-100 hover:bg-custom-background-80 rounded p-1 transition-colors my-auto"
             >
-              <X className="text-custom-text-400 size-4" />
+              <CloseIcon className="text-custom-text-400 size-4" />
             </button>
           )}
         </div>

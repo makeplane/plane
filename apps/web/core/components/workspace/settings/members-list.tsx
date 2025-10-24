@@ -3,10 +3,10 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { ChevronDown } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { Collapsible } from "@plane/ui";
 // components
 import { CountChip } from "@/components/common/count-chip";
@@ -86,7 +86,7 @@ export const WorkspaceMembersList: FC<{ searchQuery: string; isAdmin: boolean }>
                   <CountChip count={searchedInvitationsIds.length} className="h-5  m-auto ml-2" />
                 )}
               </div>{" "}
-              <ChevronDown className={`h-5 w-5 transition-all ${showPendingInvites ? "rotate-180" : ""}`} />
+              <ChevronDownIcon className={`h-5 w-5 transition-all ${showPendingInvites ? "rotate-180" : ""}`} />
             </div>
           }
         >
