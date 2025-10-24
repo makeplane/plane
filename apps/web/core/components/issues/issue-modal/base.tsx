@@ -374,6 +374,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     isDuplicateModalOpen: isDuplicateModalOpen,
     handleDuplicateIssueModal: handleDuplicateIssueModal,
     isProjectSelectionDisabled: isProjectSelectionDisabled,
+    storeType: EIssuesStoreType.GLOBAL,
   };
 
   return (

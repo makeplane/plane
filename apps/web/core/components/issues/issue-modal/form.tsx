@@ -78,9 +78,8 @@ export interface IssueFormProps {
   isProjectSelectionDisabled?: boolean;
   showActionButtons?: boolean;
   dataResetProperties?: any[];
-    storeType: EIssuesStoreType;
+  storeType: EIssuesStoreType;
 }
-
 
 export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   const { t } = useTranslation();
@@ -425,6 +424,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                     disabled={!!data?.id || !!data?.sourceIssueId || isProjectSelectionDisabled}
                     handleFormChange={handleFormChange}
                   />
+                  <ChevronRight className="h-3 w-3 text-custom-text-400 flex-shrink-0" />
                   {projectId && (
                     <IssueTypeSelect
                       control={control}

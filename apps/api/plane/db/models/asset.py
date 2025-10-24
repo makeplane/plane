@@ -37,6 +37,8 @@ class FileAsset(BaseModel):
         PROJECT_COVER = "PROJECT_COVER"
         DRAFT_ISSUE_ATTACHMENT = "DRAFT_ISSUE_ATTACHMENT"
         DRAFT_ISSUE_DESCRIPTION = "DRAFT_ISSUE_DESCRIPTION"
+        CASE_ATTACHMENT = "CASE_ATTACHMENT"
+
 
     attributes = models.JSONField(default=dict)
     asset = models.FileField(upload_to=get_upload_path, max_length=800)
@@ -47,6 +49,7 @@ class FileAsset(BaseModel):
     issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, null=True, related_name="assets")
     comment = models.ForeignKey("db.IssueComment", on_delete=models.CASCADE, null=True, related_name="assets")
     page = models.ForeignKey("db.Page", on_delete=models.CASCADE, null=True, related_name="assets")
+    case = models.ForeignKey("db.TestCase", on_delete=models.CASCADE, null=True, related_name="assets")
     entity_type = models.CharField(max_length=255, null=True, blank=True)
     entity_identifier = models.CharField(max_length=255, null=True, blank=True)
     is_deleted = models.BooleanField(default=False)
@@ -93,3 +96,9 @@ class FileAsset(BaseModel):
             return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/{self.id}/"
 
         return None
+
+
+class File(BaseModel):
+    name = models.CharField(max_length=255, blank=True, verbose_name="原始文件名")
+    size = models.PositiveBigIntegerField(verbose_name="文件大小 (bytes)")
+
