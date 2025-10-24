@@ -410,7 +410,8 @@ def get_webhook_logs_queryset():
             "response_headers",
             "retry_count",
         )
-        .iterator(chunk_size=BATCH_SIZE)
+        .order_by("created_at")
+        .iterator(chunk_size=100)
     )
 
 

@@ -1536,6 +1536,11 @@ export default {
         description: "Elementos de trabajo que aplican a los filtros, rastréalos todos aquí.",
       },
     },
+    delete_view: {
+      title: "¿Estás seguro de que quieres eliminar esta vista?",
+      content:
+        "Si confirmas, todas las opciones de ordenación, filtro y visualización + el diseño que has elegido para esta vista se eliminarán permanentemente sin posibilidad de restaurarlas.",
+    },
   },
   workspace_settings: {
     label: "Configuración del espacio de trabajo",
@@ -2187,6 +2192,11 @@ export default {
         title: "No hay vistas coincidentes",
         description: "Ninguna vista coincide con los criterios de búsqueda. \n Crea una nueva vista en su lugar.",
       },
+    },
+    delete_view: {
+      title: "¿Estás seguro de que quieres eliminar esta vista?",
+      content:
+        "Si confirmas, todas las opciones de ordenación, filtro y visualización + el diseño que has elegido para esta vista se eliminarán permanentemente sin posibilidad de restaurarlas.",
     },
   },
   project_page: {

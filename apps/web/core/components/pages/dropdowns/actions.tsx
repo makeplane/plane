@@ -54,7 +54,6 @@ export type TPageActions =
   | "move";
 
 type Props = {
-  editorRef?: EditorRefApi | null;
   extraOptions?: (TContextMenuItem & { key: TPageActions })[];
   optionsOrder: TPageActions[];
   page: TPageInstance;
@@ -63,7 +62,7 @@ type Props = {
 };
 
 export const PageActions: React.FC<Props> = observer((props) => {
-  const { editorRef, extraOptions, optionsOrder, page, parentRef, storeType } = props;
+  const { extraOptions, optionsOrder, page, parentRef, storeType } = props;
   // states
   const [deletePageModal, setDeletePageModal] = useState(false);
   const [movePageModal, setMovePageModal] = useState(false);
@@ -75,7 +74,6 @@ export const PageActions: React.FC<Props> = observer((props) => {
   });
   // page operations
   const { pageOperations } = usePageOperations({
-    editorRef,
     page,
   });
   // derived values

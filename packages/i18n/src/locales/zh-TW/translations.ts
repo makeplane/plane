@@ -1499,6 +1499,10 @@ export default {
         description: "符合篩選條件的工作事項，在這裡追蹤它們。",
       },
     },
+    delete_view: {
+      title: "您確定要刪除此視圖嗎？",
+      content: "如果您確認，您為此視圖選擇的所有排序、篩選和顯示選項 + 布局將被永久刪除，無法恢復。",
+    },
   },
   workspace_settings: {
     label: "工作區設定",
@@ -2129,6 +2133,10 @@ export default {
         title: "沒有符合的檢視",
         description: "沒有檢視符合搜尋條件。\n改為建立新檢視。",
       },
+    },
+    delete_view: {
+      title: "您確定要刪除此視圖嗎？",
+      content: "如果您確認，您為此視圖選擇的所有排序、篩選和顯示選項 + 布局將被永久刪除，無法恢復。",
     },
   },
   project_page: {

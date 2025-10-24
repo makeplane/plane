@@ -1,3 +1,4 @@
+import { AppError } from "@/lib/errors";
 import type { HocusPocusServerContext, TDocumentTypes } from "@/types";
 // services
 import { ProjectPageService } from "./project-page.service";
@@ -11,5 +12,5 @@ export const getPageService = (documentType: TDocumentTypes, context: HocusPocus
     });
   }
 
-  throw new Error(`Invalid document type ${documentType} provided.`);
+  throw new AppError(`Invalid document type ${documentType} provided.`);
 };
