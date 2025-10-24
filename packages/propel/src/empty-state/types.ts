@@ -22,4 +22,3 @@ export interface BaseEmptyStateCommonProps {
   asset?: React.ReactNode;
   align?: TAlign;
 }
-

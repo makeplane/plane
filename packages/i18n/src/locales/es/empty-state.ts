@@ -2,7 +2,8 @@ export default {
   common: {
     progress: {
       title: "Todavía no hay métricas de progreso para mostrar.",
-      description: "Comienza a establecer valores de propiedades en los elementos de trabajo para ver las métricas de progreso aquí.",
+      description:
+        "Comienza a establecer valores de propiedades en los elementos de trabajo para ver las métricas de progreso aquí.",
     },
     updates: {
       title: "Aún no hay actualizaciones.",
@@ -19,30 +20,35 @@ export default {
     },
     server_error: {
       title: "Error del servidor",
-      description: "No podemos conectarnos y obtener datos de nuestro servidor. No te preocupes, estamos trabajando en ello.",
+      description:
+        "No podemos conectarnos y obtener datos de nuestro servidor. No te preocupes, estamos trabajando en ello.",
       cta_primary: "Intentar recargar",
     },
   },
   project: {
     work_items: {
       title: "Comienza con tu primer elemento de trabajo.",
-      description: "Los elementos de trabajo son los bloques de construcción de tu proyecto — asigna responsables, establece prioridades y realiza un seguimiento del progreso fácilmente.",
+      description:
+        "Los elementos de trabajo son los bloques de construcción de tu proyecto — asigna responsables, establece prioridades y realiza un seguimiento del progreso fácilmente.",
       cta_primary: "Crea tu primer elemento de trabajo",
     },
     cycles: {
       title: "Agrupa y delimita tu trabajo en Ciclos.",
-      description: "Divide el trabajo en bloques con tiempo definido, trabaja hacia atrás desde la fecha límite de tu proyecto para establecer fechas y haz un progreso tangible como equipo.",
+      description:
+        "Divide el trabajo en bloques con tiempo definido, trabaja hacia atrás desde la fecha límite de tu proyecto para establecer fechas y haz un progreso tangible como equipo.",
       cta_primary: "Establece tu primer ciclo",
     },
     cycle_work_items: {
       title: "No hay elementos de trabajo para mostrar en este ciclo",
-      description: "Crea elementos de trabajo para comenzar a monitorear el progreso de tu equipo en este ciclo y alcanzar tus objetivos a tiempo.",
+      description:
+        "Crea elementos de trabajo para comenzar a monitorear el progreso de tu equipo en este ciclo y alcanzar tus objetivos a tiempo.",
       cta_primary: "Crear elemento de trabajo",
       cta_secondary: "Agregar elemento de trabajo existente",
     },
     modules: {
       title: "Asigna los objetivos de tu proyecto a Módulos y rastrea fácilmente.",
-      description: "Los módulos están compuestos de elementos de trabajo interconectados. Ayudan a monitorear el progreso a través de las fases del proyecto, cada una con fechas límite específicas y análisis para indicar qué tan cerca estás de alcanzar esas fases.",
+      description:
+        "Los módulos están compuestos de elementos de trabajo interconectados. Ayudan a monitorear el progreso a través de las fases del proyecto, cada una con fechas límite específicas y análisis para indicar qué tan cerca estás de alcanzar esas fases.",
       cta_primary: "Establece tu primer módulo",
     },
     module_work_items: {
@@ -53,7 +59,8 @@ export default {
     },
     views: {
       title: "Guarda vistas personalizadas para tu proyecto",
-      description: "Las vistas son filtros guardados que te ayudan a acceder rápidamente a la información que más usas. Colabora sin esfuerzo mientras los compañeros de equipo comparten y adaptan las vistas a sus necesidades específicas.",
+      description:
+        "Las vistas son filtros guardados que te ayudan a acceder rápidamente a la información que más usas. Colabora sin esfuerzo mientras los compañeros de equipo comparten y adaptan las vistas a sus necesidades específicas.",
       cta_primary: "Crear vista",
     },
     no_work_items_in_project: {
@@ -68,7 +75,8 @@ export default {
     },
     pages: {
       title: "Documenta todo — desde notas hasta PRDs",
-      description: "Las páginas te permiten capturar y organizar información en un solo lugar. Escribe notas de reuniones, documentación de proyectos y PRDs, incrusta elementos de trabajo y estructúralos con componentes listos para usar.",
+      description:
+        "Las páginas te permiten capturar y organizar información en un solo lugar. Escribe notas de reuniones, documentación de proyectos y PRDs, incrusta elementos de trabajo y estructúralos con componentes listos para usar.",
       cta_primary: "Crea tu primera Página",
     },
     archive_pages: {
@@ -77,7 +85,8 @@ export default {
     },
     intake_sidebar: {
       title: "Registra solicitudes de Entrada",
-      description: "Envía nuevas solicitudes para ser revisadas, priorizadas y rastreadas dentro del flujo de trabajo de tu proyecto.",
+      description:
+        "Envía nuevas solicitudes para ser revisadas, priorizadas y rastreadas dentro del flujo de trabajo de tu proyecto.",
       cta_primary: "Crear solicitud de Entrada",
     },
     intake_main: {
@@ -87,7 +96,8 @@ export default {
   workspace: {
     archive_work_items: {
       title: "Aún no hay elementos de trabajo archivados",
-      description: "Manualmente o mediante automatización, puedes archivar elementos de trabajo que estén completados o cancelados. Encuéntralos aquí una vez archivados.",
+      description:
+        "Manualmente o mediante automatización, puedes archivar elementos de trabajo que estén completados o cancelados. Encuéntralos aquí una vez archivados.",
       cta_primary: "Configurar automatización",
     },
     archive_cycles: {
@@ -96,7 +106,8 @@ export default {
     },
     archive_modules: {
       title: "Aún no hay Módulos archivados",
-      description: "Para ordenar tu proyecto, archiva los módulos completados o cancelados. Encuéntralos aquí una vez archivados.",
+      description:
+        "Para ordenar tu proyecto, archiva los módulos completados o cancelados. Encuéntralos aquí una vez archivados.",
     },
     home_widget_quick_links: {
       title: "Mantén a mano referencias importantes, recursos o documentos para tu trabajo",
@@ -115,12 +126,14 @@ export default {
     },
     views: {
       title: "Aún no hay Vistas",
-      description: "Agrega elementos de trabajo a tu proyecto y usa vistas para filtrar, ordenar y monitorear el progreso sin esfuerzo.",
+      description:
+        "Agrega elementos de trabajo a tu proyecto y usa vistas para filtrar, ordenar y monitorear el progreso sin esfuerzo.",
       cta_primary: "Agregar elemento de trabajo",
     },
     drafts: {
       title: "Elementos de trabajo a medio escribir",
-      description: "Para probarlo, comienza a agregar un elemento de trabajo y déjalo a medias o crea tu primer borrador a continuación. 😉",
+      description:
+        "Para probarlo, comienza a agregar un elemento de trabajo y déjalo a medias o crea tu primer borrador a continuación. 😉",
       cta_primary: "Crear borrador de elemento de trabajo",
     },
     projects_archived: {
@@ -131,10 +144,12 @@ export default {
       title: "Crea proyectos para visualizar las métricas del proyecto aquí.",
     },
     analytics_work_items: {
-      title: "Crea proyectos con elementos de trabajo y responsables para comenzar a rastrear el rendimiento, progreso e impacto del equipo aquí.",
+      title:
+        "Crea proyectos con elementos de trabajo y responsables para comenzar a rastrear el rendimiento, progreso e impacto del equipo aquí.",
     },
     analytics_no_cycle: {
-      title: "Crea ciclos para organizar el trabajo en fases con límite de tiempo y rastrear el progreso en los sprints.",
+      title:
+        "Crea ciclos para organizar el trabajo en fases con límite de tiempo y rastrear el progreso en los sprints.",
     },
     analytics_no_module: {
       title: "Crea módulos para organizar tu trabajo y rastrear el progreso en diferentes etapas.",
@@ -146,7 +161,8 @@ export default {
   settings: {
     estimates: {
       title: "Aún no hay estimaciones",
-      description: "Define cómo tu equipo mide el esfuerzo y rastréalo de manera consistente en todos los elementos de trabajo.",
+      description:
+        "Define cómo tu equipo mide el esfuerzo y rastréalo de manera consistente en todos los elementos de trabajo.",
       cta_primary: "Agregar sistema de estimación",
     },
     labels: {
@@ -156,11 +172,13 @@ export default {
     },
     exports: {
       title: "Aún no hay exportaciones",
-      description: "No tienes ningún registro de exportación en este momento. Una vez que exportes datos, todos los registros aparecerán aquí.",
+      description:
+        "No tienes ningún registro de exportación en este momento. Una vez que exportes datos, todos los registros aparecerán aquí.",
     },
     tokens: {
       title: "Aún no hay tokens Personales",
-      description: "Genera tokens API seguros para conectar tu espacio de trabajo con sistemas y aplicaciones externos.",
+      description:
+        "Genera tokens API seguros para conectar tu espacio de trabajo con sistemas y aplicaciones externos.",
       cta_primary: "Agregar token API",
     },
   },

@@ -26,23 +26,27 @@ export default {
   project: {
     work_items: {
       title: "Začnite s vašou prvou pracovnou položkou.",
-      description: "Pracovné položky sú stavebnými kameňmi vášho projektu — priraďujte vlastníkov, nastavujte priority a jednoducho sledujte pokrok.",
+      description:
+        "Pracovné položky sú stavebnými kameňmi vášho projektu — priraďujte vlastníkov, nastavujte priority a jednoducho sledujte pokrok.",
       cta_primary: "Vytvorte svoju prvú pracovnú položku",
     },
     cycles: {
       title: "Zoskupujte a časovo obmedzte svoju prácu v cykloch.",
-      description: "Rozdeľte prácu do časovo obmedzených blokov, pracujte spätne od termínu projektu na nastavenie dátumov a dosahujte hmatateľný pokrok ako tým.",
+      description:
+        "Rozdeľte prácu do časovo obmedzených blokov, pracujte spätne od termínu projektu na nastavenie dátumov a dosahujte hmatateľný pokrok ako tým.",
       cta_primary: "Nastavte svoj prvý cyklus",
     },
     cycle_work_items: {
       title: "V tomto cykle nie sú žiadne pracovné položky na zobrazenie",
-      description: "Vytvorte pracovné položky na začatie sledovania pokroku vášho tímu v tomto cykle a dosiahnutie vašich cieľov včas.",
+      description:
+        "Vytvorte pracovné položky na začatie sledovania pokroku vášho tímu v tomto cykle a dosiahnutie vašich cieľov včas.",
       cta_primary: "Vytvoriť pracovnú položku",
       cta_secondary: "Pridať existujúcu pracovnú položku",
     },
     modules: {
       title: "Namapujte ciele vášho projektu na moduly a jednoducho sledujte.",
-      description: "Moduly sa skladajú z prepojených pracovných položiek. Pomáhajú sledovať pokrok prostredníctvom fáz projektu, z ktorých každá má špecifické termíny a analytiku, ktorá ukazuje, ako blízko ste dosiahnutiu týchto fáz.",
+      description:
+        "Moduly sa skladajú z prepojených pracovných položiek. Pomáhajú sledovať pokrok prostredníctvom fáz projektu, z ktorých každá má špecifické termíny a analytiku, ktorá ukazuje, ako blízko ste dosiahnutiu týchto fáz.",
       cta_primary: "Nastavte svoj prvý modul",
     },
     module_work_items: {
@@ -53,12 +57,14 @@ export default {
     },
     views: {
       title: "Uložte vlastné pohľady pre váš projekt",
-      description: "Pohľady sú uložené filtre, ktoré vám pomáhajú rýchlo pristupovať k informáciám, ktoré používate najčastejšie. Spolupracujte bez námahy, zatiaľ čo spolupracovníci zdieľajú a prispôsobujú pohľady svojim špecifickým potrebám.",
+      description:
+        "Pohľady sú uložené filtre, ktoré vám pomáhajú rýchlo pristupovať k informáciám, ktoré používate najčastejšie. Spolupracujte bez námahy, zatiaľ čo spolupracovníci zdieľajú a prispôsobujú pohľady svojim špecifickým potrebám.",
       cta_primary: "Vytvoriť pohľad",
     },
     no_work_items_in_project: {
       title: "V projekte zatiaľ nie sú žiadne pracovné položky",
-      description: "Pridajte pracovné položky do svojho projektu a rozdeľte svoju prácu na sledovateľné časti pomocou pohľadov.",
+      description:
+        "Pridajte pracovné položky do svojho projektu a rozdeľte svoju prácu na sledovateľné časti pomocou pohľadov.",
       cta_primary: "Pridať pracovnú položku",
     },
     work_item_filter: {
@@ -68,7 +74,8 @@ export default {
     },
     pages: {
       title: "Dokumentujte všetko — od poznámok po PRD",
-      description: "Stránky vám umožňujú zachytiť a organizovať informácie na jednom mieste. Píšte poznámky zo stretnutí, projektovú dokumentáciu a PRD, vkladajte pracovné položky a štruktúrujte ich pomocou pripravených komponentov.",
+      description:
+        "Stránky vám umožňujú zachytiť a organizovať informácie na jednom mieste. Píšte poznámky zo stretnutí, projektovú dokumentáciu a PRD, vkladajte pracovné položky a štruktúrujte ich pomocou pripravených komponentov.",
       cta_primary: "Vytvorte svoju prvú stránku",
     },
     archive_pages: {
@@ -77,7 +84,8 @@ export default {
     },
     intake_sidebar: {
       title: "Zaznamenajte príchodzí požiadavky",
-      description: "Odosielajte nové požiadavky na preskúmanie, stanovenie priorít a sledovanie v rámci pracovného postupu vášho projektu.",
+      description:
+        "Odosielajte nové požiadavky na preskúmanie, stanovenie priorít a sledovanie v rámci pracovného postupu vášho projektu.",
       cta_primary: "Vytvoriť príchodzí požiadavku",
     },
     intake_main: {
@@ -87,16 +95,19 @@ export default {
   workspace: {
     archive_work_items: {
       title: "Zatiaľ žiadne archivované pracovné položky",
-      description: "Ručne alebo pomocou automatizácie môžete archivovať dokončené alebo zrušené pracovné položky. Nájdete ich tu, akonáhle budú archivované.",
+      description:
+        "Ručne alebo pomocou automatizácie môžete archivovať dokončené alebo zrušené pracovné položky. Nájdete ich tu, akonáhle budú archivované.",
       cta_primary: "Nastaviť automatizáciu",
     },
     archive_cycles: {
       title: "Zatiaľ žiadne archivované cykly",
-      description: "Pre upratanie vášho projektu archivujte dokončené cykly. Nájdete ich tu, akonáhle budú archivované.",
+      description:
+        "Pre upratanie vášho projektu archivujte dokončené cykly. Nájdete ich tu, akonáhle budú archivované.",
     },
     archive_modules: {
       title: "Zatiaľ žiadne archivované moduly",
-      description: "Pre upratanie vášho projektu archivujte dokončené alebo zrušené moduly. Nájdete ich tu, akonáhle budú archivované.",
+      description:
+        "Pre upratanie vášho projektu archivujte dokončené alebo zrušené moduly. Nájdete ich tu, akonáhle budú archivované.",
     },
     home_widget_quick_links: {
       title: "Majte po ruke dôležité odkazy, zdroje alebo dokumenty pre vašu prácu",
@@ -115,12 +126,14 @@ export default {
     },
     views: {
       title: "Zatiaľ žiadne pohľady",
-      description: "Pridajte pracovné položky do svojho projektu a používajte pohľady na jednoduché filtrovanie, triedenie a sledovanie pokroku.",
+      description:
+        "Pridajte pracovné položky do svojho projektu a používajte pohľady na jednoduché filtrovanie, triedenie a sledovanie pokroku.",
       cta_primary: "Pridať pracovnú položku",
     },
     drafts: {
       title: "Napoly napísané pracovné položky",
-      description: "Ak to chcete vyskúšať, začnite pridávať pracovnú položku a nechajte ju nedokončenú alebo vytvorte svoj prvý koncept nižšie. 😉",
+      description:
+        "Ak to chcete vyskúšať, začnite pridávať pracovnú položku a nechajte ju nedokončenú alebo vytvorte svoj prvý koncept nižšie. 😉",
       cta_primary: "Vytvoriť koncept pracovnej položky",
     },
     projects_archived: {
@@ -131,7 +144,8 @@ export default {
       title: "Vytvorte projekty na vizualizáciu metrík projektu tu.",
     },
     analytics_work_items: {
-      title: "Vytvorte projekty s pracovnými položkami a priradenými osobami na začatie sledovania výkonu, pokroku a dopadu tímu tu.",
+      title:
+        "Vytvorte projekty s pracovnými položkami a priradenými osobami na začatie sledovania výkonu, pokroku a dopadu tímu tu.",
     },
     analytics_no_cycle: {
       title: "Vytvorte cykly na organizáciu práce do časovo obmedzených fáz a sledovanie pokroku naprieč šprintmi.",
@@ -146,7 +160,8 @@ export default {
   settings: {
     estimates: {
       title: "Zatiaľ žiadne odhady",
-      description: "Definujte, ako váš tím meria úsilie, a sledujte to konzistentne naprieč všetkými pracovnými položkami.",
+      description:
+        "Definujte, ako váš tím meria úsilie, a sledujte to konzistentne naprieč všetkými pracovnými položkami.",
       cta_primary: "Pridať systém odhadov",
     },
     labels: {
@@ -156,11 +171,13 @@ export default {
     },
     exports: {
       title: "Zatiaľ žiadne exporty",
-      description: "Momentálne nemáte žiadne záznamy exportu. Akonáhle exportujete údaje, všetky záznamy sa zobrazia tu.",
+      description:
+        "Momentálne nemáte žiadne záznamy exportu. Akonáhle exportujete údaje, všetky záznamy sa zobrazia tu.",
     },
     tokens: {
       title: "Zatiaľ žiadny osobný token",
-      description: "Generujte bezpečné API tokeny na pripojenie vášho pracovného priestoru s externými systémami a aplikáciami.",
+      description:
+        "Generujte bezpečné API tokeny na pripojenie vášho pracovného priestoru s externými systémami a aplikáciami.",
       cta_primary: "Pridať API token",
     },
   },

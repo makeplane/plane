@@ -26,23 +26,27 @@ export default {
   project: {
     work_items: {
       title: "Start with your first work item.",
-      description: "Work items are the building blocks of your project — assign owners, set priorities, and track progress easily.",
+      description:
+        "Work items are the building blocks of your project — assign owners, set priorities, and track progress easily.",
       cta_primary: "Create your first work item",
     },
     cycles: {
       title: "Group and timebox your work in Cycles.",
-      description: "Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team.",
+      description:
+        "Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team.",
       cta_primary: "Set your first cycle",
     },
     cycle_work_items: {
       title: "No work items to show in this cycle",
-      description: "Create work items to begin monitoring your team's progress this cycle and achieve your goals on time.",
+      description:
+        "Create work items to begin monitoring your team's progress this cycle and achieve your goals on time.",
       cta_primary: "Create work item",
       cta_secondary: "Add existing work item",
     },
     modules: {
       title: "Map your project goals to Modules and track easily.",
-      description: "Modules are made up of interconnected work items. They assist in monitoring progress through project phases, each with specific deadlines and analytics to indicate how close you are to achieving those phases.",
+      description:
+        "Modules are made up of interconnected work items. They assist in monitoring progress through project phases, each with specific deadlines and analytics to indicate how close you are to achieving those phases.",
       cta_primary: "Set your first module",
     },
     module_work_items: {
@@ -53,7 +57,8 @@ export default {
     },
     views: {
       title: "Save custom views for your project",
-      description: "Views are saved filters that help you quickly access the information you use most. Collaborate effortlessly as teammates share and tailor views to their specific needs.",
+      description:
+        "Views are saved filters that help you quickly access the information you use most. Collaborate effortlessly as teammates share and tailor views to their specific needs.",
       cta_primary: "Create view",
     },
     no_work_items_in_project: {
@@ -68,7 +73,8 @@ export default {
     },
     pages: {
       title: "Document everything — from notes to PRDs",
-      description: "Pages let you capture and organize information in one place. Write meeting notes, project documentation, and PRDs, embed work items, and structure them with ready-to-use components.",
+      description:
+        "Pages let you capture and organize information in one place. Write meeting notes, project documentation, and PRDs, embed work items, and structure them with ready-to-use components.",
       cta_primary: "Create your first Page",
     },
     archive_pages: {
@@ -87,7 +93,8 @@ export default {
   workspace: {
     archive_work_items: {
       title: "No archived work items yet",
-      description: "Manually or through automation, you can archive work items that are completed or cancelled. Find them here once archived.",
+      description:
+        "Manually or through automation, you can archive work items that are completed or cancelled. Find them here once archived.",
       cta_primary: "Set automation",
     },
     archive_cycles: {
@@ -120,7 +127,8 @@ export default {
     },
     drafts: {
       title: "Half-written work items",
-      description: "To try this out, start adding a work item and leave it mid-way or create your first draft below. 😉",
+      description:
+        "To try this out, start adding a work item and leave it mid-way or create your first draft below. 😉",
       cta_primary: "Create draft work item",
     },
     projects_archived: {
@@ -131,7 +139,8 @@ export default {
       title: "Create projects to visualize project metrics here.",
     },
     analytics_work_items: {
-      title: "Create projects with work items and assignees to start tracking performance, progress, and team impact here.",
+      title:
+        "Create projects with work items and assignees to start tracking performance, progress, and team impact here.",
     },
     analytics_no_cycle: {
       title: "Create cycles to organise work into time-bound phases and track progress across sprints.",

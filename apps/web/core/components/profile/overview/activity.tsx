@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { Loader, Card } from "@plane/ui";
 import { calculateTimeAgo, getFileURL } from "@plane/utils";
 // components
@@ -19,7 +20,6 @@ import { useUser } from "@/hooks/store/user";
 import recentActivityEmptyState from "@/public/empty-state/recent_activity.svg";
 // services
 import { UserService } from "@/services/user.service";
-import { EmptyStateCompact } from "@plane/propel/empty-state";
 
 const userService = new UserService();
 

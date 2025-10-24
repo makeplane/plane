@@ -2,7 +2,8 @@ export default {
   common: {
     progress: {
       title: "Non ci sono ancora metriche di progresso da mostrare.",
-      description: "Inizia a impostare i valori delle proprietà negli elementi di lavoro per vedere qui le metriche di progresso.",
+      description:
+        "Inizia a impostare i valori delle proprietà negli elementi di lavoro per vedere qui le metriche di progresso.",
     },
     updates: {
       title: "Nessun aggiornamento ancora.",
@@ -14,35 +15,41 @@ export default {
     },
     not_found: {
       title: "Oops! Qualcosa sembra andare storto",
-      description: "Al momento non riusciamo a recuperare il tuo account plane. Potrebbe trattarsi di un errore di rete.",
+      description:
+        "Al momento non riusciamo a recuperare il tuo account plane. Potrebbe trattarsi di un errore di rete.",
       cta_primary: "Prova a ricaricare",
     },
     server_error: {
       title: "Errore del server",
-      description: "Non riusciamo a connetterci e recuperare dati dal nostro server. Non preoccuparti, ci stiamo lavorando.",
+      description:
+        "Non riusciamo a connetterci e recuperare dati dal nostro server. Non preoccuparti, ci stiamo lavorando.",
       cta_primary: "Prova a ricaricare",
     },
   },
   project: {
     work_items: {
       title: "Inizia con il tuo primo elemento di lavoro.",
-      description: "Gli elementi di lavoro sono i mattoni del tuo progetto — assegna proprietari, imposta priorità e traccia facilmente i progressi.",
+      description:
+        "Gli elementi di lavoro sono i mattoni del tuo progetto — assegna proprietari, imposta priorità e traccia facilmente i progressi.",
       cta_primary: "Crea il tuo primo elemento di lavoro",
     },
     cycles: {
       title: "Raggruppa e delimita temporalmente il tuo lavoro in Cicli.",
-      description: "Suddividi il lavoro in blocchi temporali, lavora a ritroso dalla scadenza del progetto per impostare le date e fai progressi tangibili come team.",
+      description:
+        "Suddividi il lavoro in blocchi temporali, lavora a ritroso dalla scadenza del progetto per impostare le date e fai progressi tangibili come team.",
       cta_primary: "Imposta il tuo primo ciclo",
     },
     cycle_work_items: {
       title: "Nessun elemento di lavoro da mostrare in questo ciclo",
-      description: "Crea elementi di lavoro per iniziare a monitorare il progresso del tuo team in questo ciclo e raggiungere i tuoi obiettivi in tempo.",
+      description:
+        "Crea elementi di lavoro per iniziare a monitorare il progresso del tuo team in questo ciclo e raggiungere i tuoi obiettivi in tempo.",
       cta_primary: "Crea elemento di lavoro",
       cta_secondary: "Aggiungi elemento di lavoro esistente",
     },
     modules: {
       title: "Mappa gli obiettivi del tuo progetto ai Moduli e traccia facilmente.",
-      description: "I moduli sono costituiti da elementi di lavoro interconnessi. Aiutano a monitorare i progressi attraverso le fasi del progetto, ciascuna con scadenze specifiche e analitiche per indicare quanto sei vicino al raggiungimento di quelle fasi.",
+      description:
+        "I moduli sono costituiti da elementi di lavoro interconnessi. Aiutano a monitorare i progressi attraverso le fasi del progetto, ciascuna con scadenze specifiche e analitiche per indicare quanto sei vicino al raggiungimento di quelle fasi.",
       cta_primary: "Imposta il tuo primo modulo",
     },
     module_work_items: {
@@ -53,12 +60,14 @@ export default {
     },
     views: {
       title: "Salva viste personalizzate per il tuo progetto",
-      description: "Le viste sono filtri salvati che ti aiutano ad accedere rapidamente alle informazioni che usi di più. Collabora senza sforzo mentre i colleghi condividono e personalizzano le viste secondo le loro esigenze specifiche.",
+      description:
+        "Le viste sono filtri salvati che ti aiutano ad accedere rapidamente alle informazioni che usi di più. Collabora senza sforzo mentre i colleghi condividono e personalizzano le viste secondo le loro esigenze specifiche.",
       cta_primary: "Crea vista",
     },
     no_work_items_in_project: {
       title: "Nessun elemento di lavoro nel progetto ancora",
-      description: "Aggiungi elementi di lavoro al tuo progetto e suddividi il lavoro in pezzi tracciabili con le viste.",
+      description:
+        "Aggiungi elementi di lavoro al tuo progetto e suddividi il lavoro in pezzi tracciabili con le viste.",
       cta_primary: "Aggiungi elemento di lavoro",
     },
     work_item_filter: {
@@ -68,7 +77,8 @@ export default {
     },
     pages: {
       title: "Documenta tutto — dalle note ai PRD",
-      description: "Le pagine ti permettono di catturare e organizzare informazioni in un unico posto. Scrivi note di riunioni, documentazione di progetto e PRD, incorpora elementi di lavoro e strutturali con componenti pronti all'uso.",
+      description:
+        "Le pagine ti permettono di catturare e organizzare informazioni in un unico posto. Scrivi note di riunioni, documentazione di progetto e PRD, incorpora elementi di lavoro e strutturali con componenti pronti all'uso.",
       cta_primary: "Crea la tua prima Pagina",
     },
     archive_pages: {
@@ -77,7 +87,8 @@ export default {
     },
     intake_sidebar: {
       title: "Registra richieste di Intake",
-      description: "Invia nuove richieste da rivedere, dare priorità e tracciare all'interno del flusso di lavoro del tuo progetto.",
+      description:
+        "Invia nuove richieste da rivedere, dare priorità e tracciare all'interno del flusso di lavoro del tuo progetto.",
       cta_primary: "Crea richiesta di Intake",
     },
     intake_main: {
@@ -87,7 +98,8 @@ export default {
   workspace: {
     archive_work_items: {
       title: "Nessun elemento di lavoro archiviato ancora",
-      description: "Manualmente o tramite automazione, puoi archiviare elementi di lavoro completati o annullati. Trovali qui una volta archiviati.",
+      description:
+        "Manualmente o tramite automazione, puoi archiviare elementi di lavoro completati o annullati. Trovali qui una volta archiviati.",
       cta_primary: "Imposta automazione",
     },
     archive_cycles: {
@@ -96,7 +108,8 @@ export default {
     },
     archive_modules: {
       title: "Nessun Modulo archiviato ancora",
-      description: "Per riordinare il tuo progetto, archivia i moduli completati o annullati. Trovali qui una volta archiviati.",
+      description:
+        "Per riordinare il tuo progetto, archivia i moduli completati o annullati. Trovali qui una volta archiviati.",
     },
     home_widget_quick_links: {
       title: "Mantieni a portata di mano riferimenti importanti, risorse o documenti per il tuo lavoro",
@@ -115,12 +128,14 @@ export default {
     },
     views: {
       title: "Nessuna Vista ancora",
-      description: "Aggiungi elementi di lavoro al tuo progetto e usa le viste per filtrare, ordinare e monitorare i progressi senza sforzo.",
+      description:
+        "Aggiungi elementi di lavoro al tuo progetto e usa le viste per filtrare, ordinare e monitorare i progressi senza sforzo.",
       cta_primary: "Aggiungi elemento di lavoro",
     },
     drafts: {
       title: "Elementi di lavoro semi-scritti",
-      description: "Per provare questo, inizia ad aggiungere un elemento di lavoro e lascialo a metà o crea la tua prima bozza qui sotto. 😉",
+      description:
+        "Per provare questo, inizia ad aggiungere un elemento di lavoro e lascialo a metà o crea la tua prima bozza qui sotto. 😉",
       cta_primary: "Crea elemento di lavoro bozza",
     },
     projects_archived: {
@@ -131,7 +146,8 @@ export default {
       title: "Crea progetti per visualizzare qui le metriche del progetto.",
     },
     analytics_work_items: {
-      title: "Crea progetti con elementi di lavoro e assegnatari per iniziare a tracciare prestazioni, progressi e impatto del team qui.",
+      title:
+        "Crea progetti con elementi di lavoro e assegnatari per iniziare a tracciare prestazioni, progressi e impatto del team qui.",
     },
     analytics_no_cycle: {
       title: "Crea cicli per organizzare il lavoro in fasi temporali e tracciare i progressi attraverso gli sprint.",
@@ -146,7 +162,8 @@ export default {
   settings: {
     estimates: {
       title: "Nessuna stima ancora",
-      description: "Definisci come il tuo team misura lo sforzo e traccialo in modo coerente su tutti gli elementi di lavoro.",
+      description:
+        "Definisci come il tuo team misura lo sforzo e traccialo in modo coerente su tutti gli elementi di lavoro.",
       cta_primary: "Aggiungi sistema di stima",
     },
     labels: {
@@ -156,7 +173,8 @@ export default {
     },
     exports: {
       title: "Nessuna esportazione ancora",
-      description: "Al momento non hai record di esportazione. Una volta esportati i dati, tutti i record appariranno qui.",
+      description:
+        "Al momento non hai record di esportazione. Una volta esportati i dati, tutti i record appariranno qui.",
     },
     tokens: {
       title: "Nessun token personale ancora",

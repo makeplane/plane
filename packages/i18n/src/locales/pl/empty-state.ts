@@ -26,23 +26,27 @@ export default {
   project: {
     work_items: {
       title: "Zacznij od swojego pierwszego elementu roboczego.",
-      description: "Elementy robocze są podstawowymi elementami Twojego projektu — przypisuj właścicieli, ustalaj priorytety i łatwo śledź postęp.",
+      description:
+        "Elementy robocze są podstawowymi elementami Twojego projektu — przypisuj właścicieli, ustalaj priorytety i łatwo śledź postęp.",
       cta_primary: "Utwórz swój pierwszy element roboczy",
     },
     cycles: {
       title: "Grupuj i ograniczaj czasowo swoją pracę w Cyklach.",
-      description: "Podziel pracę na bloki czasowe, pracuj wstecz od terminu projektu, aby ustalić daty, i osiągaj wymierny postęp jako zespół.",
+      description:
+        "Podziel pracę na bloki czasowe, pracuj wstecz od terminu projektu, aby ustalić daty, i osiągaj wymierny postęp jako zespół.",
       cta_primary: "Ustaw swój pierwszy cykl",
     },
     cycle_work_items: {
       title: "Brak elementów roboczych do wyświetlenia w tym cyklu",
-      description: "Utwórz elementy robocze, aby rozpocząć monitorowanie postępów Twojego zespołu w tym cyklu i osiągnąć swoje cele na czas.",
+      description:
+        "Utwórz elementy robocze, aby rozpocząć monitorowanie postępów Twojego zespołu w tym cyklu i osiągnąć swoje cele na czas.",
       cta_primary: "Utwórz element roboczy",
       cta_secondary: "Dodaj istniejący element roboczy",
     },
     modules: {
       title: "Mapuj cele swojego projektu na Moduły i łatwo śledź.",
-      description: "Moduły składają się z połączonych elementów roboczych. Pomagają one monitorować postęp przez fazy projektu, każda z konkretnymi terminami i analityką, aby wskazać, jak blisko jesteś osiągnięcia tych faz.",
+      description:
+        "Moduły składają się z połączonych elementów roboczych. Pomagają one monitorować postęp przez fazy projektu, każda z konkretnymi terminami i analityką, aby wskazać, jak blisko jesteś osiągnięcia tych faz.",
       cta_primary: "Ustaw swój pierwszy moduł",
     },
     module_work_items: {
@@ -53,12 +57,14 @@ export default {
     },
     views: {
       title: "Zapisz niestandardowe widoki dla swojego projektu",
-      description: "Widoki to zapisane filtry, które pomagają szybko uzyskać dostęp do najczęściej używanych informacji. Współpracuj bez wysiłku, gdy członkowie zespołu udostępniają i dostosowują widoki do swoich konkretnych potrzeb.",
+      description:
+        "Widoki to zapisane filtry, które pomagają szybko uzyskać dostęp do najczęściej używanych informacji. Współpracuj bez wysiłku, gdy członkowie zespołu udostępniają i dostosowują widoki do swoich konkretnych potrzeb.",
       cta_primary: "Utwórz widok",
     },
     no_work_items_in_project: {
       title: "Brak elementów roboczych w projekcie jeszcze",
-      description: "Dodaj elementy robocze do swojego projektu i podziel swoją pracę na śledzone części za pomocą widoków.",
+      description:
+        "Dodaj elementy robocze do swojego projektu i podziel swoją pracę na śledzone części za pomocą widoków.",
       cta_primary: "Dodaj element roboczy",
     },
     work_item_filter: {
@@ -68,16 +74,19 @@ export default {
     },
     pages: {
       title: "Dokumentuj wszystko — od notatek po PRD",
-      description: "Strony pozwalają przechwytywać i organizować informacje w jednym miejscu. Pisz notatki ze spotkań, dokumentację projektu i PRD, osadzaj elementy robocze i strukturyzuj je za pomocą gotowych komponentów.",
+      description:
+        "Strony pozwalają przechwytywać i organizować informacje w jednym miejscu. Pisz notatki ze spotkań, dokumentację projektu i PRD, osadzaj elementy robocze i strukturyzuj je za pomocą gotowych komponentów.",
       cta_primary: "Utwórz swoją pierwszą Stronę",
     },
     archive_pages: {
       title: "Jeszcze brak zarchiwizowanych stron",
-      description: "Archiwizuj strony, które nie są na Twoim radarze. Uzyskaj do nich dostęp tutaj, gdy będzie to potrzebne.",
+      description:
+        "Archiwizuj strony, które nie są na Twoim radarze. Uzyskaj do nich dostęp tutaj, gdy będzie to potrzebne.",
     },
     intake_sidebar: {
       title: "Rejestruj zgłoszenia przyjmowane",
-      description: "Przesyłaj nowe zgłoszenia do przeglądu, ustalania priorytetów i śledzenia w ramach przepływu pracy Twojego projektu.",
+      description:
+        "Przesyłaj nowe zgłoszenia do przeglądu, ustalania priorytetów i śledzenia w ramach przepływu pracy Twojego projektu.",
       cta_primary: "Utwórz zgłoszenie przyjmowane",
     },
     intake_main: {
@@ -87,7 +96,8 @@ export default {
   workspace: {
     archive_work_items: {
       title: "Jeszcze brak zarchiwizowanych elementów roboczych",
-      description: "Ręcznie lub za pomocą automatyzacji możesz archiwizować ukończone lub anulowane elementy robocze. Znajdź je tutaj po zarchiwizowaniu.",
+      description:
+        "Ręcznie lub za pomocą automatyzacji możesz archiwizować ukończone lub anulowane elementy robocze. Znajdź je tutaj po zarchiwizowaniu.",
       cta_primary: "Ustaw automatyzację",
     },
     archive_cycles: {
@@ -96,7 +106,8 @@ export default {
     },
     archive_modules: {
       title: "Jeszcze brak zarchiwizowanych Modułów",
-      description: "Aby uporządkować swój projekt, archiwizuj ukończone lub anulowane moduły. Znajdź je tutaj po zarchiwizowaniu.",
+      description:
+        "Aby uporządkować swój projekt, archiwizuj ukończone lub anulowane moduły. Znajdź je tutaj po zarchiwizowaniu.",
     },
     home_widget_quick_links: {
       title: "Miej pod ręką ważne odniesienia, zasoby lub dokumenty do swojej pracy",
@@ -115,12 +126,14 @@ export default {
     },
     views: {
       title: "Jeszcze brak Widoków",
-      description: "Dodaj elementy robocze do swojego projektu i używaj widoków do filtrowania, sortowania i monitorowania postępów bez wysiłku.",
+      description:
+        "Dodaj elementy robocze do swojego projektu i używaj widoków do filtrowania, sortowania i monitorowania postępów bez wysiłku.",
       cta_primary: "Dodaj element roboczy",
     },
     drafts: {
       title: "Półnapisane elementy robocze",
-      description: "Aby to wypróbować, zacznij dodawać element roboczy i zostaw go w połowie lub utwórz swój pierwszy szkic poniżej. 😉",
+      description:
+        "Aby to wypróbować, zacznij dodawać element roboczy i zostaw go w połowie lub utwórz swój pierwszy szkic poniżej. 😉",
       cta_primary: "Utwórz szkic elementu roboczego",
     },
     projects_archived: {
@@ -131,7 +144,8 @@ export default {
       title: "Utwórz projekty, aby wizualizować metryki projektu tutaj.",
     },
     analytics_work_items: {
-      title: "Utwórz projekty z elementami roboczymi i osobami przypisanymi, aby rozpocząć śledzenie wydajności, postępów i wpływu zespołu tutaj.",
+      title:
+        "Utwórz projekty z elementami roboczymi i osobami przypisanymi, aby rozpocząć śledzenie wydajności, postępów i wpływu zespołu tutaj.",
     },
     analytics_no_cycle: {
       title: "Utwórz cykle, aby organizować pracę w fazy czasowe i śledzić postępy przez sprinty.",
@@ -140,27 +154,32 @@ export default {
       title: "Utwórz moduły, aby organizować swoją pracę i śledzić postępy przez różne fazy.",
     },
     analytics_no_intake: {
-      title: "Skonfiguruj przyjmowanie, aby zarządzać przychodzącymi zgłoszeniami i śledzić, jak są akceptowane i odrzucane",
+      title:
+        "Skonfiguruj przyjmowanie, aby zarządzać przychodzącymi zgłoszeniami i śledzić, jak są akceptowane i odrzucane",
     },
   },
   settings: {
     estimates: {
       title: "Jeszcze brak szacunków",
-      description: "Zdefiniuj, jak Twój zespół mierzy wysiłek i śledź to konsekwentnie we wszystkich elementach roboczych.",
+      description:
+        "Zdefiniuj, jak Twój zespół mierzy wysiłek i śledź to konsekwentnie we wszystkich elementach roboczych.",
       cta_primary: "Dodaj system szacowania",
     },
     labels: {
       title: "Jeszcze brak etykiet",
-      description: "Twórz spersonalizowane etykiety, aby skutecznie kategoryzować i zarządzać swoimi elementami roboczymi.",
+      description:
+        "Twórz spersonalizowane etykiety, aby skutecznie kategoryzować i zarządzać swoimi elementami roboczymi.",
       cta_primary: "Utwórz swoją pierwszą etykietę",
     },
     exports: {
       title: "Jeszcze brak eksportów",
-      description: "Obecnie nie masz żadnych rekordów eksportu. Po wyeksportowaniu danych wszystkie rekordy pojawią się tutaj.",
+      description:
+        "Obecnie nie masz żadnych rekordów eksportu. Po wyeksportowaniu danych wszystkie rekordy pojawią się tutaj.",
     },
     tokens: {
       title: "Jeszcze brak Tokenu osobistego",
-      description: "Generuj bezpieczne tokeny API, aby połączyć swój obszar roboczy z zewnętrznymi systemami i aplikacjami.",
+      description:
+        "Generuj bezpieczne tokeny API, aby połączyć swój obszar roboczy z zewnętrznymi systemami i aplikacjami.",
       cta_primary: "Dodaj token API",
     },
   },

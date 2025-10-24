@@ -42,7 +42,8 @@ export default {
     },
     modules: {
       title: "将项目目标映射到模块并轻松跟踪。",
-      description: "模块由相互关联的工作项组成。它们有助于监控项目阶段的进度,每个阶段都有特定的截止日期和分析,以指示您离实现这些阶段有多近。",
+      description:
+        "模块由相互关联的工作项组成。它们有助于监控项目阶段的进度,每个阶段都有特定的截止日期和分析,以指示您离实现这些阶段有多近。",
       cta_primary: "设置您的第一个模块",
     },
     module_work_items: {
@@ -53,7 +54,8 @@ export default {
     },
     views: {
       title: "为项目保存自定义视图",
-      description: "视图是保存的过滤器,可帮助您快速访问最常用的信息。团队成员可以轻松协作,共享视图并根据特定需求进行调整。",
+      description:
+        "视图是保存的过滤器,可帮助您快速访问最常用的信息。团队成员可以轻松协作,共享视图并根据特定需求进行调整。",
       cta_primary: "创建视图",
     },
     no_work_items_in_project: {
@@ -68,7 +70,8 @@ export default {
     },
     pages: {
       title: "记录一切 — 从笔记到 PRD",
-      description: "页面让您在一个地方捕获和组织信息。编写会议笔记、项目文档和 PRD,嵌入工作项,并使用现成的组件进行结构化。",
+      description:
+        "页面让您在一个地方捕获和组织信息。编写会议笔记、项目文档和 PRD,嵌入工作项,并使用现成的组件进行结构化。",
       cta_primary: "创建您的第一个页面",
     },
     archive_pages: {

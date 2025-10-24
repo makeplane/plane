@@ -2,7 +2,8 @@ export default {
   common: {
     progress: {
       title: "Nu există încă metrici de progres de afișat.",
-      description: "Începeți să setați valori de proprietăți în elementele de lucru pentru a vedea metricile de progres aici.",
+      description:
+        "Începeți să setați valori de proprietăți în elementele de lucru pentru a vedea metricile de progres aici.",
     },
     updates: {
       title: "Încă nu există actualizări.",
@@ -26,23 +27,27 @@ export default {
   project: {
     work_items: {
       title: "Începeți cu primul dvs. element de lucru.",
-      description: "Elementele de lucru sunt blocurile de construcție ale proiectului dvs. — alocați proprietari, stabiliți priorități și urmăriți progresul cu ușurință.",
+      description:
+        "Elementele de lucru sunt blocurile de construcție ale proiectului dvs. — alocați proprietari, stabiliți priorități și urmăriți progresul cu ușurință.",
       cta_primary: "Creați primul dvs. element de lucru",
     },
     cycles: {
       title: "Grupați și limitați în timp munca dvs. în Cicluri.",
-      description: "Împărțiți munca în bucăți limitate în timp, lucrați înapoi de la termenul limită al proiectului pentru a stabili datele și faceți progrese tangibile ca echipă.",
+      description:
+        "Împărțiți munca în bucăți limitate în timp, lucrați înapoi de la termenul limită al proiectului pentru a stabili datele și faceți progrese tangibile ca echipă.",
       cta_primary: "Setați primul dvs. ciclu",
     },
     cycle_work_items: {
       title: "Niciun element de lucru de afișat în acest ciclu",
-      description: "Creați elemente de lucru pentru a începe monitorizarea progresului echipei dvs. în acest ciclu și pentru a-vă atinge obiectivele la timp.",
+      description:
+        "Creați elemente de lucru pentru a începe monitorizarea progresului echipei dvs. în acest ciclu și pentru a-vă atinge obiectivele la timp.",
       cta_primary: "Creați element de lucru",
       cta_secondary: "Adăugați element de lucru existent",
     },
     modules: {
       title: "Mapați obiectivele proiectului dvs. la Module și urmăriți cu ușurință.",
-      description: "Modulele sunt compuse din elemente de lucru interconectate. Acestea ajută la monitorizarea progresului prin fazele proiectului, fiecare cu termene limită și analize specifice pentru a indica cât de aproape sunteți de atingerea acelor faze.",
+      description:
+        "Modulele sunt compuse din elemente de lucru interconectate. Acestea ajută la monitorizarea progresului prin fazele proiectului, fiecare cu termene limită și analize specifice pentru a indica cât de aproape sunteți de atingerea acelor faze.",
       cta_primary: "Setați primul dvs. modul",
     },
     module_work_items: {
@@ -53,12 +58,14 @@ export default {
     },
     views: {
       title: "Salvați vizualizări personalizate pentru proiectul dvs.",
-      description: "Vizualizările sunt filtre salvate care vă ajută să accesați rapid informațiile pe care le utilizați cel mai mult. Colaborați fără efort pe măsură ce colegii de echipă partajează și personalizează vizualizările conform nevoilor lor specifice.",
+      description:
+        "Vizualizările sunt filtre salvate care vă ajută să accesați rapid informațiile pe care le utilizați cel mai mult. Colaborați fără efort pe măsură ce colegii de echipă partajează și personalizează vizualizările conform nevoilor lor specifice.",
       cta_primary: "Creați vizualizare",
     },
     no_work_items_in_project: {
       title: "Încă nu există elemente de lucru în proiect",
-      description: "Adăugați elemente de lucru la proiectul dvs. și împărțiți munca în bucăți urmăribile cu vizualizări.",
+      description:
+        "Adăugați elemente de lucru la proiectul dvs. și împărțiți munca în bucăți urmăribile cu vizualizări.",
       cta_primary: "Adăugați element de lucru",
     },
     work_item_filter: {
@@ -68,7 +75,8 @@ export default {
     },
     pages: {
       title: "Documentați totul — de la notițe la PRD-uri",
-      description: "Paginile vă permit să capturați și să organizați informații într-un singur loc. Scrieți note de întâlnire, documentație de proiect și PRD-uri, încorporați elemente de lucru și structurați-le cu componente gata de utilizat.",
+      description:
+        "Paginile vă permit să capturați și să organizați informații într-un singur loc. Scrieți note de întâlnire, documentație de proiect și PRD-uri, încorporați elemente de lucru și structurați-le cu componente gata de utilizat.",
       cta_primary: "Creați prima dvs. Pagină",
     },
     archive_pages: {
@@ -77,7 +85,8 @@ export default {
     },
     intake_sidebar: {
       title: "Înregistrați solicitări de Admitere",
-      description: "Trimiteți solicitări noi pentru a fi revizuite, prioritizate și urmărite în cadrul fluxului de lucru al proiectului dvs.",
+      description:
+        "Trimiteți solicitări noi pentru a fi revizuite, prioritizate și urmărite în cadrul fluxului de lucru al proiectului dvs.",
       cta_primary: "Creați solicitare de Admitere",
     },
     intake_main: {
@@ -87,7 +96,8 @@ export default {
   workspace: {
     archive_work_items: {
       title: "Încă nu există elemente de lucru arhivate",
-      description: "Manual sau prin automatizare, puteți arhiva elemente de lucru finalizate sau anulate. Găsiți-le aici odată arhivate.",
+      description:
+        "Manual sau prin automatizare, puteți arhiva elemente de lucru finalizate sau anulate. Găsiți-le aici odată arhivate.",
       cta_primary: "Configurați automatizarea",
     },
     archive_cycles: {
@@ -96,7 +106,8 @@ export default {
     },
     archive_modules: {
       title: "Încă nu există Module arhivate",
-      description: "Pentru a vă aranja proiectul, arhivați modulele finalizate sau anulate. Găsiți-le aici odată arhivate.",
+      description:
+        "Pentru a vă aranja proiectul, arhivați modulele finalizate sau anulate. Găsiți-le aici odată arhivate.",
     },
     home_widget_quick_links: {
       title: "Păstrați referințe importante, resurse sau documente la îndemână pentru munca dvs.",
@@ -115,12 +126,14 @@ export default {
     },
     views: {
       title: "Încă nu există Vizualizări",
-      description: "Adăugați elemente de lucru la proiectul dvs. și utilizați vizualizări pentru a filtra, sorta și monitoriza progresul fără efort.",
+      description:
+        "Adăugați elemente de lucru la proiectul dvs. și utilizați vizualizări pentru a filtra, sorta și monitoriza progresul fără efort.",
       cta_primary: "Adăugați element de lucru",
     },
     drafts: {
       title: "Elemente de lucru semi-scrise",
-      description: "Pentru a încerca acest lucru, începeți să adăugați un element de lucru și lăsați-l nefinalizat sau creați prima dvs. schiță mai jos. 😉",
+      description:
+        "Pentru a încerca acest lucru, începeți să adăugați un element de lucru și lăsați-l nefinalizat sau creați prima dvs. schiță mai jos. 😉",
       cta_primary: "Creați element de lucru schiță",
     },
     projects_archived: {
@@ -131,7 +144,8 @@ export default {
       title: "Creați proiecte pentru a vizualiza metricile proiectului aici.",
     },
     analytics_work_items: {
-      title: "Creați proiecte cu elemente de lucru și responsabili pentru a începe urmărirea performanței, progresului și impactului echipei aici.",
+      title:
+        "Creați proiecte cu elemente de lucru și responsabili pentru a începe urmărirea performanței, progresului și impactului echipei aici.",
     },
     analytics_no_cycle: {
       title: "Creați cicluri pentru a organiza munca în faze limitate în timp și a urmări progresul în sprint-uri.",
@@ -146,7 +160,8 @@ export default {
   settings: {
     estimates: {
       title: "Încă nu există estimări",
-      description: "Definiți modul în care echipa dvs. măsoară efortul și urmăriți-l consecvent în toate elementele de lucru.",
+      description:
+        "Definiți modul în care echipa dvs. măsoară efortul și urmăriți-l consecvent în toate elementele de lucru.",
       cta_primary: "Adăugați sistem de estimări",
     },
     labels: {
@@ -156,11 +171,13 @@ export default {
     },
     exports: {
       title: "Încă nu există exporturi",
-      description: "Nu aveți nicio înregistrare de export în acest moment. Odată ce exportați date, toate înregistrările vor apărea aici.",
+      description:
+        "Nu aveți nicio înregistrare de export în acest moment. Odată ce exportați date, toate înregistrările vor apărea aici.",
     },
     tokens: {
       title: "Încă nu există token Personal",
-      description: "Generați token-uri API sigure pentru a conecta spațiul dvs. de lucru cu sisteme și aplicații externe.",
+      description:
+        "Generați token-uri API sigure pentru a conecta spațiul dvs. de lucru cu sisteme și aplicații externe.",
       cta_primary: "Adăugați token API",
     },
   },

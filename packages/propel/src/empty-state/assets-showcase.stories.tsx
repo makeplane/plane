@@ -137,7 +137,9 @@ export const AllAssets: Story = {
       <div>
         <div className="mb-6">
           <h2 className="text-xl font-semibold text-custom-text-100">Horizontal Stack Assets</h2>
-          <p className="text-sm text-custom-text-300">For EmptyStateCompact - {HorizontalStackAssetsMap.length} assets</p>
+          <p className="text-sm text-custom-text-300">
+            For EmptyStateCompact - {HorizontalStackAssetsMap.length} assets
+          </p>
         </div>
         <div className="grid w-full grid-cols-12 gap-4">
           {HorizontalStackAssetsMap.map((item) => (
@@ -146,9 +148,7 @@ export const AllAssets: Story = {
               className="col-span-6 flex flex-col items-center justify-center gap-2 rounded border border-custom-border-200 bg-custom-background-100 p-4 sm:col-span-3 lg:col-span-2"
             >
               <div className="flex h-16 w-16 items-center justify-center">{item.asset}</div>
-              <code className="text-[10px] text-custom-text-400">
-                {item.title.toLowerCase().replace(/\s+/g, "-")}
-              </code>
+              <code className="text-[10px] text-custom-text-400">{item.title.toLowerCase().replace(/\s+/g, "-")}</code>
             </div>
           ))}
         </div>
@@ -158,7 +158,9 @@ export const AllAssets: Story = {
       <div>
         <div className="mb-6">
           <h2 className="text-xl font-semibold text-custom-text-100">Vertical Stack Assets</h2>
-          <p className="text-sm text-custom-text-300">For EmptyStateDetailed - {VerticalStackAssetsMap.length} assets</p>
+          <p className="text-sm text-custom-text-300">
+            For EmptyStateDetailed - {VerticalStackAssetsMap.length} assets
+          </p>
         </div>
         <div className="grid w-full grid-cols-12 gap-4">
           {VerticalStackAssetsMap.map((item) => (

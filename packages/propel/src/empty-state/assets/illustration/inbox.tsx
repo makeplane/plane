@@ -1,7 +1,15 @@
 import { type TIllustrationAssetProps, ILLUSTRATION_COLOR_TOKEN_MAP } from "../helper";
 
 export const InboxIllustration = ({ className, ...rest }: TIllustrationAssetProps) => (
-  <svg width="100" height="92" viewBox="0 0 100 92" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} {...rest}>
+  <svg
+    width="100"
+    height="92"
+    viewBox="0 0 100 92"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+    {...rest}
+  >
     <path
       d="M47.9704 90.9139C45.6095 90.9139 43.3811 90.4381 41.6888 89.5768L3.42089 70.0815C1.60205 69.1601 0.602295 67.8772 0.602295 66.48V46.5631C0.602295 45.1719 1.60205 43.8951 3.42089 42.9676L45.748 21.4005C47.4344 20.5393 49.6628 20.0635 52.0236 20.0635C54.3845 20.0635 56.6129 20.5393 58.2992 21.4005L96.5732 40.9018C98.392 41.8233 99.3917 43.1061 99.3917 44.5034V64.4202C99.3917 65.8115 98.392 67.0883 96.5732 68.0158L54.246 89.5829C52.5597 90.4441 50.3313 90.9199 47.9644 90.9199L47.9704 90.9139Z"
       fill={ILLUSTRATION_COLOR_TOKEN_MAP.fill.primary}
