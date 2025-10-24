@@ -6,10 +6,10 @@ import useSWR from "swr";
 // plane imports
 import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { cn } from "@plane/utils";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
-import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -87,8 +87,8 @@ export const NotificationsRoot = observer(({ workspaceSlug }: NotificationsRootP
   return (
     <div className={cn("w-full h-full overflow-hidden ", isWorkItem && "overflow-y-auto")}>
       {!currentSelectedNotificationId ? (
-        <div className="w-full h-screen flex justify-center items-center">
-          <SimpleEmptyState title={t("notification.empty_state.detail.title")} assetPath={resolvedPath} />
+        <div className="flex justify-center items-center size-full">
+          <EmptyStateCompact assetKey="unknown" assetClassName="size-20" />
         </div>
       ) : (
         <>
