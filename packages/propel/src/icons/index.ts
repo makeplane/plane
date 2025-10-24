@@ -5,6 +5,7 @@ export * from "./ai-icon";
 export * from "./analytics-icon";
 export * from "./archive-icon";
 export * from "./at-risk-icon";
+export * from "./attachments";
 export * from "./bar-icon";
 export * from "./blocked-icon";
 export * from "./blocker-icon";
