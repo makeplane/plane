@@ -25,8 +25,7 @@ export const bannerBaseStyles = "flex items-center justify-between w-full transi
 
 // Get banner container styling
 export const getBannerStyling = (variant: TBannerVariant): string => {
-
-  const variantStyles = bannerStyling[variant]
+  const variantStyles = bannerStyling[variant];
   const sizeStyles = bannerSizeStyling.container;
 
   return `${bannerBaseStyles} ${variantStyles} ${sizeStyles}`;
