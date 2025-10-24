@@ -69,13 +69,17 @@ const ProjectViewsPage = observer(() => {
           <ViewAppliedFiltersList
             appliedFilters={filters.filters ?? {}}
             handleClearAllFilters={() => {
-            const ownedBy = filters.filters?.owned_by;
-            clearAllFilters();
-            if (ownedBy) updateFilters("filters", { owned_by: ownedBy });
+              const ownedBy = filters.filters?.owned_by;
+              clearAllFilters();
+              if (ownedBy) {
+                updateFilters("filters", { owned_by: ownedBy });
+              }
             }}
             handleRemoveFilter={(key, value) => {
-            if (key === "owned_by") return;
-            handleRemoveFilter(key, value);
+              if (key === "owned_by") {
+                return;
+              }
+              handleRemoveFilter(key, value);
             }}
             alwaysAllowEditing
           />

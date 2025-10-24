@@ -27,7 +27,10 @@ export const ViewAppliedFiltersList: React.FC<Props> = (props) => {
 
   const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();
-  const isProjectViewsPage = workspaceSlug && projectId && pathname?.includes("/views");
+  const isProjectViewsPage = !!(workspaceSlug && projectId && pathname?.includes("/views"));
+  const shouldShowRemoveButton = (isProjectViewsPage: boolean, filterKey: keyof TViewFilterProps): boolean => {
+    return !(isProjectViewsPage && filterKey === "owned_by");
+  };
 
   if (!appliedFilters) return null;
   if (Object.keys(appliedFilters).length === 0) return null;
@@ -66,16 +69,16 @@ export const ViewAppliedFiltersList: React.FC<Props> = (props) => {
                 values={Array.isArray(value) ? (value as string[]) : []}
               />
             )}
-            {isEditingAllowed && 
-             !(isProjectViewsPage && filterKey === "owned_by") && (
-              <button
-                type="button"
-                className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
-                onClick={() => handleRemoveFilter(filterKey, null)}
-              >
-                <X size={12} strokeWidth={2} />
-              </button>
-            )}
+            {isEditingAllowed &&
+              shouldShowRemoveButton(isProjectViewsPage, filterKey) && (
+                <button
+                  type="button"
+                  className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                  onClick={() => handleRemoveFilter(filterKey, null)}
+                >
+                  <X size={12} strokeWidth={2} />
+                </button>
+              )}
           </Tag>
         );
       })}
