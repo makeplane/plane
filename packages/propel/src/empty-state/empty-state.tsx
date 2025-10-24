@@ -1,7 +1,8 @@
 import React from "react";
+import { CompactAssetType, DetailedAssetType } from "./assets/asset-types";
 import { EmptyStateCompact } from "./compact-empty-state";
 import { EmptyStateDetailed } from "./detailed-empty-state";
-import type { CompactEmptyStateProps, DetailedEmptyStateProps } from "./types";
+import type { BaseEmptyStateCommonProps } from "./types";
 
 /**
  * @deprecated Use EmptyStateCompact or EmptyStateDetailed directly with assetKey for better type safety
@@ -19,13 +20,13 @@ export interface EmptyStateProps {
   asset?: React.ReactNode;
   title?: string;
   description?: string;
-  actions?: CompactEmptyStateProps["actions"];
+  actions?: BaseEmptyStateCommonProps["actions"];
   className?: string;
   rootClassName?: string;
   assetClassName?: string;
   type?: EmptyStateType;
   /** Type-safe asset key (use instead of asset) */
-  assetKey?: CompactEmptyStateProps["assetKey"] | DetailedEmptyStateProps["assetKey"];
+  assetKey?: CompactAssetType | DetailedAssetType;
 }
 
 export const EmptyState: React.FC<EmptyStateProps> = ({
@@ -43,7 +44,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
     return (
       <EmptyStateCompact
         asset={asset}
-        assetKey={assetKey as any}
+        assetKey={assetKey}
         title={title || description} // For simple type, use description as title if no title
         actions={actions}
         className={className}
@@ -56,7 +57,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   return (
     <EmptyStateDetailed
       asset={asset}
-      assetKey={assetKey as any}
+      assetKey={assetKey}
       title={title}
       description={description}
       actions={actions}

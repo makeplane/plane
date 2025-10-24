@@ -2,9 +2,10 @@ import React from "react";
 import { Button } from "../button/button";
 import { cn } from "../utils/classname";
 import { getDetailedAsset } from "./assets/asset-registry";
-import type { DetailedEmptyStateProps } from "./types";
+import type { DetailedAssetType } from "./assets/asset-types";
+import type { BaseEmptyStateCommonProps } from "./types";
 
-export const EmptyStateDetailed: React.FC<DetailedEmptyStateProps> = ({
+export const EmptyStateDetailed: React.FC<BaseEmptyStateCommonProps> = ({
   asset,
   assetKey,
   title,
@@ -15,7 +16,7 @@ export const EmptyStateDetailed: React.FC<DetailedEmptyStateProps> = ({
   assetClassName,
 }) => {
   // Determine which asset to use: assetKey takes precedence, fallback to custom asset
-  const resolvedAsset = assetKey ? getDetailedAsset(assetKey, assetClassName) : asset;
+  const resolvedAsset = assetKey ? getDetailedAsset(assetKey as DetailedAssetType, assetClassName) : asset;
 
   return (
     <div className={cn("flex size-full items-center justify-center", rootClassName)}>

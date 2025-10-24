@@ -20,6 +20,7 @@ export const ProjectViewEmptyState: React.FC = observer(() => {
   );
 
   return (
+    // TODO: Add translation
     <EmptyStateDetailed
       assetKey="work-item"
       title="View work items will appear here"

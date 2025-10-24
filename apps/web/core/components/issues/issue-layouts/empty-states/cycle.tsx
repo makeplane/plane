@@ -19,7 +19,6 @@ import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkItemFilterInstance } from "@/hooks/store/work-item-filters/use-work-item-filter-instance";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 export const CycleEmptyState: React.FC = observer(() => {
   // router
@@ -33,27 +32,18 @@ export const CycleEmptyState: React.FC = observer(() => {
   const { t } = useTranslation();
   // store hooks
   const { getCycleById } = useCycle();
-  const { issues, issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
+  const { issues } = useIssues(EIssuesStoreType.CYCLE);
   const { toggleCreateIssueModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   // derived values
   const cycleWorkItemFilter = cycleId ? useWorkItemFilterInstance(EIssuesStoreType.CYCLE, cycleId) : undefined;
   const cycleDetails = cycleId ? getCycleById(cycleId) : undefined;
-  const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
   const isCompletedCycleSnapshotAvailable = !isEmpty(cycleDetails?.progress_snapshot ?? {});
   const isCompletedAndEmpty = isCompletedCycleSnapshotAvailable || cycleDetails?.status?.toLowerCase() === "completed";
-  const additionalPath = activeLayout ?? "list";
   const canPerformEmptyStateActions = allowPermissions(
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
     EUserPermissionsLevel.PROJECT
   );
-  const emptyFilterResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/empty-filters/",
-    additionalPath: additionalPath,
-  });
-  const completedNoIssuesResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/cycle/completed-no-issues",
-  });
 
   const handleAddIssuesToCycle = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId || !cycleId) return;
@@ -95,11 +85,6 @@ export const CycleEmptyState: React.FC = observer(() => {
             assetKey="work-item"
             title={t("project_cycles.empty_state.completed_no_issues.title")}
             description={t("project_cycles.empty_state.completed_no_issues.description")}
-            actions={[
-              {
-                label: t("project.cycles.cta_primary"),
-              },
-            ]}
           />
         ) : cycleWorkItemFilter?.hasActiveFilters ? (
           <EmptyStateDetailed

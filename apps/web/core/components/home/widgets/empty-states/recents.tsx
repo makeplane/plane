@@ -1,5 +1,6 @@
 import { useTranslation } from "@plane/i18n";
-import { EmptyStateCompact, type CompactAssetType } from "@plane/propel/empty-state";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
+import type { CompactAssetType } from "@plane/propel/empty-state";
 
 const getDisplayContent = (type: string): { assetKey: CompactAssetType; text: string } => {
   switch (type) {
