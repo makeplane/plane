@@ -14,7 +14,6 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
@@ -22,11 +21,10 @@ import { Search } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { CloseIcon } from "@plane/propel/icons";
 // plane package imports
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@plane/propel/table";
 import { cn } from "@plane/utils";
 // plane web components
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-import AnalyticsEmptyState from "../empty-state";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -43,7 +41,6 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
   const { t } = useTranslation();
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [isSearchOpen, setIsSearchOpen] = React.useState(false);
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics/empty-table" });
 
   const table = useReactTable({
     data,
@@ -157,14 +154,12 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="p-0">
-                  <div className="flex h-[350px] w-full items-center justify-center border border-custom-border-100 ">
-                    <AnalyticsEmptyState
-                      title={t("workspace_analytics.empty_state.customized_insights.title")}
-                      description={t("workspace_analytics.empty_state.customized_insights.description")}
-                      className="border-0"
-                      assetPath={resolvedPath}
-                    />
-                  </div>
+                  <EmptyStateCompact
+                    assetKey="unknown"
+                    assetClassName="size-20"
+                    rootClassName="border border-custom-border-100 px-5 py-10 md:py-20 md:px-20"
+                    title={t("workspace.analytics_work_items.title")}
+                  />
                 </TableCell>
               </TableRow>
             )}

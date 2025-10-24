@@ -6,12 +6,11 @@ import { Fragment, useState } from "react";
 import { observer } from "mobx-react";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EIssuesStoreType, EUserWorkspaceRoles } from "@plane/types";
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // constants
 import { useUserPermissions } from "@/hooks/store/user";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 export const WorkspaceDraftEmptyState: FC = observer(() => {
   // state
@@ -24,7 +23,6 @@ export const WorkspaceDraftEmptyState: FC = observer(() => {
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/cycles" });
 
   return (
     <Fragment>
@@ -35,17 +33,21 @@ export const WorkspaceDraftEmptyState: FC = observer(() => {
         isDraft
       />
       <div className="relative h-full w-full overflow-y-auto">
-        <DetailedEmptyState
-          title={t("workspace_draft_issues.empty_state.title")}
-          description={t("workspace_draft_issues.empty_state.description")}
-          assetPath={resolvedPath}
-          primaryButton={{
-            text: t("workspace_draft_issues.empty_state.primary_button.text"),
-            onClick: () => {
-              setIsDraftIssueModalOpen(true);
+        <EmptyStateDetailed
+          title={t("workspace.drafts.title")}
+          description={t("workspace.drafts.description")}
+          assetKey="draft"
+          assetClassName="size-20"
+          actions={[
+            {
+              label: t("workspace.drafts.cta_primary"),
+              onClick: () => {
+                setIsDraftIssueModalOpen(true);
+              },
+              disabled: !canPerformEmptyStateActions,
+              variant: "primary",
             },
-            disabled: !canPerformEmptyStateActions,
-          }}
+          ]}
         />
       </div>
     </Fragment>
