@@ -7,18 +7,17 @@ import useSWR from "swr";
 import { PROFILE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // component
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { APITokenService } from "@plane/services";
 import { CreateApiTokenModal } from "@/components/api-token/modal/create-token-modal";
 import { ApiTokenListItem } from "@/components/api-token/token-list-item";
 import { PageHead } from "@/components/core/page-title";
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { SettingsHeading } from "@/components/settings/heading";
 import { APITokenSettingsLoader } from "@/components/ui/loader/settings/api-token";
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";
 // store hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 const apiTokenService = new APITokenService();
 
@@ -30,8 +29,6 @@ const ApiTokensPage = observer(() => {
   const { t } = useTranslation();
   // store hooks
   const { currentWorkspace } = useWorkspace();
-  // derived values
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/workspace-settings/api-tokens" });
 
   const { data: tokens } = useSWR(API_TOKENS_LIST, () => apiTokenService.list());
 
@@ -70,7 +67,7 @@ const ApiTokensPage = observer(() => {
             </div>
           </>
         ) : (
-          <div className="flex h-full w-full flex-col">
+          <div className="flex h-full w-full flex-col py-">
             <SettingsHeading
               title={t("account_settings.api_tokens.heading")}
               description={t("account_settings.api_tokens.description")}
@@ -84,24 +81,26 @@ const ApiTokensPage = observer(() => {
                 },
               }}
             />
-            <div className="h-full w-full flex items-center justify-center">
-              <DetailedEmptyState
-                title=""
-                description=""
-                assetPath={resolvedPath}
-                className="w-full !p-0 justify-center mx-auto"
-                size="md"
-                primaryButton={{
-                  text: t("workspace_settings.settings.api_tokens.add_token"),
+
+            <EmptyStateCompact
+              assetKey="token"
+              assetClassName="size-20"
+              title={t("settings.tokens.title")}
+              description={t("settings.tokens.description")}
+              actions={[
+                {
+                  label: t("settings.tokens.cta_primary"),
                   onClick: () => {
                     captureClick({
                       elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.EMPTY_STATE_ADD_PAT_BUTTON,
                     });
                     setIsCreateTokenModalOpen(true);
                   },
-                }}
-              />
-            </div>
+                },
+              ]}
+              align="start"
+              rootClassName="py-20"
+            />
           </div>
         )}
       </section>

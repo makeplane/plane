@@ -6,9 +6,9 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import type { IIssueLabel } from "@plane/types";
 import { Loader } from "@plane/ui";
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import type { TLabelOperationsCallbacks } from "@/components/labels";
 import {
   CreateUpdateLabelInline,
@@ -20,7 +20,6 @@ import {
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useLabel } from "@/hooks/store/use-label";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // local imports
 import { SettingsHeading } from "../settings/heading";
 
@@ -40,7 +39,6 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
   const { allowPermissions } = useUserPermissions();
   // derived values
   const isEditable = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/project-settings/labels" });
   const labelOperationsCallbacks: TLabelOperationsCallbacks = {
     createLabel: (data: Partial<IIssueLabel>) => createLabel(workspaceSlug?.toString(), projectId?.toString(), data),
     updateLabel: (labelId: string, data: Partial<IIssueLabel>) =>
@@ -111,24 +109,25 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
         )}
         {projectLabels ? (
           projectLabels.length === 0 && !showLabelForm ? (
-            <div className="flex items-center justify-center h-full w-full">
-              <DetailedEmptyState
-                title={""}
-                description={""}
-                primaryButton={{
-                  text: "Create your first label",
+            <EmptyStateCompact
+              assetKey="label"
+              assetClassName="size-20"
+              title={t("settings.labels.title")}
+              description={t("settings.labels.description")}
+              actions={[
+                {
+                  label: t("settings.labels.cta_primary"),
                   onClick: () => {
                     newLabel();
                     captureClick({
                       elementName: PROJECT_SETTINGS_TRACKER_ELEMENTS.LABELS_EMPTY_STATE_CREATE_BUTTON,
                     });
                   },
-                }}
-                assetPath={resolvedPath}
-                className="w-full !px-0 !py-0"
-                size="md"
-              />
-            </div>
+                },
+              ]}
+              align="start"
+              rootClassName="py-20"
+            />
           ) : (
             projectLabelsTree && (
               <div className="mt-3">
