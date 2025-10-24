@@ -260,7 +260,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
         id={`issue-${issueId}`}
         ref={cellRef}
         tabIndex={0}
-        className="relative md:sticky left-0 z-10 group/list-block bg-custom-background-100 min-w-60 max-w-[30vw]"
+        className="relative group/list-block bg-custom-background-100 min-w-60 max-w-[30vw]"
       >
         <ControlLink
           href={workItemLink}
