@@ -28,6 +28,10 @@
       "import": "./dist/avatar/index.mjs",
       "require": "./dist/avatar/index.js"
     },
+    "./banner": {
+      "import": "./dist/banner/index.mjs",
+      "require": "./dist/banner/index.js"
+    },
     "./button": {
       "import": "./dist/button/index.mjs",
       "require": "./dist/button/index.js"
