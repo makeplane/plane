@@ -131,6 +131,9 @@ export class ProjectViewStore implements IProjectViewStore {
     if (!this.fetchedMap[projectId]) return undefined;
 
     const ViewsList = Object.values(this.viewMap ?? {});
+    this.filters.filters ??= {};
+    this.filters.filters.owned_by = [this.rootStore.user.data?.id?.toString() ?? ""];
+    
     // helps to filter views based on the projectId, searchQuery and filters
     let filteredViews = ViewsList.filter(
       (view) =>
