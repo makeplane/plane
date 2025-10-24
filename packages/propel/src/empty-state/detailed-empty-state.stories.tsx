@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { EmptyStateDetailed } from "./detailed-empty-state";
-import type { DetailedEmptyStateProps } from "./types";
+import type { BaseEmptyStateCommonProps } from "./types";
 
-const meta: Meta<DetailedEmptyStateProps> = {
+const meta: Meta<BaseEmptyStateCommonProps> = {
   title: "Components/EmptyState/Detailed",
   component: EmptyStateDetailed,
   parameters: {
@@ -72,7 +72,7 @@ const meta: Meta<DetailedEmptyStateProps> = {
 };
 
 export default meta;
-type Story = StoryObj<DetailedEmptyStateProps>;
+type Story = StoryObj<BaseEmptyStateCommonProps>;
 
 // Primary story - showcases the most common usage
 export const Default: Story = {
@@ -92,7 +92,6 @@ export const Default: Story = {
 };
 
 export const WithSingleAction: Story = {
-  name: "With Single Action",
   args: {
     assetKey: "project",
     assetClassName: "w-40 h-45",
@@ -109,7 +108,6 @@ export const WithSingleAction: Story = {
 };
 
 export const WithMultipleActions: Story = {
-  name: "With Multiple Actions",
   args: {
     assetKey: "module",
     assetClassName: "w-40 h-45",
@@ -131,7 +129,6 @@ export const WithMultipleActions: Story = {
 };
 
 export const WithoutActions: Story = {
-  name: "Without Actions",
   args: {
     assetKey: "dashboard",
     assetClassName: "w-40 h-45",
@@ -141,7 +138,6 @@ export const WithoutActions: Story = {
 };
 
 export const ErrorState: Story = {
-  name: "Error - 404",
   args: {
     assetKey: "error-404",
     assetClassName: "w-40 h-45",

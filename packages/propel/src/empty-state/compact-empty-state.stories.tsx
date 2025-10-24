@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { EmptyStateCompact } from "./compact-empty-state";
-import type { CompactEmptyStateProps } from "./types";
+import type { BaseEmptyStateCommonProps } from "./types";
 
-const meta: Meta<CompactEmptyStateProps> = {
+const meta: Meta<BaseEmptyStateCommonProps> = {
   title: "Components/EmptyState/Compact",
   component: EmptyStateCompact,
   parameters: {
@@ -70,7 +70,7 @@ const meta: Meta<CompactEmptyStateProps> = {
 };
 
 export default meta;
-type Story = StoryObj<CompactEmptyStateProps>;
+type Story = StoryObj<BaseEmptyStateCommonProps>;
 
 // Using assetKey (recommended approach)
 export const WithAssetKey: Story = {
