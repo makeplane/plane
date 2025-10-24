@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { EIssueFilterType, ISSUE_LAYOUTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
@@ -24,7 +25,7 @@ const SUPPORTED_LAYOUTS = [
   { key: "calendar", titleTranslationKey: "issue.layouts.calendar", icon: CalendarLayoutIcon },
 ];
 
-export const CycleIssuesMobileHeader = () => {
+export const CycleIssuesMobileHeader = observer(() => {
   // router
   const { workspaceSlug, projectId, cycleId } = useParams();
   // states
@@ -150,4 +151,4 @@ export const CycleIssuesMobileHeader = () => {
       </div>
     </>
   );
-};
+});

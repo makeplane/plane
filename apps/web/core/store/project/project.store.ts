@@ -12,7 +12,7 @@ import { ProjectService, ProjectStateService, ProjectArchiveService } from "@/se
 // store
 import type { CoreRootStore } from "../root.store";
 
-type ProjectOverviewCollapsible = "links" | "attachments";
+type ProjectOverviewCollapsible = "links" | "attachments" | "milestones";
 
 export interface IProjectStore {
   // observables
