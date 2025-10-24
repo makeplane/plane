@@ -33,7 +33,7 @@ type Props = {
   handleOnSubmit: (data: ISearchIssueResponse[]) => Promise<void>;
   workspaceLevelToggle?: boolean;
   shouldHideIssue?: (issue: ISearchIssueResponse) => boolean;
-  selectedWorkItems?: ISearchIssueResponse[];
+  selectedWorkItemIds?: string[];
   workItemSearchServiceCallback?: (params: TProjectIssuesSearchParams) => Promise<ISearchIssueResponse[]>;
 };
 
@@ -51,7 +51,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
     handleOnSubmit,
     workspaceLevelToggle = false,
     shouldHideIssue,
-    selectedWorkItems,
+    selectedWorkItemIds,
     workItemSearchServiceCallback,
   } = props;
   // states
@@ -117,10 +117,10 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    if (selectedWorkItems) {
-      setSelectedIssues(selectedWorkItems);
+    if (selectedWorkItemIds) {
+      setSelectedIssues(issues.filter((issue) => selectedWorkItemIds.includes(issue.id)));
     }
-  }, [isOpen, selectedWorkItems]);
+  }, [isOpen, selectedWorkItemIds]);
 
   useEffect(() => {
     handleSearch();

@@ -27,7 +27,7 @@
     "@plane/types": "workspace:*",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
-    "isomorphic-dompurify": "^2.16.0",
+    "dompurify": "3.2.7",
     "lodash-es": "catalog:",
     "lucide-react": "catalog:",
     "react": "catalog:",

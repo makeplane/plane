@@ -7,9 +7,14 @@ import { getWeekNumberOfDate, renderFormattedPayloadDate } from "./datetime";
  * @returns {ICalendarPayload} calendar payload to render the calendar
  * @param {ICalendarPayload | null} currentStructure current calendar payload
  * @param {Date} startDate date of the month to render
+ * @param {EStartOfTheWeek} startOfWeek the day to start the week on
  * @description Returns calendar payload to render the calendar, if currentStructure is null, it will generate the payload for the month of startDate, else it will construct the payload for the month of startDate and append it to the currentStructure
  */
-export const generateCalendarData = (currentStructure: ICalendarPayload | null, startDate: Date): ICalendarPayload => {
+export const generateCalendarData = (
+  currentStructure: ICalendarPayload | null,
+  startDate: Date,
+  startOfWeek: EStartOfTheWeek = EStartOfTheWeek.SUNDAY
+): ICalendarPayload => {
   const calendarData: ICalendarPayload = currentStructure ?? {};
 
   const startMonth = startDate.getMonth();
@@ -19,10 +24,15 @@ export const generateCalendarData = (currentStructure: ICalendarPayload | null, 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
-  const firstDayOfMonth = new Date(year, month, 1).getDay(); // Sunday is 0, Monday is 1, ..., Saturday is 6
+  const firstDayOfMonthRaw = new Date(year, month, 1).getDay(); // Sunday is 0, Monday is 1, ..., Saturday is 6
+
+  // Adjust firstDayOfMonth based on startOfWeek preference
+  // This calculates how many empty cells we need at the start of the calendar
+  const firstDayOfMonth = (firstDayOfMonthRaw - startOfWeek + 7) % 7;
 
   calendarData[`y-${year}`] ||= {};
-  calendarData[`y-${year}`][`m-${month}`] ||= {};
+  // Always reset the month data to ensure clean regeneration with correct startOfWeek
+  calendarData[`y-${year}`][`m-${month}`] = {};
 
   const numWeeks = Math.ceil((totalDaysInMonth + firstDayOfMonth) / 7);
 
@@ -50,7 +60,9 @@ export const generateCalendarData = (currentStructure: ICalendarPayload | null, 
         };
     }
 
-    calendarData[`y-${year}`][`m-${month}`][`w-${weekNumber}`] = currentWeekObject;
+    // Use sequential week index instead of calculated week number for the key
+    // This ensures weeks are grouped correctly regardless of startOfWeek preference
+    calendarData[`y-${year}`][`m-${month}`][`w-${week}`] = currentWeekObject;
   }
 
   return calendarData;
