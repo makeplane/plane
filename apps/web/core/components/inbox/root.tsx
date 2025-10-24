@@ -4,11 +4,11 @@ import { observer } from "mobx-react";
 import { PanelLeft } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { IntakeIcon } from "@plane/propel/icons";
 import { EInboxIssueCurrentTab } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
-import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 import { InboxContentRoot } from "@/components/inbox/content";
 import { InboxSidebar } from "@/components/inbox/sidebar";
 import { InboxLayoutLoader } from "@/components/ui/loader/layouts/project-inbox/inbox-layout-loader";
@@ -101,9 +101,7 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
             inboxIssueId={inboxIssueId.toString()}
           />
         ) : (
-          <div className="w-full h-full relative flex justify-center items-center">
-            <SimpleEmptyState title={t("inbox_issue.empty_state.detail.title")} assetPath={resolvedPath} />
-          </div>
+          <EmptyStateCompact assetKey="intake" title={t("project.intake_main.title")} assetClassName="size-20" />
         )}
       </div>
     </>
