@@ -3,6 +3,7 @@
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import type { MouseEvent } from "react";
 // plane imports
 import type { IWorkspaceSearchResults } from "@plane/types";
 // hooks
@@ -35,28 +36,43 @@ export const CommandPaletteSearchResults: React.FC<Props> = observer((props) => 
         if (section.length > 0) {
           return (
             <Command.Group key={key} heading={`${currentSection.title} search`}>
-              {section.map((item: any) => (
-                <Command.Item
-                  key={item.id}
-                  onSelect={() => {
-                    closePalette();
-                    router.push(currentSection.path(item, projectId));
-                    const itemProjectId =
-                      item?.project_id ||
-                      (Array.isArray(item?.project_ids) && item?.project_ids?.length > 0
-                        ? item?.project_ids[0]
-                        : undefined);
-                    if (itemProjectId) openProjectAndScrollToSidebar(itemProjectId);
-                  }}
-                  value={`${key}-${item?.id}-${item.name}-${item.project__identifier ?? ""}-${item.sequence_id ?? ""}`}
-                  className="focus:outline-none"
-                >
-                  <div className="flex items-center gap-2 overflow-hidden text-custom-text-200">
-                    {currentSection.icon}
-                    <p className="block flex-1 truncate">{currentSection.itemName(item)}</p>
-                  </div>
-                </Command.Item>
-              ))}
+              {section.map((item: any) => {
+                const targetPath = currentSection.path(item, projectId);
+                const itemProjectId =
+                  item?.project_id ||
+                  (Array.isArray(item?.project_ids) && item?.project_ids?.length > 0
+                    ? item?.project_ids[0]
+                    : undefined);
+
+                const handleMetaClick = (event: MouseEvent<HTMLDivElement>) => {
+                  if (!event.metaKey && !event.ctrlKey) return;
+
+                  event.preventDefault();
+                  event.stopPropagation();
+
+                  closePalette();
+                  window.open(targetPath, "_blank", "noopener,noreferrer");
+                };
+
+                return (
+                  <Command.Item
+                    key={item.id}
+                    onMouseDown={handleMetaClick}
+                    onSelect={() => {
+                      closePalette();
+                      router.push(targetPath);
+                      if (itemProjectId) openProjectAndScrollToSidebar(itemProjectId);
+                    }}
+                    value={`${key}-${item?.id}-${item.name}-${item.project__identifier ?? ""}-${item.sequence_id ?? ""}`}
+                    className="focus:outline-none"
+                  >
+                    <div className="flex items-center gap-2 overflow-hidden text-custom-text-200">
+                      {currentSection.icon}
+                      <p className="block flex-1 truncate">{currentSection.itemName(item)}</p>
+                    </div>
+                  </Command.Item>
+                );
+              })}
             </Command.Group>
           );
         }
