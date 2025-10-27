@@ -1,8 +1,10 @@
 "use client";
 
 import type React from "react";
+import type React from "react";
 import { observer } from "mobx-react";
 // ui
+import type { ISvgIcons } from "@plane/propel/icons";
 import { TimelineLayoutIcon, GridLayoutIcon, ListLayoutIcon } from "@plane/propel/icons";
 // plane package imports
 import type { TCycleLayoutOptions } from "@plane/types";
@@ -13,7 +15,7 @@ import { useProject } from "@/hooks/store/use-project";
 
 const CYCLE_VIEW_LAYOUTS: {
   key: TCycleLayoutOptions;
-  icon: React.FC<React.SVGProps<SVGSVGElement>>;
+  icon: React.FC<ISvgIcons>;
   title: string;
 }[] = [
   {
