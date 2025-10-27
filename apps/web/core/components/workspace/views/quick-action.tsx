@@ -6,14 +6,13 @@ import { observer } from "mobx-react";
 import { EUserPermissions, EUserPermissionsLevel, GLOBAL_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspaceView } from "@plane/types";
-import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useUser, useUserPermissions } from "@/hooks/store/user";
-import { useViewMenuItems } from "@/plane-web/components/views/helper";
+import { useViewMenuItems } from "@/plane-web/components/common/quick-actions-helper";
 // local imports
 import { DeleteGlobalViewModal } from "./delete-view-modal";
 import { CreateUpdateWorkspaceViewModal } from "./modal";
@@ -46,16 +45,15 @@ export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
     });
   const handleOpenInNewTab = () => window.open(`/${viewLink}`, "_blank");
 
-  const MENU_ITEMS: TContextMenuItem[] = useViewMenuItems({
+  const MENU_ITEMS = useViewMenuItems({
     isOwner,
     isAdmin,
-    setDeleteViewModal,
-    setCreateUpdateViewModal: setUpdateViewModal,
+    handleDelete: () => setDeleteViewModal(true),
+    handleEdit: () => setUpdateViewModal(true),
     handleOpenInNewTab,
-    handleCopyText,
-    isLocked: view.is_locked,
+    handleCopyLink: handleCopyText,
     workspaceSlug,
-    viewId: view.id,
+    view,
   });
 
   return (
@@ -68,7 +66,7 @@ export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
         closeOnSelect
         buttonClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-custom-background-80/70 rounded"
       >
-        {MENU_ITEMS.map((item) => {
+        {MENU_ITEMS.items.map((item) => {
           if (item.shouldRender === false) return null;
           return (
             <CustomMenu.MenuItem

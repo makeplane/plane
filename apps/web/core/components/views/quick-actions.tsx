@@ -14,7 +14,7 @@ import { copyUrlToClipboard, cn } from "@plane/utils";
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useUser, useUserPermissions } from "@/hooks/store/user";
-import { useViewMenuItems } from "@/plane-web/components/views/helper";
+import { useViewMenuItems } from "@/plane-web/components/common/quick-actions-helper";
 import { PublishViewModal, useViewPublish } from "@/plane-web/components/views/publish";
 // local imports
 import { DeleteProjectViewModal } from "./delete-view-modal";
@@ -56,18 +56,21 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
     });
   const handleOpenInNewTab = () => window.open(`/${viewLink}`, "_blank");
 
-  const MENU_ITEMS: TContextMenuItem[] = useViewMenuItems({
+  const menuResult = useViewMenuItems({
     isOwner,
     isAdmin,
-    setDeleteViewModal,
-    setCreateUpdateViewModal,
-    handleOpenInNewTab,
-    handleCopyText,
-    isLocked: view.is_locked,
     workspaceSlug,
     projectId,
-    viewId: view.id,
+    view,
+    handleEdit: () => setCreateUpdateViewModal(true),
+    handleDelete: () => setDeleteViewModal(true),
+    handleCopyLink: handleCopyText,
+    handleOpenInNewTab,
   });
+
+  // Handle both CE (array) and EE (object) return types
+  const MENU_ITEMS: TContextMenuItem[] = Array.isArray(menuResult) ? menuResult : menuResult.items;
+  const additionalModals = Array.isArray(menuResult) ? null : menuResult.modals;
 
   if (publishContextMenu) MENU_ITEMS.splice(2, 0, publishContextMenu);
 
@@ -90,6 +93,7 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
       />
       <DeleteProjectViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
       <PublishViewModal isOpen={isPublishModalOpen} onClose={() => setPublishModalOpen(false)} view={view} />
+      {additionalModals}
       <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />
       <CustomMenu ellipsis placement="bottom-end" closeOnSelect buttonClassName={customClassName}>
         {MENU_ITEMS.map((item) => {
