@@ -89,11 +89,11 @@ export const CycleEmptyState: React.FC = observer(() => {
         ) : cycleWorkItemFilter?.hasActiveFilters ? (
           <EmptyStateDetailed
             assetKey="search"
-            title={t("common.search.title")}
-            description={t("common.search.description")}
+            title={t("common_empty_state.search.title")}
+            description={t("common_empty_state.search.description")}
             actions={[
               {
-                label: t("common.search.cta_secondary"),
+                label: t("common_empty_state.search.cta_secondary"),
                 onClick: cycleWorkItemFilter?.clearFilters,
                 disabled: !canPerformEmptyStateActions || !cycleWorkItemFilter,
                 variant: "outline-primary",

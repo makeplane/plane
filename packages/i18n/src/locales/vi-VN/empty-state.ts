@@ -1,5 +1,5 @@
 export default {
-  common: {
+  common_empty_state: {
     progress: {
       title: "Chưa có số liệu tiến độ để hiển thị.",
       description: "Bắt đầu đặt giá trị thuộc tính trong các mục công việc để xem số liệu tiến độ ở đây.",

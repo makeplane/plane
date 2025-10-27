@@ -1,5 +1,5 @@
 export default {
-  common: {
+  common_empty_state: {
     progress: {
       title: "Henüz gösterilecek ilerleme metriği yok.",
       description: "İlerleme metriklerini burada görmek için iş öğelerinde özellik değerleri belirlemeye başlayın.",

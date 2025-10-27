@@ -1,5 +1,5 @@
 export default {
-  common: {
+  common_empty_state: {
     progress: {
       title: "暫無進度指標可顯示。",
       description: "開始在工作項中設定屬性值以在此查看進度指標。",

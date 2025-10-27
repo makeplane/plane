@@ -37,8 +37,8 @@ export const ProjectViewsList = observer(() => {
     return (
       <EmptyStateDetailed
         assetKey="search"
-        title={t("common.search.title")}
-        description={t("common.search.description")}
+        title={t("common_empty_state.search.title")}
+        description={t("common_empty_state.search.description")}
       />
     );
   }

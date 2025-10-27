@@ -1,5 +1,5 @@
 export default {
-  common: {
+  common_empty_state: {
     progress: {
       title: "There're no progress metrics to show yet.",
       description: "Start setting property values in work items to see progress metrics here.",
