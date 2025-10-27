@@ -1506,6 +1506,11 @@ export default {
         description: "필터가 적용된 작업 항목을 여기에서 모두 추적하세요.",
       },
     },
+    delete_view: {
+      title: "이 뷰를 삭제하시겠습니까?",
+      content:
+        "확인하면 이 뷰에 대해 선택한 모든 정렬, 필터 및 표시 옵션 + 레이아웃이 복원할 수 없는 방식으로 영구적으로 삭제됩니다.",
+    },
   },
   workspace_settings: {
     label: "작업 공간 설정",
@@ -2148,6 +2153,11 @@ export default {
         title: "일치하는 뷰 없음",
         description: "검색 기준과 일치하는 뷰가 없습니다. 대신 새 뷰를 생성하세요.",
       },
+    },
+    delete_view: {
+      title: "이 뷰를 삭제하시겠습니까?",
+      content:
+        "확인하면 이 뷰에 대해 선택한 모든 정렬, 필터 및 표시 옵션 + 레이아웃이 복원할 수 없는 방식으로 영구적으로 삭제됩니다.",
     },
   },
   project_page: {

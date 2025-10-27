@@ -1,6 +1,5 @@
 import { type Editor, isNodeSelection } from "@tiptap/core";
-import { useEditorState } from "@tiptap/react";
-import { BubbleMenu, type BubbleMenuProps } from "@tiptap/react/menus";
+import { BubbleMenu, type BubbleMenuProps, useEditorState } from "@tiptap/react";
 import { FC, useEffect, useState, useRef } from "react";
 // plane utils
 import { cn } from "@plane/utils";
@@ -119,7 +118,10 @@ export const EditorBubbleMenu: FC<Props> = (props) => {
       }
       return true;
     },
-    options: {
+    tippyOptions: {
+      moveTransition: "transform 0.15s ease-out",
+      duration: [300, 0],
+      zIndex: 9,
       onShow: () => {
         if (editor.storage.link) {
           editor.storage.link.isBubbleMenuOpen = true;
@@ -134,13 +136,15 @@ export const EditorBubbleMenu: FC<Props> = (props) => {
           editor.commands.removeActiveDropbarExtension("bubble-menu");
         }, 0);
       },
+      onHidden: () => {
+        if (editor.storage.link) {
+          editor.storage.link.isBubbleMenuOpen = false;
+        }
+        setTimeout(() => {
+          editor.commands.removeActiveDropbarExtension("bubble-menu");
+        }, 0);
+      },
     },
-    // TODO: Migrate these to floating UI options
-    // tippyOptions: {
-    //   moveTransition: "transform 0.15s ease-out",
-    //   duration: [300, 0],
-    //   zIndex: 9,
-    // },
   };
 
   useEffect(() => {

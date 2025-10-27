@@ -3,9 +3,8 @@
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { LinkIcon, Signal, Trash2, UserMinus2, UserPlus2, Users } from "lucide-react";
-// plane imports
-import { DoubleCircleIcon } from "@plane/propel/icons";
+import { LinkIcon, Trash2, UserMinus2, UserPlus2 } from "lucide-react";
+import { StatePropertyIcon, PriorityPropertyIcon, MembersPropertyIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
@@ -93,7 +92,7 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
         className="focus:outline-none"
       >
         <div className="flex items-center gap-2 text-custom-text-200">
-          <DoubleCircleIcon className="h-3.5 w-3.5" />
+          <StatePropertyIcon className="h-3.5 w-3.5" />
           Change state...
         </div>
       </Command.Item>
@@ -106,7 +105,7 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
         className="focus:outline-none"
       >
         <div className="flex items-center gap-2 text-custom-text-200">
-          <Signal className="h-3.5 w-3.5" />
+          <PriorityPropertyIcon className="h-3.5 w-3.5" />
           Change priority...
         </div>
       </Command.Item>
@@ -119,7 +118,7 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
         className="focus:outline-none"
       >
         <div className="flex items-center gap-2 text-custom-text-200">
-          <Users className="h-3.5 w-3.5" />
+          <MembersPropertyIcon className="h-3.5 w-3.5" />
           Assign to...
         </div>
       </Command.Item>

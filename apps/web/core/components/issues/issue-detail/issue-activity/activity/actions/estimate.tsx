@@ -1,6 +1,6 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { Triangle } from "lucide-react";
+import { EstimatePropertyIcon } from "@plane/propel/icons";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
@@ -21,7 +21,7 @@ export const IssueEstimateActivity: FC<TIssueEstimateActivity> = observer((props
 
   return (
     <IssueActivityBlockComponent
-      icon={<Triangle size={14} className="text-custom-text-200" aria-hidden="true" />}
+      icon={<EstimatePropertyIcon className="h-3.5 w-3.5 text-custom-text-200" aria-hidden="true" />}
       activityId={activityId}
       ends={ends}
     >

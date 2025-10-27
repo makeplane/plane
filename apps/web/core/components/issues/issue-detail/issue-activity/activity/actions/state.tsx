@@ -3,7 +3,7 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { DoubleCircleIcon } from "@plane/propel/icons";
+import { StatePropertyIcon } from "@plane/propel/icons";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
 import { IssueActivityBlockComponent, IssueLink } from "./";
@@ -23,7 +23,7 @@ export const IssueStateActivity: FC<TIssueStateActivity> = observer((props) => {
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<DoubleCircleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />}
+      icon={<StatePropertyIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />}
       activityId={activityId}
       ends={ends}
     >

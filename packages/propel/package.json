@@ -1,6 +1,6 @@
 {
   "name": "@plane/propel",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "license": "AGPL-3.0",
   "scripts": {
@@ -27,6 +27,10 @@
     "./avatar": {
       "import": "./dist/avatar/index.mjs",
       "require": "./dist/avatar/index.js"
+    },
+    "./banner": {
+      "import": "./dist/banner/index.mjs",
+      "require": "./dist/banner/index.js"
     },
     "./button": {
       "import": "./dist/button/index.mjs",

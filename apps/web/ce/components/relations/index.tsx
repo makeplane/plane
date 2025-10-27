@@ -1,5 +1,5 @@
-import { CircleDot, CopyPlus, XCircle } from "lucide-react";
-import { RelatedIcon } from "@plane/propel/icons";
+import { CircleDot, XCircle } from "lucide-react";
+import { RelatedIcon, DuplicatePropertyIcon } from "@plane/propel/icons";
 import type { TRelationObject } from "@/components/issues/issue-detail-widgets/relations";
 import type { TIssueRelationTypes } from "../../types";
 
@@ -17,7 +17,7 @@ export const ISSUE_RELATION_OPTIONS: Record<TIssueRelationTypes, TRelationObject
     key: "duplicate",
     i18n_label: "issue.relation.duplicate",
     className: "bg-custom-background-80 text-custom-text-200",
-    icon: (size) => <CopyPlus size={size} className="text-custom-text-200" />,
+    icon: (size) => <DuplicatePropertyIcon width={size} height={size} className="text-custom-text-200" />,
     placeholder: "None",
   },
   blocked_by: {

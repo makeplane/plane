@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { Loader, Card } from "@plane/ui";
 import { calculateTimeAgo, getFileURL } from "@plane/utils";
 // components
@@ -83,11 +84,7 @@ export const ProfileActivity = observer(() => {
               ))}
             </div>
           ) : (
-            <ProfileEmptyState
-              title={t("no_data_yet")}
-              description={t("profile.stats.recent_activity.empty")}
-              image={recentActivityEmptyState}
-            />
+            <EmptyStateCompact title={t("no_data_yet")} assetKey="unknown" assetClassName="size-20" />
           )
         ) : (
           <Loader className="space-y-5">

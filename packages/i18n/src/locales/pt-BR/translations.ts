@@ -1534,6 +1534,11 @@ export default {
         description: "Itens de trabalho que se aplicam aos filtros, rastreie todos eles aqui.",
       },
     },
+    delete_view: {
+      title: "Tem certeza de que deseja excluir esta visualização?",
+      content:
+        "Se você confirmar, todas as opções de classificação, filtro e exibição + o layout que você escolheu para esta visualização serão excluídos permanentemente sem nenhuma maneira de restaurá-los.",
+    },
   },
   workspace_settings: {
     label: "Configurações do espaço de trabalho",
@@ -2178,6 +2183,11 @@ export default {
         description:
           "Nenhuma visualização corresponde aos critérios de pesquisa.\nCrie uma nova visualização em vez disso.",
       },
+    },
+    delete_view: {
+      title: "Tem certeza de que deseja excluir esta visualização?",
+      content:
+        "Se você confirmar, todas as opções de classificação, filtro e exibição + o layout que você escolheu para esta visualização serão excluídos permanentemente sem nenhuma maneira de restaurá-los.",
     },
   },
   project_page: {
