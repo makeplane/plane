@@ -1,6 +1,7 @@
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import { TextStyle } from "@tiptap/extension-text-style";
+import { Underline } from "@tiptap/extension-underline";
 // plane editor imports
 import { CoreEditorAdditionalExtensionsWithoutProps } from "@/plane-editor/extensions/core/without-props";
 // extensions
@@ -30,6 +31,7 @@ export const CoreEditorExtensionsWithoutProps = [
   CustomLinkExtension,
   ImageExtensionConfig,
   CustomImageExtensionConfig,
+  Underline,
   TextStyle,
   TaskList.configure({
     HTMLAttributes: {

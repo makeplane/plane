@@ -2,8 +2,8 @@
 import type { SyntheticEvent } from "react";
 import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { CalendarCheck2, CalendarClock } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { StartDatePropertyIcon, DueDatePropertyIcon } from "@plane/propel/icons";
 import type { IIssueDisplayProperties, TIssue } from "@plane/types";
 import { getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
@@ -165,7 +165,7 @@ export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => 
             onChange={handleStartDate}
             maxDate={maxDate}
             placeholder={t("common.order_by.start_date")}
-            icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
+            icon={<StartDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
             optionsClassName="z-30"
             disabled={!canEdit}
@@ -186,7 +186,7 @@ export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => 
             onChange={handleTargetDate}
             minDate={minDate}
             placeholder={t("common.order_by.due_date")}
-            icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+            icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
             buttonClassName={shouldHighlight ? "text-red-500" : ""}
             clearIconClassName="text-custom-text-100"

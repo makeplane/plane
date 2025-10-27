@@ -3,7 +3,7 @@ import { TIssuePriorities } from "./issues";
 export type TDuplicateIssuePayload = {
   title: string;
   workspace_id: string;
-  issue_id?: string;
+  issue_id?: string | null;
   project_id?: string;
   description_stripped?: string;
 };

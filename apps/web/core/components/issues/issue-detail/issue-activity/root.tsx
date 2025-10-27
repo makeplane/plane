@@ -2,6 +2,7 @@
 
 import type { FC } from "react";
 import { useMemo } from "react";
+import uniq from "lodash-es/uniq";
 import { observer } from "mobx-react";
 // plane package imports
 import type { TActivityFilters } from "@plane/constants";
@@ -75,7 +76,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
       _filters = [...selectedFilters, filter];
     }
 
-    setFilterValue(_filters);
+    setFilterValue(uniq(_filters));
   };
 
   const toggleSortOrder = () => {

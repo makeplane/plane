@@ -3,13 +3,10 @@
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { BarChart } from "@plane/propel/charts/bar-chart";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import type { IUserProfileData } from "@plane/types";
 import { Loader, Card } from "@plane/ui";
 import { capitalizeFirstLetter } from "@plane/utils";
-// components
-import { ProfileEmptyState } from "@/components/ui/profile-empty-state";
-// assets
-import emptyBarGraph from "@/public/empty-state/empty_bar_graph.svg";
 
 type Props = {
   userProfile: IUserProfileData | undefined;
@@ -62,13 +59,11 @@ export const ProfilePriorityDistribution: React.FC<Props> = ({ userProfile }) =>
               barSize={20}
             />
           ) : (
-            <div className="flex-grow p-7">
-              <ProfileEmptyState
-                title={t("no_data_yet")}
-                description={t("profile.stats.priority_distribution.empty")}
-                image={emptyBarGraph}
-              />
-            </div>
+            <EmptyStateCompact
+              assetKey="priority"
+              assetClassName="size-20"
+              title={t("workspace.your_work_by_priority.title")}
+            />
           )}
         </Card>
       ) : (

@@ -46,7 +46,6 @@ export class IssueActivityStore implements IIssueActivityStore {
   loader: TActivityLoader = "fetch";
   activities: TIssueActivityIdMap = {};
   activityMap: TIssueActivityMap = {};
-
   // services
   serviceType;
   issueActivityService;
@@ -79,10 +78,10 @@ export class IssueActivityStore implements IIssueActivityStore {
     return this.activityMap[activityId] ?? undefined;
   };
 
-  getActivityAndCommentsByIssueId = computedFn((issueId: string, sortOrder: E_SORT_ORDER) => {
+  protected buildActivityAndCommentItems(issueId: string): TIssueActivityComment[] | undefined {
     if (!issueId) return undefined;
 
-    let activityComments: TIssueActivityComment[] = [];
+    const activityComments: TIssueActivityComment[] = [];
 
     const currentStore =
       this.serviceType === EIssueServiceType.EPICS ? this.store.issue.epicDetail : this.store.issue.issueDetail;
@@ -92,29 +91,46 @@ export class IssueActivityStore implements IIssueActivityStore {
 
     if (!activities || !comments) return undefined;
 
-    activities?.forEach((activityId) => {
+    activities.forEach((activityId) => {
       const activity = this.getActivityById(activityId);
       if (!activity) return;
+      const type =
+        activity.field === "state"
+          ? EActivityFilterType.STATE
+          : activity.field === "assignees"
+            ? EActivityFilterType.ASSIGNEE
+            : activity.field === null
+              ? EActivityFilterType.DEFAULT
+              : EActivityFilterType.ACTIVITY;
       activityComments.push({
         id: activity.id,
-        activity_type: EActivityFilterType.ACTIVITY,
+        activity_type: type,
         created_at: activity.created_at,
       });
     });
 
-    comments?.forEach((commentId) => {
+    comments.forEach((commentId) => {
       const comment = currentStore.comment.getCommentById(commentId);
       if (!comment) return;
+      const commentTimestamp = comment.edited_at ?? comment.updated_at ?? comment.created_at;
       activityComments.push({
         id: comment.id,
         activity_type: EActivityFilterType.COMMENT,
-        created_at: comment.created_at,
+        created_at: commentTimestamp,
       });
     });
 
-    activityComments = orderBy(activityComments, (e) => new Date(e.created_at || 0), sortOrder);
-
     return activityComments;
+  }
+
+  protected sortActivityComments(items: TIssueActivityComment[], sortOrder: E_SORT_ORDER): TIssueActivityComment[] {
+    return orderBy(items, (e) => new Date(e.created_at || 0), sortOrder);
+  }
+
+  getActivityAndCommentsByIssueId = computedFn((issueId: string, sortOrder: E_SORT_ORDER) => {
+    const baseItems = this.buildActivityAndCommentItems(issueId);
+    if (!baseItems) return undefined;
+    return this.sortActivityComments(baseItems, sortOrder);
   });
 
   // actions

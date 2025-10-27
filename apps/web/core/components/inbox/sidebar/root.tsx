@@ -4,20 +4,19 @@ import type { FC } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import type { TInboxIssueCurrentTab } from "@plane/types";
 import { EInboxIssueCurrentTab } from "@plane/types";
 // plane imports
 import { Header, Loader, EHeaderVariant } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 import { InboxSidebarLoader } from "@/components/ui/loader/layouts/project-inbox/inbox-sidebar-loader";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // local imports
 import { FiltersRoot } from "../inbox-filter";
 import { InboxIssueAppliedFilters } from "../inbox-filter/applied-filters/root";
@@ -62,11 +61,6 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
     getAppliedFiltersCount,
   } = useProjectInbox();
   // derived values
-  const sidebarAssetPath = useResolvedAssetPath({ basePath: "/empty-state/intake/intake-issue" });
-  const sidebarFilterAssetPath = useResolvedAssetPath({
-    basePath: "/empty-state/intake/filter-issue",
-  });
-
   const fetchNextPages = useCallback(() => {
     if (!workspaceSlug || !projectId) return;
     fetchInboxPaginationIssues(workspaceSlug.toString(), projectId.toString());
@@ -141,22 +135,33 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
             ) : (
               <div className="flex items-center justify-center h-full w-full">
                 {getAppliedFiltersCount > 0 ? (
-                  <SimpleEmptyState
-                    title={t("inbox_issue.empty_state.sidebar_filter.title")}
-                    description={t("inbox_issue.empty_state.sidebar_filter.description")}
-                    assetPath={sidebarFilterAssetPath}
+                  <EmptyStateDetailed
+                    assetKey="search"
+                    title={t("common.search.title")}
+                    description={t("common.search.description")}
+                    assetClassName="size-20"
                   />
                 ) : currentTab === EInboxIssueCurrentTab.OPEN ? (
-                  <SimpleEmptyState
-                    title={t("inbox_issue.empty_state.sidebar_open_tab.title")}
-                    description={t("inbox_issue.empty_state.sidebar_open_tab.description")}
-                    assetPath={sidebarAssetPath}
+                  <EmptyStateDetailed
+                    assetKey="inbox"
+                    title={t("project.intake_sidebar.title")}
+                    description={t("project.intake_sidebar.description")}
+                    assetClassName="size-20"
+                    actions={[
+                      {
+                        label: t("project.intake_sidebar.cta_primary"),
+                        onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/intake`),
+                        variant: "primary",
+                      },
+                    ]}
                   />
                 ) : (
-                  <SimpleEmptyState
-                    title={t("inbox_issue.empty_state.sidebar_closed_tab.title")}
-                    description={t("inbox_issue.empty_state.sidebar_closed_tab.description")}
-                    assetPath={sidebarAssetPath}
+                  // TODO: Add translation
+                  <EmptyStateDetailed
+                    assetKey="inbox"
+                    title="No request closed yet"
+                    description="All the work items whether accepted or declined can be found here."
+                    assetClassName="size-20"
                   />
                 )}
               </div>

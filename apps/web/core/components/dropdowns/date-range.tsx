@@ -5,13 +5,14 @@ import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
-import { ArrowRight, CalendarCheck2, CalendarDays, X } from "lucide-react";
+import { ArrowRight, CalendarDays, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // ui
 import type { DateRange, Matcher } from "@plane/propel/calendar";
 import { Calendar } from "@plane/propel/calendar";
+import { DueDatePropertyIcon } from "@plane/propel/icons";
 import { ComboDropDown } from "@plane/ui";
 import { cn, renderFormattedDate } from "@plane/utils";
 // helpers
@@ -236,7 +237,7 @@ export const DateRangeDropdown: React.FC<Props> = observer((props) => {
                 buttonToDateClassName
               )}
             >
-              {!hideIcon.to && <CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+              {!hideIcon.to && <DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
               {dateRange.to ? renderFormattedDate(dateRange.to) : renderPlaceholder ? placeholder.to : ""}
             </span>
             {isClearable && !disabled && hasDisplayedDates && (

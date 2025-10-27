@@ -107,7 +107,7 @@ export const NotificationsSidebarRoot: FC = observer(() => {
               </ContentWrapper>
             ) : (
               <div className="relative w-full h-full flex justify-center items-center">
-                <NotificationEmptyState />
+                <NotificationEmptyState currentNotificationTab={currentNotificationTab} />
               </div>
             )}
           </>

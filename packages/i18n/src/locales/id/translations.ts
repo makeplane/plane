@@ -1522,6 +1522,11 @@ export default {
         description: "Item kerja yang menerapkan filter ini, lacak semuanya di sini.",
       },
     },
+    delete_view: {
+      title: "Apakah Anda yakin ingin menghapus tampilan ini?",
+      content:
+        "Jika Anda mengonfirmasi, semua opsi pengurutan, filter, dan tampilan + tata letak yang telah Anda pilih untuk tampilan ini akan dihapus secara permanen tanpa cara untuk memulihkannya.",
+    },
   },
   workspace_settings: {
     label: "Pengaturan ruang kerja",
@@ -2163,6 +2168,11 @@ export default {
         title: "Tidak ada tampilan yang cocok",
         description: "Tidak ada tampilan yang cocok dengan kriteria pencarian. \n Buat tampilan baru sebagai gantinya.",
       },
+    },
+    delete_view: {
+      title: "Apakah Anda yakin ingin menghapus tampilan ini?",
+      content:
+        "Jika Anda mengonfirmasi, semua opsi pengurutan, filter, dan tampilan + tata letak yang telah Anda pilih untuk tampilan ini akan dihapus secara permanen tanpa cara untuk memulihkannya.",
     },
   },
   project_page: {

@@ -6,12 +6,12 @@ import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { CalendarCheck2, CalendarClock, Link, Paperclip } from "lucide-react";
+import { Link, Paperclip } from "lucide-react";
 // types
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
-import { ViewsIcon } from "@plane/propel/icons";
+import { StartDatePropertyIcon, ViewsIcon, DueDatePropertyIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // ui
@@ -324,7 +324,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             onChange={handleStartDate}
             maxDate={maxDate}
             placeholder={t("common.order_by.start_date")}
-            icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
+            icon={<StartDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
             optionsClassName="z-10"
             disabled={isReadOnly}
@@ -346,7 +346,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             onChange={handleTargetDate}
             minDate={minDate}
             placeholder={t("common.order_by.due_date")}
-            icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+            icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
             buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-red-500" : ""}
             clearIconClassName="!text-custom-text-100"

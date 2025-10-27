@@ -1,7 +1,7 @@
 import * as React from "react";
 import { CircleDotDashed, Circle } from "lucide-react";
 
-import { CycleIcon } from "../cycle-icon";
+import { CycleIcon } from "../project/cycle-icon";
 import { CircleDotFullIcon } from "./circle-dot-full-icon";
 import { CYCLE_GROUP_COLORS, ICycleGroupIcon } from "./helper";
 

@@ -7,7 +7,6 @@ from plane.app.views import (
     IssueLinkViewSet,
     IssueAttachmentEndpoint,
     CommentReactionViewSet,
-    ExportIssuesEndpoint,
     IssueActivityEndpoint,
     IssueArchiveViewSet,
     IssueCommentViewSet,
@@ -140,12 +139,6 @@ urlpatterns = [
         "assets/v2/workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/attachments/<uuid:pk>/",
         IssueAttachmentV2Endpoint.as_view(),
         name="project-issue-attachments",
-    ),
-    ## Export Issues
-    path(
-        "workspaces/<str:slug>/export-issues/",
-        ExportIssuesEndpoint.as_view(),
-        name="export-issues",
     ),
     ## End Issues
     ## Issue Activity
