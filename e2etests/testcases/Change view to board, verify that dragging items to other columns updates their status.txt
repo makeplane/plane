@@ -1,0 +1,10 @@
+Log stored value "adminUser" to website
+Log stored value "adminUser" to website
+create work item "workItem" on project stored value "projectName"
+click "Kanban"
+drag "workItem" to "New Work Item" below "In Progress"
+click "workItem"
+check that page contains "In Progress" on the right of "State"
+click "Backlog"
+click "list"
+delete work item "workItem" from project stored value "projectName"

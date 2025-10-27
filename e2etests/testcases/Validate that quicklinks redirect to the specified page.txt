@@ -1,0 +1,15 @@
+Log stored value "adminUser" to website
+Log stored value "adminUser" to website
+save "https://en.wikipedia.org/wiki/Main_Page" as "customUrl"
+click "Home" within the context of "sidebar"
+click "Add quick Link"
+enter saved value "customUrl" into "Type or paste a URL"
+enter "Quick link test" into "Display title"
+click "Add Quicklink"
+click "Quick link test"
+check that url is saved value "customUrl"
+switch to tab 1
+hover over "Quick link test"
+click "ellipsis" roughly on the right of "Quick link test"
+click "Delete"
+check that page contains "Save links to work things that you'd like handy."

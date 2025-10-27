@@ -1,0 +1,10 @@
+hover over stored value "projectName" below "Project" within the context of "sidebar"
+click "Toggle quick actions menu"
+click "Settings"
+click "Members"
+hover over text within context of table at row containing stored value "userName" and 1st column
+click button on the right of stored value "userName"
+click "Remove"
+click "Remove"
+check that page does not contain stored value "userName"
+click "Back to workspace"

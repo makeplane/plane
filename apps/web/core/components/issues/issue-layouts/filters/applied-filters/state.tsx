@@ -2,10 +2,9 @@
 
 import { observer } from "mobx-react";
 // icons
-import { X } from "lucide-react";
 // plane imports
 import { EIconSize } from "@plane/constants";
-import { StateGroupIcon } from "@plane/propel/icons";
+import { CloseIcon, StateGroupIcon } from "@plane/propel/icons";
 import type { IState } from "@plane/types";
 
 type Props = {
@@ -40,7 +39,7 @@ export const AppliedStateFilters: React.FC<Props> = observer((props) => {
                 className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
                 onClick={() => handleRemove(stateId)}
               >
-                <X size={10} strokeWidth={2} />
+                <CloseIcon height={10} width={10} strokeWidth={2} />
               </button>
             )}
           </div>
