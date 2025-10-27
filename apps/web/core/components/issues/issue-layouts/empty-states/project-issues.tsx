@@ -34,8 +34,8 @@ export const ProjectEmptyState: React.FC = observer(() => {
       {projectWorkItemFilter?.hasActiveFilters ? (
         <EmptyStateDetailed
           assetKey="search"
-          title={t("common.search.title")}
-          description={t("common.search.description")}
+          title={t("common_empty_state.search.title")}
+          description={t("common_empty_state.search.description")}
           actions={[
             {
               label: t("project_issues.empty_state.issues_empty_filter.secondary_button.text"),

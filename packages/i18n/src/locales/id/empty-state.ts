@@ -1,5 +1,5 @@
 export default {
-  common: {
+  common_empty_state: {
     progress: {
       title: "Belum ada metrik progres untuk ditampilkan.",
       description: "Mulai mengatur nilai properti dalam item kerja untuk melihat metrik progres di sini.",

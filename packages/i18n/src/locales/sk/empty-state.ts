@@ -1,5 +1,5 @@
 export default {
-  common: {
+  common_empty_state: {
     progress: {
       title: "Zatiaľ nie sú k dispozícii žiadne metriky pokroku.",
       description: "Začnite nastavovať hodnoty vlastností v pracovných položkách, aby ste tu videli metriky pokroku.",
