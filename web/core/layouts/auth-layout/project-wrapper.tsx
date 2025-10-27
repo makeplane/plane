@@ -1,8 +1,8 @@
 "use client";
 
-import { FC, ReactNode, useEffect } from "react";
+import { FC, Fragment, ReactNode, useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
 
 // components
@@ -55,7 +55,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { getProjectEstimates } = useProjectEstimates();
   // router
   const { workspaceSlug, projectId } = useParams();
-
+  const pathname = usePathname();
   const projectMemberInfo = projectUserInfo?.[workspaceSlug?.toString()]?.[projectId?.toString()];
 
   // Initialize module timeline chart
@@ -178,5 +178,5 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
       </div>
     );
 
-  return <>{children}</>;
+  return <Fragment key={pathname ?? ""}>{children}</Fragment>;
 });
