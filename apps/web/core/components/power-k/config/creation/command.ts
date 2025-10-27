@@ -61,7 +61,7 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       group: "create",
       i18n_title: "power_k.creation_actions.create_work_item",
       icon: LayersIcon,
-      shortcut: "c",
+      keySequence: "ni",
       action: () => toggleCreateIssueModal(true),
       isEnabled: () => Boolean(canCreateWorkItem),
       isVisible: () => Boolean(canCreateWorkItem),
@@ -73,7 +73,7 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       group: "create",
       i18n_title: "power_k.creation_actions.create_page",
       icon: FileText,
-      shortcut: "d",
+      keySequence: "nd",
       action: () => toggleCreatePageModal({ isOpen: true }),
       isEnabled: (ctx) => Boolean(currentProjectDetails?.page_view && hasProjectMemberLevelPermissions(ctx)),
       isVisible: (ctx) =>
@@ -86,7 +86,7 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       group: "create",
       i18n_title: "power_k.creation_actions.create_view",
       icon: Layers,
-      shortcut: "v",
+      keySequence: "nv",
       action: () => toggleCreateViewModal(true),
       isEnabled: (ctx) => Boolean(currentProjectDetails?.issue_views_view && hasProjectMemberLevelPermissions(ctx)),
       isVisible: (ctx) =>
@@ -101,7 +101,7 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       group: "create",
       i18n_title: "power_k.creation_actions.create_cycle",
       icon: ContrastIcon,
-      shortcut: "q",
+      keySequence: "nc",
       action: () => toggleCreateCycleModal(true),
       isEnabled: (ctx) => Boolean(currentProjectDetails?.cycle_view && hasProjectMemberLevelPermissions(ctx)),
       isVisible: (ctx) =>
@@ -114,7 +114,7 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       group: "create",
       i18n_title: "power_k.creation_actions.create_module",
       icon: DiceIcon,
-      shortcut: "m",
+      keySequence: "nm",
       action: () => toggleCreateModuleModal(true),
       isEnabled: (ctx) => Boolean(currentProjectDetails?.module_view && hasProjectMemberLevelPermissions(ctx)),
       isVisible: (ctx) =>
@@ -127,7 +127,7 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       group: "create",
       i18n_title: "power_k.creation_actions.create_project",
       icon: FolderPlus,
-      shortcut: "p",
+      keySequence: "np",
       action: () => toggleCreateProjectModal(true),
       isEnabled: () => Boolean(canCreateProject),
       isVisible: () => Boolean(canCreateProject),

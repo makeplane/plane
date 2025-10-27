@@ -105,7 +105,7 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       group: "navigation",
       i18n_title: "power_k.navigation_actions.nav_inbox",
       icon: Inbox,
-      keySequence: "gi",
+      keySequence: "gx",
       action: (ctx) => handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "notifications"]),
       isEnabled: (ctx) => baseWorkspaceConditions(ctx),
       isVisible: (ctx) => baseWorkspaceConditions(ctx),

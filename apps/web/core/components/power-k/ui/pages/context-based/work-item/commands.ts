@@ -1,6 +1,19 @@
 import { useCallback } from "react";
 import { useParams } from "next/navigation";
-import { Bell, BellOff, LinkIcon, Signal, TagIcon, Trash2, Triangle, UserMinus2, UserPlus2, Users } from "lucide-react";
+import {
+  Bell,
+  BellOff,
+  LinkIcon,
+  Signal,
+  TagIcon,
+  TicketCheck,
+  Trash2,
+  Triangle,
+  Type,
+  UserMinus2,
+  UserPlus2,
+  Users,
+} from "lucide-react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -124,6 +137,41 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
   const handleDeleteWorkItem = useCallback(() => {
     toggleDeleteIssueModal(true);
   }, [toggleDeleteIssueModal]);
+
+  const copyWorkItemIdToClipboard = useCallback(() => {
+    const id = `${projectDetails?.identifier}-${entityDetails?.sequence_id}`;
+    copyTextToClipboard(id)
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: t("power_k.contextual_actions.work_item.copy_id_toast_success"),
+        });
+      })
+      .catch(() => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("power_k.contextual_actions.work_item.copy_id_toast_error"),
+        });
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entityDetails?.sequence_id, projectDetails?.identifier]);
+
+  const copyWorkItemTitleToClipboard = useCallback(() => {
+    copyTextToClipboard(entityDetails?.name ?? "")
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: t("power_k.contextual_actions.work_item.copy_title_toast_success"),
+        });
+      })
+      .catch(() => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("power_k.contextual_actions.work_item.copy_title_toast_error"),
+        });
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entityDetails?.name]);
 
   const copyWorkItemUrlToClipboard = useCallback(() => {
     const url = new URL(window.location.href);
@@ -360,6 +408,32 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
       modifierShortcut: "cmd+backspace",
       isEnabled: () => isEditingAllowed,
       isVisible: () => isEditingAllowed,
+      closeOnSelect: true,
+    },
+    {
+      id: "copy_work_item_id",
+      i18n_title: "power_k.contextual_actions.work_item.copy_id",
+      icon: TicketCheck,
+      group: "contextual",
+      contextType: "work-item",
+      type: "action",
+      action: copyWorkItemIdToClipboard,
+      modifierShortcut: "cmd+.",
+      isEnabled: () => true,
+      isVisible: () => true,
+      closeOnSelect: true,
+    },
+    {
+      id: "copy_work_item_title",
+      i18n_title: "power_k.contextual_actions.work_item.copy_title",
+      icon: Type,
+      group: "contextual",
+      contextType: "work-item",
+      type: "action",
+      action: copyWorkItemTitleToClipboard,
+      modifierShortcut: "cmd+shift+'",
+      isEnabled: () => true,
+      isVisible: () => true,
       closeOnSelect: true,
     },
     {

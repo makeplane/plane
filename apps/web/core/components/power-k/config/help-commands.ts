@@ -22,6 +22,7 @@ export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
       group: "help",
       i18n_title: "power_k.help_actions.open_keyboard_shortcuts",
       icon: Rocket,
+      modifierShortcut: "cmd+/",
       action: () => toggleShortcutsListModal(true),
       isEnabled: () => true,
       isVisible: () => true,
