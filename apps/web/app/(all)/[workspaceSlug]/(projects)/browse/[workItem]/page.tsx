@@ -9,6 +9,9 @@ import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
 import { EIssueServiceType } from "@plane/types";
 import { Loader } from "@plane/ui";
+// assets
+import emptyIssueDark from "@/app/assets/empty-state/search/issues-dark.webp?url";
+import emptyIssueLight from "@/app/assets/empty-state/search/issues-light.webp?url";
 // components
 import { EmptyState } from "@/components/common/empty-state";
 import { PageHead } from "@/components/core/page-title";
@@ -17,12 +20,10 @@ import { IssueDetailRoot } from "@/components/issues/issue-detail";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
-// assets
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web imports
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
 import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
-import emptyIssueDark from "@/public/empty-state/search/issues-dark.webp";
-import emptyIssueLight from "@/public/empty-state/search/issues-light.webp";
 
 const IssueDetailsPage = observer(() => {
   // router

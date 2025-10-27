@@ -5,11 +5,11 @@ import { useParams } from "next/navigation";
 import { ClipboardList } from "lucide-react";
 // plane imports
 import { Button } from "@plane/propel/button";
+// assets
+import Unauthorized from "@/app/assets/auth/unauthorized.svg?url";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-// assets
-import Unauthorized from "@/public/auth/unauthorized.svg";
 
 type Props = {
   projectId?: string;

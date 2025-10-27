@@ -12,13 +12,12 @@ import { Button } from "@plane/propel/button";
 import { MembersPropertyIcon } from "@plane/propel/icons";
 // types
 import type { IJiraImporterForm } from "@plane/types";
-// ui
+// assets
+import JiraLogo from "@/app/assets/services/jira.svg?url";
 // fetch keys
 import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
-// assets
-import JiraLogo from "@/public/services/jira.svg";
 // services
 import { JiraImporterService } from "@/services/integrations";
 // components

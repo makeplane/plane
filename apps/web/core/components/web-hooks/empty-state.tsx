@@ -5,7 +5,7 @@ import Image from "next/image";
 // ui
 import { Button } from "@plane/propel/button";
 // assets
-import EmptyWebhook from "@/public/empty-state/web-hook.svg";
+import EmptyWebhook from "@/app/assets/empty-state/web-hook.svg?url";
 
 type Props = {
   onClick: () => void;

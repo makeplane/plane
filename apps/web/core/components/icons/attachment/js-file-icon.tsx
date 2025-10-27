@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 // image
-import JsFileIcon from "@/public/attachment/js-icon.png";
+import JsFileIcon from "@/app/assets/attachment/js-icon.png?url";
 // type
 import type { ImageIconPros } from "../types";
 

@@ -2,24 +2,23 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import type { StaticImageData } from "next/image";
 import Image from "next/image";
 import { X } from "lucide-react";
 // plane imports
 import { PRODUCT_TOUR_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { PlaneLockup } from "@plane/propel/icons";
+// assets
+import CyclesTour from "@/app/assets/onboarding/cycles.webp?url";
+import IssuesTour from "@/app/assets/onboarding/issues.webp?url";
+import ModulesTour from "@/app/assets/onboarding/modules.webp?url";
+import PagesTour from "@/app/assets/onboarding/pages.webp?url";
+import ViewsTour from "@/app/assets/onboarding/views.webp?url";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUser } from "@/hooks/store/user";
-// assets
-import CyclesTour from "@/public/onboarding/cycles.webp";
-import IssuesTour from "@/public/onboarding/issues.webp";
-import ModulesTour from "@/public/onboarding/modules.webp";
-import PagesTour from "@/public/onboarding/pages.webp";
-import ViewsTour from "@/public/onboarding/views.webp";
 // local imports
 import { TourSidebar } from "./sidebar";
 
@@ -33,7 +32,7 @@ const TOUR_STEPS: {
   key: TTourSteps;
   title: string;
   description: string;
-  image: StaticImageData;
+  image: any;
   prevStep?: TTourSteps;
   nextStep?: TTourSteps;
 }[] = [

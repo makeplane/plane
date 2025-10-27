@@ -8,6 +8,13 @@ import "@/styles/globals.css";
 import { SITE_DESCRIPTION, SITE_NAME } from "@plane/constants";
 import { cn } from "@plane/utils";
 // types
+// assets
+import favicon16 from "@/app/assets/favicon/favicon-16x16.png?url";
+import favicon32 from "@/app/assets/favicon/favicon-32x32.png?url";
+import faviconIco from "@/app/assets/favicon/favicon.ico?url";
+import icon180 from "@/app/assets/icons/icon-180x180.png?url";
+import icon512 from "@/app/assets/icons/icon-512x512.png?url";
+import ogImage from "@/app/assets/og-image.png?url";
 import type { Route } from "./+types/root";
 // local
 import { AppProvider } from "./provider";
@@ -15,14 +22,13 @@ import { AppProvider } from "./provider";
 const APP_TITLE = "Plane | Simple, extensible, open-source project management tool.";
 
 export const links: LinksFunction = () => [
-  { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon/favicon-32x32.png" },
-  { rel: "icon", type: "image/png", sizes: "16x16", href: "/favicon/favicon-16x16.png" },
-  { rel: "shortcut icon", href: "/favicon/favicon.ico" },
+  { rel: "icon", type: "image/png", sizes: "32x32", href: favicon32 },
+  { rel: "icon", type: "image/png", sizes: "16x16", href: favicon16 },
+  { rel: "shortcut icon", href: faviconIco },
   { rel: "manifest", href: "/site.webmanifest.json" },
-  { rel: "apple-touch-icon", href: "/icons/icon-512x512.png" },
-  { rel: "apple-touch-icon", sizes: "152x152", href: "/icons/icon-152x152.png" },
-  { rel: "apple-touch-icon", sizes: "180x180", href: "/icons/icon-180x180.png" },
-  { rel: "apple-touch-icon", sizes: "512x512", href: "/icons/icon-512x512.png" },
+  { rel: "apple-touch-icon", href: icon512 },
+  { rel: "apple-touch-icon", sizes: "180x180", href: icon180 },
+  { rel: "apple-touch-icon", sizes: "512x512", href: icon512 },
   { rel: "manifest", href: "/manifest.json" },
 ];
 
@@ -89,7 +95,7 @@ export const meta: Route.MetaFunction = () => [
     content: "Open-source project management tool to manage work items, cycles, and product roadmaps easily",
   },
   { property: "og:url", content: "https://app.plane.so/" },
-  { property: "og:image", content: "/og-image.png" },
+  { property: "og:image", content: ogImage },
   { property: "og:image:width", content: "1200" },
   { property: "og:image:height", content: "630" },
   { property: "og:image:alt", content: "Plane - Modern project management" },
@@ -100,7 +106,7 @@ export const meta: Route.MetaFunction = () => [
   },
   { name: "twitter:site", content: "@planepowers" },
   { name: "twitter:card", content: "summary_large_image" },
-  { name: "twitter:image", content: "/og-image.png" },
+  { name: "twitter:image", content: ogImage },
   { name: "twitter:image:width", content: "1200" },
   { name: "twitter:image:height", content: "630" },
   { name: "twitter:image:alt", content: "Plane - Modern project management" },

@@ -3,20 +3,20 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-// components
+// plane imports
 import { cn } from "@plane/utils";
+// assets
+import emptyModule from "@/app/assets/empty-state/module.svg?url";
+// components
 import { EmptyState } from "@/components/common/empty-state";
 import { PageHead } from "@/components/core/page-title";
 import { ModuleLayoutRoot } from "@/components/issues/issue-layouts/roots/module-layout-root";
 import { ModuleAnalyticsSidebar } from "@/components/modules";
-// helpers
 // hooks
 import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useLocalStorage from "@/hooks/use-local-storage";
-// assets
-import emptyModule from "@/public/empty-state/module.svg";
 
 const ModuleIssuesPage = observer(() => {
   // router

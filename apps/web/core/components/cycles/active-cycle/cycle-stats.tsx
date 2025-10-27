@@ -17,6 +17,8 @@ import { EIssuesStoreType } from "@plane/types";
 // ui
 import { Loader, Avatar } from "@plane/ui";
 import { cn, renderFormattedDate, renderFormattedDateWithoutYear, getFileURL } from "@plane/utils";
+// assets
+import userImage from "@/app/assets/user.png?url";
 // components
 import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
@@ -294,7 +296,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                         title={
                           <div className="flex items-center gap-2">
                             <div className="h-5 w-5 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
-                              <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
+                              <img src={userImage} height="100%" width="100%" className="rounded-full" alt="User" />
                             </div>
                             <span>{t("no_assignee")}</span>
                           </div>

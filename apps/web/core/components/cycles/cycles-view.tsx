@@ -3,15 +3,15 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 // components
 import { useTranslation } from "@plane/i18n";
+// assets
+import AllFiltersImage from "@/app/assets/empty-state/cycle/all-filters.svg?url";
+import NameFilterImage from "@/app/assets/empty-state/cycle/name-filter.svg?url";
+// components
 import { CyclesList } from "@/components/cycles/list";
-// ui
 import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module-list-loader";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
-// assets
-import AllFiltersImage from "@/public/empty-state/cycle/all-filters.svg";
-import NameFilterImage from "@/public/empty-state/cycle/name-filter.svg";
 
 export interface ICyclesView {
   workspaceSlug: string;

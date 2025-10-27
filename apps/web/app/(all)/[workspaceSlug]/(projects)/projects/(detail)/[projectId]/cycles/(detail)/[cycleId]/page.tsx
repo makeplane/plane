@@ -4,6 +4,8 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { cn } from "@plane/utils";
+// assets
+import emptyCycle from "@/app/assets/empty-state/cycle.svg?url";
 // components
 import { EmptyState } from "@/components/common/empty-state";
 import { PageHead } from "@/components/core/page-title";
@@ -15,8 +17,6 @@ import { useCycle } from "@/hooks/store/use-cycle";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useLocalStorage from "@/hooks/use-local-storage";
-// assets
-import emptyCycle from "@/public/empty-state/cycle.svg";
 
 const CycleDetailPage = observer(() => {
   // router

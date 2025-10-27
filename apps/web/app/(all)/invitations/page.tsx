@@ -15,6 +15,8 @@ import { PlaneLogo } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
 import { truncateText } from "@plane/utils";
+// assets
+import emptyInvitation from "@/app/assets/empty-state/invitation.svg?url";
 // components
 import { EmptyState } from "@/components/common/empty-state";
 import { WorkspaceLogo } from "@/components/workspace/logo";
@@ -29,8 +31,6 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
-// images
-import emptyInvitation from "@/public/empty-state/invitation.svg";
 
 const workspaceService = new WorkspaceService();
 

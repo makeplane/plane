@@ -6,14 +6,14 @@ import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
+// assets
+import emptyIssueDark from "@/app/assets/empty-state/search/issues-dark.webp?url";
+import emptyIssueLight from "@/app/assets/empty-state/search/issues-light.webp?url";
 // components
 import { EmptyState } from "@/components/common/empty-state";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
-// assets
-import emptyIssueDark from "@/public/empty-state/search/issues-dark.webp";
-import emptyIssueLight from "@/public/empty-state/search/issues-light.webp";
 // services
 import { IssueService } from "@/services/issue/issue.service";
 

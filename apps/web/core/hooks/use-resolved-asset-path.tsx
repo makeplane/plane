@@ -17,10 +17,16 @@ export const useResolvedAssetPath = ({
   const { resolvedTheme } = useTheme();
   // resolved theme
   const theme = resolvedTheme === "light" ? "light" : "dark";
+  // resolved asset path
+  const resolvedBasePath = `/app/assets${basePath}`;
+
+  let path: string;
 
   if (!includeThemeInPath) {
-    return `${additionalPath && additionalPath !== "" ? `${basePath}${additionalPath}` : basePath}.${extension}`;
+    path = `${additionalPath && additionalPath !== "" ? `${resolvedBasePath}${additionalPath}` : resolvedBasePath}.${extension}`;
+  } else {
+    path = `${additionalPath && additionalPath !== "" ? `${resolvedBasePath}${additionalPath}` : resolvedBasePath}-${theme}.${extension}`;
   }
 
-  return `${additionalPath && additionalPath !== "" ? `${basePath}${additionalPath}` : basePath}-${theme}.${extension}`;
+  return `${path}?url`;
 };

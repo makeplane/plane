@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 // image
-import SheetFileIcon from "@/public/attachment/excel-icon.png";
+import SheetFileIcon from "@/app/assets/attachment/excel-icon.png?url";
 // type
 import type { ImageIconPros } from "../types";
 

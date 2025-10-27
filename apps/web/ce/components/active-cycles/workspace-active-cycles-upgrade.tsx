@@ -10,6 +10,13 @@ import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
 import { ContentWrapper } from "@plane/ui";
 import { cn } from "@plane/utils";
+// assets
+import ctaL1Dark from "@/app/assets/workspace-active-cycles/cta-l-1-dark.webp?url";
+import ctaL1Light from "@/app/assets/workspace-active-cycles/cta-l-1-light.webp?url";
+import ctaR1Dark from "@/app/assets/workspace-active-cycles/cta-r-1-dark.webp?url";
+import ctaR1Light from "@/app/assets/workspace-active-cycles/cta-r-1-light.webp?url";
+import ctaR2Dark from "@/app/assets/workspace-active-cycles/cta-r-2-dark.webp?url";
+import ctaR2Light from "@/app/assets/workspace-active-cycles/cta-r-2-light.webp?url";
 // components
 import { ProIcon } from "@/components/common/pro-icon";
 // hooks
@@ -93,7 +100,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
           </div>
           <span className="absolute left-0 top-0">
             <Image
-              src={`/workspace-active-cycles/cta-l-1-${isDarkMode ? "dark" : "light"}.webp`}
+              src={isDarkMode ? ctaL1Dark : ctaL1Light}
               height={125}
               width={125}
               className="rounded-xl"
@@ -103,20 +110,10 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
         </div>
         <div className="relative hidden w-1/2 lg:block">
           <span className="absolute bottom-0 right-0">
-            <Image
-              src={`/workspace-active-cycles/cta-r-1-${isDarkMode ? "dark" : "light"}.webp`}
-              height={420}
-              width={500}
-              alt="r-1"
-            />
+            <Image src={isDarkMode ? ctaR1Dark : ctaR1Light} height={420} width={500} alt="r-1" />
           </span>
           <span className="absolute -bottom-16 right-1/2 rounded-xl">
-            <Image
-              src={`/workspace-active-cycles/cta-r-2-${isDarkMode ? "dark" : "light"}.webp`}
-              height={210}
-              width={280}
-              alt="r-2"
-            />
+            <Image src={isDarkMode ? ctaR2Dark : ctaR2Light} height={210} width={280} alt="r-2" />
           </span>
         </div>
       </div>

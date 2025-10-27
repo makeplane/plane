@@ -6,6 +6,8 @@ import useSWR from "swr";
 import { GLOBAL_VIEW_TRACKER_ELEMENTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import type { EIssueLayoutTypes } from "@plane/types";
 import { EIssuesStoreType, STATIC_VIEW_TYPES } from "@plane/types";
+// assets
+import emptyView from "@/app/assets/empty-state/view.svg?url";
 // components
 import { EmptyState } from "@/components/common/empty-state";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
@@ -18,8 +20,6 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
-// public imports
-import emptyView from "@/public/empty-state/view.svg";
 
 type Props = {
   isDefaultView: boolean;
