@@ -21,4 +21,5 @@ export interface BaseEmptyStateCommonProps {
   assetKey?: CompactAssetType | DetailedAssetType;
   asset?: React.ReactNode;
   align?: TAlign;
+  customButton?: React.ReactNode;
 }
