@@ -1,5 +1,5 @@
 export default {
-  common: {
+  common_empty_state: {
     progress: {
       title: "表示する進捗メトリクスがまだありません。",
       description: "作業項目にプロパティ値を設定して、ここに進捗メトリクスを表示します。",

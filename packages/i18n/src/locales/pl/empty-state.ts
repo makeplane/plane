@@ -1,5 +1,5 @@
 export default {
-  common: {
+  common_empty_state: {
     progress: {
       title: "Nie ma jeszcze metryk postępu do wyświetlenia.",
       description: "Zacznij ustawiać wartości właściwości w elementach roboczych, aby zobaczyć tutaj metryki postępu.",

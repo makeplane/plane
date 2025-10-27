@@ -34,7 +34,7 @@ export const ProjectArchivedEmptyState: React.FC = observer(() => {
       {archivedWorkItemFilter?.hasActiveFilters ? (
         <EmptyStateDetailed
           assetKey="search"
-          title={t("common.search.title")}
+          title={t("common_empty_state.search.title")}
           description={t("common.search.description")}
           actions={[
             {

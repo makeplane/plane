@@ -1,5 +1,5 @@
 export default {
-  common: {
+  common_empty_state: {
     progress: {
       title: "Non ci sono ancora metriche di progresso da mostrare.",
       description:

@@ -1,5 +1,5 @@
 export default {
-  common: {
+  common_empty_state: {
     progress: {
       title: "아직 표시할 진행 지표가 없습니다.",
       description: "작업 항목에서 속성 값을 설정하여 여기에서 진행 지표를 확인하세요.",

@@ -137,7 +137,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                 {getAppliedFiltersCount > 0 ? (
                   <EmptyStateDetailed
                     assetKey="search"
-                    title={t("common.search.title")}
+                    title={t("common_empty_state.search.title")}
                     description={t("common.search.description")}
                     assetClassName="size-20"
                   />
