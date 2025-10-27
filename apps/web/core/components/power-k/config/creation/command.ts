@@ -30,7 +30,7 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
     canPerformAnyCreateAction,
     permission: { allowPermissions },
   } = useUser();
-  const { workspaceProjectIds, currentProjectDetails } = useProject();
+  const { workspaceProjectIds, getPartialProjectById } = useProject();
   const {
     toggleCreateIssueModal,
     toggleCreateProjectModal,
@@ -54,6 +54,9 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
     );
   const isWorkspaceCreationDisabled = getIsWorkspaceCreationDisabled();
 
+  const getProjectDetails = (ctx: TPowerKContext) =>
+    ctx.params.projectId ? getPartialProjectById(ctx.params.projectId.toString()) : undefined;
+
   return {
     create_work_item: {
       id: "create_work_item",
@@ -75,9 +78,9 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       icon: FileText,
       keySequence: "nd",
       action: () => toggleCreatePageModal({ isOpen: true }),
-      isEnabled: (ctx) => Boolean(currentProjectDetails?.page_view && hasProjectMemberLevelPermissions(ctx)),
+      isEnabled: (ctx) => Boolean(getProjectDetails(ctx)?.page_view && hasProjectMemberLevelPermissions(ctx)),
       isVisible: (ctx) =>
-        Boolean(ctx.params.projectId && currentProjectDetails?.page_view && hasProjectMemberLevelPermissions(ctx)),
+        Boolean(ctx.params.projectId && getProjectDetails(ctx)?.page_view && hasProjectMemberLevelPermissions(ctx)),
       closeOnSelect: true,
     },
     create_view: {
@@ -88,10 +91,10 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       icon: Layers,
       keySequence: "nv",
       action: () => toggleCreateViewModal(true),
-      isEnabled: (ctx) => Boolean(currentProjectDetails?.issue_views_view && hasProjectMemberLevelPermissions(ctx)),
+      isEnabled: (ctx) => Boolean(getProjectDetails(ctx)?.issue_views_view && hasProjectMemberLevelPermissions(ctx)),
       isVisible: (ctx) =>
         Boolean(
-          ctx.params.projectId && currentProjectDetails?.issue_views_view && hasProjectMemberLevelPermissions(ctx)
+          ctx.params.projectId && getProjectDetails(ctx)?.issue_views_view && hasProjectMemberLevelPermissions(ctx)
         ),
       closeOnSelect: true,
     },
@@ -103,9 +106,9 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       icon: ContrastIcon,
       keySequence: "nc",
       action: () => toggleCreateCycleModal(true),
-      isEnabled: (ctx) => Boolean(currentProjectDetails?.cycle_view && hasProjectMemberLevelPermissions(ctx)),
+      isEnabled: (ctx) => Boolean(getProjectDetails(ctx)?.cycle_view && hasProjectMemberLevelPermissions(ctx)),
       isVisible: (ctx) =>
-        Boolean(ctx.params.projectId && currentProjectDetails?.cycle_view && hasProjectMemberLevelPermissions(ctx)),
+        Boolean(ctx.params.projectId && getProjectDetails(ctx)?.cycle_view && hasProjectMemberLevelPermissions(ctx)),
       closeOnSelect: true,
     },
     create_module: {
@@ -116,9 +119,9 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       icon: DiceIcon,
       keySequence: "nm",
       action: () => toggleCreateModuleModal(true),
-      isEnabled: (ctx) => Boolean(currentProjectDetails?.module_view && hasProjectMemberLevelPermissions(ctx)),
+      isEnabled: (ctx) => Boolean(getProjectDetails(ctx)?.module_view && hasProjectMemberLevelPermissions(ctx)),
       isVisible: (ctx) =>
-        Boolean(ctx.params.projectId && currentProjectDetails?.module_view && hasProjectMemberLevelPermissions(ctx)),
+        Boolean(ctx.params.projectId && getProjectDetails(ctx)?.module_view && hasProjectMemberLevelPermissions(ctx)),
       closeOnSelect: true,
     },
     create_project: {

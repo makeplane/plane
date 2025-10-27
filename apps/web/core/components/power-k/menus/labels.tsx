@@ -10,9 +10,10 @@ import { PowerKMenuBuilder } from "./builder";
 type Props = {
   labels: IIssueLabel[];
   onSelect: (label: IIssueLabel) => void;
+  value?: string[];
 };
 
-export const PowerKLabelsMenu: React.FC<Props> = observer(({ labels, onSelect }) => (
+export const PowerKLabelsMenu: React.FC<Props> = observer(({ labels, onSelect, value }) => (
   <PowerKMenuBuilder
     items={labels}
     getIconNode={(label) => (
@@ -23,6 +24,7 @@ export const PowerKLabelsMenu: React.FC<Props> = observer(({ labels, onSelect })
     getKey={(label) => label.id}
     getValue={(label) => label.name}
     getLabel={(label) => label.name}
+    isSelected={(label) => !!value?.includes(label.id)}
     onSelect={onSelect}
     emptyText="No labels found"
   />

@@ -15,19 +15,19 @@ export const usePowerKMiscellaneousCommands = (): TPowerKCommandConfig[] => {
   // translation
   const { t } = useTranslation();
 
-  const copyPageUrlToClipboard = useCallback(() => {
+  const copyCurrentPageUrlToClipboard = useCallback(() => {
     const url = new URL(window.location.href);
     copyTextToClipboard(url.href)
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: t("power_k.miscellaneous_actions.copy_page_url_toast_success"),
+          title: t("power_k.miscellaneous_actions.copy_current_page_url_toast_success"),
         });
       })
       .catch(() => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: t("power_k.miscellaneous_actions.copy_page_url_toast_error"),
+          title: t("power_k.miscellaneous_actions.copy_current_page_url_toast_error"),
         });
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -47,12 +47,12 @@ export const usePowerKMiscellaneousCommands = (): TPowerKCommandConfig[] => {
       closeOnSelect: true,
     },
     {
-      id: "copy_page_url",
+      id: "copy_current_page_url",
       group: "miscellaneous",
       type: "action",
-      i18n_title: "power_k.miscellaneous_actions.copy_page_url",
+      i18n_title: "power_k.miscellaneous_actions.copy_current_page_url",
       icon: Link,
-      action: copyPageUrlToClipboard,
+      action: copyCurrentPageUrlToClipboard,
       modifierShortcut: "cmd+shift+c",
       isEnabled: () => true,
       isVisible: () => true,

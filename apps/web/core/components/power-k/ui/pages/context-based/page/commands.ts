@@ -51,8 +51,8 @@ export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
 
   const toggleFavorite = useCallback(() => {
     try {
-      if (isFavorite) addToFavorites?.();
-      else removePageFromFavorites?.();
+      if (isFavorite) removePageFromFavorites?.();
+      else addToFavorites?.();
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,

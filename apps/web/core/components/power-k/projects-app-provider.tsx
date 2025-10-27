@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hooks
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePowerK } from "@/hooks/store/use-power-k";
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -25,6 +26,7 @@ export const ProjectsAppPowerKProvider = observer(() => {
   // router
   const router = useAppRouter();
   const params = useParams();
+  const { workspaceSlug, projectId: routerProjectId, workItem: workItemIdentifier } = params;
   // states
   const [activeCommand, setActiveCommand] = useState<TPowerKCommandConfig | null>(null);
   const [shouldShowContextBasedActions, setShouldShowContextBasedActions] = useState(true);
@@ -32,7 +34,13 @@ export const ProjectsAppPowerKProvider = observer(() => {
   const { activeContext, isPowerKModalOpen, togglePowerKModal, setActivePage } = usePowerK();
   const { data: currentUser } = useUser();
   // derived values
-  const { workspaceSlug, projectId, workItem: workItemIdentifier } = params;
+  const {
+    issue: { getIssueById, getIssueIdByIdentifier },
+  } = useIssueDetail();
+  // derived values
+  const workItemId = workItemIdentifier ? getIssueIdByIdentifier(workItemIdentifier.toString()) : undefined;
+  const workItemDetails = workItemId ? getIssueById(workItemId) : undefined;
+  const projectId: string | string[] | undefined | null = routerProjectId ?? workItemDetails?.project_id;
   const commands = useProjectsAppPowerKCommands();
   // Build command context from props and store
   const context: TPowerKContext = useMemo(
@@ -42,7 +50,10 @@ export const ProjectsAppPowerKProvider = observer(() => {
       activeContext,
       shouldShowContextBasedActions,
       setShouldShowContextBasedActions,
-      params,
+      params: {
+        ...params,
+        projectId,
+      },
       router,
       closePalette: () => togglePowerKModal(false),
       setActiveCommand,
@@ -54,6 +65,7 @@ export const ProjectsAppPowerKProvider = observer(() => {
       activeContext,
       shouldShowContextBasedActions,
       params,
+      projectId,
       router,
       togglePowerKModal,
       setActivePage,

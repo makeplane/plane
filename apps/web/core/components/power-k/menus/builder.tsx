@@ -15,6 +15,7 @@ type Props<T> = {
   getKey: (item: T) => string;
   getLabel: (item: T) => React.ReactNode;
   getValue: (item: T) => string;
+  isSelected?: (item: T) => boolean;
   emptyText?: string;
 };
 
@@ -27,6 +28,7 @@ export const PowerKMenuBuilder = <T,>({
   getKey,
   getLabel,
   getValue,
+  isSelected,
   emptyText,
 }: Props<T>) => {
   if (items.length === 0) return <PowerKMenuEmptyState emptyText={emptyText} />;
@@ -40,6 +42,7 @@ export const PowerKMenuBuilder = <T,>({
           iconNode={getIconNode?.(item)}
           value={getValue(item)}
           label={getLabel(item)}
+          isSelected={isSelected?.(item)}
           onSelect={() => onSelect(item)}
         />
       ))}

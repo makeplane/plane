@@ -25,5 +25,5 @@ export const PowerKWorkItemCyclesMenu: React.FC<Props> = observer((props) => {
 
   if (!filteredCyclesList) return <Spinner />;
 
-  return <PowerKCyclesMenu cycles={filteredCyclesList} onSelect={handleSelect} />;
+  return <PowerKCyclesMenu cycles={filteredCyclesList} onSelect={handleSelect} value={workItemDetails.cycle_id} />;
 });

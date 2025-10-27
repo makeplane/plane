@@ -25,5 +25,5 @@ export const PowerKWorkItemLabelsMenu: React.FC<Props> = observer((props) => {
 
   if (!filteredLabelsList) return <Spinner />;
 
-  return <PowerKLabelsMenu labels={filteredLabelsList} onSelect={handleSelect} />;
+  return <PowerKLabelsMenu labels={filteredLabelsList} onSelect={handleSelect} value={workItemDetails.label_ids} />;
 });
