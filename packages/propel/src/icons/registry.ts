@@ -32,7 +32,7 @@ import { ParentPropertyIcon } from "./properties/parent-icon";
 import { PriorityPropertyIcon } from "./properties/priority-icon";
 import { RelatesToPropertyIcon } from "./properties/relates-to-icon";
 import { RelationPropertyIcon } from "./properties/relation-icon";
-import { ScopePropertyIcon } from "./properties/scrope-icon";
+import { ScopePropertyIcon } from "./properties/scope-icon";
 import { StartDatePropertyIcon } from "./properties/start-date-icon";
 import { StatePropertyIcon } from "./properties/state-icon";
 import { UserCirclePropertyIcon } from "./properties/user-circle-icon";
