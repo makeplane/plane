@@ -129,7 +129,6 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       group: "navigation",
       i18n_title: "power_k.navigation_actions.nav_account_settings",
       icon: Settings,
-      keySequence: "gsa",
       action: (ctx) => handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "settings", "account"]),
       isEnabled: (ctx) => baseWorkspaceConditions(ctx),
       isVisible: (ctx) => baseWorkspaceConditions(ctx),
@@ -157,7 +156,7 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       group: "navigation",
       i18n_title: "power_k.navigation_actions.nav_projects_list",
       icon: Briefcase,
-      keySequence: "gpl",
+      keySequence: "gp",
       action: (ctx) => handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "projects"]),
       isEnabled: (ctx) => baseWorkspaceConditions(ctx),
       isVisible: (ctx) => baseWorkspaceConditions(ctx),
@@ -169,7 +168,6 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       group: "navigation",
       i18n_title: "power_k.navigation_actions.nav_all_workspace_work_items",
       icon: Layers,
-      keySequence: "ggw",
       action: (ctx) =>
         handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "workspace-views", "all-issues"]),
       isEnabled: (ctx) => baseWorkspaceConditions(ctx),
@@ -182,7 +180,6 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       group: "navigation",
       i18n_title: "power_k.navigation_actions.nav_assigned_workspace_work_items",
       icon: Layers,
-      keySequence: "gga",
       action: (ctx) => handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "workspace-views", "assigned"]),
       isEnabled: (ctx) => baseWorkspaceConditions(ctx),
       isVisible: (ctx) => baseWorkspaceConditions(ctx),
@@ -194,7 +191,6 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       group: "navigation",
       i18n_title: "power_k.navigation_actions.nav_created_workspace_work_items",
       icon: Layers,
-      keySequence: "ggc",
       action: (ctx) => handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "workspace-views", "created"]),
       isEnabled: (ctx) => baseWorkspaceConditions(ctx),
       isVisible: (ctx) => baseWorkspaceConditions(ctx),
@@ -206,7 +202,6 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       group: "navigation",
       i18n_title: "power_k.navigation_actions.nav_subscribed_workspace_work_items",
       icon: Layers,
-      keySequence: "ggs",
       action: (ctx) =>
         handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "workspace-views", "subscribed"]),
       isEnabled: (ctx) => baseWorkspaceConditions(ctx),
@@ -231,7 +226,7 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       group: "navigation",
       i18n_title: "power_k.navigation_actions.nav_workspace_drafts",
       icon: PenSquare,
-      keySequence: "gd",
+      keySequence: "gj",
       action: (ctx) => handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "drafts"]),
       isEnabled: (ctx) => baseWorkspaceConditions(ctx) && hasWorkspaceMemberLevelPermissions(ctx),
       isVisible: (ctx) => baseWorkspaceConditions(ctx) && hasWorkspaceMemberLevelPermissions(ctx),
@@ -243,10 +238,12 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       group: "navigation",
       i18n_title: "power_k.navigation_actions.nav_workspace_archives",
       icon: ArchiveIcon,
-      keySequence: "ga",
+      keySequence: "gr",
       action: (ctx) => handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "projects", "archives"]),
-      isEnabled: (ctx) => baseWorkspaceConditions(ctx) && hasWorkspaceMemberLevelPermissions(ctx),
-      isVisible: (ctx) => baseWorkspaceConditions(ctx) && hasWorkspaceMemberLevelPermissions(ctx),
+      isEnabled: (ctx) =>
+        baseWorkspaceConditions(ctx) && !baseProjectConditions(ctx) && hasWorkspaceMemberLevelPermissions(ctx),
+      isVisible: (ctx) =>
+        baseWorkspaceConditions(ctx) && !baseProjectConditions(ctx) && hasWorkspaceMemberLevelPermissions(ctx),
       closeOnSelect: true,
     },
     open_workspace_setting: {
@@ -255,14 +252,14 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       group: "navigation",
       i18n_title: "power_k.navigation_actions.open_workspace_setting",
       icon: Settings,
-      keySequence: "osw",
+      keySequence: "os",
       page: "open-workspace-setting",
       onSelect: (data, ctx) => {
         const settingsHref = data as string;
         handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), settingsHref]);
       },
-      isEnabled: (ctx) => baseWorkspaceConditions(ctx),
-      isVisible: (ctx) => baseWorkspaceConditions(ctx),
+      isEnabled: (ctx) => baseWorkspaceConditions(ctx) && !baseProjectConditions(ctx),
+      isVisible: (ctx) => baseWorkspaceConditions(ctx) && !baseProjectConditions(ctx),
       closeOnSelect: true,
     },
     nav_workspace_settings: {
@@ -271,10 +268,10 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       group: "navigation",
       i18n_title: "power_k.navigation_actions.nav_workspace_settings",
       icon: Settings,
-      keySequence: "gsw",
+      keySequence: "gs",
       action: (ctx) => handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "settings"]),
-      isEnabled: (ctx) => baseWorkspaceConditions(ctx),
-      isVisible: (ctx) => baseWorkspaceConditions(ctx),
+      isEnabled: (ctx) => baseWorkspaceConditions(ctx) && !baseProjectConditions(ctx),
+      isVisible: (ctx) => baseWorkspaceConditions(ctx) && !baseProjectConditions(ctx),
       closeOnSelect: true,
     },
     nav_project_work_items: {
@@ -283,7 +280,7 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       group: "navigation",
       i18n_title: "power_k.navigation_actions.nav_project_work_items",
       icon: LayersIcon,
-      keySequence: "gpw",
+      keySequence: "gi",
       action: (ctx) =>
         handlePowerKNavigate(ctx, [
           ctx.params.workspaceSlug?.toString(),
@@ -325,7 +322,7 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       group: "navigation",
       i18n_title: "power_k.navigation_actions.nav_project_cycles",
       icon: ContrastIcon,
-      keySequence: "gpc",
+      keySequence: "gc",
       action: (ctx) =>
         handlePowerKNavigate(ctx, [
           ctx.params.workspaceSlug?.toString(),
@@ -369,7 +366,7 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       group: "navigation",
       i18n_title: "power_k.navigation_actions.nav_project_modules",
       icon: DiceIcon,
-      keySequence: "gpm",
+      keySequence: "gm",
       action: (ctx) =>
         handlePowerKNavigate(ctx, [
           ctx.params.workspaceSlug?.toString(),
@@ -411,7 +408,7 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       group: "navigation",
       i18n_title: "power_k.navigation_actions.nav_project_views",
       icon: Layers,
-      keySequence: "gpv",
+      keySequence: "gv",
       action: (ctx) =>
         handlePowerKNavigate(ctx, [
           ctx.params.workspaceSlug?.toString(),
@@ -429,7 +426,7 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       group: "navigation",
       i18n_title: "power_k.navigation_actions.nav_project_pages",
       icon: FileText,
-      keySequence: "gpp",
+      keySequence: "gd",
       action: (ctx) =>
         handlePowerKNavigate(ctx, [
           ctx.params.workspaceSlug?.toString(),
@@ -447,7 +444,7 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       group: "navigation",
       i18n_title: "power_k.navigation_actions.nav_project_intake",
       icon: Intake,
-      keySequence: "gpi",
+      keySequence: "gk",
       action: (ctx) =>
         handlePowerKNavigate(ctx, [
           ctx.params.workspaceSlug?.toString(),
@@ -465,7 +462,7 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       group: "navigation",
       i18n_title: "power_k.navigation_actions.nav_project_archives",
       icon: ArchiveIcon,
-      keySequence: "gpa",
+      keySequence: "gr",
       action: (ctx) =>
         handlePowerKNavigate(ctx, [
           ctx.params.workspaceSlug?.toString(),
@@ -506,7 +503,7 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       group: "navigation",
       i18n_title: "power_k.navigation_actions.nav_project_settings",
       icon: Settings,
-      keySequence: "gps",
+      keySequence: "gs",
       action: (ctx) =>
         handlePowerKNavigate(ctx, [
           ctx.params.workspaceSlug?.toString(),
