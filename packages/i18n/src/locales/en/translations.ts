@@ -2563,7 +2563,7 @@ export default {
       nav_workspace_archives: "Go to workspace archives",
       open_workspace_setting: "Open a workspace setting",
       nav_workspace_settings: "Go to workspace settings",
-      nav_project_work_items: "Go to project work items",
+      nav_project_work_items: "Go to work items",
       open_project_cycle: "Open a cycle",
       nav_project_cycles: "Go to cycles",
       open_project_module: "Open a module",

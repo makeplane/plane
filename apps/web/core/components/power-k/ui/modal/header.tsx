@@ -29,7 +29,7 @@ export const PowerKModalHeader: React.FC<Props> = (props) => {
   return (
     <div className="border-b border-custom-border-200">
       {/* Context Indicator */}
-      {context.shouldShowContextBasedActions && (
+      {context.shouldShowContextBasedActions && !activePage && (
         <PowerKModalContextIndicator
           activeContext={context.activeContext}
           handleClearContext={() => context.setShouldShowContextBasedActions(false)}
