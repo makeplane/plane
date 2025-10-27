@@ -122,4 +122,11 @@ export const locales = {
     editor: () => import("./tr-TR/editor"),
     "empty-state": () => import("./tr-TR/empty-state"),
   },
+  fa: {
+    core: () => import("./fa/core"),
+    translations: () => import("./fa/translations"),
+    accessibility: () => import("./fa/accessibility"),
+    editor: () => import("./fa/editor"),
+    "empty-state": () => import("./fa/empty-state"),
+  },
 };
