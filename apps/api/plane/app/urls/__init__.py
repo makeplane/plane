@@ -20,6 +20,7 @@ from .timezone import urlpatterns as timezone_urls
 from .exporter import urlpatterns as exporter_urls
 from .custom import urlpatterns as custom_urls
 from .issue_type import urlpatterns as issue_type_urls
+from .qa import urlpatterns as qa_urls
 
 urlpatterns = [
     *analytic_urls,
@@ -44,4 +45,5 @@ urlpatterns = [
     *custom_urls,
     *issue_type_urls,
     *exporter_urls,
+    *qa_urls,
 ]

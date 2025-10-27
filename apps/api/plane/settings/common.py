@@ -452,7 +452,8 @@ ATTACHMENT_MIME_TYPES = [
 # Seed directory path
 SEED_DIR = os.path.join(BASE_DIR, "seeds")
 
-ENABLE_DRF_SPECTACULAR = os.environ.get("ENABLE_DRF_SPECTACULAR", "0") == "1"
+# ENABLE_DRF_SPECTACULAR = os.environ.get("ENABLE_DRF_SPECTACULAR", "0") == "1"
+ENABLE_DRF_SPECTACULAR = True
 
 if ENABLE_DRF_SPECTACULAR:
     REST_FRAMEWORK["DEFAULT_SCHEMA_CLASS"] = "drf_spectacular.openapi.AutoSchema"

@@ -128,3 +128,5 @@ from .draft import (
     DraftIssueSerializer,
     DraftIssueDetailSerializer,
 )
+
+from .qa import TestPlanCreateUpdateSerializer,TestCaseRepositorySerializer,TestCaseRepositoryDetailSerializer
