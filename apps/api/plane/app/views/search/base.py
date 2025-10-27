@@ -294,29 +294,15 @@ class SearchEndpoint(BaseAPIView):
                         .order_by("-created_at")
                     )
 
-                    if issue_id:
-                        issue_created_by = (
-                            Issue.objects.filter(id=issue_id).values_list("created_by_id", flat=True).first()
+                    users = (
+                        users
+                        .distinct()
+                        .values(
+                            "member__avatar_url",
+                            "member__display_name",
+                            "member__id",
                         )
-                        users = (
-                            users.filter(Q(role__gt=10) | Q(member_id=issue_created_by))
-                            .distinct()
-                            .values(
-                                "member__avatar_url",
-                                "member__display_name",
-                                "member__id",
-                            )
-                        )
-                    else:
-                        users = (
-                            users.filter(Q(role__gt=10))
-                            .distinct()
-                            .values(
-                                "member__avatar_url",
-                                "member__display_name",
-                                "member__id",
-                            )
-                        )
+                    )
 
                     response_data["user_mention"] = list(users[:count])
 
