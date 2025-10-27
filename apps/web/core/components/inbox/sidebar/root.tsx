@@ -162,6 +162,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                     title="No request closed yet"
                     description="All the work items whether accepted or declined can be found here."
                     assetClassName="size-20"
+                    className="px-10"
                   />
                 )}
               </div>
