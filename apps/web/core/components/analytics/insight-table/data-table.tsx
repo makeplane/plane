@@ -19,9 +19,9 @@ import {
 } from "@tanstack/react-table";
 import { Search } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { CloseIcon } from "@plane/propel/icons";
 // plane package imports
-import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@plane/propel/table";
 import { cn } from "@plane/utils";
 // plane web components

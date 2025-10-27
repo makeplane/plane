@@ -1,7 +1,6 @@
 "use client";
 
 import type React from "react";
-import type React from "react";
 import { observer } from "mobx-react";
 // ui
 import type { ISvgIcons } from "@plane/propel/icons";
