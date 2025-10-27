@@ -84,7 +84,7 @@ export const ProjectCardList = observer((props: TProjectCardListProps) => {
           currentWorkspaceDisplayFilters?.archived_projects &&
           calculateTotalFilters(currentWorkspaceFilters ?? {}) === 0
             ? t("workspace.projects_archived.description")
-            : t("common.search.description")
+            : t("common_empty_state.search.description")
         }
         assetKey={
           currentWorkspaceDisplayFilters?.archived_projects &&

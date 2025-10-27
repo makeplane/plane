@@ -35,7 +35,7 @@ export const ProjectArchivedEmptyState: React.FC = observer(() => {
         <EmptyStateDetailed
           assetKey="search"
           title={t("common_empty_state.search.title")}
-          description={t("common.search.description")}
+          description={t("common_empty_state.search.description")}
           actions={[
             {
               label: t("common.search.cta_secondary"),

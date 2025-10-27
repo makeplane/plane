@@ -138,7 +138,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                   <EmptyStateDetailed
                     assetKey="search"
                     title={t("common_empty_state.search.title")}
-                    description={t("common.search.description")}
+                    description={t("common_empty_state.search.description")}
                     assetClassName="size-20"
                   />
                 ) : currentTab === EInboxIssueCurrentTab.OPEN ? (
