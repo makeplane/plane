@@ -1360,6 +1360,9 @@ importers:
       '@headlessui/react':
         specifier: ^1.7.3
         version: 1.7.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@hocuspocus/common':
+        specifier: 2.15.3
+        version: 2.15.3
       '@hocuspocus/provider':
         specifier: 2.15.2
         version: 2.15.2(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27)
@@ -1387,17 +1390,59 @@ importers:
       '@tiptap/extension-blockquote':
         specifier: ^2.22.3
         version: 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))
+      '@tiptap/extension-bold':
+        specifier: 2.26.2
+        version: 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))
+      '@tiptap/extension-bubble-menu':
+        specifier: 2.26.3
+        version: 2.26.3(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))(@tiptap/pm@2.26.3)
+      '@tiptap/extension-bullet-list':
+        specifier: 2.26.2
+        version: 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))
       '@tiptap/extension-character-count':
         specifier: ^2.22.3
         version: 2.26.1(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))(@tiptap/pm@2.26.3)
+      '@tiptap/extension-code':
+        specifier: 2.26.2
+        version: 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))
+      '@tiptap/extension-code-block':
+        specifier: 2.26.2
+        version: 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))(@tiptap/pm@2.26.3)
       '@tiptap/extension-collaboration':
         specifier: ^2.22.3
         version: 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))(@tiptap/pm@2.26.3)(y-prosemirror@1.3.7(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.40.0)(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27))
+      '@tiptap/extension-document':
+        specifier: 2.26.2
+        version: 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))
+      '@tiptap/extension-dropcursor':
+        specifier: 2.26.2
+        version: 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))(@tiptap/pm@2.26.3)
       '@tiptap/extension-emoji':
         specifier: ^2.22.3
         version: 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))(@tiptap/pm@2.26.3)(@tiptap/suggestion@2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))(@tiptap/pm@2.26.3))(emojibase@16.0.0)
+      '@tiptap/extension-floating-menu':
+        specifier: 2.26.3
+        version: 2.26.3(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))(@tiptap/pm@2.26.3)
+      '@tiptap/extension-gapcursor':
+        specifier: 2.26.2
+        version: 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))(@tiptap/pm@2.26.3)
+      '@tiptap/extension-hard-break':
+        specifier: 2.26.2
+        version: 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))
+      '@tiptap/extension-heading':
+        specifier: 2.26.2
+        version: 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))
+      '@tiptap/extension-history':
+        specifier: 2.26.1
+        version: 2.26.1(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))(@tiptap/pm@2.26.3)
+      '@tiptap/extension-horizontal-rule':
+        specifier: 2.26.2
+        version: 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))(@tiptap/pm@2.26.3)
       '@tiptap/extension-image':
         specifier: ^2.22.3
+        version: 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))
+      '@tiptap/extension-italic':
+        specifier: 2.26.2
         version: 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))
       '@tiptap/extension-list-item':
         specifier: ^2.22.3
@@ -1405,14 +1450,26 @@ importers:
       '@tiptap/extension-mention':
         specifier: ^2.22.3
         version: 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))(@tiptap/pm@2.26.3)(@tiptap/suggestion@2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))(@tiptap/pm@2.26.3))
+      '@tiptap/extension-ordered-list':
+        specifier: 2.26.2
+        version: 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))
+      '@tiptap/extension-paragraph':
+        specifier: 2.26.2
+        version: 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))
       '@tiptap/extension-placeholder':
         specifier: ^2.22.3
         version: 2.26.1(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))(@tiptap/pm@2.26.3)
+      '@tiptap/extension-strike':
+        specifier: 2.26.2
+        version: 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))
       '@tiptap/extension-task-item':
         specifier: ^2.22.3
         version: 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))(@tiptap/pm@2.26.3)
       '@tiptap/extension-task-list':
         specifier: ^2.22.3
+        version: 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))
+      '@tiptap/extension-text':
+        specifier: 2.26.2
         version: 2.26.2(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))
       '@tiptap/extension-text-align':
         specifier: ^2.22.3
@@ -1555,6 +1612,9 @@ importers:
       tiptap-markdown:
         specifier: ^0.8.10
         version: 0.8.10(@tiptap/core@2.26.2(@tiptap/pm@2.26.3))
+      uc.micro:
+        specifier: 2.1.0
+        version: 2.1.0
       uuid:
         specifier: 'catalog:'
         version: 13.0.0
@@ -1576,6 +1636,9 @@ importers:
       yjs:
         specifier: ^13.6.20
         version: 13.6.27
+      zeed-dom:
+        specifier: 0.15.1
+        version: 0.15.1
     devDependencies:
       '@plane/eslint-config':
         specifier: workspace:*
