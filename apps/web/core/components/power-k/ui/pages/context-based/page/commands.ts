@@ -88,8 +88,16 @@ export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
       contextType: "page",
       type: "action",
       action: () => {
-        if (isLocked) unlock?.();
-        else lock?.();
+        if (isLocked)
+          unlock?.({
+            shouldSync: true,
+            recursive: true,
+          });
+        else
+          lock?.({
+            shouldSync: true,
+            recursive: true,
+          });
       },
       modifierShortcut: "shift+l",
       isEnabled: () => !!canCurrentUserLockPage,
@@ -107,8 +115,14 @@ export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
       contextType: "page",
       type: "action",
       action: () => {
-        if (access === EPageAccess.PUBLIC) makePrivate?.();
-        else makePublic?.();
+        if (access === EPageAccess.PUBLIC)
+          makePrivate?.({
+            shouldSync: true,
+          });
+        else
+          makePublic?.({
+            shouldSync: true,
+          });
       },
       modifierShortcut: "shift+a",
       isEnabled: () => !!canCurrentUserChangeAccess,
@@ -123,8 +137,14 @@ export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
       contextType: "page",
       type: "action",
       action: () => {
-        if (archived_at) restore?.();
-        else archive?.();
+        if (archived_at)
+          restore?.({
+            shouldSync: true,
+          });
+        else
+          archive?.({
+            shouldSync: true,
+          });
       },
       modifierShortcut: "shift+r",
       isEnabled: () => !!canCurrentUserArchivePage,
