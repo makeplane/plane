@@ -80,7 +80,7 @@ export const ModuleEmptyState: React.FC = observer(() => {
             description={t("common_empty_state.search.description")}
             actions={[
               {
-                label: t("common_empty_state.search.cta_secondary"),
+                label: "Clear filters",
                 onClick: moduleWorkItemFilter?.clearFilters,
                 disabled: !canPerformEmptyStateActions || !moduleWorkItemFilter,
                 variant: "outline-primary",
