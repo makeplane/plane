@@ -28,10 +28,7 @@ export type TInstanceGitlabAuthenticationConfigurationKeys =
   | "GITLAB_CLIENT_ID"
   | "GITLAB_CLIENT_SECRET";
 
-export type TInstanceGiteaAuthenticationConfigurationKeys =
-  | "GITEA_HOST"
-  | "GITEA_CLIENT_ID"
-  | "GITEA_CLIENT_SECRET" ;
+export type TInstanceGiteaAuthenticationConfigurationKeys = "GITEA_HOST" | "GITEA_CLIENT_ID" | "GITEA_CLIENT_SECRET";
 
 export type TInstanceAuthenticationConfigurationKeys =
   | TInstanceGoogleAuthenticationConfigurationKeys

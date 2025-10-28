@@ -93,7 +93,12 @@ export const AuthRoot: FC = observer(() => {
   const isMagicLoginEnabled = config?.is_magic_login_enabled || false;
   const isEmailPasswordEnabled = config?.is_email_password_enabled || false;
   const isOAuthEnabled =
-    (config && (config?.is_google_enabled || config?.is_github_enabled || config?.is_gitlab_enabled || config?.is_gitea_enabled)) || false;
+    (config &&
+      (config?.is_google_enabled ||
+        config?.is_github_enabled ||
+        config?.is_gitlab_enabled ||
+        config?.is_gitea_enabled)) ||
+    false;
 
   // submit handler- email verification
   const handleEmailVerification = async (data: IEmailCheckData) => {
@@ -197,8 +202,8 @@ export const AuthRoot: FC = observer(() => {
       onClick: () => {
         window.location.assign(`${API_BASE_URL}/auth/gitea/${next_path ? `?next_path=${next_path}` : ``}`);
       },
-      enabled: config?.is_gitea_enabled
-    }
+      enabled: config?.is_gitea_enabled,
+    },
   ];
 
   return (

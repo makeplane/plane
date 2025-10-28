@@ -141,6 +141,7 @@ export const InstanceGiteaConfigForm: FC<Props> = (props) => {
           message: "Your Gitea authentication is configured. You should test it now.",
         });
         reset({
+          GITEA_HOST: response.find((item) => item.key === "GITEA_HOST")?.value,
           GITEA_CLIENT_ID: response.find((item) => item.key === "GITEA_CLIENT_ID")?.value,
           GITEA_CLIENT_SECRET: response.find((item) => item.key === "GITEA_CLIENT_SECRET")?.value,
         });
