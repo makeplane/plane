@@ -24,7 +24,7 @@ export default {
       cta_primary: "Спробуйте перезавантажити",
     },
   },
-  project: {
+  project_empty_state: {
     work_items: {
       title: "Почніть з вашого першого робочого елемента.",
       description:
@@ -93,7 +93,7 @@ export default {
       title: "Виберіть робочий елемент Intake, щоб переглянути його деталі",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     archive_work_items: {
       title: "Ще немає архівованих робочих елементів",
       description:
@@ -158,7 +158,7 @@ export default {
         "Налаштуйте вхід для управління вхідними запитами та відстеження того, як вони приймаються та відхиляються",
     },
   },
-  settings: {
+  settings_empty_state: {
     estimates: {
       title: "Ще немає оцінок",
       description:

@@ -24,7 +24,7 @@ export default {
       cta_primary: "Thử tải lại",
     },
   },
-  project: {
+  project_empty_state: {
     work_items: {
       title: "Bắt đầu với mục công việc đầu tiên của bạn.",
       description:
@@ -92,7 +92,7 @@ export default {
       title: "Chọn một mục công việc Tiếp nhận để xem chi tiết của nó",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     archive_work_items: {
       title: "Chưa có mục công việc được lưu trữ",
       description:
@@ -157,7 +157,7 @@ export default {
       title: "Thiết lập tiếp nhận để quản lý các yêu cầu đến và theo dõi cách chúng được chấp nhận và từ chối",
     },
   },
-  settings: {
+  settings_empty_state: {
     estimates: {
       title: "Chưa có ước tính",
       description:
