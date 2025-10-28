@@ -237,10 +237,6 @@ def validate_html_content(html_content: str):
             except Exception:
                 summary = str(diff)
             logger.warning(f"HTML sanitization removals: {summary}")
-            log_exception(
-                ValueError(f"HTML sanitization removals: {summary}"),
-                warning=True,
-            )
         return True, None, clean_html
     except Exception as e:
         log_exception(e)
