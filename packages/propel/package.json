@@ -171,13 +171,7 @@
     "./styles/react-day-picker": "./dist/styles/react-day-picker.css"
   },
   "dependencies": {
-    "@babel/runtime": "7.26.10",
     "@base-ui-components/react": "1.0.0-beta.3",
-    "@base-ui-components/utils": "^0.1.0",
-    "@floating-ui/core": "^1.7.3",
-    "@floating-ui/dom": "^1.7.3",
-    "@floating-ui/react-dom": "^2.1.5",
-    "@floating-ui/utils": "^0.2.10",
     "@plane/constants": "workspace:*",
     "@plane/hooks": "workspace:*",
     "@plane/types": "workspace:*",
@@ -185,18 +179,14 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
-    "fontfaceobserver": "^2.3.0",
     "frimousse": "^0.3.0",
     "lucide-react": "catalog:",
-    "object-assign": "^4.1.1",
     "react": "catalog:",
     "react-day-picker": "9.5.0",
     "react-dom": "catalog:",
     "recharts": "^2.15.1",
-    "tabbable": "^6.2.0",
     "tailwind-merge": "^3.3.1",
-    "use-font-face-observer": "^1.3.0",
-    "use-sync-external-store": "^1.2.0"
+    "use-font-face-observer": "^1.3.0"
   },
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",

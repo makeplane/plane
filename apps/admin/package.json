@@ -51,7 +51,6 @@
     "react-router-dom": "^7.9.1",
     "serve": "14.2.5",
     "swr": "catalog:",
-    "use-sync-external-store": "^1.2.0",
     "uuid": "catalog:"
   },
   "devDependencies": {

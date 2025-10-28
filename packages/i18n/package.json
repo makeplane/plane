@@ -22,9 +22,6 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "@formatjs/fast-memoize": "^2.2.7",
-    "@formatjs/icu-messageformat-parser": "^2.11.2",
-    "@formatjs/icu-skeleton-parser": "^1.8.14",
     "@plane/utils": "workspace:*",
     "intl-messageformat": "^10.7.11",
     "lodash-es": "catalog:",

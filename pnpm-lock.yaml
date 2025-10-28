@@ -148,7 +148,7 @@ importers:
         version: 1.2.2
       axios:
         specifier: 'catalog:'
-        version: 1.12.0(debug@4.4.3)
+        version: 1.12.0
       compression:
         specifier: ^1.8.1
         version: 1.8.1
@@ -206,9 +206,6 @@ importers:
       swr:
         specifier: 'catalog:'
         version: 2.2.4(react@18.3.1)
-      use-sync-external-store:
-        specifier: ^1.2.0
-        version: 1.5.0(react@18.3.1)
       uuid:
         specifier: 'catalog:'
         version: 13.0.0
@@ -302,7 +299,7 @@ importers:
         version: 2.26.2(@tiptap/core@2.26.3(@tiptap/pm@3.6.6))(@tiptap/pm@3.6.6)
       axios:
         specifier: 'catalog:'
-        version: 1.12.0(debug@4.4.3)
+        version: 1.12.0
       compression:
         specifier: 1.8.1
         version: 1.8.1
@@ -376,9 +373,6 @@ importers:
 
   apps/space:
     dependencies:
-      '@babel/runtime':
-        specifier: 7.26.10
-        version: 7.26.10
       '@emotion/react':
         specifier: ^11.11.1
         version: 11.14.0(@types/react@18.3.11)(react@18.3.1)
@@ -421,51 +415,30 @@ importers:
       '@react-router/node':
         specifier: ^7.9.3
         version: 7.9.4(react-router@7.9.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
-      '@tanstack/react-virtual':
-        specifier: ^3.13.12
-        version: 3.13.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@tanstack/virtual-core':
-        specifier: ^3.13.12
-        version: 3.13.12
       '@vercel/edge':
         specifier: 1.2.2
         version: 1.2.2
       axios:
         specifier: 'catalog:'
-        version: 1.12.0(debug@4.4.3)
-      client-only:
-        specifier: ^0.0.1
-        version: 0.0.1
+        version: 1.12.0
       clsx:
         specifier: ^2.0.0
         version: 2.1.1
       compression:
         specifier: ^1.8.1
         version: 1.8.1
-      cookie:
-        specifier: ^0.6.0
-        version: 0.6.0
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
-      debug:
-        specifier: 4.4.3
-        version: 4.4.3
-      dompurify:
-        specifier: ^3.0.11
-        version: 3.2.7
       dotenv:
         specifier: ^16.4.5
         version: 16.6.1
       express:
         specifier: ^5.1.0
         version: 5.1.0
-      fast-deep-equal:
-        specifier: ^3.1.3
-        version: 3.1.3
       http-proxy-middleware:
         specifier: ^3.0.5
         version: 3.0.5
@@ -484,18 +457,12 @@ importers:
       mobx-react:
         specifier: 'catalog:'
         version: 9.1.1(mobx@6.12.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      mobx-react-lite:
-        specifier: ^4.0.7
-        version: 4.1.0(mobx@6.12.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       mobx-utils:
         specifier: 'catalog:'
         version: 6.0.8(mobx@6.12.0)
       morgan:
         specifier: ^1.10.1
         version: 1.10.1
-      ms:
-        specifier: ^2.1.3
-        version: 2.1.3
       next-themes:
         specifier: ^0.2.1
         version: 0.2.1(next@14.2.32(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -508,15 +475,9 @@ importers:
       react-dropzone:
         specifier: ^14.2.3
         version: 14.3.8(react@18.3.1)
-      react-fast-compare:
-        specifier: ^3.2.2
-        version: 3.2.2
       react-hook-form:
         specifier: 7.51.5
         version: 7.51.5(react@18.3.1)
-      react-is:
-        specifier: ^18.2.0
-        version: 18.3.1
       react-popper:
         specifier: ^2.3.0
         version: 2.3.0(@popperjs/core@2.11.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -526,30 +487,15 @@ importers:
       react-router-dom:
         specifier: ^7.9.1
         version: 7.9.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      scheduler:
-        specifier: ^0.23.2
-        version: 0.23.2
       serve:
         specifier: 14.2.5
         version: 14.2.5
-      set-cookie-parser:
-        specifier: ^2.6.0
-        version: 2.7.1
       swr:
         specifier: 'catalog:'
         version: 2.2.4(react@18.3.1)
-      tailwind-merge:
-        specifier: ^3.3.1
-        version: 3.3.1
-      use-sync-external-store:
-        specifier: ^1.2.0
-        version: 1.5.0(react@18.3.1)
       uuid:
         specifier: 'catalog:'
         version: 13.0.0
-      warning:
-        specifier: ^4.0.3
-        version: 4.0.3
     devDependencies:
       '@plane/eslint-config':
         specifier: workspace:*
@@ -655,7 +601,7 @@ importers:
         version: 8.21.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios:
         specifier: 'catalog:'
-        version: 1.12.0(debug@4.4.3)
+        version: 1.12.0
       clsx:
         specifier: ^2.0.0
         version: 2.1.1
@@ -835,30 +781,18 @@ importers:
 
   packages/editor:
     dependencies:
-      '@floating-ui/core':
-        specifier: ^1.7.3
-        version: 1.7.3
       '@floating-ui/dom':
         specifier: ^1.7.1
         version: 1.7.4
       '@floating-ui/react':
         specifier: ^0.26.4
         version: 0.26.28(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@floating-ui/react-dom':
-        specifier: ^2.1.6
-        version: 2.1.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@floating-ui/utils':
-        specifier: ^0.2.10
-        version: 0.2.10
       '@headlessui/react':
         specifier: ^1.7.3
         version: 1.7.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@hocuspocus/provider':
         specifier: 2.15.2
         version: 2.15.2(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27)
-      '@lifeomic/attempt':
-        specifier: ^3.1.0
-        version: 3.1.0
       '@plane/constants':
         specifier: workspace:*
         version: link:../constants
@@ -931,24 +865,9 @@ importers:
       '@tiptap/suggestion':
         specifier: ^2.22.3
         version: 2.26.2(@tiptap/core@2.26.3(@tiptap/pm@2.26.3))(@tiptap/pm@2.26.3)
-      dequal:
-        specifier: ^2.0.3
-        version: 2.0.3
-      devlop:
-        specifier: ^1.1.0
-        version: 1.1.0
-      dom4:
-        specifier: ^2.1.6
-        version: 2.1.6
       emoji-regex:
         specifier: ^10.3.0
         version: 10.5.0
-      entities:
-        specifier: ^6.0.1
-        version: 6.0.1
-      fontfaceobserver:
-        specifier: ^2.3.0
-        version: 2.3.0
       highlight.js:
         specifier: ^11.8.0
         version: 11.11.1
@@ -958,12 +877,6 @@ importers:
       jsx-dom-cjs:
         specifier: ^8.0.3
         version: 8.1.6
-      lib0:
-        specifier: ^0.2.114
-        version: 0.2.114
-      linkify-it:
-        specifier: ^5.0.0
-        version: 5.0.0
       linkifyjs:
         specifier: ^4.3.2
         version: 4.3.2
@@ -973,75 +886,15 @@ importers:
       lucide-react:
         specifier: 'catalog:'
         version: 0.469.0(react@18.3.1)
-      markdown-it:
-        specifier: ^14.1.0
-        version: 14.1.0
-      markdown-it-task-lists:
-        specifier: ^2.1.1
-        version: 2.1.1
-      mdurl:
-        specifier: ^2.0.0
-        version: 2.0.0
-      object-assign:
-        specifier: ^4.1.1
-        version: 4.1.1
-      orderedmap:
-        specifier: ^2.1.1
-        version: 2.1.1
       prosemirror-codemark:
         specifier: ^0.4.2
         version: 0.4.2(prosemirror-inputrules@1.5.0)(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.40.0)
-      prosemirror-commands:
-        specifier: ^1.7.1
-        version: 1.7.1
-      prosemirror-dropcursor:
-        specifier: ^1.8.2
-        version: 1.8.2
-      prosemirror-gapcursor:
-        specifier: ^1.3.2
-        version: 1.3.2
-      prosemirror-history:
-        specifier: ^1.4.1
-        version: 1.4.1
-      prosemirror-keymap:
-        specifier: ^1.2.3
-        version: 1.2.3
-      prosemirror-markdown:
-        specifier: ^1.13.2
-        version: 1.13.2
-      prosemirror-model:
-        specifier: ^1.25.3
-        version: 1.25.3
-      prosemirror-schema-list:
-        specifier: ^1.5.1
-        version: 1.5.1
-      prosemirror-state:
-        specifier: ^1.4.3
-        version: 1.4.3
-      prosemirror-tables:
-        specifier: ^1.7.1
-        version: 1.7.1
-      prosemirror-transform:
-        specifier: ^1.10.4
-        version: 1.10.4
-      prosemirror-view:
-        specifier: 1.40.0
-        version: 1.40.0
-      punycode.js:
-        specifier: ^2.3.1
-        version: 2.3.1
       react:
         specifier: 'catalog:'
         version: 18.3.1
       react-dom:
         specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
-      rope-sequence:
-        specifier: ^1.3.4
-        version: 1.3.4
-      tabbable:
-        specifier: ^6.2.0
-        version: 6.2.0
       tippy.js:
         specifier: ^6.3.7
         version: 6.3.7
@@ -1051,12 +904,6 @@ importers:
       uuid:
         specifier: 'catalog:'
         version: 13.0.0
-      w3c-keyname:
-        specifier: ^2.2.8
-        version: 2.2.8
-      warning:
-        specifier: ^4.0.3
-        version: 4.0.3
       y-indexeddb:
         specifier: ^9.0.12
         version: 9.0.12(yjs@13.6.27)
@@ -1158,15 +1005,6 @@ importers:
 
   packages/i18n:
     dependencies:
-      '@formatjs/fast-memoize':
-        specifier: ^2.2.7
-        version: 2.2.7
-      '@formatjs/icu-messageformat-parser':
-        specifier: ^2.11.2
-        version: 2.11.2
-      '@formatjs/icu-skeleton-parser':
-        specifier: ^1.8.14
-        version: 1.8.14
       '@plane/utils':
         specifier: workspace:*
         version: link:../utils
@@ -1238,27 +1076,9 @@ importers:
 
   packages/propel:
     dependencies:
-      '@babel/runtime':
-        specifier: 7.26.10
-        version: 7.26.10
       '@base-ui-components/react':
         specifier: 1.0.0-beta.3
         version: 1.0.0-beta.3(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@base-ui-components/utils':
-        specifier: ^0.1.0
-        version: 0.1.1(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@floating-ui/core':
-        specifier: ^1.7.3
-        version: 1.7.3
-      '@floating-ui/dom':
-        specifier: ^1.7.3
-        version: 1.7.4
-      '@floating-ui/react-dom':
-        specifier: ^2.1.5
-        version: 2.1.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@floating-ui/utils':
-        specifier: ^0.2.10
-        version: 0.2.10
       '@plane/constants':
         specifier: workspace:*
         version: link:../constants
@@ -1280,18 +1100,12 @@ importers:
       cmdk:
         specifier: ^1.1.1
         version: 1.1.1(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      fontfaceobserver:
-        specifier: ^2.3.0
-        version: 2.3.0
       frimousse:
         specifier: ^0.3.0
         version: 0.3.0(react@18.3.1)(typescript@5.8.3)
       lucide-react:
         specifier: 'catalog:'
         version: 0.469.0(react@18.3.1)
-      object-assign:
-        specifier: ^4.1.1
-        version: 4.1.1
       react:
         specifier: 'catalog:'
         version: 18.3.1
@@ -1304,18 +1118,12 @@ importers:
       recharts:
         specifier: ^2.15.1
         version: 2.15.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      tabbable:
-        specifier: ^6.2.0
-        version: 6.2.0
       tailwind-merge:
         specifier: ^3.3.1
         version: 3.3.1
       use-font-face-observer:
         specifier: ^1.3.0
         version: 1.3.0(react@18.3.1)
-      use-sync-external-store:
-        specifier: ^1.2.0
-        version: 1.5.0(react@18.3.1)
     devDependencies:
       '@plane/eslint-config':
         specifier: workspace:*
@@ -1356,39 +1164,18 @@ importers:
 
   packages/services:
     dependencies:
-      '@borewit/text-codec':
-        specifier: 0.1.1
-        version: 0.1.1
       '@plane/constants':
         specifier: workspace:*
         version: link:../constants
       '@plane/types':
         specifier: workspace:*
         version: link:../types
-      '@tokenizer/inflate':
-        specifier: 0.2.7
-        version: 0.2.7
       axios:
         specifier: 'catalog:'
-        version: 1.12.0(debug@4.4.3)
-      fflate:
-        specifier: 0.8.2
-        version: 0.8.2
+        version: 1.12.0
       file-type:
         specifier: ^21.0.0
         version: 21.0.0
-      ieee754:
-        specifier: 1.2.1
-        version: 1.2.1
-      strtok3:
-        specifier: 10.3.4
-        version: 10.3.4
-      token-types:
-        specifier: 6.1.1
-        version: 6.1.1
-      uint8array-extras:
-        specifier: 1.5.0
-        version: 1.5.0
     devDependencies:
       '@plane/eslint-config':
         specifier: workspace:*
@@ -1505,30 +1292,15 @@ importers:
       '@atlaskit/pragmatic-drag-and-drop-hitbox':
         specifier: 'catalog:'
         version: 1.1.0
-      '@babel/runtime':
-        specifier: 7.26.10
-        version: 7.26.10
-      '@blueprintjs/colors':
-        specifier: ^4.2.1
-        version: 4.2.1
       '@blueprintjs/core':
         specifier: ^4.16.3
         version: 4.20.2(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@blueprintjs/icons':
-        specifier: ^4.16.0
-        version: 4.16.0
       '@blueprintjs/popover2':
         specifier: ^1.13.3
         version: 1.14.11(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@headlessui/react':
         specifier: ^1.7.3
         version: 1.7.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@icons/material':
-        specifier: ^0.2.4
-        version: 0.2.4(react@18.3.1)
-      '@juggle/resize-observer':
-        specifier: ^3.4.0
-        version: 3.4.0
       '@plane/constants':
         specifier: workspace:*
         version: link:../constants
@@ -1547,123 +1319,21 @@ importers:
       '@popperjs/core':
         specifier: ^2.11.8
         version: 2.11.8
-      '@radix-ui/number':
-        specifier: ^1.1.1
-        version: 1.1.1
-      '@radix-ui/primitive':
-        specifier: ^1.1.3
-        version: 1.1.3
-      '@radix-ui/react-compose-refs':
-        specifier: ^1.1.2
-        version: 1.1.2(@types/react@18.3.11)(react@18.3.1)
-      '@radix-ui/react-context':
-        specifier: ^1.1.2
-        version: 1.1.2(@types/react@18.3.11)(react@18.3.1)
-      '@radix-ui/react-direction':
-        specifier: ^1.1.1
-        version: 1.1.1(@types/react@18.3.11)(react@18.3.1)
-      '@radix-ui/react-presence':
-        specifier: ^1.1.1
-        version: 1.1.5(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@radix-ui/react-primitive':
-        specifier: ^2.1.3
-        version: 2.1.3(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-scroll-area':
         specifier: ^1.2.3
         version: 1.2.10(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@radix-ui/react-slot':
-        specifier: ^1.2.3
-        version: 1.2.3(@types/react@18.3.11)(react@18.3.1)
-      '@radix-ui/react-use-callback-ref':
-        specifier: ^1.1.1
-        version: 1.1.1(@types/react@18.3.11)(react@18.3.1)
-      '@radix-ui/react-use-layout-effect':
-        specifier: ^1.1.1
-        version: 1.1.1(@types/react@18.3.11)(react@18.3.1)
-      '@tanstack/react-virtual':
-        specifier: ^3.13.12
-        version: 3.13.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@tanstack/virtual-core':
-        specifier: ^3.13.12
-        version: 3.13.12
-      bind-event-listener:
-        specifier: ^3.0.0
-        version: 3.0.0
-      camel-case:
-        specifier: ^4.1.2
-        version: 4.1.2
-      capital-case:
-        specifier: ^1.0.4
-        version: 1.0.4
-      change-case:
-        specifier: ^4.1.2
-        version: 4.1.2
-      classnames:
-        specifier: ^2.5.1
-        version: 2.5.1
       clsx:
         specifier: ^2.0.0
         version: 2.1.1
-      constant-case:
-        specifier: ^3.0.4
-        version: 3.0.4
-      dom-helpers:
-        specifier: ^5.2.1
-        version: 5.2.1
-      dom4:
-        specifier: ^2.1.6
-        version: 2.1.6
-      dot-case:
-        specifier: ^3.0.4
-        version: 3.0.4
       emoji-picker-react:
         specifier: ^4.5.16
         version: 4.12.2(react@18.3.1)
-      flairup:
-        specifier: 1.0.0
-        version: 1.0.0
-      fontfaceobserver:
-        specifier: ^2.3.0
-        version: 2.3.0
-      header-case:
-        specifier: ^2.0.4
-        version: 2.0.4
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
       lodash-es:
         specifier: 'catalog:'
         version: 4.17.21
-      lower-case:
-        specifier: ^2.0.2
-        version: 2.0.2
       lucide-react:
         specifier: 'catalog:'
         version: 0.469.0(react@18.3.1)
-      material-colors:
-        specifier: ^1.2.6
-        version: 1.2.6
-      no-case:
-        specifier: ^3.0.4
-        version: 3.0.4
-      object-assign:
-        specifier: ^4.1.1
-        version: 4.1.1
-      param-case:
-        specifier: ^3.0.4
-        version: 3.0.4
-      pascal-case:
-        specifier: ^3.1.2
-        version: 3.1.2
-      path-case:
-        specifier: ^3.0.4
-        version: 3.0.4
-      prop-types:
-        specifier: ^15.8.1
-        version: 15.8.1
-      raf-schd:
-        specifier: ^4.0.3
-        version: 4.0.3
       react:
         specifier: 'catalog:'
         version: 18.3.1
@@ -1676,51 +1346,15 @@ importers:
       react-dom:
         specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
-      react-fast-compare:
-        specifier: ^3.2.2
-        version: 3.2.2
       react-popper:
         specifier: ^2.3.0
         version: 2.3.0(@popperjs/core@2.11.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react-transition-group:
-        specifier: ^4.4.5
-        version: 4.4.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      reactcss:
-        specifier: ^1.2.3
-        version: 1.2.3(react@18.3.1)
-      sentence-case:
-        specifier: ^3.0.4
-        version: 3.0.4
-      snake-case:
-        specifier: ^3.0.4
-        version: 3.0.4
-      sonner:
-        specifier: ^1.4.41
-        version: 1.7.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      tabbable:
-        specifier: ^6.2.0
-        version: 6.2.0
       tailwind-merge:
         specifier: ^2.0.0
         version: 2.6.0
-      tinycolor2:
-        specifier: ^1.6.0
-        version: 1.6.0
-      tslib:
-        specifier: ^2.7.0
-        version: 2.8.1
-      upper-case:
-        specifier: ^2.0.2
-        version: 2.0.2
-      upper-case-first:
-        specifier: ^2.0.2
-        version: 2.0.2
       use-font-face-observer:
         specifier: ^1.2.2
         version: 1.3.0(react@18.3.1)
-      warning:
-        specifier: ^4.0.3
-        version: 4.0.3
     devDependencies:
       '@chromatic-com/storybook':
         specifier: ^1.4.0
@@ -5165,10 +4799,6 @@ packages:
     resolution: {integrity: sha512-D76uU73ulSXrD1UXF4KE2TMxVVwhsnCgfAyTg9k8P6KGZjlXKrOLe4dJQKI3Bxi5wjesZoFXJWElNWBjPZMbhg==}
     engines: {node: '>=6.6.0'}
 
-  cookie@0.6.0:
-    resolution: {integrity: sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw==}
-    engines: {node: '>= 0.6'}
-
   cookie@0.7.1:
     resolution: {integrity: sha512-6DnInpx7SJ2AK3+CTUE/ZM0vWTUboZCegxhC2xiIydHR9jNuTAASBrfEpHhiGOZw/nX51bHt6YQl8jsGo4y/0w==}
     engines: {node: '>= 0.6'}
@@ -5598,10 +5228,6 @@ packages:
     resolution: {integrity: sha512-BeJFvFRJddxobhvEdm5GqHzRV/X+ACeuw0/BuuxsCh1EUZcAIz8+kYmBp/LrQuloy6K1f3a0M7+IhmZ7QnkISA==}
     engines: {node: '>=0.12'}
 
-  entities@6.0.1:
-    resolution: {integrity: sha512-aN97NXWF6AWBTahfVOIrB/NShkzi5H7F9r1s9mD3cDj4Ko5f2qhhVoYMibXF7GlLveb/D2ioWay8lxI97Ven3g==}
-    engines: {node: '>=0.12'}
-
   err-code@2.0.3:
     resolution: {integrity: sha512-2bmlRpNKBxT/CRmPOlyISQpNj+qSeYvcym/uT0Jx2bMOlKLtSy1ZmLuVxSEKKyor/N5yhvp/ZiG1oE3DEYMSFA==}
 
@@ -5997,9 +5623,6 @@ packages:
 
   fontfaceobserver@2.1.0:
     resolution: {integrity: sha512-ReOsO2F66jUa0jmv2nlM/s1MiutJx/srhAe2+TE8dJCMi02ZZOcCTxTCQFr3Yet+uODUtnr4Mewg+tNQ+4V1Ng==}
-
-  fontfaceobserver@2.3.0:
-    resolution: {integrity: sha512-6FPvD/IVyT4ZlNe7Wcn5Fb/4ChigpucKYSvD6a+0iMoLn2inpo711eyIcKjmDtE5XNcgAkSH9uN/nfAeZzHEfg==}
 
   fontkit@2.0.4:
     resolution: {integrity: sha512-syetQadaUEDNdxdugga9CpEYVaQIxOwk7GlwZWWZ19//qW4zE5bknOKeMBDYAASwnpaSHKJITRLMF9m1fp3s6g==}
@@ -8224,12 +7847,6 @@ packages:
 
   snake-case@3.0.4:
     resolution: {integrity: sha512-LAOh4z89bGQvl9pFfNF8V146i7o7/CqFPbqzYgP+yYzDIDeS9HaNFtXABamRW+AQzEVODcvE79ljJ+8a9YSdMg==}
-
-  sonner@1.7.4:
-    resolution: {integrity: sha512-DIS8z4PfJRbIyfVFDVnK9rO3eYDtse4Omcm6bt0oEr5/jtLgysmjuBl1frJ9E/EQZrFmKx2A8m/s5s9CRXIzhw==}
-    peerDependencies:
-      react: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
-      react-dom: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -12557,7 +12174,7 @@ snapshots:
 
   axe-core@4.10.3: {}
 
-  axios@1.12.0(debug@4.4.3):
+  axios@1.12.0:
     dependencies:
       follow-redirects: 1.15.11(debug@4.4.3)
       form-data: 4.0.4
@@ -12943,8 +12560,6 @@ snapshots:
 
   cookie-signature@1.2.2: {}
 
-  cookie@0.6.0: {}
-
   cookie@0.7.1: {}
 
   cookie@1.0.2: {}
@@ -13324,8 +12939,6 @@ snapshots:
   entities@4.5.0: {}
 
   entities@5.0.0: {}
-
-  entities@6.0.1: {}
 
   err-code@2.0.3: {}
 
@@ -13960,8 +13573,6 @@ snapshots:
       debug: 4.4.3
 
   fontfaceobserver@2.1.0: {}
-
-  fontfaceobserver@2.3.0: {}
 
   fontkit@2.0.4:
     dependencies:
@@ -16439,11 +16050,6 @@ snapshots:
     dependencies:
       dot-case: 3.0.4
       tslib: 2.8.1
-
-  sonner@1.7.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
 
   source-map-js@1.2.1: {}
 
