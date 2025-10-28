@@ -101,7 +101,7 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
             inboxIssueId={inboxIssueId.toString()}
           />
         ) : (
-          <EmptyStateCompact assetKey="intake" title={t("project.intake_main.title")} assetClassName="size-20" />
+          <EmptyStateCompact assetKey="intake" title={t("project_empty_state.intake_main.title")} assetClassName="size-20" />
         )}
       </div>
     </>

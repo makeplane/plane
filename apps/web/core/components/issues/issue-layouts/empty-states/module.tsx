@@ -90,11 +90,11 @@ export const ModuleEmptyState: React.FC = observer(() => {
         ) : (
           <EmptyStateDetailed
             assetKey="work-item"
-            title={t("project.module_work_items.title")}
-            description={t("project.module_work_items.description")}
+            title={t("project_empty_state.module_work_items.title")}
+            description={t("project_empty_state.module_work_items.description")}
             actions={[
               {
-                label: t("project.module_work_items.cta_primary"),
+                label: t("project_empty_state.module_work_items.cta_primary"),
                 onClick: () => {
                   captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.MODULE });
                   toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
@@ -103,7 +103,7 @@ export const ModuleEmptyState: React.FC = observer(() => {
                 variant: "primary",
               },
               {
-                label: t("project.module_work_items.cta_secondary"),
+                label: t("project_empty_state.module_work_items.cta_secondary"),
                 onClick: () => setModuleIssuesListModal(true),
                 disabled: !canPerformEmptyStateActions,
                 variant: "outline-primary",

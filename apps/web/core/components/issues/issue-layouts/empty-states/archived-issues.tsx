@@ -48,11 +48,11 @@ export const ProjectArchivedEmptyState: React.FC = observer(() => {
       ) : (
         <EmptyStateDetailed
           assetKey="archived-work-item"
-          title={t("workspace.archive_work_items.title")}
-          description={t("workspace.archive_work_items.description")}
+          title={t("workspace_empty_state.archive_work_items.title")}
+          description={t("workspace_empty_state.archive_work_items.description")}
           actions={[
             {
-              label: t("workspace.archive_work_items.cta_primary"),
+              label: t("workspace_empty_state.archive_work_items.cta_primary"),
               onClick: () => router.push(`/${workspaceSlug}/settings/projects/${projectId}/automations`),
               disabled: !canPerformEmptyStateActions,
               variant: "primary",

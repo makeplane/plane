@@ -112,11 +112,11 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
             <EmptyStateCompact
               assetKey="label"
               assetClassName="size-20"
-              title={t("settings.labels.title")}
-              description={t("settings.labels.description")}
+              title={t("settings_empty_state.labels.title")}
+              description={t("settings_empty_state.labels.description")}
               actions={[
                 {
-                  label: t("settings.labels.cta_primary"),
+                  label: t("settings_empty_state.labels.cta_primary"),
                   onClick: () => {
                     newLabel();
                     captureClick({
