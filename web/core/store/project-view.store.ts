@@ -2,7 +2,7 @@ import { set } from "lodash";
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { IProjectView, TPublishViewDetails, TPublishViewSettings, TViewFilters } from "@plane/types";
+import { IProjectView, TPublishViewDetails, TPublishViewSettings, TViewFilters, TViewFilterProps } from "@plane/types";
 // constants
 import { EViewAccess } from "@/constants/views";
 // helpers
@@ -131,15 +131,18 @@ export class ProjectViewStore implements IProjectViewStore {
     if (!this.fetchedMap[projectId]) return undefined;
 
     const ViewsList = Object.values(this.viewMap ?? {});
-    this.filters.filters ??= {};
-    this.filters.filters.owned_by = [this.rootStore.user.data?.id?.toString() ?? ""];
+    const effectiveFilters: TViewFilterProps = this.filters.filters ? { ...this.filters.filters } : {};
+    if (effectiveFilters.owned_by == null) {
+      const currentUserId = this.rootStore.user.data?.id?.toString();
+      if (currentUserId) effectiveFilters.owned_by = [currentUserId];
+    }
     
     // helps to filter views based on the projectId, searchQuery and filters
     let filteredViews = ViewsList.filter(
       (view) =>
         view?.project === projectId &&
         getViewName(view.name).toLowerCase().includes(this.filters.searchQuery.toLowerCase()) &&
-        shouldFilterView(view, this.filters.filters)
+        shouldFilterView(view, effectiveFilters)
     );
     filteredViews = orderViews(filteredViews, this.filters.sortKey, this.filters.sortBy);
 
