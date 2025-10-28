@@ -43,6 +43,8 @@ export const AdminHeader = observer(() => {
         return "GitHub";
       case "gitlab":
         return "GitLab";
+      case "gitea":
+        return "Gitea";
       case "workspace":
         return "Workspace";
       case "create":

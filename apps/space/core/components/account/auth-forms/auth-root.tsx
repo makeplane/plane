@@ -11,6 +11,7 @@ import { SitesAuthService } from "@plane/services";
 import type { IEmailCheckData } from "@plane/types";
 import { OAuthOptions } from "@plane/ui";
 // assets
+import GiteaLogo from "@/app/assets/logos/gitea-logo.svg?url";
 import GithubLightLogo from "@/app/assets/logos/github-black.png?url";
 import GithubDarkLogo from "@/app/assets/logos/github-dark.svg?url";
 import GitlabLogo from "@/app/assets/logos/gitlab-logo.svg?url";
@@ -90,7 +91,12 @@ export const AuthRoot: React.FC = observer(() => {
   const isMagicLoginEnabled = config?.is_magic_login_enabled || false;
   const isEmailPasswordEnabled = config?.is_email_password_enabled || false;
   const isOAuthEnabled =
-    (config && (config?.is_google_enabled || config?.is_github_enabled || config?.is_gitlab_enabled)) || false;
+    (config &&
+      (config?.is_google_enabled ||
+        config?.is_github_enabled ||
+        config?.is_gitlab_enabled ||
+        config?.is_gitea_enabled)) ||
+    false;
 
   // submit handler- email verification
   const handleEmailVerification = async (data: IEmailCheckData) => {
@@ -186,6 +192,15 @@ export const AuthRoot: React.FC = observer(() => {
         window.location.assign(`${API_BASE_URL}/auth/gitlab/${next_path ? `?next_path=${next_path}` : ``}`);
       },
       enabled: config?.is_gitlab_enabled,
+    },
+    {
+      id: "gitea",
+      text: `${content} with Gitea`,
+      icon: <Image src={GiteaLogo} height={18} width={18} alt="Gitea Logo" />,
+      onClick: () => {
+        window.location.assign(`${API_BASE_URL}/auth/gitea/${next_path ? `?next_path=${next_path}` : ``}`);
+      },
+      enabled: config?.is_gitea_enabled,
     },
   ];
 

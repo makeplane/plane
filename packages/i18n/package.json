@@ -1,6 +1,6 @@
 {
   "name": "@plane/i18n",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "AGPL-3.0",
   "description": "I18n shared across multiple apps internally",
   "private": true,
@@ -30,9 +30,7 @@
     "lodash-es": "catalog:",
     "mobx": "catalog:",
     "mobx-react": "catalog:",
-    "react": "catalog:",
-    "tslib": "^2.7.0",
-    "use-sync-external-store": "^1.2.0"
+    "react": "catalog:"
   },
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",

@@ -102,6 +102,9 @@ dev-editor
 storybook-static
 
 CLAUDE.md
+AGENTS.md
 
 build/
 .react-router/
+
+temp/

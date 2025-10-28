@@ -45,7 +45,7 @@ const InstanceGithubAuthenticationPage = observer<React.FC<Route.ComponentProps>
       loading: "Saving Configuration...",
       success: {
         title: "Configuration saved",
-        message: () => `GitHub authentication is now ${value ? "active" : "disabled"}.`,
+        message: () => `GitHub authentication is now ${value === "1" ? "active" : "disabled"}.`,
       },
       error: {
         title: "Error",

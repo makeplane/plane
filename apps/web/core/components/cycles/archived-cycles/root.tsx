@@ -4,15 +4,14 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import type { TCycleFilters } from "@plane/types";
 import { calculateTotalFilters } from "@plane/utils";
 // components
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module-list-loader";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // local imports
 import { CycleAppliedFiltersList } from "../applied-filters";
 import { ArchivedCyclesView } from "./view";
@@ -28,7 +27,6 @@ export const ArchivedCycleLayoutRoot: React.FC = observer(() => {
   const { clearAllFilters, currentProjectArchivedFilters, updateFilters } = useCycleFilter();
   // derived values
   const totalArchivedCycles = currentProjectArchivedCycleIds?.length ?? 0;
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/archived/empty-cycles" });
 
   useSWR(
     workspaceSlug && projectId ? `ARCHIVED_CYCLES_${workspaceSlug.toString()}_${projectId.toString()}` : null,
@@ -69,10 +67,10 @@ export const ArchivedCycleLayoutRoot: React.FC = observer(() => {
       )}
       {totalArchivedCycles === 0 ? (
         <div className="h-full place-items-center">
-          <DetailedEmptyState
-            title={t("project_cycles.empty_state.archived.title")}
-            description={t("project_cycles.empty_state.archived.description")}
-            assetPath={resolvedPath}
+          <EmptyStateDetailed
+            assetKey="archived-cycle"
+            title={t("workspace_empty_state.archive_cycles.title")}
+            description={t("workspace_empty_state.archive_cycles.description")}
           />
         </div>
       ) : (

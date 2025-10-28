@@ -10,27 +10,27 @@ catalog:
   "@atlaskit/pragmatic-drag-and-drop": 1.7.4
   "@sentry/node": 10.5.0
   "@sentry/profiling-node": 10.5.0
-  "@tiptap/core": ^3.5.3
-  "@tiptap/html": ^3.5.3
-  "@types/lodash-es": 4.17.12
-  "@types/node": 22.12.0
-  "@types/react-dom": 18.3.1
-  "@types/react": 18.3.11
   axios: 1.12.0
-  lodash-es: 4.17.21
-  lucide-react: 0.469.0
+  mobx: 6.12.0
   mobx-react: 9.1.1
   mobx-utils: 6.0.8
-  mobx: 6.12.0
+  lodash-es: 4.17.21
+  "@types/lodash-es": 4.17.12
+  lucide-react: 0.469.0
   next: 14.2.32
-  react-dom: 18.3.1
-  react: 18.3.1
   sharp: 0.33.5
   swr: 2.2.4
-  tsdown: 0.15.5
+  react: 18.3.1
+  react-dom: 18.3.1
+  "@types/react": 18.3.11
+  "@types/react-dom": 18.3.1
+  "@types/node": 22.12.0
   typescript: 5.8.3
+  tsdown: 0.15.5
+  vite: 7.1.11
   uuid: 13.0.0
-  vite: 7.1.7
+  "@tiptap/core": ^2.22.3
+  "@tiptap/html": ^2.22.3
 
 onlyBuiltDependencies:
   - turbo

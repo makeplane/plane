@@ -5,6 +5,7 @@ export default defineConfig({
     "src/accordion/index.ts",
     "src/animated-counter/index.ts",
     "src/avatar/index.ts",
+    "src/banner/index.ts",
     "src/button/index.ts",
     "src/calendar/index.ts",
     "src/card/index.ts",
@@ -37,8 +38,8 @@ export default defineConfig({
   outDir: "dist",
   format: ["esm", "cjs"],
   exports: {
-    customExports: (out) => ({
-      ...out,
+    customExports: (exports) => ({
+      ...exports,
       "./styles/fonts.css": "./dist/styles/fonts/index.css",
       "./styles/fonts": "./dist/styles/fonts/index.css",
       "./styles/react-day-picker.css": "./dist/styles/react-day-picker.css",

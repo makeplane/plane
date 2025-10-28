@@ -5,16 +5,15 @@ import useSWR from "swr";
 // plane package imports
 import { useTranslation } from "@plane/i18n";
 import { AreaChart } from "@plane/propel/charts/area-chart";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import type { IChartResponse, TChartData } from "@plane/types";
 import { renderFormattedDate } from "@plane/utils";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
 // services
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { AnalyticsService } from "@/services/analytics.service";
 // plane web components
 import AnalyticsSectionWrapper from "../analytics-section-wrapper";
-import AnalyticsEmptyState from "../empty-state";
 import { ChartLoader } from "../loaders";
 
 const analyticsService = new AnalyticsService();
@@ -31,7 +30,6 @@ const CreatedVsResolved = observer(() => {
   const params = useParams();
   const { t } = useTranslation();
   const workspaceSlug = params.workspaceSlug.toString();
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics/empty-chart-area" });
   const { data: createdVsResolvedData, isLoading: isCreatedVsResolvedLoading } = useSWR(
     `created-vs-resolved-${workspaceSlug}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${isPeekView}-${isEpic}`,
     () =>
@@ -121,11 +119,11 @@ const CreatedVsResolved = observer(() => {
           }}
         />
       ) : (
-        <AnalyticsEmptyState
-          title={t("workspace_analytics.empty_state.created_vs_resolved.title")}
-          description={t("workspace_analytics.empty_state.created_vs_resolved.description")}
-          className="h-[350px]"
-          assetPath={resolvedPath}
+        <EmptyStateCompact
+          assetKey="unknown"
+          assetClassName="size-20"
+          rootClassName="border border-custom-border-100 px-5 py-10 md:py-20 md:px-20"
+          title={t("workspace_empty_state.analytics_work_items.title")}
         />
       )}
     </AnalyticsSectionWrapper>

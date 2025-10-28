@@ -39,7 +39,6 @@ export class Server {
       const manager = HocusPocusServerManager.getInstance();
       this.hocuspocusServer = await manager.initialize();
       logger.info("SERVER: HocusPocus setup completed");
-
       this.setupRoutes(this.hocuspocusServer);
       this.setupNotFoundHandler();
     } catch (error) {
