@@ -116,10 +116,30 @@ export class CalendarStore implements ICalendarStore {
     if (!this.calendarPayload) return undefined;
 
     const { activeWeekDate } = this.calendarFilters;
+    const year = activeWeekDate.getFullYear();
+    const month = activeWeekDate.getMonth();
+    const dayOfMonth = activeWeekDate.getDate();
 
-    return this.calendarPayload[`y-${activeWeekDate.getFullYear()}`][`m-${activeWeekDate.getMonth()}`][
-      `w-${this.activeWeekNumber - 1}`
-    ];
+    // Check if calendar data exists for this year and month
+    const yearData = this.calendarPayload[`y-${year}`];
+    if (!yearData) return undefined;
+
+    const monthData = yearData[`m-${month}`];
+    if (!monthData) return undefined;
+
+    // Calculate firstDayOfMonth offset (same logic as calendar generation)
+    const startOfWeek = this.rootStore?.rootStore?.user?.userProfile?.data?.start_of_the_week ?? EStartOfTheWeek.SUNDAY;
+    const firstDayOfMonthRaw = new Date(year, month, 1).getDay();
+    const firstDayOfMonth = (firstDayOfMonthRaw - startOfWeek + 7) % 7;
+
+    // Calculate which sequential week this date falls into
+    const weekIndex = Math.floor((dayOfMonth - 1 + firstDayOfMonth) / 7);
+
+    const weekKey = `w-${weekIndex}`;
+    if (!(weekKey in monthData)) {
+      return undefined;
+    }
+    return monthData[weekKey];
   }
 
   getStartAndEndDate = computedFn((layout: "week" | "month") => {
