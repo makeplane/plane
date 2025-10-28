@@ -49,10 +49,6 @@ export default defineConfig(({ isSsrBuild }) => {
         "next/link": path.resolve(__dirname, "app/compat/next/link.tsx"),
         "next/navigation": path.resolve(__dirname, "app/compat/next/navigation.ts"),
       },
-      // When building inside Docker with pnpm workspaces, symlinks may be used
-      // for workspace packages. Preserve them so Vite can resolve their exports
-      // correctly instead of attempting to follow to source paths.
-      preserveSymlinks: true,
       dedupe: ["react", "react-dom"],
     },
     // No SSR-specific overrides needed; alias resolves to ESM build
