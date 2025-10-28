@@ -49,11 +49,11 @@ export const ProjectViewsHeader = observer(() => {
         </Header.LeftItem>
         <Header.RightItem>
           <ViewListHeader />
-          <div>
+          {/* <div>
             <Button variant="primary" size="sm" onClick={() => toggleCreateViewModal(true)}>
               {t("add_view")}
             </Button>
-          </div>
+          </div> */}
         </Header.RightItem>
       </Header>
     </>
