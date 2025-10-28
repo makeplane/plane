@@ -23,7 +23,7 @@ export default {
       cta_primary: "尝试重新加载",
     },
   },
-  project: {
+  project_empty_state: {
     work_items: {
       title: "从您的第一个工作项开始。",
       description: "工作项是项目的构建块 — 分配负责人、设置优先级并轻松跟踪进度。",
@@ -87,7 +87,7 @@ export default {
       title: "选择一个接收工作项以查看其详细信息",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     archive_work_items: {
       title: "暂无已归档工作项",
       description: "通过手动或自动化,您可以归档已完成或已取消的工作项。归档后在此处查找它们。",
@@ -146,7 +146,7 @@ export default {
       title: "设置接收以管理传入请求并跟踪它们的接受和拒绝情况",
     },
   },
-  settings: {
+  settings_empty_state: {
     estimates: {
       title: "暂无估算",
       description: "定义团队如何衡量工作量,并在所有工作项中一致地跟踪它。",

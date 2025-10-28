@@ -103,11 +103,11 @@ export const CycleEmptyState: React.FC = observer(() => {
         ) : (
           <EmptyStateDetailed
             assetKey="work-item"
-            title={t("project.cycle_work_items.title")}
-            description={t("project.cycle_work_items.description")}
+            title={t("project_empty_state.cycle_work_items.title")}
+            description={t("project_empty_state.cycle_work_items.description")}
             actions={[
               {
-                label: t("project.cycle_work_items.cta_primary"),
+                label: t("project_empty_state.cycle_work_items.cta_primary"),
                 onClick: () => {
                   captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.CYCLE });
                   toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
@@ -117,7 +117,7 @@ export const CycleEmptyState: React.FC = observer(() => {
                 "data-ph-element": WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.CYCLE,
               },
               {
-                label: t("project.cycle_work_items.cta_secondary"),
+                label: t("project_empty_state.cycle_work_items.cta_secondary"),
                 onClick: () => setCycleIssuesListModal(true),
                 disabled: !canPerformEmptyStateActions,
                 variant: "outline-primary",

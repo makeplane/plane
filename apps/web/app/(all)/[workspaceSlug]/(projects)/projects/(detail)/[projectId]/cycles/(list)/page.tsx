@@ -98,11 +98,11 @@ const ProjectCyclesPage = observer(() => {
           <div className="h-full place-items-center">
             <EmptyStateDetailed
               assetKey="cycle"
-              title={t("project.cycles.title")}
-              description={t("project.cycles.description")}
+              title={t("project_empty_state.cycles.title")}
+              description={t("project_empty_state.cycles.description")}
               actions={[
                 {
-                  label: t("project.cycles.cta_primary"),
+                  label: t("project_empty_state.cycles.cta_primary"),
                   onClick: () => setCreateModal(true),
                   variant: "primary",
                   disabled: !hasMemberLevelPermission,

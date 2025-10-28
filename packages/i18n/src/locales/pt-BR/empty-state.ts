@@ -25,7 +25,7 @@ export default {
       cta_primary: "Tentar recarregar",
     },
   },
-  project: {
+  project_empty_state: {
     work_items: {
       title: "Comece com seu primeiro item de trabalho.",
       description:
@@ -94,7 +94,7 @@ export default {
       title: "Selecione um item de trabalho de Entrada para ver seus detalhes",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     archive_work_items: {
       title: "Ainda não há itens de trabalho arquivados",
       description:
@@ -158,7 +158,7 @@ export default {
       title: "Configure a entrada para gerenciar solicitações recebidas e rastrear como elas são aceitas e rejeitadas",
     },
   },
-  settings: {
+  settings_empty_state: {
     estimates: {
       title: "Ainda não há estimativas",
       description:

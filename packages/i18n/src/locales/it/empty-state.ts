@@ -26,7 +26,7 @@ export default {
       cta_primary: "Prova a ricaricare",
     },
   },
-  project: {
+  project_empty_state: {
     work_items: {
       title: "Inizia con il tuo primo elemento di lavoro.",
       description:
@@ -95,7 +95,7 @@ export default {
       title: "Seleziona un elemento di lavoro di Intake per visualizzarne i dettagli",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     archive_work_items: {
       title: "Nessun elemento di lavoro archiviato ancora",
       description:
@@ -159,7 +159,7 @@ export default {
       title: "Imposta intake per gestire le richieste in arrivo e tracciare come vengono accettate e rifiutate",
     },
   },
-  settings: {
+  settings_empty_state: {
     estimates: {
       title: "Nessuna stima ancora",
       description:

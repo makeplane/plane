@@ -69,8 +69,8 @@ export const ArchivedCycleLayoutRoot: React.FC = observer(() => {
         <div className="h-full place-items-center">
           <EmptyStateDetailed
             assetKey="archived-cycle"
-            title={t("workspace.archive_cycles.title")}
-            description={t("workspace.archive_cycles.description")}
+            title={t("workspace_empty_state.archive_cycles.title")}
+            description={t("workspace_empty_state.archive_cycles.description")}
           />
         </div>
       ) : (

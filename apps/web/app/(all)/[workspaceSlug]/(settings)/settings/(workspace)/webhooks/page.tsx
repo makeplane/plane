@@ -90,11 +90,11 @@ const WebhooksListPage = observer(() => {
             <div className="h-full w-full flex items-center justify-center">
               <EmptyStateCompact
                 assetKey="webhook"
-                title={t("settings.webhooks.title")}
-                description={t("settings.webhooks.description")}
+                title={t("settings_empty_state.webhooks.title")}
+                description={t("settings_empty_state.webhooks.description")}
                 actions={[
                   {
-                    label: t("settings.webhooks.cta_primary"),
+                    label: t("settings_empty_state.webhooks.cta_primary"),
                     onClick: () => {
                       captureClick({
                         elementName: WORKSPACE_SETTINGS_TRACKER_ELEMENTS.EMPTY_STATE_ADD_WEBHOOK_BUTTON,
