@@ -1,19 +1,23 @@
 "use client";
 
-import { FC, useState } from "react";
-import isEmpty from "lodash/isEmpty";
+import type { FC } from "react";
+import { useState } from "react";
+import { isEmpty } from "lodash-es";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 // plane internal packages
 import { API_BASE_URL } from "@plane/constants";
-import { IFormattedInstanceConfiguration, TInstanceGiteaAuthenticationConfigurationKeys } from "@plane/types";
-import { Button, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IFormattedInstanceConfiguration, TInstanceGiteaAuthenticationConfigurationKeys } from "@plane/types";
+import { Button, getButtonStyling } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { CodeBlock } from "@/components/common/code-block";
 import { ConfirmDiscardModal } from "@/components/common/confirm-discard-modal";
-import { ControllerInput, TControllerInputFormField } from "@/components/common/controller-input";
-import { CopyField, TCopyField } from "@/components/common/copy-field";
+import type { TControllerInputFormField } from "@/components/common/controller-input";
+import { ControllerInput } from "@/components/common/controller-input";
+import type { TCopyField } from "@/components/common/copy-field";
+import { CopyField } from "@/components/common/copy-field";
 // hooks
 import { useInstance } from "@/hooks/store";
 
@@ -47,18 +51,18 @@ export const InstanceGiteaConfigForm: FC<Props> = (props) => {
 
   const GITEA_FORM_FIELDS: TControllerInputFormField[] = [
     {
-      key: "GITEA_HOST", 
+      key: "GITEA_HOST",
       type: "text",
       label: "Gitea Host",
       description: (
-        <>Use the URL of your Gitea instance. For the official Gitea instance, use "https://gitea.com".</>
+        <>Use the URL of your Gitea instance. For the official Gitea instance, use &quot;https://gitea.com&quot;.</>
       ),
       placeholder: "https://gitea.com",
       error: Boolean(errors.GITEA_HOST),
       required: true,
     },
     {
-      key: "GITEA_CLIENT_ID", 
+      key: "GITEA_CLIENT_ID",
       type: "text",
       label: "Client ID",
       description: (
@@ -100,7 +104,7 @@ export const InstanceGiteaConfigForm: FC<Props> = (props) => {
       placeholder: "9b0050f94ec1b744e32ce79ea4ffacd40d4119cb",
       error: Boolean(errors.GITEA_CLIENT_SECRET),
       required: true,
-    }
+    },
   ];
 
   const GITEA_SERVICE_FIELD: TCopyField[] = [
@@ -138,7 +142,7 @@ export const InstanceGiteaConfigForm: FC<Props> = (props) => {
         });
         reset({
           GITEA_CLIENT_ID: response.find((item) => item.key === "GITEA_CLIENT_ID")?.value,
-          GITEA_CLIENT_SECRET: response.find((item) => item.key === "GITEA_CLIENT_SECRET")?.value,    
+          GITEA_CLIENT_SECRET: response.find((item) => item.key === "GITEA_CLIENT_SECRET")?.value,
         });
       })
       .catch((err) => console.error(err));

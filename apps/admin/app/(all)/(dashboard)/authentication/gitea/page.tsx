@@ -6,8 +6,8 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane internal packages
-import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
-import { resolveGeneralTheme } from "@plane/utils";
+import { setPromiseToast } from "@plane/propel/toast";
+import { Loader, ToggleSwitch } from "@plane/ui";
 // components
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 // hooks
@@ -68,14 +68,7 @@ const InstanceGiteaAuthenticationPage = observer(() => {
           <AuthenticationMethodCard
             name="Gitea"
             description="Allow members to login or sign up to plane with their Gitea accounts."
-            icon={
-              <Image
-                src={giteaLogo}
-                height={24}
-                width={24}
-                alt="Gitea Logo"
-              />
-            }
+            icon={<Image src={giteaLogo} height={24} width={24} alt="Gitea Logo" />}
             config={
               <ToggleSwitch
                 value={isGiteaEnabled}
@@ -92,7 +85,7 @@ const InstanceGiteaAuthenticationPage = observer(() => {
         </div>
         <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-4">
           {formattedConfig ? (
-            <InstanceGiteaConfigForm config={formattedConfig}/>
+            <InstanceGiteaConfigForm config={formattedConfig} />
           ) : (
             <Loader className="space-y-8">
               <Loader.Item height="50px" width="25%" />

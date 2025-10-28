@@ -12,19 +12,19 @@ import { resolveGeneralTheme } from "@plane/utils";
 // components
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 import { EmailCodesConfiguration } from "@/components/authentication/email-config-switch";
+import { GiteaConfiguration } from "@/components/authentication/gitea-config";
 import { GithubConfiguration } from "@/components/authentication/github-config";
 import { GitlabConfiguration } from "@/components/authentication/gitlab-config";
 import { GoogleConfiguration } from "@/components/authentication/google-config";
-import { GiteaConfiguration } from "@/components/authentication/gitea-config";
 import { PasswordLoginConfiguration } from "@/components/authentication/password-config-switch";
 // plane admin components
 import { UpgradeButton } from "@/plane-admin/components/common";
 // assets
+import giteaLogo from "@/public/logos/gitea-logo.svg";
 import githubLightModeImage from "@/public/logos/github-black.png";
 import githubDarkModeImage from "@/public/logos/github-white.png";
 import GitlabLogo from "@/public/logos/gitlab-logo.svg";
 import GoogleLogo from "@/public/logos/google-logo.svg";
-import giteaLogo from "@/public/logos/gitea-logo.svg";
 import OIDCLogo from "@/public/logos/oidc-logo.svg";
 import SAMLLogo from "@/public/logos/saml-logo.svg";
 

@@ -6,7 +6,7 @@ import Link from "next/link";
 // icons
 import { Settings2 } from "lucide-react";
 // plane internal packages
-import { TInstanceAuthenticationMethodKeys } from "@plane/types";
+import type { TInstanceAuthenticationMethodKeys } from "@plane/types";
 import { ToggleSwitch, getButtonStyling } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
@@ -23,7 +23,8 @@ export const GiteaConfiguration: React.FC<Props> = observer((props) => {
   const { formattedConfig } = useInstance();
   // derived values
   const GiteaConfig = formattedConfig?.IS_GITEA_ENABLED ?? "";
-  const GiteaConfigured = !!formattedConfig?.GITEA_HOST && !!formattedConfig?.GITEA_CLIENT_ID && !!formattedConfig?.GITEA_CLIENT_SECRET;
+  const GiteaConfigured =
+    !!formattedConfig?.GITEA_HOST && !!formattedConfig?.GITEA_CLIENT_ID && !!formattedConfig?.GITEA_CLIENT_SECRET;
 
   return (
     <>
