@@ -1221,7 +1221,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
             pk=cycle_id,
         )
         # transfer work items only when cycle is completed (passed the end data)
-        if old_cycle.end_date is not None and old_cycle.end_date < timezone.now():
+        if old_cycle.end_date is not None and old_cycle.end_date > timezone.now():
             return Response(
                 {"error": "The old cycle is not completed yet"},
                 status=status.HTTP_400_BAD_REQUEST,
