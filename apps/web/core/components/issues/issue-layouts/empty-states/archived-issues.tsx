@@ -38,7 +38,7 @@ export const ProjectArchivedEmptyState: React.FC = observer(() => {
           description={t("common_empty_state.search.description")}
           actions={[
             {
-              label: t("common.search.cta_secondary"),
+              label: "Clear filters",
               onClick: archivedWorkItemFilter?.clearFilters,
               disabled: !canPerformEmptyStateActions || !archivedWorkItemFilter,
               variant: "outline-primary",
