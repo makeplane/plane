@@ -7,7 +7,8 @@ import { Controller, useForm } from "react-hook-form";
 import { Button } from "@plane/propel/button";
 import type { ILinkDetails, ModuleLink } from "@plane/types";
 // plane ui
-import { Input, ModalCore, setToast, TOAST_TYPE } from "@plane/ui";
+import { Input, ModalCore } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 
 type Props = {
   createLink: (formData: ModuleLink) => Promise<void>;

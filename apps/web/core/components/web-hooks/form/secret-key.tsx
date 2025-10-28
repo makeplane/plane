@@ -12,7 +12,7 @@ import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IWebhook } from "@plane/types";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { csvDownload, copyTextToClipboard } from "@plane/utils";
 // helpers
 // hooks

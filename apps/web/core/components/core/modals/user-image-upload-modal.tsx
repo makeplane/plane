@@ -9,7 +9,7 @@ import { Transition, Dialog } from "@headlessui/react";
 import { ACCEPTED_AVATAR_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { EFileAssetType } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { getAssetIdFromUrl, getFileURL, checkURLValidity } from "@plane/utils";
 // helpers
 // services

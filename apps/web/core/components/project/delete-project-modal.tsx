@@ -10,7 +10,8 @@ import { PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import type { IProject } from "@plane/types";
 // ui
-import { Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { Input } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // constants
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";

@@ -10,7 +10,8 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { CustomSearchSelect, CustomSelect, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomSearchSelect, CustomSelect } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";

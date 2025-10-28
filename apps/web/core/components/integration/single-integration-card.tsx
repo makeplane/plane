@@ -11,7 +11,8 @@ import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
 // ui
-import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { Loader } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // constants
 import { WORKSPACE_INTEGRATIONS } from "@/constants/fetch-keys";
 // hooks

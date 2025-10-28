@@ -10,7 +10,8 @@ import { PROFILE_SETTINGS_TRACKER_ELEMENTS, PROFILE_SETTINGS_TRACKER_EVENTS } fr
 import { useTranslation } from "@plane/i18n";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import type { IUser, TUserProfile } from "@plane/types";
-import { Input, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+import { Input } from "@plane/ui";
+import { TOAST_TYPE, setToast, setPromiseToast } from "@plane/propel/toast";
 import { cn, getFileURL } from "@plane/utils";
 // components
 import { DeactivateAccountModal } from "@/components/account/deactivate-account-modal";

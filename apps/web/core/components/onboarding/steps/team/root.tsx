@@ -23,7 +23,8 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EOnboardingSteps, IWorkspace } from "@plane/types";
 // ui
-import { Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import { Input, Spinner } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // constants
 // helpers
 

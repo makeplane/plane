@@ -10,7 +10,8 @@ import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // ui
-import { Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+import { Loader, ToggleSwitch } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // helpers
 // hooks
