@@ -3,18 +3,17 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
-import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane internal packages
 import { setPromiseToast } from "@plane/propel/toast";
 import { Loader, ToggleSwitch } from "@plane/ui";
 // components
+import giteaLogo from "@/app/assets/logos/gitea-logo.svg?url";
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 // hooks
 import { useInstance } from "@/hooks/store";
-// icons
-import giteaLogo from "@/public/logos/gitea-logo.svg";
 //local components
+import type { Route } from "./+types/page";
 import { InstanceGiteaConfigForm } from "./form";
 
 const InstanceGiteaAuthenticationPage = observer(() => {
@@ -22,8 +21,6 @@ const InstanceGiteaAuthenticationPage = observer(() => {
   const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
   // state
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  // theme
-  const { resolvedTheme } = useTheme();
   // config
   const enableGiteaConfig = formattedConfig?.IS_GITEA_ENABLED ?? "";
   useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
@@ -100,5 +97,6 @@ const InstanceGiteaAuthenticationPage = observer(() => {
     </>
   );
 });
+export const meta: Route.MetaFunction = () => [{ title: "Gitea Authentication - God Mode" }];
 
 export default InstanceGiteaAuthenticationPage;
