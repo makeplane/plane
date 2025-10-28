@@ -634,6 +634,8 @@ export default {
   },
   common: {
     all: "모두",
+    no_items_in_this_group: "No items in this group",
+    drop_here_to_move: "Drop here to move",
     states: "상태",
     state: "상태",
     state_groups: "상태 그룹",

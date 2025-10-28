@@ -647,6 +647,8 @@ export default {
   },
   common: {
     all: "Tutti",
+    no_items_in_this_group: "No items in this group",
+    drop_here_to_move: "Drop here to move",
     states: "Stati",
     state: "Stato",
     state_groups: "Gruppi di stati",
