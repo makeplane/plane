@@ -1,7 +1,6 @@
 import os
 from datetime import datetime, timedelta
-from urllib.parse import urlencode
-
+from urllib.parse import urlencode, urlparse
 import pytz
 import requests
 
@@ -16,6 +15,7 @@ from plane.authentication.adapter.error import (
 
 class GiteaOAuthProvider(OauthAdapter):
     provider = "gitea"
+    scope = "openid email profile"
 
     def __init__(self, request, code=None, state=None, callback=None):
         (GITEA_CLIENT_ID, GITEA_CLIENT_SECRET, GITEA_HOST) = get_configuration_value(
@@ -41,14 +41,18 @@ class GiteaOAuthProvider(OauthAdapter):
                 error_message="GITEA_NOT_CONFIGURED",
             )
 
-        # Remove trailing slash if present
-        if GITEA_HOST.endswith("/"):
-            GITEA_HOST = GITEA_HOST[:-1]
+        # Enforce scheme and normalize trailing slash(es)
+        parsed = urlparse(GITEA_HOST)
+        if not parsed.scheme or parsed.scheme not in ("https", "http"):
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["GITEA_NOT_CONFIGURED"],
+                error_message="GITEA_NOT_CONFIGURED",  # avoid leaking details to query params
+            )
+        GITEA_HOST = GITEA_HOST.rstrip("/")
 
         # Set URLs based on the host
         self.token_url = f"{GITEA_HOST}/login/oauth/access_token"
         self.userinfo_url = f"{GITEA_HOST}/api/v1/user"
-        self.scope = "user:email"
 
         client_id = GITEA_CLIENT_ID
         client_secret = GITEA_CLIENT_SECRET
@@ -115,20 +119,29 @@ class GiteaOAuthProvider(OauthAdapter):
             if not response.ok:
                 raise AuthenticationException(
                     error_code=AUTHENTICATION_ERROR_CODES["GITEA_OAUTH_PROVIDER_ERROR"],
-                    error_message=f"GITEA_OAUTH_PROVIDER_ERROR: Failed to fetch emails (status: {response.status_code}, response: {response.text})",
+                    error_message="GITEA_OAUTH_PROVIDER_ERROR: Failed to fetch emails",
                 )
             emails_response = response.json()
-            email = next(
-                (email["email"] for email in emails_response if email.get("primary")), None
-            )
+
+            if not emails_response:
+                raise AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES["GITEA_OAUTH_PROVIDER_ERROR"],
+                    error_message="GITEA_OAUTH_PROVIDER_ERROR: No emails found",
+                )
+            # Prefer primary+verified, then any verified, then primary, else first
+            email = next((e.get("email") for e in emails_response if e.get("primary") and e.get("verified")), None)
+            if not email:
+                email = next((e.get("email") for e in emails_response if e.get("verified")), None)
+            if not email:
+                email = next((e.get("email") for e in emails_response if e.get("primary")), None)
             if not email and emails_response:
                 # If no primary email, use the first one
                 email = emails_response[0].get("email")
             return email
-        except requests.RequestException as e:
+        except requests.RequestException:
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["GITEA_OAUTH_PROVIDER_ERROR"],
-                error_message=f"GITEA_OAUTH_PROVIDER_ERROR: Exception occurred while fetching emails: {str(e)}",
+                error_message="GITEA_OAUTH_PROVIDER_ERROR: Exception occurred while fetching emails",
             )
 
     def set_user_data(self):

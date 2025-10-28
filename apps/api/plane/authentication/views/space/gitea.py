@@ -24,7 +24,7 @@ class GiteaOauthInitiateSpaceEndpoint(View):
         request.session["host"] = base_host(request=request, is_space=True)
         next_path = request.GET.get("next_path")
         if next_path:
-            request.session["next_path"] = str(next_path)
+            request.session["next_path"] = str(validate_next_path(next_path))
 
         # Check instance configuration
         instance = Instance.objects.first()
@@ -88,7 +88,9 @@ class GiteaCallbackSpaceEndpoint(View):
             user_login(request=request, user=user, is_space=True)
             # Process workspace and project invitations
             # redirect to referer path
-            url = f"{base_host(request=request, is_space=True)}{str(next_path) if next_path else ''}"
+            url = (
+                f"{base_host(request=request, is_space=True)}{str(validate_next_path(next_path)) if next_path else ''}"
+            )
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             params = e.get_error_dict()
