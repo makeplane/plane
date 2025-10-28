@@ -190,7 +190,7 @@ llm_config_variables = [
     {
         "key": "GPT_ENGINE",
         "value": os.environ.get("GPT_ENGINE", "gpt-3.5-turbo"),
-        "category": "SMTP",
+        "category": "AI",
         "is_encrypted": False,
     },
 ]
