@@ -143,7 +143,7 @@ Check out this interactive walkthrough of the `plane` codebase on CodeCanvas [he
 
 To refine existing dataflow simulation or create new ones, follow the quick tutorial [here](https://docs.code-canvas.com/updating-diagram).
 
-<img width="1916" alt="CodeCanvas Screenshot" src="https://codecanvas-media-public.s3.amazonaws.com/images/codecanvas-readme-screenshot.png" />
+<img width="1690" height="785" alt="image" src="https://github.com/user-attachments/assets/a997d9a6-193c-41aa-beed-1ffcffe180f9" />
 
 ## ❤️ Community
 
