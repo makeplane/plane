@@ -1,22 +1,22 @@
 export default {
   common_empty_state: {
     progress: {
-      title: "Il n'y a pas encore de métriques de progression à afficher.",
+      title: "Il n’y a pas encore de métriques de progression à afficher.",
       description:
         "Commencez à définir des valeurs de propriété dans les éléments de travail pour voir les métriques de progression ici.",
     },
     updates: {
       title: "Pas encore de mises à jour.",
-      description: "Une fois que les membres du projet ajoutent des mises à jour, elles apparaîtront ici",
+      description: "Lorsque les membres du projet ajoutent des mises à jour, elles apparaissent ici",
     },
     search: {
       title: "Aucun résultat correspondant.",
-      description: "Aucun résultat trouvé. Essayez d'ajuster vos termes de recherche.",
+      description: "Aucun résultat n’a été trouvé. Essayez d’ajuster votre recherche.",
     },
     not_found: {
       title: "Oups ! Quelque chose semble incorrect",
       description:
-        "Nous ne sommes actuellement pas en mesure de récupérer votre compte plane. Il pourrait s'agir d'une erreur réseau.",
+        "Nous ne sommes actuellement pas en mesure de récupérer votre compte plane. Il pourrait s’agir d'une erreur réseau.",
       cta_primary: "Essayer de recharger",
     },
     server_error: {
@@ -42,19 +42,19 @@ export default {
     cycle_work_items: {
       title: "Aucun élément de travail à afficher dans ce cycle",
       description:
-        "Créez des éléments de travail pour commencer à surveiller la progression de votre équipe ce cycle et atteindre vos objectifs à temps.",
+        "Créez des éléments de travail pour commencer à suivre la progression de votre équipe dans ce cycle et atteindre vos objectifs à temps.",
       cta_primary: "Créer un élément de travail",
       cta_secondary: "Ajouter un élément de travail existant",
     },
     modules: {
-      title: "Associez vos objectifs de projet aux Modules et suivez facilement.",
+      title: "Associez vos objectifs de projet aux Modules et suivez-les facilement.",
       description:
-        "Les modules sont composés d'éléments de travail interconnectés. Ils aident à surveiller les progrès à travers les phases du projet, chacune avec des délais spécifiques et des analyses pour indiquer à quel point vous êtes proche de la réalisation de ces phases.",
+        "Les modules sont composés d’éléments de travail interconnectés. Ils aident à suivre les progrès à travers les phases du projet, chacune avec des délais spécifiques et des analyses pour indiquer à quel point vous êtes proche de la réalisation de ces phases.",
       cta_primary: "Définir votre premier module",
     },
     module_work_items: {
       title: "Aucun élément de travail à afficher dans ce Module",
-      description: "Créez des éléments de travail pour commencer à surveiller ce module.",
+      description: "Créez des éléments de travail pour commencer à suivre ce module.",
       cta_primary: "Créer un élément de travail",
       cta_secondary: "Ajouter un élément de travail existant",
     },
@@ -72,13 +72,13 @@ export default {
     },
     work_item_filter: {
       title: "Aucun élément de travail trouvé",
-      description: "Votre filtre actuel n'a renvoyé aucun résultat. Essayez de modifier les filtres.",
+      description: "Votre filtre actuel n’a renvoyé aucun résultat. Essayez de modifier les filtres.",
       cta_primary: "Ajouter un élément de travail",
     },
     pages: {
       title: "Documentez tout — des notes aux PRD",
       description:
-        "Les pages vous permettent de capturer et d'organiser des informations en un seul endroit. Rédigez des notes de réunion, de la documentation de projet et des PRD, intégrez des éléments de travail et structurez-les avec des composants prêts à l'emploi.",
+        "Les pages vous permettent de capturer et d’organiser des informations en un seul endroit. Rédigez des notes de réunion, de la documentation de projet et des PRD, intégrez des éléments de travail et structurez-les avec des composants prêts à l'emploi.",
       cta_primary: "Créer votre première Page",
     },
     archive_pages: {
@@ -86,10 +86,10 @@ export default {
       description: "Archivez les pages qui ne sont pas sur votre radar. Accédez-y ici si nécessaire.",
     },
     intake_sidebar: {
-      title: "Enregistrer les demandes d'Intake",
+      title: "Enregistrer les demandes d’Intake",
       description:
         "Soumettez de nouvelles demandes à examiner, prioriser et suivre dans le flux de travail de votre projet.",
-      cta_primary: "Créer une demande d'Intake",
+      cta_primary: "Créer une demande d’Intake",
     },
     intake_main: {
       title: "Sélectionnez un élément de travail Intake pour voir ses détails",
@@ -100,7 +100,7 @@ export default {
       title: "Aucun élément de travail archivé pour le moment",
       description:
         "Manuellement ou par automatisation, vous pouvez archiver des éléments de travail qui sont terminés ou annulés. Retrouvez-les ici une fois archivés.",
-      cta_primary: "Définir l'automatisation",
+      cta_primary: "Définir l’automatisation",
     },
     archive_cycles: {
       title: "Aucun cycle archivé pour le moment",
@@ -129,25 +129,25 @@ export default {
     views: {
       title: "Aucune vue pour le moment",
       description:
-        "Ajoutez des éléments de travail à votre projet et utilisez les vues pour filtrer, trier et surveiller les progrès sans effort.",
+        "Ajoutez des éléments de travail à votre projet et utilisez les vues pour filtrer, trier et suivre les progrès sans effort.",
       cta_primary: "Ajouter un élément de travail",
     },
     drafts: {
       title: "Éléments de travail à moitié écrits",
       description:
-        "Pour l'essayer, commencez à ajouter un élément de travail et laissez-le à mi-chemin ou créez votre premier brouillon ci-dessous. 😉",
-      cta_primary: "Créer un brouillon d'élément de travail",
+        "Pour l’essayer, commencez à ajouter un élément de travail et laissez-le à mi-chemin ou créez votre premier brouillon ci-dessous. 😉",
+      cta_primary: "Créer un brouillon d’élément de travail",
     },
     projects_archived: {
       title: "Aucun projet archivé",
-      description: "On dirait que tous vos projets sont toujours actifs—excellent travail !",
+      description: "On dirait que tous vos projets sont toujours actifs — excellent travail !",
     },
     analytics_projects: {
       title: "Créez des projets pour visualiser les métriques de projet ici.",
     },
     analytics_work_items: {
       title:
-        "Créez des projets avec des éléments de travail et des assignés pour commencer à suivre les performances, les progrès et l'impact de l'équipe ici.",
+        "Créez des projets avec des éléments de travail et des personnes assignées pour commencer à suivre les performances, les progrès et l’impact de l’équipe ici.",
     },
     analytics_no_cycle: {
       title:
@@ -157,15 +157,15 @@ export default {
       title: "Créez des modules pour organiser votre travail et suivre les progrès à travers différentes étapes.",
     },
     analytics_no_intake: {
-      title: "Configurez l'intake pour gérer les demandes entrantes et suivre comment elles sont acceptées et rejetées",
+      title: "Configurez l’intake pour gérer les demandes entrantes et suivre comment elles sont acceptées et rejetées",
     },
   },
   settings_empty_state: {
     estimates: {
       title: "Aucune estimation pour le moment",
       description:
-        "Définissez comment votre équipe mesure l'effort et suivez-le de manière cohérente sur tous les éléments de travail.",
-      cta_primary: "Ajouter un système d'estimation",
+        "Définissez comment votre équipe mesure l’effort et suivez-le de manière cohérente sur tous les éléments de travail.",
+      cta_primary: "Ajouter un système d’estimation",
     },
     labels: {
       title: "Aucune étiquette pour le moment",
@@ -176,7 +176,7 @@ export default {
     exports: {
       title: "Aucune exportation pour le moment",
       description:
-        "Vous n'avez aucun enregistrement d'exportation pour le moment. Une fois que vous exportez des données, tous les enregistrements apparaîtront ici.",
+        "Vous n’avez aucun enregistrement d’exportation pour le moment. Une fois que vous exportez des données, tous les enregistrements apparaîtront ici.",
     },
     tokens: {
       title: "Aucun jeton personnel pour le moment",
