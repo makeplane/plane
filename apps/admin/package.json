@@ -42,7 +42,6 @@
     "lucide-react": "catalog:",
     "mobx": "catalog:",
     "mobx-react": "catalog:",
-    "mobx-react-lite": "^4.0.7",
     "morgan": "^1.10.1",
     "next-themes": "^0.2.1",
     "react": "catalog:",
