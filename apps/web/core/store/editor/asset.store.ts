@@ -27,6 +27,19 @@ export interface IEditorAssetStore {
     projectId?: string;
     workspaceSlug: string;
   }) => Promise<TFileSignedURLResponse>;
+  duplicateEditorAsset: ({
+    assetId,
+    entityId,
+    entityType,
+    projectId,
+    workspaceSlug,
+  }: {
+    assetId: string;
+    entityId: string;
+    entityType: string;
+    projectId?: string;
+    workspaceSlug: string;
+  }) => Promise<{ asset_id: string }>;
 }
 
 export class EditorAssetStore implements IEditorAssetStore {
@@ -116,5 +129,14 @@ export class EditorAssetStore implements IEditorAssetStore {
         delete this.assetsUploadStatus[blockId];
       });
     }
+  };
+  duplicateEditorAsset: IEditorAssetStore["duplicateEditorAsset"] = async (args) => {
+    const { assetId, entityId, entityType, projectId, workspaceSlug } = args;
+    const { asset_id } = await this.fileService.duplicateAsset(workspaceSlug?.toString() ?? "", assetId, {
+      entity_id: entityId,
+      entity_type: entityType,
+      project_id: projectId,
+    });
+    return { asset_id };
   };
 }

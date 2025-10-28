@@ -9,6 +9,7 @@ export enum ECustomImageAttributeNames {
   ASPECT_RATIO = "aspectRatio",
   SOURCE = "src",
   ALIGNMENT = "alignment",
+  STATUS = "status",
 }
 
 export type Pixel = `${number}px`;
@@ -23,6 +24,14 @@ export type TCustomImageSize = {
 
 export type TCustomImageAlignment = "left" | "center" | "right";
 
+export type TCustomImageStatus =
+  | "pending"
+  | "uploading"
+  | "uploaded"
+  | "duplicating"
+  | "duplicated"
+  | "duplication-failed";
+
 export type TCustomImageAttributes = {
   [ECustomImageAttributeNames.ID]: string | null;
   [ECustomImageAttributeNames.WIDTH]: PixelAttribute<"35%" | number> | null;
@@ -30,6 +39,7 @@ export type TCustomImageAttributes = {
   [ECustomImageAttributeNames.ASPECT_RATIO]: number | null;
   [ECustomImageAttributeNames.SOURCE]: string | null;
   [ECustomImageAttributeNames.ALIGNMENT]: TCustomImageAlignment;
+  [ECustomImageAttributeNames.STATUS]: TCustomImageStatus;
 };
 
 export type UploadEntity = ({ event: "insert" } | { event: "drop"; file: File }) & { hasOpenedFileInputOnce?: boolean };
@@ -45,6 +55,7 @@ export type CustomImageExtensionOptions = {
   getImageSource: TFileHandler["getAssetSrc"];
   restoreImage: TFileHandler["restore"];
   uploadImage?: TFileHandler["upload"];
+  duplicateImage?: TFileHandler["duplicate"];
 };
 
 export type CustomImageExtensionStorage = {

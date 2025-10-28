@@ -1,4 +1,4 @@
-import { ImageIcon } from "lucide-react";
+import { ImageIcon, RotateCcw } from "lucide-react";
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from "react";
 // plane imports
 import { cn } from "@plane/utils";
@@ -15,6 +15,7 @@ import type { CustomImageNodeViewProps } from "./node-view";
 
 type CustomImageUploaderProps = CustomImageNodeViewProps & {
   failedToLoadImage: boolean;
+  isDuplicationFailed: boolean;
   loadImageFromFileSystem: (file: string) => void;
   maxFileSize: number;
   setIsUploaded: (isUploaded: boolean) => void;
@@ -32,6 +33,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     selected,
     setIsUploaded,
     updateAttributes,
+    isDuplicationFailed,
   } = props;
   // refs
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -49,6 +51,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
         // Update the node view's src attribute post upload
         updateAttributes({
           src: url,
+          status: "uploaded",
         });
         imageComponentImageFileMap?.delete(imageEntityId);
 
@@ -108,6 +111,11 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     onInvalidFile: handleInvalidFile,
     onUpload,
   });
+  useEffect(() => {
+    if (isImageBeingUploaded) {
+      updateAttributes({ status: "uploading" });
+    }
+  }, [isImageBeingUploaded, updateAttributes]);
 
   const { draggedInside, onDrop, onDragEnter, onDragLeave } = useDropZone({
     editor,
@@ -160,7 +168,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
 
   const getDisplayMessage = useCallback(() => {
     const isUploading = isImageBeingUploaded;
-    if (failedToLoadImage) {
+    if (failedToLoadImage || isDuplicationFailed) {
       return "Error loading image";
     }
 
@@ -173,7 +181,17 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     }
 
     return "Add an image";
-  }, [draggedInside, editor.isEditable, failedToLoadImage, isImageBeingUploaded]);
+  }, [draggedInside, editor.isEditable, failedToLoadImage, isImageBeingUploaded, isDuplicationFailed]);
+
+  const handleRetryClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (isDuplicationFailed && editor.isEditable) {
+        updateAttributes({ status: "duplicating" });
+      }
+    },
+    [isDuplicationFailed, editor.isEditable, updateAttributes]
+  );
 
   return (
     <div
@@ -184,10 +202,10 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
           "bg-custom-background-80 text-custom-text-200": draggedInside && editor.isEditable,
           "text-custom-primary-200 bg-custom-primary-100/10 border-custom-primary-200/10 hover:bg-custom-primary-100/10 hover:text-custom-primary-200":
             selected && editor.isEditable,
-          "text-red-500 cursor-default": failedToLoadImage,
-          "hover:text-red-500": failedToLoadImage && editor.isEditable,
-          "bg-red-500/10": failedToLoadImage && selected,
-          "hover:bg-red-500/10": failedToLoadImage && selected && editor.isEditable,
+          "text-red-500 cursor-default": failedToLoadImage || isDuplicationFailed,
+          "hover:text-red-500": (failedToLoadImage || isDuplicationFailed) && editor.isEditable,
+          "bg-red-500/10": (failedToLoadImage || isDuplicationFailed) && selected,
+          "hover:bg-red-500/10": (failedToLoadImage || isDuplicationFailed) && selected && editor.isEditable,
         }
       )}
       onDrop={onDrop}
@@ -195,13 +213,23 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
       onDragLeave={onDragLeave}
       contentEditable={false}
       onClick={() => {
-        if (!failedToLoadImage && editor.isEditable) {
+        if (!failedToLoadImage && editor.isEditable && !isDuplicationFailed) {
           fileInputRef.current?.click();
         }
       }}
     >
       <ImageIcon className="size-4" />
-      <div className="text-base font-medium">{getDisplayMessage()}</div>
+      <div className="text-base font-medium flex-1">{getDisplayMessage()}</div>
+      {isDuplicationFailed && editor.isEditable && (
+        <button
+          onClick={handleRetryClick}
+          className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-custom-text-200 bg-custom-background-80 hover:bg-custom-background-70 border border-custom-border-300 hover:border-custom-border-200 rounded-md transition-all duration-200 ease-in-out"
+          title="Retry duplication"
+        >
+          <RotateCcw className="size-3" />
+          Retry
+        </button>
+      )}
       <input
         className="size-0 overflow-hidden"
         ref={fileInputRef}

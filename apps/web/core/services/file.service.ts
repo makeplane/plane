@@ -281,4 +281,20 @@ export class FileService extends APIService {
         throw err?.response?.data;
       });
   }
+
+  async duplicateAsset(
+    workspaceSlug: string,
+    assetId: string,
+    data: {
+      entity_id: string;
+      entity_type: string;
+      project_id?: string;
+    }
+  ): Promise<{ asset_id: string }> {
+    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/duplicate-assets/${assetId}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

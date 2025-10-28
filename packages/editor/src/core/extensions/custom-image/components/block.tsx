@@ -4,7 +4,7 @@ import React, { useRef, useState, useCallback, useLayoutEffect, useEffect } from
 import { cn } from "@plane/utils";
 // local imports
 import { Pixel, TCustomImageAttributes, TCustomImageSize } from "../types";
-import { ensurePixelString, getImageBlockId } from "../utils";
+import { ensurePixelString, getImageBlockId, isImageDuplicating } from "../utils";
 import type { CustomImageNodeViewProps } from "./node-view";
 import { ImageToolbarRoot } from "./toolbar";
 import { ImageUploadStatus } from "./upload-status";
@@ -42,6 +42,7 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
     aspectRatio: nodeAspectRatio,
     src: imgNodeSrc,
     alignment: nodeAlignment,
+    status,
   } = node.attrs;
   // states
   const [size, setSize] = useState<TCustomImageSize>({
@@ -202,15 +203,20 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
     [editor, getPos, isTouchDevice]
   );
 
-  // show the image loader if the remote image's src or preview image from filesystem is not set yet (while loading the image post upload) (or)
-  // if the initial resize (from 35% width and "auto" height attrs to the actual size in px) is not complete
-  const showImageLoader = !(resolvedImageSrc || imageFromFileSystem) || !initialResizeComplete || hasErroredOnFirstLoad;
-  // show the image upload status only when the resolvedImageSrc is not ready
-  const showUploadStatus = !resolvedImageSrc;
-  // show the image utils only if the remote image's (post upload) src is set and the initial resize is complete (but not while we're showing the preview imageFromFileSystem)
-  const showImageToolbar = resolvedImageSrc && resolvedDownloadSrc && initialResizeComplete;
-  // show the image resizer only if the editor is editable, the remote image's (post upload) src is set and the initial resize is complete (but not while we're showing the preview imageFromFileSystem)
-  const showImageResizer = editor.isEditable && resolvedImageSrc && initialResizeComplete;
+  // Check if image is duplicating
+  const isDuplicating = isImageDuplicating(status);
+
+  const showImageLoader =
+    (!resolvedImageSrc && !isDuplicating) || !initialResizeComplete || hasErroredOnFirstLoad || isDuplicating;
+
+  // show the image upload status only when not duplicating and no resolved source
+  const showUploadStatus = !resolvedImageSrc && !isDuplicating;
+
+  // show the image utils only if image is loaded and not duplicating
+  const showImageToolbar = resolvedImageSrc && resolvedDownloadSrc && initialResizeComplete && !isDuplicating;
+
+  // show the image resizer only if image is loaded and not duplicating
+  const showImageResizer = editor.isEditable && resolvedImageSrc && initialResizeComplete && !isDuplicating;
   // show the preview image from the file system if the remote image's src is not set
   const displayedImageSrc = resolvedImageSrc || imageFromFileSystem;
 
