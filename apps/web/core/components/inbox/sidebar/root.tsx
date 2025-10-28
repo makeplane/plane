@@ -144,12 +144,12 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                 ) : currentTab === EInboxIssueCurrentTab.OPEN ? (
                   <EmptyStateDetailed
                     assetKey="inbox"
-                    title={t("project.intake_sidebar.title")}
-                    description={t("project.intake_sidebar.description")}
+                    title={t("project_empty_state.intake_sidebar.title")}
+                    description={t("project_empty_state.intake_sidebar.description")}
                     assetClassName="size-20"
                     actions={[
                       {
-                        label: t("project.intake_sidebar.cta_primary"),
+                        label: t("project_empty_state.intake_sidebar.cta_primary"),
                         onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/intake`),
                         variant: "primary",
                       },

@@ -23,7 +23,7 @@ export default {
       cta_primary: "嘗試重新載入",
     },
   },
-  project: {
+  project_empty_state: {
     work_items: {
       title: "從您的第一個工作項開始。",
       description: "工作項是專案的建構模組 — 指派負責人、設定優先順序並輕鬆追蹤進度。",
@@ -87,7 +87,7 @@ export default {
       title: "選擇一個接收工作項以查看其詳細資訊",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     archive_work_items: {
       title: "暫無已封存工作項",
       description: "透過手動或自動化,您可以封存已完成或已取消的工作項。封存後在此處尋找它們。",
@@ -146,7 +146,7 @@ export default {
       title: "設定接收以管理傳入請求並追蹤它們的接受和拒絕情況",
     },
   },
-  settings: {
+  settings_empty_state: {
     estimates: {
       title: "暫無估算",
       description: "定義團隊如何衡量工作量,並在所有工作項中一致地追蹤它。",

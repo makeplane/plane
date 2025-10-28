@@ -24,7 +24,7 @@ export default {
       cta_primary: "Попробовать перезагрузить",
     },
   },
-  project: {
+  project_empty_state: {
     work_items: {
       title: "Начните с вашего первого рабочего элемента.",
       description:
@@ -94,7 +94,7 @@ export default {
       title: "Выберите рабочий элемент приема, чтобы просмотреть его детали",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     archive_work_items: {
       title: "Пока нет архивированных рабочих элементов",
       description:
@@ -160,7 +160,7 @@ export default {
       title: "Настройте прием для управления входящими запросами и отслеживания их принятия и отклонения",
     },
   },
-  settings: {
+  settings_empty_state: {
     estimates: {
       title: "Пока нет оценок",
       description:

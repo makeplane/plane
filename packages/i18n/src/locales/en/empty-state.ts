@@ -23,7 +23,7 @@ export default {
       cta_primary: "Try reloading",
     },
   },
-  project: {
+  project_empty_state: {
     work_items: {
       title: "Start with your first work item.",
       description:
@@ -90,7 +90,7 @@ export default {
       title: "Select an Intake work item to view its details",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     archive_work_items: {
       title: "No archived work items yet",
       description:
@@ -152,7 +152,7 @@ export default {
       title: "Set up intake to manage incoming requests and track how they're accepted and rejected",
     },
   },
-  settings: {
+  settings_empty_state: {
     estimates: {
       title: "No estimates yet",
       description: "Define how your team measures effort and track it consistently across all work items.",
