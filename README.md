@@ -136,6 +136,15 @@ See [CONTRIBUTING](./CONTRIBUTING.md)
 
 Explore Plane's [product documentation](https://docs.plane.so/) and [developer documentation](https://developers.plane.so/) to learn about features, setup, and usage.
 
+
+### How does `plane` work under the hood?
+
+Check out this interactive walkthrough of the `plane` codebase on CodeCanvas [here](https://www.code-canvas.com/?session=unauthenticatedGithub&repo=plane&owner=makeplane&branch=preview&OnboardingTutorial=true).
+
+To refine existing dataflow simulation or create new ones, follow the quick tutorial [here](https://docs.code-canvas.com/updating-diagram).
+
+<img width="1916" alt="CodeCanvas Screenshot" src="https://codecanvas-media-public.s3.amazonaws.com/images/codecanvas-readme-screenshot.png" />
+
 ## ❤️ Community
 
 Join the Plane community on [GitHub Discussions](https://github.com/orgs/makeplane/discussions) and our [Discord server](https://discord.com/invite/A92xrEGCge). We follow a [Code of conduct](https://github.com/makeplane/plane/blob/master/CODE_OF_CONDUCT.md) in all our community channels.
