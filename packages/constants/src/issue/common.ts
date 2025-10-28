@@ -241,7 +241,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "A",
     descendingOrderKey: "-assignees__first_name",
     descendingOrderTitle: "Z",
-    icon: "Users",
+    icon: "MembersPropertyIcon",
   },
   created_on: {
     i18n_title: "common.sort.created_on",
@@ -257,7 +257,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "New",
     descendingOrderKey: "target_date",
     descendingOrderTitle: "Old",
-    icon: "CalendarCheck2",
+    icon: "DueDatePropertyIcon",
   },
   estimate: {
     i18n_title: "common.estimate",
@@ -265,7 +265,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "Low",
     descendingOrderKey: "-estimate_point__key",
     descendingOrderTitle: "High",
-    icon: "Triangle",
+    icon: "EstimatePropertyIcon",
   },
   labels: {
     i18n_title: "common.labels",
@@ -273,7 +273,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "A",
     descendingOrderKey: "-labels__name",
     descendingOrderTitle: "Z",
-    icon: "Tag",
+    icon: "LabelPropertyIcon",
   },
   modules: {
     i18n_title: "common.modules",
@@ -297,7 +297,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "None",
     descendingOrderKey: "-priority",
     descendingOrderTitle: "Urgent",
-    icon: "Signal",
+    icon: "PriorityPropertyIcon",
   },
   start_date: {
     i18n_title: "common.order_by.start_date",
@@ -305,7 +305,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "New",
     descendingOrderKey: "start_date",
     descendingOrderTitle: "Old",
-    icon: "CalendarClock",
+    icon: "StartDatePropertyIcon",
   },
   state: {
     i18n_title: "common.state",
@@ -313,7 +313,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "A",
     descendingOrderKey: "-state__name",
     descendingOrderTitle: "Z",
-    icon: "DoubleCircleIcon",
+    icon: "StatePropertyIcon",
   },
   updated_on: {
     i18n_title: "common.sort.updated_on",

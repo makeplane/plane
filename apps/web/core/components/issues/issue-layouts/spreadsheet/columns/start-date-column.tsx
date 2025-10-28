@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { CalendarClock } from "lucide-react";
+import { StartDatePropertyIcon } from "@plane/propel/icons";
 // types
 import type { TIssue } from "@plane/types";
 // components
@@ -36,7 +36,7 @@ export const SpreadsheetStartDateColumn: React.FC<Props> = observer((props: Prop
         }}
         disabled={disabled}
         placeholder="Start date"
-        icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
+        icon={<StartDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
         buttonVariant="transparent-with-text"
         buttonClassName="text-left rounded-none group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10 px-page-x"
         buttonContainerClassName="w-full"

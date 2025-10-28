@@ -11,15 +11,14 @@ import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES, CHART_COLOR_PALETTES,
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { BarChart } from "@plane/propel/charts/bar-chart";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import type { TBarItem, TChart, TChartDatum, ChartXAxisProperty, ChartYAxisMetric } from "@plane/types";
 // plane web components
 import { generateExtendedColors, parseChartData } from "@/components/chart/utils";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
 import { useProjectState } from "@/hooks/store/use-project-state";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { AnalyticsService } from "@/services/analytics.service";
-import AnalyticsEmptyState from "../empty-state";
 import { exportCSV } from "../export";
 import { DataTable } from "../insight-table/data-table";
 import { ChartLoader } from "../loaders";
@@ -46,7 +45,6 @@ const analyticsService = new AnalyticsService();
 const PriorityChart = observer((props: Props) => {
   const { x_axis, y_axis, group_by } = props;
   const { t } = useTranslation();
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics/empty-chart-bar" });
   // store hooks
   const { selectedDuration, selectedProjects, selectedCycle, selectedModule, isPeekView, isEpic } = useAnalytics();
   const { workspaceStates } = useProjectState();
@@ -232,11 +230,11 @@ const PriorityChart = observer((props: Props) => {
           />
         </>
       ) : (
-        <AnalyticsEmptyState
-          title={t("workspace_analytics.empty_state.customized_insights.title")}
-          description={t("workspace_analytics.empty_state.customized_insights.description")}
-          className="h-[350px]"
-          assetPath={resolvedPath}
+        <EmptyStateCompact
+          assetKey="unknown"
+          assetClassName="size-20"
+          rootClassName="border border-custom-border-100 px-5 py-10 md:py-20 md:px-20"
+          title={t("workspace_empty_state.analytics_work_items.title")}
         />
       )}
     </div>

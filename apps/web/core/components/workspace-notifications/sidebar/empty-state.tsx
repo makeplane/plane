@@ -4,33 +4,29 @@ import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ENotificationTab } from "@plane/constants";
-// components
 import { useTranslation } from "@plane/i18n";
-import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
-// constants
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 
-export const NotificationEmptyState: FC = observer(() => {
+type TNotificationEmptyStateProps = {
+  currentNotificationTab: ENotificationTab;
+};
+
+export const NotificationEmptyState: FC<TNotificationEmptyStateProps> = observer(({ currentNotificationTab }) => {
   // plane imports
   const { t } = useTranslation();
-  // derived values
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/notification" });
 
   return (
     <>
-      {ENotificationTab.ALL ? (
-        <SimpleEmptyState
-          title={t("notification.empty_state.all.title")}
-          description={t("notification.empty_state.all.description")}
-          assetPath={resolvedPath}
-        />
-      ) : (
-        <SimpleEmptyState
-          title={t("notification.empty_state.mentions.title")}
-          description={t("notification.empty_state.mentions.description")}
-          assetPath={resolvedPath}
-        />
-      )}
+      <EmptyStateCompact
+        assetKey="inbox"
+        assetClassName="size-24"
+        title={
+          currentNotificationTab === ENotificationTab.ALL
+            ? t("workspace_empty_state.inbox_sidebar_all.title")
+            : t("workspace_empty_state.inbox_sidebar_mentions.title")
+        }
+        className="max-w-56"
+      />
     </>
   );
 });
