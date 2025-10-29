@@ -17,7 +17,7 @@ import { useProjectsAppPowerKCommands } from "./config/commands";
 import type { TPowerKCommandConfig, TPowerKContext } from "./core/types";
 import { GlobalShortcutsProvider } from "./global-shortcuts";
 import { ProjectsAppPowerKCommandsList } from "./ui/modal/commands-list";
-import { ProjectsAppPowerKModalWrapper } from "./ui/modal/wrapper.tsx";
+import { ProjectsAppPowerKModalWrapper } from "./ui/modal/wrapper";
 
 /**
  * Projects App PowerK provider
