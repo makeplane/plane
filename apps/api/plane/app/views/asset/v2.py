@@ -772,9 +772,9 @@ class DuplicateAssetEndpoint(BaseAPIView):
         entity_id = request.data.get("entity_id", None)
         entity_type = request.data.get("entity_type", None)
 
+
         if (
-            not entity_id
-            or not entity_type
+            not entity_type
             or entity_type not in FileAsset.EntityTypeContext.values
         ):
             return Response(
