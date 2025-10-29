@@ -23,7 +23,7 @@ export default {
       cta_primary: "Spróbuj przeładować",
     },
   },
-  project: {
+  project_empty_state: {
     work_items: {
       title: "Zacznij od swojego pierwszego elementu roboczego.",
       description:
@@ -93,7 +93,7 @@ export default {
       title: "Wybierz element roboczy Intake, aby wyświetlić jego szczegóły",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     archive_work_items: {
       title: "Jeszcze brak zarchiwizowanych elementów roboczych",
       description:
@@ -158,7 +158,7 @@ export default {
         "Skonfiguruj przyjmowanie, aby zarządzać przychodzącymi zgłoszeniami i śledzić, jak są akceptowane i odrzucane",
     },
   },
-  settings: {
+  settings_empty_state: {
     estimates: {
       title: "Jeszcze brak szacunków",
       description:

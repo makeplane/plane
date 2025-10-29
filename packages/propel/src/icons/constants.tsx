@@ -1,5 +1,15 @@
 import { Icon } from "./icon";
-export const ActionsIconsMap = [{ icon: <Icon name="action.add" />, title: "AddIcon" }];
+export const ActionsIconsMap = [
+  { icon: <Icon name="action.add" />, title: "AddIcon" },
+  { icon: <Icon name="action.close" />, title: "CloseIcon" },
+];
+
+export const ArrowsIconsMap = [
+  { icon: <Icon name="arrow.chevron-down" />, title: "ChevronDownIcon" },
+  { icon: <Icon name="arrow.chevron-left" />, title: "ChevronLeftIcon" },
+  { icon: <Icon name="arrow.chevron-right" />, title: "ChevronRightIcon" },
+  { icon: <Icon name="arrow.chevron-up" />, title: "ChevronUpIcon" },
+];
 
 export const WorkspaceIconsMap = [
   { icon: <Icon name="workspace.analytics" />, title: "AnalyticsIcon" },

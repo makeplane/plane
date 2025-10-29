@@ -8,7 +8,7 @@ export const LinksEmptyState = () => {
       <EmptyStateCompact
         assetKey="link"
         assetClassName="w-20 h-20"
-        title={t("workspace.home_widget_quick_links.title")}
+        title={t("workspace_empty_state.home_widget_quick_links.title")}
       />
     </div>
   );

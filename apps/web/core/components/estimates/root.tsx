@@ -79,11 +79,11 @@ export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
             <EmptyStateCompact
               assetKey="estimate"
               assetClassName="size-20"
-              title={t("settings.estimates.title")}
-              description={t("settings.estimates.description")}
+              title={t("settings_empty_state.estimates.title")}
+              description={t("settings_empty_state.estimates.description")}
               actions={[
                 {
-                  label: t("settings.estimates.cta_primary"),
+                  label: t("settings_empty_state.estimates.cta_primary"),
                   onClick: () => setIsEstimateCreateModalOpen(true),
                 },
               ]}

@@ -23,7 +23,7 @@ export default {
       cta_primary: "Yeniden yüklemeyi dene",
     },
   },
-  project: {
+  project_empty_state: {
     work_items: {
       title: "İlk iş öğenizle başlayın.",
       description:
@@ -91,7 +91,7 @@ export default {
       title: "Ayrıntılarını görmek için bir Giriş iş öğesi seçin",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     archive_work_items: {
       title: "Henüz arşivlenmiş iş öğesi yok",
       description:
@@ -157,7 +157,7 @@ export default {
         "Gelen istekleri yönetmek ve bunların nasıl kabul edildiğini ve reddedildiğini izlemek için giriş ayarlayın",
     },
   },
-  settings: {
+  settings_empty_state: {
     estimates: {
       title: "Henüz tahmin yok",
       description: "Ekibinizin çabayı nasıl ölçtüğünü tanımlayın ve tüm iş öğelerinde tutarlı bir şekilde takip edin.",

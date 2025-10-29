@@ -1,7 +1,8 @@
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
-import { Circle, ChevronDown, ChevronUp } from "lucide-react";
+import { Circle } from "lucide-react";
+import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 // Plane
 import type { TIssueGroupByOptions, TIssueKanbanFilters } from "@plane/types";
 // Plane-web
@@ -27,9 +28,9 @@ export const HeaderSubGroupByCard: FC<IHeaderSubGroupByCard> = observer((props) 
     >
       <div className="flex h-[20px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80">
         {collapsedGroups?.sub_group_by.includes(column_id) ? (
-          <ChevronDown width={14} strokeWidth={2} />
+          <ChevronDownIcon width={14} strokeWidth={2} />
         ) : (
-          <ChevronUp width={14} strokeWidth={2} />
+          <ChevronUpIcon width={14} strokeWidth={2} />
         )}
       </div>
 

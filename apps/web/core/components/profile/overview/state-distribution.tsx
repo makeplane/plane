@@ -74,7 +74,7 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
           <EmptyStateCompact
             assetKey="priority"
             assetClassName="size-20"
-            title={t("workspace.your_work_by_priority.title")}
+            title={t("workspace_empty_state.your_work_by_priority.title")}
           />
         )}
       </Card>
