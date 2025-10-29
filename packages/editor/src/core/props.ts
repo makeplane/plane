@@ -27,8 +27,5 @@ export const CoreEditorProps = (props: TArgs): EditorProps => {
         }
       },
     },
-    transformPastedHTML(html) {
-      return html.replace(/<img.*?>/g, "");
-    },
   };
 };
