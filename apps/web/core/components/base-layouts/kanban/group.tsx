@@ -29,10 +29,6 @@ export const BaseKanbanGroup = observer(<T extends IBaseLayoutsKanbanItem>(props
     onDrop,
   });
 
-  const handleToggle = () => {
-    onToggleGroup(group.id);
-  };
-
   return (
     <div
       ref={groupRef}
@@ -53,7 +49,7 @@ export const BaseKanbanGroup = observer(<T extends IBaseLayoutsKanbanItem>(props
             group={group}
             itemCount={itemIds.length}
             isCollapsed={isCollapsed}
-            onToggleGroup={handleToggle}
+            onToggleGroup={onToggleGroup}
           />
         )}
       </div>

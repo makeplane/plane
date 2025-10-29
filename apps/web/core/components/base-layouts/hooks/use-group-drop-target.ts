@@ -4,12 +4,7 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 interface UseGroupDropTargetProps {
   groupId: string;
   enableDragDrop?: boolean;
-  onDrop?: (
-    itemId: string,
-    targetId: string | null,
-    sourceGroupId: string,
-    targetGroupId: string
-  ) => void | Promise<void>;
+  onDrop?: (itemId: string, targetId: string | null, sourceGroupId: string, targetGroupId: string) => void;
 }
 
 interface DragSourceData {
