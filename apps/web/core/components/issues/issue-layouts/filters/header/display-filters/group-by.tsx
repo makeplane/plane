@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { ISSUE_GROUP_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { IIssueDisplayFilterOptions, TIssueGroupByOptions } from "@plane/types";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
+import { useGroupByOptions } from "@/plane-web/components/issues/issue-layouts/utils";
 
 type Props = {
   displayFilters: IIssueDisplayFilterOptions | undefined;
@@ -22,6 +22,8 @@ export const FilterGroupBy: React.FC<Props> = observer((props) => {
   const selectedGroupBy = displayFilters?.group_by ?? null;
   const selectedSubGroupBy = displayFilters?.sub_group_by ?? null;
 
+  const options = useGroupByOptions(groupByOptions);
+
   return (
     <>
       <FilterHeader
@@ -31,7 +33,7 @@ export const FilterGroupBy: React.FC<Props> = observer((props) => {
       />
       {previewEnabled && (
         <div>
-          {ISSUE_GROUP_BY_OPTIONS.filter((option) => groupByOptions.includes(option.key)).map((groupBy) => {
+          {options.map((groupBy) => {
             if (
               displayFilters?.layout === "kanban" &&
               selectedSubGroupBy !== null &&
