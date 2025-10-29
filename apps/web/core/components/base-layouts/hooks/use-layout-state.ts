@@ -32,7 +32,6 @@ export const useLayoutState = (props: UseLayoutStateProps = { mode: "internal" }
     );
   }, []);
 
-  // Use external state/handlers only if BOTH are provided together
   const useExternal = props.mode === "external";
   const collapsedGroups = useExternal ? props.externalCollapsedGroups : internalCollapsedGroups;
   const onToggleGroup = useExternal ? props.externalOnToggleGroup : internalToggleGroup;
