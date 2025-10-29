@@ -197,28 +197,28 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
       setValue(selectedValue);
       setLocalError(null);
       handleClose();
-    };
+    
 
-    const handleBlur = async () => {
-      if (property.is_required && value.trim() === "") {
-        setLocalError("This field is required.");
-        setValue(property.value);
-        return;
-      }
-
-      if (value !== property.value) {
+      if (selectedValue !== property.value) {
         try {
-          const updatedProperty = { ...property, value };
+          const updatedProperty = { ...property, value: selectedValue };
           await onUpdate(updatedProperty);
           setLocalError(null);
         } catch (error) {
           setLocalError("Failed to update custom property.");
+          // Revert on error
+          setValue(property.value);
         }
       }
       
-      onClose();
     };
-
+    const handleBlur = async () => {
+      // Only validate on blur, don't close dropdown here as it conflicts with option clicks
+      if (property.is_required && value.trim() === "") {
+        setLocalError("This field is required.");
+        setValue(property.value);
+      }
+    };
     const filteredOptions = query === "" 
       ? options 
       : options.filter((option) => 
@@ -241,12 +241,11 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
             <button
               ref={setReferenceElement}
               type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                handleOpen();
+              onClick={() => {
+                if (!isOpen) {
+                  handleOpen();
+                }
               }}
-              onBlur={handleBlur}
               className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 flex items-center justify-between"
             >
               <span className={cn("truncate", value ? "text-custom-text-500" : "text-custom-text-400")}>
@@ -297,6 +296,10 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
                             }
                           )
                         }
+                        onClick={() => {
+                          // Close dropdown - onChange will handle the value update
+                          handleClose();
+                        }}
                       >
                         {({ selected }) => (
                           <>
