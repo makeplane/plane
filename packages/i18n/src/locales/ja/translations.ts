@@ -640,8 +640,8 @@ export default {
   },
   common: {
     all: "すべて",
-    no_items_in_this_group: "No items in this group",
-    drop_here_to_move: "Drop here to move",
+    no_items_in_this_group: "このグループにアイテムはありません",
+    drop_here_to_move: "移動するにはここにドロップ",
     states: "ステータス",
     state: "ステータス",
     state_groups: "ステータスグループ",

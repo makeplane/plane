@@ -648,8 +648,8 @@ export default {
   },
   common: {
     all: "Tất cả",
-    no_items_in_this_group: "No items in this group",
-    drop_here_to_move: "Drop here to move",
+    no_items_in_this_group: "Không có mục nào trong nhóm này",
+    drop_here_to_move: "Thả vào đây để di chuyển",
     states: "Trạng thái",
     state: "Trạng thái",
     state_groups: "Nhóm trạng thái",

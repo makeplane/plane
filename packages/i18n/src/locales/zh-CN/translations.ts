@@ -629,8 +629,8 @@ export default {
   },
   common: {
     all: "全部",
-    no_items_in_this_group: "No items in this group",
-    drop_here_to_move: "Drop here to move",
+    no_items_in_this_group: "此组中没有项目",
+    drop_here_to_move: "拖放到此处以移动",
     states: "状态",
     state: "状态",
     state_groups: "状态组",
