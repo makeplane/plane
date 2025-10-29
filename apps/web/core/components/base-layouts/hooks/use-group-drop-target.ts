@@ -15,6 +15,7 @@ interface UseGroupDropTargetProps {
 interface DragSourceData {
   id: string;
   groupId: string;
+  type: "ITEM" | "GROUP";
 }
 
 /**
@@ -34,10 +35,9 @@ export const useGroupDropTarget = ({ groupId, enableDragDrop = false, onDrop }: 
       element,
       getData: () => ({ groupId, type: "GROUP" }),
 
-      // Optional drop validation
       canDrop: ({ source }) => {
-        const sourceData = source.data as Partial<DragSourceData>;
-        return sourceData.groupId !== groupId;
+        const data = (source?.data || {}) as Partial<DragSourceData>;
+        return data.type === "ITEM" && !!data.groupId && data.groupId !== groupId;
       },
 
       onDragEnter: () => setIsDraggingOver(true),
@@ -45,11 +45,10 @@ export const useGroupDropTarget = ({ groupId, enableDragDrop = false, onDrop }: 
 
       onDrop: ({ source }) => {
         setIsDraggingOver(false);
-        const sourceData = source.data as unknown as DragSourceData;
-
-        // Only trigger onDrop if dropped in a different group
-        if (sourceData.groupId !== groupId) {
-          onDrop(sourceData.id, null, sourceData.groupId, groupId);
+        const data = (source?.data || {}) as Partial<DragSourceData>;
+        if (data.type !== "ITEM" || !data.id || !data.groupId) return;
+        if (data.groupId !== groupId) {
+          onDrop(data.id, null, data.groupId, groupId);
         }
       },
     });

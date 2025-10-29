@@ -45,18 +45,15 @@ export const BaseKanbanGroup = observer(<T extends IBaseLayoutsKanbanItem>(props
       )}
     >
       {/* Group Header */}
-      <div
-        className="sticky top-0 z-[2] w-full flex-shrink-0 bg-custom-background-90 px-1 py-2 cursor-pointer"
-        onClick={handleToggle}
-      >
+      <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-custom-background-90 px-1 py-2 cursor-pointer">
         {renderGroupHeader ? (
-          renderGroupHeader(group, itemIds.length)
+          renderGroupHeader({ group, itemCount: itemIds.length, isCollapsed, onToggleGroup })
         ) : (
           <GroupHeader
             group={group}
-            count={itemIds.length}
+            itemCount={itemIds.length}
             isCollapsed={isCollapsed}
-            onToggle={() => onToggleGroup(group.id)}
+            onToggleGroup={handleToggle}
           />
         )}
       </div>

@@ -34,8 +34,18 @@ export interface IItemRenderProps<T extends IBaseLayoutsBaseItem> {
   renderItem: (item: T, groupId: string) => ReactNode;
 }
 
+export interface IGroupHeaderControls {
+  isCollapsed: boolean;
+  onToggleGroup: (groupId: string) => void;
+}
+
+export interface IGroupHeaderProps extends IGroupHeaderControls {
+  group: IBaseLayoutsBaseGroup;
+  itemCount: number;
+}
+
 export interface IGroupRenderProps {
-  renderGroupHeader?: (group: IBaseLayoutsBaseGroup, itemCount: number) => ReactNode;
+  renderGroupHeader?: (props: IGroupHeaderProps) => ReactNode;
 }
 
 export interface IRenderProps<T extends IBaseLayoutsBaseItem> extends IItemRenderProps<T>, IGroupRenderProps {}

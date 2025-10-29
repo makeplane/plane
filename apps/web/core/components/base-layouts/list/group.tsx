@@ -28,10 +28,6 @@ export const BaseListGroup = observer(<T extends IBaseLayoutsListItem>(props: IB
     onDrop,
   });
 
-  const handleToggle = () => {
-    onToggleGroup(group.id);
-  };
-
   return (
     <div
       ref={groupRef}
@@ -42,9 +38,14 @@ export const BaseListGroup = observer(<T extends IBaseLayoutsListItem>(props: IB
       {/* Group Header */}
       <Row className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 py-1">
         {renderGroupHeader ? (
-          renderGroupHeader(group, itemIds.length)
+          renderGroupHeader({ group, itemCount: itemIds.length, isCollapsed, onToggleGroup })
         ) : (
-          <GroupHeader group={group} count={itemIds.length} isCollapsed={isCollapsed} onToggle={handleToggle} />
+          <GroupHeader
+            group={group}
+            itemCount={itemIds.length}
+            isCollapsed={isCollapsed}
+            onToggleGroup={onToggleGroup}
+          />
         )}
       </Row>
 

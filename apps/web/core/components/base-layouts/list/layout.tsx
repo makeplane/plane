@@ -4,6 +4,7 @@ import { observer } from "mobx-react";
 import type { IBaseLayoutsListItem, IBaseLayoutsListProps } from "@plane/types";
 import { useLayoutState } from "../hooks/use-layout-state";
 import { BaseListGroup } from "./group";
+import { cn } from "@plane/ui";
 
 export const BaseListLayout = observer(<T extends IBaseLayoutsListItem>(props: IBaseLayoutsListProps<T>) => {
   const {
@@ -19,6 +20,7 @@ export const BaseListLayout = observer(<T extends IBaseLayoutsListItem>(props: I
     collapsedGroups: externalCollapsedGroups,
     onToggleGroup: externalOnToggleGroup,
     loadMoreItems,
+    className,
   } = props;
 
   const { containerRef, collapsedGroups, onToggleGroup } = useLayoutState({
@@ -27,7 +29,7 @@ export const BaseListLayout = observer(<T extends IBaseLayoutsListItem>(props: I
   });
 
   return (
-    <div ref={containerRef} className="relative size-full overflow-auto bg-custom-background-90">
+    <div ref={containerRef} className={cn("relative size-full overflow-auto bg-custom-background-90", className)}>
       <div className="relative size-full flex flex-col">
         {groups.map((group) => {
           const itemIds = groupedItemIds[group.id] || [];
