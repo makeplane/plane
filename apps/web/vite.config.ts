@@ -50,18 +50,14 @@ export default defineConfig(({ isSsrBuild }) => {
     resolve: {
       alias: {
         // swc helpers compatibility
-        "@swc/helpers/_/_define_property": "@swc/helpers/esm/_define_property.js",
-        "@swc/helpers/_/_ts_decorate": "@swc/helpers/esm/_ts_decorate.js",
+        // "@swc/helpers/_/_define_property": "@swc/helpers/esm/_define_property.js",
+        // "@swc/helpers/_/_ts_decorate": "@swc/helpers/esm/_ts_decorate.js",
         // Next.js compatibility shims used within web
         "next/image": path.resolve(__dirname, "app/compat/next/image.tsx"),
         "next/link": path.resolve(__dirname, "app/compat/next/link.tsx"),
         "next/navigation": path.resolve(__dirname, "app/compat/next/navigation.ts"),
         "next/script": path.resolve(__dirname, "app/compat/next/script.tsx"),
       },
-      // When building inside Docker with pnpm workspaces, symlinks may be used
-      // for workspace packages. Preserve them so Vite can resolve their exports
-      // correctly instead of attempting to follow to source paths.
-      preserveSymlinks: true,
       dedupe: ["react", "react-dom", "@headlessui/react"],
     },
     // No SSR-specific overrides needed; alias resolves to ESM build

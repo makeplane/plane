@@ -42,9 +42,6 @@ catalogs:
     axios:
       specifier: 1.12.0
       version: 1.12.0
-    lodash:
-      specifier: 4.17.21
-      version: 4.17.21
     lodash-es:
       specifier: 4.17.21
       version: 4.17.21
@@ -184,7 +181,7 @@ importers:
         version: 1.10.1
       next-themes:
         specifier: ^0.2.1
-        version: 0.2.1(next@14.2.32(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 0.2.1(next@14.2.32(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react:
         specifier: 'catalog:'
         version: 18.3.1
@@ -465,7 +462,7 @@ importers:
         version: 1.10.1
       next-themes:
         specifier: ^0.2.1
-        version: 0.2.1(next@14.2.32(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 0.2.1(next@14.2.32(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react:
         specifier: 'catalog:'
         version: 18.3.1
@@ -551,15 +548,9 @@ importers:
       '@atlaskit/pragmatic-drag-and-drop-hitbox':
         specifier: 'catalog:'
         version: 1.1.0
-      '@babel/runtime':
-        specifier: 7.26.10
-        version: 7.26.10
       '@headlessui/react':
         specifier: ^1.7.19
         version: 1.7.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@icons/material':
-        specifier: ^0.2.4
-        version: 0.2.4(react@18.3.1)
       '@intercom/messenger-js-sdk':
         specifier: ^0.0.12
         version: 0.0.12
@@ -596,138 +587,18 @@ importers:
       '@popperjs/core':
         specifier: ^2.11.8
         version: 2.11.8
-      '@radix-ui/number':
-        specifier: ^1.1.1
-        version: 1.1.1
-      '@radix-ui/primitive':
-        specifier: ^1.1.3
-        version: 1.1.3
-      '@radix-ui/react-compose-refs':
-        specifier: ^1.1.2
-        version: 1.1.2(@types/react@18.3.11)(react@18.3.1)
-      '@radix-ui/react-context':
-        specifier: ^1.1.2
-        version: 1.1.2(@types/react@18.3.11)(react@18.3.1)
-      '@radix-ui/react-dialog':
-        specifier: ^1.1.15
-        version: 1.1.15(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@radix-ui/react-direction':
-        specifier: ^1.1.1
-        version: 1.1.1(@types/react@18.3.11)(react@18.3.1)
-      '@radix-ui/react-dismissable-layer':
-        specifier: ^1.1.11
-        version: 1.1.11(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@radix-ui/react-focus-guards':
-        specifier: ^1.1.3
-        version: 1.1.3(@types/react@18.3.11)(react@18.3.1)
-      '@radix-ui/react-focus-scope':
-        specifier: ^1.1.7
-        version: 1.1.7(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@radix-ui/react-id':
-        specifier: ^1.1.1
-        version: 1.1.1(@types/react@18.3.11)(react@18.3.1)
-      '@radix-ui/react-portal':
-        specifier: ^1.1.9
-        version: 1.1.9(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@radix-ui/react-presence':
-        specifier: ^1.1.1
-        version: 1.1.5(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@radix-ui/react-primitive':
-        specifier: ^2.1.3
-        version: 2.1.3(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@radix-ui/react-scroll-area':
-        specifier: ^1.2.3
-        version: 1.2.10(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@radix-ui/react-slot':
-        specifier: ^1.2.3
-        version: 1.2.3(@types/react@18.3.11)(react@18.3.1)
-      '@radix-ui/react-use-callback-ref':
-        specifier: ^1.1.1
-        version: 1.1.1(@types/react@18.3.11)(react@18.3.1)
-      '@radix-ui/react-use-controllable-state':
-        specifier: ^1.2.2
-        version: 1.2.2(@types/react@18.3.11)(react@18.3.1)
-      '@radix-ui/react-use-effect-event':
-        specifier: ^0.0.2
-        version: 0.0.2(@types/react@18.3.11)(react@18.3.1)
-      '@radix-ui/react-use-escape-keydown':
-        specifier: ^1.1.1
-        version: 1.1.1(@types/react@18.3.11)(react@18.3.1)
-      '@radix-ui/react-use-layout-effect':
-        specifier: ^1.1.1
-        version: 1.1.1(@types/react@18.3.11)(react@18.3.1)
-      '@react-pdf/fns':
-        specifier: ^2.2.1
-        version: 2.2.1
-      '@react-pdf/font':
-        specifier: ^2.5.2
-        version: 2.5.2
-      '@react-pdf/image':
-        specifier: ^2.3.6
-        version: 2.3.6
-      '@react-pdf/layout':
-        specifier: ^3.13.0
-        version: 3.13.0
-      '@react-pdf/pdfkit':
-        specifier: ^3.2.0
-        version: 3.2.0
-      '@react-pdf/png-js':
-        specifier: ^2.3.1
-        version: 2.3.1
-      '@react-pdf/primitives':
-        specifier: ^3.1.1
-        version: 3.1.1
-      '@react-pdf/render':
-        specifier: ^3.5.0
-        version: 3.5.0
       '@react-pdf/renderer':
         specifier: ^3.4.5
         version: 3.4.5(react@18.3.1)
-      '@react-pdf/stylesheet':
-        specifier: ^4.3.0
-        version: 4.3.0
-      '@react-pdf/textkit':
-        specifier: ^4.4.1
-        version: 4.4.1
-      '@react-pdf/types':
-        specifier: ^2.9.1
-        version: 2.9.1
       '@react-router/express':
         specifier: ^7.9.3
         version: 7.9.4(express@5.1.0)(react-router@7.9.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
       '@react-router/node':
         specifier: ^7.9.3
         version: 7.9.4(react-router@7.9.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
-      '@swc/helpers':
-        specifier: ^0.5.17
-        version: 0.5.17
       '@tanstack/react-table':
         specifier: ^8.21.3
         version: 8.21.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@tanstack/react-virtual':
-        specifier: ^3.13.12
-        version: 3.13.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@tanstack/table-core':
-        specifier: ^8.21.3
-        version: 8.21.3
-      '@tanstack/virtual-core':
-        specifier: ^3.13.12
-        version: 3.13.12
-      '@tiptap/pm':
-        specifier: ^3.6.2
-        version: 3.6.6
-      '@vercel/edge':
-        specifier: 1.2.2
-        version: 1.2.2
-      abs-svg-path:
-        specifier: ^0.1.1
-        version: 0.1.1
-      aria-hidden:
-        specifier: ^1.2.6
-        version: 1.2.6
-      attr-accept:
-        specifier: ^2.2.5
-        version: 2.2.5
       axios:
         specifier: 'catalog:'
         version: 1.12.0
@@ -737,246 +608,60 @@ importers:
       cmdk:
         specifier: ^1.0.0
         version: 1.1.1(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      color-name:
-        specifier: ^2.0.2
-        version: 2.0.2
-      color-string:
-        specifier: ^2.0.1
-        version: 2.0.1
       comlink:
         specifier: ^4.4.1
         version: 4.4.2
       compression:
         specifier: ^1.8.1
         version: 1.8.1
-      compute-scroll-into-view:
-        specifier: ^3.1.1
-        version: 3.1.1
-      cookie:
-        specifier: ^0.6.0
-        version: 0.6.0
-      create-react-class:
-        specifier: ^15.7.0
-        version: 15.7.0
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
-      cross-fetch:
-        specifier: ^3.2.0
-        version: 3.2.0
-      crypto-js:
-        specifier: ^4.2.0
-        version: 4.2.0
-      css-select:
-        specifier: 5.2.2
-        version: 5.2.2
-      css-tree:
-        specifier: 1.1.3
-        version: 1.1.3
-      css-what:
-        specifier: 6.2.2
-        version: 6.2.2
-      d3-array:
-        specifier: ^3.2.4
-        version: 3.2.4
-      d3-color:
-        specifier: ^3.1.0
-        version: 3.1.0
-      d3-format:
-        specifier: ^3.1.0
-        version: 3.1.0
-      d3-interpolate:
-        specifier: ^3.0.1
-        version: 3.0.1
-      d3-path:
-        specifier: ^3.1.0
-        version: 3.1.0
-      d3-scale:
-        specifier: ^4.0.2
-        version: 4.0.2
-      d3-shape:
-        specifier: ^3.2.0
-        version: 3.2.0
-      d3-time:
-        specifier: ^3.1.0
-        version: 3.1.0
-      d3-time-format:
-        specifier: ^4.1.0
-        version: 4.1.0
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
-      debug:
-        specifier: 4.4.3
-        version: 4.4.3
-      decimal.js-light:
-        specifier: ^2.5.1
-        version: 2.5.1
-      desandro-matches-selector:
-        specifier: ^2.0.2
-        version: 2.0.2
-      detect-node-es:
-        specifier: ^1.1.0
-        version: 1.1.0
-      dfa:
-        specifier: ^1.2.0
-        version: 1.2.0
-      dom-helpers:
-        specifier: ^5.2.1
-        version: 5.2.1
-      dom-serializer:
-        specifier: 2.0.0
-        version: 2.0.0
-      domelementtype:
-        specifier: 2.3.0
-        version: 2.3.0
-      domhandler:
-        specifier: 5.0.3
-        version: 5.0.3
-      domutils:
-        specifier: 3.2.2
-        version: 3.2.2
       dotenv:
         specifier: ^16.4.5
         version: 16.6.1
-      element-resize-detector:
-        specifier: ^1.2.4
-        version: 1.2.4
       emoji-picker-react:
         specifier: ^4.5.16
         version: 4.12.2(react@18.3.1)
-      emoji-regex:
-        specifier: ^10.5.0
-        version: 10.5.0
-      entities:
-        specifier: 4.5.0
-        version: 4.5.0
-      ev-emitter:
-        specifier: ^1.1.1
-        version: 1.1.1
-      eventemitter3:
-        specifier: ^4.0.7
-        version: 4.0.7
       export-to-csv:
         specifier: ^1.4.0
         version: 1.4.0
       express:
         specifier: ^5.1.0
         version: 5.1.0
-      fast-deep-equal:
-        specifier: ^3.1.3
-        version: 3.1.3
-      fast-equals:
-        specifier: ^5.2.2
-        version: 5.2.2
-      file-selector:
-        specifier: ^2.1.2
-        version: 2.1.2
-      fizzy-ui-utils:
-        specifier: ^2.0.7
-        version: 2.0.7
-      fontfaceobserver:
-        specifier: ^2.3.0
-        version: 2.3.0
-      fontkit:
-        specifier: ^2.0.4
-        version: 2.0.4
-      get-nonce:
-        specifier: ^1.0.1
-        version: 1.0.1
-      get-size:
-        specifier: ^2.0.3
-        version: 2.0.3
-      he:
-        specifier: 1.2.0
-        version: 1.2.0
-      hsl-to-hex:
-        specifier: ^1.0.0
-        version: 1.0.0
-      hsl-to-rgb-for-reals:
-        specifier: ^1.1.1
-        version: 1.1.1
       http-proxy-middleware:
         specifier: ^3.0.5
         version: 3.0.5
-      hyphen:
-        specifier: ^1.10.6
-        version: 1.10.6
-      imagesloaded:
-        specifier: ^4.1.4
-        version: 4.1.4
-      inherits:
-        specifier: ^2.0.4
-        version: 2.0.4
-      internmap:
-        specifier: ^2.0.3
-        version: 2.0.3
-      is-url:
-        specifier: ^1.2.4
-        version: 1.2.4
       isbot:
         specifier: ^5.1.31
         version: 5.1.31
-      jay-peg:
-        specifier: ^1.1.1
-        version: 1.1.1
-      linebreak:
-        specifier: ^1.1.0
-        version: 1.1.0
-      lodash:
-        specifier: 'catalog:'
-        version: 4.17.21
       lodash-es:
         specifier: 'catalog:'
         version: 4.17.21
       lucide-react:
         specifier: 'catalog:'
         version: 0.469.0(react@18.3.1)
-      masonry-layout:
-        specifier: 4.2.2
-        version: 4.2.2
-      material-colors:
-        specifier: ^1.2.6
-        version: 1.2.6
-      mdn-data:
-        specifier: 2.0.14
-        version: 2.0.14
-      media-engine:
-        specifier: ^1.0.3
-        version: 1.0.3
       mobx:
         specifier: 'catalog:'
         version: 6.12.0
       mobx-react:
         specifier: 'catalog:'
         version: 9.1.1(mobx@6.12.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      mobx-react-lite:
-        specifier: ^4.0.7
-        version: 4.1.0(mobx@6.12.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       mobx-utils:
         specifier: 'catalog:'
         version: 6.0.8(mobx@6.12.0)
       morgan:
         specifier: ^1.10.1
         version: 1.10.1
-      ms:
-        specifier: ^2.1.3
-        version: 2.1.3
       next-themes:
         specifier: ^0.2.1
-        version: 0.2.1(next@14.2.32(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 0.2.1(next@14.2.32(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       posthog-js:
         specifier: ^1.131.3
         version: 1.255.1
-      prop-types:
-        specifier: ^15.8.1
-        version: 15.8.1
-      queue:
-        specifier: ^6.0.2
-        version: 6.0.2
-      raf-schd:
-        specifier: ^4.0.3
-        version: 4.0.3
       react:
         specifier: 'catalog:'
         version: 18.3.1
@@ -1010,108 +695,33 @@ importers:
       react-popper:
         specifier: ^2.3.0
         version: 2.3.0(@popperjs/core@2.11.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react-remove-scroll:
-        specifier: ^2.7.1
-        version: 2.7.1(@types/react@18.3.11)(react@18.3.1)
-      react-remove-scroll-bar:
-        specifier: ^2.3.8
-        version: 2.3.8(@types/react@18.3.11)(react@18.3.1)
       react-router:
         specifier: ^7.9.1
         version: 7.9.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-router-dom:
         specifier: ^7.9.1
         version: 7.9.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react-smooth:
-        specifier: ^4.0.4
-        version: 4.0.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react-style-singleton:
-        specifier: ^2.2.3
-        version: 2.2.3(@types/react@18.3.11)(react@18.3.1)
-      react-transition-group:
-        specifier: ^4.4.5
-        version: 4.4.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      reactcss:
-        specifier: ^1.2.3
-        version: 1.2.3(react@18.3.1)
       recharts:
         specifier: ^2.12.7
         version: 2.15.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      recharts-scale:
-        specifier: ^0.4.5
-        version: 0.4.5
-      restructure:
-        specifier: ^3.0.2
-        version: 3.0.2
-      scheduler:
-        specifier: ^0.23.2
-        version: 0.23.2
-      scroll-into-view-if-needed:
-        specifier: ^3.1.0
-        version: 3.1.0
       serve:
         specifier: 14.2.5
         version: 14.2.5
-      set-cookie-parser:
-        specifier: ^2.6.0
-        version: 2.7.1
       smooth-scroll-into-view-if-needed:
         specifier: ^2.0.2
         version: 2.0.2
-      source-map:
-        specifier: 0.6.1
-        version: 0.6.1
-      svg-arc-to-cubic-bezier:
-        specifier: ^3.2.0
-        version: 3.2.0
       swr:
         specifier: 'catalog:'
         version: 2.2.4(react@18.3.1)
       tailwind-merge:
         specifier: ^2.0.0
         version: 2.6.0
-      tiny-inflate:
-        specifier: ^1.0.3
-        version: 1.0.3
-      tiny-invariant:
-        specifier: ^1.3.3
-        version: 1.3.3
-      tinycolor2:
-        specifier: ^1.6.0
-        version: 1.6.0
-      tslib:
-        specifier: ^2.7.0
-        version: 2.8.1
-      unicode-properties:
-        specifier: ^1.4.1
-        version: 1.4.1
-      unicode-trie:
-        specifier: ^2.0.0
-        version: 2.0.0
-      use-callback-ref:
-        specifier: ^1.3.3
-        version: 1.3.3(@types/react@18.3.11)(react@18.3.1)
       use-font-face-observer:
         specifier: ^1.2.2
         version: 1.3.0(react@18.3.1)
-      use-sidecar:
-        specifier: ^1.1.3
-        version: 1.1.3(@types/react@18.3.11)(react@18.3.1)
-      use-sync-external-store:
-        specifier: ^1.2.0
-        version: 1.5.0(react@18.3.1)
       uuid:
         specifier: 'catalog:'
         version: 13.0.0
-      victory-vendor:
-        specifier: ^36.9.2
-        version: 36.9.2
-      warning:
-        specifier: ^4.0.3
-        version: 4.0.3
-      yoga-layout:
-        specifier: ^2.0.1
-        version: 2.0.1
     devDependencies:
       '@plane/eslint-config':
         specifier: workspace:*
@@ -1351,9 +961,6 @@ importers:
       yjs:
         specifier: ^13.6.20
         version: 13.6.27
-      zeed-dom:
-        specifier: 0.15.1
-        version: 0.15.1
     devDependencies:
       '@plane/eslint-config':
         specifier: workspace:*
@@ -1526,45 +1133,9 @@ importers:
       '@plane/types':
         specifier: workspace:*
         version: link:../types
-      '@radix-ui/number':
-        specifier: ^1.1.1
-        version: 1.1.1
-      '@radix-ui/primitive':
-        specifier: ^1.1.3
-        version: 1.1.3
-      '@radix-ui/react-compose-refs':
-        specifier: ^1.1.2
-        version: 1.1.2(@types/react@18.3.11)(react@18.3.1)
-      '@radix-ui/react-context':
-        specifier: ^1.1.2
-        version: 1.1.2(@types/react@18.3.11)(react@18.3.1)
-      '@radix-ui/react-direction':
-        specifier: ^1.1.1
-        version: 1.1.1(@types/react@18.3.11)(react@18.3.1)
-      '@radix-ui/react-presence':
-        specifier: ^1.1.1
-        version: 1.1.5(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@radix-ui/react-primitive':
-        specifier: ^2.1.3
-        version: 2.1.3(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@radix-ui/react-scroll-area':
-        specifier: ^1.2.3
-        version: 1.2.10(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@radix-ui/react-slot':
-        specifier: ^1.2.3
-        version: 1.2.3(@types/react@18.3.11)(react@18.3.1)
-      '@radix-ui/react-use-callback-ref':
-        specifier: ^1.1.1
-        version: 1.1.1(@types/react@18.3.11)(react@18.3.1)
-      '@radix-ui/react-use-layout-effect':
-        specifier: ^1.1.1
-        version: 1.1.1(@types/react@18.3.11)(react@18.3.1)
       '@tanstack/react-table':
         specifier: ^8.21.3
         version: 8.21.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      aria-hidden:
-        specifier: ^1.2.6
-        version: 1.2.6
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -1589,18 +1160,12 @@ importers:
       react-dom:
         specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
-      react-remove-scroll:
-        specifier: ^2.7.1
-        version: 2.7.1(@types/react@18.3.11)(react@18.3.1)
       recharts:
         specifier: ^2.15.1
         version: 2.15.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       tailwind-merge:
         specifier: ^3.3.1
         version: 3.3.1
-      tslib:
-        specifier: ^2.7.0
-        version: 2.8.1
       use-font-face-observer:
         specifier: ^1.3.0
         version: 1.3.0(react@18.3.1)
@@ -1778,11 +1343,8 @@ importers:
       '@blueprintjs/popover2':
         specifier: ^1.13.3
         version: 1.14.11(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@date-fns/tz':
-        specifier: ^1.4.1
-        version: 1.4.1
       '@headlessui/react':
-        specifier: ^1.7.19
+        specifier: ^1.7.3
         version: 1.7.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@plane/constants':
         specifier: workspace:*
@@ -3178,8 +2740,8 @@ packages:
   '@react-pdf/textkit@4.4.1':
     resolution: {integrity: sha512-Jl9wdTqIvJ5pX+vAGz0EOhP7ut5Two9H6CzTKo/YYPeD79cM2yTXF3JzTERBC28y7LR0Waq9D2LHQjI+b/EYUQ==}
 
-  '@react-pdf/types@2.9.0':
-    resolution: {integrity: sha512-ckj80vZLlvl9oYrQ4tovEaqKWP3O06Eb1D48/jQWbdwz1Yh7Y9v1cEmwlP8ET+a1Whp8xfdM0xduMexkuPANCQ==}
+  '@react-pdf/types@2.9.1':
+    resolution: {integrity: sha512-5GoCgG0G5NMgpPuHbKG2xcVRQt7+E5pg3IyzVIIozKG3nLcnsXW4zy25vG1ZBQA0jmo39q34au/sOnL/0d1A4w==}
 
   '@react-router/dev@7.9.3':
     resolution: {integrity: sha512-oPaO+OpvCo/rNTJrRipHSp31/K4It19PE5A24x21FlYlemPTe3fbGX/kyC2+8au/abXbvzNHfRbuIBD/rfojmA==}
@@ -5071,16 +4633,8 @@ packages:
   color-name@1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
 
-  color-name@2.0.2:
-    resolution: {integrity: sha512-9vEt7gE16EW7Eu7pvZnR0abW9z6ufzhXxGXZEVU9IqPdlsUiMwJeJfRtq0zePUmnbHGT9zajca7mX8zgoayo4A==}
-    engines: {node: '>=12.20'}
-
   color-string@1.9.1:
     resolution: {integrity: sha512-shrVawQFojnZv6xM40anx4CkoDP+fZsw/ZerEMsW/pyzsRbElpsL/DBVW7q3ExxwusdNXI3lXpuhEZkzs8p5Eg==}
-
-  color-string@2.0.1:
-    resolution: {integrity: sha512-5z9FbYTZPAo8iKsNEqRNv+OlpBbDcoE+SY9GjLfDUHEfcNNV7tS9eSAlFHEaub/r5tBL9LtskAeq1l9SaoZ5tQ==}
-    engines: {node: '>=18'}
 
   color@3.2.1:
     resolution: {integrity: sha512-aBl7dZI9ENN6fUGC7mWpMTPNHmWUSNan9tuWN6ahh5ZLNk9baLJOnSMlrQkHcrfFgz2/RigjUVAjdx36VcemKA==}
@@ -12745,16 +12299,10 @@ snapshots:
 
   color-name@1.1.4: {}
 
-  color-name@2.0.2: {}
-
   color-string@1.9.1:
     dependencies:
       color-name: 1.1.4
       simple-swizzle: 0.2.4
-
-  color-string@2.0.1:
-    dependencies:
-      color-name: 2.0.2
 
   color@3.2.1:
     dependencies:
@@ -13118,10 +12666,6 @@ snapshots:
     dependencies:
       domelementtype: 2.3.0
 
-  dompurify@3.2.6:
-    optionalDependencies:
-      '@types/trusted-types': 2.0.7
-
   dompurify@3.2.7:
     optionalDependencies:
       '@types/trusted-types': 2.0.7
@@ -13215,8 +12759,6 @@ snapshots:
   entities@4.5.0: {}
 
   entities@5.0.0: {}
-
-  entities@6.0.1: {}
 
   err-code@2.0.3: {}
 
@@ -14949,7 +14491,7 @@ snapshots:
 
   neo-async@2.6.2: {}
 
-  next-themes@0.2.1(next@14.2.32(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  next-themes@0.2.1(next@14.2.32(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       next: 14.2.32(@babel/core@7.28.4)(@opentelemetry/api@1.9.0)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
