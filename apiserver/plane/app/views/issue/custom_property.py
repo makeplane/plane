@@ -1,6 +1,6 @@
 # Python imports
 import json
-
+import os
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Django imports
@@ -236,7 +236,7 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
             
             # TODO: Replace with actual WB API endpoint URL
             # This should be configured in settings or environment variables
-            WB_API_URL = "https://api.wb.example.com/dropdown-options"  # Placeholder URL
+            WB_API_URL = os.environ.get("WB_API_URL", "https://wbdemo.shipsy.io/webhook-test/wb/sample-dropdowns")# Placeholder URL
             
             # Make request to WB API
             try:
@@ -244,11 +244,6 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
                     WB_API_URL,
                     json=wb_api_payload,
                     timeout=30,
-                    headers={
-                        "Content-Type": "application/json",
-                        # TODO: Add authentication headers if required
-                        # "Authorization": f"Bearer {WB_API_TOKEN}",
-                    }
                 )
                 wb_response.raise_for_status()
                 
