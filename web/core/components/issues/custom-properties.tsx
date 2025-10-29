@@ -189,7 +189,11 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
 
     useOutsideClickDetector(dropdownRef, handleClose);
 
-    const handleChange = (selectedValue: string) => {
+    const handleChange = async (selectedValue: string) => {
+      if (selectedValue === value) {
+        handleClose();
+        return;
+      }
       setValue(selectedValue);
       setLocalError(null);
       handleClose();
