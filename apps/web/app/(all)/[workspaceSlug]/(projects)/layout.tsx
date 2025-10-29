@@ -1,26 +1,33 @@
 "use client";
 
-import { CommandPalette } from "@/components/command-palette";
+import { observer } from "mobx-react";
+import { ProjectsAppPowerKProvider } from "@/components/power-k/projects-app-provider";
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // plane web components
 import { WorkspaceAuthWrapper } from "@/plane-web/layouts/workspace-wrapper";
 import { ProjectAppSidebar } from "./_sidebar";
 
+const WorkspaceLayoutContent = observer(({ children }: { children: React.ReactNode }) => (
+  <>
+    <ProjectsAppPowerKProvider />
+    <WorkspaceAuthWrapper>
+      <div className="relative flex flex-col h-full w-full overflow-hidden rounded-lg border border-custom-border-200">
+        <div id="full-screen-portal" className="inset-0 absolute w-full" />
+        <div className="relative flex size-full overflow-hidden">
+          <ProjectAppSidebar />
+          <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
+            {children}
+          </main>
+        </div>
+      </div>
+    </WorkspaceAuthWrapper>
+  </>
+));
+
 export default function WorkspaceLayout({ children }: { children: React.ReactNode }) {
   return (
     <AuthenticationWrapper>
-      <CommandPalette />
-      <WorkspaceAuthWrapper>
-        <div className="relative flex flex-col h-full w-full overflow-hidden rounded-lg border border-custom-border-200">
-          <div id="full-screen-portal" className="inset-0 absolute w-full" />
-          <div className="relative flex size-full overflow-hidden">
-            <ProjectAppSidebar />
-            <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
-              {children}
-            </main>
-          </div>
-        </div>
-      </WorkspaceAuthWrapper>
+      <WorkspaceLayoutContent>{children}</WorkspaceLayoutContent>
     </AuthenticationWrapper>
   );
 }

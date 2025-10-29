@@ -8,6 +8,8 @@ import type { IAnalyticsStore } from "@/plane-web/store/analytics.store";
 import { AnalyticsStore } from "@/plane-web/store/analytics.store";
 import type { ICommandPaletteStore } from "@/plane-web/store/command-palette.store";
 import { CommandPaletteStore } from "@/plane-web/store/command-palette.store";
+import { PowerKStore } from "@/plane-web/store/power-k.store";
+import type { IPowerKStore } from "@/plane-web/store/power-k.store";
 import type { RootStore } from "@/plane-web/store/root.store";
 import type { IStateStore } from "@/plane-web/store/state.store";
 import { StateStore } from "@/plane-web/store/state.store";
@@ -95,6 +97,7 @@ export class CoreRootStore {
   stickyStore: IStickyStore;
   editorAssetStore: IEditorAssetStore;
   workItemFilters: IWorkItemFilterStore;
+  powerK: IPowerKStore;
 
   constructor() {
     this.router = new RouterStore();
@@ -126,6 +129,7 @@ export class CoreRootStore {
     this.editorAssetStore = new EditorAssetStore();
     this.analytics = new AnalyticsStore();
     this.workItemFilters = new WorkItemFilterStore();
+    this.powerK = new PowerKStore();
   }
 
   resetOnSignOut() {
@@ -159,5 +163,6 @@ export class CoreRootStore {
     this.stickyStore = new StickyStore();
     this.editorAssetStore = new EditorAssetStore();
     this.workItemFilters = new WorkItemFilterStore();
+    this.powerK = new PowerKStore();
   }
 }
