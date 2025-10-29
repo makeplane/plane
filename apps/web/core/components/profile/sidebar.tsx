@@ -6,13 +6,14 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // icons
-import { ChevronDown, Pencil } from "lucide-react";
+import { Pencil } from "lucide-react";
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { useTranslation } from "@plane/i18n";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IUserProfileProjectSegregation } from "@plane/types";
 // plane ui
@@ -182,7 +183,7 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
                                 </div>
                               </Tooltip>
                             )}
-                            <ChevronDown className="h-4 w-4" />
+                            <ChevronDownIcon className="h-4 w-4" />
                           </div>
                         </Disclosure.Button>
                         <Transition
