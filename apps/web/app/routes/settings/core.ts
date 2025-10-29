@@ -1,6 +1,6 @@
 import { layout, route } from "@react-router/dev/routes";
 import type { RouteConfigEntry } from "@react-router/dev/routes";
-import { workspaceRoute } from "@/app/routes/utils/core";
+import { workspaceRoute } from "./../utils";
 
 export const coreSettingsRoutes: RouteConfigEntry[] = [
   // ========================================================================
