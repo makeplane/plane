@@ -23,7 +23,7 @@ import ReactDOM from "react-dom";
 //   }, []);
 // };
 
-export const PreloadResources = () => {
+export const PreloadResources = () =>
   // usePreloadResources();
-  return null;
-};
+   null
+;
