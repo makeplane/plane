@@ -4,12 +4,11 @@ import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
 import { ChevronRight } from "lucide-react";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 // icons
 import { Row } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
-// components
-import { Logo } from "@/components/common/logo";
 import { useProject } from "@/hooks/store/use-project";
 
 type Props = {

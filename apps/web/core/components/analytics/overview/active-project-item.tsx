@@ -1,7 +1,7 @@
-import { ProjectIcon } from "@plane/propel/icons";
 // plane package imports
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import { ProjectIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
-import { Logo } from "@/components/common/logo";
 // plane web hooks
 import { useProject } from "@/hooks/store/use-project";
 
