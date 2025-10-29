@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Pencil, ChevronDown } from "lucide-react";
+import { Pencil, ChevronDown, Loader2 } from "lucide-react";
 import axios from "axios";
 import { Input } from "@plane/ui";
 import { Combobox } from "@headlessui/react";
@@ -237,7 +237,11 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
             <button
               ref={setReferenceElement}
               type="button"
-              onClick={handleOpen}
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                handleOpen();
+              }}
               onBlur={handleBlur}
               className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 flex items-center justify-between"
             >
@@ -256,19 +260,24 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
                 style={styles.popper}
                 {...attributes.popper}
               >
-                <div className="sticky top-0 z-10 mb-2 bg-custom-background-100">
-                  <input
-                    type="text"
-                    className="w-full rounded border border-custom-border-300 bg-custom-background-90 px-2 py-1 text-xs text-custom-text-100 placeholder:text-custom-text-400 focus:border-custom-primary-100 focus:outline-none"
-                    placeholder="Search..."
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                  />
-                </div>
+                {options.length > 5 && !isLoading && (
+                  <div className="sticky top-0 z-10 mb-2 bg-custom-background-100">
+                    <input
+                      type="text"
+                      className="w-full rounded border border-custom-border-300 bg-custom-background-90 px-2 py-1 text-xs text-custom-text-100 placeholder:text-custom-text-400 focus:border-custom-primary-100 focus:outline-none"
+                      placeholder="Search..."
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                    />
+                  </div>
+                )}
                 
                 <div className="max-h-48 space-y-1 overflow-y-scroll">
                   {isLoading ? (
-                    <div className="px-1.5 py-1 text-custom-text-400">Loading options...</div>
+                    <div className="flex items-center justify-center gap-2 px-1.5 py-4 text-custom-text-400">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>Loading options...</span>
+                    </div>
                   ) : filteredOptions.length > 0 ? (
                     filteredOptions.map((option) => (
                       <Combobox.Option
