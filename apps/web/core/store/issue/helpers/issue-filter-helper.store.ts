@@ -180,7 +180,7 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
   ): IIssueDisplayFilterOptions => {
     const computedFilters = getComputedDisplayFilters(displayFilters, defaultValues);
     return getEnabledDisplayFilters(computedFilters);
-  }
+  };
 
   /**
    * @description This method is used to apply the display properties on the issues
