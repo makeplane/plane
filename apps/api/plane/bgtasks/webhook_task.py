@@ -86,7 +86,6 @@ def get_issue_prefetches():
     ]
 
 
-
 def save_webhook_log(
     webhook: Webhook,
     request_method: str,
@@ -98,10 +97,9 @@ def save_webhook_log(
     retry_count: int,
     event_type: str,
 ) -> None:
-
     # webhook_logs
     mongo_collection = MongoConnection.get_collection("webhook_logs")
-    
+
     log_data = {
         "workspace_id": str(webhook.workspace_id),
         "webhook": str(webhook.id),
@@ -123,7 +121,7 @@ def save_webhook_log(
             logger.info("Webhook log saved successfully to mongo")
             mongo_save_success = True
         except Exception as e:
-            log_exception(e)
+            log_exception(e, warning=True)
             logger.error(f"Failed to save webhook log: {e}")
             mongo_save_success = False
 
@@ -134,7 +132,7 @@ def save_webhook_log(
             WebhookLog.objects.create(**log_data)
             logger.info("Webhook log saved successfully to database")
         except Exception as e:
-            log_exception(e)
+            log_exception(e, warning=True)
             logger.error(f"Failed to save webhook log: {e}")
 
 
@@ -244,7 +242,7 @@ def send_webhook_deactivation_email(webhook_id: str, receiver_id: str, current_s
         msg.send()
         logger.info("Email sent successfully.")
     except Exception as e:
-        log_exception(e)
+        log_exception(e, warning=True)
         logger.error(f"Failed to send email: {e}")
 
 

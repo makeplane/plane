@@ -32,6 +32,7 @@ export type VerticalStackAssetType =
   | "draft"
   | "epic"
   | "error-404"
+  | "initiative"
   | "invalid-link"
   | "module"
   | "no-access"

@@ -8,9 +8,9 @@ import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel, WORKSPACE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 import { WebhookSettingsLoader } from "@/components/ui/loader/settings/web-hook";
@@ -20,7 +20,6 @@ import { captureClick } from "@/helpers/event-tracker.helper";
 import { useWebhook } from "@/hooks/store/use-webhook";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 const WebhooksListPage = observer(() => {
   // states
@@ -35,7 +34,6 @@ const WebhooksListPage = observer(() => {
   const { currentWorkspace } = useWorkspace();
   // derived values
   const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/workspace-settings/webhooks" });
 
   useSWR(
     workspaceSlug && canPerformWorkspaceAdminActions ? `WEBHOOKS_LIST_${workspaceSlug}` : null,
@@ -90,21 +88,23 @@ const WebhooksListPage = observer(() => {
         ) : (
           <div className="flex h-full w-full flex-col">
             <div className="h-full w-full flex items-center justify-center">
-              <DetailedEmptyState
-                className="!p-0"
-                title=""
-                description=""
-                assetPath={resolvedPath}
-                size="md"
-                primaryButton={{
-                  text: t("workspace_settings.settings.webhooks.add_webhook"),
-                  onClick: () => {
-                    captureClick({
-                      elementName: WORKSPACE_SETTINGS_TRACKER_ELEMENTS.EMPTY_STATE_ADD_WEBHOOK_BUTTON,
-                    });
-                    setShowCreateWebhookModal(true);
+              <EmptyStateCompact
+                assetKey="webhook"
+                title={t("settings_empty_state.webhooks.title")}
+                description={t("settings_empty_state.webhooks.description")}
+                actions={[
+                  {
+                    label: t("settings_empty_state.webhooks.cta_primary"),
+                    onClick: () => {
+                      captureClick({
+                        elementName: WORKSPACE_SETTINGS_TRACKER_ELEMENTS.EMPTY_STATE_ADD_WEBHOOK_BUTTON,
+                      });
+                      setShowCreateWebhookModal(true);
+                    },
                   },
-                }}
+                ]}
+                align="start"
+                rootClassName="py-20"
               />
             </div>
           </div>

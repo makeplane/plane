@@ -137,19 +137,19 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                 {getAppliedFiltersCount > 0 ? (
                   <EmptyStateDetailed
                     assetKey="search"
-                    title={t("common.search.title")}
-                    description={t("common.search.description")}
+                    title={t("common_empty_state.search.title")}
+                    description={t("common_empty_state.search.description")}
                     assetClassName="size-20"
                   />
                 ) : currentTab === EInboxIssueCurrentTab.OPEN ? (
                   <EmptyStateDetailed
                     assetKey="inbox"
-                    title={t("project.intake_sidebar.title")}
-                    description={t("project.intake_sidebar.description")}
+                    title={t("project_empty_state.intake_sidebar.title")}
+                    description={t("project_empty_state.intake_sidebar.description")}
                     assetClassName="size-20"
                     actions={[
                       {
-                        label: t("project.intake_sidebar.cta_primary"),
+                        label: t("project_empty_state.intake_sidebar.cta_primary"),
                         onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/intake`),
                         variant: "primary",
                       },
@@ -162,6 +162,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                     title="No request closed yet"
                     description="All the work items whether accepted or declined can be found here."
                     assetClassName="size-20"
+                    className="px-10"
                   />
                 )}
               </div>
