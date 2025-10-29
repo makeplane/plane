@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.shortcuts import get_object_or_404
 
 # Third party imports
+import requests
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -117,10 +118,15 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
         
-    def get(self, request, slug, issue_id, pk=None):
+    def get(self, request, slug, issue_id, pk=None, issue_type_custom_property_id=None):
         """
         Retrieve the custom property details for a given issue.
+        If issue_type_custom_property_id is provided, fetch dropdown options from WB API.
         """
+        # Check if this is a request for dropdown options
+        if issue_type_custom_property_id:
+            return self.get_dropdown_options(request, slug, issue_id, issue_type_custom_property_id)
+        
         if pk:
             custom_property = get_object_or_404(IssueCustomProperty, pk=pk, issue_id=issue_id)
             serializer = self.serializer_class(custom_property)
@@ -202,3 +208,62 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
             epoch=epoch_timestamp,
         )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def get_dropdown_options(self, request, slug, issue_id, issue_type_custom_property_id):
+        """
+        Fetch dropdown options from WB API for a custom property.
+        """
+        try:
+            # Get the issue and issue type custom property
+            issue = get_object_or_404(Issue, id=issue_id)
+            issue_type_custom_property = get_object_or_404(IssueTypeCustomProperty, id=issue_type_custom_property_id)
+            
+            # Get issue_type_id from the issue
+            issue_type_id = issue.type_id
+            
+            if not issue_type_id:
+                return Response(
+                    {"error": "Issue type ID is required."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Prepare payload for WB API
+            wb_api_payload = {
+                "issue_type_id": str(issue_type_id),
+                "issue_type_custom_property_id": str(issue_type_custom_property_id),
+                "issueId": str(issue_id),
+            }
+            
+            # TODO: Replace with actual WB API endpoint URL
+            # This should be configured in settings or environment variables
+            WB_API_URL = "https://api.wb.example.com/dropdown-options"  # Placeholder URL
+            
+            # Make request to WB API
+            try:
+                wb_response = requests.post(
+                    WB_API_URL,
+                    json=wb_api_payload,
+                    timeout=30,
+                    headers={
+                        "Content-Type": "application/json",
+                        # TODO: Add authentication headers if required
+                        # "Authorization": f"Bearer {WB_API_TOKEN}",
+                    }
+                )
+                wb_response.raise_for_status()
+                
+                # Return the response from WB API
+                return Response(
+                    wb_response.json(),
+                    status=status.HTTP_200_OK
+                )
+            except requests.exceptions.RequestException as e:
+                return Response(
+                    {"error": f"Failed to fetch dropdown options from WB API: {str(e)}"},
+                    status=status.HTTP_502_BAD_GATEWAY
+                )
+        except Exception as e:
+            return Response(
+                {"error": f"An error occurred while fetching dropdown options: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

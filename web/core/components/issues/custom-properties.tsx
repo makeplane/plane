@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Pencil } from "lucide-react";
+import { Pencil, ChevronDown } from "lucide-react";
 import axios from "axios";
 import { Input } from "@plane/ui";
+import { Combobox } from "@headlessui/react";
+import { usePopper } from "react-popper";
+import { useOutsideClickDetector } from "@plane/helpers";
+import { cn } from "@/helpers/common.helper";
 
 export type CustomProperty = {
   key: string;
@@ -19,6 +23,7 @@ type CustomPropertiesProps = {
   issue_type_id: string;
   workspaceSlug: string;
   updateCustomProperties: (updatedProperties: CustomProperty[]) => void;
+  issueId: string;
   layout?: "quarter" | "two-fifths";
 };
 
@@ -27,6 +32,7 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
   issue_type_id,
   workspaceSlug,
   updateCustomProperties,
+  issueId,
   layout = "quarter",
 }) => {
   const [issueTypeCustomProperties, setissueTypeCustomProperties] = useState<CustomProperty[]>([]);
@@ -106,6 +112,202 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
     }
   };
 
+  const CustomPropertyDropdown: React.FC<{ property: CustomProperty; onUpdate: (property: CustomProperty) => Promise<void>; onClose: () => void }> = React.memo(({ property, onUpdate, onClose }) => {
+    const [value, setValue] = useState(property.value);
+    
+    // Sync value when property changes
+    useEffect(() => {
+      setValue(property.value);
+    }, [property.value]);
+    const [localError, setLocalError] = useState<string | null>(null);
+    const [options, setOptions] = useState<Array<{ value: string; label: string }>>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const [query, setQuery] = useState("");
+    
+    const dropdownRef = React.useRef<HTMLDivElement | null>(null);
+    const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+    const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+    
+    const { styles, attributes } = usePopper(referenceElement, popperElement, {
+      placement: "bottom-start",
+      modifiers: [
+        {
+          name: "preventOverflow",
+          options: {
+            padding: 12,
+          },
+        },
+      ],
+    });
+
+    const fetchDropdownOptions = async () => {
+      if (isLoading || options.length > 0) return;
+      
+      setIsLoading(true);
+      try {
+        const response = await axios.get(
+          `/api/workspaces/${workspaceSlug}/issues/${issueId}/custom-properties/${property.issue_type_custom_property}/dropdown-options/`
+        );
+        
+        // Assuming WB API returns an array of options or an object with options
+        // Adjust this based on actual WB API response format
+        const responseData = response.data;
+        let fetchedOptions: Array<{ value: string; label: string }> = [];
+        
+        if (Array.isArray(responseData)) {
+          fetchedOptions = responseData.map((item: any) => ({
+            value: typeof item === 'string' ? item : item.value || item.id || String(item),
+            label: typeof item === 'string' ? item : item.label || item.name || item.value || String(item),
+          }));
+        } else if (responseData?.options || responseData?.data) {
+          const optionsArray = responseData.options || responseData.data || [];
+          fetchedOptions = optionsArray.map((item: any) => ({
+            value: typeof item === 'string' ? item : item.value || item.id || String(item),
+            label: typeof item === 'string' ? item : item.label || item.name || item.value || String(item),
+          }));
+        }
+        
+        setOptions(fetchedOptions);
+      } catch (error) {
+        setLocalError("Failed to load dropdown options.");
+        console.error("Failed to fetch dropdown options:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    const handleOpen = () => {
+      setIsOpen(true);
+      fetchDropdownOptions();
+    };
+
+    const handleClose = () => {
+      setIsOpen(false);
+      setQuery("");
+    };
+
+    useOutsideClickDetector(dropdownRef, handleClose);
+
+    const handleChange = (selectedValue: string) => {
+      setValue(selectedValue);
+      setLocalError(null);
+      handleClose();
+    };
+
+    const handleBlur = async () => {
+      if (property.is_required && value.trim() === "") {
+        setLocalError("This field is required.");
+        setValue(property.value);
+        return;
+      }
+
+      if (value !== property.value) {
+        try {
+          const updatedProperty = { ...property, value };
+          await onUpdate(updatedProperty);
+          setLocalError(null);
+        } catch (error) {
+          setLocalError("Failed to update custom property.");
+        }
+      }
+      
+      onClose();
+    };
+
+    const filteredOptions = query === "" 
+      ? options 
+      : options.filter((option) => 
+          option.label.toLowerCase().includes(query.toLowerCase()) ||
+          option.value.toLowerCase().includes(query.toLowerCase())
+        );
+
+    const selectedOption = options.find((opt) => opt.value === value);
+
+    return (
+      <div className="relative w-full">
+        <Combobox
+          as="div"
+          ref={dropdownRef}
+          value={value}
+          onChange={handleChange}
+          className="relative"
+        >
+          <Combobox.Button as={React.Fragment}>
+            <button
+              ref={setReferenceElement}
+              type="button"
+              onClick={handleOpen}
+              onBlur={handleBlur}
+              className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 flex items-center justify-between"
+            >
+              <span className={cn("truncate", value ? "text-custom-text-500" : "text-custom-text-400")}>
+                {selectedOption ? selectedOption.label : value || `Select ${property.key}`}
+              </span>
+              <ChevronDown className="h-4 w-4 flex-shrink-0 text-custom-text-400" />
+            </button>
+          </Combobox.Button>
+
+          {isOpen && (
+            <Combobox.Options className="fixed z-10" static>
+              <div
+                className="my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2 text-xs shadow-custom-shadow-rg focus:outline-none"
+                ref={setPopperElement}
+                style={styles.popper}
+                {...attributes.popper}
+              >
+                <div className="sticky top-0 z-10 mb-2 bg-custom-background-100">
+                  <input
+                    type="text"
+                    className="w-full rounded border border-custom-border-300 bg-custom-background-90 px-2 py-1 text-xs text-custom-text-100 placeholder:text-custom-text-400 focus:border-custom-primary-100 focus:outline-none"
+                    placeholder="Search..."
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                  />
+                </div>
+                
+                <div className="max-h-48 space-y-1 overflow-y-scroll">
+                  {isLoading ? (
+                    <div className="px-1.5 py-1 text-custom-text-400">Loading options...</div>
+                  ) : filteredOptions.length > 0 ? (
+                    filteredOptions.map((option) => (
+                      <Combobox.Option
+                        key={option.value}
+                        value={option.value}
+                        className={({ active, selected }) =>
+                          cn(
+                            "flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5",
+                            {
+                              "bg-custom-background-80": active,
+                              "text-custom-text-100": selected,
+                              "text-custom-text-200": !selected,
+                            }
+                          )
+                        }
+                      >
+                        {({ selected }) => (
+                          <>
+                            <span className="flex-grow truncate">{option.label}</span>
+                            {selected && <span className="text-custom-primary-100">✓</span>}
+                          </>
+                        )}
+                      </Combobox.Option>
+                    ))
+                  ) : (
+                    <div className="px-1.5 py-1 italic text-custom-text-400">No options found</div>
+                  )}
+                </div>
+              </div>
+            </Combobox.Options>
+          )}
+        </Combobox>
+        {localError && (
+          <div className="text-red-500 text-sm mt-1">{localError}</div>
+        )}
+      </div>
+    );
+  });
+
   const EditableProperty: React.FC<{ property: CustomProperty }> = React.memo(({ property }) => {
     const [value, setValue] = useState(property.value);
     const [localError, setLocalError] = useState<string | null>(null);
@@ -135,6 +337,17 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
       setValue(e.target.value);
       setLocalError(null);
     };
+
+    // For dropdown type, use the CustomPropertyDropdown component
+    if (property.data_type === "dropdown") {
+      return (
+        <CustomPropertyDropdown 
+          property={property} 
+          onUpdate={handlePropertyUpdate}
+          onClose={() => setEditingPropertyKey(null)}
+        />
+      );
+    }
 
     const inputComponents: Record<string, React.JSX.Element> = {
       date: (
