@@ -29,7 +29,7 @@ type Props = {
   isWorkspaceLevel?: boolean;
 };
 
-export const IssueSelectionPage: React.FC<Props> = (props) => {
+export const WorkItemSelectionPage: React.FC<Props> = (props) => {
   const {
     workspaceSlug,
     projectId,

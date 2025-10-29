@@ -61,7 +61,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
   const entityDetails = entityId ? getIssueById(entityId) : null;
   const isEpic = !!entityDetails?.is_epic;
   const projectDetails = entityDetails?.project_id ? getProjectById(entityDetails?.project_id) : undefined;
-  const isCurrentUserAssigned = entityDetails?.assignee_ids.includes(currentUser?.id ?? "");
+  const isCurrentUserAssigned = !!entityDetails?.assignee_ids?.includes(currentUser?.id ?? "");
   const isEstimateEnabled = entityDetails?.project_id
     ? areEstimateEnabledByProjectId(entityDetails?.project_id)
     : false;
@@ -99,7 +99,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
     (assigneeId: string) => {
       if (!entityDetails) return;
 
-      const updatedAssignees = entityDetails.assignee_ids ?? [];
+      const updatedAssignees = [...(entityDetails.assignee_ids ?? [])];
       if (updatedAssignees.includes(assigneeId)) updatedAssignees.splice(updatedAssignees.indexOf(assigneeId), 1);
       else updatedAssignees.push(assigneeId);
 
@@ -370,7 +370,7 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
       onSelect: (data) => {
         const labelId = (data as IIssueLabel)?.id;
         if (!workspaceSlug || !entityDetails || !entityDetails.project_id) return;
-        const updatedLabels = entityDetails.label_ids ?? [];
+        const updatedLabels = [...(entityDetails.label_ids ?? [])];
         if (updatedLabels.includes(labelId)) updatedLabels.splice(updatedLabels.indexOf(labelId), 1);
         else updatedLabels.push(labelId);
         handleUpdateEntity({

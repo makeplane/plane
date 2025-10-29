@@ -2591,6 +2591,20 @@ export default {
       update_timezone: "Change timezone",
       update_start_of_week: "Change first day of week",
       update_language: "Change interface language",
+      toast: {
+        theme: {
+          success: "Theme updated successfully.",
+          error: "Failed to update theme. Please try again.",
+        },
+        timezone: {
+          success: "Timezone updated successfully.",
+          error: "Failed to update timezone. Please try again.",
+        },
+        generic: {
+          success: "Preferences updated successfully.",
+          error: "Failed to update preferences. Please try again.",
+        },
+      },
     },
     help_actions: {
       open_keyboard_shortcuts: "Open keyboard shortcuts",

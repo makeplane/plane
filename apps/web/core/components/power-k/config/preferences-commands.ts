@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { useTheme } from "next-themes";
 import { Calendar, Earth, Languages, Palette } from "lucide-react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { EStartOfTheWeek, TUserProfile } from "@plane/types";
 // components
@@ -17,17 +18,29 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
   const { setTheme } = useTheme();
   const { updateCurrentUser } = useUser();
   const { updateUserProfile, updateUserTheme } = useUserProfile();
+  // translation
+  const { t } = useTranslation();
 
   const handleUpdateTheme = useCallback(
     async (newTheme: string) => {
       setTheme(newTheme);
-      return updateUserTheme({ theme: newTheme }).catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Failed to save user theme settings!",
+      return updateUserTheme({ theme: newTheme })
+        .then(() => {
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: t("toast.success"),
+            message: t("power_k.preferences_actions.toast.theme.success"),
+          });
+        })
+        .catch(() => {
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("toast.error"),
+            message: t("power_k.preferences_actions.toast.theme.error"),
+          });
         });
-      });
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [setTheme, updateUserTheme]
   );
 
@@ -36,19 +49,20 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
       updateCurrentUser({ user_timezone: value })
         .then(() => {
           setToast({
-            title: "Success!",
-            message: "Timezone updated successfully",
             type: TOAST_TYPE.SUCCESS,
+            title: t("toast.success"),
+            message: t("power_k.preferences_actions.toast.timezone.success"),
           });
         })
         .catch(() => {
           setToast({
-            title: "Error!",
-            message: "Failed to update timezone",
             type: TOAST_TYPE.ERROR,
+            title: t("toast.error"),
+            message: t("power_k.preferences_actions.toast.timezone.error"),
           });
         });
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [updateCurrentUser]
   );
 
@@ -57,19 +71,20 @@ export const usePowerKPreferencesCommands = (): TPowerKCommandConfig[] => {
       updateUserProfile(payload)
         .then(() => {
           setToast({
-            title: "Success!",
-            message: "Language updated successfully",
             type: TOAST_TYPE.SUCCESS,
+            title: t("toast.success"),
+            message: t("power_k.preferences_actions.toast.generic.success"),
           });
         })
         .catch(() => {
           setToast({
-            title: "Error!",
-            message: "Failed to update language",
             type: TOAST_TYPE.ERROR,
+            title: t("toast.error"),
+            message: t("power_k.preferences_actions.toast.generic.error"),
           });
         });
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [updateUserProfile]
   );
 

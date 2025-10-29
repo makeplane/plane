@@ -57,6 +57,10 @@ export const PowerKModalSearchMenu: React.FC<Props> = (props) => {
           );
           setResultsCount(count);
         })
+        .catch(() => {
+          setResults(WORKSPACE_DEFAULT_SEARCH_RESULT);
+          setResultsCount(0);
+        })
         .finally(() => setIsSearching(false));
     } else {
       setResults(WORKSPACE_DEFAULT_SEARCH_RESULT);

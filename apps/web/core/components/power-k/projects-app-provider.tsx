@@ -9,8 +9,8 @@ import { usePowerK } from "@/hooks/store/use-power-k";
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { IssueLevelModals } from "@/plane-web/components/command-palette/modals/issue-level";
 import { ProjectLevelModals } from "@/plane-web/components/command-palette/modals/project-level";
+import { WorkItemLevelModals } from "@/plane-web/components/command-palette/modals/work-item-level";
 import { WorkspaceLevelModals } from "@/plane-web/components/command-palette/modals/workspace-level";
 // local imports
 import { useProjectsAppPowerKCommands } from "./config/commands";
@@ -79,7 +79,7 @@ export const ProjectsAppPowerKProvider = observer(() => {
       {workspaceSlug && projectId && (
         <ProjectLevelModals workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
       )}
-      <IssueLevelModals workItemIdentifier={workItemIdentifier?.toString()} />
+      <WorkItemLevelModals workItemIdentifier={workItemIdentifier?.toString()} />
       <ProjectsAppPowerKModalWrapper
         commandsListComponent={ProjectsAppPowerKCommandsList}
         context={context}

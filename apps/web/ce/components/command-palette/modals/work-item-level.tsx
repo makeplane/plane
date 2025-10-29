@@ -15,11 +15,11 @@ import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 
-export type TIssueLevelModalsProps = {
+export type TWorkItemLevelModalsProps = {
   workItemIdentifier: string | undefined;
 };
 
-export const IssueLevelModals: FC<TIssueLevelModalsProps> = observer((props) => {
+export const WorkItemLevelModals: FC<TWorkItemLevelModalsProps> = observer((props) => {
   const { workItemIdentifier } = props;
   // router
   const { workspaceSlug, cycleId, moduleId } = useParams();
