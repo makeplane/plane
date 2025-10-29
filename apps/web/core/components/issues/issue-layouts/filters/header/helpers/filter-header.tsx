@@ -1,6 +1,6 @@
 import React from "react";
+import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 // lucide icons
-import { ChevronDown, ChevronUp } from "lucide-react";
 
 interface IFilterHeader {
   title: string;
@@ -16,7 +16,7 @@ export const FilterHeader = ({ title, isPreviewEnabled, handleIsPreviewEnabled }
       className="grid h-5 w-5 flex-shrink-0 place-items-center rounded hover:bg-custom-background-80"
       onClick={handleIsPreviewEnabled}
     >
-      {isPreviewEnabled ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+      {isPreviewEnabled ? <ChevronUpIcon height={14} width={14} /> : <ChevronDownIcon height={14} width={14} />}
     </button>
   </div>
 );
