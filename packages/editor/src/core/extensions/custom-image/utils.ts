@@ -1,7 +1,13 @@
 import type { Editor } from "@tiptap/core";
 import { AlignCenter, AlignLeft, AlignRight, type LucideIcon } from "lucide-react";
 // local imports
-import { ECustomImageAttributeNames, TCustomImageAlignment, type Pixel, type TCustomImageAttributes } from "./types";
+import {
+  ECustomImageAttributeNames,
+  TCustomImageAlignment,
+  TCustomImageStatus,
+  type Pixel,
+  type TCustomImageAttributes,
+} from "./types";
 
 export const DEFAULT_CUSTOM_IMAGE_ATTRIBUTES: TCustomImageAttributes = {
   [ECustomImageAttributeNames.SOURCE]: null,
@@ -10,6 +16,7 @@ export const DEFAULT_CUSTOM_IMAGE_ATTRIBUTES: TCustomImageAttributes = {
   [ECustomImageAttributeNames.HEIGHT]: "auto",
   [ECustomImageAttributeNames.ASPECT_RATIO]: null,
   [ECustomImageAttributeNames.ALIGNMENT]: "left",
+  [ECustomImageAttributeNames.STATUS]: "pending",
 };
 
 export const getImageComponentImageFileMap = (editor: Editor) => editor.storage.imageComponent?.fileMap;
@@ -51,3 +58,10 @@ export const IMAGE_ALIGNMENT_OPTIONS: {
   },
 ];
 export const getImageBlockId = (id: string) => `editor-image-block-${id}`;
+
+export const isImageDuplicating = (status: TCustomImageStatus) => status === "duplicating";
+
+export const isImageDuplicationComplete = (status: TCustomImageStatus) =>
+  status === "duplicated" || status === "duplication-failed";
+
+export const isImageDuplicationFailed = (status: TCustomImageStatus) => status === "duplication-failed";
