@@ -393,7 +393,7 @@ class IssueLinkCreateSerializer(BaseSerializer):
 
     class Meta:
         model = IssueLink
-        fields = ["url", "issue_id"]
+        fields = ["title", "url", "issue_id"]
         read_only_fields = [
             "id",
             "workspace",
