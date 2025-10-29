@@ -26,7 +26,7 @@ export const useCommentOperations = (
   } = useIssueDetail();
   const { getProjectById } = useProject();
   const { getUserDetails } = useMember();
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   const { data: currentUser } = useUser();
   // derived values
   const issueDetails = issueId ? getIssueById(issueId) : undefined;
@@ -133,6 +133,22 @@ export const useCommentOperations = (
         } catch (error) {
           console.log("Error in uploading comment asset:", error);
           throw new Error(t("issue.comments.upload.error"));
+        }
+      },
+      duplicateCommentAsset: async (assetId, commentId) => {
+        try {
+          if (!workspaceSlug || !projectId) throw new Error("Missing fields");
+          const res = await duplicateEditorAsset({
+            assetId,
+            entityId: commentId,
+            entityType: EFileAssetType.COMMENT_DESCRIPTION,
+            projectId,
+            workspaceSlug,
+          });
+          return res;
+        } catch (error) {
+          console.log("Error in duplicating comment asset:", error);
+          throw new Error(t("issue.comments.duplicate.error"));
         }
       },
       addCommentReaction: async (commentId, reaction) => {

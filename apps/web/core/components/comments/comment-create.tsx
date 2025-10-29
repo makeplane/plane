@@ -132,6 +132,11 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
                   setUploadedAssetIds((prev) => [...prev, asset_id]);
                   return asset_id;
                 }}
+                duplicateFile={async (assetId: string) => {
+                  const { asset_id } = await activityOperations.duplicateCommentAsset(assetId, entityId);
+                  setUploadedAssetIds((prev) => [...prev, asset_id]);
+                  return asset_id;
+                }}
                 showToolbarInitially={showToolbarInitially}
                 parentClassName="p-2"
                 displayConfig={{

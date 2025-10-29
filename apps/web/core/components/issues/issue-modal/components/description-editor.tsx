@@ -75,7 +75,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
   const { getWorkspaceBySlug } = useWorkspace();
   const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString())?.id ?? "";
   const { config } = useInstance();
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   // platform
   const { isMobile } = usePlatformOS();
 
@@ -217,6 +217,22 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
                   } catch (error) {
                     console.log("Error in uploading issue asset:", error);
                     throw new Error("Asset upload failed. Please try again later.");
+                  }
+                }}
+                duplicateFile={async (assetId: string) => {
+                  try {
+                    const { asset_id } = await duplicateEditorAsset({
+                      assetId,
+                      entityId: issueId ?? "",
+                      entityType: isDraft ? EFileAssetType.DRAFT_ISSUE_DESCRIPTION : EFileAssetType.ISSUE_DESCRIPTION,
+                      projectId,
+                      workspaceSlug,
+                    });
+                    onAssetUpload(asset_id);
+                    return asset_id;
+                  } catch (error) {
+                    console.log("Error in duplicating issue asset:", error);
+                    throw new Error("Asset duplication failed. Please try again later.");
                   }
                 }}
               />

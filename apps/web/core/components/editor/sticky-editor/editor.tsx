@@ -29,6 +29,7 @@ interface StickyEditorWrapperProps
   showToolbarInitially?: boolean;
   showToolbar?: boolean;
   uploadFile: TFileHandler["upload"];
+  duplicateFile: TFileHandler["duplicate"];
   parentClassName?: string;
   handleColorChange: (data: Partial<TSticky>) => Promise<void>;
   handleDelete: () => void;
@@ -46,6 +47,7 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
     showToolbar = true,
     parentClassName = "",
     uploadFile,
+    duplicateFile,
     ...rest
   } = props;
   // states
@@ -75,6 +77,7 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
         fileHandler={getEditorFileHandlers({
           projectId,
           uploadFile,
+          duplicateFile,
           workspaceId,
           workspaceSlug,
         })}

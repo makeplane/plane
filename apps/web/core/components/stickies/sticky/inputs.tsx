@@ -87,6 +87,7 @@ export const StickyInput = (props: TProps) => {
               }
             )}
             uploadFile={async () => ""}
+            duplicateFile={async () => ""}
             showToolbar={showToolbar}
             parentClassName="border-none p-0"
             handleDelete={handleDelete}

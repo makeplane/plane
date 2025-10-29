@@ -44,7 +44,7 @@ const PageDetailsPage = observer(() => {
     storeType,
   });
   const { getWorkspaceBySlug } = useWorkspace();
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   // derived values
   const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug.toString())?.id ?? "") : "";
   const { canCurrentUserAccessPage, id, name, updateDescription } = page ?? {};
@@ -131,11 +131,21 @@ const PageDetailsPage = observer(() => {
           });
           return asset_id;
         },
+        duplicateFile: async (assetId: string) => {
+          const { asset_id } = await duplicateEditorAsset({
+            assetId,
+            entityId: id ?? "",
+            entityType: EFileAssetType.PAGE_DESCRIPTION,
+            projectId: projectId?.toString() ?? "",
+            workspaceSlug: workspaceSlug?.toString() ?? "",
+          });
+          return asset_id;
+        },
         workspaceId,
         workspaceSlug: workspaceSlug?.toString() ?? "",
       }),
     }),
-    [getEditorFileHandlers, id, uploadEditorAsset, projectId, workspaceId, workspaceSlug]
+    [getEditorFileHandlers, projectId, workspaceId, workspaceSlug, uploadEditorAsset, id, duplicateEditorAsset]
   );
 
   const webhookConnectionParams: TWebhookConnectionQueryParams = useMemo(

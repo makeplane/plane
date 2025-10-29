@@ -57,7 +57,7 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
   // ref to track if there are unsaved changes
   const hasUnsavedChanges = useRef(false);
   // store hooks
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id?.toString();
@@ -181,6 +181,21 @@ export const IssueDescriptionInput: FC<IssueDescriptionInputProps> = observer((p
                 } catch (error) {
                   console.log("Error in uploading work item asset:", error);
                   throw new Error("Asset upload failed. Please try again later.");
+                }
+              }}
+              duplicateFile={async (assetId: string) => {
+                try {
+                  const { asset_id } = await duplicateEditorAsset({
+                    assetId,
+                    entityId: issueId,
+                    entityType: EFileAssetType.ISSUE_DESCRIPTION,
+                    projectId,
+                    workspaceSlug,
+                  });
+                  return asset_id;
+                } catch (error) {
+                  console.log("Error in duplicating work item asset:", error);
+                  throw new Error("Asset duplication failed. Please try again later.");
                 }
               }}
               ref={editorRef}

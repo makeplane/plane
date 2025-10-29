@@ -14,6 +14,7 @@ const fileService = new FileService();
 type TArgs = {
   projectId?: string;
   uploadFile: TFileHandler["upload"];
+  duplicateFile: TFileHandler["duplicate"];
   workspaceId: string;
   workspaceSlug: string;
 };
@@ -27,7 +28,7 @@ export const useEditorConfig = () => {
 
   const getEditorFileHandlers = useCallback(
     (args: TArgs): TFileHandler => {
-      const { projectId, uploadFile, workspaceId, workspaceSlug } = args;
+      const { projectId, uploadFile, duplicateFile, workspaceId, workspaceSlug } = args;
 
       return {
         assetsUploadStatus: assetsUploadPercentage,
@@ -85,6 +86,7 @@ export const useEditorConfig = () => {
           }
         },
         upload: uploadFile,
+        duplicate: duplicateFile,
         validation: {
           maxFileSize,
         },
