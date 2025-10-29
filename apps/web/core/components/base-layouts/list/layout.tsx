@@ -2,9 +2,9 @@
 
 import { observer } from "mobx-react";
 import type { IBaseLayoutsListItem, IBaseLayoutsListProps } from "@plane/types";
+import { cn } from "@plane/ui";
 import { useLayoutState } from "../hooks/use-layout-state";
 import { BaseListGroup } from "./group";
-import { cn } from "@plane/ui";
 
 export const BaseListLayout = observer(<T extends IBaseLayoutsListItem>(props: IBaseLayoutsListProps<T>) => {
   const {
@@ -17,13 +17,14 @@ export const BaseListLayout = observer(<T extends IBaseLayoutsListItem>(props: I
     onDrop,
     canDrag,
     showEmptyGroups = false,
-    collapsedGroups: externalCollapsedGroups,
-    onToggleGroup: externalOnToggleGroup,
+    collapsedGroups: externalCollapsedGroups = [],
+    onToggleGroup: externalOnToggleGroup = () => {},
     loadMoreItems,
     className,
   } = props;
 
   const { containerRef, collapsedGroups, onToggleGroup } = useLayoutState({
+    mode: "external",
     externalCollapsedGroups,
     externalOnToggleGroup,
   });

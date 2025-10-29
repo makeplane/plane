@@ -20,11 +20,12 @@ export const BaseKanbanLayout = observer(<T extends IBaseLayoutsKanbanItem>(prop
     showEmptyGroups = true,
     enableDragDrop = false,
     loadMoreItems,
-    collapsedGroups: externalCollapsedGroups,
-    onToggleGroup: externalOnToggleGroup,
+    collapsedGroups: externalCollapsedGroups = [],
+    onToggleGroup: externalOnToggleGroup = () => {},
   } = props;
 
   const { containerRef, collapsedGroups, onToggleGroup } = useLayoutState({
+    mode: "external",
     externalCollapsedGroups,
     externalOnToggleGroup,
   });
