@@ -12,6 +12,7 @@ export default [
     route("authentication/github", "./(all)/(dashboard)/authentication/github/page.tsx"),
     route("authentication/gitlab", "./(all)/(dashboard)/authentication/gitlab/page.tsx"),
     route("authentication/google", "./(all)/(dashboard)/authentication/google/page.tsx"),
+    route("authentication/gitea", "./(all)/(dashboard)/authentication/gitea/page.tsx"),
     route("ai", "./(all)/(dashboard)/ai/page.tsx"),
     route("image", "./(all)/(dashboard)/image/page.tsx"),
   ]),

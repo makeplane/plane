@@ -6,8 +6,8 @@ export default defineConfig({
   format: ["esm", "cjs"],
   copy: ["src/styles"],
   exports: {
-    customExports: (out) => ({
-      ...out,
+    customExports: (exports) => ({
+      ...exports,
       "./styles.css": "./dist/styles/index.css",
       "./styles": "./dist/styles/index.css",
     }),

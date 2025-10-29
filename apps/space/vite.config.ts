@@ -44,23 +44,11 @@ export default defineConfig(({ isSsrBuild }) => {
     plugins: [reactRouter(), tsconfigPaths({ projects: [path.resolve(__dirname, "tsconfig.json")] })],
     resolve: {
       alias: {
-        "@tiptap/pm/state": "prosemirror-state",
-        "@tiptap/pm/view": "prosemirror-view",
-        "@tiptap/pm/model": "prosemirror-model",
-        "@tiptap/pm/transform": "prosemirror-transform",
-        "@tiptap/pm/keymap": "prosemirror-keymap",
-        "@tiptap/pm/commands": "prosemirror-commands",
-        "@tiptap/pm/schema-list": "prosemirror-schema-list",
-        "@tiptap/pm/tables": "prosemirror-tables",
         // Next.js compatibility shims used within space
         "next/image": path.resolve(__dirname, "app/compat/next/image.tsx"),
         "next/link": path.resolve(__dirname, "app/compat/next/link.tsx"),
         "next/navigation": path.resolve(__dirname, "app/compat/next/navigation.ts"),
       },
-      // When building inside Docker with pnpm workspaces, symlinks may be used
-      // for workspace packages. Preserve them so Vite can resolve their exports
-      // correctly instead of attempting to follow to source paths.
-      preserveSymlinks: true,
       dedupe: ["react", "react-dom"],
     },
     // No SSR-specific overrides needed; alias resolves to ESM build

@@ -4,7 +4,7 @@ import { PreloadResources } from "./layout.preload";
 // types
 
 // styles
-import "@/styles/command-pallette.css";
+import "@/styles/power-k.css";
 import "@/styles/emoji.css";
 import "@plane/propel/styles/react-day-picker.css";
 

@@ -37,8 +37,8 @@ export const ProjectViewsList = observer(() => {
     return (
       <EmptyStateDetailed
         assetKey="search"
-        title={t("common.search.title")}
-        description={t("common.search.description")}
+        title={t("common_empty_state.search.title")}
+        description={t("common_empty_state.search.description")}
       />
     );
   }
@@ -58,11 +58,11 @@ export const ProjectViewsList = observer(() => {
       ) : (
         <EmptyStateDetailed
           assetKey="view"
-          title={t("project.views.title")}
-          description={t("project.views.description")}
+          title={t("project_empty_state.views.title")}
+          description={t("project_empty_state.views.description")}
           actions={[
             {
-              label: t("project.views.cta_primary"),
+              label: t("project_empty_state.views.cta_primary"),
               onClick: () => toggleCreateViewModal(true),
               disabled: !canPerformEmptyStateActions,
               variant: "primary",
