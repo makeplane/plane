@@ -628,6 +628,8 @@ export default {
   },
   common: {
     all: "全部",
+    no_items_in_this_group: "此群組中沒有項目",
+    drop_here_to_move: "拖放到此處以移動",
     states: "狀態",
     state: "狀態",
     state_groups: "狀態群組",

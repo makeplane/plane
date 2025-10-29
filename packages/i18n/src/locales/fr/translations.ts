@@ -652,6 +652,8 @@ export default {
   },
   common: {
     all: "Tout",
+    no_items_in_this_group: "Aucun élément dans ce groupe",
+    drop_here_to_move: "Déposer ici pour déplacer",
     states: "États",
     state: "État",
     state_groups: "Groupes d'états",

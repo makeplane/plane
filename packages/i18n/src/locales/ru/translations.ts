@@ -643,6 +643,8 @@ export default {
   },
   common: {
     all: "Все",
+    no_items_in_this_group: "В этой группе нет элементов",
+    drop_here_to_move: "Перетащите сюда для перемещения",
     states: "Статусы",
     state: "Статус",
     state_groups: "Группы статусов",

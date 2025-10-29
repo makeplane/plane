@@ -643,6 +643,8 @@ export default {
   },
   common: {
     all: "Усе",
+    no_items_in_this_group: "У цій групі немає елементів",
+    drop_here_to_move: "Перетягніть сюди для переміщення",
     states: "Стани",
     state: "Стан",
     state_groups: "Групи станів",

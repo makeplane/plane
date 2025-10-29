@@ -644,6 +644,8 @@ export default {
   },
   common: {
     all: "Semua",
+    no_items_in_this_group: "Tidak ada item dalam grup ini",
+    drop_here_to_move: "Letakkan di sini untuk memindahkan",
     states: "Negara-negara",
     state: "Negara",
     state_groups: "Kelompok negara",

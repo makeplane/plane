@@ -639,6 +639,8 @@ export default {
   },
   common: {
     all: "Vše",
+    no_items_in_this_group: "V této skupině nejsou žádné položky",
+    drop_here_to_move: "Přetáhněte sem pro přesunutí",
     states: "Stavy",
     state: "Stav",
     state_groups: "Skupiny stavů",
