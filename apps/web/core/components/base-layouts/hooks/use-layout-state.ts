@@ -2,27 +2,24 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 
-interface UseLayoutStateProps {
-  /** Groups that should be collapsed externally */
-  externalCollapsedGroups?: string[];
-
-  /** External handler to toggle a group’s collapsed state */
-  externalOnToggleGroup?: (groupId: string) => void;
-
-  /** Enables automatic scrolling during drag-and-drop */
-  enableAutoScroll?: boolean;
-}
+type UseLayoutStateProps =
+  | {
+      mode: "external";
+      externalCollapsedGroups: string[];
+      externalOnToggleGroup: (groupId: string) => void;
+      enableAutoScroll?: boolean;
+    }
+  | {
+      mode?: "internal";
+      enableAutoScroll?: boolean;
+    };
 
 /**
  * Hook for managing layout state including:
  * - Collapsed/expanded group tracking (internal or external)
  * - Auto-scroll setup for drag-and-drop
  */
-export const useLayoutState = ({
-  externalCollapsedGroups,
-  externalOnToggleGroup,
-  enableAutoScroll = true,
-}: UseLayoutStateProps = {}) => {
+export const useLayoutState = (props: UseLayoutStateProps = { mode: "internal" }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   // Internal fallback state
@@ -35,14 +32,15 @@ export const useLayoutState = ({
     );
   }, []);
 
-  // Use external state/handlers if provided
-  const collapsedGroups = externalCollapsedGroups ?? internalCollapsedGroups;
-  const onToggleGroup = externalOnToggleGroup ?? internalToggleGroup;
+  // Use external state/handlers only if BOTH are provided together
+  const useExternal = props.mode === "external";
+  const collapsedGroups = useExternal ? props.externalCollapsedGroups : internalCollapsedGroups;
+  const onToggleGroup = useExternal ? props.externalOnToggleGroup : internalToggleGroup;
 
   // Enable auto-scroll for DnD
   useEffect(() => {
     const element = containerRef.current;
-    if (!element || !enableAutoScroll) return;
+    if (!element || !props.enableAutoScroll) return;
 
     const cleanup = combine(
       autoScrollForElements({
@@ -51,7 +49,7 @@ export const useLayoutState = ({
     );
 
     return cleanup;
-  }, [enableAutoScroll]);
+  }, [props.enableAutoScroll]);
 
   return {
     containerRef,
