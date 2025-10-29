@@ -24,7 +24,7 @@ export default {
       cta_primary: "Coba muat ulang",
     },
   },
-  project: {
+  project_empty_state: {
     work_items: {
       title: "Mulai dengan item kerja pertama Anda.",
       description:
@@ -92,7 +92,7 @@ export default {
       title: "Pilih item kerja Masuk untuk melihat detailnya",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     archive_work_items: {
       title: "Belum ada item kerja yang diarsipkan",
       description:
@@ -158,7 +158,7 @@ export default {
       title: "Siapkan masukan untuk mengelola permintaan masuk dan melacak bagaimana mereka diterima dan ditolak",
     },
   },
-  settings: {
+  settings_empty_state: {
     estimates: {
       title: "Belum ada estimasi",
       description: "Tentukan bagaimana tim Anda mengukur upaya dan lacak secara konsisten di semua item kerja.",

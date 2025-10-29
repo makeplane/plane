@@ -22,8 +22,8 @@ export const NotificationEmptyState: FC<TNotificationEmptyStateProps> = observer
         assetClassName="size-24"
         title={
           currentNotificationTab === ENotificationTab.ALL
-            ? t("workspace.inbox_sidebar_all.title")
-            : t("workspace.inbox_sidebar_mentions.title")
+            ? t("workspace_empty_state.inbox_sidebar_all.title")
+            : t("workspace_empty_state.inbox_sidebar_mentions.title")
         }
         className="max-w-56"
       />

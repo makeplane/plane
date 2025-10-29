@@ -23,7 +23,7 @@ export default {
       cta_primary: "Zkuste znovu načíst",
     },
   },
-  project: {
+  project_empty_state: {
     work_items: {
       title: "Začněte s vaší první pracovní položkou.",
       description:
@@ -92,7 +92,7 @@ export default {
       title: "Vyberte příchozí pracovní položku pro zobrazení jejích podrobností",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     archive_work_items: {
       title: "Zatím žádné archivované pracovní položky",
       description:
@@ -156,7 +156,7 @@ export default {
       title: "Nastavte příjem pro správu příchozích požadavků a sledování, jak jsou přijímány a odmítány",
     },
   },
-  settings: {
+  settings_empty_state: {
     estimates: {
       title: "Zatím žádné odhady",
       description: "Definujte, jak váš tým měří úsilí, a sledujte to konzistentně napříč všemi pracovními položkami.",

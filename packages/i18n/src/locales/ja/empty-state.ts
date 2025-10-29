@@ -23,7 +23,7 @@ export default {
       cta_primary: "再読み込みを試す",
     },
   },
-  project: {
+  project_empty_state: {
     work_items: {
       title: "最初の作業項目から始めましょう。",
       description:
@@ -89,7 +89,7 @@ export default {
       title: "インテーク作業項目を選択して詳細を表示",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     archive_work_items: {
       title: "アーカイブされた作業項目はまだありません",
       description:
@@ -151,7 +151,7 @@ export default {
       title: "インテークを設定して、受信リクエストを管理し、承認と拒否を追跡します",
     },
   },
-  settings: {
+  settings_empty_state: {
     estimates: {
       title: "まだ見積もりはありません",
       description: "チームが労力をどのように測定するかを定義し、すべての作業項目で一貫して追跡します。",

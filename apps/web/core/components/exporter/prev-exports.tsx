@@ -124,8 +124,8 @@ export const PrevExports = observer((props: Props) => {
             <div className="flex h-full w-full items-center justify-center">
               <EmptyStateCompact
                 assetKey="export"
-                title={t("settings.exports.title")}
-                description={t("settings.exports.description")}
+                title={t("settings_empty_state.exports.title")}
+                description={t("settings_empty_state.exports.description")}
                 align="start"
                 rootClassName="py-20"
               />

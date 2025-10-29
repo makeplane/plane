@@ -38,7 +38,7 @@ export const ProjectArchivedEmptyState: React.FC = observer(() => {
           description={t("common_empty_state.search.description")}
           actions={[
             {
-              label: t("common.search.cta_secondary"),
+              label: "Clear filters",
               onClick: archivedWorkItemFilter?.clearFilters,
               disabled: !canPerformEmptyStateActions || !archivedWorkItemFilter,
               variant: "outline-primary",
@@ -48,11 +48,11 @@ export const ProjectArchivedEmptyState: React.FC = observer(() => {
       ) : (
         <EmptyStateDetailed
           assetKey="archived-work-item"
-          title={t("workspace.archive_work_items.title")}
-          description={t("workspace.archive_work_items.description")}
+          title={t("workspace_empty_state.archive_work_items.title")}
+          description={t("workspace_empty_state.archive_work_items.description")}
           actions={[
             {
-              label: t("workspace.archive_work_items.cta_primary"),
+              label: t("workspace_empty_state.archive_work_items.cta_primary"),
               onClick: () => router.push(`/${workspaceSlug}/settings/projects/${projectId}/automations`),
               disabled: !canPerformEmptyStateActions,
               variant: "primary",
