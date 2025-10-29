@@ -2,8 +2,8 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // hooks
-import { usePowerK } from "@/hooks/store/use-power-k";
 import { SidebarSearchButton } from "@/components/sidebar/search-button";
+import { usePowerK } from "@/hooks/store/use-power-k";
 
 export const AppSearch = observer(() => {
   // store hooks

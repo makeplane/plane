@@ -1,6 +1,7 @@
 import { makeObservable } from "mobx";
 // types
-import { BasePowerKStore, IBasePowerKStore } from "@/store/base-power-k.store";
+import type { IBasePowerKStore } from "@/store/base-power-k.store";
+import { BasePowerKStore } from "@/store/base-power-k.store";
 
 export type IPowerKStore = IBasePowerKStore;
 

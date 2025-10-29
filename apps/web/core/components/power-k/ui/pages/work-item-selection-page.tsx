@@ -2,18 +2,18 @@
 
 import React, { useState, useEffect } from "react";
 // plane imports
-import { useTranslation } from "@plane/i18n";
+// import { useTranslation } from "@plane/i18n";
 import type { TIssueEntityData, TIssueSearchResponse, TActivityEntityData } from "@plane/types";
-import { generateWorkItemLink } from "@plane/utils";
+// import { generateWorkItemLink } from "@plane/utils";
 // components
 // import { CommandPaletteEntityList } from "@/components/command-palette";
-import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
+// import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
-import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { usePowerK } from "@/hooks/store/use-power-k";
-import { useAppRouter } from "@/hooks/use-app-router";
+// import { useCommandPalette } from "@/hooks/store/use-command-palette";
+// import { usePowerK } from "@/hooks/store/use-power-k";
+// import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+// import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import { WorkspaceService } from "@/plane-web/services";
 
 const workspaceService = new WorkspaceService();
@@ -30,25 +30,16 @@ type Props = {
 };
 
 export const WorkItemSelectionPage: React.FC<Props> = (props) => {
-  const {
-    workspaceSlug,
-    projectId,
-    searchTerm,
-    debouncedSearchTerm,
-    isLoading,
-    isSearching,
-    resolvedPath,
-    isWorkspaceLevel = false,
-  } = props;
+  const { workspaceSlug, projectId, debouncedSearchTerm, isWorkspaceLevel = false } = props;
   // router
-  const router = useAppRouter();
+  // const router = useAppRouter();
   // plane hooks
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
   // store hooks
-  const { togglePowerKModal } = usePowerK();
+  // const { togglePowerKModal } = usePowerK();
   // states
-  const [recentIssues, setRecentIssues] = useState<TIssueEntityData[]>([]);
-  const [issueResults, setIssueResults] = useState<TIssueSearchResponse[]>([]);
+  const [_recentIssues, setRecentIssues] = useState<TIssueEntityData[]>([]);
+  const [_issueResults, setIssueResults] = useState<TIssueSearchResponse[]>([]);
 
   // Load recent issues when component mounts
   useEffect(() => {
