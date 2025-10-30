@@ -41,7 +41,7 @@ export interface EmojiReactionButtonProps extends React.ButtonHTMLAttributes<HTM
 
 const sizeClasses = {
   sm: {
-    button: "px-2 py-1 text-xs gap-1",
+    button: "px-1.5 py-1 text-xs gap-0.5",
     emoji: "text-sm",
     count: "text-xs",
     addButton: "h-6 w-6",
@@ -96,8 +96,7 @@ const EmojiReaction = React.forwardRef<HTMLButtonElement, EmojiReactionProps>(
         ref={ref}
         onClick={handleClick}
         className={cn(
-          "inline-flex items-center rounded-full border transition-all duration-200",
-          "focus:outline-none focus:ring-2 focus:ring-custom-primary-100/20 focus:ring-offset-1",
+          "inline-flex items-center rounded-md border transition-all duration-200",
           sizeClass.button,
           reacted
             ? "bg-custom-primary-100/10 border-custom-primary-100 text-custom-primary-100"
