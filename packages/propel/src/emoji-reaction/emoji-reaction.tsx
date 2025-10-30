@@ -1,7 +1,7 @@
 import * as React from "react";
-import { Plus } from "lucide-react";
 import { AnimatedCounter } from "../animated-counter";
 import { stringToEmoji } from "../emoji-icon-picker";
+import { AddReactionIcon } from "../icons";
 import { Tooltip } from "../tooltip";
 import { cn } from "../utils";
 
@@ -96,7 +96,7 @@ const EmojiReaction = React.forwardRef<HTMLButtonElement, EmojiReactionProps>(
         ref={ref}
         onClick={handleClick}
         className={cn(
-          "inline-flex items-center rounded-full border transition-all duration-200 hover:scale-105",
+          "inline-flex items-center rounded-full border transition-all duration-200",
           "focus:outline-none focus:ring-2 focus:ring-custom-primary-100/20 focus:ring-offset-1",
           sizeClass.button,
           reacted
@@ -138,7 +138,7 @@ const EmojiReactionButton = React.forwardRef<HTMLButtonElement, EmojiReactionBut
         title="Add reaction"
         {...props}
       >
-        <Plus className={sizeClass.addIcon} />
+        <AddReactionIcon className={sizeClass.addIcon} />
       </button>
     );
   }
