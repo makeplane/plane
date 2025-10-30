@@ -35,7 +35,7 @@ export interface IEditorAssetStore {
     workspaceSlug,
   }: {
     assetId: string;
-    entityId: string;
+    entityId?: string;
     entityType: string;
     projectId?: string;
     workspaceSlug: string;

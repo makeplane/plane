@@ -286,12 +286,28 @@ export class FileService extends APIService {
     workspaceSlug: string,
     assetId: string,
     data: {
-      entity_id: string;
+      entity_id?: string;
       entity_type: string;
       project_id?: string;
     }
   ): Promise<{ asset_id: string }> {
-    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/duplicate-assets/${assetId}/`, data)
+    const payload: {
+      entity_type: string;
+      entity_id?: string;
+      project_id?: string;
+    } = {
+      entity_type: data.entity_type,
+    };
+
+    if (data.entity_id) {
+      payload.entity_id = data.entity_id;
+    }
+
+    if (data.project_id) {
+      payload.project_id = data.project_id;
+    }
+
+    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/duplicate-assets/${assetId}/`, payload)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

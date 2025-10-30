@@ -133,7 +133,7 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
                   return asset_id;
                 }}
                 duplicateFile={async (assetId: string) => {
-                  const { asset_id } = await activityOperations.duplicateCommentAsset(assetId, entityId);
+                  const { asset_id } = await activityOperations.duplicateCommentAsset(assetId);
                   setUploadedAssetIds((prev) => [...prev, asset_id]);
                   return asset_id;
                 }}

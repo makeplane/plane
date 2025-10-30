@@ -140,7 +140,7 @@ export const useCommentOperations = (
           if (!workspaceSlug || !projectId) throw new Error("Missing fields");
           const res = await duplicateEditorAsset({
             assetId,
-            entityId: commentId,
+            entityId: commentId || undefined,
             entityType: EFileAssetType.COMMENT_DESCRIPTION,
             projectId,
             workspaceSlug,

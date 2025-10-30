@@ -105,7 +105,6 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
         try {
           const { asset_id } = await duplicateEditorAsset({
             assetId,
-            entityId: data.id ?? "",
             entityType: EFileAssetType.ISSUE_DESCRIPTION,
             projectId,
             workspaceSlug,

@@ -223,7 +223,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
                   try {
                     const { asset_id } = await duplicateEditorAsset({
                       assetId,
-                      entityId: issueId ?? "",
+                      entityId: issueId,
                       entityType: isDraft ? EFileAssetType.DRAFT_ISSUE_DESCRIPTION : EFileAssetType.ISSUE_DESCRIPTION,
                       projectId,
                       workspaceSlug,

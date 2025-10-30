@@ -134,7 +134,7 @@ const PageDetailsPage = observer(() => {
         duplicateFile: async (assetId: string) => {
           const { asset_id } = await duplicateEditorAsset({
             assetId,
-            entityId: id ?? "",
+            entityId: id,
             entityType: EFileAssetType.PAGE_DESCRIPTION,
             projectId: projectId?.toString() ?? "",
             workspaceSlug: workspaceSlug?.toString() ?? "",
