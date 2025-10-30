@@ -4,6 +4,7 @@ import type { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams, usePathname } from "next/navigation";
 import useSWR from "swr";
+import { isValidNextPath } from "@plane/utils";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 // helpers
@@ -55,7 +56,7 @@ export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props
     let redirectionRoute = "/create-workspace";
 
     // validating the nextPath from the router query
-    if (nextPath && isValidURL(nextPath.toString())) {
+    if (nextPath && isValidURL(nextPath.toString()) && isValidNextPath(sanitize(nextPath.toString()))) {
       redirectionRoute = nextPath.toString();
       return redirectionRoute;
     }
