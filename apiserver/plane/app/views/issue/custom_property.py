@@ -240,26 +240,40 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
                 **issue_data_safe,
             }
             
-             # WB API endpoint URL configured in settings
+            # WB API endpoint URL configured in settings
             WB_API_URL = settings.WB_API_URL
             # Make request to WB API
             try:
-                wb_response = requests.post(
+                wb_response = requests.get(
                     WB_API_URL,
                     json=wb_api_payload,
                     timeout=30,
                 )
-                wb_response.raise_for_status()
-                
+                try:
+                    wb_response.raise_for_status()
+                except requests.exceptions.HTTPError as http_err:
+                    resp = getattr(http_err, "response", None) or wb_response
+                    status_code = getattr(resp, "status_code", status.HTTP_502_BAD_GATEWAY)
+                    message = " API returned an error"
+                    try:
+                        payload = resp.json()
+                        message = payload.get("message") or payload.get("detail") or message
+                    except ValueError:
+                        text = getattr(resp, "text", "") or ""
+                        message = text[:500] or message
+                    return Response(
+                        {"error": message},
+                        status=status_code if 400 <= status_code < 600 else status.HTTP_502_BAD_GATEWAY,
+                    )
                 # Return the response from WB API
                 return Response(
                     wb_response.json(),
                     status=status.HTTP_200_OK
                 )
-            except requests.exceptions.RequestException as e:
+            except requests.exceptions.RequestException:
                 return Response(
-                    {"error": f"Failed to fetch dropdown options from WB API: {str(e)}"},
-                    status=status.HTTP_502_BAD_GATEWAY
+                    {"error": f"Failed to fetch dropdown options from API Call: {str(e)}"},
+                    status=status.HTTP_502_BAD_GATEWAY,
                 )
         except Exception as e:
             return Response(
