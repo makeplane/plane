@@ -182,6 +182,8 @@ export const DescriptionInput: React.FC<Props> = observer((props) => {
     []
   );
 
+  if (!workspaceDetails) return null;
+
   return (
     <>
       {localDescription.description_html ? (
@@ -197,7 +199,7 @@ export const DescriptionInput: React.FC<Props> = observer((props) => {
               initialValue={localDescription.description_html ?? "<p></p>"}
               value={swrDescription ?? null}
               workspaceSlug={workspaceSlug}
-              workspaceId={workspaceDetails?.id ?? ""}
+              workspaceId={workspaceDetails.id}
               projectId={projectId}
               dragDropEnabled
               onChange={(_description, description_html) => {
