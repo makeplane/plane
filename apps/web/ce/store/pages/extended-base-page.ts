@@ -2,6 +2,9 @@ import type { TPage, TPageExtended } from "@plane/types";
 import type { RootStore } from "@/plane-web/store/root.store";
 import type { TBasePageServices } from "@/store/pages/base-page";
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export type TExtendedBasePageServices = {};
+
 export type TExtendedPageInstance = TPageExtended & {
   asJSONExtended: TPageExtended;
 };

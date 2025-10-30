@@ -6,6 +6,7 @@ import type { TDocumentPayload, TLogoProps, TNameDescriptionLoader, TPage } from
 import type { TChangeHandlerProps } from "@plane/ui";
 import { convertHexEmojiToDecimal } from "@plane/utils";
 // plane web store
+import type { TExtendedBasePageServices } from "@/plane-web/store/pages/extended-base-page";
 import { ExtendedBasePage } from "@/plane-web/store/pages/extended-base-page";
 import type { RootStore } from "@/plane-web/store/root.store";
 // local imports
@@ -64,7 +65,7 @@ export type TBasePageServices = {
   }>;
   restore: () => Promise<void>;
   duplicate: () => Promise<TPage>;
-};
+} & TExtendedBasePageServices;
 
 export type TPageInstance = TBasePage &
   TBasePagePermissions & {
