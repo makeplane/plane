@@ -799,6 +799,9 @@ importers:
       '@plane/hooks':
         specifier: workspace:*
         version: link:../hooks
+      '@plane/propel':
+        specifier: workspace:*
+        version: link:../propel
       '@plane/types':
         specifier: workspace:*
         version: link:../types

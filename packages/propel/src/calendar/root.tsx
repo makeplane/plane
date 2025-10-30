@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { ChevronLeft } from "lucide-react";
 import { DayPicker } from "react-day-picker";
+import { ChevronLeftIcon } from "@plane/propel/icons";
 
 import { cn } from "../utils";
 
@@ -20,7 +20,7 @@ export const Calendar = ({ className, showOutsideDays = true, ...props }: Calend
       weekStartsOn={props.weekStartsOn}
       components={{
         Chevron: ({ className, ...props }) => (
-          <ChevronLeft
+          <ChevronLeftIcon
             className={cn(
               "size-4",
               { "rotate-180": props.orientation === "right", "-rotate-90": props.orientation === "down" },
