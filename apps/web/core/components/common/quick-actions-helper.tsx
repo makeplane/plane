@@ -5,7 +5,7 @@ import type { TContextMenuItem } from "@plane/ui";
 import { useQuickActionsFactory } from "@/plane-web/components/common/quick-actions-factory";
 
 // Types
-export interface UseCycleMenuItemsProps {
+export type UseCycleMenuItemsProps = {
   cycleDetails: ICycle;
   isEditingAllowed: boolean;
   workspaceSlug: string;
@@ -17,9 +17,9 @@ export interface UseCycleMenuItemsProps {
   handleDelete: () => void;
   handleCopyLink: () => void;
   handleOpenInNewTab: () => void;
-}
+};
 
-export interface UseModuleMenuItemsProps {
+export type UseModuleMenuItemsProps = {
   moduleDetails: IModule;
   isEditingAllowed: boolean;
   workspaceSlug: string;
@@ -31,9 +31,9 @@ export interface UseModuleMenuItemsProps {
   handleDelete: () => void;
   handleCopyLink: () => void;
   handleOpenInNewTab: () => void;
-}
+};
 
-export interface UseViewMenuItemsProps {
+export type UseViewMenuItemsProps = {
   isOwner: boolean;
   isAdmin: boolean;
   workspaceSlug: string;
@@ -43,15 +43,15 @@ export interface UseViewMenuItemsProps {
   handleDelete: () => void;
   handleCopyLink: () => void;
   handleOpenInNewTab: () => void;
-}
+};
 
-export interface UseLayoutMenuItemsProps {
+export type UseLayoutMenuItemsProps = {
   workspaceSlug: string;
   projectId: string;
   storeType: "PROJECT" | "EPIC";
   handleCopyLink: () => void;
   handleOpenInNewTab: () => void;
-}
+};
 
 export type MenuResult = {
   items: TContextMenuItem[];

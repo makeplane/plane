@@ -116,7 +116,7 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
 
   const CONTEXT_MENU_ITEMS: TContextMenuItem[] = MENU_ITEMS.map((item) => ({
     ...item,
-    onClick: () => {
+    action: () => {
       captureClick({
         elementName: MODULE_TRACKER_ELEMENTS.CONTEXT_MENU,
       });
