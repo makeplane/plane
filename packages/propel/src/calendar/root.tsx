@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { DayPicker } from "react-day-picker";
-import { ChevronLeftIcon } from "@plane/propel/icons";
+import { ChevronLeftIcon } from "../icons";
 
 import { cn } from "../utils";
 
