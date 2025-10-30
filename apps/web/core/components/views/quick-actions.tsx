@@ -11,10 +11,10 @@ import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // helpers
+import { useViewMenuItems } from "@/components/common/quick-actions-helper";
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useUser, useUserPermissions } from "@/hooks/store/user";
-import { useViewMenuItems } from "@/plane-web/components/common/quick-actions-helper";
 import { PublishViewModal, useViewPublish } from "@/plane-web/components/views/publish";
 // local imports
 import { DeleteProjectViewModal } from "./delete-view-modal";

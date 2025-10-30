@@ -16,6 +16,7 @@ import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // components
+import { useModuleMenuItems } from "@/components/common/quick-actions-helper";
 import { ArchiveModuleModal, CreateUpdateModuleModal, DeleteModuleModal } from "@/components/modules";
 // helpers
 import { captureClick, captureSuccess, captureError } from "@/helpers/event-tracker.helper";
@@ -23,7 +24,6 @@ import { captureClick, captureSuccess, captureError } from "@/helpers/event-trac
 import { useModule } from "@/hooks/store/use-module";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { useModuleMenuItems } from "@/plane-web/components/common/quick-actions-helper";
 
 type Props = {
   parentRef: React.RefObject<HTMLDivElement>;

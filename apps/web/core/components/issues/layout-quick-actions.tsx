@@ -5,7 +5,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
-import { useLayoutMenuItems } from "@/plane-web/components/common/quick-actions-helper";
+import { useLayoutMenuItems } from "@/components/common/quick-actions-helper";
 
 type Props = {
   workspaceSlug: string;

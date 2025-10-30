@@ -101,7 +101,7 @@ export const useModuleMenuItems = (props: UseModuleMenuItemsProps): MenuResult =
       description: isInArchivableGroup ? undefined : "Only completed or cancelled modules can be archived",
     }),
     factory.createRestoreMenuItem(handlers.handleRestore, isEditingAllowed && isArchived),
-    factory.createDeleteMenuItem(handlers.handleDelete, isEditingAllowed),
+    factory.createDeleteMenuItem(handlers.handleDelete, isEditingAllowed && !isArchived),
   ].filter((item) => item.shouldRender !== false);
 
   return { items, modals: null };
