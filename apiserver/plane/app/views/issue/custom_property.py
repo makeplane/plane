@@ -16,6 +16,7 @@ from rest_framework.response import Response
 from plane.api.serializers import (
     IssueCustomPropertySerializer
 )
+from plane.app.serializers import IssueSerializer
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
@@ -226,12 +227,17 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
                     {"error": "Issue type ID is required."},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-            
+            issue_data = IssueSerializer(issue).data
+            # Convert to JSON-serializable structure (UUIDs, dates, etc.)
+            issue_data_safe = json.loads(json.dumps(issue_data, cls=DjangoJSONEncoder))
             # Prepare payload for WB API
             wb_api_payload = {
                 "issue_type_id": str(issue_type_id),
                 "issue_type_custom_property_id": str(issue_type_custom_property_id),
+                 # Retain existing camelCase key for backward compatibility
                 "issueId": str(issue_id),
+                # Include the complete issue data (snake_case keys)
+                **issue_data_safe,
             }
             
             # TODO: Replace with actual WB API endpoint URL
