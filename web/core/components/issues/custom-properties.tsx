@@ -150,22 +150,29 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
           `/api/workspaces/${workspaceSlug}/issues/${issueId}/custom-properties/${property.issue_type_custom_property}/dropdown-options/`
         );
         
-        // Assuming WB API returns an array of options or an object with options
-        // Adjust this based on actual WB API response format
+        // WB API returns an array of strings either directly or within an object key
+        // Examples: ["item1", "item2"] or { "invoice_numbers": ["item1", "item2"] }
         const responseData = response.data;
         let fetchedOptions: Array<{ value: string; label: string }> = [];
         
         if (Array.isArray(responseData)) {
-          fetchedOptions = responseData.map((item: any) => ({
-            value: typeof item === 'string' ? item : item.value || item.id || String(item),
-            label: typeof item === 'string' ? item : item.label || item.name || item.value || String(item),
+          // Direct array of strings
+          fetchedOptions = responseData.map((item: string) => ({
+            value: item,
+            label: item,
           }));
-        } else if (responseData?.options || responseData?.data) {
-          const optionsArray = responseData.options || responseData.data || [];
-          fetchedOptions = optionsArray.map((item: any) => ({
-            value: typeof item === 'string' ? item : item.value || item.id || String(item),
-            label: typeof item === 'string' ? item : item.label || item.name || item.value || String(item),
-          }));
+        } else if (responseData && typeof responseData === 'object') {
+          // Handle objects with keys containing arrays of strings (e.g., { "invoice_numbers": [...] } or { "dropdownSourceField": [...] })
+          const arrayKey = Object.keys(responseData).find(
+            (key) => Array.isArray(responseData[key])
+          );
+          if (arrayKey) {
+            const optionsArray = responseData[arrayKey] as string[];
+            fetchedOptions = optionsArray.map((item: string) => ({
+              value: item,
+              label: item,
+            }));
+          }
         }
         
         setOptions(fetchedOptions);
