@@ -242,7 +242,7 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
             
             # TODO: Replace with actual WB API endpoint URL
             # This should be configured in settings or environment variables
-            WB_API_URL = os.environ.get("WB_API_URL", "https://wbdemo.shipsy.io/webhook-test/wb/sample-dropdowns")# Placeholder URL
+            WB_API_URL = os.environ.get("WB_API_URL", "https://wbdemo.shipsy.io/webhook/wb/sample-dropdowns")# Placeholder URL
             
             # Make request to WB API
             try:
