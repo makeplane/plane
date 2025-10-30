@@ -3,8 +3,8 @@
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
-import { ChevronRightIcon } from "@plane/propel/icons";
 import { Logo } from "@plane/propel/emoji-icon-picker";
+import { ChevronRightIcon } from "@plane/propel/icons";
 // icons
 import { Row } from "@plane/ui";
 // helpers

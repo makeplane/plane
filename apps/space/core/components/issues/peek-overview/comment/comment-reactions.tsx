@@ -38,8 +38,15 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
   const { data: user } = useUser();
   const isInIframe = useIsInIframe();
 
-  const commentReactions = peekId ? details[peekId].comments.find((c) => c.id === commentId)?.comment_reactions : [];
-  const groupedReactions = peekId ? groupReactions(commentReactions ?? [], "reaction") : {};
+  const commentReactions = useMemo(() => {
+    if (!peekId) return [];
+    return details[peekId].comments.find((c) => c.id === commentId)?.comment_reactions ?? [];
+  }, [peekId, details, commentId]);
+
+  const groupedReactions = useMemo(() => {
+    if (!peekId) return {};
+    return groupReactions(commentReactions ?? [], "reaction");
+  }, [peekId, commentReactions]);
 
   const userReactions = commentReactions?.filter((r) => r?.actor_detail?.id === user?.id);
 
