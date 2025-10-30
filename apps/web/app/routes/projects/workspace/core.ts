@@ -1,10 +1,10 @@
 import { layout, route } from "@react-router/dev/routes";
 import type { RouteConfigEntry } from "@react-router/dev/routes";
-import { workspaceRoute } from "./../utils";
+import { workspaceRoute } from "../../utils";
 
 export const coreWorkspaceRoutes: RouteConfigEntry[] = [
   // ========================================================================
-  // WORKSPACE DASHBOARD
+  // WORKSPACE HOME
   // ========================================================================
   route(":workspaceSlug", "./(all)/[workspaceSlug]/(projects)/page.tsx"),
 

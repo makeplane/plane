@@ -1,3 +1,3 @@
 import type { RouteConfigEntry } from "@react-router/dev/routes";
 
-export const extendedSettingsRoutes: RouteConfigEntry[] = [];
+export const extendedProjectDetailRoutes: RouteConfigEntry[] = [];

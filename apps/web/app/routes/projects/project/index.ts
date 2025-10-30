@@ -1,4 +1,6 @@
+import type { RouteConfigEntry } from "@react-router/dev/routes";
 import { coreProjectRoutes } from "./core";
+import { projectDetailRoutes } from "./detail";
 import { extendedProjectRoutes } from "./extended";
 
 /**
@@ -6,4 +8,8 @@ import { extendedProjectRoutes } from "./extended";
  * All project-related routes including list view and detail views
  * Includes: project list, issues, cycles, modules, views, pages, intake, and archives
  */
-export const projectRoutes = [...coreProjectRoutes, ...extendedProjectRoutes];
+export const projectRoutes: RouteConfigEntry[] = [
+  ...coreProjectRoutes,
+  ...extendedProjectRoutes,
+  ...projectDetailRoutes,
+] as const;

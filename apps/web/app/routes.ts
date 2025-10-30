@@ -1,12 +1,12 @@
 import { layout, route } from "@react-router/dev/routes";
 import type { RouteConfig } from "@react-router/dev/routes";
 // local imports
-import { projectRoutes } from "./routes/project";
+import { piRoutes } from "./routes/pi";
+import { projectsAppRoutes } from "./routes/projects";
 import { settingsRoutes } from "./routes/settings";
 import { standaloneRoutes } from "./routes/standalone";
-import { teamspaceRoutes } from "./routes/teamspace";
 import { userManagementRoutes } from "./routes/user";
-import { workspaceRoutes } from "./routes/workspace";
+import { wikiRoutes } from "./routes/wiki";
 
 /**
  * Main Routes Configuration
@@ -31,28 +31,25 @@ function createRoutes(): RouteConfig {
       // ======================================================================
       layout("./(all)/[workspaceSlug]/layout.tsx", [
         // ====================================================================
-        // PROJECTS SECTION
+        // PROJECTS APP SECTION
         // ====================================================================
-        layout("./(all)/[workspaceSlug]/(projects)/layout.tsx", [
-          // Workspace-level routes
-          ...workspaceRoutes,
+        ...projectsAppRoutes,
 
-          // Teamspace-level routes
-          ...teamspaceRoutes,
+        // ====================================================================
+        // WIKI APP SECTION
+        // ====================================================================
+        ...wikiRoutes,
 
-          // Project routes
-          ...projectRoutes,
-        ]),
+        // ====================================================================
+        // PI APP SECTION
+        // ====================================================================
+        ...piRoutes,
 
         // ====================================================================
         // SETTINGS SECTION
         // ====================================================================
-        layout("./(all)/[workspaceSlug]/(settings)/layout.tsx", [
-          // Settings routes (workspace, account, project settings)
-          ...settingsRoutes,
-        ]),
+        ...settingsRoutes,
       ]),
-
       // ======================================================================
       // STANDALONE ROUTES (outside workspace context)
       // ======================================================================
