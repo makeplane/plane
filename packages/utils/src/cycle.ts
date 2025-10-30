@@ -1,10 +1,7 @@
 import { startOfToday, format } from "date-fns";
-import isEmpty from "lodash/isEmpty";
-import orderBy from "lodash/orderBy";
-import sortBy from "lodash/sortBy";
-import uniqBy from "lodash/uniqBy";
+import { isEmpty, orderBy, sortBy, uniqBy } from "lodash-es";
 // plane imports
-import { ICycle, TCycleFilters } from "@plane/types";
+import { ICycle, TCycleFilters, TProgressSnapshot } from "@plane/types";
 // local imports
 import { findTotalDaysInRange, generateDateArray, getDate } from "./datetime";
 import { satisfiesDateFilter } from "./filter";
@@ -190,4 +187,58 @@ export const formatActiveCycle = (args: {
   return cycle.version === 1
     ? formatV1Data(isTypeIssue!, cycle, isBurnDown!, endDate)
     : formatV2Data(isTypeIssue!, cycle, isBurnDown!, endDate);
+};
+
+/**
+ * Calculates cycle progress percentage excluding cancelled issues from total count
+ * Formula: completed / (total - cancelled) * 100
+ * This gives accurate progress based on: pendingIssues = totalIssues - completedIssues - cancelledIssues
+ * @param cycle - Cycle data object
+ * @param estimateType - Whether to calculate based on "issues" or "points"
+ * @param includeInProgress - Whether to include started/in-progress items in completion calculation
+ * @returns Progress percentage (0-100)
+ */
+export const calculateCycleProgress = (
+  cycle: ICycle | undefined,
+  estimateType: "issues" | "points" = "issues",
+  includeInProgress: boolean = false
+): number => {
+  if (!cycle) return 0;
+
+  const progressSnapshot: TProgressSnapshot | undefined = cycle.progress_snapshot;
+  const cycleDetails = progressSnapshot && !isEmpty(progressSnapshot) ? progressSnapshot : cycle;
+
+  let completed: number;
+  let cancelled: number;
+  let total: number;
+
+  if (estimateType === "points") {
+    completed = cycleDetails.completed_estimate_points || 0;
+    cancelled = cycleDetails.cancelled_estimate_points || 0;
+    total = cycleDetails.total_estimate_points || 0;
+
+    if (includeInProgress) {
+      completed += cycleDetails.started_estimate_points || 0;
+    }
+  } else {
+    completed = cycleDetails.completed_issues || 0;
+    cancelled = cycleDetails.cancelled_issues || 0;
+    total = cycleDetails.total_issues || 0;
+
+    if (includeInProgress) {
+      completed += cycleDetails.started_issues || 0;
+    }
+  }
+
+  // Exclude cancelled issues from total (pendingIssues = total - completed - cancelled)
+  const adjustedTotal = total - cancelled;
+
+  // Handle edge cases
+  if (adjustedTotal === 0) return 0;
+  if (completed < 0 || adjustedTotal < 0) return 0;
+  if (completed > adjustedTotal) return 100;
+
+  // Calculate percentage and round
+  const percentage = (completed / adjustedTotal) * 100;
+  return Math.round(percentage);
 };

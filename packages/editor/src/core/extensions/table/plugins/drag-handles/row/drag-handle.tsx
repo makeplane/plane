@@ -15,6 +15,8 @@ import { Ellipsis } from "lucide-react";
 import { useCallback, useState } from "react";
 // plane imports
 import { cn } from "@plane/utils";
+// constants
+import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
 import {
   findTable,
@@ -59,7 +61,16 @@ export const RowDragHandle: React.FC<RowDragHandleProps> = (props) => {
       }),
     ],
     open: isDropdownOpen,
-    onOpenChange: setIsDropdownOpen,
+    onOpenChange: (open) => {
+      setIsDropdownOpen(open);
+      if (open) {
+        editor.commands.addActiveDropbarExtension(CORE_EXTENSIONS.TABLE);
+      } else {
+        setTimeout(() => {
+          editor.commands.removeActiveDropbarExtension(CORE_EXTENSIONS.TABLE);
+        }, 0);
+      }
+    },
     whileElementsMounted: autoUpdate,
   });
   const click = useClick(context);
@@ -184,7 +195,6 @@ export const RowDragHandle: React.FC<RowDragHandleProps> = (props) => {
             }}
             lockScroll
           />
-
           <div
             className="max-h-[90vh] w-[12rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg"
             ref={refs.setFloating}
@@ -194,7 +204,7 @@ export const RowDragHandle: React.FC<RowDragHandleProps> = (props) => {
               zIndex: 100,
             }}
           >
-            <RowOptionsDropdown editor={editor} onClose={() => setIsDropdownOpen(false)} />
+            <RowOptionsDropdown editor={editor} onClose={() => context.onOpenChange(false)} />
           </div>
         </FloatingPortal>
       )}

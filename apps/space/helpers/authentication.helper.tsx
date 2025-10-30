@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import Link from "next/link";
 // helpers
 import { SUPPORT_EMAIL } from "./common.helper";
@@ -66,7 +66,7 @@ export enum EAuthenticationErrorCodes {
   INCORRECT_OLD_PASSWORD = "5135",
   MISSING_PASSWORD = "5138",
   INVALID_NEW_PASSWORD = "5140",
-  // set passowrd
+  // set password
   PASSWORD_ALREADY_SET = "5145",
   // Admin
   ADMIN_ALREADY_EXIST = "5150",

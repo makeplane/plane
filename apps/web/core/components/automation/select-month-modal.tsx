@@ -6,9 +6,10 @@ import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
+import { Button } from "@plane/propel/button";
 import type { IProject } from "@plane/types";
 // ui
-import { Button, Input } from "@plane/ui";
+import { Input } from "@plane/ui";
 // types
 
 // types

@@ -1,13 +1,14 @@
 "use client";
 
-import React, { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { WORKSPACE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IWebhook, TWebhookEventTypes } from "@plane/types";
+import { Button } from "@plane/propel/button";
+import type { IWebhook, TWebhookEventTypes } from "@plane/types";
 // hooks
-import { Button } from "@plane/ui";
 import {
   WebhookIndividualEventOptions,
   WebhookInput,

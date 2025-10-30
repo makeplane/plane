@@ -1,5 +1,10 @@
 import { TLogoProps } from "./common";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "./view-props";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  TWorkItemFilterExpression,
+} from "./view-props";
 
 export enum EViewAccess {
   PRIVATE,
@@ -16,7 +21,7 @@ export interface IProjectView {
   updated_by: string;
   name: string;
   description: string;
-  filters: IIssueFilterOptions;
+  rich_filters: TWorkItemFilterExpression;
   display_filters: IIssueDisplayFilterOptions;
   display_properties: IIssueDisplayProperties;
   query: IIssueFilterOptions;
@@ -27,6 +32,10 @@ export interface IProjectView {
   is_locked: boolean;
   anchor?: string;
   owned_by: string;
+}
+
+export interface IPublishedProjectView extends Omit<IProjectView, "rich_filters"> {
+  filters: IIssueFilterOptions;
 }
 
 export type TPublishViewSettings = {

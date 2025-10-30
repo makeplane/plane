@@ -85,8 +85,9 @@ export class UserService extends APIService {
       });
   }
 
-  async currentUserSettings(): Promise<IUserSettings> {
-    return this.get("/api/users/me/settings/")
+  async currentUserSettings(bustCache: boolean = false): Promise<IUserSettings> {
+    const url = bustCache ? `/api/users/me/settings/?t=${Date.now()}` : "/api/users/me/settings/";
+    return this.get(url)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;

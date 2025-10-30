@@ -1,9 +1,12 @@
 "use-client";
-import { FC, useEffect, useRef } from "react";
+import type { FC } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import { EFileAssetType, TNameDescriptionLoader } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
+import type { TNameDescriptionLoader } from "@plane/types";
+// components
 import { getTextContent } from "@plane/utils";
 // components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
@@ -29,7 +32,8 @@ import { IssueTitleInput } from "../title-input";
 // services init
 const workItemVersionService = new WorkItemVersionService();
 
-interface IPeekOverviewIssueDetails {
+type Props = {
+  editorRef: React.RefObject<EditorRefApi>;
   workspaceSlug: string;
   projectId: string;
   issueId: string;
@@ -38,12 +42,11 @@ interface IPeekOverviewIssueDetails {
   isArchived: boolean;
   isSubmitting: TNameDescriptionLoader;
   setIsSubmitting: (value: TNameDescriptionLoader) => void;
-}
+};
 
-export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = observer((props) => {
-  const { workspaceSlug, issueId, issueOperations, disabled, isArchived, isSubmitting, setIsSubmitting } = props;
-  // refs
-  const editorRef = useRef<EditorRefApi>(null);
+export const PeekOverviewIssueDetails: FC<Props> = observer((props) => {
+  const { editorRef, workspaceSlug, issueId, issueOperations, disabled, isArchived, isSubmitting, setIsSubmitting } =
+    props;
   // store hooks
   const { data: currentUser } = useUser();
   const {

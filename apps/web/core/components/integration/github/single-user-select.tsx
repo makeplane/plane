@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane types
-import { IGithubRepoCollaborator } from "@plane/types";
+import type { IGithubRepoCollaborator } from "@plane/types";
 // plane ui
 import { Avatar, CustomSelect, CustomSearchSelect, Input } from "@plane/ui";
 // constants
@@ -13,7 +13,7 @@ import { WORKSPACE_MEMBERS } from "@/constants/fetch-keys";
 // plane web services
 import { WorkspaceService } from "@/plane-web/services";
 // types
-import { IUserDetails } from "./root";
+import type { IUserDetails } from "./root";
 
 type Props = {
   collaborator: IGithubRepoCollaborator;

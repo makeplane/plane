@@ -1,4 +1,4 @@
-import range from "lodash/range";
+import { range } from "lodash-es";
 
 export const CycleModuleBoardLayoutLoader = () => (
   <div className="h-full w-full animate-pulse">

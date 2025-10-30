@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, Fragment, useEffect, useState } from "react";
+import type { FC } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";

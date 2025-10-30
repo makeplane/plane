@@ -1,11 +1,11 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import { MinusCircle } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 // component
 // ui
 import { ControlLink, CustomMenu } from "@plane/ui";
@@ -20,7 +20,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // types
-import { TIssueOperations } from "../root";
+import type { TIssueOperations } from "../root";
 import { IssueParentSiblings } from "./siblings";
 
 export type TIssueParentDetail = {

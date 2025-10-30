@@ -1,8 +1,8 @@
-import cloneDeep from "lodash/cloneDeep";
-import set from "lodash/set";
+import { cloneDeep, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 // types
-import { EStartOfTheWeek, IUserTheme, TUserProfile } from "@plane/types";
+import type { IUserTheme, TUserProfile } from "@plane/types";
+import { EStartOfTheWeek } from "@plane/types";
 // services
 import { UserService } from "@/services/user.service";
 // store
@@ -168,7 +168,13 @@ export class ProfileStore implements IUserProfileStore {
       // update user onboarding status
       await this.userService.updateUserOnBoard();
 
-      // update the user profile store
+      // Wait for user settings to be refreshed with cache-busting before updating onboarding status
+      await Promise.all([
+        this.fetchUserProfile(),
+        this.store.user.userSettings.fetchCurrentUserSettings(true), // Cache-busting enabled
+      ]);
+
+      // Only after settings are refreshed, update the user profile store to mark as onboarded
       runInAction(() => {
         this.mutateUserProfile({ ...dataToUpdate, is_onboarded: true });
       });

@@ -1,2 +1,2 @@
-export { Pill } from "./pill";
+export { Pill, EPillVariant, EPillSize } from "./pill";
 export type { PillProps } from "./pill";

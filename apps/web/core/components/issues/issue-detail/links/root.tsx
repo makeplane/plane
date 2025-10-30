@@ -1,10 +1,12 @@
 "use client";
 
-import { FC, useCallback, useMemo, useState } from "react";
+import type { FC } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 // plane imports
-import { EIssueServiceType, TIssueLink } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TIssueLink } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports

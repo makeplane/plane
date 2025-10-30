@@ -18,9 +18,7 @@ class WebhookEndpoint(BaseAPIView):
     def post(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         try:
-            serializer = WebhookSerializer(
-                data=request.data, context={"request": request}
-            )
+            serializer = WebhookSerializer(data=request.data, context={"request": request})
             if serializer.is_valid():
                 serializer.save(workspace_id=workspace.id)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -119,8 +117,6 @@ class WebhookSecretRegenerateEndpoint(BaseAPIView):
 class WebhookLogsEndpoint(BaseAPIView):
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def get(self, request, slug, webhook_id):
-        webhook_logs = WebhookLog.objects.filter(
-            workspace__slug=slug, webhook=webhook_id
-        )
+        webhook_logs = WebhookLog.objects.filter(workspace__slug=slug, webhook=webhook_id)
         serializer = WebhookLogSerializer(webhook_logs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

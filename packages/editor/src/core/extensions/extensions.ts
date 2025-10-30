@@ -1,9 +1,9 @@
 import { Extensions } from "@tiptap/core";
-import CharacterCount from "@tiptap/extension-character-count";
+import { CharacterCount } from "@tiptap/extension-character-count";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
-import TextStyle from "@tiptap/extension-text-style";
-import TiptapUnderline from "@tiptap/extension-underline";
+import { TextStyle } from "@tiptap/extension-text-style";
+import { Underline } from "@tiptap/extension-underline";
 import { Markdown } from "tiptap-markdown";
 // extensions
 import {
@@ -76,7 +76,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     ListKeymap({ tabIndex }),
     CustomLinkExtension,
     CustomTypographyExtension,
-    TiptapUnderline,
+    Underline,
     TextStyle,
     TaskList.configure({
       HTMLAttributes: {

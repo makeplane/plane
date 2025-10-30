@@ -1,13 +1,15 @@
 "use client";
 
-import { FC, FormEvent, useMemo, useRef, useState } from "react";
+import type { FC, FormEvent } from "react";
+import { useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // icons
 import { CircleAlert, XCircle } from "lucide-react";
 // types
-import { IEmailCheckData } from "@plane/types";
+import { Button } from "@plane/propel/button";
+import type { IEmailCheckData } from "@plane/types";
 // ui
-import { Button, Input, Spinner } from "@plane/ui";
+import { Input, Spinner } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 import { checkEmailValidity } from "@/helpers/string.helper";

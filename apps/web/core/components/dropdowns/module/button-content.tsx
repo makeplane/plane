@@ -1,8 +1,7 @@
 "use client";
 
-import { ChevronDown, X } from "lucide-react";
 // plane imports
-import { DiceIcon } from "@plane/propel/icons";
+import { CloseIcon, ModuleIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // hooks
@@ -46,7 +45,7 @@ export const ModuleButtonContent: React.FC<ModuleButtonContentProps> = (props) =
       <>
         {showCount ? (
           <div className="relative flex items-center max-w-full gap-1">
-            {!hideIcon && <DiceIcon className="h-3 w-3 flex-shrink-0" />}
+            {!hideIcon && <ModuleIcon className="h-3 w-3 flex-shrink-0" />}
             {(value.length > 0 || !!placeholder) && (
               <div className="max-w-40 flex-grow truncate">
                 {value.length > 0
@@ -69,7 +68,7 @@ export const ModuleButtonContent: React.FC<ModuleButtonContentProps> = (props) =
                     className
                   )}
                 >
-                  {!hideIcon && <DiceIcon className="h-2.5 w-2.5 flex-shrink-0" />}
+                  {!hideIcon && <ModuleIcon className="h-2.5 w-2.5 flex-shrink-0" />}
                   {!hideText && (
                     <Tooltip
                       tooltipHeading="Title"
@@ -96,7 +95,7 @@ export const ModuleButtonContent: React.FC<ModuleButtonContentProps> = (props) =
                           onChange(newModuleIds);
                         }}
                       >
-                        <X className="h-2.5 w-2.5 text-custom-text-300 hover:text-red-500" />
+                        <CloseIcon className="h-2.5 w-2.5 text-custom-text-300 hover:text-red-500" />
                       </button>
                     </Tooltip>
                   )}
@@ -106,24 +105,24 @@ export const ModuleButtonContent: React.FC<ModuleButtonContentProps> = (props) =
           </div>
         ) : (
           <>
-            {!hideIcon && <DiceIcon className="h-3 w-3 flex-shrink-0" />}
+            {!hideIcon && <ModuleIcon className="h-3 w-3 flex-shrink-0" />}
             <span className="flex-grow truncate text-left">{placeholder}</span>
           </>
         )}
         {dropdownArrow && (
-          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+          <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
       </>
     );
   else
     return (
       <>
-        {!hideIcon && <DiceIcon className="h-3 w-3 flex-shrink-0" />}
+        {!hideIcon && <ModuleIcon className="h-3 w-3 flex-shrink-0" />}
         {!hideText && (
           <span className="flex-grow truncate text-left">{value ? getModuleById(value)?.name : placeholder}</span>
         )}
         {dropdownArrow && (
-          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+          <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
       </>
     );

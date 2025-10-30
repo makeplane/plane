@@ -97,9 +97,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
             if settings.DEBUG:
                 from django.db import connection
 
-                print(
-                    f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}"
-                )
+                print(f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}")
             return response
 
         except Exception as exc:
@@ -108,14 +106,10 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
 
     @property
     def fields(self):
-        fields = [
-            field for field in self.request.GET.get("fields", "").split(",") if field
-        ]
+        fields = [field for field in self.request.GET.get("fields", "").split(",") if field]
         return fields if fields else None
 
     @property
     def expand(self):
-        expand = [
-            expand for expand in self.request.GET.get("expand", "").split(",") if expand
-        ]
+        expand = [expand for expand in self.request.GET.get("expand", "").split(",") if expand]
         return expand if expand else None

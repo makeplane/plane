@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import tippy, { Instance } from "tippy.js";
+import tippy, { type Instance } from "tippy.js";
 // plane utils
 import { cn } from "@plane/utils";
 // types
-import { TAIHandler } from "@/types";
+import type { TAIHandler } from "@/types";
 
 type Props = {
   menu: TAIHandler["menu"];

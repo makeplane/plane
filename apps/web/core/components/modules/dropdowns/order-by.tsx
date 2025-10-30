@@ -1,11 +1,13 @@
 "use client";
 
-import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check, ChevronDown } from "lucide-react";
+import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check } from "lucide-react";
 import { MODULE_ORDER_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TModuleOrderByOptions } from "@plane/types";
+import { getButtonStyling } from "@plane/propel/button";
+import { ChevronDownIcon } from "@plane/propel/icons";
+import type { TModuleOrderByOptions } from "@plane/types";
 // ui
-import { CustomMenu, getButtonStyling } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // types
@@ -32,7 +34,7 @@ export const ModuleOrderByDropdown: React.FC<Props> = (props) => {
         <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-300")}>
           {!isDescending ? <ArrowUpWideNarrow className="size-3 " /> : <ArrowDownWideNarrow className="size-3 " />}
           {orderByDetails && t(orderByDetails?.i18n_label)}
-          <ChevronDown className="size-3" strokeWidth={2} />
+          <ChevronDownIcon className="size-3" strokeWidth={2} />
         </div>
       }
       placement="bottom-end"

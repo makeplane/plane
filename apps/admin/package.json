@@ -1,7 +1,7 @@
 {
   "name": "admin",
   "description": "Admin UI for Plane",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "AGPL-3.0",
   "private": true,
   "scripts": {
@@ -27,7 +27,7 @@
     "@plane/utils": "workspace:*",
     "autoprefixer": "10.4.14",
     "axios": "catalog:",
-    "lodash": "catalog:",
+    "lodash-es": "catalog:",
     "lucide-react": "catalog:",
     "mobx": "catalog:",
     "mobx-react": "catalog:",
@@ -45,11 +45,10 @@
     "@plane/eslint-config": "workspace:*",
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@types/lodash": "catalog:",
-    "@types/node": "18.16.1",
+    "@types/lodash-es": "catalog:",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@types/uuid": "^9.0.8",
     "typescript": "catalog:"
   }
 }

@@ -14,6 +14,7 @@ export enum EPillSize {
   SM = "sm",
   MD = "md",
   LG = "lg",
+  XS = "xs",
 }
 
 export type TPillVariant =
@@ -23,7 +24,7 @@ export type TPillVariant =
   | EPillVariant.WARNING
   | EPillVariant.ERROR
   | EPillVariant.INFO;
-export type TPillSize = EPillSize.SM | EPillSize.MD | EPillSize.LG;
+export type TPillSize = EPillSize.SM | EPillSize.MD | EPillSize.LG | EPillSize.XS;
 
 export interface PillProps extends React.HTMLAttributes<HTMLSpanElement> {
   variant?: TPillVariant;
@@ -42,6 +43,7 @@ const pillVariants = {
 };
 
 const pillSizes = {
+  [EPillSize.XS]: "px-1.5 py-0.5 text-xs",
   [EPillSize.SM]: "px-2 py-0.5 text-xs",
   [EPillSize.MD]: "px-2.5 py-1 text-sm",
   [EPillSize.LG]: "px-3 py-1.5 text-base",

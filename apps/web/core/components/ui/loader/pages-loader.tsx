@@ -1,4 +1,4 @@
-import range from "lodash/range";
+import { range } from "lodash-es";
 
 export const PagesLoader = () => (
   <div className="flex h-full flex-col space-y-5 overflow-hidden p-6">

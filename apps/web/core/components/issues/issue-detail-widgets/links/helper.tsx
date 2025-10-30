@@ -2,12 +2,12 @@
 import { useMemo } from "react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TIssueLink, TIssueServiceType } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TIssueLink, TIssueServiceType } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
-import { TLinkOperations } from "../../issue-detail/links";
+import type { TLinkOperations } from "../../issue-detail/links";
 
 export const useLinkOperations = (
   workspaceSlug: string,

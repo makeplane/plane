@@ -114,7 +114,7 @@ export function LowlightPlugin({
           ([oldNodeName, newNodeName].includes(name) ||
             // OR transaction adds/removes named node,
             newNodes.length !== oldNodes.length ||
-            // OR transaction has changes that completely encapsulte a node
+            // OR transaction has changes that completely encapsulate a node
             // (for example, a transaction that affects the entire document).
             // Such transactions can happen during collab syncing via y-prosemirror, for example.
             transaction.steps.some(

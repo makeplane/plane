@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTheme as nextUseTheme } from "next-themes";
 // ui
-import { Button, getButtonStyling } from "@plane/ui";
+import { Button, getButtonStyling } from "@plane/propel/button";
 import { resolveGeneralTheme } from "@plane/utils";
 // hooks
 import { useTheme } from "@/hooks/store";

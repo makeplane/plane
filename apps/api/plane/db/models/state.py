@@ -52,9 +52,7 @@ class State(ProjectBaseModel):
         self.slug = slugify(self.name)
         if self._state.adding:
             # Get the maximum sequence value from the database
-            last_id = State.objects.filter(project=self.project).aggregate(
-                largest=models.Max("sequence")
-            )["largest"]
+            last_id = State.objects.filter(project=self.project).aggregate(largest=models.Max("sequence"))["largest"]
             # if last_id is not None
             if last_id is not None:
                 self.sequence = last_id + 15000

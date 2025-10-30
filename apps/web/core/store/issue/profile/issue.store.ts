@@ -1,34 +1,37 @@
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
 // base class
-import {
+import type {
   TIssue,
   TLoader,
   IssuePaginationOptions,
   TIssuesResponse,
   ViewFlags,
   TBulkOperationsPayload,
+  TProfileViews,
 } from "@plane/types";
 import { UserService } from "@/services/user.service";
 
 // services
 // types
-import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
-import { IIssueRootStore } from "../root.store";
-import { IProfileIssuesFilter } from "./filter.store";
+import type { IBaseIssuesStore } from "../helpers/base-issues.store";
+import { BaseIssuesStore } from "../helpers/base-issues.store";
+import type { IIssueRootStore } from "../root.store";
+import type { IProfileIssuesFilter } from "./filter.store";
 
 export interface IProfileIssues extends IBaseIssuesStore {
   // observable
-  currentView: "assigned" | "created" | "subscribed";
+  currentView: TProfileViews;
   viewFlags: ViewFlags;
   // actions
-  setViewId: (viewId: "assigned" | "created" | "subscribed") => void;
+  setViewId: (viewId: TProfileViews) => void;
   // action
   fetchIssues: (
     workspaceSlug: string,
     userId: string,
     loadType: TLoader,
     option: IssuePaginationOptions,
-    view: "assigned" | "created" | "subscribed"
+    view: TProfileViews,
+    isExistingPaginationOptions?: boolean
   ) => Promise<TIssuesResponse | undefined>;
   fetchIssuesWithExistingPagination: (
     workspaceSlug: string,
@@ -53,7 +56,7 @@ export interface IProfileIssues extends IBaseIssuesStore {
 }
 
 export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
-  currentView: "assigned" | "created" | "subscribed" = "assigned";
+  currentView: TProfileViews = "assigned";
   // filter store
   issueFilterStore: IProfileIssuesFilter;
   // services
@@ -92,7 +95,7 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
     };
   }
 
-  setViewId(viewId: "assigned" | "created" | "subscribed") {
+  setViewId(viewId: TProfileViews) {
     this.currentView = viewId;
   }
 
@@ -110,12 +113,12 @@ export class ProfileIssues extends BaseIssuesStore implements IProfileIssues {
    * @param view
    * @returns
    */
-  fetchIssues = async (
+  fetchIssues: IProfileIssues["fetchIssues"] = async (
     workspaceSlug: string,
     userId: string,
     loadType: TLoader,
     options: IssuePaginationOptions,
-    view: "assigned" | "created" | "subscribed",
+    view: TProfileViews,
     isExistingPaginationOptions: boolean = false
   ) => {
     try {

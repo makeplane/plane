@@ -20,9 +20,7 @@ class WorkspaceHomePreferenceViewSet(BaseAPIView):
     def get(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
 
-        get_preference = WorkspaceHomePreference.objects.filter(
-            user=request.user, workspace_id=workspace.id
-        )
+        get_preference = WorkspaceHomePreference.objects.filter(user=request.user, workspace_id=workspace.id)
 
         create_preference_keys = []
 
@@ -55,9 +53,7 @@ class WorkspaceHomePreferenceViewSet(BaseAPIView):
                 )
                 sort_order_counter += 1
 
-        preference = WorkspaceHomePreference.objects.filter(
-            user=request.user, workspace_id=workspace.id
-        )
+        preference = WorkspaceHomePreference.objects.filter(user=request.user, workspace_id=workspace.id)
 
         return Response(
             preference.values("key", "is_enabled", "config", "sort_order"),
@@ -66,20 +62,14 @@ class WorkspaceHomePreferenceViewSet(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def patch(self, request, slug, key):
-        preference = WorkspaceHomePreference.objects.filter(
-            key=key, workspace__slug=slug, user=request.user
-        ).first()
+        preference = WorkspaceHomePreference.objects.filter(key=key, workspace__slug=slug, user=request.user).first()
 
         if preference:
-            serializer = WorkspaceHomePreferenceSerializer(
-                preference, data=request.data, partial=True
-            )
+            serializer = WorkspaceHomePreferenceSerializer(preference, data=request.data, partial=True)
 
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(
-            {"detail": "Preference not found"}, status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response({"detail": "Preference not found"}, status=status.HTTP_400_BAD_REQUEST)

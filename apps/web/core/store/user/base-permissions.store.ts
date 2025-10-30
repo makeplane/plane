@@ -1,22 +1,15 @@
-import set from "lodash/set";
-import unset from "lodash/unset";
+import { unset, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
+import type { TUserPermissions, TUserPermissionsLevel } from "@plane/constants";
 import {
   EUserPermissions,
   EUserPermissionsLevel,
-  TUserPermissions,
-  TUserPermissionsLevel,
   WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS,
 } from "@plane/constants";
-import {
-  EUserProjectRoles,
-  EUserWorkspaceRoles,
-  IUserProjectsRole,
-  IWorkspaceMemberMe,
-  TProjectMembership,
-} from "@plane/types";
+import type { EUserProjectRoles, IUserProjectsRole, IWorkspaceMemberMe, TProjectMembership } from "@plane/types";
+import { EUserWorkspaceRoles } from "@plane/types";
 // plane web imports
 import { WorkspaceService } from "@/plane-web/services";
 import type { RootStore } from "@/plane-web/store/root.store";

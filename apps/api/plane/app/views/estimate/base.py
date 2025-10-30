@@ -56,9 +56,7 @@ class BulkEstimatePointEndpoint(BaseViewSet):
         serializer = EstimateReadSerializer(estimates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @invalidate_cache(
-        path="/api/workspaces/:slug/estimates/", url_params=True, user=False
-    )
+    @invalidate_cache(path="/api/workspaces/:slug/estimates/", url_params=True, user=False)
     def create(self, request, slug, project_id):
         estimate = request.data.get("estimate")
         estimate_name = estimate.get("name", generate_random_name())
@@ -73,9 +71,7 @@ class BulkEstimatePointEndpoint(BaseViewSet):
 
         estimate_points = request.data.get("estimate_points", [])
 
-        serializer = EstimatePointSerializer(
-            data=request.data.get("estimate_points"), many=True
-        )
+        serializer = EstimatePointSerializer(data=request.data.get("estimate_points"), many=True)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -101,15 +97,11 @@ class BulkEstimatePointEndpoint(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, slug, project_id, estimate_id):
-        estimate = Estimate.objects.get(
-            pk=estimate_id, workspace__slug=slug, project_id=project_id
-        )
+        estimate = Estimate.objects.get(pk=estimate_id, workspace__slug=slug, project_id=project_id)
         serializer = EstimateReadSerializer(estimate)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @invalidate_cache(
-        path="/api/workspaces/:slug/estimates/", url_params=True, user=False
-    )
+    @invalidate_cache(path="/api/workspaces/:slug/estimates/", url_params=True, user=False)
     def partial_update(self, request, slug, project_id, estimate_id):
         if not len(request.data.get("estimate_points", [])):
             return Response(
@@ -127,9 +119,7 @@ class BulkEstimatePointEndpoint(BaseViewSet):
         estimate_points_data = request.data.get("estimate_points", [])
 
         estimate_points = EstimatePoint.objects.filter(
-            pk__in=[
-                estimate_point.get("id") for estimate_point in estimate_points_data
-            ],
+            pk__in=[estimate_point.get("id") for estimate_point in estimate_points_data],
             workspace__slug=slug,
             project_id=project_id,
             estimate_id=estimate_id,
@@ -138,34 +128,20 @@ class BulkEstimatePointEndpoint(BaseViewSet):
         updated_estimate_points = []
         for estimate_point in estimate_points:
             # Find the data for that estimate point
-            estimate_point_data = [
-                point
-                for point in estimate_points_data
-                if point.get("id") == str(estimate_point.id)
-            ]
+            estimate_point_data = [point for point in estimate_points_data if point.get("id") == str(estimate_point.id)]
             if len(estimate_point_data):
-                estimate_point.value = estimate_point_data[0].get(
-                    "value", estimate_point.value
-                )
-                estimate_point.key = estimate_point_data[0].get(
-                    "key", estimate_point.key
-                )
+                estimate_point.value = estimate_point_data[0].get("value", estimate_point.value)
+                estimate_point.key = estimate_point_data[0].get("key", estimate_point.key)
                 updated_estimate_points.append(estimate_point)
 
-        EstimatePoint.objects.bulk_update(
-            updated_estimate_points, ["key", "value"], batch_size=10
-        )
+        EstimatePoint.objects.bulk_update(updated_estimate_points, ["key", "value"], batch_size=10)
 
         estimate_serializer = EstimateReadSerializer(estimate)
         return Response(estimate_serializer.data, status=status.HTTP_200_OK)
 
-    @invalidate_cache(
-        path="/api/workspaces/:slug/estimates/", url_params=True, user=False
-    )
+    @invalidate_cache(path="/api/workspaces/:slug/estimates/", url_params=True, user=False)
     def destroy(self, request, slug, project_id, estimate_id):
-        estimate = Estimate.objects.get(
-            pk=estimate_id, workspace__slug=slug, project_id=project_id
-        )
+        estimate = Estimate.objects.get(pk=estimate_id, workspace__slug=slug, project_id=project_id)
         estimate.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -196,9 +172,7 @@ class EstimatePointEndpoint(BaseViewSet):
             project_id=project_id,
             workspace__slug=slug,
         )
-        serializer = EstimatePointSerializer(
-            estimate_point, data=request.data, partial=True
-        )
+        serializer = EstimatePointSerializer(estimate_point, data=request.data, partial=True)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         serializer.save()
@@ -220,24 +194,12 @@ class EstimatePointEndpoint(BaseViewSet):
             for issue in issues:
                 issue_activity.delay(
                     type="issue.activity.updated",
-                    requested_data=json.dumps(
-                        {
-                            "estimate_point": (
-                                str(new_estimate_id) if new_estimate_id else None
-                            )
-                        }
-                    ),
+                    requested_data=json.dumps({"estimate_point": (str(new_estimate_id) if new_estimate_id else None)}),
                     actor_id=str(request.user.id),
                     issue_id=issue.id,
                     project_id=str(project_id),
                     current_instance=json.dumps(
-                        {
-                            "estimate_point": (
-                                str(issue.estimate_point_id)
-                                if issue.estimate_point_id
-                                else None
-                            )
-                        }
+                        {"estimate_point": (str(issue.estimate_point_id) if issue.estimate_point_id else None)}
                     ),
                     epoch=int(timezone.now().timestamp()),
                 )
@@ -256,13 +218,7 @@ class EstimatePointEndpoint(BaseViewSet):
                     issue_id=issue.id,
                     project_id=str(project_id),
                     current_instance=json.dumps(
-                        {
-                            "estimate_point": (
-                                str(issue.estimate_point_id)
-                                if issue.estimate_point_id
-                                else None
-                            )
-                        }
+                        {"estimate_point": (str(issue.estimate_point_id) if issue.estimate_point_id else None)}
                     ),
                     epoch=int(timezone.now().timestamp()),
                 )
@@ -277,9 +233,7 @@ class EstimatePointEndpoint(BaseViewSet):
                 estimate_point.key -= 1
                 updated_estimate_points.append(estimate_point)
 
-        EstimatePoint.objects.bulk_update(
-            updated_estimate_points, ["key"], batch_size=10
-        )
+        EstimatePoint.objects.bulk_update(updated_estimate_points, ["key"], batch_size=10)
 
         old_estimate_point.delete()
 

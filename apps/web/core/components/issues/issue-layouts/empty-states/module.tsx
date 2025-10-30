@@ -1,57 +1,44 @@
 "use client";
 
 import { useState } from "react";
-import size from "lodash/size";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EIssueFilterType, EUserPermissionsLevel, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissionsLevel, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EIssuesStoreType, EUserProjectRoles, IIssueFilterOptions, ISearchIssueResponse } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { ISearchIssueResponse } from "@plane/types";
+import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+import { useWorkItemFilterInstance } from "@/hooks/store/work-item-filters/use-work-item-filter-instance";
 
 export const ModuleEmptyState: React.FC = observer(() => {
   // router
-  const { workspaceSlug, projectId, moduleId } = useParams();
+  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId, moduleId: routerModuleId } = useParams();
+  const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
+  const projectId = routerProjectId ? routerProjectId.toString() : undefined;
+  const moduleId = routerModuleId ? routerModuleId.toString() : undefined;
   // states
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { issues, issuesFilter } = useIssues(EIssuesStoreType.MODULE);
+  const { issues } = useIssues(EIssuesStoreType.MODULE);
   const { toggleCreateIssueModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   // derived values
-  const userFilters = issuesFilter?.issueFilters?.filters;
-  const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
-  const issueFilterCount = size(
-    Object.fromEntries(
-      Object.entries(userFilters ?? {}).filter(([, value]) => value && Array.isArray(value) && value.length > 0)
-    )
-  );
-  const isEmptyFilters = issueFilterCount > 0;
-  const additionalPath = activeLayout ?? "list";
+  const moduleWorkItemFilter = moduleId ? useWorkItemFilterInstance(EIssuesStoreType.MODULE, moduleId) : undefined;
   const canPerformEmptyStateActions = allowPermissions(
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
     EUserPermissionsLevel.PROJECT
   );
-  const emptyFilterResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/empty-filters/",
-    additionalPath: additionalPath,
-  });
-  const moduleIssuesResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/module-issues/",
-    additionalPath: additionalPath,
-  });
 
   const handleAddIssuesToModule = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId || !moduleId) return;
@@ -75,23 +62,6 @@ export const ModuleEmptyState: React.FC = observer(() => {
       );
   };
 
-  const handleClearAllFilters = () => {
-    if (!workspaceSlug || !projectId || !moduleId) return;
-    const newFilters: IIssueFilterOptions = {};
-    Object.keys(userFilters ?? {}).forEach((key) => {
-      newFilters[key as keyof IIssueFilterOptions] = null;
-    });
-    issuesFilter.updateFilters(
-      workspaceSlug.toString(),
-      projectId.toString(),
-      EIssueFilterType.FILTERS,
-      {
-        ...newFilters,
-      },
-      moduleId.toString()
-    );
-  };
-
   return (
     <div className="relative h-full w-full overflow-y-auto">
       <ExistingIssuesListModal
@@ -103,34 +73,42 @@ export const ModuleEmptyState: React.FC = observer(() => {
         handleOnSubmit={handleAddIssuesToModule}
       />
       <div className="grid h-full w-full place-items-center">
-        {isEmptyFilters ? (
-          <DetailedEmptyState
-            title={t("project_issues.empty_state.issues_empty_filter.title")}
-            assetPath={emptyFilterResolvedPath}
-            secondaryButton={{
-              text: t("project_issues.empty_state.issues_empty_filter.secondary_button.text"),
-              onClick: handleClearAllFilters,
-              disabled: !canPerformEmptyStateActions,
-            }}
+        {moduleWorkItemFilter?.hasActiveFilters ? (
+          <EmptyStateDetailed
+            assetKey="search"
+            title={t("common_empty_state.search.title")}
+            description={t("common_empty_state.search.description")}
+            actions={[
+              {
+                label: "Clear filters",
+                onClick: moduleWorkItemFilter?.clearFilters,
+                disabled: !canPerformEmptyStateActions || !moduleWorkItemFilter,
+                variant: "outline-primary",
+              },
+            ]}
           />
         ) : (
-          <DetailedEmptyState
-            title={t("project_module.empty_state.no_issues.title")}
-            description={t("project_module.empty_state.no_issues.description")}
-            assetPath={moduleIssuesResolvedPath}
-            primaryButton={{
-              text: t("project_module.empty_state.no_issues.primary_button.text"),
-              onClick: () => {
-                captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.MODULE });
-                toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
+          <EmptyStateDetailed
+            assetKey="work-item"
+            title={t("project_empty_state.module_work_items.title")}
+            description={t("project_empty_state.module_work_items.description")}
+            actions={[
+              {
+                label: t("project_empty_state.module_work_items.cta_primary"),
+                onClick: () => {
+                  captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.MODULE });
+                  toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
+                },
+                disabled: !canPerformEmptyStateActions,
+                variant: "primary",
               },
-              disabled: !canPerformEmptyStateActions,
-            }}
-            secondaryButton={{
-              text: t("project_module.empty_state.no_issues.secondary_button.text"),
-              onClick: () => setModuleIssuesListModal(true),
-              disabled: !canPerformEmptyStateActions,
-            }}
+              {
+                label: t("project_empty_state.module_work_items.cta_secondary"),
+                onClick: () => setModuleIssuesListModal(true),
+                disabled: !canPerformEmptyStateActions,
+                variant: "outline-primary",
+              },
+            ]}
           />
         )}
       </div>

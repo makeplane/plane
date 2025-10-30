@@ -6,7 +6,7 @@ import { Loader } from "@plane/ui";
 // store hooks
 import { usePublish } from "@/hooks/store/publish";
 // types
-import { IIssue } from "@/types/issue";
+import type { IIssue } from "@/types/issue";
 // local imports
 import { PeekOverviewHeader } from "./header";
 import { PeekOverviewIssueActivity } from "./issue-activity";

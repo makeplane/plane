@@ -7,7 +7,6 @@ import { ACCEPTED_IMAGE_MIME_TYPES } from "@/constants/config";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { EFileError } from "@/helpers/file";
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // hooks
 import { useUploader, useDropZone, uploadFirstFileAndInsertRemaining } from "@/hooks/use-file-upload";
 // local imports
@@ -40,7 +39,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
   const { id: imageEntityId } = node.attrs;
   // derived values
   const imageComponentImageFileMap = useMemo(() => getImageComponentImageFileMap(editor), [editor]);
-  const isTouchDevice = !!getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY).isTouchDevice;
+  const isTouchDevice = !!editor.storage.utility.isTouchDevice;
 
   const onUpload = useCallback(
     (url: string) => {
@@ -60,7 +59,12 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
 
         // only if the cursor is at the current image component, manipulate
         // the cursor position
-        if (currentNode && currentNode.type.name === node.type.name && currentNode.attrs.src === url) {
+        if (
+          currentNode &&
+          currentNode.type.name === node.type.name &&
+          currentNode.attrs.src === url &&
+          pos !== undefined
+        ) {
           // control cursor position after upload
           const nextNode = editor.state.doc.nodeAt(pos + 1);
 
@@ -85,7 +89,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
 
   const handleProgressStatus = useCallback(
     (isUploading: boolean) => {
-      getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY).uploadInProgress = isUploading;
+      editor.storage.utility.uploadInProgress = isUploading;
     },
     [editor]
   );
@@ -107,7 +111,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
 
   const { draggedInside, onDrop, onDragEnter, onDragLeave } = useDropZone({
     editor,
-    pos: getPos(),
+    getPos,
     type: "image",
     uploader: uploadFile,
   });
@@ -139,13 +143,14 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     async (e: ChangeEvent<HTMLInputElement>) => {
       e.preventDefault();
       const filesList = e.target.files;
-      if (!filesList) {
+      const pos = getPos();
+      if (!filesList || pos === undefined) {
         return;
       }
       await uploadFirstFileAndInsertRemaining({
         editor,
         filesList,
-        pos: getPos(),
+        pos,
         type: "image",
         uploader: uploadFile,
       });

@@ -1,12 +1,16 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-import { FileText, Globe2, Lock, LucideIcon } from "lucide-react";
+import type { FormEvent } from "react";
+import { useState } from "react";
+import type { LucideIcon } from "lucide-react";
+import { Globe2, Lock } from "lucide-react";
 // plane imports
 import { ETabIndices, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import { PageIcon } from "@plane/propel/icons";
 import type { TPage } from "@plane/types";
-import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input } from "@plane/ui";
+import { EmojiIconPicker, EmojiIconPickerTypes, Input } from "@plane/ui";
 import { convertHexEmojiToDecimal, getTabIndex } from "@plane/utils";
 // components
 import { AccessField } from "@/components/common/access-field";
@@ -72,7 +76,7 @@ export const PageForm: React.FC<Props> = (props) => {
                   {formData?.logo_props?.in_use ? (
                     <Logo logo={formData?.logo_props} size={18} type="lucide" />
                   ) : (
-                    <FileText className="h-4 w-4 text-custom-text-300" />
+                    <PageIcon className="h-4 w-4 text-custom-text-300" />
                   )}
                 </>
               </span>

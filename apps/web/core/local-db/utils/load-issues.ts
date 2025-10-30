@@ -1,4 +1,4 @@
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 import { rootStore } from "@/lib/store-context";
 import { IssueService } from "@/services/issue";
 import { persistence } from "../storage.sqlite";

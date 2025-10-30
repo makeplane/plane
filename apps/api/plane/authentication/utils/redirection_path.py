@@ -26,9 +26,7 @@ def get_redirection_path(user):
         return f"{workspace.slug}"
 
     fallback_workspace = (
-        Workspace.objects.filter(
-            workspace_member__member_id=user.id, workspace_member__is_active=True
-        )
+        Workspace.objects.filter(workspace_member__member_id=user.id, workspace_member__is_active=True)
         .order_by("created_at")
         .first()
     )

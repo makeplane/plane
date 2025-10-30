@@ -11,9 +11,11 @@ import {
   PROJECT_TRACKER_ELEMENTS,
 } from "@plane/constants";
 // plane types
-import { TPage } from "@plane/types";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TPage } from "@plane/types";
 // plane ui
-import { Breadcrumbs, Button, Header, setToast, TOAST_TYPE } from "@plane/ui";
+import { Breadcrumbs, Header } from "@plane/ui";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks

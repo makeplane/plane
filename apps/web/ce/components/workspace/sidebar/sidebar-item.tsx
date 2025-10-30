@@ -1,5 +1,5 @@
-import { FC } from "react";
-import { IWorkspaceSidebarNavigationItem } from "@plane/constants";
+import type { FC } from "react";
+import type { IWorkspaceSidebarNavigationItem } from "@plane/constants";
 import { SidebarItemBase } from "@/components/workspace/sidebar/sidebar-item";
 
 type Props = {

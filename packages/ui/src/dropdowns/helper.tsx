@@ -24,7 +24,7 @@ export interface IDropdownProps {
   disabled?: boolean;
   input?: boolean;
   label?: string | React.ReactNode;
-  maxHeight?: "sm" | "rg" | "md" | "lg";
+  maxHeight?: "sm" | "rg" | "md" | "lg" | "xl" | "2xl";
   noChevron?: boolean;
   chevronClassName?: string;
   onOpen?: () => void;

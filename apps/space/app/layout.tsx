@@ -1,4 +1,4 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 // helpers
 import { SPACE_BASE_PATH } from "@plane/constants";
 // styles

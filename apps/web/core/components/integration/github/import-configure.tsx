@@ -1,9 +1,10 @@
 "use client";
 
 // components
-import { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
-import { Button } from "@plane/ui";
-import { GithubAuth, TIntegrationSteps } from "@/components/integration";
+import { Button } from "@plane/propel/button";
+import type { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
+import type { TIntegrationSteps } from "@/components/integration";
+import { GithubAuth } from "@/components/integration";
 // types
 
 type Props = {

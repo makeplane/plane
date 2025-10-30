@@ -1,4 +1,4 @@
-import { Editor } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 import {
   BoldIcon,
   Heading1,
@@ -18,7 +18,7 @@ import {
   Heading5,
   Heading6,
   CaseSensitive,
-  LucideIcon,
+  type LucideIcon,
   MinusSquare,
   Palette,
   AlignCenter,
@@ -70,7 +70,7 @@ export const TextItem = (editor: Editor): EditorMenuItem<"text"> => ({
   icon: CaseSensitive,
 });
 
-type SupportedHeadingLevels = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+type SupportedHeadingLevels = Extract<TEditorCommands, "h1" | "h2" | "h3" | "h4" | "h5" | "h6">;
 
 const HeadingItem = <T extends SupportedHeadingLevels>(
   editor: Editor,
@@ -274,5 +274,5 @@ export const getEditorMenuItems = (editor: Editor | null): EditorMenuItem<TEdito
     TextColorItem(editor),
     BackgroundColorItem(editor),
     TextAlignItem(editor),
-  ];
+  ] as EditorMenuItem<TEditorCommands>[];
 };

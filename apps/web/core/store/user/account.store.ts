@@ -1,7 +1,7 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { makeObservable, observable } from "mobx";
 // types
-import { IUserAccount } from "@plane/types";
+import type { IUserAccount } from "@plane/types";
 // services
 import { UserService } from "@/services/user.service";
 // store

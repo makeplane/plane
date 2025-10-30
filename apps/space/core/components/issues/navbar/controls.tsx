@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, FC } from "react";
+import type { FC } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
 // components

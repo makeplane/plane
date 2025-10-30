@@ -1,6 +1,6 @@
-import { FC } from "react";
+import type { FC } from "react";
 // plane types
-import { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
+import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 
 export type TWorkItemAdditionalWidgetActionButtonsProps = {
   disabled: boolean;

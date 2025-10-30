@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import {
@@ -9,12 +9,14 @@ import {
   WORKSPACE_SETTINGS_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EProductSubscriptionEnum, TBillingFrequency } from "@plane/types";
-import { getButtonStyling, getUpgradeButtonStyle } from "@plane/ui";
+import { getButtonStyling } from "@plane/propel/button";
+import type { TBillingFrequency } from "@plane/types";
+import { EProductSubscriptionEnum } from "@plane/types";
+import { getUpgradeButtonStyle } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // components
 import { DiscountInfo } from "@/components/license/modal/card/discount-info";
-import { TPlanDetail } from "@/constants/plans";
+import type { TPlanDetail } from "@/constants/plans";
 // local imports
 import { captureSuccess } from "@/helpers/event-tracker.helper";
 import { PlanFrequencyToggle } from "./frequency-toggle";

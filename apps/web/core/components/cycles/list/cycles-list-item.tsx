@@ -1,6 +1,6 @@
 "use client";
-import { FC, MouseEvent, useRef } from "react";
-import isEmpty from "lodash/isEmpty";
+import type { FC, MouseEvent } from "react";
+import { useRef } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Check } from "lucide-react";
@@ -8,7 +8,7 @@ import { Check } from "lucide-react";
 import type { TCycleGroups } from "@plane/types";
 import { CircularProgressIndicator } from "@plane/ui";
 // components
-import { generateQueryParams } from "@plane/utils";
+import { generateQueryParams, calculateCycleProgress } from "@plane/utils";
 import { ListItem } from "@/components/core/list";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
@@ -50,7 +50,6 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
   // computed
   // TODO: change this logic once backend fix the response
   const cycleStatus = cycleDetails.status ? (cycleDetails.status.toLocaleLowerCase() as TCycleGroups) : "draft";
-  const isCompleted = cycleStatus === "completed";
   const isActive = cycleStatus === "current";
 
   // handlers
@@ -73,20 +72,7 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
 
   const handleItemClick = cycleDetails.archived_at ? handleArchivedCycleClick : undefined;
 
-  const getCycleProgress = () => {
-    let completionPercentage =
-      ((cycleDetails.completed_issues + cycleDetails.cancelled_issues) / cycleDetails.total_issues) * 100;
-
-    if (isCompleted && !isEmpty(cycleDetails.progress_snapshot)) {
-      completionPercentage =
-        ((cycleDetails.progress_snapshot.completed_issues + cycleDetails.progress_snapshot.cancelled_issues) /
-          cycleDetails.progress_snapshot.total_issues) *
-        100;
-    }
-    return isNaN(completionPercentage) ? 0 : Math.floor(completionPercentage);
-  };
-
-  const progress = getCycleProgress();
+  const progress = calculateCycleProgress(cycleDetails);
 
   return (
     <ListItem
@@ -96,16 +82,10 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
       className={className}
       prependTitleElement={
         <CircularProgressIndicator size={30} percentage={progress} strokeWidth={3}>
-          {isCompleted ? (
-            progress === 100 ? (
-              <Check className="h-3 w-3 stroke-[2] text-custom-primary-100" />
-            ) : (
-              <span className="text-sm text-custom-primary-100">{`!`}</span>
-            )
-          ) : progress === 100 ? (
+          {progress === 100 ? (
             <Check className="h-3 w-3 stroke-[2] text-custom-primary-100" />
           ) : (
-            <span className="text-[9px] text-custom-text-300">{`${progress}%`}</span>
+            <span className="text-[9px] text-custom-text-100">{`${progress}%`}</span>
           )}
         </CircularProgressIndicator>
       }

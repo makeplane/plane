@@ -4,7 +4,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import useSWR from "swr";
-import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
+import { setPromiseToast } from "@plane/propel/toast";
+import { Loader, ToggleSwitch } from "@plane/ui";
 // components
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 // hooks
@@ -37,7 +38,7 @@ const InstanceGitlabAuthenticationPage = observer(() => {
       loading: "Saving Configuration...",
       success: {
         title: "Configuration saved",
-        message: () => `GitLab authentication is now ${value ? "active" : "disabled"}.`,
+        message: () => `GitLab authentication is now ${value === "1" ? "active" : "disabled"}.`,
       },
       error: {
         title: "Error",

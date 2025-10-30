@@ -1,4 +1,4 @@
-import range from "lodash/range";
+import { range } from "lodash-es";
 export const MembersLayoutLoader = () => (
   <div className="flex gap-5 py-1.5 overflow-x-auto">
     {range(5).map((columnIndex) => (

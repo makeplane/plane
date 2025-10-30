@@ -14,9 +14,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/intake-issues/<uuid:issue_id>/",
-        IntakeIssueDetailAPIEndpoint.as_view(
-            http_method_names=["get", "patch", "delete"]
-        ),
+        IntakeIssueDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="intake-issue",
     ),
 ]

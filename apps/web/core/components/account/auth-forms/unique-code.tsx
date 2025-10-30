@@ -4,7 +4,8 @@ import React, { useEffect, useState } from "react";
 import { CircleCheck, XCircle } from "lucide-react";
 import { API_BASE_URL, AUTH_TRACKER_ELEMENTS, AUTH_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, Input, Spinner } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Input, Spinner } from "@plane/ui";
 // constants
 // helpers
 import { EAuthModes } from "@/helpers/authentication.helper";

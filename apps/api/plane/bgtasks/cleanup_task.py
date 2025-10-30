@@ -21,13 +21,14 @@ from plane.db.models import (
     PageVersion,
     APIActivityLog,
     IssueDescriptionVersion,
+    WebhookLog,
 )
 from plane.settings.mongo import MongoConnection
 from plane.utils.exception_logger import log_exception
 
 
 logger = logging.getLogger("plane.worker")
-BATCH_SIZE = 1000
+BATCH_SIZE = 500
 
 
 def get_mongo_collection(collection_name: str) -> Optional[Collection]:
@@ -60,9 +61,7 @@ def flush_to_mongo_and_delete(
         logger.debug("No records to flush - buffer is empty")
         return
 
-    logger.info(
-        f"Starting batch flush: {len(buffer)} records, {len(ids_to_delete)} IDs to delete"
-    )
+    logger.info(f"Starting batch flush: {len(buffer)} records, {len(ids_to_delete)} IDs to delete")
 
     mongo_archival_failed = False
 
@@ -82,9 +81,7 @@ def flush_to_mongo_and_delete(
 
     # Delete from PostgreSQL - delete() returns (count, {model: count})
     delete_result = model.all_objects.filter(id__in=ids_to_delete).delete()
-    deleted_count = (
-        delete_result[0] if delete_result and isinstance(delete_result, tuple) else 0
-    )
+    deleted_count = delete_result[0] if delete_result and isinstance(delete_result, tuple) else 0
     logger.info(f"Batch flush completed: {deleted_count} records deleted")
 
 
@@ -192,9 +189,7 @@ def transform_email_log(record: Dict) -> Dict:
         "entity_identifier": str(record["entity_identifier"]),
         "entity_name": record["entity_name"],
         "data": record["data"],
-        "processed_at": (
-            str(record["processed_at"]) if record.get("processed_at") else None
-        ),
+        "processed_at": (str(record["processed_at"]) if record.get("processed_at") else None),
         "sent_at": str(record["sent_at"]) if record.get("sent_at") else None,
         "entity": record["entity"],
         "old_value": str(record["old_value"]),
@@ -219,9 +214,7 @@ def transform_page_version(record: Dict) -> Dict:
         "created_by_id": str(record["created_by_id"]),
         "updated_by_id": str(record["updated_by_id"]),
         "deleted_at": str(record["deleted_at"]) if record.get("deleted_at") else None,
-        "last_saved_at": (
-            str(record["last_saved_at"]) if record.get("last_saved_at") else None
-        ),
+        "last_saved_at": (str(record["last_saved_at"]) if record.get("last_saved_at") else None),
     }
 
 
@@ -236,14 +229,33 @@ def transform_issue_description_version(record: Dict) -> Dict:
         "created_by_id": str(record["created_by_id"]),
         "updated_by_id": str(record["updated_by_id"]),
         "owned_by_id": str(record["owned_by_id"]),
-        "last_saved_at": (
-            str(record["last_saved_at"]) if record.get("last_saved_at") else None
-        ),
+        "last_saved_at": (str(record["last_saved_at"]) if record.get("last_saved_at") else None),
         "description_binary": record["description_binary"],
         "description_html": record["description_html"],
         "description_stripped": record["description_stripped"],
         "description_json": record["description_json"],
         "deleted_at": str(record["deleted_at"]) if record.get("deleted_at") else None,
+    }
+
+
+def transform_webhook_log(record: Dict):
+    """Transfer webhook logs to a new destination."""
+    return {
+        "id": str(record["id"]),
+        "created_at": str(record["created_at"]) if record.get("created_at") else None,
+        "workspace_id": str(record["workspace_id"]),
+        "webhook": str(record["webhook"]),
+        # Request
+        "event_type": str(record["event_type"]),
+        "request_method": str(record["request_method"]),
+        "request_headers": str(record["request_headers"]),
+        "request_body": str(record["request_body"]),
+        # Response
+        "response_status": str(record["response_status"]),
+        "response_body": str(record["response_body"]),
+        "response_headers": str(record["response_headers"]),
+        # retry count
+        "retry_count": str(record["retry_count"]),
     }
 
 
@@ -374,7 +386,35 @@ def get_issue_description_versions_queryset():
     )
 
 
-# Celery tasks - now much simpler!
+def get_webhook_logs_queryset():
+    """Get email logs older than cutoff days."""
+    cutoff_days = int(os.environ.get("HARD_DELETE_AFTER_DAYS", 30))
+    cutoff_time = timezone.now() - timedelta(days=cutoff_days)
+    logger.info(f"Webhook logs cutoff time: {cutoff_time}")
+
+    return (
+        WebhookLog.all_objects.filter(created_at__lte=cutoff_time)
+        .values(
+            "id",
+            "created_at",
+            "workspace_id",
+            "webhook",
+            "event_type",
+            # Request
+            "request_method",
+            "request_headers",
+            "request_body",
+            # Response
+            "response_status",
+            "response_body",
+            "response_headers",
+            "retry_count",
+        )
+        .order_by("created_at")
+        .iterator(chunk_size=100)
+    )
+
+
 @shared_task
 def delete_api_logs():
     """Delete old API activity logs."""
@@ -420,4 +460,16 @@ def delete_issue_description_versions():
         model=IssueDescriptionVersion,
         task_name="Issue Description Version",
         collection_name="issue_description_versions",
+    )
+
+
+@shared_task
+def delete_webhook_logs():
+    """Delete old webhook logs"""
+    process_cleanup_task(
+        queryset_func=get_webhook_logs_queryset,
+        transform_func=transform_webhook_log,
+        model=WebhookLog,
+        task_name="Webhook Log",
+        collection_name="webhook_logs",
     )

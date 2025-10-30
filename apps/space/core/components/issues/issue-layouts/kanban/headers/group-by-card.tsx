@@ -1,10 +1,11 @@
 "use client";
 
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { Circle } from "lucide-react";
 // types
-import { TIssueGroupByOptions } from "@plane/types";
+import type { TIssueGroupByOptions } from "@plane/types";
 
 interface IHeaderGroupByCard {
   groupBy: TIssueGroupByOptions | undefined;

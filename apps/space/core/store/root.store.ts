@@ -1,16 +1,27 @@
 import { enableStaticRendering } from "mobx-react";
 // store imports
-import { IInstanceStore, InstanceStore } from "@/store/instance.store";
-import { IssueDetailStore, IIssueDetailStore } from "@/store/issue-detail.store";
-import { IssueStore, IIssueStore } from "@/store/issue.store";
-import { IUserStore, UserStore } from "@/store/user.store";
-import { CycleStore, ICycleStore } from "./cycle.store";
-import { IssueFilterStore, IIssueFilterStore } from "./issue-filters.store";
-import { IIssueLabelStore, LabelStore } from "./label.store";
-import { IIssueMemberStore, MemberStore } from "./members.store";
-import { IIssueModuleStore, ModuleStore } from "./module.store";
-import { IPublishListStore, PublishListStore } from "./publish/publish_list.store";
-import { IStateStore, StateStore } from "./state.store";
+import type { IInstanceStore } from "@/store/instance.store";
+import { InstanceStore } from "@/store/instance.store";
+import type { IIssueDetailStore } from "@/store/issue-detail.store";
+import { IssueDetailStore } from "@/store/issue-detail.store";
+import type { IIssueStore } from "@/store/issue.store";
+import { IssueStore } from "@/store/issue.store";
+import type { IUserStore } from "@/store/user.store";
+import { UserStore } from "@/store/user.store";
+import type { ICycleStore } from "./cycle.store";
+import { CycleStore } from "./cycle.store";
+import type { IIssueFilterStore } from "./issue-filters.store";
+import { IssueFilterStore } from "./issue-filters.store";
+import type { IIssueLabelStore } from "./label.store";
+import { LabelStore } from "./label.store";
+import type { IIssueMemberStore } from "./members.store";
+import { MemberStore } from "./members.store";
+import type { IIssueModuleStore } from "./module.store";
+import { ModuleStore } from "./module.store";
+import type { IPublishListStore } from "./publish/publish_list.store";
+import { PublishListStore } from "./publish/publish_list.store";
+import type { IStateStore } from "./state.store";
+import { StateStore } from "./state.store";
 
 enableStaticRendering(typeof window === "undefined");
 

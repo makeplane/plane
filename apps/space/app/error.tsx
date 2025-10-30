@@ -1,7 +1,7 @@
 "use client";
 
 // ui
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 
 const ErrorPage = () => {
   const handleRetry = () => {

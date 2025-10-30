@@ -1,22 +1,10 @@
-import clone from "lodash/clone";
-import concat from "lodash/concat";
-import get from "lodash/get";
-import indexOf from "lodash/indexOf";
-import isEmpty from "lodash/isEmpty";
-import isEqual from "lodash/isEqual";
-import isNil from "lodash/isNil";
-import orderBy from "lodash/orderBy";
-import pull from "lodash/pull";
-import set from "lodash/set";
-import uniq from "lodash/uniq";
-import update from "lodash/update";
+import { isEqual, concat, get, indexOf, isEmpty, orderBy, pull, set, uniq, update, clone } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane constants
 import { ALL_ISSUES, ISSUE_PRIORITIES } from "@plane/constants";
 // types
-import {
-  EIssueServiceType,
+import type {
   TIssue,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
@@ -31,8 +19,8 @@ import {
   TPaginationData,
   TBulkOperationsPayload,
   IBlockUpdateDependencyData,
-  EIssueLayoutTypes,
 } from "@plane/types";
+import { EIssueServiceType, EIssueLayoutTypes } from "@plane/types";
 // helpers
 import { convertToISODateString } from "@plane/utils";
 // local-db
@@ -44,7 +32,7 @@ import { CycleService } from "@/services/cycle.service";
 import { IssueArchiveService, IssueService } from "@/services/issue";
 import { ModuleService } from "@/services/module.service";
 //
-import { IIssueRootStore } from "../root.store";
+import type { IIssueRootStore } from "../root.store";
 import {
   getDifference,
   getGroupIssueKeyActions,
@@ -53,7 +41,7 @@ import {
   getSortOrderToFilterEmptyValues,
   getSubGroupIssueKeyActions,
 } from "./base-issues-utils";
-import { IBaseIssueFilterStore } from "./issue-filter-helper.store";
+import type { IBaseIssueFilterStore } from "./issue-filter-helper.store";
 
 export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date";
 
@@ -95,6 +83,8 @@ export interface IBaseIssuesStore {
   addCycleToIssue: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   removeCycleFromIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
 
+  addIssueToList: (issueId: string) => void;
+  removeIssueFromList: (issueId: string) => void;
   addIssuesToModule: (
     workspaceSlug: string,
     projectId: string,
@@ -1682,7 +1672,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   };
 
   /**
-   * This Method is used to get data of the issue based on the ids of the data for states, labels adn assignees
+   * This Method is used to get data of the issue based on the ids of the data for states, labels and assignees
    * @param dataType what type of data is being sent
    * @param dataIds id/ids of the data that is to be populated
    * @param order ascending or descending for arrays of data

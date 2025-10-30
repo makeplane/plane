@@ -91,9 +91,7 @@ class UserMeSettingsSerializer(BaseSerializer):
         read_only_fields = fields
 
     def get_workspace(self, obj):
-        workspace_invites = WorkspaceMemberInvite.objects.filter(
-            email=obj.email
-        ).count()
+        workspace_invites = WorkspaceMemberInvite.objects.filter(email=obj.email).count()
 
         # profile
         profile = Profile.objects.get(user=obj)
@@ -110,43 +108,27 @@ class UserMeSettingsSerializer(BaseSerializer):
                 workspace_member__member=obj.id,
                 workspace_member__is_active=True,
             ).first()
-            logo_asset_url = (
-                workspace.logo_asset.asset_url
-                if workspace.logo_asset is not None
-                else ""
-            )
+            logo_asset_url = workspace.logo_asset.asset_url if workspace.logo_asset is not None else ""
             return {
                 "last_workspace_id": profile.last_workspace_id,
-                "last_workspace_slug": (
-                    workspace.slug if workspace is not None else ""
-                ),
-                "last_workspace_name": (
-                    workspace.name if workspace is not None else ""
-                ),
+                "last_workspace_slug": (workspace.slug if workspace is not None else ""),
+                "last_workspace_name": (workspace.name if workspace is not None else ""),
                 "last_workspace_logo": (logo_asset_url),
                 "fallback_workspace_id": profile.last_workspace_id,
-                "fallback_workspace_slug": (
-                    workspace.slug if workspace is not None else ""
-                ),
+                "fallback_workspace_slug": (workspace.slug if workspace is not None else ""),
                 "invites": workspace_invites,
             }
         else:
             fallback_workspace = (
-                Workspace.objects.filter(
-                    workspace_member__member_id=obj.id, workspace_member__is_active=True
-                )
+                Workspace.objects.filter(workspace_member__member_id=obj.id, workspace_member__is_active=True)
                 .order_by("created_at")
                 .first()
             )
             return {
                 "last_workspace_id": None,
                 "last_workspace_slug": None,
-                "fallback_workspace_id": (
-                    fallback_workspace.id if fallback_workspace is not None else None
-                ),
-                "fallback_workspace_slug": (
-                    fallback_workspace.slug if fallback_workspace is not None else None
-                ),
+                "fallback_workspace_id": (fallback_workspace.id if fallback_workspace is not None else None),
+                "fallback_workspace_slug": (fallback_workspace.slug if fallback_workspace is not None else None),
                 "invites": workspace_invites,
             }
 
@@ -195,14 +177,10 @@ class ChangePasswordSerializer(serializers.Serializer):
 
     def validate(self, data):
         if data.get("old_password") == data.get("new_password"):
-            raise serializers.ValidationError(
-                {"error": "New password cannot be same as old password."}
-            )
+            raise serializers.ValidationError({"error": "New password cannot be same as old password."})
 
         if data.get("new_password") != data.get("confirm_password"):
-            raise serializers.ValidationError(
-                {"error": "Confirm password should be same as the new password."}
-            )
+            raise serializers.ValidationError({"error": "Confirm password should be same as the new password."})
 
         return data
 

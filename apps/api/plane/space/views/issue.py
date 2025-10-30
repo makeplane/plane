@@ -73,13 +73,9 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
         filters = issue_filters(request.query_params, "GET")
         order_by_param = request.GET.get("order_by", "-created_at")
 
-        deploy_board = DeployBoard.objects.filter(
-            anchor=anchor, entity_name="project"
-        ).first()
+        deploy_board = DeployBoard.objects.filter(anchor=anchor, entity_name="project").first()
         if not deploy_board:
-            return Response(
-                {"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
 
         project_id = deploy_board.entity_identifier
         slug = deploy_board.workspace.slug
@@ -94,14 +90,10 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                     queryset=IssueReaction.objects.select_related("actor"),
                 )
             )
-            .prefetch_related(
-                Prefetch("votes", queryset=IssueVote.objects.select_related("actor"))
-            )
+            .prefetch_related(Prefetch("votes", queryset=IssueVote.objects.select_related("actor")))
             .annotate(
                 cycle_id=Subquery(
-                    CycleIssue.objects.filter(
-                        issue=OuterRef("id"), deleted_at__isnull=True
-                    ).values("cycle_id")[:1]
+                    CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
                 )
             )
             .annotate(
@@ -139,17 +131,13 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
         sub_group_by = request.GET.get("sub_group_by", False)
 
         # issue queryset
-        issue_queryset = issue_queryset_grouper(
-            queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by
-        )
+        issue_queryset = issue_queryset_grouper(queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by)
 
         if group_by:
             if sub_group_by:
                 if group_by == sub_group_by:
                     return Response(
-                        {
-                            "error": "Group by and sub group by cannot have same parameters"
-                        },
+                        {"error": "Group by and sub group by cannot have same parameters"},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
                 else:
@@ -215,9 +203,7 @@ class ProjectIssuesPublicEndpoint(BaseAPIView):
                 order_by=order_by_param,
                 request=request,
                 queryset=issue_queryset,
-                on_results=lambda issues: issue_on_results(
-                    group_by=group_by, issues=issues, sub_group_by=sub_group_by
-                ),
+                on_results=lambda issues: issue_on_results(group_by=group_by, issues=issues, sub_group_by=sub_group_by),
             )
 
 
@@ -237,9 +223,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
 
     def get_queryset(self):
         try:
-            project_deploy_board = DeployBoard.objects.get(
-                anchor=self.kwargs.get("anchor"), entity_name="project"
-            )
+            project_deploy_board = DeployBoard.objects.get(anchor=self.kwargs.get("anchor"), entity_name="project")
             if project_deploy_board.is_comments_enabled:
                 return self.filter_queryset(
                     super()
@@ -267,9 +251,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
             return IssueComment.objects.none()
 
     def create(self, request, anchor, issue_id):
-        project_deploy_board = DeployBoard.objects.get(
-            anchor=anchor, entity_name="project"
-        )
+        project_deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="project")
 
         if not project_deploy_board.is_comments_enabled:
             return Response(
@@ -308,9 +290,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, anchor, issue_id, pk):
-        project_deploy_board = DeployBoard.objects.get(
-            anchor=anchor, entity_name="project"
-        )
+        project_deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="project")
 
         if not project_deploy_board.is_comments_enabled:
             return Response(
@@ -327,18 +307,14 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 actor_id=str(request.user.id),
                 issue_id=str(issue_id),
                 project_id=str(project_deploy_board.project_id),
-                current_instance=json.dumps(
-                    IssueCommentSerializer(comment).data, cls=DjangoJSONEncoder
-                ),
+                current_instance=json.dumps(IssueCommentSerializer(comment).data, cls=DjangoJSONEncoder),
                 epoch=int(timezone.now().timestamp()),
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, anchor, issue_id, pk):
-        project_deploy_board = DeployBoard.objects.get(
-            anchor=anchor, entity_name="project"
-        )
+        project_deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="project")
 
         if not project_deploy_board.is_comments_enabled:
             return Response(
@@ -352,9 +328,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
             actor_id=str(request.user.id),
             issue_id=str(issue_id),
             project_id=str(project_deploy_board.project_id),
-            current_instance=json.dumps(
-                IssueCommentSerializer(comment).data, cls=DjangoJSONEncoder
-            ),
+            current_instance=json.dumps(IssueCommentSerializer(comment).data, cls=DjangoJSONEncoder),
             epoch=int(timezone.now().timestamp()),
         )
         comment.delete()
@@ -386,9 +360,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
             return IssueReaction.objects.none()
 
     def create(self, request, anchor, issue_id):
-        project_deploy_board = DeployBoard.objects.get(
-            anchor=anchor, entity_name="project"
-        )
+        project_deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="project")
 
         if not project_deploy_board.is_reactions_enabled:
             return Response(
@@ -425,9 +397,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, anchor, issue_id, reaction_code):
-        project_deploy_board = DeployBoard.objects.get(
-            anchor=anchor, entity_name="project"
-        )
+        project_deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="project")
 
         if not project_deploy_board.is_reactions_enabled:
             return Response(
@@ -446,9 +416,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
             actor_id=str(self.request.user.id),
             issue_id=str(self.kwargs.get("issue_id", None)),
             project_id=str(project_deploy_board.project_id),
-            current_instance=json.dumps(
-                {"reaction": str(reaction_code), "identifier": str(issue_reaction.id)}
-            ),
+            current_instance=json.dumps({"reaction": str(reaction_code), "identifier": str(issue_reaction.id)}),
             epoch=int(timezone.now().timestamp()),
         )
         issue_reaction.delete()
@@ -461,9 +429,7 @@ class CommentReactionPublicViewSet(BaseViewSet):
 
     def get_queryset(self):
         try:
-            project_deploy_board = DeployBoard.objects.get(
-                anchor=self.kwargs.get("anchor"), entity_name="project"
-            )
+            project_deploy_board = DeployBoard.objects.get(anchor=self.kwargs.get("anchor"), entity_name="project")
             if project_deploy_board.is_reactions_enabled:
                 return (
                     super()
@@ -479,9 +445,7 @@ class CommentReactionPublicViewSet(BaseViewSet):
             return CommentReaction.objects.none()
 
     def create(self, request, anchor, comment_id):
-        project_deploy_board = DeployBoard.objects.get(
-            anchor=anchor, entity_name="project"
-        )
+        project_deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="project")
 
         if not project_deploy_board.is_reactions_enabled:
             return Response(
@@ -518,9 +482,7 @@ class CommentReactionPublicViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, anchor, comment_id, reaction_code):
-        project_deploy_board = DeployBoard.objects.get(
-            anchor=anchor, entity_name="project"
-        )
+        project_deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="project")
         if not project_deploy_board.is_reactions_enabled:
             return Response(
                 {"error": "Reactions are not enabled for this board"},
@@ -575,9 +537,7 @@ class IssueVotePublicViewSet(BaseViewSet):
             return IssueVote.objects.none()
 
     def create(self, request, anchor, issue_id):
-        project_deploy_board = DeployBoard.objects.get(
-            anchor=anchor, entity_name="project"
-        )
+        project_deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="project")
         issue_vote, _ = IssueVote.objects.get_or_create(
             actor_id=request.user.id,
             project_id=project_deploy_board.project_id,
@@ -607,9 +567,7 @@ class IssueVotePublicViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, anchor, issue_id):
-        project_deploy_board = DeployBoard.objects.get(
-            anchor=anchor, entity_name="project"
-        )
+        project_deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="project")
         issue_vote = IssueVote.objects.get(
             issue_id=issue_id,
             actor_id=request.user.id,
@@ -622,9 +580,7 @@ class IssueVotePublicViewSet(BaseViewSet):
             actor_id=str(self.request.user.id),
             issue_id=str(self.kwargs.get("issue_id", None)),
             project_id=str(project_deploy_board.project_id),
-            current_instance=json.dumps(
-                {"vote": str(issue_vote.vote), "identifier": str(issue_vote.id)}
-            ),
+            current_instance=json.dumps({"vote": str(issue_vote.vote), "identifier": str(issue_vote.id)}),
             epoch=int(timezone.now().timestamp()),
         )
         issue_vote.delete()
@@ -647,9 +603,7 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
             .prefetch_related("assignees", "labels", "issue_module__module")
             .annotate(
                 cycle_id=Subquery(
-                    CycleIssue.objects.filter(
-                        issue=OuterRef("id"), deleted_at__isnull=True
-                    ).values("cycle_id")[:1]
+                    CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
                 )
             )
             .annotate(
@@ -657,10 +611,7 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
                     ArrayAgg(
                         "labels__id",
                         distinct=True,
-                        filter=Q(
-                            ~Q(labels__id__isnull=True)
-                            & Q(label_issue__deleted_at__isnull=True)
-                        ),
+                        filter=Q(~Q(labels__id__isnull=True) & Q(label_issue__deleted_at__isnull=True)),
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
@@ -693,9 +644,7 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
                     queryset=IssueReaction.objects.select_related("issue", "actor"),
                 )
             )
-            .prefetch_related(
-                Prefetch("votes", queryset=IssueVote.objects.select_related("actor"))
-            )
+            .prefetch_related(Prefetch("votes", queryset=IssueVote.objects.select_related("actor")))
             .annotate(
                 vote_items=ArrayAgg(
                     Case(
@@ -771,9 +720,7 @@ class IssueRetrievePublicEndpoint(BaseAPIView):
                                         default=Value(None),
                                         output_field=CharField(),
                                     ),
-                                    display_name=F(
-                                        "issue_reactions__actor__display_name"
-                                    ),
+                                    display_name=F("issue_reactions__actor__display_name"),
                                 ),
                             ),
                         ),

@@ -1,4 +1,4 @@
-import range from "lodash/range";
+import { range } from "lodash-es";
 
 export const ProjectsLoader = () => (
   <div className="h-full w-full overflow-y-auto p-8 animate-pulse">

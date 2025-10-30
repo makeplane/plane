@@ -1,10 +1,11 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { KeyRound, Mails } from "lucide-react";
 // plane packages
-import { SUPPORT_EMAIL, EAdminAuthErrorCodes, TAdminAuthErrorInfo } from "@plane/constants";
-import { TGetBaseAuthenticationModeProps, TInstanceAuthenticationModes } from "@plane/types";
+import type { TAdminAuthErrorInfo } from "@plane/constants";
+import { SUPPORT_EMAIL, EAdminAuthErrorCodes } from "@plane/constants";
+import type { TGetBaseAuthenticationModeProps, TInstanceAuthenticationModes } from "@plane/types";
 import { resolveGeneralTheme } from "@plane/utils";
 // components
 import { EmailCodesConfiguration } from "@/components/authentication/email-config-switch";

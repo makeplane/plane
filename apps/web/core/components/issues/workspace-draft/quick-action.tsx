@@ -3,7 +3,8 @@
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { ContextMenu, CustomMenu } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 
@@ -31,9 +32,7 @@ export const WorkspaceDraftIssueQuickActions: React.FC<Props> = observer((props)
         {MENU_ITEMS.map((item) => (
           <CustomMenu.MenuItem
             key={item.key}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
+            onClick={() => {
               item.action();
             }}
             className={cn(

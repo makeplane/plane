@@ -2,12 +2,14 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { EUserPermissionsLevel } from "@plane/constants";
-import { EUserPermissions, IIssueLabel } from "@plane/types";
+import type { IIssueLabel } from "@plane/types";
+import { EUserPermissions } from "@plane/types";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
 import { useUserPermissions } from "@/hooks/store/user";
 // local imports
-import { TWorkItemLabelSelectBaseProps, WorkItemLabelSelectBase } from "./base";
+import type { TWorkItemLabelSelectBaseProps } from "./base";
+import { WorkItemLabelSelectBase } from "./base";
 
 type TWorkItemLabelSelectProps = Omit<TWorkItemLabelSelectBaseProps, "labelIds" | "getLabelById" | "onDropdownOpen"> & {
   projectId: string | undefined;

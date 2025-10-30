@@ -1,4 +1,4 @@
-import { IWorkspace } from "@plane/types";
+import type { IWorkspace } from "@plane/types";
 
 type TProps = {
   workspace?: IWorkspace;

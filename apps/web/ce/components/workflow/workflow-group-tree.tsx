@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { TIssueGroupByOptions } from "@plane/types";
+import type { TIssueGroupByOptions } from "@plane/types";
 
 type Props = {
   groupBy?: TIssueGroupByOptions;

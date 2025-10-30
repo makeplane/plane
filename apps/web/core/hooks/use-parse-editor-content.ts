@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useParams } from "next/navigation";
 // plane types
-import { TSearchEntities } from "@plane/types";
+import type { TSearchEntities } from "@plane/types";
 // helpers
 import { getBase64Image } from "@plane/utils";
 // hooks

@@ -6,7 +6,7 @@ import { cn } from "@plane/utils";
 // types
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { BACKGROUND_BUTTON_VARIANTS, BORDER_BUTTON_VARIANTS } from "./constants";
-import { TButtonVariants } from "./types";
+import type { TButtonVariants } from "./types";
 
 export type DropdownButtonProps = {
   children: React.ReactNode;

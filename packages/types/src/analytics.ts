@@ -73,7 +73,7 @@ export interface WorkItemInsightColumns {
   backlog_work_items: number;
   un_started_work_items: number;
   started_work_items: number;
-  // incase of peek view, we will display the display_name instead of project__name
+  // in case of peek view, we will display the display_name instead of project__name
   display_name?: string;
   avatar_url?: string;
   assignee_id?: string;

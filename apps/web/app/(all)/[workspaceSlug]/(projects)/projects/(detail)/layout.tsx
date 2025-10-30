@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useParams } from "next/navigation";
 // plane web layouts
 import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";

@@ -1,9 +1,5 @@
 import type { Editor } from "@tiptap/core";
 import { AlignCenter, AlignLeft, AlignRight, type LucideIcon } from "lucide-react";
-// constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
-// helpers
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // local imports
 import { ECustomImageAttributeNames, TCustomImageAlignment, type Pixel, type TCustomImageAttributes } from "./types";
 
@@ -16,8 +12,7 @@ export const DEFAULT_CUSTOM_IMAGE_ATTRIBUTES: TCustomImageAttributes = {
   [ECustomImageAttributeNames.ALIGNMENT]: "left",
 };
 
-export const getImageComponentImageFileMap = (editor: Editor) =>
-  getExtensionStorage(editor, CORE_EXTENSIONS.CUSTOM_IMAGE)?.fileMap;
+export const getImageComponentImageFileMap = (editor: Editor) => editor.storage.imageComponent?.fileMap;
 
 export const ensurePixelString = <TDefault>(
   value: Pixel | TDefault | number | undefined | null,

@@ -4,8 +4,6 @@ from .workspace import WorkspaceBaseModel
 
 
 class Description(WorkspaceBaseModel):
-
-
     description_json = models.JSONField(default=dict, blank=True)
     description_html = models.TextField(blank=True, default="<p></p>")
     description_binary = models.BinaryField(null=True)
@@ -32,9 +30,7 @@ class DescriptionVersion(WorkspaceBaseModel):
     DescriptionVersion is a model used to store historical versions of a Description.
     """
 
-    description = models.ForeignKey(
-        "db.Description", on_delete=models.CASCADE, related_name="versions"
-    )
+    description = models.ForeignKey("db.Description", on_delete=models.CASCADE, related_name="versions")
     description_json = models.JSONField(default=dict, blank=True)
     description_html = models.TextField(blank=True, default="<p></p>")
     description_binary = models.BinaryField(null=True)

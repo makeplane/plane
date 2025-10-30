@@ -1,14 +1,9 @@
-import { uniq, update } from "lodash";
-import isEmpty from "lodash/isEmpty";
-import omit from "lodash/omit";
-import set from "lodash/set";
+import { uniq, update, isEmpty, omit, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { EPastDurationFilters } from "@plane/constants";
+import type { EPastDurationFilters } from "@plane/constants";
 // types
-import {
-  EInboxIssueCurrentTab,
-  EInboxIssueStatus,
+import type {
   TInboxIssue,
   TInboxIssueCurrentTab,
   TInboxIssueFilter,
@@ -16,12 +11,14 @@ import {
   TInboxIssuePaginationInfo,
   TInboxIssueSortingOrderByQueryParam,
 } from "@plane/types";
+import { EInboxIssueCurrentTab, EInboxIssueStatus } from "@plane/types";
 import { getCustomDates } from "@plane/utils";
 // helpers
 // services
 import { InboxIssueService } from "@/services/inbox";
 // root store
-import { IInboxIssueStore, InboxIssueStore } from "@/store/inbox/inbox-issue.store";
+import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
+import { InboxIssueStore } from "@/store/inbox/inbox-issue.store";
 import type { CoreRootStore } from "../root.store";
 
 type TLoader =

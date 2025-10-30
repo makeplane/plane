@@ -110,7 +110,7 @@ declare interface SQLitePrepareOptions {
  * the corresponding Javascript wrapper will throw an exception with a
  * `code` property on an error.
  *
- * Note that a few functions return a Promise in order to accomodate
+ * Note that a few functions return a Promise in order to accommodate
  * either a synchronous or asynchronous SQLite build, generally those
  * involved with opening/closing a database or executing a statement.
  *
@@ -330,7 +330,7 @@ declare interface SQLiteAPI {
   column(stmt: number, i: number): SQLiteCompatibleType;
 
   /**
-   * Extract a column value from a row after a prepared statment {@link step}
+   * Extract a column value from a row after a prepared statement {@link step}
    *
    * The contents of the returned buffer may be invalid after the
    * next SQLite call. Make a copy of the data (e.g. with `.slice()`)
@@ -360,7 +360,7 @@ declare interface SQLiteAPI {
   column_count(stmt: number): number;
 
   /**
-   * Extract a column value from a row after a prepared statment {@link step}
+   * Extract a column value from a row after a prepared statement {@link step}
    * @see https://www.sqlite.org/c3ref/column_blob.html
    * @param stmt prepared statement pointer
    * @param i column index
@@ -369,7 +369,7 @@ declare interface SQLiteAPI {
   column_double(stmt: number, i: number): number;
 
   /**
-   * Extract a column value from a row after a prepared statment {@link step}
+   * Extract a column value from a row after a prepared statement {@link step}
    * @see https://www.sqlite.org/c3ref/column_blob.html
    * @param stmt prepared statement pointer
    * @param i column index
@@ -378,7 +378,7 @@ declare interface SQLiteAPI {
   column_int(stmt: number, i: number): number;
 
   /**
-   * Extract a column value from a row after a prepared statment {@link step}
+   * Extract a column value from a row after a prepared statement {@link step}
    * @see https://www.sqlite.org/c3ref/column_blob.html
    * @param stmt prepared statement pointer
    * @param i column index
@@ -406,7 +406,7 @@ declare interface SQLiteAPI {
   column_names(stmt: number): Array<string>;
 
   /**
-   * Extract a column value from a row after a prepared statment {@link step}
+   * Extract a column value from a row after a prepared statement {@link step}
    * @see https://www.sqlite.org/c3ref/column_blob.html
    * @param stmt prepared statement pointer
    * @param i column index
@@ -1190,7 +1190,7 @@ declare module "wa-sqlite/src/VFS.js" {
      */
     xAccess(name: string, flags: number, pResOut: DataView): number;
     /**
-     * Handle asynchronous operation. This implementation will be overriden on
+     * Handle asynchronous operation. This implementation will be overridden on
      * registration by an Asyncify build.
      * @param {function(): Promise<number>} f
      * @returns {number}

@@ -12,9 +12,7 @@ class UserFavorite(WorkspaceBaseModel):
     UserFavorite (model): To store all the favorites of the user
     """
 
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="favorites"
-    )
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="favorites")
     entity_type = models.CharField(max_length=100)
     entity_identifier = models.UUIDField(null=True, blank=True)
     name = models.CharField(max_length=255, blank=True, null=True)
@@ -43,24 +41,20 @@ class UserFavorite(WorkspaceBaseModel):
         ordering = ("-created_at",)
         indexes = [
             models.Index(fields=["entity_type"], name="fav_entity_type_idx"),
-            models.Index(
-                fields=["entity_identifier"], name="fav_entity_identifier_idx"
-            ),
-            models.Index(
-                fields=["entity_type", "entity_identifier"], name="fav_entity_idx"
-            ),
+            models.Index(fields=["entity_identifier"], name="fav_entity_identifier_idx"),
+            models.Index(fields=["entity_type", "entity_identifier"], name="fav_entity_idx"),
         ]
 
     def save(self, *args, **kwargs):
         if self._state.adding:
             if self.project:
-                largest_sequence = UserFavorite.objects.filter(
-                    workspace=self.project.workspace
-                ).aggregate(largest=models.Max("sequence"))["largest"]
+                largest_sequence = UserFavorite.objects.filter(workspace=self.project.workspace).aggregate(
+                    largest=models.Max("sequence")
+                )["largest"]
             else:
-                largest_sequence = UserFavorite.objects.filter(
-                    workspace=self.workspace
-                ).aggregate(largest=models.Max("sequence"))["largest"]
+                largest_sequence = UserFavorite.objects.filter(workspace=self.workspace).aggregate(
+                    largest=models.Max("sequence")
+                )["largest"]
             if largest_sequence is not None:
                 self.sequence = largest_sequence + 10000
 

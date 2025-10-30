@@ -2,7 +2,8 @@
 
 import { observer } from "mobx-react";
 // icons
-import { LucideIcon, Users } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { MembersPropertyIcon } from "@plane/propel/icons";
 // plane ui
 import { Avatar, AvatarGroup } from "@plane/ui";
 // plane utils
@@ -10,7 +11,7 @@ import { cn } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 //
-import { TPublicMember } from "@/types/member";
+import type { TPublicMember } from "@/types/member";
 
 type Props = {
   memberIds: string[];
@@ -48,7 +49,11 @@ export const ButtonAvatars: React.FC<AvatarProps> = observer((props: AvatarProps
     }
   }
 
-  return Icon ? <Icon className="h-3 w-3 flex-shrink-0" /> : <Users className="h-3 w-3 mx-[4px] flex-shrink-0" />;
+  return Icon ? (
+    <Icon className="h-3 w-3 flex-shrink-0" />
+  ) : (
+    <MembersPropertyIcon className="h-3 w-3 mx-[4px] flex-shrink-0" />
+  );
 });
 
 export const IssueBlockMembers = observer(({ memberIds, shouldShowBorder = true }: Props) => {

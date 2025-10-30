@@ -6,7 +6,8 @@ import { useParams } from "next/navigation";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
 // local imports
-import { WorkItemStateDropdownBase, TWorkItemStateDropdownBaseProps } from "./base";
+import type { TWorkItemStateDropdownBaseProps } from "./base";
+import { WorkItemStateDropdownBase } from "./base";
 
 type TWorkItemStateDropdownProps = Omit<
   TWorkItemStateDropdownBaseProps,
@@ -28,7 +29,7 @@ export const StateDropdown: React.FC<TWorkItemStateDropdownProps> = observer((pr
 
   // fetch states if not provided
   const onDropdownOpen = async () => {
-    if (stateIds === undefined && workspaceSlug && projectId) {
+    if ((stateIds === undefined || stateIds.length === 0) && workspaceSlug && projectId) {
       setStateLoader(true);
       await fetchProjectStates(workspaceSlug.toString(), projectId);
       setStateLoader(false);

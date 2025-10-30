@@ -1,7 +1,8 @@
 import { Disclosure } from "@headlessui/react";
 import type { Editor } from "@tiptap/core";
-import { Ban, ChevronRight, Palette } from "lucide-react";
+import { Ban, Palette } from "lucide-react";
 // plane imports
+import { ChevronRightIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 // constants
 import { COLORS_LIST } from "@/constants/common";
@@ -50,7 +51,7 @@ export const TableDragHandleDropdownColorSelector: React.FC<Props> = (props) => 
               <Palette className="shrink-0 size-3" />
               Color
             </span>
-            <ChevronRight
+            <ChevronRightIcon
               className={cn("shrink-0 size-3 transition-transform duration-200", {
                 "rotate-90": open,
               })}

@@ -12,13 +12,7 @@ from django.db.models import (
     OuterRef,
     Q,
     Sum,
-    FloatField,
-    Case,
-    When,
-    Value,
 )
-from django.db.models.functions import Cast, Concat
-from django.db import models
 
 # Third party imports
 from rest_framework import status
@@ -47,7 +41,7 @@ from plane.db.models import (
     ProjectMember,
     UserFavorite,
 )
-from plane.utils.analytics_plot import burndown_plot
+from plane.utils.cycle_transfer_issues import transfer_cycle_issues
 from plane.utils.host import base_host
 from .base import BaseAPIView
 from plane.bgtasks.webhook_task import model_activity
@@ -171,7 +165,7 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
     @cycle_docs(
         operation_id="list_cycles",
         summary="List cycles",
-        description="Retrieve all cycles in a project. Supports filtering by cycle status like current, upcoming, completed, or draft.",
+        description="Retrieve all cycles in a project. Supports filtering by cycle status like current, upcoming, completed, or draft.",  # noqa: E501
         parameters=[
             CURSOR_PARAMETER,
             PER_PAGE_PARAMETER,
@@ -289,7 +283,7 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
     @cycle_docs(
         operation_id="create_cycle",
         summary="Create cycle",
-        description="Create a new development cycle with specified name, description, and date range. Supports external ID tracking for integration purposes.",
+        description="Create a new development cycle with specified name, description, and date range. Supports external ID tracking for integration purposes.",  # noqa: E501
         request=OpenApiRequest(
             request=CycleCreateSerializer,
             examples=[CYCLE_CREATE_EXAMPLE],
@@ -315,7 +309,10 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
             request.data.get("start_date", None) is not None
             and request.data.get("end_date", None) is not None
         ):
-            serializer = CycleCreateSerializer(data=request.data)
+
+            serializer = CycleCreateSerializer(
+                data=request.data, context={"request": request}
+            )
             if serializer.is_valid():
                 if (
                     request.data.get("external_id")
@@ -340,7 +337,7 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
                         },
                         status=status.HTTP_409_CONFLICT,
                     )
-                serializer.save(project_id=project_id, owned_by=request.user)
+                serializer.save(project_id=project_id)
                 # Send the model activity
                 model_activity.delay(
                     model_name="cycle",
@@ -487,7 +484,7 @@ class CycleDetailAPIEndpoint(BaseAPIView):
     @cycle_docs(
         operation_id="update_cycle",
         summary="Update cycle",
-        description="Modify an existing cycle's properties like name, description, or date range. Completed cycles can only have their sort order changed.",
+        description="Modify an existing cycle's properties like name, description, or date range. Completed cycles can only have their sort order changed.",  # noqa: E501
         request=OpenApiRequest(
             request=CycleUpdateSerializer,
             examples=[CYCLE_UPDATE_EXAMPLE],
@@ -534,7 +531,9 @@ class CycleDetailAPIEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-        serializer = CycleUpdateSerializer(cycle, data=request.data, partial=True)
+        serializer = CycleUpdateSerializer(
+            cycle, data=request.data, partial=True, context={"request": request}
+        )
         if serializer.is_valid():
             if (
                 request.data.get("external_id")
@@ -773,7 +772,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
     @cycle_docs(
         operation_id="archive_cycle",
         summary="Archive cycle",
-        description="Move a completed cycle to archived status for historical tracking. Only cycles that have ended can be archived.",
+        description="Move a completed cycle to archived status for historical tracking. Only cycles that have ended can be archived.",  # noqa: E501
         request={},
         responses={
             204: ARCHIVED_RESPONSE,
@@ -931,7 +930,7 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
     @cycle_docs(
         operation_id="add_cycle_work_items",
         summary="Add Work Items to Cycle",
-        description="Assign multiple work items to a cycle. Automatically handles bulk creation and updates with activity tracking.",
+        description="Assign multiple work items to a cycle. Automatically handles bulk creation and updates with activity tracking.",  # noqa: E501
         request=OpenApiRequest(
             request=CycleIssueRequestSerializer,
             examples=[CYCLE_ISSUE_REQUEST_EXAMPLE],
@@ -955,18 +954,27 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
 
         if not issues:
             return Response(
-                {"error": "Work items are required"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Work items are required", "code": "MISSING_WORK_ITEMS"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         cycle = Cycle.objects.get(
             workspace__slug=slug, project_id=project_id, pk=cycle_id
         )
 
+        if cycle.end_date is not None and cycle.end_date < timezone.now():
+            return Response(
+                {
+                    "code": "CYCLE_COMPLETED",
+                    "message": "The Cycle has already been completed so no new issues can be added",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         # Get all CycleWorkItems already created
         cycle_issues = list(
             CycleIssue.objects.filter(~Q(cycle_id=cycle_id), issue_id__in=issues)
         )
-
         existing_issues = [
             str(cycle_issue.issue_id)
             for cycle_issue in cycle_issues
@@ -1154,7 +1162,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
     @cycle_docs(
         operation_id="transfer_cycle_work_items",
         summary="Transfer cycle work items",
-        description="Move incomplete work items from the current cycle to a new target cycle. Captures progress snapshot and transfers only unfinished work items.",
+        description="Move incomplete work items from the current cycle to a new target cycle. Captures progress snapshot and transfers only unfinished work items.",  # noqa: E501
         request=OpenApiRequest(
             request=TransferCycleIssueRequestSerializer,
             examples=[TRANSFER_CYCLE_ISSUE_EXAMPLE],
@@ -1206,434 +1214,34 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                 {"error": "New Cycle Id is required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
-        new_cycle = Cycle.objects.filter(
-            workspace__slug=slug, project_id=project_id, pk=new_cycle_id
-        ).first()
-
-        old_cycle = (
-            Cycle.objects.filter(
-                workspace__slug=slug, project_id=project_id, pk=cycle_id
-            )
-            .annotate(
-                total_issues=Count(
-                    "issue_cycle",
-                    filter=Q(
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                        issue_cycle__deleted_at__isnull=True,
-                        issue_cycle__issue__deleted_at__isnull=True,
-                    ),
-                )
-            )
-            .annotate(
-                completed_issues=Count(
-                    "issue_cycle__issue__state__group",
-                    filter=Q(
-                        issue_cycle__issue__state__group="completed",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                        issue_cycle__deleted_at__isnull=True,
-                        issue_cycle__issue__deleted_at__isnull=True,
-                    ),
-                )
-            )
-            .annotate(
-                cancelled_issues=Count(
-                    "issue_cycle__issue__state__group",
-                    filter=Q(
-                        issue_cycle__issue__state__group="cancelled",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                        issue_cycle__deleted_at__isnull=True,
-                    ),
-                )
-            )
-            .annotate(
-                started_issues=Count(
-                    "issue_cycle__issue__state__group",
-                    filter=Q(
-                        issue_cycle__issue__state__group="started",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                        issue_cycle__deleted_at__isnull=True,
-                    ),
-                )
-            )
-            .annotate(
-                unstarted_issues=Count(
-                    "issue_cycle__issue__state__group",
-                    filter=Q(
-                        issue_cycle__issue__state__group="unstarted",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                        issue_cycle__deleted_at__isnull=True,
-                    ),
-                )
-            )
-            .annotate(
-                backlog_issues=Count(
-                    "issue_cycle__issue__state__group",
-                    filter=Q(
-                        issue_cycle__issue__state__group="backlog",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                        issue_cycle__deleted_at__isnull=True,
-                    ),
-                )
-            )
-        )
-        old_cycle = old_cycle.first()
-
-        estimate_type = Project.objects.filter(
+        
+        old_cycle = Cycle.objects.get(
             workspace__slug=slug,
-            pk=project_id,
-            estimate__isnull=False,
-            estimate__type="points",
-        ).exists()
-
-        if estimate_type:
-            assignee_estimate_data = (
-                Issue.issue_objects.filter(
-                    issue_cycle__cycle_id=cycle_id,
-                    issue_cycle__deleted_at__isnull=True,
-                    workspace__slug=slug,
-                    project_id=project_id,
-                )
-                .annotate(display_name=F("assignees__display_name"))
-                .annotate(assignee_id=F("assignees__id"))
-                .annotate(avatar=F("assignees__avatar"))
-                .annotate(
-                    avatar_url=Case(
-                        # If `avatar_asset` exists, use it to generate the asset URL
-                        When(
-                            assignees__avatar_asset__isnull=False,
-                            then=Concat(
-                                Value("/api/assets/v2/static/"),
-                                "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
-                                Value("/"),
-                            ),
-                        ),
-                        # If `avatar_asset` is None, fall back to using `avatar` field directly
-                        When(
-                            assignees__avatar_asset__isnull=True,
-                            then="assignees__avatar",
-                        ),
-                        default=Value(None),
-                        output_field=models.CharField(),
-                    )
-                )
-                .values("display_name", "assignee_id", "avatar", "avatar_url")
-                .annotate(
-                    total_estimates=Sum(Cast("estimate_point__value", FloatField()))
-                )
-                .annotate(
-                    completed_estimates=Sum(
-                        Cast("estimate_point__value", FloatField()),
-                        filter=Q(
-                            completed_at__isnull=False,
-                            archived_at__isnull=True,
-                            is_draft=False,
-                        ),
-                    )
-                )
-                .annotate(
-                    pending_estimates=Sum(
-                        Cast("estimate_point__value", FloatField()),
-                        filter=Q(
-                            completed_at__isnull=True,
-                            archived_at__isnull=True,
-                            is_draft=False,
-                        ),
-                    )
-                )
-                .order_by("display_name")
-            )
-            # assignee distribution serialization
-            assignee_estimate_distribution = [
-                {
-                    "display_name": item["display_name"],
-                    "assignee_id": (
-                        str(item["assignee_id"]) if item["assignee_id"] else None
-                    ),
-                    "avatar": item.get("avatar", None),
-                    "avatar_url": item.get("avatar_url", None),
-                    "total_estimates": item["total_estimates"],
-                    "completed_estimates": item["completed_estimates"],
-                    "pending_estimates": item["pending_estimates"],
-                }
-                for item in assignee_estimate_data
-            ]
-
-            label_distribution_data = (
-                Issue.issue_objects.filter(
-                    issue_cycle__cycle_id=cycle_id,
-                    issue_cycle__deleted_at__isnull=True,
-                    workspace__slug=slug,
-                    project_id=project_id,
-                )
-                .annotate(label_name=F("labels__name"))
-                .annotate(color=F("labels__color"))
-                .annotate(label_id=F("labels__id"))
-                .values("label_name", "color", "label_id")
-                .annotate(
-                    total_estimates=Sum(Cast("estimate_point__value", FloatField()))
-                )
-                .annotate(
-                    completed_estimates=Sum(
-                        Cast("estimate_point__value", FloatField()),
-                        filter=Q(
-                            completed_at__isnull=False,
-                            archived_at__isnull=True,
-                            is_draft=False,
-                        ),
-                    )
-                )
-                .annotate(
-                    pending_estimates=Sum(
-                        Cast("estimate_point__value", FloatField()),
-                        filter=Q(
-                            completed_at__isnull=True,
-                            archived_at__isnull=True,
-                            is_draft=False,
-                        ),
-                    )
-                )
-                .order_by("label_name")
-            )
-
-            estimate_completion_chart = burndown_plot(
-                queryset=old_cycle,
-                slug=slug,
-                project_id=project_id,
-                plot_type="points",
-                cycle_id=cycle_id,
-            )
-            # Label distribution serialization
-            label_estimate_distribution = [
-                {
-                    "label_name": item["label_name"],
-                    "color": item["color"],
-                    "label_id": (str(item["label_id"]) if item["label_id"] else None),
-                    "total_estimates": item["total_estimates"],
-                    "completed_estimates": item["completed_estimates"],
-                    "pending_estimates": item["pending_estimates"],
-                }
-                for item in label_distribution_data
-            ]
-
-        # Get the assignee distribution
-        assignee_distribution = (
-            Issue.issue_objects.filter(
-                issue_cycle__cycle_id=cycle_id,
-                issue_cycle__deleted_at__isnull=True,
-                workspace__slug=slug,
-                project_id=project_id,
-            )
-            .annotate(display_name=F("assignees__display_name"))
-            .annotate(assignee_id=F("assignees__id"))
-            .annotate(avatar=F("assignees__avatar"))
-            .annotate(
-                avatar_url=Case(
-                    # If `avatar_asset` exists, use it to generate the asset URL
-                    When(
-                        assignees__avatar_asset__isnull=False,
-                        then=Concat(
-                            Value("/api/assets/v2/static/"),
-                            "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
-                            Value("/"),
-                        ),
-                    ),
-                    # If `avatar_asset` is None, fall back to using `avatar` field directly
-                    When(
-                        assignees__avatar_asset__isnull=True, then="assignees__avatar"
-                    ),
-                    default=Value(None),
-                    output_field=models.CharField(),
-                )
-            )
-            .values("display_name", "assignee_id", "avatar_url")
-            .annotate(
-                total_issues=Count(
-                    "id", filter=Q(archived_at__isnull=True, is_draft=False)
-                )
-            )
-            .annotate(
-                completed_issues=Count(
-                    "id",
-                    filter=Q(
-                        completed_at__isnull=False,
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                )
-            )
-            .annotate(
-                pending_issues=Count(
-                    "id",
-                    filter=Q(
-                        completed_at__isnull=True,
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                )
-            )
-            .order_by("display_name")
-        )
-        # assignee distribution serialized
-        assignee_distribution_data = [
-            {
-                "display_name": item["display_name"],
-                "assignee_id": (
-                    str(item["assignee_id"]) if item["assignee_id"] else None
-                ),
-                "avatar": item.get("avatar", None),
-                "avatar_url": item.get("avatar_url", None),
-                "total_issues": item["total_issues"],
-                "completed_issues": item["completed_issues"],
-                "pending_issues": item["pending_issues"],
-            }
-            for item in assignee_distribution
-        ]
-
-        # Get the label distribution
-        label_distribution = (
-            Issue.issue_objects.filter(
-                issue_cycle__cycle_id=cycle_id,
-                issue_cycle__deleted_at__isnull=True,
-                workspace__slug=slug,
-                project_id=project_id,
-            )
-            .annotate(label_name=F("labels__name"))
-            .annotate(color=F("labels__color"))
-            .annotate(label_id=F("labels__id"))
-            .values("label_name", "color", "label_id")
-            .annotate(
-                total_issues=Count(
-                    "id", filter=Q(archived_at__isnull=True, is_draft=False)
-                )
-            )
-            .annotate(
-                completed_issues=Count(
-                    "id",
-                    filter=Q(
-                        completed_at__isnull=False,
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                )
-            )
-            .annotate(
-                pending_issues=Count(
-                    "id",
-                    filter=Q(
-                        completed_at__isnull=True,
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                )
-            )
-            .order_by("label_name")
-        )
-
-        # Label distribution serilization
-        label_distribution_data = [
-            {
-                "label_name": item["label_name"],
-                "color": item["color"],
-                "label_id": (str(item["label_id"]) if item["label_id"] else None),
-                "total_issues": item["total_issues"],
-                "completed_issues": item["completed_issues"],
-                "pending_issues": item["pending_issues"],
-            }
-            for item in label_distribution
-        ]
-
-        # Pass the new_cycle queryset to burndown_plot
-        completion_chart = burndown_plot(
-            queryset=old_cycle,
-            slug=slug,
             project_id=project_id,
-            plot_type="issues",
-            cycle_id=cycle_id,
+            pk=cycle_id,
         )
-
-        current_cycle = Cycle.objects.filter(
-            workspace__slug=slug, project_id=project_id, pk=cycle_id
-        ).first()
-
-        current_cycle.progress_snapshot = {
-            "total_issues": old_cycle.total_issues,
-            "completed_issues": old_cycle.completed_issues,
-            "cancelled_issues": old_cycle.cancelled_issues,
-            "started_issues": old_cycle.started_issues,
-            "unstarted_issues": old_cycle.unstarted_issues,
-            "backlog_issues": old_cycle.backlog_issues,
-            "distribution": {
-                "labels": label_distribution_data,
-                "assignees": assignee_distribution_data,
-                "completion_chart": completion_chart,
-            },
-            "estimate_distribution": (
-                {}
-                if not estimate_type
-                else {
-                    "labels": label_estimate_distribution,
-                    "assignees": assignee_estimate_distribution,
-                    "completion_chart": estimate_completion_chart,
-                }
-            ),
-        }
-        current_cycle.save(update_fields=["progress_snapshot"])
-
-        if new_cycle.end_date is not None and new_cycle.end_date < timezone.now():
+        # transfer work items only when cycle is completed (passed the end data)
+        if old_cycle.end_date is not None and old_cycle.end_date > timezone.now():
             return Response(
-                {
-                    "error": "The cycle where the issues are transferred is already completed"
-                },
+                {"error": "The old cycle is not completed yet"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        cycle_issues = CycleIssue.objects.filter(
-            cycle_id=cycle_id,
+        # Call the utility function to handle the transfer
+        result = transfer_cycle_issues(
+            slug=slug,
             project_id=project_id,
-            workspace__slug=slug,
-            issue__state__group__in=["backlog", "unstarted", "started"],
+            cycle_id=cycle_id,
+            new_cycle_id=new_cycle_id,
+            request=request,
+            user_id=self.request.user.id,
         )
 
-        updated_cycles = []
-        update_cycle_issue_activity = []
-        for cycle_issue in cycle_issues:
-            cycle_issue.cycle_id = new_cycle_id
-            updated_cycles.append(cycle_issue)
-            update_cycle_issue_activity.append(
-                {
-                    "old_cycle_id": str(cycle_id),
-                    "new_cycle_id": str(new_cycle_id),
-                    "issue_id": str(cycle_issue.issue_id),
-                }
+        # Handle the result
+        if result.get("success"):
+            return Response({"message": "Success"}, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                {"error": result.get("error")},
+                status=status.HTTP_400_BAD_REQUEST,
             )
-
-        cycle_issues = CycleIssue.objects.bulk_update(
-            updated_cycles, ["cycle_id"], batch_size=100
-        )
-
-        # Capture Issue Activity
-        issue_activity.delay(
-            type="cycle.activity.created",
-            requested_data=json.dumps({"cycles_list": []}),
-            actor_id=str(self.request.user.id),
-            issue_id=None,
-            project_id=str(self.kwargs.get("project_id", None)),
-            current_instance=json.dumps(
-                {
-                    "updated_cycle_issues": update_cycle_issue_activity,
-                    "created_cycle_issues": "[]",
-                }
-            ),
-            epoch=int(timezone.now().timestamp()),
-            notification=True,
-            origin=base_host(request=request, is_app=True),
-        )
-
-        return Response({"message": "Success"}, status=status.HTTP_200_OK)

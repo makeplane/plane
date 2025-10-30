@@ -1,12 +1,12 @@
 "use client";
 
-import { MutableRefObject } from "react";
+import type { MutableRefObject } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 // plane types
 import { Tooltip } from "@plane/propel/tooltip";
-import { IIssueDisplayProperties } from "@plane/types";
+import type { IIssueDisplayProperties } from "@plane/types";
 // plane ui
 // plane utils
 import { cn } from "@plane/utils";
@@ -18,7 +18,7 @@ import { queryParamGenerator } from "@/helpers/query-param-generator";
 import { usePublish } from "@/hooks/store/publish";
 import { useIssueDetails } from "@/hooks/store/use-issue-details";
 //
-import { IIssue } from "@/types/issue";
+import type { IIssue } from "@/types/issue";
 import { IssueProperties } from "../properties/all-properties";
 import { getIssueBlockId } from "../utils";
 import { BlockReactions } from "./block-reactions";

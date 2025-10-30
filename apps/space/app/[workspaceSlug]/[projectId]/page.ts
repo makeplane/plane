@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 // plane imports
 import { SitesProjectPublishService } from "@plane/services";
-import { TProjectPublishSettings } from "@plane/types";
+import type { TProjectPublishSettings } from "@plane/types";
 
 const publishService = new SitesProjectPublishService();
 

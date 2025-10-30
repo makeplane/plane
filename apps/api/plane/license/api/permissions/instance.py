@@ -11,6 +11,4 @@ class InstanceAdminPermission(BasePermission):
             return False
 
         instance = Instance.objects.first()
-        return InstanceAdmin.objects.filter(
-            role__gte=15, instance=instance, user=request.user
-        ).exists()
+        return InstanceAdmin.objects.filter(role__gte=15, instance=instance, user=request.user).exists()

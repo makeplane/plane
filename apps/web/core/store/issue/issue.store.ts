@@ -1,10 +1,8 @@
-import clone from "lodash/clone";
-import set from "lodash/set";
-import update from "lodash/update";
+import { clone, set, update } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 // helpers
 import { getCurrentDateTimeInISO } from "@plane/utils";
 import { rootStore } from "@/lib/store-context";

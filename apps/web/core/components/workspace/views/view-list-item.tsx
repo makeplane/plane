@@ -8,7 +8,7 @@ import { Pencil, Trash2 } from "lucide-react";
 // plane imports
 import { GLOBAL_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { CustomMenu } from "@plane/ui";
-import { calculateTotalFilters, truncateText } from "@plane/utils";
+import { truncateText } from "@plane/utils";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
@@ -33,8 +33,6 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
 
   if (!view) return null;
 
-  const totalFilters = calculateTotalFilters(view.filters ?? {});
-
   return (
     <>
       <CreateUpdateWorkspaceViewModal data={view} isOpen={updateViewModal} onClose={() => setUpdateViewModal(false)} />
@@ -51,14 +49,9 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
               </div>
               <div className="ml-2 flex flex-shrink-0">
                 <div className="flex items-center gap-4">
-                  <p className="hidden rounded bg-custom-background-80 px-2 py-1 text-xs text-custom-text-200 group-hover:block">
-                    {totalFilters} {totalFilters === 1 ? "filter" : "filters"}
-                  </p>
                   <CustomMenu ellipsis>
                     <CustomMenu.MenuItem
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
+                      onClick={() => {
                         captureClick({
                           elementName: GLOBAL_VIEW_TRACKER_ELEMENTS.LIST_ITEM,
                         });
@@ -71,9 +64,7 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
                       </span>
                     </CustomMenu.MenuItem>
                     <CustomMenu.MenuItem
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
+                      onClick={() => {
                         captureClick({
                           elementName: GLOBAL_VIEW_TRACKER_ELEMENTS.LIST_ITEM,
                         });

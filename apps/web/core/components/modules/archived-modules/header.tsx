@@ -1,10 +1,12 @@
-import { FC, useCallback, useRef, useState } from "react";
+import type { FC } from "react";
+import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { ListFilter, Search, X } from "lucide-react";
-// plane helpers
+import { ListFilter, Search } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
+import { CloseIcon } from "@plane/propel/icons";
+// plane helpers
 // types
 import type { TModuleFilters } from "@plane/types";
 import { cn, calculateTotalFilters } from "@plane/utils";
@@ -118,7 +120,7 @@ export const ArchivedModulesHeader: FC = observer(() => {
                 setIsSearchOpen(false);
               }}
             >
-              <X className="h-3 w-3" />
+              <CloseIcon className="h-3 w-3" />
             </button>
           )}
         </div>

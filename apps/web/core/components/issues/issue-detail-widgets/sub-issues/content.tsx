@@ -1,7 +1,9 @@
 "use client";
-import React, { FC, useEffect, useState, useCallback } from "react";
+import type { FC } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { observer } from "mobx-react";
-import { EIssueServiceType, EIssuesStoreType, TIssue, TIssueServiceType } from "@plane/types";
+import type { TIssue, TIssueServiceType } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 // components
 import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
 // hooks
@@ -122,7 +124,7 @@ export const SubIssuesCollapsibleContent: FC<Props> = observer((props) => {
           parentIssueId={parentIssueId}
           rootIssueId={parentIssueId}
           spacingLeft={6}
-          disabled={!disabled}
+          canEdit={!disabled}
           handleIssueCrudState={handleIssueCrudState}
           subIssueOperations={subIssueOperations}
           issueServiceType={issueServiceType}

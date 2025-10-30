@@ -5,9 +5,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
 import { GLOBAL_VIEW_TRACKER_EVENTS } from "@plane/constants";
-import { IWorkspaceView } from "@plane/types";
+import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IWorkspaceView } from "@plane/types";
 // ui
-import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { AlertModalCore } from "@plane/ui";
 // constants
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
@@ -27,7 +29,7 @@ export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = useParams();
   // store hooks
   const { deleteGlobalView } = useGlobalView();
-
+  const { t } = useTranslation();
   const handleClose = () => onClose();
 
   const handleDeletion = async () => {
@@ -73,14 +75,8 @@ export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
       handleSubmit={handleDeletion}
       isSubmitting={isDeleteLoading}
       isOpen={isOpen}
-      title="Delete view"
-      content={
-        <>
-          Are you sure you want to delete view-{" "}
-          <span className="break-words font-medium text-custom-text-100">{data?.name}</span>? All of the data related to
-          the view will be permanently removed. This action cannot be undone.
-        </>
-      }
+      title={t("workspace_views.delete_view.title")}
+      content={<>{t("workspace_views.delete_view.content")}</>}
     />
   );
 });

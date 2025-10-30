@@ -48,9 +48,7 @@ class SoftDeletionQuerySet(models.QuerySet):
 
 class SoftDeletionManager(models.Manager):
     def get_queryset(self):
-        return SoftDeletionQuerySet(self.model, using=self._db).filter(
-            deleted_at__isnull=True
-        )
+        return SoftDeletionQuerySet(self.model, using=self._db).filter(deleted_at__isnull=True)
 
 
 class SoftDeleteModel(models.Model):
@@ -70,9 +68,7 @@ class SoftDeleteModel(models.Model):
             self.deleted_at = timezone.now()
             self.save(using=using)
 
-            soft_delete_related_objects.delay(
-                self._meta.app_label, self._meta.model_name, self.pk, using=using
-            )
+            soft_delete_related_objects.delay(self._meta.app_label, self._meta.model_name, self.pk, using=using)
 
         else:
             # Perform hard delete if soft deletion is not enabled

@@ -1,7 +1,8 @@
-import { MutableRefObject, useState } from "react";
+import type { MutableRefObject } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // types
-import {
+import type {
   GroupByColumnTypes,
   IGroupByColumn,
   TGroupedIssues,

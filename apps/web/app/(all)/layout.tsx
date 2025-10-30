@@ -1,9 +1,9 @@
-import { Metadata, Viewport } from "next";
+import type { Metadata, Viewport } from "next";
 
 import { PreloadResources } from "./layout.preload";
 
 // styles
-import "@/styles/command-pallette.css";
+import "@/styles/power-k.css";
 import "@/styles/emoji.css";
 import "@plane/propel/styles/react-day-picker";
 

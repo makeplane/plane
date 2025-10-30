@@ -1,13 +1,17 @@
 "use client";
 
-import { useState, FC } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronDown, LinkIcon, Trash2 } from "lucide-react";
+import { LinkIcon, Trash2 } from "lucide-react";
 // plane imports
 import { ROLE, EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CustomSelect, TOAST_TYPE, setToast, TContextMenuItem, CustomMenu } from "@plane/ui";
+import { ChevronDownIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TContextMenuItem } from "@plane/ui";
+import { CustomSelect, CustomMenu } from "@plane/ui";
 import { cn, copyTextToClipboard } from "@plane/utils";
 // components
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace/confirm-workspace-member-remove";
@@ -145,7 +149,7 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
                 </span>
                 {hasRoleChangeAccess && (
                   <span className="grid place-items-center">
-                    <ChevronDown className="h-3 w-3" />
+                    <ChevronDownIcon className="h-3 w-3" />
                   </span>
                 )}
               </div>
@@ -185,9 +189,7 @@ export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
                 return (
                   <CustomMenu.MenuItem
                     key={item.key}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
+                    onClick={() => {
                       item.action();
                     }}
                     className={cn(

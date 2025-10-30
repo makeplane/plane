@@ -17,7 +17,7 @@ import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-stat
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-import { ActiveCycleIssueDetails } from "@/store/issue/cycle";
+import type { ActiveCycleIssueDetails } from "@/store/issue/cycle";
 
 interface IActiveCycleDetails {
   workspaceSlug: string;

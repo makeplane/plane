@@ -1,4 +1,4 @@
-import range from "lodash/range";
+import { range } from "lodash-es";
 
 export const CycleModuleListLayoutLoader = () => (
   <div className="h-full overflow-y-auto animate-pulse">

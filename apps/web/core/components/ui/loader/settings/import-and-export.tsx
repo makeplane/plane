@@ -1,4 +1,4 @@
-import range from "lodash/range";
+import { range } from "lodash-es";
 
 export const ImportExportSettingsLoader = () => (
   <div className="divide-y-[0.5px] divide-custom-border-200 animate-pulse">

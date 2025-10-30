@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { Disclosure } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EUserWorkspaceRoles } from "@plane/types";
+import type { EUserWorkspaceRoles } from "@plane/types";
 import { cn, joinUrlPath } from "@plane/utils";
 // hooks
 import { useUserSettings } from "@/hooks/store/user";
@@ -41,8 +41,8 @@ const SettingsSidebarNavItem = observer((props: TSettingsSidebarNavItemProps) =>
     "flex w-full items-center px-2 py-1.5 rounded text-custom-text-200 justify-between",
     "hover:bg-custom-primary-100/10",
     {
-      "text-custom-primary-200 bg-custom-primary-100/10": typeof isActive === "function" ? isActive(setting) : isActive,
-      "hover:bg-custom-sidebar-background-90 active:bg-custom-sidebar-background-90":
+      "text-custom-text-200 bg-custom-background-80/75": typeof isActive === "function" ? isActive(setting) : isActive,
+      "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 active:bg-custom-sidebar-background-90":
         typeof isActive === "function" ? !isActive(setting) : !isActive,
     }
   );
@@ -83,14 +83,9 @@ const SettingsSidebarNavItem = observer((props: TSettingsSidebarNavItemProps) =>
       </Disclosure.Button>
       {/* Nested Navigation */}
       {isExpanded && (
-        <Disclosure.Panel
-          as="div"
-          className={cn("flex flex-col gap-0.5", {
-            "space-y-0 ml-0": isExpanded,
-          })}
-          static
-        >
-          <div className="ml-4 border-l border-custom-border-200 pl-2 my-0.5">{renderChildren?.(setting.key)}</div>
+        <Disclosure.Panel as="div" className={cn("relative flex flex-col gap-0.5 mt-1 pl-6 mb-1.5")} static>
+          <div className="absolute left-[15px] top-0 bottom-1 w-[1px] bg-custom-border-200" />
+          {renderChildren?.(setting.key)}
         </Disclosure.Panel>
       )}
     </Disclosure>

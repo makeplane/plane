@@ -23,27 +23,20 @@ class Command(BaseCommand):
             creator = input("Your email: ")
 
             if creator == "" or not User.objects.filter(email=creator).exists():
-                raise CommandError(
-                    "User email is required and should have signed in plane"
-                )
+                raise CommandError("User email is required and should have signed in plane")
 
             user = User.objects.get(email=creator)
 
             members = input("Enter Member emails (comma separated): ")
             members = members.split(",") if members != "" else []
             # Create workspace
-            workspace = Workspace.objects.create(
-                slug=workspace_slug, name=workspace_name, owner=user
-            )
+            workspace = Workspace.objects.create(slug=workspace_slug, name=workspace_name, owner=user)
             # Create workspace member
             WorkspaceMember.objects.create(workspace=workspace, role=20, member=user)
             user_ids = User.objects.filter(email__in=members)
 
             _ = WorkspaceMember.objects.bulk_create(
-                [
-                    WorkspaceMember(workspace=workspace, member=user_id, role=20)
-                    for user_id in user_ids
-                ],
+                [WorkspaceMember(workspace=workspace, member=user_id, role=20) for user_id in user_ids],
                 ignore_conflicts=True,
             )
 
@@ -55,9 +48,7 @@ class Command(BaseCommand):
                 cycle_count = int(input("Number of cycles to be created: "))
                 module_count = int(input("Number of modules to be created: "))
                 pages_count = int(input("Number of pages to be created: "))
-                intake_issue_count = int(
-                    input("Number of intake issues to be created: ")
-                )
+                intake_issue_count = int(input("Number of intake issues to be created: "))
 
                 from plane.bgtasks.dummy_data_task import create_dummy_data
 

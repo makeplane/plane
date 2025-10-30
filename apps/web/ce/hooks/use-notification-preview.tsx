@@ -1,7 +1,8 @@
-import { EIssueServiceType, IWorkItemPeekOverview } from "@plane/types";
+import type { IWorkItemPeekOverview } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { TPeekIssue } from "@/store/issue/issue-details/root.store";
+import type { TPeekIssue } from "@/store/issue/issue-details/root.store";
 
 export type TNotificationPreview = {
   isWorkItem: boolean;

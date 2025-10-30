@@ -1,12 +1,10 @@
-import concat from "lodash/concat";
-import set from "lodash/set";
-import sortBy from "lodash/sortBy";
-import update from "lodash/update";
+import { update, concat, set, sortBy } from "lodash-es";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { IModule, ILinkDetails, TModulePlotType } from "@plane/types";
-import { DistributionUpdates, updateDistribution, orderModules, shouldFilterModule } from "@plane/utils";
+import type { IModule, ILinkDetails, TModulePlotType } from "@plane/types";
+import type { DistributionUpdates } from "@plane/utils";
+import { updateDistribution, orderModules, shouldFilterModule } from "@plane/utils";
 // helpers
 // services
 import { syncIssuesWithDeletedModules } from "@/local-db/utils/load-workspace";

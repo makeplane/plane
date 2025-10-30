@@ -53,9 +53,7 @@ class ReadReplicaRouter:
         logger.debug(f"Routing write for {model._meta.label} to primary database")
         return "default"
 
-    def allow_migrate(
-        self, db: str, app_label: str, model_name: str = None, **hints
-    ) -> bool:
+    def allow_migrate(self, db: str, app_label: str, model_name: str = None, **hints) -> bool:
         """
         Ensure migrations only run on the primary database.
         Args:

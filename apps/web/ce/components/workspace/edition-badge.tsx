@@ -2,8 +2,8 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
-import { Button } from "@plane/ui";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import packageJson from "package.json";

@@ -76,6 +76,9 @@ declare module "@tiptap/core" {
       unsetLink: () => ReturnType;
     };
   }
+  interface Storage {
+    [CORE_EXTENSIONS.CUSTOM_LINK]: CustomLinkStorage;
+  }
 }
 
 export type CustomLinkStorage = {

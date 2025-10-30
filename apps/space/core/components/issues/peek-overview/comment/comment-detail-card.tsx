@@ -1,11 +1,12 @@
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { Check, MessageSquare, MoreVertical, X } from "lucide-react";
+import { Check, MessageSquare, MoreVertical } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
 // plane imports
-import { EditorRefApi } from "@plane/editor";
-import { TIssuePublicComment } from "@plane/types";
+import type { EditorRefApi } from "@plane/editor";
+import { CloseIcon } from "@plane/propel/icons";
+import type { TIssuePublicComment } from "@plane/types";
 import { getFileURL } from "@plane/utils";
 // components
 import { LiteTextEditor } from "@/components/editor/lite-text-editor";
@@ -136,7 +137,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                 className="group rounded border border-red-500 bg-red-500/20 p-2 shadow-md duration-300 hover:bg-red-500"
                 onClick={() => setIsEditing(false)}
               >
-                <X className="h-3 w-3 text-red-500 duration-300 group-hover:text-white" strokeWidth={2} />
+                <CloseIcon className="h-3 w-3 text-red-500 duration-300 group-hover:text-white" strokeWidth={2} />
               </button>
             </div>
           </form>

@@ -9,16 +9,6 @@ const meta: Meta<typeof Breadcrumbs> = {
   title: "UI/Breadcrumbs",
   component: Breadcrumbs,
   tags: ["autodocs"],
-  argTypes: {
-    isLoading: {
-      control: "boolean",
-      description: "Shows loading state of breadcrumbs",
-    },
-    onBack: {
-      action: "onBack",
-      description: "Callback function when back button is clicked",
-    },
-  },
 };
 
 type TBreadcrumbBlockProps = {

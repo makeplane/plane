@@ -1,16 +1,17 @@
-/* eslint-disable no-useless-catch */
-
-import orderBy from "lodash/orderBy";
-import set from "lodash/set";
-// import unset from "lodash/unset";
+import { orderBy, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { IEstimate as IEstimateType, IEstimatePoint as IEstimatePointType, TEstimateSystemKeys } from "@plane/types";
+import type {
+  IEstimate as IEstimateType,
+  IEstimatePoint as IEstimatePointType,
+  TEstimateSystemKeys,
+} from "@plane/types";
 // plane web services
 import estimateService from "@/plane-web/services/project/estimate.service";
 // store
-import { IEstimatePoint, EstimatePoint } from "@/store/estimates/estimate-point";
+import type { IEstimatePoint } from "@/store/estimates/estimate-point";
+import { EstimatePoint } from "@/store/estimates/estimate-point";
 import type { CoreRootStore } from "@/store/root.store";
 
 type TErrorCodes = {
@@ -140,19 +141,15 @@ export class Estimate implements IEstimate {
     projectId: string,
     payload: Partial<IEstimatePointType>
   ): Promise<IEstimatePointType | undefined> => {
-    try {
-      if (!this.id || !payload) return;
+    if (!this.id || !payload) return;
 
-      const estimatePoint = await estimateService.createEstimatePoint(workspaceSlug, projectId, this.id, payload);
-      if (estimatePoint) {
-        runInAction(() => {
-          if (estimatePoint.id) {
-            set(this.estimatePoints, [estimatePoint.id], new EstimatePoint(this.store, this.data, estimatePoint));
-          }
-        });
-      }
-    } catch (error) {
-      throw error;
+    const estimatePoint = await estimateService.createEstimatePoint(workspaceSlug, projectId, this.id, payload);
+    if (estimatePoint) {
+      runInAction(() => {
+        if (estimatePoint.id) {
+          set(this.estimatePoints, [estimatePoint.id], new EstimatePoint(this.store, this.data, estimatePoint));
+        }
+      });
     }
   };
 }

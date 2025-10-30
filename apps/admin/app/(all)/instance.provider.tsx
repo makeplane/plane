@@ -1,4 +1,4 @@
-import { FC, ReactNode } from "react";
+import type { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // hooks

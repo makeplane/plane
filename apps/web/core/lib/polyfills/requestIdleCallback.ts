@@ -1,5 +1,5 @@
 if (typeof window !== "undefined" && window) {
-  // Add request callback polyfill to browser incase it does not exist
+  // Add request callback polyfill to browser in case it does not exist
   window.requestIdleCallback =
     window.requestIdleCallback ??
     function (cb) {

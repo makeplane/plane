@@ -18,16 +18,12 @@ def allow_permission(allowed_roles, level="PROJECT", creator=False, model=None):
         def _wrapped_view(instance, request, *args, **kwargs):
             # Check for creator if required
             if creator and model:
-                obj = model.objects.filter(
-                    id=kwargs["pk"], created_by=request.user
-                ).exists()
+                obj = model.objects.filter(id=kwargs["pk"], created_by=request.user).exists()
                 if obj:
                     return view_func(instance, request, *args, **kwargs)
 
             # Convert allowed_roles to their values if they are enum members
-            allowed_role_values = [
-                role.value if isinstance(role, ROLE) else role for role in allowed_roles
-            ]
+            allowed_role_values = [role.value if isinstance(role, ROLE) else role for role in allowed_roles]
 
             # Check role permissions
             if level == "WORKSPACE":
@@ -47,7 +43,7 @@ def allow_permission(allowed_roles, level="PROJECT", creator=False, model=None):
                     is_active=True,
                 ).exists()
 
-                # Return if the user has the allowed role else if they are workspace admin and part of the project regardless of the role
+                # Return if the user has the allowed role else if they are workspace admin and part of the project regardless of the role # noqa: E501
                 if is_user_has_allowed_role:
                     return view_func(instance, request, *args, **kwargs)
                 elif (

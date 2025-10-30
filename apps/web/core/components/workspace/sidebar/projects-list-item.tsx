@@ -9,13 +9,13 @@ import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import { createRoot } from "react-dom/client";
-import { LinkIcon, Settings, Share2, LogOut, MoreHorizontal, ChevronRight } from "lucide-react";
+import { LinkIcon, Settings, Share2, LogOut, MoreHorizontal } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { ArchiveIcon } from "@plane/propel/icons";
+import { ArchiveIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { CustomMenu, DropIndicator, DragHandle, ControlLink } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -384,7 +384,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                     : "aria_labels.projects_sidebar.open_project_menu"
                 )}
               >
-                <ChevronRight
+                <ChevronRightIcon
                   className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
                     "rotate-90": isProjectListOpen,
                   })}
@@ -402,7 +402,8 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
             leaveTo="transform scale-95 opacity-0"
           >
             {isProjectListOpen && (
-              <Disclosure.Panel as="div" className="flex flex-col gap-0.5 mt-1">
+              <Disclosure.Panel as="div" className="relative flex flex-col gap-0.5 mt-1 pl-6 mb-1.5">
+                <div className="absolute left-[15px] top-0 bottom-1 w-[1px] bg-custom-border-200" />
                 <ProjectNavigationRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
               </Disclosure.Panel>
             )}

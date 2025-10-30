@@ -1,12 +1,14 @@
 "use client";
 
-import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check, ChevronDown } from "lucide-react";
+import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check } from "lucide-react";
 // types
 import { VIEW_SORT_BY_OPTIONS, VIEW_SORTING_KEY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TViewFiltersSortBy, TViewFiltersSortKey } from "@plane/types";
+import { getButtonStyling } from "@plane/propel/button";
+import { ChevronDownIcon } from "@plane/propel/icons";
+import type { TViewFiltersSortBy, TViewFiltersSortKey } from "@plane/types";
 // ui
-import { CustomMenu, getButtonStyling } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 // constants
 
 type Props = {
@@ -37,7 +39,7 @@ export const ViewOrderByDropdown: React.FC<Props> = (props) => {
         <span className={buttonClassName}>
           {!isMobile && icon}
           <span className="flex-shrink-0"> {orderByDetails?.i18n_label && t(orderByDetails?.i18n_label)}</span>
-          <ChevronDown className={chevronClassName} strokeWidth={2} />
+          <ChevronDownIcon className={chevronClassName} strokeWidth={2} />
         </span>
       }
       placement="bottom-end"

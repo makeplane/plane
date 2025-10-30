@@ -1,7 +1,9 @@
-import { FC, useState, useRef, useEffect } from "react";
-import { Search, X } from "lucide-react";
-// plane helpers
+import type { FC } from "react";
+import { useState, useRef, useEffect } from "react";
+import { Search } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
+import { CloseIcon } from "@plane/propel/icons";
+// plane helpers
 // helpers
 import { cn } from "@plane/utils";
 
@@ -75,7 +77,7 @@ export const PageSearchInput: FC<Props> = (props) => {
               setIsSearchOpen(false);
             }}
           >
-            <X className="h-3 w-3" />
+            <CloseIcon className="h-3 w-3" />
           </button>
         )}
       </div>

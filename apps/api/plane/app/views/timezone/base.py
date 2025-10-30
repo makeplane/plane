@@ -99,7 +99,7 @@ class TimezoneEndpoint(APIView):
             ("Tunis", "Africa/Tunis"),  # UTC+01:00
             (
                 "Eastern European Time (Cairo, Helsinki, Kyiv)",
-                "Europe/Kiev",
+                "Europe/Kyiv",
             ),  # UTC+02:00 (DST: UTC+03:00)
             ("Athens", "Europe/Athens"),  # UTC+02:00 (DST: UTC+03:00)
             ("Jerusalem", "Asia/Jerusalem"),  # UTC+02:00 (DST: UTC+03:00)
@@ -187,10 +187,7 @@ class TimezoneEndpoint(APIView):
                 total_seconds = int(current_utc_offset.total_seconds())
                 hours_offset = total_seconds // 3600
                 minutes_offset = abs(total_seconds % 3600) // 60
-                offset = (
-                    f"{'+' if hours_offset >= 0 else '-'}"
-                    f"{abs(hours_offset):02}:{minutes_offset:02}"
-                )
+                offset = f"{'+' if hours_offset >= 0 else '-'}{abs(hours_offset):02}:{minutes_offset:02}"
 
                 timezone_value = {
                     "offset": int(current_offset),

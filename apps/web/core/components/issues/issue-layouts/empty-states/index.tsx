@@ -1,7 +1,8 @@
 // plane web components
 import { EIssuesStoreType } from "@plane/types";
-import { TeamEmptyState, TeamViewEmptyState } from "@/plane-web/components/issues/issue-layouts/empty-states";
+import { TeamEmptyState } from "@/plane-web/components/issues/issue-layouts/empty-states/team-issues";
 import { TeamProjectWorkItemEmptyState } from "@/plane-web/components/issues/issue-layouts/empty-states/team-project";
+import { TeamViewEmptyState } from "@/plane-web/components/issues/issue-layouts/empty-states/team-view-issues";
 // components
 import { ProjectArchivedEmptyState } from "./archived-issues";
 import { CycleEmptyState } from "./cycle";

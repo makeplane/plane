@@ -6,8 +6,10 @@ import { useParams } from "next/navigation";
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 // Plane imports
 import { useTranslation } from "@plane/i18n";
-import { EIssuesStoreType, TBaseIssue, TIssue } from "@plane/types";
-import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TBaseIssue, TIssue } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
@@ -24,7 +26,8 @@ const fileService = new FileService();
 // local imports
 import { CreateIssueToastActionItems } from "../create-issue-toast-action-items";
 import { DraftIssueLayout } from "./draft-issue-layout";
-import { type IssueFormProps, IssueFormRoot } from "./form";
+import { IssueFormRoot } from "./form";
+import type { IssueFormProps } from "./form";
 import type { IssuesModalProps } from "./modal";
 
 export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((props) => {
@@ -365,7 +368,6 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     isDuplicateModalOpen: isDuplicateModalOpen,
     handleDuplicateIssueModal: handleDuplicateIssueModal,
     isProjectSelectionDisabled: isProjectSelectionDisabled,
-    storeType: storeType,
   };
 
   return (

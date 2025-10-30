@@ -10,6 +10,7 @@ import type { TFileHandler } from "@/types";
 // local imports
 import { CustomImageNodeView, CustomImageNodeViewProps } from "./components/node-view";
 import { CustomImageExtensionConfig } from "./extension-config";
+import type { CustomImageExtensionOptions, CustomImageExtensionStorage } from "./types";
 import { getImageComponentImageFileMap } from "./utils";
 
 type Props = {
@@ -22,7 +23,7 @@ export const CustomImageExtension = (props: Props) => {
   // derived values
   const { getAssetSrc, getAssetDownloadSrc, restore: restoreImageFn } = fileHandler;
 
-  return CustomImageExtensionConfig.extend({
+  return CustomImageExtensionConfig.extend<CustomImageExtensionOptions, CustomImageExtensionStorage>({
     selectable: isEditable,
     draggable: isEditable,
 

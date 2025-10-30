@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { WEBSITE_URL } from "@plane/constants";
 // assets
 import { PlaneLogo } from "@plane/propel/icons";

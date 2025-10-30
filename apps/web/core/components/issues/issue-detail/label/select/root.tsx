@@ -1,6 +1,6 @@
-import { FC } from "react";
+import type { FC } from "react";
 // components
-import { TLabelOperations } from "../root";
+import type { TLabelOperations } from "../root";
 import { IssueLabelSelect } from "./label-select";
 // types
 

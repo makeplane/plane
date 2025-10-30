@@ -1,10 +1,9 @@
-import groupBy from "lodash/groupBy";
-import set from "lodash/set";
+import { set, groupBy } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { STATE_GROUPS } from "@plane/constants";
-import { IState } from "@plane/types";
+import type { IState } from "@plane/types";
 // helpers
 import { sortStates } from "@plane/utils";
 // plane web
@@ -239,7 +238,7 @@ export class StateStore implements IStateStore {
   };
 
   /**
-   * deletes the state from the store, incase of failure reverts back to original state
+   * deletes the state from the store, in case of failure reverts back to original state
    * @param workspaceSlug
    * @param projectId
    * @param stateId

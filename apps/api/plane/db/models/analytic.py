@@ -5,9 +5,7 @@ from .base import BaseModel
 
 
 class AnalyticView(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", related_name="analytics", on_delete=models.CASCADE
-    )
+    workspace = models.ForeignKey("db.Workspace", related_name="analytics", on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     query = models.JSONField()

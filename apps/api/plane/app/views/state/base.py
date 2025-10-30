@@ -57,9 +57,7 @@ class StateViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def partial_update(self, request, slug, project_id, pk):
         try:
-            state = State.objects.get(
-                pk=pk, project_id=project_id, workspace__slug=slug
-            )
+            state = State.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
             serializer = StateSerializer(state, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
@@ -103,20 +101,14 @@ class StateViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN])
     def mark_as_default(self, request, slug, project_id, pk):
         # Select all the states which are marked as default
-        _ = State.objects.filter(
-            workspace__slug=slug, project_id=project_id, default=True
-        ).update(default=False)
-        _ = State.objects.filter(
-            workspace__slug=slug, project_id=project_id, pk=pk
-        ).update(default=True)
+        _ = State.objects.filter(workspace__slug=slug, project_id=project_id, default=True).update(default=False)
+        _ = State.objects.filter(workspace__slug=slug, project_id=project_id, pk=pk).update(default=True)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])
     def destroy(self, request, slug, project_id, pk):
-        state = State.objects.get(
-            is_triage=False, pk=pk, project_id=project_id, workspace__slug=slug
-        )
+        state = State.objects.get(is_triage=False, pk=pk, project_id=project_id, workspace__slug=slug)
 
         if state.default:
             return Response(

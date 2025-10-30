@@ -19,27 +19,20 @@ def get_view_props():
 class Page(BaseModel):
     PRIVATE_ACCESS = 1
     PUBLIC_ACCESS = 0
+    DEFAULT_SORT_ORDER = 65535
 
     ACCESS_CHOICES = ((PRIVATE_ACCESS, "Private"), (PUBLIC_ACCESS, "Public"))
 
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="pages"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="pages")
     name = models.TextField(blank=True)
     description = models.JSONField(default=dict, blank=True)
     description_binary = models.BinaryField(null=True)
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
-    owned_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="pages"
-    )
-    access = models.PositiveSmallIntegerField(
-        choices=((0, "Public"), (1, "Private")), default=0
-    )
+    owned_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="pages")
+    access = models.PositiveSmallIntegerField(choices=((0, "Public"), (1, "Private")), default=0)
     color = models.CharField(max_length=255, blank=True)
-    labels = models.ManyToManyField(
-        "db.Label", blank=True, related_name="pages", through="db.PageLabel"
-    )
+    labels = models.ManyToManyField("db.Label", blank=True, related_name="pages", through="db.PageLabel")
     parent = models.ForeignKey(
         "self",
         on_delete=models.CASCADE,
@@ -52,12 +45,10 @@ class Page(BaseModel):
     view_props = models.JSONField(default=get_view_props)
     logo_props = models.JSONField(default=dict)
     is_global = models.BooleanField(default=False)
-    projects = models.ManyToManyField(
-        "db.Project", related_name="pages", through="db.ProjectPage"
-    )
+    projects = models.ManyToManyField("db.Project", related_name="pages", through="db.ProjectPage")
     moved_to_page = models.UUIDField(null=True, blank=True)
     moved_to_project = models.UUIDField(null=True, blank=True)
-    sort_order = models.FloatField(default=65535)
+    sort_order = models.FloatField(default=DEFAULT_SORT_ORDER)
 
     external_id = models.CharField(max_length=255, null=True, blank=True)
     external_source = models.CharField(max_length=255, null=True, blank=True)
@@ -101,12 +92,8 @@ class PageLog(BaseModel):
     page = models.ForeignKey(Page, related_name="page_log", on_delete=models.CASCADE)
     entity_identifier = models.UUIDField(null=True, blank=True)
     entity_name = models.CharField(max_length=30, verbose_name="Transaction Type")
-    entity_type = models.CharField(
-        max_length=30, verbose_name="Entity Type", null=True, blank=True
-    )
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_page_log"
-    )
+    entity_type = models.CharField(max_length=30, verbose_name="Entity Type", null=True, blank=True)
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="workspace_page_log")
 
     class Meta:
         unique_together = ["page", "transaction"]
@@ -118,12 +105,8 @@ class PageLog(BaseModel):
             models.Index(fields=["entity_type"], name="pagelog_entity_type_idx"),
             models.Index(fields=["entity_identifier"], name="pagelog_entity_id_idx"),
             models.Index(fields=["entity_name"], name="pagelog_entity_name_idx"),
-            models.Index(
-                fields=["entity_type", "entity_identifier"], name="pagelog_type_id_idx"
-            ),
-            models.Index(
-                fields=["entity_name", "entity_identifier"], name="pagelog_name_id_idx"
-            ),
+            models.Index(fields=["entity_type", "entity_identifier"], name="pagelog_type_id_idx"),
+            models.Index(fields=["entity_name", "entity_identifier"], name="pagelog_name_id_idx"),
         ]
 
     def __str__(self):
@@ -131,15 +114,9 @@ class PageLog(BaseModel):
 
 
 class PageLabel(BaseModel):
-    label = models.ForeignKey(
-        "db.Label", on_delete=models.CASCADE, related_name="page_labels"
-    )
-    page = models.ForeignKey(
-        "db.Page", on_delete=models.CASCADE, related_name="page_labels"
-    )
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_page_label"
-    )
+    label = models.ForeignKey("db.Label", on_delete=models.CASCADE, related_name="page_labels")
+    page = models.ForeignKey("db.Page", on_delete=models.CASCADE, related_name="page_labels")
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="workspace_page_label")
 
     class Meta:
         verbose_name = "Page Label"
@@ -152,15 +129,9 @@ class PageLabel(BaseModel):
 
 
 class ProjectPage(BaseModel):
-    project = models.ForeignKey(
-        "db.Project", on_delete=models.CASCADE, related_name="project_pages"
-    )
-    page = models.ForeignKey(
-        "db.Page", on_delete=models.CASCADE, related_name="project_pages"
-    )
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="project_pages"
-    )
+    project = models.ForeignKey("db.Project", on_delete=models.CASCADE, related_name="project_pages")
+    page = models.ForeignKey("db.Page", on_delete=models.CASCADE, related_name="project_pages")
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="project_pages")
 
     class Meta:
         unique_together = ["project", "page", "deleted_at"]
@@ -181,16 +152,10 @@ class ProjectPage(BaseModel):
 
 
 class PageVersion(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="page_versions"
-    )
-    page = models.ForeignKey(
-        "db.Page", on_delete=models.CASCADE, related_name="page_versions"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="page_versions")
+    page = models.ForeignKey("db.Page", on_delete=models.CASCADE, related_name="page_versions")
     last_saved_at = models.DateTimeField(default=timezone.now)
-    owned_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="page_versions"
-    )
+    owned_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="page_versions")
     description_binary = models.BinaryField(null=True)
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)

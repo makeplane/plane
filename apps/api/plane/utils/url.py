@@ -10,11 +10,11 @@ URL_PATTERN = re.compile(
     r"(?:"  # Non-capturing group for alternatives
     r"https?://[^\s]+"  # http:// or https:// followed by non-whitespace
     r"|"
-    r"www\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*"  # www.domain with proper length limits
+    r"www\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*"  # noqa: E501
     r"|"
-    r"(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}"  # domain.tld with length limits
+    r"(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}"  # noqa: E501
     r"|"
-    r"(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"  # IP address with proper validation
+    r"(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"  # noqa: E501
     r")"
 )
 
@@ -85,7 +85,10 @@ def get_url_components(url: str) -> Optional[dict]:
 
     Example:
         >>> get_url_components("https://example.com/path?query=1")
-        {'scheme': 'https', 'netloc': 'example.com', 'path': '/path', 'params': '', 'query': 'query=1', 'fragment': ''}
+        {
+        'scheme': 'https', 'netloc': 'example.com',
+        'path': '/path', 'params': '',
+        'query': 'query=1', 'fragment': ''}
     """
     if not is_valid_url(url):
         return None
@@ -102,9 +105,11 @@ def get_url_components(url: str) -> Optional[dict]:
 
 def normalize_url_path(url: str) -> str:
     """
-    Normalize the path component of a URL by replacing multiple consecutive slashes with a single slash.
+    Normalize the path component of a URL by
+    replacing multiple consecutive slashes with a single slash.
 
-    This function preserves the protocol, domain, query parameters, and fragments of the URL,
+    This function preserves the protocol, domain,
+    query parameters, and fragments of the URL,
     only modifying the path portion to ensure there are no duplicate slashes.
 
     Args:

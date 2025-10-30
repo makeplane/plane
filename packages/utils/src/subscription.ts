@@ -1,4 +1,4 @@
-import orderBy from "lodash/orderBy";
+import { orderBy } from "lodash-es";
 // plane imports
 import { EProductSubscriptionEnum, IPaymentProduct, TProductSubscriptionType, TSubscriptionPrice } from "@plane/types";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import range from "lodash/range";
+import { range } from "lodash-es";
 // ui
 import { Loader } from "@plane/ui";
 

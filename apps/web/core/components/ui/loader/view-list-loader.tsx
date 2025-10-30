@@ -1,4 +1,4 @@
-import range from "lodash/range";
+import { range } from "lodash-es";
 
 export const ViewListLoader = () => (
   <div className="flex h-full w-full flex-col animate-pulse">

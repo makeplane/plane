@@ -1,13 +1,14 @@
-import { FC, useState, useRef } from "react";
+import type { FC } from "react";
+import { useState, useRef } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
-import { MoreHorizontal, ArchiveIcon, ChevronRight, Settings } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { MoreHorizontal, ArchiveIcon, Settings } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { ChevronRightIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -27,6 +28,7 @@ export const SidebarWorkspaceMenuHeader: FC<SidebarWorkspaceMenuHeaderProps> = o
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
   // hooks
   const { workspaceSlug } = useParams();
+  const router = useRouter();
   const { allowPermissions } = useUserPermissions();
   const { t } = useTranslation();
 
@@ -66,23 +68,19 @@ export const SidebarWorkspaceMenuHeader: FC<SidebarWorkspaceMenuHeaderProps> = o
         customButtonClassName="grid place-items-center"
         placement="bottom-start"
       >
-        <CustomMenu.MenuItem>
-          <Link href={`/${workspaceSlug}/projects/archives`}>
-            <div className="flex items-center justify-start gap-2">
-              <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
-              <span>{t("archives")}</span>
-            </div>
-          </Link>
+        <CustomMenu.MenuItem onClick={() => router.push(`/${workspaceSlug}/projects/archives`)}>
+          <div className="flex items-center justify-start gap-2">
+            <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
+            <span>{t("archives")}</span>
+          </div>
         </CustomMenu.MenuItem>
 
         {isAdmin && (
-          <CustomMenu.MenuItem>
-            <Link href={`/${workspaceSlug}/settings`}>
-              <div className="flex items-center justify-start gap-2">
-                <Settings className="h-3.5 w-3.5 stroke-[1.5]" />
-                <span>{t("settings")}</span>
-              </div>
-            </Link>
+          <CustomMenu.MenuItem onClick={() => router.push(`/${workspaceSlug}/settings`)}>
+            <div className="flex items-center justify-start gap-2">
+              <Settings className="h-3.5 w-3.5 stroke-[1.5]" />
+              <span>{t("settings")}</span>
+            </div>
           </CustomMenu.MenuItem>
         )}
       </CustomMenu>
@@ -93,7 +91,7 @@ export const SidebarWorkspaceMenuHeader: FC<SidebarWorkspaceMenuHeaderProps> = o
       >
         {" "}
         <span className="flex-shrink-0 opacity-0 pointer-events-none group-hover/workspace-button:opacity-100 group-hover/workspace-button:pointer-events-auto rounded hover:bg-custom-sidebar-background-80">
-          <ChevronRight
+          <ChevronRightIcon
             className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
               "rotate-90": isWorkspaceMenuOpen,
             })}

@@ -1,16 +1,9 @@
-// base class
-// types
-import concat from "lodash/concat";
-import get from "lodash/get";
-import set from "lodash/set";
-import uniq from "lodash/uniq";
-import update from "lodash/update";
+import { get, set, concat, uniq, update } from "lodash-es";
 import { action, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-// types
-// plane constants
+// plane imports
 import { ALL_ISSUES } from "@plane/constants";
-import {
+import type {
   TIssue,
   TLoader,
   IssuePaginationOptions,
@@ -23,10 +16,11 @@ import { getDistributionPathsPostUpdate } from "@plane/utils";
 //local
 import { storage } from "@/lib/local-storage";
 import { persistence } from "@/local-db/storage.sqlite";
-import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
+import type { IBaseIssuesStore } from "../helpers/base-issues.store";
+import { BaseIssuesStore } from "../helpers/base-issues.store";
 //
-import { IIssueRootStore } from "../root.store";
-import { ICycleIssuesFilter } from "./filter.store";
+import type { IIssueRootStore } from "../root.store";
+import type { ICycleIssuesFilter } from "./filter.store";
 
 export const ACTIVE_CYCLE_ISSUES = "ACTIVE_CYCLE_ISSUES";
 
@@ -141,15 +135,20 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
   fetchParentStats = (workspaceSlug: string, projectId?: string | undefined, id?: string | undefined) => {
     const cycleId = id ?? this.cycleId;
 
-    projectId && cycleId && this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
+    if (projectId && cycleId) {
+      this.rootIssueStore.rootStore.cycle.fetchCycleDetails(workspaceSlug, projectId, cycleId);
+    }
     // fetch cycle progress
     const isSidebarCollapsed = storage.get("cycle_sidebar_collapsed");
-    projectId &&
+    if (
+      projectId &&
       cycleId &&
       this.rootIssueStore.rootStore.cycle.getCycleById(cycleId)?.version === 2 &&
       isSidebarCollapsed &&
-      JSON.parse(isSidebarCollapsed) === false &&
+      JSON.parse(isSidebarCollapsed) === false
+    ) {
       this.rootIssueStore.rootStore.cycle.fetchActiveCycleProgressPro(workspaceSlug, projectId, cycleId);
+    }
   };
 
   updateParentStats = (prevIssueState?: TIssue, nextIssueState?: TIssue, id?: string | undefined) => {
@@ -162,8 +161,9 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
       );
 
       const cycleId = id ?? this.cycleId;
-
-      cycleId && this.rootIssueStore.rootStore.cycle.updateCycleDistribution(distributionUpdates, cycleId);
+      if (cycleId) {
+        this.rootIssueStore.rootStore.cycle.updateCycleDistribution(distributionUpdates, cycleId);
+      }
     } catch (e) {
       console.warn("could not update cycle statistics");
     }

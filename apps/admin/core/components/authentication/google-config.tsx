@@ -6,8 +6,9 @@ import Link from "next/link";
 // icons
 import { Settings2 } from "lucide-react";
 // plane internal packages
-import { TInstanceAuthenticationMethodKeys } from "@plane/types";
-import { ToggleSwitch, getButtonStyling } from "@plane/ui";
+import { getButtonStyling } from "@plane/propel/button";
+import type { TInstanceAuthenticationMethodKeys } from "@plane/types";
+import { ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useInstance } from "@/hooks/store";

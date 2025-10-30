@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 // helpers
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";

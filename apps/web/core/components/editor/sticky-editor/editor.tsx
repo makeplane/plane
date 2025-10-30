@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 // plane constants
-import { EIssueCommentAccessSpecifier } from "@plane/constants";
+import type { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
-import { type EditorRefApi, type ILiteTextEditorProps, LiteTextEditorWithRef, type TFileHandler } from "@plane/editor";
+import { LiteTextEditorWithRef } from "@plane/editor";
+import type { EditorRefApi, ILiteTextEditorProps, TFileHandler } from "@plane/editor";
 // components
-import { TSticky } from "@plane/types";
+import type { TSticky } from "@plane/types";
 // helpers
 import { cn } from "@plane/utils";
 // hooks

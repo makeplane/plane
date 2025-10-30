@@ -101,9 +101,7 @@ class MongoConnection:
         try:
             db = cls.get_db()
             if db is None:
-                logger.warning(
-                    f"Cannot access collection '{collection_name}': MongoDB not configured"
-                )
+                logger.warning(f"Cannot access collection '{collection_name}': MongoDB not configured")
                 return None
             return db[collection_name]
         except Exception as e:

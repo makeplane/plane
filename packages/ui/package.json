@@ -2,15 +2,20 @@
   "name": "@plane/ui",
   "description": "UI components shared across multiple apps internally",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "sideEffects": false,
   "license": "AGPL-3.0",
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.cts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
@@ -29,8 +34,8 @@
     "react-dom": "catalog:"
   },
   "dependencies": {
-    "@atlaskit/pragmatic-drag-and-drop": "^1.1.10",
-    "@atlaskit/pragmatic-drag-and-drop-hitbox": "^1.0.3",
+    "@atlaskit/pragmatic-drag-and-drop": "catalog:",
+    "@atlaskit/pragmatic-drag-and-drop-hitbox": "catalog:",
     "@blueprintjs/core": "^4.16.3",
     "@blueprintjs/popover2": "^1.13.3",
     "@headlessui/react": "^1.7.3",
@@ -43,12 +48,11 @@
     "@radix-ui/react-scroll-area": "^1.2.3",
     "clsx": "^2.0.0",
     "emoji-picker-react": "^4.5.16",
-    "lodash": "catalog:",
+    "lodash-es": "catalog:",
     "lucide-react": "catalog:",
     "react-color": "^2.19.3",
     "react-day-picker": "9.5.0",
     "react-popper": "^2.3.0",
-    "sonner": "^1.4.41",
     "tailwind-merge": "^2.0.0",
     "use-font-face-observer": "^1.2.2"
   },
@@ -67,8 +71,8 @@
     "@storybook/react": "^8.1.1",
     "@storybook/react-webpack5": "^8.1.1",
     "@storybook/test": "^8.1.1",
-    "@types/lodash": "catalog:",
-    "@types/node": "^20.5.2",
+    "@types/lodash-es": "catalog:",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-color": "^3.0.9",
     "@types/react-dom": "catalog:",

@@ -1,18 +1,23 @@
 "use client";
-import { FC, useState } from "react";
-import isEmpty from "lodash/isEmpty";
+import type { FC } from "react";
+import { useState } from "react";
+import { isEmpty } from "lodash-es";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
+import { Monitor } from "lucide-react";
 // plane internal packages
 import { API_BASE_URL } from "@plane/constants";
-import { IFormattedInstanceConfiguration, TInstanceGoogleAuthenticationConfigurationKeys } from "@plane/types";
-import { Button, TOAST_TYPE, getButtonStyling, setToast } from "@plane/ui";
+import { Button, getButtonStyling } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IFormattedInstanceConfiguration, TInstanceGoogleAuthenticationConfigurationKeys } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import { CodeBlock } from "@/components/common/code-block";
 import { ConfirmDiscardModal } from "@/components/common/confirm-discard-modal";
-import { ControllerInput, TControllerInputFormField } from "@/components/common/controller-input";
-import { CopyField, TCopyField } from "@/components/common/copy-field";
+import type { TControllerInputFormField } from "@/components/common/controller-input";
+import { ControllerInput } from "@/components/common/controller-input";
+import type { TCopyField } from "@/components/common/copy-field";
+import { CopyField } from "@/components/common/copy-field";
 // hooks
 import { useInstance } from "@/hooks/store";
 
@@ -90,7 +95,7 @@ export const InstanceGoogleConfigForm: FC<Props> = (props) => {
     },
   ];
 
-  const GOOGLE_SERVICE_DETAILS: TCopyField[] = [
+  const GOOGLE_COMMON_SERVICE_DETAILS: TCopyField[] = [
     {
       key: "Origin_URL",
       label: "Origin URL",
@@ -110,6 +115,9 @@ export const InstanceGoogleConfigForm: FC<Props> = (props) => {
         </p>
       ),
     },
+  ];
+
+  const GOOGLE_SERVICE_DETAILS: TCopyField[] = [
     {
       key: "Callback_URI",
       label: "Callback URI",
@@ -195,12 +203,29 @@ export const InstanceGoogleConfigForm: FC<Props> = (props) => {
               </div>
             </div>
           </div>
-          <div className="col-span-2 md:col-span-1">
-            <div className="flex flex-col gap-y-4 px-6 pt-1.5 pb-4 bg-custom-background-80/60 rounded-lg">
-              <div className="pt-2 text-xl font-medium">Plane-provided details for Google</div>
-              {GOOGLE_SERVICE_DETAILS.map((field) => (
-                <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
-              ))}
+          <div className="col-span-2 md:col-span-1 flex flex-col gap-y-6">
+            <div className="pt-2 text-xl font-medium">Plane-provided details for Google</div>
+
+            <div className="flex flex-col gap-y-4">
+              {/* common service details */}
+              <div className="flex flex-col gap-y-4 px-6 py-4 bg-custom-background-80 rounded-lg">
+                {GOOGLE_COMMON_SERVICE_DETAILS.map((field) => (
+                  <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
+                ))}
+              </div>
+
+              {/* web service details */}
+              <div className="flex flex-col rounded-lg overflow-hidden">
+                <div className="px-6 py-3 bg-custom-background-80/60 font-medium text-xs uppercase flex items-center gap-x-3 text-custom-text-200">
+                  <Monitor className="w-3 h-3" />
+                  Web
+                </div>
+                <div className="px-6 py-4 flex flex-col gap-y-4 bg-custom-background-80">
+                  {GOOGLE_SERVICE_DETAILS.map((field) => (
+                    <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>

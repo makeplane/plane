@@ -1,6 +1,7 @@
 "use-client";
 
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 // plane imports
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks

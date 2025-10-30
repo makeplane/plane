@@ -1,6 +1,4 @@
 import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
-// plane imports
-import { IIssueFilters } from "@plane/types";
 // local imports
 import { getDate } from "./datetime";
 
@@ -62,18 +60,4 @@ export const satisfiesDateFilter = (date: Date, filter: string): boolean => {
   }
 
   return false;
-};
-
-/**
- * @description checks if the issue filter is active
- * @param {IIssueFilters} issueFilters
- * @returns {boolean}
- */
-export const isIssueFilterActive = (issueFilters: IIssueFilters | undefined): boolean => {
-  if (!issueFilters) return false;
-
-  const issueType = issueFilters?.displayFilters?.type;
-  const isFiltersApplied = calculateTotalFilters(issueFilters?.filters ?? {}) !== 0 || !!issueType;
-
-  return isFiltersApplied;
 };

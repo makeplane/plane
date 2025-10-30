@@ -108,8 +108,7 @@ def get_llm_config() -> Tuple[str | None, str | None, str | None]:
     if model not in provider.models:
         log_exception(
             ValueError(
-                f"Model {model} not supported by {provider.name}. "
-                f"Supported models: {', '.join(provider.models)}"
+                f"Model {model} not supported by {provider.name}. Supported models: {', '.join(provider.models)}"
             )
         )
         return None, None, None
@@ -117,9 +116,7 @@ def get_llm_config() -> Tuple[str | None, str | None, str | None]:
     return api_key, model, provider_key
 
 
-def get_llm_response(
-    task, prompt, api_key: str, model: str, provider: str
-) -> Tuple[str | None, str | None]:
+def get_llm_response(task, prompt, api_key: str, model: str, provider: str) -> Tuple[str | None, str | None]:
     """Helper to get LLM completion response"""
     final_text = task + "\n" + prompt
     try:
@@ -157,13 +154,9 @@ class GPTIntegrationEndpoint(BaseAPIView):
 
         task = request.data.get("task", False)
         if not task:
-            return Response(
-                {"error": "Task is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Task is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-        text, error = get_llm_response(
-            task, request.data.get("prompt", False), api_key, model, provider
-        )
+        text, error = get_llm_response(task, request.data.get("prompt", False), api_key, model, provider)
         if not text and error:
             return Response(
                 {"error": "An internal error has occurred."},
@@ -197,13 +190,9 @@ class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
 
         task = request.data.get("task", False)
         if not task:
-            return Response(
-                {"error": "Task is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Task is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-        text, error = get_llm_response(
-            task, request.data.get("prompt", False), api_key, model, provider
-        )
+        text, error = get_llm_response(task, request.data.get("prompt", False), api_key, model, provider)
         if not text and error:
             return Response(
                 {"error": "An internal error has occurred."},

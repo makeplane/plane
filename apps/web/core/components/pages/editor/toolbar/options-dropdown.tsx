@@ -4,19 +4,22 @@ import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { ArrowUpToLine, Clipboard, History } from "lucide-react";
 // plane imports
-import { TContextMenuItem, TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TContextMenuItem } from "@plane/ui";
+import { ToggleSwitch } from "@plane/ui";
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageFilters } from "@/hooks/use-page-filters";
 import { useQueryParams } from "@/hooks/use-query-params";
 // plane web imports
-import { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
-import { EPageStoreType } from "@/plane-web/hooks/store";
+import type { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
-import { PageActions, TPageActions } from "../../dropdowns";
+import type { TPageActions } from "../../dropdowns";
+import { PageActions } from "../../dropdowns";
 import { ExportPageModal } from "../../modals/export-page-modal";
 import { PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM } from "../../navigation-pane";
 
@@ -127,7 +130,6 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         pageTitle={name ?? ""}
       />
       <PageActions
-        editorRef={editorRef}
         extraOptions={EXTRA_MENU_OPTIONS}
         optionsOrder={[
           "full-screen",

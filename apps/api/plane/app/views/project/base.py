@@ -58,9 +58,7 @@ class ProjectViewSet(BaseViewSet):
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related(
-                "workspace", "workspace__owner", "default_assignee", "project_lead"
-            )
+            .select_related("workspace", "workspace__owner", "default_assignee", "project_lead")
             .annotate(
                 is_favorite=Exists(
                     UserFavorite.objects.filter(
@@ -98,9 +96,7 @@ class ProjectViewSet(BaseViewSet):
             .distinct()
         )
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def list_detail(self, request, slug):
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
         projects = self.get_queryset().order_by("sort_order", "name")
@@ -134,19 +130,13 @@ class ProjectViewSet(BaseViewSet):
                 order_by=request.GET.get("order_by", "-created_at"),
                 request=request,
                 queryset=(projects),
-                on_results=lambda projects: ProjectListSerializer(
-                    projects, many=True
-                ).data,
+                on_results=lambda projects: ProjectListSerializer(projects, many=True).data,
             )
 
-        projects = ProjectListSerializer(
-            projects, many=True, fields=fields if fields else None
-        ).data
+        projects = ProjectListSerializer(projects, many=True, fields=fields if fields else None).data
         return Response(projects, status=status.HTTP_200_OK)
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def list(self, request, slug):
         sort_order = ProjectMember.objects.filter(
             member=self.request.user,
@@ -157,9 +147,7 @@ class ProjectViewSet(BaseViewSet):
 
         projects = (
             Project.objects.filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related(
-                "workspace", "workspace__owner", "default_assignee", "project_lead"
-            )
+            .select_related("workspace", "workspace__owner", "default_assignee", "project_lead")
             .annotate(
                 member_role=ProjectMember.objects.filter(
                     project_id=OuterRef("pk"),
@@ -219,9 +207,7 @@ class ProjectViewSet(BaseViewSet):
             )
         return Response(projects, status=status.HTTP_200_OK)
 
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE"
-    )
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def retrieve(self, request, slug, pk):
         project = (
             self.get_queryset()
@@ -234,9 +220,7 @@ class ProjectViewSet(BaseViewSet):
         ).first()
 
         if project is None:
-            return Response(
-                {"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
         recent_visited_task.delay(
             slug=slug,
@@ -253,9 +237,7 @@ class ProjectViewSet(BaseViewSet):
     def create(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
 
-        serializer = ProjectSerializer(
-            data={**request.data}, context={"workspace_id": workspace.id}
-        )
+        serializer = ProjectSerializer(data={**request.data}, context={"workspace_id": workspace.id})
         if serializer.is_valid():
             serializer.save()
 
@@ -266,13 +248,11 @@ class ProjectViewSet(BaseViewSet):
                 role=ROLE.ADMIN.value,
             )
             # Also create the issue property for the user
-            _ = IssueUserProperty.objects.create(
-                project_id=serializer.data["id"], user=request.user
-            )
+            _ = IssueUserProperty.objects.create(project_id=serializer.data["id"], user=request.user)
 
-            if serializer.data["project_lead"] is not None and str(
-                serializer.data["project_lead"]
-            ) != str(request.user.id):
+            if serializer.data["project_lead"] is not None and str(serializer.data["project_lead"]) != str(
+                request.user.id
+            ):
                 ProjectMember.objects.create(
                     project_id=serializer.data["id"],
                     member_id=serializer.data["project_lead"],
@@ -380,9 +360,7 @@ class ProjectViewSet(BaseViewSet):
 
         project = Project.objects.get(pk=pk)
         intake_view = request.data.get("inbox_view", project.intake_view)
-        current_instance = json.dumps(
-            ProjectSerializer(project).data, cls=DjangoJSONEncoder
-        )
+        current_instance = json.dumps(ProjectSerializer(project).data, cls=DjangoJSONEncoder)
         if project.archived_at:
             return Response(
                 {"error": "Archived projects cannot be updated"},
@@ -474,9 +452,7 @@ class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
         project.archived_at = timezone.now()
         project.save()
         UserFavorite.objects.filter(workspace__slug=slug, project=project_id).delete()
-        return Response(
-            {"archived_at": str(project.archived_at)}, status=status.HTTP_200_OK
-        )
+        return Response({"archived_at": str(project.archived_at)}, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def delete(self, request, slug, project_id):
@@ -492,26 +468,18 @@ class ProjectIdentifierEndpoint(BaseAPIView):
         name = request.GET.get("name", "").strip().upper()
 
         if name == "":
-            return Response(
-                {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-        exists = ProjectIdentifier.objects.filter(
-            name=name, workspace__slug=slug
-        ).values("id", "name", "project")
+        exists = ProjectIdentifier.objects.filter(name=name, workspace__slug=slug).values("id", "name", "project")
 
-        return Response(
-            {"exists": len(exists), "identifiers": exists}, status=status.HTTP_200_OK
-        )
+        return Response({"exists": len(exists), "identifiers": exists}, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def delete(self, request, slug):
         name = request.data.get("name", "").strip().upper()
 
         if name == "":
-            return Response(
-                {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         if Project.objects.filter(identifier=name, workspace__slug=slug).exists():
             return Response(
@@ -528,9 +496,7 @@ class ProjectUserViewsEndpoint(BaseAPIView):
     def post(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
 
-        project_member = ProjectMember.objects.filter(
-            member=request.user, project=project, is_active=True
-        ).first()
+        project_member = ProjectMember.objects.filter(member=request.user, project=project, is_active=True).first()
 
         if project_member is None:
             return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
@@ -559,9 +525,7 @@ class ProjectFavoritesViewSet(BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(user=self.request.user)
-            .select_related(
-                "project", "project__project_lead", "project__default_assignee"
-            )
+            .select_related("project", "project__project_lead", "project__default_assignee")
             .select_related("workspace", "workspace__owner")
         )
 

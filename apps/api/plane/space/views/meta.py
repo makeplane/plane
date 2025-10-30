@@ -16,17 +16,13 @@ class ProjectMetaDataEndpoint(BaseAPIView):
         try:
             deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="project")
         except DeployBoard.DoesNotExist:
-            return Response(
-                {"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
 
         try:
             project_id = deploy_board.entity_identifier
             project = Project.objects.get(id=project_id)
         except Project.DoesNotExist:
-            return Response(
-                {"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = ProjectLiteSerializer(project)
         return Response(serializer.data, status=status.HTTP_200_OK)

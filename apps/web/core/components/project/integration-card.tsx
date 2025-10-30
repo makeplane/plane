@@ -4,9 +4,8 @@ import React from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
-import { IWorkspaceIntegration } from "@plane/types";
-// ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IWorkspaceIntegration } from "@plane/types";
 // components
 import { SelectRepository, SelectChannel } from "@/components/integration";
 // constants

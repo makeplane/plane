@@ -14,10 +14,6 @@ class Command(BaseCommand):
         batch_size = input("Enter the batch size: ")
         batch_countdown = input("Enter the batch countdown: ")
 
-        schedule_issue_description_version.delay(
-            batch_size=batch_size, countdown=int(batch_countdown)
-        )
+        schedule_issue_description_version.delay(batch_size=batch_size, countdown=int(batch_countdown))
 
-        self.stdout.write(
-            self.style.SUCCESS("Successfully created issue description version task")
-        )
+        self.stdout.write(self.style.SUCCESS("Successfully created issue description version task"))

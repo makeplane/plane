@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 // hooks
-import { TSelectionHelper, useMultipleSelect } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
+import { useMultipleSelect } from "@/hooks/use-multiple-select";
 
 type Props = {
   children: (helpers: TSelectionHelper) => React.ReactNode;
