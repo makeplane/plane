@@ -1,6 +1,5 @@
 # Python imports
 import json
-import os
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Django imports
@@ -27,6 +26,7 @@ from plane.db.models import (
 )
 from plane.utils.issue_filters import issue_filters
 from .base import BaseAPIView
+from django.conf import settings
 from datetime import datetime
 
 class IssueCustomPropertyUpdateAPIView(BaseAPIView):
@@ -240,10 +240,8 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
                 **issue_data_safe,
             }
             
-            # TODO: Replace with actual WB API endpoint URL
-            # This should be configured in settings or environment variables
-            WB_API_URL = os.environ.get("WB_API_URL", "https://wbdemo.shipsy.io/webhook/wb/sample-dropdowns")# Placeholder URL
-            
+             # WB API endpoint URL configured in settings
+            WB_API_URL = settings.WB_API_URL
             # Make request to WB API
             try:
                 wb_response = requests.post(
