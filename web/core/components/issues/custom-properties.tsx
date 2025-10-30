@@ -114,11 +114,6 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
 
   const CustomPropertyDropdown: React.FC<{ property: CustomProperty; onUpdate: (property: CustomProperty) => Promise<void>; onClose: () => void }> = React.memo(({ property, onUpdate, onClose }) => {
     const [value, setValue] = useState(property.value);
-    
-    // Sync value when property changes
-    useEffect(() => {
-      setValue(property.value);
-    }, [property.value]);
     const [localError, setLocalError] = useState<string | null>(null);
     const [options, setOptions] = useState<Array<{ value: string; label: string }>>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -131,56 +126,65 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
     
     const { styles, attributes } = usePopper(referenceElement, popperElement, {
       placement: "bottom-start",
-      modifiers: [
-        {
-          name: "preventOverflow",
-          options: {
-            padding: 12,
-          },
-        },
-      ],
+      modifiers: [{ name: "preventOverflow", options: { padding: 12 } }],
     });
 
+    // Sync value when property changes
+    useEffect(() => {
+      setValue(property.value);
+    }, [property.value]);
+
+    // Helper: Extract array of strings from response
+    const parseResponse = (responseData: any): string[] => {
+      if (Array.isArray(responseData)) return responseData;
+      if (responseData && typeof responseData === 'object') {
+        const arrayKey = Object.keys(responseData).find(key => Array.isArray(responseData[key]));
+        return arrayKey ? responseData[arrayKey] : [];
+      }
+      return [];
+    };
+
+    // Fetch dropdown options
     const fetchDropdownOptions = async () => {
       if (isLoading || options.length > 0) return;
       
       setIsLoading(true);
+      setLocalError(null);
+      
       try {
         const response = await axios.get(
           `/api/workspaces/${workspaceSlug}/issues/${issueId}/custom-properties/${property.issue_type_custom_property}/dropdown-options/`
         );
         
-        // WB API returns an array of strings either directly or within an object key
-        // Examples: ["item1", "item2"] or { "invoice_numbers": ["item1", "item2"] }
-        const responseData = response.data;
-        let fetchedOptions: Array<{ value: string; label: string }> = [];
-        
-        if (Array.isArray(responseData)) {
-          // Direct array of strings
-          fetchedOptions = responseData.map((item: string) => ({
-            value: item,
-            label: item,
-          }));
-        } else if (responseData && typeof responseData === 'object') {
-          // Handle objects with keys containing arrays of strings (e.g., { "invoice_numbers": [...] } or { "dropdownSourceField": [...] })
-          const arrayKey = Object.keys(responseData).find(
-            (key) => Array.isArray(responseData[key])
-          );
-          if (arrayKey) {
-            const optionsArray = responseData[arrayKey] as string[];
-            fetchedOptions = optionsArray.map((item: string) => ({
-              value: item,
-              label: item,
-            }));
-          }
-        }
-        
+        const strings = parseResponse(response.data);
+        const fetchedOptions = strings.map((item: string) => ({ value: item, label: item }));
         setOptions(fetchedOptions);
       } catch (error) {
         setLocalError("Failed to load dropdown options.");
         console.error("Failed to fetch dropdown options:", error);
       } finally {
         setIsLoading(false);
+      }
+    };
+
+    // Handle selection change
+    const handleChange = async (selectedValue: string) => {
+      if (selectedValue === value) {
+        handleClose();
+        return;
+      }
+
+      setValue(selectedValue);
+      setLocalError(null);
+      handleClose();
+
+      if (selectedValue !== property.value) {
+        try {
+          await onUpdate({ ...property, value: selectedValue });
+        } catch (error) {
+          setLocalError("Failed to update custom property.");
+          setValue(property.value);
+        }
       }
     };
 
@@ -196,44 +200,14 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
 
     useOutsideClickDetector(dropdownRef, handleClose);
 
-    const handleChange = async (selectedValue: string) => {
-      if (selectedValue === value) {
-        handleClose();
-        return;
-      }
-      setValue(selectedValue);
-      setLocalError(null);
-      handleClose();
-    
-
-      if (selectedValue !== property.value) {
-        try {
-          const updatedProperty = { ...property, value: selectedValue };
-          await onUpdate(updatedProperty);
-          setLocalError(null);
-        } catch (error) {
-          setLocalError("Failed to update custom property.");
-          // Revert on error
-          setValue(property.value);
-        }
-      }
-      
-    };
-    const handleBlur = async () => {
-      // Only validate on blur, don't close dropdown here as it conflicts with option clicks
-      if (property.is_required && value.trim() === "") {
-        setLocalError("This field is required.");
-        setValue(property.value);
-      }
-    };
+    // Filter options based on search query
     const filteredOptions = query === "" 
       ? options 
-      : options.filter((option) => 
-          option.label.toLowerCase().includes(query.toLowerCase()) ||
-          option.value.toLowerCase().includes(query.toLowerCase())
+      : options.filter(option => 
+          option.label.toLowerCase().includes(query.toLowerCase())
         );
 
-    const selectedOption = options.find((opt) => opt.value === value);
+    const selectedOption = options.find(opt => opt.value === value);
 
     return (
       <div className="relative w-full">
@@ -248,15 +222,11 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
             <button
               ref={setReferenceElement}
               type="button"
-              onClick={() => {
-                if (!isOpen) {
-                  handleOpen();
-                }
-              }}
+              onClick={!isOpen ? handleOpen : undefined}
               className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 flex items-center justify-between"
             >
               <span className={cn("truncate", value ? "text-custom-text-500" : "text-custom-text-400")}>
-                {selectedOption ? selectedOption.label : value || `Select ${property.key}`}
+                {selectedOption?.label || value || `Select ${property.key}`}
               </span>
               <ChevronDown className="h-4 w-4 flex-shrink-0 text-custom-text-400" />
             </button>
@@ -303,10 +273,7 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
                             }
                           )
                         }
-                        onClick={() => {
-                          // Close dropdown - onChange will handle the value update
-                          handleClose();
-                        }}
+                        onClick={handleClose}
                       >
                         {({ selected }) => (
                           <>
@@ -361,18 +328,14 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
       setLocalError(null);
     };
 
-    // For dropdown type, use the CustomPropertyDropdown component
-    if (property.data_type === "dropdown") {
-      return (
+    const inputComponents: Record<string, React.JSX.Element> = {
+      dropdown: (
         <CustomPropertyDropdown 
           property={property} 
           onUpdate={handlePropertyUpdate}
           onClose={() => setEditingPropertyKey(null)}
         />
-      );
-    }
-
-    const inputComponents: Record<string, React.JSX.Element> = {
+      ),
       date: (
         <Input
           type="date"
