@@ -76,7 +76,7 @@ export class ProjectStore implements IProjectStore {
   fetchStatus: TFetchStatus = undefined;
   projectMap: Record<string, TProject> = {};
   projectAnalyticsCountMap: Record<string, TProjectAnalyticsCount> = {};
-  openCollapsibleSection: ProjectOverviewCollapsible[] = [];
+  openCollapsibleSection: ProjectOverviewCollapsible[] = ["milestones"];
   lastCollapsibleAction: ProjectOverviewCollapsible | null = null;
 
   // root store

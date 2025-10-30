@@ -2,9 +2,10 @@
 
 import type { FC } from "react";
 import { useState, Fragment } from "react";
-import { Search, X } from "lucide-react";
+import { Search } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
+import { CloseIcon } from "@plane/propel/icons";
 import { Input } from "@plane/ui";
 // hooks
 import { usePowerK } from "@/hooks/store/use-power-k";
@@ -62,7 +63,10 @@ export const ShortcutsModal: FC<Props> = (props) => {
                   <Dialog.Title as="h3" className="flex justify-between">
                     <span className="text-lg font-medium">Keyboard shortcuts</span>
                     <button type="button" onClick={handleClose}>
-                      <X className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" aria-hidden="true" />
+                      <CloseIcon
+                        className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100"
+                        aria-hidden="true"
+                      />
                     </button>
                   </Dialog.Title>
                   <div className="flex w-full items-center rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 px-2">

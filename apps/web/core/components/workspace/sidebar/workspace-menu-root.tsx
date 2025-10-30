@@ -4,11 +4,12 @@ import React, { Fragment, useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
-import { ChevronDown, CirclePlus, LogOut, Mails } from "lucide-react";
+import { CirclePlus, LogOut, Mails } from "lucide-react";
 // ui
 import { Menu, Transition } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspace } from "@plane/types";
 import { Loader } from "@plane/ui";
@@ -118,7 +119,7 @@ export const WorkspaceMenuRoot = observer((props: WorkspaceMenuRootProps) => {
                     {activeWorkspace?.name ?? t("loading")}
                   </h4>
                 </div>
-                <ChevronDown
+                <ChevronDownIcon
                   className={cn(
                     "flex-shrink-0 mx-1 hidden size-4 group-hover/menu-button:block text-custom-sidebar-text-400 duration-300",
                     { "rotate-180": open }

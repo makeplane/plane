@@ -2,9 +2,8 @@
 
 import type { FC } from "react";
 import React from "react";
-import { ChevronDown } from "lucide-react";
 // types
-import { CycleGroupIcon } from "@plane/propel/icons";
+import { CycleGroupIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { TCycleGroups } from "@plane/types";
 // icons
 import { Row } from "@plane/ui";
@@ -33,7 +32,7 @@ export const CycleListGroupHeader: FC<Props> = (props) => {
           {showCount && <div className="pl-2 text-sm font-medium text-custom-text-300">{`${count ?? "0"}`}</div>}
         </div>
       </div>
-      <ChevronDown
+      <ChevronDownIcon
         className={cn("h-4 w-4 text-custom-sidebar-text-300 duration-300 ", {
           "rotate-180": isExpanded,
         })}

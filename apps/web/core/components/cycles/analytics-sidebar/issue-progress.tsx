@@ -5,10 +5,10 @@ import { useMemo } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
-import { ChevronUp, ChevronDown } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { ChevronUpIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { ICycle, TCyclePlotType, TProgressSnapshot } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { getDate } from "@plane/utils";
@@ -114,9 +114,9 @@ export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((pro
                 </Disclosure.Button>
                 <Disclosure.Button className="ml-auto">
                   {open ? (
-                    <ChevronUp className="h-3.5 w-3.5" aria-hidden="true" />
+                    <ChevronUpIcon className="h-3.5 w-3.5" aria-hidden="true" />
                   ) : (
-                    <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
+                    <ChevronDownIcon className="h-3.5 w-3.5" aria-hidden="true" />
                   )}
                 </Disclosure.Button>
               </div>

@@ -1,7 +1,7 @@
-import { ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/ui";
 // local imports
 import type { TCustomImageAlignment } from "../../types";
@@ -38,7 +38,7 @@ export const ImageAlignmentAction: React.FC<Props> = (props) => {
           onClick={() => setIsDropdownOpen((prev) => !prev)}
         >
           {activeAlignmentDetails && <activeAlignmentDetails.icon className="flex-shrink-0 size-3" />}
-          <ChevronDown className="flex-shrink-0 size-2" />
+          <ChevronDownIcon className="flex-shrink-0 size-2" />
         </button>
       </Tooltip>
       {isDropdownOpen && (
