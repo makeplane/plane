@@ -126,7 +126,6 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
             onReactionClick={handleEmojiClick}
             showAddButton={!isInIframe}
             onAddReaction={() => setIsPickerOpen(true)}
-            size="sm"
           />
         }
         placement="bottom-start"

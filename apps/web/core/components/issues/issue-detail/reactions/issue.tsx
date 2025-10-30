@@ -137,7 +137,6 @@ export const IssueReaction: FC<TIssueReaction> = observer((props) => {
             onReactionClick={handleReactionClick}
             showAddButton={!disabled}
             onAddReaction={() => setIsPickerOpen(true)}
-            size="sm"
           />
         }
         placement="bottom-start"

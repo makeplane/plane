@@ -17,11 +17,10 @@ import { useUser } from "@/hooks/store/use-user";
 type IssueEmojiReactionsProps = {
   anchor: string;
   issueIdFromProps?: string;
-  size?: "md" | "sm";
 };
 
 export const IssueEmojiReactions: React.FC<IssueEmojiReactionsProps> = observer((props) => {
-  const { anchor, issueIdFromProps, size = "sm" } = props;
+  const { anchor, issueIdFromProps } = props;
   // state
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   // router
@@ -116,7 +115,6 @@ export const IssueEmojiReactions: React.FC<IssueEmojiReactionsProps> = observer(
           onReactionClick={handleEmojiClick}
           showAddButton
           onAddReaction={() => setIsPickerOpen(true)}
-          size={size}
         />
       }
       placement="bottom-start"

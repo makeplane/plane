@@ -76,7 +76,6 @@ export const CommentReactions: FC<TProps> = observer((props) => {
             onReactionClick={handleReactionClick}
             showAddButton={!disabled}
             onAddReaction={() => setIsPickerOpen(true)}
-            size="sm"
           />
         }
         placement="bottom-start"
