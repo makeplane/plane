@@ -343,9 +343,5 @@ urlpatterns = [
         IssueCustomPropertyUpdateAPIView.as_view(),
         name="create-issue-custom-property",
     ),
-    path(
-        'workspaces/<str:slug>/issues/<uuid:issue_id>/custom-properties/<uuid:issue_type_custom_property_id>/dropdown-options/',
-        IssueCustomPropertyUpdateAPIView.as_view(),
-        name="custom-property-dropdown-options",
-    ),
+   
 ]

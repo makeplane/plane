@@ -119,15 +119,10 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
         
-    def get(self, request, slug, issue_id, pk=None, issue_type_custom_property_id=None):
+    def get(self, request, slug, issue_id, pk=None):
         """
         Retrieve the custom property details for a given issue.
-        If issue_type_custom_property_id is provided, fetch dropdown options from WB API.
         """
-        # Check if this is a request for dropdown options
-        if issue_type_custom_property_id:
-            return self.get_dropdown_options(request, slug, issue_id, issue_type_custom_property_id)
-        
         if pk:
             custom_property = get_object_or_404(IssueCustomProperty, pk=pk, issue_id=issue_id)
             serializer = self.serializer_class(custom_property)
@@ -210,7 +205,13 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
         )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def get_dropdown_options(self, request, slug, issue_id, issue_type_custom_property_id):
+
+class IssueCustomPropertyDropdownOptionsAPIView(BaseAPIView):
+    """
+    This view handles fetching dropdown options for custom properties from the WB API.
+    """
+    
+    def get(self, request, slug, issue_id, issue_type_custom_property_id):
         """
         Fetch dropdown options from WB API for a custom property.
         """
@@ -270,7 +271,7 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
                     wb_response.json(),
                     status=status.HTTP_200_OK
                 )
-            except requests.exceptions.RequestException:
+            except requests.exceptions.RequestException as e:
                 return Response(
                     {"error": f"Failed to fetch dropdown options from API Call: {str(e)}"},
                     status=status.HTTP_502_BAD_GATEWAY,
