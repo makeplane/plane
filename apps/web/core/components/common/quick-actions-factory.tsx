@@ -1,21 +1,10 @@
-import {
-  Pencil,
-  ExternalLink,
-  Link,
-  Trash2,
-  ArchiveRestoreIcon,
-  StopCircle,
-  Download,
-  Lock,
-  LockOpen,
-} from "lucide-react";
+import { Pencil, ExternalLink, Link, Trash2, ArchiveRestoreIcon } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { ArchiveIcon } from "@plane/propel/icons";
 import type { TContextMenuItem } from "@plane/ui";
 
 /**
  * Unified factory for creating menu items across all entities (cycles, modules, views, epics)
- * Contains ALL menu item creators including EE-specific ones
  */
 export const useQuickActionsFactory = () => {
   const { t } = useTranslation();
@@ -75,35 +64,7 @@ export const useQuickActionsFactory = () => {
       shouldRender,
     }),
 
-    // EE-specific menu items (defined in core but used only in EE)
-    createEndCycleMenuItem: (handler: () => void, shouldRender: boolean = true): TContextMenuItem => ({
-      key: "end-cycle",
-      title: "End Cycle",
-      icon: StopCircle,
-      action: handler,
-      shouldRender,
-    }),
-
-    createExportMenuItem: (handler: () => void, shouldRender: boolean = true): TContextMenuItem => ({
-      key: "export",
-      title: "Export",
-      icon: Download,
-      action: handler,
-      shouldRender,
-    }),
-
-    createLockMenuItem: (
-      handler: () => void,
-      opts: { isLocked: boolean; shouldRender?: boolean }
-    ): TContextMenuItem => ({
-      key: "toggle-lock",
-      title: opts.isLocked ? "Unlock" : "Lock",
-      icon: opts.isLocked ? LockOpen : Lock,
-      action: handler,
-      shouldRender: opts.shouldRender,
-    }),
-
-    // Layout-level actions (for issues/epics list views)
+    // Layout-level actions (for work item list views)
     createOpenInNewTab: (handler: () => void): TContextMenuItem => ({
       key: "open-in-new-tab",
       title: "Open in new tab",
