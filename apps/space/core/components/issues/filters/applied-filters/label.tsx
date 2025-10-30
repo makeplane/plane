@@ -1,6 +1,6 @@
 "use client";
 
-import { X } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 // types
 import type { IIssueLabel } from "@/types/issue";
 
@@ -34,7 +34,7 @@ export const AppliedLabelsFilters: React.FC<Props> = (props) => {
               className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
               onClick={() => handleRemove(labelId)}
             >
-              <X size={10} strokeWidth={2} />
+              <CloseIcon height={10} width={10} strokeWidth={2} />
             </button>
           </div>
         );

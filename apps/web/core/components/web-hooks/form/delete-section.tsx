@@ -1,9 +1,9 @@
 "use client";
 
-import { ChevronDown, ChevronUp } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import { WORKSPACE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
+import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 
 type Props = {
   openDeleteModal: () => void;
@@ -18,7 +18,7 @@ export const WebhookDeleteSection: React.FC<Props> = (props) => {
         <div className="w-full">
           <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">
             <span className="text-lg tracking-tight">Danger zone</span>
-            {open ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+            {open ? <ChevronUpIcon className="h-5 w-5" /> : <ChevronDownIcon className="h-5 w-5" />}
           </Disclosure.Button>
 
           <Transition

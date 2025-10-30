@@ -1,7 +1,8 @@
 import type { FC } from "react";
-import { Info, X } from "lucide-react";
-// plane imports
+import { Info } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon } from "@plane/propel/icons";
+// plane imports
 // helpers
 import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
 
@@ -32,7 +33,7 @@ export const AuthBanner: FC<TAuthBanner> = (props) => {
         onClick={() => handleBannerData?.(undefined)}
         aria-label={t("aria_labels.auth_forms.close_alert")}
       >
-        <X className="size-4" />
+        <CloseIcon className="size-4" />
       </button>
     </div>
   );

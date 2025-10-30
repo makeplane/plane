@@ -1,6 +1,7 @@
 import type { FC } from "react";
 import { CalendarDays, LayersIcon, Link2, Paperclip } from "lucide-react";
 // types
+import { ISSUE_GROUP_BY_OPTIONS } from "@plane/constants";
 import type { ISvgIcons } from "@plane/propel/icons";
 import {
   CycleIcon,
@@ -13,7 +14,13 @@ import {
   PriorityPropertyIcon,
   StartDatePropertyIcon,
 } from "@plane/propel/icons";
-import type { IGroupByColumn, IIssueDisplayProperties, TGetColumns, TSpreadsheetColumn } from "@plane/types";
+import type {
+  IGroupByColumn,
+  IIssueDisplayProperties,
+  TGetColumns,
+  TIssueGroupByOptions,
+  TSpreadsheetColumn,
+} from "@plane/types";
 // components
 import {
   SpreadsheetAssigneeColumn,
@@ -95,4 +102,14 @@ export const SPREADSHEET_COLUMNS: { [key in keyof IIssueDisplayProperties]: TSpr
   sub_issue_count: SpreadsheetSubIssueColumn,
   updated_on: SpreadsheetUpdatedOnColumn,
   attachment_count: SpreadsheetAttachmentColumn,
+};
+
+export const useGroupByOptions = (
+  options: TIssueGroupByOptions[]
+): {
+  key: TIssueGroupByOptions;
+  titleTranslationKey: string;
+}[] => {
+  const groupByOptions = ISSUE_GROUP_BY_OPTIONS.filter((option) => options.includes(option.key));
+  return groupByOptions;
 };

@@ -1,4 +1,5 @@
-import { Ban, ChevronDown } from "lucide-react";
+import { Ban } from "lucide-react";
+import { ChevronDownIcon } from "@plane/propel/icons";
 // plane utils
 import { cn } from "@plane/utils";
 // constants
@@ -43,7 +44,7 @@ export const CalloutBlockColorSelector: React.FC<Props> = (props) => {
           disabled={disabled}
         >
           <span>Color</span>
-          <ChevronDown className="flex-shrink-0 size-3" />
+          <ChevronDownIcon className="flex-shrink-0 size-3" />
         </button>
         {isOpen && (
           <section className="absolute top-full right-0 z-10 mt-1 rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 p-2 shadow-custom-shadow-rg animate-in fade-in slide-in-from-top-1">
