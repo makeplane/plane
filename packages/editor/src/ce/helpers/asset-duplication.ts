@@ -17,13 +17,19 @@ const imageComponentHandler: AssetDuplicationHandler = ({ element, originalHtml 
   if (!src) {
     return { modifiedHtml: originalHtml, shouldProcess: false };
   }
-  const newId = uuidv4();
-  const originalTag = element.outerHTML;
-  const modifiedTag = originalTag
-    .replace(`<image-component`, `<image-component status="duplicating"`)
-    .replace(/id="[^"]*"/, `id="${newId}"`);
 
+  // Capture the original HTML BEFORE making any modifications
+  const originalTag = element.outerHTML;
+
+  // Use setAttribute to update attributes
+  const newId = uuidv4();
+  element.setAttribute("status", "duplicating");
+  element.setAttribute("id", newId);
+
+  // Get the modified HTML AFTER the changes
+  const modifiedTag = element.outerHTML;
   const modifiedHtml = originalHtml.replace(originalTag, modifiedTag);
+
   return { modifiedHtml, shouldProcess: true };
 };
 
