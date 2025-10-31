@@ -3,10 +3,10 @@
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronDown } from "lucide-react";
 // plane imports
 import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
@@ -79,7 +79,7 @@ export const ProjectIssuesMobileHeader = observer(() => {
             menuButton={
               <span className="flex items-center text-sm text-custom-text-200">
                 {t("common.display")}
-                <ChevronDown className="ml-2 h-4 w-4 text-custom-text-200" />
+                <ChevronDownIcon className="ml-2 h-4 w-4 text-custom-text-200" />
               </span>
             }
           >

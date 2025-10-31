@@ -47,13 +47,13 @@ export const GlobalViewEmptyState: React.FC = observer(() => {
 
   return (
     <EmptyStateDetailed
-      title={t(`workspace.views.title`)}
-      description={t(`workspace.views.description`)}
+      title={t(`workspace_empty_state.views.title`)}
+      description={t(`workspace_empty_state.views.description`)}
       assetKey="project"
       assetClassName="size-40"
       actions={[
         {
-          label: t(`workspace.views.cta_primary`),
+          label: t(`workspace_empty_state.views.cta_primary`),
           onClick: () => {
             captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.GLOBAL_VIEW });
             toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
