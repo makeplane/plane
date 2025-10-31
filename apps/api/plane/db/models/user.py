@@ -192,7 +192,7 @@ class Profile(TimeAuditModel):
     # Onboarding
     is_tour_completed = models.BooleanField(default=False)
     onboarding_step = models.JSONField(default=get_default_onboarding)
-    use_case = models.JSONField(default=list, blank=True, null=True)
+    use_case = models.TextField(blank=True, null=True)
     role = models.CharField(max_length=300, null=True, blank=True)  # job role
     is_onboarded = models.BooleanField(default=False)
     # Last visited workspace
