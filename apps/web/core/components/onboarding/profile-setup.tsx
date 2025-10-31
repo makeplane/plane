@@ -35,7 +35,7 @@ type TProfileSetupFormValues = {
   password?: string;
   confirm_password?: string;
   role?: string;
-  use_case?: string;
+  use_case?: string[];
 };
 
 const defaultValues: Partial<TProfileSetupFormValues> = {
@@ -45,7 +45,7 @@ const defaultValues: Partial<TProfileSetupFormValues> = {
   password: undefined,
   confirm_password: undefined,
   role: undefined,
-  use_case: undefined,
+  use_case: [],
 };
 
 type Props = {
@@ -539,27 +539,38 @@ export const ProfileSetup: React.FC<Props> = observer((props) => {
                   className="text-sm text-custom-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
                   htmlFor="use_case"
                 >
-                  What is your domain expertise? Choose one.
+                  What is your domain expertise? Choose one or more.
                 </label>
                 <Controller
                   control={control}
                   name="use_case"
                   rules={{
-                    required: "This field is required",
+                    required: "Please select at least one option",
+                    validate: (value) => (value && value.length > 0) || "Please select at least one option",
                   }}
                   render={({ field: { value, onChange } }) => (
                     <div className="flex flex-wrap gap-2 py-2 overflow-auto break-all">
-                      {USER_DOMAIN.map((userDomain) => (
-                        <div
-                          key={userDomain}
-                          className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-custom-background-90 ${
-                            value === userDomain ? "border-custom-primary-100" : "border-custom-border-300"
-                          } rounded px-3 py-1.5 text-sm font-medium`}
-                          onClick={() => onChange(userDomain)}
-                        >
-                          {userDomain}
-                        </div>
-                      ))}
+                      {USER_DOMAIN.map((userDomain) => {
+                        const isSelected = value?.includes(userDomain) || false;
+                        return (
+                          <div
+                            key={userDomain}
+                            className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-custom-background-90 ${
+                              isSelected ? "border-custom-primary-100" : "border-custom-border-300"
+                            } rounded px-3 py-1.5 text-sm font-medium`}
+                            onClick={() => {
+                              const currentValue = value || [];
+                              if (isSelected) {
+                                onChange(currentValue.filter((item) => item !== userDomain));
+                              } else {
+                                onChange([...currentValue, userDomain]);
+                              }
+                            }}
+                          >
+                            {userDomain}
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
                 />
