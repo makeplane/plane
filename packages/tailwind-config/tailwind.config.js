@@ -38,6 +38,15 @@ module.exports = {
 
       // Animations
       keyframes: animations,
+      animation: {
+        // Web app animations
+        "slide-up": "slide-up 0.3s ease-out forwards",
+        "text-slide-in": "textSlideIn 400ms ease-out forwards",
+        "text-fade-out": "textFadeOut 600ms ease-in 300ms forwards",
+        "lock-icon": "lockIconAnimation 600ms ease-out forwards",
+        "unlock-icon": "unlockIconAnimation 600ms ease-out forwards",
+        "fade-out": "fadeOut 500ms ease-in 100ms forwards",
+      },
 
       // Layout
       zIndex: layout.zIndex,

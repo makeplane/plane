@@ -7,7 +7,7 @@
  * @param {string} variableName - CSS variable name (e.g., "--color-primary-100")
  * @returns {string} RGBA color string
  */
-const convertToRGB = (variableName) => `rgba(var(${variableName}))`;
+const convertToRGB = (variableName) => `rgb(var(${variableName}))`;
 
 /**
  * Converts a CSS variable name to RGBA format with custom alpha
