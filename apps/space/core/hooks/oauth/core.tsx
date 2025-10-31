@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import { API_BASE_URL } from "@plane/constants";
+import type { TOAuthConfigs, TOAuthOption } from "@plane/types";
 // assets
 import GithubLightLogo from "/public/logos/github-black.png";
 import GithubDarkLogo from "/public/logos/github-dark.svg";
@@ -11,8 +12,6 @@ import GoogleLogo from "/public/logos/google-logo.svg";
 import GiteaLogo from "/public/logos/gitea-logo.svg";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
-// local imports
-import type { TOAuthConfigs } from "./types";
 
 export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
   //router
@@ -31,7 +30,7 @@ export const useCoreOAuthConfig = (oauthActionText: string): TOAuthConfigs => {
         config?.is_gitlab_enabled ||
         config?.is_gitea_enabled)) ||
     false;
-  const oAuthOptions = [
+  const oAuthOptions: TOAuthOption[] = [
     {
       id: "google",
       text: `${oauthActionText} with Google`,

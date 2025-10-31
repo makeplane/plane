@@ -1,5 +1,5 @@
-// local imports
-import type { TOAuthConfigs } from "./types";
+// plane imports
+import type { TOAuthConfigs } from "@plane/types";
 
 export const useExtendedOAuthConfig = (_oauthActionText: string): TOAuthConfigs => ({
   isOAuthEnabled: false,
