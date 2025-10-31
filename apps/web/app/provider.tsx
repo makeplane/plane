@@ -17,6 +17,8 @@ import "@/lib/polyfills";
 import { StoreProvider } from "@/lib/store-context";
 // wrappers
 import { InstanceWrapper } from "@/lib/wrappers/instance-wrapper";
+import { AntdConfigProvider } from "components/antd-config-provider";
+// components
 // dynamic imports
 const StoreWrapper = dynamic(() => import("@/lib/wrappers/store-wrapper"), { ssr: false });
 const PostHogProvider = dynamic(() => import("@/lib/posthog-provider"), { ssr: false });
@@ -45,16 +47,18 @@ export const AppProvider: FC<IAppProvider> = (props) => {
         <StoreProvider>
           <ThemeProvider themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]} defaultTheme="system">
             <TranslationProvider>
-              <ToastWithTheme />
-              <StoreWrapper>
-                <InstanceWrapper>
-                  <IntercomProvider>
-                    <PostHogProvider>
-                      <SWRConfig value={WEB_SWR_CONFIG}>{children}</SWRConfig>
-                    </PostHogProvider>
-                  </IntercomProvider>
-                </InstanceWrapper>
-              </StoreWrapper>
+              <AntdConfigProvider>
+                <ToastWithTheme />
+                <StoreWrapper>
+                  <InstanceWrapper>
+                    <IntercomProvider>
+                      <PostHogProvider>
+                        <SWRConfig value={WEB_SWR_CONFIG}>{children}</SWRConfig>
+                      </PostHogProvider>
+                    </IntercomProvider>
+                  </InstanceWrapper>
+                </StoreWrapper>
+              </AntdConfigProvider>
             </TranslationProvider>
           </ThemeProvider>
         </StoreProvider>

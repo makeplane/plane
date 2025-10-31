@@ -70,3 +70,4 @@ export * from "./wiki-icon";
 export * from "./work-items-icon";
 export * from "./workspace-icon";
 export * from "./your-work-icon";
+export * from "./test-management-icon";

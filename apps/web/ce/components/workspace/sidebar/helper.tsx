@@ -8,6 +8,7 @@ import {
   ProjectIcon,
   ViewsIcon,
   YourWorkIcon,
+  TestManagementIcon,
 } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 
@@ -31,5 +32,7 @@ export const getSidebarNavigationItemIcon = (key: string, className: string = ""
       return <DraftIcon className={cn("size-4 flex-shrink-0", className)} />;
     case "archives":
       return <ArchiveIcon className={cn("size-4 flex-shrink-0", className)} />;
+    case "test-management":
+      return <TestManagementIcon className={cn("size-4 flex-shrink-0", className)} />;
   }
 };

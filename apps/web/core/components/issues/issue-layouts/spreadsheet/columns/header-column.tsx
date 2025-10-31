@@ -32,6 +32,7 @@ export const HeaderColumn = (props: Props) => {
     ""
   );
   const propertyDetails = SPREADSHEET_PROPERTY_DETAILS[property];
+  console.log("🚀 ~ HeaderColumn ~ propertyDetails:", propertyDetails);
 
   const handleOrderBy = (order: TIssueOrderByOptions, itemKey: string) => {
     handleDisplayFilterUpdate({ order_by: order });

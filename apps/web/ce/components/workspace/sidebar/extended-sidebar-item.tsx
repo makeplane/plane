@@ -45,7 +45,8 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
   const [instruction, setInstruction] = useState<"DRAG_OVER" | "DRAG_BELOW" | undefined>(undefined);
   // refs
   const navigationIemRef = useRef<HTMLDivElement | null>(null);
-  const dragHandleRef = useRef<HTMLButtonElement | null>(null);
+  // 将 dragHandleRef 的类型由 HTMLButtonElement 改为 HTMLDivElement，避免 button 嵌套
+  const dragHandleRef = useRef<HTMLDivElement | null>(null);
 
   // nextjs hooks
   const pathname = usePathname();
@@ -171,8 +172,10 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
             position="top-end"
             disabled={isDragging}
           >
-            <button
-              type="button"
+            {/* 将 button 改为 div，避免 TooltipTrigger 与内部 button 的嵌套 */}
+            <div
+              role="button"
+              tabIndex={0}
               className={cn(
                 "flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded text-custom-sidebar-text-400 cursor-grab",
                 {
@@ -180,9 +183,10 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
                 }
               )}
               ref={dragHandleRef}
+              aria-label={t("drag_to_rearrange")}
             >
               <DragHandle className="bg-transparent" />
-            </button>
+            </div>
           </Tooltip>
         )}
         <SidebarNavItem isActive={isActive}>

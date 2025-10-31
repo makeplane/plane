@@ -54,9 +54,13 @@ class TestCaseRepositoryDetailSerializer(ModelSerializer):
     Serializer for creating a TestPlan.
     """
 
+    created_by = UserLiteSerializer(read_only=True)
+
+
     class Meta:
         model = TestCaseRepository
         fields = '__all__'
+        depth = 1
 
 
 class CaseLabelSerializer(ModelSerializer):
@@ -65,7 +69,7 @@ class CaseLabelSerializer(ModelSerializer):
     """
 
     class Meta:
-        model = TestCase
+        model = CaseLabel
         fields = '__all__'
 
 
@@ -77,6 +81,13 @@ class CaseCreateUpdateSerializer(ModelSerializer):
         model = TestCase
         fields = ['name', 'precondition', 'steps', 'remark', 'state', 'type', 'priority', 'repository', 'labels',
                   'module']
+
+class CaseListSerializer(ModelSerializer):
+    """用例查询"""
+    class Meta:
+        model = TestCase
+        fields = '__all__'
+
 
 
 class CaseModuleCreateUpdateSerializer(ModelSerializer):

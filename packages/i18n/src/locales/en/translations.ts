@@ -141,6 +141,7 @@ export default {
   views: "Views",
   workspace: "Workspace",
   archives: "Archives",
+  test_management: "测试管理",
   settings: "Settings",
   failed_to_move_favorite: "Failed to move favorite",
   favorites: "Favorites",

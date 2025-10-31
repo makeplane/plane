@@ -9,6 +9,7 @@ export default {
     workspace: "工作区",
     views: "视图",
     analytics: "分析",
+    test_management: "测试管理",
     work_items: "工作项",
     cycles: "周期",
     modules: "模块",

@@ -65,7 +65,9 @@
     "swr": "catalog:",
     "tailwind-merge": "^2.0.0",
     "use-font-face-observer": "^1.2.2",
-    "uuid": "catalog:"
+    "uuid": "catalog:",
+    "antd": "catalog:",
+    "@ant-design/icons": "catalog:"
   },
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
