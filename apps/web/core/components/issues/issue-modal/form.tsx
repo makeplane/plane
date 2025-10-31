@@ -319,6 +319,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     {
       name: watch("name"),
       description_html: getTextContent(watch("description_html")),
+      issueId: data?.id,
     }
   );
 

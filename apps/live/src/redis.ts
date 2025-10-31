@@ -59,13 +59,20 @@ export class RedisManager {
         return;
       }
 
+      // Configuration optimized for BOTH regular operations AND pub/sub
+      // HocuspocusRedis uses .duplicate() which inherits these settings
       this.redisClient = new Redis(redisUrl, {
-        lazyConnect: true,
+        lazyConnect: false, // Connect immediately for reliability (duplicates inherit this)
         keepAlive: 30000,
         connectTimeout: 10000,
-        commandTimeout: 5000,
-        // enableOfflineQueue: false,
         maxRetriesPerRequest: 3,
+        enableOfflineQueue: true, // Keep commands queued during reconnection
+        retryStrategy: (times: number) => {
+          // Exponential backoff with max 2 seconds
+          const delay = Math.min(times * 50, 2000);
+          logger.info(`REDIS_MANAGER: Reconnection attempt ${times}, delay: ${delay}ms`);
+          return delay;
+        },
       });
 
       // Set up event listeners
@@ -94,10 +101,6 @@ export class RedisManager {
         this.isConnected = false;
       });
 
-      // Connect to Redis
-      await this.redisClient.connect();
-
-      // Test the connection
       await this.redisClient.ping();
       logger.info("REDIS_MANAGER: Redis connection test successful");
     } catch (error) {

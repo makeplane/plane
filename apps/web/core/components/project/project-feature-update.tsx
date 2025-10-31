@@ -10,9 +10,10 @@ import { Button, getButtonStyling } from "@plane/propel/button";
 import { Row } from "@plane/ui";
 // components
 import { Logo } from "@/components/common/logo";
-import { ProjectFeaturesList } from "@/components/project/settings/features-list";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
+// plane web imports
+import { ProjectFeaturesList } from "@/plane-web/components/projects/settings/features-list";
 
 type Props = {
   workspaceSlug: string;

@@ -3,11 +3,11 @@ import type { FC } from "react";
 import React from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
-import { SquareUser, Users } from "lucide-react";
+import { SquareUser } from "lucide-react";
 // plane types
 import { EEstimateSystem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { WorkItemsIcon } from "@plane/propel/icons";
+import { MembersPropertyIcon, WorkItemsIcon } from "@plane/propel/icons";
 import type { ICycle } from "@plane/types";
 // plane ui
 import { Avatar, AvatarGroup, TextArea } from "@plane/ui";
@@ -87,7 +87,7 @@ export const CycleSidebarDetails: FC<Props> = observer((props) => {
 
         <div className="flex items-center justify-start gap-1">
           <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
-            <Users className="h-4 w-4" />
+            <MembersPropertyIcon className="h-4 w-4" />
             <span className="text-base">{t("members")}</span>
           </div>
           <div className="flex w-3/5 items-center rounded-sm">

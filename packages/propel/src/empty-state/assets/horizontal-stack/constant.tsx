@@ -9,6 +9,7 @@ import {
   MembersHorizontalStackIllustration,
   NoteHorizontalStackIllustration,
   PriorityHorizontalStackIllustration,
+  ProjectHorizontalStackIllustration,
   SettingsHorizontalStackIllustration,
   StateHorizontalStackIllustration,
   TemplateHorizontalStackIllustration,
@@ -60,6 +61,10 @@ export const HorizontalStackAssetsMap = [
   {
     asset: <PriorityHorizontalStackIllustration className="w-20 h-20" />,
     title: "Priority",
+  },
+  {
+    asset: <ProjectHorizontalStackIllustration className="w-20 h-20" />,
+    title: "Project",
   },
   {
     asset: <SettingsHorizontalStackIllustration className="w-20 h-20" />,

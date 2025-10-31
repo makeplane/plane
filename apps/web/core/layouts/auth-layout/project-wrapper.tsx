@@ -7,12 +7,11 @@ import useSWR from "swr";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EProjectNetwork } from "@plane/types";
 // components
 import { JoinProject } from "@/components/auth-screens/project/join-project";
 import { LogoSpinner } from "@/components/common/logo-spinner";
-import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { ETimeLineTypeType } from "@/components/gantt-chart/contexts";
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
@@ -26,7 +25,6 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useProjectView } from "@/hooks/store/use-project-view";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useTimeLineChart } from "@/hooks/use-timeline-chart";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
@@ -57,9 +55,6 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { fetchProjectStates } = useProjectState();
   const { fetchProjectLabels } = useLabel();
   const { getProjectEstimates } = useProjectEstimates();
-
-  // helper hooks
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/projects" });
 
   // derived values
   const projectExists = projectId ? getProjectById(projectId.toString()) : null;
@@ -184,22 +179,22 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   if (loader === "loaded" && projectId && !!hasPermissionToCurrentProject === false)
     return (
       <div className="grid h-full place-items-center bg-custom-background-100">
-        <DetailedEmptyState
+        <EmptyStateDetailed
           title={t("workspace_projects.empty_state.general.title")}
           description={t("workspace_projects.empty_state.general.description")}
-          assetPath={resolvedPath}
-          customPrimaryButton={
-            <ComicBoxButton
-              label={t("workspace_projects.empty_state.general.primary_button.text")}
-              title={t("workspace_projects.empty_state.general.primary_button.comic.title")}
-              description={t("workspace_projects.empty_state.general.primary_button.comic.description")}
-              onClick={() => {
+          assetKey="project"
+          assetClassName="size-40"
+          actions={[
+            {
+              label: t("workspace_projects.empty_state.general.primary_button.text"),
+              onClick: () => {
                 toggleCreateProjectModal(true);
                 captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON });
-              }}
-              disabled={!canPerformEmptyStateActions}
-            />
-          }
+              },
+              disabled: !canPerformEmptyStateActions,
+              variant: "primary",
+            },
+          ]}
         />
       </div>
     );

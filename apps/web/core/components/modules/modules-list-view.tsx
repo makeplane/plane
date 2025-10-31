@@ -1,14 +1,12 @@
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useParams, useSearchParams } from "next/navigation";
 // components
 import { EUserPermissionsLevel, MODULE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EUserProjectRoles } from "@plane/types";
 import { ContentWrapper, Row, ERowVariant } from "@plane/ui";
 import { ListLayout } from "@/components/core/list";
-import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "@/components/modules";
 import { CycleModuleBoardLayoutLoader } from "@/components/ui/loader/cycle-module-board-loader";
 import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module-list-loader";
@@ -18,9 +16,6 @@ import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useModule } from "@/hooks/store/use-module";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-import AllFiltersImage from "@/public/empty-state/module/all-filters.svg";
-import NameFilterImage from "@/public/empty-state/module/name-filter.svg";
 
 export const ModulesListView: React.FC = observer(() => {
   // router
@@ -32,7 +27,7 @@ export const ModulesListView: React.FC = observer(() => {
   // store hooks
   const { toggleCreateModuleModal } = useCommandPalette();
   const { getProjectModuleIds, getFilteredModuleIds, loader } = useModule();
-  const { currentProjectDisplayFilters: displayFilters, searchQuery } = useModuleFilter();
+  const { currentProjectDisplayFilters: displayFilters } = useModuleFilter();
   const { allowPermissions } = useUserPermissions();
   // derived values
   const projectModuleIds = projectId ? getProjectModuleIds(projectId.toString()) : undefined;
@@ -41,9 +36,6 @@ export const ModulesListView: React.FC = observer(() => {
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
     EUserPermissionsLevel.PROJECT
   );
-  const generalViewResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/onboarding/modules",
-  });
 
   if (loader || !projectModuleIds || !filteredModuleIds)
     return (
@@ -56,42 +48,29 @@ export const ModulesListView: React.FC = observer(() => {
 
   if (projectModuleIds.length === 0)
     return (
-      <DetailedEmptyState
-        title={t("project_module.empty_state.general.title")}
-        description={t("project_module.empty_state.general.description")}
-        assetPath={generalViewResolvedPath}
-        customPrimaryButton={
-          <ComicBoxButton
-            label={t("project_module.empty_state.general.primary_button.text")}
-            title={t("project_module.empty_state.general.primary_button.comic.title")}
-            description={t("project_module.empty_state.general.primary_button.comic.description")}
-            data-ph-element={MODULE_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON}
-            onClick={() => {
-              toggleCreateModuleModal(true);
-            }}
-            disabled={!canPerformEmptyStateActions}
-          />
-        }
+      <EmptyStateDetailed
+        assetKey="module"
+        title={t("project_empty_state.modules.title")}
+        description={t("project_empty_state.modules.description")}
+        actions={[
+          {
+            label: t("project_empty_state.modules.cta_primary"),
+            onClick: () => toggleCreateModuleModal(true),
+            disabled: !canPerformEmptyStateActions,
+            variant: "primary",
+            "data-ph-element": MODULE_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON,
+          },
+        ]}
       />
     );
 
   if (filteredModuleIds.length === 0)
     return (
-      <div className="grid h-full w-full place-items-center">
-        <div className="text-center">
-          <Image
-            src={searchQuery.trim() === "" ? AllFiltersImage : NameFilterImage}
-            className="mx-auto h-36 w-36 sm:h-48 sm:w-48"
-            alt="No matching modules"
-          />
-          <h5 className="mb-1 mt-7 text-xl font-medium">No matching modules</h5>
-          <p className="text-base text-custom-text-400">
-            {searchQuery.trim() === ""
-              ? "Remove the filters to see all modules"
-              : "Remove the search criteria to see all modules"}
-          </p>
-        </div>
-      </div>
+      <EmptyStateDetailed
+        assetKey="search"
+        title={t("common_empty_state.search.title")}
+        description={t("common_empty_state.search.description")}
+      />
     );
 
   return (

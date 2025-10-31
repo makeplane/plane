@@ -7,11 +7,10 @@ import useSWR from "swr";
 // plane imports
 import { EUserPermissionsLevel, EDraftIssuePaginationType, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { cn } from "@plane/utils";
-import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { captureClick } from "@/helpers/event-tracker.helper";
 // constants
 
@@ -70,23 +69,22 @@ export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer(
 
   if (workspaceProjectIds?.length === 0)
     return (
-      <DetailedEmptyState
-        size="sm"
+      <EmptyStateDetailed
         title={t("workspace_projects.empty_state.no_projects.title")}
         description={t("workspace_projects.empty_state.no_projects.description")}
-        assetPath={noProjectResolvedPath}
-        customPrimaryButton={
-          <ComicBoxButton
-            label={t("workspace_projects.empty_state.no_projects.primary_button.text")}
-            title={t("workspace_projects.empty_state.no_projects.primary_button.comic.title")}
-            description={t("workspace_projects.empty_state.no_projects.primary_button.comic.description")}
-            onClick={() => {
+        assetKey="project"
+        assetClassName="size-40"
+        actions={[
+          {
+            label: t("workspace_projects.empty_state.no_projects.primary_button.text"),
+            onClick: () => {
               toggleCreateProjectModal(true);
               captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON });
-            }}
-            disabled={!hasMemberLevelPermission}
-          />
-        }
+            },
+            disabled: !hasMemberLevelPermission,
+            variant: "primary",
+          },
+        ]}
       />
     );
 

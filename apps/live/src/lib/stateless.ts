@@ -6,7 +6,7 @@ import { DocumentCollaborativeEvents, type TDocumentEventsServer } from "@plane/
  * @param param0
  */
 export const onStateless = async ({ payload, document }: onStatelessPayload) => {
-  const response = DocumentCollaborativeEvents[payload as TDocumentEventsServer].client;
+  const response = DocumentCollaborativeEvents[payload as TDocumentEventsServer]?.client;
   if (response) {
     document.broadcastStateless(response);
   }

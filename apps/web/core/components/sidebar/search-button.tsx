@@ -1,5 +1,5 @@
-import React from "react";
 import type { FC } from "react";
+import React from "react";
 import { Search } from "lucide-react";
 import { cn } from "@plane/utils";
 

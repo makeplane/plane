@@ -266,7 +266,7 @@ export class IssueRootStore implements IIssueRootStore {
     this.archivedIssues = new ArchivedIssues(this, this.archivedIssuesFilter);
 
     this.issueKanBanView = new IssueKanBanViewStore(this);
-    this.issueCalendarView = new CalendarStore();
+    this.issueCalendarView = new CalendarStore(this);
 
     this.projectEpicsFilter = new ProjectEpicsFilter(this);
     this.projectEpics = new ProjectEpics(this, this.projectEpicsFilter);

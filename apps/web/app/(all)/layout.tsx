@@ -2,10 +2,6 @@ import type { Metadata, Viewport } from "next";
 
 import { PreloadResources } from "./layout.preload";
 
-// styles
-// Command palette and emoji styles are now included in the centralized global.css
-import "@plane/propel/styles/react-day-picker";
-
 export const metadata: Metadata = {
   robots: {
     index: false,

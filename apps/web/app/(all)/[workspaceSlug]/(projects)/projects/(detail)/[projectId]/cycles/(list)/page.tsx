@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel, CYCLE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import type { TCycleFilters } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // components
@@ -15,7 +16,6 @@ import { PageHead } from "@/components/core/page-title";
 import { CycleAppliedFiltersList } from "@/components/cycles/applied-filters";
 import { CyclesView } from "@/components/cycles/cycles-view";
 import { CycleCreateUpdateModal } from "@/components/cycles/modal";
-import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module-list-loader";
 // hooks
@@ -96,22 +96,19 @@ const ProjectCyclesPage = observer(() => {
         />
         {totalCycles === 0 ? (
           <div className="h-full place-items-center">
-            <DetailedEmptyState
-              title={t("project_cycles.empty_state.general.title")}
-              description={t("project_cycles.empty_state.general.description")}
-              assetPath={resolvedPath}
-              customPrimaryButton={
-                <ComicBoxButton
-                  label={t("project_cycles.empty_state.general.primary_button.text")}
-                  title={t("project_cycles.empty_state.general.primary_button.comic.title")}
-                  description={t("project_cycles.empty_state.general.primary_button.comic.description")}
-                  data-ph-element={CYCLE_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON}
-                  onClick={() => {
-                    setCreateModal(true);
-                  }}
-                  disabled={!hasMemberLevelPermission}
-                />
-              }
+            <EmptyStateDetailed
+              assetKey="cycle"
+              title={t("project_empty_state.cycles.title")}
+              description={t("project_empty_state.cycles.description")}
+              actions={[
+                {
+                  label: t("project_empty_state.cycles.cta_primary"),
+                  onClick: () => setCreateModal(true),
+                  variant: "primary",
+                  disabled: !hasMemberLevelPermission,
+                  "data-ph-element": CYCLE_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON,
+                },
+              ]}
             />
           </div>
         ) : (
