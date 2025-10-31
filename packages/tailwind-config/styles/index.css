@@ -8,7 +8,6 @@
 @import "./themes/dark.css";
 @import "./themes/editor-colors.css";
 @import "./components/emoji-picker.css";
-@import "./components/command-palette.css";
 @import "./components/spinner.css";
 @import "./components/tags-input.css";
 @import "./components/utility-classes.css";
