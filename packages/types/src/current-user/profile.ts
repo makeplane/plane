@@ -18,7 +18,7 @@ export type TUserProfile = {
   is_onboarded: boolean;
   is_tour_completed: boolean;
 
-  use_case: string | undefined;
+  use_case: string[] | undefined;
 
   billing_address_country: string | undefined;
   billing_address: string | undefined;
