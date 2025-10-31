@@ -218,10 +218,8 @@ class IssueCustomPropertyDropdownOptionsAPIView(BaseAPIView):
         Fetch dropdown options from WB API for a custom property.
         """
         try:
-            # Get the issue and issue type custom property
             issue = get_object_or_404(Issue, id=issue_id)
-            issue_type_custom_property = get_object_or_404(IssueTypeCustomProperty, id=issue_type_custom_property_id)
-            
+           
             # Get created_by_id from the issue and query the users table
             # Django ForeignKey fields automatically have a _id attribute
             created_by_id = issue.created_by_id
