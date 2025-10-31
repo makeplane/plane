@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Pencil, ChevronDown, Loader2 } from "lucide-react";
+import { Pencil } from "lucide-react";
 import axios from "axios";
 import { Input } from "@plane/ui";
-import { Combobox } from "@headlessui/react";
-import { usePopper } from "react-popper";
-import { useOutsideClickDetector } from "@plane/helpers";
-import { cn } from "@/helpers/common.helper";
 
 export type CustomProperty = {
   key: string;
@@ -105,202 +101,54 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
         
         return updatedProperties;
       });
-      
+       
       await updateCustomProperties([updatedProperty]);
     } catch (error) {
       console.error("Failed to update custom property:", error);
     }
   };
 
-  const CustomPropertyDropdown: React.FC<{ property: CustomProperty; onUpdate: (property: CustomProperty) => Promise<void>; onClose: () => void }> = React.memo(({ property, onUpdate, onClose }) => {
+  const EditableProperty: React.FC<{ property: CustomProperty }> = React.memo(({ property }) => {
     const [value, setValue] = useState(property.value);
     const [localError, setLocalError] = useState<string | null>(null);
-    const [options, setOptions] = useState<Array<{ value: string; label: string }>>([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [isOpen, setIsOpen] = useState(false);
-    const [query, setQuery] = useState("");
-    
-    const dropdownRef = React.useRef<HTMLDivElement | null>(null);
-    const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-    const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-    
-    const { styles, attributes } = usePopper(referenceElement, popperElement, {
-      placement: "bottom-start",
-      modifiers: [{ name: "preventOverflow", options: { padding: 12 } }],
-    });
+    // Local state for dropdown editing
+    const [ddLoading, setDdLoading] = useState<boolean>(false);
+    const [ddError, setDdError] = useState<string | null>(null);
+    const [ddOptions, setDdOptions] = useState<string[]>([]);
 
     // Sync value when property changes
     useEffect(() => {
       setValue(property.value);
     }, [property.value]);
 
-    // Helper: Extract array of strings from response
-    const parseResponse = (responseData: any): string[] => {
-      if (Array.isArray(responseData)) return responseData;
-      if (responseData && typeof responseData === 'object') {
-        const arrayKey = Object.keys(responseData).find(key => Array.isArray(responseData[key]));
-        return arrayKey ? responseData[arrayKey] : [];
-      }
-      return [];
-    };
+    // Fetch dropdown options when component mounts for dropdown type (no caching)
+    useEffect(() => {
+      if (property.data_type !== "dropdown") return;
 
-    // Fetch dropdown options
-    const fetchDropdownOptions = async () => {
-      if (isLoading || options.length > 0) return;
-      
-      setIsLoading(true);
-      setLocalError(null);
-      
-      try {
-        const response = await axios.get(
-          `/api/workspaces/${workspaceSlug}/issues/${issueId}/custom-properties/${property.issue_type_custom_property}/dropdown-options/`
-        );
+      const fetchOptions = async () => {
+        setDdLoading(true);
+        setDdError(null);
         
-        const strings = parseResponse(response.data);
-        const fetchedOptions = strings.map((item: string) => ({ value: item, label: item }));
-        setOptions(fetchedOptions);
-      } catch (error) {
-        setLocalError("Failed to load dropdown options.");
-        console.error("Failed to fetch dropdown options:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    // Handle selection change
-    const handleChange = async (selectedValue: string) => {
-      if (selectedValue === value) {
-        handleClose();
-        return;
-      }
-
-      setValue(selectedValue);
-      setLocalError(null);
-      handleClose();
-
-      if (selectedValue !== property.value) {
         try {
-          await onUpdate({ ...property, value: selectedValue });
+          const url = `/api/workspaces/${workspaceSlug}/issues/${issueId}/custom-properties/${property.issue_type_custom_property}/dropdown-options/`;
+          const res = await axios.get(url);
+          
+          // Accepts exactly your shape (and tolerates direct array fallback):
+          // { "data": [ "1760354036-2#50.221.019/0013-70", "1760354036-1#50.221.019/0013-70" ] }
+          const arr = Array.isArray(res?.data) ? res.data : res?.data?.data;
+          if (!Array.isArray(arr)) throw new Error("Invalid options response");
+          
+          setDdOptions(arr.map(String));
         } catch (error) {
-          setLocalError("Failed to update custom property.");
-          setValue(property.value);
+          setDdError("Failed to load options.");
+          console.error("Failed to fetch dropdown options:", error);
+        } finally {
+          setDdLoading(false);
         }
-      }
-    };
+      };
 
-    const handleOpen = () => {
-      setIsOpen(true);
-      fetchDropdownOptions();
-    };
-
-    const handleClose = () => {
-      setIsOpen(false);
-      setQuery("");
-    };
-
-    useOutsideClickDetector(dropdownRef, handleClose);
-
-    // Filter options based on search query
-    const filteredOptions = query === "" 
-      ? options 
-      : options.filter(option => 
-          option.label.toLowerCase().includes(query.toLowerCase())
-        );
-
-    const selectedOption = options.find(opt => opt.value === value);
-
-    return (
-      <div className="relative w-full">
-        <Combobox
-          as="div"
-          ref={dropdownRef}
-          value={value}
-          onChange={handleChange}
-          className="relative"
-        >
-          <Combobox.Button as={React.Fragment}>
-            <button
-              ref={setReferenceElement}
-              type="button"
-              onClick={!isOpen ? handleOpen : undefined}
-              className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 flex items-center justify-between"
-            >
-              <span className={cn("truncate", value ? "text-custom-text-500" : "text-custom-text-400")}>
-                {selectedOption?.label || value || `Select ${property.key}`}
-              </span>
-              <ChevronDown className="h-4 w-4 flex-shrink-0 text-custom-text-400" />
-            </button>
-          </Combobox.Button>
-
-          {isOpen && (
-            <Combobox.Options className="fixed z-10" static>
-              <div
-                className="my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2 text-xs shadow-custom-shadow-rg focus:outline-none"
-                ref={setPopperElement}
-                style={styles.popper}
-                {...attributes.popper}
-              >
-                {options.length > 5 && !isLoading && (
-                  <div className="sticky top-0 z-10 mb-2 bg-custom-background-100">
-                    <input
-                      type="text"
-                      className="w-full rounded border border-custom-border-300 bg-custom-background-90 px-2 py-1 text-xs text-custom-text-100 placeholder:text-custom-text-400 focus:border-custom-primary-100 focus:outline-none"
-                      placeholder="Search..."
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                    />
-                  </div>
-                )}
-                
-                <div className="max-h-48 space-y-1 overflow-y-scroll">
-                  {isLoading ? (
-                    <div className="flex items-center justify-center gap-2 px-1.5 py-4 text-custom-text-400">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>Loading options...</span>
-                    </div>
-                  ) : filteredOptions.length > 0 ? (
-                    filteredOptions.map((option) => (
-                      <Combobox.Option
-                        key={option.value}
-                        value={option.value}
-                        className={({ active, selected }) =>
-                          cn(
-                            "flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5",
-                            {
-                              "bg-custom-background-80": active,
-                              "text-custom-text-100": selected,
-                              "text-custom-text-200": !selected,
-                            }
-                          )
-                        }
-                        onClick={handleClose}
-                      >
-                        {({ selected }) => (
-                          <>
-                            <span className="flex-grow truncate">{option.label}</span>
-                            {selected && <span className="text-custom-primary-100">✓</span>}
-                          </>
-                        )}
-                      </Combobox.Option>
-                    ))
-                  ) : (
-                    <div className="px-1.5 py-1 italic text-custom-text-400">No options found</div>
-                  )}
-                </div>
-              </div>
-            </Combobox.Options>
-          )}
-        </Combobox>
-        {localError && (
-          <div className="text-red-500 text-sm mt-1">{localError}</div>
-        )}
-      </div>
-    );
-  });
-
-  const EditableProperty: React.FC<{ property: CustomProperty }> = React.memo(({ property }) => {
-    const [value, setValue] = useState(property.value);
-    const [localError, setLocalError] = useState<string | null>(null);
+      fetchOptions();
+    }, [property.data_type, property.issue_type_custom_property, workspaceSlug, issue_type_id]);
 
     const handleBlur = async () => {
       if (property.is_required && value.trim() === "") {
@@ -330,11 +178,28 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
 
     const inputComponents: Record<string, React.JSX.Element> = {
       dropdown: (
-        <CustomPropertyDropdown 
-          property={property} 
-          onUpdate={handlePropertyUpdate}
-          onClose={() => setEditingPropertyKey(null)}
-        />
+        <div className="w-full">
+          {ddLoading ? (
+            <div className="text-sm text-custom-text-400 py-1">Loading options…</div>
+          ) : ddError ? (
+            <div className="text-red-500 text-sm mt-1">{ddError}</div>
+          ) : (
+            <select
+              value={value}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              autoFocus
+              className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100"
+            >
+              <option value="">{`Select ${property.key}`}</option>
+              {ddOptions.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
       ),
       date: (
         <Input

@@ -1,6 +1,5 @@
 # Python imports
 import json
-from urllib.parse import urlencode
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Django imports
@@ -218,8 +217,10 @@ class IssueCustomPropertyDropdownOptionsAPIView(BaseAPIView):
         Fetch dropdown options from WB API for a custom property.
         """
         try:
+            # Get the issue and issue type custom property
             issue = get_object_or_404(Issue, id=issue_id)
-           
+            issue_type_custom_property = get_object_or_404(IssueTypeCustomProperty, id=issue_type_custom_property_id)
+            
             # Get created_by_id from the issue and query the users table
             # Django ForeignKey fields automatically have a _id attribute
             created_by_id = issue.created_by_id
@@ -264,53 +265,19 @@ class IssueCustomPropertyDropdownOptionsAPIView(BaseAPIView):
             # WB API endpoint URL configured in settings
             WB_API_URL = settings.WB_API_URL
             
-            # For GET requests, we need to send data as query parameters
-            # Convert the JSON payload to a flat query string format
-            # Since the payload contains nested data, we'll encode it as a JSON string
-            # and send it as a query parameter, or flatten it for query params
-            # Given the payload size and sensitive content, encode the JSON as a single parameter
-            json_payload_str = json.dumps(wb_api_payload, cls=DjangoJSONEncoder)
-            query_params = {"payload": json_payload_str}
+            # Make request to WB API using POST
+            wb_response = requests.post(
+                WB_API_URL,
+                json=wb_api_payload,
+                timeout=30,
+            )
+            wb_response.raise_for_status()
             
-            # Build the full URL with query parameters
-            # For large payloads, we may need to use POST instead, but handling GET as requested
-            encoded_params = urlencode(query_params)
-            full_url = f"{WB_API_URL}?{encoded_params}" if encoded_params else WB_API_URL
-            
-            # Make request to WB API using GET with query parameters
-            # Note: For very large payloads (>2000 chars), consider using POST instead
-            try:
-                wb_response = requests.get(
-                    full_url,
-                    timeout=30,
-                    headers={"Content-Type": "application/json"},
-                )
-                try:
-                    wb_response.raise_for_status()
-                except requests.exceptions.HTTPError as http_err:
-                    resp = getattr(http_err, "response", None) or wb_response
-                    status_code = getattr(resp, "status_code", status.HTTP_502_BAD_GATEWAY)
-                    message = " API returned an error"
-                    try:
-                        payload = resp.json()
-                        message = payload.get("message") or payload.get("detail") or message
-                    except ValueError:
-                        text = getattr(resp, "text", "") or ""
-                        message = text[:500] or message
-                    return Response(
-                        {"error": message},
-                        status=status_code if 400 <= status_code < 600 else status.HTTP_502_BAD_GATEWAY,
-                    )
-                # Return the response from WB API
-                return Response(
-                    wb_response.json(),
-                    status=status.HTTP_200_OK
-                )
-            except requests.exceptions.RequestException as e:
-                return Response(
-                    {"error": f"Failed to fetch dropdown options from API Call: {str(e)}"},
-                    status=status.HTTP_502_BAD_GATEWAY,
-                )
+            # Return the response from WB API
+            return Response(
+                wb_response.json(),
+                status=status.HTTP_200_OK
+            )
         except Exception as e:
             return Response(
                 {"error": f"An error occurred while fetching dropdown options: {str(e)}"},
