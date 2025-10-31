@@ -112,9 +112,9 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
     const [value, setValue] = useState(property.value);
     const [localError, setLocalError] = useState<string | null>(null);
     // Local state for dropdown editing
-    const [ddLoading, setDdLoading] = useState<boolean>(false);
-    const [ddError, setDdError] = useState<string | null>(null);
-    const [ddOptions, setDdOptions] = useState<string[]>([]);
+    const [dropdownLoading, setDropdownLoading] = useState<boolean>(false);
+    const [dropdownError, setDropdownError] = useState<string | null>(null);
+    const [dropdownOptions, setDropdownOptions] = useState<string[]>([]);
 
     // Sync value when property changes
     useEffect(() => {
@@ -126,24 +126,22 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
       if (property.data_type !== "dropdown") return;
 
       const fetchOptions = async () => {
-        setDdLoading(true);
-        setDdError(null);
+        setDropdownLoading(true);
+        setDropdownError(null);
         
         try {
           const url = `/api/workspaces/${workspaceSlug}/issues/${issueId}/custom-properties/${property.issue_type_custom_property}/dropdown-options/`;
           const res = await axios.get(url);
           
-          // Accepts exactly your shape (and tolerates direct array fallback):
-          // { "data": [ "1760354036-2#50.221.019/0013-70", "1760354036-1#50.221.019/0013-70" ] }
           const arr = Array.isArray(res?.data) ? res.data : res?.data?.data;
           if (!Array.isArray(arr)) throw new Error("Invalid options response");
           
-          setDdOptions(arr.map(String));
+          setDropdownOptions(arr.map(String));
         } catch (error) {
-          setDdError("Failed to load options.");
+          setDropdownError("Failed to load options.");
           console.error("Failed to fetch dropdown options:", error);
         } finally {
-          setDdLoading(false);
+          setDropdownLoading(false);
         }
       };
 
@@ -179,10 +177,10 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
     const inputComponents: Record<string, React.JSX.Element> = {
       dropdown: (
         <div className="w-full">
-          {ddLoading ? (
+          {dropdownLoading ? (
             <div className="text-sm text-custom-text-400 py-1">Loading options…</div>
-          ) : ddError ? (
-            <div className="text-red-500 text-sm mt-1">{ddError}</div>
+          ) : dropdownError ? (
+            <div className="text-red-500 text-sm mt-1">{dropdownError}</div>
           ) : (
             <select
               value={value}
@@ -192,7 +190,7 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
               className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100"
             >
               <option value="">{`Select ${property.key}`}</option>
-              {ddOptions.map((opt) => (
+              {dropdownOptions.map((opt) => (
                 <option key={opt} value={opt}>
                   {opt}
                 </option>
