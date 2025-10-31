@@ -1,17 +1,9 @@
 import type { FC } from "react";
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import { useTheme } from "next-themes";
 // plane imports
-import { API_BASE_URL } from "@plane/constants";
 import { OAuthOptions } from "@plane/ui";
-// assets
-import GithubLightLogo from "/public/logos/github-black.png";
-import GithubDarkLogo from "/public/logos/github-dark.svg";
-import GitlabLogo from "/public/logos/gitlab-logo.svg";
-import GoogleLogo from "/public/logos/google-logo.svg";
 // helpers
 import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
 import {
@@ -22,7 +14,7 @@ import {
   authErrorHandler,
 } from "@/helpers/authentication.helper";
 // hooks
-import { useInstance } from "@/hooks/store/use-instance";
+import { useOAuthConfig } from "@/hooks/oauth";
 // local imports
 import { TermsAndConditions } from "../terms-and-conditions";
 import { AuthBanner } from "./auth-banner";
@@ -41,8 +33,6 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
   const invitation_id = searchParams.get("invitation_id");
   const workspaceSlug = searchParams.get("slug");
   const error_code = searchParams.get("error_code");
-  const next_path = searchParams.get("next_path");
-  const { resolvedTheme } = useTheme();
   // props
   const { authMode: currentAuthMode } = props;
   // states
@@ -50,13 +40,9 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
   const [authStep, setAuthStep] = useState<EAuthSteps>(EAuthSteps.EMAIL);
   const [email, setEmail] = useState(emailParam ? emailParam.toString() : "");
   const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
-
-  // hooks
-  const { config } = useInstance();
-
   // derived values
-  const isOAuthEnabled =
-    (config && (config?.is_google_enabled || config?.is_github_enabled || config?.is_gitlab_enabled)) || false;
+  const oAuthActionText = authMode === EAuthModes.SIGN_UP ? "Sign up" : "Sign in";
+  const { isOAuthEnabled, oAuthOptions } = useOAuthConfig(oAuthActionText);
 
   useEffect(() => {
     if (!authMode && currentAuthMode) setAuthMode(currentAuthMode);
@@ -106,45 +92,6 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
 
   if (!authMode) return <></>;
 
-  const OauthButtonContent = authMode === EAuthModes.SIGN_UP ? "Sign up" : "Sign in";
-
-  const OAuthConfig = [
-    {
-      id: "google",
-      text: `${OauthButtonContent} with Google`,
-      icon: <Image src={GoogleLogo} height={18} width={18} alt="Google Logo" />,
-      onClick: () => {
-        window.location.assign(`${API_BASE_URL}/auth/google/${next_path ? `?next_path=${next_path}` : ``}`);
-      },
-      enabled: config?.is_google_enabled,
-    },
-    {
-      id: "github",
-      text: `${OauthButtonContent} with GitHub`,
-      icon: (
-        <Image
-          src={resolvedTheme === "dark" ? GithubDarkLogo : GithubLightLogo}
-          height={18}
-          width={18}
-          alt="GitHub Logo"
-        />
-      ),
-      onClick: () => {
-        window.location.assign(`${API_BASE_URL}/auth/github/${next_path ? `?next_path=${next_path}` : ``}`);
-      },
-      enabled: config?.is_github_enabled,
-    },
-    {
-      id: "gitlab",
-      text: `${OauthButtonContent} with GitLab`,
-      icon: <Image src={GitlabLogo} height={18} width={18} alt="GitLab Logo" />,
-      onClick: () => {
-        window.location.assign(`${API_BASE_URL}/auth/gitlab/${next_path ? `?next_path=${next_path}` : ``}`);
-      },
-      enabled: config?.is_gitlab_enabled,
-    },
-  ];
-
   return (
     <div className="flex flex-col justify-center items-center flex-grow w-full py-6 mt-10">
       <div className="relative flex flex-col gap-6 max-w-[22.5rem] w-full">
@@ -159,7 +106,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
           currentAuthStep={authStep}
         />
 
-        {isOAuthEnabled && <OAuthOptions options={OAuthConfig} compact={authStep === EAuthSteps.PASSWORD} />}
+        {isOAuthEnabled && <OAuthOptions options={oAuthOptions} compact={authStep === EAuthSteps.PASSWORD} />}
 
         <AuthFormRoot
           authStep={authStep}

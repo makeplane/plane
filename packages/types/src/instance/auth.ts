@@ -1,5 +1,5 @@
 export type TInstanceAuthenticationModes = {
-  key: string;
+  key: "unique-codes" | "passwords-login" | "google" | "github" | "gitlab" | "gitea" | "oidc" | "saml" | "ldap";
   name: string;
   description: string;
   icon: React.ReactNode;
