@@ -606,9 +606,18 @@ def filter_character_fields(params, issue_filter, method, prefix=""):
     ]
 
     for field in character_fields:
-        value = params.get(field, "").strip()
-        if value:
-            values_list = [v.strip() for v in value.split(",") if v.strip()]
+        raw_value = params.get(field)
+        if raw_value is None:
+            continue
+
+        if isinstance(raw_value, list):
+            values_list = [str(v).strip() for v in raw_value if str(v).strip()]
+        elif isinstance(raw_value, str):
+            values_list = [v.strip() for v in raw_value.split(",") if v.strip()]
+        else:
+            values_list = [str(raw_value).strip()]
+
+        if values_list:
             issue_filter[f"{prefix}{field}__in"] = values_list
 
     return issue_filter
