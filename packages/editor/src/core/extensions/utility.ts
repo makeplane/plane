@@ -9,8 +9,8 @@ import { DropHandlerPlugin } from "@/plugins/drop";
 import { FilePlugins } from "@/plugins/file/root";
 import { MarkdownClipboardPlugin } from "@/plugins/markdown-clipboard";
 // types
+import { PasteAssetPlugin } from "@/plugins/paste-asset";
 import type { IEditorProps, TEditorAsset, TFileHandler } from "@/types";
-import { AssetDuplicationPlugin } from "@/plugins/asset-duplication";
 
 type TActiveDropbarExtensions =
   | CORE_EXTENSIONS.MENTION
@@ -78,7 +78,7 @@ export const UtilityExtension = (props: Props) => {
           disabledExtensions,
           editor: this.editor,
         }),
-        AssetDuplicationPlugin(),
+        PasteAssetPlugin(),
       ];
     },
 
