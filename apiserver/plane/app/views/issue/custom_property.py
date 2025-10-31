@@ -1,5 +1,6 @@
 # Python imports
 import json
+from urllib.parse import urlencode
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Django imports
@@ -22,7 +23,8 @@ from plane.db.models import (
     Project,
     IssueCustomProperty,
     IssueTypeCustomProperty,
-    Workspace
+    Workspace,
+    User
 )
 from plane.utils.issue_filters import issue_filters
 from .base import BaseAPIView
@@ -220,6 +222,16 @@ class IssueCustomPropertyDropdownOptionsAPIView(BaseAPIView):
             issue = get_object_or_404(Issue, id=issue_id)
             issue_type_custom_property = get_object_or_404(IssueTypeCustomProperty, id=issue_type_custom_property_id)
             
+            # Get created_by_id from the issue and query the users table
+            # Django ForeignKey fields automatically have a _id attribute
+            created_by_id = issue.created_by_id
+            user = None
+            if created_by_id:
+                try:
+                    user = User.objects.get(id=created_by_id)
+                except User.DoesNotExist:
+                    user = None
+            
             # Get issue_type_id from the issue
             issue_type_id = issue.type_id
             
@@ -231,6 +243,14 @@ class IssueCustomPropertyDropdownOptionsAPIView(BaseAPIView):
             issue_data = IssueSerializer(issue).data
             # Convert to JSON-serializable structure (UUIDs, dates, etc.)
             issue_data_safe = json.loads(json.dumps(issue_data, cls=DjangoJSONEncoder))
+            
+            # Prepare user data if user exists - only return display_name
+            user_data = None
+            if user:
+                user_data = {
+                    "display_name": user.display_name or "",
+                }
+            
             # Prepare payload for WB API
             wb_api_payload = {
                 "issue_type_id": str(issue_type_id),
@@ -239,16 +259,33 @@ class IssueCustomPropertyDropdownOptionsAPIView(BaseAPIView):
                 "issueId": str(issue_id),
                 # Include the complete issue data (snake_case keys)
                 **issue_data_safe,
+                # Include user data (created_by user)
+                "created_by_user": user_data,
             }
             
             # WB API endpoint URL configured in settings
             WB_API_URL = settings.WB_API_URL
-            # Make request to WB API
+            
+            # For GET requests, we need to send data as query parameters
+            # Convert the JSON payload to a flat query string format
+            # Since the payload contains nested data, we'll encode it as a JSON string
+            # and send it as a query parameter, or flatten it for query params
+            # Given the payload size and sensitive content, encode the JSON as a single parameter
+            json_payload_str = json.dumps(wb_api_payload, cls=DjangoJSONEncoder)
+            query_params = {"payload": json_payload_str}
+            
+            # Build the full URL with query parameters
+            # For large payloads, we may need to use POST instead, but handling GET as requested
+            encoded_params = urlencode(query_params)
+            full_url = f"{WB_API_URL}?{encoded_params}" if encoded_params else WB_API_URL
+            
+            # Make request to WB API using GET with query parameters
+            # Note: For very large payloads (>2000 chars), consider using POST instead
             try:
                 wb_response = requests.get(
-                    WB_API_URL,
-                    json=wb_api_payload,
+                    full_url,
                     timeout=30,
+                    headers={"Content-Type": "application/json"},
                 )
                 try:
                     wb_response.raise_for_status()
