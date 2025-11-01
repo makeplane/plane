@@ -478,6 +478,23 @@ def model_activity(model_name, model_id, requested_data, current_instance, actor
     # Load the current instance
     current_instance = json.loads(current_instance) if current_instance is not None else None
 
+    # Handle hard deletes explicitly
+    if requested_data.get("deleted") is True:
+        webhook_activity.delay(
+            event=model_name,
+            verb="deleted",
+            field=None,
+            old_value=None,
+            new_value=None,
+            actor_id=actor_id,
+            slug=slug,
+            current_site=origin,
+            event_id=model_id,
+            old_identifier=None,
+            new_identifier=None,
+        )
+        return
+
     # Loop through all keys in requested data and check the current value and requested value
     for key in requested_data:
         # Check if key is present in current instance or not
