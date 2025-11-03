@@ -2,6 +2,7 @@ import path from "node:path";
 import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
+import { joinUrlPath } from "@plane/utils";
 
 const PUBLIC_ENV_KEYS = [
   "NEXT_PUBLIC_API_BASE_URL",
@@ -27,8 +28,10 @@ export default defineConfig(({ isSsrBuild }) => {
   // Only produce an SSR bundle when explicitly enabled.
   // For static deployments (default), we skip the server build entirely.
   const enableSsrBuild = process.env.SPACE_ENABLE_SSR_BUILD === "true";
+  const basePath = joinUrlPath(process.env.NEXT_PUBLIC_SPACE_BASE_PATH ?? "", "/") ?? "/";
 
   return {
+    base: basePath,
     define: {
       "process.env": JSON.stringify(publicEnv),
     },
