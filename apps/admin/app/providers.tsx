@@ -2,6 +2,7 @@
 
 import { ThemeProvider } from "next-themes";
 import { SWRConfig } from "swr";
+import { AppProgressBar } from "@/lib/b-progress";
 import { InstanceProvider } from "./(all)/instance.provider";
 import { StoreProvider } from "./(all)/store.provider";
 import { ToastWithTheme } from "./(all)/toast";
@@ -19,6 +20,7 @@ const DEFAULT_SWR_CONFIG = {
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
+      <AppProgressBar />
       <ToastWithTheme />
       <SWRConfig value={DEFAULT_SWR_CONFIG}>
         <StoreProvider>
