@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useParams, useSearchParams, redirect, notFound } from "next/navigation";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
 // plane imports
 import { SitesProjectPublishService } from "@plane/services";
 import type { TProjectPublishSettings } from "@plane/types";
@@ -12,6 +12,7 @@ const publishService = new SitesProjectPublishService();
 
 export default function IssuesPage() {
   const params = useParams<{ workspaceSlug: string; projectId: string }>();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const { workspaceSlug, projectId } = params;
   const board = searchParams.get("board");
@@ -24,7 +25,7 @@ export default function IssuesPage() {
         response = await publishService.retrieveSettingsByProjectId(workspaceSlug, projectId);
       } catch (error) {
         console.error("Error fetching project publish settings:", error);
-        notFound();
+        router.replace("/404");
       }
 
       let url = "";
@@ -34,14 +35,14 @@ export default function IssuesPage() {
         if (board) urlParams.append("board", String(board));
         if (peekId) urlParams.append("peekId", String(peekId));
         if (urlParams.toString()) url += `?${urlParams.toString()}`;
-        redirect(url);
+        router.replace(url);
       } else {
-        notFound();
+        router.replace("/404");
       }
     };
 
     fetchAndRedirect();
-  }, [workspaceSlug, projectId, board, peekId]);
+  }, [workspaceSlug, projectId, board, peekId, router]);
 
   return (
     <div className="flex h-screen min-h-[500px] w-full justify-center items-center">
