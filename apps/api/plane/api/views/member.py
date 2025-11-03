@@ -1,16 +1,18 @@
 # Third Party imports
+from calendar import c
 from rest_framework.response import Response
 from rest_framework import status
 from drf_spectacular.utils import (
     extend_schema,
     OpenApiResponse,
+    OpenApiRequest,
 )
 
 # Module imports
 from .base import BaseAPIView
-from plane.api.serializers import UserLiteSerializer
+from plane.api.serializers import UserLiteSerializer, ProjectMemberSerializer
 from plane.db.models import User, Workspace, WorkspaceMember, ProjectMember
-from plane.app.permissions import ProjectMemberPermission, WorkSpaceAdminPermission
+from plane.app.permissions import ProjectMemberPermission, WorkSpaceAdminPermission, ProjectAdminPermission
 from plane.utils.openapi import (
     WORKSPACE_SLUG_PARAMETER,
     PROJECT_ID_PARAMETER,
@@ -91,6 +93,11 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
     permission_classes = [ProjectMemberPermission]
     use_read_replica = True
 
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [ProjectMemberPermission()]
+        return [ProjectAdminPermission()]
+
     @extend_schema(
         operation_id="get_project_members",
         summary="List project members",
@@ -131,3 +138,48 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
         users = UserLiteSerializer(User.objects.filter(id__in=project_members), many=True).data
 
         return Response(users, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        operation_id="create_project_member",
+        summary="Create project member",
+        description="Create a new project member",
+        tags=["Members"],
+        parameters=[WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
+        responses={201: OpenApiResponse(description="Project member created", response=ProjectMemberSerializer)},
+        request=OpenApiRequest(request=ProjectMemberSerializer),
+    )
+    def post(self, request, slug, project_id):
+        serializer = ProjectMemberSerializer(data=request.data, context={"slug": slug})
+        serializer.is_valid(raise_exception=True)
+        serializer.save(project_id=project_id)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @extend_schema(
+        operation_id="update_project_member",
+        summary="Update project member",
+        description="Update a project member",
+        tags=["Members"],
+        parameters=[WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
+        responses={200: OpenApiResponse(description="Project member updated", response=ProjectMemberSerializer)},
+        request=OpenApiRequest(request=ProjectMemberSerializer),
+    )
+    def patch(self, request, slug, project_id, pk):
+        project_member = ProjectMember.objects.get(project_id=project_id, workspace__slug=slug, pk=pk)
+        serializer = ProjectMemberSerializer(project_member, data=request.data, partial=True, context={"slug": slug})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        operation_id="delete_project_member",
+        summary="Delete project member",
+        description="Delete a project member",
+        tags=["Members"],
+        parameters=[WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
+        responses={204: OpenApiResponse(description="Project member deleted")},
+    )
+    def delete(self, request, slug, project_id, pk):
+        project_member = ProjectMember.objects.get(project_id=project_id, workspace__slug=slug, pk=pk)
+        project_member.is_active = False
+        project_member.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)

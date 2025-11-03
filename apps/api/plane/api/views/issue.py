@@ -1808,7 +1808,7 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
             request.user.id,
             project_id=project_id,
             issue=issue,
-            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value, ROLE.GUEST.value],
             allow_creator=True,
         ):
             return Response(
@@ -1964,7 +1964,7 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
             request.user,
             project_id=project_id,
             issue=issue,
-            allowed_roles=[ROLE.ADMIN.value],
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value, ROLE.GUEST.value],
             allow_creator=True,
         ):
             return Response(
@@ -2102,7 +2102,7 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
             request.user,
             project_id=project_id,
             issue=issue,
-            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value, ROLE.GUEST.value],
             allow_creator=True,
         ):
             return Response(
