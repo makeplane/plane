@@ -13,7 +13,7 @@ from drf_spectacular.utils import (
 from plane.api.views.base import BaseViewSet
 from plane.db.models import WorkspaceMemberInvite, Workspace
 from plane.api.serializers import WorkspaceInviteSerializer
-from plane.app.permissions import WorkspaceOwnerPermission
+from plane.utils.permissions import WorkspaceOwnerPermission
 from plane.utils.openapi.parameters import WORKSPACE_SLUG_PARAMETER
 
 
