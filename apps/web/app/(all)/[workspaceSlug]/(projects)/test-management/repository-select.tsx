@@ -20,7 +20,7 @@ type RepositorySelectProps = {
   workspaceSlug: string;
   className?: string;
   defaultRepositoryId?: string | null;
-  onRepositoryChange?: (repositoryId: string | null) => void;
+  onRepositoryChange?: (repository: { id: string | null; name?: string | null }) => void; // 修改：回调携带 id 与 name
 };
 
 export const RepositorySelect: React.FC<RepositorySelectProps> = ({
@@ -98,7 +98,9 @@ export const RepositorySelect: React.FC<RepositorySelectProps> = ({
 
   const onChange = (val: string | null) => {
     setSelectedId(val);
-    onRepositoryChange?.(val);
+    // 新增：同时把 name 传递给回调，方便外部使用
+    const selectedRepo = val ? repositories.find((r) => r.id === val) : null;
+    onRepositoryChange?.({ id: val, name: selectedRepo?.name ?? null });
     setIsOpen(false);
   };
 

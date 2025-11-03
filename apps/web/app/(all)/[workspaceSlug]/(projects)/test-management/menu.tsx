@@ -80,23 +80,21 @@ export const TestManagementMenuBar = () => {
 
   // 处理测试库选择变更
   const handleRepositoryChange = React.useCallback(
-    (repositoryId: string | null) => {
-      setSelectedRepositoryId(repositoryId);
+    (repo: { id: string | null; name?: string | null }) => {
+      setSelectedRepositoryId(repo.id);
 
-      // 更新sessionStorage
-      if (repositoryId) {
-        sessionStorage.setItem("selectedRepositoryId", repositoryId);
+      if (repo.id) {
+        // 同步写入 id 与 name
+        sessionStorage.setItem("selectedRepositoryId", repo.id);
+        if (repo.name) sessionStorage.setItem("selectedRepositoryName", repo.name);
+
+        // 直接导航到该测试库的计划页，触发页面重新挂载与服务端请求
+        router.push(`/${ws}/test-management/plans/`);
       } else {
+        // 选择“全部测试库”
         sessionStorage.removeItem("selectedRepositoryId");
         sessionStorage.removeItem("selectedRepositoryName");
-      }
-
-      // 如果选择了"全部测试库"（repositoryId为null），跳转回主页面
-      if (repositoryId === null) {
         router.push(`/${ws}/test-management`);
-      } else {
-        // 这里可以触发数据刷新或其他业务逻辑
-        console.log("选中的测试库ID:", repositoryId);
       }
     },
     [router, ws]
@@ -108,11 +106,11 @@ export const TestManagementMenuBar = () => {
         {/* 测试库选择器（仅非"测试用例库"路由时展示） */}
         {!isOverviewActive && isClient && (
           <RepositorySelect
-            key={`repository-select-${defaultRepositoryId || "all"}`} // 添加key强制重新渲染
+            key={`repository-select-${defaultRepositoryId || "all"}`}
             workspaceSlug={ws}
             className="flex-shrink-0"
             defaultRepositoryId={defaultRepositoryId}
-            onRepositoryChange={handleRepositoryChange}
+            onRepositoryChange={handleRepositoryChange} // 回调签名已更新
           />
         )}
 

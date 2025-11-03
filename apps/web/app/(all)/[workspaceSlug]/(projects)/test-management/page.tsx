@@ -157,8 +157,9 @@ export default function TestManagementHomePage() {
           onClick={() => {
             // 将repositoryId存储到sessionStorage
             sessionStorage.setItem("selectedRepositoryId", record.id);
+            console.log("🚀 ~ TestManagementHomePage ~ record:", record);
             sessionStorage.setItem("selectedRepositoryName", record.name);
-            router.push(`/${workspaceSlug}/test-management/plans/${record.name}`);
+            router.push(`/${workspaceSlug}/test-management/plans/`);
           }}
           style={{ cursor: "pointer" }}
         >

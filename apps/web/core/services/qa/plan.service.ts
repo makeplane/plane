@@ -26,16 +26,18 @@ export class PlanService extends APIService {
       });
   }
 
-  async updatePlan(workspaceSlug: string, planId: string, data: any): Promise<any> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/test/plane/${planId}/`, data)
+  async updatePlan(workspaceSlug: string, data: any): Promise<any> {
+    return this.put(`/api/workspaces/${workspaceSlug}/test/plane/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async deletePlan(workspaceSlug: string, planId: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/test/plane/${planId}/`)
+  async deletePlan(workspaceSlug: string, planIds: Array<string>): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/test/plane/`, {
+      ids: planIds,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
