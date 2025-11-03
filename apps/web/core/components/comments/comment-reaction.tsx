@@ -1,10 +1,10 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
-import { TCommentsOperations, TIssueComment } from "@plane/types";
+import type { TCommentsOperations, TIssueComment } from "@plane/types";
 import { cn } from "@plane/utils";
 // helpers
 import { renderEmoji } from "@/helpers/emoji.helper";

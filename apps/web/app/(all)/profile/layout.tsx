@@ -1,9 +1,8 @@
 "use client";
 
-import { ReactNode } from "react";
-// components
-import { CommandPalette } from "@/components/command-palette";
+import type { ReactNode } from "react";
 // wrappers
+import { ProjectsAppPowerKProvider } from "@/components/power-k/projects-app-provider";
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // layout
 import { ProfileLayoutSidebar } from "./sidebar";
@@ -17,7 +16,7 @@ export default function ProfileSettingsLayout(props: Props) {
 
   return (
     <>
-      <CommandPalette />
+      <ProjectsAppPowerKProvider />
       <AuthenticationWrapper>
         <div className="relative flex h-full w-full overflow-hidden rounded-lg border border-custom-border-200">
           <ProfileLayoutSidebar />

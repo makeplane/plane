@@ -3,7 +3,7 @@ import { action, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { ALL_ISSUES } from "@plane/constants";
-import {
+import type {
   TIssue,
   TLoader,
   IssuePaginationOptions,
@@ -16,10 +16,11 @@ import { getDistributionPathsPostUpdate } from "@plane/utils";
 //local
 import { storage } from "@/lib/local-storage";
 import { persistence } from "@/local-db/storage.sqlite";
-import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
+import type { IBaseIssuesStore } from "../helpers/base-issues.store";
+import { BaseIssuesStore } from "../helpers/base-issues.store";
 //
-import { IIssueRootStore } from "../root.store";
-import { ICycleIssuesFilter } from "./filter.store";
+import type { IIssueRootStore } from "../root.store";
+import type { ICycleIssuesFilter } from "./filter.store";
 
 export const ACTIVE_CYCLE_ISSUES = "ACTIVE_CYCLE_ISSUES";
 

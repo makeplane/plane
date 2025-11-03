@@ -8,7 +8,7 @@ import { PROFILE_SETTINGS_TRACKER_ELEMENTS, PROFILE_SETTINGS_TRACKER_EVENTS } fr
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setPromiseToast } from "@plane/propel/toast";
-import { IUserTheme } from "@plane/types";
+import type { IUserTheme } from "@plane/types";
 // ui
 import { InputColorPicker } from "@plane/ui";
 // hooks

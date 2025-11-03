@@ -12,7 +12,6 @@ from rest_framework.request import Request
 from plane.utils.ip_address import get_client_ip
 from plane.db.models import APIActivityLog
 
-
 api_logger = logging.getLogger("plane.api.request")
 
 

@@ -1,12 +1,12 @@
 "use client";
 
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hooks
 import { useModule } from "@/hooks/store/use-module";
 // types
-import { TDropdownProps } from "../types";
+import type { TDropdownProps } from "../types";
 // local imports
 import { ModuleDropdownBase } from "./base";
 

@@ -1,8 +1,8 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Timer } from "lucide-react";
 // plane imports
 import { CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon } from "@plane/propel/icons";
-import { IProject } from "@plane/types";
+import type { IProject } from "@plane/types";
 
 export type TProperties = {
   key: string;
@@ -13,6 +13,7 @@ export type TProperties = {
   isPro: boolean;
   isEnabled: boolean;
   renderChildren?: (currentProjectDetails: IProject, workspaceSlug: string) => ReactNode;
+  href?: string;
 };
 
 type TProjectBaseFeatureKeys = "cycles" | "modules" | "views" | "pages" | "inbox";

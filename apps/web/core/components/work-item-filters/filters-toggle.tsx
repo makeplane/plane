@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 // plane imports
-import { EIssuesStoreType } from "@plane/types";
+import type { EIssuesStoreType } from "@plane/types";
 // components
 import { FiltersToggle } from "@/components/rich-filters/filters-toggle";
 // hooks

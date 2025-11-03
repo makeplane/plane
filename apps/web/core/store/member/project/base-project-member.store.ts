@@ -3,19 +3,20 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // plane imports
 import { EUserPermissions } from "@plane/constants";
-import { EUserProjectRoles, IProjectBulkAddFormData, IUserLite, TProjectMembership } from "@plane/types";
+import type { EUserProjectRoles, IProjectBulkAddFormData, IUserLite, TProjectMembership } from "@plane/types";
 // plane web imports
 import type { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ProjectMemberService } from "@/services/project";
 // store
-import { IProjectStore } from "@/store/project/project.store";
-import { IRouterStore } from "@/store/router.store";
-import { IUserStore } from "@/store/user";
+import type { IProjectStore } from "@/store/project/project.store";
+import type { IRouterStore } from "@/store/router.store";
+import type { IUserStore } from "@/store/user";
 // local imports
-import { IMemberRootStore } from "../index";
+import type { IMemberRootStore } from "../index";
 import { sortProjectMembers } from "../utils";
-import { ProjectMemberFiltersStore, IProjectMemberFiltersStore } from "./project-member-filters.store";
+import type { IProjectMemberFiltersStore } from "./project-member-filters.store";
+import { ProjectMemberFiltersStore } from "./project-member-filters.store";
 
 export interface IProjectMemberDetails extends Omit<TProjectMembership, "member"> {
   member: IUserLite;

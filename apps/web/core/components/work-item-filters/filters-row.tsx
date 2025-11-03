@@ -1,9 +1,10 @@
 import { observer } from "mobx-react";
 // plane imports
-import { IWorkItemFilterInstance } from "@plane/shared-state";
-import { TWorkItemFilterExpression, TWorkItemFilterProperty } from "@plane/types";
+import type { IWorkItemFilterInstance } from "@plane/shared-state";
+import type { TWorkItemFilterExpression, TWorkItemFilterProperty } from "@plane/types";
 // components
-import { FiltersRow, TFiltersRowProps } from "@/components/rich-filters/filters-row";
+import type { TFiltersRowProps } from "@/components/rich-filters/filters-row";
+import { FiltersRow } from "@/components/rich-filters/filters-row";
 
 type TWorkItemFiltersRowProps = TFiltersRowProps<TWorkItemFilterProperty, TWorkItemFilterExpression> & {
   filter: IWorkItemFilterInstance;

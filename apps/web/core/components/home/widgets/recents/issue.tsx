@@ -2,7 +2,8 @@ import { observer } from "mobx-react";
 // plane types
 import { PriorityIcon, StateGroupIcon, WorkItemsIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { EIssueServiceType, TActivityEntityData, TIssueEntityData } from "@plane/types";
+import type { TActivityEntityData, TIssueEntityData } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // plane ui
 import { calculateTimeAgo, generateWorkItemLink } from "@plane/utils";
 // components

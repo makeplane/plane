@@ -1,4 +1,5 @@
-import { Globe2, Lock, LucideIcon } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { Globe2, Lock } from "lucide-react";
 import { VIEW_ACCESS_SPECIFIERS as VIEW_ACCESS_SPECIFIERS_CONSTANTS } from "@plane/constants";
 import { EViewAccess } from "@plane/types";
 

@@ -5,7 +5,8 @@ import { Globe2, Lock } from "lucide-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import { useHashScroll } from "@plane/hooks";
-import { EIssueCommentAccessSpecifier, type TCommentsOperations, type TIssueComment } from "@plane/types";
+import { EIssueCommentAccessSpecifier } from "@plane/types";
+import type { TCommentsOperations, TIssueComment } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import { LiteTextEditor } from "@/components/editor/lite-text";

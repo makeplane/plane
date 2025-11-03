@@ -1,12 +1,14 @@
 "use client";
 
-import { FC, useMemo } from "react";
+import type { FC } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
-import { EIssuesStoreType, TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 // components
 import { EmptyState } from "@/components/common/empty-state";
 // hooks

@@ -1,5 +1,6 @@
-import { ChangeEvent } from "react";
-import { Controller, useFormContext, UseFormSetValue } from "react-hook-form";
+import type { ChangeEvent } from "react";
+import type { UseFormSetValue } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import { Info } from "lucide-react";
 // plane imports
 import { ETabIndices } from "@plane/constants";
@@ -11,7 +12,7 @@ import { cn, projectIdentifierSanitizer, getTabIndex } from "@plane/utils";
 // plane utils
 // helpers
 // plane-web types
-import { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@/plane-web/types/projects";
 
 type Props = {
   setValue: UseFormSetValue<TProject>;

@@ -1,4 +1,4 @@
-import { TIssueServiceType } from "@plane/types";
+import type { TIssueServiceType } from "@plane/types";
 
 export const useWorkItemProperties = (
   projectId: string | null | undefined,

@@ -3,7 +3,7 @@
 // icons
 import { CycleIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
 // types
-import { TTourSteps } from "./root";
+import type { TTourSteps } from "./root";
 
 const sidebarOptions: {
   key: TTourSteps;

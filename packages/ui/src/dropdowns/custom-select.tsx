@@ -1,10 +1,11 @@
 import { Combobox } from "@headlessui/react";
-import { Check, ChevronDown } from "lucide-react";
+import { Check } from "lucide-react";
 import React, { useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
-// plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
+import { ChevronDownIcon } from "@plane/propel/icons";
+// plane helpers
 // hooks
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 // helpers
@@ -97,7 +98,7 @@ const CustomSelect = (props: ICustomSelectProps) => {
               onClick={toggleDropdown}
             >
               {label}
-              {!noChevron && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
+              {!noChevron && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
             </button>
           </Combobox.Button>
         )}

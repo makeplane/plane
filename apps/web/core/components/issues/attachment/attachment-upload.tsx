@@ -4,7 +4,7 @@ import { useDropzone } from "react-dropzone";
 // plane web hooks
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
 // types
-import { TAttachmentOperations } from "../issue-detail-widgets/attachments/helper";
+import type { TAttachmentOperations } from "../issue-detail-widgets/attachments/helper";
 
 type TAttachmentOperationsModal = Pick<TAttachmentOperations, "create">;
 

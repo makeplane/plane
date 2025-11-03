@@ -1,4 +1,4 @@
-import { EInboxIssueSource } from "@plane/types";
+import type { EInboxIssueSource } from "@plane/types";
 
 export type TInboxSourcePill = {
   source: EInboxIssueSource;

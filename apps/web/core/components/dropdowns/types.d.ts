@@ -1,4 +1,4 @@
-import { Placement } from "@popperjs/core";
+import type { Placement } from "@popperjs/core";
 
 export type TButtonVariants =
   | "border-with-text"

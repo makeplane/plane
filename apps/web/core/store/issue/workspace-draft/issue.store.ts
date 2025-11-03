@@ -3,7 +3,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // plane imports
 import { EDraftIssuePaginationType } from "@plane/constants";
-import {
+import type {
   TWorkspaceDraftIssue,
   TWorkspaceDraftPaginationInfo,
   TWorkspaceDraftIssueLoader,
@@ -22,7 +22,7 @@ import { addIssueToPersistanceLayer } from "@/local-db/utils/utils";
 // services
 import workspaceDraftService from "@/services/issue/workspace_draft.service";
 // types
-import { IIssueRootStore } from "../root.store";
+import type { IIssueRootStore } from "../root.store";
 
 export type TDraftIssuePaginationType = EDraftIssuePaginationType;
 

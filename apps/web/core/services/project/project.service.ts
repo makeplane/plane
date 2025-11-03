@@ -8,7 +8,7 @@ import type {
 } from "@plane/types";
 // helpers
 // plane web types
-import { TProject, TPartialProject } from "@/plane-web/types";
+import type { TProject, TPartialProject } from "@/plane-web/types";
 // services
 import { APIService } from "@/services/api.service";
 

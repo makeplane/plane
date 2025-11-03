@@ -10,7 +10,7 @@ import {
   GLOBAL_VIEW_TRACKER_ELEMENTS,
   GLOBAL_VIEW_TRACKER_EVENTS,
 } from "@plane/constants";
-import { TStaticViewTypes } from "@plane/types";
+import type { TStaticViewTypes } from "@plane/types";
 import { Header, EHeaderVariant } from "@plane/ui";
 // helpers
 import { captureSuccess } from "@/helpers/event-tracker.helper";

@@ -1,9 +1,12 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import useSWR from "swr";
 // ui
+import { Banner } from "@plane/propel/banner";
+import { Button } from "@plane/propel/button";
+import { ArchiveIcon } from "@plane/propel/icons";
 import { Loader } from "@plane/ui";
 // components
 import { PageHead } from "@/components/core/page-title";
@@ -16,6 +19,7 @@ import { useProject } from "@/hooks/store/use-project";
 const ArchivedIssueDetailsPage = observer(() => {
   // router
   const { workspaceSlug, projectId, archivedIssueId } = useParams();
+  const router = useRouter();
   // states
   // hooks
   const {
@@ -62,18 +66,35 @@ const ArchivedIssueDetailsPage = observer(() => {
           </div>
         </Loader>
       ) : (
-        <div className="flex h-full overflow-hidden">
-          <div className="h-full w-full space-y-3 divide-y-2 divide-custom-border-200 overflow-y-auto">
-            {workspaceSlug && projectId && archivedIssueId && (
-              <IssueDetailRoot
-                workspaceSlug={workspaceSlug.toString()}
-                projectId={projectId.toString()}
-                issueId={archivedIssueId.toString()}
-                is_archived
-              />
-            )}
+        <>
+          <Banner
+            variant="warning"
+            title="This work item has been archived. Visit the Archives section to restore it."
+            icon={<ArchiveIcon className="size-4" />}
+            action={
+              <Button
+                variant="neutral-primary"
+                size="sm"
+                onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/archives/issues/`)}
+              >
+                Go to archives
+              </Button>
+            }
+            className="border-b border-custom-border-200"
+          />
+          <div className="flex h-full overflow-hidden">
+            <div className="h-full w-full space-y-3 divide-y-2 divide-custom-border-200 overflow-y-auto">
+              {workspaceSlug && projectId && archivedIssueId && (
+                <IssueDetailRoot
+                  workspaceSlug={workspaceSlug.toString()}
+                  projectId={projectId.toString()}
+                  issueId={archivedIssueId.toString()}
+                  is_archived
+                />
+              )}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </>
   );

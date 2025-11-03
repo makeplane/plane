@@ -1,5 +1,6 @@
 "use client";
-import { FC, MouseEvent, useRef } from "react";
+import type { FC, MouseEvent } from "react";
+import { useRef } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Check } from "lucide-react";

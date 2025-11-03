@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { Crown } from "lucide-react";
 // helpers
 import { cn } from "@plane/utils";

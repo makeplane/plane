@@ -13,7 +13,7 @@ import { IMPORTERS_LIST } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@plane/propel/button";
-import { IImporterService } from "@plane/types";
+import type { IImporterService } from "@plane/types";
 // ui
 // components
 import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "@/components/integration";

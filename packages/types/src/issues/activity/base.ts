@@ -58,6 +58,21 @@ export type TIssueActivityComment =
     }
   | {
       id: string;
+      activity_type: "STATE";
+      created_at?: string;
+    }
+  | {
+      id: string;
+      activity_type: "ASSIGNEE";
+      created_at?: string;
+    }
+  | {
+      id: string;
+      activity_type: "DEFAULT";
+      created_at?: string;
+    }
+  | {
+      id: string;
       activity_type: "WORKLOG";
       created_at?: string;
     }

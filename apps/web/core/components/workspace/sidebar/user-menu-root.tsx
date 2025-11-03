@@ -1,6 +1,7 @@
 "use client";
 
-import { Fragment, Ref, useState, useEffect } from "react";
+import type { Ref } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";

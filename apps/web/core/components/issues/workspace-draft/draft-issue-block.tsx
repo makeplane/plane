@@ -1,12 +1,15 @@
 "use client";
-import React, { FC, useRef, useState } from "react";
+import type { FC } from "react";
+import React, { useRef, useState } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
 import { Copy, Pencil, SquareStackIcon, Trash2 } from "lucide-react";
 // plane utils
 import { Tooltip } from "@plane/propel/tooltip";
-import { EIssuesStoreType, TWorkspaceDraftIssue } from "@plane/types";
-import { Row, TContextMenuItem } from "@plane/ui";
+import type { TWorkspaceDraftIssue } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
+import type { TContextMenuItem } from "@plane/ui";
+import { Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";

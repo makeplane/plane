@@ -640,6 +640,8 @@ export default {
   },
   common: {
     all: "すべて",
+    no_items_in_this_group: "このグループにアイテムはありません",
+    drop_here_to_move: "移動するにはここにドロップ",
     states: "ステータス",
     state: "ステータス",
     state_groups: "ステータスグループ",
@@ -1513,6 +1515,11 @@ export default {
         description: "フィルターに該当する作業項目をここで追跡できます。",
       },
     },
+    delete_view: {
+      title: "このビューを削除してもよろしいですか？",
+      content:
+        "確認すると、このビューに選択したすべてのソート、フィルター、表示オプション + レイアウトが復元不可能な形で完全に削除されます。",
+    },
   },
   workspace_settings: {
     label: "ワークスペース設定",
@@ -2156,6 +2163,11 @@ export default {
         title: "一致するビューがありません",
         description: "検索条件に一致するビューがありません。\n代わりに新しいビューを作成してください。",
       },
+    },
+    delete_view: {
+      title: "このビューを削除してもよろしいですか？",
+      content:
+        "確認すると、このビューに選択したすべてのソート、フィルター、表示オプション + レイアウトが復元不可能な形で完全に削除されます。",
     },
   },
   project_page: {

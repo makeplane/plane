@@ -6,8 +6,9 @@ import { ExternalLink, LinkIcon } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // ui
-import { TStaticViewTypes } from "@plane/types";
-import { CustomMenu, TContextMenuItem } from "@plane/ui";
+import type { TStaticViewTypes } from "@plane/types";
+import type { TContextMenuItem } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // helpers
 type Props = {

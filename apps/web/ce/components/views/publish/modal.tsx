@@ -1,6 +1,6 @@
 "use client";
 
-import { IProjectView } from "@plane/types";
+import type { IProjectView } from "@plane/types";
 
 type Props = {
   isOpen: boolean;

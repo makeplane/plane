@@ -1,12 +1,12 @@
 import { isEmpty } from "lodash-es";
 // plane constants
+import type { EIssueFilterType } from "@plane/constants";
 import {
   EIssueGroupByToServerOptions,
   EServerGroupByToFilterOptions,
-  EIssueFilterType,
   ENABLE_ISSUE_DEPENDENCIES,
 } from "@plane/constants";
-import {
+import type {
   EIssuesStoreType,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -17,13 +17,14 @@ import {
   TIssueKanbanFilters,
   TIssueParams,
   TStaticViewTypes,
-  EIssueLayoutTypes,
   TWorkItemFilterExpression,
 } from "@plane/types";
+import { EIssueLayoutTypes } from "@plane/types";
 // helpers
 import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/utils";
 // lib
 import { storage } from "@/lib/local-storage";
+import { getEnabledDisplayFilters } from "@/plane-web/store/issue/helpers/filter-utils";
 
 interface ILocalStoreIssueFilters {
   key: EIssuesStoreType;
@@ -176,7 +177,10 @@ export class IssueFilterHelperStore implements IIssueFilterHelperStore {
   computedDisplayFilters = (
     displayFilters: IIssueDisplayFilterOptions,
     defaultValues?: IIssueDisplayFilterOptions
-  ): IIssueDisplayFilterOptions => getComputedDisplayFilters(displayFilters, defaultValues);
+  ): IIssueDisplayFilterOptions => {
+    const computedFilters = getComputedDisplayFilters(displayFilters, defaultValues);
+    return getEnabledDisplayFilters(computedFilters);
+  };
 
   /**
    * @description This method is used to apply the display properties on the issues

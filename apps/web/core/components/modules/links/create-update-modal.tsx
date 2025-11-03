@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, useEffect } from "react";
+import type { FC } from "react";
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // plane types
 import { Button } from "@plane/propel/button";

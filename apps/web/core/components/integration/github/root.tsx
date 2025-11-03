@@ -6,10 +6,11 @@ import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import useSWR, { mutate } from "swr";
-import { ArrowLeft, Check, List, Settings, UploadCloud, Users } from "lucide-react";
+import { ArrowLeft, Check, List, Settings, UploadCloud } from "lucide-react";
+import { MembersPropertyIcon } from "@plane/propel/icons";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { IGithubRepoCollaborator, IGithubServiceImportFormData } from "@plane/types";
+import type { IGithubRepoCollaborator, IGithubServiceImportFormData } from "@plane/types";
 // ui
 // components
 import {
@@ -68,7 +69,7 @@ const integrationWorkflowData = [
   {
     title: "Users",
     key: "import-users",
-    icon: Users,
+    icon: MembersPropertyIcon,
   },
   {
     title: "Confirm",

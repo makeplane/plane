@@ -1,9 +1,9 @@
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { TFilterValue, TFilterProperty } from "@plane/types";
+import type { TFilterValue, TFilterProperty } from "@plane/types";
 // local imports
-import { TFilterValueInputProps } from "@/components/rich-filters/shared";
+import type { TFilterValueInputProps } from "@/components/rich-filters/shared";
 
 export const AdditionalFilterValueInput = observer(
   <P extends TFilterProperty, V extends TFilterValue>(_props: TFilterValueInputProps<P, V>) => (

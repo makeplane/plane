@@ -1,6 +1,7 @@
 "use client";
 
-import React, { FC, useState, useRef, useEffect } from "react";
+import type { FC } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
@@ -11,7 +12,8 @@ import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { EIssuesStoreType, TIssue, TWorkspaceDraftIssue } from "@plane/types";
+import type { TIssue, TWorkspaceDraftIssue } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 // hooks
 import { ToggleSwitch } from "@plane/ui";
 import {
@@ -317,6 +319,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     {
       name: watch("name"),
       description_html: getTextContent(watch("description_html")),
+      issueId: data?.id,
     }
   );
 
@@ -487,7 +490,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 activeAdditionalPropertiesLength > 0 && "shadow-custom-shadow-xs"
               )}
             >
-              <div>
+              <div className="pb-3">
                 <IssueDefaultProperties
                   control={control}
                   id={data?.id}
@@ -503,7 +506,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                 />
               </div>
               {showActionButtons && (
-                <div className="flex items-center justify-end gap-4 py-3" tabIndex={getIndex("create_more")}>
+                <div
+                  className="flex items-center justify-end gap-4 pb-3 pt-6 border-t-[0.5px] border-custom-border-200"
+                  tabIndex={getIndex("create_more")}
+                >
                   {!data?.id && (
                     <div
                       className="inline-flex items-center gap-1.5 cursor-pointer"

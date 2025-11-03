@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types";
+import type { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types";
 import { calculateTotalFilters } from "@plane/utils";
 // components
 import { PageHead } from "@/components/core/page-title";

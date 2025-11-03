@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { Tooltip } from "@plane/propel/tooltip";
 
 type TIssueLabelPill = { name?: string; color?: string };

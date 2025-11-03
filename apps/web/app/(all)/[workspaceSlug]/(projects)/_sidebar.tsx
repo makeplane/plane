@@ -1,5 +1,6 @@
 "use client";
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { SIDEBAR_WIDTH } from "@plane/constants";

@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel, WORKSPACE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { IWebhook } from "@plane/types";
+import type { IWebhook } from "@plane/types";
 // ui
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";

@@ -17,14 +17,14 @@ export const WorkspaceLogo = observer((props: Props) => {
     <div
       className={cn(
         `relative grid h-6 w-6 flex-shrink-0 place-items-center uppercase ${
-          !props.logo && "rounded bg-[#026292] text-white"
+          !props.logo && "rounded-md bg-[#026292] text-white"
         } ${props.classNames ? props.classNames : ""}`
       )}
     >
       {props.logo && props.logo !== "" ? (
         <img
           src={getFileURL(props.logo)}
-          className="absolute left-0 top-0 h-full w-full rounded object-cover"
+          className="absolute left-0 top-0 h-full w-full rounded-md object-cover"
           alt={t("aria_labels.projects_sidebar.workspace_logo")}
         />
       ) : (

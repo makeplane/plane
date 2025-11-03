@@ -4,7 +4,8 @@ import { computedFn } from "mobx-utils";
 import type { EUserPermissions } from "@plane/constants";
 import type { IUserLite } from "@plane/types";
 // local imports
-import { IMemberFilters, sortWorkspaceMembers } from "../utils";
+import type { IMemberFilters } from "../utils";
+import { sortWorkspaceMembers } from "../utils";
 
 // Workspace membership interface matching the store structure
 interface IWorkspaceMembership {

@@ -2,9 +2,9 @@
 import { useCallback, useMemo } from "react";
 // types
 import { useParams } from "next/navigation";
-import { EDraftIssuePaginationType, TSupportedFilterTypeForUpdate } from "@plane/constants";
-import {
-  EIssuesStoreType,
+import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
+import { EDraftIssuePaginationType } from "@plane/constants";
+import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IssuePaginationOptions,
@@ -14,6 +14,7 @@ import {
   TProfileViews,
   TSupportedFilterForUpdate,
 } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 import {
   useTeamIssueActions,
   useTeamProjectWorkItemsActions,

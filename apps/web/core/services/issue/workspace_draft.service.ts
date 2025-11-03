@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@plane/constants";
-import { TIssue, TWorkspaceDraftIssue, TWorkspaceDraftPaginationInfo } from "@plane/types";
+import type { TIssue, TWorkspaceDraftIssue, TWorkspaceDraftPaginationInfo } from "@plane/types";
 // helpers
 // services
 import { APIService } from "@/services/api.service";

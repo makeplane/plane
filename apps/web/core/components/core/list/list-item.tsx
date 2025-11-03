@@ -1,5 +1,6 @@
 "use client";
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
 import { ControlLink, Row } from "@plane/ui";

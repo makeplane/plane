@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
-import { I_THEME_OPTION, THEME_OPTIONS } from "@plane/constants";
+import type { I_THEME_OPTION } from "@plane/constants";
+import { THEME_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
-import { IUserTheme } from "@plane/types";
+import type { IUserTheme } from "@plane/types";
 // components
 import { applyTheme, unsetCustomCssVariables } from "@plane/utils";
 import { LogoSpinner } from "@/components/common/logo-spinner";
