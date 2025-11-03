@@ -4,6 +4,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
+import { useTheme } from "next-themes";
 import { EUserPermissionsLevel, CYCLE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
@@ -12,6 +13,10 @@ import { EUserProjectRoles } from "@plane/types";
 // components
 import { Header, EHeaderVariant } from "@plane/ui";
 import { calculateTotalFilters } from "@plane/utils";
+// assets
+import darkEmptyState from "@/app/assets/empty-state/disabled-feature/cycles-dark.webp?url";
+import lightEmptyState from "@/app/assets/empty-state/disabled-feature/cycles-light.webp?url";
+// components
 import { PageHead } from "@/components/core/page-title";
 import { CycleAppliedFiltersList } from "@/components/cycles/applied-filters";
 import { CyclesView } from "@/components/cycles/cycles-view";
@@ -24,7 +29,6 @@ import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 const ProjectCyclesPage = observer(() => {
   // states
@@ -35,12 +39,15 @@ const ProjectCyclesPage = observer(() => {
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // plane hooks
   const { t } = useTranslation();
   // cycle filters hook
   const { clearAllFilters, currentProjectFilters, updateFilters } = useCycleFilter();
   const { allowPermissions } = useUserPermissions();
   // derived values
+  const resolvedEmptyState = resolvedTheme === "light" ? lightEmptyState : darkEmptyState;
   const totalCycles = currentProjectCycleIds?.length ?? 0;
   const project = projectId ? getProjectById(projectId?.toString()) : undefined;
   const pageTitle = project?.name ? `${project?.name} - ${t("common.cycles", { count: 2 })}` : undefined;
@@ -49,7 +56,6 @@ const ProjectCyclesPage = observer(() => {
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
     EUserPermissionsLevel.PROJECT
   );
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/disabled-feature/cycles" });
 
   const handleRemoveFilter = (key: keyof TCycleFilters, value: string | null) => {
     if (!projectId) return;
@@ -70,7 +76,7 @@ const ProjectCyclesPage = observer(() => {
         <DetailedEmptyState
           title={t("disabled_project.empty_state.cycle.title")}
           description={t("disabled_project.empty_state.cycle.description")}
-          assetPath={resolvedPath}
+          assetPath={resolvedEmptyState}
           primaryButton={{
             text: t("disabled_project.empty_state.cycle.primary_button.text"),
             onClick: () => {

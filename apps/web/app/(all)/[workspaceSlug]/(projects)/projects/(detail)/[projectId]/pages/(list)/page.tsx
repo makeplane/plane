@@ -2,11 +2,15 @@
 
 import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
+import { useTheme } from "next-themes";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TPageNavigationTabs } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
+// assets
+import darkPagesAsset from "@/app/assets/empty-state/disabled-feature/pages-dark.webp?url";
+import lightPagesAsset from "@/app/assets/empty-state/disabled-feature/pages-light.webp?url";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
@@ -16,7 +20,6 @@ import { PagesListView } from "@/components/pages/pages-list-view";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // plane web hooks
 import { EPageStoreType } from "@/plane-web/hooks/store";
 
@@ -26,6 +29,8 @@ const ProjectPagesPage = observer(() => {
   const searchParams = useSearchParams();
   const type = searchParams.get("type");
   const { workspaceSlug, projectId } = useParams();
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -35,7 +40,7 @@ const ProjectPagesPage = observer(() => {
   const project = projectId ? getProjectById(projectId.toString()) : undefined;
   const pageTitle = project?.name ? `${project?.name} - Pages` : undefined;
   const canPerformEmptyStateActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/disabled-feature/pages" });
+  const resolvedPath = resolvedTheme === "light" ? lightPagesAsset : darkPagesAsset;
 
   const currentPageType = (): TPageNavigationTabs => {
     const pageType = type?.toString();

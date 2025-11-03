@@ -1,8 +1,11 @@
 import React from "react";
 import Image from "next/image";
+import { useTheme } from "next-themes";
 // plane package imports
 import { cn } from "@plane/utils";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// assets
+import darkBackgroundAsset from "@/app/assets/empty-state/analytics/empty-grid-background-dark.webp?url";
+import lightBackgroundAsset from "@/app/assets/empty-state/analytics/empty-grid-background-light.webp?url";
 
 type Props = {
   title: string;
@@ -12,7 +15,9 @@ type Props = {
 };
 
 const AnalyticsEmptyState = ({ title, description, assetPath, className }: Props) => {
-  const backgroundReolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics/empty-grid-background" });
+  // theme hook
+  const { resolvedTheme } = useTheme();
+  const backgroundReolvedPath = resolvedTheme === "light" ? lightBackgroundAsset : darkBackgroundAsset;
 
   return (
     <div

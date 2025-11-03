@@ -3,28 +3,32 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// types
+import { useTheme } from "next-themes";
+// plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TModuleFilters } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
-// components
 import { calculateTotalFilters } from "@plane/utils";
+// assets
+import darkModulesAsset from "@/app/assets/empty-state/disabled-feature/modules-dark.webp?url";
+import lightModulesAsset from "@/app/assets/empty-state/disabled-feature/modules-light.webp?url";
+// components
 import { PageHead } from "@/components/core/page-title";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { ModuleAppliedFiltersList, ModulesListView } from "@/components/modules";
-// helpers
 // hooks
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 const ProjectModulesPage = observer(() => {
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // plane hooks
   const { t } = useTranslation();
   // store
@@ -36,7 +40,7 @@ const ProjectModulesPage = observer(() => {
   const project = projectId ? getProjectById(projectId.toString()) : undefined;
   const pageTitle = project?.name ? `${project?.name} - Modules` : undefined;
   const canPerformEmptyStateActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/disabled-feature/modules" });
+  const resolvedPath = resolvedTheme === "light" ? lightModulesAsset : darkModulesAsset;
 
   const handleRemoveFilter = useCallback(
     (key: keyof TModuleFilters, value: string | null) => {
