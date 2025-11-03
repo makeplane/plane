@@ -40,7 +40,10 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
 
   const commentReactions = useMemo(() => {
     if (!peekId) return [];
-    return details[peekId].comments.find((c) => c.id === commentId)?.comment_reactions ?? [];
+    const peekDetails = details[peekId];
+    if (!peekDetails) return [];
+    const comment = peekDetails.comments?.find((c) => c.id === commentId);
+    return comment?.comment_reactions ?? [];
   }, [peekId, details, commentId]);
 
   const groupedReactions = useMemo(() => {
@@ -99,7 +102,9 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
       return;
     }
     // Convert emoji back to decimal string format for the API
-    const emojiCodePoints = Array.from(emoji).map((char) => char.codePointAt(0));
+    const emojiCodePoints = Array.from(emoji)
+      .map((char) => char.codePointAt(0))
+      .filter((cp): cp is number => cp !== undefined);
     const reactionString = emojiCodePoints.join("-");
     handleReactionClick(reactionString);
   };
