@@ -35,6 +35,11 @@ export const RepositorySelect: React.FC<RepositorySelectProps> = ({
   const [isLoading, setIsLoading] = React.useState(false);
   const [selectedId, setSelectedId] = React.useState<string | null>(defaultRepositoryId);
 
+  // 同步 defaultRepositoryId 的变化
+  React.useEffect(() => {
+    setSelectedId(defaultRepositoryId);
+  }, [defaultRepositoryId]);
+
   // popper refs
   const [referenceElement, setReferenceElement] = React.useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = React.useState<HTMLDivElement | null>(null);

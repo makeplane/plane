@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from plane.app.serializers.qa import TestPlanDetailSerializer, CaseModuleCreateUpdateSerializer, \
     CaseModuleListSerializer, CaseLabelListSerializer, CaseLabelCreateSerializer, CaseCreateUpdateSerializer, \
     CaseListSerializer
+from plane.app.views.qa.filters import TestPlanFilter
 from plane.db.models import TestPlan, TestCaseRepository, TestCase, CaseModule, CaseLabel
 from plane.utils.paginator import CustomPaginator
 from plane.utils.response import list_response
@@ -18,6 +19,7 @@ class RepositoryAPIView(BaseAPIView):
     serializer_class = TestCaseRepositorySerializer
     filterset_fields = {
         'project_id': ['exact', 'in'],
+        'project__name': ['exact', 'icontains', 'in'],
         'id': ['exact', 'in'],
         'workspace__slug': ['exact', 'icontains', 'in'],
         'name': ['exact', 'icontains', 'in'],
@@ -44,11 +46,7 @@ class PlanAPIView(BaseAPIView):
     queryset = TestPlan.objects.all()
     pagination_class = CustomPaginator
     serializer_class = TestPlanCreateUpdateSerializer
-    filterset_fields = {
-        'name': ['exact', 'icontains', 'in'],
-        'id': ['exact', 'in'],
-        'repository_id': ['exact']
-    }
+    filterset_class = TestPlanFilter
 
     def post(self, request, slug):
         serializer = self.serializer_class(data=request.data)
@@ -58,7 +56,7 @@ class PlanAPIView(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get(self, request, slug):
-        planes = self.filter_queryset(self.queryset)
+        planes = self.filter_queryset(self.queryset).distinct()
         paginator = self.pagination_class()
         paginated_queryset = paginator.paginate_queryset(planes, request)
         serializer = TestPlanDetailSerializer(instance=paginated_queryset, many=True)
@@ -88,7 +86,6 @@ class CaseAPIView(BaseAPIView):
         'name': ['exact', 'icontains', 'in'],
         'repository_id': ['exact']
     }
-
 
     def get(self, request, slug):
         cases = self.filter_queryset(self.queryset)
@@ -122,6 +119,7 @@ class CaseModuleAPIView(BaseAPIView):
         serializer = CaseModuleListSerializer(instance=test_plan)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+
 class LabelAPIView(BaseAPIView):
     model = CaseLabel
     queryset = CaseLabel.objects.all()
@@ -147,3 +145,10 @@ class LabelAPIView(BaseAPIView):
         ids = request.data.pop('ids')
         self.queryset.filter(id__in=ids).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class EnumDataAPIView(BaseAPIView):
+
+    def get(self, request, slug):
+        plan_state = dict(TestPlan.State.choices)
+        return Response(dict(plan_state=plan_state))

@@ -109,9 +109,16 @@ class TestCase(BaseModel):
 
 
 class TestPlan(BaseModel):
+    class State(models.IntegerChoices):
+        NOT_START = 0, '未开始'
+        PROGRESS = 1, '进行中'
+        COMPLETED = 2, '已完成'
+
     name = models.CharField(max_length=255, verbose_name="TestPlane Name")
     begin_time = models.DateTimeField(null=True, blank=True, verbose_name="TestPlan Begin Time")
     end_time = models.DateTimeField(null=True, blank=True, verbose_name="TestPlan End Time")
+    state = models.IntegerField(choices=State.choices, default=State.NOT_START, verbose_name="TestPlan State")
+
 
     repository = models.ForeignKey(TestCaseRepository, on_delete=models.CASCADE, verbose_name="TestCaseRepository",
                                    related_name="plans")
@@ -122,6 +129,10 @@ class TestPlan(BaseModel):
     )
     cases = models.ManyToManyField(TestCase, blank=True, related_name="plans", through="PlanCase",
                                    through_fields=("plane", "case"))
+
+    @property
+    def state_display(self):
+        return self.get_state_display()
 
     class Meta:
         constraints = [

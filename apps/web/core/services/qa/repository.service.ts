@@ -49,4 +49,12 @@ export class RepositoryService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async enumsList(workspaceSlug: string): Promise<any> {
+    return this.get(`/api/workspaces/${workspaceSlug}/test/enums/`)
+    .then((response) => response?.data)
+    .catch((error) => {
+      throw error?.response?.data;
+    });
+}
 }

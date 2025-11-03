@@ -34,9 +34,10 @@ class TestPlanDetailSerializer(ModelSerializer):
     assignees = UserLiteSerializer(many=True, read_only=True)
     cases = CaseDetailSerializer(many=True, read_only=True)
 
+
     class Meta:
         model = TestPlan
-        fields = ['id', 'name', 'begin_time', 'end_time', 'repository', 'assignees', 'cases']
+        fields = ['id', 'name', 'begin_time', 'end_time', 'repository', 'assignees', 'cases', 'state','state_display']
 
 
 class TestCaseRepositorySerializer(ModelSerializer):
@@ -55,7 +56,6 @@ class TestCaseRepositoryDetailSerializer(ModelSerializer):
     """
 
     created_by = UserLiteSerializer(read_only=True)
-
 
     class Meta:
         model = TestCaseRepository
@@ -82,12 +82,13 @@ class CaseCreateUpdateSerializer(ModelSerializer):
         fields = ['name', 'precondition', 'steps', 'remark', 'state', 'type', 'priority', 'repository', 'labels',
                   'module']
 
+
 class CaseListSerializer(ModelSerializer):
     """用例查询"""
+
     class Meta:
         model = TestCase
         fields = '__all__'
-
 
 
 class CaseModuleCreateUpdateSerializer(ModelSerializer):
@@ -133,8 +134,6 @@ class CaseLabelCreateSerializer(serializers.ModelSerializer):
 
 
 class CaseLabelListSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = CaseLabel
         fields = '__all__'
-

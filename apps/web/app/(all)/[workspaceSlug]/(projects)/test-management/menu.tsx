@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useParams } from "next/navigation";
+import { usePathname, useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import React from "react";
 import { cn } from "@plane/utils";
@@ -50,28 +50,70 @@ const MENU_ITEMS: TMenuItem[] = [
 export const TestManagementMenuBar = () => {
   const pathname = usePathname();
   const { workspaceSlug } = useParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [selectedRepositoryId, setSelectedRepositoryId] = React.useState<string | null>(null);
+  const [repositoryIdFromStorage, setRepositoryIdFromStorage] = React.useState<string | null>(null);
+  const [isClient, setIsClient] = React.useState(false);
 
   const ws = workspaceSlug?.toString() || "";
   const isOverviewActive = isTMOverviewActive(pathname, ws);
-  // 处理测试库选择变更
-  const handleRepositoryChange = React.useCallback((repositoryId: string | null) => {
-    setSelectedRepositoryId(repositoryId);
 
-    // 这里可以触发数据刷新或其他业务逻辑
-    // 例如：通知子页面重新加载数据，或者调用特定的接口
-    console.log("选中的测试库ID:", repositoryId);
+  // 从URL参数中获取repositoryId（保留作为备用）
+  const repositoryIdFromUrl = searchParams.get("repositoryId");
 
-    // 如果需要调用特定接口，可以在这里添加
-    // 例如：fetchDataWithRepository(repositoryId);
+  // 确保在客户端环境下才访问sessionStorage
+  React.useEffect(() => {
+    setIsClient(true);
   }, []);
+
+  // 从sessionStorage获取repositoryId
+  React.useEffect(() => {
+    if (!isClient) return;
+
+    const storedRepositoryId = sessionStorage.getItem("selectedRepositoryId");
+    setRepositoryIdFromStorage(storedRepositoryId);
+  }, [isClient, pathname]); // 当路径变化时重新获取
+
+  // 优先使用sessionStorage中的repositoryId，其次使用URL参数中的
+  const defaultRepositoryId = repositoryIdFromStorage || repositoryIdFromUrl;
+
+  // 处理测试库选择变更
+  const handleRepositoryChange = React.useCallback(
+    (repositoryId: string | null) => {
+      setSelectedRepositoryId(repositoryId);
+
+      // 更新sessionStorage
+      if (repositoryId) {
+        sessionStorage.setItem("selectedRepositoryId", repositoryId);
+      } else {
+        sessionStorage.removeItem("selectedRepositoryId");
+        sessionStorage.removeItem("selectedRepositoryName");
+      }
+
+      // 如果选择了"全部测试库"（repositoryId为null），跳转回主页面
+      if (repositoryId === null) {
+        router.push(`/${ws}/test-management`);
+      } else {
+        // 这里可以触发数据刷新或其他业务逻辑
+        console.log("选中的测试库ID:", repositoryId);
+      }
+    },
+    [router, ws]
+  );
 
   return (
     <div className="w-full border-b border-custom-border-200 bg-custom-background-100">
       <div className="px-3 py-2 flex items-center gap-2">
-        {/* 测试库选择器（仅非“测试用例库”路由时展示） */}
-        {!isOverviewActive && (
-          <RepositorySelect workspaceSlug={ws} className="flex-shrink-0" onRepositoryChange={handleRepositoryChange} />
+        {/* 测试库选择器（仅非"测试用例库"路由时展示） */}
+        {!isOverviewActive && isClient && (
+          <RepositorySelect
+            key={`repository-select-${defaultRepositoryId || "all"}`} // 添加key强制重新渲染
+            workspaceSlug={ws}
+            className="flex-shrink-0"
+            defaultRepositoryId={defaultRepositoryId}
+            onRepositoryChange={handleRepositoryChange}
+          />
         )}
 
         {(isOverviewActive ? MENU_ITEMS.filter((i) => i.key === "overview") : MENU_ITEMS).map((item) => {

@@ -1,3 +1,5 @@
+import { RepositoryService } from "@/services/qa";
+
 export const formatDateTime = (isoString:string) => {
     if (!isoString) return '-';
     const date = new Date(isoString);
@@ -10,3 +12,23 @@ export const formatDateTime = (isoString:string) => {
     
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   };
+
+export const getEnums = async (workspaceSlug: string) => {
+  const repositoryService = new RepositoryService();
+  const response: any = await repositoryService.enumsList(
+    workspaceSlug as string,
+  );
+  return response || {};
+}
+
+export type TGlobalEnums = {
+  // 后端返回的测试计划状态枚举：数字 -> 文本
+  plan_state: Record<number, string>;
+};
+
+export const globalEnums = {
+  Enums: { plan_state: {} } as TGlobalEnums,
+  setEnums: (value: TGlobalEnums) => {
+    globalEnums.Enums = value;
+  },
+};
