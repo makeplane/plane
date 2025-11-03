@@ -3,6 +3,7 @@ import type { RouteConfig } from "@react-router/dev/routes";
 // local imports
 import { piRoutes } from "./routes/pi";
 import { projectsAppRoutes } from "./routes/projects";
+import { redirectRoutes } from "./routes/redirects";
 import { settingsRoutes } from "./routes/settings";
 import { standaloneRoutes } from "./routes/standalone";
 import { userManagementRoutes } from "./routes/user";
@@ -56,6 +57,12 @@ function createRoutes(): RouteConfig {
       // Onboarding, sign-up, invitations, password management, OAuth
       ...standaloneRoutes,
     ]),
+
+    // ========================================================================
+    // REDIRECT ROUTES
+    // ========================================================================
+    // Legacy URL redirects for backward compatibility
+    ...redirectRoutes,
 
     // ========================================================================
     // ERROR HANDLING - 404 Catch-all (must be last)
