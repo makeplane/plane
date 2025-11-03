@@ -94,11 +94,11 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
       return (
         <EmptyStateDetailed
           assetKey="page"
-          title={t("project.pages.title")}
-          description={t("project.pages.description")}
+          title={t("project_empty_state.pages.title")}
+          description={t("project_empty_state.pages.description")}
           actions={[
             {
-              label: t("project.pages.cta_primary"),
+              label: t("project_empty_state.pages.cta_primary"),
               onClick: () => {
                 handleCreatePage();
                 captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON });
@@ -114,11 +114,11 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
       return (
         <EmptyStateDetailed
           assetKey="page"
-          title={t("project.pages.title")}
-          description={t("project.pages.description")}
+          title={t("project_empty_state.pages.title")}
+          description={t("project_empty_state.pages.description")}
           actions={[
             {
-              label: t("project.pages.cta_primary"),
+              label: t("project_empty_state.pages.cta_primary"),
               onClick: () => {
                 handleCreatePage();
                 captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON });
@@ -133,11 +133,11 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
       return (
         <EmptyStateDetailed
           assetKey="page"
-          title={t("project.pages.title")}
-          description={t("project.pages.description")}
+          title={t("project_empty_state.pages.title")}
+          description={t("project_empty_state.pages.description")}
           actions={[
             {
-              label: t("project.pages.cta_primary"),
+              label: t("project_empty_state.pages.cta_primary"),
               onClick: () => {
                 handleCreatePage();
                 captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_BUTTON });
@@ -152,8 +152,8 @@ export const PagesListMainContent: React.FC<Props> = observer((props) => {
       return (
         <EmptyStateDetailed
           assetKey="page"
-          title={t("project.archive_pages.title")}
-          description={t("project.archive_pages.description")}
+          title={t("project_empty_state.archive_pages.title")}
+          description={t("project_empty_state.archive_pages.description")}
         />
       );
   }

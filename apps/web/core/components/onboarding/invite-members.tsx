@@ -13,7 +13,7 @@ import type {
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 // icons
 import { usePopper } from "react-popper";
-import { Check, ChevronDown, Plus, XCircle } from "lucide-react";
+import { Check, Plus, XCircle } from "lucide-react";
 import { Listbox } from "@headlessui/react";
 // plane imports
 import type { EUserPermissions } from "@plane/constants";
@@ -21,6 +21,7 @@ import { ROLE, ROLE_DETAILS, MEMBER_TRACKER_EVENTS, MEMBER_TRACKER_ELEMENTS } fr
 import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@plane/propel/button";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser, IWorkspace } from "@plane/types";
 // ui
@@ -196,7 +197,7 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = observer((props) => {
                     {ROLE[value]}
                   </span>
 
-                  <ChevronDown
+                  <ChevronDownIcon
                     className={`size-3 ${
                       !getValues(`emails.${index}.role_active`)
                         ? "stroke-onboarding-text-400"

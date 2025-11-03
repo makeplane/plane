@@ -35,6 +35,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { WorkItemAdditionalSidebarProperties } from "@/plane-web/components/issues/issue-details/additional-properties";
 import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
 import { TransferHopInfo } from "@/plane-web/components/issues/issue-details/sidebar/transfer-hop-info";
+import { DateAlert } from "@/plane-web/components/issues/issue-details/sidebar.tsx/date-alert";
 import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
 import type { TIssueOperations } from "../issue-detail";
 import { IssueCycleSelect } from "../issue-detail/cycle-select";
@@ -190,28 +191,31 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <DueDatePropertyIcon className="h-4 w-4 flex-shrink-0" />
             <span>{t("common.order_by.due_date")}</span>
           </div>
-          <DateDropdown
-            value={issue.target_date}
-            onChange={(val) =>
-              issueOperations.update(workspaceSlug, projectId, issueId, {
-                target_date: val ? renderFormattedPayloadDate(val) : null,
-              })
-            }
-            placeholder={t("issue.add.due_date")}
-            buttonVariant="transparent-with-text"
-            minDate={minDate ?? undefined}
-            disabled={disabled}
-            className="w-3/4 flex-grow group"
-            buttonContainerClassName="w-full text-left"
-            buttonClassName={cn("text-sm", {
-              "text-custom-text-400": !issue.target_date,
-              "text-red-500": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
-            })}
-            hideIcon
-            clearIconClassName="h-3 w-3 hidden group-hover:inline !text-custom-text-100"
-            // TODO: add this logic
-            // showPlaceholderIcon
-          />
+          <div className="flex items-center gap-2">
+            <DateDropdown
+              value={issue.target_date}
+              onChange={(val) =>
+                issueOperations.update(workspaceSlug, projectId, issueId, {
+                  target_date: val ? renderFormattedPayloadDate(val) : null,
+                })
+              }
+              placeholder={t("issue.add.due_date")}
+              buttonVariant="transparent-with-text"
+              minDate={minDate ?? undefined}
+              disabled={disabled}
+              className="w-3/4 flex-grow group"
+              buttonContainerClassName="w-full text-left"
+              buttonClassName={cn("text-sm", {
+                "text-custom-text-400": !issue.target_date,
+                "text-red-500": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
+              })}
+              hideIcon
+              clearIconClassName="h-3 w-3 hidden group-hover:inline !text-custom-text-100"
+              // TODO: add this logic
+              // showPlaceholderIcon
+            />
+            {issue.target_date && <DateAlert date={issue.target_date} workItem={issue} projectId={projectId} />}
+          </div>
         </div>
 
         {/* estimate */}

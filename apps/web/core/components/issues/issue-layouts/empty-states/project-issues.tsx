@@ -48,11 +48,11 @@ export const ProjectEmptyState: React.FC = observer(() => {
       ) : (
         <EmptyStateDetailed
           assetKey="work-item"
-          title={t("project.work_items.title")}
-          description={t("project.work_items.description")}
+          title={t("project_empty_state.work_items.title")}
+          description={t("project_empty_state.work_items.description")}
           actions={[
             {
-              label: t("project.work_items.cta_primary"),
+              label: t("project_empty_state.work_items.cta_primary"),
               onClick: () => {
                 captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.WORK_ITEMS });
                 toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);

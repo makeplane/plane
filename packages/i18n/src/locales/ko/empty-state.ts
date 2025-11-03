@@ -23,7 +23,7 @@ export default {
       cta_primary: "다시 로드 시도",
     },
   },
-  project: {
+  project_empty_state: {
     work_items: {
       title: "첫 번째 작업 항목으로 시작하세요.",
       description:
@@ -89,7 +89,7 @@ export default {
       title: "접수 작업 항목을 선택하여 세부 정보 보기",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     archive_work_items: {
       title: "아직 보관된 작업 항목이 없습니다",
       description:
@@ -150,7 +150,7 @@ export default {
       title: "접수를 설정하여 들어오는 요청을 관리하고 승인 및 거부 방법을 추적하세요",
     },
   },
-  settings: {
+  settings_empty_state: {
     estimates: {
       title: "아직 추정치가 없습니다",
       description: "팀이 노력을 측정하는 방법을 정의하고 모든 작업 항목에서 일관되게 추적하세요.",

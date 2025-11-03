@@ -24,7 +24,7 @@ export default {
       cta_primary: "Încercați reîncărcarea",
     },
   },
-  project: {
+  project_empty_state: {
     work_items: {
       title: "Începeți cu primul dvs. element de lucru.",
       description:
@@ -93,7 +93,7 @@ export default {
       title: "Selectați un element de lucru de Admitere pentru a vedea detaliile",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     archive_work_items: {
       title: "Încă nu există elemente de lucru arhivate",
       description:
@@ -157,7 +157,7 @@ export default {
       title: "Configurați admiterea pentru a gestiona solicitările primite și a urmări cum sunt acceptate și respinse",
     },
   },
-  settings: {
+  settings_empty_state: {
     estimates: {
       title: "Încă nu există estimări",
       description:

@@ -25,7 +25,7 @@ export default {
       cta_primary: "Versuchen Sie neu zu laden",
     },
   },
-  project: {
+  project_empty_state: {
     work_items: {
       title: "Beginnen Sie mit Ihrem ersten Arbeitselement.",
       description:
@@ -94,7 +94,7 @@ export default {
       title: "Wählen Sie ein Intake-Arbeitselement aus, um seine Details anzuzeigen",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     archive_work_items: {
       title: "Noch keine archivierten Arbeitselemente",
       description:
@@ -162,7 +162,7 @@ export default {
         "Richten Sie Intake ein, um eingehende Anfragen zu verwalten und zu verfolgen, wie sie akzeptiert und abgelehnt werden",
     },
   },
-  settings: {
+  settings_empty_state: {
     estimates: {
       title: "Noch keine Schätzungen",
       description:

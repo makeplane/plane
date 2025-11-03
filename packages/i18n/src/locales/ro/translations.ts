@@ -646,6 +646,8 @@ export default {
   },
   common: {
     all: "Toate",
+    no_items_in_this_group: "Nu există elemente în acest grup",
+    drop_here_to_move: "Eliberează aici pentru a muta",
     states: "Stări",
     state: "Stare",
     state_groups: "Grupuri de stări",
