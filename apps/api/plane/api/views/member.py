@@ -88,8 +88,7 @@ class WorkspaceMemberAPIEndpoint(BaseAPIView):
         return Response(users_with_roles, status=status.HTTP_200_OK)
 
 
-# API endpoint to get and insert users inside the workspace
-class ProjectMemberAPIEndpoint(BaseAPIView):
+class ProjectMemberListCreateAPIEndpoint(BaseAPIView):
     permission_classes = [ProjectMemberPermission]
     use_read_replica = True
 
@@ -136,8 +135,61 @@ class ProjectMemberAPIEndpoint(BaseAPIView):
 
         # Get all the users that are present inside the workspace
         users = UserLiteSerializer(User.objects.filter(id__in=project_members), many=True).data
-
         return Response(users, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        operation_id="create_project_member",
+        summary="Create project member",
+        description="Create a new project member",
+        tags=["Members"],
+        parameters=[WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
+        responses={201: OpenApiResponse(description="Project member created", response=ProjectMemberSerializer)},
+        request=OpenApiRequest(request=ProjectMemberSerializer),
+    )
+    def post(self, request, slug, project_id):
+        serializer = ProjectMemberSerializer(data=request.data, context={"slug": slug})
+        serializer.is_valid(raise_exception=True)
+        serializer.save(project_id=project_id)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+# API endpoint to get and update a project member
+class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
+    def get_object(self):
+        return self.get_queryset().get(pk=self.kwargs.get("pk"))
+
+    @extend_schema(
+        operation_id="get_project_member",
+        summary="Get project member",
+        description="Retrieve a project member by ID.",
+        tags=["Members"],
+        parameters=[WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
+        responses={
+            200: OpenApiResponse(description="Project member", response=ProjectMemberSerializer),
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: PROJECT_NOT_FOUND_RESPONSE,
+        },
+    )
+    # Get a project member by ID
+    def get(self, request, slug, project_id, pk):
+        """Get project member
+
+        Retrieve a project member by ID.
+        Returns a project member with their project-specific roles and access levels.
+        """
+        # Check if the workspace exists
+        if not Workspace.objects.filter(slug=slug).exists():
+            return Response(
+                {"error": "Provided workspace does not exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Get the workspace members that are present inside the workspace
+        project_members = ProjectMember.objects.get(project_id=project_id, workspace__slug=slug, pk=pk)
+        user = User.objects.get(id=project_members.member_id)
+        user = UserLiteSerializer(user).data
+        return Response(user, status=status.HTTP_200_OK)
 
     @extend_schema(
         operation_id="create_project_member",

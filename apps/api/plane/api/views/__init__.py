@@ -43,7 +43,7 @@ from .module import (
     ModuleArchiveUnarchiveAPIEndpoint,
 )
 
-from .member import ProjectMemberAPIEndpoint, WorkspaceMemberAPIEndpoint
+from .member import ProjectMemberListCreateAPIEndpoint, ProjectMemberDetailAPIEndpoint, WorkspaceMemberAPIEndpoint
 
 from .intake import (
     IntakeIssueListCreateAPIEndpoint,
