@@ -76,7 +76,7 @@ RUN pnpm turbo run build --filter=space
 FROM nginx:1.27-alpine AS production
 
 COPY apps/space/nginx/nginx.conf /etc/nginx/nginx.conf
-COPY --from=installer /app/apps/space/build/client /usr/share/nginx/html
+COPY --from=installer /app/apps/space/build/client /usr/share/nginx/html/spaces
 
 EXPOSE 3000
 

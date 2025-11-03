@@ -18,6 +18,7 @@
     "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\""
   },
   "dependencies": {
+    "@bprogress/core": "catalog:",
     "@headlessui/react": "^1.7.19",
     "@plane/constants": "workspace:*",
     "@plane/hooks": "workspace:*",
