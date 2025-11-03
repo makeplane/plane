@@ -20,6 +20,7 @@
     "@atlaskit/pragmatic-drag-and-drop-auto-scroll": "catalog:",
     "@atlaskit/pragmatic-drag-and-drop-hitbox": "catalog:",
     "@atlaskit/pragmatic-drag-and-drop": "catalog:",
+    "@bprogress/core": "catalog:",
     "@headlessui/react": "^1.7.19",
     "@intercom/messenger-js-sdk": "^0.0.12",
     "@plane/constants": "workspace:*",

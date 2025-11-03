@@ -12,6 +12,8 @@ import { Toast } from "@plane/propel/toast";
 import { resolveGeneralTheme } from "@plane/utils";
 // polyfills
 import "@/lib/polyfills";
+// progress bar
+import { AppProgressBar } from "@/lib/b-progress";
 // mobx store provider
 import { StoreProvider } from "@/lib/store-context";
 // wrappers
@@ -36,6 +38,7 @@ export const AppProvider: FC<IAppProvider> = (props) => {
   return (
     <StoreProvider>
       <ThemeProvider themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]} defaultTheme="system">
+        <AppProgressBar />
         <TranslationProvider>
           <ToastWithTheme />
           <StoreWrapper>

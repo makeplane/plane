@@ -557,6 +557,9 @@ importers:
       '@atlaskit/pragmatic-drag-and-drop-hitbox':
         specifier: 'catalog:'
         version: 1.1.0
+      '@bprogress/core':
+        specifier: 'catalog:'
+        version: 1.3.4
       '@headlessui/react':
         specifier: ^1.7.19
         version: 1.7.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1745,6 +1748,9 @@ packages:
 
   '@borewit/text-codec@0.1.1':
     resolution: {integrity: sha512-5L/uBxmjaCIX5h8Z+uu+kA9BQLkc/Wl06UGR5ajNRxu+/XjonB5i8JpgFMrPj3LXTCPA0pv8yxUvbUi+QthGGA==}
+
+  '@bprogress/core@1.3.4':
+    resolution: {integrity: sha512-q/AqpurI/1uJzOrQROuZWixn/+ARekh+uvJGwLCP6HQ/EqAX4SkvNf618tSBxL4NysC0MwqAppb/mRw6Tzi61w==}
 
   '@chromatic-com/storybook@1.9.0':
     resolution: {integrity: sha512-vYQ+TcfktEE3GHnLZXHCzXF/sN9dw+KivH8a5cmPyd9YtQs7fZtHrEgsIjWpYycXiweKMo1Lm1RZsjxk8DH3rA==}
@@ -8969,6 +8975,8 @@ snapshots:
       '@types/react': 18.3.11
 
   '@borewit/text-codec@0.1.1': {}
+
+  '@bprogress/core@1.3.4': {}
 
   '@chromatic-com/storybook@1.9.0(react@18.3.1)':
     dependencies:
