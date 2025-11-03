@@ -46,14 +46,3 @@ export function useSearchParams(): URLSearchParams {
 export function useParams() {
   return useParamsRR();
 }
-
-export function redirect(url: string): never {
-  if (typeof window !== "undefined") {
-    window.location.href = url;
-  }
-  throw new Error(`Redirecting to ${url}`);
-}
-
-export function notFound(): never {
-  throw new Error("Not found");
-}
