@@ -34,7 +34,7 @@ import { WorkspaceService } from "@/plane-web/services";
 
 const workspaceService = new WorkspaceService();
 
-const UserInvitationsPage = observer(() => {
+function UserInvitationsPage() {
   // states
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
@@ -220,6 +220,6 @@ const UserInvitationsPage = observer(() => {
       </div>
     </AuthenticationWrapper>
   );
-});
+}
 
-export default UserInvitationsPage;
+export default observer(UserInvitationsPage);

@@ -31,4 +31,3 @@ const Image: React.FC<NextImageProps> = ({
 };
 
 export default Image;
-

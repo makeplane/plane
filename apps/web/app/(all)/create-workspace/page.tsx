@@ -21,7 +21,7 @@ import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // plane web helpers
 import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
 
-const CreateWorkspacePage = observer(() => {
+function CreateWorkspacePage() {
   const { t } = useTranslation();
   // router
   const router = useAppRouter();
@@ -103,6 +103,6 @@ const CreateWorkspacePage = observer(() => {
       </div>
     </AuthenticationWrapper>
   );
-});
+}
 
-export default CreateWorkspacePage;
+export default observer(CreateWorkspacePage);

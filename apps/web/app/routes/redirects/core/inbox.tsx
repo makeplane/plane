@@ -9,4 +9,3 @@ export const clientLoader = ({ params }: ClientLoaderFunctionArgs) => {
 export default function Inbox() {
   return null;
 }
-

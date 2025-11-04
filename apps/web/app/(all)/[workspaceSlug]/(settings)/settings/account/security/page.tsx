@@ -42,7 +42,7 @@ const defaultShowPassword = {
   confirmPassword: false,
 };
 
-const SecurityPage = observer(() => {
+function SecurityPage() {
   // store
   const { data: currentUser, changePassword } = useUser();
   // states
@@ -255,6 +255,6 @@ const SecurityPage = observer(() => {
       </form>
     </>
   );
-});
+}
 
-export default SecurityPage;
+export default observer(SecurityPage);

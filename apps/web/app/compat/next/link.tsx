@@ -22,4 +22,3 @@ const Link: React.FC<NextLinkProps> = ({
 }) => <RRLink to={ensureTrailingSlash(href)} replace={replace} {...rest} />;
 
 export default Link;
-

@@ -71,9 +71,7 @@ export const ProjectRoot = observer(() => {
   }, [clearAllFilters, clearAllAppliedDisplayFilters, workspaceSlug]);
 
   useEffect(() => {
-    isArchived
-      ? updateDisplayFilters(workspaceSlug.toString(), { archived_projects: true })
-      : updateDisplayFilters(workspaceSlug.toString(), { archived_projects: false });
+    updateDisplayFilters(workspaceSlug.toString(), { archived_projects: isArchived });
   }, [pathname]);
 
   return (

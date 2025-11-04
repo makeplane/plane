@@ -1,8 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
-import ReactDOM from "react-dom";
-
 // TODO: Check if we need this
 // https://nextjs.org/docs/app/api-reference/functions/generate-metadata#link-relpreload
 // export const usePreloadResources = () => {
@@ -25,5 +22,4 @@ import ReactDOM from "react-dom";
 
 export const PreloadResources = () =>
   // usePreloadResources();
-   null
-;
+  null;

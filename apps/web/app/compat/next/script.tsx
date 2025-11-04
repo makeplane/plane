@@ -14,15 +14,7 @@ type ScriptProps = {
 };
 
 // Minimal shim for next/script that creates a script tag
-const Script: React.FC<ScriptProps> = ({ 
-  src, 
-  id, 
-  strategy: _strategy, 
-  onLoad, 
-  onError,
-  children,
-  ...rest 
-}) => {
+const Script: React.FC<ScriptProps> = ({ src, id, strategy: _strategy, onLoad, onError, children, ...rest }) => {
   useEffect(() => {
     if (src) {
       const script = document.createElement("script");
@@ -61,4 +53,3 @@ const Script: React.FC<ScriptProps> = ({
 };
 
 export default Script;
-

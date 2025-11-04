@@ -45,4 +45,3 @@ router.use(
 );
 
 app.use(NEXT_PUBLIC_WEB_BASE_PATH, router);
-

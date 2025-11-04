@@ -10,7 +10,7 @@ import { SettingsMobileNav } from "@/components/settings/mobile";
 // local imports
 import { ProfileSidebar } from "./sidebar";
 
-const ProfileSettingsLayout = observer(() => {
+function ProfileSettingsLayout() {
   // router
   const pathname = usePathname();
 
@@ -29,6 +29,6 @@ const ProfileSettingsLayout = observer(() => {
       </div>
     </>
   );
-});
+}
 
-export default ProfileSettingsLayout;
+export default observer(ProfileSettingsLayout);

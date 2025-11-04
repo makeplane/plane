@@ -7,4 +7,3 @@ export const clientLoader = () => {
 export default function Register() {
   return null;
 }
-

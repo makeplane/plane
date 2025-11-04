@@ -1,7 +1,7 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
@@ -22,13 +22,20 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import { EPageStoreType } from "@/plane-web/hooks/store";
+import type { Route } from "./+types/page";
 
-const ProjectPagesPage = observer(() => {
+const getPageType = (pageType?: string | null): TPageNavigationTabs => {
+  if (pageType === "private") return "private";
+  if (pageType === "archived") return "archived";
+  return "public";
+};
+
+function ProjectPagesPage({ params }: Route.ComponentProps) {
   // router
   const router = useAppRouter();
   const searchParams = useSearchParams();
   const type = searchParams.get("type");
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug, projectId } = params;
   // theme hook
   const { resolvedTheme } = useTheme();
   // plane hooks
@@ -37,19 +44,11 @@ const ProjectPagesPage = observer(() => {
   const { getProjectById, currentProjectDetails } = useProject();
   const { allowPermissions } = useUserPermissions();
   // derived values
-  const project = projectId ? getProjectById(projectId.toString()) : undefined;
+  const project = getProjectById(projectId);
   const pageTitle = project?.name ? `${project?.name} - Pages` : undefined;
   const canPerformEmptyStateActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
   const resolvedPath = resolvedTheme === "light" ? lightPagesAsset : darkPagesAsset;
-
-  const currentPageType = (): TPageNavigationTabs => {
-    const pageType = type?.toString();
-    if (pageType === "private") return "private";
-    if (pageType === "archived") return "archived";
-    return "public";
-  };
-
-  if (!workspaceSlug || !projectId) return <></>;
+  const pageType = getPageType(type);
 
   // No access to cycle
   if (currentProjectDetails?.page_view === false)
@@ -73,15 +72,15 @@ const ProjectPagesPage = observer(() => {
     <>
       <PageHead title={pageTitle} />
       <PagesListView
-        pageType={currentPageType()}
-        projectId={projectId.toString()}
+        pageType={pageType}
+        projectId={projectId}
         storeType={EPageStoreType.PROJECT}
-        workspaceSlug={workspaceSlug.toString()}
+        workspaceSlug={workspaceSlug}
       >
-        <PagesListRoot pageType={currentPageType()} storeType={EPageStoreType.PROJECT} />
+        <PagesListRoot pageType={pageType} storeType={EPageStoreType.PROJECT} />
       </PagesListView>
     </>
   );
-});
+}
 
-export default ProjectPagesPage;
+export default observer(ProjectPagesPage);

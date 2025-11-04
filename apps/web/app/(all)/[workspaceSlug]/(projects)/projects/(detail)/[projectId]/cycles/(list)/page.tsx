@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { useTheme } from "next-themes";
 import { EUserPermissionsLevel, CYCLE_TRACKER_ELEMENTS } from "@plane/constants";
@@ -29,8 +28,9 @@ import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+import type { Route } from "./+types/page";
 
-const ProjectCyclesPage = observer(() => {
+function ProjectCyclesPage({ params }: Route.ComponentProps) {
   // states
   const [createModal, setCreateModal] = useState(false);
   // store hooks
@@ -38,7 +38,7 @@ const ProjectCyclesPage = observer(() => {
   const { getProjectById, currentProjectDetails } = useProject();
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug, projectId } = params;
   // theme hook
   const { resolvedTheme } = useTheme();
   // plane hooks
@@ -49,7 +49,7 @@ const ProjectCyclesPage = observer(() => {
   // derived values
   const resolvedEmptyState = resolvedTheme === "light" ? lightEmptyState : darkEmptyState;
   const totalCycles = currentProjectCycleIds?.length ?? 0;
-  const project = projectId ? getProjectById(projectId?.toString()) : undefined;
+  const project = getProjectById(projectId);
   const pageTitle = project?.name ? `${project?.name} - ${t("common.cycles", { count: 2 })}` : undefined;
   const hasAdminLevelPermission = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
   const hasMemberLevelPermission = allowPermissions(
@@ -58,16 +58,13 @@ const ProjectCyclesPage = observer(() => {
   );
 
   const handleRemoveFilter = (key: keyof TCycleFilters, value: string | null) => {
-    if (!projectId) return;
     let newValues = currentProjectFilters?.[key] ?? [];
 
     if (!value) newValues = [];
     else newValues = newValues.filter((val) => val !== value);
 
-    updateFilters(projectId.toString(), { [key]: newValues });
+    updateFilters(projectId, { [key]: newValues });
   };
-
-  if (!workspaceSlug || !projectId) return <></>;
 
   // No access to cycle
   if (currentProjectDetails?.cycle_view === false)
@@ -95,8 +92,8 @@ const ProjectCyclesPage = observer(() => {
       <PageHead title={pageTitle} />
       <div className="w-full h-full">
         <CycleCreateUpdateModal
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={projectId.toString()}
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
           isOpen={createModal}
           handleClose={() => setCreateModal(false)}
         />
@@ -123,18 +120,18 @@ const ProjectCyclesPage = observer(() => {
               <Header variant={EHeaderVariant.TERNARY}>
                 <CycleAppliedFiltersList
                   appliedFilters={currentProjectFilters ?? {}}
-                  handleClearAllFilters={() => clearAllFilters(projectId.toString())}
+                  handleClearAllFilters={() => clearAllFilters(projectId)}
                   handleRemoveFilter={handleRemoveFilter}
                 />
               </Header>
             )}
 
-            <CyclesView workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
+            <CyclesView workspaceSlug={workspaceSlug} projectId={projectId} />
           </>
         )}
       </div>
     </>
   );
-});
+}
 
-export default ProjectCyclesPage;
+export default observer(ProjectCyclesPage);
