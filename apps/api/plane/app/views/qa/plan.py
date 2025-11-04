@@ -84,7 +84,10 @@ class CaseAPIView(BaseAPIView):
     serializer_class = CaseListSerializer
     filterset_fields = {
         'name': ['exact', 'icontains', 'in'],
-        'repository_id': ['exact']
+        'repository_id': ['exact'],
+        'state': ['exact', 'in'],
+        'type': ['exact','in'],
+        'priority': ['exact','in'],
     }
 
     def get(self, request, slug):
@@ -151,4 +154,9 @@ class EnumDataAPIView(BaseAPIView):
 
     def get(self, request, slug):
         plan_state = dict(TestPlan.State.choices)
-        return Response(dict(plan_state=plan_state))
+        case_state = dict(TestCase.State.choices)
+        case_type = dict(TestCase.Type.choices)
+        case_priority = dict(TestCase.Priority.choices)
+        return Response(dict(
+            plan_state=plan_state, case_state=case_state, case_type=case_type, case_priority=case_priority
+        ))

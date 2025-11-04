@@ -89,6 +89,7 @@ class CaseListSerializer(ModelSerializer):
     class Meta:
         model = TestCase
         fields = '__all__'
+        depth = 1
 
 
 class CaseModuleCreateUpdateSerializer(ModelSerializer):
@@ -97,6 +98,7 @@ class CaseModuleCreateUpdateSerializer(ModelSerializer):
     class Meta:
         model = CaseModule
         fields = ['name', 'sort_order', 'parent', 'repository']
+        depth = 1
 
 
 class CaseModuleListSerializer(serializers.ModelSerializer):

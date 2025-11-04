@@ -31,13 +31,21 @@ export const getEnums = async (workspaceSlug: string) => {
   return response || {};
 }
 
+// 扩展：加入用例相关枚举类型定义
 export type TGlobalEnums = {
-  // 后端返回的测试计划状态枚举：数字 -> 文本
-  plan_state: Record<number, string>;
+  plan_state: Record<number | string, string>;
+  case_state: Record<number | string, string>;
+  case_type: Record<number | string, string>;
+  case_priority: Record<number | string, string>;
 };
 
 export const globalEnums = {
-  Enums: { plan_state: {} } as TGlobalEnums,
+  Enums: { 
+    plan_state: {}, 
+    case_state: {}, 
+    case_type: {}, 
+    case_priority: {} 
+  } as TGlobalEnums,
   setEnums: (value: TGlobalEnums) => {
     globalEnums.Enums = value;
   },

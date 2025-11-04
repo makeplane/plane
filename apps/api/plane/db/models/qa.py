@@ -3,7 +3,7 @@ from enum import IntEnum
 
 from django.db.models import Q
 
-from . import BaseModel
+from . import BaseModel, Issue
 from django.conf import settings
 
 
@@ -89,23 +89,34 @@ class TestCase(BaseModel):
         MEDIUM = 1, '中'
         HIGH = 2, '高'
 
+    class TestType(models.IntegerChoices):
+        MANUAL = 0, '手动'
+        AUTO = 1, '自动'
+
     name = models.CharField(max_length=255, verbose_name="TestCase Name")
     precondition = models.TextField(verbose_name="TestCase Precondition", blank=True, default='<p></p>')
     steps = models.JSONField(verbose_name="TestCase Steps", blank=True, default=dict)
     remark = models.TextField(verbose_name="TestCase Remark", blank=True, default='<p></p>')
     state = models.IntegerField(choices=State.choices, default=State.PENDING_REVIEW, verbose_name="TestCase State")
     type = models.IntegerField(choices=Type.choices, default=Type.FUNCTIONAL, verbose_name="TestCase Type")
+    test_type = models.IntegerField(choices=TestType.choices, default=TestType.AUTO, verbose_name="TestType Type")
     priority = models.IntegerField(choices=Priority.choices, default=Priority.MEDIUM, verbose_name="TestCase Priority")
 
     repository = models.ForeignKey(TestCaseRepository, on_delete=models.CASCADE, verbose_name="TestCaseRepository",
                                    related_name="cases")
     module = models.ForeignKey(CaseModule, on_delete=models.CASCADE, blank=True, null=True,
                                related_name="cases")
+    assignee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True,
+                               related_name="cases")
     labels = models.ManyToManyField(CaseLabel, blank=True, related_name="cases")
+    issues = models.ManyToManyField(Issue, blank=True, related_name="cases")
 
     class Meta:
         db_table = "test_case"
         ordering = ("-created_at",)
+
+
+
 
 
 class TestPlan(BaseModel):
@@ -114,21 +125,20 @@ class TestPlan(BaseModel):
         PROGRESS = 1, '进行中'
         COMPLETED = 2, '已完成'
 
-    name = models.CharField(max_length=255, verbose_name="TestPlane Name")
+    name = models.CharField(max_length=255, verbose_name="TestPlan Name")
     begin_time = models.DateTimeField(null=True, blank=True, verbose_name="TestPlan Begin Time")
     end_time = models.DateTimeField(null=True, blank=True, verbose_name="TestPlan End Time")
     state = models.IntegerField(choices=State.choices, default=State.NOT_START, verbose_name="TestPlan State")
-
 
     repository = models.ForeignKey(TestCaseRepository, on_delete=models.CASCADE, verbose_name="TestCaseRepository",
                                    related_name="plans")
     assignees = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         blank=True,
-        related_name="plane_assignee",
+        related_name="plan_assignee",
     )
     cases = models.ManyToManyField(TestCase, blank=True, related_name="plans", through="PlanCase",
-                                   through_fields=("plane", "case"))
+                                   through_fields=("plan", "case"))
 
     @property
     def state_display(self):
@@ -140,10 +150,10 @@ class TestPlan(BaseModel):
             models.UniqueConstraint(
                 fields=["repository", "name"],
                 condition=Q(repository__isnull=False, deleted_at__isnull=True),
-                name="unique_plane_repository_name_when_not_deleted",
+                name="unique_plan_repository_name_when_not_deleted",
             ),
         ]
-        db_table = "test_plane"
+        db_table = "test_plan"
         ordering = ("-created_at",)
 
 
@@ -154,7 +164,7 @@ class PlanCase(BaseModel):
         COMPLETED = 2, '已完成'
 
     case = models.ForeignKey(TestCase, on_delete=models.CASCADE, related_name="plan_cases")
-    plane = models.ForeignKey(TestPlan, on_delete=models.CASCADE, related_name="plan_cases")
+    plan = models.ForeignKey(TestPlan, on_delete=models.CASCADE, related_name="plan_cases")
     state = models.IntegerField(choices=State.choices, default=State.NOT_START,
                                 verbose_name="PlanCase State")
 

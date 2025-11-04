@@ -49,5 +49,8 @@
   "packageManager": "pnpm@10.12.1",
   "engines": {
     "node": ">=22.18.0"
+  },
+  "dependencies": {
+    "quill": "^2.0.3"
   }
 }
