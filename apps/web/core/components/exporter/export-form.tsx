@@ -49,7 +49,7 @@ export const ExportForm = (props: Props) => {
   });
   // derived values
   const hasProjects = workspaceProjectIds && workspaceProjectIds.length > 0;
-  const isMember = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const isMember = allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.WORKSPACE);
   const wsProjectIdsWithCreatePermisisons = projectsWithCreatePermissions
     ? intersection(workspaceProjectIds, Object.keys(projectsWithCreatePermissions))
     : [];
