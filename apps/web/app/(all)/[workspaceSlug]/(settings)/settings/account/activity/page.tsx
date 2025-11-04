@@ -18,7 +18,7 @@ import { SettingsHeading } from "@/components/settings/heading";
 
 const PER_PAGE = 100;
 
-const ProfileActivityPage = observer(() => {
+function ProfileActivityPage() {
   // states
   const [pageCount, setPageCount] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -89,6 +89,6 @@ const ProfileActivityPage = observer(() => {
       )}
     </>
   );
-});
+}
 
-export default ProfileActivityPage;
+export default observer(ProfileActivityPage);

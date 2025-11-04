@@ -15,7 +15,7 @@ import SettingsHeading from "@/components/settings/heading";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 
-const ExportsPage = observer(() => {
+function ExportsPage() {
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
@@ -51,6 +51,6 @@ const ExportsPage = observer(() => {
       </div>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default ExportsPage;
+export default observer(ExportsPage);

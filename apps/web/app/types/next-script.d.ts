@@ -13,4 +13,3 @@ declare module "next/script" {
   const Script: React.FC<ScriptProps>;
   export default Script;
 }
-

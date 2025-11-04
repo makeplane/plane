@@ -6,16 +6,14 @@ import { Outlet } from "react-router";
 import { AutomationsListWrapper } from "@/plane-web/components/automations/list/wrapper";
 import type { Route } from "./+types/layout";
 
-const AutomationsListLayout = observer((props: Route.ComponentProps) => {
-  const {
-    params: { projectId, workspaceSlug },
-  } = props;
+function AutomationsListLayout({ params }: Route.ComponentProps) {
+  const { projectId, workspaceSlug } = params;
 
   return (
     <AutomationsListWrapper projectId={projectId} workspaceSlug={workspaceSlug}>
       <Outlet />
     </AutomationsListWrapper>
   );
-});
+}
 
-export default AutomationsListLayout;
+export default observer(AutomationsListLayout);

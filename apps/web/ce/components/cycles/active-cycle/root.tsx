@@ -2,8 +2,8 @@
 
 import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { Disclosure } from "@headlessui/react";
 import { useTheme } from "next-themes";
+import { Disclosure } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Row } from "@plane/ui";

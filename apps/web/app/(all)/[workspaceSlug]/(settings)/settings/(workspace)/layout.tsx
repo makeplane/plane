@@ -15,8 +15,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // local components
 import { WorkspaceSettingsSidebar } from "./sidebar";
 
-
-const WorkspaceSettingLayout: React.FC = observer(() => {
+function WorkspaceSettingLayout() {
   // store hooks
   const { workspaceUserInfo, getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   // next hooks
@@ -50,6 +49,6 @@ const WorkspaceSettingLayout: React.FC = observer(() => {
       </div>
     </>
   );
-});
+}
 
-export default WorkspaceSettingLayout;
+export default observer(WorkspaceSettingLayout);

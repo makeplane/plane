@@ -7,4 +7,3 @@ export const clientLoader = () => {
 export default function AccountsSignup() {
   return null;
 }
-

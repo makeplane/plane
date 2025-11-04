@@ -6,4 +6,3 @@ export default {
   // Web runs as a client-side app; build a static client bundle only
   ssr: false,
 } satisfies Config;
-

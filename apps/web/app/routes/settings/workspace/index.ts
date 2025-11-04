@@ -15,4 +15,3 @@ export const workspaceSettingsRoutes = [
     ...extendedWorkspaceSettingsRoutes,
   ]),
 ] as const;
-

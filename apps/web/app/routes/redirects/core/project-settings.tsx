@@ -11,4 +11,3 @@ export const clientLoader = ({ params }: ClientLoaderFunctionArgs) => {
 export default function ProjectSettings() {
   return null;
 }
-

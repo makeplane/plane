@@ -10,4 +10,3 @@ declare module "next/link" {
   const Link: React.FC<Props>;
   export default Link;
 }
-
