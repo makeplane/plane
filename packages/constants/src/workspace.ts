@@ -96,7 +96,7 @@ export const WORKSPACE_SETTINGS = {
     key: "export",
     i18n_label: "workspace_settings.settings.exports.title",
     href: `/settings/exports`,
-    access: [EUserWorkspaceRoles.ADMIN],
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/exports/`,
   },
   webhooks: {
