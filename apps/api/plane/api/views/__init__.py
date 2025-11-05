@@ -43,7 +43,7 @@ from .module import (
     ModuleArchiveUnarchiveAPIEndpoint,
 )
 
-from .member import ProjectMemberAPIEndpoint, WorkspaceMemberAPIEndpoint
+from .member import ProjectMemberListCreateAPIEndpoint, ProjectMemberDetailAPIEndpoint, WorkspaceMemberAPIEndpoint
 
 from .intake import (
     IntakeIssueListCreateAPIEndpoint,
@@ -53,3 +53,5 @@ from .intake import (
 from .asset import UserAssetEndpoint, UserServerAssetEndpoint, GenericAssetEndpoint
 
 from .user import UserEndpoint
+
+from .invite import WorkspaceInvitationsViewset
