@@ -1,9 +1,7 @@
 import type { ReactNode } from "react";
 import Script from "next/script";
-import { isRouteErrorResponse, Links, Meta, Outlet, Scripts } from "react-router";
+import { Links, Meta, Outlet, Scripts } from "react-router";
 import type { LinksFunction } from "react-router";
-// styles
-import "@/styles/globals.css";
 // plane imports
 import { SITE_DESCRIPTION, SITE_NAME } from "@plane/constants";
 import { cn } from "@plane/utils";
@@ -15,8 +13,10 @@ import faviconIco from "@/app/assets/favicon/favicon.ico?url";
 import icon180 from "@/app/assets/icons/icon-180x180.png?url";
 import icon512 from "@/app/assets/icons/icon-512x512.png?url";
 import ogImage from "@/app/assets/og-image.png?url";
+import globalStyles from "@/styles/globals.css?url";
 import type { Route } from "./+types/root";
 // local
+import { CustomErrorComponent } from "./error";
 import { AppProvider } from "./provider";
 
 const APP_TITLE = "Plane | Simple, extensible, open-source project management tool.";
@@ -30,6 +30,7 @@ export const links: LinksFunction = () => [
   { rel: "apple-touch-icon", sizes: "180x180", href: icon180 },
   { rel: "apple-touch-icon", sizes: "512x512", href: icon512 },
   { rel: "manifest", href: "/manifest.json" },
+  { rel: "stylesheet", href: globalStyles },
 ];
 
 export function Layout({ children }: { children: ReactNode }) {
@@ -116,26 +117,10 @@ export default function Root() {
   return <Outlet />;
 }
 
+export function HydrateFallback() {
+  return null;
+}
+
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  if (isRouteErrorResponse(error)) {
-    return (
-      <>
-        <h1>
-          {error.status} {error.statusText}
-        </h1>
-        <p>{error.data}</p>
-      </>
-    );
-  } else if (error instanceof Error) {
-    return (
-      <div>
-        <h1>Error</h1>
-        <p>{error.message}</p>
-        <p>The stack trace is:</p>
-        <pre>{error.stack}</pre>
-      </div>
-    );
-  } else {
-    return <h1>Unknown Error</h1>;
-  }
+  return <CustomErrorComponent error={error} />;
 }

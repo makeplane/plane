@@ -1,14 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import { useTheme } from "next-themes";
 // plane imports
 import { Button } from "@plane/propel/button";
 // assets
 import maintenanceModeDarkModeImage from "@/app/assets/instance/maintenance-mode-dark.svg?url";
 import maintenanceModeLightModeImage from "@/app/assets/instance/maintenance-mode-light.svg?url";
-// hooks
-import { useAppRouter } from "@/hooks/use-app-router";
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
 
@@ -30,10 +27,14 @@ const linkMap = [
   },
 ];
 
-export default function CustomErrorComponent() {
+// Production Error Component
+interface ProdErrorComponentProps {
+  onGoHome: () => void;
+}
+
+export const ProdErrorComponent: React.FC<ProdErrorComponentProps> = ({ onGoHome }) => {
   // hooks
   const { resolvedTheme } = useTheme();
-  const router = useAppRouter();
 
   // derived values
   const maintenanceModeImage = resolvedTheme === "dark" ? maintenanceModeDarkModeImage : maintenanceModeLightModeImage;
@@ -42,7 +43,7 @@ export default function CustomErrorComponent() {
     <DefaultLayout>
       <div className="relative container mx-auto h-full w-full max-w-xl flex flex-col gap-2 items-center justify-center gap-y-6 bg-custom-background-100 text-center px-6">
         <div className="relative w-full">
-          <Image
+          <img
             src={maintenanceModeImage}
             height="176"
             width="288"
@@ -77,7 +78,7 @@ export default function CustomErrorComponent() {
           </div>
 
           <div className="flex items-center justify-start gap-6">
-            <Button variant="primary" size="md" onClick={() => router.push("/")}>
+            <Button variant="primary" size="md" onClick={onGoHome}>
               Go to home
             </Button>
           </div>
@@ -85,4 +86,4 @@ export default function CustomErrorComponent() {
       </div>
     </DefaultLayout>
   );
-}
+};
