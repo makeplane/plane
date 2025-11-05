@@ -53,3 +53,5 @@ from .asset import (
     GenericAssetUpdateSerializer,
     FileAssetSerializer,
 )
+from .invite import WorkspaceInviteSerializer
+from .member import ProjectMemberSerializer

@@ -23,6 +23,8 @@ interface ProgressConfig {
   trickle: boolean;
   /** Delay before showing progress bar in milliseconds */
   delay: number;
+  /** Whether to disable the progress bar */
+  isDisabled?: boolean;
 }
 
 /**
@@ -36,6 +38,7 @@ const PROGRESS_CONFIG: Readonly<ProgressConfig> = {
   easing: "ease",
   trickle: true,
   delay: 0,
+  isDisabled: import.meta.env.PROD, // Disable progress bar in production builds
 } as const;
 
 /**
@@ -43,6 +46,8 @@ const PROGRESS_CONFIG: Readonly<ProgressConfig> = {
  *
  * Automatically displays a progress bar at the top of the page during React Router navigation.
  * Integrates with React Router's useNavigation hook to monitor route changes.
+ *
+ * Note: Progress bar is disabled in production builds.
  *
  * @returns null - This component doesn't render any visible elements
  *
@@ -65,6 +70,11 @@ export function AppProgressBar(): null {
 
   // Initialize BProgress once on mount
   useEffect(() => {
+    // Skip initialization in production builds
+    if (PROGRESS_CONFIG.isDisabled) {
+      return;
+    }
+
     // Configure BProgress with our settings
     BProgress.configure({
       showSpinner: PROGRESS_CONFIG.showSpinner,
@@ -88,6 +98,11 @@ export function AppProgressBar(): null {
 
   // Handle navigation state changes
   useEffect(() => {
+    // Skip navigation tracking in production builds
+    if (PROGRESS_CONFIG.isDisabled) {
+      return;
+    }
+
     if (navigation.state === "idle") {
       // Navigation complete - clear any pending timer
       if (timerRef.current !== null) {
