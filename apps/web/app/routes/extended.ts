@@ -1,3 +1,3 @@
 import type { RouteConfigEntry } from "@react-router/dev/routes";
 
-export const piRoutes: RouteConfigEntry[] = [] as const;
+export const extendedRoutes: RouteConfigEntry[] = [];

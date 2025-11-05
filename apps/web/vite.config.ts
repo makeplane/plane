@@ -49,9 +49,6 @@ export default defineConfig(({ isSsrBuild }) => {
     plugins: [reactRouter(), tsconfigPaths({ projects: [path.resolve(__dirname, "tsconfig.json")] })],
     resolve: {
       alias: {
-        // swc helpers compatibility
-        // "@swc/helpers/_/_define_property": "@swc/helpers/esm/_define_property.js",
-        // "@swc/helpers/_/_ts_decorate": "@swc/helpers/esm/_ts_decorate.js",
         // Next.js compatibility shims used within web
         "next/image": path.resolve(__dirname, "app/compat/next/image.tsx"),
         "next/link": path.resolve(__dirname, "app/compat/next/link.tsx"),

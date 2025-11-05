@@ -1,76 +1,84 @@
-import { layout, route } from "@react-router/dev/routes";
-import type { RouteConfig } from "@react-router/dev/routes";
-// local imports
-import { piRoutes } from "./routes/pi";
-import { projectsAppRoutes } from "./routes/projects";
-import { redirectRoutes } from "./routes/redirects";
-import { settingsRoutes } from "./routes/settings";
-import { standaloneRoutes } from "./routes/standalone";
-import { userManagementRoutes } from "./routes/user";
-import { wikiRoutes } from "./routes/wiki";
+import { route } from "@react-router/dev/routes";
+import type { RouteConfigEntry } from "@react-router/dev/routes";
+import { coreRoutes } from "./routes/core";
+import { extendedRoutes } from "./routes/extended";
+
+/**
+ * Merges two route configurations intelligently.
+ * - Deep merges children when the same layout file exists in both arrays
+ * - Deduplicates routes by file property, preferring extended over core
+ * - Maintains order: core routes first, then extended routes at each level
+ */
+function mergeRoutes(core: RouteConfigEntry[], extended: RouteConfigEntry[]): RouteConfigEntry[] {
+  // Step 1: Create a Map to track routes by file path
+  const routeMap = new Map<string, RouteConfigEntry>();
+
+  // Step 2: Process core routes first
+  for (const coreRoute of core) {
+    const fileKey = coreRoute.file;
+    routeMap.set(fileKey, coreRoute);
+  }
+
+  // Step 3: Process extended routes
+  for (const extendedRoute of extended) {
+    const fileKey = extendedRoute.file;
+
+    if (routeMap.has(fileKey)) {
+      // Route exists in both - need to merge
+      const coreRoute = routeMap.get(fileKey)!;
+
+      // Check if both have children (layouts that need deep merging)
+      if (coreRoute.children && extendedRoute.children) {
+        // Deep merge: recursively merge children
+        const mergedChildren = mergeRoutes(
+          Array.isArray(coreRoute.children) ? coreRoute.children : [],
+          Array.isArray(extendedRoute.children) ? extendedRoute.children : []
+        );
+        routeMap.set(fileKey, {
+          ...extendedRoute,
+          children: mergedChildren,
+        });
+      } else {
+        // No children or only one has children - prefer extended
+        routeMap.set(fileKey, extendedRoute);
+      }
+    } else {
+      // Route only exists in extended
+      routeMap.set(fileKey, extendedRoute);
+    }
+  }
+
+  // Step 4: Build final array maintaining order (core first, then extended-only)
+  const result: RouteConfigEntry[] = [];
+
+  // Add all core routes (now merged or original)
+  for (const coreRoute of core) {
+    const fileKey = coreRoute.file;
+    if (routeMap.has(fileKey)) {
+      result.push(routeMap.get(fileKey)!);
+      routeMap.delete(fileKey); // Remove so we don't add it again
+    }
+  }
+
+  // Add remaining extended-only routes
+  for (const extendedRoute of extended) {
+    const fileKey = extendedRoute.file;
+    if (routeMap.has(fileKey)) {
+      result.push(routeMap.get(fileKey)!);
+      routeMap.delete(fileKey);
+    }
+  }
+
+  return result;
+}
 
 /**
  * Main Routes Configuration
- *
  * This file serves as the entry point for the route configuration.
- * All routes are organized in the ./core/routes/ directory by feature area.
- * For route customization or additional routes, see ./core/routes/index.ts
  */
-function createRoutes(): RouteConfig {
-  return [
-    // ========================================================================
-    // USER MANAGEMENT ROUTES
-    // ========================================================================
-    ...userManagementRoutes,
+const mergedRoutes: RouteConfigEntry[] = mergeRoutes(coreRoutes, extendedRoutes);
 
-    // ========================================================================
-    // ALL APP ROUTES
-    // ========================================================================
-    layout("./(all)/layout.tsx", [
-      // ======================================================================
-      // WORKSPACE-SCOPED ROUTES
-      // ======================================================================
-      layout("./(all)/[workspaceSlug]/layout.tsx", [
-        // ====================================================================
-        // PROJECTS APP SECTION
-        // ====================================================================
-        ...projectsAppRoutes,
-
-        // ====================================================================
-        // WIKI APP SECTION
-        // ====================================================================
-        ...wikiRoutes,
-
-        // ====================================================================
-        // PI APP SECTION
-        // ====================================================================
-        ...piRoutes,
-
-        // ====================================================================
-        // SETTINGS SECTION
-        // ====================================================================
-        ...settingsRoutes,
-      ]),
-      // ======================================================================
-      // STANDALONE ROUTES (outside workspace context)
-      // ======================================================================
-      // Onboarding, sign-up, invitations, password management, OAuth
-      ...standaloneRoutes,
-    ]),
-
-    // ========================================================================
-    // REDIRECT ROUTES
-    // ========================================================================
-    // Legacy URL redirects for backward compatibility
-    ...redirectRoutes,
-
-    // ========================================================================
-    // ERROR HANDLING - 404 Catch-all (must be last)
-    // ========================================================================
-    route("*", "./not-found.tsx"),
-  ] satisfies RouteConfig;
-}
-
-const routes = createRoutes();
+// Add catch-all route at the end (404 handler)
+const routes: RouteConfigEntry[] = [...mergedRoutes, route("*", "./not-found.tsx")];
 
 export default routes;
