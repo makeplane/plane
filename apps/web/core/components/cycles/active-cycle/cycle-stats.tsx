@@ -4,6 +4,7 @@ import type { FC } from "react";
 import { Fragment, useCallback, useRef, useState } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 import { CalendarCheck } from "lucide-react";
 // headless ui
 import { Tab } from "@headlessui/react";
@@ -17,18 +18,24 @@ import { EIssuesStoreType } from "@plane/types";
 // ui
 import { Loader, Avatar } from "@plane/ui";
 import { cn, renderFormattedDate, renderFormattedDateWithoutYear, getFileURL } from "@plane/utils";
+// assets
+import darkAssigneeAsset from "@/app/assets/empty-state/active-cycle/assignee-dark.webp?url";
+import lightAssigneeAsset from "@/app/assets/empty-state/active-cycle/assignee-light.webp?url";
+import darkLabelAsset from "@/app/assets/empty-state/active-cycle/label-dark.webp?url";
+import lightLabelAsset from "@/app/assets/empty-state/active-cycle/label-light.webp?url";
+import darkPriorityAsset from "@/app/assets/empty-state/active-cycle/priority-dark.webp?url";
+import lightPriorityAsset from "@/app/assets/empty-state/active-cycle/priority-light.webp?url";
+import userImage from "@/app/assets/user.png?url";
 // components
 import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
-// helpers
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import useLocalStorage from "@/hooks/use-local-storage";
 // plane web components
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // store
 import type { ActiveCycleIssueDetails } from "@/store/issue/cycle";
@@ -50,12 +57,14 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
   const issuesContainerRef = useRef<HTMLDivElement | null>(null);
   // states
   const [issuesLoaderElement, setIssueLoaderElement] = useState<HTMLDivElement | null>(null);
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // plane hooks
   const { t } = useTranslation();
   // derived values
-  const priorityResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/priority" });
-  const assigneesResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/assignee" });
-  const labelsResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/label" });
+  const priorityResolvedPath = resolvedTheme === "light" ? lightPriorityAsset : darkPriorityAsset;
+  const assigneesResolvedPath = resolvedTheme === "light" ? lightAssigneeAsset : darkAssigneeAsset;
+  const labelsResolvedPath = resolvedTheme === "light" ? lightLabelAsset : darkLabelAsset;
 
   const currentValue = (tab: string | null) => {
     switch (tab) {
@@ -294,7 +303,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                         title={
                           <div className="flex items-center gap-2">
                             <div className="h-5 w-5 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
-                              <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
+                              <img src={userImage} height="100%" width="100%" className="rounded-full" alt="User" />
                             </div>
                             <span>{t("no_assignee")}</span>
                           </div>

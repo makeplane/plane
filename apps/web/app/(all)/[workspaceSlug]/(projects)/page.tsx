@@ -12,7 +12,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 // local components
 import { WorkspaceDashboardHeader } from "./header";
 
-const WorkspaceDashboardPage = observer(() => {
+function WorkspaceDashboardPage() {
   const { currentWorkspace } = useWorkspace();
   const { t } = useTranslation();
   // derived values
@@ -27,6 +27,6 @@ const WorkspaceDashboardPage = observer(() => {
       </ContentWrapper>
     </>
   );
-});
+}
 
-export default WorkspaceDashboardPage;
+export default observer(WorkspaceDashboardPage);

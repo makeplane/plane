@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { useState } from "react";
 import { isEmpty } from "lodash-es";
 import Link from "next/link";
@@ -25,7 +24,7 @@ type Props = {
 
 type GitlabConfigFormValues = Record<TInstanceGitlabAuthenticationConfigurationKeys, string>;
 
-export const InstanceGitlabConfigForm: FC<Props> = (props) => {
+export const InstanceGitlabConfigForm: React.FC<Props> = (props) => {
   const { config } = props;
   // states
   const [isDiscardChangesModalOpen, setIsDiscardChangesModalOpen] = useState(false);

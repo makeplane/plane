@@ -5,7 +5,7 @@ import { ProjectAuthWrapper as CoreProjectAuthWrapper } from "@/layouts/auth-lay
 
 export type IProjectAuthWrapper = {
   workspaceSlug: string;
-  projectId: string;
+  projectId?: string;
   children: React.ReactNode;
 };
 

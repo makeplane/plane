@@ -2,7 +2,6 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 // ui
 import { Button } from "@plane/propel/button";
 // utils
@@ -85,9 +84,7 @@ export const DetailedEmptyState: React.FC<Props> = observer((props) => {
           {description && <p className="text-sm">{description}</p>}
         </div>
 
-        {assetPath && (
-          <Image src={assetPath} alt={title} width={384} height={250} layout="responsive" lazyBoundary="100%" />
-        )}
+        {assetPath && <img src={assetPath} alt={title} className="w-full h-auto" loading="lazy" />}
 
         {hasButtons && (
           <div className="relative flex items-center justify-center gap-2 flex-shrink-0 w-full">
