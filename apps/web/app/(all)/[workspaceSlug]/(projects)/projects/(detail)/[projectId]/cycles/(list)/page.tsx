@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
+import { useTheme } from "next-themes";
 import { EUserPermissionsLevel, CYCLE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
@@ -12,6 +12,10 @@ import { EUserProjectRoles } from "@plane/types";
 // components
 import { Header, EHeaderVariant } from "@plane/ui";
 import { calculateTotalFilters } from "@plane/utils";
+// assets
+import darkEmptyState from "@/app/assets/empty-state/disabled-feature/cycles-dark.webp?url";
+import lightEmptyState from "@/app/assets/empty-state/disabled-feature/cycles-light.webp?url";
+// components
 import { PageHead } from "@/components/core/page-title";
 import { CycleAppliedFiltersList } from "@/components/cycles/applied-filters";
 import { CyclesView } from "@/components/cycles/cycles-view";
@@ -24,9 +28,9 @@ import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+import type { Route } from "./+types/page";
 
-const ProjectCyclesPage = observer(() => {
+function ProjectCyclesPage({ params }: Route.ComponentProps) {
   // states
   const [createModal, setCreateModal] = useState(false);
   // store hooks
@@ -34,34 +38,33 @@ const ProjectCyclesPage = observer(() => {
   const { getProjectById, currentProjectDetails } = useProject();
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug, projectId } = params;
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // plane hooks
   const { t } = useTranslation();
   // cycle filters hook
   const { clearAllFilters, currentProjectFilters, updateFilters } = useCycleFilter();
   const { allowPermissions } = useUserPermissions();
   // derived values
+  const resolvedEmptyState = resolvedTheme === "light" ? lightEmptyState : darkEmptyState;
   const totalCycles = currentProjectCycleIds?.length ?? 0;
-  const project = projectId ? getProjectById(projectId?.toString()) : undefined;
+  const project = getProjectById(projectId);
   const pageTitle = project?.name ? `${project?.name} - ${t("common.cycles", { count: 2 })}` : undefined;
   const hasAdminLevelPermission = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
   const hasMemberLevelPermission = allowPermissions(
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
     EUserPermissionsLevel.PROJECT
   );
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/disabled-feature/cycles" });
 
   const handleRemoveFilter = (key: keyof TCycleFilters, value: string | null) => {
-    if (!projectId) return;
     let newValues = currentProjectFilters?.[key] ?? [];
 
     if (!value) newValues = [];
     else newValues = newValues.filter((val) => val !== value);
 
-    updateFilters(projectId.toString(), { [key]: newValues });
+    updateFilters(projectId, { [key]: newValues });
   };
-
-  if (!workspaceSlug || !projectId) return <></>;
 
   // No access to cycle
   if (currentProjectDetails?.cycle_view === false)
@@ -70,7 +73,7 @@ const ProjectCyclesPage = observer(() => {
         <DetailedEmptyState
           title={t("disabled_project.empty_state.cycle.title")}
           description={t("disabled_project.empty_state.cycle.description")}
-          assetPath={resolvedPath}
+          assetPath={resolvedEmptyState}
           primaryButton={{
             text: t("disabled_project.empty_state.cycle.primary_button.text"),
             onClick: () => {
@@ -89,8 +92,8 @@ const ProjectCyclesPage = observer(() => {
       <PageHead title={pageTitle} />
       <div className="w-full h-full">
         <CycleCreateUpdateModal
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={projectId.toString()}
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
           isOpen={createModal}
           handleClose={() => setCreateModal(false)}
         />
@@ -117,18 +120,18 @@ const ProjectCyclesPage = observer(() => {
               <Header variant={EHeaderVariant.TERNARY}>
                 <CycleAppliedFiltersList
                   appliedFilters={currentProjectFilters ?? {}}
-                  handleClearAllFilters={() => clearAllFilters(projectId.toString())}
+                  handleClearAllFilters={() => clearAllFilters(projectId)}
                   handleRemoveFilter={handleRemoveFilter}
                 />
               </Header>
             )}
 
-            <CyclesView workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
+            <CyclesView workspaceSlug={workspaceSlug} projectId={projectId} />
           </>
         )}
       </div>
     </>
   );
-});
+}
 
-export default ProjectCyclesPage;
+export default observer(ProjectCyclesPage);

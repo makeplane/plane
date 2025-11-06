@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -35,7 +34,7 @@ const helpOptions = [
   },
 ];
 
-export const AdminSidebarHelpSection: FC = observer(() => {
+export const AdminSidebarHelpSection: React.FC = observer(() => {
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   // store

@@ -1,25 +1,25 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
+// plane imports
 import { SPACE_BASE_PATH } from "@plane/constants";
+// assets
+import PlaneBackgroundPatternDark from "@/app/assets/auth/background-pattern-dark.svg?url";
+import PlaneBackgroundPattern from "@/app/assets/auth/background-pattern.svg?url";
+import BlackHorizontalLogo from "@/app/assets/plane-logos/black-horizontal-with-blue-logo.png?url";
+import WhiteHorizontalLogo from "@/app/assets/plane-logos/white-horizontal-with-blue-logo.png?url";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { InstanceFailureView } from "@/components/instance/instance-failure-view";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
 import { useUser } from "@/hooks/store/use-user";
-// assets
-import PlaneBackgroundPatternDark from "@/public/auth/background-pattern-dark.svg";
-import PlaneBackgroundPattern from "@/public/auth/background-pattern.svg";
-import BlackHorizontalLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
-import WhiteHorizontalLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
 
-export const InstanceProvider = observer(({ children }: { children: ReactNode }) => {
+export const InstanceProvider = observer(({ children }: { children: React.ReactNode }) => {
   const { fetchInstanceInfo, instance, error } = useInstance();
   const { fetchCurrentUser } = useUser();
   const { resolvedTheme } = useTheme();

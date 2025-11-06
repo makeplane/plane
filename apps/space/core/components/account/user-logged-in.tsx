@@ -3,13 +3,13 @@
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { PlaneLockup } from "@plane/propel/icons";
+// assets
+import UserLoggedInImage from "@/app/assets/user-logged-in.svg?url";
 // components
 import { PoweredBy } from "@/components/common/powered-by";
 import { UserAvatar } from "@/components/issues/navbar/user-avatar";
 // hooks
 import { useUser } from "@/hooks/store/use-user";
-// assets
-import UserLoggedInImage from "@/public/user-logged-in.svg";
 
 export const UserLoggedIn = observer(() => {
   // store hooks
