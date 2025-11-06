@@ -32,7 +32,7 @@ import { persistence } from "@/local-db/storage.sqlite";
 
 interface IProjectAuthWrapper {
   workspaceSlug: string;
-  projectId: string;
+  projectId?: string;
   children: ReactNode;
   isLoading?: boolean;
 }

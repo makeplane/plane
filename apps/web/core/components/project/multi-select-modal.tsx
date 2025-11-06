@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { xor } from "lodash-es";
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 import { Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane ui
@@ -8,14 +9,15 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { CloseIcon } from "@plane/propel/icons";
 import { Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-// components
 import { cn } from "@plane/utils";
+// assets
+import darkProjectAsset from "@/app/assets/empty-state/search/project-dark.webp?url";
+import lightProjectAsset from "@/app/assets/empty-state/search/project-light.webp?url";
+// components
 import { Logo } from "@/components/common/logo";
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
-// helpers
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 type Props = {
   isOpen: boolean;
@@ -33,6 +35,8 @@ export const ProjectMultiSelectModal: React.FC<Props> = observer((props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   // refs
   const moveButtonRef = useRef<HTMLButtonElement>(null);
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // plane hooks
   const { t } = useTranslation();
   // store hooks
@@ -48,9 +52,7 @@ export const ProjectMultiSelectModal: React.FC<Props> = observer((props) => {
     const projectQuery = `${project?.identifier} ${project?.name}`.toLowerCase();
     return projectQuery.includes(searchTerm.toLowerCase());
   });
-  const filteredProjectResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/search/project",
-  });
+  const filteredProjectResolvedPath = resolvedTheme === "light" ? lightProjectAsset : darkProjectAsset;
 
   useEffect(() => {
     if (isOpen) setSelectedProjectIds(selectedProjectIdsProp);

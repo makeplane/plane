@@ -1,5 +1,3 @@
-import type { FC } from "react";
-import React from "react";
 import { observer } from "mobx-react";
 import { Circle } from "lucide-react";
 import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
@@ -13,7 +11,7 @@ interface IHeaderSubGroupByCard {
   toggleExpanded: () => void;
 }
 
-export const HeaderSubGroupByCard: FC<IHeaderSubGroupByCard> = observer((props) => {
+export const HeaderSubGroupByCard: React.FC<IHeaderSubGroupByCard> = observer((props) => {
   const { icon, title, count, isExpanded, toggleExpanded } = props;
   return (
     <div
