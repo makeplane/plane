@@ -1,21 +1,20 @@
+import { lazy, Suspense } from "react";
 import { observer } from "mobx-react";
-import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane package imports
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import type { TChartData } from "@plane/types";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
 // services
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { AnalyticsService } from "@/services/analytics.service";
 // plane web components
 import AnalyticsSectionWrapper from "../analytics-section-wrapper";
-import AnalyticsEmptyState from "../empty-state";
 import { ProjectInsightsLoader } from "../loaders";
 
-const RadarChart = dynamic(() =>
+const RadarChart = lazy(() =>
   import("@plane/propel/charts/radar-chart").then((mod) => ({
     default: mod.RadarChart,
   }))
@@ -29,7 +28,6 @@ const ProjectInsights = observer(() => {
   const workspaceSlug = params.workspaceSlug.toString();
   const { selectedDuration, selectedDurationLabel, selectedProjects, selectedCycle, selectedModule, isPeekView } =
     useAnalytics();
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics/empty-chart-radar" });
 
   const { data: projectInsightsData, isLoading: isLoadingProjectInsight } = useSWR(
     `radar-chart-project-insights-${workspaceSlug}-${selectedDuration}-${selectedProjects}-${selectedCycle}-${selectedModule}-${isPeekView}`,
@@ -56,38 +54,40 @@ const ProjectInsights = observer(() => {
       {isLoadingProjectInsight ? (
         <ProjectInsightsLoader />
       ) : projectInsightsData && projectInsightsData?.length == 0 ? (
-        <AnalyticsEmptyState
-          title={t("workspace_analytics.empty_state.project_insights.title")}
-          description={t("workspace_analytics.empty_state.project_insights.description")}
-          className="h-[300px]"
-          assetPath={resolvedPath}
+        <EmptyStateCompact
+          assetKey="unknown"
+          assetClassName="size-20"
+          rootClassName="border border-custom-border-100 px-5 py-10 md:py-20 md:px-20"
+          title={t("workspace_empty_state.analytics_work_items.title")}
         />
       ) : (
         <div className="gap-8 lg:flex">
           {projectInsightsData && (
-            <RadarChart
-              className="h-[350px] w-full lg:w-3/5"
-              data={projectInsightsData}
-              dataKey="key"
-              radars={[
-                {
-                  key: "count",
-                  name: "Count",
-                  fill: "rgba(var(--color-primary-300))",
-                  stroke: "rgba(var(--color-primary-300))",
-                  fillOpacity: 0.6,
-                  dot: {
-                    r: 4,
-                    fillOpacity: 1,
+            <Suspense fallback={<ProjectInsightsLoader />}>
+              <RadarChart
+                className="h-[350px] w-full lg:w-3/5"
+                data={projectInsightsData}
+                dataKey="key"
+                radars={[
+                  {
+                    key: "count",
+                    name: "Count",
+                    fill: "rgba(var(--color-primary-300))",
+                    stroke: "rgba(var(--color-primary-300))",
+                    fillOpacity: 0.6,
+                    dot: {
+                      r: 4,
+                      fillOpacity: 1,
+                    },
                   },
-                },
-              ]}
-              margin={{ top: 0, right: 40, bottom: 10, left: 40 }}
-              showTooltip
-              angleAxis={{
-                key: "name",
-              }}
-            />
+                ]}
+                margin={{ top: 0, right: 40, bottom: 10, left: 40 }}
+                showTooltip
+                angleAxis={{
+                  key: "name",
+                }}
+              />
+            </Suspense>
           )}
           <div className="w-full lg:w-2/5">
             <div className="text-sm text-custom-text-300">{t("workspace_analytics.summary_of_projects")}</div>

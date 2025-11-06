@@ -13,6 +13,7 @@ export type TProperties = {
   isPro: boolean;
   isEnabled: boolean;
   renderChildren?: (currentProjectDetails: IProject, workspaceSlug: string) => ReactNode;
+  href?: string;
 };
 
 type TProjectBaseFeatureKeys = "cycles" | "modules" | "views" | "pages" | "inbox";

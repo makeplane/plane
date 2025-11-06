@@ -1,41 +1,40 @@
-import { History } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { PageIcon, ProjectIcon, WorkItemsIcon } from "@plane/propel/icons";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
+import type { CompactAssetType } from "@plane/propel/empty-state";
 
-const getDisplayContent = (type: string) => {
+const getDisplayContent = (type: string): { assetKey: CompactAssetType; text: string } => {
   switch (type) {
     case "project":
       return {
-        icon: <ProjectIcon height={30} width={30} className="text-custom-text-400/40" />,
+        assetKey: "project",
         text: "home.recents.empty.project",
       };
     case "page":
       return {
-        icon: <PageIcon height={30} width={30} className="text-custom-text-400/40" />,
+        assetKey: "note",
         text: "home.recents.empty.page",
       };
     case "issue":
       return {
-        icon: <WorkItemsIcon className="text-custom-text-400/40 w-[30px] h-[30px]" />,
+        assetKey: "work-item",
         text: "home.recents.empty.issue",
       };
     default:
       return {
-        icon: <History height={30} width={30} className="text-custom-text-400/40" />,
+        assetKey: "work-item",
         text: "home.recents.empty.default",
       };
   }
 };
+
 export const RecentsEmptyState = ({ type }: { type: string }) => {
   const { t } = useTranslation();
 
-  const { icon, text } = getDisplayContent(type);
+  const { assetKey, text } = getDisplayContent(type);
 
   return (
-    <div className="min-h-[120px] flex w-full justify-center py-6 bg-custom-border-100 rounded">
-      <div className="m-auto flex gap-2">
-        {icon} <div className="text-custom-text-400 text-sm text-center my-auto">{t(text)}</div>
-      </div>
+    <div className="flex items-center justify-center py-10 bg-custom-background-90 w-full">
+      <EmptyStateCompact assetKey={assetKey} assetClassName="size-20" title={t(text)} />
     </div>
   );
 };

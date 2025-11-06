@@ -647,6 +647,8 @@ export default {
   },
   common: {
     all: "Tutti",
+    no_items_in_this_group: "Nessun elemento in questo gruppo",
+    drop_here_to_move: "Rilascia qui per spostare",
     states: "Stati",
     state: "Stato",
     state_groups: "Gruppi di stati",
@@ -1526,6 +1528,11 @@ export default {
         description: "Gli elementi di lavoro che corrispondono ai filtri, tracciali tutti qui.",
       },
     },
+    delete_view: {
+      title: "Sei sicuro di voler eliminare questa visualizzazione?",
+      content:
+        "Se confermi, tutte le opzioni di ordinamento, filtro e visualizzazione + il layout che hai scelto per questa visualizzazione saranno eliminate permanentemente senza possibilità di ripristinarle.",
+    },
   },
   workspace_settings: {
     label: "Impostazioni dello spazio di lavoro",
@@ -2174,6 +2181,11 @@ export default {
         description:
           "Nessuna visualizzazione corrisponde ai criteri di ricerca. \n Crea una nuova visualizzazione invece.",
       },
+    },
+    delete_view: {
+      title: "Sei sicuro di voler eliminare questa visualizzazione?",
+      content:
+        "Se confermi, tutte le opzioni di ordinamento, filtro e visualizzazione + il layout che hai scelto per questa visualizzazione saranno eliminate permanentemente senza possibilità di ripristinarle.",
     },
   },
   project_page: {

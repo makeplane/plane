@@ -1,9 +1,10 @@
 "use client";
 
+import type React from "react";
 import { observer } from "mobx-react";
 // ui
-import { GanttChartSquare, LayoutGrid, List } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import type { ISvgIcons } from "@plane/propel/icons";
+import { TimelineLayoutIcon, GridLayoutIcon, ListLayoutIcon } from "@plane/propel/icons";
 // plane package imports
 import type { TCycleLayoutOptions } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
@@ -13,22 +14,22 @@ import { useProject } from "@/hooks/store/use-project";
 
 const CYCLE_VIEW_LAYOUTS: {
   key: TCycleLayoutOptions;
-  icon: LucideIcon;
+  icon: React.FC<ISvgIcons>;
   title: string;
 }[] = [
   {
     key: "list",
-    icon: List,
+    icon: ListLayoutIcon,
     title: "List layout",
   },
   {
     key: "board",
-    icon: LayoutGrid,
+    icon: GridLayoutIcon,
     title: "Gallery layout",
   },
   {
     key: "gantt",
-    icon: GanttChartSquare,
+    icon: TimelineLayoutIcon,
     title: "Timeline layout",
   },
 ];
@@ -45,7 +46,7 @@ export const CyclesListMobileHeader = observer(() => {
         // placement="bottom-start"
         customButton={
           <span className="flex items-center gap-2">
-            <List className="h-4 w-4" />
+            <ListLayoutIcon className="h-4 w-4" />
             <span className="flex flex-grow justify-center text-custom-text-200 text-sm">Layout</span>
           </span>
         }

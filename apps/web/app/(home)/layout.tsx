@@ -1,19 +1,12 @@
-import type { Metadata, Viewport } from "next";
+import { Outlet } from "react-router";
+// types
+import type { Route } from "./+types/layout";
 
-export const metadata: Metadata = {
-  robots: {
-    index: true,
-    follow: false,
-  },
-};
+export const meta: Route.MetaFunction = () => [
+  { name: "robots", content: "index, nofollow" },
+  { name: "viewport", content: "width=device-width, initial-scale=1, minimum-scale=1, viewport-fit=cover" },
+];
 
-export const viewport: Viewport = {
-  minimumScale: 1,
-  initialScale: 1,
-  width: "device-width",
-  viewportFit: "cover",
-};
-
-export default function HomeLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+export default function HomeLayout() {
+  return <Outlet />;
 }

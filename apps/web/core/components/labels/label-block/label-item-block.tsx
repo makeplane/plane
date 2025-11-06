@@ -3,10 +3,11 @@
 import type { MutableRefObject } from "react";
 import { useRef, useState } from "react";
 import type { LucideIcon } from "lucide-react";
-import { X } from "lucide-react";
 // plane helpers
 import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
+import type { ISvgIcons } from "@plane/propel/icons";
+import { CloseIcon } from "@plane/propel/icons";
 // types
 import type { IIssueLabel } from "@plane/types";
 // ui
@@ -17,7 +18,7 @@ import { cn } from "@plane/utils";
 import { LabelName } from "./label-name";
 
 export interface ICustomMenuItem {
-  CustomIcon: LucideIcon;
+  CustomIcon: LucideIcon | React.FC<ISvgIcons>;
   onClick: (label: IIssueLabel) => void;
   isVisible: boolean;
   text: string;
@@ -98,7 +99,7 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
                 }}
                 data-ph-element={PROJECT_SETTINGS_TRACKER_ELEMENTS.LABELS_DELETE_BUTTON}
               >
-                <X className="size-3.5 flex-shrink-0 text-custom-sidebar-text-300" />
+                <CloseIcon className="size-3.5 flex-shrink-0 text-custom-sidebar-text-300" />
               </button>
             </div>
           )}

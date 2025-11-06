@@ -44,7 +44,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    await removePage(pageId)
+    await removePage({ pageId })
       .then(() => {
         captureSuccess({
           eventName: PROJECT_PAGE_TRACKER_EVENTS.delete,

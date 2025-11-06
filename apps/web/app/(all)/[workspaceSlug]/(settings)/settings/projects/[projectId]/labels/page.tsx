@@ -14,7 +14,7 @@ import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 
-const LabelsSettingsPage = observer(() => {
+function LabelsSettingsPage() {
   // store hooks
   const { currentProjectDetails } = useProject();
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
@@ -54,6 +54,6 @@ const LabelsSettingsPage = observer(() => {
       </div>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default LabelsSettingsPage;
+export default observer(LabelsSettingsPage);

@@ -5,8 +5,11 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { Loader, Card } from "@plane/ui";
 import { calculateTimeAgo, getFileURL } from "@plane/utils";
+// assets
+import recentActivityEmptyState from "@/app/assets/empty-state/recent_activity.svg?url";
 // components
 import { ActivityMessage, IssueLink } from "@/components/core/activity";
 import { ProfileEmptyState } from "@/components/ui/profile-empty-state";
@@ -15,8 +18,6 @@ import { USER_PROFILE_ACTIVITY } from "@/constants/fetch-keys";
 // helpers
 // hooks
 import { useUser } from "@/hooks/store/user";
-// assets
-import recentActivityEmptyState from "@/public/empty-state/recent_activity.svg";
 // services
 import { UserService } from "@/services/user.service";
 
@@ -83,11 +84,7 @@ export const ProfileActivity = observer(() => {
               ))}
             </div>
           ) : (
-            <ProfileEmptyState
-              title={t("no_data_yet")}
-              description={t("profile.stats.recent_activity.empty")}
-              image={recentActivityEmptyState}
-            />
+            <EmptyStateCompact title={t("no_data_yet")} assetKey="unknown" assetClassName="size-20" />
           )
         ) : (
           <Loader className="space-y-5">

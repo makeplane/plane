@@ -130,7 +130,6 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         pageTitle={name ?? ""}
       />
       <PageActions
-        editorRef={editorRef}
         extraOptions={EXTRA_MENU_OPTIONS}
         optionsOrder={[
           "full-screen",

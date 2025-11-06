@@ -48,6 +48,8 @@ class OauthAdapter(Adapter):
             return "GITHUB_OAUTH_PROVIDER_ERROR"
         elif self.provider == "gitlab":
             return "GITLAB_OAUTH_PROVIDER_ERROR"
+        elif self.provider == "gitea":
+            return "GITEA_OAUTH_PROVIDER_ERROR"
         else:
             return "OAUTH_NOT_CONFIGURED"
 

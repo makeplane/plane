@@ -1,6 +1,7 @@
 import { Editor } from "@tiptap/react";
-import { Check, ChevronDown } from "lucide-react";
+import { Check } from "lucide-react";
 import { FC } from "react";
+import { ChevronDownIcon } from "@plane/propel/icons";
 // plane utils
 import { cn } from "@plane/utils";
 // components
@@ -67,7 +68,7 @@ export const BubbleMenuNodeSelector: FC<Props> = (props) => {
       menuButton={
         <>
           <span>{activeItem?.name}</span>
-          <ChevronDown className="shrink-0 size-3" />
+          <ChevronDownIcon className="shrink-0 size-3" />
         </>
       }
       options={options}

@@ -639,6 +639,8 @@ export default {
   },
   common: {
     all: "Vše",
+    no_items_in_this_group: "V této skupině nejsou žádné položky",
+    drop_here_to_move: "Přetáhněte sem pro přesunutí",
     states: "Stavy",
     state: "Stav",
     state_groups: "Skupiny stavů",
@@ -1514,6 +1516,11 @@ export default {
         description: "Zobrazí se položky odpovídající filtru.",
       },
     },
+    delete_view: {
+      title: "Opravdu chcete smazat tento pohled?",
+      content:
+        "Pokud potvrdíte, všechny možnosti řazení, filtrování a zobrazení + rozvržení, které jste vybrali pro tento pohled, budou trvale odstraněny a nelze je obnovit.",
+    },
   },
   workspace_settings: {
     label: "Nastavení pracovního prostoru",
@@ -2140,6 +2147,11 @@ export default {
         title: "Žádné odpovídající pohledy",
         description: "Vytvořte nový pohled.",
       },
+    },
+    delete_view: {
+      title: "Opravdu chcete smazat tento pohled?",
+      content:
+        "Pokud potvrdíte, všechny možnosti řazení, filtrování a zobrazení + rozvržení, které jste vybrali pro tento pohled, budou trvale odstraněny a nelze je obnovit.",
     },
   },
   project_page: {

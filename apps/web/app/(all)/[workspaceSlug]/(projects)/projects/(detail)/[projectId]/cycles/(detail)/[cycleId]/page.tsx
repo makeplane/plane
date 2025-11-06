@@ -1,9 +1,10 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { cn } from "@plane/utils";
+// assets
+import emptyCycle from "@/app/assets/empty-state/cycle.svg?url";
 // components
 import { EmptyState } from "@/components/common/empty-state";
 import { PageHead } from "@/components/core/page-title";
@@ -15,13 +16,12 @@ import { useCycle } from "@/hooks/store/use-cycle";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useLocalStorage from "@/hooks/use-local-storage";
-// assets
-import emptyCycle from "@/public/empty-state/cycle.svg";
+import type { Route } from "./+types/page";
 
-const CycleDetailPage = observer(() => {
+function CycleDetailPage({ params }: Route.ComponentProps) {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId, cycleId } = useParams();
+  const { workspaceSlug, projectId, cycleId } = params;
   // store hooks
   const { getCycleById, loader } = useCycle();
   const { getProjectById } = useProject();
@@ -30,14 +30,14 @@ const CycleDetailPage = observer(() => {
   const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", false);
 
   useCyclesDetails({
-    workspaceSlug: workspaceSlug?.toString(),
-    projectId: projectId.toString(),
-    cycleId: cycleId.toString(),
+    workspaceSlug,
+    projectId,
+    cycleId,
   });
   // derived values
   const isSidebarCollapsed = storedValue ? (storedValue === true ? true : false) : false;
-  const cycle = cycleId ? getCycleById(cycleId.toString()) : undefined;
-  const project = projectId ? getProjectById(projectId.toString()) : undefined;
+  const cycle = getCycleById(cycleId);
+  const project = getProjectById(projectId);
   const pageTitle = project?.name && cycle?.name ? `${project?.name} - ${cycle?.name}` : undefined;
 
   /**
@@ -46,7 +46,6 @@ const CycleDetailPage = observer(() => {
   const toggleSidebar = () => setValue(!isSidebarCollapsed);
 
   // const activeLayout = issuesFilter?.issueFilters?.displayFilters?.layout;
-
   return (
     <>
       <PageHead title={pageTitle} />
@@ -66,7 +65,7 @@ const CycleDetailPage = observer(() => {
             <div className="h-full w-full overflow-hidden">
               <CycleLayoutRoot />
             </div>
-            {cycleId && !isSidebarCollapsed && (
+            {!isSidebarCollapsed && (
               <div
                 className={cn(
                   "flex h-full w-[21.5rem] flex-shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 px-4 duration-300 vertical-scrollbar scrollbar-sm absolute right-0 z-[13]"
@@ -78,9 +77,9 @@ const CycleDetailPage = observer(() => {
               >
                 <CycleDetailsSidebar
                   handleClose={toggleSidebar}
-                  cycleId={cycleId.toString()}
-                  projectId={projectId.toString()}
-                  workspaceSlug={workspaceSlug.toString()}
+                  cycleId={cycleId}
+                  projectId={projectId}
+                  workspaceSlug={workspaceSlug}
                 />
               </div>
             )}
@@ -89,6 +88,6 @@ const CycleDetailPage = observer(() => {
       )}
     </>
   );
-});
+}
 
-export default CycleDetailPage;
+export default observer(CycleDetailPage);
