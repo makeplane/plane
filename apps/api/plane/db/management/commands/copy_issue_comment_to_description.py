@@ -11,16 +11,16 @@ class Command(BaseCommand):
     help = "Create Description records for existing IssueComment"
 
     def handle(self, *args, **kwargs):
-        issue_comments = IssueComment.objects.filter(deleted_at__isnull=True, description_id__isnull=True)
-
-        total = issue_comments.count()
-
         batch_size = 500
 
-        for i in range(0, total, batch_size):
-            with transaction.atomic():
-                comments = list(issue_comments[i : i + batch_size])
+        while True:
+            comments = list(
+                IssueComment.objects.filter(deleted_at__isnull=True, description_id__isnull=True)[:batch_size]
+            )
+            if not comments:
+                break
 
+            with transaction.atomic():
                 descriptions = [
                     Description(
                         created_at=comment.created_at,
