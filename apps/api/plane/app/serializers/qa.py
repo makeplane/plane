@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
-from plane.app.serializers import UserLiteSerializer
-from plane.db.models import TestPlan, TestCaseRepository, User, TestCase, CaseLabel, CaseModule
+from plane.app.serializers import UserLiteSerializer, BaseSerializer
+from plane.db.models import TestPlan, TestCaseRepository, User, TestCase, CaseLabel, CaseModule, FileAsset
 
 
 class TestPlanCreateUpdateSerializer(ModelSerializer):
@@ -98,7 +98,6 @@ class CaseModuleCreateUpdateSerializer(ModelSerializer):
     class Meta:
         model = CaseModule
         fields = ['name', 'sort_order', 'parent', 'repository']
-        depth = 1
 
 
 class CaseModuleListSerializer(serializers.ModelSerializer):
@@ -112,7 +111,8 @@ class CaseModuleListSerializer(serializers.ModelSerializer):
             'sort_order',
             'created_at',
             'updated_at',
-            'children'  # 递归显示所有子节点
+            'children',  # 递归显示所有子节点
+            'repository'
         ]
 
     def get_children(self, obj):
@@ -139,3 +139,20 @@ class CaseLabelListSerializer(serializers.ModelSerializer):
     class Meta:
         model = CaseLabel
         fields = '__all__'
+
+# 新增：测试用例附件序列化器（复用 FileAsset）
+class CaseAttachmentSerializer(BaseSerializer):
+    asset_url = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = FileAsset
+        fields = "__all__"
+        read_only_fields = [
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+            "workspace",
+            "project",
+            "case",
+        ]

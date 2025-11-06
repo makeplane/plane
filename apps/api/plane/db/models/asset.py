@@ -87,6 +87,10 @@ class FileAsset(BaseModel):
         if self.entity_type == self.EntityTypeContext.ISSUE_ATTACHMENT:
             return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/issues/{self.issue_id}/attachments/{self.id}/"  # noqa: E501
 
+        # 新增：测试用例附件的下载 URL
+        if self.entity_type == self.EntityTypeContext.CASE_ATTACHMENT:
+            return f"/api/assets/v2/workspaces/{self.workspace.slug}/projects/{self.project_id}/cases/{self.case_id}/attachments/{self.id}/"
+
         if self.entity_type in [
             self.EntityTypeContext.ISSUE_DESCRIPTION,
             self.EntityTypeContext.COMMENT_DESCRIPTION,

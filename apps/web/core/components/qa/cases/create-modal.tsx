@@ -1,3 +1,4 @@
+// 顶部 imports（新增 WorkItemTable 与 StateDropdown 引入）
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
@@ -5,8 +6,15 @@ import { Modal, Form, Input, Button, message } from "antd";
 import { CaseService } from "@/services/qa/case.service";
 import { ExpandAltOutlined, PlusOutlined } from "@ant-design/icons";
 // 删除顶层 Quill import，改为动态加载
-// import Quill from "quill";
-// import "quill/dist/quill.snow.css";
+import Quill from "quill";
+import "quill/dist/quill.snow.css";
+import { WorkItemTable } from "./work-item-table";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
+import * as LucideIcons from "lucide-react";
+// 新增：文件上传工具与仓库服务
+import { FileUploadService } from "@/services/file-upload.service";
+import { getFileMetaDataForUpload, generateFileUploadPayload } from "@plane/services";
+import { RepositoryService } from "@/services/qa/repository.service";
 
 type Props = {
   isOpen: boolean;
@@ -21,8 +29,10 @@ type Props = {
 
 const caseService = new CaseService();
 
-import type { TIssue } from "@plane/types";
+import type { TIssue, TPartialProject } from "@plane/types";
 import { WorkItemSelectModal } from "./work-item-select-modal";
+import { projectIssueTypesCache, ProjectIssueTypeService, ProjectService, TIssueType } from "@/services/project";
+import { Logo } from "@plane/ui";
 
 export const CreateCaseModal: React.FC<Props> = (props) => {
   const { isOpen, handleClose, workspaceSlug, repositoryId, repositoryName, onSuccess } = props;
@@ -31,12 +41,273 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
   const [submitting, setSubmitting] = useState<boolean>(false);
   const title = useMemo(() => "新建测试用例", []);
   const [isWorkItemModalOpen, setIsWorkItemModalOpen] = useState<boolean>(false);
+  // 新增：选中工作项状态（用于表格回显）
+  const [selectedIssues, setSelectedIssues] = useState<TIssue[]>([]);
 
-  const handleWorkItemConfirm = (selectedIssues: TIssue[]) => {
-    const text = selectedIssues.map((i) => i.name).join(", ");
+  // 新增：删除单个已选工作项，并同步表单显示文本
+  const handleRemoveSelected = (id: string) => {
+    const nextSelected = selectedIssues.filter((item) => item.id !== id);
+    setSelectedIssues(nextSelected);
+    form.setFieldsValue({ issues: nextSelected.map((i) => i.name).join(", ") });
+  };
+  // 新增：服务实例与状态
+  const projectService = useMemo(() => new ProjectService(), []);
+  const issueTypeService = useMemo(() => new ProjectIssueTypeService(), []);
+  const [projects, setProjects] = useState<TPartialProject[]>([]);
+  const [projectsMap, setProjectsMap] = useState<Record<string, TPartialProject>>({});
+  // key 为 projectId，value 为该项目的类型映射
+  const [projectIssueTypesMaps, setProjectIssueTypesMaps] = useState<Record<string, Record<string, TIssueType>>>({});
+
+  // 从弹窗确认回调中接收选中项
+  const handleWorkItemConfirm = (selected: TIssue[]) => {
+    setSelectedIssues(selected);
+    const text = selected.map((i) => i.name).join(", ");
     form.setFieldsValue({ issues: text });
     setIsWorkItemModalOpen(false);
   };
+  // 新增：附件选择与管理
+  const [attachmentFiles, setAttachmentFiles] = useState<File[]>([]);
+  const fileInputRef = React.useRef<HTMLInputElement | null>(null);
+  const handlePickAttachments = () => fileInputRef.current?.click();
+
+  // 新增：上传服务与仓库服务实例
+  const fileUploadService = useMemo(() => new FileUploadService(), []);
+  const repositoryService = useMemo(() => new RepositoryService(), []);
+
+  // 新增：仓库对应项目ID（用于 ProjectAssetEndpoint）
+  const [repoProjectId, setRepoProjectId] = useState<string>("");
+  // 新增：上传后的 AssetId 列表与上传中的状态映射
+  const [attachmentAssetIds, setAttachmentAssetIds] = useState<string[]>([]);
+  const [attachmentUploading, setAttachmentUploading] = useState<Record<string, boolean>>({});
+  // 新增：文件键到 assetId 的映射，保证删除时能找到对应资产
+  const [attachmentAssetMap, setAttachmentAssetMap] = useState<Record<string, string>>({});
+
+  // 打开弹窗时获取 repository 对应的 projectId
+  useEffect(() => {
+    if (!isOpen) return;
+    repositoryService
+      .getRepository(workspaceSlug, repositoryId)
+      .then((data: any) => {
+        const pid = data?.project?.id ?? data?.project_id;
+        if (pid) setRepoProjectId(String(pid));
+      })
+      .catch(() => void 0);
+  }, [isOpen, workspaceSlug, repositoryId, repositoryService]);
+
+  // 新增：三段式上传函数（ProjectAssetEndpoint -> S3 upload -> PATCH）
+  const uploadAttachmentViaProjectAssetEndpoint = async (file: File) => {
+    try {
+      if (!workspaceSlug) {
+        message.error("缺少必要参数(workspaceSlug)，无法上传附件");
+        return;
+      }
+      const key = `${file.name}-${file.size}-${file.lastModified}`;
+      setAttachmentUploading((prev) => ({ ...prev, [key]: true }));
+
+      // 1. 获取签名（固定 entity_type 为 CASE_ATTACHMENT）
+      const meta = await getFileMetaDataForUpload(file);
+      const presignResp = await caseService.post(`/api/assets/v2/workspaces/${workspaceSlug}/`, {
+        ...meta,
+        entity_type: "CASE_ATTACHMENT",
+        entity_identifier: "",
+      });
+      const signed = presignResp?.data ?? presignResp;
+
+      // 2. 直传到对象存储
+      const payload = generateFileUploadPayload(signed, file);
+      await fileUploadService.uploadFile(signed.upload_data.url, payload);
+
+      // 3. 标记已上传
+      await caseService.patch(`/api/assets/v2/workspaces/${workspaceSlug}/${signed.asset_id}/`);
+      // 记录 assetId，用于提交与删除
+      setAttachmentAssetIds((prev) => [...prev, String(signed.asset_id)]);
+      setAttachmentAssetMap((prev) => ({ ...prev, [key]: String(signed.asset_id) }));
+      message.success(`附件 ${file.name} 上传完成`);
+    } catch (e: any) {
+      const msg = e?.message || e?.detail || e?.error || "附件上传失败";
+      message.error(msg);
+    } finally {
+      const key = `${file.name}-${file.size}-${file.lastModified}`;
+      setAttachmentUploading((prev) => ({ ...prev, [key]: false }));
+    }
+  };
+
+  const handleFilesChosen = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length) {
+      setAttachmentFiles((prev) => [...prev, ...files]);
+      // 逐个文件进行三段式上传
+      files.forEach((file) => uploadAttachmentViaProjectAssetEndpoint(file));
+    }
+    // 重置 input 值，允许同名文件重复选择
+    e.target.value = "";
+  };
+
+  const handleRemoveAttachment = async (idx: number) => {
+    const file = attachmentFiles[idx];
+    if (!file) return;
+    const key = `${file.name}-${file.size}-${file.lastModified}`;
+    const uploading = !!attachmentUploading[key];
+    if (uploading) {
+      message.warning("该附件正在上传，无法删除");
+      return;
+    }
+    const assetId = attachmentAssetMap[key];
+    try {
+      // 如果已存在对应 assetId，先调用接口删除后端资产
+      if (assetId) {
+        await caseService.deleteWorkspaceAsset(workspaceSlug, assetId);
+      }
+      // 本地状态同步移除
+      setAttachmentFiles((prev) => prev.filter((_, i) => i !== idx));
+      if (assetId) {
+        setAttachmentAssetIds((prev) => prev.filter((id) => id !== assetId));
+      }
+      setAttachmentAssetMap((prev) => {
+        const { [key]: _, ...rest } = prev;
+        return rest;
+      });
+      message.success("附件已删除");
+    } catch (e: any) {
+      const msg = e?.message || e?.detail || e?.error || "附件删除失败";
+      message.error(msg);
+    }
+  };
+
+  // 加载项目列表用于“项目”列显示名称与 Logo
+  useEffect(() => {
+    if (!isOpen) return;
+    projectService
+      .getProjectsLite(workspaceSlug)
+      .then((data) => setProjects(data || []))
+      .catch(() => void 0);
+  }, [isOpen, workspaceSlug, projectService]);
+
+  useEffect(() => {
+    const map = Object.fromEntries((projects || []).map((p) => [String(p.id), p]));
+    setProjectsMap(map);
+  }, [projects]);
+
+  // 渲染类型图标（复用选择弹窗的逻辑）
+  const renderIssueTypeIcon = (record: TIssue) => {
+    const pid = String(record?.project_id ?? "");
+    const typeId = (record as any)?.type_id as string | undefined;
+    const map = projectIssueTypesMaps?.[pid];
+    if (typeId && map && map[typeId]?.logo_props?.icon) {
+      const { name, color, background_color } = map[typeId].logo_props!.icon!;
+      const IconComp = (LucideIcons as any)[name] as React.FC<any> | undefined;
+      return (
+        <span
+          className="inline-flex items-center justify-center rounded-sm"
+          style={{
+            backgroundColor: background_color || "transparent",
+            color: color || "currentColor",
+            width: "16px",
+            height: "16px",
+          }}
+          aria-label={`Issue type: ${map[typeId].name}`}
+        >
+          {IconComp ? (
+            <IconComp className="h-3.5 w-3.5" strokeWidth={2} />
+          ) : (
+            <LucideIcons.Layers className="h-3.5 w-3.5" />
+          )}
+        </span>
+      );
+    }
+    return <LucideIcons.Layers className="h-3.5 w-3.5" />;
+  };
+
+  // 当选中工作项变化时，根据涉及的项目拉取类型映射，用于“类型”列展示
+  useEffect(() => {
+    const uniqueProjectIds = Array.from(new Set(selectedIssues.map((i) => String(i.project_id)))).filter(Boolean);
+    if (uniqueProjectIds.length === 0) return;
+
+    Promise.all(
+      uniqueProjectIds.map((pid) =>
+        issueTypeService
+          .fetchProjectIssueTypes(workspaceSlug, pid)
+          .then(() => ({ pid, map: projectIssueTypesCache.get(pid) || {} }))
+          .catch(() => ({ pid, map: {} }))
+      )
+    ).then((results) => {
+      const combined: Record<string, Record<string, TIssueType>> = {};
+      results.forEach(({ pid, map }) => {
+        combined[pid] = map || {};
+      });
+      setProjectIssueTypesMaps((prev) => ({ ...prev, ...combined }));
+    });
+  }, [workspaceSlug, selectedIssues, issueTypeService]);
+
+  // 新增：工作项表格列，补全“类型”并新增“项目”
+  const workItemColumns = useMemo(
+    () => [
+      {
+        title: "名称",
+        dataIndex: "name",
+        key: "name",
+        render: (_: any, record: TIssue) => <span className="truncate">{record.name}</span>,
+      },
+      {
+        title: "状态",
+        key: "state",
+        render: (_: any, record: TIssue) => (
+          <StateDropdown
+            value={record?.state_id}
+            onChange={() => {}}
+            projectId={record?.project_id?.toString() ?? ""}
+            disabled={true}
+            buttonVariant="transparent-with-text"
+            className="group w-full"
+            buttonContainerClassName="w-full text-left"
+            buttonClassName="text-xs"
+            dropdownArrow
+          />
+        ),
+      },
+      {
+        title: "类型",
+        key: "type_id",
+        dataIndex: "type_id",
+        render: (_: any, record: TIssue) => {
+          const pid = String(record?.project_id ?? "");
+          const typeId = (record as any)?.type_id as string | undefined;
+          const map = projectIssueTypesMaps?.[pid];
+          const typeName = typeId && map ? map[typeId]?.name : undefined;
+          return (
+            <div className="flex items-center gap-2">
+              {renderIssueTypeIcon(record)}
+              <span className="truncate">{typeName ?? "-"}</span>
+            </div>
+          );
+        },
+      },
+      {
+        title: "项目",
+        key: "project",
+        render: (_: any, record: TIssue) => {
+          const pid = String(record?.project_id ?? "");
+          const p = projectsMap[pid];
+          return (
+            <div className="flex items-center gap-2">
+              {p?.logo_props ? <Logo logo={p.logo_props} size={16} /> : null}
+              <span className="truncate">{p?.name ?? pid ?? "-"}</span>
+            </div>
+          );
+        },
+      },
+      {
+        title: "操作",
+        key: "actions",
+        render: (_: any, record: TIssue) => (
+          <Button danger type="link" onClick={() => handleRemoveSelected(record.id)}>
+            删除
+          </Button>
+        ),
+      },
+    ],
+    [projectsMap, projectIssueTypesMaps]
+  );
 
   const resetForm = () => {
     form.resetFields();
@@ -376,10 +647,33 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
         return;
       }
 
-      await caseService.createCase(workspaceSlug, payload);
+      // 若有附件且仍在上传中，给出提示以避免未完成上传的绑定
+      const isAnyUploading = attachmentFiles.some((f) => attachmentUploading[`${f.name}-${f.size}-${f.lastModified}`]);
+      if (isAnyUploading) {
+        message.warning("有附件仍在上传中，请稍候再创建");
+        setSubmitting(false);
+        return;
+      }
+
+      const createdCase = await caseService.createCase(workspaceSlug, payload);
+      console.log("🚀 ~ handleSubmit ~ createdCase:", createdCase);
       message.success("测试用例创建成功");
 
+      // 从创建返回中提取 caseId 与 projectId（兼容多种返回结构）
+      const caseId: string | undefined = createdCase?.id ?? createdCase?.case?.id;
+
+      // 创建后批量绑定附件到用例（ProjectBulkAssetEndpoint）
+      if (caseId && attachmentAssetIds.length > 0) {
+        await caseService.post(`/api/assets/v2/workspaces/${workspaceSlug}/${caseId}/bulk/`, {
+          asset_ids: attachmentAssetIds,
+        });
+      }
+
       await onSuccess?.();
+      // 清理附件选择与状态
+      setAttachmentFiles([]);
+      setAttachmentAssetIds([]);
+      setAttachmentUploading({});
       onCloseWithReset();
     } catch (e: any) {
       const msg = e?.message || e?.detail || e?.error || "操作失败，请稍后重试";
@@ -401,8 +695,6 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
 
       const loadQuill = async () => {
         try {
-          const { default: Quill } = await import("quill");
-
           if (!containerRef.current || quillRef.current) return;
 
           const q = new Quill(containerRef.current, {
@@ -523,13 +815,13 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
         {/* 其余表单项与自定义组件保持不变 */}
         {/* 包括 QuillField 与 StepsEditor 的用法 */}
         {/* 左右布局、风格与已有设计体系保持一致 */}
-        <div style={{ display: "flex", gap: 16 }}>
+        <div style={{ display: "flex", gap: 16, height: "60vh", alignItems: "stretch" }}>
           {/* 左侧区域 */}
-          <div style={{ flex: 2 }}>
+          <div style={{ flex: 2, height: "100%", overflowY: "auto" }}>
             <Form.Item label={<span>标题</span>} name="name" rules={[{ required: true, message: "请输入标题" }]}>
               <Input placeholder="请输入标题" />
             </Form.Item>
-
+            {/* 保留工作项回显表格与附件列表等 */}
             <Form.Item label="前置条件" name="precondition">
               <QuillField />
             </Form.Item>
@@ -542,13 +834,81 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
               <QuillField />
             </Form.Item>
 
-            <Form.Item label="工作项" name="issues">
-              <div style={{ display: "flex", gap: 8 }}>
-                <Input placeholder="请输入关联的工作项" />
-                <Button icon={<PlusOutlined />} onClick={() => setIsWorkItemModalOpen(true)}>
-                  选择工作项
+            <Form.Item
+              label={
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <span>工作项</span>
+                  <Button
+                    type="link"
+                    icon={<PlusOutlined />}
+                    onClick={() => setIsWorkItemModalOpen(true)}
+                    style={{ marginLeft: "auto" }}
+                  >
+                    添加
+                  </Button>
+                </div>
+              }
+              name="issues"
+            >
+              {/* 保留工作项回显表格 */}
+              {selectedIssues.length > 0 && (
+                <div style={{ marginTop: 8 }}>
+                  <WorkItemTable<TIssue>
+                    data={selectedIssues}
+                    loading={false}
+                    columns={workItemColumns as any}
+                    rowKey="id"
+                    current={1}
+                    pageSize={selectedIssues.length}
+                    total={selectedIssues.length}
+                  />
+                </div>
+              )}
+            </Form.Item>
+
+            {/* 新增：附件属性（位于“工作项”下面） */}
+            <Form.Item label="附件">
+              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                <Button type="default" icon={<PlusOutlined />} onClick={handlePickAttachments}>
+                  选择文件
                 </Button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  style={{ display: "none" }}
+                  onChange={handleFilesChosen}
+                />
               </div>
+              {attachmentFiles.length > 0 && (
+                <div style={{ marginTop: 8 }}>
+                  <ul style={{ margin: 0, paddingLeft: 16 }}>
+                    {attachmentFiles.map((f, idx) => {
+                      const key = `${f.name}-${f.size}-${f.lastModified}`;
+                      const uploading = !!attachmentUploading[key];
+                      return (
+                        <li key={key} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          <span className="truncate" style={{ maxWidth: 360 }}>
+                            {f.name}
+                          </span>
+                          <span style={{ color: uploading ? "#faad14" : "#52c41a" }}>
+                            {uploading ? "上传中..." : "已上传"}
+                          </span>
+                          <Button
+                            size="small"
+                            type="link"
+                            danger
+                            onClick={() => handleRemoveAttachment(idx)}
+                            disabled={uploading}
+                          >
+                            删除
+                          </Button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              )}
             </Form.Item>
           </div>
 
@@ -587,6 +947,8 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
         workspaceSlug={workspaceSlug}
         onClose={() => setIsWorkItemModalOpen(false)}
         onConfirm={handleWorkItemConfirm}
+        // 新增：传入父组件的已选项实现回显
+        initialSelectedIssues={selectedIssues}
       />
     </Modal>
   );
