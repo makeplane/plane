@@ -10,16 +10,17 @@ import { setPromiseToast } from "@plane/propel/toast";
 import { Loader, ToggleSwitch } from "@plane/ui";
 import { resolveGeneralTheme } from "@plane/utils";
 // components
+import githubLightModeImage from "@/app/assets/logos/github-black.png?url";
+import githubDarkModeImage from "@/app/assets/logos/github-white.png?url";
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 // hooks
 import { useInstance } from "@/hooks/store";
 // icons
-import githubLightModeImage from "@/public/logos/github-black.png";
-import githubDarkModeImage from "@/public/logos/github-white.png";
 // local components
+import type { Route } from "./+types/page";
 import { InstanceGithubConfigForm } from "./form";
 
-const InstanceGithubAuthenticationPage = observer(() => {
+const InstanceGithubAuthenticationPage = observer<React.FC<Route.ComponentProps>>(() => {
   // store
   const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
   // state
@@ -110,5 +111,7 @@ const InstanceGithubAuthenticationPage = observer(() => {
     </>
   );
 });
+
+export const meta: Route.MetaFunction = () => [{ title: "GitHub Authentication - God Mode" }];
 
 export default InstanceGithubAuthenticationPage;

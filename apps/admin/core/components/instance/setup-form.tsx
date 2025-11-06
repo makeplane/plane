@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 // icons
@@ -54,7 +53,7 @@ const defaultFromData: TFormData = {
   is_telemetry_enabled: true,
 };
 
-export const InstanceSetupForm: FC = (props) => {
+export const InstanceSetupForm: React.FC = (props) => {
   const {} = props;
   // search params
   const searchParams = useSearchParams();

@@ -1,28 +1,25 @@
 "use client";
 
-import React from "react";
-import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 // ui
 import { Button } from "@plane/propel/button";
 // images
-import Image404 from "@/public/404.svg";
+import Image404 from "@/app/assets/404.svg?url";
+// types
+import type { Route } from "./+types/not-found";
 
-export const metadata: Metadata = {
-  title: "404 - Page Not Found",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+export const meta: Route.MetaFunction = () => [
+  { title: "404 - Page Not Found" },
+  { name: "robots", content: "noindex, nofollow" },
+];
 
 const PageNotFound = () => (
   <div className={`h-screen w-full overflow-hidden bg-custom-background-100`}>
     <div className="grid h-full place-items-center p-4">
       <div className="space-y-8 text-center">
         <div className="relative mx-auto h-60 w-60 lg:h-80 lg:w-80">
-          <Image src={Image404} layout="fill" alt="404- Page not found" />
+          <Image src={Image404} fill alt="404- Page not found" />
         </div>
         <div className="space-y-2">
           <h3 className="text-lg font-semibold">Oops! Something went wrong.</h3>
