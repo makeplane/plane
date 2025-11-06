@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel, WORKSPACE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -18,12 +17,13 @@ import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWebhook } from "@/hooks/store/use-webhook";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
+import type { Route } from "./+types/page";
 
-const WebhookDetailsPage = observer(() => {
+function WebhookDetailsPage({ params }: Route.ComponentProps) {
   // states
   const [deleteWebhookModal, setDeleteWebhookModal] = useState(false);
   // router
-  const { workspaceSlug, webhookId } = useParams();
+  const { workspaceSlug, webhookId } = params;
   // mobx store
   const { currentWebhook, fetchWebhookById, updateWebhook } = useWebhook();
   const { currentWorkspace } = useWorkspace();
@@ -33,57 +33,55 @@ const WebhookDetailsPage = observer(() => {
   // useEffect(() => {
   //   if (isCreated !== "true") clearSecretKey();
   // }, [clearSecretKey, isCreated]);
-
   // derived values
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Webhook` : undefined;
 
   useSWR(
-    workspaceSlug && webhookId && isAdmin ? `WEBHOOK_DETAILS_${workspaceSlug}_${webhookId}` : null,
-    workspaceSlug && webhookId && isAdmin
-      ? () => fetchWebhookById(workspaceSlug.toString(), webhookId.toString())
-      : null
+    isAdmin ? `WEBHOOK_DETAILS_${workspaceSlug}_${webhookId}` : null,
+    isAdmin ? () => fetchWebhookById(workspaceSlug, webhookId) : null
   );
 
   const handleUpdateWebhook = async (formData: IWebhook) => {
-    if (!workspaceSlug || !formData || !formData.id) return;
+    if (!formData || !formData.id) return;
+
     const payload = {
-      url: formData?.url,
-      is_active: formData?.is_active,
-      project: formData?.project,
-      cycle: formData?.cycle,
-      module: formData?.module,
-      issue: formData?.issue,
-      issue_comment: formData?.issue_comment,
+      url: formData.url,
+      is_active: formData.is_active,
+      project: formData.project,
+      cycle: formData.cycle,
+      module: formData.module,
+      issue: formData.issue,
+      issue_comment: formData.issue_comment,
     };
-    await updateWebhook(workspaceSlug.toString(), formData.id, payload)
-      .then(() => {
-        captureSuccess({
-          eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_updated,
-          payload: {
-            webhook: formData.id,
-          },
-        });
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Webhook updated successfully.",
-        });
-      })
-      .catch((error) => {
-        captureError({
-          eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_updated,
-          payload: {
-            webhook: formData.id,
-          },
-          error: error as Error,
-        });
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: error?.error ?? "Something went wrong. Please try again.",
-        });
+
+    try {
+      await updateWebhook(workspaceSlug, formData.id, payload);
+
+      captureSuccess({
+        eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_updated,
+        payload: { webhook: formData.id },
       });
+
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Success!",
+        message: "Webhook updated successfully.",
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      captureError({
+        eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_updated,
+        payload: { webhook: formData.id },
+        error: error as Error,
+      });
+
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: error?.error ?? "Something went wrong. Please try again.",
+      });
+    }
   };
 
   if (!isAdmin)
@@ -108,13 +106,13 @@ const WebhookDetailsPage = observer(() => {
       <PageHead title={pageTitle} />
       <DeleteWebhookModal isOpen={deleteWebhookModal} onClose={() => setDeleteWebhookModal(false)} />
       <div className="w-full space-y-8 overflow-y-auto">
-        <div className="">
-          <WebhookForm onSubmit={async (data) => await handleUpdateWebhook(data)} data={currentWebhook} />
+        <div>
+          <WebhookForm onSubmit={handleUpdateWebhook} data={currentWebhook} />
         </div>
         {currentWebhook && <WebhookDeleteSection openDeleteModal={() => setDeleteWebhookModal(true)} />}
       </div>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default WebhookDetailsPage;
+export default observer(WebhookDetailsPage);

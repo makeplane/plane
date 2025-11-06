@@ -1,13 +1,11 @@
-import type { Metadata } from "next";
+import { Outlet } from "react-router";
+import type { Route } from "./+types/layout";
 
-export const metadata: Metadata = {
-  title: "Sign up - Plane",
-  robots: {
-    index: true,
-    follow: false,
-  },
-};
+export const meta: Route.MetaFunction = () => [
+  { title: "Sign up - Plane" },
+  { name: "robots", content: "index, nofollow" },
+];
 
-export default function SignUpLayout({ children }: { children: React.ReactNode }) {
-  return children;
+export default function SignUpLayout() {
+  return <Outlet />;
 }

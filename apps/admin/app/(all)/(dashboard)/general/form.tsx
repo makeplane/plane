@@ -1,5 +1,4 @@
 "use client";
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Telescope } from "lucide-react";
@@ -20,7 +19,7 @@ export interface IGeneralConfigurationForm {
   instanceAdmins: IInstanceAdmin[];
 }
 
-export const GeneralConfigurationForm: FC<IGeneralConfigurationForm> = observer((props) => {
+export const GeneralConfigurationForm: React.FC<IGeneralConfigurationForm> = observer((props) => {
   const { instance, instanceAdmins } = props;
   // hooks
   const { instanceConfigurations, updateInstanceInfo, updateInstanceConfigurations } = useInstance();

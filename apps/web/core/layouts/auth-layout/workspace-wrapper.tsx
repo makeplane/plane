@@ -17,6 +17,11 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 // components
 import { cn } from "@plane/utils";
+// assets
+import PlaneBlackLogo from "@/app/assets/plane-logos/black-horizontal-with-blue-logo.png?url";
+import PlaneWhiteLogo from "@/app/assets/plane-logos/white-horizontal-with-blue-logo.png?url";
+import WorkSpaceNotAvailable from "@/app/assets/workspace/workspace-not-available.png?url";
+// components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 // hooks
 import { useFavorite } from "@/hooks/store/use-favorite";
@@ -28,10 +33,6 @@ import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
-// images
-import PlaneBlackLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
-import PlaneWhiteLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
-import WorkSpaceNotAvailable from "@/public/workspace/workspace-not-available.png";
 
 interface IWorkspaceAuthWrapper {
   children: ReactNode;

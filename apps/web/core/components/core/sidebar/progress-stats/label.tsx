@@ -2,10 +2,10 @@ import { observer } from "mobx-react";
 import Image from "next/image";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+// assets
+import emptyLabel from "@/app/assets/empty-state/empty_label.svg?url";
 // components
 import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
-// public
-import emptyLabel from "@/public/empty-state/empty_label.svg";
 
 export type TLabelData = {
   id: string | undefined;

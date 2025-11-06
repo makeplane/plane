@@ -11,7 +11,7 @@ import { ProfileSettingContentWrapper } from "@/components/profile/profile-setti
 // hooks
 import { useUser } from "@/hooks/store/user";
 
-const ProfileSettingsPage = observer(() => {
+function ProfileSettingsPage() {
   const { t } = useTranslation();
   // store hooks
   const { data: currentUser, userProfile } = useUser();
@@ -31,6 +31,6 @@ const ProfileSettingsPage = observer(() => {
       </ProfileSettingContentWrapper>
     </>
   );
-});
+}
 
-export default ProfileSettingsPage;
+export default observer(ProfileSettingsPage);

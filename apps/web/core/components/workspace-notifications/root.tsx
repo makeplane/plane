@@ -14,7 +14,6 @@ import { LogoSpinner } from "@/components/common/logo-spinner";
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 // plane web imports
 import { useNotificationPreview } from "@/plane-web/hooks/use-notification-preview";
@@ -42,7 +41,6 @@ export const NotificationsRoot = observer(({ workspaceSlug }: NotificationsRootP
   // derived values
   const { workspace_slug, project_id, issue_id, is_inbox_issue } =
     notificationLiteByNotificationId(currentSelectedNotificationId);
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/intake/issue-detail" });
 
   // fetching workspace work item properties
   useWorkspaceIssueProperties(workspaceSlug);
