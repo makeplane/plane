@@ -5,8 +5,8 @@ import type { TContextMenuItem } from "@plane/ui";
 import { useQuickActionsFactory } from "@/plane-web/components/common/quick-actions-factory";
 
 // Types
-export type UseCycleMenuItemsProps = {
-  cycleDetails: ICycle;
+interface UseCycleMenuItemsProps {
+  cycleDetails: ICycle | undefined;
   isEditingAllowed: boolean;
   workspaceSlug: string;
   projectId: string;
@@ -17,10 +17,10 @@ export type UseCycleMenuItemsProps = {
   handleDelete: () => void;
   handleCopyLink: () => void;
   handleOpenInNewTab: () => void;
-};
+}
 
-export type UseModuleMenuItemsProps = {
-  moduleDetails: IModule;
+interface UseModuleMenuItemsProps {
+  moduleDetails: IModule | undefined;
   isEditingAllowed: boolean;
   workspaceSlug: string;
   projectId: string;
@@ -31,9 +31,9 @@ export type UseModuleMenuItemsProps = {
   handleDelete: () => void;
   handleCopyLink: () => void;
   handleOpenInNewTab: () => void;
-};
+}
 
-export type UseViewMenuItemsProps = {
+interface UseViewMenuItemsProps {
   isOwner: boolean;
   isAdmin: boolean;
   workspaceSlug: string;
@@ -43,17 +43,17 @@ export type UseViewMenuItemsProps = {
   handleDelete: () => void;
   handleCopyLink: () => void;
   handleOpenInNewTab: () => void;
-};
+}
 
-export type UseLayoutMenuItemsProps = {
+interface UseLayoutMenuItemsProps {
   workspaceSlug: string;
   projectId: string;
   storeType: "PROJECT" | "EPIC";
   handleCopyLink: () => void;
   handleOpenInNewTab: () => void;
-};
+}
 
-export type MenuResult = {
+type MenuResult = {
   items: TContextMenuItem[];
   modals: JSX.Element | null;
 };
@@ -109,7 +109,7 @@ export const useModuleMenuItems = (props: UseModuleMenuItemsProps): MenuResult =
 
 export const useViewMenuItems = (props: UseViewMenuItemsProps): MenuResult => {
   const factory = useQuickActionsFactory();
-  const { isOwner, isAdmin, view, ...handlers } = props;
+  const { workspaceSlug, isOwner, isAdmin, projectId, view, ...handlers } = props;
 
   if (!view) return { items: [], modals: null };
 

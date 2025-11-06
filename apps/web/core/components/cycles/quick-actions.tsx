@@ -99,7 +99,7 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
       });
 
   const menuResult = useCycleMenuItems({
-    cycleDetails: cycleDetails!,
+    cycleDetails: cycleDetails ?? undefined,
     workspaceSlug,
     projectId,
     cycleId,

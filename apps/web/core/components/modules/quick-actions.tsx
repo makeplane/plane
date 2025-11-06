@@ -97,7 +97,7 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
 
   // Use unified menu hook from plane-web (resolves to CE or EE)
   const menuResult = useModuleMenuItems({
-    moduleDetails: moduleDetails!,
+    moduleDetails: moduleDetails ?? undefined,
     workspaceSlug,
     projectId,
     moduleId,
