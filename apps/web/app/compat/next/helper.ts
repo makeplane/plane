@@ -4,9 +4,10 @@
  * @returns The URL with a trailing slash added to the pathname (if not already present)
  */
 export function ensureTrailingSlash(url: string): string {
+  const fallbackBaseUrl = window.location.origin;
   try {
     // Handle relative URLs by creating a URL object with a dummy base
-    const urlObj = new URL(url, "http://dummy.com");
+    const urlObj = new URL(url, fallbackBaseUrl);
 
     // Don't modify root path
     if (urlObj.pathname === "/") {
