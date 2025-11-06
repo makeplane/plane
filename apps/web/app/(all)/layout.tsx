@@ -1,31 +1,23 @@
-import type { Metadata, Viewport } from "next";
-
+import { Outlet } from "react-router";
+import type { Route } from "./+types/layout";
 import { PreloadResources } from "./layout.preload";
+// types
 
 // styles
 import "@/styles/power-k.css";
 import "@/styles/emoji.css";
-import "@plane/propel/styles/react-day-picker";
+import "@plane/propel/styles/react-day-picker.css";
 
-export const metadata: Metadata = {
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+export const meta: Route.MetaFunction = () => [
+  { name: "robots", content: "noindex, nofollow" },
+  { name: "viewport", content: "width=device-width, initial-scale=1, minimum-scale=1, viewport-fit=cover" },
+];
 
-export const viewport: Viewport = {
-  minimumScale: 1,
-  initialScale: 1,
-  width: "device-width",
-  viewportFit: "cover",
-};
-
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+export default function AppLayout() {
   return (
     <>
       <PreloadResources />
-      {children}
+      <Outlet />
     </>
   );
 }

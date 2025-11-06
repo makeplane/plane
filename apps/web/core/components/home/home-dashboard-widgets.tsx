@@ -1,15 +1,18 @@
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
+import { useTheme } from "next-themes";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { THomeWidgetKeys, THomeWidgetProps } from "@plane/types";
+// assets
+import darkWidgetsAsset from "@/app/assets/empty-state/dashboard/widgets-dark.webp?url";
+import lightWidgetsAsset from "@/app/assets/empty-state/dashboard/widgets-light.webp?url";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
 import { useHome } from "@/hooks/store/use-home";
 import { useProject } from "@/hooks/store/use-project";
 // plane web components
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { HomePageHeader } from "@/plane-web/components/home/header";
 // local imports
 import { StickiesWidget } from "../stickies/widget";
@@ -56,6 +59,8 @@ export const DashboardWidgets = observer(() => {
   const { workspaceSlug } = useParams();
   // navigation
   const pathname = usePathname();
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // store hooks
   const { toggleWidgetSettings, widgetsMap, showWidgetSettings, orderedWidgets, isAnyWidgetEnabled, loading } =
     useHome();
@@ -63,7 +68,7 @@ export const DashboardWidgets = observer(() => {
   // plane hooks
   const { t } = useTranslation();
   // derived values
-  const noWidgetsResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/dashboard/widgets" });
+  const noWidgetsResolvedPath = resolvedTheme === "light" ? lightWidgetsAsset : darkWidgetsAsset;
 
   // derived values
   const isWikiApp = pathname.includes(`/${workspaceSlug.toString()}/pages`);

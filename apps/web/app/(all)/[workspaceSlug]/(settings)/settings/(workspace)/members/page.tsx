@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { Search } from "lucide-react";
 // types
 import {
@@ -32,13 +31,14 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { BillingActionsButton } from "@/plane-web/components/workspace/billing/billing-actions-button";
 import { SendWorkspaceInvitationModal } from "@/plane-web/components/workspace/members/invite-modal";
+import type { Route } from "./+types/page";
 
-const WorkspaceMembersSettingsPage = observer(() => {
+function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
   // states
   const [inviteModal, setInviteModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug } = params;
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const {
@@ -54,39 +54,42 @@ const WorkspaceMembersSettingsPage = observer(() => {
     EUserPermissionsLevel.WORKSPACE
   );
 
-  const handleWorkspaceInvite = (data: IWorkspaceBulkInviteFormData) => {
-    if (!workspaceSlug) return;
+  const handleWorkspaceInvite = async (data: IWorkspaceBulkInviteFormData) => {
+    try {
+      await inviteMembersToWorkspace(workspaceSlug, data);
 
-    return inviteMembersToWorkspace(workspaceSlug.toString(), data)
-      .then(() => {
-        setInviteModal(false);
-        captureSuccess({
-          eventName: MEMBER_TRACKER_EVENTS.invite,
-          payload: {
-            emails: [...data.emails.map((email) => email.email)],
-          },
-        });
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: t("workspace_settings.settings.members.invitations_sent_successfully"),
-        });
-      })
-      .catch((err) => {
-        captureError({
-          eventName: MEMBER_TRACKER_EVENTS.invite,
-          payload: {
-            emails: [...data.emails.map((email) => email.email)],
-          },
-          error: err,
-        });
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: `${err.error ?? t("something_went_wrong_please_try_again")}`,
-        });
-        throw err;
+      setInviteModal(false);
+
+      captureSuccess({
+        eventName: MEMBER_TRACKER_EVENTS.invite,
+        payload: {
+          emails: data.emails.map((email) => email.email),
+        },
       });
+
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Success!",
+        message: t("workspace_settings.settings.members.invitations_sent_successfully"),
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      captureError({
+        eventName: MEMBER_TRACKER_EVENTS.invite,
+        payload: {
+          emails: data.emails.map((email) => email.email),
+        },
+        error: err,
+      });
+
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: `${err.error ?? t("something_went_wrong_please_try_again")}`,
+      });
+
+      throw err;
+    }
   };
 
   // Handler for role filter updates
@@ -162,6 +165,6 @@ const WorkspaceMembersSettingsPage = observer(() => {
       </section>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default WorkspaceMembersSettingsPage;
+export default observer(WorkspaceMembersSettingsPage);
