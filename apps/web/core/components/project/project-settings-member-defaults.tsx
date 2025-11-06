@@ -64,7 +64,7 @@ export const ProjectSettingsMemberDefaults: React.FC<TProjectSettingsMemberDefau
   const { reset, control } = useForm<IProject>({ defaultValues });
   // fetching user members
   useSWR(
-    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId) : null,
+    workspaceSlug && projectId ? PROJECT_MEMBERS(workspaceSlug, projectId) : null,
     workspaceSlug && projectId ? () => fetchProjectDetails(workspaceSlug, projectId) : null
   );
 
