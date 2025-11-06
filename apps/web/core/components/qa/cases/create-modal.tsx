@@ -82,18 +82,6 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
   // 新增：文件键到 assetId 的映射，保证删除时能找到对应资产
   const [attachmentAssetMap, setAttachmentAssetMap] = useState<Record<string, string>>({});
 
-  // 打开弹窗时获取 repository 对应的 projectId
-  useEffect(() => {
-    if (!isOpen) return;
-    repositoryService
-      .getRepository(workspaceSlug, repositoryId)
-      .then((data: any) => {
-        const pid = data?.project?.id ?? data?.project_id;
-        if (pid) setRepoProjectId(String(pid));
-      })
-      .catch(() => void 0);
-  }, [isOpen, workspaceSlug, repositoryId, repositoryService]);
-
   // 新增：三段式上传函数（ProjectAssetEndpoint -> S3 upload -> PATCH）
   const uploadAttachmentViaProjectAssetEndpoint = async (file: File) => {
     try {

@@ -3,8 +3,8 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { PageHead } from "@/components/core/page-title";
-import { Table, Tag, Input, Button, Space } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
+import { Table, Tag, Input, Button, Space, Modal, Dropdown } from "antd";
+import { EllipsisOutlined, SearchOutlined } from "@ant-design/icons";
 import type { TableProps, InputRef, TableColumnType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import { CaseService } from "@/services/qa/case.service";
@@ -18,7 +18,10 @@ import {
   AppstoreOutlined,
   FileTextOutlined,
   DownOutlined,
+  PlusOutlined,
+  DeploymentUnitOutlined,
 } from "@ant-design/icons";
+import { CaseModuleService } from "@/services/qa";
 
 type TCreator = {
   display_name?: string;
@@ -75,9 +78,14 @@ export default function TestCasesPage() {
 
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
+  const [allTotal, setAllTotal] = useState<number | undefined>(undefined);
   const searchInput = useRef<InputRef>(null);
 
   const caseService = new CaseService();
+  const caseModuleService = new CaseModuleService();
+  // 新增：创建子模块的临时状态
+  const [creatingParentId, setCreatingParentId] = useState<string | "all" | null>(null);
+  const [newModuleName, setNewModuleName] = useState<string>("");
 
   // 新增状态：模块树数据、选中模块
   const [modules, setModules] = useState<any[]>([]);
@@ -87,14 +95,29 @@ export default function TestCasesPage() {
   const [treeTheme, setTreeTheme] = useState<"light" | "compact" | "high-contrast">("light");
 
   // 自定义节点标题：统一图标+文案+间距
-  const renderNodeTitle = (title: string, isLeaf: boolean) => (
-    <div className="flex items-center gap-2">
-      <span className="inline-flex items-center justify-center w-5 h-5 text-custom-text-300">
-        <FolderOutlined />
-      </span>
-      <span className="text-sm text-custom-text-200">{title}</span>
-    </div>
-  );
+  const updateModuleCount = (modules: any[], id: string, count: number): any[] => {
+    return modules.map((m) => {
+      if (String(m.id) === id) {
+        return { ...m, total: count };
+      }
+      if (m.children) {
+        return { ...m, children: updateModuleCount(m.children, id, count) };
+      }
+      return m;
+    });
+  };
+  const batchUpdateModuleCounts = (modules: any[], countsMap: Record<string, number>): any[] => {
+    return modules.map((m) => {
+      const updatedM = { ...m };
+      if (m.id && countsMap[String(m.id)] !== undefined) {
+        updatedM.total = countsMap[String(m.id)];
+      }
+      if (m.children) {
+        updatedM.children = batchUpdateModuleCounts(m.children, countsMap);
+      }
+      return updatedM;
+    });
+  };
 
   useEffect(() => {
     if (repositoryId) {
@@ -111,10 +134,79 @@ export default function TestCasesPage() {
     if (!workspaceSlug || !repositoryId) return;
     try {
       const moduleData = await caseService.getModules(workspaceSlug as string, repositoryId as string);
-      setModules(moduleData); // 假设 moduleData 是树形数组
+
+      // 调用新接口获取 counts
+      const countsResponse = await caseService.getModulesCount(workspaceSlug as string, repositoryId);
+
+      // 提取 total 和模块 countsMap
+      const { total = 0, ...countsMap } = countsResponse;
+      setAllTotal(total);
+
+      // 批量更新 moduleData 的 total
+      const updatedModules = batchUpdateModuleCounts(moduleData, countsMap as Record<string, number>);
+
+      setModules(updatedModules);
     } catch (err) {
-      console.error("获取模块失败:", err);
+      console.error("获取模块或计数失败:", err);
     }
+  };
+
+  // 新增：添加行为 - 在当前节点下插入临时输入框
+  const handleAddUnderNode = (parentId: string | "all") => {
+    if (!repositoryId) return;
+    setCreatingParentId(parentId);
+    setNewModuleName("");
+  };
+
+  // 新增：输入框失焦或回车时调用创建接口
+  const handleCreateBlurOrEnter = async (parentId: string | "all") => {
+    const name = newModuleName.trim();
+    if (!name || !workspaceSlug || !repositoryId) {
+      setCreatingParentId(null);
+      setNewModuleName("");
+      return;
+    }
+    const payload: any = {
+      name,
+      repository: repositoryId,
+    };
+    if (parentId !== "all") {
+      payload.parent = parentId;
+    }
+    try {
+      await caseService.createModules(workspaceSlug as string, payload);
+      // 刷新模块树与列表
+      setCreatingParentId(null);
+      setNewModuleName("");
+      await fetchModules();
+      await fetchCases(1, pageSize, filters);
+    } catch (e) {
+      console.error("创建模块失败:", e);
+      setCreatingParentId(null);
+      setNewModuleName("");
+    }
+  };
+  // 新增：删除确认弹窗与删除逻辑
+  // 修改：仅接收模块 id，删除单个模块（及其子模块和用例）
+  const confirmDeleteNode = (moduleId: string, nodeName: string) => {
+    Modal.confirm({
+      title: "确认删除",
+      content: "将删除该模块及其所有子模块和用例，操作不可撤销。请确认是否继续？",
+      okText: "删除",
+      cancelText: "取消",
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        try {
+          if (!workspaceSlug) return;
+          await caseModuleService.deleteCaseModule(workspaceSlug as string, moduleId);
+          if (selectedModuleId === moduleId) setSelectedModuleId(null);
+          await fetchModules();
+          await fetchCases(1, pageSize, filters);
+        } catch (e) {
+          console.error("删除失败:", e);
+        }
+      },
+    });
   };
 
   // 修改 fetchCases：支持 module_id 过滤
@@ -139,26 +231,11 @@ export default function TestCasesPage() {
         queryParams.module_id = selectedModuleId;
       }
 
-      // 名称模糊搜索
-      if (filterParams.name) {
-        queryParams.name__icontains = filterParams.name;
-      }
-      // 状态多选
-      if (filterParams.state && filterParams.state.length > 0) {
-        queryParams.state__in = filterParams.state.join(",");
-      }
-      // 类型多选
-      if (filterParams.type && filterParams.type.length > 0) {
-        queryParams.type__in = filterParams.type.join(",");
-      }
-      // 优先级多选
-      if (filterParams.priority && filterParams.priority.length > 0) {
-        queryParams.priority__in = filterParams.priority.join(",");
-      }
+      // ... existing code ... (name__icontains, state__in, type__in, priority__in)
 
       const response: TestCaseResponse = await caseService.getCases(workspaceSlug as string, queryParams);
       setCases(response?.data || []);
-      setTotal(response?.count || 0);
+      setTotal(response?.count || 0); // 保留：用于当前查询的分页
       setCurrentPage(page);
       setPageSize(size);
     } catch (err) {
@@ -168,7 +245,6 @@ export default function TestCasesPage() {
       setLoading(false);
     }
   };
-
   // 新增：监听模块选择变化，触发列表刷新（避免使用旧状态）
   useEffect(() => {
     if (!repositoryId) return;
@@ -187,58 +263,174 @@ export default function TestCasesPage() {
       }
       return;
     }
-
+    fetchModules();
     const key = selectedKeys[0] as string | undefined;
     const nextModuleId = !key || key === "all" ? null : key;
     setSelectedModuleId(nextModuleId);
   };
 
-  const treeData = [
-    {
-      title: (
+  // Helper：获取节点数量（兼容不同字段名），没有则返回 undefined 不展示
+  const getNodeCount = (m: any) => {
+    const c = m?.case_count ?? m?.count ?? m?.total ?? m?.cases_count;
+    return typeof c === "number" ? c : undefined;
+  };
+
+  // 自定义节点标题：统一图标 + 名称 + 右侧数量
+  const renderNodeTitle = (title: string, count?: number, nodeId?: string | "all") => {
+    const items = [
+      {
+        key: "add",
+        label: (
+          <Button type="text" size="small" onClick={() => handleAddUnderNode(nodeId || "all")}>
+            添加
+          </Button>
+        ),
+      },
+      {
+        key: "delete",
+        label: (
+          <Button type="text" danger size="small" onClick={() => confirmDeleteNode(nodeId || "all", title)}>
+            删除
+          </Button>
+        ),
+      },
+    ];
+    return (
+      <div className="group flex items-center justify-between gap-2 w-full">
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center justify-center w-5 h-5 text-custom-text-300">
-            <AppstoreOutlined />
+            <DeploymentUnitOutlined />
           </span>
-          <span className="text-sm font-medium text-custom-text-200">全部模块</span>
+          <span className="text-sm text-custom-text-200">{title}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          {typeof count === "number" && <span className="text-xs text-custom-text-300">{count}</span>}
+          {repositoryId && (
+            <Dropdown trigger={["hover"]} menu={{ items }}>
+              <Button type="text" size="small" className="opacity-0 group-hover:opacity-100 transition-opacity">
+                操作
+              </Button>
+            </Dropdown>
+          )}
+        </div>
+      </div>
+    );
+  };
+  const renderCreatingInput = (parentId: string | "all") => (
+    <div className="w-full">
+      <Input
+        size="small"
+        autoFocus
+        placeholder="请输入模块名称"
+        value={newModuleName}
+        onChange={(e) => setNewModuleName(e.target.value)}
+        onBlur={() => handleCreateBlurOrEnter(parentId)}
+        onPressEnter={() => handleCreateBlurOrEnter(parentId)}
+      />
+    </div>
+  );
+
+  const treeData = [
+    {
+      // 修改：根节点“全部模块”仅显示添加，不显示删除
+      title: (
+        <div className="group flex items-center justify-between gap-2 w-full">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center justify-center w-5 h-5 text-custom-text-300">
+              <AppstoreOutlined />
+            </span>
+            <span className="text-sm font-medium text-custom-text-200">全部模块</span>
+          </div>
+          <div className="flex items-center gap-2">
+            {typeof total === "number" && <span className="text-xs text-custom-text-300">{allTotal}</span>}
+            {repositoryId && (
+              <Dropdown
+                trigger={["hover"]}
+                menu={{
+                  items: [
+                    {
+                      key: "add",
+                      label: (
+                        <Button type="text" size="small" onClick={() => handleAddUnderNode("all")}>
+                          添加
+                        </Button>
+                      ),
+                    },
+                    // 删除项已移除
+                  ],
+                }}
+              >
+                <Button
+                  type="text"
+                  size="small"
+                  icon={<EllipsisOutlined />}
+                  className="opacity-0 group-hover:opacity-100 transition-opacity"
+                ></Button>
+              </Dropdown>
+            )}
+          </div>
         </div>
       ),
       key: "all",
       icon: <AppstoreOutlined />,
-      children:
-        modules?.map((mod: any) => ({
-          title: renderNodeTitle(mod?.name ?? "-", !(mod?.children && mod?.children.length)),
-          key: String(mod?.id),
-          icon: mod?.children && mod?.children.length ? <FolderOpenOutlined /> : <FolderOutlined />,
-          children:
-            (mod?.children || [])?.map((child: any) => ({
-              title: renderNodeTitle(child?.name ?? "-", !(child?.children && child?.children.length)),
+      children: [
+        // 根下的临时输入
+        ...(creatingParentId === "all"
+          ? [
+              {
+                title: renderCreatingInput("all"),
+                key: "__creating__root",
+                icon: <PlusOutlined />,
+              },
+            ]
+          : []),
+        // 常规模块
+        ...(modules?.map((mod: any) => {
+          const modChildren = (mod?.children || [])?.map((child: any) => {
+            const grandChildren = (child?.children || [])?.map((c2: any) => ({
+              title: renderNodeTitle(c2?.name ?? "-", getNodeCount(c2), String(c2?.id)),
+              key: String(c2?.id),
+              icon: <AppstoreOutlined />,
+            }));
+            return {
+              title: renderNodeTitle(child?.name ?? "-", getNodeCount(child), String(child?.id)),
               key: String(child?.id),
-              icon: child?.children && child?.children.length ? <FolderOpenOutlined /> : <FileTextOutlined />,
-              children: (child?.children || [])?.map((c2: any) => ({
-                title: renderNodeTitle(c2?.name ?? "-", !(c2?.children && c2?.children.length)),
-                key: String(c2?.id),
-                icon: c2?.children && c2?.children.length ? <FolderOpenOutlined /> : <FileTextOutlined />,
-              })),
-            })) ?? [],
-        })) ?? [],
+              icon: <AppstoreOutlined />,
+              children: [
+                ...(creatingParentId === String(child?.id)
+                  ? [
+                      {
+                        title: renderCreatingInput(String(child?.id)),
+                        key: `__creating__${String(child?.id)}`,
+                        icon: <PlusOutlined />,
+                      },
+                    ]
+                  : []),
+                ...(grandChildren || []),
+              ],
+            };
+          });
+          return {
+            title: renderNodeTitle(mod?.name ?? "-", getNodeCount(mod), String(mod?.id)),
+            key: String(mod?.id),
+            icon: <AppstoreOutlined />,
+            children: [
+              ...(creatingParentId === String(mod?.id)
+                ? [
+                    {
+                      title: renderCreatingInput(String(mod?.id)),
+                      key: `__creating__${String(mod?.id)}`,
+                      icon: <PlusOutlined />,
+                    },
+                  ]
+                : []),
+              ...(modChildren || []),
+            ],
+          };
+        }) ?? []),
+      ],
     },
   ];
-  const TreeToolbar = (
-    <div className="flex items-center justify-between px-2 pb-2">
-      <div className="text-sm text-custom-text-300">模块筛选</div>
-      <Segmented
-        size="small"
-        value={treeTheme}
-        onChange={(v) => setTreeTheme(v as any)}
-        options={[
-          { label: "默认", value: "light" },
-          { label: "紧凑", value: "compact" },
-          { label: "高对比", value: "high-contrast" },
-        ]}
-      />
-    </div>
-  );
 
   const getColumnSearchProps = (dataIndex: keyof TestCase | string): TableColumnType<TestCase> => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -447,9 +639,23 @@ export default function TestCasesPage() {
           {/* 修改列表区域：添加 Row/Col 布局 */}
           <Row className="flex-1 overflow-hidden p-4 sm:p-5" gutter={[16, 16]}>
             {/* 左侧树形菜单 */}
-            <Col span={6} className="border-r border-custom-border-200 overflow-y-auto">
+            <Col span={5} className="border-r border-custom-border-200 overflow-y-auto">
+              {/* 树头部工具栏（贴近图片样式） */}
+              <div className="flex items-center justify-between px-2 pb-2">
+                <div className="text-sm text-custom-text-300">用例模块</div>
+                <Space size={4}>
+                  <Button
+                    type="text"
+                    size="small"
+                    icon={<PlusOutlined />}
+                    disabled={!repositoryId}
+                    onClick={() => handleAddUnderNode("all")}
+                  />
+                </Space>
+              </div>
+
               <Tree
-                showLine
+                showLine={false}
                 defaultExpandAll
                 onSelect={onSelect}
                 treeData={treeData}
@@ -505,13 +711,17 @@ export default function TestCasesPage() {
       {repositoryId && (
         <CreateCaseModal
           isOpen={isCreateModalOpen}
-          handleClose={() => setIsCreateModalOpen(false)}
+          handleClose={() => {
+            setIsCreateModalOpen(false);
+            fetchModules();
+          }}
           workspaceSlug={workspaceSlug as string}
           repositoryId={repositoryId as string}
           repositoryName={decodeURIComponent(repositoryName || "")}
           onSuccess={async () => {
             // 新增成功后刷新当前列表与分页/筛选状态
             await fetchCases(currentPage, pageSize, filters);
+            fetchModules();
           }}
         />
       )}

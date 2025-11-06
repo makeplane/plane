@@ -43,7 +43,7 @@ export class CaseModuleService extends APIService {
   }
 
   async deleteCaseModule(workspaceSlug: string, moduleId: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/test/module/${moduleId}/`)
+    return this.delete(`/api/workspaces/${workspaceSlug}/test/module/?id=${moduleId}`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

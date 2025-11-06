@@ -6,6 +6,9 @@ import type { AxiosRequestConfig } from "axios";
 import { getFileMetaDataForUpload, generateFileUploadPayload } from "@plane/services";
 import { FileUploadService } from "@/services/file-upload.service";
 
+
+export type ModuleCountResponse = { total: number } & Record<string, number>;
+
 export class CaseService extends APIService {
   constructor() {
     super(API_BASE_URL);
@@ -134,6 +137,33 @@ export class CaseService extends APIService {
   async getModules(workspaceSlug: string, repositoryId: string): Promise<any[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/test/module/?repository_id=${repositoryId}`)
       .then((response) => response?.data || [])
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async createModules(workspaceSlug: string, data: any): Promise<any[]> {
+    return this.post(`/api/workspaces/${workspaceSlug}/test/module/`, data)
+      .then((response) => response?.data || [])
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deleteModules(workspaceSlug: string, moduleId: string): Promise<any[]> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/test/module/?id=${moduleId}`)
+      .then((response) => response?.data || [])
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+
+
+  async getModulesCount(workspaceSlug: string, repositoryId: string): Promise<Partial<ModuleCountResponse>> {
+    const params = {repository_id:repositoryId}
+    return this.get(`/api/workspaces/${workspaceSlug}/test/module/count/`,{params})
+      .then((response) => (response?.data ?? {}) as Partial<ModuleCountResponse>)
       .catch((error) => {
         throw error?.response?.data;
       });

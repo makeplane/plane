@@ -113,11 +113,12 @@ class CaseModuleAPIView(BaseAPIView):
     serializer_class = CaseModuleCreateUpdateSerializer
     filterset_fields = {
         'name': ['exact', 'icontains', 'in'],
-        'repository_id': ['exact']
+        'repository_id': ['exact'],
+        'id': ['exact'],
     }
 
     def get(self, request, slug):
-        modules = self.queryset.filter(parent=None)
+        modules = self.filter_queryset(self.queryset.filter(parent=None))
         serializer = CaseModuleListSerializer(instance=modules, many=True)
         return Response(data=serializer.data)
 
