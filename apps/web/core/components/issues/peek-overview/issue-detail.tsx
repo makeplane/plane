@@ -1,13 +1,16 @@
 "use-client";
 import type { FC } from "react";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
+import { EFileAssetType } from "@plane/types";
 import type { TNameDescriptionLoader } from "@plane/types";
 // components
 import { getTextContent } from "@plane/utils";
+// components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
+import { DescriptionInput } from "@/components/editor/rich-text/description-input";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
@@ -22,7 +25,6 @@ import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-dup
 // services
 import { WorkItemVersionService } from "@/services/issue";
 // local components
-import { IssueDescriptionInput } from "../description-input";
 import type { TIssueOperations } from "../issue-detail";
 import { IssueParentDetail } from "../issue-detail/parent";
 import { IssueReaction } from "../issue-detail/reactions";
@@ -125,16 +127,22 @@ export const PeekOverviewIssueDetails: FC<Props> = observer((props) => {
         containerClassName="-ml-3"
       />
 
-      <IssueDescriptionInput
-        editorRef={editorRef}
-        workspaceSlug={workspaceSlug}
-        projectId={issue.project_id}
-        issueId={issue.id}
-        initialValue={issueDescription}
-        disabled={disabled || isArchived}
-        issueOperations={issueOperations}
-        setIsSubmitting={(value) => setIsSubmitting(value)}
+      <DescriptionInput
         containerClassName="-ml-3 border-none"
+        disabled={disabled || isArchived}
+        editorRef={editorRef}
+        entityId={issue.id}
+        fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
+        initialValue={issueDescription}
+        onSubmit={async (value) => {
+          if (!issue.id || !issue.project_id) return;
+          await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
+            description_html: value,
+          });
+        }}
+        setIsSubmitting={(value) => setIsSubmitting(value)}
+        projectId={issue.project_id}
+        workspaceSlug={workspaceSlug}
       />
 
       <div className="flex items-center justify-between gap-2">
