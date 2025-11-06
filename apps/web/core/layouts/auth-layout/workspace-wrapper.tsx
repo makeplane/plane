@@ -16,6 +16,9 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 // components
 import { cn } from "@plane/utils";
+// assets
+import WorkSpaceNotAvailable from "@/app/assets/workspace/workspace-not-available.png?url";
+// components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 // hooks
 import {
@@ -37,8 +40,6 @@ import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
-// images
-import WorkSpaceNotAvailable from "@/public/workspace/workspace-not-available.png";
 
 interface IWorkspaceAuthWrapper {
   children: ReactNode;

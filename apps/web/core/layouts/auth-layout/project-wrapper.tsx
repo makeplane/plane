@@ -42,7 +42,7 @@ import { persistence } from "@/local-db/storage.sqlite";
 // plane web constants
 interface IProjectAuthWrapper {
   workspaceSlug: string;
-  projectId: string;
+  projectId?: string;
   children: ReactNode;
   isLoading?: boolean;
 }

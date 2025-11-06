@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -14,7 +13,7 @@ type TIntercomConfig = {
   isTelemetryEnabled: boolean;
 };
 
-export const IntercomConfig: FC<TIntercomConfig> = observer((props) => {
+export const IntercomConfig: React.FC<TIntercomConfig> = observer((props) => {
   const { isTelemetryEnabled } = props;
   // hooks
   const { instanceConfigurations, updateInstanceConfigurations, fetchInstanceConfigurations } = useInstance();

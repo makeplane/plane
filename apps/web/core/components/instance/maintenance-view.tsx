@@ -3,13 +3,13 @@
 import type { FC } from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
+// assets
+import maintenanceModeDarkModeImage from "@/app/assets/instance/maintenance-mode-dark.svg?url";
+import maintenanceModeLightModeImage from "@/app/assets/instance/maintenance-mode-light.svg?url";
 // layouts
 import DefaultLayout from "@/layouts/default-layout";
 // components
 import { MaintenanceMessage } from "@/plane-web/components/instance";
-// images
-import maintenanceModeDarkModeImage from "@/public/instance/maintenance-mode-dark.svg";
-import maintenanceModeLightModeImage from "@/public/instance/maintenance-mode-light.svg";
 
 export const MaintenanceView: FC = () => {
   // hooks

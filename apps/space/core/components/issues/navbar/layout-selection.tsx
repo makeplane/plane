@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
 // ui
@@ -20,7 +19,7 @@ type Props = {
   anchor: string;
 };
 
-export const IssuesLayoutSelection: FC<Props> = observer((props) => {
+export const IssuesLayoutSelection: React.FC<Props> = observer((props) => {
   const { anchor } = props;
   // hooks
   const { t } = useTranslation();

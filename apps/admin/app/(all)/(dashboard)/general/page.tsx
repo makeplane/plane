@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 // hooks
 import { useInstance } from "@/hooks/store";
 // components
+import type { Route } from "./+types/page";
 import { GeneralConfigurationForm } from "./form";
 
 function GeneralPage() {
@@ -27,5 +28,7 @@ function GeneralPage() {
     </>
   );
 }
+
+export const meta: Route.MetaFunction = () => [{ title: "General Settings - God Mode" }];
 
 export default observer(GeneralPage);

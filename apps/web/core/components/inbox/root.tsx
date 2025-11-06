@@ -14,7 +14,6 @@ import { InboxSidebar } from "@/components/inbox/sidebar";
 import { InboxLayoutLoader } from "@/components/ui/loader/layouts/project-inbox/inbox-layout-loader";
 // hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 type TInboxIssueRoot = {
   workspaceSlug: string;
@@ -32,8 +31,6 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
   const { t } = useTranslation();
   // hooks
   const { loader, error, currentTab, handleCurrentTab, fetchInboxIssues } = useProjectInbox();
-  // derived values
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/intake/issue-detail" });
 
   useEffect(() => {
     if (!inboxAccessible || !workspaceSlug || !projectId) return;

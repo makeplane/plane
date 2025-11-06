@@ -18,6 +18,7 @@
       "require": "./dist/lib.cjs"
     },
     "./package.json": "./package.json",
+    "./styles.css": "./dist/styles/index.css",
     "./styles": "./dist/styles/index.css"
   },
   "scripts": {
@@ -43,8 +44,8 @@
     "@plane/hooks": "workspace:*",
     "@plane/types": "workspace:*",
     "@plane/ui": "workspace:*",
-    "@plane/utils": "workspace:*",
     "@plane/propel": "workspace:*",
+    "@plane/utils": "workspace:*",
     "@tiptap/core": "catalog:",
     "@tiptap/extension-blockquote": "^2.22.3",
     "@tiptap/extension-character-count": "^2.22.3",

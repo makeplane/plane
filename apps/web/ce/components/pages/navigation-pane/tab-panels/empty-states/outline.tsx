@@ -1,12 +1,16 @@
 import Image from "next/image";
+import { useTheme } from "next-themes";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-// hooks
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// assets
+import darkOutlineAsset from "@/app/assets/empty-state/wiki/navigation-pane/outline-dark.webp?url";
+import lightOutlineAsset from "@/app/assets/empty-state/wiki/navigation-pane/outline-light.webp?url";
 
 export const PageNavigationPaneOutlineTabEmptyState = () => {
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // asset resolved path
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/wiki/navigation-pane/outline" });
+  const resolvedPath = resolvedTheme === "light" ? lightOutlineAsset : darkOutlineAsset;
   // translation
   const { t } = useTranslation();
 

@@ -1,7 +1,5 @@
 "use server";
 
-import { IssuesClientLayout } from "./client-layout";
-
 type Props = {
   children: React.ReactNode;
   params: {
@@ -9,6 +7,7 @@ type Props = {
   };
 };
 
+// TODO: Convert into SSR in order to generate metadata
 export async function generateMetadata({ params }: Props) {
   const { anchor } = params;
   const DEFAULT_TITLE = "Plane";
@@ -49,9 +48,7 @@ export async function generateMetadata({ params }: Props) {
   }
 }
 
-export default async function IssuesLayout(props: Props) {
-  const { children, params } = props;
-  const { anchor } = params;
-
-  return <IssuesClientLayout anchor={anchor}>{children}</IssuesClientLayout>;
+export default async function IssuesLayout(_props: Props) {
+  // return <IssuesClientLayout params={{ anchor }}>{children}</IssuesClientLayout>;
+  return null;
 }
