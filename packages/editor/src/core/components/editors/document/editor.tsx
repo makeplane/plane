@@ -59,7 +59,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
       })
     );
     return additionalExtensions;
-  }, []);
+  }, [disabledExtensions, editable, extendedEditorProps, fileHandler, flaggedExtensions, user]);
 
   const editor = useEditor({
     disabledExtensions,
