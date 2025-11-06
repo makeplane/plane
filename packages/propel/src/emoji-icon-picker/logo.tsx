@@ -6,8 +6,10 @@ import type { FC } from "react";
 // eslint-disable-next-line import/order
 import useFontFaceObserver from "use-font-face-observer";
 // plane imports
-import { getEmojiSize, LUCIDE_ICONS_LIST, stringToEmoji } from "@plane/propel/emoji-icon-picker";
 import type { TLogoProps } from "@plane/types";
+// local imports
+import { getEmojiSize, stringToEmoji } from "./helper";
+import { LUCIDE_ICONS_LIST } from "./lucide-icons";
 
 type Props = {
   logo: TLogoProps;

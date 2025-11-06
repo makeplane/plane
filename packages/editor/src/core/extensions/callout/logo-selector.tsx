@@ -1,6 +1,7 @@
 // plane imports
-import { EmojiIconPicker, EmojiIconPickerTypes, Logo, TEmojiLogoProps } from "@plane/ui";
-import { cn, convertHexEmojiToDecimal } from "@plane/utils";
+import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
+import type { TLogoProps } from "@plane/types";
+import { cn } from "@plane/utils";
 // types
 import { TCalloutBlockAttributes } from "./types";
 // utils
@@ -17,7 +18,7 @@ type Props = {
 export const CalloutBlockLogoSelector: React.FC<Props> = (props) => {
   const { blockAttributes, disabled, handleOpen, isOpen, updateAttributes } = props;
 
-  const logoValue: TEmojiLogoProps = {
+  const logoValue: TLogoProps = {
     in_use: blockAttributes["data-logo-in-use"],
     icon: {
       color: blockAttributes["data-icon-color"],
@@ -31,7 +32,7 @@ export const CalloutBlockLogoSelector: React.FC<Props> = (props) => {
 
   return (
     <div contentEditable={false}>
-      <EmojiIconPicker
+      <EmojiPicker
         closeOnSelect={false}
         isOpen={isOpen}
         handleToggle={handleOpen}
@@ -43,7 +44,7 @@ export const CalloutBlockLogoSelector: React.FC<Props> = (props) => {
         onChange={(val) => {
           // construct the new logo value based on the type of value
           let newLogoValue: Partial<TCalloutBlockAttributes> = {};
-          let newLogoValueToStoreInLocalStorage: TEmojiLogoProps = {
+          let newLogoValueToStoreInLocalStorage: TLogoProps = {
             in_use: "emoji",
             emoji: {
               value: DEFAULT_CALLOUT_BLOCK_ATTRIBUTES["data-emoji-unicode"],
@@ -51,15 +52,16 @@ export const CalloutBlockLogoSelector: React.FC<Props> = (props) => {
             },
           };
           if (val.type === "emoji") {
+            // val.value is now a string in decimal format (e.g. "128512")
             newLogoValue = {
-              "data-emoji-unicode": convertHexEmojiToDecimal(val.value.unified),
-              "data-emoji-url": val.value.imageUrl,
+              "data-emoji-unicode": val.value,
+              "data-emoji-url": undefined,
             };
             newLogoValueToStoreInLocalStorage = {
               in_use: "emoji",
               emoji: {
-                value: convertHexEmojiToDecimal(val.value.unified),
-                url: val.value.imageUrl,
+                value: val.value,
+                url: undefined,
               },
             };
           } else if (val.type === "icon") {

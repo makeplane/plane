@@ -1385,9 +1385,6 @@ importers:
       clsx:
         specifier: ^2.0.0
         version: 2.1.1
-      emoji-picker-react:
-        specifier: ^4.5.16
-        version: 4.12.2(react@18.3.1)
       lodash-es:
         specifier: 'catalog:'
         version: 4.17.21

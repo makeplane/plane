@@ -47,7 +47,6 @@
     "@popperjs/core": "^2.11.8",
     "@radix-ui/react-scroll-area": "^1.2.3",
     "clsx": "^2.0.0",
-    "emoji-picker-react": "^4.5.16",
     "lodash-es": "catalog:",
     "lucide-react": "catalog:",
     "react-color": "^2.19.3",
