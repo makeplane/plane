@@ -471,19 +471,30 @@ class IssueComment(ProjectBaseModel):
     def save(self, *args, **kwargs):
         self.comment_stripped = strip_tags(self.comment_html) if self.comment_html != "" else ""
 
-        description = Description.objects.create(
-            workspace_id=self.workspace_id,
-            project_id=self.project_id,
-            created_by_id=self.created_by_id,
-            updated_by_id=self.updated_by_id,
-            description_stripped=self.comment_stripped,
-            created_at=self.created_at,
-            updated_at=self.updated_at,
-            description_json=self.comment_json,
-            description_html=self.comment_html,
-        )
+        description_id = self.description_id
 
-        self.description_id = description.id
+        if description_id is not None:
+            description = Description.objects.get(pk=description_id)
+
+            description.description_stripped = self.comment_stripped
+            description.description_json = self.comment_json
+            description.description_html = self.comment_html
+
+            description.save(update_fields=["description_stripped", "description_json", "description_html"])
+        else:
+            description = Description.objects.create(
+                workspace_id=self.workspace_id,
+                project_id=self.project_id,
+                created_by_id=self.created_by_id,
+                updated_by_id=self.updated_by_id,
+                description_stripped=self.comment_stripped,
+                created_at=self.created_at,
+                updated_at=self.updated_at,
+                description_json=self.comment_json,
+                description_html=self.comment_html,
+            )
+
+            self.description_id = description.id
 
         return super(IssueComment, self).save(*args, **kwargs)
 
