@@ -17,6 +17,7 @@ from plane.db.mixins import SoftDeletionManager
 from plane.utils.exception_logger import log_exception
 from .project import ProjectBaseModel
 from plane.utils.uuid import convert_uuid_to_integer
+from .description import Description
 
 
 def get_default_properties():
@@ -446,6 +447,9 @@ class IssueComment(ProjectBaseModel):
     comment_stripped = models.TextField(verbose_name="Comment", blank=True)
     comment_json = models.JSONField(blank=True, default=dict)
     comment_html = models.TextField(blank=True, default="<p></p>")
+    description = models.OneToOneField(
+        "db.Description", on_delete=models.CASCADE, related_name="issue_comment_description", null=True
+    )
     attachments = ArrayField(models.URLField(), size=10, blank=True, default=list)
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="issue_comments")
     # System can also create comment
@@ -466,6 +470,21 @@ class IssueComment(ProjectBaseModel):
 
     def save(self, *args, **kwargs):
         self.comment_stripped = strip_tags(self.comment_html) if self.comment_html != "" else ""
+
+        description = Description.objects.create(
+            workspace_id=self.workspace_id,
+            project_id=self.project_id,
+            created_by_id=self.created_by_id,
+            updated_by_id=self.updated_by_id,
+            description_stripped=self.comment_stripped,
+            created_at=self.created_at,
+            updated_at=self.updated_at,
+            description_json=self.comment_json,
+            description_html=self.comment_html,
+        )
+
+        self.description_id = description.id
+
         return super(IssueComment, self).save(*args, **kwargs)
 
     class Meta:
