@@ -1,5 +1,5 @@
 export default {
-  common: {
+  common_empty_state: {
     progress: {
       title: "Il n'y a pas encore de métriques de progression à afficher.",
       description:
@@ -26,7 +26,7 @@ export default {
       cta_primary: "Essayer de recharger",
     },
   },
-  project: {
+  project_empty_state: {
     work_items: {
       title: "Commencez avec votre premier élément de travail.",
       description:
@@ -95,7 +95,7 @@ export default {
       title: "Sélectionnez un élément de travail Intake pour voir ses détails",
     },
   },
-  workspace: {
+  workspace_empty_state: {
     archive_work_items: {
       title: "Aucun élément de travail archivé pour le moment",
       description:
@@ -160,7 +160,7 @@ export default {
       title: "Configurez l'intake pour gérer les demandes entrantes et suivre comment elles sont acceptées et rejetées",
     },
   },
-  settings: {
+  settings_empty_state: {
     estimates: {
       title: "Aucune estimation pour le moment",
       description:

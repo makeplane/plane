@@ -15,6 +15,7 @@ export const EmptyStateCompact: React.FC<BaseEmptyStateCommonProps> = ({
   rootClassName,
   assetClassName,
   align = "center",
+  customButton,
 }) => {
   // Determine which asset to use: assetKey takes precedence, fallback to custom asset
   const resolvedAsset = assetKey ? getCompactAsset(assetKey as CompactAssetType, assetClassName) : asset;
@@ -39,18 +40,21 @@ export const EmptyStateCompact: React.FC<BaseEmptyStateCommonProps> = ({
             title && <p className="text-sm leading-5 text-custom-text-300">{title}</p>
           )}
 
-          {actions && actions.length > 0 && (
-            <div className="flex flex-col gap-4 sm:flex-row">
-              {actions.map((action, index) => {
-                const { label, variant, ...rest } = action;
-                return (
-                  <Button key={index} variant={variant} {...rest}>
-                    {label}
-                  </Button>
-                );
-              })}
-            </div>
-          )}
+          {customButton
+            ? customButton
+            : actions &&
+              actions.length > 0 && (
+                <div className="flex flex-col gap-4 sm:flex-row">
+                  {actions.map((action, index) => {
+                    const { label, variant, ...rest } = action;
+                    return (
+                      <Button key={index} variant={variant} {...rest}>
+                        {label}
+                      </Button>
+                    );
+                  })}
+                </div>
+              )}
         </div>
       </div>
     </div>

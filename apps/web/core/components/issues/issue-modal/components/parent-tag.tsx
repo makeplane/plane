@@ -4,9 +4,9 @@ import React from "react";
 import { observer } from "mobx-react";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
-import { X } from "lucide-react";
-// plane imports
 import { ETabIndices } from "@plane/constants";
+import { CloseIcon } from "@plane/propel/icons";
+// plane imports
 // types
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
 // helpers
@@ -65,7 +65,7 @@ export const IssueParentTag: React.FC<TIssueParentTagProps> = observer((props) =
               }}
               tabIndex={getIndex("remove_parent")}
             >
-              <X className="h-3 w-3 cursor-pointer" />
+              <CloseIcon className="h-3 w-3 cursor-pointer" />
             </button>
           </div>
         </div>

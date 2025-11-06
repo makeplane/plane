@@ -49,7 +49,7 @@ export const ExportForm = (props: Props) => {
   });
   // derived values
   const hasProjects = workspaceProjectIds && workspaceProjectIds.length > 0;
-  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const isMember = allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.WORKSPACE);
   const wsProjectIdsWithCreatePermisisons = projectsWithCreatePermissions
     ? intersection(workspaceProjectIds, Object.keys(projectsWithCreatePermissions))
     : [];
@@ -132,7 +132,7 @@ export const ExportForm = (props: Props) => {
           <Controller
             control={control}
             name="project"
-            disabled={!isAdmin && (!hasProjects || !canPerformAnyCreateAction)}
+            disabled={!isMember && (!hasProjects || !canPerformAnyCreateAction)}
             render={({ field: { value, onChange } }) => (
               <CustomSearchSelect
                 value={value ?? []}
@@ -165,7 +165,7 @@ export const ExportForm = (props: Props) => {
           <Controller
             control={control}
             name="provider"
-            disabled={!isAdmin && (!hasProjects || !canPerformAnyCreateAction)}
+            disabled={!isMember && (!hasProjects || !canPerformAnyCreateAction)}
             render={({ field: { value, onChange } }) => (
               <CustomSelect
                 value={value}

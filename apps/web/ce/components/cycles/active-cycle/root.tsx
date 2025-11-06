@@ -2,10 +2,14 @@
 
 import { useMemo } from "react";
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 import { Disclosure } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Row } from "@plane/ui";
+// assets
+import darkActiveCycleAsset from "@/app/assets/empty-state/cycle/active-dark.webp?url";
+import lightActiveCycleAsset from "@/app/assets/empty-state/cycle/active-light.webp?url";
 // components
 import { ActiveCycleStats } from "@/components/cycles/active-cycle/cycle-stats";
 import { ActiveCycleProductivity } from "@/components/cycles/active-cycle/productivity";
@@ -16,7 +20,6 @@ import { CyclesListItem } from "@/components/cycles/list/cycles-list-item";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import type { ActiveCycleIssueDetails } from "@/store/issue/cycle";
 
 interface IActiveCycleDetails {
@@ -28,13 +31,15 @@ interface IActiveCycleDetails {
 
 export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) => {
   const { workspaceSlug, projectId, cycleId: propsCycleId, showHeader = true } = props;
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // plane hooks
   const { t } = useTranslation();
   // store hooks
   const { currentProjectActiveCycleId } = useCycle();
   // derived values
   const cycleId = propsCycleId ?? currentProjectActiveCycleId;
-  const activeCycleResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/cycle/active" });
+  const activeCycleResolvedPath = resolvedTheme === "light" ? lightActiveCycleAsset : darkActiveCycleAsset;
   // fetch cycle details
   const {
     handleFiltersUpdate,

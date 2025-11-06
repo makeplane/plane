@@ -713,10 +713,10 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                     ),
                 )
             )
-            .annotate(total_estimates=Sum("issue_cycle__issue__estimate_point"))
+            .annotate(total_estimates=Sum("issue_cycle__issue__estimate_point__key"))
             .annotate(
                 completed_estimates=Sum(
-                    "issue_cycle__issue__estimate_point",
+                    "issue_cycle__issue__estimate_point__key",
                     filter=Q(
                         issue_cycle__issue__state__group="completed",
                         issue_cycle__issue__archived_at__isnull=True,
@@ -727,7 +727,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             )
             .annotate(
                 started_estimates=Sum(
-                    "issue_cycle__issue__estimate_point",
+                    "issue_cycle__issue__estimate_point__key",
                     filter=Q(
                         issue_cycle__issue__state__group="started",
                         issue_cycle__issue__archived_at__isnull=True,
@@ -867,7 +867,7 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
         request={},
         responses={
             200: create_paginated_response(
-                CycleIssueSerializer,
+                IssueSerializer,
                 "PaginatedCycleIssueResponse",
                 "Paginated list of cycle work items",
                 "Paginated Cycle Work Items",
@@ -1221,7 +1221,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
             pk=cycle_id,
         )
         # transfer work items only when cycle is completed (passed the end data)
-        if old_cycle.end_date is not None and old_cycle.end_date < timezone.now():
+        if old_cycle.end_date is not None and old_cycle.end_date > timezone.now():
             return Response(
                 {"error": "The old cycle is not completed yet"},
                 status=status.HTTP_400_BAD_REQUEST,

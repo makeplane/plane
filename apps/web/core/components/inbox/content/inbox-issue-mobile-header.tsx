@@ -2,19 +2,8 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import {
-  CircleCheck,
-  CircleX,
-  ChevronDown,
-  ChevronUp,
-  Clock,
-  ExternalLink,
-  FileStack,
-  Link,
-  Trash2,
-  PanelLeft,
-  MoveRight,
-} from "lucide-react";
+import { CircleCheck, CircleX, Clock, ExternalLink, FileStack, Link, Trash2, PanelLeft, MoveRight } from "lucide-react";
+import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { Header, CustomMenu, EHeaderVariant } from "@plane/ui";
 import { cn, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
@@ -117,14 +106,14 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
             className="rounded border border-custom-border-200 p-1.5"
             onClick={() => handleInboxIssueNavigation("prev")}
           >
-            <ChevronUp size={14} strokeWidth={2} />
+            <ChevronUpIcon height={14} width={14} strokeWidth={2} />
           </button>
           <button
             type="button"
             className="rounded border border-custom-border-200 p-1.5"
             onClick={() => handleInboxIssueNavigation("next")}
           >
-            <ChevronDown size={14} strokeWidth={2} />
+            <ChevronDownIcon height={14} width={14} strokeWidth={2} />
           </button>
         </div>
         <div className="flex items-center gap-4">

@@ -6,6 +6,7 @@ import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EUserProjectRoles } from "@plane/types";
 import { ContentWrapper, Row, ERowVariant } from "@plane/ui";
+// components
 import { ListLayout } from "@/components/core/list";
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "@/components/modules";
 import { CycleModuleBoardLayoutLoader } from "@/components/ui/loader/cycle-module-board-loader";
@@ -50,11 +51,11 @@ export const ModulesListView: React.FC = observer(() => {
     return (
       <EmptyStateDetailed
         assetKey="module"
-        title={t("project.modules.title")}
-        description={t("project.modules.description")}
+        title={t("project_empty_state.modules.title")}
+        description={t("project_empty_state.modules.description")}
         actions={[
           {
-            label: t("project.modules.cta_primary"),
+            label: t("project_empty_state.modules.cta_primary"),
             onClick: () => toggleCreateModuleModal(true),
             disabled: !canPerformEmptyStateActions,
             variant: "primary",
@@ -68,8 +69,8 @@ export const ModulesListView: React.FC = observer(() => {
     return (
       <EmptyStateDetailed
         assetKey="search"
-        title={t("common.search.title")}
-        description={t("common.search.description")}
+        title={t("common_empty_state.search.title")}
+        description={t("common_empty_state.search.description")}
       />
     );
 

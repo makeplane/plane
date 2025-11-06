@@ -1,5 +1,5 @@
-import { ChevronRight } from "lucide-react";
 import * as React from "react";
+import { ChevronRightIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "../utils";
 
@@ -64,7 +64,7 @@ const Breadcrumbs = ({ className, children, onBack, isLoading = false }: Breadcr
                 ...
               </span>
             )}
-            <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-400" aria-hidden="true" />
+            <ChevronRightIcon className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-400" aria-hidden="true" />
           </div>
           <div className="flex items-center gap-2.5 p-1">
             {isLoading ? (
@@ -146,7 +146,7 @@ const BreadcrumbSeparator: React.FC<BreadcrumbSeparatorProps> = (props) => {
           containerClassName
         )}
       >
-        <ChevronRight className={cn("h-3.5 w-3.5 flex-shrink-0", iconClassName)} />
+        <ChevronRightIcon className={cn("h-3.5 w-3.5 flex-shrink-0", iconClassName)} />
       </div>
     </div>
   );

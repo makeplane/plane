@@ -17,10 +17,11 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Search, X } from "lucide-react";
-// plane package imports
+import { Search } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
+import { CloseIcon } from "@plane/propel/icons";
+// plane package imports
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@plane/propel/table";
 import { cn } from "@plane/utils";
 // plane web components
@@ -116,7 +117,7 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
                   setIsSearchOpen(false);
                 }}
               >
-                <X className="h-3 w-3" />
+                <CloseIcon className="h-3 w-3" />
               </button>
             )}
           </div>
@@ -157,7 +158,7 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
                     assetKey="unknown"
                     assetClassName="size-20"
                     rootClassName="border border-custom-border-100 px-5 py-10 md:py-20 md:px-20"
-                    title={t("workspace.analytics_work_items.title")}
+                    title={t("workspace_empty_state.analytics_work_items.title")}
                   />
                 </TableCell>
               </TableRow>

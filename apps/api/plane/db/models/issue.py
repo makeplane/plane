@@ -407,7 +407,7 @@ class IssueAttachment(ProjectBaseModel):
 
 
 class IssueActivity(ProjectBaseModel):
-    issue = models.ForeignKey(Issue, on_delete=models.SET_NULL, null=True, related_name="issue_activity")
+    issue = models.ForeignKey(Issue, on_delete=models.DO_NOTHING, null=True, related_name="issue_activity")
     verb = models.CharField(max_length=255, verbose_name="Action", default="created")
     field = models.CharField(max_length=255, verbose_name="Field Name", blank=True, null=True)
     old_value = models.TextField(verbose_name="Old Value", blank=True, null=True)
@@ -417,7 +417,7 @@ class IssueActivity(ProjectBaseModel):
     attachments = ArrayField(models.URLField(), size=10, blank=True, default=list)
     issue_comment = models.ForeignKey(
         "db.IssueComment",
-        on_delete=models.SET_NULL,
+        on_delete=models.DO_NOTHING,
         related_name="issue_comment",
         null=True,
     )

@@ -11,7 +11,8 @@ import { MembersPropertyIcon } from "@plane/propel/icons";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IGithubRepoCollaborator, IGithubServiceImportFormData } from "@plane/types";
-// ui
+// assets
+import GithubLogo from "@/app/assets/services/github.png?url";
 // components
 import {
   GithubImportConfigure,
@@ -24,8 +25,6 @@ import {
 import { APP_INTEGRATIONS, IMPORTER_SERVICES_LIST, WORKSPACE_INTEGRATIONS } from "@/constants/fetch-keys";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
-// images
-import GithubLogo from "@/public/services/github.png";
 // services
 import { IntegrationService, GithubIntegrationService } from "@/services/integrations";
 

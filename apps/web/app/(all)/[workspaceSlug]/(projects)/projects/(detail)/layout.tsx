@@ -1,18 +1,16 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { useParams } from "next/navigation";
+import { Outlet } from "react-router";
 // plane web layouts
 import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
+import type { Route } from "./+types/layout";
 
-const ProjectDetailLayout = ({ children }: { children: ReactNode }) => {
+export default function ProjectDetailLayout({ params }: Route.ComponentProps) {
   // router
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug, projectId } = params;
   return (
-    <ProjectAuthWrapper workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()}>
-      {children}
+    <ProjectAuthWrapper workspaceSlug={workspaceSlug} projectId={projectId}>
+      <Outlet />
     </ProjectAuthWrapper>
   );
-};
-
-export default ProjectDetailLayout;
+}

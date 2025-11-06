@@ -2,56 +2,62 @@
 
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-// types
+import { useTheme } from "next-themes";
+// plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TModuleFilters } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
-// components
 import { calculateTotalFilters } from "@plane/utils";
+// assets
+import darkModulesAsset from "@/app/assets/empty-state/disabled-feature/modules-dark.webp?url";
+import lightModulesAsset from "@/app/assets/empty-state/disabled-feature/modules-light.webp?url";
+// components
 import { PageHead } from "@/components/core/page-title";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 import { ModuleAppliedFiltersList, ModulesListView } from "@/components/modules";
-// helpers
 // hooks
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+import type { Route } from "./+types/page";
 
-const ProjectModulesPage = observer(() => {
+function ProjectModulesPage({ params }: Route.ComponentProps) {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug, projectId } = params;
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // plane hooks
   const { t } = useTranslation();
   // store
   const { getProjectById, currentProjectDetails } = useProject();
-  const { currentProjectFilters, currentProjectDisplayFilters, clearAllFilters, updateFilters, updateDisplayFilters } =
-    useModuleFilter();
+  const {
+    currentProjectFilters = {},
+    currentProjectDisplayFilters,
+    clearAllFilters,
+    updateFilters,
+    updateDisplayFilters,
+  } = useModuleFilter();
   const { allowPermissions } = useUserPermissions();
   // derived values
-  const project = projectId ? getProjectById(projectId.toString()) : undefined;
+  const project = getProjectById(projectId);
   const pageTitle = project?.name ? `${project?.name} - Modules` : undefined;
   const canPerformEmptyStateActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/disabled-feature/modules" });
+  const resolvedPath = resolvedTheme === "light" ? lightModulesAsset : darkModulesAsset;
 
   const handleRemoveFilter = useCallback(
     (key: keyof TModuleFilters, value: string | null) => {
-      if (!projectId) return;
-      let newValues = currentProjectFilters?.[key] ?? [];
+      let newValues = currentProjectFilters[key] ?? [];
 
       if (!value) newValues = [];
       else newValues = newValues.filter((val) => val !== value);
 
-      updateFilters(projectId.toString(), { [key]: newValues });
+      updateFilters(projectId, { [key]: newValues });
     },
     [currentProjectFilters, projectId, updateFilters]
   );
-
-  if (!workspaceSlug || !projectId) return <></>;
 
   // No access to
   if (currentProjectDetails?.module_view === false)
@@ -76,16 +82,13 @@ const ProjectModulesPage = observer(() => {
     <>
       <PageHead title={pageTitle} />
       <div className="h-full w-full flex flex-col">
-        {(calculateTotalFilters(currentProjectFilters ?? {}) !== 0 || currentProjectDisplayFilters?.favorites) && (
+        {(calculateTotalFilters(currentProjectFilters) !== 0 || currentProjectDisplayFilters?.favorites) && (
           <ModuleAppliedFiltersList
-            appliedFilters={currentProjectFilters ?? {}}
+            appliedFilters={currentProjectFilters}
             isFavoriteFilterApplied={currentProjectDisplayFilters?.favorites ?? false}
-            handleClearAllFilters={() => clearAllFilters(`${projectId}`)}
+            handleClearAllFilters={() => clearAllFilters(projectId)}
             handleRemoveFilter={handleRemoveFilter}
-            handleDisplayFiltersUpdate={(val) => {
-              if (!projectId) return;
-              updateDisplayFilters(projectId.toString(), val);
-            }}
+            handleDisplayFiltersUpdate={(val) => updateDisplayFilters(projectId, val)}
             alwaysAllowEditing
           />
         )}
@@ -93,6 +96,6 @@ const ProjectModulesPage = observer(() => {
       </div>
     </>
   );
-});
+}
 
-export default ProjectModulesPage;
+export default observer(ProjectModulesPage);

@@ -21,7 +21,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 
 const apiTokenService = new APITokenService();
 
-const ApiTokensPage = observer(() => {
+function ApiTokensPage() {
   // states
   const [isCreateTokenModalOpen, setIsCreateTokenModalOpen] = useState(false);
   // router
@@ -85,11 +85,11 @@ const ApiTokensPage = observer(() => {
             <EmptyStateCompact
               assetKey="token"
               assetClassName="size-20"
-              title={t("settings.tokens.title")}
-              description={t("settings.tokens.description")}
+              title={t("settings_empty_state.tokens.title")}
+              description={t("settings_empty_state.tokens.description")}
               actions={[
                 {
-                  label: t("settings.tokens.cta_primary"),
+                  label: t("settings_empty_state.tokens.cta_primary"),
                   onClick: () => {
                     captureClick({
                       elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.EMPTY_STATE_ADD_PAT_BUTTON,
@@ -106,6 +106,6 @@ const ApiTokensPage = observer(() => {
       </section>
     </div>
   );
-});
+}
 
-export default ApiTokensPage;
+export default observer(ApiTokensPage);

@@ -13,7 +13,8 @@ export type TInstanceAuthenticationMethodKeys =
   | "ENABLE_EMAIL_PASSWORD"
   | "IS_GOOGLE_ENABLED"
   | "IS_GITHUB_ENABLED"
-  | "IS_GITLAB_ENABLED";
+  | "IS_GITLAB_ENABLED"
+  | "IS_GITEA_ENABLED";
 
 export type TInstanceGoogleAuthenticationConfigurationKeys = "GOOGLE_CLIENT_ID" | "GOOGLE_CLIENT_SECRET";
 
@@ -27,10 +28,13 @@ export type TInstanceGitlabAuthenticationConfigurationKeys =
   | "GITLAB_CLIENT_ID"
   | "GITLAB_CLIENT_SECRET";
 
+export type TInstanceGiteaAuthenticationConfigurationKeys = "GITEA_HOST" | "GITEA_CLIENT_ID" | "GITEA_CLIENT_SECRET";
+
 export type TInstanceAuthenticationConfigurationKeys =
   | TInstanceGoogleAuthenticationConfigurationKeys
   | TInstanceGithubAuthenticationConfigurationKeys
-  | TInstanceGitlabAuthenticationConfigurationKeys;
+  | TInstanceGitlabAuthenticationConfigurationKeys
+  | TInstanceGiteaAuthenticationConfigurationKeys;
 
 export type TInstanceAuthenticationKeys = TInstanceAuthenticationMethodKeys | TInstanceAuthenticationConfigurationKeys;
 

@@ -641,6 +641,8 @@ export default {
   },
   common: {
     all: "Tümü",
+    no_items_in_this_group: "Bu grupta öğe yok",
+    drop_here_to_move: "Taşımak için buraya bırakın",
     states: "Durumlar",
     state: "Durum",
     state_groups: "Durum grupları",
