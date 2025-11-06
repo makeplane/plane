@@ -1,6 +1,7 @@
 import { Icon } from "./icon";
 export const ActionsIconsMap = [
   { icon: <Icon name="action.add" />, title: "AddIcon" },
+  { icon: <Icon name="action.add-reaction" />, title: "AddReactionIcon" },
   { icon: <Icon name="action.close" />, title: "CloseIcon" },
 ];
 

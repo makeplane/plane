@@ -1,12 +1,14 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 // lib
-import { Tooltip } from "@plane/propel/tooltip";
-import { ReactionSelector } from "@/components/ui";
+import { stringToEmoji } from "@plane/propel/emoji-icon-picker";
+import { EmojiReactionGroup, EmojiReactionPicker } from "@plane/propel/emoji-reaction";
+import type { EmojiReactionType } from "@plane/propel/emoji-reaction";
 // helpers
-import { groupReactions, renderEmoji } from "@/helpers/emoji.helper";
+import { groupReactions } from "@/helpers/emoji.helper";
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
 import { useIssueDetails } from "@/hooks/store/use-issue-details";
@@ -15,11 +17,12 @@ import { useUser } from "@/hooks/store/use-user";
 type IssueEmojiReactionsProps = {
   anchor: string;
   issueIdFromProps?: string;
-  size?: "md" | "sm";
 };
 
 export const IssueEmojiReactions: React.FC<IssueEmojiReactionsProps> = observer((props) => {
-  const { anchor, issueIdFromProps, size = "md" } = props;
+  const { anchor, issueIdFromProps } = props;
+  // state
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
   // router
   const router = useRouter();
   const pathName = usePathname();
@@ -58,62 +61,63 @@ export const IssueEmojiReactions: React.FC<IssueEmojiReactionsProps> = observer(
 
   // derived values
   const { queryParam } = queryParamGenerator({ peekId, board, state, priority, labels });
-  const reactionDimensions = size === "sm" ? "h-6 px-2 py-1" : "h-full px-2 py-1";
+
+  // Transform reactions data to Propel EmojiReactionType format
+  const propelReactions: EmojiReactionType[] = useMemo(() => {
+    const REACTIONS_LIMIT = 1000;
+
+    return Object.keys(groupedReactions || {})
+      .filter((reaction) => groupedReactions?.[reaction]?.length > 0)
+      .map((reaction) => {
+        const reactionList = groupedReactions?.[reaction] ?? [];
+        const userNames = reactionList
+          .map((r) => r?.actor_details?.display_name)
+          .filter((name): name is string => !!name)
+          .slice(0, REACTIONS_LIMIT);
+
+        return {
+          emoji: stringToEmoji(reaction),
+          count: reactionList.length,
+          reacted: reactionList.some((r) => r?.actor_details?.id === user?.id && r.reaction === reaction),
+          users: userNames,
+        };
+      });
+  }, [groupedReactions, user?.id]);
+
+  const handleEmojiClick = (emoji: string) => {
+    if (!user) {
+      router.push(`/?next_path=${pathName}?${queryParam}`);
+      return;
+    }
+    // Convert emoji back to decimal string format for the API
+    const emojiCodePoints = Array.from(emoji).map((char) => char.codePointAt(0));
+    const reactionString = emojiCodePoints.join("-");
+    handleReactionClick(reactionString);
+  };
+
+  const handleEmojiSelect = (emoji: string) => {
+    if (!user) {
+      router.push(`/?next_path=${pathName}?${queryParam}`);
+      return;
+    }
+    // emoji is already in decimal string format from EmojiReactionPicker
+    handleReactionClick(emoji);
+  };
 
   return (
-    <>
-      <ReactionSelector
-        onSelect={(value) => {
-          if (user) handleReactionClick(value);
-          else router.push(`/?next_path=${pathName}?${queryParam}`);
-        }}
-        selected={userReactions?.map((r) => r.reaction)}
-        size={size}
-      />
-      {Object.keys(groupedReactions || {}).map((reaction) => {
-        const reactions = groupedReactions?.[reaction] ?? [];
-        const REACTIONS_LIMIT = 1000;
-
-        if (reactions.length > 0)
-          return (
-            <Tooltip
-              key={reaction}
-              tooltipContent={
-                <div>
-                  {reactions
-                    ?.map((r) => r?.actor_details?.display_name)
-                    ?.splice(0, REACTIONS_LIMIT)
-                    ?.join(", ")}
-                  {reactions.length > REACTIONS_LIMIT && " and " + (reactions.length - REACTIONS_LIMIT) + " more"}
-                </div>
-              }
-            >
-              <button
-                type="button"
-                onClick={() => {
-                  if (user) handleReactionClick(reaction);
-                  else router.push(`/?next_path=${pathName}?${queryParam}`);
-                }}
-                className={`flex items-center gap-1 rounded-md text-sm text-custom-text-100 ${
-                  reactions.some((r) => r?.actor_details?.id === user?.id && r.reaction === reaction)
-                    ? "bg-custom-primary-100/10"
-                    : "bg-custom-background-80"
-                } ${reactionDimensions}`}
-              >
-                <span>{renderEmoji(reaction)}</span>
-                <span
-                  className={
-                    reactions.some((r) => r?.actor_details?.id === user?.id && r.reaction === reaction)
-                      ? "text-custom-primary-100"
-                      : ""
-                  }
-                >
-                  {groupedReactions?.[reaction].length}{" "}
-                </span>
-              </button>
-            </Tooltip>
-          );
-      })}
-    </>
+    <EmojiReactionPicker
+      isOpen={isPickerOpen}
+      handleToggle={setIsPickerOpen}
+      onChange={handleEmojiSelect}
+      label={
+        <EmojiReactionGroup
+          reactions={propelReactions}
+          onReactionClick={handleEmojiClick}
+          showAddButton
+          onAddReaction={() => setIsPickerOpen(true)}
+        />
+      }
+      placement="bottom-start"
+    />
   );
 });
