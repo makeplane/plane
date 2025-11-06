@@ -43,6 +43,6 @@ class Command(BaseCommand):
                     comment.description_id = description.id
                     comments_to_update.append(comment)
 
-                IssueComment.objects.bulk_update(comments_to_update, ["description"])
+                IssueComment.objects.bulk_update(comments_to_update, ["description_id"])
 
             self.stdout.write(self.style.SUCCESS("Successfully Copied IssueComment to Description"))
