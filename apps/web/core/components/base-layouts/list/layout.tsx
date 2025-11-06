@@ -17,17 +17,24 @@ export const BaseListLayout = observer(<T extends IBaseLayoutsListItem>(props: I
     onDrop,
     canDrag,
     showEmptyGroups = false,
-    collapsedGroups: externalCollapsedGroups = [],
-    onToggleGroup: externalOnToggleGroup = () => {},
+    collapsedGroups: externalCollapsedGroups,
+    onToggleGroup: externalOnToggleGroup,
     loadMoreItems,
     className,
   } = props;
 
-  const { containerRef, collapsedGroups, onToggleGroup } = useLayoutState({
-    mode: "external",
-    externalCollapsedGroups,
-    externalOnToggleGroup,
-  });
+  const useExternalMode = externalCollapsedGroups !== undefined && externalOnToggleGroup !== undefined;
+  const { containerRef, collapsedGroups, onToggleGroup } = useLayoutState(
+    useExternalMode
+      ? {
+          mode: "external",
+          externalCollapsedGroups,
+          externalOnToggleGroup,
+        }
+      : {
+          mode: "internal",
+        }
+  );
 
   return (
     <div ref={containerRef} className={cn("relative size-full overflow-auto bg-custom-background-90", className)}>
