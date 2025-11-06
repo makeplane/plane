@@ -6,9 +6,10 @@ import { Loader } from "@plane/ui";
 // hooks
 import { useInstance } from "@/hooks/store";
 // components
+import type { Route } from "./+types/page";
 import { InstanceAIForm } from "./form";
 
-const InstanceAIPage = observer(() => {
+const InstanceAIPage = observer<React.FC<Route.ComponentProps>>(() => {
   // store
   const { fetchInstanceConfigurations, formattedConfig } = useInstance();
 
@@ -41,5 +42,7 @@ const InstanceAIPage = observer(() => {
     </>
   );
 });
+
+export const meta: Route.MetaFunction = () => [{ title: "Artificial Intelligence Settings - God Mode" }];
 
 export default InstanceAIPage;
