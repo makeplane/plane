@@ -1,7 +1,5 @@
 "use server";
 
-import IssuesClientLayout from "./client-layout";
-
 type Props = {
   children: React.ReactNode;
   params: {
@@ -50,10 +48,7 @@ export async function generateMetadata({ params }: Props) {
   }
 }
 
-export default async function IssuesLayout(props: Props) {
-  const { children, params } = props;
-  const { anchor } = params;
-
+export default async function IssuesLayout(_props: Props) {
   // return <IssuesClientLayout params={{ anchor }}>{children}</IssuesClientLayout>;
   return null;
 }
