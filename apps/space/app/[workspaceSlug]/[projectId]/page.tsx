@@ -1,16 +1,16 @@
 "use client";
 
 import { redirect } from "react-router";
-import type { ClientLoaderFunctionArgs } from "react-router";
 // plane imports
 import { SitesProjectPublishService } from "@plane/services";
 import type { TProjectPublishSettings } from "@plane/types";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
+import type { Route } from "./+types/page";
 
 const publishService = new SitesProjectPublishService();
 
-export const clientLoader = async ({ params, request }: ClientLoaderFunctionArgs) => {
+export const clientLoader = async ({ params, request }: Route.ClientLoaderArgs) => {
   const { workspaceSlug, projectId } = params;
 
   // Validate required params

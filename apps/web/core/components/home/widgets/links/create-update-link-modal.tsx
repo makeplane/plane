@@ -9,7 +9,6 @@ import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { TLinkEditableFields } from "@plane/types";
-import { TLink } from "@plane/types";
 import { Input, ModalCore } from "@plane/ui";
 import type { TLinkOperations } from "./use-links";
 

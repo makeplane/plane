@@ -24,7 +24,7 @@ import { WorkspaceService } from "@/plane-web/services";
 // service initialization
 const workspaceService = new WorkspaceService();
 
-const WorkspaceInvitationPage = observer(() => {
+function WorkspaceInvitationPage() {
   // router
   const router = useAppRouter();
   // query params
@@ -124,6 +124,6 @@ const WorkspaceInvitationPage = observer(() => {
       </div>
     </AuthenticationWrapper>
   );
-});
+}
 
-export default WorkspaceInvitationPage;
+export default observer(WorkspaceInvitationPage);

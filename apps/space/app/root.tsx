@@ -1,12 +1,11 @@
 import { Links, Meta, Outlet, Scripts } from "react-router";
 import type { LinksFunction } from "react-router";
-// styles
-import "@/styles/globals.css";
 // assets
 import appleTouchIcon from "@/app/assets/favicon/apple-touch-icon.png?url";
 import favicon16 from "@/app/assets/favicon/favicon-16x16.png?url";
 import favicon32 from "@/app/assets/favicon/favicon-32x32.png?url";
 import faviconIco from "@/app/assets/favicon/favicon.ico?url";
+import globalStyles from "@/styles/globals.css?url";
 // types
 import type { Route } from "./+types/root";
 // local imports
@@ -22,6 +21,7 @@ export const links: LinksFunction = () => [
   { rel: "icon", type: "image/png", sizes: "16x16", href: favicon16 },
   { rel: "shortcut icon", href: faviconIco },
   { rel: "manifest", href: `/site.webmanifest.json` },
+  { rel: "stylesheet", href: globalStyles },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -59,6 +59,10 @@ export const meta: Route.MetaFunction = () => [
 
 export default function Root() {
   return <Outlet />;
+}
+
+export function HydrateFallback() {
+  return null;
 }
 
 export function ErrorBoundary() {

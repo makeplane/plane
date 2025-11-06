@@ -1,6 +1,9 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
+// assets
+import AllFiltersImage from "@/app/assets/empty-state/module/all-filters.svg?url";
+import NameFilterImage from "@/app/assets/empty-state/module/name-filter.svg?url";
 // components
 import { ModuleListItem, ModulePeekOverview } from "@/components/modules";
 // ui
@@ -8,9 +11,6 @@ import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module
 // hooks
 import { useModule } from "@/hooks/store/use-module";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
-// assets
-import AllFiltersImage from "@/public/empty-state/module/all-filters.svg";
-import NameFilterImage from "@/public/empty-state/module/name-filter.svg";
 
 export interface IArchivedModulesView {
   workspaceSlug: string;
