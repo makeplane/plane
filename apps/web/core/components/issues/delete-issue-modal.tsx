@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import { PROJECT_ERROR_MESSAGES, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { TDeDupeIssue, TIssue } from "@plane/types";
+import type { TDeDupeIssue, TIssue } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
 // constants

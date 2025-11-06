@@ -5,16 +5,16 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { IWorkspaceIntegration } from "@plane/types";
+import type { IWorkspaceIntegration } from "@plane/types";
+// assets
+import GithubLogo from "@/app/assets/logos/github-square.png?url";
+import SlackLogo from "@/app/assets/services/slack.png?url";
 // components
 import { SelectRepository, SelectChannel } from "@/components/integration";
 // constants
 import { PROJECT_GITHUB_REPOSITORY } from "@/constants/fetch-keys";
-// icons
-import GithubLogo from "@/public/logos/github-square.png";
-import SlackLogo from "@/public/services/slack.png";
+// services
 import { ProjectService } from "@/services/project";
-// types
 
 type Props = {
   integration: IWorkspaceIntegration;

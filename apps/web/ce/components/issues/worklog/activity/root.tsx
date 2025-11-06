@@ -1,7 +1,7 @@
 "use client";
 
-import { FC } from "react";
-import { TIssueActivityComment } from "@plane/types";
+import type { FC } from "react";
+import type { TIssueActivityComment } from "@plane/types";
 
 type TIssueActivityWorklog = {
   workspaceSlug: string;

@@ -48,7 +48,7 @@ export const renderMentionsDropdown =
         component.updateProps(props);
         if (!props.clientRect) return;
         cleanup();
-        cleanup = updateFloatingUIFloaterPosition(props.editor, component.element).cleanup;
+        cleanup = updateFloatingUIFloaterPosition(props.editor, component.element as HTMLElement).cleanup;
       },
       onKeyDown: ({ event }) => {
         if ([...DROPDOWN_NAVIGATION_KEYS, "Escape"].includes(event.key)) {

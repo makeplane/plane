@@ -1,5 +1,5 @@
 // plane imports
-import { TSupportedFilterFieldConfigs, IFilterOption, TFilterValue } from "@plane/types";
+import type { TSupportedFilterFieldConfigs, IFilterOption, TFilterValue } from "@plane/types";
 import { cn } from "@plane/utils";
 // local imports
 import { COMMON_FILTER_ITEM_BORDER_CLASSNAME } from "../../shared";

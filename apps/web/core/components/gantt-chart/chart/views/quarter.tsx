@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane utils
 import { cn } from "@plane/utils";
@@ -6,7 +6,8 @@ import { cn } from "@plane/utils";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 //
 import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "../../constants";
-import { groupMonthsToQuarters, IMonthBlock, IQuarterMonthBlock } from "../../views";
+import type { IMonthBlock, IQuarterMonthBlock } from "../../views";
+import { groupMonthsToQuarters } from "../../views";
 
 export const QuarterChartView: FC<any> = observer(() => {
   const { currentViewData, renderView } = useTimeLineChartStore();

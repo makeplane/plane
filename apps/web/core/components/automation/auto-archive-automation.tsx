@@ -13,7 +13,7 @@ import {
   PROJECT_SETTINGS_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IProject } from "@plane/types";
+import type { IProject } from "@plane/types";
 // ui
 import { CustomSelect, Loader, ToggleSwitch } from "@plane/ui";
 // component

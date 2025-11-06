@@ -1,5 +1,5 @@
 import { difference } from "lodash-es";
-import { IEstimate, IEstimatePoint, IWorkspaceMember, TIssue } from "@plane/types";
+import type { IEstimate, IEstimatePoint, IWorkspaceMember, TIssue } from "@plane/types";
 import { EstimateService } from "@/plane-web/services/project/estimate.service";
 import { CycleService } from "@/services/cycle.service";
 import { IssueLabelService } from "@/services/issue/issue_label.service";
@@ -8,15 +8,8 @@ import { ProjectStateService } from "@/services/project";
 import { WorkspaceService } from "@/services/workspace.service";
 import { persistence } from "../storage.sqlite";
 import { updateIssue } from "./load-issues";
-import {
-  cycleSchema,
-  estimatePointSchema,
-  labelSchema,
-  memberSchema,
-  moduleSchema,
-  Schema,
-  stateSchema,
-} from "./schemas";
+import type { Schema } from "./schemas";
+import { cycleSchema, estimatePointSchema, labelSchema, memberSchema, moduleSchema, stateSchema } from "./schemas";
 import { log } from "./utils";
 
 const stageInserts = async (table: string, schema: Schema, data: any) => {

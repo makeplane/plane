@@ -628,6 +628,8 @@ export default {
   },
   common: {
     all: "全部",
+    no_items_in_this_group: "此群組中沒有項目",
+    drop_here_to_move: "拖放到此處以移動",
     states: "狀態",
     state: "狀態",
     state_groups: "狀態群組",
@@ -1499,6 +1501,10 @@ export default {
         description: "符合篩選條件的工作事項，在這裡追蹤它們。",
       },
     },
+    delete_view: {
+      title: "您確定要刪除此視圖嗎？",
+      content: "如果您確認，您為此視圖選擇的所有排序、篩選和顯示選項 + 布局將被永久刪除，無法恢復。",
+    },
   },
   workspace_settings: {
     label: "工作區設定",
@@ -2129,6 +2135,10 @@ export default {
         title: "沒有符合的檢視",
         description: "沒有檢視符合搜尋條件。\n改為建立新檢視。",
       },
+    },
+    delete_view: {
+      title: "您確定要刪除此視圖嗎？",
+      content: "如果您確認，您為此視圖選擇的所有排序、篩選和顯示選項 + 布局將被永久刪除，無法恢復。",
     },
   },
   project_page: {

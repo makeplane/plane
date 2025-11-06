@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useState, useRef, Fragment, Ref } from "react";
-import { Placement } from "@popperjs/core";
+import type { Ref } from "react";
+import React, { useEffect, useState, useRef, Fragment } from "react";
+import type { Placement } from "@popperjs/core";
 import { Controller, useForm } from "react-hook-form"; // services
 import { usePopper } from "react-popper";
 import { AlertCircle } from "lucide-react";

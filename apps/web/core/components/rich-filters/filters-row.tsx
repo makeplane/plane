@@ -4,11 +4,12 @@ import { ListFilterPlus } from "lucide-react";
 import { Transition } from "@headlessui/react";
 // plane imports
 import { Button } from "@plane/propel/button";
-import { IFilterInstance } from "@plane/shared-state";
-import { TExternalFilter, TFilterProperty } from "@plane/types";
+import type { IFilterInstance } from "@plane/shared-state";
+import type { TExternalFilter, TFilterProperty } from "@plane/types";
 import { cn, EHeaderVariant, Header, Loader } from "@plane/ui";
 // local imports
-import { AddFilterButton, TAddFilterButtonProps } from "./add-filters/button";
+import type { TAddFilterButtonProps } from "./add-filters/button";
+import { AddFilterButton } from "./add-filters/button";
 import { FilterItem } from "./filter-item/root";
 
 export type TFiltersRowProps<K extends TFilterProperty, E extends TExternalFilter> = {

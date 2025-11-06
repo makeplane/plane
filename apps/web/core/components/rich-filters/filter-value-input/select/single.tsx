@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import {
+import type {
   IFilterOption,
   TFilterProperty,
   TSingleSelectFilterFieldConfig,

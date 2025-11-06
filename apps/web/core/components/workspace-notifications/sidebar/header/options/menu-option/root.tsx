@@ -1,12 +1,12 @@
 "use client";
 
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { Check, CheckCircle, Clock } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { ArchiveIcon } from "@plane/propel/icons";
-import { TNotificationFilter } from "@plane/types";
+import type { TNotificationFilter } from "@plane/types";
 import { PopoverMenu } from "@plane/ui";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";

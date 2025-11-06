@@ -987,12 +987,12 @@ class LabelDetailAPIEndpoint(LabelListCreateAPIEndpoint):
         serializer = LabelCreateUpdateSerializer(label, data=request.data, partial=True)
         if serializer.is_valid():
             if (
-                str(request.data.get("external_id"))
-                and (label.external_id != str(request.data.get("external_id")))
+                request.data.get("external_id")
+                and request.data.get("external_source")
                 and Label.objects.filter(
                     project_id=project_id,
                     workspace__slug=slug,
-                    external_source=request.data.get("external_source", label.external_source),
+                    external_source=request.data.get("external_source"),
                     external_id=request.data.get("external_id"),
                 )
                 .exclude(id=pk)
@@ -1695,23 +1695,27 @@ class IssueActivityDetailAPIEndpoint(BaseAPIView):
         Retrieve details of a specific activity.
         Excludes comment, vote, reaction, and draft activities.
         """
-        issue_activities = (
-            IssueActivity.objects.filter(issue_id=issue_id, workspace__slug=slug, project_id=project_id)
-            .filter(
-                ~Q(field__in=["comment", "vote", "reaction", "draft"]),
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
+        issue_activity = (
+            (
+                IssueActivity.objects.filter(issue_id=issue_id, workspace__slug=slug, project_id=project_id, id=pk)
+                .filter(
+                    ~Q(field__in=["comment", "vote", "reaction", "draft"]),
+                    project__project_projectmember__member=self.request.user,
+                    project__project_projectmember__is_active=True,
+                )
+                .filter(project__archived_at__isnull=True)
+                .select_related("actor", "workspace", "issue", "project")
             )
-            .filter(project__archived_at__isnull=True)
-            .select_related("actor", "workspace", "issue", "project")
-        ).order_by(request.GET.get("order_by", "created_at"))
+            .order_by(request.GET.get("order_by", "created_at"))
+            .first()
+        )
 
-        return self.paginate(
-            request=request,
-            queryset=(issue_activities),
-            on_results=lambda issue_activity: IssueActivitySerializer(
-                issue_activity, many=True, fields=self.fields, expand=self.expand
-            ).data,
+        if not issue_activity:
+            return Response({"message": "Activity not found.", "code": "NOT_FOUND"}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response(
+            IssueActivitySerializer(issue_activity, fields=self.fields, expand=self.expand).data,
+            status=status.HTTP_200_OK,
         )
 
 
@@ -1804,7 +1808,7 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
             request.user.id,
             project_id=project_id,
             issue=issue,
-            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value, ROLE.GUEST.value],
             allow_creator=True,
         ):
             return Response(
@@ -1957,10 +1961,10 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
         issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
         # if the request user is creator or admin then delete the attachment
         if not user_has_issue_permission(
-            request.user,
+            request.user.id,
             project_id=project_id,
             issue=issue,
-            allowed_roles=[ROLE.ADMIN.value],
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value, ROLE.GUEST.value],
             allow_creator=True,
         ):
             return Response(
@@ -2030,7 +2034,7 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
         """
         # if the user is part of the project then allow the download
         if not user_has_issue_permission(
-            request.user,
+            request.user.id,
             project_id=project_id,
             issue=None,
             allowed_roles=None,
@@ -2095,10 +2099,10 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
         issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
         # if the user is creator or admin then allow the upload
         if not user_has_issue_permission(
-            request.user,
+            request.user.id,
             project_id=project_id,
             issue=issue,
-            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value, ROLE.GUEST.value],
             allow_creator=True,
         ):
             return Response(

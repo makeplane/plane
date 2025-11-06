@@ -4,7 +4,8 @@ import type { ChartDataType } from "@plane/types";
 // local imports
 import { months } from "../data";
 import { getNumberOfDaysBetweenTwoDates, getNumberOfDaysInMonth } from "./helpers";
-import { getWeeksBetweenTwoDates, IWeekBlock } from "./week-view";
+import type { IWeekBlock } from "./week-view";
+import { getWeeksBetweenTwoDates } from "./week-view";
 
 export interface IMonthBlock {
   today: boolean;

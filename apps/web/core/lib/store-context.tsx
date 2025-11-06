@@ -1,6 +1,7 @@
 "use client";
 
-import { ReactElement, createContext } from "react";
+import type { ReactElement } from "react";
+import { createContext } from "react";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
 

@@ -1,10 +1,10 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EProjectFeatureKey } from "@plane/constants";
-import { ISvgIcons } from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/propel/icons";
 import { BreadcrumbNavigationDropdown, Breadcrumbs } from "@plane/ui";
 // components
 import { SwitcherLabel } from "@/components/common/switcher-label";

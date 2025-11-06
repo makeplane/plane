@@ -16,7 +16,8 @@ import { PageHead } from "@/components/core/page-title";
 import { ProfileSettingContentHeader } from "@/components/profile/profile-setting-content-header";
 import { ProfileSettingContentWrapper } from "@/components/profile/profile-setting-content-wrapper";
 // helpers
-import { authErrorHandler, type EAuthenticationErrorCodes } from "@/helpers/authentication.helper";
+import { authErrorHandler } from "@/helpers/authentication.helper";
+import type { EAuthenticationErrorCodes } from "@/helpers/authentication.helper";
 // hooks
 import { useUser } from "@/hooks/store/user";
 // services
@@ -42,7 +43,7 @@ const defaultShowPassword = {
   confirmPassword: false,
 };
 
-const SecurityPage = observer(() => {
+const SecurityPage = () => {
   // store
   const { data: currentUser, changePassword } = useUser();
   // states
@@ -253,6 +254,6 @@ const SecurityPage = observer(() => {
       </ProfileSettingContentWrapper>
     </>
   );
-});
+};
 
-export default SecurityPage;
+export default observer(SecurityPage);

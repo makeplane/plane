@@ -1,4 +1,4 @@
-import {
+import type {
   DragLocationHistory,
   DropTargetRecord,
   ElementDragPayload,
@@ -8,7 +8,8 @@ import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { useHome } from "@/hooks/store/use-home";
 import { WidgetItem } from "./widget-item";
-import { getInstructionFromPayload, TargetData } from "./widget.helpers";
+import type { TargetData } from "./widget.helpers";
+import { getInstructionFromPayload } from "./widget.helpers";
 
 export const WidgetList = observer(({ workspaceSlug }: { workspaceSlug: string }) => {
   const { orderedWidgets, reorderWidget, toggleWidget } = useHome();

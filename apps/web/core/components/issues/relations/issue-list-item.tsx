@@ -1,12 +1,15 @@
 "use client";
 
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
-import { X, Pencil, Trash, Link as LinkIcon } from "lucide-react";
-// plane imports
+import { Pencil, Trash, Link as LinkIcon } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon } from "@plane/propel/icons";
+// plane imports
 import { Tooltip } from "@plane/propel/tooltip";
-import { EIssueServiceType, TIssue, TIssueServiceType } from "@plane/types";
+import type { TIssue, TIssueServiceType } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 import { ControlLink, CustomMenu } from "@plane/ui";
 import { generateWorkItemLink } from "@plane/utils";
 // hooks
@@ -178,7 +181,7 @@ export const RelationIssueListItem: FC<Props> = observer((props) => {
                 {!disabled && (
                   <CustomMenu.MenuItem onClick={handleRemoveRelation}>
                     <div className="flex items-center gap-2">
-                      <X className="h-3.5 w-3.5" strokeWidth={2} />
+                      <CloseIcon className="h-3.5 w-3.5" strokeWidth={2} />
                       <span>{t("common.actions.remove_relation")}</span>
                     </div>
                   </CustomMenu.MenuItem>

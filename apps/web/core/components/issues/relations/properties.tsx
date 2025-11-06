@@ -1,15 +1,17 @@
 "use client";
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 // components
-import { EIssueServiceType, TIssuePriorities, TIssueServiceType } from "@plane/types";
+import type { TIssuePriorities, TIssueServiceType } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // types
-import { TRelationIssueOperations } from "../issue-detail-widgets/relations/helper";
+import type { TRelationIssueOperations } from "../issue-detail-widgets/relations/helper";
 
 type Props = {
   workspaceSlug: string;

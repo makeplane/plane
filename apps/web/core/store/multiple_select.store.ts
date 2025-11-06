@@ -2,7 +2,7 @@ import { differenceWith, remove, isEqual } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // hooks
-import { TEntityDetails } from "@/hooks/use-multiple-select";
+import type { TEntityDetails } from "@/hooks/use-multiple-select";
 // services
 import { IssueService } from "@/services/issue";
 

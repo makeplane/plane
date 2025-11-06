@@ -233,7 +233,7 @@ class StateDetailAPIEndpoint(BaseAPIView):
             )
 
         # Check for any issues in the state
-        issue_exist = Issue.issue_objects.filter(state=state_id).exists()
+        issue_exist = Issue.objects.filter(state=state_id).exists()
 
         if issue_exist:
             return Response(

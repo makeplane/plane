@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TPageVersion } from "@plane/types";
+import type { TPageVersion } from "@plane/types";
 import { Avatar } from "@plane/ui";
 import { cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // components

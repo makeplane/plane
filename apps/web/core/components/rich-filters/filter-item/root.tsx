@@ -1,8 +1,8 @@
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { IFilterInstance } from "@plane/shared-state";
-import {
+import type { IFilterInstance } from "@plane/shared-state";
+import type {
   SingleOrArray,
   TExternalFilter,
   TFilterProperty,

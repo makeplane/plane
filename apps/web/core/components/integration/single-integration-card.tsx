@@ -10,9 +10,12 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
+import type { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
+// assets
+import GithubLogo from "@/app/assets/services/github.png?url";
+import SlackLogo from "@/app/assets/services/slack.png?url";
 // constants
 import { WORKSPACE_INTEGRATIONS } from "@/constants/fetch-keys";
 // hooks
@@ -21,9 +24,6 @@ import { useUserPermissions } from "@/hooks/store/user";
 import useIntegrationPopup from "@/hooks/use-integration-popup";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
-// icons
-import GithubLogo from "@/public/services/github.png";
-import SlackLogo from "@/public/services/slack.png";
 import { IntegrationService } from "@/services/integrations";
 
 type Props = {

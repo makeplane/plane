@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@plane/constants";
-import { IAppIntegration, IImporterService, IWorkspaceIntegration, IExportServiceResponse } from "@plane/types";
+import type { IAppIntegration, IImporterService, IWorkspaceIntegration, IExportServiceResponse } from "@plane/types";
 import { APIService } from "@/services/api.service";
 // types
 // helper

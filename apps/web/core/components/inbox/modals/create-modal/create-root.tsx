@@ -1,6 +1,7 @@
 "use client";
 
-import { FC, FormEvent, useCallback, useEffect, useRef, useState } from "react";
+import type { FC, FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ETabIndices, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
@@ -8,7 +9,7 @@ import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 import { renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 // helpers

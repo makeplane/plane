@@ -1,6 +1,7 @@
 "use client";
 
-import React, { ReactNode, useMemo, FC } from "react";
+import type { ReactNode, FC } from "react";
+import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Breadcrumbs } from "@plane/ui";

@@ -2,11 +2,12 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { Control, Controller } from "react-hook-form";
+import type { Control } from "react-hook-form";
+import { Controller } from "react-hook-form";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 // types
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 import { getTabIndex } from "@plane/utils";
 // components
 import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";

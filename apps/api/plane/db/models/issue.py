@@ -273,6 +273,21 @@ class IssueRelationChoices(models.TextChoices):
     IMPLEMENTED_BY = "implemented_by", "Implemented By"
 
 
+# Bidirectional relation pairs: (forward, reverse)
+# Defined after class to avoid enum metaclass conflicts
+IssueRelationChoices._RELATION_PAIRS = (
+    ("blocked_by", "blocking"),
+    ("relates_to", "relates_to"),  # symmetric
+    ("duplicate", "duplicate"),  # symmetric
+    ("start_before", "start_after"),
+    ("finish_before", "finish_after"),
+    ("implemented_by", "implements"),
+)
+
+# Generate reverse mapping from pairs
+IssueRelationChoices._REVERSE_MAPPING = {forward: reverse for forward, reverse in IssueRelationChoices._RELATION_PAIRS}
+
+
 class IssueRelation(ProjectBaseModel):
     issue = models.ForeignKey(Issue, related_name="issue_relation", on_delete=models.CASCADE)
     related_issue = models.ForeignKey(Issue, related_name="issue_related", on_delete=models.CASCADE)
@@ -392,7 +407,7 @@ class IssueAttachment(ProjectBaseModel):
 
 
 class IssueActivity(ProjectBaseModel):
-    issue = models.ForeignKey(Issue, on_delete=models.SET_NULL, null=True, related_name="issue_activity")
+    issue = models.ForeignKey(Issue, on_delete=models.DO_NOTHING, null=True, related_name="issue_activity")
     verb = models.CharField(max_length=255, verbose_name="Action", default="created")
     field = models.CharField(max_length=255, verbose_name="Field Name", blank=True, null=True)
     old_value = models.TextField(verbose_name="Old Value", blank=True, null=True)
@@ -402,7 +417,7 @@ class IssueActivity(ProjectBaseModel):
     attachments = ArrayField(models.URLField(), size=10, blank=True, default=list)
     issue_comment = models.ForeignKey(
         "db.IssueComment",
-        on_delete=models.SET_NULL,
+        on_delete=models.DO_NOTHING,
         related_name="issue_comment",
         null=True,
     )

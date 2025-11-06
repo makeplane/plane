@@ -1,4 +1,5 @@
-import { useEffect, FC, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { getAssetIdFromUrl, checkURLValidity } from "@plane/utils";
 // plane ui
@@ -8,7 +9,7 @@ import useKeypress from "@/hooks/use-keypress";
 // plane web components
 import { CreateProjectForm } from "@/plane-web/components/projects/create/root";
 // plane web types
-import { TProject } from "@/plane-web/types/projects";
+import type { TProject } from "@/plane-web/types/projects";
 // services
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();

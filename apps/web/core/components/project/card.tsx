@@ -12,7 +12,8 @@ import { Button } from "@plane/propel/button";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IProject } from "@plane/types";
-import { Avatar, AvatarGroup, ContextMenu, TContextMenuItem, FavoriteStar } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { Avatar, AvatarGroup, ContextMenu, FavoriteStar } from "@plane/ui";
 import { copyUrlToClipboard, cn, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
 import { Logo } from "@/components/common/logo";

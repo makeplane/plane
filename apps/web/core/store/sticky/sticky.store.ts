@@ -2,7 +2,7 @@ import { orderBy, set } from "lodash-es";
 import { observable, action, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { STICKIES_PER_PAGE } from "@plane/constants";
-import { InstructionType, TLoader, TPaginationInfo, TSticky } from "@plane/types";
+import type { InstructionType, TLoader, TPaginationInfo, TSticky } from "@plane/types";
 import { StickyService } from "@/services/sticky.service";
 
 export interface IStickyStore {

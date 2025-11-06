@@ -1,18 +1,16 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { GOD_MODE_URL } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { PlaneLockup } from "@plane/propel/icons";
-// helpers
-// images
 // assets
-import PlaneBackgroundPatternDark from "@/public/auth/background-pattern-dark.svg";
-import PlaneBackgroundPattern from "@/public/auth/background-pattern.svg";
-import PlaneTakeOffImage from "@/public/plane-takeoff.png";
+import PlaneBackgroundPatternDark from "@/app/assets/auth/background-pattern-dark.svg?url";
+import PlaneBackgroundPattern from "@/app/assets/auth/background-pattern.svg?url";
+import PlaneTakeOffImage from "@/app/assets/plane-takeoff.png?url";
 
 export const InstanceNotReady: FC = () => {
   const { resolvedTheme } = useTheme();

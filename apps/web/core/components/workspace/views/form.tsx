@@ -6,15 +6,8 @@ import { Controller, useForm } from "react-hook-form";
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import {
-  EViewAccess,
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  IWorkspaceView,
-  EIssueLayoutTypes,
-  EIssuesStoreType,
-  IIssueFilters,
-} from "@plane/types";
+import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, IWorkspaceView, IIssueFilters } from "@plane/types";
+import { EViewAccess, EIssueLayoutTypes, EIssuesStoreType } from "@plane/types";
 import { Input, TextArea } from "@plane/ui";
 import { getComputedDisplayFilters, getComputedDisplayProperties } from "@plane/utils";
 // components

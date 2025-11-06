@@ -1,6 +1,7 @@
 "use client";
 
-import React, { FC, useRef } from "react";
+import type { FC } from "react";
+import React, { useRef } from "react";
 import { observer } from "mobx-react";
 import { LinkIcon } from "lucide-react";
 // plane imports

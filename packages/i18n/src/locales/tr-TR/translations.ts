@@ -641,6 +641,8 @@ export default {
   },
   common: {
     all: "Tümü",
+    no_items_in_this_group: "Bu grupta öğe yok",
+    drop_here_to_move: "Taşımak için buraya bırakın",
     states: "Durumlar",
     state: "Durum",
     state_groups: "Durum grupları",
@@ -1521,6 +1523,11 @@ export default {
         description: "Filtrelere uyan iş öğeleri burada takip edilebilir.",
       },
     },
+    delete_view: {
+      title: "Bu görünümü silmek istediğinizden emin misiniz?",
+      content:
+        "Onaylarsanız, bu görünüm için seçtiğiniz tüm sıralama, filtreleme ve görüntüleme seçenekleri + düzen kalıcı olarak silinecek ve geri yükleme imkanı olmayacaktır.",
+    },
   },
   workspace_settings: {
     label: "Çalışma Alanı Ayarları",
@@ -2141,6 +2148,11 @@ export default {
         title: "Eşleşen görünüm yok",
         description: "Arama kriterleriyle eşleşen görünüm yok. \n Bunun yerine yeni bir görünüm oluşturun.",
       },
+    },
+    delete_view: {
+      title: "Bu görünümü silmek istediğinizden emin misiniz?",
+      content:
+        "Onaylarsanız, bu görünüm için seçtiğiniz tüm sıralama, filtreleme ve görüntüleme seçenekleri + düzen kalıcı olarak silinecek ve geri yükleme imkanı olmayacaktır.",
     },
   },
   project_page: {

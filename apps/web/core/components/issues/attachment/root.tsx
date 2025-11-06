@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
 import { useAttachmentOperations } from "../issue-detail-widgets/attachments/helper";

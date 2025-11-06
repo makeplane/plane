@@ -1,20 +1,21 @@
 "use client";
 
-import { ReactNode, useRef, useState } from "react";
+import type { ReactNode } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { ChevronDown, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { StateGroupIcon } from "@plane/propel/icons";
-import { IState } from "@plane/types";
+import { StateGroupIcon, ChevronDownIcon } from "@plane/propel/icons";
+import type { IState } from "@plane/types";
 import { ComboDropDown, Spinner } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { DropdownButton } from "@/components/dropdowns/buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "@/components/dropdowns/constants";
-import { TDropdownProps } from "@/components/dropdowns/types";
+import type { TDropdownProps } from "@/components/dropdowns/types";
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
 // plane web imports
@@ -184,7 +185,10 @@ export const WorkItemStateDropdownBase: React.FC<TWorkItemStateDropdownBaseProps
                   <span className="flex-grow truncate text-left">{selectedState?.name ?? t("state")}</span>
                 )}
                 {dropdownArrow && (
-                  <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+                  <ChevronDownIcon
+                    className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)}
+                    aria-hidden="true"
+                  />
                 )}
               </>
             )}

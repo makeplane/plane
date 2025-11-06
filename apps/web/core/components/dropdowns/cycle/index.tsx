@@ -1,11 +1,11 @@
 "use client";
 
-import { ReactNode, useRef, useState } from "react";
+import type { ReactNode } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronDown } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { CycleIcon } from "@plane/propel/icons";
+import { CycleIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { ComboDropDown } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
@@ -15,7 +15,7 @@ import { useDropdown } from "@/hooks/use-dropdown";
 // local components and constants
 import { DropdownButton } from "../buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
-import { TDropdownProps } from "../types";
+import type { TDropdownProps } from "../types";
 import { CycleOptions } from "./cycle-options";
 
 type Props = TDropdownProps & {
@@ -125,7 +125,7 @@ export const CycleDropdown: React.FC<Props> = observer((props) => {
               <span className="max-w-40 flex-grow truncate">{selectedName ?? placeholder}</span>
             )}
             {dropdownArrow && (
-              <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+              <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
             )}
           </DropdownButton>
         </button>

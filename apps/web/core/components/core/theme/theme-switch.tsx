@@ -1,8 +1,9 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 // plane imports
-import { I_THEME_OPTION, THEME_OPTIONS } from "@plane/constants";
+import type { I_THEME_OPTION } from "@plane/constants";
+import { THEME_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // constants
 import { CustomSelect } from "@plane/ui";

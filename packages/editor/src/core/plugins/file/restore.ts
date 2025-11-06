@@ -63,7 +63,6 @@ export const TrackFileRestorationPlugin = (editor: Editor, restoreHandler: TFile
           const src = node.attrs.src;
           const nodeFileSetDetails = NODE_FILE_MAP[nodeType];
           if (!nodeFileSetDetails) return;
-          // @ts-expect-error add proper types for storage
           const extensionFileSetStorage = editor.storage[nodeType]?.[nodeFileSetDetails.fileSetName];
           const wasDeleted = extensionFileSetStorage?.get(src);
           if (!nodeFileSetDetails || !src) return;

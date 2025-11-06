@@ -1,8 +1,10 @@
 "use client";
 
-import { FC, useEffect, useMemo, useRef } from "react";
+import type { FC } from "react";
+import { useEffect, useMemo, useRef } from "react";
 // plane imports
-import { EOnboardingSteps, IWorkspaceMemberInvitation } from "@plane/types";
+import type { IWorkspaceMemberInvitation } from "@plane/types";
+import { EOnboardingSteps } from "@plane/types";
 // local components
 import { ProfileSetupStep } from "./profile";
 import { RoleSetupStep } from "./role";
