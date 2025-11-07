@@ -5,8 +5,10 @@
  */
 export function ensureTrailingSlash(url: string): string {
   try {
-    // Handle relative URLs by creating a URL object with a dummy base
-    const urlObj = new URL(url, "http://dummy.com");
+    const fallbackBaseUrl =
+      typeof window !== "undefined" && window.location.origin ? window.location.origin : "http://dummy.com";
+    // Handle relative URLs by creating a URL object with a fallback base URL
+    const urlObj = new URL(url, fallbackBaseUrl);
 
     // Don't modify root path
     if (urlObj.pathname === "/") {
