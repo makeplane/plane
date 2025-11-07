@@ -45,4 +45,4 @@ class Command(BaseCommand):
 
                 IssueComment.objects.bulk_update(comments_to_update, ["description_id"])
 
-            self.stdout.write(self.style.SUCCESS("Successfully Copied IssueComment to Description"))
+        self.stdout.write(self.style.SUCCESS("Successfully Copied IssueComment to Description"))
