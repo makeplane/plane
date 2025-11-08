@@ -1,0 +1,314 @@
+# Docker Compose configuration for Dokploy deployment
+# This version removes the built-in proxy and relies on Dokploy's Traefik
+# All telemetry and licensing code has been removed
+
+x-db-env: &db-env
+  PGHOST: ${PGHOST:-plane-db}
+  PGDATABASE: ${PGDATABASE:-plane}
+  POSTGRES_USER: ${POSTGRES_USER:-plane}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  POSTGRES_DB: ${POSTGRES_DB:-plane}
+  POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+  PGDATA: ${PGDATA:-/var/lib/postgresql/data}
+
+x-redis-env: &redis-env
+  REDIS_HOST: ${REDIS_HOST:-plane-redis}
+  REDIS_PORT: ${REDIS_PORT:-6379}
+  REDIS_URL: ${REDIS_URL:-redis://plane-redis:6379/}
+
+x-minio-env: &minio-env
+  MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID:-access-key}
+  MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
+
+x-aws-s3-env: &aws-s3-env
+  AWS_REGION: ${AWS_REGION:-}
+  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-access-key}
+  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+  AWS_S3_ENDPOINT_URL: ${AWS_S3_ENDPOINT_URL:-http://plane-minio:9000}
+  AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+
+x-mq-env: &mq-env
+  RABBITMQ_HOST: ${RABBITMQ_HOST:-plane-mq}
+  RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
+  RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-plane}
+  RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+  RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-plane}
+  RABBITMQ_VHOST: ${RABBITMQ_VHOST:-plane}
+
+x-live-env: &live-env
+  API_BASE_URL: ${API_BASE_URL:-http://api:8000}
+  LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY}
+
+x-app-env: &app-env
+  WEB_URL: ${WEB_URL}
+  DEBUG: ${DEBUG:-0}
+  CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
+  GUNICORN_WORKERS: ${GUNICORN_WORKERS:-2}
+  USE_MINIO: ${USE_MINIO:-1}
+  DATABASE_URL: ${DATABASE_URL}
+  SECRET_KEY: ${SECRET_KEY}
+  AMQP_URL: ${AMQP_URL:-amqp://plane:plane@plane-mq:5672/plane}
+  API_KEY_RATE_LIMIT: ${API_KEY_RATE_LIMIT:-60/minute}
+  MINIO_ENDPOINT_SSL: ${MINIO_ENDPOINT_SSL:-0}
+  LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY}
+
+services:
+  # Main web application (Next.js)
+  web:
+    container_name: plane-web
+    build:
+      context: .
+      dockerfile: ./apps/web/Dockerfile.web
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: unless-stopped
+    expose:
+      - "3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.plane-web.rule=Host(`${APP_DOMAIN}`)"
+      - "traefik.http.routers.plane-web.entrypoints=websecure"
+      - "traefik.http.routers.plane-web.tls.certresolver=letsencrypt"
+      - "traefik.http.services.plane-web.loadbalancer.server.port=3000"
+    depends_on:
+      - api
+    networks:
+      - plane-network
+
+  # Admin panel
+  admin:
+    container_name: plane-admin
+    build:
+      context: .
+      dockerfile: ./apps/admin/Dockerfile.admin
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: unless-stopped
+    expose:
+      - "3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.plane-admin.rule=Host(`${APP_DOMAIN}`) && PathPrefix(`/god-mode`)"
+      - "traefik.http.routers.plane-admin.entrypoints=websecure"
+      - "traefik.http.routers.plane-admin.tls.certresolver=letsencrypt"
+      - "traefik.http.services.plane-admin.loadbalancer.server.port=3000"
+    depends_on:
+      - api
+      - web
+    networks:
+      - plane-network
+
+  # Public space
+  space:
+    container_name: plane-space
+    build:
+      context: .
+      dockerfile: ./apps/space/Dockerfile.space
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: unless-stopped
+    expose:
+      - "3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.plane-space.rule=Host(`${APP_DOMAIN}`) && PathPrefix(`/spaces`)"
+      - "traefik.http.routers.plane-space.entrypoints=websecure"
+      - "traefik.http.routers.plane-space.tls.certresolver=letsencrypt"
+      - "traefik.http.services.plane-space.loadbalancer.server.port=3000"
+    depends_on:
+      - api
+      - web
+    networks:
+      - plane-network
+
+  # API backend (Django)
+  api:
+    container_name: plane-api
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: unless-stopped
+    command: ./bin/docker-entrypoint-api.sh
+    expose:
+      - "8000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.plane-api.rule=Host(`${APP_DOMAIN}`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.plane-api.entrypoints=websecure"
+      - "traefik.http.routers.plane-api.tls.certresolver=letsencrypt"
+      - "traefik.http.services.plane-api.loadbalancer.server.port=8000"
+    volumes:
+      - api-logs:/code/plane/logs
+    environment:
+      <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *mq-env]
+    depends_on:
+      - plane-db
+      - plane-redis
+      - plane-mq
+    networks:
+      - plane-network
+
+  # Background worker (Celery)
+  worker:
+    container_name: plane-worker
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: unless-stopped
+    command: ./bin/docker-entrypoint-worker.sh
+    volumes:
+      - worker-logs:/code/plane/logs
+    environment:
+      <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *mq-env]
+    depends_on:
+      - api
+      - plane-db
+      - plane-redis
+      - plane-mq
+    networks:
+      - plane-network
+
+  # Beat worker (Celery scheduler)
+  beat-worker:
+    container_name: plane-beat-worker
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: unless-stopped
+    command: ./bin/docker-entrypoint-beat.sh
+    volumes:
+      - beat-logs:/code/plane/logs
+    environment:
+      <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *mq-env]
+    depends_on:
+      - api
+      - plane-db
+      - plane-redis
+      - plane-mq
+    networks:
+      - plane-network
+
+  # Database migrator (runs once)
+  migrator:
+    container_name: plane-migrator
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: "no"
+    command: ./bin/docker-entrypoint-migrator.sh
+    volumes:
+      - migrator-logs:/code/plane/logs
+    environment:
+      <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *mq-env]
+    depends_on:
+      - plane-db
+      - plane-redis
+    networks:
+      - plane-network
+
+  # Live collaboration server
+  live:
+    container_name: plane-live
+    build:
+      context: .
+      dockerfile: ./apps/live/Dockerfile.live
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: unless-stopped
+    expose:
+      - "3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.plane-live.rule=Host(`${APP_DOMAIN}`) && PathPrefix(`/live`)"
+      - "traefik.http.routers.plane-live.entrypoints=websecure"
+      - "traefik.http.routers.plane-live.tls.certresolver=letsencrypt"
+      - "traefik.http.services.plane-live.loadbalancer.server.port=3000"
+    environment:
+      <<: [*live-env, *redis-env]
+    networks:
+      - plane-network
+
+  # PostgreSQL database
+  plane-db:
+    container_name: plane-db
+    image: postgres:15.7-alpine
+    restart: unless-stopped
+    command: postgres -c 'max_connections=1000'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      <<: *db-env
+    networks:
+      - plane-network
+
+  # Redis cache
+  plane-redis:
+    container_name: plane-redis
+    image: valkey/valkey:7.2.11-alpine
+    restart: unless-stopped
+    volumes:
+      - redisdata:/data
+    networks:
+      - plane-network
+
+  # RabbitMQ message queue
+  plane-mq:
+    container_name: plane-mq
+    image: rabbitmq:3.13.6-management-alpine
+    restart: unless-stopped
+    environment:
+      <<: *mq-env
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - plane-network
+
+  # MinIO object storage (S3-compatible)
+  plane-minio:
+    container_name: plane-minio
+    image: minio/minio:latest
+    restart: unless-stopped
+    command: server /export --console-address ":9090"
+    expose:
+      - "9000"
+      - "9090"
+    labels:
+      - "traefik.enable=true"
+      # MinIO API
+      - "traefik.http.routers.plane-minio-api.rule=Host(`${APP_DOMAIN}`) && PathPrefix(`/minio-api`)"
+      - "traefik.http.routers.plane-minio-api.entrypoints=websecure"
+      - "traefik.http.routers.plane-minio-api.tls.certresolver=letsencrypt"
+      - "traefik.http.services.plane-minio-api.loadbalancer.server.port=9000"
+      # MinIO Console
+      - "traefik.http.routers.plane-minio-console.rule=Host(`minio.${APP_DOMAIN}`)"
+      - "traefik.http.routers.plane-minio-console.entrypoints=websecure"
+      - "traefik.http.routers.plane-minio-console.tls.certresolver=letsencrypt"
+      - "traefik.http.services.plane-minio-console.loadbalancer.server.port=9090"
+    environment:
+      <<: *minio-env
+    volumes:
+      - uploads:/export
+    networks:
+      - plane-network
+
+networks:
+  plane-network:
+    driver: bridge
+
+volumes:
+  pgdata:
+  redisdata:
+  uploads:
+  api-logs:
+  worker-logs:
+  beat-logs:
+  migrator-logs:
+  rabbitmq_data:
