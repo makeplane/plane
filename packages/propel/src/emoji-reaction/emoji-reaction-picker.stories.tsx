@@ -18,6 +18,12 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "Pick Emoji",
+  },
   render() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
@@ -46,6 +52,12 @@ export const Default: Story = {
 };
 
 export const WithCustomLabel: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "Add Reaction",
+  },
   render() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
@@ -71,6 +83,12 @@ export const WithCustomLabel: Story = {
 };
 
 export const InlineReactions: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "Add",
+  },
   render() {
     const [isOpen, setIsOpen] = useState(false);
     const [reactions, setReactions] = useState<EmojiReactionType[]>([
@@ -128,6 +146,12 @@ export const InlineReactions: Story = {
 };
 
 export const DifferentPlacements: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "Placements",
+  },
   render() {
     const [isOpen1, setIsOpen1] = useState(false);
     const [isOpen2, setIsOpen2] = useState(false);
@@ -182,6 +206,12 @@ export const DifferentPlacements: Story = {
 };
 
 export const SearchDisabled: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "No Search",
+  },
   render() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
@@ -207,6 +237,12 @@ export const SearchDisabled: Story = {
 };
 
 export const CustomSearchPlaceholder: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "Custom Search",
+  },
   render() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
@@ -232,6 +268,12 @@ export const CustomSearchPlaceholder: Story = {
 };
 
 export const CloseOnSelectDisabled: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "Select Multiple",
+  },
   render() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedEmojis, setSelectedEmojis] = useState<string[]>([]);
@@ -279,6 +321,12 @@ export const CloseOnSelectDisabled: Story = {
 };
 
 export const InMessageContext: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "Message",
+  },
   render() {
     const [isOpen, setIsOpen] = useState(false);
     const [reactions, setReactions] = useState<EmojiReactionType[]>([

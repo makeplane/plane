@@ -2,9 +2,8 @@ import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, reaction, runInAction } from "mobx";
 // plane imports
 import { EPageAccess } from "@plane/constants";
+import type { TChangeHandlerProps } from "@plane/propel/emoji-icon-picker";
 import type { TDocumentPayload, TLogoProps, TNameDescriptionLoader, TPage } from "@plane/types";
-import type { TChangeHandlerProps } from "@plane/ui";
-import { convertHexEmojiToDecimal } from "@plane/utils";
 // plane web store
 import { ExtendedBasePage } from "@/plane-web/store/pages/extended-base-page";
 import type { RootStore } from "@/plane-web/store/root.store";
@@ -448,8 +447,8 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
       let logoValue = {};
       if (value?.type === "emoji")
         logoValue = {
-          value: convertHexEmojiToDecimal(value.value.unified),
-          url: value.value.imageUrl,
+          value: value.value,
+          url: undefined,
         };
       else if (value?.type === "icon") logoValue = value.value;
 

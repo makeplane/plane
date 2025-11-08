@@ -1,6 +1,6 @@
 import Image from "next/image";
 // assets
-import SomethingWentWrongImage from "public/something-went-wrong.svg";
+import SomethingWentWrongImage from "@/app/assets/something-went-wrong.svg?url";
 
 export const SomethingWentWrongError = () => (
   <div className="grid min-h-screen w-full place-items-center p-6">

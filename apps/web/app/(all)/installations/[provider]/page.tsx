@@ -1,18 +1,19 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 // ui
 import { LogoSpinner } from "@/components/common/logo-spinner";
 // services
 import { AppInstallationService } from "@/services/app_installation.service";
+import type { Route } from "./+types/page";
 
 // services
 const appInstallationService = new AppInstallationService();
 
-export default function AppPostInstallation() {
+export default function AppPostInstallation({ params }: Route.ComponentProps) {
   // params
-  const { provider } = useParams();
+  const { provider } = params;
   // query params
   const searchParams = useSearchParams();
   const installation_id = searchParams.get("installation_id");

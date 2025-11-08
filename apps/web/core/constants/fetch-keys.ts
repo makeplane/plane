@@ -49,13 +49,35 @@ const paramsToKey = (params: any) => {
 
 export const USER_WORKSPACES_LIST = "USER_WORKSPACES_LIST";
 
+export const WORKSPACE_PARTIAL_PROJECTS = (workspaceSlug: string) =>
+  `WORKSPACE_PARTIAL_PROJECTS_${workspaceSlug.toUpperCase()}`;
+
 export const WORKSPACE_MEMBERS = (workspaceSlug: string) => `WORKSPACE_MEMBERS_${workspaceSlug.toUpperCase()}`;
+
+export const WORKSPACE_MODULES = (workspaceSlug: string) => `WORKSPACE_MODULES_${workspaceSlug.toUpperCase()}`;
+
+export const WORKSPACE_CYCLES = (workspaceSlug: string) => `WORKSPACE_CYCLES_${workspaceSlug.toUpperCase()}`;
+
+export const WORKSPACE_LABELS = (workspaceSlug: string) => `WORKSPACE_LABELS_${workspaceSlug.toUpperCase()}`;
+
+export const WORKSPACE_ESTIMATES = (workspaceSlug: string) => `WORKSPACE_ESTIMATES_${workspaceSlug.toUpperCase()}`;
 
 export const WORKSPACE_INVITATION = (invitationId: string) => `WORKSPACE_INVITATION_${invitationId}`;
 
-export const PROJECT_DETAILS = (projectId: string) => `PROJECT_DETAILS_${projectId.toUpperCase()}`;
+export const WORKSPACE_MEMBER_ME_INFORMATION = (workspaceSlug: string) =>
+  `WORKSPACE_MEMBER_ME_INFORMATION_${workspaceSlug.toUpperCase()}`;
 
-export const PROJECT_MEMBERS = (projectId: string) => `PROJECT_MEMBERS_${projectId.toUpperCase()}`;
+export const WORKSPACE_PROJECTS_ROLES_INFORMATION = (workspaceSlug: string) =>
+  `WORKSPACE_PROJECTS_ROLES_INFORMATION_${workspaceSlug.toUpperCase()}`;
+
+export const WORKSPACE_FAVORITE = (workspaceSlug: string) => `WORKSPACE_FAVORITE_${workspaceSlug.toUpperCase()}`;
+
+export const WORKSPACE_STATES = (workspaceSlug: string) => `WORKSPACE_STATES_${workspaceSlug.toUpperCase()}`;
+
+export const WORKSPACE_SIDEBAR_PREFERENCES = (workspaceSlug: string) =>
+  `WORKSPACE_SIDEBAR_PREFERENCES_${workspaceSlug.toUpperCase()}`;
+
+export const WORKSPACE_DB = (workspaceSlug: string) => `WORKSPACE_DB_${workspaceSlug.toUpperCase()}`;
 
 export const PROJECT_GITHUB_REPOSITORY = (projectId: string) => `PROJECT_GITHUB_REPOSITORY_${projectId.toUpperCase()}`;
 
@@ -115,3 +137,31 @@ export const USER_PROFILE_PROJECT_SEGREGATION = (workspaceSlug: string, userId: 
 
 // api-tokens
 export const API_TOKENS_LIST = `API_TOKENS_LIST`;
+
+// project level keys
+export const PROJECT_DETAILS = (workspaceSlug: string, projectId: string) =>
+  `PROJECT_DETAILS_${projectId.toString().toUpperCase()}`;
+
+export const PROJECT_ME_INFORMATION = (workspaceSlug: string, projectId: string) =>
+  `PROJECT_ME_INFORMATION_${projectId.toString().toUpperCase()}`;
+
+export const PROJECT_LABELS = (workspaceSlug: string, projectId: string) =>
+  `PROJECT_LABELS_${projectId.toString().toUpperCase()}`;
+
+export const PROJECT_MEMBERS = (workspaceSlug: string, projectId: string) =>
+  `PROJECT_MEMBERS_${projectId.toString().toUpperCase()}`;
+
+export const PROJECT_STATES = (workspaceSlug: string, projectId: string) =>
+  `PROJECT_STATES_${projectId.toString().toUpperCase()}`;
+
+export const PROJECT_ESTIMATES = (workspaceSlug: string, projectId: string) =>
+  `PROJECT_ESTIMATES_${projectId.toString().toUpperCase()}`;
+
+export const PROJECT_ALL_CYCLES = (workspaceSlug: string, projectId: string) =>
+  `PROJECT_ALL_CYCLES_${projectId.toString().toUpperCase()}`;
+
+export const PROJECT_MODULES = (workspaceSlug: string, projectId: string) =>
+  `PROJECT_MODULES_${projectId.toString().toUpperCase()}`;
+
+export const PROJECT_VIEWS = (workspaceSlug: string, projectId: string) =>
+  `PROJECT_VIEWS_${projectId.toString().toUpperCase()}`;

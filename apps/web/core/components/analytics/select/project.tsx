@@ -1,11 +1,10 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { ProjectIcon } from "@plane/propel/icons";
 // plane package imports
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import { ProjectIcon } from "@plane/propel/icons";
 import { CustomSearchSelect } from "@plane/ui";
-// components
-import { Logo } from "@/components/common/logo";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 
