@@ -28,7 +28,7 @@ class Instance(BaseModel):
     last_checked_at = models.DateTimeField()
     namespace = models.CharField(max_length=255, blank=True, null=True)
     # telemetry and support
-    is_telemetry_enabled = models.BooleanField(default=True)
+    is_telemetry_enabled = models.BooleanField(default=False)
     is_support_required = models.BooleanField(default=True)
     # is setup done
     is_setup_done = models.BooleanField(default=False)

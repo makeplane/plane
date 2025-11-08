@@ -28,10 +28,6 @@ app.conf.beat_schedule = {
         "task": "plane.bgtasks.email_notification_task.stack_email_notification",
         "schedule": crontab(minute="*/5"),  # Every 5 minutes
     },
-    "run-every-6-hours-for-instance-trace": {
-        "task": "plane.license.bgtasks.tracer.instance_traces",
-        "schedule": crontab(hour="*/6", minute=0),  # Every 6 hours
-    },
     # Occurs once every day
     "check-every-day-to-delete-hard-delete": {
         "task": "plane.bgtasks.deletion_task.hard_delete",

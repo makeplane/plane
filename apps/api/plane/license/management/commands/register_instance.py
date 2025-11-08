@@ -82,7 +82,7 @@ class Command(BaseCommand):
             instance.edition = InstanceEdition.PLANE_COMMUNITY.value
             instance.save()
 
-        # Call the instance traces task
-        instance_traces.delay()
+        # Telemetry disabled - no instance traces sent
+        # instance_traces.delay()
 
         return

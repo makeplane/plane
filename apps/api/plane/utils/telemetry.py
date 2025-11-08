@@ -15,37 +15,9 @@ _TRACER_PROVIDER = None
 
 
 def init_tracer():
-    """Initialize OpenTelemetry with proper shutdown handling"""
-    global _TRACER_PROVIDER
-
-    # If already initialized, return existing provider
-    if _TRACER_PROVIDER is not None:
-        return _TRACER_PROVIDER
-
-    # Configure the tracer provider
-    service_name = os.environ.get("SERVICE_NAME", "plane-ce-api")
-    resource = Resource.create({"service.name": service_name})
-    tracer_provider = TracerProvider(resource=resource)
-
-    # Set as global tracer provider
-    trace.set_tracer_provider(tracer_provider)
-
-    # Configure the OTLP exporter
-    otel_endpoint = os.environ.get("OTLP_ENDPOINT", "https://telemetry.plane.so")
-    otlp_exporter = OTLPSpanExporter(endpoint=otel_endpoint)
-    span_processor = BatchSpanProcessor(otlp_exporter)
-    tracer_provider.add_span_processor(span_processor)
-
-    # Initialize Django instrumentation
-    DjangoInstrumentor().instrument()
-
-    # Store provider globally
-    _TRACER_PROVIDER = tracer_provider
-
-    # Register shutdown handler
-    atexit.register(shutdown_tracer)
-
-    return tracer_provider
+    """Initialize OpenTelemetry with proper shutdown handling - DISABLED"""
+    # Telemetry disabled - no external connections to telemetry.plane.so
+    return None
 
 
 def shutdown_tracer():
