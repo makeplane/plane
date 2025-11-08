@@ -16,34 +16,29 @@ type TEstimateListItem = {
 };
 
 export const EstimateListItemButtons: FC<TEstimateListItem> = observer((props) => {
-  const { estimateId, isAdmin, isEditable, onDeleteClick } = props;
+  const { estimateId, isAdmin, isEditable, onEditClick, onDeleteClick } = props;
 
   if (!isAdmin || !isEditable) return <></>;
   return (
     <div className="relative flex items-center gap-1">
-      <Tooltip
-        tooltipContent={
-          <div className="relative flex items-center gap-2">
-            <div>Upgrade</div>
-            <ProIcon className="w-3 h-3" />
-          </div>
-        }
-        position="top"
-      >
+      <Tooltip tooltipContent="Edit" position="top">
         <button
           className="relative flex-shrink-0 w-6 h-6 flex justify-center items-center rounded cursor-pointer transition-colors overflow-hidden hover:bg-custom-background-80"
+          onClick={() => onEditClick && onEditClick(estimateId)}
           data-ph-element={PROJECT_SETTINGS_TRACKER_ELEMENTS.ESTIMATES_LIST_ITEM}
         >
           <Pen size={12} />
         </button>
       </Tooltip>
-      <button
-        className="relative flex-shrink-0 w-6 h-6 flex justify-center items-center rounded cursor-pointer transition-colors overflow-hidden hover:bg-custom-background-80"
-        onClick={() => onDeleteClick && onDeleteClick(estimateId)}
-        data-ph-element={PROJECT_SETTINGS_TRACKER_ELEMENTS.ESTIMATES_LIST_ITEM}
-      >
-        <Trash size={12} />
-      </button>
+      <Tooltip tooltipContent="Delete" position="top">
+        <button
+          className="relative flex-shrink-0 w-6 h-6 flex justify-center items-center rounded cursor-pointer transition-colors overflow-hidden hover:bg-custom-background-80"
+          onClick={() => onDeleteClick && onDeleteClick(estimateId)}
+          data-ph-element={PROJECT_SETTINGS_TRACKER_ELEMENTS.ESTIMATES_LIST_ITEM}
+        >
+          <Trash size={12} />
+        </button>
+      </Tooltip>
     </div>
   );
 });

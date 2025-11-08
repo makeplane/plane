@@ -22,7 +22,6 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 // local imports
-import { UpgradeBadge } from "../upgrade-badge";
 import { getSidebarNavigationItemIcon } from "./helper";
 
 type TExtendedSidebarItemProps = {
@@ -193,11 +192,6 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
             </div>
           </Link>
           <div className="flex items-center gap-2">
-            {item.key === "active_cycles" && (
-              <div className="flex-shrink-0">
-                <UpgradeBadge />
-              </div>
-            )}
             {isPinned ? (
               <Tooltip tooltipContent="Unpin">
                 <PinOff
