@@ -40,6 +40,8 @@ pnpm-debug.log*
 .env.development.local
 .env.test.local
 .env.production.local
+.env.generated
+CREDENTIALS_REFERENCE.md
 
 # Vercel
 .vercel
