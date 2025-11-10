@@ -49,6 +49,7 @@
     "@tiptap/core": "catalog:",
     "@tiptap/extension-blockquote": "^2.22.3",
     "@tiptap/extension-character-count": "^2.22.3",
+    "buffer": "^6.0.3",
     "@tiptap/extension-collaboration": "^2.22.3",
     "@tiptap/extension-emoji": "^2.22.3",
     "@tiptap/extension-image": "^2.22.3",
