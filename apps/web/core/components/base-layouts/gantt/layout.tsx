@@ -2,12 +2,12 @@
 
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-import {
-  type IBaseLayoutsGanttItem,
-  type IBaseLayoutsGanttProps,
-  type TGanttBlockUpdateData,
-  type IBlockUpdateDependencyData,
-  GANTT_TIMELINE_TYPE,
+import { GANTT_TIMELINE_TYPE } from "@plane/types";
+import type {
+  IBaseLayoutsGanttItem,
+  IBaseLayoutsGanttProps,
+  TGanttBlockUpdateData,
+  IBlockUpdateDependencyData,
 } from "@plane/types";
 import { cn } from "@plane/utils";
 import { TimeLineTypeContext } from "@/components/gantt-chart/contexts";
@@ -85,7 +85,7 @@ export const BaseGanttLayout = observer(<T extends IBaseLayoutsGanttItem>(props:
   );
 
   // Map timeline type string to enum value
-  const timelineTypeEnum = useMemo(() => TimelineType[timelineType], [timelineType]);
+  const timelineTypeEnum = useMemo(() => GANTT_TIMELINE_TYPE[timelineType], [timelineType]);
 
   // Date update handler - transforms IBlockUpdateDependencyData to TGanttDateUpdate
   const handleDateUpdate = useCallback(

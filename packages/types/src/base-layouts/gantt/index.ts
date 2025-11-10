@@ -72,6 +72,10 @@ export const GANTT_TIMELINE_TYPE = {
   ...EXTENDED_GANTT_TIMELINE_TYPE,
 } as const;
 
-export type TTimelineType =
-  | (typeof CORE_GANTT_TIMELINE_TYPE)[keyof typeof CORE_GANTT_TIMELINE_TYPE]
-  | (typeof EXTENDED_GANTT_TIMELINE_TYPE)[keyof typeof EXTENDED_GANTT_TIMELINE_TYPE];
+
+export type TTimelineTypeCore = (typeof CORE_GANTT_TIMELINE_TYPE)[keyof typeof CORE_GANTT_TIMELINE_TYPE];
+export type TTimelineTypeExtended =
+  (typeof EXTENDED_GANTT_TIMELINE_TYPE)[keyof typeof EXTENDED_GANTT_TIMELINE_TYPE];
+
+export type TTimelineType = TTimelineTypeCore | TTimelineTypeExtended;
+
