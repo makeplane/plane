@@ -70,6 +70,17 @@ export const WorkspaceLevelWorkItemFiltersHOC = observer((props: TWorkspaceLevel
       isCurrentUserOwner,
     ]
   );
+  const createViewLabel = useMemo(() => props.saveViewOptions?.label, [props.saveViewOptions?.label]);
+  const updateViewLabel = useMemo(() => props.updateViewOptions?.label, [props.updateViewOptions?.label]);
+  const hasAdditionalChanges = useMemo(
+    () =>
+      !isEqual(initialWorkItemFilters?.displayFilters, viewDetails?.display_filters) ||
+      !isEqual(
+        removeNillKeys(initialWorkItemFilters?.displayProperties),
+        removeNillKeys(viewDetails?.display_properties)
+      ),
+    [initialWorkItemFilters, viewDetails]
+  );
 
   const getDefaultViewDetailPayload: () => Partial<IWorkspaceView> = useCallback(
     () => ({
@@ -87,6 +98,17 @@ export const WorkspaceLevelWorkItemFiltersHOC = observer((props: TWorkspaceLevel
       display_properties: cloneDeep(initialWorkItemFilters?.displayProperties),
     }),
     [initialWorkItemFilters]
+  );
+
+  const handleViewSave = useCallback(
+    (expression: TWorkItemFilterExpression) => {
+      setCreateViewPayload({
+        ...getDefaultViewDetailPayload(),
+        ...getViewFilterPayload(expression),
+      });
+      setIsCreateViewModalOpen(true);
+    },
+    [getDefaultViewDetailPayload, getViewFilterPayload]
   );
 
   const handleViewUpdate = useCallback(
@@ -140,6 +162,25 @@ export const WorkspaceLevelWorkItemFiltersHOC = observer((props: TWorkspaceLevel
     [viewDetails, updateGlobalView, workspaceSlug, getViewFilterPayload]
   );
 
+  const saveViewOptions = useMemo(
+    () => ({
+      label: createViewLabel,
+      isDisabled: !canCreateView,
+      onViewSave: handleViewSave,
+    }),
+    [createViewLabel, canCreateView, handleViewSave]
+  );
+
+  const updateViewOptions = useMemo(
+    () => ({
+      label: updateViewLabel,
+      isDisabled: !canUpdateView,
+      hasAdditionalChanges,
+      onViewUpdate: handleViewUpdate,
+    }),
+    [updateViewLabel, canUpdateView, hasAdditionalChanges, handleViewUpdate]
+  );
+
   return (
     <>
       <CreateUpdateWorkspaceViewModal
@@ -155,28 +196,8 @@ export const WorkspaceLevelWorkItemFiltersHOC = observer((props: TWorkspaceLevel
         memberIds={getWorkspaceMemberIds(workspaceSlug)}
         labelIds={getWorkspaceLabelIds(workspaceSlug)}
         projectIds={joinedProjectIds}
-        saveViewOptions={{
-          label: props.saveViewOptions?.label,
-          isDisabled: !canCreateView,
-          onViewSave: (expression) => {
-            setCreateViewPayload({
-              ...getDefaultViewDetailPayload(),
-              ...getViewFilterPayload(expression),
-            });
-            setIsCreateViewModalOpen(true);
-          },
-        }}
-        updateViewOptions={{
-          label: props.updateViewOptions?.label,
-          isDisabled: !canUpdateView,
-          hasAdditionalChanges:
-            !isEqual(initialWorkItemFilters?.displayFilters, viewDetails?.display_filters) ||
-            !isEqual(
-              removeNillKeys(initialWorkItemFilters?.displayProperties),
-              removeNillKeys(viewDetails?.display_properties)
-            ),
-          onViewUpdate: handleViewUpdate,
-        }}
+        saveViewOptions={saveViewOptions}
+        updateViewOptions={updateViewOptions}
       >
         {children}
       </WorkItemFiltersHOC>
