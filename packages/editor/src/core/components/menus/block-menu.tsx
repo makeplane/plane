@@ -8,8 +8,10 @@ import {
   useInteractions,
   FloatingPortal,
 } from "@floating-ui/react";
+import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
+import { TableMap } from "@tiptap/pm/tables";
 import type { Editor } from "@tiptap/react";
-import { Copy, LucideIcon, Trash2 } from "lucide-react";
+import { Copy, LucideIcon, Trash2, MoveHorizontal } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@plane/utils";
 // constants
@@ -144,6 +146,77 @@ export const BlockMenu = (props: Props) => {
       onClick: (_e) => {
         // Execute the delete action
         editor.chain().deleteSelection().focus().run();
+      },
+    },
+    {
+      icon: MoveHorizontal,
+      key: "full-width",
+      label: "Full width",
+      isDisabled: !editor.isActive(CORE_EXTENSIONS.TABLE),
+      onClick: () => {
+        try {
+          const { state, view } = editor;
+
+          // Find table node
+          let tableNode: ProseMirrorNode | null = null;
+          let tablePos = -1;
+
+          state.doc.nodesBetween(
+            Math.max(0, state.selection.from - 1),
+            Math.min(state.doc.content.size, state.selection.to + 1),
+            (node, pos) => {
+              if (node.type.name === CORE_EXTENSIONS.TABLE) {
+                tableNode = node;
+                tablePos = pos;
+                return false;
+              }
+            }
+          );
+
+          if (!tableNode) return;
+
+          // Get content width
+          const editorContainer = view.dom.closest(".editor-container");
+          if (!editorContainer) return;
+
+          const contentWidthVar = getComputedStyle(editorContainer).getPropertyValue("--editor-content-width").trim();
+          if (!contentWidthVar) return;
+
+          const contentWidth = Math.floor(parseFloat(contentWidthVar));
+          const map = TableMap.get(tableNode);
+          if (map.width === 0) return;
+
+          const equalWidth = Math.floor(contentWidth / map.width);
+
+          // Update all cell widths
+          const tr = state.tr;
+          const tableStart = tablePos + 1;
+          const updatedCells = new Set<number>();
+
+          for (let row = 0; row < map.height; row++) {
+            for (let col = 0; col < map.width; col++) {
+              const cellIndex = row * map.width + col;
+              if (updatedCells.has(cellIndex)) continue;
+
+              const cell = state.doc.nodeAt(tableStart + map.map[cellIndex]);
+              if (!cell) continue;
+
+              const colspan = cell.attrs.colspan || 1;
+              tr.setNodeMarkup(tableStart + map.map[cellIndex], null, {
+                ...cell.attrs,
+                colwidth: [equalWidth * colspan],
+              });
+
+              for (let spanCol = 0; spanCol < colspan; spanCol++) {
+                updatedCells.add(cellIndex + spanCol);
+              }
+            }
+          }
+
+          view.dispatch(tr);
+        } catch (error) {
+          console.error("Error setting table to full width:", error);
+        }
       },
     },
     {
