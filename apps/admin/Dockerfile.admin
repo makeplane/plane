@@ -66,7 +66,7 @@ COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm fetch --store-dir=/pnpm/store
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
-RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm install --offline --frozen-lockfile --store-dir=/pnpm/store --prod=false
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store CI=true pnpm install --offline --frozen-lockfile --store-dir=/pnpm/store --prod=false
 
 # Build only the admin package
 RUN pnpm turbo run build --filter=admin
