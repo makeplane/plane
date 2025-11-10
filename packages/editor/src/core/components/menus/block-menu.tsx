@@ -157,21 +157,22 @@ export const BlockMenu = (props: Props) => {
         try {
           const { state, view } = editor;
 
-          // Find table node
           let tableNode: ProseMirrorNode | null = null;
           let tablePos = -1;
 
-          state.doc.nodesBetween(
-            Math.max(0, state.selection.from - 1),
-            Math.min(state.doc.content.size, state.selection.to + 1),
-            (node, pos) => {
-              if (node.type.name === CORE_EXTENSIONS.TABLE) {
-                tableNode = node;
+          const selectedNode = state.selection.content().content.firstChild;
+
+          if (selectedNode?.type.name === CORE_EXTENSIONS.TABLE) {
+            tableNode = selectedNode;
+
+            const doc = state.doc;
+            doc.descendants((node, pos) => {
+              if (node === selectedNode) {
                 tablePos = pos;
                 return false;
               }
-            }
-          );
+            });
+          }
 
           if (!tableNode) return;
 
@@ -193,6 +194,7 @@ export const BlockMenu = (props: Props) => {
           const tr = state.tr;
           const tableStart = tablePos + 1;
           const updatedCells = new Set<number>();
+          console.log("test ");
 
           for (let row = 0; row < map.height; row++) {
             for (let col = 0; col < map.width; col++) {
