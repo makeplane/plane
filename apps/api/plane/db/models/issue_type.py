@@ -18,6 +18,7 @@ class IssueType(BaseModel):
     level = models.FloatField(default=0)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
+    is_global = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Issue Type"
