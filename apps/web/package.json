@@ -96,6 +96,6 @@
     "prettier": "^3.2.5",
     "typescript": "catalog:",
     "vite-tsconfig-paths": "^5.1.4",
-    "vite": "7.1.7"
+    "vite": "catalog:"
   }
 }

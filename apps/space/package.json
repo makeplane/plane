@@ -73,7 +73,7 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "typescript": "catalog:",
-    "vite": "7.1.7",
+    "vite": "catalog:",
     "vite-tsconfig-paths": "^5.1.4"
   }
 }
