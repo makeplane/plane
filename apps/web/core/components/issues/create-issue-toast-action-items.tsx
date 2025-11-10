@@ -1,5 +1,6 @@
 "use client";
-import React, { FC, useState } from "react";
+import type { FC } from "react";
+import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // plane imports

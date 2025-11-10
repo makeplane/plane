@@ -1,10 +1,11 @@
-import { FC, useEffect, useRef, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { GripVertical, Pencil, Trash2 } from "lucide-react";
 // plane imports
 import { EEstimateSystem, estimateCount } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
+import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
 import { convertMinutesToHoursMinutesString } from "@plane/utils";
 // plane web imports
 import { EstimatePointDelete } from "@/plane-web/components/estimates";

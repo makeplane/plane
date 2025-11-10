@@ -7,15 +7,16 @@ import useSWR from "swr";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Loader, ToggleSwitch } from "@plane/ui";
 // components
+import GitlabLogo from "@/app/assets/logos/gitlab-logo.svg?url";
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 // hooks
 import { useInstance } from "@/hooks/store";
 // icons
-import GitlabLogo from "@/public/logos/gitlab-logo.svg";
 // local components
+import type { Route } from "./+types/page";
 import { InstanceGitlabConfigForm } from "./form";
 
-const InstanceGitlabAuthenticationPage = observer(() => {
+const InstanceGitlabAuthenticationPage = observer<React.FC<Route.ComponentProps>>(() => {
   // store
   const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
   // state
@@ -38,7 +39,7 @@ const InstanceGitlabAuthenticationPage = observer(() => {
       loading: "Saving Configuration...",
       success: {
         title: "Configuration saved",
-        message: () => `GitLab authentication is now ${value ? "active" : "disabled"}.`,
+        message: () => `GitLab authentication is now ${value === "1" ? "active" : "disabled"}.`,
       },
       error: {
         title: "Error",
@@ -98,5 +99,7 @@ const InstanceGitlabAuthenticationPage = observer(() => {
     </>
   );
 });
+
+export const meta: Route.MetaFunction = () => [{ title: "GitLab Authentication - God Mode" }];
 
 export default InstanceGitlabAuthenticationPage;

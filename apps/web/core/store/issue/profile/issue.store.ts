@@ -1,6 +1,6 @@
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
 // base class
-import {
+import type {
   TIssue,
   TLoader,
   IssuePaginationOptions,
@@ -13,9 +13,10 @@ import { UserService } from "@/services/user.service";
 
 // services
 // types
-import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
-import { IIssueRootStore } from "../root.store";
-import { IProfileIssuesFilter } from "./filter.store";
+import type { IBaseIssuesStore } from "../helpers/base-issues.store";
+import { BaseIssuesStore } from "../helpers/base-issues.store";
+import type { IIssueRootStore } from "../root.store";
+import type { IProfileIssuesFilter } from "./filter.store";
 
 export interface IProfileIssues extends IBaseIssuesStore {
   // observable

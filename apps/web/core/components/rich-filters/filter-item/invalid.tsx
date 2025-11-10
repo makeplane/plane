@@ -2,12 +2,12 @@ import React from "react";
 import { observer } from "mobx-react";
 import { CircleAlert } from "lucide-react";
 // plane imports
-import { TExternalFilter, TFilterProperty } from "@plane/types";
+import type { TExternalFilter, TFilterProperty } from "@plane/types";
 // local imports
 import { FilterItemCloseButton } from "./close-button";
 import { FilterItemContainer } from "./container";
 import { FilterItemProperty } from "./property";
-import { IFilterItemProps } from "./root";
+import type { IFilterItemProps } from "./root";
 
 export const InvalidFilterItem = observer(
   <P extends TFilterProperty, E extends TExternalFilter>(props: IFilterItemProps<P, E>) => {

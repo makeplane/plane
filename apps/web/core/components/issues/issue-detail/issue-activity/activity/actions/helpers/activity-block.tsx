@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, ReactNode } from "react";
+import type { FC, ReactNode } from "react";
 import { Network } from "lucide-react";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";

@@ -1,8 +1,8 @@
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
 // constants
 import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon } from "@plane/propel/icons";
 
 type Props = {
   handleRemove: (val: string) => void;
@@ -27,7 +27,7 @@ export const AppliedAccessFilters: React.FC<Props> = observer((props) => {
                 className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
                 onClick={() => handleRemove(status)}
               >
-                <X size={10} strokeWidth={2} />
+                <CloseIcon height={10} width={10} strokeWidth={2} />
               </button>
             )}
           </div>

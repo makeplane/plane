@@ -1,15 +1,18 @@
 "use client";
 
-import { Dispatch, MouseEvent, MutableRefObject, SetStateAction, useRef, useState } from "react";
+import type { Dispatch, MouseEvent, MutableRefObject, SetStateAction } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronRight, MoreHorizontal } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import { SPREADSHEET_SELECT_GROUP } from "@plane/constants";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
+import { ChevronRightIcon } from "@plane/propel/icons";
 // types
 import { Tooltip } from "@plane/propel/tooltip";
-import { EIssueServiceType, IIssueDisplayProperties, TIssue } from "@plane/types";
+import type { IIssueDisplayProperties, TIssue } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // ui
 import { ControlLink, Row } from "@plane/ui";
 import { cn, generateWorkItemLink } from "@plane/utils";
@@ -22,12 +25,12 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // local components
-import { TRenderQuickActions } from "../list/list-view-types";
+import type { TRenderQuickActions } from "../list/list-view-types";
 import { isIssueNew } from "../utils";
 import { IssueColumn } from "./issue-column";
 
@@ -333,7 +336,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
                     className="grid place-items-center size-4 rounded-sm text-custom-text-400 hover:text-custom-text-300"
                     onClick={handleToggleExpand}
                   >
-                    <ChevronRight
+                    <ChevronRightIcon
                       className={cn("size-4", {
                         "rotate-90": isExpanded,
                       })}

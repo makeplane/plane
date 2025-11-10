@@ -1,4 +1,5 @@
-import { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 // plane imports
@@ -13,15 +14,8 @@ import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 //
 import { SIDEBAR_WIDTH } from "../constants";
 import { currentViewDataWithView } from "../data";
-import {
-  getNumberOfDaysBetweenTwoDates,
-  IMonthBlock,
-  IMonthView,
-  IWeekBlock,
-  monthView,
-  quarterView,
-  weekView,
-} from "../views";
+import type { IMonthBlock, IMonthView, IWeekBlock } from "../views";
+import { getNumberOfDaysBetweenTwoDates, monthView, quarterView, weekView } from "../views";
 
 type ChartViewRootProps = {
   border: boolean;

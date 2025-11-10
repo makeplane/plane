@@ -1,9 +1,10 @@
 "use client";
-import { FC, Fragment } from "react";
+import type { FC } from "react";
+import { Fragment } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TCycleEstimateType } from "@plane/types";
+import type { TCycleEstimateType } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { getDate } from "@plane/utils";
 // components

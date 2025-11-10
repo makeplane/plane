@@ -70,6 +70,7 @@ export const EmojiReactionPicker: React.FC<EmojiReactionPickerProps> = (props) =
         side={finalSide}
         align={finalAlign}
         sideOffset={8}
+        data-prevent-outside-click="true"
       >
         <div className="h-80 overflow-hidden overflow-y-auto">
           <EmojiRoot

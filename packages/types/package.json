@@ -1,6 +1,6 @@
 {
   "name": "@plane/types",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "AGPL-3.0",
   "private": true,
   "exports": {

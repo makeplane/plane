@@ -1,14 +1,15 @@
 "use client";
 
-import { CSSProperties, FC } from "react";
+import type { CSSProperties, FC } from "react";
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { clone, isNil, pull, uniq, concat } from "lodash-es";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
 // plane types
 import { EIconSize, ISSUE_PRIORITIES, STATE_GROUPS } from "@plane/constants";
-import { CycleGroupIcon, CycleIcon, ISvgIcons, ModuleIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
-import {
-  EIssuesStoreType,
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import type { ISvgIcons } from "@plane/propel/icons";
+import { CycleGroupIcon, CycleIcon, ModuleIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
+import type {
   GroupByColumnTypes,
   IGroupByColumn,
   TCycleGroups,
@@ -22,11 +23,10 @@ import {
   IIssueDisplayFilterOptions,
   TGetColumns,
 } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 // plane ui
 import { Avatar } from "@plane/ui";
 import { renderFormattedDate, getFileURL } from "@plane/utils";
-// components
-import { Logo } from "@/components/common/logo";
 // helpers
 // store
 import { store } from "@/lib/store-context";

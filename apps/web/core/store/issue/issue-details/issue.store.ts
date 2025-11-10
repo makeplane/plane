@@ -1,13 +1,14 @@
 import { makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { EIssueServiceType, TIssue, TIssueServiceType } from "@plane/types";
+import type { TIssue, TIssueServiceType } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
 // services
 import { IssueArchiveService, WorkspaceDraftService, IssueService } from "@/services/issue";
 // types
-import { IIssueDetail } from "./root.store";
+import type { IIssueDetail } from "./root.store";
 
 export interface IIssueStoreActions {
   // actions

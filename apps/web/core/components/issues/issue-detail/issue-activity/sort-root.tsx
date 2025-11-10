@@ -1,9 +1,10 @@
 "use client";
 
-import { FC, memo } from "react";
+import type { FC } from "react";
+import { memo } from "react";
 import { ArrowUpWideNarrow, ArrowDownWideNarrow } from "lucide-react";
 // plane package imports
-import { E_SORT_ORDER } from "@plane/constants";
+import type { E_SORT_ORDER } from "@plane/constants";
 import { getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 

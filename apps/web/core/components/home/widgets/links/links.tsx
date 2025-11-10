@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // computed
 import { ContentOverflowWrapper } from "@/components/core/content-overflow-HOC";
@@ -6,7 +6,7 @@ import { useHome } from "@/hooks/store/use-home";
 import { LinksEmptyState } from "../empty-states/links";
 import { EWidgetKeys, WidgetLoader } from "../loaders";
 import { ProjectLinkDetail } from "./link-detail";
-import { TLinkOperations } from "./use-links";
+import type { TLinkOperations } from "./use-links";
 
 export type TLinkOperationsModal = Exclude<TLinkOperations, "create">;
 

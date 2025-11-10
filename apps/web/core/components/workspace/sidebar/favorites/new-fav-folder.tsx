@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import type { SubmitHandler } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 // plane helpers

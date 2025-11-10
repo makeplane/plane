@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@plane/constants";
-import { TTimezones } from "@plane/types";
+import type { TTimezones } from "@plane/types";
 // helpers
 // api services
 import { APIService } from "@/services/api.service";

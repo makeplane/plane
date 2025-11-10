@@ -1,6 +1,7 @@
 import { useRouter } from "next/navigation";
 // types
-import { EIssueServiceType, TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // helpers
 import { generateWorkItemLink } from "@plane/utils";
 // hooks

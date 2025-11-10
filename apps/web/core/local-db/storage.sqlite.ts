@@ -2,7 +2,7 @@ import * as Comlink from "comlink";
 import { set } from "lodash-es";
 // plane
 import { EIssueGroupBYServerToProperty } from "@plane/constants";
-import { TIssue, TIssueParams } from "@plane/types";
+import type { TIssue, TIssueParams } from "@plane/types";
 // lib
 import { rootStore } from "@/lib/store-context";
 // services

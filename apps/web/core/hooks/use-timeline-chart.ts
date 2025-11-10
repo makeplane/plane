@@ -2,7 +2,7 @@ import { useContext } from "react";
 // lib
 import { StoreContext } from "@/lib/store-context";
 // Plane-web
-import { IBaseTimelineStore } from "@/plane-web/store/timeline/base-timeline.store";
+import type { IBaseTimelineStore } from "@/plane-web/store/timeline/base-timeline.store";
 //
 import { ETimeLineTypeType, useTimeLineType } from "../components/gantt-chart/contexts";
 

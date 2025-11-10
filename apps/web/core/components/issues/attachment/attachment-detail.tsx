@@ -1,9 +1,11 @@
 "use client";
 
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { AlertCircle, X } from "lucide-react";
+import { AlertCircle } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
 import {
@@ -25,7 +27,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
-import { TAttachmentHelpers } from "../issue-detail-widgets/attachments/helper";
+import type { TAttachmentHelpers } from "../issue-detail-widgets/attachments/helper";
 
 type TAttachmentOperationsRemoveModal = Exclude<TAttachmentHelpers, "create">;
 
@@ -97,7 +99,7 @@ export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = observer((pro
 
         {!disabled && (
           <button type="button" onClick={() => setIsDeleteIssueAttachmentModalOpen(true)}>
-            <X className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" />
+            <CloseIcon className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" />
           </button>
         )}
       </div>

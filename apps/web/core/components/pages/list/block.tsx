@@ -1,18 +1,20 @@
 "use client";
 
-import { FC, useRef } from "react";
+import type { FC } from "react";
+import { useRef } from "react";
 import { observer } from "mobx-react";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { PageIcon } from "@plane/propel/icons";
 // plane imports
 import { getPageName } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
 import { ListItem } from "@/components/core/list";
 import { BlockItemAction } from "@/components/pages/list/block-item-action";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web hooks
-import { EPageStoreType, usePage } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
+import { usePage } from "@/plane-web/hooks/store";
 
 type TPageListBlock = {
   pageId: string;

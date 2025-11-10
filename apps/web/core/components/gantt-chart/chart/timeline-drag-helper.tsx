@@ -1,4 +1,4 @@
-import { RefObject } from "react";
+import type { RefObject } from "react";
 import { observer } from "mobx-react";
 // hooks
 import { useAutoScroller } from "@/hooks/use-auto-scroller";

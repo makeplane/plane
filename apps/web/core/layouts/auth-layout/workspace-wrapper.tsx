@@ -1,11 +1,10 @@
 "use client";
 
-import { FC, ReactNode } from "react";
+import type { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useTheme } from "next-themes";
 import useSWR from "swr";
 import useSWRImmutable from "swr/immutable";
 // ui
@@ -17,8 +16,21 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 // components
 import { cn } from "@plane/utils";
+// assets
+import WorkSpaceNotAvailable from "@/app/assets/workspace/workspace-not-available.png?url";
+// components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 // hooks
+import {
+  WORKSPACE_MEMBERS,
+  WORKSPACE_PARTIAL_PROJECTS,
+  WORKSPACE_MEMBER_ME_INFORMATION,
+  WORKSPACE_PROJECTS_ROLES_INFORMATION,
+  WORKSPACE_FAVORITE,
+  WORKSPACE_STATES,
+  WORKSPACE_SIDEBAR_PREFERENCES,
+  WORKSPACE_DB,
+} from "@/constants/fetch-keys";
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
@@ -28,10 +40,6 @@ import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
-// images
-import PlaneBlackLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
-import PlaneWhiteLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
-import WorkSpaceNotAvailable from "@/public/workspace/workspace-not-available.png";
 
 interface IWorkspaceAuthWrapper {
   children: ReactNode;
@@ -42,8 +50,6 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   const { children, isLoading: isParentLoading = false } = props;
   // router params
   const { workspaceSlug } = useParams();
-  // next themes
-  const { resolvedTheme } = useTheme();
   // store hooks
   const { signOut, data: currentUser } = useUser();
   const { fetchPartialProjects } = useProject();
@@ -61,7 +67,6 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-  const planeLogo = resolvedTheme === "dark" ? PlaneWhiteLogo : PlaneBlackLogo;
   const allWorkspaces = workspaces ? Object.values(workspaces) : undefined;
   const currentWorkspace =
     (allWorkspaces && allWorkspaces.find((workspace) => workspace?.slug === workspaceSlug)) || undefined;
@@ -69,32 +74,32 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
 
   // fetching user workspace information
   useSWR(
-    workspaceSlug && currentWorkspace ? `WORKSPACE_MEMBER_ME_INFORMATION_${workspaceSlug}` : null,
+    workspaceSlug && currentWorkspace ? WORKSPACE_MEMBER_ME_INFORMATION(workspaceSlug.toString()) : null,
     workspaceSlug && currentWorkspace ? () => fetchUserWorkspaceInfo(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   useSWR(
-    workspaceSlug && currentWorkspace ? `WORKSPACE_PROJECTS_ROLES_INFORMATION_${workspaceSlug}` : null,
+    workspaceSlug && currentWorkspace ? WORKSPACE_PROJECTS_ROLES_INFORMATION(workspaceSlug.toString()) : null,
     workspaceSlug && currentWorkspace ? () => fetchUserProjectPermissions(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // fetching workspace projects
   useSWR(
-    workspaceSlug && currentWorkspace ? `WORKSPACE_PARTIAL_PROJECTS_${workspaceSlug}` : null,
+    workspaceSlug && currentWorkspace ? WORKSPACE_PARTIAL_PROJECTS(workspaceSlug.toString()) : null,
     workspaceSlug && currentWorkspace ? () => fetchPartialProjects(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetch workspace members
   useSWR(
-    workspaceSlug && currentWorkspace ? `WORKSPACE_MEMBERS_${workspaceSlug}` : null,
+    workspaceSlug && currentWorkspace ? WORKSPACE_MEMBERS(workspaceSlug.toString()) : null,
     workspaceSlug && currentWorkspace ? () => fetchWorkspaceMembers(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetch workspace favorite
   useSWR(
     workspaceSlug && currentWorkspace && canPerformWorkspaceMemberActions
-      ? `WORKSPACE_FAVORITE_${workspaceSlug}`
+      ? WORKSPACE_FAVORITE(workspaceSlug.toString())
       : null,
     workspaceSlug && currentWorkspace && canPerformWorkspaceMemberActions
       ? () => fetchFavorite(workspaceSlug.toString())
@@ -103,21 +108,21 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   );
   // fetch workspace states
   useSWR(
-    workspaceSlug ? `WORKSPACE_STATES_${workspaceSlug}` : null,
+    workspaceSlug ? WORKSPACE_STATES(workspaceSlug.toString()) : null,
     workspaceSlug ? () => fetchWorkspaceStates(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // fetch workspace sidebar preferences
   useSWR(
-    workspaceSlug ? `WORKSPACE_SIDEBAR_PREFERENCES_${workspaceSlug}` : null,
+    workspaceSlug ? WORKSPACE_SIDEBAR_PREFERENCES(workspaceSlug.toString()) : null,
     workspaceSlug ? () => fetchSidebarNavigationPreferences(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // initialize the local database
   const { isLoading: isDBInitializing } = useSWRImmutable(
-    workspaceSlug ? `WORKSPACE_DB_${workspaceSlug}` : null,
+    workspaceSlug ? WORKSPACE_DB(workspaceSlug.toString()) : null,
     workspaceSlug
       ? async () => {
           // persistence.reset();

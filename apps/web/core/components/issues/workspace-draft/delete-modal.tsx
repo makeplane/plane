@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { PROJECT_ERROR_MESSAGES, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { TWorkspaceDraftIssue } from "@plane/types";
+import type { TWorkspaceDraftIssue } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
 // constants

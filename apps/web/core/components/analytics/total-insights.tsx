@@ -2,9 +2,10 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { IInsightField, ANALYTICS_INSIGHTS_FIELDS } from "@plane/constants";
+import type { IInsightField } from "@plane/constants";
+import { ANALYTICS_INSIGHTS_FIELDS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IAnalyticsResponse, TAnalyticsTabsBase } from "@plane/types";
+import type { IAnalyticsResponse, TAnalyticsTabsBase } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";

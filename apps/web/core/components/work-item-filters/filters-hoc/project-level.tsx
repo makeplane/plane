@@ -4,7 +4,8 @@ import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissionsLevel, PROJECT_VIEW_TRACKER_EVENTS } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { EUserProjectRoles, EViewAccess, IProjectView, TWorkItemFilterExpression } from "@plane/types";
+import type { IProjectView, TWorkItemFilterExpression } from "@plane/types";
+import { EUserProjectRoles, EViewAccess } from "@plane/types";
 // components
 import { removeNillKeys } from "@/components/issues/issue-layouts/utils";
 import { CreateUpdateProjectViewModal } from "@/components/views/modal";
@@ -22,7 +23,7 @@ import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { getAdditionalProjectLevelFiltersHOCProps } from "@/plane-web/helpers/work-item-filters/project-level";
 // local imports
 import { WorkItemFiltersHOC } from "./base";
-import { TEnableSaveViewProps, TEnableUpdateViewProps, TSharedWorkItemFiltersHOCProps } from "./shared";
+import type { TEnableSaveViewProps, TEnableUpdateViewProps, TSharedWorkItemFiltersHOCProps } from "./shared";
 
 type TProjectLevelWorkItemFiltersHOCProps = TSharedWorkItemFiltersHOCProps & {
   workspaceSlug: string;
@@ -87,6 +88,17 @@ export const ProjectLevelWorkItemFiltersHOC = observer((props: TProjectLevelWork
       isCurrentUserOwner,
     ]
   );
+  const createViewLabel = useMemo(() => props.saveViewOptions?.label, [props.saveViewOptions?.label]);
+  const updateViewLabel = useMemo(() => props.updateViewOptions?.label, [props.updateViewOptions?.label]);
+  const hasAdditionalChanges = useMemo(
+    () =>
+      !isEqual(initialWorkItemFilters?.displayFilters, viewDetails?.display_filters) ||
+      !isEqual(
+        removeNillKeys(initialWorkItemFilters?.displayProperties),
+        removeNillKeys(viewDetails?.display_properties)
+      ),
+    [initialWorkItemFilters, viewDetails]
+  );
 
   const getDefaultViewDetailPayload: () => Partial<IProjectView> = useCallback(
     () => ({
@@ -105,6 +117,17 @@ export const ProjectLevelWorkItemFiltersHOC = observer((props: TProjectLevelWork
       display_properties: cloneDeep(initialWorkItemFilters?.displayProperties),
     }),
     [initialWorkItemFilters]
+  );
+
+  const handleViewSave = useCallback(
+    (expression: TWorkItemFilterExpression) => {
+      setCreateViewPayload({
+        ...getDefaultViewDetailPayload(),
+        ...getViewFilterPayload(expression),
+      });
+      setIsCreateViewModalOpen(true);
+    },
+    [getDefaultViewDetailPayload, getViewFilterPayload]
   );
 
   const handleViewUpdate = useCallback(
@@ -152,6 +175,25 @@ export const ProjectLevelWorkItemFiltersHOC = observer((props: TProjectLevelWork
     [viewDetails, updateView, workspaceSlug, projectId, getViewFilterPayload]
   );
 
+  const saveViewOptions = useMemo(
+    () => ({
+      label: createViewLabel,
+      isDisabled: !canCreateView,
+      onViewSave: handleViewSave,
+    }),
+    [createViewLabel, canCreateView, handleViewSave]
+  );
+
+  const updateViewOptions = useMemo(
+    () => ({
+      label: updateViewLabel,
+      isDisabled: !canUpdateView,
+      hasAdditionalChanges,
+      onViewUpdate: handleViewUpdate,
+    }),
+    [updateViewLabel, canUpdateView, hasAdditionalChanges, handleViewUpdate]
+  );
+
   return (
     <>
       <CreateUpdateProjectViewModal
@@ -176,28 +218,8 @@ export const ProjectLevelWorkItemFiltersHOC = observer((props: TProjectLevelWork
         memberIds={getProjectMemberIds(projectId, false) ?? undefined}
         moduleIds={getProjectModuleIds(projectId) ?? undefined}
         stateIds={getProjectStateIds(projectId)}
-        saveViewOptions={{
-          label: props.saveViewOptions?.label,
-          isDisabled: !canCreateView,
-          onViewSave: (expression) => {
-            setCreateViewPayload({
-              ...getDefaultViewDetailPayload(),
-              ...getViewFilterPayload(expression),
-            });
-            setIsCreateViewModalOpen(true);
-          },
-        }}
-        updateViewOptions={{
-          label: props.updateViewOptions?.label,
-          isDisabled: !canUpdateView,
-          hasAdditionalChanges:
-            !isEqual(initialWorkItemFilters?.displayFilters, viewDetails?.display_filters) ||
-            !isEqual(
-              removeNillKeys(initialWorkItemFilters?.displayProperties),
-              removeNillKeys(viewDetails?.display_properties)
-            ),
-          onViewUpdate: handleViewUpdate,
-        }}
+        saveViewOptions={saveViewOptions}
+        updateViewOptions={updateViewOptions}
       >
         {children}
       </WorkItemFiltersHOC>

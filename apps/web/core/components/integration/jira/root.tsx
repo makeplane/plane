@@ -7,29 +7,22 @@ import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { mutate } from "swr";
 // icons
-import { ArrowLeft, Check, List, Settings, Users } from "lucide-react";
-// types
+import { ArrowLeft, Check, List, Settings } from "lucide-react";
 import { Button } from "@plane/propel/button";
-import { IJiraImporterForm } from "@plane/types";
-// ui
+import { MembersPropertyIcon } from "@plane/propel/icons";
+// types
+import type { IJiraImporterForm } from "@plane/types";
+// assets
+import JiraLogo from "@/app/assets/services/jira.svg?url";
 // fetch keys
 import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
-// assets
-import JiraLogo from "@/public/services/jira.svg";
 // services
 import { JiraImporterService } from "@/services/integrations";
 // components
-import {
-  JiraGetImportDetail,
-  JiraProjectDetail,
-  JiraImportUsers,
-  JiraConfirmImport,
-  jiraFormDefaultValues,
-  TJiraIntegrationSteps,
-  IJiraIntegrationData,
-} from ".";
+import type { TJiraIntegrationSteps, IJiraIntegrationData } from ".";
+import { JiraGetImportDetail, JiraProjectDetail, JiraImportUsers, JiraConfirmImport, jiraFormDefaultValues } from ".";
 
 const integrationWorkflowData: Array<{
   title: string;
@@ -49,7 +42,7 @@ const integrationWorkflowData: Array<{
   {
     title: "Users",
     key: "import-users",
-    icon: Users,
+    icon: MembersPropertyIcon,
   },
   {
     title: "Confirm",

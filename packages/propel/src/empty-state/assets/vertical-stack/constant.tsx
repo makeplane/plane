@@ -8,6 +8,7 @@ import {
   DraftVerticalStackIllustration,
   EpicVerticalStackIllustration,
   Error404VerticalStackIllustration,
+  InitiativeVerticalStackIllustration,
   InvalidLinkVerticalStackIllustration,
   ModuleVerticalStackIllustration,
   NoAccessVerticalStackIllustration,
@@ -55,6 +56,10 @@ export const VerticalStackAssetsMap = [
   {
     asset: <Error404VerticalStackIllustration />,
     title: "Error404VerticalStackIllustration",
+  },
+  {
+    asset: <InitiativeVerticalStackIllustration />,
+    title: "InitiativeVerticalStackIllustration",
   },
   {
     asset: <InvalidLinkVerticalStackIllustration />,

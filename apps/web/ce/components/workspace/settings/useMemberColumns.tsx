@@ -4,10 +4,11 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { renderFormattedDate } from "@plane/utils";
 import { MemberHeaderColumn } from "@/components/project/member-header-column";
-import { AccountTypeColumn, NameColumn, RowData } from "@/components/workspace/settings/member-columns";
+import type { RowData } from "@/components/workspace/settings/member-columns";
+import { AccountTypeColumn, NameColumn } from "@/components/workspace/settings/member-columns";
 import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
-import { IMemberFilters } from "@/store/member/utils";
+import type { IMemberFilters } from "@/store/member/utils";
 
 export const useMemberColumns = () => {
   // states

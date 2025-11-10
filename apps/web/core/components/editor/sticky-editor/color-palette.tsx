@@ -1,4 +1,4 @@
-import { TSticky } from "@plane/types";
+import type { TSticky } from "@plane/types";
 
 export const STICKY_COLORS_LIST: {
   key: string;

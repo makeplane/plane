@@ -106,6 +106,7 @@ export const EmojiPicker: React.FC<TCustomEmojiPicker> = (props) => {
         side={finalSide}
         align={finalAlign}
         sideOffset={8}
+        data-prevent-outside-click="true"
       >
         <Tabs.Root defaultValue={defaultOpen}>
           <Tabs.List className="grid grid-cols-2 gap-1 px-3.5 pt-3">

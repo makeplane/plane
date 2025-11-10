@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
 // plane imports
-import { TWorkItemFilterCondition } from "@plane/shared-state";
+import type { TWorkItemFilterCondition } from "@plane/shared-state";
 import { EIssuesStoreType } from "@plane/types";
 // constants
 import { CYCLE_ISSUES_WITH_PARAMS } from "@/constants/fetch-keys";

@@ -15,8 +15,8 @@ import {
   PROJECT_SETTINGS_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { StateGroupIcon, DoubleCircleIcon } from "@plane/propel/icons";
-import { IProject } from "@plane/types";
+import { StateGroupIcon, StatePropertyIcon } from "@plane/propel/icons";
+import type { IProject } from "@plane/types";
 // ui
 import { CustomSelect, CustomSearchSelect, ToggleSwitch, Loader } from "@plane/ui";
 // component
@@ -188,7 +188,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
                               size={EIconSize.LG}
                             />
                           ) : (
-                            <DoubleCircleIcon className="h-3.5 w-3.5 text-custom-text-200" />
+                            <StatePropertyIcon className="h-3.5 w-3.5 text-custom-text-200" />
                           )}
                           {selectedOption?.name
                             ? selectedOption.name

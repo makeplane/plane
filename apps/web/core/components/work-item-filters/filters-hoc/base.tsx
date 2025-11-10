@@ -2,18 +2,16 @@ import { useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { v4 as uuidv4 } from "uuid";
 // plane imports
-import { TSaveViewOptions, TUpdateViewOptions } from "@plane/constants";
-import { IWorkItemFilterInstance } from "@plane/shared-state";
-import { IIssueFilters, TWorkItemFilterExpression } from "@plane/types";
+import type { TSaveViewOptions, TUpdateViewOptions } from "@plane/constants";
+import type { IWorkItemFilterInstance } from "@plane/shared-state";
+import type { IIssueFilters, TWorkItemFilterExpression } from "@plane/types";
 // store hooks
 import { useWorkItemFilters } from "@/hooks/store/work-item-filters/use-work-item-filters";
 // plane web imports
-import {
-  TWorkItemFiltersEntityProps,
-  useWorkItemFiltersConfig,
-} from "@/plane-web/hooks/work-item-filters/use-work-item-filters-config";
+import type { TWorkItemFiltersEntityProps } from "@/plane-web/hooks/work-item-filters/use-work-item-filters-config";
+import { useWorkItemFiltersConfig } from "@/plane-web/hooks/work-item-filters/use-work-item-filters-config";
 // local imports
-import { TSharedWorkItemFiltersHOCProps, TSharedWorkItemFiltersProps } from "./shared";
+import type { TSharedWorkItemFiltersHOCProps, TSharedWorkItemFiltersProps } from "./shared";
 
 type TAdditionalWorkItemFiltersProps = {
   saveViewOptions?: TSaveViewOptions<TWorkItemFilterExpression>;
@@ -64,27 +62,28 @@ const WorkItemFilterRoot = observer((props: TWorkItemFilterProps) => {
     [isTemporary, entityId]
   );
   // memoize initial values to prevent re-computations when reference changes
-  const initialUserFilters = useMemo(
-    () => initialWorkItemFilters.richFilters,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  ); // Empty dependency array to capture only the initial value
+  const initialUserFilters = useMemo(() => initialWorkItemFilters.richFilters, [initialWorkItemFilters]);
   const workItemFiltersConfig = useWorkItemFiltersConfig({
     allowedFilters: filtersToShowByLayout ? filtersToShowByLayout : [],
     ...entityConfigProps,
   });
   // get or create filter instance
-  const workItemLayoutFilter = getOrCreateFilter({
-    entityType,
-    entityId: workItemEntityID,
-    initialExpression: initialUserFilters,
-    onExpressionChange: updateFilters,
-    expressionOptions: {
-      saveViewOptions,
-      updateViewOptions,
-    },
-    showOnMount,
-  });
+  const workItemLayoutFilter = useMemo(
+    () =>
+      getOrCreateFilter({
+        entityType,
+        entityId: workItemEntityID,
+        initialExpression: initialUserFilters,
+        onExpressionChange: updateFilters,
+        expressionOptions: {
+          saveViewOptions,
+          updateViewOptions,
+        },
+        showOnMount,
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [entityType, workItemEntityID, saveViewOptions, updateViewOptions, updateFilters]
+  );
 
   // delete filter instance when component unmounts
   useEffect(
@@ -94,8 +93,14 @@ const WorkItemFilterRoot = observer((props: TWorkItemFilterProps) => {
     [deleteFilter, entityType, workItemEntityID]
   );
 
-  workItemLayoutFilter.configManager.setAreConfigsReady(workItemFiltersConfig.areAllConfigsInitialized);
-  workItemLayoutFilter.configManager.registerAll(workItemFiltersConfig.configs);
+  useEffect(() => {
+    workItemLayoutFilter.configManager.setAreConfigsReady(workItemFiltersConfig.areAllConfigsInitialized);
+    workItemLayoutFilter.configManager.registerAll(workItemFiltersConfig.configs);
+  }, [
+    workItemFiltersConfig.areAllConfigsInitialized,
+    workItemFiltersConfig.configs,
+    workItemLayoutFilter.configManager,
+  ]);
 
   return <>{typeof children === "function" ? children({ filter: workItemLayoutFilter }) : children}</>;
 });

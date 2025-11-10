@@ -1,15 +1,17 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
-import { Control, Controller, UseFormWatch } from "react-hook-form";
+import type { Control, UseFormWatch } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { Button } from "@plane/propel/button";
-import { IWorkspaceIntegration } from "@plane/types";
+import type { IWorkspaceIntegration } from "@plane/types";
 // hooks
 // components
 import { CustomSearchSelect, ToggleSwitch } from "@plane/ui";
 import { truncateText } from "@plane/utils";
-import { SelectRepository, TFormValues, TIntegrationSteps } from "@/components/integration";
+import type { TFormValues, TIntegrationSteps } from "@/components/integration";
+import { SelectRepository } from "@/components/integration";
 // ui
 // helpers
 import { useProject } from "@/hooks/store/use-project";

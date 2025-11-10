@@ -7,7 +7,7 @@ import { CircleDashed, Plus } from "lucide-react";
 // types
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { TIssue, ISearchIssueResponse, TIssueGroupByOptions } from "@plane/types";
+import type { TIssue, ISearchIssueResponse, TIssueGroupByOptions } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
 // components
@@ -18,7 +18,7 @@ import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // constants
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // plane-web
 import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
 // Plane-web

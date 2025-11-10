@@ -1,6 +1,7 @@
 "use client";
 
-import { MutableRefObject, useEffect, useRef, useState } from "react";
+import type { MutableRefObject } from "react";
+import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
@@ -8,7 +9,7 @@ import { observer } from "mobx-react";
 import { DRAG_ALLOWED_GROUPS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import {
+import type {
   IGroupByColumn,
   TIssueMap,
   TIssueGroupByOptions,
@@ -16,8 +17,8 @@ import {
   TIssue,
   IIssueDisplayProperties,
   TIssueKanbanFilters,
-  EIssueLayoutTypes,
 } from "@plane/types";
+import { EIssueLayoutTypes } from "@plane/types";
 import { Row } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
@@ -26,14 +27,14 @@ import { ListLoaderItemRow } from "@/components/ui/loader/layouts/list-layout-lo
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // Plane-web
 import { useWorkFlowFDragNDrop } from "@/plane-web/components/workflow";
 //
 import { GroupDragOverlay } from "../group-drag-overlay";
 import { ListQuickAddIssueButton, QuickAddIssueRoot } from "../quick-add";
+import type { GroupDropLocation } from "../utils";
 import {
-  GroupDropLocation,
   getDestinationFromDropPayload,
   getIssueBlockId,
   getSourceFromDropPayload,
@@ -41,7 +42,7 @@ import {
 } from "../utils";
 import { IssueBlocksList } from "./blocks-list";
 import { HeaderGroupByCard } from "./headers/group-by-card";
-import { TRenderQuickActions } from "./list-view-types";
+import type { TRenderQuickActions } from "./list-view-types";
 
 interface Props {
   groupIssueIds: string[] | undefined;

@@ -1,9 +1,9 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 // types
-import { IProject } from "@plane/types";
+import type { IProject } from "@plane/types";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 

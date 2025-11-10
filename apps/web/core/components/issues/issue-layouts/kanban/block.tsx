@@ -1,6 +1,7 @@
 "use client";
 
-import { MutableRefObject, useEffect, useRef, useState } from "react";
+import type { MutableRefObject } from "react";
+import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
@@ -11,13 +12,14 @@ import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { EIssueServiceType, TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
+import type { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // ui
 import { ControlLink, DropIndicator } from "@plane/ui";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // components
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
-import { HIGHLIGHT_CLASS } from "@/components/issues/issue-layouts/utils";
+import { HIGHLIGHT_CLASS, getIssueBlockId } from "@/components/issues/issue-layouts/utils";
 // helpers
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -29,10 +31,9 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // local components
 import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-stats";
-import { TRenderQuickActions } from "../list/list-view-types";
+import type { TRenderQuickActions } from "../list/list-view-types";
 import { IssueProperties } from "../properties/all-properties";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
-import { getIssueBlockId } from "../utils";
 
 interface IssueBlockProps {
   issueId: string;

@@ -5,7 +5,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { IApiToken } from "@plane/types";
+import type { IApiToken } from "@plane/types";
 // ui
 import { renderFormattedDate, renderFormattedTime, copyTextToClipboard } from "@plane/utils";
 // helpers

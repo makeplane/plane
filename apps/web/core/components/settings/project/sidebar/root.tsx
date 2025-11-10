@@ -2,9 +2,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { PROJECT_SETTINGS_CATEGORIES, PROJECT_SETTINGS_CATEGORY } from "@plane/constants";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { getUserRole } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // local imports

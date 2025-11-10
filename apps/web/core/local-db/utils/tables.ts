@@ -1,8 +1,8 @@
 import { persistence } from "../storage.sqlite";
+import type { Schema } from "./schemas";
 import {
   labelSchema,
   moduleSchema,
-  Schema,
   issueMetaSchema,
   issueSchema,
   stateSchema,

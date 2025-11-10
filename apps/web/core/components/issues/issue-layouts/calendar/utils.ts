@@ -1,4 +1,4 @@
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 
 export const handleDragDrop = async (
   issueId: string,

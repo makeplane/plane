@@ -1,62 +1,71 @@
 import React from "react";
-import { Button } from "../button/button";
-import { TButtonVariant } from "../button/helper";
+import { CompactAssetType, DetailedAssetType } from "./assets/asset-types";
+import { EmptyStateCompact } from "./compact-empty-state";
+import { EmptyStateDetailed } from "./detailed-empty-state";
+import type { BaseEmptyStateCommonProps } from "./types";
 
-export interface ActionButton {
-  label: string;
-  onClick: () => void;
-  variant?: TButtonVariant;
-  disabled?: boolean;
-}
+/**
+ * @deprecated Use EmptyStateCompact or EmptyStateDetailed directly with assetKey for better type safety
+ *
+ * This wrapper component maintains backward compatibility for existing code.
+ * For new code, prefer:
+ * - EmptyStateCompact with assetKey for simple states
+ * - EmptyStateDetailed with assetKey for detailed states
+ */
 
-type TEmptyStateType = "detailed" | "simple";
+type EmptyStateType = "detailed" | "simple";
 
 export interface EmptyStateProps {
+  /** @deprecated Use assetKey instead */
   asset?: React.ReactNode;
-  title: string;
+  title?: string;
   description?: string;
-  actions?: ActionButton[];
+  actions?: BaseEmptyStateCommonProps["actions"];
   className?: string;
-  type?: TEmptyStateType;
+  rootClassName?: string;
+  assetClassName?: string;
+  type?: EmptyStateType;
+  /** Type-safe asset key (use instead of asset) */
+  assetKey?: CompactAssetType | DetailedAssetType;
 }
 
-const EmptyStateContent: React.FC<{
-  title: string;
-  description?: string;
-  actions?: ActionButton[];
-}> = ({ title, description, actions }) => (
-  <div className="flex flex-col gap-4">
-    <div className="flex flex-col gap-2">
-      <h3 className="text-lg leading-7 font-semibold text-custom-text-100">{title}</h3>
-      {description && <p className="text-sm leading-5 text-custom-text-300">{description}</p>}
-    </div>
-
-    {actions && actions.length > 0 && (
-      <div className="flex flex-col sm:flex-row gap-4">
-        {actions.map((action, index) => (
-          <Button key={index} onClick={action.onClick} disabled={action.disabled} variant={action.variant}>
-            {action.label}
-          </Button>
-        ))}
-      </div>
-    )}
-  </div>
-);
-
 export const EmptyState: React.FC<EmptyStateProps> = ({
+  type = "detailed",
   asset,
+  assetKey,
   title,
   description,
   actions,
-  className = "",
-  type = "detailed",
+  className,
+  rootClassName,
+  assetClassName,
 }) => {
-  const alignmentClass = type === "simple" ? "items-center text-center" : "text-left";
+  if (type === "simple") {
+    return (
+      <EmptyStateCompact
+        asset={asset}
+        assetKey={assetKey}
+        title={title || description} // For simple type, use description as title if no title
+        actions={actions}
+        className={className}
+        rootClassName={rootClassName}
+        assetClassName={assetClassName}
+      />
+    );
+  }
 
   return (
-    <div className={`flex flex-col gap-6 justify-center ${alignmentClass} max-w-[25rem] ${className}`}>
-      {asset && <div className="flex items-center max-w-40">{asset}</div>}
-      <EmptyStateContent title={title} description={description} actions={actions} />
-    </div>
+    <EmptyStateDetailed
+      asset={asset}
+      assetKey={assetKey}
+      title={title}
+      description={description}
+      actions={actions}
+      className={className}
+      rootClassName={rootClassName}
+      assetClassName={assetClassName}
+    />
   );
 };
+
+EmptyState.displayName = "EmptyState";

@@ -8,7 +8,7 @@ import { AlertTriangle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // types
 import { Button } from "@plane/propel/button";
-import { IUserLite } from "@plane/types";
+import type { IUserLite } from "@plane/types";
 // ui
 // hooks
 import { useProject } from "@/hooks/store/use-project";

@@ -3,7 +3,7 @@ import { sortBy, set, isEmpty } from "lodash-es";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import {
+import type {
   ICycle,
   TCyclePlotType,
   TProgressSnapshot,
@@ -11,7 +11,8 @@ import {
   TCycleDistribution,
   TCycleEstimateType,
 } from "@plane/types";
-import { orderCycles, shouldFilterCycle, getDate, DistributionUpdates, updateDistribution } from "@plane/utils";
+import type { DistributionUpdates } from "@plane/utils";
+import { orderCycles, shouldFilterCycle, getDate, updateDistribution } from "@plane/utils";
 // helpers
 // services
 import { syncIssuesWithDeletedCycles } from "@/local-db/utils/load-workspace";

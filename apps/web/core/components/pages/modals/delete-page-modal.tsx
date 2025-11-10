@@ -12,7 +12,8 @@ import { AlertModalCore } from "@plane/ui";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // plane web hooks
 import { useAppRouter } from "@/hooks/use-app-router";
-import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
+import { usePageStore } from "@/plane-web/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 
@@ -43,7 +44,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    await removePage(pageId)
+    await removePage({ pageId })
       .then(() => {
         captureSuccess({
           eventName: PROJECT_PAGE_TRACKER_EVENTS.delete,

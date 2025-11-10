@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { MessageSquare } from "lucide-react";
 // plane imports
@@ -12,7 +12,7 @@ import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 // store
-import { INotification } from "@/store/notifications/notification";
+import type { INotification } from "@/store/notifications/notification";
 // local imports
 import { NotificationItemOptionButton } from "./button";
 

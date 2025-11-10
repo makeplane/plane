@@ -1,4 +1,5 @@
-import { RefObject, useRef } from "react";
+import type { RefObject } from "react";
+import { useRef } from "react";
 import { observer } from "mobx-react";
 // components
 import type { IBlockUpdateDependencyData } from "@plane/types";

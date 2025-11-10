@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect, ReactNode, MutableRefObject } from "react";
+import type { ReactNode, MutableRefObject } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { cn } from "@plane/utils";
 
 type Props = {

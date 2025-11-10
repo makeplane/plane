@@ -1,6 +1,7 @@
 "use client";
 
-import React, { SyntheticEvent, useRef } from "react";
+import type { SyntheticEvent } from "react";
+import React, { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
@@ -19,7 +20,7 @@ import { useLocalStorage } from "@plane/hooks";
 import { WorkItemsIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { IModule } from "@plane/types";
+import type { IModule } from "@plane/types";
 import { Card, FavoriteStar, LinearProgressIndicator } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, generateQueryParams } from "@plane/utils";
 // components
@@ -35,7 +36,6 @@ import { useModule } from "@/hooks/store/use-module";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web constants
 
 type Props = {
   moduleId: string;
@@ -54,10 +54,8 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const { allowPermissions } = useUserPermissions();
   const { getModuleById, addModuleToFavorites, removeModuleFromFavorites, updateModuleDetails } = useModule();
   const { getUserDetails } = useMember();
-
   // local storage
   const { setValue: toggleFavoriteMenu, storedValue } = useLocalStorage<boolean>(IS_FAVORITE_MENU_OPEN, false);
-
   // derived values
   const moduleDetails = getModuleById(moduleId);
   const isEditingAllowed = allowPermissions(
@@ -189,7 +187,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
 
-  const issueCount = module
+  const issueCount = moduleDetails
     ? !moduleTotalIssues || moduleTotalIssues === 0
       ? `0 work items`
       : moduleTotalIssues === moduleCompletedIssues

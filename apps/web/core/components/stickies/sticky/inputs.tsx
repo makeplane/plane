@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useRef } from "react";
-// import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import { TSticky } from "@plane/types";
+import type { TSticky } from "@plane/types";
 import { cn, isCommentEmpty } from "@plane/utils";
 import { StickyEditor } from "@/components/editor/sticky-editor";
 // hooks

@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 import { Loader } from "@plane/ui";
 
 export const EstimateLoaderScreen: FC = () => (

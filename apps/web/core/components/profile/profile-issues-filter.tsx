@@ -6,7 +6,8 @@ import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constant
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
-import { EIssuesStoreType, IIssueDisplayFilterOptions, IIssueDisplayProperties, EIssueLayoutTypes } from "@plane/types";
+import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, LayoutSelection } from "@/components/issues/issue-layouts/filters";
 import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-toggle";

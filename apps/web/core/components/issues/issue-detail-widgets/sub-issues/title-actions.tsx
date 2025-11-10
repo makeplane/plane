@@ -1,4 +1,5 @@
-import { FC, useCallback } from "react";
+import type { FC } from "react";
+import { useCallback } from "react";
 import { cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
 import {
@@ -6,13 +7,13 @@ import {
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
   SUB_WORK_ITEM_AVAILABLE_FILTERS_FOR_WORK_ITEM_PAGE,
 } from "@plane/constants";
-import {
-  EIssueServiceType,
+import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
   TIssueServiceType,
 } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProjectState } from "@/hooks/store/use-project-state";

@@ -52,7 +52,6 @@ export const HeadingListExtension = Extension.create<unknown, HeadingExtensionSt
         this.editor.emit("update", {
           editor: this.editor,
           transaction: newState.tr,
-          appendedTransactions: [],
         });
 
         return null;
@@ -60,5 +59,9 @@ export const HeadingListExtension = Extension.create<unknown, HeadingExtensionSt
     });
 
     return [plugin];
+  },
+
+  getHeadings() {
+    return this.storage.headings;
   },
 });

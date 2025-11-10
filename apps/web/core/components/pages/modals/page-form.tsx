@@ -1,18 +1,20 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-import { Globe2, Lock, LucideIcon } from "lucide-react";
+import type { FormEvent } from "react";
+import { useState } from "react";
+import type { LucideIcon } from "lucide-react";
+import { Globe2, Lock } from "lucide-react";
 // plane imports
 import { ETabIndices, EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
 import { PageIcon } from "@plane/propel/icons";
 import type { TPage } from "@plane/types";
-import { EmojiIconPicker, EmojiIconPickerTypes, Input } from "@plane/ui";
-import { convertHexEmojiToDecimal, getTabIndex } from "@plane/utils";
+import { Input } from "@plane/ui";
+import { getTabIndex } from "@plane/utils";
 // components
 import { AccessField } from "@/components/common/access-field";
-import { Logo } from "@/components/common/logo";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -63,7 +65,7 @@ export const PageForm: React.FC<Props> = (props) => {
       <div className="space-y-5 p-5">
         <h3 className="text-xl font-medium text-custom-text-200">Create page</h3>
         <div className="flex items-start gap-2 h-9 w-full">
-          <EmojiIconPicker
+          <EmojiPicker
             isOpen={isOpen}
             handleToggle={(val: boolean) => setIsOpen(val)}
             className="flex items-center justify-center flex-shrink0"
@@ -84,8 +86,8 @@ export const PageForm: React.FC<Props> = (props) => {
 
               if (val?.type === "emoji")
                 logoValue = {
-                  value: convertHexEmojiToDecimal(val.value.unified),
-                  url: val.value.imageUrl,
+                  value: val.value,
+                  url: undefined,
                 };
               else if (val?.type === "icon") logoValue = val.value;
 

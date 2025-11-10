@@ -1,17 +1,15 @@
 "use client";
 
-// types
 import { LayoutGrid } from "lucide-react";
+// plane imports
 import { CycleIcon, ModuleIcon, PageIcon, ProjectIcon, ViewsIcon } from "@plane/propel/icons";
-import {
+import type {
   IWorkspaceDefaultSearchResult,
   IWorkspaceIssueSearchResult,
   IWorkspacePageSearchResult,
   IWorkspaceProjectSearchResult,
   IWorkspaceSearchResult,
 } from "@plane/types";
-// ui
-// helpers
 import { generateWorkItemLink } from "@plane/utils";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
@@ -95,7 +93,7 @@ export const commandGroups: TCommandGroups = {
       if (!!projectId && page?.project_ids?.includes(projectId)) redirectProjectId = projectId;
       return redirectProjectId
         ? `/${page?.workspace__slug}/projects/${redirectProjectId}/pages/${page?.id}`
-        : `/${page?.workspace__slug}/pages/${page?.id}`;
+        : `/${page?.workspace__slug}/wiki/${page?.id}`;
     },
     title: "Pages",
   },

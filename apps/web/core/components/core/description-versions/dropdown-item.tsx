@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TDescriptionVersion } from "@plane/types";
+import type { TDescriptionVersion } from "@plane/types";
 import { Avatar, CustomMenu } from "@plane/ui";
 import { calculateTimeAgo, getFileURL } from "@plane/utils";
 // hooks

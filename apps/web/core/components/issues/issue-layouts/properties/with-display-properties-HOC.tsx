@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { observer } from "mobx-react";
-import { IIssueDisplayProperties } from "@plane/types";
+import type { IIssueDisplayProperties } from "@plane/types";
 
 interface IWithDisplayPropertiesHOC {
   displayProperties: IIssueDisplayProperties;

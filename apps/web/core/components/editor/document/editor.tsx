@@ -1,13 +1,8 @@
 import React, { forwardRef } from "react";
 // plane imports
-import {
-  DocumentEditorWithRef,
-  IEditorPropsExtended,
-  type EditorRefApi,
-  type IDocumentEditorProps,
-  type TFileHandler,
-} from "@plane/editor";
-import { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
+import { DocumentEditorWithRef } from "@plane/editor";
+import type { IEditorPropsExtended, EditorRefApi, IDocumentEditorProps, TFileHandler } from "@plane/editor";
+import type { MakeOptional, TSearchEntityRequestPayload, TSearchResponse } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";

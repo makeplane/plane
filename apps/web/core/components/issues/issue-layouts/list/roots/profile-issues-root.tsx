@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";

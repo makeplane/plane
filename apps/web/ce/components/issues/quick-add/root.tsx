@@ -1,19 +1,21 @@
-import { FC, useEffect, useRef } from "react";
+import type { FC } from "react";
+import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
-import { UseFormRegister, UseFormSetFocus } from "react-hook-form";
+import type { UseFormRegister, UseFormSetFocus } from "react-hook-form";
 // plane constants
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
-import { TIssue, EIssueLayoutTypes } from "@plane/types";
+import type { TIssue } from "@plane/types";
+import { EIssueLayoutTypes } from "@plane/types";
 // components
+import type { TQuickAddIssueForm } from "@/components/issues/issue-layouts/quick-add";
 import {
   CalendarQuickAddIssueForm,
   GanttQuickAddIssueForm,
   KanbanQuickAddIssueForm,
   ListQuickAddIssueForm,
   SpreadsheetQuickAddIssueForm,
-  TQuickAddIssueForm,
 } from "@/components/issues/issue-layouts/quick-add";
 // hooks
 import { useProject } from "@/hooks/store/use-project";

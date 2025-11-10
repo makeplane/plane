@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { Header, EHeaderVariant } from "@plane/ui";

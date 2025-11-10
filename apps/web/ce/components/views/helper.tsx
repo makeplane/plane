@@ -1,8 +1,8 @@
 import { ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { EIssueLayoutTypes, IProjectView } from "@plane/types";
-import { TContextMenuItem } from "@plane/ui";
-import { TWorkspaceLayoutProps } from "@/components/views/helper";
+import type { EIssueLayoutTypes, IProjectView } from "@plane/types";
+import type { TContextMenuItem } from "@plane/ui";
+import type { TWorkspaceLayoutProps } from "@/components/views/helper";
 
 export type TLayoutSelectionProps = {
   onChange: (layout: EIssueLayoutTypes) => void;

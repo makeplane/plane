@@ -1,13 +1,14 @@
 "use client";
 
-import { FC } from "react";
+import type { FC } from "react";
 
 // react-hook-form
-import { UseFormWatch } from "react-hook-form";
+import type { UseFormWatch } from "react-hook-form";
 // ui
 import { Button } from "@plane/propel/button";
 // types
-import { IUserDetails, SingleUserSelect, TFormValues, TIntegrationSteps } from "@/components/integration";
+import type { IUserDetails, TFormValues, TIntegrationSteps } from "@/components/integration";
+import { SingleUserSelect } from "@/components/integration";
 
 type Props = {
   handleStepChange: (value: TIntegrationSteps) => void;

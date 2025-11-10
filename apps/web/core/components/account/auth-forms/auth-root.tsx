@@ -1,4 +1,5 @@
-import React, { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -7,17 +8,17 @@ import { useTheme } from "next-themes";
 import { API_BASE_URL } from "@plane/constants";
 import { OAuthOptions } from "@plane/ui";
 // assets
-import GithubLightLogo from "/public/logos/github-black.png";
-import GithubDarkLogo from "/public/logos/github-dark.svg";
-import GitlabLogo from "/public/logos/gitlab-logo.svg";
-import GoogleLogo from "/public/logos/google-logo.svg";
+import GithubLightLogo from "@/app/assets/logos/github-black.png?url";
+import GithubDarkLogo from "@/app/assets/logos/github-dark.svg?url";
+import GitlabLogo from "@/app/assets/logos/gitlab-logo.svg?url";
+import GoogleLogo from "@/app/assets/logos/google-logo.svg?url";
 // helpers
+import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
 import {
   EAuthModes,
   EAuthSteps,
   EAuthenticationErrorCodes,
   EErrorAlertType,
-  TAuthErrorInfo,
   authErrorHandler,
 } from "@/helpers/authentication.helper";
 // hooks

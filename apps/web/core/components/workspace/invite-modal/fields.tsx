@@ -1,16 +1,17 @@
 "use client";
 
 import { observer } from "mobx-react";
-import { Control, Controller, FieldArrayWithId, FormState } from "react-hook-form";
-import { X } from "lucide-react";
+import type { Control, FieldArrayWithId, FormState } from "react-hook-form";
+import { Controller } from "react-hook-form";
 // plane imports
 import { ROLE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon } from "@plane/propel/icons";
 import { CustomSelect, Input } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
-import { InvitationFormValues } from "@/hooks/use-workspace-invitation";
+import type { InvitationFormValues } from "@/hooks/use-workspace-invitation";
 
 type TInvitationFieldsProps = {
   workspaceSlug: string;
@@ -101,7 +102,7 @@ export const InvitationFields = observer((props: TInvitationFieldsProps) => {
             {fields.length > 1 && (
               <div className="flex-item flex w-6">
                 <button type="button" className="place-items-center self-center rounded" onClick={() => remove(index)}>
-                  <X className="h-4 w-4 text-custom-text-200" />
+                  <CloseIcon className="h-4 w-4 text-custom-text-200" />
                 </button>
               </div>
             )}

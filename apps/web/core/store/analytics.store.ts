@@ -1,6 +1,6 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { ANALYTICS_DURATION_FILTER_OPTIONS } from "@plane/constants";
-import { TAnalyticsTabsBase } from "@plane/types";
+import type { TAnalyticsTabsBase } from "@plane/types";
 
 type DurationType = (typeof ANALYTICS_DURATION_FILTER_OPTIONS)[number]["value"];
 

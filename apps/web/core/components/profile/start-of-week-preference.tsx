@@ -9,7 +9,7 @@ import {
   START_OF_THE_WEEK_OPTIONS,
 } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { EStartOfTheWeek } from "@plane/types";
+import type { EStartOfTheWeek } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 // hooks
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";

@@ -1,6 +1,6 @@
 import { uniq, orderBy, isEmpty, indexOf, groupBy, cloneDeep, set } from "lodash-es";
 import { ALL_ISSUES, EIssueFilterType, FILTER_TO_ISSUE_MAP, ISSUE_PRIORITIES } from "@plane/constants";
-import {
+import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,

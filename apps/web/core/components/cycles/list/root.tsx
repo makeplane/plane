@@ -1,4 +1,5 @@
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { Disclosure } from "@headlessui/react";
 // components
