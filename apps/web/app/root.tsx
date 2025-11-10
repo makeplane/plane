@@ -13,6 +13,7 @@ import faviconIco from "@/app/assets/favicon/favicon.ico?url";
 import icon180 from "@/app/assets/icons/icon-180x180.png?url";
 import icon512 from "@/app/assets/icons/icon-512x512.png?url";
 import ogImage from "@/app/assets/og-image.png?url";
+import { LogoSpinner } from "@/components/common/logo-spinner";
 import globalStyles from "@/styles/globals.css?url";
 import type { Route } from "./+types/root";
 // local
@@ -118,7 +119,11 @@ export default function Root() {
 }
 
 export function HydrateFallback() {
-  return null;
+  return (
+    <div className="relative flex h-screen w-full items-center justify-center">
+      <LogoSpinner />
+    </div>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
