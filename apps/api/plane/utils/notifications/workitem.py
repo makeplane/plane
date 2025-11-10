@@ -25,7 +25,7 @@ from plane.utils.notifications.base import (
 )
 
 
-class IssueNotificationHandler(BaseNotificationHandler):
+class WorkItemNotificationHandler(BaseNotificationHandler):
     """
     Notification handler for Issues and Epics.
     Handles all issue-related notifications including mentions, assignments, and property changes.

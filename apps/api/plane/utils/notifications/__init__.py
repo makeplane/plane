@@ -1,7 +1,7 @@
 from .base import NotificationContext
-from .issue import IssueNotificationHandler
+from .workitem import WorkItemNotificationHandler
 
 __all__ = [
     "NotificationContext",
-    "IssueNotificationHandler",
+    "WorkItemNotificationHandler",
 ]
