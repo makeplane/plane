@@ -205,7 +205,7 @@ export const BlockMenu = (props: Props) => {
               const colspan = cell.attrs.colspan || 1;
               tr.setNodeMarkup(tableStart + map.map[cellIndex], null, {
                 ...cell.attrs,
-                colwidth: [equalWidth * colspan],
+                colwidth: Array(colspan).fill(equalWidth),
               });
 
               for (let spanCol = 0; spanCol < colspan; spanCol++) {
