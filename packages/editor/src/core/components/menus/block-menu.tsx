@@ -8,21 +8,28 @@ import {
   useInteractions,
   FloatingPortal,
 } from "@floating-ui/react";
-import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
-import { TableMap } from "@tiptap/pm/tables";
 import type { Editor } from "@tiptap/react";
-import { Copy, LucideIcon, Trash2, MoveHorizontal } from "lucide-react";
+import { Copy, LucideIcon, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@plane/utils";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // types
 import type { IEditorProps } from "@/types";
+// components
+import { getNodeOptions } from "./block-menu-options";
 
 type Props = {
   disabledExtensions?: IEditorProps["disabledExtensions"];
   editor: Editor;
   flaggedExtensions?: IEditorProps["flaggedExtensions"];
+};
+export type BlockMenuOption = {
+  icon: LucideIcon;
+  key: string;
+  label: string;
+  onClick: (e: React.MouseEvent) => void;
+  isDisabled?: boolean;
 };
 
 export const BlockMenu = (props: Props) => {
@@ -132,13 +139,7 @@ export const BlockMenu = (props: Props) => {
     }
   }, [isOpen]);
 
-  const MENU_ITEMS: {
-    icon: LucideIcon;
-    key: string;
-    label: string;
-    onClick: (e: React.MouseEvent) => void;
-    isDisabled?: boolean;
-  }[] = [
+  const MENU_ITEMS: BlockMenuOption[] = [
     {
       icon: Trash2,
       key: "delete",
@@ -146,78 +147,6 @@ export const BlockMenu = (props: Props) => {
       onClick: (_e) => {
         // Execute the delete action
         editor.chain().deleteSelection().focus().run();
-      },
-    },
-    {
-      icon: MoveHorizontal,
-      key: "full-width",
-      label: "Full width",
-      isDisabled: !editor.isActive(CORE_EXTENSIONS.TABLE),
-      onClick: () => {
-        try {
-          const { state, view } = editor;
-
-          let tableNode: ProseMirrorNode | null = null;
-          let tablePos = -1;
-
-          const selectedNode = state.selection.content().content.firstChild;
-
-          if (selectedNode?.type.name === CORE_EXTENSIONS.TABLE) {
-            tableNode = selectedNode;
-
-            const doc = state.doc;
-            doc.descendants((node, pos) => {
-              if (node === selectedNode) {
-                tablePos = pos;
-                return false;
-              }
-            });
-          }
-
-          if (!tableNode) return;
-
-          // Get content width
-          const editorContainer = view.dom.closest(".editor-container");
-          if (!editorContainer) return;
-
-          const contentWidthVar = getComputedStyle(editorContainer).getPropertyValue("--editor-content-width").trim();
-          if (!contentWidthVar) return;
-
-          const contentWidth = Math.floor(parseFloat(contentWidthVar));
-          if (isNaN(contentWidth) || contentWidth <= 0) return;
-          const map = TableMap.get(tableNode);
-          if (map.width === 0) return;
-
-          const equalWidth = Math.floor(contentWidth / map.width);
-
-          // Update all cell widths
-          const tr = state.tr;
-          const tableStart = tablePos + 1;
-          const updatedCells = new Set<number>();
-
-          for (let row = 0; row < map.height; row++) {
-            for (let col = 0; col < map.width; col++) {
-              const cellIndex = row * map.width + col;
-              const cellPos = map.map[cellIndex];
-              if (updatedCells.has(cellPos)) continue;
-
-              const cell = state.doc.nodeAt(tableStart + cellPos);
-              if (!cell) continue;
-
-              const colspan = cell.attrs.colspan || 1;
-              tr.setNodeMarkup(tableStart + cellPos, null, {
-                ...cell.attrs,
-                colwidth: [equalWidth * colspan],
-              });
-
-              updatedCells.add(cellPos);
-            }
-          }
-
-          view.dispatch(tr);
-        } catch (error) {
-          console.error("Error setting table to full width:", error);
-        }
       },
     },
     {
@@ -263,6 +192,7 @@ export const BlockMenu = (props: Props) => {
         }
       },
     },
+    ...getNodeOptions(editor),
   ];
 
   if (!isOpen) {
