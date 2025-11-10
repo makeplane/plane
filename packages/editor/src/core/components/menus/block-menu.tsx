@@ -183,6 +183,7 @@ export const BlockMenu = (props: Props) => {
           if (!contentWidthVar) return;
 
           const contentWidth = Math.floor(parseFloat(contentWidthVar));
+          if (isNaN(contentWidth) || contentWidth <= 0) return;
           const map = TableMap.get(tableNode);
           if (map.width === 0) return;
 
