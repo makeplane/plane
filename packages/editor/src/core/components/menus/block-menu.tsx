@@ -194,7 +194,6 @@ export const BlockMenu = (props: Props) => {
           const tr = state.tr;
           const tableStart = tablePos + 1;
           const updatedCells = new Set<number>();
-          console.log("test ");
 
           for (let row = 0; row < map.height; row++) {
             for (let col = 0; col < map.width; col++) {
