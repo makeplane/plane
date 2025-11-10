@@ -197,20 +197,19 @@ export const BlockMenu = (props: Props) => {
           for (let row = 0; row < map.height; row++) {
             for (let col = 0; col < map.width; col++) {
               const cellIndex = row * map.width + col;
-              if (updatedCells.has(cellIndex)) continue;
+              const cellPos = map.map[cellIndex];
+              if (updatedCells.has(cellPos)) continue;
 
-              const cell = state.doc.nodeAt(tableStart + map.map[cellIndex]);
+              const cell = state.doc.nodeAt(tableStart + cellPos);
               if (!cell) continue;
 
               const colspan = cell.attrs.colspan || 1;
-              tr.setNodeMarkup(tableStart + map.map[cellIndex], null, {
+              tr.setNodeMarkup(tableStart + cellPos, null, {
                 ...cell.attrs,
-                colwidth: Array(colspan).fill(equalWidth),
+                colwidth: [equalWidth * colspan],
               });
 
-              for (let spanCol = 0; spanCol < colspan; spanCol++) {
-                updatedCells.add(cellIndex + spanCol);
-              }
+              updatedCells.add(cellPos);
             }
           }
 
