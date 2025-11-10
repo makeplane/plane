@@ -63,7 +63,7 @@ const setTableToFullWidth = (editor: Editor): void => {
         const colspan = cell.attrs.colspan || 1;
         tr.setNodeMarkup(tableStart + cellPos, null, {
           ...cell.attrs,
-          colwidth: [equalWidth * colspan],
+          colwidth: Array(colspan).fill(equalWidth),
         });
 
         updatedCells.add(cellPos);
