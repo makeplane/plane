@@ -16,20 +16,20 @@ const TIMELINE_STORE_MAP: Record<TTimelineType, keyof ITimelineStore> = {
   [GANTT_TIMELINE_TYPE.GROUPED]: "groupedTimeLineStore",
 };
 
-export const useTimeLineChart = (GANTT_TIMELINE_TYPE: TTimelineType): IBaseTimelineStore => {
+export const useTimeLineChart = (timelineType: TTimelineType): IBaseTimelineStore => {
   const context = useContext(StoreContext);
   if (context === undefined) throw new Error("useTimeLineChart must be used within StoreProvider");
 
-  const storeKey = TIMELINE_STORE_MAP[GANTT_TIMELINE_TYPE];
+  const storeKey = TIMELINE_STORE_MAP[timelineType];
   return context.timelineStore[storeKey] as IBaseTimelineStore;
 };
 
 export const useTimeLineChartStore = (): IBaseTimelineStore => {
   const context = useContext(StoreContext);
-  const GANTT_TIMELINE_TYPE = useTimeLineType();
+  const timelineType = useTimeLineType();
 
   if (!context) throw new Error("useTimeLineChartStore must be used within StoreProvider");
-  if (!GANTT_TIMELINE_TYPE) throw new Error("useTimeLineChartStore must be used within TimeLineTypeContext");
+  if (!timelineType) throw new Error("useTimeLineChartStore must be used within TimeLineTypeContext");
 
-  return useTimeLineChart(GANTT_TIMELINE_TYPE);
+  return useTimeLineChart(timelineType);
 };
