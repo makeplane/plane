@@ -1,5 +1,5 @@
 import { type NodeViewProps, NodeViewWrapper } from "@tiptap/react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 // local imports
 import type { CustomImageExtensionType, TCustomImageAttributes } from "../types";
 import { isImageDuplicationFailed } from "../utils";
@@ -27,6 +27,7 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
   const [editorContainer, setEditorContainer] = useState<HTMLDivElement | null>(null);
   const imageComponentRef = useRef<HTMLDivElement>(null);
   const hasRetriedOnMount = useRef(false);
+  const isDuplicatingRef = useRef(false);
 
   useEffect(() => {
     const closestEditorContainer = imageComponentRef.current?.closest(".editor-container");
@@ -62,34 +63,41 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
     getImageSource();
   }, [imgNodeSrc, extension.options]);
 
-  // Memoize the duplication function to prevent unnecessary re-runs
-  const handleDuplication = useCallback(async () => {
+  // Handle image duplication when status is duplicating
+  useEffect(() => {
     if (status !== "duplicating" || !extension.options.duplicateImage || !imgNodeSrc) {
       return;
     }
 
-    try {
-      hasRetriedOnMount.current = true;
-
-      const newAssetId = await extension.options.duplicateImage!(imgNodeSrc);
-      // Update node with new source and success status
-      updateAttributes({
-        src: newAssetId,
-        status: "duplicated",
-      });
-    } catch (error) {
-      console.error("Failed to duplicate image:", error);
-      // Update status to failed
-      updateAttributes({ status: "duplication-failed" });
+    // Prevent duplicate calls - check if already duplicating this asset
+    if (isDuplicatingRef.current) {
+      return;
     }
+
+    isDuplicatingRef.current = true;
+
+    const handleDuplication = async () => {
+      try {
+        hasRetriedOnMount.current = true;
+
+        const newAssetId = await extension.options.duplicateImage!(imgNodeSrc);
+
+        // Update node with new source and success status
+        updateAttributes({
+          src: newAssetId,
+          status: "duplicated",
+        });
+      } catch (error) {
+        console.error("Failed to duplicate image:", error);
+        // Update status to failed
+        updateAttributes({ status: "duplication-failed" });
+      } finally {
+        isDuplicatingRef.current = false;
+      }
+    };
+
+    handleDuplication();
   }, [status, imgNodeSrc, extension.options.duplicateImage, updateAttributes]);
-
-  // Handle image duplication when status is duplicating
-  useEffect(() => {
-    if (status === "duplicating") {
-      handleDuplication();
-    }
-  }, [status, handleDuplication]);
 
   useEffect(() => {
     if (isImageDuplicationFailed(status) && !hasRetriedOnMount.current && imgNodeSrc) {
