@@ -1,10 +1,11 @@
 import { Links, Meta, Outlet, Scripts } from "react-router";
-import type { LinksFunction } from "react-router";
+import type { HeadersFunction, LinksFunction } from "react-router";
 // assets
 import appleTouchIcon from "@/app/assets/favicon/apple-touch-icon.png?url";
 import favicon16 from "@/app/assets/favicon/favicon-16x16.png?url";
 import favicon32 from "@/app/assets/favicon/favicon-32x32.png?url";
 import faviconIco from "@/app/assets/favicon/favicon.ico?url";
+import siteWebmanifest from "@/app/assets/favicon/site.webmanifest?url";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import globalStyles from "@/styles/globals.css?url";
 // types
@@ -21,9 +22,17 @@ export const links: LinksFunction = () => [
   { rel: "icon", type: "image/png", sizes: "32x32", href: favicon32 },
   { rel: "icon", type: "image/png", sizes: "16x16", href: favicon16 },
   { rel: "shortcut icon", href: faviconIco },
-  { rel: "manifest", href: `/site.webmanifest.json` },
+  { rel: "manifest", href: siteWebmanifest },
   { rel: "stylesheet", href: globalStyles },
 ];
+
+export const headers: HeadersFunction = () => ({
+  "Referrer-Policy": "origin-when-cross-origin",
+  "X-Frame-Options": "SAMEORIGIN",
+  "X-Content-Type-Options": "nosniff",
+  "X-DNS-Prefetch-Control": "on",
+  "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+});
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (

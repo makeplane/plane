@@ -73,14 +73,17 @@ RUN pnpm turbo run build --filter=space
 
 # =========================================================================== #
 
-FROM nginx:1.27-alpine AS production
+FROM base AS runner
 
-COPY apps/space/nginx/nginx.conf /etc/nginx/nginx.conf
-COPY --from=installer /app/apps/space/build/client /usr/share/nginx/html/spaces
+COPY --from=installer /app/apps/space/build ./apps/space/build
+COPY --from=installer /app/apps/space/node_modules ./apps/space/node_modules
+COPY --from=installer /app/node_modules ./node_modules
+
+WORKDIR /app/apps/space
 
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD curl -fsS http://127.0.0.1:3000/ >/dev/null || exit 1
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["npx", "react-router-serve", "./build/server/index.js"]
