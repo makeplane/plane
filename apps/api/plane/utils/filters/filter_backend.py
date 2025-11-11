@@ -10,6 +10,8 @@ from django_filters.utils import translate_validation
 from rest_framework import filters
 from rest_framework.exceptions import ValidationError as DRFValidationError
 
+from plane.utils.exception_logger import log_exception
+
 
 class ComplexFilterBackend(filters.BaseFilterBackend):
     """
@@ -43,13 +45,8 @@ class ComplexFilterBackend(filters.BaseFilterBackend):
             # Propagate validation errors unchanged
             raise
         except Exception as e:
-            # Convert unexpected errors to ValidationError to keep response consistent
-            raise DRFValidationError(
-                {
-                    "message": f"Filter error: {str(e)}",
-                    "code": "filter_error",
-                }
-            )
+            log_exception(e)
+            raise
 
     def _normalize_filter_data(self, raw_filter, source_label):
         """Return a dict from raw filter input or raise a ValidationError.
