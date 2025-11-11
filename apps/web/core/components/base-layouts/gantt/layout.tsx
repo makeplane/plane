@@ -39,7 +39,7 @@ export const BaseGanttLayout = observer(<T extends IBaseLayoutsGanttItem>(props:
     loadMoreItems,
     isLoading: _isLoading,
     className,
-    timelineType = GANTT_TIMELINE_TYPE.ISSUE,
+    timelineType: timelineTypeKey = GANTT_TIMELINE_TYPE.ISSUE,
   } = props;
 
   // Flatten all grouped item IDs into a single array for gantt
@@ -84,7 +84,7 @@ export const BaseGanttLayout = observer(<T extends IBaseLayoutsGanttItem>(props:
     [renderSidebar, renderBlock, items, loadMoreItems]
   );
 
-  const timelineTypeEnum = useMemo(() => GANTT_TIMELINE_TYPE[timelineType], [timelineType]);
+  const timelineType = GANTT_TIMELINE_TYPE[timelineTypeKey];
 
   // Date update handler - transforms IBlockUpdateDependencyData to TGanttDateUpdate
   const handleDateUpdate = useCallback(
@@ -110,7 +110,7 @@ export const BaseGanttLayout = observer(<T extends IBaseLayoutsGanttItem>(props:
   }, [loadMoreItems]);
 
   return (
-    <TimeLineTypeContext.Provider value={timelineTypeEnum}>
+    <TimeLineTypeContext.Provider value={timelineType}>
       <div className={cn("h-full w-full", className)}>
         <GanttChartRoot
           border={border}
