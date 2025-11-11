@@ -69,6 +69,7 @@ export const useEditor = (props: TEditorHookProps) => {
           mentionHandler,
           placeholder,
           tabIndex,
+          provider,
         }),
         ...extensions,
       ],

@@ -1,3 +1,4 @@
+import { HocuspocusProvider } from "@hocuspocus/provider";
 import { Extensions } from "@tiptap/core";
 import { CharacterCount } from "@tiptap/extension-character-count";
 import TaskItem from "@tiptap/extension-task-item";
@@ -35,6 +36,7 @@ import { CustomImageExtension } from "./custom-image/extension";
 import { EmojiExtension } from "./emoji/extension";
 import { CustomPlaceholderExtension } from "./placeholder";
 import { CustomStarterKitExtension } from "./starter-kit";
+import { UniqueID } from "./unique-id/extension";
 
 type TArguments = Pick<
   IEditorProps,
@@ -49,6 +51,7 @@ type TArguments = Pick<
 > & {
   enableHistory: boolean;
   editable: boolean;
+  provider: HocuspocusProvider | undefined;
 };
 
 export const CoreEditorExtensions = (args: TArguments): Extensions => {
@@ -63,6 +66,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     tabIndex,
     editable,
     extendedEditorProps,
+    provider,
   } = args;
 
   const extensions = [
@@ -118,6 +122,9 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
       flaggedExtensions,
       fileHandler,
       extendedEditorProps,
+    }),
+    UniqueID.configure({
+      provider,
     }),
   ];
 
