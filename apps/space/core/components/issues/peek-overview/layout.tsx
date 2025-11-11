@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
@@ -25,19 +25,19 @@ export const IssuePeekOverview: React.FC<TIssuePeekOverview> = observer((props) 
   const state = searchParams.get("state") || undefined;
   const priority = searchParams.get("priority") || undefined;
   const labels = searchParams.get("labels") || undefined;
-  // states
-  const [isSidePeekOpen, setIsSidePeekOpen] = useState(false);
-  const [isModalPeekOpen, setIsModalPeekOpen] = useState(false);
   // store
-  const issueDetailStore = useIssueDetails();
-
-  const issueDetails = issueDetailStore.peekId && peekId ? issueDetailStore.details[peekId.toString()] : undefined;
+  const { peekMode, setPeekId, getIssueById, fetchIssueDetails } = useIssueDetails();
+  // derived values
+  const issueDetails = peekId ? getIssueById(peekId.toString()) : undefined;
+  // state
+  const isSidePeekOpen = !!peekId && peekMode === "side";
+  const isModalPeekOpen = !!peekId && (peekMode === "modal" || peekMode === "full");
 
   useEffect(() => {
     if (anchor && peekId) {
-      issueDetailStore.fetchIssueDetails(anchor, peekId.toString());
+      fetchIssueDetails(anchor, peekId.toString());
     }
-  }, [anchor, issueDetailStore, peekId]);
+  }, [anchor, fetchIssueDetails, peekId]);
 
   const handleClose = () => {
     // if close logic is passed down, call that instead of the below logic
@@ -46,7 +46,7 @@ export const IssuePeekOverview: React.FC<TIssuePeekOverview> = observer((props) 
       return;
     }
 
-    issueDetailStore.setPeekId(null);
+    setPeekId(null);
     let queryParams: any = {
       board,
     };
@@ -56,21 +56,6 @@ export const IssuePeekOverview: React.FC<TIssuePeekOverview> = observer((props) 
     queryParams = new URLSearchParams(queryParams).toString();
     router.push(`/issues/${anchor}?${queryParams}`);
   };
-
-  useEffect(() => {
-    if (peekId) {
-      if (issueDetailStore.peekMode === "side") {
-        setIsSidePeekOpen(true);
-        setIsModalPeekOpen(false);
-      } else {
-        setIsModalPeekOpen(true);
-        setIsSidePeekOpen(false);
-      }
-    } else {
-      setIsSidePeekOpen(false);
-      setIsModalPeekOpen(false);
-    }
-  }, [peekId, issueDetailStore.peekMode]);
 
   return (
     <>
@@ -116,13 +101,13 @@ export const IssuePeekOverview: React.FC<TIssuePeekOverview> = observer((props) 
             <Dialog.Panel>
               <div
                 className={`fixed left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-custom-background-100 shadow-custom-shadow-xl transition-all duration-300 ${
-                  issueDetailStore.peekMode === "modal" ? "h-[70%] w-3/5" : "h-[95%] w-[95%]"
+                  peekMode === "modal" ? "h-[70%] w-3/5" : "h-[95%] w-[95%]"
                 }`}
               >
-                {issueDetailStore.peekMode === "modal" && (
+                {peekMode === "modal" && (
                   <SidePeekView anchor={anchor} handleClose={handleClose} issueDetails={issueDetails} />
                 )}
-                {issueDetailStore.peekMode === "full" && (
+                {peekMode === "full" && (
                   <FullScreenPeekView anchor={anchor} handleClose={handleClose} issueDetails={issueDetails} />
                 )}
               </div>

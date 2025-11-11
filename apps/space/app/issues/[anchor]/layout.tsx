@@ -1,54 +1,142 @@
-"use server";
+import { observer } from "mobx-react";
+import { Outlet } from "react-router";
+import type { ShouldRevalidateFunctionArgs } from "react-router";
+import useSWR from "swr";
+// components
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { PoweredBy } from "@/components/common/powered-by";
+import { SomethingWentWrongError } from "@/components/issues/issue-layouts/error";
+import { IssuesNavbarRoot } from "@/components/issues/navbar";
+// hooks
+import { PageNotFound } from "@/components/ui/not-found";
+import { usePublish, usePublishList } from "@/hooks/store/publish";
+import { useIssueFilter } from "@/hooks/store/use-issue-filter";
+import type { Route } from "./+types/layout";
 
-type Props = {
-  children: React.ReactNode;
-  params: {
-    anchor: string;
-  };
-};
+const DEFAULT_TITLE = "Plane";
+const DEFAULT_DESCRIPTION = "Made with Plane, an AI-powered work management platform with publishing capabilities.";
 
-// TODO: Convert into SSR in order to generate metadata
-export async function generateMetadata({ params }: Props) {
+interface IssueMetadata {
+  name?: string;
+  description?: string;
+  cover_image?: string;
+}
+
+// Loader function runs on the server and fetches metadata
+export async function loader({ params }: Route.LoaderArgs) {
   const { anchor } = params;
-  const DEFAULT_TITLE = "Plane";
-  const DEFAULT_DESCRIPTION = "Made with Plane, an AI-powered work management platform with publishing capabilities.";
+
   // Validate anchor before using in request (only allow alphanumeric, -, _)
   const ANCHOR_REGEX = /^[a-zA-Z0-9_-]+$/;
   if (!ANCHOR_REGEX.test(anchor)) {
-    return { title: DEFAULT_TITLE, description: DEFAULT_DESCRIPTION };
+    return { metadata: null };
   }
+
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/public/anchor/${anchor}/meta/`);
-    const data = await response.json();
-    return {
-      title: data?.name || DEFAULT_TITLE,
-      description: data?.description || DEFAULT_DESCRIPTION,
-      openGraph: {
-        title: data?.name || DEFAULT_TITLE,
-        description: data?.description || DEFAULT_DESCRIPTION,
-        type: "website",
-        images: [
-          {
-            url: data?.cover_image,
-            width: 800,
-            height: 600,
-            alt: data?.name || DEFAULT_TITLE,
-          },
-        ],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: data?.name || DEFAULT_TITLE,
-        description: data?.description || DEFAULT_DESCRIPTION,
-        images: [data?.cover_image],
-      },
-    };
-  } catch {
-    return { title: DEFAULT_TITLE, description: DEFAULT_DESCRIPTION };
+
+    if (!response.ok) {
+      return { metadata: null };
+    }
+
+    const metadata: IssueMetadata = await response.json();
+    return { metadata };
+  } catch (error) {
+    console.error("Error fetching issue metadata:", error);
+    return { metadata: null };
   }
 }
 
-export default async function IssuesLayout(_props: Props) {
-  // return <IssuesClientLayout params={{ anchor }}>{children}</IssuesClientLayout>;
-  return null;
+// Meta function uses the loader data to generate metadata
+export function meta({ loaderData }: Route.MetaArgs) {
+  const metadata = loaderData?.metadata;
+
+  const title = metadata?.name || DEFAULT_TITLE;
+  const description = metadata?.description || DEFAULT_DESCRIPTION;
+  const coverImage = metadata?.cover_image;
+
+  const metaTags = [
+    { title },
+    { name: "description", content: description },
+    // OpenGraph metadata
+    { property: "og:title", content: title },
+    { property: "og:description", content: description },
+    { property: "og:type", content: "website" },
+    // Twitter metadata
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:title", content: title },
+    { name: "twitter:description", content: description },
+  ];
+
+  // Add images if cover image exists
+  if (coverImage) {
+    metaTags.push(
+      { property: "og:image", content: coverImage },
+      { property: "og:image:width", content: "800" },
+      { property: "og:image:height", content: "600" },
+      { property: "og:image:alt", content: title },
+      { name: "twitter:image", content: coverImage }
+    );
+  }
+
+  return metaTags;
 }
+
+// Prevent loader from re-running on anchor param changes
+export function shouldRevalidate({ currentParams, nextParams }: ShouldRevalidateFunctionArgs) {
+  return currentParams.anchor !== nextParams.anchor;
+}
+
+function IssuesLayout(props: Route.ComponentProps) {
+  const { anchor } = props.params;
+  // store hooks
+  const { fetchPublishSettings } = usePublishList();
+  const publishSettings = usePublish(anchor);
+  const { updateLayoutOptions } = useIssueFilter();
+  // fetch publish settings
+  const { error } = useSWR(
+    anchor ? `PUBLISH_SETTINGS_${anchor}` : null,
+    anchor
+      ? async () => {
+          const response = await fetchPublishSettings(anchor);
+          if (response.view_props) {
+            updateLayoutOptions({
+              list: !!response.view_props.list,
+              kanban: !!response.view_props.kanban,
+              calendar: !!response.view_props.calendar,
+              gantt: !!response.view_props.gantt,
+              spreadsheet: !!response.view_props.spreadsheet,
+            });
+          }
+        }
+      : null
+  );
+
+  if (!publishSettings && !error) {
+    return (
+      <div className="flex items-center justify-center h-screen w-full">
+        <LogoSpinner />
+      </div>
+    );
+  }
+
+  if (error?.status === 404) return <PageNotFound />;
+
+  if (error) return <SomethingWentWrongError />;
+
+  return (
+    <>
+      <div className="relative flex h-screen min-h-[500px] w-screen flex-col overflow-hidden">
+        <div className="relative flex h-[60px] flex-shrink-0 select-none items-center border-b border-custom-border-300 bg-custom-sidebar-background-100">
+          <IssuesNavbarRoot publishSettings={publishSettings} />
+        </div>
+        <div className="relative h-full w-full overflow-hidden bg-custom-background-90">
+          <Outlet />
+        </div>
+      </div>
+      <PoweredBy />
+    </>
+  );
+}
+
+export default observer(IssuesLayout);
