@@ -88,7 +88,6 @@ overrides:
   prosemirror-view: 1.40.0
   '@types/express': 4.17.23
   typescript: 5.8.3
-  sharp: 0.33.5
   vite: 7.1.11
 
 importers:
@@ -102,8 +101,8 @@ importers:
         specifier: ^0.6.14
         version: 0.6.14(prettier@3.6.2)
       turbo:
-        specifier: ^2.5.8
-        version: 2.5.8
+        specifier: 2.6.1
+        version: 2.6.1
 
   apps/admin:
     dependencies:
@@ -943,7 +942,7 @@ importers:
         version: 10.1.8(eslint@8.57.1)
       eslint-config-turbo:
         specifier: ^2.5.8
-        version: 2.5.8(eslint@8.57.1)(turbo@2.5.8)
+        version: 2.5.8(eslint@8.57.1)(turbo@2.6.1)
       eslint-plugin-import:
         specifier: ^2.32.0
         version: 2.32.0(@typescript-eslint/parser@8.45.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1)
@@ -8008,38 +8007,38 @@ packages:
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
 
-  turbo-darwin-64@2.5.8:
-    resolution: {integrity: sha512-Dh5bCACiHO8rUXZLpKw+m3FiHtAp2CkanSyJre+SInEvEr5kIxjGvCK/8MFX8SFRjQuhjtvpIvYYZJB4AGCxNQ==}
+  turbo-darwin-64@2.6.1:
+    resolution: {integrity: sha512-Dm0HwhyZF4J0uLqkhUyCVJvKM9Rw7M03v3J9A7drHDQW0qAbIGBrUijQ8g4Q9Cciw/BXRRd8Uzkc3oue+qn+ZQ==}
     cpu: [x64]
     os: [darwin]
 
-  turbo-darwin-arm64@2.5.8:
-    resolution: {integrity: sha512-f1H/tQC9px7+hmXn6Kx/w8Jd/FneIUnvLlcI/7RGHunxfOkKJKvsoiNzySkoHQ8uq1pJnhJ0xNGTlYM48ZaJOQ==}
+  turbo-darwin-arm64@2.6.1:
+    resolution: {integrity: sha512-U0PIPTPyxdLsrC3jN7jaJUwgzX5sVUBsKLO7+6AL+OASaa1NbT1pPdiZoTkblBAALLP76FM0LlnsVQOnmjYhyw==}
     cpu: [arm64]
     os: [darwin]
 
-  turbo-linux-64@2.5.8:
-    resolution: {integrity: sha512-hMyvc7w7yadBlZBGl/bnR6O+dJTx3XkTeyTTH4zEjERO6ChEs0SrN8jTFj1lueNXKIHh1SnALmy6VctKMGnWfw==}
+  turbo-linux-64@2.6.1:
+    resolution: {integrity: sha512-eM1uLWgzv89bxlK29qwQEr9xYWBhmO/EGiH22UGfq+uXr+QW1OvNKKMogSN65Ry8lElMH4LZh0aX2DEc7eC0Mw==}
     cpu: [x64]
     os: [linux]
 
-  turbo-linux-arm64@2.5.8:
-    resolution: {integrity: sha512-LQELGa7bAqV2f+3rTMRPnj5G/OHAe2U+0N9BwsZvfMvHSUbsQ3bBMWdSQaYNicok7wOZcHjz2TkESn1hYK6xIQ==}
+  turbo-linux-arm64@2.6.1:
+    resolution: {integrity: sha512-MFFh7AxAQAycXKuZDrbeutfWM5Ep0CEZ9u7zs4Hn2FvOViTCzIfEhmuJou3/a5+q5VX1zTxQrKGy+4Lf5cdpsA==}
     cpu: [arm64]
     os: [linux]
 
-  turbo-windows-64@2.5.8:
-    resolution: {integrity: sha512-3YdcaW34TrN1AWwqgYL9gUqmZsMT4T7g8Y5Azz+uwwEJW+4sgcJkIi9pYFyU4ZBSjBvkfuPZkGgfStir5BBDJQ==}
+  turbo-windows-64@2.6.1:
+    resolution: {integrity: sha512-buq7/VAN7KOjMYi4tSZT5m+jpqyhbRU2EUTTvp6V0Ii8dAkY2tAAjQN1q5q2ByflYWKecbQNTqxmVploE0LVwQ==}
     cpu: [x64]
     os: [win32]
 
-  turbo-windows-arm64@2.5.8:
-    resolution: {integrity: sha512-eFC5XzLmgXJfnAK3UMTmVECCwuBcORrWdewoiXBnUm934DY6QN8YowC/srhNnROMpaKaqNeRpoB5FxCww3eteQ==}
+  turbo-windows-arm64@2.6.1:
+    resolution: {integrity: sha512-7w+AD5vJp3R+FB0YOj1YJcNcOOvBior7bcHTodqp90S3x3bLgpr7tE6xOea1e8JkP7GK6ciKVUpQvV7psiwU5Q==}
     cpu: [arm64]
     os: [win32]
 
-  turbo@2.5.8:
-    resolution: {integrity: sha512-5c9Fdsr9qfpT3hA0EyYSFRZj1dVVsb6KIWubA9JBYZ/9ZEAijgUEae0BBR/Xl/wekt4w65/lYLTFaP3JmwSO8w==}
+  turbo@2.6.1:
+    resolution: {integrity: sha512-qBwXXuDT3rA53kbNafGbT5r++BrhRgx3sAo0cHoDAeG9g1ItTmUMgltz3Hy7Hazy1ODqNpR+C7QwqL6DYB52yA==}
     hasBin: true
 
   tween-functions@1.2.0:
@@ -12809,11 +12808,11 @@ snapshots:
     dependencies:
       eslint: 8.57.1
 
-  eslint-config-turbo@2.5.8(eslint@8.57.1)(turbo@2.5.8):
+  eslint-config-turbo@2.5.8(eslint@8.57.1)(turbo@2.6.1):
     dependencies:
       eslint: 8.57.1
-      eslint-plugin-turbo: 2.5.8(eslint@8.57.1)(turbo@2.5.8)
-      turbo: 2.5.8
+      eslint-plugin-turbo: 2.5.8(eslint@8.57.1)(turbo@2.6.1)
+      turbo: 2.6.1
 
   eslint-import-resolver-node@0.3.9:
     dependencies:
@@ -12942,11 +12941,11 @@ snapshots:
       - supports-color
       - typescript
 
-  eslint-plugin-turbo@2.5.8(eslint@8.57.1)(turbo@2.5.8):
+  eslint-plugin-turbo@2.5.8(eslint@8.57.1)(turbo@2.6.1):
     dependencies:
       dotenv: 16.0.3
       eslint: 8.57.1
-      turbo: 2.5.8
+      turbo: 2.6.1
 
   eslint-scope@5.1.1:
     dependencies:
@@ -15991,32 +15990,32 @@ snapshots:
 
   tslib@2.8.1: {}
 
-  turbo-darwin-64@2.5.8:
+  turbo-darwin-64@2.6.1:
     optional: true
 
-  turbo-darwin-arm64@2.5.8:
+  turbo-darwin-arm64@2.6.1:
     optional: true
 
-  turbo-linux-64@2.5.8:
+  turbo-linux-64@2.6.1:
     optional: true
 
-  turbo-linux-arm64@2.5.8:
+  turbo-linux-arm64@2.6.1:
     optional: true
 
-  turbo-windows-64@2.5.8:
+  turbo-windows-64@2.6.1:
     optional: true
 
-  turbo-windows-arm64@2.5.8:
+  turbo-windows-arm64@2.6.1:
     optional: true
 
-  turbo@2.5.8:
+  turbo@2.6.1:
     optionalDependencies:
-      turbo-darwin-64: 2.5.8
-      turbo-darwin-arm64: 2.5.8
-      turbo-linux-64: 2.5.8
-      turbo-linux-arm64: 2.5.8
-      turbo-windows-64: 2.5.8
-      turbo-windows-arm64: 2.5.8
+      turbo-darwin-64: 2.6.1
+      turbo-darwin-arm64: 2.6.1
+      turbo-linux-64: 2.6.1
+      turbo-linux-arm64: 2.6.1
+      turbo-windows-64: 2.6.1
+      turbo-windows-arm64: 2.6.1
 
   tween-functions@1.2.0: {}
 
