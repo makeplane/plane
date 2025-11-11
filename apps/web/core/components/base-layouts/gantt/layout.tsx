@@ -84,7 +84,6 @@ export const BaseGanttLayout = observer(<T extends IBaseLayoutsGanttItem>(props:
     [renderSidebar, renderBlock, items, loadMoreItems]
   );
 
-  // Map timeline type string to enum value
   const timelineTypeEnum = useMemo(() => GANTT_TIMELINE_TYPE[timelineType], [timelineType]);
 
   // Date update handler - transforms IBlockUpdateDependencyData to TGanttDateUpdate
