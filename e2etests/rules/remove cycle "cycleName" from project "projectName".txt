@@ -1,0 +1,7 @@
+click stored value "projectName" below "Project" within the context of "sidebar"
+click "Cycles" below stored value "projectName"
+click button "ellipsis" on the right of stored value "cycleName"
+click "Delete"
+click "Delete"
+check that page does not contain stored value "cycleName"
+click stored value "projectName" below "Project" within the context of "sidebar"
