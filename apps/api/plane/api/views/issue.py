@@ -1808,7 +1808,7 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
             request.user.id,
             project_id=project_id,
             issue=issue,
-            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value, ROLE.GUEST.value],
             allow_creator=True,
         ):
             return Response(
@@ -1961,10 +1961,10 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
         issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
         # if the request user is creator or admin then delete the attachment
         if not user_has_issue_permission(
-            request.user,
+            request.user.id,
             project_id=project_id,
             issue=issue,
-            allowed_roles=[ROLE.ADMIN.value],
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value, ROLE.GUEST.value],
             allow_creator=True,
         ):
             return Response(
@@ -2034,7 +2034,7 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
         """
         # if the user is part of the project then allow the download
         if not user_has_issue_permission(
-            request.user,
+            request.user.id,
             project_id=project_id,
             issue=None,
             allowed_roles=None,
@@ -2099,10 +2099,10 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
         issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
         # if the user is creator or admin then allow the upload
         if not user_has_issue_permission(
-            request.user,
+            request.user.id,
             project_id=project_id,
             issue=issue,
-            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value, ROLE.GUEST.value],
             allow_creator=True,
         ):
             return Response(

@@ -8,9 +8,9 @@ export interface AnimatedCounterProps {
 }
 
 const sizeClasses = {
-  sm: "text-xs h-4 w-4",
-  md: "text-sm h-5 w-5",
-  lg: "text-base h-6 w-6",
+  sm: "text-xs",
+  md: "text-sm",
+  lg: "text-base",
 };
 
 export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({ count, className, size = "md" }) => {
@@ -44,7 +44,7 @@ export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({ count, classNa
   const sizeClass = sizeClasses[size];
 
   return (
-    <div className={cn("relative inline-flex items-center justify-center overflow-hidden", sizeClass)}>
+    <div className={cn("relative inline-flex items-center justify-center overflow-hidden min-w-2", sizeClass)}>
       {/* Previous number sliding out */}
       {isAnimating && (
         <span

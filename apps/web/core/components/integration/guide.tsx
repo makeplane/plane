@@ -14,7 +14,9 @@ import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@plane/propel/button";
 import type { IImporterService } from "@plane/types";
-// ui
+// assets
+import GithubLogo from "@/app/assets/services/github.png?url";
+import JiraLogo from "@/app/assets/services/jira.svg?url";
 // components
 import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "@/components/integration";
 import { ImportExportSettingsLoader } from "@/components/ui/loader/settings/import-and-export";
@@ -22,9 +24,6 @@ import { ImportExportSettingsLoader } from "@/components/ui/loader/settings/impo
 import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
 // hooks
 import { useUser } from "@/hooks/store/user";
-// assets
-import GithubLogo from "@/public/services/github.png";
-import JiraLogo from "@/public/services/jira.svg";
 // services
 import { IntegrationService } from "@/services/integrations";
 

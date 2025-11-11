@@ -15,12 +15,12 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ArchiveIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { CustomMenu, DropIndicator, DragHandle, ControlLink } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
 import { LeaveProjectModal } from "@/components/project/leave-project-modal";
 import { PublishProjectModal } from "@/components/project/publish-project/modal";
 // hooks

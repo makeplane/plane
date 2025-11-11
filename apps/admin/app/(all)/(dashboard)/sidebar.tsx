@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 // plane helpers
@@ -12,7 +11,7 @@ import { AdminSidebarDropdown } from "./sidebar-dropdown";
 import { AdminSidebarHelpSection } from "./sidebar-help-section";
 import { AdminSidebarMenu } from "./sidebar-menu";
 
-export const AdminSidebar: FC = observer(() => {
+export const AdminSidebar = observer(() => {
   // store
   const { isSidebarCollapsed, toggleSidebar } = useTheme();
 

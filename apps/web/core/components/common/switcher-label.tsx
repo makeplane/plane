@@ -1,8 +1,8 @@
 import type { FC } from "react";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import type { ISvgIcons } from "@plane/propel/icons";
 import type { TLogoProps } from "@plane/types";
 import { getFileURL, truncateText } from "@plane/utils";
-import { Logo } from "@/components/common/logo";
 
 type TSwitcherIconProps = {
   logo_props?: TLogoProps;

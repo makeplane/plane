@@ -7,15 +7,16 @@ import useSWR from "swr";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Loader, ToggleSwitch } from "@plane/ui";
 // components
+import GoogleLogo from "@/app/assets/logos/google-logo.svg?url";
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 // hooks
 import { useInstance } from "@/hooks/store";
 // icons
-import GoogleLogo from "@/public/logos/google-logo.svg";
 // local components
+import type { Route } from "./+types/page";
 import { InstanceGoogleConfigForm } from "./form";
 
-const InstanceGoogleAuthenticationPage = observer(() => {
+const InstanceGoogleAuthenticationPage = observer<React.FC<Route.ComponentProps>>(() => {
   // store
   const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
   // state
@@ -99,5 +100,7 @@ const InstanceGoogleAuthenticationPage = observer(() => {
     </>
   );
 });
+
+export const meta: Route.MetaFunction = () => [{ title: "Google Authentication - God Mode" }];
 
 export default InstanceGoogleAuthenticationPage;

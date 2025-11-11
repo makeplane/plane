@@ -24,16 +24,16 @@
   "dependencies": {
     "@plane/utils": "workspace:*",
     "intl-messageformat": "^10.7.11",
+    "lodash-es": "catalog:",
     "mobx": "catalog:",
     "mobx-react": "catalog:",
-    "lodash-es": "catalog:",
     "react": "catalog:"
   },
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@types/node": "catalog:",
     "@types/lodash-es": "catalog:",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"

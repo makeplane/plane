@@ -9,6 +9,7 @@ import { ArchiveRestoreIcon, Check, ExternalLink, LinkIcon, Lock, Settings, Tras
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { Button } from "@plane/propel/button";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IProject } from "@plane/types";
@@ -16,7 +17,6 @@ import type { TContextMenuItem } from "@plane/ui";
 import { Avatar, AvatarGroup, ContextMenu, FavoriteStar } from "@plane/ui";
 import { copyUrlToClipboard, cn, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";

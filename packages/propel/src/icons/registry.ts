@@ -1,3 +1,4 @@
+import { AddReactionIcon } from "./actions";
 import { AddIcon } from "./actions/add-icon";
 import { CloseIcon } from "./actions/close-icon";
 import { ChevronDownIcon } from "./arrows/chevron-down";
@@ -112,6 +113,7 @@ export const ICON_REGISTRY = {
 
   // Action icons
   "action.add": AddIcon,
+  "action.add-reaction": AddReactionIcon,
   "action.close": CloseIcon,
 
   // Arrow icons

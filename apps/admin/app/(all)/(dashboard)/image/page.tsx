@@ -6,9 +6,10 @@ import { Loader } from "@plane/ui";
 // hooks
 import { useInstance } from "@/hooks/store";
 // local
+import type { Route } from "./+types/page";
 import { InstanceImageConfigForm } from "./form";
 
-const InstanceImagePage = observer(() => {
+const InstanceImagePage = observer<React.FC<Route.ComponentProps>>(() => {
   // store
   const { formattedConfig, fetchInstanceConfigurations } = useInstance();
 
@@ -37,5 +38,7 @@ const InstanceImagePage = observer(() => {
     </>
   );
 });
+
+export const meta: Route.MetaFunction = () => [{ title: "Images Settings - God Mode" }];
 
 export default InstanceImagePage;
