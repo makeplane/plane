@@ -24,7 +24,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "dist/**", "build/**"]
+      "outputs": ["dist/**", "build/**"]
     },
     "build-storybook": {
       "dependsOn": ["^build"],
@@ -41,7 +41,7 @@
     },
     "check:lint": {
       "cache": false,
-      "inputs": ["**/*", "!**/.next/**", "!**/dist/**"]
+      "inputs": ["**/*", "!**/build/**", "!**/dist/**"]
     },
     "check:format": {
       "cache": false
