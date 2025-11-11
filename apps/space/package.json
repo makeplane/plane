@@ -32,6 +32,7 @@
     "@popperjs/core": "^2.11.8",
     "@react-router/node": "^7.9.3",
     "@react-router/serve": "^7.9.5",
+    "@sentry/react-router": "catalog:",
     "axios": "catalog:",
     "clsx": "^2.0.0",
     "date-fns": "^4.1.0",
