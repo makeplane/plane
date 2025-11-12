@@ -509,7 +509,9 @@ class IssueComment(ProjectBaseModel):
 
             if changed_fields:
                 if self.description_id:
-                    Description.objects.filter(pk=self.description_id).update(**changed_fields)
+                    Description.objects.filter(pk=self.description_id).update(
+                        **changed_fields, updated_by_id=self.updated_by_id
+                    )
                 else:
                     description = Description.objects.create(**description_defaults)
                     IssueComment.objects.filter(pk=self.pk).update(description_id=description.id)
