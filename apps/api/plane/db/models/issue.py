@@ -510,6 +510,7 @@ class IssueComment(ProjectBaseModel):
                 else:
                     description = Description.objects.create(**description_defaults)
                     IssueComment.objects.filter(pk=self.pk).update(description_id=description.id)
+                    self.description_id = description.id
 
     class Meta:
         verbose_name = "Issue Comment"
