@@ -8,7 +8,7 @@ export const PageNotFound = () => (
     <div className="grid h-full place-items-center p-4">
       <div className="space-y-8 text-center">
         <div className="relative mx-auto h-60 w-60 lg:h-80 lg:w-80">
-          <img src={Image404} alt="404- Page not found" />
+          <img src={Image404} alt="404- Page not found" className="w-full h-full object-contain" />
         </div>
         <div className="space-y-2">
           <h3 className="text-lg font-semibold">Oops! Something went wrong.</h3>
