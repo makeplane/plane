@@ -4,12 +4,20 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { joinUrlPath } from "@plane/utils";
 
+// Expose only vars starting with VITE_
+const viteEnv = Object.keys(process.env)
+  .filter((k) => k.startsWith("VITE_"))
+  .reduce<Record<string, string>>((a, k) => {
+    a[k] = process.env[k] ?? "";
+    return a;
+  }, {});
+
 const basePath = joinUrlPath(process.env.VITE_SPACE_BASE_PATH ?? "", "/") ?? "/";
 
 export default defineConfig(() => ({
   base: basePath,
   define: {
-    "process.env": JSON.stringify(import.meta.env),
+    "process.env": JSON.stringify(viteEnv),
   },
   build: {
     assetsInlineLimit: 0,
