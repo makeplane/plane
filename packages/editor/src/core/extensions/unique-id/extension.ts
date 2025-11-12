@@ -1,5 +1,5 @@
 import { type HocuspocusProvider } from "@hocuspocus/provider";
-import { Extension, findChildren } from "@tiptap/core";
+import { Extension } from "@tiptap/core";
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import type { Transaction } from "@tiptap/pm/state";
 import { v4 as uuidv4 } from "uuid";
@@ -9,6 +9,8 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 import { BLOCK_NODE_TYPES } from "@/plane-editor/constants/extensions";
 // plugins
 import { createUniqueIDPlugin } from "./plugin";
+// utils
+import { createIdsForView } from "./utils";
 
 export type UniqueIDGenerationContext = {
   node: ProseMirrorNode;
@@ -56,7 +58,7 @@ export interface UniqueIDOptions {
 export const UniqueID = Extension.create<UniqueIDOptions>({
   name: CORE_EXTENSIONS.UNIQUE_ID,
 
-  // we’ll set a very high priority to make sure this runs first
+  // we'll set a very high priority to make sure this runs first
   // and is compatible with `appendTransaction` hooks of other extensions
   priority: 10000,
 
@@ -106,31 +108,6 @@ export const UniqueID = Extension.create<UniqueIDOptions>({
 
     const provider = this.options.provider;
 
-    const createIds = () => {
-      const { view, state } = this.editor;
-      const { tr, doc } = state;
-      const { types, attributeName, generateID } = this.options;
-      const nodesWithoutId = findChildren(
-        doc,
-        (node) => types.includes(node.type.name) && node.attrs[attributeName] === null
-      );
-
-      nodesWithoutId.forEach(({ node, pos }) => {
-        tr.setNodeMarkup(pos, undefined, {
-          ...node.attrs,
-          [attributeName]: generateID({ node, pos }),
-        });
-      });
-
-      tr.setMeta("addToHistory", false);
-
-      view.dispatch(tr);
-
-      if (provider) {
-        provider.off("synced", createIds);
-      }
-    };
-
     /**
      * We need to handle collaboration a bit different here
      * because we can't automatically add IDs when the provider is not yet synced
@@ -139,13 +116,12 @@ export const UniqueID = Extension.create<UniqueIDOptions>({
     if (provider) {
       // Check if provider is already synced
       if (provider.isSynced) {
-        createIds();
-      } else {
-        // Wait for sync event if not yet synced
-        provider.on("synced", createIds);
+        createIdsForView(this.editor.view, this.options);
       }
+      // If not synced, the listener will be registered in the plugin
+      // and handled there with proper cleanup
     } else {
-      return createIds();
+      return createIdsForView(this.editor.view, this.options);
     }
   },
 
