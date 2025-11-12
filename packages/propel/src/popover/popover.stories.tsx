@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useArgs } from "storybook/preview-api";
-import { CloseIcon } from "../icons";
+import { CloseIcon } from "../icons/actions/close-icon";
 import { Popover } from "./root";
 
 // cannot use satifies here because base-ui does not have portable types.

@@ -1,11 +1,11 @@
 "use client";
 
 import type { FC, ReactNode } from "react";
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
+import { PostHogProvider as PHProvider } from "@posthog/react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import posthog from "posthog-js";
-import { PostHogProvider as PHProvider } from "posthog-js/react";
 // constants
 import { GROUP_WORKSPACE_TRACKER_EVENT } from "@plane/constants";
 // helpers
@@ -29,7 +29,9 @@ const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
   const { instance } = useInstance();
   const { workspaceSlug, projectId } = useParams();
   const { getWorkspaceRoleByWorkspaceSlug, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
-
+  // states
+  const [hydrated, setHydrated] = useState(false);
+  // derived values
   const currentProjectRole = getProjectRoleByWorkspaceSlugAndProjectId(
     workspaceSlug?.toString(),
     projectId?.toString()
@@ -40,7 +42,7 @@ const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
     process.env.NEXT_PUBLIC_POSTHOG_KEY && process.env.NEXT_PUBLIC_POSTHOG_HOST && is_telemetry_enabled;
 
   useEffect(() => {
-    if (user) {
+    if (user && hydrated) {
       // Identify sends an event, so you want may want to limit how often you call it
       posthog?.identify(user.email, {
         id: user.id,
@@ -57,19 +59,23 @@ const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
         });
       }
     }
-  }, [user, currentProjectRole, currentWorkspaceRole, currentWorkspace]);
+  }, [user, currentProjectRole, currentWorkspaceRole, currentWorkspace, hydrated]);
 
   useEffect(() => {
-    if (process.env.NEXT_PUBLIC_POSTHOG_KEY && process.env.NEXT_PUBLIC_POSTHOG_HOST) {
-      posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY, {
-        api_host: "/ingest",
-        ui_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
-        debug: process.env.NEXT_PUBLIC_POSTHOG_DEBUG === "1", // Debug mode based on the environment variable
+    const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY;
+    const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST;
+    const isDebugMode = process.env.NEXT_PUBLIC_POSTHOG_DEBUG === "1";
+    if (posthogKey && posthogHost) {
+      posthog.init(posthogKey, {
+        api_host: posthogHost,
+        ui_host: posthogHost,
+        debug: isDebugMode, // Debug mode based on the environment variable
         autocapture: false,
         capture_pageview: false, // Disable automatic pageview capture, as we capture manually
         capture_pageleave: true,
         disable_session_recording: true,
       });
+      setHydrated(true);
     }
   }, []);
 
@@ -86,16 +92,16 @@ const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
       }
     };
 
-    if (is_posthog_enabled) {
+    if (is_posthog_enabled && hydrated) {
       document.addEventListener("click", clickHandler);
     }
 
     return () => {
       document.removeEventListener("click", clickHandler);
     };
-  }, [is_posthog_enabled]);
+  }, [hydrated, is_posthog_enabled]);
 
-  if (is_posthog_enabled)
+  if (is_posthog_enabled && hydrated)
     return (
       <PHProvider client={posthog}>
         <Suspense>
