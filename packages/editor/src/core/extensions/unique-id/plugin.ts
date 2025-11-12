@@ -3,16 +3,26 @@ import { Fragment, type Node as ProseMirrorNode, Slice } from "@tiptap/pm/model"
 import { Plugin, PluginKey, type Transaction } from "@tiptap/pm/state";
 // types
 import type { UniqueIDOptions } from "./extension";
-// helpers
-import { findDuplicates } from "./helpers";
+
+const createThrottle = (interval: number) => {
+  let lastRun = 0;
+  return () => {
+    const now = Date.now();
+    if (now - lastRun >= interval) {
+      lastRun = now;
+      return true;
+    }
+    return false;
+  };
+};
 
 export const createUniqueIDPlugin = (options: UniqueIDOptions) => {
   let dragSourceElement: Element | null = null;
   let transformPasted = false;
+  const shouldRunDuplicateScan = createThrottle(1000);
 
   return new Plugin({
     key: new PluginKey("uniqueID"),
-
     appendTransaction: (transactions, oldState, newState) => {
       const hasDocChanges =
         transactions.some((transaction) => transaction.docChanged) && !oldState.doc.eq(newState.doc);
@@ -34,33 +44,34 @@ export const createUniqueIDPlugin = (options: UniqueIDOptions) => {
       const { types, attributeName, generateID } = options;
       const transform = combineTransactionSteps(oldState.doc, transactions as Transaction[]);
 
-      const seenIds = new Map<string, number>();
-      const duplicatePositions: number[] = [];
+      if (shouldRunDuplicateScan()) {
+        const seenIds = new Map<string, number>();
+        const duplicatePositions: number[] = [];
 
-      newState.doc.descendants((node, pos) => {
-        if (types.includes(node.type.name)) {
-          const id = node.attrs[attributeName];
+        newState.doc.descendants((node, pos) => {
+          if (types.includes(node.type.name)) {
+            const id = node.attrs[attributeName];
 
-          if (id !== null) {
-            if (seenIds.has(id)) {
-              duplicatePositions.push(pos);
-            } else {
-              seenIds.set(id, pos);
+            if (id !== null) {
+              if (seenIds.has(id)) {
+                duplicatePositions.push(pos);
+              } else {
+                seenIds.set(id, pos);
+              }
             }
           }
-        }
-      });
+        });
 
-      // Clear IDs at duplicate positions
-      duplicatePositions.forEach((pos) => {
-        const node = tr.doc.nodeAt(pos);
-        if (node) {
-          tr.setNodeMarkup(pos, undefined, {
-            ...node.attrs,
-            [attributeName]: generateID({ node, pos }),
-          });
-        }
-      });
+        duplicatePositions.forEach((pos) => {
+          const node = tr.doc.nodeAt(pos);
+          if (node) {
+            tr.setNodeMarkup(pos, undefined, {
+              ...node.attrs,
+              [attributeName]: generateID({ node, pos }),
+            });
+          }
+        });
+      }
 
       // get changed ranges based on the old state
       const changes = getChangedRanges(transform);
@@ -91,6 +102,9 @@ export const createUniqueIDPlugin = (options: UniqueIDOptions) => {
       // `tr.setNodeMarkup` resets the stored marks
       // so we'll restore them if they exist
       tr.setStoredMarks(newState.tr.storedMarks);
+
+      // Don't add ID generation to undo history
+      tr.setMeta("addToHistory", false);
 
       return tr;
     },
