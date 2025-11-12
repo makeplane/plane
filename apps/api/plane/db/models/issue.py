@@ -470,9 +470,12 @@ class IssueComment(ProjectBaseModel):
 
     def save(self, *args, **kwargs):
         self.comment_stripped = strip_tags(self.comment_html) if self.comment_html != "" else ""
-        super(IssueComment, self).save(*args, **kwargs)
+        is_creating = self._state.adding or not self.pk
 
-        description_id = self.description_id
+        if not is_creating:
+            old_issue_comment = IssueComment.objects.get(pk=self.id)
+
+        super(IssueComment, self).save(*args, **kwargs)
 
         description_defaults = {
             "workspace_id": self.workspace_id,
@@ -484,11 +487,29 @@ class IssueComment(ProjectBaseModel):
             "description_html": self.comment_html,
         }
 
-        if description_id:
-            Description.objects.filter(pk=self.description_id).update(**description_defaults)
-        else:
+        if is_creating:
             description = Description.objects.create(**description_defaults)
-            IssueComment.objects.filter(pk=self.pk).update(description_id=description.id)
+
+            self.description_id = description.id
+            super(IssueComment, self).save(update_fields=["description_id"])
+        else:
+            changed_fields = {}
+
+            if old_issue_comment.comment_html != self.comment_html:
+                changed_fields["description_html"] = self.comment_html
+
+            if old_issue_comment.comment_stripped != self.comment_stripped:
+                changed_fields["description_stripped"] = self.comment_stripped
+
+            if old_issue_comment.comment_json != self.comment_json:
+                changed_fields["description_json"] = self.comment_json
+
+            if changed_fields:
+                if self.description_id:
+                    Description.objects.filter(pk=self.description_id).update(**changed_fields)
+                else:
+                    description = Description.objects.create(**description_defaults)
+                    IssueComment.objects.filter(pk=self.pk).update(description_id=description.id)
 
     class Meta:
         verbose_name = "Issue Comment"
