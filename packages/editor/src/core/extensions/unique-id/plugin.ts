@@ -1,30 +1,24 @@
 import { combineTransactionSteps, findChildrenInRange, getChangedRanges } from "@tiptap/core";
 import { Fragment, type Node as ProseMirrorNode, Slice } from "@tiptap/pm/model";
 import { Plugin, PluginKey, type Transaction } from "@tiptap/pm/state";
+import { throttle } from "lodash-es";
 // types
 import type { UniqueIDOptions } from "./extension";
 // utils
 import { createIdsForView } from "./utils";
 
-const createThrottle = (interval: number) => {
-  let lastRun = 0;
-  return () => {
-    const now = Date.now();
-    if (now - lastRun >= interval) {
-      lastRun = now;
-      return true;
-    }
-    return false;
-  };
-};
-
 export const createUniqueIDPlugin = (options: UniqueIDOptions) => {
   let dragSourceElement: Element | null = null;
   let transformPasted = false;
-  const shouldRunDuplicateScan = createThrottle(1000);
-
-  // Store the sync handler reference for cleanup
   let syncHandler: (() => void) | null = null;
+  let shouldScanForDuplicates = false;
+  const scheduleDuplicateScan = throttle(
+    () => {
+      shouldScanForDuplicates = true;
+    },
+    1000,
+    { leading: true, trailing: false }
+  );
 
   return new Plugin({
     key: new PluginKey("uniqueID"),
@@ -49,7 +43,11 @@ export const createUniqueIDPlugin = (options: UniqueIDOptions) => {
       const { types, attributeName, generateID } = options;
       const transform = combineTransactionSteps(oldState.doc, transactions as Transaction[]);
 
-      if (shouldRunDuplicateScan()) {
+      scheduleDuplicateScan();
+
+      if (shouldScanForDuplicates) {
+        shouldScanForDuplicates = false;
+
         const seenIds = new Map<string, number>();
         const duplicatePositions: number[] = [];
 
