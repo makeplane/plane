@@ -2,7 +2,7 @@ import type { AxiosRequestConfig } from "axios";
 // plane types
 import { API_BASE_URL } from "@plane/constants";
 import { getFileMetaDataForUpload, generateFileUploadPayload } from "@plane/services";
-import type { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
+import type { EFileAssetType, TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
 import { getAssetIdFromUrl } from "@plane/utils";
 // helpers
 // services
@@ -287,27 +287,11 @@ export class FileService extends APIService {
     assetId: string,
     data: {
       entity_id?: string;
-      entity_type: string;
+      entity_type: EFileAssetType;
       project_id?: string;
     }
   ): Promise<{ asset_id: string }> {
-    const payload: {
-      entity_type: string;
-      entity_id?: string;
-      project_id?: string;
-    } = {
-      entity_type: data.entity_type,
-    };
-
-    if (data.entity_id) {
-      payload.entity_id = data.entity_id;
-    }
-
-    if (data.project_id) {
-      payload.project_id = data.project_id;
-    }
-
-    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/duplicate-assets/${assetId}/`, payload)
+    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/duplicate-assets/${assetId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

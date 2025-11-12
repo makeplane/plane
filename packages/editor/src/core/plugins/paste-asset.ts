@@ -5,7 +5,7 @@ export const PasteAssetPlugin = (): Plugin =>
   new Plugin({
     key: new PluginKey("paste-asset-duplication"),
     props: {
-      handlePaste: (view, event, _slice) => {
+      handlePaste: (view, event) => {
         if (!event.clipboardData) return false;
 
         const htmlContent = event.clipboardData.getData("text/html");
