@@ -1,4 +1,3 @@
-import Image from "next/image";
 // assets
 import SomethingWentWrongImage from "@/app/assets/something-went-wrong.svg?url";
 
@@ -7,7 +6,7 @@ export const SomethingWentWrongError = () => (
     <div className="text-center">
       <div className="mx-auto grid h-52 w-52 place-items-center rounded-full bg-custom-background-80">
         <div className="grid h-32 w-32 place-items-center">
-          <Image src={SomethingWentWrongImage} alt="Oops! Something went wrong" />
+          <img src={SomethingWentWrongImage} alt="Oops! Something went wrong" />
         </div>
       </div>
       <h1 className="mt-12 text-3xl font-semibold">Oops! Something went wrong.</h1>

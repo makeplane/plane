@@ -2,7 +2,6 @@
 
 import type { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -178,7 +177,13 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
           </div>
           <div className="relative flex h-full w-full flex-grow flex-col items-center justify-center space-y-3">
             <div className="relative flex-shrink-0">
-              <Image src={WorkSpaceNotAvailable} className="h-[220px] object-contain object-center" alt="Plane logo" />
+              <img
+                src={WorkSpaceNotAvailable}
+                width="100%"
+                height="100%"
+                className="h-[220px] object-contain object-center"
+                alt="Plane logo"
+              />
             </div>
             <h3 className="text-center text-lg font-semibold">Workspace not found</h3>
             <p className="text-center text-sm text-custom-text-200">

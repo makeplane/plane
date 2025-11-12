@@ -1,7 +1,6 @@
 "use client";
 
 import { observer } from "mobx-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
@@ -52,12 +51,12 @@ export const InstanceProvider = observer(({ children }: { children: React.ReactN
           <div className="container h-[110px] flex-shrink-0 mx-auto px-5 lg:px-0 flex items-center justify-between gap-5 z-50">
             <div className="flex items-center gap-x-2 py-10">
               <Link href={`${SPACE_BASE_PATH}/`} className="h-[30px] w-[133px]">
-                <Image src={logo} alt="Plane logo" />
+                <img src={logo} alt="Plane logo" />
               </Link>
             </div>
           </div>
           <div className="absolute inset-0 z-0">
-            <Image src={patternBackground} className="w-screen h-full object-cover" alt="Plane background pattern" />
+            <img src={patternBackground} className="w-screen h-full object-cover" alt="Plane background pattern" />
           </div>
           <div className="relative z-10 flex-grow">
             <div className="relative h-full w-full overflow-y-auto px-6 py-10 mx-auto flex justify-center items-center">

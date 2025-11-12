@@ -1,7 +1,6 @@
 "use client";
 
 import type { FC } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { GOD_MODE_URL } from "@plane/constants";
@@ -28,7 +27,13 @@ export const InstanceNotReady: FC = () => {
         </div>
 
         <div className="absolute inset-0 z-0">
-          <Image src={patternBackground} className="w-screen h-full object-cover" alt="Plane background pattern" />
+          <img
+            src={patternBackground}
+            width="100%"
+            height="100%"
+            className="object-cover"
+            alt="Plane background pattern"
+          />
         </div>
 
         <div className="relative z-10 mb-[110px] flex-grow">
@@ -36,7 +41,7 @@ export const InstanceNotReady: FC = () => {
             <div className="w-auto max-w-2xl relative space-y-8 py-10">
               <div className="relative flex flex-col justify-center items-center space-y-4">
                 <h1 className="text-3xl font-bold pb-3">Welcome aboard Plane!</h1>
-                <Image src={PlaneTakeOffImage} alt="Plane Logo" />
+                <img src={PlaneTakeOffImage} width="100%" height="100%" className="object-contain" alt="Plane Logo" />
                 <p className="font-medium text-base text-custom-text-400">
                   Get started by setting up your instance and workspace
                 </p>

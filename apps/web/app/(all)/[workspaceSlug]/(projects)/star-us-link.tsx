@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useTheme } from "next-themes";
 // plane imports
 import { HEADER_GITHUB_ICON, GITHUB_REDIRECTED_TRACKER_EVENT } from "@plane/constants";
@@ -37,7 +36,7 @@ export const StarUsOnGitHubLink = () => {
       target="_blank"
       rel="noopener noreferrer"
     >
-      <Image src={imageSrc} height={16} width={16} alt="GitHub Logo" aria-hidden="true" />
+      <img src={imageSrc} className="h-4 w-4 object-contain" alt="GitHub Logo" aria-hidden="true" />
       <span className="hidden text-xs font-medium sm:hidden md:block">{t("home.star_us_on_github")}</span>
     </a>
   );

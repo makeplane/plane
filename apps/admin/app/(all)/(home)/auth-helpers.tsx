@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { KeyRound, Mails } from "lucide-react";
 // plane packages
@@ -135,7 +134,7 @@ export const getBaseAuthenticationModes: (props: TGetBaseAuthenticationModeProps
     key: "google",
     name: "Google",
     description: "Allow members to log in or sign up for Plane with their Google accounts.",
-    icon: <Image src={GoogleLogo} height={20} width={20} alt="Google Logo" />,
+    icon: <img src={GoogleLogo} height={20} width={20} alt="Google Logo" />,
     config: <GoogleConfiguration disabled={disabled} updateConfig={updateConfig} />,
   },
   {
@@ -143,7 +142,7 @@ export const getBaseAuthenticationModes: (props: TGetBaseAuthenticationModeProps
     name: "GitHub",
     description: "Allow members to log in or sign up for Plane with their GitHub accounts.",
     icon: (
-      <Image
+      <img
         src={resolveGeneralTheme(resolvedTheme) === "dark" ? githubDarkModeImage : githubLightModeImage}
         height={20}
         width={20}
@@ -156,7 +155,7 @@ export const getBaseAuthenticationModes: (props: TGetBaseAuthenticationModeProps
     key: "gitlab",
     name: "GitLab",
     description: "Allow members to log in or sign up to plane with their GitLab accounts.",
-    icon: <Image src={GitlabLogo} height={20} width={20} alt="GitLab Logo" />,
+    icon: <img src={GitlabLogo} height={20} width={20} alt="GitLab Logo" />,
     config: <GitlabConfiguration disabled={disabled} updateConfig={updateConfig} />,
   },
 ];
