@@ -7,9 +7,22 @@ import { HydratedRouter } from "react-router/dom";
 Sentry.init({
   dsn: import.meta.env.VITE_SENTRY_DSN,
   environment: import.meta.env.VITE_SENTRY_ENVIRONMENT,
-  // Adds request headers and IP for users, for more info visit:
-  // https://docs.sentry.io/platforms/javascript/guides/react-router/configuration/options/#sendDefaultPii
-  sendDefaultPii: true,
+  sendDefaultPii: import.meta.env.VITE_SENTRY_SEND_DEFAULT_PII
+    ? import.meta.env.VITE_SENTRY_SEND_DEFAULT_PII === "1"
+    : false,
+  release: import.meta.env.VITE_APP_VERSION,
+  tracesSampleRate: import.meta.env.VITE_SENTRY_TRACES_SAMPLE_RATE
+    ? parseFloat(import.meta.env.VITE_SENTRY_TRACES_SAMPLE_RATE)
+    : 0.1,
+  profilesSampleRate: import.meta.env.VITE_SENTRY_PROFILES_SAMPLE_RATE
+    ? parseFloat(import.meta.env.VITE_SENTRY_PROFILES_SAMPLE_RATE)
+    : 0.1,
+  replaysSessionSampleRate: import.meta.env.VITE_SENTRY_REPLAYS_SESSION_SAMPLE_RATE
+    ? parseFloat(import.meta.env.VITE_SENTRY_REPLAYS_SESSION_SAMPLE_RATE)
+    : 0.1,
+  replaysOnErrorSampleRate: import.meta.env.VITE_SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE
+    ? parseFloat(import.meta.env.VITE_SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE)
+    : 1.0,
   integrations: [],
 });
 

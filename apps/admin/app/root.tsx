@@ -68,7 +68,7 @@ export function HydrateFallback() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  if (error && error instanceof Error) {
+  if (error) {
     Sentry.captureException(error);
   }
 
