@@ -137,7 +137,13 @@ export const UniqueID = Extension.create<UniqueIDOptions>({
      * otherwise we end up with empty paragraphs
      */
     if (provider) {
-      provider.on("synced", createIds);
+      // Check if provider is already synced
+      if (provider.isSynced) {
+        createIds();
+      } else {
+        // Wait for sync event if not yet synced
+        provider.on("synced", createIds);
+      }
     } else {
       return createIds();
     }
