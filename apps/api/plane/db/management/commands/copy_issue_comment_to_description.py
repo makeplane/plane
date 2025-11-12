@@ -15,8 +15,9 @@ class Command(BaseCommand):
 
         while True:
             comments = list(
-                IssueComment.objects.filter(deleted_at__isnull=True, description_id__isnull=True)[:batch_size]
+                IssueComment.objects.filter(description_id__isnull=True).order_by("created_at")[:batch_size]
             )
+
             if not comments:
                 break
 
