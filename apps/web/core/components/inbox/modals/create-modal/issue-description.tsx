@@ -112,8 +112,7 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
           });
           onAssetUpload?.(asset_id);
           return asset_id;
-        } catch (error) {
-          console.log("Error in duplicating work item asset:", error);
+        } catch {
           throw new Error("Asset duplication failed. Please try again later.");
         }
       }}

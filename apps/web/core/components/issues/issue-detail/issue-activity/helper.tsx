@@ -147,9 +147,8 @@ export const useCommentOperations = (
             workspaceSlug,
           });
           return res;
-        } catch (error) {
-          console.log("Error in duplicating comment asset:", error);
-          throw new Error(t("issue.comments.duplicate.error"));
+        } catch {
+          throw new Error("Asset upload failed. Please try again later.");
         }
       },
       addCommentReaction: async (commentId, reaction) => {

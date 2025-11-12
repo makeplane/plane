@@ -243,8 +243,7 @@ export const DescriptionInput: React.FC<Props> = observer((props) => {
                     workspaceSlug,
                   });
                   return asset_id;
-                } catch (error) {
-                  console.log("Error in duplicating work item asset:", error);
+                } catch {
                   throw new Error("Asset duplication failed. Please try again later.");
                 }
               }}
