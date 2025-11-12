@@ -36,7 +36,6 @@
     "axios": "catalog:",
     "clsx": "^2.0.0",
     "date-fns": "^4.1.0",
-    "dotenv": "^16.4.5",
     "isbot": "^5.1.31",
     "lodash-es": "catalog:",
     "lucide-react": "catalog:",

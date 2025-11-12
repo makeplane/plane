@@ -151,9 +151,6 @@ importers:
       axios:
         specifier: 'catalog:'
         version: 1.12.0
-      dotenv:
-        specifier: ^16.4.5
-        version: 16.6.1
       isbot:
         specifier: ^5.1.31
         version: 5.1.31
@@ -408,9 +405,6 @@ importers:
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
-      dotenv:
-        specifier: ^16.4.5
-        version: 16.6.1
       isbot:
         specifier: ^5.1.31
         version: 5.1.31
@@ -577,9 +571,6 @@ importers:
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
-      dotenv:
-        specifier: ^16.4.5
-        version: 16.6.1
       emoji-picker-react:
         specifier: ^4.5.16
         version: 4.12.2(react@18.3.1)

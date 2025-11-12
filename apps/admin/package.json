@@ -32,7 +32,6 @@
     "@tanstack/react-virtual": "^3.13.12",
     "@tanstack/virtual-core": "^3.13.12",
     "axios": "catalog:",
-    "dotenv": "^16.4.5",
     "isbot": "^5.1.31",
     "lodash-es": "catalog:",
     "lucide-react": "catalog:",
