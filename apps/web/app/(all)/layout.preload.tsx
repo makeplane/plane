@@ -9,11 +9,11 @@
 //     };
 
 //     const urls = [
-//       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/instances/`,
-//       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/me/`,
-//       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/me/profile/`,
-//       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/me/settings/`,
-//       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/me/workspaces/?v=${Date.now()}`,
+//       `${process.env.VITE_API_BASE_URL}/api/instances/`,
+//       `${process.env.VITE_API_BASE_URL}/api/users/me/`,
+//       `${process.env.VITE_API_BASE_URL}/api/users/me/profile/`,
+//       `${process.env.VITE_API_BASE_URL}/api/users/me/settings/`,
+//       `${process.env.VITE_API_BASE_URL}/api/users/me/workspaces/?v=${Date.now()}`,
 //     ];
 
 //     urls.forEach((url) => preloadItem(url));

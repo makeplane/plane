@@ -38,8 +38,7 @@ const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
   );
   const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug?.toString());
   const is_telemetry_enabled = instance?.is_telemetry_enabled || false;
-  const is_posthog_enabled =
-    process.env.NEXT_PUBLIC_POSTHOG_KEY && process.env.NEXT_PUBLIC_POSTHOG_HOST && is_telemetry_enabled;
+  const is_posthog_enabled = process.env.VITE_POSTHOG_KEY && process.env.VITE_POSTHOG_HOST && is_telemetry_enabled;
 
   useEffect(() => {
     if (user && hydrated) {
@@ -62,9 +61,9 @@ const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
   }, [user, currentProjectRole, currentWorkspaceRole, currentWorkspace, hydrated]);
 
   useEffect(() => {
-    const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY;
-    const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST;
-    const isDebugMode = process.env.NEXT_PUBLIC_POSTHOG_DEBUG === "1";
+    const posthogKey = process.env.VITE_POSTHOG_KEY;
+    const posthogHost = process.env.VITE_POSTHOG_HOST;
+    const isDebugMode = process.env.VITE_POSTHOG_DEBUG === "1";
     if (posthogKey && posthogHost) {
       posthog.init(posthogKey, {
         api_host: posthogHost,

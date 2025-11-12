@@ -1,22 +1,11 @@
 import path from "node:path";
 import { reactRouter } from "@react-router/dev/vite";
-import dotenv from "dotenv";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-dotenv.config({ path: path.resolve(__dirname, ".env") });
-
-// Automatically expose all environment variables prefixed with NEXT_PUBLIC_
-const publicEnv = Object.keys(process.env)
-  .filter((key) => key.startsWith("NEXT_PUBLIC_"))
-  .reduce<Record<string, string>>((acc, key) => {
-    acc[key] = process.env[key] ?? "";
-    return acc;
-  }, {});
-
 export default defineConfig(() => ({
   define: {
-    "process.env": JSON.stringify(publicEnv),
+    "process.env": JSON.stringify(import.meta.env),
   },
   build: {
     assetsInlineLimit: 0,
