@@ -467,6 +467,9 @@ class IssueComment(ProjectBaseModel):
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
     edited_at = models.DateTimeField(null=True, blank=True)
+    parent = models.ForeignKey(
+        "self", on_delete=models.CASCADE, null=True, blank=True, related_name="parent_issue_comment"
+    )
 
     def save(self, *args, **kwargs):
         self.comment_stripped = strip_tags(self.comment_html) if self.comment_html != "" else ""

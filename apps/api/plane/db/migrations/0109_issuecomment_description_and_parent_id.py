@@ -16,4 +16,9 @@ class Migration(migrations.Migration):
             name='description',
             field=models.OneToOneField(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='issue_comment_description', to='db.description'),
         ),
+        migrations.AddField(
+            model_name='issuecomment',
+            name='parent',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='parent_issue_comment', to='db.issuecomment'),
+        ),
     ]
