@@ -148,7 +148,7 @@ export const useCommentOperations = (
           });
           return res;
         } catch {
-          throw new Error("Asset upload failed. Please try again later.");
+          throw new Error("Asset duplication failed. Please try again later.");
         }
       },
       addCommentReaction: async (commentId, reaction) => {

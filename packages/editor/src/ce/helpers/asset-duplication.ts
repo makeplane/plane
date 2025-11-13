@@ -29,7 +29,7 @@ const imageComponentHandler: AssetDuplicationHandler = ({ element, originalHtml 
 
   // Get the modified HTML AFTER the changes
   const modifiedTag = element.outerHTML;
-  const modifiedHtml = originalHtml.replace(originalTag, modifiedTag);
+  const modifiedHtml = originalHtml.replaceAll(originalTag, modifiedTag);
 
   return { modifiedHtml, shouldProcess: true };
 };
