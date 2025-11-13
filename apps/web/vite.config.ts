@@ -33,7 +33,7 @@ export default defineConfig(() => ({
     dedupe: ["react", "react-dom", "@headlessui/react"],
   },
   server: {
-    host: true,
+    host: "127.0.0.1",
   },
   // No SSR-specific overrides needed; alias resolves to ESM build
 }));
