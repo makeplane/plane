@@ -1,4 +1,5 @@
-import { ICON_REGISTRY, IconName } from "./registry";
+import type { IconName } from "./registry";
+import { ICON_REGISTRY } from "./registry";
 
 /**
  * Get the icon component by name

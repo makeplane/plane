@@ -1,6 +1,6 @@
 import Link from "next/link";
 // helpers
-import { SUPPORT_EMAIL } from "./common.helper";
+import { SUPPORT_EMAIL } from "@plane/constants";
 
 export enum EPageTypes {
   INIT = "INIT",

@@ -2,12 +2,8 @@
 import type { TLogoProps } from "@plane/types";
 import { sanitizeHTML } from "@plane/utils";
 // types
-import {
-  ECalloutAttributeNames,
-  TCalloutBlockAttributes,
-  TCalloutBlockEmojiAttributes,
-  TCalloutBlockIconAttributes,
-} from "./types";
+import type { TCalloutBlockAttributes, TCalloutBlockEmojiAttributes, TCalloutBlockIconAttributes } from "./types";
+import { ECalloutAttributeNames } from "./types";
 
 export const DEFAULT_CALLOUT_BLOCK_ATTRIBUTES: TCalloutBlockAttributes = {
   [ECalloutAttributeNames.LOGO_IN_USE]: "emoji",

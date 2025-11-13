@@ -9,7 +9,7 @@ import {
   MODAL_Z_INDEX,
 } from "./constants";
 import { PortalWrapper } from "./portal-wrapper";
-import { ModalPortalProps } from "./types";
+import type { ModalPortalProps } from "./types";
 
 /**
  * @param children - The modal content to render

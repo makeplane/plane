@@ -1,5 +1,5 @@
 import React from "react";
-import { CompactAssetType, DetailedAssetType } from "./assets/asset-types";
+import type { CompactAssetType, DetailedAssetType } from "./assets/asset-types";
 import { EmptyStateCompact } from "./compact-empty-state";
 import { EmptyStateDetailed } from "./detailed-empty-state";
 import type { BaseEmptyStateCommonProps } from "./types";

@@ -1,10 +1,11 @@
 import { Node, mergeAttributes } from "@tiptap/core";
-import { MarkdownSerializerState } from "@tiptap/pm/markdown";
+import type { MarkdownSerializerState } from "@tiptap/pm/markdown";
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // types
-import { type CustomCalloutExtensionType, ECalloutAttributeNames, type TCalloutBlockAttributes } from "./types";
+import { ECalloutAttributeNames } from "./types";
+import type { CustomCalloutExtensionType, TCalloutBlockAttributes } from "./types";
 // utils
 import { DEFAULT_CALLOUT_BLOCK_ATTRIBUTES } from "./utils";
 

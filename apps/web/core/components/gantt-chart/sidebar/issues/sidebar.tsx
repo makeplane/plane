@@ -4,6 +4,7 @@ import type { RefObject } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
+import { GANTT_TIMELINE_TYPE } from "@plane/types";
 import type { IBlockUpdateData } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
@@ -15,7 +16,6 @@ import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // local imports
 import { useTimeLineChart } from "../../../../hooks/use-timeline-chart";
-import { ETimeLineTypeType } from "../../contexts";
 import { GanttDnDHOC } from "../gantt-dnd-HOC";
 import { handleOrderChange } from "../utils";
 import { IssuesSidebarBlock } from "./block";
@@ -47,7 +47,7 @@ export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
     isEpic = false,
   } = props;
 
-  const { getBlockById } = useTimeLineChart(ETimeLineTypeType.ISSUE);
+  const { getBlockById } = useTimeLineChart(GANTT_TIMELINE_TYPE.ISSUE);
 
   const {
     issues: { getIssueLoader },

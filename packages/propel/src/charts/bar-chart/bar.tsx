@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 // plane imports
-import { TBarChartShapeVariant, TBarItem, TChartData } from "@plane/types";
+import type { TBarChartShapeVariant, TBarItem, TChartData } from "@plane/types";
 import { cn } from "../../utils/classname";
 
 // Constants

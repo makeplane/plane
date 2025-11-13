@@ -1254,7 +1254,6 @@ declare module "wa-sqlite/src/examples/IndexedDbVFS.js" {
 
 /** @ignore */
 declare module "wa-sqlite/src/examples/MemoryVFS.js" {
-  // eslint-disable-next-line no-duplicate-imports
   import * as VFS from "wa-sqlite/src/VFS.js";
   /** @ignore */
   export class MemoryVFS extends VFS.Base {

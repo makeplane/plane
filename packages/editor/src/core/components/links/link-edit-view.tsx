@@ -1,8 +1,8 @@
-import { Node } from "@tiptap/pm/model";
+import type { Node } from "@tiptap/pm/model";
 import { Link2Off } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 // components
-import { LinkViewProps, LinkViews } from "@/components/links";
+import type { LinkViewProps, LinkViews } from "@/components/links";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
 

@@ -1,5 +1,5 @@
 import { makeObservable, observable } from "mobx";
-import { IWorkspaceStore } from "./workspace.store";
+import type { IWorkspaceStore } from "./workspace.store";
 
 export interface IUserStore {
   user: any;

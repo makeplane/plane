@@ -1,6 +1,6 @@
-import { EPageAccess } from "@plane/constants";
-import { TPage } from "@plane/types";
-import { CreatePayload, BaseActionPayload } from "@/types";
+import type { EPageAccess } from "@plane/constants";
+import type { TPage } from "@plane/types";
+import type { CreatePayload, BaseActionPayload } from "@/types";
 
 // Define all payload types for each event.
 export type ArchivedPayload = CreatePayload<{ archived_at: string | null }>;

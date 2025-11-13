@@ -1,4 +1,4 @@
-import { Fragment, Node as ProsemirrorNode, Schema } from "@tiptap/pm/model";
+import type { Fragment, Node as ProsemirrorNode, Schema } from "@tiptap/pm/model";
 // extensions
 import { createCell } from "@/extensions/table/table/utilities/create-cell";
 import { getTableNodeTypes } from "@/extensions/table/table/utilities/get-table-node-types";

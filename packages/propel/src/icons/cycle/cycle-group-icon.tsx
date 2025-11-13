@@ -3,7 +3,8 @@ import { CircleDotDashed, Circle } from "lucide-react";
 
 import { CycleIcon } from "../project/cycle-icon";
 import { CircleDotFullIcon } from "./circle-dot-full-icon";
-import { CYCLE_GROUP_COLORS, ICycleGroupIcon } from "./helper";
+import type { ICycleGroupIcon } from "./helper";
+import { CYCLE_GROUP_COLORS } from "./helper";
 
 const iconComponents = {
   current: CycleIcon,

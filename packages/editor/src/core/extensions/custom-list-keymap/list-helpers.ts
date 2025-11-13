@@ -1,6 +1,7 @@
-import { Editor, getNodeType, getNodeAtPosition, isAtEndOfNode, isAtStartOfNode, isNodeActive } from "@tiptap/core";
-import { Node, NodeType } from "@tiptap/pm/model";
-import { EditorState } from "@tiptap/pm/state";
+import type { Editor } from "@tiptap/core";
+import { getNodeType, getNodeAtPosition, isAtEndOfNode, isAtStartOfNode, isNodeActive } from "@tiptap/core";
+import type { Node, NodeType } from "@tiptap/pm/model";
+import type { EditorState } from "@tiptap/pm/state";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 

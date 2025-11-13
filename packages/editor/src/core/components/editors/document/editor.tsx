@@ -1,5 +1,6 @@
-import { Extensions } from "@tiptap/core";
-import { forwardRef, MutableRefObject, useMemo } from "react";
+import type { Extensions } from "@tiptap/core";
+import type { MutableRefObject } from "react";
+import { forwardRef, useMemo } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // components
@@ -15,7 +16,7 @@ import { useEditor } from "@/hooks/use-editor";
 // plane editor extensions
 import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
-import { EditorRefApi, IDocumentEditorProps } from "@/types";
+import type { EditorRefApi, IDocumentEditorProps } from "@/types";
 
 const DocumentEditor = (props: IDocumentEditorProps) => {
   const {

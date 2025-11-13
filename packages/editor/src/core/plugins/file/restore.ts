@@ -1,5 +1,6 @@
 import type { Editor } from "@tiptap/core";
-import { type EditorState, Plugin, PluginKey, type Transaction } from "@tiptap/pm/state";
+import { Plugin, PluginKey } from "@tiptap/pm/state";
+import type { EditorState, Transaction } from "@tiptap/pm/state";
 // plane imports
 import { CORE_EXTENSIONS } from "@plane/utils";
 // helpers
@@ -7,10 +8,10 @@ import { CORE_ASSETS_META_DATA_RECORD } from "@/helpers/assets";
 // plane editor imports
 import { NODE_FILE_MAP } from "@/plane-editor/constants/utility";
 // types
-import { TFileHandler } from "@/types";
+import type { TFileHandler } from "@/types";
 // local imports
 import type { NodeFileMapType } from "../../../ce/constants/utility";
-import { TFileNode } from "./types";
+import type { TFileNode } from "./types";
 
 const RESTORE_PLUGIN_KEY = new PluginKey("restore-utility");
 

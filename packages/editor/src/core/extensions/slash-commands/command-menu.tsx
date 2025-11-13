@@ -8,7 +8,7 @@ import { DROPDOWN_NAVIGATION_KEYS, getNextValidIndex } from "@/helpers/tippy";
 // types
 import type { ISlashCommandItem } from "@/types";
 // components
-import { TSlashCommandSection } from "./command-items-list";
+import type { TSlashCommandSection } from "./command-items-list";
 import { CommandMenuItem } from "./command-menu-item";
 
 export type SlashCommandsMenuProps = SuggestionProps<TSlashCommandSection, ISlashCommandItem> & {

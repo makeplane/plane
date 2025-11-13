@@ -5,7 +5,7 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 import { replaceCodeWithText } from "@/extensions/code/utils/replace-code-block-with-text";
 import type { InsertImageComponentProps } from "@/extensions/custom-image/types";
 // helpers
-import { ExtendedEmojiStorage } from "@/extensions/emoji/emoji";
+import type { ExtendedEmojiStorage } from "@/extensions/emoji/emoji";
 import { findTableAncestor } from "@/helpers/common";
 
 export const setText = (editor: Editor, range?: Range) => {

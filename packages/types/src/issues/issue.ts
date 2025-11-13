@@ -1,9 +1,9 @@
-import { TIssuePriorities } from "../issues";
-import { TIssuePublicComment } from "./activity/issue_comment";
-import { TIssueAttachment } from "./issue_attachment";
-import { TIssueLink } from "./issue_link";
-import { TIssueReaction, IIssuePublicReaction, IPublicVote } from "./issue_reaction";
-import { TIssueRelationTypes } from "./issue_relation";
+import type { TIssuePriorities } from "../issues";
+import type { TIssuePublicComment } from "./activity/issue_comment";
+import type { TIssueAttachment } from "./issue_attachment";
+import type { TIssueLink } from "./issue_link";
+import type { TIssueReaction, IIssuePublicReaction, IPublicVote } from "./issue_reaction";
+import type { TIssueRelationTypes } from "./issue_relation";
 
 export enum EIssueLayoutTypes {
   LIST = "list",

@@ -1,7 +1,7 @@
 // local imports
 import { gitHubEmojis, shortcodeToEmoji } from "@tiptap/extension-emoji";
-import { MarkdownSerializerState } from "@tiptap/pm/markdown";
-import { Node as ProseMirrorNode } from "@tiptap/pm/model";
+import type { MarkdownSerializerState } from "@tiptap/pm/markdown";
+import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { Emoji } from "./emoji";
 import { emojiSuggestion } from "./suggestion";
 

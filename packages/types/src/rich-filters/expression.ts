@@ -1,6 +1,6 @@
 // local imports
-import { SingleOrArray } from "../utils";
-import { TSupportedOperators, LOGICAL_OPERATOR, TAllAvailableOperatorsForDisplay } from "./operators";
+import type { SingleOrArray } from "../utils";
+import type { TSupportedOperators, LOGICAL_OPERATOR, TAllAvailableOperatorsForDisplay } from "./operators";
 
 /**
  * Filter node types for building hierarchical filter trees.

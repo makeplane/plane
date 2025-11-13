@@ -1,7 +1,7 @@
 import { NodeSelection } from "@tiptap/pm/state";
-import { EditorView } from "@tiptap/pm/view";
+import type { EditorView } from "@tiptap/pm/view";
 // extensions
-import { SideMenuHandleOptions, SideMenuPluginProps } from "@/extensions";
+import type { SideMenuHandleOptions, SideMenuPluginProps } from "@/extensions";
 // plugins
 import { nodeDOMAtCoords } from "@/plugins/drag-handle";
 

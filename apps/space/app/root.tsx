@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/react-router";
 import { Links, Meta, Outlet, Scripts } from "react-router";
 import type { HeadersFunction, LinksFunction } from "react-router";
 // assets
@@ -79,6 +80,10 @@ export function HydrateFallback() {
   );
 }
 
-export function ErrorBoundary() {
+export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  if (error) {
+    Sentry.captureException(error);
+  }
+
   return <ErrorPage />;
 }

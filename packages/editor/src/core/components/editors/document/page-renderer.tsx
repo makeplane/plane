@@ -1,4 +1,4 @@
-import { Editor } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 // plane imports
 import { cn } from "@plane/utils";
 // components

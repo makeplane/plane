@@ -11,7 +11,7 @@ import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 // helpers
 import { cn } from "../utils";
 // types
-import { ICustomSelectItemProps, ICustomSelectProps } from "./helper";
+import type { ICustomSelectItemProps, ICustomSelectProps } from "./helper";
 
 const CustomSelect = (props: ICustomSelectProps) => {
   const {

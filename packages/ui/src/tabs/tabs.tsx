@@ -1,10 +1,12 @@
 import { Tab } from "@headlessui/react";
-import React, { FC, Fragment, useEffect, useState } from "react";
+import type { FC } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 // helpers
 import { useLocalStorage } from "@plane/hooks";
 import { cn } from "../utils";
 // types
-import { TabList, TabListItem } from "./tab-list";
+import type { TabListItem } from "./tab-list";
+import { TabList } from "./tab-list";
 
 export type TabContent = {
   content: React.ReactNode;

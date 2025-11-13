@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@plane/constants";
-import { IWorkspaceMemberMe, IWorkspaceMember, IUserProjectsRole } from "@plane/types";
+import type { IWorkspaceMemberMe, IWorkspaceMember, IUserProjectsRole } from "@plane/types";
 import { APIService } from "../api.service";
 
 /**

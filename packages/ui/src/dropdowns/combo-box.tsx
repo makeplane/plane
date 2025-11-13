@@ -1,15 +1,6 @@
 import { Combobox } from "@headlessui/react";
-import React, {
-  ElementType,
-  Fragment,
-  KeyboardEventHandler,
-  ReactNode,
-  Ref,
-  forwardRef,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import type { ElementType, KeyboardEventHandler, ReactNode, Ref } from "react";
+import React, { Fragment, forwardRef, useEffect, useRef, useState } from "react";
 
 type Props = {
   as?: ElementType | undefined;

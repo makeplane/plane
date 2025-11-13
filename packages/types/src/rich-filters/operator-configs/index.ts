@@ -1,7 +1,7 @@
-import { TFilterValue } from "../expression";
-import { EQUALITY_OPERATOR, COLLECTION_OPERATOR, COMPARISON_OPERATOR } from "../operators";
-import { TCoreExactOperatorConfigs, TCoreInOperatorConfigs, TCoreRangeOperatorConfigs } from "./core";
-import {
+import type { TFilterValue } from "../expression";
+import type { EQUALITY_OPERATOR, COLLECTION_OPERATOR, COMPARISON_OPERATOR } from "../operators";
+import type { TCoreExactOperatorConfigs, TCoreInOperatorConfigs, TCoreRangeOperatorConfigs } from "./core";
+import type {
   TExtendedExactOperatorConfigs,
   TExtendedInOperatorConfigs,
   TExtendedOperatorSpecificConfigs,
