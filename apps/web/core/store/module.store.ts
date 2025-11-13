@@ -7,7 +7,6 @@ import type { DistributionUpdates } from "@plane/utils";
 import { updateDistribution, orderModules, shouldFilterModule } from "@plane/utils";
 // helpers
 // services
-import { syncIssuesWithDeletedModules } from "@/local-db/utils/load-workspace";
 import { ModuleService } from "@/services/module.service";
 import { ModuleArchiveService } from "@/services/module_archive.service";
 import { ProjectService } from "@/services/project";
@@ -453,7 +452,6 @@ export class ModulesStore implements IModuleStore {
       runInAction(() => {
         delete this.moduleMap[moduleId];
         if (this.rootStore.favorite.entityMap[moduleId]) this.rootStore.favorite.removeFavoriteFromStore(moduleId);
-        syncIssuesWithDeletedModules([moduleId]);
       });
     });
   };
