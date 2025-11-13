@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { IconWrapper } from "../icon-wrapper";
-import { ISvgIcons } from "../type";
+import type { ISvgIcons } from "../type";
 
 export const BooleanPropertyIcon: React.FC<ISvgIcons> = ({ color = "currentColor", ...rest }) => (
   <IconWrapper color={color} {...rest}>

@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { RequestHandler } from "express";
+import type { RequestHandler } from "express";
 
 // Define valid HTTP methods
 type RestMethod = "get" | "post" | "put" | "patch" | "delete";

@@ -1,8 +1,6 @@
 // plane imports
 import { isEmpty } from "lodash-es";
-import {
-  LOGICAL_OPERATOR,
-  MULTI_VALUE_OPERATORS,
+import type {
   SingleOrArray,
   TFilterExpression,
   TFilterValue,
@@ -12,8 +10,8 @@ import {
   TWorkItemFilterExpression,
   TWorkItemFilterExpressionData,
   TWorkItemFilterProperty,
-  WORK_ITEM_FILTER_PROPERTY_KEYS,
 } from "@plane/types";
+import { LOGICAL_OPERATOR, MULTI_VALUE_OPERATORS, WORK_ITEM_FILTER_PROPERTY_KEYS } from "@plane/types";
 import { createConditionNode, createAndGroupNode, isAndGroupNode, isConditionNode } from "@plane/utils";
 // local imports
 import { FilterAdapter } from "../rich-filters/adapter";

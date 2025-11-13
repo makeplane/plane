@@ -2,7 +2,6 @@
 
 import React, { useState, useRef, useCallback } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 import type { Control } from "react-hook-form";
@@ -329,12 +328,10 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                         </button>
                         {image !== null || (value && value !== "") ? (
                           <>
-                            <Image
-                              layout="fill"
-                              objectFit="cover"
+                            <img
                               src={image ? URL.createObjectURL(image) : value ? (getFileURL(value) ?? "") : ""}
                               alt="image"
-                              className="rounded-lg"
+                              className="rounded-lg h-full w-full object-cover"
                             />
                           </>
                         ) : (

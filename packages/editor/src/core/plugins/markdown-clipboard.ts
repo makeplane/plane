@@ -1,5 +1,6 @@
-import { Editor } from "@tiptap/core";
-import { Fragment, Node } from "@tiptap/pm/model";
+import type { Editor } from "@tiptap/core";
+import type { Fragment } from "@tiptap/pm/model";
+import { Node } from "@tiptap/pm/model";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";

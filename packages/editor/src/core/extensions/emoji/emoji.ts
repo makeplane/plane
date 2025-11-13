@@ -10,10 +10,13 @@ import {
   PasteRule,
   removeDuplicates,
 } from "@tiptap/core";
-import { EmojiStorage, emojis, emojiToShortcode, shortcodeToEmoji } from "@tiptap/extension-emoji";
+import type { EmojiStorage } from "@tiptap/extension-emoji";
+import { emojis, emojiToShortcode, shortcodeToEmoji } from "@tiptap/extension-emoji";
 import { Fragment } from "@tiptap/pm/model";
-import { Plugin, PluginKey, TextSelection, Transaction } from "@tiptap/pm/state";
-import Suggestion, { SuggestionOptions } from "@tiptap/suggestion";
+import type { Transaction } from "@tiptap/pm/state";
+import { Plugin, PluginKey, TextSelection } from "@tiptap/pm/state";
+import type { SuggestionOptions } from "@tiptap/suggestion";
+import Suggestion from "@tiptap/suggestion";
 import emojiRegex from "emoji-regex";
 import { isEmojiSupported } from "is-emoji-supported";
 // helpers

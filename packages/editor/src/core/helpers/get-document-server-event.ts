@@ -1,5 +1,9 @@
 import { DocumentCollaborativeEvents } from "@/constants/document-collaborative-events";
-import { TDocumentEventKey, TDocumentEventsClient, TDocumentEventsServer } from "@/types/document-collaborative-events";
+import type {
+  TDocumentEventKey,
+  TDocumentEventsClient,
+  TDocumentEventsServer,
+} from "@/types/document-collaborative-events";
 
 export const getServerEventName = (clientEvent: TDocumentEventsClient): TDocumentEventsServer | undefined => {
   for (const key in DocumentCollaborativeEvents) {

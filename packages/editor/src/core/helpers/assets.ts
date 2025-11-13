@@ -1,6 +1,7 @@
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 // plane imports
-import { ADDITIONAL_EXTENSIONS, CORE_EXTENSIONS } from "@plane/utils";
+import type { ADDITIONAL_EXTENSIONS } from "@plane/utils";
+import { CORE_EXTENSIONS } from "@plane/utils";
 // extensions
 import { getImageBlockId } from "@/extensions/custom-image/utils";
 // plane editor imports

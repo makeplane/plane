@@ -7,7 +7,7 @@ import { SideMenuExtension } from "@/extensions";
 // plane editor imports
 import { RichTextEditorAdditionalExtensions } from "@/plane-editor/extensions/rich-text-extensions";
 // types
-import { EditorRefApi, IRichTextEditorProps } from "@/types";
+import type { EditorRefApi, IRichTextEditorProps } from "@/types";
 
 const RichTextEditor: React.FC<IRichTextEditorProps> = (props) => {
   const {

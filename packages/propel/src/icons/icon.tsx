@@ -1,7 +1,8 @@
 import * as React from "react";
 
-import { ICON_REGISTRY, IconName } from "./registry";
-import { ISvgIcons } from "./type";
+import type { IconName } from "./registry";
+import { ICON_REGISTRY } from "./registry";
+import type { ISvgIcons } from "./type";
 
 export interface IconProps extends Omit<ISvgIcons, "ref"> {
   name: IconName;

@@ -2,7 +2,8 @@ import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { SmilePlus } from "lucide-react";
 import { stringToEmoji } from "../emoji-icon-picker";
-import { EmojiReactionGroup, EmojiReactionType } from "./emoji-reaction";
+import type { EmojiReactionType } from "./emoji-reaction";
+import { EmojiReactionGroup } from "./emoji-reaction";
 import { EmojiReactionPicker } from "./emoji-reaction-picker";
 
 const meta = {

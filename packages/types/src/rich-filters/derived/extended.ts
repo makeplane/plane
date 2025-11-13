@@ -1,4 +1,4 @@
-import { TFilterValue } from "../expression";
+import type { TFilterValue } from "../expression";
 
 // -------- DATE FILTER OPERATORS --------
 

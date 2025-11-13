@@ -1,4 +1,4 @@
-import { type Editor } from "@tiptap/core";
+import type { Editor } from "@tiptap/core";
 import type { ReactElement } from "react";
 import type { IEditorPropsExtended } from "@/types";
 

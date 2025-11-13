@@ -36,9 +36,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { useProjectView } from "@/hooks/store/use-project-view";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useTimeLineChart } from "@/hooks/use-timeline-chart";
-// local
-import { persistence } from "@/local-db/storage.sqlite";
-// plane web constants
+
 interface IProjectAuthWrapper {
   workspaceSlug: string;
   projectId?: string;
@@ -85,21 +83,6 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     initGantt();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useSWR(
-    workspaceSlug && projectId ? `PROJECT_SYNC_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}` : null,
-    workspaceSlug && projectId
-      ? () => {
-          persistence.syncIssues(projectId.toString());
-        }
-      : null,
-    {
-      revalidateIfStale: true,
-      revalidateOnFocus: true,
-      revalidateOnReconnect: true,
-      refreshInterval: 5 * 60 * 1000,
-    }
-  );
 
   // fetching project details
   useSWR(

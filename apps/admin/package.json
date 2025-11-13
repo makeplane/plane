@@ -56,6 +56,7 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "dotenv": "^16.4.5",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-tsconfig-paths": "^5.1.4"

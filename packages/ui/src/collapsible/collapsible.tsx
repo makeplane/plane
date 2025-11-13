@@ -1,5 +1,6 @@
 import { Disclosure, Transition } from "@headlessui/react";
-import React, { FC, useState, useEffect, useCallback } from "react";
+import type { FC } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 export type TCollapsibleProps = {
   title: string | React.ReactNode;

@@ -1,5 +1,5 @@
 "use client";
-import Image from "next/image";
+
 import { useTheme } from "next-themes";
 // assets
 import LogoSpinnerDark from "@/app/assets/images/logo-spinner-dark.gif?url";
@@ -12,7 +12,7 @@ export const LogoSpinner = () => {
 
   return (
     <div className="flex items-center justify-center">
-      <Image src={logoSrc} alt="logo" className="h-6 w-auto sm:h-11" />
+      <img src={logoSrc} alt="logo" className="h-6 w-auto sm:h-11" />
     </div>
   );
 };

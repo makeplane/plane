@@ -8,7 +8,8 @@ import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-par
 // types
 import type { TFileHandler } from "@/types";
 // local imports
-import { CustomImageNodeView, CustomImageNodeViewProps } from "./components/node-view";
+import type { CustomImageNodeViewProps } from "./components/node-view";
+import { CustomImageNodeView } from "./components/node-view";
 import { CustomImageExtensionConfig } from "./extension-config";
 import type { CustomImageExtensionOptions, CustomImageExtensionStorage } from "./types";
 import { getImageComponentImageFileMap } from "./utils";

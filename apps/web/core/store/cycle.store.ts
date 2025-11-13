@@ -15,7 +15,6 @@ import type { DistributionUpdates } from "@plane/utils";
 import { orderCycles, shouldFilterCycle, getDate, updateDistribution } from "@plane/utils";
 // helpers
 // services
-import { syncIssuesWithDeletedCycles } from "@/local-db/utils/load-workspace";
 import { CycleService } from "@/services/cycle.service";
 import { CycleArchiveService } from "@/services/cycle_archive.service";
 import { IssueService } from "@/services/issue";
@@ -618,7 +617,6 @@ export class CycleStore implements ICycleStore {
         delete this.cycleMap[cycleId];
         delete this.activeCycleIdMap[cycleId];
         if (this.rootStore.favorite.entityMap[cycleId]) this.rootStore.favorite.removeFavoriteFromStore(cycleId);
-        syncIssuesWithDeletedCycles([cycleId]);
       });
     });
 

@@ -1,4 +1,4 @@
-import { Editor } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 
 export const insertContentAtSavedSelection = (editor: Editor, content: string) => {
   if (!editor || editor.isDestroyed) {

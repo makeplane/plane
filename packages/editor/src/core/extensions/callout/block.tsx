@@ -1,4 +1,5 @@
-import { NodeViewContent, NodeViewProps, NodeViewWrapper } from "@tiptap/react";
+import type { NodeViewProps } from "@tiptap/react";
+import { NodeViewContent, NodeViewWrapper } from "@tiptap/react";
 import React, { useState } from "react";
 // constants
 import { COLORS_LIST } from "@/constants/common";
@@ -6,7 +7,8 @@ import { COLORS_LIST } from "@/constants/common";
 import { CalloutBlockColorSelector } from "./color-selector";
 import { CalloutBlockLogoSelector } from "./logo-selector";
 // types
-import { ECalloutAttributeNames, TCalloutBlockAttributes } from "./types";
+import type { TCalloutBlockAttributes } from "./types";
+import { ECalloutAttributeNames } from "./types";
 // utils
 import { updateStoredBackgroundColor } from "./utils";
 

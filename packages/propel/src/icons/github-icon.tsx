@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { ISvgIcons } from "./type";
+import type { ISvgIcons } from "./type";
 
 export const GithubIcon: React.FC<ISvgIcons> = ({ width = "24", height = "24", className, color }) => (
   <svg
