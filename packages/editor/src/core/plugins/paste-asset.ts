@@ -9,7 +9,7 @@ export const PasteAssetPlugin = (): Plugin =>
         if (!event.clipboardData) return false;
 
         const htmlContent = event.clipboardData.getData("text/html");
-        if (!htmlContent || htmlContent.includes('data-duplicated="true"')) return false;
+        if (!htmlContent || htmlContent.includes('data-uploaded="true"')) return false;
 
         // Process the HTML content using the registry
         const { processedHtml, hasChanges } = processAssetDuplication(htmlContent);
@@ -20,10 +20,13 @@ export const PasteAssetPlugin = (): Plugin =>
         event.stopPropagation();
 
         // Mark the content as already processed to avoid infinite loops
-        const finalHtml = processedHtml.replace(
-          "<meta charset='utf-8'>",
-          "<meta charset='utf-8' data-duplicated=\"true\">"
-        );
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = processedHtml;
+        const metaTag = tempDiv.querySelector("meta[charset='utf-8']");
+        if (metaTag) {
+          metaTag.setAttribute("data-uploaded", "true");
+        }
+        const finalHtml = tempDiv.innerHTML;
 
         const newDataTransfer = new DataTransfer();
         newDataTransfer.setData("text/html", finalHtml);

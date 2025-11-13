@@ -85,7 +85,7 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
         // Update node with new source and success status
         updateAttributes({
           src: newAssetId,
-          status: "duplicated",
+          status: "uploaded",
         });
       } catch (error) {
         console.error("Failed to duplicate image:", error);
@@ -108,7 +108,7 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
   }, [status, imgNodeSrc, updateAttributes]);
 
   useEffect(() => {
-    if (status === "duplicated") {
+    if (status === "uploaded") {
       hasRetriedOnMount.current = false;
     }
   }, [status]);

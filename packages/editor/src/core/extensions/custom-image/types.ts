@@ -24,13 +24,7 @@ export type TCustomImageSize = {
 
 export type TCustomImageAlignment = "left" | "center" | "right";
 
-export type TCustomImageStatus =
-  | "pending"
-  | "uploading"
-  | "uploaded"
-  | "duplicating"
-  | "duplicated"
-  | "duplication-failed";
+export type TCustomImageStatus = "pending" | "uploading" | "uploaded" | "duplicating" | "duplication-failed";
 
 export type TCustomImageAttributes = {
   [ECustomImageAttributeNames.ID]: string | null;
