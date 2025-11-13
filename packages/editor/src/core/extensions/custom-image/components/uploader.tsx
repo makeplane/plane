@@ -87,8 +87,11 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
   );
 
   const uploadImageEditorCommand = useCallback(
-    async (file: File) => await extension.options.uploadImage?.(imageEntityId ?? "", file),
-    [extension.options, imageEntityId]
+    async (file: File) => {
+      updateAttributes({ status: TCustomImageStatus.UPLOADING });
+      return await extension.options.uploadImage?.(imageEntityId ?? "", file);
+    },
+    [extension.options, imageEntityId, updateAttributes]
   );
 
   const handleProgressStatus = useCallback(
@@ -112,11 +115,6 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     onInvalidFile: handleInvalidFile,
     onUpload,
   });
-  useEffect(() => {
-    if (isImageBeingUploaded) {
-      updateAttributes({ status: TCustomImageStatus.UPLOADING });
-    }
-  }, [isImageBeingUploaded, updateAttributes]);
 
   const { draggedInside, onDrop, onDragEnter, onDragLeave } = useDropZone({
     editor,
