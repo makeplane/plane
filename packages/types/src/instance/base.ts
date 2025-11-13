@@ -1,5 +1,5 @@
-import { IUserLite } from "../users";
-import {
+import type { IUserLite } from "../users";
+import type {
   TInstanceAIConfigurationKeys,
   TInstanceEmailConfigurationKeys,
   TInstanceImageConfigurationKeys,

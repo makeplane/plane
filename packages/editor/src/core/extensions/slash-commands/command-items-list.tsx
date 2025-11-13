@@ -38,9 +38,9 @@ import {
 // plane editor extensions
 import { coreEditorAdditionalSlashCommandOptions } from "@/plane-editor/extensions";
 // types
-import { CommandProps, ISlashCommandItem, TSlashCommandSectionKeys } from "@/types";
+import type { CommandProps, ISlashCommandItem, TSlashCommandSectionKeys } from "@/types";
 // local types
-import { TExtensionProps, TSlashCommandAdditionalOption } from "./root";
+import type { TExtensionProps, TSlashCommandAdditionalOption } from "./root";
 
 export type TSlashCommandSection = {
   key: TSlashCommandSectionKeys;

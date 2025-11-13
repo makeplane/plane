@@ -1,15 +1,8 @@
 import type { Connection, Extension, Hocuspocus, onConfigurePayload } from "@hocuspocus/server";
 import { logger } from "@plane/logger";
 import { Redis } from "@/extensions/redis";
-import {
-  AdminCommand,
-  CloseCode,
-  ForceCloseReason,
-  getForceCloseMessage,
-  isForceCloseCommand,
-  type ClientForceCloseMessage,
-  type ForceCloseCommandData,
-} from "@/types/admin-commands";
+import { AdminCommand, CloseCode, getForceCloseMessage, isForceCloseCommand } from "@/types/admin-commands";
+import type { ForceCloseReason, ClientForceCloseMessage, ForceCloseCommandData } from "@/types/admin-commands";
 
 /**
  * Extension to handle force close commands from other servers via Redis admin channel

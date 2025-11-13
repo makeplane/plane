@@ -1,7 +1,7 @@
 import React from "react";
 import { cn } from "../utils";
+import type { TBannerVariant } from "./helper";
 import {
-  TBannerVariant,
   getBannerStyling,
   getBannerTitleStyling,
   getBannerActionStyling,

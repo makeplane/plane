@@ -1,13 +1,13 @@
 import { compact, isEqual, sortBy } from "lodash-es";
 // plane imports
-import {
-  FILTER_NODE_TYPE,
+import type {
   TFilterConditionNode,
   TFilterExpression,
   TFilterGroupNode,
   TFilterProperty,
   TFilterValue,
 } from "@plane/types";
+import { FILTER_NODE_TYPE } from "@plane/types";
 // local imports
 import { isConditionNode, isGroupNode } from "../types/core";
 import { processGroupNode } from "../types/shared";

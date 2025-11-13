@@ -3,7 +3,7 @@ import React, { useRef, useState, useCallback, useLayoutEffect, useEffect } from
 // plane imports
 import { cn } from "@plane/utils";
 // local imports
-import { Pixel, TCustomImageAttributes, TCustomImageSize } from "../types";
+import type { Pixel, TCustomImageAttributes, TCustomImageSize } from "../types";
 import { ensurePixelString, getImageBlockId } from "../utils";
 import type { CustomImageNodeViewProps } from "./node-view";
 import { ImageToolbarRoot } from "./toolbar";

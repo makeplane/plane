@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { ISvgIcons } from "../type";
+import type { ISvgIcons } from "../type";
 import { DashedCircle } from "./dashed-circle";
 
 export const BacklogGroupIcon: React.FC<ISvgIcons> = ({

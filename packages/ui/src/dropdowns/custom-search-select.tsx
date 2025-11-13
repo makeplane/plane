@@ -10,7 +10,7 @@ import { ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 import { cn } from "../utils";
-import { ICustomSearchSelectProps } from "./helper";
+import type { ICustomSearchSelectProps } from "./helper";
 
 export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
   const {

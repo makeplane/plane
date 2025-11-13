@@ -9,7 +9,8 @@ import {
   FloatingPortal,
 } from "@floating-ui/react";
 import type { Editor } from "@tiptap/react";
-import { Copy, LucideIcon, Trash2 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { Copy, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@plane/utils";
 // constants

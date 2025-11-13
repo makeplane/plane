@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { IconWrapper } from "../icon-wrapper";
-import { ISvgIcons } from "../type";
+import type { ISvgIcons } from "../type";
 
 export const ChevronDownIcon: React.FC<ISvgIcons> = ({ color = "currentColor", ...rest }) => (
   <IconWrapper color={color} clipPathId="clip0_2890_23" {...rest}>

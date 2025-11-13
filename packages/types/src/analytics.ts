@@ -1,4 +1,4 @@
-import { TChartData } from "./charts";
+import type { TChartData } from "./charts";
 
 export enum ChartXAxisProperty {
   STATES = "STATES",

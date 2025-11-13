@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Popover as BasePopover } from "@base-ui-components/react/popover";
-import { TPlacement, TSide, TAlign, convertPlacementToSideAndAlign } from "../utils/placement";
+import type { TPlacement, TSide, TAlign } from "../utils/placement";
+import { convertPlacementToSideAndAlign } from "../utils/placement";
 
 export interface PopoverContentProps extends React.ComponentProps<typeof BasePopover.Popup> {
   placement?: TPlacement;

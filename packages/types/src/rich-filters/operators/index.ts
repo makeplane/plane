@@ -1,17 +1,17 @@
+import type { TCoreSupportedOperators } from "./core";
 import {
   CORE_LOGICAL_OPERATOR,
   CORE_EQUALITY_OPERATOR,
   CORE_COLLECTION_OPERATOR,
   CORE_COMPARISON_OPERATOR,
-  TCoreSupportedOperators,
   CORE_MULTI_VALUE_OPERATORS,
 } from "./core";
+import type { TExtendedSupportedOperators } from "./extended";
 import {
   EXTENDED_LOGICAL_OPERATOR,
   EXTENDED_EQUALITY_OPERATOR,
   EXTENDED_COLLECTION_OPERATOR,
   EXTENDED_COMPARISON_OPERATOR,
-  TExtendedSupportedOperators,
   EXTENDED_MULTI_VALUE_OPERATORS,
 } from "./extended";
 

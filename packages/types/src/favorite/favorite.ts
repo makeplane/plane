@@ -1,4 +1,4 @@
-import { TLogoProps } from "../common";
+import type { TLogoProps } from "../common";
 
 export type IFavorite = {
   id: string;

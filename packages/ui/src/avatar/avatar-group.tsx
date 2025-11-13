@@ -4,7 +4,8 @@ import { Tooltip } from "@plane/propel/tooltip";
 // helpers
 import { cn } from "../utils";
 // types
-import { TAvatarSize, getSizeInfo, isAValidNumber } from "./avatar";
+import type { TAvatarSize } from "./avatar";
+import { getSizeInfo, isAValidNumber } from "./avatar";
 
 type Props = {
   /**

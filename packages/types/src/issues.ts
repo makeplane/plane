@@ -1,17 +1,17 @@
-import { ICycle } from "./cycle";
-import { TIssue } from "./issues/issue";
-import { IModule } from "./module";
-import { IProjectLite } from "./project";
-import { IStateLite } from "./state";
-import { IUserLite } from "./users";
-import {
+import type { ICycle } from "./cycle";
+import type { TIssue } from "./issues/issue";
+import type { IModule } from "./module";
+import type { IProjectLite } from "./project";
+import type { IStateLite } from "./state";
+import type { IUserLite } from "./users";
+import type {
   IIssueDisplayProperties,
   TIssueExtraOptions,
   TIssueGroupByOptions,
   TIssueGroupingFilters,
   TIssueOrderByOptions,
 } from "./view-props";
-import { IWorkspaceLite, Properties } from "./workspace";
+import type { IWorkspaceLite, Properties } from "./workspace";
 
 export interface IIssueCycle {
   id: string;

@@ -1,6 +1,6 @@
 // plane imports
 import { TWebhookConnectionQueryParams } from "@plane/types";
-import { TExtendedFileHandler } from "@/plane-editor/types/config";
+import type { TExtendedFileHandler } from "@/plane-editor/types/config";
 
 export type TFileHandler = {
   assetsUploadStatus: Record<string, number>; // blockId => progress percentage

@@ -1,6 +1,6 @@
-import { TLogoProps } from "../common";
-import { EPageAccess } from "../enums";
-import { TPageExtended } from "./extended";
+import type { TLogoProps } from "../common";
+import type { EPageAccess } from "../enums";
+import type { TPageExtended } from "./extended";
 
 export type TPage = {
   access: EPageAccess | undefined;
