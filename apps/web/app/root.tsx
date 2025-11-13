@@ -68,9 +68,6 @@ export function Layout({ children }: { children: ReactNode }) {
           </div>
         </AppProvider>
         <Scripts />
-        {process.env.VITE_PLAUSIBLE_DOMAIN && (
-          <Script defer data-domain={process.env.VITE_PLAUSIBLE_DOMAIN} src="https://plausible.io/js/script.js" />
-        )}
         {!!isSessionRecorderEnabled && process.env.VITE_SESSION_RECORDER_KEY && (
           <Script id="clarity-tracking">
             {`(function(c,l,a,r,i,t,y){
