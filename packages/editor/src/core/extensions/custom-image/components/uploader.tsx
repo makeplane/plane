@@ -35,7 +35,6 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     selected,
     setIsUploaded,
     updateAttributes,
-    hasDuplicationFailed,
   } = props;
   // refs
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -45,6 +44,8 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
   const imageComponentImageFileMap = useMemo(() => getImageComponentImageFileMap(editor), [editor]);
   const isTouchDevice = !!editor.storage.utility.isTouchDevice;
 
+  const hasDuplicationFailed = true;
+  // console.log("hasDuplicationFailed", hasDuplicationFailed);
   const onUpload = useCallback(
     (url: string) => {
       if (url) {
@@ -220,11 +221,16 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     >
       <ImageIcon className="size-4" />
       <div className="text-base font-medium flex-1">{getDisplayMessage()}</div>
-      {hasDuplicationFailed && editor.isEditable && (
+      {true && (
         <button
           type="button"
           onClick={handleRetryClick}
-          className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-custom-text-200 bg-custom-background-80 hover:bg-custom-background-70 border border-custom-border-300 hover:border-custom-border-200 rounded-md transition-all duration-200 ease-in-out"
+          className={cn(
+            "flex items-center gap-1 px-2 py-1 text-xs font-medium text-custom-text-300 hover:bg-custom-background-90 hover:text-custom-text-200 rounded-md transition-all duration-200 ease-in-out",
+            {
+              "hover:bg-red-500/20": selected,
+            }
+          )}
           title="Retry duplication"
         >
           <RotateCcw className="size-3" />
