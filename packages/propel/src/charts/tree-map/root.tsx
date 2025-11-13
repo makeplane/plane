@@ -1,7 +1,7 @@
 import React from "react";
 import { Treemap, ResponsiveContainer, Tooltip } from "recharts";
 // plane imports
-import { TreeMapChartProps } from "@plane/types";
+import type { TreeMapChartProps } from "@plane/types";
 // local imports
 import { cn } from "../../utils/classname";
 import { CustomTreeMapContent } from "./map-content";

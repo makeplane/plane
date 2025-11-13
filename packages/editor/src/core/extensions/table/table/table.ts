@@ -1,4 +1,5 @@
-import { callOrReturn, getExtensionField, mergeAttributes, Node, ParentConfig } from "@tiptap/core";
+import type { ParentConfig } from "@tiptap/core";
+import { callOrReturn, getExtensionField, mergeAttributes, Node } from "@tiptap/core";
 import { TextSelection } from "@tiptap/pm/state";
 import {
   addColumnAfter,

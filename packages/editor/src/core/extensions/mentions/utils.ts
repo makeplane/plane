@@ -1,14 +1,17 @@
-import { type Editor, ReactRenderer } from "@tiptap/react";
+import { ReactRenderer } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 import type { SuggestionOptions } from "@tiptap/suggestion";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { updateFloatingUIFloaterPosition } from "@/helpers/floating-ui";
-import { CommandListInstance, DROPDOWN_NAVIGATION_KEYS } from "@/helpers/tippy";
+import type { CommandListInstance } from "@/helpers/tippy";
+import { DROPDOWN_NAVIGATION_KEYS } from "@/helpers/tippy";
 // types
-import { TMentionHandler } from "@/types";
+import type { TMentionHandler } from "@/types";
 // local components
-import { MentionsListDropdown, MentionsListDropdownProps } from "./mentions-list-dropdown";
+import type { MentionsListDropdownProps } from "./mentions-list-dropdown";
+import { MentionsListDropdown } from "./mentions-list-dropdown";
 
 export const renderMentionsDropdown =
   (args: Pick<TMentionHandler, "searchCallback">): SuggestionOptions["render"] =>

@@ -1,4 +1,5 @@
-import React, { useState, useEffect, FC } from "react";
+import type { FC } from "react";
+import React, { useState, useEffect } from "react";
 
 interface IRadialProgressBar {
   progress: number;

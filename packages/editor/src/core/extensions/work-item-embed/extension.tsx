@@ -1,4 +1,5 @@
-import { ReactNodeViewRenderer, NodeViewWrapper, type NodeViewProps } from "@tiptap/react";
+import { ReactNodeViewRenderer, NodeViewWrapper } from "@tiptap/react";
+import type { NodeViewProps } from "@tiptap/react";
 // local imports
 import { WorkItemEmbedExtensionConfig } from "./extension-config";
 

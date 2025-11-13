@@ -7,9 +7,8 @@ import {
   autoUpdate,
   useClick,
   useRole,
-  type UseInteractionsReturn,
-  type UseFloatingReturn,
 } from "@floating-ui/react";
+import type { UseInteractionsReturn, UseFloatingReturn } from "@floating-ui/react";
 import { useState } from "react";
 
 type TArgs = {

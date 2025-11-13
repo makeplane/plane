@@ -1,12 +1,13 @@
 import { ImageIcon } from "lucide-react";
-import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from "react";
+import type { ChangeEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // constants
 import { ACCEPTED_IMAGE_MIME_TYPES } from "@/constants/config";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
-import { EFileError } from "@/helpers/file";
+import type { EFileError } from "@/helpers/file";
 // hooks
 import { useUploader, useDropZone, uploadFirstFileAndInsertRemaining } from "@/hooks/use-file-upload";
 // local imports

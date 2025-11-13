@@ -1,5 +1,5 @@
 import { logger } from "@plane/logger";
-import { TPage } from "@plane/types";
+import type { TPage } from "@plane/types";
 // services
 import { AppError } from "@/lib/errors";
 import { APIService } from "../api.service";

@@ -1,4 +1,5 @@
-import { type TIllustrationAssetProps, ILLUSTRATION_COLOR_TOKEN_MAP } from "../helper";
+import { ILLUSTRATION_COLOR_TOKEN_MAP } from "../helper";
+import type { TIllustrationAssetProps } from "../helper";
 
 export const IntakeHorizontalStackIllustration = ({ className }: TIllustrationAssetProps) => (
   <svg width="71" height="80" viewBox="0 0 71 80" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>

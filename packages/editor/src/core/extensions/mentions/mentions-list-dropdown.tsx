@@ -10,7 +10,7 @@ import { cn } from "@plane/utils";
 // helpers
 import { DROPDOWN_NAVIGATION_KEYS, getNextValidIndex } from "@/helpers/tippy";
 // types
-import { TMentionHandler, TMentionSection, TMentionSuggestion } from "@/types";
+import type { TMentionHandler, TMentionSection, TMentionSuggestion } from "@/types";
 
 export type MentionsListDropdownProps = SuggestionProps<TMentionSection, TMentionSuggestion> &
   Pick<TMentionHandler, "searchCallback"> & {

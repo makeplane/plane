@@ -1,6 +1,7 @@
 import { Combobox } from "@headlessui/react";
 import { Search } from "lucide-react";
-import React, { FC, useEffect, useRef } from "react";
+import type { FC } from "react";
+import React, { useEffect, useRef } from "react";
 // helpers
 import { cn } from "../../utils";
 

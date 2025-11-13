@@ -1,7 +1,7 @@
-import { SingleOrArray } from "../utils";
-import { IFilterAdapter, TExternalFilter } from "./adapter";
-import { TFilterProperty, TFilterValue } from "./expression";
-import { TAllAvailableOperatorsForDisplay } from "./operators";
+import type { SingleOrArray } from "../utils";
+import type { IFilterAdapter, TExternalFilter } from "./adapter";
+import type { TFilterProperty, TFilterValue } from "./expression";
+import type { TAllAvailableOperatorsForDisplay } from "./operators";
 
 /**
  * Condition payload for building filter expressions.

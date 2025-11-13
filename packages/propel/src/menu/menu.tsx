@@ -3,7 +3,7 @@ import { Menu as BaseMenu } from "@base-ui-components/react/menu";
 import { MoreHorizontal } from "lucide-react";
 import { ChevronDownIcon, ChevronRightIcon } from "../icons";
 import { cn } from "../utils/classname";
-import { TMenuProps, TSubMenuProps, TMenuItemProps } from "./types";
+import type { TMenuProps, TSubMenuProps, TMenuItemProps } from "./types";
 
 // Context for main menu to communicate with submenus
 const MenuContext = React.createContext<{

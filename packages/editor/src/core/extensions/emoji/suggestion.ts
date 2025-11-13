@@ -1,12 +1,15 @@
 import type { EmojiOptions, EmojiStorage } from "@tiptap/extension-emoji";
-import { ReactRenderer, type Editor } from "@tiptap/react";
+import { ReactRenderer } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { updateFloatingUIFloaterPosition } from "@/helpers/floating-ui";
-import { CommandListInstance, DROPDOWN_NAVIGATION_KEYS } from "@/helpers/tippy";
+import type { CommandListInstance } from "@/helpers/tippy";
+import { DROPDOWN_NAVIGATION_KEYS } from "@/helpers/tippy";
 // local imports
-import { type EmojiItem, EmojisListDropdown, EmojisListDropdownProps } from "./components/emojis-list";
+import { EmojisListDropdown } from "./components/emojis-list";
+import type { EmojisListDropdownProps, EmojiItem } from "./components/emojis-list";
 import type { ExtendedEmojiStorage } from "./emoji";
 
 const DEFAULT_EMOJIS = ["+1", "-1", "smile", "orange_heart", "eyes"];

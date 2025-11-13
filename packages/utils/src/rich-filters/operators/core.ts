@@ -1,7 +1,7 @@
 import { get } from "lodash-es";
 // plane imports
 import { DATE_OPERATOR_LABELS_MAP, EMPTY_OPERATOR_LABEL, OPERATOR_LABELS_MAP } from "@plane/constants";
-import {
+import type {
   TAllAvailableOperatorsForDisplay,
   TFilterValue,
   TAllAvailableDateFilterOperatorsForDisplay,

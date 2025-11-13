@@ -1,8 +1,8 @@
-import { AnyExtension, Extensions } from "@tiptap/core";
+import type { AnyExtension, Extensions } from "@tiptap/core";
 // extensions
 import { SlashCommands } from "@/extensions/slash-commands/root";
 // types
-import { IEditorProps, TExtensions } from "@/types";
+import type { IEditorProps, TExtensions } from "@/types";
 
 export type TRichTextEditorAdditionalExtensionsProps = Pick<
   IEditorProps,

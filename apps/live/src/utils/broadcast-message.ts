@@ -1,5 +1,5 @@
-import { Hocuspocus } from "@hocuspocus/server";
-import { BroadcastedEvent } from "@plane/editor";
+import type { Hocuspocus } from "@hocuspocus/server";
+import type { BroadcastedEvent } from "@plane/editor";
 import { logger } from "@plane/logger";
 import { Redis } from "@/extensions/redis";
 import { AppError } from "@/lib/errors";

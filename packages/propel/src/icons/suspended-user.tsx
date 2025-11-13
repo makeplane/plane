@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { ISvgIcons } from "./type";
+import type { ISvgIcons } from "./type";
 
 export const SuspendedUserIcon: React.FC<ISvgIcons> = ({ className, ...rest }) => (
   <svg viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} {...rest}>
