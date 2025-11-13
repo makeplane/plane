@@ -40,8 +40,8 @@ export class CaseService extends APIService {
       });
   }
 
-  async updateCase(workspaceSlug: string, caseId: string, data: any): Promise<any> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/test/case/${caseId}/`, data)
+  async updateCase(workspaceSlug: string,  data: any): Promise<any> {
+    return this.put(`/api/workspaces/${workspaceSlug}/test/case/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -163,6 +163,35 @@ export class CaseService extends APIService {
   async getModulesCount(workspaceSlug: string, repositoryId: string): Promise<Partial<ModuleCountResponse>> {
     const params = {repository_id:repositoryId}
     return this.get(`/api/workspaces/${workspaceSlug}/test/module/count/`,{params})
+      .then((response) => (response?.data ?? {}) as Partial<ModuleCountResponse>)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async putAssetCaseId(workspaceSlug: string, assetId: string, data: any): Promise<Partial<ModuleCountResponse>> {
+  return this.put(`/api/assets/v2/workspaces/${workspaceSlug}/${assetId}/`, data)
+    .then((response) => (response?.data ?? {}) as Partial<ModuleCountResponse>)
+    .catch((error) => {
+      throw error?.response?.data;
+    });
+}
+ async getCaseAsset(workspaceSlug: string, caseId:string,asset_id:string): Promise<any> {
+    return this.get(`/api/workspaces/${workspaceSlug}/cases/${caseId}/attachments/${asset_id}/`, {}, { responseType: 'blob' })
+      .then((response) => response)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+  async getCaseAssetList(workspaceSlug: string, caseId:string): Promise<Partial<ModuleCountResponse>> {
+    return this.get(`/api/workspaces/${workspaceSlug}/test/case/${caseId}/assets/`)
+      .then((response) => (response?.data ?? {}) as Partial<ModuleCountResponse>)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+  async deleteCaseAsset(workspaceSlug: string, caseId:string, asset_id:string): Promise<Partial<ModuleCountResponse>> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/case/${caseId}/attachments/${asset_id}/`)
       .then((response) => (response?.data ?? {}) as Partial<ModuleCountResponse>)
       .catch((error) => {
         throw error?.response?.data;

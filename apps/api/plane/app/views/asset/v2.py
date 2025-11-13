@@ -394,6 +394,15 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         asset.save(update_fields=["is_uploaded", "attributes"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    def put(self, request, slug, asset_id):
+        # get the asset id
+        asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug)
+        case_id = request.data.get('case_id')
+        asset.case_id = case_id
+        asset.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
     def delete(self, request, slug, asset_id):
         asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug)
         asset.is_deleted = True

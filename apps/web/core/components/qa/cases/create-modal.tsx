@@ -1,8 +1,8 @@
-// 顶部 imports（新增 WorkItemTable 与 StateDropdown 引入）
+// 顶部 imports（新增 Select）
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { Modal, Form, Input, Button, message } from "antd";
+import { Modal, Form, Input, Button, message, Select } from "antd";
 import { CaseService } from "@/services/qa/case.service";
 import { ExpandAltOutlined, PlusOutlined } from "@ant-design/icons";
 // 删除顶层 Quill import，改为动态加载
@@ -15,6 +15,7 @@ import * as LucideIcons from "lucide-react";
 import { FileUploadService } from "@/services/file-upload.service";
 import { getFileMetaDataForUpload, generateFileUploadPayload } from "@plane/services";
 import { RepositoryService } from "@/services/qa/repository.service";
+// 修正：使用相对路径导入枚举获取函数
 
 type Props = {
   isOpen: boolean;
@@ -33,6 +34,8 @@ import type { TIssue, TPartialProject } from "@plane/types";
 import { WorkItemSelectModal } from "./work-item-select-modal";
 import { projectIssueTypesCache, ProjectIssueTypeService, ProjectService, TIssueType } from "@/services/project";
 import { Logo } from "@plane/ui";
+import { getEnums } from "app/(all)/[workspaceSlug]/(projects)/test-management/util";
+import { useMember } from "@/hooks/store/use-member";
 
 export const CreateCaseModal: React.FC<Props> = (props) => {
   const { isOpen, handleClose, workspaceSlug, repositoryId, repositoryName, onSuccess } = props;
@@ -43,6 +46,12 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
   const [isWorkItemModalOpen, setIsWorkItemModalOpen] = useState<boolean>(false);
   // 新增：选中工作项状态（用于表格回显）
   const [selectedIssues, setSelectedIssues] = useState<TIssue[]>([]);
+  // 新增：枚举数据状态
+  const [enumsData, setEnumsData] = useState<{
+    case_type?: Record<string, string>;
+    case_priority?: Record<string, string>;
+    case_test_type?: Record<string, string>;
+  }>({});
 
   // 新增：删除单个已选工作项，并同步表单显示文本
   const handleRemoveSelected = (id: string) => {
@@ -73,6 +82,91 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
   // 新增：上传服务与仓库服务实例
   const fileUploadService = useMemo(() => new FileUploadService(), []);
   const repositoryService = useMemo(() => new RepositoryService(), []);
+
+  // 新增：获取枚举数据
+  useEffect(() => {
+    if (!isOpen || !workspaceSlug) return;
+
+    const fetchEnums = async () => {
+      try {
+        const enums = await getEnums(workspaceSlug);
+        setEnumsData({
+          case_type: enums.case_type || {},
+          case_priority: enums.case_priority || {},
+          case_test_type: enums.case_test_type || {},
+        });
+      } catch (error) {
+        console.error("获取枚举数据失败:", error);
+        message.error("获取枚举数据失败");
+      }
+    };
+
+    fetchEnums();
+  }, [isOpen, workspaceSlug]);
+
+  // 生成用例类型下拉选项
+  const caseTypeOptions = useMemo(() => {
+    return Object.entries(enumsData.case_type || {}).map(([value, label]) => ({
+      value,
+      label,
+    }));
+  }, [enumsData.case_type]);
+
+  const caseTestTypeOptions = useMemo(() => {
+    return Object.entries(enumsData.case_test_type || {}).map(([value, label]) => ({
+      value,
+      label,
+    }));
+  }, [enumsData.case_test_type]);
+
+  // 生成优先级下拉选项
+  const casePriorityOptions = useMemo(() => {
+    return Object.entries(enumsData.case_priority || {}).map(([value, label]) => ({
+      value,
+      label,
+    }));
+  }, [enumsData.case_priority]);
+
+  // 弹窗打开后，根据选项自动设置默认值（不覆盖用户已选择）
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const updates: Record<string, any> = {};
+
+    if (!form.getFieldValue("type") && caseTypeOptions.length > 0) {
+      updates.type = caseTypeOptions[0].value;
+    }
+    if (!form.getFieldValue("priority") && casePriorityOptions.length > 0) {
+      updates.priority = casePriorityOptions[0].value;
+    }
+    if (!form.getFieldValue("test_type") && caseTestTypeOptions.length > 0) {
+      updates.test_type = caseTestTypeOptions[0].value;
+    }
+
+    if (Object.keys(updates).length > 0) {
+      form.setFieldsValue(updates);
+    }
+  }, [isOpen, caseTypeOptions, casePriorityOptions, caseTestTypeOptions]);
+
+  // 复用成员来源与状态，保持与计划模块一致的调用链
+  const {
+    getUserDetails,
+    workspace: { workspaceMemberIds, isUserSuspended },
+  } = useMember();
+
+  // 维护人下拉选项（单选）
+  const assigneeOptions = useMemo(
+    () =>
+      (workspaceMemberIds ?? []).map((userId) => {
+        const user = getUserDetails(userId);
+        return {
+          value: userId,
+          label: user?.display_name ?? "",
+          disabled: isUserSuspended(userId, workspaceSlug),
+        };
+      }),
+    [workspaceMemberIds, getUserDetails, isUserSuspended, workspaceSlug]
+  );
 
   // 新增：仓库对应项目ID（用于 ProjectAssetEndpoint）
   const [repoProjectId, setRepoProjectId] = useState<string>("");
@@ -118,6 +212,20 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
       const key = `${file.name}-${file.size}-${file.lastModified}`;
       setAttachmentUploading((prev) => ({ ...prev, [key]: false }));
     }
+  };
+  const [moduleOptions, setModuleOptions] = useState<{ label: string; value: string }[]>([]);
+  const flattenModules = (list: any[]): { id: string; name: string }[] => {
+    const res: { id: string; name: string }[] = [];
+    const dfs = (nodes: any[]) => {
+      (nodes || []).forEach((n) => {
+        const id = String(n?.id ?? "");
+        const name = String(n?.name ?? "-");
+        if (id) res.push({ id, name });
+        if (Array.isArray(n?.children) && n.children.length > 0) dfs(n.children);
+      });
+    };
+    dfs(list || []);
+    return res;
   };
 
   const handleFilesChosen = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -299,6 +407,7 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
 
   const resetForm = () => {
     form.resetFields();
+    setSelectedIssues([]);
     setSubmitting(false);
   };
 
@@ -610,12 +719,28 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
     });
   }, [isOpen, form, repositoryName]);
 
+  // 新增：弹窗打开时拉取模块列表
+  useEffect(() => {
+    if (!isOpen || !workspaceSlug || !repositoryId) return;
+    caseService
+      .getModules(workspaceSlug, repositoryId)
+      .then((list) => {
+        const flat = flattenModules(list);
+        setModuleOptions(flat.map((m) => ({ label: m.name, value: String(m.id) })));
+      })
+      .catch((err) => {
+        const msg = err?.message || err?.detail || err?.error || "获取模块列表失败";
+        message.error(msg);
+        setModuleOptions([]);
+      });
+  }, [isOpen, workspaceSlug, repositoryId]);
+
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
       setSubmitting(true);
 
-      // 构造 payload：包含 steps 数组（仅创建）
+      // 构造 payload：包含所有表单项（附件除外）
       const payload: any = {
         name: (values?.name || "").trim(),
         precondition: (values?.precondition || "").trim(),
@@ -627,6 +752,14 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
               result: (s?.result || "").trim(),
             }))
           : [],
+        // 新增：右侧与其它项的值全部带上（附件除外）
+        assignee: values?.assignee || null,
+        module: values?.module || null,
+        type: values?.type || null,
+        priority: values?.priority || null,
+        test_type: values?.test_type || null,
+        // 新增：工作项以 id 列表传递
+        issues: Array.isArray(selectedIssues) ? selectedIssues.map((i) => i.id) : [],
       };
 
       if (!payload.name) {
@@ -635,7 +768,7 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
         return;
       }
 
-      // 若有附件且仍在上传中，给出提示以避免未完成上传的绑定
+      // 若有附件仍在上传中，避免未完成上传的绑定
       const isAnyUploading = attachmentFiles.some((f) => attachmentUploading[`${f.name}-${f.size}-${f.lastModified}`]);
       if (isAnyUploading) {
         message.warning("有附件仍在上传中，请稍候再创建");
@@ -647,10 +780,9 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
       console.log("🚀 ~ handleSubmit ~ createdCase:", createdCase);
       message.success("测试用例创建成功");
 
-      // 从创建返回中提取 caseId 与 projectId（兼容多种返回结构）
       const caseId: string | undefined = createdCase?.id ?? createdCase?.case?.id;
 
-      // 创建后批量绑定附件到用例（ProjectBulkAssetEndpoint）
+      // 创建后批量绑定附件到用例（附件不在创建 payload 中）
       if (caseId && attachmentAssetIds.length > 0) {
         await caseService.post(`/api/assets/v2/workspaces/${workspaceSlug}/${caseId}/bulk/`, {
           asset_ids: attachmentAssetIds,
@@ -658,7 +790,6 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
       }
 
       await onSuccess?.();
-      // 清理附件选择与状态
       setAttachmentFiles([]);
       setAttachmentAssetIds([]);
       setAttachmentUploading({});
@@ -788,7 +919,6 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
         initialValues={{
           name: "",
           precondition: "",
-          // 修正 steps 初始值为数组且默认一行空数据
           steps: [{ description: "", result: "" }],
           remark: "",
           issues: "",
@@ -796,7 +926,7 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
           module: "",
           type: "",
           priority: "",
-          test_type: "",
+          test_type: "manual",
           assignee: "",
         }}
       >
@@ -906,24 +1036,53 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
               <Input placeholder="所属测试库" disabled />
             </Form.Item>
 
+            <Form.Item label="维护人" name="assignee" rules={[{ required: true, message: "请选择维护人" }]}>
+              <Select
+                placeholder="选择维护人"
+                options={assigneeOptions}
+                allowClear
+                showSearch
+                optionFilterProp="label"
+                filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
+              />
+            </Form.Item>
+
+            {/* 将模块改为下拉框 */}
             <Form.Item label="模块" name="module">
-              <Input placeholder="请输入模块" />
+              <Select
+                placeholder="请选择模块"
+                options={moduleOptions}
+                allowClear
+                showSearch
+                filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
+              />
             </Form.Item>
 
             <Form.Item label="用例类型" name="type">
-              <Input placeholder="请输入用例类型" />
+              <Select
+                placeholder="请选择用例类型"
+                options={caseTypeOptions}
+                showSearch
+                filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
+              />
             </Form.Item>
 
             <Form.Item label="重要程度" name="priority">
-              <Input placeholder="请输入重要程度" />
+              <Select
+                placeholder="请选择重要程度"
+                options={casePriorityOptions}
+                showSearch
+                filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
+              />
             </Form.Item>
 
             <Form.Item label="测试类型" name="test_type">
-              <Input placeholder="请输入测试类型" />
-            </Form.Item>
-
-            <Form.Item label="维护人" name="assignee">
-              <Input placeholder="请输入维护人" />
+              <Select
+                placeholder="请选择测试类型"
+                options={caseTestTypeOptions}
+                showSearch
+                filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
+              />
             </Form.Item>
           </div>
         </div>

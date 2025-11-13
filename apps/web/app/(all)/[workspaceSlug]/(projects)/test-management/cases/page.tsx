@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { PageHead } from "@/components/core/page-title";
 import { Table, Tag, Input, Button, Space, Modal, Dropdown } from "antd";
-import { EllipsisOutlined, SearchOutlined } from "@ant-design/icons";
+import { EllipsisOutlined, MoreOutlined, SearchOutlined } from "@ant-design/icons";
 import type { TableProps, InputRef, TableColumnType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import { CaseService } from "@/services/qa/case.service";
@@ -22,9 +22,14 @@ import {
   DeploymentUnitOutlined,
 } from "@ant-design/icons";
 import { CaseModuleService } from "@/services/qa";
+import UpdateModal from "@/components/qa/cases/update-modal";
 
 type TCreator = {
   display_name?: string;
+};
+
+type TModule = {
+  name?: string;
 };
 
 type TLabel =
@@ -62,6 +67,8 @@ export default function TestCasesPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [activeCase, setActiveCase] = useState<any | null>(null);
 
   // 分页状态管理
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -93,6 +100,12 @@ export default function TestCasesPage() {
 
   // 新增：树主题（默认/紧凑/高对比）
   const [treeTheme, setTreeTheme] = useState<"light" | "compact" | "high-contrast">("light");
+  const [expandedKeys, setExpandedKeys] = useState<string[] | undefined>(undefined);
+  const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
+  const onExpand: TreeProps["onExpand"] = (keys) => {
+    setExpandedKeys(keys as string[]);
+    setAutoExpandParent(false);
+  };
 
   // 自定义节点标题：统一图标+文案+间距
   const updateModuleCount = (modules: any[], id: string, count: number): any[] => {
@@ -106,6 +119,7 @@ export default function TestCasesPage() {
       return m;
     });
   };
+
   const batchUpdateModuleCounts = (modules: any[], countsMap: Record<string, number>): any[] => {
     return modules.map((m) => {
       const updatedM = { ...m };
@@ -156,6 +170,14 @@ export default function TestCasesPage() {
     if (!repositoryId) return;
     setCreatingParentId(parentId);
     setNewModuleName("");
+
+    // 新增：确保当前父节点展开，便于显示临时输入框
+    setExpandedKeys((prev) => {
+      const prevKeys = prev || [];
+      const pid = String(parentId);
+      return prevKeys.includes(pid) ? prevKeys : [...prevKeys, pid];
+    });
+    setAutoExpandParent(true);
   };
 
   // 新增：输入框失焦或回车时调用创建接口
@@ -231,7 +253,7 @@ export default function TestCasesPage() {
         queryParams.module_id = selectedModuleId;
       }
 
-      // ... existing code ... (name__icontains, state__in, type__in, priority__in)
+      // name__icontains, state__in, type__in, priority__in
 
       const response: TestCaseResponse = await caseService.getCases(workspaceSlug as string, queryParams);
       setCases(response?.data || []);
@@ -255,9 +277,14 @@ export default function TestCasesPage() {
 
   // 新增：Tree onSelect 处理（仅更新选中状态，不直接调用 fetchCases）
   const onSelect: TreeProps["onSelect"] = (selectedKeys, info) => {
+    const keyStr = String(info?.node?.key);
+    // 忽略临时创建节点，避免设置成选中模块从而发起错误过滤请求
+    if (keyStr.startsWith("__creating__")) {
+      return;
+    }
+
     // 如果是“取消选择”事件（再次点击同一模块），则忽略，保持当前选中不变
     if (!info.selected) {
-      // 仅当点击“全部模块”时才切换到全部
       if (String(info?.node?.key) === "all") {
         setSelectedModuleId(null);
       }
@@ -307,9 +334,12 @@ export default function TestCasesPage() {
           {typeof count === "number" && <span className="text-xs text-custom-text-300">{count}</span>}
           {repositoryId && (
             <Dropdown trigger={["hover"]} menu={{ items }}>
-              <Button type="text" size="small" className="opacity-0 group-hover:opacity-100 transition-opacity">
-                操作
-              </Button>
+              <Button
+                type="text"
+                icon={<EllipsisOutlined />}
+                size="small"
+                className="opacity-0 group-hover:opacity-100 transition-opacity"
+              ></Button>
             </Dropdown>
           )}
         </div>
@@ -329,6 +359,32 @@ export default function TestCasesPage() {
       />
     </div>
   );
+
+  // 新增：递归构建树节点，任意层级都支持插入“添加”的临时输入框
+  const buildTreeNodes = (list: any[]): any[] => {
+    if (!Array.isArray(list)) return [];
+    return list.map((node: any) => {
+      const nodeId = String(node?.id);
+      const childrenNodes = buildTreeNodes(node?.children || []);
+      const creatingChild =
+        creatingParentId === nodeId
+          ? [
+              {
+                title: renderCreatingInput(nodeId),
+                key: `__creating__${nodeId}`,
+                icon: <PlusOutlined />,
+                selectable: false, // 防止选中临时输入节点
+              },
+            ]
+          : [];
+      return {
+        title: renderNodeTitle(node?.name ?? "-", getNodeCount(node), nodeId),
+        key: nodeId,
+        icon: <AppstoreOutlined />,
+        children: [...creatingChild, ...childrenNodes],
+      };
+    });
+  };
 
   const treeData = [
     {
@@ -356,7 +412,6 @@ export default function TestCasesPage() {
                         </Button>
                       ),
                     },
-                    // 删除项已移除
                   ],
                 }}
               >
@@ -374,60 +429,18 @@ export default function TestCasesPage() {
       key: "all",
       icon: <AppstoreOutlined />,
       children: [
-        // 根下的临时输入
         ...(creatingParentId === "all"
           ? [
               {
                 title: renderCreatingInput("all"),
                 key: "__creating__root",
                 icon: <PlusOutlined />,
+                selectable: false, // 防止选中根下临时输入节点
               },
             ]
           : []),
-        // 常规模块
-        ...(modules?.map((mod: any) => {
-          const modChildren = (mod?.children || [])?.map((child: any) => {
-            const grandChildren = (child?.children || [])?.map((c2: any) => ({
-              title: renderNodeTitle(c2?.name ?? "-", getNodeCount(c2), String(c2?.id)),
-              key: String(c2?.id),
-              icon: <AppstoreOutlined />,
-            }));
-            return {
-              title: renderNodeTitle(child?.name ?? "-", getNodeCount(child), String(child?.id)),
-              key: String(child?.id),
-              icon: <AppstoreOutlined />,
-              children: [
-                ...(creatingParentId === String(child?.id)
-                  ? [
-                      {
-                        title: renderCreatingInput(String(child?.id)),
-                        key: `__creating__${String(child?.id)}`,
-                        icon: <PlusOutlined />,
-                      },
-                    ]
-                  : []),
-                ...(grandChildren || []),
-              ],
-            };
-          });
-          return {
-            title: renderNodeTitle(mod?.name ?? "-", getNodeCount(mod), String(mod?.id)),
-            key: String(mod?.id),
-            icon: <AppstoreOutlined />,
-            children: [
-              ...(creatingParentId === String(mod?.id)
-                ? [
-                    {
-                      title: renderCreatingInput(String(mod?.id)),
-                      key: `__creating__${String(mod?.id)}`,
-                      icon: <PlusOutlined />,
-                    },
-                  ]
-                : []),
-              ...(modChildren || []),
-            ],
-          };
-        }) ?? []),
+        // 递归构建所有模块与子模块（任意层级）
+        ...buildTreeNodes(modules),
       ],
     },
   ];
@@ -571,6 +584,18 @@ export default function TestCasesPage() {
       dataIndex: "name",
       key: "name",
       ...getColumnSearchProps("name"),
+      render: (_: any, record: any) => (
+        <button
+          type="button"
+          className="text-primary hover:underline"
+          onClick={() => {
+            setActiveCase(record);
+            setIsUpdateModalOpen(true);
+          }}
+        >
+          {record?.name}
+        </button>
+      ),
     },
     {
       title: "状态",
@@ -610,6 +635,13 @@ export default function TestCasesPage() {
       })),
       filterMultiple: true,
       filteredValue: filters.priority ?? null,
+    },
+    {
+      title: "模块",
+      dataIndex: "module",
+      key: "module",
+      render: (module: TModule | undefined) => module?.name || "",
+      width: 140,
     },
     {
       title: "创建人",
@@ -658,6 +690,9 @@ export default function TestCasesPage() {
                 showLine={false}
                 defaultExpandAll
                 onSelect={onSelect}
+                onExpand={onExpand}
+                expandedKeys={expandedKeys}
+                autoExpandParent={autoExpandParent}
                 treeData={treeData}
                 selectedKeys={selectedModuleId ? [selectedModuleId] : ["all"]}
                 className="py-2"
@@ -722,9 +757,19 @@ export default function TestCasesPage() {
             // 新增成功后刷新当前列表与分页/筛选状态
             await fetchCases(currentPage, pageSize, filters);
             fetchModules();
+            fetchCases(1, pageSize, filters);
           }}
         />
       )}
+      <UpdateModal
+        open={isUpdateModalOpen}
+        onClose={() => {
+          setIsUpdateModalOpen(false);
+          fetchModules();
+          fetchCases(1, pageSize, filters);
+        }}
+        caseId={activeCase?.id}
+      />
     </>
   );
 }

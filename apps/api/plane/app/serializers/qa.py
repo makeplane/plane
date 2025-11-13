@@ -80,7 +80,7 @@ class CaseCreateUpdateSerializer(ModelSerializer):
     class Meta:
         model = TestCase
         fields = ['name', 'precondition', 'steps', 'remark', 'state', 'type', 'priority', 'repository', 'labels',
-                  'module']
+                  'module','assignee']
 
 
 class CaseListSerializer(ModelSerializer):
@@ -155,4 +155,9 @@ class CaseAttachmentSerializer(BaseSerializer):
             "workspace",
             "project",
             "case",
+            'size',
+            'storage_metadata',
+            'attributesz',
         ]
+
+
