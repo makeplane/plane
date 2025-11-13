@@ -65,18 +65,17 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
 
   // Handle image duplication when status is duplicating
   useEffect(() => {
-    if (status !== TCustomImageStatus.DUPLICATING || !extension.options.duplicateImage || !imgNodeSrc) {
-      return;
-    }
-
-    // Prevent duplicate calls - check if already duplicating this asset
-    if (isDuplicatingRef.current) {
-      return;
-    }
-
-    isDuplicatingRef.current = true;
-
     const handleDuplication = async () => {
+      if (status !== TCustomImageStatus.DUPLICATING || !extension.options.duplicateImage || !imgNodeSrc) {
+        return;
+      }
+
+      // Prevent duplicate calls - check if already duplicating this asset
+      if (isDuplicatingRef.current) {
+        return;
+      }
+
+      isDuplicatingRef.current = true;
       try {
         hasRetriedOnMount.current = true;
 
@@ -113,13 +112,13 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
     }
   }, [status]);
 
-  const isDuplicationFailed = hasImageDuplicationFailed(status);
+  const hasDuplicationFailed = hasImageDuplicationFailed(status);
   const shouldShowBlock = (isUploaded || imageFromFileSystem) && !failedToLoadImage;
 
   return (
     <NodeViewWrapper>
       <div className="p-0 mx-0 my-2" data-drag-handle ref={imageComponentRef}>
-        {shouldShowBlock && !isDuplicationFailed ? (
+        {shouldShowBlock && !hasDuplicationFailed ? (
           <CustomImageBlock
             editorContainer={editorContainer}
             imageFromFileSystem={imageFromFileSystem}
@@ -132,7 +131,7 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
         ) : (
           <CustomImageUploader
             failedToLoadImage={failedToLoadImage}
-            isDuplicationFailed={isDuplicationFailed}
+            hasDuplicationFailed={hasDuplicationFailed}
             loadImageFromFileSystem={setImageFromFileSystem}
             maxFileSize={editor.storage.imageComponent?.maxFileSize}
             setIsUploaded={setIsUploaded}

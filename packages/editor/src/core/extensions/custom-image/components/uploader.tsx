@@ -10,13 +10,13 @@ import { EFileError } from "@/helpers/file";
 // hooks
 import { useUploader, useDropZone, uploadFirstFileAndInsertRemaining } from "@/hooks/use-file-upload";
 // local imports
+import { TCustomImageStatus } from "../types";
 import { getImageComponentImageFileMap } from "../utils";
 import type { CustomImageNodeViewProps } from "./node-view";
-import { TCustomImageStatus } from "../types";
 
 type CustomImageUploaderProps = CustomImageNodeViewProps & {
   failedToLoadImage: boolean;
-  isDuplicationFailed: boolean;
+  hasDuplicationFailed: boolean;
   loadImageFromFileSystem: (file: string) => void;
   maxFileSize: number;
   setIsUploaded: (isUploaded: boolean) => void;
@@ -34,7 +34,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     selected,
     setIsUploaded,
     updateAttributes,
-    isDuplicationFailed,
+    hasDuplicationFailed,
   } = props;
   // refs
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -169,7 +169,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
 
   const getDisplayMessage = useCallback(() => {
     const isUploading = isImageBeingUploaded;
-    if (failedToLoadImage || isDuplicationFailed) {
+    if (failedToLoadImage || hasDuplicationFailed) {
       return "Error loading image";
     }
 
@@ -182,16 +182,16 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     }
 
     return "Add an image";
-  }, [draggedInside, editor.isEditable, failedToLoadImage, isImageBeingUploaded, isDuplicationFailed]);
+  }, [draggedInside, editor.isEditable, failedToLoadImage, isImageBeingUploaded, hasDuplicationFailed]);
 
   const handleRetryClick = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      if (isDuplicationFailed && editor.isEditable) {
+      if (hasDuplicationFailed && editor.isEditable) {
         updateAttributes({ status: TCustomImageStatus.DUPLICATING });
       }
     },
-    [isDuplicationFailed, editor.isEditable, updateAttributes]
+    [hasDuplicationFailed, editor.isEditable, updateAttributes]
   );
 
   return (
@@ -203,10 +203,10 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
           "bg-custom-background-80 text-custom-text-200": draggedInside && editor.isEditable,
           "text-custom-primary-200 bg-custom-primary-100/10 border-custom-primary-200/10 hover:bg-custom-primary-100/10 hover:text-custom-primary-200":
             selected && editor.isEditable,
-          "text-red-500 cursor-default": failedToLoadImage || isDuplicationFailed,
-          "hover:text-red-500": (failedToLoadImage || isDuplicationFailed) && editor.isEditable,
-          "bg-red-500/10": (failedToLoadImage || isDuplicationFailed) && selected,
-          "hover:bg-red-500/10": (failedToLoadImage || isDuplicationFailed) && selected && editor.isEditable,
+          "text-red-500 cursor-default": failedToLoadImage || hasDuplicationFailed,
+          "hover:text-red-500": (failedToLoadImage || hasDuplicationFailed) && editor.isEditable,
+          "bg-red-500/10": (failedToLoadImage || hasDuplicationFailed) && selected,
+          "hover:bg-red-500/10": (failedToLoadImage || hasDuplicationFailed) && selected && editor.isEditable,
         }
       )}
       onDrop={onDrop}
@@ -214,15 +214,16 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
       onDragLeave={onDragLeave}
       contentEditable={false}
       onClick={() => {
-        if (!failedToLoadImage && editor.isEditable && !isDuplicationFailed) {
+        if (!failedToLoadImage && editor.isEditable && !hasDuplicationFailed) {
           fileInputRef.current?.click();
         }
       }}
     >
       <ImageIcon className="size-4" />
       <div className="text-base font-medium flex-1">{getDisplayMessage()}</div>
-      {isDuplicationFailed && editor.isEditable && (
+      {hasDuplicationFailed && editor.isEditable && (
         <button
+          type="button"
           onClick={handleRetryClick}
           className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-custom-text-200 bg-custom-background-80 hover:bg-custom-background-70 border border-custom-border-300 hover:border-custom-border-200 rounded-md transition-all duration-200 ease-in-out"
           title="Retry duplication"
