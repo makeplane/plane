@@ -1,11 +1,13 @@
 import type { ReactNode } from "react";
+import * as Sentry from "@sentry/react-router";
 import { Links, Meta, Outlet, Scripts } from "react-router";
 import type { LinksFunction } from "react-router";
-import "../styles/globals.css";
 import appleTouchIcon from "@/app/assets/favicon/apple-touch-icon.png?url";
 import favicon16 from "@/app/assets/favicon/favicon-16x16.png?url";
 import favicon32 from "@/app/assets/favicon/favicon-32x32.png?url";
 import faviconIco from "@/app/assets/favicon/favicon.ico?url";
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import globalStyles from "@/styles/globals.css?url";
 import type { Route } from "./+types/root";
 import { AppProviders } from "./providers";
 
@@ -19,6 +21,7 @@ export const links: LinksFunction = () => [
   { rel: "icon", type: "image/png", sizes: "16x16", href: favicon16 },
   { rel: "shortcut icon", href: faviconIco },
   { rel: "manifest", href: `/site.webmanifest.json` },
+  { rel: "stylesheet", href: globalStyles },
 ];
 
 export function Layout({ children }: { children: ReactNode }) {
@@ -56,7 +59,19 @@ export default function Root() {
   return <Outlet />;
 }
 
-export function ErrorBoundary() {
+export function HydrateFallback() {
+  return (
+    <div className="relative flex h-screen w-full items-center justify-center">
+      <LogoSpinner />
+    </div>
+  );
+}
+
+export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  if (error) {
+    Sentry.captureException(error);
+  }
+
   return (
     <div>
       <p>Something went wrong.</p>

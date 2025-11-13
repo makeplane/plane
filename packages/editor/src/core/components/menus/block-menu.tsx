@@ -16,11 +16,20 @@ import { cn } from "@plane/utils";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // types
 import type { IEditorProps } from "@/types";
+// components
+import { getNodeOptions } from "./block-menu-options";
 
 type Props = {
   disabledExtensions?: IEditorProps["disabledExtensions"];
   editor: Editor;
   flaggedExtensions?: IEditorProps["flaggedExtensions"];
+};
+export type BlockMenuOption = {
+  icon: LucideIcon;
+  key: string;
+  label: string;
+  onClick: (e: React.MouseEvent) => void;
+  isDisabled?: boolean;
 };
 
 export const BlockMenu = (props: Props) => {
@@ -130,13 +139,7 @@ export const BlockMenu = (props: Props) => {
     }
   }, [isOpen]);
 
-  const MENU_ITEMS: {
-    icon: LucideIcon;
-    key: string;
-    label: string;
-    onClick: (e: React.MouseEvent) => void;
-    isDisabled?: boolean;
-  }[] = [
+  const MENU_ITEMS: BlockMenuOption[] = [
     {
       icon: Trash2,
       key: "delete",
@@ -189,6 +192,7 @@ export const BlockMenu = (props: Props) => {
         }
       },
     },
+    ...getNodeOptions(editor),
   ];
 
   if (!isOpen) {

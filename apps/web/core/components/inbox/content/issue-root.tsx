@@ -8,20 +8,20 @@ import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue, TNameDescriptionLoader } from "@plane/types";
-import { EInboxIssueSource } from "@plane/types";
-import { Loader } from "@plane/ui";
+import { EFileAssetType, EInboxIssueSource } from "@plane/types";
 import { getTextContent } from "@plane/utils";
 // components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
+import { DescriptionInput } from "@/components/editor/rich-text/description-input";
+import { DescriptionInputLoader } from "@/components/editor/rich-text/description-input/loader";
 import { IssueAttachmentRoot } from "@/components/issues/attachment";
-import { IssueDescriptionInput } from "@/components/issues/description-input";
 import type { TIssueOperations } from "@/components/issues/issue-detail";
 import { IssueActivity } from "@/components/issues/issue-detail/issue-activity";
 import { IssueReaction } from "@/components/issues/issue-detail/reactions";
 import { IssueTitleInput } from "@/components/issues/title-input";
 // helpers
-// hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+// hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
@@ -152,7 +152,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
             payload: { id: issueId },
           });
         } catch (error) {
-          console.log("Error in archiving issue:", error);
+          console.error("Error in archiving issue:", error);
           captureError({
             eventName: WORK_ITEM_TRACKER_EVENTS.archive,
             payload: { id: issueId },
@@ -192,21 +192,25 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
         />
 
         {loader === "issue-loading" ? (
-          <Loader className="min-h-[6rem] rounded-md border border-custom-border-200">
-            <Loader.Item width="100%" height="140px" />
-          </Loader>
+          <DescriptionInputLoader />
         ) : (
-          <IssueDescriptionInput
-            editorRef={editorRef}
-            workspaceSlug={workspaceSlug}
-            projectId={issue.project_id}
-            issueId={issue.id}
-            swrIssueDescription={issue.description_html ?? "<p></p>"}
-            initialValue={issue.description_html ?? "<p></p>"}
-            disabled={!isEditable}
-            issueOperations={issueOperations}
-            setIsSubmitting={(value) => setIsSubmitting(value)}
+          <DescriptionInput
             containerClassName="-ml-3 border-none"
+            disabled={!isEditable}
+            editorRef={editorRef}
+            entityId={issue.id}
+            fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
+            initialValue={issue.description_html ?? "<p></p>"}
+            onSubmit={async (value) => {
+              if (!issue.id || !issue.project_id) return;
+              await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
+                description_html: value,
+              });
+            }}
+            projectId={issue.project_id}
+            setIsSubmitting={(value) => setIsSubmitting(value)}
+            swrDescription={issue.description_html ?? "<p></p>"}
+            workspaceSlug={workspaceSlug}
           />
         )}
 

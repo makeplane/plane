@@ -37,7 +37,7 @@ export const BlockReactions = observer((props: Props) => {
         )}
         {canReact && (
           <div className="flex flex-wrap items-center gap-2">
-            <IssueEmojiReactions anchor={anchor.toString()} issueIdFromProps={issueId} size="sm" />
+            <IssueEmojiReactions anchor={anchor.toString()} issueIdFromProps={issueId} />
           </div>
         )}
       </div>

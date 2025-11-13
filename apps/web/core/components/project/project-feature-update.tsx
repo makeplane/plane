@@ -7,9 +7,9 @@ import Link from "next/link";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Button, getButtonStyling } from "@plane/propel/button";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { Row } from "@plane/ui";
 // components
-import { Logo } from "@/components/common/logo";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // plane web imports

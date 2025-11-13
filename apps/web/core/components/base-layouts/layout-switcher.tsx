@@ -9,7 +9,7 @@ import { BASE_LAYOUTS } from "./constants";
 type Props = {
   layouts?: TBaseLayoutType[];
   onChange: (layout: TBaseLayoutType) => void;
-  selectedLayout: TBaseLayoutType | undefined;
+  selectedLayout: TBaseLayoutType;
 };
 
 export const LayoutSwitcher: React.FC<Props> = (props) => {
