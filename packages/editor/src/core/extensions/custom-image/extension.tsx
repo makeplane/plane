@@ -10,7 +10,12 @@ import type { TFileHandler } from "@/types";
 // local imports
 import { CustomImageNodeView, CustomImageNodeViewProps } from "./components/node-view";
 import { CustomImageExtensionConfig } from "./extension-config";
-import type { CustomImageExtensionOptions, CustomImageExtensionStorage } from "./types";
+import {
+  CustomImageExtensionOptions,
+  CustomImageExtensionStorage,
+  ECustomImageAttributeNames,
+  TCustomImageStatus,
+} from "./types";
 import { getImageComponentImageFileMap } from "./utils";
 
 type Props = {
@@ -93,8 +98,8 @@ export const CustomImageExtension = (props: Props) => {
             }
 
             const attributes = {
-              id: fileId,
-              status: "pending",
+              [ECustomImageAttributeNames.ID]: fileId,
+              [ECustomImageAttributeNames.STATUS]: TCustomImageStatus.PENDING,
             };
 
             if (props.pos) {

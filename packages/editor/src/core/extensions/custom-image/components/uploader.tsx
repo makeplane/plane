@@ -12,6 +12,7 @@ import { useUploader, useDropZone, uploadFirstFileAndInsertRemaining } from "@/h
 // local imports
 import { getImageComponentImageFileMap } from "../utils";
 import type { CustomImageNodeViewProps } from "./node-view";
+import { TCustomImageStatus } from "../types";
 
 type CustomImageUploaderProps = CustomImageNodeViewProps & {
   failedToLoadImage: boolean;
@@ -51,7 +52,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
         // Update the node view's src attribute post upload
         updateAttributes({
           src: url,
-          status: "uploaded",
+          status: TCustomImageStatus.UPLOADED,
         });
         imageComponentImageFileMap?.delete(imageEntityId);
 
@@ -113,7 +114,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
   });
   useEffect(() => {
     if (isImageBeingUploaded) {
-      updateAttributes({ status: "uploading" });
+      updateAttributes({ status: TCustomImageStatus.UPLOADING });
     }
   }, [isImageBeingUploaded, updateAttributes]);
 
@@ -187,7 +188,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     (e: React.MouseEvent) => {
       e.stopPropagation();
       if (isDuplicationFailed && editor.isEditable) {
-        updateAttributes({ status: "duplicating" });
+        updateAttributes({ status: TCustomImageStatus.DUPLICATING });
       }
     },
     [isDuplicationFailed, editor.isEditable, updateAttributes]

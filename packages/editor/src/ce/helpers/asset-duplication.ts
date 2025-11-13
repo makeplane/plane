@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
+import { ECustomImageAttributeNames, TCustomImageStatus } from "@/extensions/custom-image/types";
 
 export type AssetDuplicationContext = {
   element: Element;
@@ -23,8 +24,8 @@ const imageComponentHandler: AssetDuplicationHandler = ({ element, originalHtml 
 
   // Use setAttribute to update attributes
   const newId = uuidv4();
-  element.setAttribute("status", "duplicating");
-  element.setAttribute("id", newId);
+  element.setAttribute(ECustomImageAttributeNames.STATUS, TCustomImageStatus.DUPLICATING);
+  element.setAttribute(ECustomImageAttributeNames.ID, newId);
 
   // Get the modified HTML AFTER the changes
   const modifiedTag = element.outerHTML;

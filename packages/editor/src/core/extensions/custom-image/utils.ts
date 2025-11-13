@@ -16,7 +16,7 @@ export const DEFAULT_CUSTOM_IMAGE_ATTRIBUTES: TCustomImageAttributes = {
   [ECustomImageAttributeNames.HEIGHT]: "auto",
   [ECustomImageAttributeNames.ASPECT_RATIO]: null,
   [ECustomImageAttributeNames.ALIGNMENT]: "left",
-  [ECustomImageAttributeNames.STATUS]: "pending",
+  [ECustomImageAttributeNames.STATUS]: TCustomImageStatus.PENDING,
 };
 
 export const getImageComponentImageFileMap = (editor: Editor) => editor.storage.imageComponent?.fileMap;
@@ -59,9 +59,10 @@ export const IMAGE_ALIGNMENT_OPTIONS: {
 ];
 export const getImageBlockId = (id: string) => `editor-image-block-${id}`;
 
-export const isImageDuplicating = (status: TCustomImageStatus) => status === "duplicating";
+export const isImageDuplicating = (status: TCustomImageStatus) => status === TCustomImageStatus.DUPLICATING;
 
 export const isImageDuplicationComplete = (status: TCustomImageStatus) =>
-  status === "uploaded" || status === "duplication-failed";
+  status === TCustomImageStatus.UPLOADED || status === TCustomImageStatus.DUPLICATION_FAILED;
 
-export const isImageDuplicationFailed = (status: TCustomImageStatus) => status === "duplication-failed";
+export const hasImageDuplicationFailed = (status: TCustomImageStatus) =>
+  status === TCustomImageStatus.DUPLICATION_FAILED;

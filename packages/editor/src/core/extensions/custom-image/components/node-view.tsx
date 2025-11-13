@@ -1,8 +1,8 @@
 import { type NodeViewProps, NodeViewWrapper } from "@tiptap/react";
 import { useEffect, useRef, useState } from "react";
 // local imports
-import type { CustomImageExtensionType, TCustomImageAttributes } from "../types";
-import { isImageDuplicationFailed } from "../utils";
+import { CustomImageExtensionType, TCustomImageAttributes, TCustomImageStatus } from "../types";
+import { hasImageDuplicationFailed } from "../utils";
 import { CustomImageBlock } from "./block";
 import { CustomImageUploader } from "./uploader";
 
@@ -65,7 +65,7 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
 
   // Handle image duplication when status is duplicating
   useEffect(() => {
-    if (status !== "duplicating" || !extension.options.duplicateImage || !imgNodeSrc) {
+    if (status !== TCustomImageStatus.DUPLICATING || !extension.options.duplicateImage || !imgNodeSrc) {
       return;
     }
 
@@ -85,12 +85,12 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
         // Update node with new source and success status
         updateAttributes({
           src: newAssetId,
-          status: "uploaded",
+          status: TCustomImageStatus.UPLOADED,
         });
       } catch (error) {
         console.error("Failed to duplicate image:", error);
         // Update status to failed
-        updateAttributes({ status: "duplication-failed" });
+        updateAttributes({ status: TCustomImageStatus.DUPLICATION_FAILED });
       } finally {
         isDuplicatingRef.current = false;
       }
@@ -100,20 +100,20 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
   }, [status, imgNodeSrc, extension.options.duplicateImage, updateAttributes]);
 
   useEffect(() => {
-    if (isImageDuplicationFailed(status) && !hasRetriedOnMount.current && imgNodeSrc) {
+    if (hasImageDuplicationFailed(status) && !hasRetriedOnMount.current && imgNodeSrc) {
       hasRetriedOnMount.current = true;
       // Add a small delay before retrying to avoid immediate retries
-      updateAttributes({ status: "duplicating" });
+      updateAttributes({ status: TCustomImageStatus.DUPLICATING });
     }
   }, [status, imgNodeSrc, updateAttributes]);
 
   useEffect(() => {
-    if (status === "uploaded") {
+    if (status === TCustomImageStatus.UPLOADED) {
       hasRetriedOnMount.current = false;
     }
   }, [status]);
 
-  const isDuplicationFailed = isImageDuplicationFailed(status);
+  const isDuplicationFailed = hasImageDuplicationFailed(status);
   const shouldShowBlock = (isUploaded || imageFromFileSystem) && !failedToLoadImage;
 
   return (
