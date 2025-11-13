@@ -1,10 +1,9 @@
 import React from "react";
-import Image from "next/image";
 // image
 import VideoFileIcon from "@/app/assets/attachment/video-icon.png?url";
 // type
 import type { ImageIconPros } from "../types";
 
 export const VideoIcon: React.FC<ImageIconPros> = ({ width, height }) => (
-  <Image src={VideoFileIcon} height={height} width={width} alt="VideoFileIcon" />
+  <img src={VideoFileIcon} width={width} height={height} className="h-full w-full object-contain" alt="VideoFileIcon" />
 );

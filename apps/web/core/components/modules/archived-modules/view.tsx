@@ -1,6 +1,5 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 // assets
 import AllFiltersImage from "@/app/assets/empty-state/module/all-filters.svg?url";
 import NameFilterImage from "@/app/assets/empty-state/module/name-filter.svg?url";
@@ -31,7 +30,7 @@ export const ArchivedModulesView: FC<IArchivedModulesView> = observer((props) =>
     return (
       <div className="h-full w-full grid place-items-center">
         <div className="text-center">
-          <Image
+          <img
             src={archivedModulesSearchQuery.trim() === "" ? AllFiltersImage : NameFilterImage}
             className="h-36 sm:h-48 w-36 sm:w-48 mx-auto"
             alt="No matching modules"
