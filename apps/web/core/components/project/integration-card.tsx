@@ -88,8 +88,6 @@ export const IntegrationCard: React.FC<Props> = ({ integration }) => {
             <div className="h-10 w-10 flex-shrink-0">
               <img
                 src={integrationDetails[integration.integration_detail.provider].logo}
-                width="100%"
-                height="100%"
                 className="w-full h-full object-cover"
                 alt={`${integration.integration_detail.title} Logo`}
               />
