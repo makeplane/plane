@@ -1,5 +1,6 @@
 import * as React from "react";
 import { LucideIcon } from "lucide-react";
+import type { ISvgIcons } from "../icons";
 import { Tooltip } from "../tooltip";
 import { cn } from "../utils";
 
@@ -15,7 +16,7 @@ export interface ToolbarGroupProps extends React.HTMLAttributes<HTMLDivElement> 
 }
 
 export interface ToolbarItemProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  icon: LucideIcon;
+  icon: LucideIcon | React.FC<ISvgIcons>;
   isActive?: boolean;
   tooltip?: string;
   shortcut?: string[];

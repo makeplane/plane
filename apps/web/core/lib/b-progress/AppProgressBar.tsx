@@ -38,7 +38,6 @@ const PROGRESS_CONFIG: Readonly<ProgressConfig> = {
   easing: "ease",
   trickle: true,
   delay: 0,
-  isDisabled: import.meta.env.PROD, // Disable progress bar in production builds
 } as const;
 
 /**

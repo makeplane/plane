@@ -12,7 +12,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IProject, IUserLite, IWorkspace } from "@plane/types";
 import { Loader, ToggleSwitch } from "@plane/ui";
 // constants
-import { PROJECT_MEMBERS } from "@/constants/fetch-keys";
+import { PROJECT_DETAILS } from "@/constants/fetch-keys";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -64,7 +64,7 @@ export const ProjectSettingsMemberDefaults: React.FC<TProjectSettingsMemberDefau
   const { reset, control } = useForm<IProject>({ defaultValues });
   // fetching user members
   useSWR(
-    workspaceSlug && projectId ? PROJECT_MEMBERS(workspaceSlug, projectId) : null,
+    workspaceSlug && projectId ? PROJECT_DETAILS(workspaceSlug, projectId) : null,
     workspaceSlug && projectId ? () => fetchProjectDetails(workspaceSlug, projectId) : null
   );
 

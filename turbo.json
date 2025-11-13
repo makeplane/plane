@@ -2,29 +2,29 @@
   "$schema": "https://turbo.build/schema.json",
   "globalEnv": [
     "NODE_ENV",
-    "NEXT_PUBLIC_API_BASE_URL",
-    "NEXT_PUBLIC_ADMIN_BASE_URL",
-    "NEXT_PUBLIC_ADMIN_BASE_PATH",
-    "NEXT_PUBLIC_SPACE_BASE_URL",
-    "NEXT_PUBLIC_SPACE_BASE_PATH",
-    "NEXT_PUBLIC_WEB_BASE_URL",
-    "NEXT_PUBLIC_LIVE_BASE_URL",
-    "NEXT_PUBLIC_PLAUSIBLE_DOMAIN",
-    "NEXT_PUBLIC_CRISP_ID",
-    "NEXT_PUBLIC_ENABLE_SESSION_RECORDER",
-    "NEXT_PUBLIC_SESSION_RECORDER_KEY",
-    "NEXT_PUBLIC_EXTRA_IMAGE_DOMAINS",
-    "NEXT_PUBLIC_POSTHOG_KEY",
-    "NEXT_PUBLIC_POSTHOG_HOST",
-    "NEXT_PUBLIC_POSTHOG_DEBUG",
-    "NEXT_PUBLIC_SUPPORT_EMAIL",
+    "VITE_API_BASE_URL",
+    "VITE_ADMIN_BASE_URL",
+    "VITE_ADMIN_BASE_PATH",
+    "VITE_SPACE_BASE_URL",
+    "VITE_SPACE_BASE_PATH",
+    "VITE_WEB_BASE_URL",
+    "VITE_LIVE_BASE_URL",
+    "VITE_PLAUSIBLE_DOMAIN",
+    "VITE_CRISP_ID",
+    "VITE_ENABLE_SESSION_RECORDER",
+    "VITE_SESSION_RECORDER_KEY",
+    "VITE_EXTRA_IMAGE_DOMAINS",
+    "VITE_POSTHOG_KEY",
+    "VITE_POSTHOG_HOST",
+    "VITE_POSTHOG_DEBUG",
+    "VITE_SUPPORT_EMAIL",
     "ENABLE_EXPERIMENTAL_COREPACK"
   ],
   "globalDependencies": ["pnpm-lock.yaml", "pnpm-workspace.yaml", ".npmrc"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "dist/**", "build/**"]
+      "outputs": ["dist/**", "build/**"]
     },
     "build-storybook": {
       "dependsOn": ["^build"],
@@ -41,7 +41,7 @@
     },
     "check:lint": {
       "cache": false,
-      "inputs": ["**/*", "!**/.next/**", "!**/dist/**"]
+      "inputs": ["**/*", "!**/build/**", "!**/dist/**"]
     },
     "check:format": {
       "cache": false
