@@ -1,9 +1,9 @@
-import { JSONContent } from "../../editor";
-import { EIssueCommentAccessSpecifier } from "../../enums";
-import { TFileSignedURLResponse } from "../../file";
-import { IUserLite } from "../../users";
-import { IWorkspaceLite } from "../../workspace";
-import {
+import type { JSONContent } from "../../editor";
+import type { EIssueCommentAccessSpecifier } from "../../enums";
+import type { TFileSignedURLResponse } from "../../file";
+import type { IUserLite } from "../../users";
+import type { IWorkspaceLite } from "../../workspace";
+import type {
   TIssueActivityWorkspaceDetail,
   TIssueActivityProjectDetail,
   TIssueActivityIssueDetail,

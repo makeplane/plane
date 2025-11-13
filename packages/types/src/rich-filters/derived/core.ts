@@ -1,12 +1,12 @@
-import { TFilterValue } from "../expression";
-import {
+import type { TFilterValue } from "../expression";
+import type {
   TDateFilterFieldConfig,
   TDateRangeFilterFieldConfig,
   TSingleSelectFilterFieldConfig,
   TMultiSelectFilterFieldConfig,
 } from "../field-types";
-import { TCoreOperatorSpecificConfigs } from "../operator-configs";
-import { TFilterOperatorHelper } from "./shared";
+import type { TCoreOperatorSpecificConfigs } from "../operator-configs";
+import type { TFilterOperatorHelper } from "./shared";
 
 // -------- DATE FILTER OPERATORS --------
 

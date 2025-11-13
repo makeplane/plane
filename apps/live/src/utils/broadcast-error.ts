@@ -1,4 +1,4 @@
-import { type Hocuspocus } from "@hocuspocus/server";
+import type { Hocuspocus } from "@hocuspocus/server";
 import { createRealtimeEvent } from "@plane/editor";
 import { logger } from "@plane/logger";
 import type { FetchPayloadWithContext, StorePayloadWithContext } from "@/types";

@@ -1,5 +1,4 @@
 import React from "react";
-import Image from "next/image";
 // image
 import AudioFileIcon from "@/app/assets/attachment/audio-icon.png?url";
 
@@ -9,5 +8,5 @@ export type AudioIconProps = {
 };
 
 export const AudioIcon: React.FC<AudioIconProps> = ({ width, height }) => (
-  <Image src={AudioFileIcon} height={height} width={width} alt="AudioFileIcon" />
+  <img src={AudioFileIcon} width={width} height={height} className="h-full w-full object-contain" alt="AudioFileIcon" />
 );

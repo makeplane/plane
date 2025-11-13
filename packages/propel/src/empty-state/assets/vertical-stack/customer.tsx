@@ -1,4 +1,5 @@
-import { type TIllustrationAssetProps, ILLUSTRATION_COLOR_TOKEN_MAP } from "../helper";
+import { ILLUSTRATION_COLOR_TOKEN_MAP } from "../helper";
+import type { TIllustrationAssetProps } from "../helper";
 
 export const CustomerVerticalStackIllustration = ({ className }: TIllustrationAssetProps) => (
   <svg

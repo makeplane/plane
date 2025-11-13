@@ -17,8 +17,6 @@ import type {
   TBulkOperationsPayload,
 } from "@plane/types";
 import { getCurrentDateTimeInISO, convertToISODateString } from "@plane/utils";
-// local-db
-import { addIssueToPersistanceLayer } from "@/local-db/utils/utils";
 // services
 import workspaceDraftService from "@/services/issue/workspace_draft.service";
 // types
@@ -349,9 +347,6 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
             total_count: this.paginationInfo.total_count - 1,
           });
         }
-
-        // sync issue to local db
-        addIssueToPersistanceLayer({ ...payload, ...response });
 
         // Update draft issue count in workspaceUserInfo
         this.updateWorkspaceUserDraftIssueCount(workspaceSlug, -1);

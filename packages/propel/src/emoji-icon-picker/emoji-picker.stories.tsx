@@ -1,7 +1,8 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { EmojiPicker } from "./emoji-picker";
-import { EmojiIconPickerTypes, TChangeHandlerProps } from "./helper";
+import type { TChangeHandlerProps } from "./helper";
+import { EmojiIconPickerTypes } from "./helper";
 
 const meta = {
   title: "Components/Emoji/EmojiPicker",

@@ -1,5 +1,5 @@
 // plane imports
-import { SingleOrArray, TFilterExpression, TFilterProperty, TFilterValue } from "@plane/types";
+import type { SingleOrArray, TFilterExpression, TFilterProperty, TFilterValue } from "@plane/types";
 // local imports
 import { getGroupChildren } from "../types";
 import { isConditionNode, isGroupNode } from "../types/core";

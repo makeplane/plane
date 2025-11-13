@@ -1,4 +1,5 @@
-import { createLogger, format, LoggerOptions, transports } from "winston";
+import type { LoggerOptions } from "winston";
+import { createLogger, format, transports } from "winston";
 
 export const loggerConfig: LoggerOptions = {
   level: process.env.LOG_LEVEL || "info",

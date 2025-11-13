@@ -6,7 +6,6 @@ import type { IIssueLabel, IIssueLabelTree } from "@plane/types";
 // helpers
 import { buildTree } from "@plane/utils";
 // services
-import { syncIssuesWithDeletedLabels } from "@/local-db/utils/load-workspace";
 import { IssueLabelService } from "@/services/issue";
 // store
 import type { CoreRootStore } from "./root.store";
@@ -299,7 +298,6 @@ export class LabelStore implements ILabelStore {
       runInAction(() => {
         delete this.labelMap[labelId];
       });
-      syncIssuesWithDeletedLabels([labelId]);
     });
   };
 }

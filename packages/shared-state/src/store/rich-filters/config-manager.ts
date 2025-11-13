@@ -1,11 +1,13 @@
 import { action, computed, makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { DEFAULT_FILTER_CONFIG_OPTIONS, TConfigOptions } from "@plane/constants";
-import { TExternalFilter, TFilterConfig, TFilterProperty, TFilterValue } from "@plane/types";
+import type { TConfigOptions } from "@plane/constants";
+import { DEFAULT_FILTER_CONFIG_OPTIONS } from "@plane/constants";
+import type { TExternalFilter, TFilterConfig, TFilterProperty, TFilterValue } from "@plane/types";
 // local imports
-import { FilterConfig, IFilterConfig } from "./config";
-import { IFilterInstance } from "./filter";
+import type { IFilterConfig } from "./config";
+import { FilterConfig } from "./config";
+import type { IFilterInstance } from "./filter";
 
 /**
  * Interface for managing filter configurations.

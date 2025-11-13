@@ -1,5 +1,6 @@
-import { type Editor, EditorContent } from "@tiptap/react";
-import { FC, ReactNode } from "react";
+import { EditorContent } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
+import type { FC, ReactNode } from "react";
 
 type Props = {
   children?: ReactNode;

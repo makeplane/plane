@@ -4,7 +4,7 @@ import { cn } from "../utils";
 import { Popover } from "./popover";
 // helpers
 // types
-import { TPopoverMenu } from "./types";
+import type { TPopoverMenu } from "./types";
 
 export const PopoverMenu = <T,>(props: TPopoverMenu<T>) => {
   const {

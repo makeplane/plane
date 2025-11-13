@@ -1,6 +1,8 @@
-import { TFilterValue } from "../expression";
-import { CORE_FILTER_FIELD_TYPE, TCoreFilterFieldConfigs } from "./core";
-import { EXTENDED_FILTER_FIELD_TYPE, TExtendedFilterFieldConfigs } from "./extended";
+import type { TFilterValue } from "../expression";
+import type { TCoreFilterFieldConfigs } from "./core";
+import { CORE_FILTER_FIELD_TYPE } from "./core";
+import type { TExtendedFilterFieldConfigs } from "./extended";
+import { EXTENDED_FILTER_FIELD_TYPE } from "./extended";
 
 // -------- COMPOSED FILTER TYPES --------
 

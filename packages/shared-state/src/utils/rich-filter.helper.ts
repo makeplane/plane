@@ -1,11 +1,6 @@
 // plane imports
-import {
-  LOGICAL_OPERATOR,
-  TBuildFilterExpressionParams,
-  TExternalFilter,
-  TFilterProperty,
-  TFilterValue,
-} from "@plane/types";
+import type { TBuildFilterExpressionParams, TExternalFilter, TFilterProperty, TFilterValue } from "@plane/types";
+import { LOGICAL_OPERATOR } from "@plane/types";
 import { getOperatorForPayload } from "@plane/utils";
 // local imports
 import { FilterInstance } from "../store/rich-filters/filter";

@@ -1,6 +1,6 @@
-import { TIssue } from "./issues/issue";
-import { LOGICAL_OPERATOR, TSupportedOperators } from "./rich-filters";
-import { CompleteOrEmpty } from "./utils";
+import type { TIssue } from "./issues/issue";
+import type { LOGICAL_OPERATOR, TSupportedOperators } from "./rich-filters";
+import type { CompleteOrEmpty } from "./utils";
 
 export type TIssueLayouts = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
 

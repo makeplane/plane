@@ -1,6 +1,7 @@
 import type { Editor } from "@tiptap/core";
 import { Check, Link, Trash2 } from "lucide-react";
-import { FC, useCallback, useRef, useState } from "react";
+import type { FC } from "react";
+import { useCallback, useRef, useState } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // constants

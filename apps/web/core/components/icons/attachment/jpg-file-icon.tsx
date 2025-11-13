@@ -1,10 +1,9 @@
 import React from "react";
-import Image from "next/image";
 // image
 import JpgFileIcon from "@/app/assets/attachment/jpg-icon.png?url";
 // type
 import type { ImageIconPros } from "../types";
 
 export const JpgIcon: React.FC<ImageIconPros> = ({ width, height }) => (
-  <Image src={JpgFileIcon} height={height} width={width} alt="JpgFileIcon" />
+  <img src={JpgFileIcon} width={width} height={height} className="h-full w-full object-contain" alt="JpgFileIcon" />
 );

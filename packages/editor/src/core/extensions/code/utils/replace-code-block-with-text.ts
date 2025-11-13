@@ -1,4 +1,5 @@
-import { Editor, findParentNode } from "@tiptap/core";
+import type { Editor } from "@tiptap/core";
+import { findParentNode } from "@tiptap/core";
 
 type ReplaceCodeBlockParams = {
   editor: Editor;

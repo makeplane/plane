@@ -1,7 +1,7 @@
 // plane types
-import { TPaginationInfo } from "./common";
-import { TIssuePriorities } from "./issues";
-import { TIssue } from "./issues/issue";
+import type { TPaginationInfo } from "./common";
+import type { TIssuePriorities } from "./issues";
+import type { TIssue } from "./issues/issue";
 
 export enum EInboxIssueCurrentTab {
   OPEN = "open",

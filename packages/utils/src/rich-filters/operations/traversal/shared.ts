@@ -1,5 +1,5 @@
 // plane imports
-import {
+import type {
   TAllAvailableOperatorsForDisplay,
   TFilterExpression,
   TFilterProperty,

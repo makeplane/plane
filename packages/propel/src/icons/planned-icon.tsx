@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { ISvgIcons } from "./type";
+import type { ISvgIcons } from "./type";
 
 export const PlannedState: React.FC<ISvgIcons> = ({ width = "10", height = "11", className }) => (
   <svg

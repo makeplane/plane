@@ -1,22 +1,10 @@
 // plane imports
 import { STATE_GROUPS } from "@plane/constants";
-import {
-  COLLECTION_OPERATOR,
-  EQUALITY_OPERATOR,
-  IState,
-  TFilterProperty,
-  TStateGroups,
-  TSupportedOperators,
-} from "@plane/types";
+import type { IState, TFilterProperty, TStateGroups, TSupportedOperators } from "@plane/types";
+import { COLLECTION_OPERATOR, EQUALITY_OPERATOR } from "@plane/types";
 // local imports
-import {
-  createFilterConfig,
-  getMultiSelectConfig,
-  IFilterIconConfig,
-  TCreateFilterConfig,
-  TCreateFilterConfigParams,
-  createOperatorConfigEntry,
-} from "../../../rich-filters";
+import type { IFilterIconConfig, TCreateFilterConfig, TCreateFilterConfigParams } from "../../../rich-filters";
+import { createFilterConfig, getMultiSelectConfig, createOperatorConfigEntry } from "../../../rich-filters";
 
 // ------------ State group filter ------------
 

@@ -23,9 +23,7 @@ import type {
 import { EIssueServiceType, EIssueLayoutTypes } from "@plane/types";
 // helpers
 import { convertToISODateString } from "@plane/utils";
-// local-db
-import { SPECIAL_ORDER_BY } from "@/local-db/utils/query-constructor";
-import { updatePersistentLayer } from "@/local-db/utils/utils";
+// plane web imports
 import { workItemSortWithOrderByExtended } from "@/plane-web/store/issue/helpers/base-issue.store";
 // services
 import { CycleService } from "@/services/cycle.service";
@@ -60,7 +58,7 @@ export interface IBaseIssuesStore {
 
   //actions
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
-  clear(shouldClearPaginationOptions?: boolean, clearForLocal?: boolean): void;
+  clear(shouldClearPaginationOptions?: boolean): void;
   // helper methods
   getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
   issuesSortWithOrderBy(issueIds: string[], key: Partial<TIssueOrderByOptions>): string[];
@@ -281,13 +279,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     const orderBy = displayFilters.order_by;
 
     // Temporary code to fix no load order by
-    if (
-      this.rootIssueStore.rootStore.user.localDBEnabled &&
-      this.rootIssueStore.rootStore.router.projectId &&
-      layout !== EIssueLayoutTypes.SPREADSHEET &&
-      orderBy &&
-      Object.keys(SPECIAL_ORDER_BY).includes(orderBy)
-    ) {
+    if (this.rootIssueStore.rootStore.router.projectId && layout !== EIssueLayoutTypes.SPREADSHEET && orderBy) {
       return "sort_order";
     }
 
@@ -483,7 +475,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     // Update all the GroupIds to this Store's groupedIssueIds and update Individual group issue counts
     runInAction(() => {
-      this.clear(shouldClearPaginationOptions, true);
+      this.clear(shouldClearPaginationOptions);
       this.updateGroupedIssueIds(groupedIssues, groupedIssueCount);
       this.loader[getGroupKey()] = undefined;
     });
@@ -548,8 +540,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     // If shouldUpdateList is true, call fetchParentStats
     shouldUpdateList && (await this.fetchParentStats(workspaceSlug, projectId));
-
-    updatePersistentLayer(response.id);
 
     return response;
   }
@@ -1162,22 +1152,17 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   /**
    * Method called to clear out the current store
    */
-  clear(shouldClearPaginationOptions = true, clearForLocal = false) {
-    if (
-      (this.rootIssueStore.rootStore.user?.localDBEnabled && clearForLocal) ||
-      (!this.rootIssueStore.rootStore.user?.localDBEnabled && !clearForLocal)
-    ) {
-      runInAction(() => {
-        this.groupedIssueIds = undefined;
-        this.issuePaginationData = {};
-        this.groupedIssueCount = {};
-        if (shouldClearPaginationOptions) {
-          this.paginationOptions = undefined;
-        }
-      });
-      this.controller.abort();
-      this.controller = new AbortController();
-    }
+  clear(shouldClearPaginationOptions = true) {
+    runInAction(() => {
+      this.groupedIssueIds = undefined;
+      this.issuePaginationData = {};
+      this.groupedIssueCount = {};
+      if (shouldClearPaginationOptions) {
+        this.paginationOptions = undefined;
+      }
+    });
+    this.controller.abort();
+    this.controller = new AbortController();
   }
 
   /**

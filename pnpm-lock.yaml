@@ -218,6 +218,9 @@ importers:
       '@types/react-dom':
         specifier: 'catalog:'
         version: 18.3.1
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.6.1
       typescript:
         specifier: 5.8.3
         version: 5.8.3
@@ -478,6 +481,9 @@ importers:
       '@types/react-dom':
         specifier: 'catalog:'
         version: 18.3.1
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.6.1
       typescript:
         specifier: 5.8.3
         version: 5.8.3
@@ -689,6 +695,9 @@ importers:
       '@types/react-dom':
         specifier: 'catalog:'
         version: 18.3.1
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.6.1
       prettier:
         specifier: ^3.2.5
         version: 3.6.2

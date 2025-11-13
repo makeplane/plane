@@ -1,5 +1,5 @@
 // local imports
-import { TFilterExpression, TFilterProperty } from "./expression";
+import type { TFilterExpression, TFilterProperty } from "./expression";
 
 /**
  * External filter format
