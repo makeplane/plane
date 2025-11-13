@@ -1,10 +1,11 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // PLane
+import { GANTT_TIMELINE_TYPE } from "@plane/types";
 import type { IBlockUpdateData, IBlockUpdateDependencyData, IModule } from "@plane/types";
 // components
 import { GanttChartRoot, ModuleGanttSidebar } from "@/components/gantt-chart";
-import { ETimeLineTypeType, TimeLineTypeContext } from "@/components/gantt-chart/contexts";
+import { TimeLineTypeContext } from "@/components/gantt-chart/contexts";
 import { ModuleGanttBlock } from "@/components/modules";
 // hooks
 import { useModule } from "@/hooks/store/use-module";
@@ -49,7 +50,7 @@ export const ModulesListGanttChartView: React.FC = observer(() => {
   if (!filteredModuleIds) return null;
 
   return (
-    <TimeLineTypeContext.Provider value={ETimeLineTypeType.MODULE}>
+    <TimeLineTypeContext.Provider value={GANTT_TIMELINE_TYPE.MODULE}>
       <GanttChartRoot
         title="Modules"
         loaderTitle="Modules"
