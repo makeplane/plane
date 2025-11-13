@@ -57,13 +57,12 @@ export const useEditorMention = (args: TArgs) => {
             });
           }
         });
-        updateAdditionalSections({
+        const { sections } = updateAdditionalSections({
           response: res,
-          sections: suggestionSections,
         });
-        return suggestionSections;
+        return [...suggestionSections, ...sections];
       } catch (error) {
-        console.error("Error in fetching mentions for project pages:", error);
+        console.error("Error in fetching mentions:", error);
         throw error;
       }
     },

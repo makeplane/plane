@@ -6,6 +6,9 @@ import type { TSearchEntities, TSearchResponse } from "@plane/types";
 
 export type TAdditionalEditorMentionHandlerArgs = {
   response: TSearchResponse;
+};
+
+export type TAdditionalEditorMentionHandlerReturnType = {
   sections: TMentionSection[];
 };
 
@@ -22,9 +25,15 @@ export type TAdditionalParseEditorContentReturnType =
   | undefined;
 
 export const useAdditionalEditorMention = () => {
-  const updateAdditionalSections = useCallback((args: TAdditionalEditorMentionHandlerArgs) => {
-    const {} = args;
-  }, []);
+  const updateAdditionalSections = useCallback(
+    (args: TAdditionalEditorMentionHandlerArgs): TAdditionalEditorMentionHandlerReturnType => {
+      const {} = args;
+      return {
+        sections: [],
+      };
+    },
+    []
+  );
 
   const parseAdditionalEditorContent = useCallback(
     (args: TAdditionalParseEditorContentArgs): TAdditionalParseEditorContentReturnType => {
