@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 // plane editor
 import type { TMentionSection } from "@plane/editor";
 // plane types
@@ -43,8 +43,11 @@ export const useAdditionalEditorMention = () => {
     []
   );
 
+  const editorMentionTypes: TSearchEntities[] = useMemo(() => ["user_mention"], []);
+
   return {
     updateAdditionalSections,
     parseAdditionalEditorContent,
+    editorMentionTypes,
   };
 };

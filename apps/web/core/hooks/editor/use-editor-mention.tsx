@@ -7,8 +7,6 @@ import type { TSearchEntities, TSearchEntityRequestPayload, TSearchResponse, TUs
 import { Avatar } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
-// plane web constants
-import { EDITOR_MENTION_TYPES } from "@/plane-web/constants/editor";
 // plane web hooks
 import { useAdditionalEditorMention } from "@/plane-web/hooks/use-additional-editor-mention";
 
@@ -19,14 +17,14 @@ type TArgs = {
 export const useEditorMention = (args: TArgs) => {
   const { searchEntity } = args;
   // additional mentions
-  const { updateAdditionalSections } = useAdditionalEditorMention();
+  const { editorMentionTypes, updateAdditionalSections } = useAdditionalEditorMention();
   // fetch mentions handler
   const fetchMentions = useCallback(
     async (query: string): Promise<TMentionSection[]> => {
       try {
         const res = await searchEntity({
           count: 5,
-          query_type: EDITOR_MENTION_TYPES,
+          query_type: editorMentionTypes,
           query,
         });
         const suggestionSections: TMentionSection[] = [];
