@@ -266,7 +266,6 @@ export const getComputedDisplayFilters = (
   defaultValues?: IIssueDisplayFilterOptions
 ): IIssueDisplayFilterOptions => {
   const filters = !isEmpty(displayFilters) ? displayFilters : defaultValues;
-
   return {
     calendar: {
       show_weekends: filters?.calendar?.show_weekends || false,
@@ -307,20 +306,6 @@ export const getComputedDisplayProperties = (
   issue_type: displayProperties?.issue_type ?? true,
 });
 
-/**
- * This is to check if the issues list api should fall back to server or use local db
- * @param queries
- * @returns
- */
-export const getIssuesShouldFallbackToServer = (queries: any) => {
-  // If there is expand query and is not grouped then fallback to server
-  if (!isEmpty(queries.expand as string) && !queries.group_by) return true;
-  // If query has mentions then fallback to server
-  if (!isEmpty(queries.mentions)) return true;
-
-  return false;
-};
-
 export const generateWorkItemLink = ({
   workspaceSlug,
   projectId,
@@ -339,8 +324,8 @@ export const generateWorkItemLink = ({
   isEpic?: boolean;
 }): string => {
   const archiveIssueLink = `/${workspaceSlug}/projects/${projectId}/archives/issues/${issueId}`;
-  const epicLink = `/${workspaceSlug}/projects/${projectId}/epics/${issueId}`;
   const workItemLink = `/${workspaceSlug}/browse/${projectIdentifier}-${sequenceId}/`;
+  const epicLink = workItemLink;
 
   return isArchived ? archiveIssueLink : isEpic ? epicLink : workItemLink;
 };

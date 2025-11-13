@@ -6,7 +6,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import useSWRImmutable from "swr/immutable";
 // ui
 import { LogOut } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -29,7 +28,6 @@ import {
   WORKSPACE_FAVORITE,
   WORKSPACE_STATES,
   WORKSPACE_SIDEBAR_PREFERENCES,
-  WORKSPACE_DB,
 } from "@/constants/fetch-keys";
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { useMember } from "@/hooks/store/use-member";
@@ -38,8 +36,6 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// local
-import { persistence } from "@/local-db/storage.sqlite";
 
 interface IWorkspaceAuthWrapper {
   children: ReactNode;
@@ -120,20 +116,6 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  // initialize the local database
-  const { isLoading: isDBInitializing } = useSWRImmutable(
-    workspaceSlug ? WORKSPACE_DB(workspaceSlug.toString()) : null,
-    workspaceSlug
-      ? async () => {
-          // persistence.reset();
-          await persistence.initialize(workspaceSlug.toString());
-          // Load common data
-          persistence.syncWorkspace();
-          return true;
-        }
-      : null
-  );
-
   const handleSignOut = async () => {
     await signOut().catch(() =>
       setToast({
@@ -145,7 +127,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   };
 
   // if list of workspaces are not there then we have to render the spinner
-  if (isParentLoading || allWorkspaces === undefined || loader || isDBInitializing) {
+  if (isParentLoading || allWorkspaces === undefined || loader) {
     return (
       <div className="grid h-full place-items-center bg-custom-background-100 p-4 rounded-lg border border-custom-border-200">
         <div className="flex flex-col items-center gap-3 text-center">
