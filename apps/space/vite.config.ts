@@ -1,8 +1,11 @@
 import path from "node:path";
 import { reactRouter } from "@react-router/dev/vite";
+import dotenv from "dotenv";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { joinUrlPath } from "@plane/utils";
+
+dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 // Expose only vars starting with VITE_
 const viteEnv = Object.keys(process.env)
@@ -31,5 +34,8 @@ export default defineConfig(() => ({
       "next/navigation": path.resolve(__dirname, "app/compat/next/navigation.ts"),
     },
     dedupe: ["react", "react-dom"],
+  },
+  server: {
+    host: "127.0.0.1",
   },
 }));

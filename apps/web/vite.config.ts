@@ -1,7 +1,10 @@
 import path from "node:path";
 import { reactRouter } from "@react-router/dev/vite";
+import dotenv from "dotenv";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
+
+dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 // Expose only vars starting with VITE_
 const viteEnv = Object.keys(process.env)
@@ -28,6 +31,9 @@ export default defineConfig(() => ({
       "next/script": path.resolve(__dirname, "app/compat/next/script.tsx"),
     },
     dedupe: ["react", "react-dom", "@headlessui/react"],
+  },
+  server: {
+    host: "127.0.0.1",
   },
   // No SSR-specific overrides needed; alias resolves to ESM build
 }));
