@@ -24,7 +24,7 @@ export type TCustomImageSize = {
 
 export type TCustomImageAlignment = "left" | "center" | "right";
 
-export enum TCustomImageStatus {
+export enum ECustomImageStatus {
   PENDING = "pending",
   UPLOADING = "uploading",
   UPLOADED = "uploaded",
@@ -39,7 +39,7 @@ export type TCustomImageAttributes = {
   [ECustomImageAttributeNames.ASPECT_RATIO]: number | null;
   [ECustomImageAttributeNames.SOURCE]: string | null;
   [ECustomImageAttributeNames.ALIGNMENT]: TCustomImageAlignment;
-  [ECustomImageAttributeNames.STATUS]: TCustomImageStatus;
+  [ECustomImageAttributeNames.STATUS]: ECustomImageStatus;
 };
 
 export type UploadEntity = ({ event: "insert" } | { event: "drop"; file: File }) & { hasOpenedFileInputOnce?: boolean };

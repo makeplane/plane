@@ -1,7 +1,7 @@
 import { type NodeViewProps, NodeViewWrapper } from "@tiptap/react";
 import { useEffect, useRef, useState } from "react";
 // local imports
-import { CustomImageExtensionType, TCustomImageAttributes, TCustomImageStatus } from "../types";
+import { CustomImageExtensionType, TCustomImageAttributes, ECustomImageStatus } from "../types";
 import { hasImageDuplicationFailed } from "../utils";
 import { CustomImageBlock } from "./block";
 import { CustomImageUploader } from "./uploader";
@@ -66,7 +66,7 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
   // Handle image duplication when status is duplicating
   useEffect(() => {
     const handleDuplication = async () => {
-      if (status !== TCustomImageStatus.DUPLICATING || !extension.options.duplicateImage || !imgNodeSrc) {
+      if (status !== ECustomImageStatus.DUPLICATING || !extension.options.duplicateImage || !imgNodeSrc) {
         return;
       }
 
@@ -84,12 +84,12 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
         // Update node with new source and success status
         updateAttributes({
           src: newAssetId,
-          status: TCustomImageStatus.UPLOADED,
+          status: ECustomImageStatus.UPLOADED,
         });
       } catch (error) {
         console.error("Failed to duplicate image:", error);
         // Update status to failed
-        updateAttributes({ status: TCustomImageStatus.DUPLICATION_FAILED });
+        updateAttributes({ status: ECustomImageStatus.DUPLICATION_FAILED });
       } finally {
         isDuplicatingRef.current = false;
       }
@@ -102,12 +102,12 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
     if (hasImageDuplicationFailed(status) && !hasRetriedOnMount.current && imgNodeSrc) {
       hasRetriedOnMount.current = true;
       // Add a small delay before retrying to avoid immediate retries
-      updateAttributes({ status: TCustomImageStatus.DUPLICATING });
+      updateAttributes({ status: ECustomImageStatus.DUPLICATING });
     }
   }, [status, imgNodeSrc, updateAttributes]);
 
   useEffect(() => {
-    if (status === TCustomImageStatus.UPLOADED) {
+    if (status === ECustomImageStatus.UPLOADED) {
       hasRetriedOnMount.current = false;
     }
   }, [status]);

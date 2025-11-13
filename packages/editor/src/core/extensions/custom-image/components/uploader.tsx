@@ -10,7 +10,7 @@ import { EFileError } from "@/helpers/file";
 // hooks
 import { useUploader, useDropZone, uploadFirstFileAndInsertRemaining } from "@/hooks/use-file-upload";
 // local imports
-import { TCustomImageStatus } from "../types";
+import { ECustomImageStatus } from "../types";
 import { getImageComponentImageFileMap } from "../utils";
 import type { CustomImageNodeViewProps } from "./node-view";
 
@@ -52,7 +52,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
         // Update the node view's src attribute post upload
         updateAttributes({
           src: url,
-          status: TCustomImageStatus.UPLOADED,
+          status: ECustomImageStatus.UPLOADED,
         });
         imageComponentImageFileMap?.delete(imageEntityId);
 
@@ -88,7 +88,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
 
   const uploadImageEditorCommand = useCallback(
     async (file: File) => {
-      updateAttributes({ status: TCustomImageStatus.UPLOADING });
+      updateAttributes({ status: ECustomImageStatus.UPLOADING });
       return await extension.options.uploadImage?.(imageEntityId ?? "", file);
     },
     [extension.options, imageEntityId, updateAttributes]
@@ -186,7 +186,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     (e: React.MouseEvent) => {
       e.stopPropagation();
       if (hasDuplicationFailed && editor.isEditable) {
-        updateAttributes({ status: TCustomImageStatus.DUPLICATING });
+        updateAttributes({ status: ECustomImageStatus.DUPLICATING });
       }
     },
     [hasDuplicationFailed, editor.isEditable, updateAttributes]

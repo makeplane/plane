@@ -120,8 +120,8 @@ function PageDetailsPage({ params }: Route.ComponentProps) {
             assetId,
             entityId: id,
             entityType: EFileAssetType.PAGE_DESCRIPTION,
-            projectId: projectId?.toString() ?? "",
-            workspaceSlug: workspaceSlug?.toString() ?? "",
+            projectId,
+            workspaceSlug,
           });
           return asset_id;
         },

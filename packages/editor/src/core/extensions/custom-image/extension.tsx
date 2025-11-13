@@ -14,7 +14,7 @@ import {
   CustomImageExtensionOptions,
   CustomImageExtensionStorage,
   ECustomImageAttributeNames,
-  TCustomImageStatus,
+  ECustomImageStatus,
 } from "./types";
 import { getImageComponentImageFileMap } from "./utils";
 
@@ -99,7 +99,7 @@ export const CustomImageExtension = (props: Props) => {
 
             const attributes = {
               [ECustomImageAttributeNames.ID]: fileId,
-              [ECustomImageAttributeNames.STATUS]: TCustomImageStatus.PENDING,
+              [ECustomImageAttributeNames.STATUS]: ECustomImageStatus.PENDING,
             };
 
             if (props.pos) {

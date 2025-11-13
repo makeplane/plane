@@ -4,7 +4,7 @@ import { AlignCenter, AlignLeft, AlignRight, type LucideIcon } from "lucide-reac
 import {
   ECustomImageAttributeNames,
   TCustomImageAlignment,
-  TCustomImageStatus,
+  ECustomImageStatus,
   type Pixel,
   type TCustomImageAttributes,
 } from "./types";
@@ -16,7 +16,7 @@ export const DEFAULT_CUSTOM_IMAGE_ATTRIBUTES: TCustomImageAttributes = {
   [ECustomImageAttributeNames.HEIGHT]: "auto",
   [ECustomImageAttributeNames.ASPECT_RATIO]: null,
   [ECustomImageAttributeNames.ALIGNMENT]: "left",
-  [ECustomImageAttributeNames.STATUS]: TCustomImageStatus.PENDING,
+  [ECustomImageAttributeNames.STATUS]: ECustomImageStatus.PENDING,
 };
 
 export const getImageComponentImageFileMap = (editor: Editor) => editor.storage.imageComponent?.fileMap;
@@ -59,10 +59,10 @@ export const IMAGE_ALIGNMENT_OPTIONS: {
 ];
 export const getImageBlockId = (id: string) => `editor-image-block-${id}`;
 
-export const isImageDuplicating = (status: TCustomImageStatus) => status === TCustomImageStatus.DUPLICATING;
+export const isImageDuplicating = (status: ECustomImageStatus) => status === ECustomImageStatus.DUPLICATING;
 
-export const isImageDuplicationComplete = (status: TCustomImageStatus) =>
-  status === TCustomImageStatus.UPLOADED || status === TCustomImageStatus.DUPLICATION_FAILED;
+export const isImageDuplicationComplete = (status: ECustomImageStatus) =>
+  status === ECustomImageStatus.UPLOADED || status === ECustomImageStatus.DUPLICATION_FAILED;
 
-export const hasImageDuplicationFailed = (status: TCustomImageStatus) =>
-  status === TCustomImageStatus.DUPLICATION_FAILED;
+export const hasImageDuplicationFailed = (status: ECustomImageStatus) =>
+  status === ECustomImageStatus.DUPLICATION_FAILED;
