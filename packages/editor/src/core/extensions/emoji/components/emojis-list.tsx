@@ -121,6 +121,7 @@ export const EmojisListDropdown = forwardRef<EmojiListRef, EmojisListDropdownPro
       />
       <div
         ref={dropdownContainerRef}
+        id="emojis-picker"
         className={cn(
           "relative max-h-80 w-[14rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg space-y-2 opacity-0 invisible transition-opacity",
           {
