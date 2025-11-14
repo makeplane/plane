@@ -5,5 +5,5 @@ import SvgFileIcon from "@/app/assets/attachment/svg-icon.png?url";
 import type { ImageIconPros } from "../types";
 
 export const SvgIcon: React.FC<ImageIconPros> = ({ width, height }) => (
-  <img src={SvgFileIcon} width={width} height={height} className="h-full w-full object-contain" alt="SvgFileIcon" />
+  <img src={SvgFileIcon} width={width} height={height} alt="SvgFileIcon" />
 );
