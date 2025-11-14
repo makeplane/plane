@@ -17,8 +17,8 @@
     "check:format": "turbo run check:format"
   },
   "devDependencies": {
-    "prettier": "latest",
-    "prettier-plugin-tailwindcss": "^0.6.14",
+    "@prettier/plugin-oxc": "0.0.4",
+    "prettier": "^3.6.2",
     "turbo": "2.6.1"
   },
   "pnpm": {
