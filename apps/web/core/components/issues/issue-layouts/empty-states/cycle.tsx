@@ -36,7 +36,7 @@ export const CycleEmptyState: React.FC = observer(() => {
   const { toggleCreateIssueModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   // derived values
-  const cycleWorkItemFilter = cycleId ? useWorkItemFilterInstance(EIssuesStoreType.CYCLE, cycleId) : undefined;
+  const cycleWorkItemFilter = useWorkItemFilterInstance(EIssuesStoreType.CYCLE, cycleId);
   const cycleDetails = cycleId ? getCycleById(cycleId) : undefined;
   const isCompletedCycleSnapshotAvailable = !isEmpty(cycleDetails?.progress_snapshot ?? {});
   const isCompletedAndEmpty = isCompletedCycleSnapshotAvailable || cycleDetails?.status?.toLowerCase() === "completed";
