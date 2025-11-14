@@ -1,5 +1,5 @@
 "use client";
-import type { FC } from "react";
+
 import { Fragment } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -19,7 +19,7 @@ type ProgressChartProps = {
   projectId: string;
   cycleId: string;
 };
-export const SidebarChart: FC<ProgressChartProps> = observer((props) => {
+export const SidebarChart = observer((props: ProgressChartProps) => {
   const { workspaceSlug, projectId, cycleId } = props;
 
   // hooks

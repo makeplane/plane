@@ -1,5 +1,4 @@
 import { observer } from "mobx-react";
-import Image from "next/image";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // assets
@@ -76,7 +75,7 @@ export const LabelStatComponent = observer((props: TLabelStatComponent) => {
       ) : (
         <div className="flex h-full flex-col items-center justify-center gap-2">
           <div className="flex h-20 w-20 items-center justify-center rounded-full bg-custom-background-80">
-            <Image src={emptyLabel} className="h-12 w-12" alt="empty label" />
+            <img src={emptyLabel} className="h-12 w-12 object-contain" alt="empty label" />
           </div>
           <h6 className="text-base text-custom-text-300">{t("no_labels_yet")}</h6>
         </div>
