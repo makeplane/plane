@@ -11,13 +11,16 @@ import { getFileURL } from "@plane/utils";
 import { useAdditionalEditorMention } from "@/plane-web/hooks/use-additional-editor-mention";
 
 type TArgs = {
+  enableAdvancedMentions?: boolean;
   searchEntity: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
 };
 
 export const useEditorMention = (args: TArgs) => {
-  const { searchEntity } = args;
+  const { enableAdvancedMentions = false, searchEntity } = args;
   // additional mentions
-  const { editorMentionTypes, updateAdditionalSections } = useAdditionalEditorMention();
+  const { editorMentionTypes, updateAdditionalSections } = useAdditionalEditorMention({
+    enableAdvancedMentions,
+  });
   // fetch mentions handler
   const fetchMentions = useCallback(
     async (query: string): Promise<TMentionSection[]> => {
@@ -64,7 +67,7 @@ export const useEditorMention = (args: TArgs) => {
         throw error;
       }
     },
-    [searchEntity, updateAdditionalSections]
+    [editorMentionTypes, searchEntity, updateAdditionalSections]
   );
 
   return {

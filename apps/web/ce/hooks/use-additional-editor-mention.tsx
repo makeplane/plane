@@ -4,6 +4,10 @@ import type { TMentionSection } from "@plane/editor";
 // plane types
 import type { TSearchEntities, TSearchResponse } from "@plane/types";
 
+export type TUseAdditionalEditorMentionArgs = {
+  enableAdvancedMentions: boolean;
+};
+
 export type TAdditionalEditorMentionHandlerArgs = {
   response: TSearchResponse;
 };
@@ -24,22 +28,16 @@ export type TAdditionalParseEditorContentReturnType =
     }
   | undefined;
 
-export const useAdditionalEditorMention = () => {
+export const useAdditionalEditorMention = (_args: TUseAdditionalEditorMentionArgs) => {
   const updateAdditionalSections = useCallback(
-    (args: TAdditionalEditorMentionHandlerArgs): TAdditionalEditorMentionHandlerReturnType => {
-      const {} = args;
-      return {
-        sections: [],
-      };
-    },
+    (_args: TAdditionalEditorMentionHandlerArgs): TAdditionalEditorMentionHandlerReturnType => ({
+      sections: [],
+    }),
     []
   );
 
   const parseAdditionalEditorContent = useCallback(
-    (args: TAdditionalParseEditorContentArgs): TAdditionalParseEditorContentReturnType => {
-      const {} = args;
-      return undefined;
-    },
+    (_args: TAdditionalParseEditorContentArgs): TAdditionalParseEditorContentReturnType => undefined,
     []
   );
 
