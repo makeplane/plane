@@ -50,6 +50,8 @@ from plane.api.serializers import (
     IssueLinkUpdateSerializer,
     LabelCreateUpdateSerializer,
 )
+from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
+from plane.utils.issue_filters import issue_filters
 from plane.app.permissions import (
     ProjectEntityPermission,
     ProjectLitePermission,
@@ -169,6 +171,8 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
     serializer_class = IssueSerializer
     use_read_replica = True
+    filter_backends = (ComplexFilterBackend,)
+    filterset_class = IssueFilterSet
 
     @property
     def project_identifier(self):
@@ -342,6 +346,15 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
         )
 
         total_issue_queryset = Issue.issue_objects.filter(project_id=project_id, workspace__slug=slug)
+
+        # Apply both JSON filters (ComplexFilterBackend) and legacy query param filters
+        issue_queryset = self.filter_queryset(issue_queryset)
+        total_issue_queryset = self.filter_queryset(total_issue_queryset)
+
+        legacy_filters = issue_filters(request.query_params, "GET")
+        if legacy_filters:
+            issue_queryset = issue_queryset.filter(**legacy_filters)
+            total_issue_queryset = total_issue_queryset.filter(**legacy_filters)
 
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
