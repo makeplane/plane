@@ -1,6 +1,7 @@
 import { Extension } from "@tiptap/core";
-import { NodeType } from "@tiptap/pm/model";
-import { Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
+import type { NodeType } from "@tiptap/pm/model";
+import type { Transaction } from "@tiptap/pm/state";
+import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { canJoin } from "@tiptap/pm/transform";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import Link from "next/link";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -71,7 +70,11 @@ function CreateWorkspacePage() {
         <div className="relative flex h-full justify-center px-8 pb-8 sm:w-10/12 sm:items-center sm:justify-start sm:p-0 sm:pr-[8.33%] md:w-9/12 lg:w-4/5">
           {isWorkspaceCreationDisabled ? (
             <div className="w-4/5 h-full flex flex-col items-center justify-center text-lg font-medium gap-1">
-              <Image src={WorkspaceCreationDisabled} width={200} alt="Workspace creation disabled" className="mb-4" />
+              <img
+                src={WorkspaceCreationDisabled}
+                className="w-full h-full object-contain mb-4"
+                alt="Workspace creation disabled"
+              />
               <div className="text-lg font-medium text-center">
                 {t("workspace_creation.errors.creation_disabled.title")}
               </div>

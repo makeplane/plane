@@ -1,7 +1,7 @@
 import React from "react";
-import { LegendProps } from "recharts";
+import type { LegendProps } from "recharts";
 // plane imports
-import { TChartLegend } from "@plane/types";
+import type { TChartLegend } from "@plane/types";
 import { cn } from "../../utils/classname";
 
 export const getLegendProps = (args: TChartLegend): LegendProps => {

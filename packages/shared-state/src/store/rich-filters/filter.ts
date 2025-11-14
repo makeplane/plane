@@ -3,16 +3,15 @@ import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
 // plane imports
-import {
-  DEFAULT_FILTER_VISIBILITY_OPTIONS,
+import type {
   TClearFilterOptions,
   TExpressionOptions,
   TFilterOptions,
   TSaveViewOptions,
   TUpdateViewOptions,
 } from "@plane/constants";
-import {
-  FILTER_NODE_TYPE,
+import { DEFAULT_FILTER_VISIBILITY_OPTIONS } from "@plane/constants";
+import type {
   IFilterAdapter,
   SingleOrArray,
   TAllAvailableOperatorsForDisplay,
@@ -26,6 +25,7 @@ import {
   TLogicalOperator,
   TSupportedOperators,
 } from "@plane/types";
+import { FILTER_NODE_TYPE } from "@plane/types";
 // local imports
 import {
   deepCompareFilterExpressions,
@@ -39,8 +39,10 @@ import {
   shouldNotifyChangeForExpression,
   updateNodeInExpression,
 } from "@plane/utils";
-import { FilterConfigManager, IFilterConfigManager } from "./config-manager";
-import { FilterInstanceHelper, IFilterInstanceHelper } from "./filter-helpers";
+import type { IFilterConfigManager } from "./config-manager";
+import { FilterConfigManager } from "./config-manager";
+import type { IFilterInstanceHelper } from "./filter-helpers";
+import { FilterInstanceHelper } from "./filter-helpers";
 
 /**
  * Interface for a filter instance.

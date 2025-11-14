@@ -1,7 +1,7 @@
 // plane utils
 import { cn } from "@plane/utils";
 // types
-import { ISlashCommandItem } from "@/types";
+import type { ISlashCommandItem } from "@/types";
 
 type Props = {
   isSelected: boolean;

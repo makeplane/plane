@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -168,7 +167,7 @@ export const GithubImporterRoot: React.FC = () => {
         <div className="space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4">
           <div className="flex items-center gap-2">
             <div className="h-10 w-10 flex-shrink-0">
-              <Image src={GithubLogo} alt="GitHubLogo" />
+              <img src={GithubLogo} className="w-full h-full object-cover" alt="GitHubLogo" />
             </div>
             <div className="flex h-full w-full items-center justify-center">
               {integrationWorkflowData.map((integration, index) => (

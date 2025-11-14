@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import * as Sentry from "@sentry/react-router";
 import { Links, Meta, Outlet, Scripts } from "react-router";
 import type { LinksFunction } from "react-router";
 import appleTouchIcon from "@/app/assets/favicon/apple-touch-icon.png?url";
@@ -66,7 +67,11 @@ export function HydrateFallback() {
   );
 }
 
-export function ErrorBoundary() {
+export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  if (error) {
+    Sentry.captureException(error);
+  }
+
   return (
     <div>
       <p>Something went wrong.</p>

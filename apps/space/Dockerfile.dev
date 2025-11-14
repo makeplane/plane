@@ -12,7 +12,7 @@ RUN pnpm install
 
 EXPOSE 3002
 
-ENV NEXT_PUBLIC_SPACE_BASE_PATH="/spaces"
+ENV VITE_SPACE_BASE_PATH="/spaces"
 
 VOLUME [ "/app/node_modules", "/app/apps/space/node_modules"]
 

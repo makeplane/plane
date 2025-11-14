@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import Image from "next/image";
 import { useParams } from "next/navigation";
 import { ClipboardList } from "lucide-react";
 // plane imports
@@ -39,7 +38,7 @@ export const JoinProject: React.FC<Props> = (props) => {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-y-5 bg-custom-background-100 text-center">
       <div className="h-44 w-72">
-        <Image src={Unauthorized} height="176" width="288" alt="JoinProject" />
+        <img src={Unauthorized} className="h-[176px] w-[288px] object-contain" alt="JoinProject" />
       </div>
       <h1 className="text-xl font-medium text-custom-text-100">
         {!isPrivateProject ? `You are not a member of this project yet.` : `You are not a member of this project.`}

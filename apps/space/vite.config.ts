@@ -7,20 +7,20 @@ import { joinUrlPath } from "@plane/utils";
 
 dotenv.config({ path: path.resolve(__dirname, ".env") });
 
-// Automatically expose all environment variables prefixed with NEXT_PUBLIC_
-const publicEnv = Object.keys(process.env)
-  .filter((key) => key.startsWith("NEXT_PUBLIC_"))
-  .reduce<Record<string, string>>((acc, key) => {
-    acc[key] = process.env[key] ?? "";
-    return acc;
+// Expose only vars starting with VITE_
+const viteEnv = Object.keys(process.env)
+  .filter((k) => k.startsWith("VITE_"))
+  .reduce<Record<string, string>>((a, k) => {
+    a[k] = process.env[k] ?? "";
+    return a;
   }, {});
 
-const basePath = joinUrlPath(process.env.NEXT_PUBLIC_SPACE_BASE_PATH ?? "", "/") ?? "/";
+const basePath = joinUrlPath(process.env.VITE_SPACE_BASE_PATH ?? "", "/") ?? "/";
 
 export default defineConfig(() => ({
   base: basePath,
   define: {
-    "process.env": JSON.stringify(publicEnv),
+    "process.env": JSON.stringify(viteEnv),
   },
   build: {
     assetsInlineLimit: 0,
@@ -29,10 +29,12 @@ export default defineConfig(() => ({
   resolve: {
     alias: {
       // Next.js compatibility shims used within space
-      "next/image": path.resolve(__dirname, "app/compat/next/image.tsx"),
       "next/link": path.resolve(__dirname, "app/compat/next/link.tsx"),
       "next/navigation": path.resolve(__dirname, "app/compat/next/navigation.ts"),
     },
     dedupe: ["react", "react-dom"],
+  },
+  server: {
+    host: "127.0.0.1",
   },
 }));

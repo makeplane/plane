@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { IconWrapper } from "../icon-wrapper";
-import { ISvgIcons } from "../type";
+import type { ISvgIcons } from "../type";
 
 export const CycleIcon: React.FC<ISvgIcons> = ({ color = "currentColor", ...rest }) => {
   const clipPathId = React.useId();

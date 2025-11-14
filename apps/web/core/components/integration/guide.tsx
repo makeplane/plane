@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
@@ -103,10 +102,9 @@ const IntegrationGuide = observer(() => {
               >
                 <div className="flex items-start gap-4">
                   <div className="relative h-10 w-10 flex-shrink-0">
-                    <Image
+                    <img
                       src={getImporterLogo(service?.provider)}
-                      layout="fill"
-                      objectFit="cover"
+                      className="h-full w-full object-cover"
                       alt={`${t(service.i18n_title)} Logo`}
                     />
                   </div>

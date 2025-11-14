@@ -1,10 +1,9 @@
 import React from "react";
-import Image from "next/image";
 // image
 import FigmaFileIcon from "@/app/assets/attachment/figma-icon.png?url";
 // type
 import type { ImageIconPros } from "../types";
 
 export const FigmaIcon: React.FC<ImageIconPros> = ({ width, height }) => (
-  <Image src={FigmaFileIcon} height={height} width={width} alt="FigmaFileIcon" />
+  <img src={FigmaFileIcon} width={width} height={height} className="h-full w-full object-contain" alt="FigmaFileIcon" />
 );

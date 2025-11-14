@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import useSWR from "swr";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Loader, ToggleSwitch } from "@plane/ui";
@@ -64,7 +63,7 @@ const InstanceGoogleAuthenticationPage = observer<React.FC<Route.ComponentProps>
             name="Google"
             description="Allow members to login or sign up to plane with their Google
             accounts."
-            icon={<Image src={GoogleLogo} height={24} width={24} alt="Google Logo" />}
+            icon={<img src={GoogleLogo} height={24} width={24} alt="Google Logo" />}
             config={
               <ToggleSwitch
                 value={Boolean(parseInt(enableGoogleConfig))}

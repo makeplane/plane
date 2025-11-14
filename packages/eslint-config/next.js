@@ -26,7 +26,7 @@ module.exports = {
     "prefer-const": "error",
     "no-irregular-whitespace": "error",
     "no-trailing-spaces": "error",
-    "no-duplicate-imports": "error",
+    "import/no-duplicates": ["error", { considerQueryString: true }],
     "no-useless-catch": "warn",
     "no-case-declarations": "error",
     "no-undef": "error",
@@ -39,6 +39,16 @@ module.exports = {
     "react/jsx-boolean-value": "error",
     "react/jsx-no-duplicate-props": "error",
     "react-hooks/exhaustive-deps": "warn",
+    "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
+    "@typescript-eslint/no-import-type-side-effects": "error",
+    "@typescript-eslint/consistent-type-imports": [
+      "error",
+      {
+        prefer: "type-imports",
+        fixStyle: "separate-type-imports",
+        disallowTypeAnnotations: false,
+      },
+    ],
     "@typescript-eslint/no-unused-expressions": "warn",
     "@typescript-eslint/no-unused-vars": [
       "warn",
@@ -51,6 +61,7 @@ module.exports = {
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-useless-empty-export": "error",
     "@typescript-eslint/prefer-ts-expect-error": "warn",
+
     "@typescript-eslint/naming-convention": [
       "warn",
       {

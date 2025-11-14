@@ -2,13 +2,12 @@
 
 import { observer } from "mobx-react";
 // ui
+import { GANTT_TIMELINE_TYPE } from "@plane/types";
 import type { IBlockUpdateData } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 // hooks
 import { useTimeLineChart } from "@/hooks/use-timeline-chart";
-//
-import { ETimeLineTypeType } from "../../contexts";
 import { GanttDnDHOC } from "../gantt-dnd-HOC";
 import { handleOrderChange } from "../utils";
 import { ModulesSidebarBlock } from "./block";
@@ -24,7 +23,7 @@ type Props = {
 export const ModuleGanttSidebar: React.FC<Props> = observer((props) => {
   const { blockUpdateHandler, blockIds, enableReorder } = props;
 
-  const { getBlockById } = useTimeLineChart(ETimeLineTypeType.MODULE);
+  const { getBlockById } = useTimeLineChart(GANTT_TIMELINE_TYPE.MODULE);
 
   const handleOnDrop = (
     draggingBlockId: string | undefined,

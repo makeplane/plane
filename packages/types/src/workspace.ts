@@ -1,7 +1,7 @@
 import type { TPaginationInfo } from "./common";
 import type { ICycle } from "./cycle";
-import { TUserPermissions } from "./enums";
-import { TProjectMembership } from "./project";
+import type { TUserPermissions } from "./enums";
+import type { TProjectMembership } from "./project";
 import type { IUser, IUserLite } from "./users";
 import type { IWorkspaceViewProps } from "./view-props";
 

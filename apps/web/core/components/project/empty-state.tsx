@@ -1,9 +1,6 @@
 "use client";
 
 import React from "react";
-
-import Image from "next/image";
-
 // ui
 import { Button } from "@plane/propel/button";
 
@@ -30,7 +27,7 @@ export const EmptyState: React.FC<Props> = ({
 }) => (
   <div className="flex h-full w-full items-center justify-center px-5 md:px-10 lg:p-20">
     <div className="relative h-full w-full max-w-6xl">
-      <Image src={image} className="w-52 sm:w-60" alt={primaryButton?.text ?? ""} layout="fill" />
+      <img src={image} className="w-52 sm:w-60 object-cover" alt={primaryButton?.text ?? ""} />
     </div>
     <div className="absolute flex w-full flex-col items-center pt-[30vh] text-center md:pt-[35vh] lg:pt-[45vh]">
       <h6 className="mt-6 text-xl font-semibold">{title}</h6>

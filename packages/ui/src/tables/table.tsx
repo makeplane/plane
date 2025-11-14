@@ -2,7 +2,7 @@ import React from "react";
 // helpers
 import { cn } from "../utils";
 // types
-import { TTableData } from "./types";
+import type { TTableData } from "./types";
 
 export const Table = <T,>(props: TTableData<T>) => {
   const {

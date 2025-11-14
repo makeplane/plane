@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 // plane imports
@@ -162,7 +161,7 @@ export const AuthRoot: React.FC = observer(() => {
     {
       id: "google",
       text: `${content} with Google`,
-      icon: <Image src={GoogleLogo} height={18} width={18} alt="Google Logo" />,
+      icon: <img src={GoogleLogo} height={18} width={18} alt="Google Logo" />,
       onClick: () => {
         window.location.assign(`${API_BASE_URL}/auth/google/${next_path ? `?next_path=${next_path}` : ``}`);
       },
@@ -172,7 +171,7 @@ export const AuthRoot: React.FC = observer(() => {
       id: "github",
       text: `${content} with GitHub`,
       icon: (
-        <Image
+        <img
           src={resolvedTheme === "dark" ? GithubLightLogo : GithubDarkLogo}
           height={18}
           width={18}
@@ -187,7 +186,7 @@ export const AuthRoot: React.FC = observer(() => {
     {
       id: "gitlab",
       text: `${content} with GitLab`,
-      icon: <Image src={GitlabLogo} height={18} width={18} alt="GitLab Logo" />,
+      icon: <img src={GitlabLogo} height={18} width={18} alt="GitLab Logo" />,
       onClick: () => {
         window.location.assign(`${API_BASE_URL}/auth/gitlab/${next_path ? `?next_path=${next_path}` : ``}`);
       },
@@ -196,7 +195,7 @@ export const AuthRoot: React.FC = observer(() => {
     {
       id: "gitea",
       text: `${content} with Gitea`,
-      icon: <Image src={GiteaLogo} height={18} width={18} alt="Gitea Logo" />,
+      icon: <img src={GiteaLogo} height={18} width={18} alt="Gitea Logo" />,
       onClick: () => {
         window.location.assign(`${API_BASE_URL}/auth/gitea/${next_path ? `?next_path=${next_path}` : ``}`);
       },

@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { ISvgIcons } from "./type";
+import type { ISvgIcons } from "./type";
 
 export const WorkspaceIcon: React.FC<ISvgIcons> = ({ className }) => (
   <svg

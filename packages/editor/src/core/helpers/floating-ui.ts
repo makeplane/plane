@@ -1,13 +1,7 @@
-import {
-  computePosition,
-  flip,
-  type Strategy,
-  type Placement,
-  shift,
-  ReferenceElement,
-  autoUpdate,
-} from "@floating-ui/dom";
-import { type Editor, posToDOMRect } from "@tiptap/core";
+import { computePosition, flip, shift, autoUpdate } from "@floating-ui/dom";
+import type { Placement, ReferenceElement, Strategy } from "@floating-ui/dom";
+import { posToDOMRect } from "@tiptap/core";
+import type { Editor } from "@tiptap/core";
 
 export type UpdateFloatingUIFloaterPosition = (
   editor: Editor,

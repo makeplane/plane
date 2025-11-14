@@ -8,11 +8,10 @@ import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import { EProjectNetwork } from "@plane/types";
+import { EProjectNetwork, GANTT_TIMELINE_TYPE } from "@plane/types";
 // components
 import { JoinProject } from "@/components/auth-screens/project/join-project";
 import { LogoSpinner } from "@/components/common/logo-spinner";
-import { ETimeLineTypeType } from "@/components/gantt-chart/contexts";
 import {
   PROJECT_DETAILS,
   PROJECT_ME_INFORMATION,
@@ -37,9 +36,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { useProjectView } from "@/hooks/store/use-project-view";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useTimeLineChart } from "@/hooks/use-timeline-chart";
-// local
-import { persistence } from "@/local-db/storage.sqlite";
-// plane web constants
+
 interface IProjectAuthWrapper {
   workspaceSlug: string;
   projectId?: string;
@@ -57,7 +54,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { loader, getProjectById, fetchProjectDetails } = useProject();
   const { fetchAllCycles } = useCycle();
   const { fetchModulesSlim, fetchModules } = useModule();
-  const { initGantt } = useTimeLineChart(ETimeLineTypeType.MODULE);
+  const { initGantt } = useTimeLineChart(GANTT_TIMELINE_TYPE.MODULE);
   const { fetchViews } = useProjectView();
   const {
     project: { fetchProjectMembers },
@@ -86,21 +83,6 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     initGantt();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useSWR(
-    workspaceSlug && projectId ? `PROJECT_SYNC_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}` : null,
-    workspaceSlug && projectId
-      ? () => {
-          persistence.syncIssues(projectId.toString());
-        }
-      : null,
-    {
-      revalidateIfStale: true,
-      revalidateOnFocus: true,
-      revalidateOnReconnect: true,
-      refreshInterval: 5 * 60 * 1000,
-    }
-  );
 
   // fetching project details
   useSWR(

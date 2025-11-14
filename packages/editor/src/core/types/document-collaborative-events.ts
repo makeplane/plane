@@ -1,4 +1,4 @@
-import { DocumentCollaborativeEvents } from "@/constants/document-collaborative-events";
+import type { DocumentCollaborativeEvents } from "@/constants/document-collaborative-events";
 
 // Base type for all action payloads
 export type BaseActionPayload = {

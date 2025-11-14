@@ -6,17 +6,17 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 dotenv.config({ path: path.resolve(__dirname, ".env") });
 
-// Automatically expose all environment variables prefixed with NEXT_PUBLIC_
-const publicEnv = Object.keys(process.env)
-  .filter((key) => key.startsWith("NEXT_PUBLIC_"))
-  .reduce<Record<string, string>>((acc, key) => {
-    acc[key] = process.env[key] ?? "";
-    return acc;
+// Expose only vars starting with VITE_
+const viteEnv = Object.keys(process.env)
+  .filter((k) => k.startsWith("VITE_"))
+  .reduce<Record<string, string>>((a, k) => {
+    a[k] = process.env[k] ?? "";
+    return a;
   }, {});
 
 export default defineConfig(() => ({
   define: {
-    "process.env": JSON.stringify(publicEnv),
+    "process.env": JSON.stringify(viteEnv),
   },
   build: {
     assetsInlineLimit: 0,
@@ -25,12 +25,14 @@ export default defineConfig(() => ({
   resolve: {
     alias: {
       // Next.js compatibility shims used within web
-      "next/image": path.resolve(__dirname, "app/compat/next/image.tsx"),
       "next/link": path.resolve(__dirname, "app/compat/next/link.tsx"),
       "next/navigation": path.resolve(__dirname, "app/compat/next/navigation.ts"),
       "next/script": path.resolve(__dirname, "app/compat/next/script.tsx"),
     },
     dedupe: ["react", "react-dom", "@headlessui/react"],
+  },
+  server: {
+    host: "127.0.0.1",
   },
   // No SSR-specific overrides needed; alias resolves to ESM build
 }));

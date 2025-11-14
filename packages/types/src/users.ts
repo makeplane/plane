@@ -1,5 +1,5 @@
-import { TUserPermissions } from "./enums";
-import { IIssueActivity, TIssuePriorities, TStateGroups } from ".";
+import type { TUserPermissions } from "./enums";
+import type { IIssueActivity, TIssuePriorities, TStateGroups } from ".";
 
 /**
  * @description The start of the week for the user

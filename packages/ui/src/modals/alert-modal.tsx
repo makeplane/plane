@@ -1,7 +1,9 @@
-import { AlertTriangle, Info, LucideIcon } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { AlertTriangle, Info } from "lucide-react";
 import React from "react";
 // components
-import { Button, TButtonVariant } from "../button";
+import type { TButtonVariant } from "../button";
+import { Button } from "../button";
 import { cn } from "../utils";
 import { EModalPosition, EModalWidth } from "./constants";
 import { ModalCore } from "./modal-core";

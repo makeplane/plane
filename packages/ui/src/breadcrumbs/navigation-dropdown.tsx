@@ -4,7 +4,8 @@ import { CheckIcon } from "lucide-react";
 import * as React from "react";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
-import { CustomMenu, TContextMenuItem } from "../dropdowns";
+import type { TContextMenuItem } from "../dropdowns";
+import { CustomMenu } from "../dropdowns";
 import { cn } from "../utils";
 import { Breadcrumbs } from "./breadcrumbs";
 

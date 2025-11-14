@@ -3,7 +3,6 @@ module.exports = {
   extends: ["@plane/eslint-config/next.js"],
   ignorePatterns: ["build/**", "dist/**", ".vite/**"],
   rules: {
-    "no-duplicate-imports": "off",
     "import/no-duplicates": ["error", { "prefer-inline": false }],
     "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
     "@typescript-eslint/no-import-type-side-effects": "error",

@@ -1,5 +1,5 @@
 import { FloatingOverlay } from "@floating-ui/react";
-import { SuggestionKeyDownProps, type SuggestionProps } from "@tiptap/suggestion";
+import type { SuggestionKeyDownProps, SuggestionProps } from "@tiptap/suggestion";
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
