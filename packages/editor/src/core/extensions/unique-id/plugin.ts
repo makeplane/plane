@@ -1,7 +1,6 @@
-import { combineTransactionSteps, findChildrenInRange, getChangedRanges } from "@tiptap/core";
+import { combineTransactionSteps, findChildrenInRange, findDuplicates, getChangedRanges } from "@tiptap/core";
 import { Fragment, type Node as ProseMirrorNode, Slice } from "@tiptap/pm/model";
 import { Plugin, PluginKey, type Transaction } from "@tiptap/pm/state";
-import { throttle } from "lodash-es";
 // types
 import type { UniqueIDOptions } from "./extension";
 // utils
@@ -11,14 +10,6 @@ export const createUniqueIDPlugin = (options: UniqueIDOptions) => {
   let dragSourceElement: Element | null = null;
   let transformPasted = false;
   let syncHandler: (() => void) | null = null;
-  let shouldScanForDuplicates = false;
-  const scheduleDuplicateScan = throttle(
-    () => {
-      shouldScanForDuplicates = true;
-    },
-    1000,
-    { leading: true, trailing: false }
-  );
 
   return new Plugin({
     key: new PluginKey("uniqueID"),
@@ -40,41 +31,10 @@ export const createUniqueIDPlugin = (options: UniqueIDOptions) => {
 
       const { tr } = newState;
 
-      const { types, attributeName, generateID } = options;
+      const { types, attributeName, generateUniqueID } = options;
       const transform = combineTransactionSteps(oldState.doc, transactions as Transaction[]);
 
-      scheduleDuplicateScan();
-
-      if (shouldScanForDuplicates) {
-        shouldScanForDuplicates = false;
-
-        const seenIds = new Map<string, number>();
-        const duplicatePositions: number[] = [];
-
-        newState.doc.descendants((node, pos) => {
-          if (types.includes(node.type.name)) {
-            const id = node.attrs[attributeName];
-
-            if (id !== null) {
-              if (seenIds.has(id)) {
-                duplicatePositions.push(pos);
-              } else {
-                seenIds.set(id, pos);
-              }
-            }
-          }
-        });
-
-        duplicatePositions.forEach((pos) => {
-          const node = tr.doc.nodeAt(pos);
-          if (node) {
-            tr.setNodeMarkup(pos, undefined, {
-              ...node.attrs,
-              [attributeName]: generateID({ node, pos }),
-            });
-          }
-        });
-      }
+      const { mapping } = transform;
 
       // get changed ranges based on the old state
       const changes = getChangedRanges(transform);
@@ -82,18 +42,35 @@ export const createUniqueIDPlugin = (options: UniqueIDOptions) => {
       changes.forEach(({ newRange }) => {
         const newNodes = findChildrenInRange(newState.doc, newRange, (node) => types.includes(node.type.name));
 
+        const newIds = newNodes.map(({ node }) => node.attrs[attributeName]).filter((id) => id !== null);
+
         newNodes.forEach(({ node, pos }) => {
-          // Check the current state of the node within `tr.doc`
-          // This helps to prevent adding new IDs to the same node
+          // instead of checking `node.attrs[attributeName]` directly
+          // we look at the current state of the node within `tr.doc`.
+          // this helps to prevent adding new ids to the same node
           // if the node changed multiple times within one transaction
           const id = tr.doc.nodeAt(pos)?.attrs[attributeName];
 
           if (id === null) {
             tr.setNodeMarkup(pos, undefined, {
               ...node.attrs,
-              [attributeName]: generateID({ node, pos }),
+              [attributeName]: generateUniqueID({ node, pos }),
             });
+
             return;
+          }
+          const duplicatedNewIds = findDuplicates(newIds);
+
+          // check if the node doesn’t exist in the old state
+          const { deleted } = mapping.invert().mapResult(pos);
+
+          const newNode = deleted && duplicatedNewIds.includes(id);
+
+          if (newNode) {
+            tr.setNodeMarkup(pos, undefined, {
+              ...node.attrs,
+              [attributeName]: generateUniqueID({ node, pos }),
+            });
           }
         });
       });

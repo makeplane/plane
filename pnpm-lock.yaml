@@ -861,9 +861,6 @@ importers:
       linkifyjs:
         specifier: ^4.3.2
         version: 4.3.2
-      lodash-es:
-        specifier: 'catalog:'
-        version: 4.17.21
       lowlight:
         specifier: ^3.0.0
         version: 3.3.0
@@ -910,9 +907,6 @@ importers:
       '@plane/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
-      '@types/lodash-es':
-        specifier: 'catalog:'
-        version: 4.17.12
       '@types/node':
         specifier: 'catalog:'
         version: 22.12.0

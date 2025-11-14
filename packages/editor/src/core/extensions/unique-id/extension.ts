@@ -15,6 +15,8 @@ export type UniqueIDGenerationContext = {
   node: ProseMirrorNode;
   pos: number;
 };
+export const UniqueIDAttribute = "id";
+export const generateUniqueID = () => uuidv4();
 
 export interface UniqueIDOptions {
   /**
@@ -32,7 +34,7 @@ export interface UniqueIDOptions {
    * generated. However, you can provide your own function to generate the
    * unique ID based on the node type and the position.
    */
-  generateID: (ctx: UniqueIDGenerationContext) => string;
+  generateUniqueID: (ctx: UniqueIDGenerationContext) => string;
   /**
    * Ignore some mutations, for example applied from other users through the collaboration plugin.
    *
@@ -65,7 +67,7 @@ export const UniqueID = Extension.create<UniqueIDOptions>({
     return {
       attributeName: "id",
       types: COMBINED_BLOCK_NODE_TYPES,
-      generateID: () => uuidv4(),
+      generateUniqueID: () => uuidv4(),
       filterTransaction: null,
       updateDocument: true,
       provider: undefined,

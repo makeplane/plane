@@ -9,7 +9,7 @@ import type { UniqueIDOptions } from "./extension";
 export const createIdsForView = (view: EditorView, options: UniqueIDOptions) => {
   const { state } = view;
   const { tr, doc } = state;
-  const { types, attributeName, generateID } = options;
+  const { types, attributeName, generateUniqueID } = options;
   const nodesWithoutId = findChildren(
     doc,
     (node) => types.includes(node.type.name) && node.attrs[attributeName] === null
@@ -18,7 +18,7 @@ export const createIdsForView = (view: EditorView, options: UniqueIDOptions) => 
   nodesWithoutId.forEach(({ node, pos }) => {
     tr.setNodeMarkup(pos, undefined, {
       ...node.attrs,
-      [attributeName]: generateID({ node, pos }),
+      [attributeName]: generateUniqueID({ node, pos }),
     });
   });
 

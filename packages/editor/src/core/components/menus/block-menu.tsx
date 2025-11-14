@@ -8,7 +8,7 @@ import {
   useInteractions,
   FloatingPortal,
 } from "@floating-ui/react";
-import type { Editor } from "@tiptap/react";
+import type { Editor, JSONContent } from "@tiptap/react";
 import type { LucideIcon } from "lucide-react";
 import { Copy, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -19,6 +19,7 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 import type { IEditorProps } from "@/types";
 // components
 import { getNodeOptions } from "./block-menu-options";
+import { UniqueIDAttribute } from "@/extensions/unique-id/extension";
 
 type Props = {
   disabledExtensions?: IEditorProps["disabledExtensions"];
@@ -33,6 +34,26 @@ export type BlockMenuOption = {
   isDisabled?: boolean;
 };
 
+const stripUniqueIDFromJSON = (node: JSONContent | null | undefined): JSONContent | null | undefined => {
+  if (!node) return node;
+
+  const sanitizedNode: JSONContent = { ...node };
+
+  // Remove the unique ID attribute from attrs
+  if (sanitizedNode.attrs && sanitizedNode.attrs[UniqueIDAttribute]) {
+    const { [UniqueIDAttribute]: _, ...restAttrs } = sanitizedNode.attrs;
+    sanitizedNode.attrs = restAttrs;
+  }
+
+  // Recursively strip unique IDs from child nodes
+  if (sanitizedNode.content) {
+    sanitizedNode.content = sanitizedNode.content
+      .map((child) => stripUniqueIDFromJSON(child))
+      .filter((child): child is JSONContent => Boolean(child));
+  }
+
+  return sanitizedNode;
+};
 export const BlockMenu = (props: Props) => {
   const { editor } = props;
   const [isOpen, setIsOpen] = useState(false);
@@ -176,7 +197,8 @@ export const BlockMenu = (props: Props) => {
             throw new Error("The insertion position is invalid or outside the document.");
           }
 
-          const contentToInsert = firstChild.toJSON();
+          let contentToInsert = firstChild.toJSON();
+          contentToInsert = stripUniqueIDFromJSON(contentToInsert);
 
           // Insert the content at the calculated position
           editor
