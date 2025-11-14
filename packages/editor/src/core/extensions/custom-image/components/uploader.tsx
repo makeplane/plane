@@ -35,6 +35,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     selected,
     setIsUploaded,
     updateAttributes,
+    hasDuplicationFailed,
   } = props;
   // refs
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -44,8 +45,6 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
   const imageComponentImageFileMap = useMemo(() => getImageComponentImageFileMap(editor), [editor]);
   const isTouchDevice = !!editor.storage.utility.isTouchDevice;
 
-  const hasDuplicationFailed = true;
-  // console.log("hasDuplicationFailed", hasDuplicationFailed);
   const onUpload = useCallback(
     (url: string) => {
       if (url) {
@@ -221,7 +220,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     >
       <ImageIcon className="size-4" />
       <div className="text-base font-medium flex-1">{getDisplayMessage()}</div>
-      {true && (
+      {hasDuplicationFailed && editor.isEditable && (
         <button
           type="button"
           onClick={handleRetryClick}
