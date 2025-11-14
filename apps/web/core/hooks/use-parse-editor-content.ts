@@ -15,7 +15,9 @@ export const useParseEditorContent = () => {
   // store hooks
   const { getUserDetails } = useMember();
   // parse additional content
-  const { parseAdditionalEditorContent } = useAdditionalEditorMention();
+  const { parseAdditionalEditorContent } = useAdditionalEditorMention({
+    enableAdvancedMentions: true,
+  });
 
   /**
    * @description function to replace all the custom components from the html component to make it pdf compatible
