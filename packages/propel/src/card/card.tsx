@@ -1,14 +1,7 @@
 import * as React from "react";
 import { cn } from "../utils/classname";
-import {
-  ECardDirection,
-  ECardSpacing,
-  ECardVariant,
-  getCardStyle,
-  TCardDirection,
-  TCardSpacing,
-  TCardVariant,
-} from "./helper";
+import type { TCardDirection, TCardSpacing, TCardVariant } from "./helper";
+import { ECardDirection, ECardSpacing, ECardVariant, getCardStyle } from "./helper";
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: TCardVariant;

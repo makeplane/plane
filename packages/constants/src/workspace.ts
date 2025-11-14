@@ -1,4 +1,5 @@
-import { TStaticViewTypes, IWorkspaceSearchResults, EUserWorkspaceRoles } from "@plane/types";
+import type { TStaticViewTypes, IWorkspaceSearchResults } from "@plane/types";
+import { EUserWorkspaceRoles } from "@plane/types";
 
 export const ORGANIZATION_SIZE = ["Just myself", "2-10", "11-50", "51-200", "201-500", "500+"];
 
@@ -96,7 +97,7 @@ export const WORKSPACE_SETTINGS = {
     key: "export",
     i18n_label: "workspace_settings.settings.exports.title",
     href: `/settings/exports`,
-    access: [EUserWorkspaceRoles.ADMIN],
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/settings/exports/`,
   },
   webhooks: {

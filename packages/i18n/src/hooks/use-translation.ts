@@ -2,7 +2,7 @@ import { useContext } from "react";
 // context
 import { TranslationContext } from "../context";
 // types
-import { ILanguageOption, TLanguage } from "../types";
+import type { ILanguageOption, TLanguage } from "../types";
 
 export type TTranslationStore = {
   t: (key: string, params?: Record<string, unknown>) => string;

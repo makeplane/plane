@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { IconWrapper } from "../icon-wrapper";
-import { ISvgIcons } from "../type";
+import type { ISvgIcons } from "../type";
 
 export const PiChatLogo: React.FC<ISvgIcons> = ({ color = "currentColor", ...rest }) => (
   <IconWrapper color={color} viewBox="0 0 24 24" {...rest}>

@@ -1,6 +1,7 @@
 import { Tab } from "@headlessui/react";
-import { LucideProps } from "lucide-react";
-import React, { FC } from "react";
+import type { LucideProps } from "lucide-react";
+import type { FC } from "react";
+import React from "react";
 // helpers
 import { cn } from "../utils";
 

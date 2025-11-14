@@ -1,16 +1,19 @@
-import { type Editor, isNodeSelection } from "@tiptap/core";
-import { BubbleMenu, type BubbleMenuProps, useEditorState } from "@tiptap/react";
-import { FC, useEffect, useState, useRef } from "react";
+import { isNodeSelection } from "@tiptap/core";
+import type { Editor } from "@tiptap/core";
+import { BubbleMenu, useEditorState } from "@tiptap/react";
+import type { BubbleMenuProps } from "@tiptap/react";
+import type { FC } from "react";
+import { useEffect, useState, useRef } from "react";
 // plane utils
 import { cn } from "@plane/utils";
 // components
+import type { EditorMenuItem } from "@/components/menus";
 import {
   BackgroundColorItem,
   BoldItem,
   BubbleMenuColorSelector,
   BubbleMenuNodeSelector,
   CodeItem,
-  EditorMenuItem,
   ItalicItem,
   StrikeThroughItem,
   TextAlignItem,

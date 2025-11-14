@@ -20,15 +20,22 @@ export const BaseKanbanLayout = observer(<T extends IBaseLayoutsKanbanItem>(prop
     showEmptyGroups = true,
     enableDragDrop = false,
     loadMoreItems,
-    collapsedGroups: externalCollapsedGroups = [],
-    onToggleGroup: externalOnToggleGroup = () => {},
+    collapsedGroups: externalCollapsedGroups,
+    onToggleGroup: externalOnToggleGroup,
   } = props;
 
-  const { containerRef, collapsedGroups, onToggleGroup } = useLayoutState({
-    mode: "external",
-    externalCollapsedGroups,
-    externalOnToggleGroup,
-  });
+  const useExternalMode = externalCollapsedGroups !== undefined && externalOnToggleGroup !== undefined;
+  const { containerRef, collapsedGroups, onToggleGroup } = useLayoutState(
+    useExternalMode
+      ? {
+          mode: "external",
+          externalCollapsedGroups,
+          externalOnToggleGroup,
+        }
+      : {
+          mode: "internal",
+        }
+  );
 
   return (
     <div ref={containerRef} className={cn("relative w-full flex gap-2 p-3 h-full overflow-x-auto", className)}>

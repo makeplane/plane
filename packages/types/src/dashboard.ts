@@ -1,8 +1,8 @@
-import { EDurationFilters } from "./enums";
-import { IIssueActivity, TIssuePriorities } from "./issues";
-import { TIssue } from "./issues/issue";
-import { TIssueRelationTypes } from "./issues/issue_relation";
-import { TStateGroups } from "./state";
+import type { EDurationFilters } from "./enums";
+import type { IIssueActivity, TIssuePriorities } from "./issues";
+import type { TIssue } from "./issues/issue";
+import type { TIssueRelationTypes } from "./issues/issue_relation";
+import type { TStateGroups } from "./state";
 
 export type TWidgetKeys =
   | "overview_stats"

@@ -1,8 +1,16 @@
-import Image from "next/image";
 import { KeyRound, Mails } from "lucide-react";
 // types
 import type { TGetBaseAuthenticationModeProps, TInstanceAuthenticationModes } from "@plane/types";
 import { resolveGeneralTheme } from "@plane/utils";
+// assets
+import giteaLogo from "@/app/assets/logos/gitea-logo.svg?url";
+import githubLightModeImage from "@/app/assets/logos/github-black.png?url";
+import githubDarkModeImage from "@/app/assets/logos/github-white.png?url";
+import gitlabLogo from "@/app/assets/logos/gitlab-logo.svg?url";
+import googleLogo from "@/app/assets/logos/google-logo.svg?url";
+import ldapLogo from "@/app/assets/logos/ldap.webp?url";
+import oidcLogo from "@/app/assets/logos/oidc-logo.svg?url";
+import samlLogo from "@/app/assets/logos/saml-logo.svg?url";
 // components
 import { EmailCodesConfiguration } from "@/components/authentication/email-config-switch";
 import { GiteaConfiguration } from "@/components/authentication/gitea-config";
@@ -12,15 +20,6 @@ import { GoogleConfiguration } from "@/components/authentication/google-config";
 import { PasswordLoginConfiguration } from "@/components/authentication/password-config-switch";
 // plane admin components
 import { UpgradeButton } from "@/plane-admin/components/common";
-// assets
-import giteaLogo from "@/public/logos/gitea-logo.svg";
-import githubLightModeImage from "@/public/logos/github-black.png";
-import githubDarkModeImage from "@/public/logos/github-white.png";
-import GitlabLogo from "@/public/logos/gitlab-logo.svg";
-import GoogleLogo from "@/public/logos/google-logo.svg";
-import LDAPLogo from "@/public/logos/ldap.webp";
-import OIDCLogo from "@/public/logos/oidc-logo.svg";
-import SAMLLogo from "@/public/logos/saml-logo.svg";
 
 // Authentication methods
 export const getCoreAuthenticationModesMap: (
@@ -49,7 +48,7 @@ export const getCoreAuthenticationModesMap: (
     key: "google",
     name: "Google",
     description: "Allow members to log in or sign up for Plane with their Google accounts.",
-    icon: <Image src={GoogleLogo} height={20} width={20} alt="Google Logo" />,
+    icon: <img src={googleLogo} height={20} width={20} alt="Google Logo" />,
     config: <GoogleConfiguration disabled={disabled} updateConfig={updateConfig} />,
   },
   github: {
@@ -57,7 +56,7 @@ export const getCoreAuthenticationModesMap: (
     name: "GitHub",
     description: "Allow members to log in or sign up for Plane with their GitHub accounts.",
     icon: (
-      <Image
+      <img
         src={resolveGeneralTheme(resolvedTheme) === "dark" ? githubDarkModeImage : githubLightModeImage}
         height={20}
         width={20}
@@ -70,21 +69,21 @@ export const getCoreAuthenticationModesMap: (
     key: "gitlab",
     name: "GitLab",
     description: "Allow members to log in or sign up to plane with their GitLab accounts.",
-    icon: <Image src={GitlabLogo} height={20} width={20} alt="GitLab Logo" />,
+    icon: <img src={gitlabLogo} height={20} width={20} alt="GitLab Logo" />,
     config: <GitlabConfiguration disabled={disabled} updateConfig={updateConfig} />,
   },
   gitea: {
     key: "gitea",
     name: "Gitea",
     description: "Allow members to log in or sign up to plane with their Gitea accounts.",
-    icon: <Image src={giteaLogo} height={20} width={20} alt="Gitea Logo" />,
+    icon: <img src={giteaLogo} height={20} width={20} alt="Gitea Logo" />,
     config: <GiteaConfiguration disabled={disabled} updateConfig={updateConfig} />,
   },
   oidc: {
     key: "oidc",
     name: "OIDC",
     description: "Authenticate your users via the OpenID Connect protocol.",
-    icon: <Image src={OIDCLogo} height={22} width={22} alt="OIDC Logo" />,
+    icon: <img src={oidcLogo} height={22} width={22} alt="OIDC Logo" />,
     config: <UpgradeButton level="workspace" />,
     unavailable: true,
   },
@@ -92,7 +91,7 @@ export const getCoreAuthenticationModesMap: (
     key: "saml",
     name: "SAML",
     description: "Authenticate your users via the Security Assertion Markup Language protocol.",
-    icon: <Image src={SAMLLogo} height={22} width={22} alt="SAML Logo" className="pl-0.5" />,
+    icon: <img src={samlLogo} height={22} width={22} alt="SAML Logo" className="pl-0.5" />,
     config: <UpgradeButton level="workspace" />,
     unavailable: true,
   },
@@ -100,7 +99,7 @@ export const getCoreAuthenticationModesMap: (
     key: "ldap",
     name: "LDAP",
     description: "Authenticate your users via LDAP directory services.",
-    icon: <Image src={LDAPLogo} height={22} width={22} alt="LDAP Logo" />,
+    icon: <img src={ldapLogo} height={22} width={22} alt="LDAP Logo" />,
     config: <UpgradeButton level="instance" />,
     unavailable: true,
   },

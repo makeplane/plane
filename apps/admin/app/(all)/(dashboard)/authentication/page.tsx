@@ -13,20 +13,21 @@ import { cn, resolveGeneralTheme } from "@plane/utils";
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 import { useAuthenticationModes } from "@/hooks/oauth";
 import { useInstance } from "@/hooks/store";
+// types
+import type { Route } from "./+types/page";
 
-const InstanceAuthenticationPage = observer(() => {
+const InstanceAuthenticationPage = observer<React.FC<Route.ComponentProps>>(() => {
   // theme
   const { resolvedTheme: resolvedThemeAdmin } = useTheme();
   // store
   const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
-
-  useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
-
   // state
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   // derived values
   const enableSignUpConfig = formattedConfig?.ENABLE_SIGNUP ?? "";
   const resolvedTheme = resolveGeneralTheme(resolvedThemeAdmin);
+
+  useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
 
   const updateConfig = async (key: TInstanceConfigurationKeys, value: string) => {
     setIsSubmitting(true);
@@ -125,5 +126,7 @@ const InstanceAuthenticationPage = observer(() => {
     </>
   );
 });
+
+export const meta: Route.MetaFunction = () => [{ title: "Authentication Settings - Plane Web" }];
 
 export default InstanceAuthenticationPage;

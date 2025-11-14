@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { EmojiReaction, EmojiReactionGroup, EmojiReactionButton, EmojiReactionType } from "./emoji-reaction";
+import type { EmojiReactionType } from "./emoji-reaction";
+import { EmojiReaction, EmojiReactionGroup, EmojiReactionButton } from "./emoji-reaction";
 
 const meta = {
   title: "Components/Emoji/EmojiReaction",
@@ -33,6 +34,10 @@ export const Reacted: Story = {
 };
 
 export const Interactive: Story = {
+  args: {
+    emoji: "👍",
+    count: 0,
+  },
   render() {
     const [reacted, setReacted] = useState(false);
     const [count, setCount] = useState(5);
@@ -75,28 +80,11 @@ export const WithoutCount: Story = {
   },
 };
 
-export const Sizes: Story = {
-  render() {
-    return (
-      <div className="flex flex-col gap-4 items-center">
-        <div className="flex flex-col gap-2">
-          <span className="text-xs text-custom-text-400">Small</span>
-          <EmojiReaction emoji="👍" count={5} size="sm" users={["Alice", "Bob"]} />
-        </div>
-        <div className="flex flex-col gap-2">
-          <span className="text-xs text-custom-text-400">Medium (default)</span>
-          <EmojiReaction emoji="👍" count={5} size="md" users={["Alice", "Bob"]} />
-        </div>
-        <div className="flex flex-col gap-2">
-          <span className="text-xs text-custom-text-400">Large</span>
-          <EmojiReaction emoji="👍" count={5} size="lg" users={["Alice", "Bob"]} />
-        </div>
-      </div>
-    );
-  },
-};
-
 export const MultipleReactions: Story = {
+  args: {
+    emoji: "👍",
+    count: 0,
+  },
   render() {
     const [reactions, setReactions] = useState<EmojiReactionType[]>([
       { emoji: "👍", count: 5, reacted: false, users: ["Alice", "Bob", "Charlie"] },
@@ -137,6 +125,10 @@ export const MultipleReactions: Story = {
 };
 
 export const AddButton: Story = {
+  args: {
+    emoji: "➕",
+    count: 0,
+  },
   render() {
     const handleAdd = () => {
       alert("Add reaction clicked");
@@ -146,28 +138,11 @@ export const AddButton: Story = {
   },
 };
 
-export const AddButtonSizes: Story = {
-  render() {
-    return (
-      <div className="flex gap-4 items-center">
-        <div className="flex flex-col gap-2 items-center">
-          <span className="text-xs text-custom-text-400">Small</span>
-          <EmojiReactionButton size="sm" />
-        </div>
-        <div className="flex flex-col gap-2 items-center">
-          <span className="text-xs text-custom-text-400">Medium</span>
-          <EmojiReactionButton size="md" />
-        </div>
-        <div className="flex flex-col gap-2 items-center">
-          <span className="text-xs text-custom-text-400">Large</span>
-          <EmojiReactionButton size="lg" />
-        </div>
-      </div>
-    );
-  },
-};
-
 export const ReactionGroup: Story = {
+  args: {
+    emoji: "👍",
+    count: 0,
+  },
   render() {
     const [reactions, setReactions] = useState<EmojiReactionType[]>([
       { emoji: "👍", count: 5, reacted: false, users: ["Alice", "Bob", "Charlie"] },
@@ -205,34 +180,11 @@ export const ReactionGroup: Story = {
   },
 };
 
-export const ReactionGroupSizes: Story = {
-  render() {
-    const reactions: EmojiReactionType[] = [
-      { emoji: "👍", count: 5, reacted: false, users: ["Alice", "Bob"] },
-      { emoji: "❤️", count: 12, reacted: true, users: ["Charlie", "David"] },
-      { emoji: "🎉", count: 3, reacted: false, users: ["Emma"] },
-    ];
-
-    return (
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-2">
-          <span className="text-xs text-custom-text-400">Small</span>
-          <EmojiReactionGroup reactions={reactions} size="sm" />
-        </div>
-        <div className="flex flex-col gap-2">
-          <span className="text-xs text-custom-text-400">Medium</span>
-          <EmojiReactionGroup reactions={reactions} size="md" />
-        </div>
-        <div className="flex flex-col gap-2">
-          <span className="text-xs text-custom-text-400">Large</span>
-          <EmojiReactionGroup reactions={reactions} size="lg" />
-        </div>
-      </div>
-    );
-  },
-};
-
 export const InMessageContext: Story = {
+  args: {
+    emoji: "👍",
+    count: 0,
+  },
   render() {
     const [reactions, setReactions] = useState<EmojiReactionType[]>([
       { emoji: "👍", count: 5, reacted: false, users: ["Alice", "Bob", "Charlie"] },

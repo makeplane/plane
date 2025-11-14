@@ -1,10 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 // icons
 import { Lightbulb } from "lucide-react";
 // images
-import latestFeatures from "@/public/onboarding/onboarding-pages.webp";
+import latestFeatures from "@/app/assets/onboarding/onboarding-pages.webp?url";
 
 export const LatestFeatureBlock = () => {
   const { resolvedTheme } = useTheme();
@@ -26,7 +25,7 @@ export const LatestFeatureBlock = () => {
         }`}
       >
         <div className="h-[90%]">
-          <Image
+          <img
             src={latestFeatures}
             alt="Plane Work items"
             className={`-mt-2 ml-10 h-full rounded-md ${

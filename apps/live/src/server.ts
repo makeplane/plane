@@ -1,8 +1,9 @@
-import { Server as HttpServer } from "http";
-import { type Hocuspocus } from "@hocuspocus/server";
+import type { Server as HttpServer } from "http";
+import type { Hocuspocus } from "@hocuspocus/server";
 import compression from "compression";
 import cors from "cors";
-import express, { Express, Request, Response, Router } from "express";
+import type { Express, Request, Response, Router } from "express";
+import express from "express";
 import expressWs from "express-ws";
 import helmet from "helmet";
 // plane imports

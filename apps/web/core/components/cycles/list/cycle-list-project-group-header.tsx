@@ -3,13 +3,12 @@
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ChevronRightIcon } from "@plane/propel/icons";
 // icons
 import { Row } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
-// components
-import { Logo } from "@/components/common/logo";
 import { useProject } from "@/hooks/store/use-project";
 
 type Props = {

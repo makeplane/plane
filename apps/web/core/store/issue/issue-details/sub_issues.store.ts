@@ -11,9 +11,7 @@ import type {
   TIssueServiceType,
   TLoader,
 } from "@plane/types";
-import { EIssueServiceType } from "@plane/types";
 // services
-import { updatePersistentLayer } from "@/local-db/utils/utils";
 import { IssueService } from "@/services/issue";
 // store
 import type { IIssueDetail } from "./root.store";
@@ -198,10 +196,6 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       this.subIssues[parentIssueId].length
     );
 
-    if (this.serviceType === EIssueServiceType.ISSUES) {
-      updatePersistentLayer([parentIssueId, ...issueIds]);
-    }
-
     return;
   };
 
@@ -298,10 +292,6 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       );
     });
 
-    if (this.serviceType === EIssueServiceType.ISSUES) {
-      updatePersistentLayer([parentIssueId]);
-    }
-
     return;
   };
 
@@ -334,10 +324,6 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
         this.subIssues[parentIssueId]?.length
       );
     });
-
-    if (this.serviceType === EIssueServiceType.ISSUES) {
-      updatePersistentLayer([parentIssueId]);
-    }
 
     return;
   };

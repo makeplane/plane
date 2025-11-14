@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { AtSign, Briefcase, Calendar } from "lucide-react";
 // plane imports
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import {
   CycleGroupIcon,
   CycleIcon,
@@ -26,7 +27,7 @@ import type {
   IProject,
   TWorkItemFilterProperty,
 } from "@plane/types";
-import { Avatar, Logo } from "@plane/ui";
+import { Avatar } from "@plane/ui";
 import {
   getAssigneeFilterConfig,
   getCreatedAtFilterConfig,

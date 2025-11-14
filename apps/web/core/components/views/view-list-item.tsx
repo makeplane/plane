@@ -4,11 +4,11 @@ import type { FC } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ViewsIcon } from "@plane/propel/icons";
 // types
 import type { IProjectView } from "@plane/types";
 // components
-import { Logo } from "@/components/common/logo";
 import { ListItem } from "@/components/core/list";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";

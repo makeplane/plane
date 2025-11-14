@@ -1,7 +1,9 @@
 import type { Editor } from "@tiptap/core";
-import { AlignCenter, AlignLeft, AlignRight, type LucideIcon } from "lucide-react";
+import { AlignCenter, AlignLeft, AlignRight } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 // local imports
-import { ECustomImageAttributeNames, TCustomImageAlignment, type Pixel, type TCustomImageAttributes } from "./types";
+import { ECustomImageAttributeNames } from "./types";
+import type { TCustomImageAlignment, Pixel, TCustomImageAttributes } from "./types";
 
 export const DEFAULT_CUSTOM_IMAGE_ATTRIBUTES: TCustomImageAttributes = {
   [ECustomImageAttributeNames.SOURCE]: null,

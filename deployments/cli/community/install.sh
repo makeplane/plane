@@ -141,6 +141,7 @@ function updateEnvFile() {
                 value=$(echo "$value" | sed 's/|/\\|/g')
                 sed -i '' "s|^$key=.*|$key=$value|g" "$file"
             else
+                value=$(echo "$value" | sed 's/\//\\\//g')
                 sed -i "s/^$key=.*/$key=$value/g" "$file"
             fi
         fi

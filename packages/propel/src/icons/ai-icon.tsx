@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { ISvgIcons } from "./type";
+import type { ISvgIcons } from "./type";
 
 export const AiIcon: React.FC<ISvgIcons> = ({ width = "16", height = "16", className, color = "currentColor" }) => (
   <svg

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Copy, Download, Edit, Share, Trash, Star, Archive } from "lucide-react";
-import { ChevronRightIcon } from "../icons";
+import { ChevronRightIcon } from "../icons/arrows/chevron-right";
 import { ContextMenu } from "./context-menu";
 
 // cannot use satisfies here because base-ui does not have portable types.

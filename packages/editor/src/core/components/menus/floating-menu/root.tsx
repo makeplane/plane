@@ -1,9 +1,5 @@
-import {
-  FloatingOverlay,
-  FloatingPortal,
-  type UseInteractionsReturn,
-  type UseFloatingReturn,
-} from "@floating-ui/react";
+import { FloatingOverlay, FloatingPortal } from "@floating-ui/react";
+import type { UseInteractionsReturn, UseFloatingReturn } from "@floating-ui/react";
 
 type Props = {
   children: React.ReactNode;

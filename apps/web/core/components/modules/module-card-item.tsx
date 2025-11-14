@@ -36,7 +36,6 @@ import { useModule } from "@/hooks/store/use-module";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web constants
 
 type Props = {
   moduleId: string;
@@ -55,10 +54,8 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const { allowPermissions } = useUserPermissions();
   const { getModuleById, addModuleToFavorites, removeModuleFromFavorites, updateModuleDetails } = useModule();
   const { getUserDetails } = useMember();
-
   // local storage
   const { setValue: toggleFavoriteMenu, storedValue } = useLocalStorage<boolean>(IS_FAVORITE_MENU_OPEN, false);
-
   // derived values
   const moduleDetails = getModuleById(moduleId);
   const isEditingAllowed = allowPermissions(
@@ -190,7 +187,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
 
-  const issueCount = module
+  const issueCount = moduleDetails
     ? !moduleTotalIssues || moduleTotalIssues === 0
       ? `0 work items`
       : moduleTotalIssues === moduleCompletedIssues

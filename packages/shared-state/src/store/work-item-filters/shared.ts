@@ -1,7 +1,7 @@
 // plane imports
-import { EIssuesStoreType, TWorkItemFilterExpression, TWorkItemFilterProperty } from "@plane/types";
+import type { EIssuesStoreType, TWorkItemFilterExpression, TWorkItemFilterProperty } from "@plane/types";
 // local imports
-import { IFilterInstance } from "../rich-filters";
+import type { IFilterInstance } from "../rich-filters";
 
 export type TWorkItemFilterKey = `${EIssuesStoreType}-${string}`;
 

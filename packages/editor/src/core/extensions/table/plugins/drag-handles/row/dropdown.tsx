@@ -1,8 +1,10 @@
 import type { Editor } from "@tiptap/core";
 import { TableMap } from "@tiptap/pm/tables";
-import { ArrowDown, ArrowUp, Copy, ToggleRight, Trash2, type LucideIcon } from "lucide-react";
+import { ArrowDown, ArrowUp, Copy, ToggleRight, Trash2 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 // extensions
-import { CloseIcon, ISvgIcons } from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/propel/icons";
+import { CloseIcon } from "@plane/propel/icons";
 import { findTable, getSelectedRows } from "@/extensions/table/table/utilities/helpers";
 // local imports
 import { duplicateRows } from "../actions";

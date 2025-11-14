@@ -1,17 +1,14 @@
-import {
-  EIssuesStoreType,
+import type {
   IIssueFilterOptions,
   ILayoutDisplayFiltersOptions,
   TIssueActivityComment,
   TWorkItemFilterProperty,
 } from "@plane/types";
-import {
-  TIssueFilterPriorityObject,
-  ISSUE_DISPLAY_PROPERTIES_KEYS,
-  SUB_ISSUES_DISPLAY_PROPERTIES_KEYS,
-} from "./common";
+import { EIssuesStoreType } from "@plane/types";
+import type { TIssueFilterPriorityObject } from "./common";
+import { ISSUE_DISPLAY_PROPERTIES_KEYS, SUB_ISSUES_DISPLAY_PROPERTIES_KEYS } from "./common";
 
-import { TIssueLayout } from "./layout";
+import type { TIssueLayout } from "./layout";
 
 export type TIssueFilterKeys = "priority" | "state" | "labels";
 

@@ -1,5 +1,5 @@
-import { IProjectLite } from "./project";
-import { IWorkspaceLite } from "./workspace";
+import type { IProjectLite } from "./project";
+import type { IWorkspaceLite } from "./workspace";
 
 export interface IGptResponse {
   response: string;

@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { ISvgIcons } from "./type";
+import type { ISvgIcons } from "./type";
 
 export const StickyNoteIcon: React.FC<ISvgIcons> = ({ width = "17", height = "17", className, color }) => (
   <svg

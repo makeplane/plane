@@ -1,4 +1,4 @@
-import { TFileSignedURLResponse } from "../file";
+import type { TFileSignedURLResponse } from "../file";
 
 export type TIssueAttachment = {
   id: string;

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
@@ -12,13 +11,12 @@ import { Button } from "@plane/propel/button";
 import { MembersPropertyIcon } from "@plane/propel/icons";
 // types
 import type { IJiraImporterForm } from "@plane/types";
-// ui
+// assets
+import JiraLogo from "@/app/assets/services/jira.svg?url";
 // fetch keys
 import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
-// assets
-import JiraLogo from "@/public/services/jira.svg";
 // services
 import { JiraImporterService } from "@/services/integrations";
 // components
@@ -106,7 +104,7 @@ export const JiraImporterRoot: React.FC = () => {
       <div className="flex h-full flex-col space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4">
         <div className="flex items-center gap-2">
           <div className="h-10 w-10 flex-shrink-0">
-            <Image src={JiraLogo} alt="jira logo" />
+            <img src={JiraLogo} className="w-full h-full object-cover" alt="jira logo" />
           </div>
           <div className="flex h-full w-full items-center justify-center">
             {integrationWorkflowData.map((integration, index) => (

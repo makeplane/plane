@@ -4,7 +4,8 @@ import { Popover } from "../popover";
 import { cn } from "../utils/classname";
 import { convertPlacementToSideAndAlign } from "../utils/placement";
 import { EmojiRoot } from "./emoji/emoji";
-import { emojiToString, TCustomEmojiPicker, EmojiIconPickerTypes } from "./helper";
+import type { TCustomEmojiPicker } from "./helper";
+import { emojiToString, EmojiIconPickerTypes } from "./helper";
 import { IconRoot } from "./icon/icon-root";
 
 export const EmojiPicker: React.FC<TCustomEmojiPicker> = (props) => {
@@ -106,6 +107,7 @@ export const EmojiPicker: React.FC<TCustomEmojiPicker> = (props) => {
         side={finalSide}
         align={finalAlign}
         sideOffset={8}
+        data-prevent-outside-click="true"
       >
         <Tabs.Root defaultValue={defaultOpen}>
           <Tabs.List className="grid grid-cols-2 gap-1 px-3.5 pt-3">

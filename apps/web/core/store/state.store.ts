@@ -7,7 +7,6 @@ import type { IState } from "@plane/types";
 // helpers
 import { sortStates } from "@plane/utils";
 // plane web
-import { syncIssuesWithDeletedStates } from "@/local-db/utils/load-workspace";
 import { ProjectStateService } from "@/plane-web/services/project/project-state.service";
 import type { RootStore } from "@/plane-web/store/root.store";
 
@@ -248,7 +247,6 @@ export class StateStore implements IStateStore {
     await this.stateService.deleteState(workspaceSlug, projectId, stateId).then(() => {
       runInAction(() => {
         delete this.stateMap[stateId];
-        syncIssuesWithDeletedStates([stateId]);
       });
     });
   };

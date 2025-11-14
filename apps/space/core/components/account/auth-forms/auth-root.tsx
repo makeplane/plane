@@ -1,14 +1,12 @@
 "use client";
 
-import type { FC } from "react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 // plane imports
 import { SitesAuthService } from "@plane/services";
 import type { IEmailCheckData } from "@plane/types";
 import { OAuthOptions } from "@plane/ui";
-// components
 // helpers
 import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
 import { EErrorAlertType, authErrorHandler, EAuthenticationErrorCodes } from "@/helpers/authentication.helper";
@@ -27,7 +25,7 @@ import { AuthUniqueCodeForm } from "./unique-code";
 
 const authService = new SitesAuthService();
 
-export const AuthRoot: FC = observer(() => {
+export const AuthRoot: React.FC = observer(() => {
   // router params
   const searchParams = useSearchParams();
   const emailParam = searchParams.get("email") || undefined;
