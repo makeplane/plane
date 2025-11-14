@@ -5,5 +5,5 @@ import VideoFileIcon from "@/app/assets/attachment/video-icon.png?url";
 import type { ImageIconPros } from "../types";
 
 export const VideoIcon: React.FC<ImageIconPros> = ({ width, height }) => (
-  <img src={VideoFileIcon} width={width} height={height} className="h-full w-full object-contain" alt="VideoFileIcon" />
+  <img src={VideoFileIcon} width={width} height={height} alt="VideoFileIcon" />
 );

@@ -59,9 +59,9 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
 
     const query = generateQueryParams(searchParams, ["peekCycle"]);
     if (searchParams.has("peekCycle") && searchParams.get("peekCycle") === cycleId) {
-      router.push(`${pathname}?${query}`, { showProgress: false });
+      router.push(`${pathname}?${query}`);
     } else {
-      router.push(`${pathname}?${query && `${query}&`}peekCycle=${cycleId}`, { showProgress: false });
+      router.push(`${pathname}?${query && `${query}&`}peekCycle=${cycleId}`);
     }
   };
 
