@@ -171,8 +171,6 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
     serializer_class = IssueSerializer
     use_read_replica = True
-    filter_backends = (ComplexFilterBackend,)
-    filterset_class = IssueFilterSet
 
     @property
     def project_identifier(self):
@@ -249,6 +247,8 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
     serializer_class = IssueSerializer
     use_read_replica = True
+    filter_backends = (ComplexFilterBackend,)
+    filterset_class = IssueFilterSet
 
     def get_queryset(self):
         return (
