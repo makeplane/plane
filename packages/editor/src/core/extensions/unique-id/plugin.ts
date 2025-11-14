@@ -39,10 +39,18 @@ export const createUniqueIDPlugin = (options: UniqueIDOptions) => {
       // get changed ranges based on the old state
       const changes = getChangedRanges(transform);
 
+      // Get all IDs from the entire document to check for duplicates globally
+      const allNodesInDoc: Array<{ node: ProseMirrorNode; pos: number }> = [];
+      newState.doc.descendants((node, pos) => {
+        if (types.includes(node.type.name)) {
+          allNodesInDoc.push({ node, pos });
+        }
+      });
+      const allIds = allNodesInDoc.map(({ node }) => node.attrs[attributeName]).filter((id) => id !== null);
+      const duplicatedIds = findDuplicates(allIds);
+
       changes.forEach(({ newRange }) => {
         const newNodes = findChildrenInRange(newState.doc, newRange, (node) => types.includes(node.type.name));
-
-        const newIds = newNodes.map(({ node }) => node.attrs[attributeName]).filter((id) => id !== null);
 
         newNodes.forEach(({ node, pos }) => {
           // instead of checking `node.attrs[attributeName]` directly
@@ -59,12 +67,12 @@ export const createUniqueIDPlugin = (options: UniqueIDOptions) => {
 
             return;
           }
-          const duplicatedNewIds = findDuplicates(newIds);
 
-          // check if the node doesn’t exist in the old state
+          // check if the node doesn't exist in the old state
           const { deleted } = mapping.invert().mapResult(pos);
 
-          const newNode = deleted && duplicatedNewIds.includes(id);
+          // If this is a new node (didn't exist in old state) and its ID is duplicated in the entire document
+          const newNode = deleted && duplicatedIds.includes(id);
 
           if (newNode) {
             tr.setNodeMarkup(pos, undefined, {
