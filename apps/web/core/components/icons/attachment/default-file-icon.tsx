@@ -9,7 +9,6 @@ export const DefaultIcon: React.FC<ImageIconPros> = ({ width, height }) => (
     src={DefaultFileIcon}
     width={width}
     height={height}
-    className="h-full w-full object-contain"
     alt="DefaultFileIcon"
   />
 );
