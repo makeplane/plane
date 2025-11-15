@@ -1,10 +1,16 @@
 # Python imports
 import uuid
+import json
+import logging
 
 # Django imports
 from django.db.models import Case, Count, IntegerField, Q, When
 from django.contrib.auth import logout
 from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_control
+from django.views.decorators.vary import vary_on_cookie
+from django.core.validators import validate_email
 
 # Third party imports
 from rest_framework import status
@@ -36,9 +42,15 @@ from plane.utils.paginator import BasePaginator
 from plane.authentication.utils.host import user_ip
 from plane.bgtasks.user_deactivation_email_task import user_deactivation_email
 from plane.utils.host import base_host
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_control
-from django.views.decorators.vary import vary_on_cookie
+from plane.authentication.provider.credentials.magic_code import MagicCodeProvider
+from plane.authentication.adapter.error import (
+    AuthenticationException,
+)
+from plane.bgtasks.user_email_update_task import send_email_update_magic_code, send_email_update_confirmation
+from plane.settings.redis import redis_instance
+
+
+logger = logging.getLogger("plane")
 
 
 class UserEndpoint(BaseViewSet):
@@ -68,6 +80,165 @@ class UserEndpoint(BaseViewSet):
 
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
+
+    def generate_email_verification_code(self, request):
+        """
+        Generate and send a magic code to the new email address for verification.
+        """
+        user = self.get_object()
+        new_email = request.data.get("email", "").strip().lower()
+
+        if not new_email:
+            return Response(
+                {"error": "Email is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Validate email format
+        try:
+            validate_email(new_email)
+        except Exception:
+            return Response(
+                {"error": "Invalid email format"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Check if email is the same as current email
+        if new_email == user.email:
+            return Response(
+                {"error": "New email must be different from current email"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Check if email already exists in the User model
+        if User.objects.filter(email=new_email).exclude(id=user.id).exists():
+            return Response(
+                {"error": "An account with this email already exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            # Generate magic code for email verification
+            # Use a special key prefix to distinguish from regular magic signin
+            adapter = MagicCodeProvider(request=request, key=f"email_update_{new_email}")
+            key, token = adapter.initiate()
+
+            # Debug logging
+            logger.info(f"Generated verification code - Redis key: {key}, Token: {token}")
+
+            # Send magic code to the new email
+            send_email_update_magic_code.delay(new_email, key, token)
+
+            return Response(
+                {"key": str(key), "message": "Verification code sent to email"},
+                status=status.HTTP_200_OK,
+            )
+        except AuthenticationException as e:
+            return Response(
+                e.get_error_dict(),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def update_email(self, request):
+        """
+        Verify the magic code and update the user's email address.
+        This endpoint verifies the code and updates the existing user record
+        without creating a new user, ensuring the user ID remains unchanged.
+        """
+        user = self.get_object()
+        new_email = request.data.get("email", "").strip().lower()
+        code = request.data.get("code", "").strip()
+
+        if not new_email:
+            return Response(
+                {"error": "Email is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not code:
+            return Response(
+                {"error": "Verification code is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Validate email format
+        try:
+            validate_email(new_email)
+        except Exception:
+            return Response(
+                {"error": "Invalid email format"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Check if email is the same as current email
+        if new_email == user.email:
+            return Response(
+                {"error": "New email must be different from current email"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Check if email already exists in the User model
+        if User.objects.filter(email=new_email).exclude(id=user.id).exists():
+            return Response(
+                {"error": "An account with this email already exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Verify the magic code
+        try:
+            # MagicCodeProvider.initiate() prepends "magic_" to the key, so we need to match that
+            redis_key = f"magic_email_update_{new_email}"
+            ri = redis_instance()
+
+            if not ri.exists(redis_key):
+                logger.warning("Redis key not found: %s. Code may have expired or was never generated.", redis_key)
+                return Response(
+                    {"error": "Verification code has expired or is invalid"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            data = json.loads(ri.get(redis_key))
+            stored_token = data.get("token")
+
+            if str(stored_token) != str(code):
+                logger.warning(f"Token mismatch! Provided: '{code}', Expected: '{stored_token}'")
+                return Response(
+                    {"error": "Invalid verification code"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Code is valid, delete it from redis
+            ri.delete(redis_key)
+
+        except Exception as e:
+            logger.error(f"Exception during verification: {type(e).__name__}: {str(e)}", exc_info=True)
+            return Response(
+                {"error": "Failed to verify code. Please try again."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Final check: ensure email is still available (might have been taken between code generation and update)
+        if User.objects.filter(email=new_email).exclude(id=user.id).exists():
+            return Response(
+                {"error": "An account with this email already exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Update the email - this updates the existing user record without creating a new user
+        user.email = new_email
+        # Reset email verification status when email is changed
+        user.is_email_verified = False
+        user.save()
+
+        # Logout the user
+        logout(request)
+
+        # Send confirmation email to the new email address
+        send_email_update_confirmation.delay(new_email)
+
+        # Return updated user data
+        serialized_data = UserMeSerializer(user).data
+        return Response(serialized_data, status=status.HTTP_200_OK)
 
     def deactivate(self, request):
         # Check all workspace user is active
