@@ -8,7 +8,6 @@ import { MoreHorizontal } from "lucide-react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { Popover } from "@plane/propel/popover";
-import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssue } from "@plane/types";
 import { ControlLink } from "@plane/ui";
 import { cn, generateWorkItemLink } from "@plane/utils";
@@ -129,9 +128,7 @@ export const CalendarIssueBlock = observer(
                       displayProperties={issuesFilter?.issueFilters?.displayProperties}
                     />
                   )}
-                  <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-                    <div className="truncate text-sm font-medium md:font-normal md:text-xs">{issue.name}</div>
-                  </Tooltip>
+                  <div className="truncate text-sm font-medium md:font-normal md:text-xs">{issue.name}</div>
                 </div>
                 <div
                   className={cn("flex-shrink-0 size-5", {
