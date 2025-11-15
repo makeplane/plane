@@ -81,13 +81,17 @@ class UserEndpoint(BaseViewSet):
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
 
-    def generate_email_verification_code(self, request):
+    def _validate_new_email(self, user, new_email):
         """
-        Generate and send a magic code to the new email address for verification.
-        """
-        user = self.get_object()
-        new_email = request.data.get("email", "").strip().lower()
+        Validate the new email address.
 
+        Args:
+            user: The User instance
+            new_email: The new email address to validate
+
+        Returns:
+            Response object with error if validation fails, None if validation passes
+        """
         if not new_email:
             return Response(
                 {"error": "Email is required"},
@@ -117,20 +121,31 @@ class UserEndpoint(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        return None
+
+    def generate_email_verification_code(self, request):
+        """
+        Generate and send a magic code to the new email address for verification.
+        """
+        user = self.get_object()
+        new_email = request.data.get("email", "").strip().lower()
+
+        # Validate the new email
+        validation_error = self._validate_new_email(user, new_email)
+        if validation_error:
+            return validation_error
+
         try:
             # Generate magic code for email verification
             # Use a special key prefix to distinguish from regular magic signin
             adapter = MagicCodeProvider(request=request, key=f"email_update_{new_email}")
             key, token = adapter.initiate()
 
-            # Debug logging
-            logger.info(f"Generated verification code - Redis key: {key}, Token: {token}")
-
             # Send magic code to the new email
-            send_email_update_magic_code.delay(new_email, key, token)
+            send_email_update_magic_code.delay(new_email, token)
 
             return Response(
-                {"key": str(key), "message": "Verification code sent to email"},
+                {"message": "Verification code sent to email"},
                 status=status.HTTP_200_OK,
             )
         except AuthenticationException as e:
@@ -149,38 +164,14 @@ class UserEndpoint(BaseViewSet):
         new_email = request.data.get("email", "").strip().lower()
         code = request.data.get("code", "").strip()
 
-        if not new_email:
-            return Response(
-                {"error": "Email is required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        # Validate the new email
+        validation_error = self._validate_new_email(user, new_email)
+        if validation_error:
+            return validation_error
 
         if not code:
             return Response(
                 {"error": "Verification code is required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Validate email format
-        try:
-            validate_email(new_email)
-        except Exception:
-            return Response(
-                {"error": "Invalid email format"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Check if email is the same as current email
-        if new_email == user.email:
-            return Response(
-                {"error": "New email must be different from current email"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Check if email already exists in the User model
-        if User.objects.filter(email=new_email).exclude(id=user.id).exists():
-            return Response(
-                {"error": "An account with this email already exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -201,7 +192,6 @@ class UserEndpoint(BaseViewSet):
             stored_token = data.get("token")
 
             if str(stored_token) != str(code):
-                logger.warning(f"Token mismatch! Provided: '{code}', Expected: '{stored_token}'")
                 return Response(
                     {"error": "Invalid verification code"},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -235,6 +225,8 @@ class UserEndpoint(BaseViewSet):
 
         # Send confirmation email to the new email address
         send_email_update_confirmation.delay(new_email)
+        # send the email to the old email address
+        send_email_update_confirmation.delay(user.email)
 
         # Return updated user data
         serialized_data = UserMeSerializer(user).data

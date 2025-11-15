@@ -10,13 +10,12 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
 # Module imports
-from plane.db.models import User
 from plane.license.utils.instance_value import get_email_configuration
 from plane.utils.exception_logger import log_exception
 
 
 @shared_task
-def send_email_update_magic_code(email, key, token):
+def send_email_update_magic_code(email, token):
     try:
         (
             EMAIL_HOST,
