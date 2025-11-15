@@ -18,8 +18,8 @@ type Props = {
   workspaceSlug: string;
   onClose: () => void;
   onConfirm: (issues: TIssue[]) => void;
-  // 新增：父组件传入的已选工作项，用于回显与初始化
   initialSelectedIssues?: TIssue[];
+  forceTypeName?: "Requirement" | "Task" | "Bug";
 };
 
 export const WorkItemSelectModal: React.FC<Props> = ({
@@ -28,6 +28,7 @@ export const WorkItemSelectModal: React.FC<Props> = ({
   onClose,
   onConfirm,
   initialSelectedIssues,
+  forceTypeName,
 }) => {
   const projectService = useMemo(() => new ProjectService(), []);
   const issueService = useMemo(() => new IssueService(), []);
@@ -149,6 +150,11 @@ export const WorkItemSelectModal: React.FC<Props> = ({
       });
   }, [isOpen, workspaceSlug, selectedProjectId, issueTypeService]);
 
+  const displayIssues = useMemo(
+    () => displayIssuesSelector(issues, projectIssueTypesMap, forceTypeName),
+    [issues, projectIssueTypesMap, forceTypeName]
+  );
+
   // 渲染类型图标（参考 issue-detail.tsx 逻辑）
   const renderIssueTypeIcon = (record: TIssue) => {
     const typeId = (record as any)?.type_id as string | undefined;
@@ -181,8 +187,9 @@ export const WorkItemSelectModal: React.FC<Props> = ({
   // 新增：Table 列定义（展示名称与状态）
   const columns = useMemo(
     () => {
-      const uniqueStateIds = Array.from(new Set((issues || []).map((i) => i.state_id).filter(Boolean))) as string[];
-      const uniqueTypeIds = Array.from(new Set((issues || []).map((i) => i.type_id).filter(Boolean))) as string[];
+      const baseList = displayIssues;
+      const uniqueStateIds = Array.from(new Set((baseList || []).map((i) => i.state_id).filter(Boolean))) as string[];
+      const uniqueTypeIds = Array.from(new Set((baseList || []).map((i) => i.type_id).filter(Boolean))) as string[];
       // 新增：类型过滤项使用“当前项目全部类型”，而不是仅限于当前页数据出现的类型
       const allProjectTypeIds = projectIssueTypesMap ? Object.keys(projectIssueTypesMap) : uniqueTypeIds;
 
@@ -258,7 +265,7 @@ export const WorkItemSelectModal: React.FC<Props> = ({
       ];
     },
     // 依赖中加入 getStateById，确保状态名称变化时列配置更新
-    [issues, filters, projectIssueTypesMap, workspaceSlug, issueService, getStateById]
+    [displayIssues, filters, projectIssueTypesMap, workspaceSlug, issueService, getStateById]
   );
 
   // 表格 onChange：同步 filters（受控）
@@ -291,7 +298,7 @@ export const WorkItemSelectModal: React.FC<Props> = ({
       });
     },
     onSelectAll: (selected: boolean, selectedRows: TIssue[]) => {
-      const currentIds = issues.map((i) => String(i.id));
+      const currentIds = displayIssues.map((i) => String(i.id));
       setSelectedIssueIds((prev) => {
         const next = new Set(prev);
         if (selected) currentIds.forEach((id) => next.add(id));
@@ -301,9 +308,9 @@ export const WorkItemSelectModal: React.FC<Props> = ({
       setSelectedIssuesMap((prev) => {
         const next = { ...prev };
         if (selected) {
-          issues.forEach((i) => (next[String(i.id)] = i));
+          displayIssues.forEach((i) => (next[String(i.id)] = i));
         } else {
-          issues.forEach((i) => delete next[String(i.id)]);
+          displayIssues.forEach((i) => delete next[String(i.id)]);
         }
         return next;
       });
@@ -311,7 +318,7 @@ export const WorkItemSelectModal: React.FC<Props> = ({
     // 合并式更新，避免覆盖掉其它项目页的选中
     onChange: (selectedRowKeys: React.Key[], selectedRows: TIssue[]) => {
       const selectedKeySet = new Set((selectedRowKeys || []).map((k) => String(k)));
-      const currentIdsSet = new Set(issues.map((i) => String(i.id)));
+      const currentIdsSet = new Set(displayIssues.map((i) => String(i.id)));
 
       setSelectedIssueIds((prev) => {
         const next = new Set(prev);
@@ -326,7 +333,7 @@ export const WorkItemSelectModal: React.FC<Props> = ({
       setSelectedIssuesMap((prev) => {
         const next = { ...prev };
         // 移除当前数据集中未选中的
-        issues.forEach((i) => {
+        displayIssues.forEach((i) => {
           const id = String(i.id);
           if (!selectedKeySet.has(id)) delete next[id];
         });
@@ -524,13 +531,13 @@ export const WorkItemSelectModal: React.FC<Props> = ({
             size="small"
             rowKey="id"
             loading={loadingIssues}
-            dataSource={issues}
+            dataSource={displayIssues}
             columns={columns as any}
             onChange={handleTableChange}
             pagination={{
               current: currentPage,
               pageSize,
-              total: totalCount ?? issues.length,
+              total: totalCount ?? displayIssues.length,
               showSizeChanger: true,
               showQuickJumper: true,
               onChange: (page) => setCurrentPage(page),
@@ -546,4 +553,29 @@ export const WorkItemSelectModal: React.FC<Props> = ({
       </div>
     </Modal>
   );
+};
+
+const getTypeNameById = (typeId: string | undefined, map: Record<string, TIssueType> | undefined) => {
+  if (!typeId || !map) return undefined;
+  return map[typeId]?.name;
+};
+
+const typeNameMatches = (
+  issue: TIssue,
+  map: Record<string, TIssueType> | undefined,
+  force?: "Requirement" | "Task" | "Bug"
+) => {
+  if (!force) return true;
+  const name = getTypeNameById((issue as any)?.type_id as string | undefined, map);
+  return name === force;
+};
+
+const displayIssuesSelector = (
+  issues: TIssue[],
+  projectIssueTypesMap: Record<string, TIssueType> | undefined,
+  force?: "Requirement" | "Task" | "Bug"
+) => {
+  if (!force) return issues;
+  if (!projectIssueTypesMap) return issues;
+  return (issues || []).filter((i) => typeNameMatches(i, projectIssueTypesMap, force));
 };

@@ -36,6 +36,7 @@ import { projectIssueTypesCache, ProjectIssueTypeService, ProjectService, TIssue
 import { Logo } from "@plane/ui";
 import { getEnums } from "app/(all)/[workspaceSlug]/(projects)/test-management/util";
 import { useMember } from "@/hooks/store/use-member";
+import { IssueService } from "@/services/issue/issue.service";
 
 export const CreateCaseModal: React.FC<Props> = (props) => {
   const { isOpen, handleClose, workspaceSlug, repositoryId, repositoryName, onSuccess } = props;
@@ -73,7 +74,53 @@ export const CreateCaseModal: React.FC<Props> = (props) => {
     const text = selected.map((i) => i.name).join(", ");
     form.setFieldsValue({ issues: text });
     setIsWorkItemModalOpen(false);
+    refreshSelectedIssuesDetails();
   };
+
+  const refreshSelectedIssuesDetails = async () => {
+    try {
+      const groups: Record<string, string[]> = {};
+      selectedIssues.forEach((i) => {
+        const pid = String(i.project_id || "");
+        if (!pid) return;
+        if (!groups[pid]) groups[pid] = [];
+        groups[pid].push(String(i.id));
+      });
+      const issueService = new IssueService();
+      const updates: TIssue[] = [];
+      for (const pid of Object.keys(groups)) {
+        const ids = groups[pid];
+        const refreshed = await issueService.retrieveIssues(workspaceSlug, pid, ids);
+        updates.push(...(Array.isArray(refreshed) ? refreshed : []));
+      }
+      if (updates.length > 0) {
+        const map = new Map<string, TIssue>();
+        updates.forEach((u) => map.set(String(u.id), u));
+        setSelectedIssues((prev) => prev.map((i) => map.get(String(i.id)) || i));
+      }
+    } catch {}
+  };
+
+  useEffect(() => {
+    if (isWorkItemModalOpen) return;
+    const uniqueProjectIds = Array.from(new Set(selectedIssues.map((i) => String(i.project_id)))).filter(Boolean);
+    if (uniqueProjectIds.length === 0) return;
+    Promise.all(
+      uniqueProjectIds.map((pid) =>
+        issueTypeService
+          .fetchProjectIssueTypes(workspaceSlug, pid)
+          .then(() => ({ pid, map: projectIssueTypesCache.get(pid) || {} }))
+          .catch(() => ({ pid, map: {} }))
+      )
+    ).then((results) => {
+      const combined: Record<string, Record<string, TIssueType>> = {};
+      results.forEach(({ pid, map }) => {
+        combined[pid] = map || {};
+      });
+      setProjectIssueTypesMaps((prev) => ({ ...prev, ...combined }));
+    });
+    refreshSelectedIssuesDetails();
+  }, [isWorkItemModalOpen, workspaceSlug, selectedIssues, issueTypeService]);
   // 新增：附件选择与管理
   const [attachmentFiles, setAttachmentFiles] = useState<File[]>([]);
   const fileInputRef = React.useRef<HTMLInputElement | null>(null);

@@ -13,6 +13,10 @@ import { CaseMetaForm } from "./update-modal/case-meta-form";
 import { BasicInfoPanel } from "./update-modal/basic-info-panel";
 import { SideInfoPanel } from "./update-modal/side-info-panel";
 import { FileUploadService, generateFileUploadPayload, getFileMetaDataForUpload } from "@plane/services";
+import { WorkItemDisplayModal } from "./work-item-display-modal";
+import { WorkItemSelectModal } from "./work-item-select-modal";
+import { PlusOutlined } from "@ant-design/icons";
+import type { TIssue } from "@plane/types";
 
 type UpdateModalProps = {
   open: boolean;
@@ -23,7 +27,7 @@ type UpdateModalProps = {
 function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
   if (!open) return null;
 
-  const activeTab = "basic"; // 仅样式占位，默认激活"基本信息"
+  const [activeTab, setActiveTab] = useState<string>("basic");
   // 增加：本地状态与失焦更新逻辑
   const { workspaceSlug } = useParams() as { workspaceSlug?: string };
   const caseService = React.useMemo(() => new CaseService(), []);
@@ -99,6 +103,78 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
     }
     return String(s ?? "");
   }, [caseData?.steps]);
+
+  const [reloadToken, setReloadToken] = React.useState<number>(0);
+  const [isWorkItemModalOpen, setIsWorkItemModalOpen] = React.useState<boolean>(false);
+  const [forceTypeName, setForceTypeName] = React.useState<"Requirement" | "Task" | "Bug" | undefined>(undefined);
+  const [currentCount, setCurrentCount] = React.useState<number>(0);
+  const [currentLabel, setCurrentLabel] = React.useState<string>("");
+  const [preselectedIssues, setPreselectedIssues] = React.useState<TIssue[]>([]);
+
+  const handleOpenSelectModal = async (type: "Requirement" | "Task" | "Bug") => {
+    setForceTypeName(type);
+    if (workspaceSlug && caseId) {
+      try {
+        const data = await caseService.getCaseIssueWithType(String(workspaceSlug), {
+          id: caseId,
+          issues__type__name: type,
+        });
+        let resolved: TIssue[] = [];
+        if (Array.isArray(data)) {
+          const item = data.find((d: any) => String(d?.id) === String(caseId));
+          resolved = Array.isArray(item?.issues) ? (item.issues as TIssue[]) : [];
+        } else if (data && typeof data === "object") {
+          resolved = Array.isArray((data as any).issues) ? ((data as any).issues as TIssue[]) : [];
+        }
+        setPreselectedIssues(resolved);
+      } catch {
+        setPreselectedIssues([]);
+      }
+    }
+    setIsWorkItemModalOpen(true);
+  };
+
+  const handleWorkItemConfirm = async (issues: any[]) => {
+    try {
+      if (!workspaceSlug || !caseId) return;
+      const issueIds = (issues || []).map((i) => i.id);
+      await caseService.updateCase(String(workspaceSlug), { id: caseId, issues: issueIds });
+      setIsWorkItemModalOpen(false);
+      setReloadToken((t) => t + 1);
+      await fetchCaseData();
+      message.success("关联工作项已更新");
+    } catch (e: any) {
+      message.error(e?.message || e?.detail || e?.error || "更新失败");
+    }
+  };
+
+  React.useEffect(() => {
+    const map: Record<string, { type: "Requirement" | "Task" | "Bug"; label: string }> = {
+      requirement: { type: "Requirement", label: "产品需求" },
+      work: { type: "Task", label: "工作项" },
+      defect: { type: "Bug", label: "缺陷" },
+    };
+    const m = map[activeTab];
+    if (!m || !workspaceSlug || !caseId) {
+      setCurrentCount(0);
+      setCurrentLabel("");
+      return;
+    }
+    setCurrentLabel(m.label);
+    caseService
+      .getCaseIssueWithType(String(workspaceSlug), { id: caseId, issues__type__name: m.type })
+      .then((data) => {
+        let resolved: any[] = [];
+        if (Array.isArray(data)) {
+          const item = data.find((d: any) => String(d?.id) === String(caseId));
+          resolved = Array.isArray(item?.issues) ? (item.issues as any[]) : [];
+        } else if (data && typeof data === "object") {
+          resolved = Array.isArray((data as any).issues) ? ((data as any).issues as any[]) : [];
+        }
+        setCurrentCount(resolved.length);
+      })
+      .catch(() => setCurrentCount(0));
+  }, [activeTab, workspaceSlug, caseId, reloadToken]);
 
   // 新增：附件相关本地状态（编辑模式展示与上传）
   const [caseAttachments, setCaseAttachments] = React.useState<any[]>([]);
@@ -402,6 +478,19 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
     }
   };
 
+  const handleUpdateAssine = async (v: any) => {
+    if (!workspaceSlug || !caseId) return;
+
+    if (v === normalizeId(caseData?.assignee)) return;
+    try {
+      await caseService.updateCase(String(workspaceSlug), { id: caseId, assignee: v });
+      setCaseData((prev: any) => (prev ? { ...prev, assignee: normalizeId(v) } : prev));
+      setAssignee(normalizeId(v));
+    } catch {
+      // 静默处理
+    }
+  };
+
   const handleBlurState = async () => {
     if (!workspaceSlug || !caseId) return;
     if (stateValue === normalizeId(caseData?.state)) return;
@@ -460,16 +549,17 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
   };
 
   // 新增：Steps 更新逻辑（参考前置条件 onBlur）
-  const handleBlurSteps = async () => {
-    console.log(1111);
-
+  const handleBlurSteps = async (rowsArg?: { description?: string; result?: string }[]) => {
     if (!workspaceSlug || !caseId) return;
     const oldSteps = Array.isArray(caseData?.steps) ? caseData.steps : [];
-    const normalize = (rows: { description?: string; result?: string }[]) =>
+    const mapRows = (rows: { description?: string; result?: string }[]) =>
       (rows || []).map((r) => ({ description: r?.description ?? "", result: r?.result ?? "" }));
-    const nextSteps = normalize(stepsValue);
-    const prevSteps = normalize(oldSteps);
-    if (JSON.stringify(nextSteps) === JSON.stringify(prevSteps)) return;
+    const filterEmpty = (rows: { description: string; result: string }[]) =>
+      rows.filter((r) => !(r.description.trim() === "" && r.result.trim() === ""));
+    const sourceRows = Array.isArray(rowsArg) ? rowsArg : stepsValue;
+    const nextSteps = filterEmpty(mapRows(sourceRows));
+    const prevStepsRaw = mapRows(oldSteps);
+    if (JSON.stringify(nextSteps) === JSON.stringify(prevStepsRaw)) return;
 
     try {
       await caseService.updateCase(String(workspaceSlug), { id: caseId, steps: nextSteps });
@@ -531,7 +621,7 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
             <TitleInput value={title} onChange={setTitle} onBlur={handleBlurTitle} />
             <CaseMetaForm
               assignee={assignee}
-              onAssigneeChange={(v) => setAssignee(normalizeId(v))}
+              onAssigneeChange={(v) => handleUpdateAssine(v)}
               onAssigneeBlur={handleBlurAssignee}
               assigneeOptions={assigneeOptions}
               stateValue={stateValue}
@@ -548,32 +638,68 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
               casePriorityOptions={casePriorityOptions}
             />
             {/* Menu 导航 */}
-            <div className="mt-6 border-b">
-              <nav className="flex gap-2">
-                <button
-                  type="button"
-                  className={`rounded-t-md px-3 py-2 text-sm ${
-                    activeTab === "basic"
-                      ? "bg-white font-medium text-gray-900 border-x border-t"
-                      : "text-gray-600 hover:text-gray-900"
-                  }`}
-                >
-                  基本信息
-                </button>
-                <button type="button" className="rounded-t-md px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
-                  产品需求（占位）
-                </button>
-                <button type="button" className="rounded-t-md px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
-                  工作项（占位）
-                </button>
-                <button type="button" className="rounded-t-md px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
-                  缺陷（占位）
-                </button>
-                <button type="button" className="rounded-t-md px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
-                  执行（占位）
-                </button>
-              </nav>
+            <div className="mt-6">
+              <div className="mx-2 border-b border-gray-200">
+                <nav className="flex gap-4">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("basic")}
+                    className={`px-2 py-3 text-sm -mb-px border-b-2 transition-colors ${
+                      activeTab === "basic"
+                        ? "text-blue-600 border-blue-600"
+                        : "text-black border-transparent hover:text-blue-600"
+                    }`}
+                  >
+                    基本信息
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("requirement")}
+                    className={`px-2 py-3 text-sm -mb-px border-b-2 transition-colors ${
+                      activeTab === "requirement"
+                        ? "text-blue-600 border-blue-600"
+                        : "text-black border-transparent hover:text-blue-600"
+                    }`}
+                  >
+                    产品需求
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("work")}
+                    className={`px-2 py-3 text-sm -mb-px border-b-2 transition-colors ${
+                      activeTab === "work"
+                        ? "text-blue-600 border-blue-600"
+                        : "text-black border-transparent hover:text-blue-600"
+                    }`}
+                  >
+                    工作项
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("defect")}
+                    className={`px-2 py-3 text-sm -mb-px border-b-2 transition-colors ${
+                      activeTab === "defect"
+                        ? "text-blue-600 border-blue-600"
+                        : "text-black border-transparent hover:text-blue-600"
+                    }`}
+                  >
+                    缺陷
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("execution")}
+                    className={`px-2 py-3 text-sm -mb-px border-b-2 transition-colors ${
+                      activeTab === "execution"
+                        ? "text-blue-600 border-blue-600"
+                        : "text-black border-transparent hover:text-blue-600"
+                    }`}
+                  >
+                    执行
+                  </button>
+                </nav>
+              </div>
             </div>
+
             {activeTab === "basic" && (
               <BasicInfoPanel
                 preconditionValue={preconditionValue ?? ""}
@@ -581,7 +707,7 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
                 onPreconditionBlur={handleBlurPrecondition}
                 stepsValue={stepsValue}
                 onStepsChange={setStepsValue}
-                onStepsBlur={handleBlurSteps}
+                onStepsBlur={(rows) => handleBlurSteps(rows)}
                 remarkValue={remarkValue ?? ""}
                 onRemarkChange={(v) => setRemarkValue(v)}
                 onRemarkBlur={handleBlurRemark}
@@ -593,6 +719,51 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
                 onDownloadAttachment={handleDownloadAttachment}
                 onRemoveCaseAttachment={(id) => handleRemoveCaseAttachment(id)}
               />
+            )}
+            {activeTab === "requirement" && caseId && (
+              <div className="mt-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="text-sm text-gray-600">{currentCount}个产品需求</div>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenSelectModal("Requirement")}
+                    className="inline-flex items-center gap-1 rounded px-2 py-1 text-sm bg-blue-50 text-blue-600 hover:bg-blue-100"
+                  >
+                    <PlusOutlined /> 添加产品需求
+                  </button>
+                </div>
+                <WorkItemDisplayModal caseId={String(caseId)} defaultType="Requirement" reloadToken={reloadToken} />
+              </div>
+            )}
+            {activeTab === "work" && caseId && (
+              <div className="mt-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="text-sm text-gray-600">{currentCount}个工作项</div>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenSelectModal("Task")}
+                    className="inline-flex items-center gap-1 rounded px-2 py-1 text-sm bg-blue-50 text-blue-600 hover:bg-blue-100"
+                  >
+                    <PlusOutlined /> 添加工作项
+                  </button>
+                </div>
+                <WorkItemDisplayModal caseId={String(caseId)} defaultType="Task" reloadToken={reloadToken} />
+              </div>
+            )}
+            {activeTab === "defect" && caseId && (
+              <div className="mt-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="text-sm text-gray-600">{currentCount}个缺陷</div>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenSelectModal("Bug")}
+                    className="inline-flex items-center gap-1 rounded px-2 py-1 text-sm bg-blue-50 text-blue-600 hover:bg-blue-100"
+                  >
+                    <PlusOutlined /> 添加缺陷
+                  </button>
+                </div>
+                <WorkItemDisplayModal caseId={String(caseId)} defaultType="Bug" reloadToken={reloadToken} />
+              </div>
             )}
           </div>
           <SideInfoPanel caseData={caseData} />
@@ -610,6 +781,14 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
           {/* 暂不实现保存功能 */}
         </div>
       </div>
+      <WorkItemSelectModal
+        isOpen={isWorkItemModalOpen}
+        workspaceSlug={String(workspaceSlug ?? "")}
+        onClose={() => setIsWorkItemModalOpen(false)}
+        onConfirm={handleWorkItemConfirm}
+        forceTypeName={forceTypeName}
+        initialSelectedIssues={preselectedIssues}
+      />
     </div>
   );
 }

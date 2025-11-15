@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
-from plane.app.serializers import UserLiteSerializer, BaseSerializer
-from plane.db.models import TestPlan, TestCaseRepository, User, TestCase, CaseLabel, CaseModule, FileAsset
+from plane.app.serializers import UserLiteSerializer, BaseSerializer, IssueAssigneeSerializer, ProjectDetailSerializer
+from plane.db.models import TestPlan, TestCaseRepository, User, TestCase, CaseLabel, CaseModule, FileAsset, Issue
 
 
 class TestPlanCreateUpdateSerializer(ModelSerializer):
@@ -74,17 +74,41 @@ class CaseLabelSerializer(ModelSerializer):
 
 
 class CaseCreateUpdateSerializer(ModelSerializer):
-    """创建和更新用例"""
     labels = serializers.PrimaryKeyRelatedField(queryset=CaseLabel.objects.all(), many=True, required=False)
+    issues = serializers.PrimaryKeyRelatedField(queryset=Issue.objects.all(), many=True, required=False)
 
     class Meta:
         model = TestCase
         fields = ['name', 'precondition', 'steps', 'remark', 'state', 'type', 'priority', 'repository', 'labels',
-                  'module','assignee']
+                  'module', 'assignee', 'issues','test_type']
+
+    def create(self, validated_data):
+        labels = validated_data.pop('labels', [])
+        issues = validated_data.pop('issues', [])
+        instance = super().create(validated_data)
+        if labels:
+            instance.labels.set(labels)
+        if issues:
+            instance.issues.set(issues)
+        return instance
+
+    def update(self, instance, validated_data):
+        labels = validated_data.pop('labels', None)
+        issues = validated_data.pop('issues', None)
+        instance = super().update(instance, validated_data)
+        if labels is not None:
+            instance.labels.set(labels)
+        if issues is not None:
+            instance.issues.set(issues)
+        return instance
+
+
 
 
 class CaseListSerializer(ModelSerializer):
     """用例查询"""
+    issues = ...
+
 
     class Meta:
         model = TestCase
@@ -161,3 +185,17 @@ class CaseAttachmentSerializer(BaseSerializer):
         ]
 
 
+
+class IssueListSerializer(BaseSerializer):
+    project = ProjectDetailSerializer( read_only=True)
+
+    class Meta:
+        model = Issue
+        fields = "__all__"
+
+class CaseIssueSerializer(ModelSerializer):
+    issues = IssueListSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = TestCase
+        fields = ['id','issues']

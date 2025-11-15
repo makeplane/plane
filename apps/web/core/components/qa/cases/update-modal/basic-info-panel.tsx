@@ -12,7 +12,7 @@ type BasicInfoPanelProps = {
 
   stepsValue: { description?: string; result?: string }[];
   onStepsChange: (v: { description?: string; result?: string }[]) => void;
-  onStepsBlur: () => void;
+  onStepsBlur: (v: { description?: string; result?: string }[]) => void;
 
   remarkValue: string;
   onRemarkChange: (v: string) => void;
@@ -48,34 +48,75 @@ export function BasicInfoPanel(props: BasicInfoPanelProps) {
   } = props;
 
   return (
-    <div className="space-y-4 rounded-b-md border-x border-b px-4 py-4">
+    <div className="space-y-8 rounded-b-md border-x border-b border-gray-200 px-6 py-6 transition-colors focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-100">
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">前置条件</label>
-        <RichTextEditor value={preconditionValue ?? ""} onChange={onPreconditionChange} onBlur={onPreconditionBlur} />
+        <label className="mb-3 flex items-center gap-2 text-sm font-medium text-gray-700">
+          <LucideIcons.ListChecks size={16} className="text-gray-500" aria-hidden="true" />
+          前置条件
+        </label>
+        <RichTextEditor
+          value={preconditionValue ?? ""}
+          onChange={onPreconditionChange}
+          onBlur={onPreconditionBlur}
+          aria-label="前置条件"
+        />
       </div>
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">测试步骤</label>
-        <StepsEditor value={stepsValue} onChange={onStepsChange} onBlur={onStepsBlur} />
+        <label className="mb-3 flex items-center gap-2 text-sm font-medium text-gray-700">
+          <LucideIcons.ListOrdered size={16} className="text-gray-500" aria-hidden="true" />
+          测试步骤
+        </label>
+        <StepsEditor value={stepsValue} onChange={onStepsChange} onBlur={onStepsBlur} aria-label="测试步骤" />
       </div>
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">备注（remark）</label>
-        <RichTextEditor value={remarkValue ?? ""} onChange={onRemarkChange} onBlur={onRemarkBlur} />
+        <label className="mb-3 flex items-center gap-2 text-sm font-medium text-gray-700">
+          <LucideIcons.StickyNote size={16} className="text-gray-500" aria-hidden="true" />
+          备注
+        </label>
+        <RichTextEditor value={remarkValue ?? ""} onChange={onRemarkChange} onBlur={onRemarkBlur} aria-label="备注" />
       </div>
-      <div>
-        <div className="mb-1 flex items-center justify-between">
-          <span className="text-sm font-medium text-gray-700">附件</span>
-          <Tooltip title="选择文件">
-            <Button type="text" icon={<LucideIcons.Upload size={16} className="text-gray-600 hover:text-blue-600" />} onClick={onPickAttachments} />
+      <section
+        aria-labelledby="attachments-title"
+        aria-busy={attachmentsLoading}
+        className="rounded-md border border-gray-200 p-3 transition-colors hover:border-gray-300 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-100"
+        role="group"
+      >
+        <div className="mb-2 flex items-center justify-between">
+          <span id="attachments-title" className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <LucideIcons.Paperclip size={16} className="text-gray-500" aria-hidden="true" />
+            附件
+          </span>
+          <Tooltip title="上传文件">
+            <Button
+              type="text"
+              aria-label="上传附件"
+              icon={<LucideIcons.Upload size={16} className="text-gray-600 hover:text-blue-600" aria-hidden="true" />}
+              onClick={onPickAttachments}
+            />
           </Tooltip>
         </div>
-        <input ref={fileInputRef} type="file" multiple style={{ display: "none" }} onChange={onFilesChosen} />
-        <div style={{ marginTop: 8 }}>
+        <input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          style={{ display: "none" }}
+          aria-hidden="true"
+          onChange={onFilesChosen}
+        />
+        <div className="mt-2">
           <Table
             size="small"
             loading={attachmentsLoading}
             rowKey={(r: any) => String(r?.id ?? "")}
             dataSource={caseAttachments}
             pagination={false}
+            rowClassName={() => "hover:bg-gray-50 focus:bg-blue-50"}
+            onRow={(record: any) => ({
+              tabIndex: 0,
+              onKeyDown: (e) => {
+                if ((e as React.KeyboardEvent).key === "Enter") onDownloadAttachment(record);
+              },
+            })}
             columns={[
               {
                 title: "名称",
@@ -92,11 +133,18 @@ export function BasicInfoPanel(props: BasicInfoPanelProps) {
                   })();
                   const mime: string = String(record?.attributes?.type ?? "");
                   const icon = (() => {
-                    if (mime.startsWith("image/")) return <LucideIcons.Image size={18} className="text-gray-500" />;
-                    if (mime.startsWith("video/")) return <LucideIcons.Video size={18} className="text-gray-500" />;
-                    if (mime.startsWith("audio/")) return <LucideIcons.Music size={18} className="text-gray-500" />;
-                    if (mime === "text/plain" || mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
-                      return <LucideIcons.FileText size={18} className="text-gray-500" />;
+                    if (mime.startsWith("image/"))
+                      return <LucideIcons.Image size={16} className="text-gray-500" aria-hidden="true" />;
+                    if (mime.startsWith("video/"))
+                      return <LucideIcons.Video size={16} className="text-gray-500" aria-hidden="true" />;
+                    if (mime.startsWith("audio/"))
+                      return <LucideIcons.Music size={16} className="text-gray-500" aria-hidden="true" />;
+                    if (
+                      mime === "text/plain" ||
+                      mime === "application/pdf" ||
+                      mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    )
+                      return <LucideIcons.FileText size={16} className="text-gray-500" aria-hidden="true" />;
                     if (
                       [
                         "application/zip",
@@ -109,16 +157,14 @@ export function BasicInfoPanel(props: BasicInfoPanelProps) {
                         "application/gzip",
                       ].includes(mime)
                     )
-                      return <LucideIcons.Archive size={18} className="text-gray-500" />;
-                    return <LucideIcons.File size={18} className="text-gray-500" />;
+                      return <LucideIcons.Archive size={16} className="text-gray-500" aria-hidden="true" />;
+                    return <LucideIcons.File size={16} className="text-gray-500" aria-hidden="true" />;
                   })();
                   return (
                     <div className="flex items-center gap-2 min-w-0">
                       {icon}
-                      <span className="truncate" style={{ maxWidth: 360, fontSize: 16 }}>
-                        {name}
-                      </span>
-                      <span style={{ fontSize: 14, color: "#888" }}>{sizeText}</span>
+                      <span className="truncate max-w-[360px] text-sm text-gray-700">{name}</span>
+                      <span className="text-xs text-gray-500">{sizeText}</span>
                     </div>
                   );
                 },
@@ -157,7 +203,14 @@ export function BasicInfoPanel(props: BasicInfoPanelProps) {
                     <Tooltip title="下载">
                       <Button
                         type="text"
-                        icon={<LucideIcons.Download size={16} className="text-gray-600 hover:text-blue-600" />}
+                        aria-label="下载附件"
+                        icon={
+                          <LucideIcons.Download
+                            size={16}
+                            className="text-gray-600 hover:text-blue-600"
+                            aria-hidden="true"
+                          />
+                        }
                         onClick={() =>
                           Modal.confirm({
                             title: "下载附件",
@@ -171,7 +224,14 @@ export function BasicInfoPanel(props: BasicInfoPanelProps) {
                       <Button
                         type="text"
                         danger
-                        icon={<LucideIcons.Trash2 size={16} className="text-gray-600 hover:text-red-600" />}
+                        aria-label="删除附件"
+                        icon={
+                          <LucideIcons.Trash2
+                            size={16}
+                            className="text-gray-600 hover:text-red-600"
+                            aria-hidden="true"
+                          />
+                        }
                         onClick={() =>
                           Modal.confirm({
                             title: "删除附件",
@@ -187,8 +247,7 @@ export function BasicInfoPanel(props: BasicInfoPanelProps) {
             ]}
           />
         </div>
-      </div>
+      </section>
     </div>
   );
 }
-

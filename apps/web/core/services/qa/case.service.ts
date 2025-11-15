@@ -39,6 +39,15 @@ export class CaseService extends APIService {
         throw error?.response?.data;
       });
   }
+    async getCaseIssueWithType(workspaceSlug: string,query?:any): Promise<any> {
+    return this.get(`/api/workspaces/${workspaceSlug}/test/case/issues/`,{
+      params: query,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 
   async updateCase(workspaceSlug: string,  data: any): Promise<any> {
     return this.put(`/api/workspaces/${workspaceSlug}/test/case/`, data)
