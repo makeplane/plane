@@ -5,15 +5,13 @@ import { useState, useRef, forwardRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { MoreHorizontal } from "lucide-react";
-// plane helpers
+// plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
-// types
+import { Popover } from "@plane/propel/popover";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssue } from "@plane/types";
-// ui
 import { ControlLink } from "@plane/ui";
 import { cn, generateWorkItemLink } from "@plane/utils";
-// helpers
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
@@ -25,6 +23,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // local components
+import { WorkItemPreviewCard } from "../../preview-card";
 import type { TRenderQuickActions } from "../list/list-view-types";
 import type { CalendarStoreType } from "./base-calendar-root";
 
@@ -89,69 +88,86 @@ export const CalendarIssueBlock = observer(
     });
 
     return (
-      <ControlLink
-        id={`issue-${issue.id}`}
-        href={workItemLink}
-        onClick={() => handleIssuePeekOverview(issue)}
-        className="block w-full text-sm text-custom-text-100 rounded border-b md:border-[1px] border-custom-border-200 hover:border-custom-border-400"
-        disabled={!!issue?.tempId || isMobile}
-        ref={ref}
-      >
-        <>
-          {issue?.tempId !== undefined && (
-            <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
-          )}
-
-          <div
-            ref={blockRef}
-            className={cn(
-              "group/calendar-block flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded  md:px-1 px-4 py-1.5 ",
-              {
-                "bg-custom-background-90 shadow-custom-shadow-rg border-custom-primary-100": isDragging,
-                "bg-custom-background-100 hover:bg-custom-background-90": !isDragging,
-                "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id),
-              }
-            )}
+      <Popover delay={100} openOnHover>
+        <Popover.Button className="w-full">
+          <ControlLink
+            id={`issue-${issue.id}`}
+            href={workItemLink}
+            onClick={() => handleIssuePeekOverview(issue)}
+            className="block w-full text-sm text-custom-text-100 rounded border-b md:border-[1px] border-custom-border-200 hover:border-custom-border-400"
+            disabled={!!issue?.tempId || isMobile}
+            ref={ref}
           >
-            <div className="flex h-full items-center gap-1.5 truncate">
-              <span
-                className="h-full w-0.5 flex-shrink-0 rounded"
-                style={{
-                  backgroundColor: stateColor,
-                }}
-              />
-              {issue.project_id && (
-                <IssueIdentifier
-                  issueId={issue.id}
-                  projectId={issue.project_id}
-                  textContainerClassName="text-sm md:text-xs text-custom-text-300"
-                  displayProperties={issuesFilter?.issueFilters?.displayProperties}
-                />
+            <>
+              {issue?.tempId !== undefined && (
+                <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
               )}
-              <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-                <div className="truncate text-sm font-medium md:font-normal md:text-xs">{issue.name}</div>
-              </Tooltip>
-            </div>
-            <div
-              className={cn("flex-shrink-0 size-5", {
-                "hidden group-hover/calendar-block:block": !isMobile,
-                block: isMenuActive,
-              })}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-            >
-              {quickActions({
-                issue,
-                parentRef: blockRef,
-                customActionButton,
-                placement,
-              })}
-            </div>
-          </div>
-        </>
-      </ControlLink>
+
+              <div
+                ref={blockRef}
+                className={cn(
+                  "group/calendar-block flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded  md:px-1 px-4 py-1.5 ",
+                  {
+                    "bg-custom-background-90 shadow-custom-shadow-rg border-custom-primary-100": isDragging,
+                    "bg-custom-background-100 hover:bg-custom-background-90": !isDragging,
+                    "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id),
+                  }
+                )}
+              >
+                <div className="flex h-full items-center gap-1.5 truncate">
+                  <span
+                    className="h-full w-0.5 flex-shrink-0 rounded"
+                    style={{
+                      backgroundColor: stateColor,
+                    }}
+                  />
+                  {issue.project_id && (
+                    <IssueIdentifier
+                      issueId={issue.id}
+                      projectId={issue.project_id}
+                      textContainerClassName="text-sm md:text-xs text-custom-text-300"
+                      displayProperties={issuesFilter?.issueFilters?.displayProperties}
+                    />
+                  )}
+                  <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
+                    <div className="truncate text-sm font-medium md:font-normal md:text-xs">{issue.name}</div>
+                  </Tooltip>
+                </div>
+                <div
+                  className={cn("flex-shrink-0 size-5", {
+                    "hidden group-hover/calendar-block:block": !isMobile,
+                    block: isMenuActive,
+                  })}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                >
+                  {quickActions({
+                    issue,
+                    parentRef: blockRef,
+                    customActionButton,
+                    placement,
+                  })}
+                </div>
+              </div>
+            </>
+          </ControlLink>
+        </Popover.Button>
+        <Popover.Panel side="bottom" align="start">
+          <>
+            {issue.project_id && (
+              <WorkItemPreviewCard
+                projectId={issue.project_id}
+                stateDetails={{
+                  id: issue.state_id ?? undefined,
+                }}
+                workItem={issue}
+              />
+            )}
+          </>
+        </Popover.Panel>
+      </Popover>
     );
   })
 );
