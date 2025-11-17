@@ -39,8 +39,8 @@ export const useEditor = (props: TEditorHookProps) => {
     onEditorFocus,
     onTransaction,
     placeholder,
-    provider,
     tabIndex,
+    provider,
     value,
   } = props;
 
@@ -69,6 +69,7 @@ export const useEditor = (props: TEditorHookProps) => {
           mentionHandler,
           placeholder,
           tabIndex,
+          provider,
         }),
         ...extensions,
       ],

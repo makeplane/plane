@@ -128,6 +128,7 @@ export const PeekOverviewIssueDetails: FC<Props> = observer((props) => {
       />
 
       <DescriptionInput
+        issueSequenceId={issue.sequence_id}
         containerClassName="-ml-3 border-none"
         disabled={disabled || isArchived}
         editorRef={editorRef}

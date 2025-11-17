@@ -165,6 +165,7 @@ export type IEditorProps = {
   tabIndex?: number;
   value?: string | null;
   extendedEditorProps: IEditorPropsExtended;
+  workItemIdentifier?: string | null;
 };
 
 export type ILiteTextEditorProps = IEditorProps;
