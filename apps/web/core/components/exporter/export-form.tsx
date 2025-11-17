@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { intersection } from "lodash-es";
 import { observer } from "mobx-react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { Info } from "lucide-react";
 import {
   EUserPermissions,
@@ -34,6 +34,7 @@ type FormData = {
   provider: (typeof EXPORTERS_LIST)[0];
   project: string[];
   multiple: boolean;
+  filters: TWorkItemFilterExpression;
 };
 const projectExportService = new ProjectExportService();
 
@@ -42,7 +43,6 @@ export const ExportForm = observer((props: Props) => {
   const { workspaceSlug, mutateServices } = props;
   // states
   const [exportLoading, setExportLoading] = useState(false);
-  const [richFilters, setRichFilters] = useState<TWorkItemFilterExpression>({});
 
   // store hooks
   const { allowPermissions } = useUserPermissions();
@@ -55,12 +55,12 @@ export const ExportForm = observer((props: Props) => {
       provider: EXPORTERS_LIST[0],
       project: [],
       multiple: false,
+      filters: {},
     },
   });
 
-  // Initial work item filters for the HOC
   const initialWorkItemFilters = {
-    richFilters: richFilters,
+    richFilters: {},
     displayFilters: {},
     displayProperties: {},
     kanbanFilters: {
@@ -99,7 +99,7 @@ export const ExportForm = observer((props: Props) => {
         provider: formData.provider.provider,
         project: formData.project,
         multiple: formData.project.length > 1,
-        rich_filters: Object.keys(richFilters).length > 0 ? richFilters : undefined,
+        rich_filters: formData.filters,
       };
       await projectExportService
         .csvExport(workspaceSlug as string, payload)
@@ -228,24 +228,30 @@ export const ExportForm = observer((props: Props) => {
             </button>
           </Tooltip>
         </div>
-        <WorkspaceLevelWorkItemFiltersHOC
-          entityId={workspaceSlug}
-          entityType={EIssuesStoreType.GLOBAL}
-          filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.filters}
-          initialWorkItemFilters={initialWorkItemFilters}
-          isTemporary
-          updateFilters={(updatedFilters) => setRichFilters(updatedFilters)}
-          showOnMount
-          workspaceSlug={workspaceSlug}
-        >
-          {({ filter: workspaceExportWorkItemsFilter }) =>
-            workspaceExportWorkItemsFilter && (
-              <WorkItemFiltersRow filter={workspaceExportWorkItemsFilter} variant="modal" />
-            )
-          }
-        </WorkspaceLevelWorkItemFiltersHOC>
+        <Controller
+          control={control}
+          name="filters"
+          render={({ field: { onChange } }) => (
+            <WorkspaceLevelWorkItemFiltersHOC
+              entityId={workspaceSlug}
+              entityType={EIssuesStoreType.GLOBAL}
+              filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.filters}
+              initialWorkItemFilters={initialWorkItemFilters}
+              isTemporary
+              updateFilters={(updatedFilters) => onChange(updatedFilters)}
+              showOnMount
+              workspaceSlug={workspaceSlug}
+            >
+              {({ filter: workspaceExportWorkItemsFilter }) =>
+                workspaceExportWorkItemsFilter && (
+                  <WorkItemFiltersRow filter={workspaceExportWorkItemsFilter} variant="modal" />
+                )
+              }
+            </WorkspaceLevelWorkItemFiltersHOC>
+          )}
+        />
       </div>
-      <div className="flex items-center justify-between ">
+      <div className="flex items-center justify-between">
         <Button
           variant="primary"
           type="submit"
