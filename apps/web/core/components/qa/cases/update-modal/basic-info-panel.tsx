@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Button, Table, Tooltip, Modal } from "antd";
+import { Button, Table, Tooltip, Modal, Input, Spin } from "antd";
 import * as LucideIcons from "lucide-react";
 import { convertBytesToSize, renderFormattedDate } from "@plane/utils";
 import { RichTextEditor, StepsEditor } from "../util";
@@ -25,6 +25,20 @@ type BasicInfoPanelProps = {
   onFilesChosen: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onDownloadAttachment: (attachment: any) => void;
   onRemoveCaseAttachment: (id: string) => void;
+
+  commentsLoading: boolean;
+  comments: any[];
+  commentPage: number;
+  commentPageSize: number;
+  commentTotal: number;
+  setCommentPage: (n: number) => void;
+  fetchComments: (reset?: boolean, pageOverride?: number) => void;
+  renderComment: (c: any) => React.ReactNode;
+  newComment: string;
+  commentPlaceholder: string;
+  newCommentInputRef: React.RefObject<any>;
+  onNewCommentChange: (v: string) => void;
+  onCreateComment: () => void;
 };
 
 export function BasicInfoPanel(props: BasicInfoPanelProps) {
@@ -45,10 +59,23 @@ export function BasicInfoPanel(props: BasicInfoPanelProps) {
     onFilesChosen,
     onDownloadAttachment,
     onRemoveCaseAttachment,
+    commentsLoading,
+    comments,
+    commentPage,
+    commentPageSize,
+    commentTotal,
+    setCommentPage,
+    fetchComments,
+    renderComment,
+    newComment,
+    commentPlaceholder,
+    newCommentInputRef,
+    onNewCommentChange,
+    onCreateComment,
   } = props;
 
   return (
-    <div className="space-y-8 rounded-b-md border-x border-b border-gray-200 px-6 py-6 transition-colors focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-100">
+    <div className="space-y-8 rounded-b-md border-gray-200 px-6 py-6 transition-colors focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-100">
       <div>
         <label className="mb-3 flex items-center gap-2 text-sm font-medium text-gray-700">
           <LucideIcons.ListChecks size={16} className="text-gray-500" aria-hidden="true" />
@@ -78,10 +105,10 @@ export function BasicInfoPanel(props: BasicInfoPanelProps) {
       <section
         aria-labelledby="attachments-title"
         aria-busy={attachmentsLoading}
-        className="rounded-md border border-gray-200 p-3 transition-colors hover:border-gray-300 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-100"
+        className="transition-colors"
         role="group"
       >
-        <div className="mb-2 flex items-center justify-between">
+        <div className="mb-3 flex items-center justify-between">
           <span id="attachments-title" className="flex items-center gap-2 text-sm font-medium text-gray-700">
             <LucideIcons.Paperclip size={16} className="text-gray-500" aria-hidden="true" />
             附件
@@ -248,6 +275,58 @@ export function BasicInfoPanel(props: BasicInfoPanelProps) {
           />
         </div>
       </section>
+      <div className="mt-6 h-[420px] flex flex-col rounded bg-white">
+        <span id="attachments-title" className="flex items-center gap-2 text-sm font-medium text-gray-700">
+          <LucideIcons.MessageSquareMore size={16} className="text-gray-500" aria-hidden="true" />
+          评论
+        </span>
+        <div className="flex-1 min-h-0 overflow-y-auto px-3 py-2">
+          {commentsLoading ? (
+            <div className="py-6 flex justify-center">
+              <Spin />
+            </div>
+          ) : comments.length === 0 ? (
+            <div className="text-sm text-gray-500">暂无评论</div>
+          ) : (
+            <div>
+              {comments.map((c) => renderComment(c))}
+              {commentPage * commentPageSize < commentTotal && (
+                <div className="mt-3">
+                  <button
+                    type="button"
+                    className="rounded bg-gray-100 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-200"
+                    onClick={() => {
+                      const nextPage = commentPage + 1;
+                      setCommentPage(nextPage);
+                      fetchComments(false, nextPage);
+                    }}
+                  >
+                    加载更多
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+        <div className=" px-3 py-2 bg-white">
+          <div className="flex items-start gap-2">
+            <Input.TextArea
+              ref={newCommentInputRef}
+              placeholder={commentPlaceholder}
+              autoSize={{ minRows: 2, maxRows: 4 }}
+              value={newComment}
+              onChange={(e) => onNewCommentChange(e.target.value)}
+            />
+            <button
+              type="button"
+              className="rounded bg-blue-600 text-white px-3 py-2 text-sm shrink-0"
+              onClick={onCreateComment}
+            >
+              发送
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

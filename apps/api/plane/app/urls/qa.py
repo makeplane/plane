@@ -1,7 +1,7 @@
 from django.urls import path
 from plane.app.views import PlanAPIView, RepositoryAPIView, CaseModuleAPIView, LabelAPIView, CaseAPIView, \
     EnumDataAPIView, CaseAttachmentV2Endpoint, CaseDetailAPIView
-from plane.app.views.qa.case import CaseAssetAPIView, CaseIssueWithType
+from plane.app.views.qa.case import CaseAssetAPIView, CaseIssueWithType, TestCaseCommentAPIView
 from plane.app.views.qa.module import CaseModuleCountAPIView
 
 urlpatterns = [
@@ -21,4 +21,6 @@ urlpatterns = [
         CaseAttachmentV2Endpoint.as_view(),
         name="case-attachments-v2",
     ),
+    path('workspaces/<str:slug>/test/comments/', TestCaseCommentAPIView.as_view(), name='test-comments'),
+    path('workspaces/<str:slug>/test/comments/<uuid:id>/', TestCaseCommentAPIView.as_view(), name='test-comments-detail'),
 ]

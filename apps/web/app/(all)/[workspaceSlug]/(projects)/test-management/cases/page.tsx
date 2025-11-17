@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { PageHead } from "@/components/core/page-title";
 import { Table, Tag, Input, Button, Space, Modal, Dropdown } from "antd";
@@ -23,6 +23,7 @@ import {
 } from "@ant-design/icons";
 import { CaseModuleService } from "@/services/qa";
 import UpdateModal from "@/components/qa/cases/update-modal";
+import { useQueryParams } from "@/hooks/use-query-params";
 
 type TCreator = {
   display_name?: string;
@@ -60,6 +61,9 @@ type TestCaseResponse = {
 
 export default function TestCasesPage() {
   const { workspaceSlug } = useParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { updateQueryParams } = useQueryParams();
   const repositoryId = typeof window !== "undefined" ? sessionStorage.getItem("selectedRepositoryId") : null;
   const repositoryName = typeof window !== "undefined" ? sessionStorage.getItem("selectedRepositoryName") : "";
 
@@ -107,6 +111,31 @@ export default function TestCasesPage() {
     setAutoExpandParent(false);
   };
 
+  const [leftWidth, setLeftWidth] = useState<number>(280);
+  const isDraggingRef = useRef<boolean>(false);
+  const startXRef = useRef<number>(0);
+  const startWidthRef = useRef<number>(0);
+  const onMouseDownResize = (e: any) => {
+    isDraggingRef.current = true;
+    startXRef.current = e.clientX;
+    startWidthRef.current = leftWidth;
+    window.addEventListener("mousemove", onMouseMoveResize);
+    window.addEventListener("mouseup", onMouseUpResize);
+    document.body.style.cursor = "col-resize";
+  };
+  const onMouseMoveResize = (e: MouseEvent) => {
+    if (!isDraggingRef.current) return;
+    const delta = e.clientX - startXRef.current;
+    const next = Math.min(300, Math.max(200, startWidthRef.current + delta));
+    setLeftWidth(next);
+  };
+  const onMouseUpResize = () => {
+    isDraggingRef.current = false;
+    window.removeEventListener("mousemove", onMouseMoveResize);
+    window.removeEventListener("mouseup", onMouseUpResize);
+    document.body.style.cursor = "auto";
+  };
+
   // 自定义节点标题：统一图标+文案+间距
   const updateModuleCount = (modules: any[], id: string, count: number): any[] => {
     return modules.map((m) => {
@@ -142,6 +171,15 @@ export default function TestCasesPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [repositoryId]);
+
+  // 解析 URL 参数以自动打开用例模态框
+  useEffect(() => {
+    const peekCase = searchParams.get("peekCase");
+    if (peekCase) {
+      setActiveCase({ id: peekCase });
+      setIsUpdateModalOpen(true);
+    }
+  }, [searchParams]);
 
   // 新增：获取模块列表
   const fetchModules = async () => {
@@ -589,8 +627,11 @@ export default function TestCasesPage() {
           type="button"
           className="text-primary hover:underline"
           onClick={() => {
+            if (!record || !record.id) return;
             setActiveCase(record);
             setIsUpdateModalOpen(true);
+            const updatedRoute = updateQueryParams({ paramsToAdd: { peekCase: String(record.id) } });
+            router.push(updatedRoute);
           }}
         >
           {record?.name}
@@ -664,14 +705,17 @@ export default function TestCasesPage() {
             <h3 className="text-lg font-medium">测试用例</h3>
             <div>
               <Button type="primary" onClick={() => setIsCreateModalOpen(true)} disabled={!repositoryId}>
-                新增测试用例
+                新增
               </Button>
             </div>
           </div>
           {/* 修改列表区域：添加 Row/Col 布局 */}
-          <Row className="flex-1 overflow-hidden p-4 sm:p-5" gutter={[16, 16]}>
-            {/* 左侧树形菜单 */}
-            <Col span={5} className="border-r border-custom-border-200 overflow-y-auto">
+          <Row className="flex-1 overflow-hidden p-4 sm:p-5" gutter={[0, 16]}>
+            <Col
+              className="relative border-r border-custom-border-200 overflow-y-auto"
+              flex="0 0 auto"
+              style={{ width: leftWidth, minWidth: 200, maxWidth: 300 }}
+            >
               {/* 树头部工具栏（贴近图片样式） */}
               <div className="flex items-center justify-between px-2 pb-2">
                 <div className="text-sm text-custom-text-300">用例模块</div>
@@ -685,7 +729,11 @@ export default function TestCasesPage() {
                   />
                 </Space>
               </div>
-
+              <div
+                onMouseDown={onMouseDownResize}
+                className="absolute right-0 top-0 h-full w-2"
+                style={{ cursor: "col-resize", zIndex: 10 }}
+              />
               <Tree
                 showLine={false}
                 defaultExpandAll
@@ -699,7 +747,7 @@ export default function TestCasesPage() {
               />
             </Col>
             {/* 右侧表格 */}
-            <Col span={18} className="overflow-y-auto">
+            <Col flex="auto" className="overflow-y-auto">
               {/* 加载/错误/空状态 */}
               {loading && (
                 <div className="flex items-center justify-center py-12">
@@ -765,8 +813,11 @@ export default function TestCasesPage() {
         open={isUpdateModalOpen}
         onClose={() => {
           setIsUpdateModalOpen(false);
+          setActiveCase(null);
           fetchModules();
           fetchCases(1, pageSize, filters);
+          const updatedRoute = updateQueryParams({ paramsToRemove: ["peekCase"] });
+          router.push(updatedRoute);
         }}
         caseId={activeCase?.id}
       />

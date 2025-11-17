@@ -3,10 +3,11 @@
 import React, { useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { CaseService } from "../../../services/qa/case.service";
-import { Tag, Spin, Tooltip, message } from "antd";
+import { Tag, Spin, Tooltip, message, Input } from "antd";
 import { getEnums } from "app/(all)/[workspaceSlug]/(projects)/test-management/util";
 import { useMember } from "@/hooks/store/use-member";
 import * as LucideIcons from "lucide-react";
+import { useUser } from "@/hooks/store/user";
 import { ModalHeader } from "./update-modal/modal-header";
 import { TitleInput } from "./update-modal/title-input";
 import { CaseMetaForm } from "./update-modal/case-meta-form";
@@ -15,8 +16,11 @@ import { SideInfoPanel } from "./update-modal/side-info-panel";
 import { FileUploadService, generateFileUploadPayload, getFileMetaDataForUpload } from "@plane/services";
 import { WorkItemDisplayModal } from "./work-item-display-modal";
 import { WorkItemSelectModal } from "./work-item-select-modal";
-import { PlusOutlined } from "@ant-design/icons";
+import { CommentOutlined, PlusOutlined } from "@ant-design/icons";
 import type { TIssue } from "@plane/types";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { formatCNDateTime } from "./util";
+import styles from "./update-modal.module.css";
 
 type UpdateModalProps = {
   open: boolean;
@@ -25,7 +29,7 @@ type UpdateModalProps = {
 };
 
 function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
-  if (!open) return null;
+  if (!open || !caseId) return null;
 
   const [activeTab, setActiveTab] = useState<string>("basic");
   // 增加：本地状态与失焦更新逻辑
@@ -43,6 +47,8 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
     } else {
       // 关闭时清空数据
       setCaseData(null);
+      setReplyTargetId(undefined);
+      setReplyContent({});
     }
   }, [open]); // 仅在打开时拉取详情
 
@@ -342,6 +348,225 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
     }
   };
 
+  const { data: currentUser } = useUser();
+  const [comments, setComments] = React.useState<any[]>([]);
+  const [commentsLoading, setCommentsLoading] = React.useState<boolean>(false);
+  const [commentPage, setCommentPage] = React.useState<number>(1);
+  const [commentPageSize, setCommentPageSize] = React.useState<number>(10);
+  const [commentTotal, setCommentTotal] = React.useState<number>(0);
+  const [newComment, setNewComment] = React.useState<string>("");
+  const [replyContent, setReplyContent] = React.useState<Record<string, string>>({});
+  const [editContent, setEditContent] = React.useState<Record<string, string>>({});
+  const [replyTargetId, setReplyTargetId] = React.useState<string | undefined>(undefined);
+  const [commentPlaceholder, setCommentPlaceholder] = React.useState<string>("输入评论内容");
+  const newCommentInputRef = React.useRef<any>(null);
+
+  const fetchComments = async (reset = true, pageOverride?: number) => {
+    if (!workspaceSlug || !caseId) return;
+    setCommentsLoading(true);
+    try {
+      const pageToUse = pageOverride ?? (reset ? 1 : commentPage);
+      const resp = await caseService.get(`/api/workspaces/${workspaceSlug}/test/comments/`, {
+        params: { case_id: caseId, page: pageToUse, page_size: commentPageSize, max_depth: 5 },
+      });
+      const results = resp?.data?.data ?? [];
+      const count = resp?.data?.count ?? (Array.isArray(results) ? results.length : 0);
+      setCommentTotal(Number(count || 0));
+      if (reset) {
+        setComments(Array.isArray(results) ? results : []);
+        setCommentPage(1);
+      } else {
+        setComments((prev) => [...prev, ...(Array.isArray(results) ? results : [])]);
+      }
+    } catch {}
+    setCommentsLoading(false);
+  };
+
+  React.useEffect(() => {
+    if (open && caseId && workspaceSlug) fetchComments(true);
+  }, [open, caseId, workspaceSlug]);
+
+  const handleCreateComment = async () => {
+    if (!workspaceSlug || !caseId) return;
+    const content = newComment.trim();
+    if (!content) {
+      message.warning("请输入评论内容");
+      return;
+    }
+    try {
+      await caseService.createComment(String(workspaceSlug), { case: String(caseId), content });
+      setNewComment("");
+      setReplyTargetId(undefined);
+      setCommentPlaceholder("输入评论内容");
+      fetchComments(true);
+    } catch (e: any) {
+      message.error(e?.message || e?.detail || e?.error || "创建失败");
+    }
+  };
+
+  const handleReply = async (parentId: string) => {
+    if (!workspaceSlug || !caseId) return;
+    const content = (replyContent[parentId] || "").trim();
+    if (!content) {
+      message.warning("请输入回复内容");
+      return;
+    }
+    try {
+      setReplyTargetId(undefined);
+      await caseService.createComment(String(workspaceSlug), {
+        case: String(caseId),
+        content,
+        parent: String(parentId),
+      });
+      setReplyContent((prev) => ({ ...prev, [parentId]: "" }));
+      fetchComments(true);
+    } catch (e: any) {
+      message.error(e?.message || e?.detail || e?.error || "回复失败");
+    }
+  };
+  const handleDelete = async (id: string) => {
+    if (!workspaceSlug) return;
+    try {
+      await caseService.deleteComment(String(workspaceSlug), String(id));
+      fetchComments(true);
+    } catch (e: any) {
+      message.error(e?.message || e?.detail || e?.error || "删除失败");
+    }
+  };
+
+  const startReply = (c: any) => {
+    const id = String(c?.id || "");
+    setReplyTargetId(id);
+  };
+
+  const renderComment = (c: any, depth = 0, parentCreatorName?: string, parentCreatorId?: string) => {
+    const isOwner = currentUser?.id && String(currentUser.id) === String(c?.creator);
+    const children = Array.isArray(c?.children) ? c.children : [];
+    const indentClass = depth === 1 ? styles.depthChild : styles.depth0;
+    const creatorName = String(c?.creator_name || "");
+    return (
+      <div key={String(c?.id)} className={`${styles.commentItem} ${indentClass}`} data-depth={depth}>
+        <div className={`rounded p-2 bg-white`}>
+          {depth === 0 ? (
+            <div className="flex items-center">
+              <span className="flex-1 min-w-0">
+                <div className={styles.noHover}>
+                  <MemberDropdown
+                    multiple={false}
+                    value={c?.creator ?? null}
+                    onChange={() => {}}
+                    disabled={true}
+                    placeholder={creatorName || "未知用户"}
+                    className="w-full text-sm"
+                    buttonContainerClassName="w-full text-left p-0 cursor-default"
+                    buttonVariant="transparent-with-text"
+                    buttonClassName="text-sm p-0 hover:bg-transparent hover:bg-inherit"
+                    showUserDetails={true}
+                    optionsClassName="z-[60]"
+                  />
+                </div>
+              </span>
+            </div>
+          ) : (
+            <div className="text-sm flex flex-wrap items-center">
+              <div className={styles.noHover}>
+                <MemberDropdown
+                  multiple={false}
+                  value={c?.creator ?? null}
+                  onChange={() => {}}
+                  disabled={true}
+                  placeholder={creatorName || "未知用户"}
+                  className="text-sm"
+                  buttonContainerClassName="p-0 cursor-default inline-flex items-center gap-1"
+                  buttonVariant="transparent-with-text"
+                  buttonClassName="text-sm p-0 hover:bg-transparent hover:bg-inherit font-semibold"
+                  showUserDetails={true}
+                  optionsClassName="z-[60]"
+                />
+              </div>
+              {depth >= 2 && parentCreatorName ? <span className="mx-1">回复</span> : null}
+              {depth >= 2 && parentCreatorName ? (
+                <div className={styles.noHover}>
+                  <MemberDropdown
+                    multiple={false}
+                    value={parentCreatorId ?? null}
+                    onChange={() => {}}
+                    disabled={true}
+                    placeholder={parentCreatorName || "未知用户"}
+                    className="text-sm"
+                    buttonContainerClassName="p-0 cursor-default inline-flex items-center gap-1"
+                    buttonVariant="transparent-with-text"
+                    buttonClassName="text-sm p-0 hover:bg-transparent hover:bg-inherit font-semibold"
+                    showUserDetails={true}
+                    optionsClassName="z-[60]"
+                  />
+                </div>
+              ) : null}
+              <span className="mx-1">：</span>
+              <span className="whitespace-pre-wrap break-words">{c?.content || ""}</span>
+            </div>
+          )}
+          {depth === 0 && <div className="mt-2 pl-8 text-sm whitespace-pre-wrap break-words">{c?.content || ""}</div>}
+          <div className={`mt-1 text-xs text-gray-500 flex items-center gap-2 ${depth === 0 ? "pl-8" : ""}`}>
+            <span>{formatCNDateTime(c?.created_at)}</span>
+            <button
+              type="button"
+              title="回复"
+              className="text-gray-500 hover:text-blue-600 inline-flex items-center gap-1"
+              onClick={() => startReply(c)}
+            >
+              <CommentOutlined />
+              <span>回复</span>
+            </button>
+            {isOwner && (
+              <button
+                type="button"
+                title="删除"
+                className="text-gray-500 hover:text-red-600 inline-flex items-center gap-1"
+                onClick={() => handleDelete(String(c?.id))}
+              >
+                <LucideIcons.Trash2 size={14} />
+                <span>删除</span>
+              </button>
+            )}
+          </div>
+          {replyTargetId === String(c?.id) && (
+            <div className={`mt-2 ${depth === 0 ? "pl-8" : ""}`}>
+              <Input.TextArea
+                autoSize={{ minRows: 2, maxRows: 4 }}
+                placeholder={`回复${creatorName}：`}
+                value={replyContent[String(c?.id)] || ""}
+                onChange={(e) => setReplyContent((prev) => ({ ...prev, [String(c?.id)]: e.target.value }))}
+              />
+              <div className="mt-2 flex gap-2">
+                <button
+                  type="button"
+                  className="rounded bg-blue-600 text-white px-3 py-1.5 text-sm"
+                  onClick={() => handleReply(String(c?.id))}
+                >
+                  回复
+                </button>
+                <button
+                  type="button"
+                  className="rounded bg-gray-100 text-gray-700 px-3 py-1.5 text-sm hover:bg-gray-200"
+                  onClick={() => {
+                    setReplyContent((prev) => ({ ...prev, [String(c?.id)]: "" }));
+                    setReplyTargetId(undefined);
+                  }}
+                >
+                  取消
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+        {children &&
+          children.length > 0 &&
+          children.slice(0, 100).map((child: any) => renderComment(child, depth + 1, creatorName, String(c?.creator)))}
+      </div>
+    );
+  };
+
   // 新增：四个下拉框的本地值状态（从 caseData 同步，类型统一为字符串）
   const [assignee, setAssignee] = React.useState<string | undefined>(undefined);
   const [stateValue, setStateValue] = React.useState<string | undefined>(undefined);
@@ -613,7 +838,7 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center" aria-modal="true" role="dialog">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} aria-hidden="true" />
       <div className="relative z-10 w-[85vw] h-[90vh] max-h-[90vh] overflow-hidden rounded-lg bg-white shadow-lg flex flex-col">
-        <ModalHeader onClose={onClose} />
+        <ModalHeader onClose={onClose} caseId={String(caseId ?? "")} />
         {/* 内容区域：左右布局 */}
         <div className="flex flex-1 min-h-0">
           {/* 左侧：2/3宽度 */}
@@ -718,6 +943,19 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
                 onFilesChosen={handleFilesChosen}
                 onDownloadAttachment={handleDownloadAttachment}
                 onRemoveCaseAttachment={(id) => handleRemoveCaseAttachment(id)}
+                commentsLoading={commentsLoading}
+                comments={comments}
+                commentPage={commentPage}
+                commentPageSize={commentPageSize}
+                commentTotal={commentTotal}
+                setCommentPage={(n) => setCommentPage(n)}
+                fetchComments={(reset?: boolean, pageOverride?: number) => fetchComments(reset, pageOverride)}
+                renderComment={(c: any) => renderComment(c)}
+                newComment={newComment}
+                commentPlaceholder={commentPlaceholder}
+                newCommentInputRef={newCommentInputRef}
+                onNewCommentChange={(v: string) => setNewComment(v)}
+                onCreateComment={() => handleCreateComment()}
               />
             )}
             {activeTab === "requirement" && caseId && (
@@ -729,7 +967,7 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
                     onClick={() => handleOpenSelectModal("Requirement")}
                     className="inline-flex items-center gap-1 rounded px-2 py-1 text-sm bg-blue-50 text-blue-600 hover:bg-blue-100"
                   >
-                    <PlusOutlined /> 添加产品需求
+                    <PlusOutlined /> 添加
                   </button>
                 </div>
                 <WorkItemDisplayModal caseId={String(caseId)} defaultType="Requirement" reloadToken={reloadToken} />
@@ -744,7 +982,7 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
                     onClick={() => handleOpenSelectModal("Task")}
                     className="inline-flex items-center gap-1 rounded px-2 py-1 text-sm bg-blue-50 text-blue-600 hover:bg-blue-100"
                   >
-                    <PlusOutlined /> 添加工作项
+                    <PlusOutlined /> 添加
                   </button>
                 </div>
                 <WorkItemDisplayModal caseId={String(caseId)} defaultType="Task" reloadToken={reloadToken} />
@@ -759,7 +997,7 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
                     onClick={() => handleOpenSelectModal("Bug")}
                     className="inline-flex items-center gap-1 rounded px-2 py-1 text-sm bg-blue-50 text-blue-600 hover:bg-blue-100"
                   >
-                    <PlusOutlined /> 添加缺陷
+                    <PlusOutlined /> 添加
                   </button>
                 </div>
                 <WorkItemDisplayModal caseId={String(caseId)} defaultType="Bug" reloadToken={reloadToken} />

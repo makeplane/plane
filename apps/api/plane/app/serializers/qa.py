@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
 from plane.app.serializers import UserLiteSerializer, BaseSerializer, IssueAssigneeSerializer, ProjectDetailSerializer
-from plane.db.models import TestPlan, TestCaseRepository, User, TestCase, CaseLabel, CaseModule, FileAsset, Issue
+from plane.db.models import TestPlan, TestCaseRepository, User, TestCase, CaseLabel, CaseModule, FileAsset, Issue, TestCaseComment
 
 
 class TestPlanCreateUpdateSerializer(ModelSerializer):
@@ -199,3 +199,21 @@ class CaseIssueSerializer(ModelSerializer):
     class Meta:
         model = TestCase
         fields = ['id','issues']
+
+
+class TestCaseCommentSerializer(ModelSerializer):
+    children = serializers.SerializerMethodField()
+    creator_name = serializers.CharField(source="creator.display_name", read_only=True)
+
+    class Meta:
+        model = TestCaseComment
+        fields = "__all__"
+
+    def get_children(self, obj):
+        current_depth = int(self.context.get("current_depth", 1))
+        max_depth = int(self.context.get("max_depth", 5))
+        if current_depth >= max_depth:
+            return []
+        qs = obj.children.filter(deleted_at__isnull=True).order_by("created_at")
+        serializer = TestCaseCommentSerializer(qs, many=True, context={"current_depth": current_depth + 1, "max_depth": max_depth})
+        return serializer.data

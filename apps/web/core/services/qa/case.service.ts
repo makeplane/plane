@@ -39,6 +39,30 @@ export class CaseService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async createComment(workspaceSlug: string, payload: { case: string; content: string; parent?: string }): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/test/comments/`, payload)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateComment(workspaceSlug: string, id: string, content: string): Promise<any> {
+    return this.put(`/api/workspaces/${workspaceSlug}/test/comments/${id}/`, { content })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deleteComment(workspaceSlug: string, id: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/test/comments/${id}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
     async getCaseIssueWithType(workspaceSlug: string,query?:any): Promise<any> {
     return this.get(`/api/workspaces/${workspaceSlug}/test/case/issues/`,{
       params: query,

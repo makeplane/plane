@@ -173,3 +173,36 @@ class PlanCase(BaseModel):
         verbose_name_plural = "PlanCases"
         db_table = "test_plan_cases"
         ordering = ("-created_at",)
+
+
+class TestCaseComment(BaseModel):
+    content = models.TextField(verbose_name="Comment Content")
+    creator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="testcase_comments",
+        verbose_name="Creator",
+    )
+    parent = models.ForeignKey(
+        "self",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="children",
+        verbose_name="Parent Comment",
+    )
+    case = models.ForeignKey(
+        TestCase,
+        on_delete=models.CASCADE,
+        related_name="comments",
+        verbose_name="TestCase",
+    )
+
+    class Meta:
+        verbose_name = "测试用例评论"
+        verbose_name_plural = "测试用例评论"
+        db_table = "test_case_comments"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return str(self.content)[:50]

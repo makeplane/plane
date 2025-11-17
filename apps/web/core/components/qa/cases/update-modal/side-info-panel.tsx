@@ -200,7 +200,7 @@ export function SideInfoPanel({ caseData, caseTestTypeMap }: SideInfoPanelProps)
             <span className="text-sm text-gray-700 shrink-0 basis-28 md:basis-32">测试库</span>
             <span className="text-sm text-gray-900 flex-1 min-w-0 truncate inline-flex items-center gap-2">
               <FolderOutlined className="text-blue-500" />
-              <span className="truncate">{caseData.repository.name}</span>
+              <span className="truncate">{caseData?.repository?.name ?? "-"}</span>
             </span>
           </div>
           <div className="flex items-center gap-3 md:gap-4">
@@ -209,7 +209,7 @@ export function SideInfoPanel({ caseData, caseTestTypeMap }: SideInfoPanelProps)
               {
                 <MemberDropdown
                   multiple={false}
-                  value={caseData.created_by.id ?? null}
+                  value={caseData?.created_by?.id ?? null}
                   onChange={(val) => {}}
                   disabled={true}
                   placeholder="请选择维护人"
@@ -226,7 +226,7 @@ export function SideInfoPanel({ caseData, caseTestTypeMap }: SideInfoPanelProps)
           <div className="flex items-center gap-3 md:gap-4">
             <span className="text-sm text-gray-700 shrink-0 basis-28 md:basis-32">创建时间</span>
             <span className="text-sm text-gray-900 flex-1 min-w-0 truncate">
-              {formatCNDateTime(caseData.created_at)}
+              {formatCNDateTime(caseData?.created_at)}
             </span>
           </div>
           <div className="flex items-center gap-3 md:gap-4">
@@ -235,7 +235,7 @@ export function SideInfoPanel({ caseData, caseTestTypeMap }: SideInfoPanelProps)
               {
                 <MemberDropdown
                   multiple={false}
-                  value={caseData.updated_by.id ?? null}
+                  value={caseData?.updated_by?.id ?? null}
                   onChange={(val) => {}}
                   disabled={true}
                   placeholder="请选择维护人"
@@ -252,7 +252,7 @@ export function SideInfoPanel({ caseData, caseTestTypeMap }: SideInfoPanelProps)
           <div className="flex items-center gap-3 md:gap-4">
             <span className="text-sm text-gray-700 shrink-0 basis-28 md:basis-32">更新时间</span>
             <span className="text-sm text-gray-900 flex-1 min-w-0 truncate">
-              {formatCNDateTime(caseData.updated_at)}
+              {formatCNDateTime(caseData?.updated_at)}
             </span>
           </div>
         </div>

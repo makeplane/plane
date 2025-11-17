@@ -1,0 +1,25 @@
+/* 评论层级样式（CSS Modules，隔离作用域） */
+/* 顶级评论保持现状，子级评论统一左侧缩进20px；所有评论之间垂直间距8px */
+.commentItem { 
+  margin-top: 8px;
+}
+
+.depth0 { margin-left: 0; }
+.depthChild { margin-left: 20px; }
+
+/* 通过层级选择（属性选择）精确控制不同深度的缩进 */
+.commentItem[data-depth="0"] { margin-left: 0; }
+.commentItem[data-depth="1"] { margin-left: 20px; }
+.commentItem[data-depth]:not([data-depth="0"]):not([data-depth="1"]) { margin-left: 0; }
+
+.userName {
+  font-weight: 600;
+}
+
+/* 覆盖 MemberDropdown 按钮 hover 背景与指针样式，仅在此模块内 */
+.noHover :global(.clickable) {
+  cursor: default;
+}
+.noHover :global(.hover\:bg-custom-background-80:hover) {
+  background-color: transparent !important;
+}
