@@ -5,5 +5,5 @@ import ImgFileIcon from "@/app/assets/attachment/img-icon.png?url";
 import type { ImageIconPros } from "../types";
 
 export const ImgIcon: React.FC<ImageIconPros> = ({ width, height }) => (
-  <img src={ImgFileIcon} width={width} height={height} className="h-full w-full object-contain" alt="ImgFileIcon" />
+  <img src={ImgFileIcon} width={width} height={height} alt="ImgFileIcon" />
 );

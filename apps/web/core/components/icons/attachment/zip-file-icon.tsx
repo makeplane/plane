@@ -5,5 +5,5 @@ import ZipFileIcon from "@/app/assets/attachment/zip-icon.png?url";
 import type { ImageIconPros } from "../types";
 
 export const ZipIcon: React.FC<ImageIconPros> = ({ width, height }) => (
-  <img src={ZipFileIcon} width={width} height={height} className="h-full w-full object-contain" alt="ZipFileIcon" />
+  <img src={ZipFileIcon} width={width} height={height} alt="ZipFileIcon" />
 );

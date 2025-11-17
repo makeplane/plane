@@ -5,5 +5,5 @@ import JpgFileIcon from "@/app/assets/attachment/jpg-icon.png?url";
 import type { ImageIconPros } from "../types";
 
 export const JpgIcon: React.FC<ImageIconPros> = ({ width, height }) => (
-  <img src={JpgFileIcon} width={width} height={height} className="h-full w-full object-contain" alt="JpgFileIcon" />
+  <img src={JpgFileIcon} width={width} height={height} alt="JpgFileIcon" />
 );

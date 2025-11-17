@@ -1,4 +1,4 @@
-import type { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+import type { Params } from "react-router";
 // plane web imports
 import { detectExtendedContextFromURL } from "@/plane-web/components/command-palette/power-k/context-detector";
 // local imports

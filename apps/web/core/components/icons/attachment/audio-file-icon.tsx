@@ -8,5 +8,5 @@ export type AudioIconProps = {
 };
 
 export const AudioIcon: React.FC<AudioIconProps> = ({ width, height }) => (
-  <img src={AudioFileIcon} width={width} height={height} className="h-full w-full object-contain" alt="AudioFileIcon" />
+  <img src={AudioFileIcon} width={width} height={height} alt="AudioFileIcon" />
 );
