@@ -6,7 +6,7 @@ import type { TIssue, TStateGroups } from "@plane/types";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web imports
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // local imports
 import { WorkItemPreviewCardDate } from "./date";
 
@@ -39,6 +39,8 @@ export const WorkItemPreviewCard: React.FC<Props> = observer((props) => {
           projectId={projectId}
           projectIdentifier={projectIdentifier}
           issueSequenceId={workItem.sequence_id}
+          issueTypeId={workItem.type_id}
+          size="xs"
         />
         <div className="shrink-0 flex items-center gap-1">
           <StateGroupIcon stateGroup={stateGroup} className="shrink-0 size-3" />
