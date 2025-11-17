@@ -1463,6 +1463,7 @@ export default {
         export_separate_files: "Export the data into separate files",
         exporting_projects: "Exporting project",
         format: "Format",
+        filters_info: "Apply filters to export specific work items based on your criteria.",
         modal: {
           title: "Export to",
           toasts: {

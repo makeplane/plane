@@ -1610,6 +1610,7 @@ export default {
         exporting: "Đang xuất",
         previous_exports: "Xuất trước đây",
         export_separate_files: "Xuất dữ liệu thành các tệp riêng biệt",
+        filters_info: "Áp dụng bộ lọc để xuất các mục công việc cụ thể dựa trên tiêu chí của bạn.",
         modal: {
           title: "Xuất đến",
           toasts: {

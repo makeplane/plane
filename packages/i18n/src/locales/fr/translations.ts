@@ -1622,6 +1622,7 @@ export default {
         exporting: "Exportation",
         previous_exports: "Exportations précédentes",
         export_separate_files: "Exporter les données dans des fichiers séparés",
+        filters_info: "Appliquez des filtres pour exporter des éléments de travail spécifiques selon vos critères.",
         modal: {
           title: "Exporter vers",
           toasts: {

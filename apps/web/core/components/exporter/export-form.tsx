@@ -1,17 +1,25 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { intersection } from "lodash-es";
+import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
+import { Info } from "lucide-react";
 import {
   EUserPermissions,
   EUserPermissionsLevel,
   EXPORTERS_LIST,
+  ISSUE_DISPLAY_FILTERS_BY_PAGE,
   WORKSPACE_SETTINGS_TRACKER_EVENTS,
   WORKSPACE_SETTINGS_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { Popover } from "@plane/propel/popover";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { EIssuesStoreType } from "@plane/types";
+import type { TWorkItemFilterExpression } from "@plane/types";
 import { CustomSearchSelect, CustomSelect } from "@plane/ui";
+import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
+import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
@@ -29,11 +37,13 @@ type FormData = {
 };
 const projectExportService = new ProjectExportService();
 
-export const ExportForm = (props: Props) => {
+export const ExportForm = observer((props: Props) => {
   // props
   const { workspaceSlug, mutateServices } = props;
   // states
   const [exportLoading, setExportLoading] = useState(false);
+  const [richFilters, setRichFilters] = useState<TWorkItemFilterExpression>({});
+
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { data: user, canPerformAnyCreateAction, projectsWithCreatePermissions } = useUser();
@@ -47,6 +57,20 @@ export const ExportForm = (props: Props) => {
       multiple: false,
     },
   });
+
+  // Initial work item filters for the HOC
+  const initialWorkItemFilters = useMemo(
+    () => ({
+      richFilters: richFilters,
+      displayFilters: {},
+      displayProperties: {},
+      kanbanFilters: {
+        group_by: [],
+        sub_group_by: [],
+      },
+    }),
+    [richFilters]
+  );
   // derived values
   const hasProjects = workspaceProjectIds && workspaceProjectIds.length > 0;
   const isMember = allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.WORKSPACE);
@@ -77,6 +101,7 @@ export const ExportForm = (props: Props) => {
         provider: formData.provider.provider,
         project: formData.project,
         multiple: formData.project.length > 1,
+        rich_filters: Object.keys(richFilters).length > 0 ? richFilters : undefined,
       };
       await projectExportService
         .csvExport(workspaceSlug as string, payload)
@@ -185,6 +210,43 @@ export const ExportForm = (props: Props) => {
           />
         </div>
       </div>
+      {/* Rich Filters */}
+      <div className="w-full">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="text-sm font-medium text-custom-text-200 leading-tight">
+            {t("common.filters") || "Filters"}
+          </div>
+          <Popover>
+            <Popover.Button>
+              <Info className="h-3 w-3 text-custom-text-300" />
+            </Popover.Button>
+            <Popover.Panel>
+              <div className="text-sm text-custom-text-20 bg-custom-background-90 rounded-lg p-3 flex gap-3 w-[238px]">
+                <div className=" rounded bg-custom-background-80 flex items-center justify-center p-1 h-5 aspect-square">
+                  <Info className="h-3 w-3" />
+                </div>
+                {t("workspace_settings.settings.exports.filters_info")}
+              </div>
+            </Popover.Panel>
+          </Popover>
+        </div>
+        <WorkspaceLevelWorkItemFiltersHOC
+          entityId={undefined}
+          entityType={EIssuesStoreType.GLOBAL}
+          filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.filters}
+          initialWorkItemFilters={initialWorkItemFilters}
+          isTemporary
+          updateFilters={(updatedFilters) => setRichFilters(updatedFilters)}
+          showOnMount
+          workspaceSlug={workspaceSlug}
+        >
+          {({ filter: workspaceExportWorkItemsFilter }) =>
+            workspaceExportWorkItemsFilter && (
+              <WorkItemFiltersRow filter={workspaceExportWorkItemsFilter} variant="modal" />
+            )
+          }
+        </WorkspaceLevelWorkItemFiltersHOC>
+      </div>
       <div className="flex items-center justify-between ">
         <Button
           variant="primary"
@@ -197,4 +259,4 @@ export const ExportForm = (props: Props) => {
       </div>
     </form>
   );
-};
+});
