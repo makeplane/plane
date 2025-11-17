@@ -7,7 +7,6 @@ import type { CoreRootStore } from "./root.store";
 
 export interface IFavoriteStore {
   // observables
-
   favoriteIds: string[];
   favoriteMap: {
     [favoriteId: string]: IFavorite;
@@ -24,7 +23,7 @@ export interface IFavoriteStore {
   addFavorite: (workspaceSlug: string, data: Partial<IFavorite>) => Promise<IFavorite>;
   updateFavorite: (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => Promise<IFavorite>;
   deleteFavorite: (workspaceSlug: string, favoriteId: string) => Promise<void>;
-  getGroupedFavorites: (workspaceSlug: string, favoriteId: string) => Promise<IFavorite[]>;
+  fetchGroupedFavorites: (workspaceSlug: string, favoriteId: string) => Promise<IFavorite[]>;
   moveFavoriteToFolder: (workspaceSlug: string, favoriteId: string, data: Partial<IFavorite>) => Promise<void>;
   removeFavoriteEntity: (workspaceSlug: string, entityId: string) => Promise<void>;
   reOrderFavorite: (
@@ -48,6 +47,7 @@ export class FavoriteStore implements IFavoriteStore {
   } = {};
   // service
   favoriteService;
+  rootStore;
   viewStore;
   projectStore;
   pageStore;
@@ -61,13 +61,14 @@ export class FavoriteStore implements IFavoriteStore {
       entityMap: observable,
       favoriteIds: observable,
       //computed
+      currentWorkspaceFavorites: computed,
       existingFolders: computed,
       groupedFavorites: computed,
       // action
       fetchFavorite: action,
       // CRUD actions
       addFavorite: action,
-      getGroupedFavorites: action,
+      fetchGroupedFavorites: action,
       moveFavoriteToFolder: action,
       removeFavoriteEntity: action,
       reOrderFavorite: action,
@@ -75,6 +76,7 @@ export class FavoriteStore implements IFavoriteStore {
       removeFromFavoriteFolder: action,
     });
     this.favoriteService = new FavoriteService();
+    this.rootStore = _rootStore;
     this.viewStore = _rootStore.projectView;
     this.projectStore = _rootStore.projectRoot.project;
     this.moduleStore = _rootStore.module;
@@ -82,12 +84,26 @@ export class FavoriteStore implements IFavoriteStore {
     this.pageStore = _rootStore.projectPages;
   }
 
+  get currentWorkspaceFavorites() {
+    const currentWorkspace = this.rootStore.workspaceRoot.currentWorkspace;
+    if (!currentWorkspace) return {};
+    return Object.values(this.favoriteMap)
+      .filter((fav: IFavorite) => fav.workspace_id === currentWorkspace.id)
+      .reduce(
+        (acc, fav) => {
+          acc[fav.id] = fav;
+          return acc;
+        },
+        {} as { [favoriteId: string]: IFavorite }
+      );
+  }
+
   get existingFolders() {
     return Object.values(this.favoriteMap).map((fav) => fav.name);
   }
 
   get groupedFavorites() {
-    const data: { [favoriteId: string]: IFavorite } = JSON.parse(JSON.stringify(this.favoriteMap));
+    const data: { [favoriteId: string]: IFavorite } = JSON.parse(JSON.stringify(this.currentWorkspaceFavorites));
 
     Object.values(data).forEach((fav) => {
       if (fav.parent && data[fav.parent]) {
@@ -118,7 +134,9 @@ export class FavoriteStore implements IFavoriteStore {
       // optimistic addition
       runInAction(() => {
         set(this.favoriteMap, [id], data);
-        data.entity_identifier && set(this.entityMap, [data.entity_identifier], data);
+        if (data.entity_identifier) {
+          set(this.entityMap, [data.entity_identifier], data);
+        }
         this.favoriteIds = [id, ...this.favoriteIds];
       });
       const response = await this.favoriteService.addFavorite(workspaceSlug, data);
@@ -127,13 +145,19 @@ export class FavoriteStore implements IFavoriteStore {
       runInAction(() => {
         delete this.favoriteMap[id];
         set(this.favoriteMap, [response.id], response);
-        response.entity_identifier && set(this.entityMap, [response.entity_identifier], response);
+        if (response.entity_identifier) {
+          set(this.entityMap, [response.entity_identifier], response);
+        }
         this.favoriteIds = [response.id, ...this.favoriteIds.filter((favId) => favId !== id)];
       });
       return response;
     } catch (error) {
-      delete this.favoriteMap[id];
-      data.entity_identifier && delete this.entityMap[data.entity_identifier];
+      runInAction(() => {
+        delete this.favoriteMap[id];
+        if (data.entity_identifier) {
+          delete this.entityMap[data.entity_identifier];
+        }
+      });
       this.favoriteIds = this.favoriteIds.filter((favId) => favId !== id);
 
       console.error("Failed to create favorite from favorite store");
@@ -281,11 +305,15 @@ export class FavoriteStore implements IFavoriteStore {
       await this.favoriteService.deleteFavorite(workspaceSlug, favoriteId);
       runInAction(() => {
         delete this.favoriteMap[favoriteId];
-        entity_identifier && delete this.entityMap[entity_identifier];
+        if (entity_identifier) {
+          delete this.entityMap[entity_identifier];
+        }
         this.favoriteIds = this.favoriteIds.filter((id) => id !== favoriteId);
       });
       runInAction(() => {
-        entity_identifier && this.removeFavoriteEntityFromStore(entity_identifier, initialState.entity_type);
+        if (entity_identifier) {
+          this.removeFavoriteEntityFromStore(entity_identifier, initialState.entity_type);
+        }
         if (children) {
           children.forEach((child) => {
             if (!child.entity_identifier) return;
@@ -298,7 +326,9 @@ export class FavoriteStore implements IFavoriteStore {
       runInAction(() => {
         if (parent) set(this.favoriteMap, [parent, "children"], [...this.favoriteMap[parent].children, initialState]);
         set(this.favoriteMap, [favoriteId], initialState);
-        entity_identifier && set(this.entityMap, [entity_identifier], initialState);
+        if (entity_identifier) {
+          set(this.entityMap, [entity_identifier], initialState);
+        }
         this.favoriteIds = [favoriteId, ...this.favoriteIds];
       });
       throw error;
@@ -333,16 +363,20 @@ export class FavoriteStore implements IFavoriteStore {
         (fav) => fav.project_id === entity_identifier && fav.entity_type !== "project"
       );
       runInAction(() => {
-        projectData &&
+        if (projectData) {
           projectData.forEach(async (fav) => {
-            this.removeFavoriteFromStore(fav.entity_identifier!);
-            this.removeFavoriteEntityFromStore(fav.entity_identifier!, fav.entity_type);
+            if (fav.entity_identifier) {
+              this.removeFavoriteFromStore(fav.entity_identifier);
+              this.removeFavoriteEntityFromStore(fav.entity_identifier, fav.entity_type);
+            }
           });
+        }
 
         if (!favoriteId) return;
         delete this.favoriteMap[favoriteId];
-        this.removeFavoriteEntityFromStore(entity_identifier!, oldData.entity_type);
-
+        if (entity_identifier) {
+          this.removeFavoriteEntityFromStore(entity_identifier, oldData.entity_type);
+        }
         delete this.entityMap[entity_identifier];
         this.favoriteIds = this.favoriteIds.filter((id) => id !== favoriteId);
       });
@@ -357,7 +391,7 @@ export class FavoriteStore implements IFavoriteStore {
    * @param favoriteId
    * @returns Promise<IFavorite[]>
    */
-  getGroupedFavorites = async (workspaceSlug: string, favoriteId: string) => {
+  fetchGroupedFavorites = async (workspaceSlug: string, favoriteId: string) => {
     if (!favoriteId) return [];
     try {
       const response = await this.favoriteService.getGroupedFavorites(workspaceSlug, favoriteId);
@@ -386,15 +420,14 @@ export class FavoriteStore implements IFavoriteStore {
    */
   fetchFavorite = async (workspaceSlug: string) => {
     try {
-      this.favoriteIds = [];
-      this.favoriteMap = {};
-      this.entityMap = {};
       const favorites = await this.favoriteService.getFavorites(workspaceSlug);
       runInAction(() => {
         favorites.forEach((favorite) => {
           set(this.favoriteMap, [favorite.id], favorite);
           this.favoriteIds.push(favorite.id);
-          favorite.entity_identifier && set(this.entityMap, [favorite.entity_identifier], favorite);
+          if (favorite.entity_identifier) {
+            set(this.entityMap, [favorite.entity_identifier], favorite);
+          }
         });
       });
       return favorites;
