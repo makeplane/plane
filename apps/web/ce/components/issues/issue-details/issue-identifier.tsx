@@ -36,7 +36,7 @@ type TIssueTypeIdentifier = {
   size?: "xs" | "sm" | "md" | "lg";
 };
 
-export const IssueTypeIdentifier: FC<TIssueTypeIdentifier> = observer((props) => <></>);
+export const IssueTypeIdentifier: FC<TIssueTypeIdentifier> = observer((_props) => <></>);
 
 type TIdentifierTextProps = {
   identifier: string;

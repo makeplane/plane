@@ -57,29 +57,32 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
 
   return (
     <Popover delay={100} openOnHover>
-      <Popover.Button className="w-full">
-        <div
-          id={`issue-${issueId}`}
-          className="relative flex h-full w-full cursor-pointer items-center rounded space-between"
-          style={blockStyle}
-          onClick={handleIssuePeekOverview}
-        >
-          <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50 " />
+      <Popover.Button
+        className="w-full"
+        render={
           <div
-            className="sticky w-auto overflow-hidden truncate px-2.5 py-1 text-sm text-custom-text-100 flex-1"
-            style={{ left: `${SIDEBAR_WIDTH}px` }}
+            id={`issue-${issueId}`}
+            className="relative flex h-full w-full cursor-pointer items-center rounded space-between"
+            style={blockStyle}
+            onClick={handleIssuePeekOverview}
           >
-            {issueDetails?.name}
+            <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50 " />
+            <div
+              className="sticky w-auto overflow-hidden truncate px-2.5 py-1 text-sm text-custom-text-100 flex-1"
+              style={{ left: `${SIDEBAR_WIDTH}px` }}
+            >
+              {issueDetails?.name}
+            </div>
+            {isEpic && (
+              <IssueStats
+                issueId={issueId}
+                className="sticky mx-2 font-medium text-custom-text-100 overflow-hidden truncate w-auto justify-end flex-shrink-0"
+                showProgressText={duration >= 2}
+              />
+            )}
           </div>
-          {isEpic && (
-            <IssueStats
-              issueId={issueId}
-              className="sticky mx-2 font-medium text-custom-text-100 overflow-hidden truncate w-auto justify-end flex-shrink-0"
-              showProgressText={duration >= 2}
-            />
-          )}
-        </div>
-      </Popover.Button>
+        }
+      />
       <Popover.Panel side="bottom" align="start">
         <>
           {issueDetails && issueDetails?.project_id && (
