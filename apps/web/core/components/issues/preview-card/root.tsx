@@ -6,7 +6,7 @@ import type { TIssue, TStateGroups } from "@plane/types";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web imports
-import { WorkItemPreviewCardLogo } from "@/plane-web/components/issues/preview-card/logo";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details";
 // local imports
 import { WorkItemPreviewCardDate } from "./date";
 
@@ -17,7 +17,7 @@ type Props = {
     id?: string;
     name?: string;
   };
-  workItem: Pick<TIssue, "name" | "sequence_id" | "priority" | "start_date" | "target_date" | "type_id">;
+  workItem: Pick<TIssue, "id" | "name" | "sequence_id" | "priority" | "start_date" | "target_date" | "type_id">;
 };
 
 export const WorkItemPreviewCard: React.FC<Props> = observer((props) => {
@@ -34,16 +34,12 @@ export const WorkItemPreviewCard: React.FC<Props> = observer((props) => {
   return (
     <div className="p-3 space-y-2 w-72 rounded-lg shadow-custom-shadow-rg bg-custom-background-100 border-[0.5px] border-custom-border-300">
       <div className="flex items-center justify-between gap-3 text-custom-text-200">
-        <div className="shrink-0 flex items-center gap-1">
-          <WorkItemPreviewCardLogo
-            className="shrink-0 size-4"
-            projectId={projectId}
-            workItemTypeId={workItem.type_id}
-          />
-          <p className="text-xs font-medium">
-            {projectIdentifier}-{workItem.sequence_id}
-          </p>
-        </div>
+        <IssueIdentifier
+          textContainerClassName="shrink-0 text-xs text-custom-text-200"
+          projectId={projectId}
+          projectIdentifier={projectIdentifier}
+          issueSequenceId={workItem.sequence_id}
+        />
         <div className="shrink-0 flex items-center gap-1">
           <StateGroupIcon stateGroup={stateGroup} className="shrink-0 size-3" />
           <p className="text-xs font-medium">{stateName}</p>

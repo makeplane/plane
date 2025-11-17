@@ -94,7 +94,7 @@ export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props)
   if (!shouldRenderIssueID) return null;
 
   return (
-    <div className="flex items-center space-x-2">
+    <div className="shrink-0 flex items-center space-x-2">
       <IdentifierText
         identifier={`${projectIdentifier}-${issueSequenceId}`}
         enableClickToCopyIdentifier={enableClickToCopyIdentifier}
