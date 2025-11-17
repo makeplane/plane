@@ -95,6 +95,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
   // use editor mention
   const { fetchMentions } = useEditorMention({
+    enableAdvancedMentions: true,
     searchEntity: handlers.fetchEntity,
   });
   // editor flaggings
