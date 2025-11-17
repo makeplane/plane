@@ -275,14 +275,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     const displayFilters = this.issueFilterStore?.issueFilters?.displayFilters;
     if (!displayFilters) return;
 
-    const layout = displayFilters.layout;
-    const orderBy = displayFilters.order_by;
-
-    // Temporary code to fix no load order by
-    if (this.rootIssueStore.rootStore.router.projectId && layout !== EIssueLayoutTypes.SPREADSHEET && orderBy) {
-      return "sort_order";
-    }
-
     return displayFilters?.order_by;
   }
 
