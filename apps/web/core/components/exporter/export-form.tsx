@@ -36,6 +36,17 @@ type FormData = {
   multiple: boolean;
   filters: TWorkItemFilterExpression;
 };
+
+const initialWorkItemFilters = {
+  richFilters: {},
+  displayFilters: {},
+  displayProperties: {},
+  kanbanFilters: {
+    group_by: [],
+    sub_group_by: [],
+  },
+};
+
 const projectExportService = new ProjectExportService();
 
 export const ExportForm = observer((props: Props) => {
@@ -58,16 +69,6 @@ export const ExportForm = observer((props: Props) => {
       filters: {},
     },
   });
-
-  const initialWorkItemFilters = {
-    richFilters: {},
-    displayFilters: {},
-    displayProperties: {},
-    kanbanFilters: {
-      group_by: [],
-      sub_group_by: [],
-    },
-  };
 
   // derived values
   const hasProjects = workspaceProjectIds && workspaceProjectIds.length > 0;
@@ -92,7 +93,6 @@ export const ExportForm = observer((props: Props) => {
 
   // handlers
   const ExportCSVToMail = async (formData: FormData) => {
-    console.log(formData);
     setExportLoading(true);
     if (workspaceSlug && user) {
       const payload = {
