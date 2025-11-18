@@ -191,7 +191,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           containerClassName="-ml-3"
         />
 
-        {loader === "issue-loading" ? (
+        {loader === "issue-loading" || issue.description_html === undefined ? (
           <DescriptionInputLoader />
         ) : (
           <DescriptionInput

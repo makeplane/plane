@@ -122,7 +122,7 @@ export const UniqueID = Extension.create<UniqueIDOptions>({
       // If not synced, the listener will be registered in the plugin
       // and handled there with proper cleanup
     } else {
-      return createIdsForView(this.editor.view, this.options);
+      createIdsForView(this.editor.view, this.options);
     }
   },
 
