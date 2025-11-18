@@ -265,6 +265,12 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                         "sequence": 55000,
                         "group": "cancelled",
                     },
+                    {
+                        "name": "Triage",
+                        "color": "#9AA4BC",
+                        "sequence": 65000,
+                        "group": "triage",
+                    },
                 ]
 
                 State.objects.bulk_create(

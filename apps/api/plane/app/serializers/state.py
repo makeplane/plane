@@ -24,6 +24,12 @@ class StateSerializer(BaseSerializer):
         ]
         read_only_fields = ["workspace", "project"]
 
+    def validate(self, attrs):
+
+        if attrs.get("group") == "triage":
+            raise serializers.ValidationError("cannot create triage state")
+        return attrs
+
 
 class StateLiteSerializer(BaseSerializer):
     class Meta:

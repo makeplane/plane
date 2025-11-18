@@ -228,6 +228,10 @@ class IntakeIssueViewSet(BaseViewSet):
         ]:
             return Response({"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST)
 
+        # get the triage state
+        state_id = State.triage_objects.filter(project_id=project_id, workspace__slug=slug).first().id
+        request.data["issue"]["state_id"] = state_id
+
         # create an issue
         project = Project.objects.get(pk=project_id)
         serializer = IssueCreateSerializer(
@@ -236,6 +240,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 "project_id": project_id,
                 "workspace_id": project.workspace_id,
                 "default_assignee_id": project.default_assignee_id,
+                "allow_triage_state": True,
             },
         )
         if serializer.is_valid():
@@ -374,7 +379,7 @@ class IntakeIssueViewSet(BaseViewSet):
             current_instance = json.dumps(IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder)
 
             issue_serializer = IssueCreateSerializer(
-                issue, data=issue_data, partial=True, context={"project_id": project_id}
+                issue, data=issue_data, partial=True, context={"project_id": project_id, "allow_triage_state": True}
             )
 
             if issue_serializer.is_valid():
