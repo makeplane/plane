@@ -10,6 +10,13 @@ export const createIdsForView = (view: EditorView, options: UniqueIDOptions) => 
   const { state } = view;
   const { tr, doc } = state;
   const { types, attributeName, generateUniqueID } = options;
+
+  // size > 2 means more than just the default empty paragraph
+  const hasContent = doc.content.size > 2;
+  if (!hasContent) {
+    return;
+  }
+
   const nodesWithoutId = findChildren(
     doc,
     (node) => types.includes(node.type.name) && node.attrs[attributeName] === null

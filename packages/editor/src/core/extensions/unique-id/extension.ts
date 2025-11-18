@@ -122,11 +122,7 @@ export const UniqueID = Extension.create<UniqueIDOptions>({
       // If not synced, the listener will be registered in the plugin
       // and handled there with proper cleanup
     } else {
-      // size > 2 means more than just the default empty paragraph
-      const hasContent = this.editor.state.doc.content.size > 2;
-      if (hasContent) {
-        createIdsForView(this.editor.view, this.options);
-      }
+      createIdsForView(this.editor.view, this.options);
     }
   },
 
