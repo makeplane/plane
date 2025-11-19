@@ -62,7 +62,7 @@ class StickyViewSet(BaseViewSet):
     )
     def list(self, request, slug):
         query = request.query_params.get("query", False)
-        stickies = self.get_queryset().order_by("-sort_order")
+        stickies = self.get_queryset().order_by("-created_at")
         if query:
             stickies = stickies.filter(description_stripped__icontains=query)
 
