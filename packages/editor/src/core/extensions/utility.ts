@@ -72,7 +72,7 @@ export const UtilityExtension = (props: Props) => {
           fileHandler,
         }),
         ...codemark({ markType: this.editor.schema.marks.code }),
-        MarkdownClipboardPlugin(this.editor),
+        MarkdownClipboardPlugin(),
         DropHandlerPlugin({
           disabledExtensions,
           editor: this.editor,
