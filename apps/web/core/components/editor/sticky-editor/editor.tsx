@@ -53,7 +53,8 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
   const [isFocused, setIsFocused] = useState(showToolbarInitially);
   // editor flaggings
   const { liteText: liteTextEditorExtensions } = useEditorFlagging({
-    workspaceSlug: workspaceSlug?.toString() ?? "",
+    workspaceSlug,
+    projectId,
   });
   // editor config
   const { getEditorFileHandlers } = useEditorConfig();

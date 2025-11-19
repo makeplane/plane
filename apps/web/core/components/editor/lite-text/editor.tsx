@@ -76,7 +76,8 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   const [editorRef, setEditorRef] = useState<EditorRefApi | null>(null);
   // editor flaggings
   const { liteText: liteTextEditorExtensions } = useEditorFlagging({
-    workspaceSlug: workspaceSlug?.toString() ?? "",
+    workspaceSlug,
+    projectId,
   });
   // store hooks
   const { getUserDetails } = useMember();

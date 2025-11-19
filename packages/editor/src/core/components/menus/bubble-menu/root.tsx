@@ -26,7 +26,7 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
 import { isCellSelection } from "@/extensions/table/table/utilities/helpers";
 // types
-import type { TEditorCommands } from "@/types";
+import type { IEditorPropsExtended, TEditorCommands, TExtensions } from "@/types";
 // local imports
 import { TextAlignmentSelector } from "./alignment-selector";
 import { BubbleMenuLinkSelector } from "./link-selector";
@@ -61,7 +61,10 @@ export type EditorStateType = {
 };
 
 type Props = {
+  disabledExtensions: TExtensions[];
   editor: Editor;
+  extendedEditorProps: IEditorPropsExtended;
+  flaggedExtensions: TExtensions[];
 };
 
 export const EditorBubbleMenu: FC<Props> = (props) => {

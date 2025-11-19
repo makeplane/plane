@@ -91,6 +91,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
       displayConfig={displayConfig}
       editor={editor}
       editorContainerClassName={cn(editorContainerClassName, "document-editor")}
+      extendedEditorProps={extendedEditorProps}
       id={id}
       flaggedExtensions={flaggedExtensions}
       disabledExtensions={disabledExtensions}

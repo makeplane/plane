@@ -45,7 +45,8 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
   const { getUserDetails } = useMember();
   // editor flaggings
   const { richText: richTextEditorExtensions } = useEditorFlagging({
-    workspaceSlug: workspaceSlug?.toString() ?? "",
+    workspaceSlug,
+    projectId,
   });
   // use editor mention
   const { fetchMentions } = useEditorMention({

@@ -5,38 +5,46 @@ import { cn } from "@plane/utils";
 import { DocumentContentLoader, EditorContainer, EditorContentWrapper } from "@/components/editors";
 import { AIFeaturesMenu, BlockMenu, EditorBubbleMenu } from "@/components/menus";
 // types
-import type { ICollaborativeDocumentEditorPropsExtended, IEditorProps, TAIHandler, TDisplayConfig } from "@/types";
+import type {
+  ICollaborativeDocumentEditorPropsExtended,
+  IEditorProps,
+  IEditorPropsExtended,
+  TAIHandler,
+  TDisplayConfig,
+} from "@/types";
 
 type Props = {
   aiHandler?: TAIHandler;
   bubbleMenuEnabled: boolean;
+  disabledExtensions: IEditorProps["disabledExtensions"];
   displayConfig: TDisplayConfig;
   documentLoaderClassName?: string;
   editor: Editor;
   editorContainerClassName: string;
   extendedDocumentEditorProps?: ICollaborativeDocumentEditorPropsExtended;
+  extendedEditorProps: IEditorPropsExtended;
+  flaggedExtensions: IEditorProps["flaggedExtensions"];
   id: string;
   isLoading?: boolean;
   isTouchDevice: boolean;
   tabIndex?: number;
-  flaggedExtensions: IEditorProps["flaggedExtensions"];
-  disabledExtensions: IEditorProps["disabledExtensions"];
 };
 
 export const PageRenderer = (props: Props) => {
   const {
     aiHandler,
     bubbleMenuEnabled,
+    disabledExtensions,
     displayConfig,
     documentLoaderClassName,
     editor,
     editorContainerClassName,
+    extendedEditorProps,
+    flaggedExtensions,
     id,
     isLoading,
     isTouchDevice,
     tabIndex,
-    flaggedExtensions,
-    disabledExtensions,
   } = props;
 
   return (
@@ -58,7 +66,14 @@ export const PageRenderer = (props: Props) => {
           <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
           {editor.isEditable && !isTouchDevice && (
             <div>
-              {bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}
+              {bubbleMenuEnabled && (
+                <EditorBubbleMenu
+                  disabledExtensions={disabledExtensions}
+                  editor={editor}
+                  extendedEditorProps={extendedEditorProps}
+                  flaggedExtensions={flaggedExtensions}
+                />
+              )}
               <BlockMenu
                 editor={editor}
                 flaggedExtensions={flaggedExtensions}
