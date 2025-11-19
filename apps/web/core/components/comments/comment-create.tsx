@@ -26,7 +26,7 @@ type TCommentCreate = {
 // services
 const fileService = new FileService();
 
-export const CommentCreate: FC<TCommentCreate> = observer((props) => {
+export const CommentCreate = observer(function CommentCreate(props: TCommentCreate) {
   const {
     workspaceSlug,
     entityId,

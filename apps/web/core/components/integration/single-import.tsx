@@ -20,7 +20,7 @@ type Props = {
   handleDelete: () => void;
 };
 
-export const SingleImport: React.FC<Props> = observer(({ service, refreshing, handleDelete }) => {
+export const SingleImport = observer(function SingleImport({ service, refreshing, handleDelete }: Props) {
   const { t } = useTranslation();
 
   const importer = IMPORTERS_LIST.find((i) => i.provider === service.service);

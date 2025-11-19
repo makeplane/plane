@@ -32,7 +32,7 @@ interface Props {
   referenceElement: HTMLButtonElement | null;
 }
 
-export const ModuleOptions = observer((props: Props) => {
+export const ModuleOptions = observer(function ModuleOptions(props: Props) {
   const { getModuleById, isOpen, moduleIds, multiple, onDropdownOpen, placement, referenceElement } = props;
   // refs
   const inputRef = useRef<HTMLInputElement | null>(null);

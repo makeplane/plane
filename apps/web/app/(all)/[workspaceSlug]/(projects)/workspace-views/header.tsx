@@ -30,7 +30,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { GlobalViewLayoutSelection } from "@/plane-web/components/views/helper";
 
-export const GlobalIssuesHeader = observer(() => {
+export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
   // states
   const [createViewModal, setCreateViewModal] = useState(false);
   // router

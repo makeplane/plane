@@ -32,7 +32,7 @@ import { AuthUniqueCodeForm } from "./unique-code";
 
 const authService = new SitesAuthService();
 
-export const AuthRoot: React.FC = observer(() => {
+export const AuthRoot = observer(function AuthRoot() {
   // router params
   const searchParams = useSearchParams();
   const emailParam = searchParams.get("email") || undefined;

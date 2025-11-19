@@ -19,7 +19,7 @@ interface Props {
   isEpic?: boolean;
 }
 
-export const HeaderColumn = (props: Props) => {
+export function HeaderColumn(props: Props) {
   const { displayFilters, handleDisplayFilterUpdate, property, onClose, isEpic = false } = props;
   // i18n
   const { t } = useTranslation();
@@ -126,4 +126,4 @@ export const HeaderColumn = (props: Props) => {
         )}
     </CustomMenu>
   );
-};
+}

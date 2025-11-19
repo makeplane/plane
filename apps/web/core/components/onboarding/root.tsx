@@ -21,7 +21,7 @@ type Props = {
   invitations?: IWorkspaceMemberInvitation[];
 };
 
-export const OnboardingRoot: FC<Props> = observer(({ invitations = [] }) => {
+export const OnboardingRoot = observer(function OnboardingRoot({ invitations = [] }: Props) {
   const [currentStep, setCurrentStep] = useState<TOnboardingStep>(EOnboardingSteps.PROFILE_SETUP);
   // store hooks
   const { data: user } = useUser();

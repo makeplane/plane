@@ -41,7 +41,7 @@ const getImporterLogo = (provider: string) => {
 };
 
 // FIXME: [Deprecated] Remove this component
-const IntegrationGuide = observer(() => {
+const IntegrationGuide = observer(function IntegrationGuide() {
   // states
   const [refreshing, setRefreshing] = useState(false);
   const [deleteImportModal, setDeleteImportModal] = useState(false);

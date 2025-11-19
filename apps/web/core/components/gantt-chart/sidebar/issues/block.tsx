@@ -21,7 +21,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const IssuesSidebarBlock = observer((props: Props) => {
+export const IssuesSidebarBlock = observer(function IssuesSidebarBlock(props: Props) {
   const { block, enableSelection, isDragging, selectionHelpers, isEpic = false } = props;
   // store hooks
   const { updateActiveBlockId, isBlockActive, getNumberOfDaysFromPosition } = useTimeLineChartStore();

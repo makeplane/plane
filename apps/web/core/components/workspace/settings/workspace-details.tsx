@@ -36,7 +36,7 @@ const defaultValues: Partial<IWorkspace> = {
   logo_url: null,
 };
 
-export const WorkspaceDetails: FC = observer(() => {
+export const WorkspaceDetails = observer(function WorkspaceDetails() {
   // states
   const [isLoading, setIsLoading] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);

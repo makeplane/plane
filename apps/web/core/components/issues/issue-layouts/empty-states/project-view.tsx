@@ -9,7 +9,7 @@ import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUserPermissions } from "@/hooks/store/user";
 
-export const ProjectViewEmptyState: React.FC = observer(() => {
+export const ProjectViewEmptyState = observer(function ProjectViewEmptyState() {
   // store hooks
   const { toggleCreateIssueModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();

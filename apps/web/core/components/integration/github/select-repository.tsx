@@ -22,7 +22,7 @@ type Props = {
 
 const projectService = new ProjectService();
 
-export const SelectRepository: React.FC<Props> = (props) => {
+export function SelectRepository(props: Props) {
   const { integration, value, label, onChange, characterLimit = 25 } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -84,4 +84,4 @@ export const SelectRepository: React.FC<Props> = (props) => {
       optionsClassName="w-48"
     />
   );
-};
+}

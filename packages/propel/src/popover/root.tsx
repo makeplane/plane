@@ -13,7 +13,7 @@ export interface PopoverContentProps extends React.ComponentProps<typeof BasePop
 }
 
 // PopoverContent component
-const PopoverContent = React.memo<PopoverContentProps>(function PopoverContent({
+const PopoverContent = React.memo(function PopoverContent({
   children,
   className,
   placement,
@@ -45,19 +45,17 @@ const PopoverContent = React.memo<PopoverContentProps>(function PopoverContent({
 });
 
 // wrapper components
-const PopoverTrigger = React.memo<React.ComponentProps<typeof BasePopover.Trigger>>(function PopoverTrigger(props) {
+const PopoverTrigger = React.memo(function PopoverTrigger(props) {
   return <BasePopover.Trigger data-slot="popover-trigger" {...props} />;
 });
 
-const PopoverPortal = React.memo<React.ComponentProps<typeof BasePopover.Portal>>(function PopoverPortal(props) {
+const PopoverPortal = React.memo(function PopoverPortal(props) {
   return <BasePopover.Portal data-slot="popover-portal" {...props} />;
 });
 
-const PopoverPositioner = React.memo<React.ComponentProps<typeof BasePopover.Positioner>>(
-  function PopoverPositioner(props) {
-    return <BasePopover.Positioner data-slot="popover-positioner" {...props} />;
-  }
-);
+const PopoverPositioner = React.memo(function PopoverPositioner(props) {
+  return <BasePopover.Positioner data-slot="popover-positioner" {...props} />;
+});
 
 // compound components
 const Popover = Object.assign(

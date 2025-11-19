@@ -14,7 +14,7 @@ type TNotificationItemOptionButton = {
   children: ReactNode;
 };
 
-export const NotificationItemOptionButton: FC<TNotificationItemOptionButton> = (props) => {
+export function NotificationItemOptionButton(props: TNotificationItemOptionButton) {
   const { tooltipContent = "", buttonClassName = "", children, callBack } = props;
   // hooks
   const { isMobile } = usePlatformOS();
@@ -37,4 +37,4 @@ export const NotificationItemOptionButton: FC<TNotificationItemOptionButton> = (
       </button>
     </Tooltip>
   );
-};
+}

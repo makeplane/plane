@@ -13,7 +13,7 @@ type TIntercomConfig = {
   isTelemetryEnabled: boolean;
 };
 
-export const IntercomConfig: React.FC<TIntercomConfig> = observer((props) => {
+export const IntercomConfig = observer(function IntercomConfig(props: TIntercomConfig) {
   const { isTelemetryEnabled } = props;
   // hooks
   const { instanceConfigurations, updateInstanceConfigurations, fetchInstanceConfigurations } = useInstance();

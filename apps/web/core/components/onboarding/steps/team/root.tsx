@@ -81,7 +81,7 @@ const placeholderEmails = [
   "thomas.selfridge@frstflt.com",
   "albert.zahm@frstflt.com",
 ];
-const InviteMemberInput: React.FC<InviteMemberFormProps> = observer((props) => {
+const InviteMemberInput = observer(function InviteMemberInput(props: InviteMemberFormProps) {
   const {
     control,
     index,
@@ -262,7 +262,7 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = observer((props) => {
   );
 });
 
-export const InviteTeamStep: React.FC<Props> = observer((props) => {
+export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
   const { handleStepChange } = props;
 
   const [isInvitationDisabled, setIsInvitationDisabled] = useState(true);

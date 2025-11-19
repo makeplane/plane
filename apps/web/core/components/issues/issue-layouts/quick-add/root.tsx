@@ -51,7 +51,7 @@ const defaultValues: Partial<TIssue> = {
   name: "",
 };
 
-export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
+export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQuickAddIssueRoot) {
   const {
     isQuickAddOpen,
     layout,

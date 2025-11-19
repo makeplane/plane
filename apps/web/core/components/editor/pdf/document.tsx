@@ -45,7 +45,7 @@ type Props = {
   pageFormat: PageProps["size"];
 };
 
-export const PDFDocument: React.FC<Props> = (props) => {
+export function PDFDocument(props: Props) {
   const { content, pageFormat } = props;
 
   return (
@@ -61,4 +61,4 @@ export const PDFDocument: React.FC<Props> = (props) => {
       </Page>
     </Document>
   );
-};
+}

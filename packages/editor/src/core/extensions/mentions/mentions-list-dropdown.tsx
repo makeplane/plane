@@ -17,7 +17,7 @@ export type MentionsListDropdownProps = SuggestionProps<TMentionSection, TMentio
     onClose: () => void;
   };
 
-export const MentionsListDropdown = forwardRef((props: MentionsListDropdownProps, ref) => {
+export const MentionsListDropdown = forwardRef(function MentionsListDropdown(props: MentionsListDropdownProps, ref) {
   const { command, query, searchCallback, onClose } = props;
   // states
   const [sections, setSections] = useState<TMentionSection[]>([]);

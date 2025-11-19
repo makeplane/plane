@@ -20,7 +20,7 @@ interface IEmailNotificationFormProps {
 // services
 const userService = new UserService();
 
-export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) => {
+export function EmailNotificationForm(props: IEmailNotificationFormProps) {
   const { data } = props;
   const { t } = useTranslation();
   // form data
@@ -195,4 +195,4 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
       </div>
     </>
   );
-};
+}

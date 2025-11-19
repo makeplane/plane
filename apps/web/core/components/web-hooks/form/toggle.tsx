@@ -14,24 +14,26 @@ interface IWebHookToggle {
   control: Control<IWebhook, any>;
 }
 
-export const WebhookToggle = ({ control }: IWebHookToggle) => (
-  <div className="flex gap-6">
-    <div className="text-sm font-medium">Enable webhook</div>
-    <Controller
-      control={control}
-      name="is_active"
-      render={({ field: { onChange, value } }) => (
-        <ToggleSwitch
-          value={value}
-          onChange={(val: boolean) => {
-            captureClick({
-              elementName: WORKSPACE_SETTINGS_TRACKER_ELEMENTS.WEBHOOK_DETAILS_PAGE_TOGGLE_SWITCH,
-            });
-            onChange(val);
-          }}
-          size="sm"
-        />
-      )}
-    />
-  </div>
-);
+export function WebhookToggle({ control }: IWebHookToggle) {
+  return (
+    <div className="flex gap-6">
+      <div className="text-sm font-medium">Enable webhook</div>
+      <Controller
+        control={control}
+        name="is_active"
+        render={({ field: { onChange, value } }) => (
+          <ToggleSwitch
+            value={value}
+            onChange={(val: boolean) => {
+              captureClick({
+                elementName: WORKSPACE_SETTINGS_TRACKER_ELEMENTS.WEBHOOK_DETAILS_PAGE_TOGGLE_SWITCH,
+              });
+              onChange(val);
+            }}
+            size="sm"
+          />
+        )}
+      />
+    </div>
+  );
+}

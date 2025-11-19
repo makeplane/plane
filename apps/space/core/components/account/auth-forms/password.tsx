@@ -35,7 +35,7 @@ const defaultValues: TPasswordFormValues = {
 
 const authService = new AuthService();
 
-export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
+export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props) {
   const { email, nextPath, isSMTPConfigured, handleAuthStep, handleEmailClear, mode } = props;
   // ref
   const formRef = useRef<HTMLFormElement>(null);

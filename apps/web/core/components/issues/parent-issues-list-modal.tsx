@@ -37,7 +37,7 @@ type Props = {
 // services
 const projectService = new ProjectService();
 
-export const ParentIssuesListModal: React.FC<Props> = ({
+export function ParentIssuesListModal({
   isOpen,
   handleClose: onClose,
   value,
@@ -45,7 +45,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
   projectId,
   issueId,
   searchEpic = false,
-}) => {
+}: Props) {
   // i18n
   const { t } = useTranslation();
 
@@ -226,4 +226,4 @@ export const ParentIssuesListModal: React.FC<Props> = ({
       </Transition.Root>
     </>
   );
-};
+}

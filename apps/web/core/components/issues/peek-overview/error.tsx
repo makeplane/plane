@@ -14,7 +14,7 @@ type TIssuePeekOverviewError = {
   removeRoutePeekId: () => void;
 };
 
-export const IssuePeekOverviewError: FC<TIssuePeekOverviewError> = (props) => {
+export function IssuePeekOverviewError(props: TIssuePeekOverviewError) {
   const { removeRoutePeekId } = props;
   // hooks
   const { isMobile } = usePlatformOS();
@@ -38,4 +38,4 @@ export const IssuePeekOverviewError: FC<TIssuePeekOverviewError> = (props) => {
       </div>
     </div>
   );
-};
+}

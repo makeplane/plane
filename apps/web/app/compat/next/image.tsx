@@ -1,5 +1,4 @@
 "use client";
-
 import React from "react";
 
 // Minimal shim so code using next/image compiles under React Router + Vite
@@ -14,7 +13,7 @@ type NextImageProps = React.ImgHTMLAttributes<HTMLImageElement> & {
   blurDataURL?: string;
 };
 
-const Image: React.FC<NextImageProps> = ({
+function Image({
   src,
   alt = "",
   fill,
@@ -23,11 +22,11 @@ const Image: React.FC<NextImageProps> = ({
   placeholder: _placeholder,
   blurDataURL: _blurDataURL,
   ...rest
-}) => {
+}: NextImageProps) {
   // If fill is true, apply object-fit styles
   const style = fill ? { objectFit: "cover" as const, width: "100%", height: "100%" } : rest.style;
 
   return <img src={src} alt={alt} {...rest} style={style} />;
-};
+}
 
 export default Image;

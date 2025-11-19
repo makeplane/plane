@@ -18,7 +18,7 @@ type Props = {
 const MEMBERS_FILTERS = ["created_by"];
 const DATE_FILTERS = ["created_at"];
 
-export const PageAppliedFiltersList: React.FC<Props> = (props) => {
+export function PageAppliedFiltersList(props: Props) {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, alwaysAllowEditing } = props;
   const { t } = useTranslation();
 
@@ -76,4 +76,4 @@ export const PageAppliedFiltersList: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+}

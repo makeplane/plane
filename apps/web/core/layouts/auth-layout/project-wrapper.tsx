@@ -44,7 +44,7 @@ interface IProjectAuthWrapper {
   isLoading?: boolean;
 }
 
-export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
+export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IProjectAuthWrapper) {
   const { workspaceSlug, projectId, children, isLoading: isParentLoading = false } = props;
   // plane hooks
   const { t } = useTranslation();

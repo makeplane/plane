@@ -12,7 +12,7 @@ import { DropdownButton } from "./common";
 import { DropdownOptions } from "./common/options";
 import type { IMultiSelectDropdown } from "./dropdown";
 
-export const MultiSelectDropdown: FC<IMultiSelectDropdown> = (props) => {
+export function MultiSelectDropdown(props: IMultiSelectDropdown) {
   const {
     value,
     onChange,
@@ -165,4 +165,4 @@ export const MultiSelectDropdown: FC<IMultiSelectDropdown> = (props) => {
       )}
     </Combobox>
   );
-};
+}

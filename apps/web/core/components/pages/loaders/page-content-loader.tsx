@@ -8,7 +8,7 @@ type Props = {
   className?: string;
 };
 
-export const PageContentLoader = (props: Props) => {
+export function PageContentLoader(props: Props) {
   const { className } = props;
 
   return (
@@ -82,4 +82,4 @@ export const PageContentLoader = (props: Props) => {
       </div>
     </div>
   );
-};
+}

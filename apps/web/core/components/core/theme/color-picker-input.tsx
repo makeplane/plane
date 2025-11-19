@@ -33,7 +33,7 @@ type Props = {
   register: UseFormRegister<any>;
 };
 
-export const ColorPickerInput: FC<Props> = (props) => {
+export function ColorPickerInput(props: Props) {
   const { name, position = "left", watch, setValue, error, control } = props;
 
   const handleColorChange = (newColor: ColorResult) => {
@@ -128,4 +128,4 @@ export const ColorPickerInput: FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

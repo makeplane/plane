@@ -27,7 +27,7 @@ type Props = {
 // services
 const fileService = new FileService();
 
-export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
+export const WorkspaceImageUploadModal = observer(function WorkspaceImageUploadModal(props: Props) {
   const { handleRemove, isOpen, onClose, onSuccess, value } = props;
   // states
   const [image, setImage] = useState<File | null>(null);

@@ -60,7 +60,7 @@ const TONES_LIST = [
   },
 ];
 
-export const EditorAIMenu: React.FC<Props> = (props) => {
+export function EditorAIMenu(props: Props) {
   const { editorRef, isOpen, onClose, workspaceId, workspaceSlug } = props;
   // states
   const [activeTask, setActiveTask] = useState<AI_EDITOR_TASKS | null>(null);
@@ -302,4 +302,4 @@ export const EditorAIMenu: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+}

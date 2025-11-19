@@ -16,7 +16,7 @@ type Props = {
   token: IApiToken;
 };
 
-export const ApiTokenListItem: React.FC<Props> = (props) => {
+export function ApiTokenListItem(props: Props) {
   const { token } = props;
   // states
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -61,4 +61,4 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

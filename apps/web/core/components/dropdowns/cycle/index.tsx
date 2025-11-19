@@ -31,7 +31,7 @@ type Props = TDropdownProps & {
   currentCycleId?: string;
 };
 
-export const CycleDropdown: React.FC<Props> = observer((props) => {
+export const CycleDropdown = observer(function CycleDropdown(props: Props) {
   const {
     button,
     buttonClassName,

@@ -26,7 +26,7 @@ type Props = {
 };
 const workspaceService = new WorkspaceService();
 
-export const WorkspaceJoinInvitesStep: React.FC<Props> = (props) => {
+export function WorkspaceJoinInvitesStep(props: Props) {
   const { invitations, handleNextStep, handleCurrentViewChange } = props;
   // states
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
@@ -134,4 +134,4 @@ export const WorkspaceJoinInvitesStep: React.FC<Props> = (props) => {
   ) : (
     <div>No Invitations found</div>
   );
-};
+}

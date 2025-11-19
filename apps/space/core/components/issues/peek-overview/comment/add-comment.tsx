@@ -26,7 +26,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const AddComment: React.FC<Props> = observer((props) => {
+export const AddComment = observer(function AddComment(props: Props) {
   const { anchor } = props;
   // states
   const [uploadedAssetIds, setUploadAssetIds] = useState<string[]>([]);

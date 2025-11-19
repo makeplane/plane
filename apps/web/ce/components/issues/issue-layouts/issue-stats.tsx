@@ -11,4 +11,6 @@ type Props = {
   showLabel?: boolean;
 };
 
-export const IssueStats: FC<Props> = (props) => <></>;
+export function IssueStats(props: Props) {
+  return <></>;
+}

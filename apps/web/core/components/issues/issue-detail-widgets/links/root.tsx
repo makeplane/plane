@@ -19,7 +19,7 @@ type Props = {
   issueServiceType: TIssueServiceType;
 };
 
-export const LinksCollapsible: FC<Props> = observer((props) => {
+export const LinksCollapsible = observer(function LinksCollapsible(props: Props) {
   const { workspaceSlug, projectId, issueId, disabled = false, issueServiceType } = props;
   // store hooks
   const { openWidgets, toggleOpenWidget } = useIssueDetail(issueServiceType);

@@ -13,7 +13,7 @@ type Props = {
   editable: boolean | undefined;
 };
 
-export const AppliedPriorityFilters: React.FC<Props> = observer((props) => {
+export const AppliedPriorityFilters = observer(function AppliedPriorityFilters(props: Props) {
   const { handleRemove, values, editable } = props;
 
   return (

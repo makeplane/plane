@@ -5,7 +5,7 @@ import { useTranslation } from "@plane/i18n";
 import darkOutlineAsset from "@/app/assets/empty-state/wiki/navigation-pane/outline-dark.webp?url";
 import lightOutlineAsset from "@/app/assets/empty-state/wiki/navigation-pane/outline-light.webp?url";
 
-export const PageNavigationPaneOutlineTabEmptyState = () => {
+export function PageNavigationPaneOutlineTabEmptyState() {
   // theme hook
   const { resolvedTheme } = useTheme();
   // asset resolved path
@@ -30,4 +30,4 @@ export const PageNavigationPaneOutlineTabEmptyState = () => {
       </div>
     </div>
   );
-};
+}

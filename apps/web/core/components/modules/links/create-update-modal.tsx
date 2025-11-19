@@ -23,7 +23,7 @@ const defaultValues: ModuleLink = {
   url: "",
 };
 
-export const CreateUpdateModuleLinkModal: FC<Props> = (props) => {
+export function CreateUpdateModuleLinkModal(props: Props) {
   const { isOpen, handleClose, createLink, updateLink, data } = props;
   // form info
   const {
@@ -144,4 +144,4 @@ export const CreateUpdateModuleLinkModal: FC<Props> = (props) => {
       </form>
     </ModalCore>
   );
-};
+}

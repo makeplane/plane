@@ -23,7 +23,7 @@ type TCommentsWrapper = {
   showCopyLinkOption?: boolean;
 };
 
-export const CommentsWrapper: FC<TCommentsWrapper> = observer((props) => {
+export const CommentsWrapper = observer(function CommentsWrapper(props: TCommentsWrapper) {
   const {
     entityId,
     activityOperations,

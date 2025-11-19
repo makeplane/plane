@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -43,7 +42,7 @@ const defaultShowPassword = {
   confirmPassword: false,
 };
 
-const SecurityPage = () => {
+function SecurityPage() {
   // store
   const { data: currentUser, changePassword } = useUser();
   // states
@@ -254,6 +253,6 @@ const SecurityPage = () => {
       </ProfileSettingContentWrapper>
     </>
   );
-};
+}
 
 export default observer(SecurityPage);

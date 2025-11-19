@@ -19,7 +19,7 @@ type Props = {
   states: IState[] | undefined;
 };
 
-export const FilterState: React.FC<Props> = observer((props) => {
+export const FilterState = observer(function FilterState(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery, states } = props;
 
   const [itemsToRender, setItemsToRender] = useState(5);

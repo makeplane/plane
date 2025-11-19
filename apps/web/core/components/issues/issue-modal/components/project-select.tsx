@@ -21,7 +21,7 @@ type TIssueProjectSelectProps = {
   handleFormChange: () => void;
 };
 
-export const IssueProjectSelect: React.FC<TIssueProjectSelectProps> = observer((props) => {
+export const IssueProjectSelect = observer(function IssueProjectSelect(props: TIssueProjectSelectProps) {
   const { control, disabled = false, handleFormChange } = props;
   // store hooks
   const { isMobile } = usePlatformOS();

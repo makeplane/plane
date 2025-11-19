@@ -13,7 +13,7 @@ const sizeClasses = {
   lg: "text-base",
 };
 
-export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({ count, className, size = "md" }) => {
+export function AnimatedCounter({ count, className, size = "md" }: AnimatedCounterProps) {
   // states
   const [displayCount, setDisplayCount] = useState(count);
   const [prevCount, setPrevCount] = useState(count);
@@ -92,4 +92,4 @@ export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({ count, classNa
       </span>
     </div>
   );
-};
+}

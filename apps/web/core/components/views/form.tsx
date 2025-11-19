@@ -48,7 +48,7 @@ const DEFAULT_VALUES: Partial<IProjectView> = {
   display_filters: { ...getComputedDisplayFilters(), group_by: "state" },
 };
 
-export const ProjectViewForm: React.FC<Props> = observer((props) => {
+export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
   const { handleFormSubmit, handleClose, data, preLoadedData, projectId, workspaceSlug } = props;
   // i18n
   const { t } = useTranslation();

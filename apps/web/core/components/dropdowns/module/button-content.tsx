@@ -22,7 +22,7 @@ type ModuleButtonContentProps = {
   className?: string;
 };
 
-export const ModuleButtonContent: React.FC<ModuleButtonContentProps> = (props) => {
+export function ModuleButtonContent(props: ModuleButtonContentProps) {
   const {
     disabled,
     dropdownArrow,
@@ -126,4 +126,4 @@ export const ModuleButtonContent: React.FC<ModuleButtonContentProps> = (props) =
         )}
       </>
     );
-};
+}

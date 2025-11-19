@@ -33,7 +33,7 @@ type TProfileSidebar = {
   className?: string;
 };
 
-export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
+export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSidebar) {
   const { userProjectsData, className = "" } = props;
   // refs
   const ref = useRef<HTMLDivElement>(null);

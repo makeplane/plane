@@ -11,7 +11,7 @@ import { AdminSidebarDropdown } from "./sidebar-dropdown";
 import { AdminSidebarHelpSection } from "./sidebar-help-section";
 import { AdminSidebarMenu } from "./sidebar-menu";
 
-export const AdminSidebar = observer(() => {
+export const AdminSidebar = observer(function AdminSidebar() {
   // store
   const { isSidebarCollapsed, toggleSidebar } = useTheme();
 

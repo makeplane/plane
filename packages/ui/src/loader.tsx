@@ -7,11 +7,13 @@ type Props = {
   className?: string;
 };
 
-const Loader = ({ children, className = "" }: Props) => (
-  <div className={cn("animate-pulse", className)} role="status">
-    {children}
-  </div>
-);
+function Loader({ children, className = "" }: Props) {
+  return (
+    <div className={cn("animate-pulse", className)} role="status">
+      {children}
+    </div>
+  );
+}
 
 type ItemProps = {
   height?: string;
@@ -19,9 +21,11 @@ type ItemProps = {
   className?: string;
 };
 
-const Item: React.FC<ItemProps> = ({ height = "auto", width = "auto", className = "" }) => (
-  <div className={cn("rounded-md bg-custom-background-80", className)} style={{ height: height, width: width }} />
-);
+function Item({ height = "auto", width = "auto", className = "" }: ItemProps) {
+  return (
+    <div className={cn("rounded-md bg-custom-background-80", className)} style={{ height: height, width: width }} />
+  );
+}
 
 Loader.Item = Item;
 

@@ -23,7 +23,7 @@ interface Props {
   isEpic?: boolean;
 }
 
-export const SpreadsheetHeader = observer((props: Props) => {
+export const SpreadsheetHeader = observer(function SpreadsheetHeader(props: Props) {
   const {
     displayProperties,
     displayFilters,

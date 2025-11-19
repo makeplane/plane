@@ -9,7 +9,7 @@ type Props = {
   icon?: React.ReactNode | undefined;
 };
 
-export const BreadcrumbLink: React.FC<Props> = (props) => {
+export function BreadcrumbLink(props: Props) {
   const { href, label, icon } = props;
   return (
     <Tooltip tooltipContent={label} position="bottom">
@@ -35,4 +35,4 @@ export const BreadcrumbLink: React.FC<Props> = (props) => {
       </li>
     </Tooltip>
   );
-};
+}

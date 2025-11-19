@@ -50,7 +50,7 @@ const COMMENT_ACCESS_SPECIFIERS: TCommentAccessType[] = [
 
 const toolbarItems = TOOLBAR_ITEMS.lite;
 
-export const IssueCommentToolbar: React.FC<Props> = (props) => {
+export function IssueCommentToolbar(props: Props) {
   const { t } = useTranslation();
   const {
     accessSpecifier,
@@ -184,4 +184,4 @@ export const IssueCommentToolbar: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

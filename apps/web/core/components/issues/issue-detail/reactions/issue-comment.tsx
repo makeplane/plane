@@ -24,7 +24,7 @@ export type TIssueCommentReaction = {
   disabled?: boolean;
 };
 
-export const IssueCommentReaction: FC<TIssueCommentReaction> = observer((props) => {
+export const IssueCommentReaction = observer(function IssueCommentReaction(props: TIssueCommentReaction) {
   const { workspaceSlug, projectId, commentId, currentUser, disabled = false } = props;
   // state
   const [isPickerOpen, setIsPickerOpen] = useState(false);

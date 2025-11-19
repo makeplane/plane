@@ -6,7 +6,7 @@ type Props = {
   classNames?: string;
 };
 
-export const DropIndicator = (props: Props) => {
+export function DropIndicator(props: Props) {
   const { isVisible, classNames = "" } = props;
 
   return (
@@ -22,4 +22,4 @@ export const DropIndicator = (props: Props) => {
       )}
     />
   );
-};
+}

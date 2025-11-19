@@ -6,7 +6,7 @@ type Props = {
   isSignUp?: boolean;
 };
 
-export const TermsAndConditions: React.FC<Props> = (props) => {
+export function TermsAndConditions(props: Props) {
   const { isSignUp = false } = props;
   return (
     <span className="flex items-center justify-center py-6">
@@ -23,4 +23,4 @@ export const TermsAndConditions: React.FC<Props> = (props) => {
       </p>
     </span>
   );
-};
+}

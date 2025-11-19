@@ -27,7 +27,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const DeleteIssueModal: React.FC<Props> = observer((props) => {
+export const DeleteIssueModal = observer(function DeleteIssueModal(props: Props) {
   const { dataId, data, isOpen, handleClose, isSubIssue = false, onSubmit, isEpic = false } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);

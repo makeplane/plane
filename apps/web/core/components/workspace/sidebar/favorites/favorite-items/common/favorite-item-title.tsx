@@ -13,7 +13,7 @@ type Props = {
   icon: React.ReactNode;
 };
 
-export const FavoriteItemTitle: FC<Props> = observer((props) => {
+export const FavoriteItemTitle = observer(function FavoriteItemTitle(props: Props) {
   const { href, title, icon } = props;
   // store hooks
   const { toggleSidebar } = useAppTheme();

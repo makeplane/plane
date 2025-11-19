@@ -10,7 +10,7 @@ import { Tag } from "@plane/ui";
 // hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 
-export const InboxIssueAppliedFiltersPriority: FC = observer(() => {
+export const InboxIssueAppliedFiltersPriority = observer(function InboxIssueAppliedFiltersPriority() {
   // hooks
   const { t } = useTranslation();
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();

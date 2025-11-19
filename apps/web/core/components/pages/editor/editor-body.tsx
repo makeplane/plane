@@ -64,7 +64,7 @@ type Props = {
   extendedEditorProps: TExtendedEditorExtensionsConfig;
 };
 
-export const PageEditorBody: React.FC<Props> = observer((props) => {
+export const PageEditorBody = observer(function PageEditorBody(props: Props) {
   const {
     config,
     editorForwardRef,

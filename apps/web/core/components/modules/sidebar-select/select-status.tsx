@@ -21,7 +21,7 @@ type Props = {
   watch: UseFormWatch<Partial<IModule>>;
 };
 
-export const SidebarStatusSelect: React.FC<Props> = ({ control, submitChanges, watch }) => {
+export function SidebarStatusSelect({ control, submitChanges, watch }: Props) {
   const { t } = useTranslation();
   return (
     <div className="flex flex-wrap items-center py-2">
@@ -65,4 +65,4 @@ export const SidebarStatusSelect: React.FC<Props> = ({ control, submitChanges, w
       </div>
     </div>
   );
-};
+}

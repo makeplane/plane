@@ -43,7 +43,7 @@ const defaultValues: Partial<ICycle> = {
 
 const cycleService = new CycleService();
 
-export const CycleSidebarHeader: FC<Props> = observer((props) => {
+export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Props) {
   const { workspaceSlug, projectId, cycleDetails, handleClose, isArchived = false } = props;
   // hooks
   const { allowPermissions } = useUserPermissions();

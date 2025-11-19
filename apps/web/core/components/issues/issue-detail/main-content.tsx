@@ -44,7 +44,7 @@ type Props = {
   isArchived: boolean;
 };
 
-export const IssueMainContent: React.FC<Props> = observer((props) => {
+export const IssueMainContent = observer(function IssueMainContent(props: Props) {
   const { workspaceSlug, projectId, issueId, issueOperations, isEditable, isArchived } = props;
   // refs
   const editorRef = useRef<EditorRefApi>(null);

@@ -27,7 +27,7 @@ type Props = {
 
 type GiteaConfigFormValues = Record<TInstanceGiteaAuthenticationConfigurationKeys, string>;
 
-export const InstanceGiteaConfigForm: FC<Props> = (props) => {
+export function InstanceGiteaConfigForm(props: Props) {
   const { config } = props;
   // states
   const [isDiscardChangesModalOpen, setIsDiscardChangesModalOpen] = useState(false);
@@ -207,4 +207,4 @@ export const InstanceGiteaConfigForm: FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

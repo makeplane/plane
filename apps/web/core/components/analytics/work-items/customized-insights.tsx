@@ -11,7 +11,13 @@ import AnalyticsSectionWrapper from "../analytics-section-wrapper";
 import { AnalyticsSelectParams } from "../select/analytics-params";
 import PriorityChart from "./priority-chart";
 
-const CustomizedInsights = observer(({ peekView, isEpic }: { peekView?: boolean; isEpic?: boolean }) => {
+const CustomizedInsights = observer(function CustomizedInsights({
+  peekView,
+  isEpic,
+}: {
+  peekView?: boolean;
+  isEpic?: boolean;
+}) {
   const { t } = useTranslation();
   const { workspaceSlug } = useParams();
   const { control, watch, setValue } = useForm<IAnalyticsParams>({

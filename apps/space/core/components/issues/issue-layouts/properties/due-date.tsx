@@ -17,7 +17,7 @@ type Props = {
   shouldShowBorder?: boolean;
 };
 
-export const IssueBlockDate = observer((props: Props) => {
+export const IssueBlockDate = observer(function IssueBlockDate(props: Props) {
   const { due_date, stateId, shouldHighLight = true, shouldShowBorder = true } = props;
   const { getStateById } = useStates();
 

@@ -37,7 +37,7 @@ export interface ILeaveProjectModal {
   onClose: () => void;
 }
 
-export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
+export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILeaveProjectModal) {
   const { project, isOpen, onClose } = props;
   // router
   const router = useAppRouter();

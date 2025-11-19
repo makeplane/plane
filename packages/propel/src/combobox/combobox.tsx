@@ -90,13 +90,16 @@ function ComboboxRoot({
 }
 
 // Trigger button component
-const ComboboxButton = React.forwardRef<HTMLButtonElement, ComboboxButtonProps>(
-  ({ className, children, disabled = false }, ref) => (
+const ComboboxButton = React.forwardRef(function ComboboxButton(
+  { className, children, disabled = false }: ComboboxButtonProps,
+  ref: React.ForwardedRef<HTMLButtonElement>
+) {
+  return (
     <BaseCombobox.Trigger ref={ref} disabled={disabled} className={className}>
       {children}
     </BaseCombobox.Trigger>
-  )
-);
+  );
+});
 
 // Options popup component
 function ComboboxOptions({

@@ -27,7 +27,7 @@ export interface SidebarUserMenuItemProps {
   draftIssueCount: number;
 }
 
-export const SidebarUserMenuItem: FC<SidebarUserMenuItemProps> = observer((props) => {
+export const SidebarUserMenuItem = observer(function SidebarUserMenuItem(props: SidebarUserMenuItemProps) {
   const { item, draftIssueCount } = props;
   // nextjs hooks
   const { workspaceSlug } = useParams();

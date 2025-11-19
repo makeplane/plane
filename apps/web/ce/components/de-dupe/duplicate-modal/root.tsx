@@ -10,7 +10,7 @@ type TDuplicateModalRootProps = {
   handleDuplicateIssueModal: (value: boolean) => void;
 };
 
-export const DuplicateModalRoot: FC<TDuplicateModalRootProps> = (props) => {
+export function DuplicateModalRoot(props: TDuplicateModalRootProps) {
   const { workspaceSlug, issues, handleDuplicateIssueModal } = props;
   return <></>;
-};
+}

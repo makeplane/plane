@@ -19,7 +19,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 
-export const WorkspaceDraftHeader = observer(() => {
+export const WorkspaceDraftHeader = observer(function WorkspaceDraftHeader() {
   // state
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
   // store hooks

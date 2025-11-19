@@ -18,7 +18,7 @@ type Props = {
   isExpanded?: boolean;
 };
 
-export const CycleListProjectGroupHeader: FC<Props> = observer((props) => {
+export const CycleListProjectGroupHeader = observer(function CycleListProjectGroupHeader(props: Props) {
   const { projectId, count, showCount = false, isExpanded = false } = props;
   // store hooks
   const { getProjectById } = useProject();

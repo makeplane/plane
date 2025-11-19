@@ -12,7 +12,7 @@ interface IToggleSwitchProps {
   className?: string;
 }
 
-const ToggleSwitch: React.FC<IToggleSwitchProps> = (props) => {
+function ToggleSwitch(props: IToggleSwitchProps) {
   const { value, onChange, label, size = "sm", disabled, className } = props;
 
   return (
@@ -49,7 +49,7 @@ const ToggleSwitch: React.FC<IToggleSwitchProps> = (props) => {
       />
     </Switch>
   );
-};
+}
 
 ToggleSwitch.displayName = "plane-ui-toggle-switch";
 

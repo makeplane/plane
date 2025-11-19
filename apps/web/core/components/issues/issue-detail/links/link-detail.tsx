@@ -22,7 +22,7 @@ export type TIssueLinkDetail = {
   isNotAllowed: boolean;
 };
 
-export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
+export function IssueLinkDetail(props: TIssueLinkDetail) {
   // props
   const { linkId, linkOperations, isNotAllowed } = props;
   // hooks
@@ -123,4 +123,4 @@ export const IssueLinkDetail: FC<TIssueLinkDetail> = (props) => {
       </div>
     </div>
   );
-};
+}

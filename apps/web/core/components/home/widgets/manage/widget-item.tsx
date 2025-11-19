@@ -35,7 +35,7 @@ type Props = {
   handleToggle: (workspaceSlug: string, widgetKey: string, is_enabled: boolean) => void;
 };
 
-export const WidgetItem: FC<Props> = observer((props) => {
+export const WidgetItem = observer(function WidgetItem(props: Props) {
   // props
   const { widgetId, isLastChild, handleDrop, handleToggle } = props;
   const { workspaceSlug } = useParams();

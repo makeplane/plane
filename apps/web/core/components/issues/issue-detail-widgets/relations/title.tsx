@@ -20,7 +20,7 @@ type Props = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const RelationsCollapsibleTitle: FC<Props> = observer((props) => {
+export const RelationsCollapsibleTitle = observer(function RelationsCollapsibleTitle(props: Props) {
   const { isOpen, issueId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
   const { t } = useTranslation();
   // store hook

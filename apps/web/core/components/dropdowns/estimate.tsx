@@ -40,7 +40,7 @@ type DropdownOptions =
     }[]
   | undefined;
 
-export const EstimateDropdown: React.FC<Props> = observer((props) => {
+export const EstimateDropdown = observer(function EstimateDropdown(props: Props) {
   const {
     button,
     buttonClassName,

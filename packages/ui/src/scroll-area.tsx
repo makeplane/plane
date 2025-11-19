@@ -24,7 +24,7 @@ const thumbSizeStyles = {
   lg: "before:absolute before:left-1/2 before:top-1/2 before:size-full before:min-h-17 before:min-w-17 before:-translate-x-1/2 before:-translate-y-1/2",
 };
 
-export const ScrollArea: FC<TScrollAreaProps> = (props) => {
+export function ScrollArea(props: TScrollAreaProps) {
   const { type = "always", className = "", scrollHideDelay = 600, size = "md", children } = props;
 
   return (
@@ -64,4 +64,4 @@ export const ScrollArea: FC<TScrollAreaProps> = (props) => {
       </RadixScrollArea.Scrollbar>
     </RadixScrollArea.Root>
   );
-};
+}

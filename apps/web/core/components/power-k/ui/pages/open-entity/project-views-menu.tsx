@@ -15,7 +15,7 @@ type Props = {
   handleSelect: (view: IProjectView) => void;
 };
 
-export const PowerKOpenProjectViewsMenu: React.FC<Props> = observer((props) => {
+export const PowerKOpenProjectViewsMenu = observer(function PowerKOpenProjectViewsMenu(props: Props) {
   const { context, handleSelect } = props;
   // store hooks
   const { fetchedMap, getProjectViews } = useProjectView();

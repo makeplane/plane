@@ -9,7 +9,7 @@ type Props = {
   openDeleteModal: () => void;
 };
 
-export const WebhookDeleteSection: React.FC<Props> = (props) => {
+export function WebhookDeleteSection(props: Props) {
   const { openDeleteModal } = props;
 
   return (
@@ -52,4 +52,4 @@ export const WebhookDeleteSection: React.FC<Props> = (props) => {
       )}
     </Disclosure>
   );
-};
+}

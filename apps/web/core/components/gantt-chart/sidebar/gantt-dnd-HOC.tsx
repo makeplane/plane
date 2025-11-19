@@ -18,7 +18,7 @@ type Props = {
   onDrop: (draggingBlockId: string | undefined, droppedBlockId: string | undefined, dropAtEndOfList: boolean) => void;
 };
 
-export const GanttDnDHOC = observer((props: Props) => {
+export const GanttDnDHOC = observer(function GanttDnDHOC(props: Props) {
   const { id, isLastChild, children, onDrop, isDragEnabled } = props;
   // states
   const [isDragging, setIsDragging] = useState(false);

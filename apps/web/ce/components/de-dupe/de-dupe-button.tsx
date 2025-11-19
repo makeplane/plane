@@ -10,7 +10,7 @@ type TDeDupeButtonRoot = {
   label: string;
 };
 
-export const DeDupeButtonRoot: FC<TDeDupeButtonRoot> = (props) => {
+export function DeDupeButtonRoot(props: TDeDupeButtonRoot) {
   const { workspaceSlug, isDuplicateModalOpen, label, handleOnClick } = props;
   return <></>;
-};
+}

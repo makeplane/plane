@@ -24,7 +24,7 @@ interface ICycleDelete {
   projectId: string;
 }
 
-export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
+export const CycleDeleteModal = observer(function CycleDeleteModal(props: ICycleDelete) {
   const { isOpen, handleClose, cycle, workspaceSlug, projectId } = props;
   // states
   const [loader, setLoader] = useState(false);

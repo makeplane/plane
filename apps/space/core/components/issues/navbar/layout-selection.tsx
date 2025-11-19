@@ -19,7 +19,7 @@ type Props = {
   anchor: string;
 };
 
-export const IssuesLayoutSelection: React.FC<Props> = observer((props) => {
+export const IssuesLayoutSelection = observer(function IssuesLayoutSelection(props: Props) {
   const { anchor } = props;
   // hooks
   const { t } = useTranslation();

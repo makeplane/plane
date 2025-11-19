@@ -21,7 +21,7 @@ type Props = {
 
 const DISABLED_ORDERING_OPTIONS = ["sort_order"];
 
-export const ProjectOrderByDropdown: React.FC<Props> = (props) => {
+export function ProjectOrderByDropdown(props: Props) {
   const { onChange, value, isMobile = false } = props;
   const { t } = useTranslation();
 
@@ -90,4 +90,4 @@ export const ProjectOrderByDropdown: React.FC<Props> = (props) => {
       </CustomMenu.MenuItem>
     </CustomMenu>
   );
-};
+}

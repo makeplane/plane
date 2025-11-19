@@ -30,7 +30,7 @@ type Props = {
 
 const initialValues: Partial<IProject> = { archive_in: 1 };
 
-export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
+export const AutoArchiveAutomation = observer(function AutoArchiveAutomation(props: Props) {
   const { handleChange } = props;
   // router
   const { workspaceSlug } = useParams();

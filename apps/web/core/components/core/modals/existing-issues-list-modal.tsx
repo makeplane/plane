@@ -40,7 +40,7 @@ type Props = {
 
 const projectService = new ProjectService();
 
-export const ExistingIssuesListModal: React.FC<Props> = (props) => {
+export function ExistingIssuesListModal(props: Props) {
   const { t } = useTranslation();
 
   const {
@@ -361,4 +361,4 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
       </Transition.Root>
     </>
   );
-};
+}

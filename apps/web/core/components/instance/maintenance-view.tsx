@@ -10,7 +10,7 @@ import DefaultLayout from "@/layouts/default-layout";
 // components
 import { MaintenanceMessage } from "@/plane-web/components/instance";
 
-export const MaintenanceView: FC = () => {
+export function MaintenanceView() {
   // hooks
   const { resolvedTheme } = useTheme();
   // derived values
@@ -33,4 +33,4 @@ export const MaintenanceView: FC = () => {
       </div>
     </DefaultLayout>
   );
-};
+}

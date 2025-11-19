@@ -34,7 +34,7 @@ type TIssueActivityItem = {
   ends: "top" | "bottom" | undefined;
 };
 
-export const IssueActivityItem: FC<TIssueActivityItem> = observer((props) => {
+export const IssueActivityItem = observer(function IssueActivityItem(props: TIssueActivityItem) {
   const { activityId, ends } = props;
   // hooks
   const {

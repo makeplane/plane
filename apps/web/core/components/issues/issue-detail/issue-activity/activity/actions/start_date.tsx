@@ -10,7 +10,7 @@ import { IssueActivityBlockComponent, IssueLink } from "./";
 
 type TIssueStartDateActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
-export const IssueStartDateActivity: FC<TIssueStartDateActivity> = observer((props) => {
+export const IssueStartDateActivity = observer(function IssueStartDateActivity(props: TIssueStartDateActivity) {
   const { activityId, showIssue = true, ends } = props;
   // hooks
   const {

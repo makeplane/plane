@@ -14,14 +14,14 @@ import type { PortalWrapperProps } from "./types";
  * @param onMount - Callback fired when portal is mounted
  * @param onUnmount - Callback fired when portal is unmounted
  */
-export const PortalWrapper: React.FC<PortalWrapperProps> = ({
+export function PortalWrapper({
   children,
   portalId = DEFAULT_PORTAL_ID,
   fallbackToDocument = true,
   className,
   onMount,
   onUnmount,
-}) => {
+}: PortalWrapperProps) {
   const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(null);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -73,4 +73,4 @@ export const PortalWrapper: React.FC<PortalWrapperProps> = ({
   }
 
   return null;
-};
+}

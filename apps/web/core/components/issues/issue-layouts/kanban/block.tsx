@@ -62,7 +62,7 @@ interface IssueDetailsBlockProps {
   isEpic?: boolean;
 }
 
-const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((props) => {
+const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props: IssueDetailsBlockProps) {
   const { cardRef, issue, updateIssue, quickActions, isReadOnly, displayProperties, isEpic = false } = props;
   // refs
   const menuActionRef = useRef<HTMLDivElement | null>(null);
@@ -148,7 +148,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
   );
 });
 
-export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
+export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueBlockProps) {
   const {
     issueId,
     groupId,

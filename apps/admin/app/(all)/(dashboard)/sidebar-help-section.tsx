@@ -34,7 +34,7 @@ const helpOptions = [
   },
 ];
 
-export const AdminSidebarHelpSection: React.FC = observer(() => {
+export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection() {
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   // store

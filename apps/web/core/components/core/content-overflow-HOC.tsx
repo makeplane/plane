@@ -14,7 +14,7 @@ interface IContentOverflowWrapper {
   customButton?: ReactNode;
 }
 
-export const ContentOverflowWrapper = observer((props: IContentOverflowWrapper) => {
+export const ContentOverflowWrapper = observer(function ContentOverflowWrapper(props: IContentOverflowWrapper) {
   const {
     children,
     maxHeight = 625,

@@ -18,7 +18,7 @@ type TInboxIssueTitle = {
   isTitleLengthMoreThan255Character?: boolean;
 };
 
-export const InboxIssueTitle: FC<TInboxIssueTitle> = observer((props) => {
+export const InboxIssueTitle = observer(function InboxIssueTitle(props: TInboxIssueTitle) {
   const { data, handleData, isTitleLengthMoreThan255Character } = props;
   // hooks
   const { isMobile } = usePlatformOS();

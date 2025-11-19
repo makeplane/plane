@@ -18,7 +18,7 @@ type TStateUpdate = {
   handleClose: () => void;
 };
 
-export const StateUpdate: FC<TStateUpdate> = observer((props) => {
+export const StateUpdate = observer(function StateUpdate(props: TStateUpdate) {
   const { state, updateStateCallback, shouldTrackEvents, handleClose } = props;
   // states
   const [loader, setLoader] = useState(false);

@@ -35,7 +35,7 @@ const handleBackgroundColorChange = (editor: Editor, color: string | null) => {
 //     .run();
 // };
 
-export const TableDragHandleDropdownColorSelector: React.FC<Props> = (props) => {
+export function TableDragHandleDropdownColorSelector(props: Props) {
   const { editor, onSelect } = props;
 
   return (
@@ -115,4 +115,4 @@ export const TableDragHandleDropdownColorSelector: React.FC<Props> = (props) => 
       </Disclosure.Panel>
     </Disclosure>
   );
-};
+}

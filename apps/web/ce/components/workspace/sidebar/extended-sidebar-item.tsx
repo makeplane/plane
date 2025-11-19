@@ -37,7 +37,7 @@ type TExtendedSidebarItemProps = {
   isLastChild: boolean;
 };
 
-export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((props) => {
+export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: TExtendedSidebarItemProps) {
   const { item, handleOnNavigationItemDrop, disableDrag = false, disableDrop = false, isLastChild } = props;
   const { t } = useTranslation();
   // states

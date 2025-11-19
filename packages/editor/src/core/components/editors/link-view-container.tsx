@@ -13,7 +13,7 @@ type Props = {
   containerRef: React.RefObject<HTMLDivElement>;
 };
 
-export const LinkViewContainer: FC<Props> = ({ editor, containerRef }) => {
+export function LinkViewContainer({ editor, containerRef }: Props) {
   const [linkViewProps, setLinkViewProps] = useState<LinkViewProps>();
   const [isOpen, setIsOpen] = useState(false);
   const [virtualElement, setVirtualElement] = useState<Element | null>(null);
@@ -201,4 +201,4 @@ export const LinkViewContainer: FC<Props> = ({ editor, containerRef }) => {
       )}
     </>
   );
-};
+}

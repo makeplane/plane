@@ -20,7 +20,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterMentions: React.FC<Props> = observer((props: Props) => {
+export const FilterMentions = observer(function FilterMentions(props: Props) {
   const { appliedFilters, handleUpdate, memberIds, searchQuery } = props;
   // states
   const [itemsToRender, setItemsToRender] = useState(5);

@@ -25,7 +25,7 @@ type Props = {
   issueServiceType: TIssueServiceType;
 };
 
-export const IssueAttachmentActionButton: FC<Props> = observer((props) => {
+export const IssueAttachmentActionButton = observer(function IssueAttachmentActionButton(props: Props) {
   const { workspaceSlug, projectId, issueId, customButton, disabled = false, issueServiceType } = props;
   // state
   const [isLoading, setIsLoading] = useState(false);

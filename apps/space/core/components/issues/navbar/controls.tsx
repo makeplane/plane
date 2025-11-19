@@ -24,7 +24,7 @@ export type NavbarControlsProps = {
   publishSettings: PublishStore;
 };
 
-export const NavbarControls: React.FC<NavbarControlsProps> = observer((props) => {
+export const NavbarControls = observer(function NavbarControls(props: NavbarControlsProps) {
   // props
   const { publishSettings } = props;
   // router

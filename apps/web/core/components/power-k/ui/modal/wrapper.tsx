@@ -20,7 +20,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const ProjectsAppPowerKModalWrapper = observer((props: Props) => {
+export const ProjectsAppPowerKModalWrapper = observer(function ProjectsAppPowerKModalWrapper(props: Props) {
   const { commandsListComponent: CommandsListComponent, context, hideFooter = false, isOpen, onClose } = props;
   // states
   const [searchTerm, setSearchTerm] = useState("");

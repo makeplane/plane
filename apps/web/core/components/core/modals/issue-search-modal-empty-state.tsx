@@ -18,12 +18,7 @@ interface EmptyStateProps {
   isSearching: boolean;
 }
 
-export const IssueSearchModalEmptyState: React.FC<EmptyStateProps> = ({
-  issues,
-  searchTerm,
-  debouncedSearchTerm,
-  isSearching,
-}) => {
+export function IssueSearchModalEmptyState({ issues, searchTerm, debouncedSearchTerm, isSearching }: EmptyStateProps) {
   // theme hook
   const { resolvedTheme } = useTheme();
   // plane hooks
@@ -32,9 +27,9 @@ export const IssueSearchModalEmptyState: React.FC<EmptyStateProps> = ({
   const searchResolvedPath = resolvedTheme === "light" ? lightSearchAsset : darkSearchAsset;
   const issuesResolvedPath = resolvedTheme === "light" ? lightIssuesAsset : darkIssuesAsset;
 
-  const EmptyStateContainer = ({ children }: { children: React.ReactNode }) => (
-    <div className="flex flex-col items-center justify-center px-3 py-8 text-center">{children}</div>
-  );
+  function EmptyStateContainer({ children }: { children: React.ReactNode }) {
+    return <div className="flex flex-col items-center justify-center px-3 py-8 text-center">{children}</div>;
+  }
 
   if (issues.length === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && !isSearching) {
     return (
@@ -50,4 +45,4 @@ export const IssueSearchModalEmptyState: React.FC<EmptyStateProps> = ({
     );
   }
   return null;
-};
+}

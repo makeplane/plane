@@ -19,7 +19,7 @@ type Props = {
   isEditable: boolean;
 };
 
-export const CustomImageExtension = (props: Props) => {
+export function CustomImageExtension(props: Props) {
   const { fileHandler, isEditable } = props;
   // derived values
   const { getAssetSrc, getAssetDownloadSrc, restore: restoreImageFn } = fileHandler;
@@ -123,4 +123,4 @@ export const CustomImageExtension = (props: Props) => {
       ));
     },
   });
-};
+}

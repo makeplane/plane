@@ -14,7 +14,7 @@ type TEstimateInputRootProps = {
   value?: string;
 };
 
-export const EstimateInputRoot: FC<TEstimateInputRootProps> = (props) => {
+export function EstimateInputRoot(props: TEstimateInputRootProps) {
   const { estimateType, handleEstimateInputValue, value } = props;
 
   switch (estimateType) {
@@ -37,4 +37,4 @@ export const EstimateInputRoot: FC<TEstimateInputRootProps> = (props) => {
     default:
       return null;
   }
-};
+}

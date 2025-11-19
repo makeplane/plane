@@ -12,7 +12,7 @@ type Props = {
   updateSearchQuery: (val: string) => void;
 };
 
-export const PageSearchInput: FC<Props> = (props) => {
+export function PageSearchInput(props: Props) {
   const { searchQuery, updateSearchQuery } = props;
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -83,4 +83,4 @@ export const PageSearchInput: FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

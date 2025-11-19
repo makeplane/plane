@@ -39,7 +39,7 @@ const defaultValues: TResetPasswordFormValues = {
 // services
 const authService = new AuthService();
 
-export const SetPasswordForm = observer(() => {
+export const SetPasswordForm = observer(function SetPasswordForm() {
   // router
   const router = useAppRouter();
   // search params

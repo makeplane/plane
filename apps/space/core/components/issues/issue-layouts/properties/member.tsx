@@ -24,7 +24,7 @@ type AvatarProps = {
   icon?: LucideIcon;
 };
 
-export const ButtonAvatars: React.FC<AvatarProps> = observer((props: AvatarProps) => {
+export const ButtonAvatars = observer(function ButtonAvatars(props: AvatarProps) {
   const { showTooltip, members, icon: Icon } = props;
 
   if (Array.isArray(members)) {
@@ -56,7 +56,7 @@ export const ButtonAvatars: React.FC<AvatarProps> = observer((props: AvatarProps
   );
 });
 
-export const IssueBlockMembers = observer(({ memberIds, shouldShowBorder = true }: Props) => {
+export const IssueBlockMembers = observer(function IssueBlockMembers({ memberIds, shouldShowBorder = true }: Props) {
   const { getMembersByIds } = useMember();
 
   const members = getMembersByIds(memberIds);

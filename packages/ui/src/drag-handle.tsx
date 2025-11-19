@@ -8,7 +8,10 @@ interface IDragHandle {
   disabled?: boolean;
 }
 
-export const DragHandle = forwardRef<HTMLButtonElement | null, IDragHandle>((props, ref) => {
+export const DragHandle = forwardRef(function DragHandle(
+  props: IDragHandle,
+  ref: React.ForwardedRef<HTMLButtonElement | null>
+) {
   const { className, disabled = false } = props;
 
   if (disabled) {

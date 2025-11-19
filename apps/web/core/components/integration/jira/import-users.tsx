@@ -17,7 +17,7 @@ import { WorkspaceService } from "@/plane-web/services";
 
 const workspaceService = new WorkspaceService();
 
-export const JiraImportUsers: FC = () => {
+export function JiraImportUsers() {
   const { workspaceSlug } = useParams();
   // form info
   const {
@@ -151,4 +151,4 @@ export const JiraImportUsers: FC = () => {
       )}
     </div>
   );
-};
+}

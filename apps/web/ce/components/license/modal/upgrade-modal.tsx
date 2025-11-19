@@ -28,7 +28,7 @@ export type PaidPlanUpgradeModalProps = {
   handleClose: () => void;
 };
 
-export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = observer((props) => {
+export const PaidPlanUpgradeModal = observer(function PaidPlanUpgradeModal(props: PaidPlanUpgradeModalProps) {
   const { isOpen, handleClose } = props;
   // derived values
   const isSelfHosted = true;

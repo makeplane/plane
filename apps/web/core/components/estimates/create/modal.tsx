@@ -24,7 +24,7 @@ type TCreateEstimateModal = {
   handleClose: () => void;
 };
 
-export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) => {
+export const CreateEstimateModal = observer(function CreateEstimateModal(props: TCreateEstimateModal) {
   // props
   const { workspaceSlug, projectId, isOpen, handleClose } = props;
   // hooks

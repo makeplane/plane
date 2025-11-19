@@ -2,4 +2,6 @@
 
 import React from "react";
 
-export const WorkspaceAppSwitcher = () => <></>;
+export function WorkspaceAppSwitcher() {
+  return <></>;
+}

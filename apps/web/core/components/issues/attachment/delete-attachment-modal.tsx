@@ -25,7 +25,7 @@ type Props = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const IssueAttachmentDeleteModal: FC<Props> = observer((props) => {
+export const IssueAttachmentDeleteModal = observer(function IssueAttachmentDeleteModal(props: Props) {
   const { t } = useTranslation();
   const { isOpen, onClose, attachmentId, attachmentOperations, issueServiceType = EIssueServiceType.ISSUES } = props;
   // states

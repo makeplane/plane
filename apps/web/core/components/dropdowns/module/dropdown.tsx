@@ -32,7 +32,7 @@ type TModuleDropdownProps = TDropdownProps & {
       }
   );
 
-export const ModuleDropdown: React.FC<TModuleDropdownProps> = observer((props) => {
+export const ModuleDropdown = observer(function ModuleDropdown(props: TModuleDropdownProps) {
   const { projectId } = props;
   // router
   const { workspaceSlug } = useParams();

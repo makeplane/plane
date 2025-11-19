@@ -10,16 +10,18 @@ type BreadcrumbsProps = {
   isLoading?: boolean;
 };
 
-export const BreadcrumbItemLoader = () => (
-  <div className="flex items-center gap-2 h-7 animate-pulse">
-    <div className="group h-full flex items-center gap-2 rounded px-2 py-1 text-sm font-medium">
-      <span className="h-full w-5 bg-custom-background-80 rounded" />
-      <span className="h-full w-16 bg-custom-background-80 rounded" />
+export function BreadcrumbItemLoader() {
+  return (
+    <div className="flex items-center gap-2 h-7 animate-pulse">
+      <div className="group h-full flex items-center gap-2 rounded px-2 py-1 text-sm font-medium">
+        <span className="h-full w-5 bg-custom-background-80 rounded" />
+        <span className="h-full w-16 bg-custom-background-80 rounded" />
+      </div>
     </div>
-  </div>
-);
+  );
+}
 
-const Breadcrumbs = ({ className, children, onBack, isLoading = false }: BreadcrumbsProps) => {
+function Breadcrumbs({ className, children, onBack, isLoading = false }: BreadcrumbsProps) {
   const [isSmallScreen, setIsSmallScreen] = React.useState(false);
 
   React.useEffect(() => {
@@ -82,7 +84,7 @@ const Breadcrumbs = ({ className, children, onBack, isLoading = false }: Breadcr
       {isSmallScreen && childrenArray.length === 1 && childrenArray}
     </div>
   );
-};
+}
 
 // breadcrumb item
 type BreadcrumbItemProps = {
@@ -91,7 +93,7 @@ type BreadcrumbItemProps = {
   isLast?: boolean;
 };
 
-const BreadcrumbItem: React.FC<BreadcrumbItemProps> = (props) => {
+function BreadcrumbItem(props: BreadcrumbItemProps) {
   const { component, showSeparator = true, isLast = false } = props;
   return (
     <div className="flex items-center gap-0.5 h-6">
@@ -99,7 +101,7 @@ const BreadcrumbItem: React.FC<BreadcrumbItemProps> = (props) => {
       {showSeparator && !isLast && <BreadcrumbSeparator />}
     </div>
   );
-};
+}
 
 // breadcrumb icon
 type BreadcrumbIconProps = {
@@ -107,10 +109,10 @@ type BreadcrumbIconProps = {
   className?: string;
 };
 
-const BreadcrumbIcon: React.FC<BreadcrumbIconProps> = (props) => {
+function BreadcrumbIcon(props: BreadcrumbIconProps) {
   const { children, className } = props;
   return <div className={cn("flex size-4 items-center justify-start overflow-hidden", className)}>{children}</div>;
-};
+}
 
 // breadcrumb label
 type BreadcrumbLabelProps = {
@@ -118,14 +120,14 @@ type BreadcrumbLabelProps = {
   className?: string;
 };
 
-const BreadcrumbLabel: React.FC<BreadcrumbLabelProps> = (props) => {
+function BreadcrumbLabel(props: BreadcrumbLabelProps) {
   const { children, className } = props;
   return (
     <div className={cn("relative line-clamp-1 block max-w-[150px] overflow-hidden truncate", className)}>
       {children}
     </div>
   );
-};
+}
 
 // breadcrumb separator
 type BreadcrumbSeparatorProps = {
@@ -135,7 +137,7 @@ type BreadcrumbSeparatorProps = {
   showDivider?: boolean;
 };
 
-const BreadcrumbSeparator: React.FC<BreadcrumbSeparatorProps> = (props) => {
+function BreadcrumbSeparator(props: BreadcrumbSeparatorProps) {
   const { className, containerClassName, iconClassName, showDivider = false } = props;
   return (
     <div className={cn("relative flex items-center justify-center h-full px-1.5 py-1", className)}>
@@ -150,7 +152,7 @@ const BreadcrumbSeparator: React.FC<BreadcrumbSeparatorProps> = (props) => {
       </div>
     </div>
   );
-};
+}
 
 // breadcrumb wrapper
 type BreadcrumbItemWrapperProps = {
@@ -162,7 +164,7 @@ type BreadcrumbItemWrapperProps = {
   isLast?: boolean;
 };
 
-const BreadcrumbItemWrapper: React.FC<BreadcrumbItemWrapperProps> = (props) => {
+function BreadcrumbItemWrapper(props: BreadcrumbItemWrapperProps) {
   const { label, disableTooltip = false, children, className, type = "link", isLast = false } = props;
   return (
     <Tooltip tooltipContent={label} position="bottom" disabled={!label || label === "" || disableTooltip}>
@@ -179,7 +181,7 @@ const BreadcrumbItemWrapper: React.FC<BreadcrumbItemWrapperProps> = (props) => {
       </div>
     </Tooltip>
   );
-};
+}
 
 Breadcrumbs.Item = BreadcrumbItem;
 Breadcrumbs.Icon = BreadcrumbIcon;

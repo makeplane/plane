@@ -18,7 +18,7 @@ type Props = {
   issueServiceType: TIssueServiceType;
 };
 
-export const RelationsCollapsible: FC<Props> = observer((props) => {
+export const RelationsCollapsible = observer(function RelationsCollapsible(props: Props) {
   const { workspaceSlug, issueId, disabled = false, issueServiceType } = props;
   // store hooks
   const { openWidgets, toggleOpenWidget } = useIssueDetail(issueServiceType);

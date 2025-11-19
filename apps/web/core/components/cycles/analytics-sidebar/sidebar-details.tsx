@@ -23,7 +23,7 @@ type Props = {
   cycleDetails: ICycle;
 };
 
-export const CycleSidebarDetails: FC<Props> = observer((props) => {
+export const CycleSidebarDetails = observer(function CycleSidebarDetails(props: Props) {
   const { projectId, cycleDetails } = props;
   // hooks
   const { getUserDetails } = useMember();

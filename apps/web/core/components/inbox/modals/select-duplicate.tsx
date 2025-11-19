@@ -32,7 +32,7 @@ type Props = {
 
 const projectService = new ProjectService();
 
-export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
+export function SelectDuplicateInboxIssueModal(props: Props) {
   const { isOpen, onClose, onSubmit, value } = props;
   // router
   const { workspaceSlug, projectId, issueId } = useParams();
@@ -193,4 +193,4 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
       </div>
     </Transition.Root>
   );
-};
+}

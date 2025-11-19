@@ -14,7 +14,7 @@ type Props = {
   shouldShowBorder?: boolean;
 };
 
-export const IssueBlockCycle = observer(({ cycleId, shouldShowBorder = true }: Props) => {
+export const IssueBlockCycle = observer(function IssueBlockCycle({ cycleId, shouldShowBorder = true }: Props) {
   const { getCycleById } = useCycle();
 
   const cycle = getCycleById(cycleId);

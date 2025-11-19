@@ -15,7 +15,7 @@ type TLabelListItem = {
   disabled: boolean;
 };
 
-export const LabelListItem: FC<TLabelListItem> = observer((props) => {
+export const LabelListItem = observer(function LabelListItem(props: TLabelListItem) {
   const { workspaceSlug, projectId, issueId, labelId, values, labelOperations, disabled } = props;
   // hooks
   const { getLabelById } = useLabel();

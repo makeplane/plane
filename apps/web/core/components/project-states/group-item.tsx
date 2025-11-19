@@ -27,7 +27,7 @@ type TGroupItem = {
   handleExpand: (groupKey: TStateGroups) => void;
 };
 
-export const GroupItem: FC<TGroupItem> = observer((props) => {
+export const GroupItem = observer(function GroupItem(props: TGroupItem) {
   const {
     groupKey,
     groupedStates,

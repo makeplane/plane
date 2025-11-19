@@ -19,7 +19,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterCycle: React.FC<Props> = observer((props) => {
+export const FilterCycle = observer(function FilterCycle(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery } = props;
 
   // hooks

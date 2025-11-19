@@ -17,7 +17,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const ComicBoxButton: React.FC<Props> = (props) => {
+export function ComicBoxButton(props: Props) {
   const { label, icon, title, description, onClick, disabled = false } = props;
   const [isHovered, setIsHovered] = useState(false);
 
@@ -77,4 +77,4 @@ export const ComicBoxButton: React.FC<Props> = (props) => {
       )}
     </Popover>
   );
-};
+}

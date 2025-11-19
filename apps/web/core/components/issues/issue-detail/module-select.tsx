@@ -21,7 +21,7 @@ type TIssueModuleSelect = {
   disabled?: boolean;
 };
 
-export const IssueModuleSelect: React.FC<TIssueModuleSelect> = observer((props) => {
+export const IssueModuleSelect = observer(function IssueModuleSelect(props: TIssueModuleSelect) {
   const { className = "", workspaceSlug, projectId, issueId, issueOperations, disabled = false } = props;
   const { t } = useTranslation();
   // states

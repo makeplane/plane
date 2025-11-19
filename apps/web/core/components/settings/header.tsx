@@ -15,7 +15,7 @@ import { useUserSettings } from "@/hooks/store/user";
 import { WorkspaceLogo } from "../workspace/logo";
 import SettingsTabs from "./tabs";
 
-export const SettingsHeader = observer(() => {
+export const SettingsHeader = observer(function SettingsHeader() {
   // hooks
   const { t } = useTranslation();
   const { currentWorkspace } = useWorkspace();

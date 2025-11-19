@@ -35,7 +35,7 @@ interface IIssueView {
   issueOperations: TIssueOperations;
 }
 
-export const IssueView: FC<IIssueView> = observer((props) => {
+export const IssueView = observer(function IssueView(props: IIssueView) {
   const {
     workspaceSlug,
     projectId,

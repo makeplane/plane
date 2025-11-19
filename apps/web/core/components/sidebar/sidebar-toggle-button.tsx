@@ -5,7 +5,7 @@ import { PanelLeft } from "lucide-react";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 
-export const AppSidebarToggleButton = observer(() => {
+export const AppSidebarToggleButton = observer(function AppSidebarToggleButton() {
   // store hooks
   const { toggleSidebar, sidebarPeek, toggleSidebarPeek } = useAppTheme();
 

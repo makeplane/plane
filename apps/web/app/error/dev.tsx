@@ -1,5 +1,4 @@
 "use client";
-
 // plane imports
 import { isRouteErrorResponse } from "react-router";
 import { Banner } from "@plane/propel/banner";
@@ -12,18 +11,20 @@ interface ErrorActionsProps {
   onReload?: () => void;
 }
 
-const ErrorActions: React.FC<ErrorActionsProps> = ({ onGoHome, onReload }) => (
-  <div className="flex gap-3 pt-2">
-    <Button variant="primary" size="md" onClick={onGoHome}>
-      Go to home
-    </Button>
-    {onReload && (
-      <Button variant="outline-primary" size="md" onClick={onReload}>
-        Reload page
+function ErrorActions({ onGoHome, onReload }: ErrorActionsProps) {
+  return (
+    <div className="flex gap-3 pt-2">
+      <Button variant="primary" size="md" onClick={onGoHome}>
+        Go to home
       </Button>
-    )}
-  </div>
-);
+      {onReload && (
+        <Button variant="outline-primary" size="md" onClick={onReload}>
+          Reload page
+        </Button>
+      )}
+    </div>
+  );
+}
 
 interface DevErrorComponentProps {
   error: unknown;
@@ -31,7 +32,7 @@ interface DevErrorComponentProps {
   onReload: () => void;
 }
 
-export const DevErrorComponent: React.FC<DevErrorComponentProps> = ({ error, onGoHome, onReload }) => {
+export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorComponentProps) {
   if (isRouteErrorResponse(error)) {
     return (
       <div className="min-h-screen bg-custom-background-90 p-6 flex items-start justify-center transition-none">
@@ -152,4 +153,4 @@ export const DevErrorComponent: React.FC<DevErrorComponentProps> = ({ error, onG
       </div>
     </div>
   );
-};
+}

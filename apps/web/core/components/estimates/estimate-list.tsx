@@ -12,7 +12,7 @@ type TEstimateList = {
   onDeleteClick?: (estimateId: string) => void;
 };
 
-export const EstimateList: FC<TEstimateList> = observer((props) => {
+export const EstimateList = observer(function EstimateList(props: TEstimateList) {
   const { estimateIds, isAdmin, isEstimateEnabled = false, isEditable = false, onEditClick, onDeleteClick } = props;
 
   if (!estimateIds || estimateIds?.length <= 0) return <></>;

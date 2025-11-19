@@ -10,7 +10,7 @@ import githubWhiteImage from "@/app/assets/logos/github-white.png?url";
 // helpers
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 
-export const StarUsOnGitHubLink = () => {
+export function StarUsOnGitHubLink() {
   // plane hooks
   const { t } = useTranslation();
   // hooks
@@ -40,4 +40,4 @@ export const StarUsOnGitHubLink = () => {
       <span className="hidden text-xs font-medium sm:hidden md:block">{t("home.star_us_on_github")}</span>
     </a>
   );
-};
+}

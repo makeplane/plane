@@ -20,7 +20,7 @@ type Props = {
   issueServiceType: TIssueServiceType;
 };
 
-export const SubIssuesActionButton: FC<Props> = observer((props) => {
+export const SubIssuesActionButton = observer(function SubIssuesActionButton(props: Props) {
   const { issueId, customButton, disabled = false, issueServiceType } = props;
   // translation
   const { t } = useTranslation();

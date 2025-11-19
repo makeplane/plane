@@ -9,7 +9,7 @@ type Props = {
   page: TPageInstance;
 };
 
-export const PageNavigationPaneOutlineTabPanel: React.FC<Props> = (props) => {
+export function PageNavigationPaneOutlineTabPanel(props: Props) {
   const { page } = props;
   // derived values
   const {
@@ -25,4 +25,4 @@ export const PageNavigationPaneOutlineTabPanel: React.FC<Props> = (props) => {
       />
     </div>
   );
-};
+}

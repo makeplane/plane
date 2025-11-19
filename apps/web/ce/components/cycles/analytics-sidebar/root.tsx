@@ -10,4 +10,6 @@ type Props = {
   cycleId: string;
 };
 
-export const SidebarChartRoot: FC<Props> = (props) => <SidebarChart {...props} />;
+export function SidebarChartRoot(props: Props) {
+  return <SidebarChart {...props} />;
+}

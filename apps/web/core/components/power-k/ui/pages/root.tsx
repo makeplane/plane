@@ -15,7 +15,7 @@ type Props = {
   onPageDataSelect: (value: unknown) => void;
 };
 
-export const PowerKModalPagesList: React.FC<Props> = observer((props) => {
+export const PowerKModalPagesList = observer(function PowerKModalPagesList(props: Props) {
   const { activePage, context, onCommandSelect, onPageDataSelect } = props;
 
   // Main page content (no specific page)

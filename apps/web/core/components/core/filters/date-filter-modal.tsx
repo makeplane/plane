@@ -29,7 +29,7 @@ const defaultValues: TFormValues = {
   date2: new Date(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()),
 };
 
-export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, onSelect }) => {
+export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props) {
   const { handleSubmit, watch, control } = useForm<TFormValues>({
     defaultValues,
   });
@@ -164,4 +164,4 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
       </Dialog>
     </Transition.Root>
   );
-};
+}

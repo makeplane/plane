@@ -5,7 +5,7 @@ import { Popover } from "@headlessui/react";
 import { useTranslation } from "@plane/i18n";
 import { CloseIcon } from "@plane/propel/icons";
 
-export const ForgotPasswordPopover = () => {
+export function ForgotPasswordPopover() {
   // popper-js refs
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -58,4 +58,4 @@ export const ForgotPasswordPopover = () => {
       </Popover.Panel>
     </Popover>
   );
-};
+}

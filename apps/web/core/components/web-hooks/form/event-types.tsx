@@ -18,7 +18,7 @@ const WEBHOOK_EVENT_TYPES: { key: TWebhookEventTypes; i18n_label: string }[] = [
   },
 ];
 
-export const WebhookOptions: React.FC<Props> = (props) => {
+export function WebhookOptions(props: Props) {
   const { value, onChange } = props;
   const { t } = useTranslation();
 
@@ -43,4 +43,4 @@ export const WebhookOptions: React.FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

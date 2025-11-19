@@ -16,7 +16,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterPriority: React.FC<Props> = observer((props) => {
+export const FilterPriority = observer(function FilterPriority(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery } = props;
 
   // hooks

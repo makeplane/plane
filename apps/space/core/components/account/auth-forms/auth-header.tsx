@@ -27,7 +27,7 @@ const Titles: TAuthHeaderDetails = {
   },
 };
 
-export const AuthHeader: React.FC<TAuthHeader> = (props) => {
+export function AuthHeader(props: TAuthHeader) {
   const { authMode } = props;
 
   const getHeaderSubHeader = (mode: EAuthModes | null): TAuthHeaderContent => {
@@ -51,4 +51,4 @@ export const AuthHeader: React.FC<TAuthHeader> = (props) => {
       </div>
     </>
   );
-};
+}

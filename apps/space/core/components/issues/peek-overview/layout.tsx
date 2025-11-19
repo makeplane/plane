@@ -16,7 +16,7 @@ type TIssuePeekOverview = {
   handlePeekClose?: () => void;
 };
 
-export const IssuePeekOverview: React.FC<TIssuePeekOverview> = observer((props) => {
+export const IssuePeekOverview = observer(function IssuePeekOverview(props: TIssuePeekOverview) {
   const { anchor, peekId, handlePeekClose } = props;
   const router = useRouter();
   const searchParams = useSearchParams();

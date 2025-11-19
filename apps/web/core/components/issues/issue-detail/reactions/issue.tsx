@@ -25,7 +25,7 @@ export type TIssueReaction = {
   className?: string;
 };
 
-export const IssueReaction: FC<TIssueReaction> = observer((props) => {
+export const IssueReaction = observer(function IssueReaction(props: TIssueReaction) {
   const { workspaceSlug, projectId, issueId, currentUser, disabled = false, className = "" } = props;
   // state
   const [isPickerOpen, setIsPickerOpen] = useState(false);

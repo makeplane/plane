@@ -28,7 +28,7 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
+export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: Props) {
   const { page, storeType } = props;
   // states
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -45,8 +45,8 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
   // query params
   const { updateQueryParams } = useQueryParams();
   // menu items list
-  const EXTRA_MENU_OPTIONS: (TContextMenuItem & { key: TPageActions })[] = useMemo(
-    () => [
+  const EXTRA_MENU_OPTIONS = useMemo(function EXTRA_MENU_OPTIONS() {
+    return [
       {
         key: "full-screen",
         action: () => handleFullWidth(!isFullWidth),
@@ -108,18 +108,8 @@ export const PageOptionsDropdown: React.FC<Props> = observer((props) => {
         icon: ArrowUpToLine,
         shouldRender: true,
       },
-    ],
-    [
-      editorRef,
-      handleFullWidth,
-      handleStickyToolbar,
-      isContentEditable,
-      isFullWidth,
-      isStickyToolbarEnabled,
-      router,
-      updateQueryParams,
-    ]
-  );
+    ];
+  });
 
   return (
     <>

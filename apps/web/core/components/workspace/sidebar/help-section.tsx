@@ -25,7 +25,7 @@ export interface WorkspaceHelpSectionProps {
   setSidebarActive?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const SidebarHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(() => {
+export const SidebarHelpSection = observer(function SidebarHelpSection(_props: WorkspaceHelpSectionProps) {
   // store hooks
   const { t } = useTranslation();
   const { sidebarCollapsed: isCollapsed, toggleSidebar, sidebarPeek, toggleSidebarPeek } = useAppTheme();

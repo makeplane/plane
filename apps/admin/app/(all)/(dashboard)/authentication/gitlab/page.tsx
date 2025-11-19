@@ -15,7 +15,9 @@ import { useInstance } from "@/hooks/store";
 import type { Route } from "./+types/page";
 import { InstanceGitlabConfigForm } from "./form";
 
-const InstanceGitlabAuthenticationPage = observer<React.FC<Route.ComponentProps>>(() => {
+const InstanceGitlabAuthenticationPage = observer(function InstanceGitlabAuthenticationPage(
+  _props: Route.ComponentProps
+) {
   // store
   const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
   // state

@@ -30,7 +30,7 @@ export interface IssuesModalProps {
   allowedProjectIds?: string[];
 }
 
-export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((props) => {
+export const CreateUpdateIssueModal = observer(function CreateUpdateIssueModal(props: IssuesModalProps) {
   // router params
   const { cycleId, moduleId } = useParams();
   // derived values

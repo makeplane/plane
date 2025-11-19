@@ -19,7 +19,7 @@ type ProgressChartProps = {
   projectId: string;
   cycleId: string;
 };
-export const SidebarChart = observer((props: ProgressChartProps) => {
+export const SidebarChart = observer(function SidebarChart(props: ProgressChartProps) {
   const { workspaceSlug, projectId, cycleId } = props;
 
   // hooks

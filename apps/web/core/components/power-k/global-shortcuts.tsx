@@ -21,7 +21,7 @@ type GlobalShortcutsProps = {
  * Global shortcuts component - sets up keyboard listeners and context detection
  * Should be mounted once at the app root level
  */
-export const GlobalShortcutsProvider = observer((props: GlobalShortcutsProps) => {
+export const GlobalShortcutsProvider = observer(function GlobalShortcutsProvider(props: GlobalShortcutsProps) {
   const { context, commands } = props;
   // router
   const router = useAppRouter();

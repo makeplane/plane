@@ -40,7 +40,9 @@ type TWorkItemDetailQuickActionProps = IQuickActionProps & {
   isPeekMode?: boolean;
 };
 
-export const WorkItemDetailQuickActions: React.FC<TWorkItemDetailQuickActionProps> = observer((props) => {
+export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickActions(
+  props: TWorkItemDetailQuickActionProps
+) {
   const {
     issue,
     handleDelete,
@@ -176,15 +178,20 @@ export const WorkItemDetailQuickActions: React.FC<TWorkItemDetailQuickActionProp
       }
       return item;
     })
-    .filter((item) => item.shouldRender !== false);
+    .filter(function MENU_ITEMS(item) {
+      return item.shouldRender !== false;
+    });
 
-  const CONTEXT_MENU_ITEMS: TContextMenuItem[] = MENU_ITEMS.map((item) => ({
-    ...item,
-    onClick: () => {
-      captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.PROJECT_VIEW });
-      item.action();
-    },
-  }));
+  const CONTEXT_MENU_ITEMS = MENU_ITEMS.map(function CONTEXT_MENU_ITEMS(item) {
+    return {
+      ...item,
+
+      onClick: () => {
+        captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.PROJECT_VIEW });
+        item.action();
+      },
+    };
+  });
 
   return (
     <>

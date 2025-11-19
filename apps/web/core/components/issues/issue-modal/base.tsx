@@ -31,7 +31,7 @@ import { IssueFormRoot } from "./form";
 import type { IssueFormProps } from "./form";
 import type { IssuesModalProps } from "./modal";
 
-export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((props) => {
+export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueModalBase(props: IssuesModalProps) {
   const {
     data,
     isOpen,

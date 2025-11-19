@@ -42,7 +42,7 @@ export interface IKanBan {
   showEmptyGroup?: boolean;
 }
 
-export const KanBan: React.FC<IKanBan> = observer((props) => {
+export const KanBan = observer(function KanBan(props: IKanBan) {
   const {
     groupedIssueIds,
     displayProperties,

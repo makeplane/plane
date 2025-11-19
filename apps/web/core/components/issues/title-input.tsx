@@ -26,7 +26,7 @@ export type IssueTitleInputProps = {
   containerClassName?: string;
 };
 
-export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
+export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTitleInputProps) {
   const {
     disabled,
     value,

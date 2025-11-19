@@ -20,7 +20,7 @@ type Props = {
   page: TPageInstance;
 };
 
-export const PageLockControl = observer(({ page }: Props) => {
+export const PageLockControl = observer(function PageLockControl({ page }: Props) {
   // Initial state: if locked, then "locked", otherwise default to "neutral"
   const [displayState, setDisplayState] = useState<LockDisplayState>(page.is_locked ? "locked" : "neutral");
   // derived values

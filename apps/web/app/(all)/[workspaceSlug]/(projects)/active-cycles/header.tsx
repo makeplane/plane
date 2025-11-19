@@ -9,7 +9,7 @@ import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // plane web components
 import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
 
-export const WorkspaceActiveCycleHeader = observer(() => {
+export const WorkspaceActiveCycleHeader = observer(function WorkspaceActiveCycleHeader() {
   const { t } = useTranslation();
   return (
     <Header>

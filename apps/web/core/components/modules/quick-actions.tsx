@@ -36,7 +36,7 @@ type Props = {
   customClassName?: string;
 };
 
-export const ModuleQuickActions: React.FC<Props> = observer((props) => {
+export const ModuleQuickActions = observer(function ModuleQuickActions(props: Props) {
   const { parentRef, moduleId, projectId, workspaceSlug, customClassName } = props;
   // router
   const router = useAppRouter();
@@ -161,15 +161,18 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
     },
   ];
 
-  const CONTEXT_MENU_ITEMS: TContextMenuItem[] = MENU_ITEMS.map((item) => ({
-    ...item,
-    onClick: () => {
-      captureClick({
-        elementName: MODULE_TRACKER_ELEMENTS.CONTEXT_MENU,
-      });
-      item.action();
-    },
-  }));
+  const CONTEXT_MENU_ITEMS = MENU_ITEMS.map(function CONTEXT_MENU_ITEMS(item) {
+    return {
+      ...item,
+
+      onClick: () => {
+        captureClick({
+          elementName: MODULE_TRACKER_ELEMENTS.CONTEXT_MENU,
+        });
+        item.action();
+      },
+    };
+  });
 
   return (
     <>

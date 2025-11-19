@@ -24,7 +24,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
+export const ProjectMemberListItem = observer(function ProjectMemberListItem(props: Props) {
   const { memberDetails, projectId, workspaceSlug } = props;
   // router
   const router = useAppRouter();

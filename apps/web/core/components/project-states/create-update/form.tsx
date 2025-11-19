@@ -15,7 +15,7 @@ type TStateForm = {
   buttonTitle: string;
 };
 
-export const StateForm: FC<TStateForm> = (props) => {
+export function StateForm(props: TStateForm) {
   const { data, onSubmit, onCancel, buttonDisabled, buttonTitle } = props;
   // states
   const [formData, setFromData] = useState<Partial<IState> | undefined>(undefined);
@@ -48,17 +48,16 @@ export const StateForm: FC<TStateForm> = (props) => {
     }
   };
 
-  const PopoverButton = useMemo(
-    () => (
+  const PopoverButton = useMemo(function PopoverButton() {
+    return (
       <div
         className="group inline-flex items-center text-base font-medium focus:outline-none h-5 w-5 rounded transition-all"
         style={{
           backgroundColor: formData?.color ?? "black",
         }}
       />
-    ),
-    [formData?.color]
-  );
+    );
+  });
 
   return (
     <div className="relative flex space-x-2 bg-custom-background-100 p-3 rounded">
@@ -106,4 +105,4 @@ export const StateForm: FC<TStateForm> = (props) => {
       </div>
     </div>
   );
-};
+}

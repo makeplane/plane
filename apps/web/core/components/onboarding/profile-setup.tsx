@@ -78,7 +78,7 @@ const USER_DOMAIN = [
 
 const authService = new AuthService();
 
-export const ProfileSetup: React.FC<Props> = observer((props) => {
+export const ProfileSetup = observer(function ProfileSetup(props: Props) {
   const { user, totalSteps, stepChange, finishOnboarding } = props;
   // states
   const [profileSetupStep, setProfileSetupStep] = useState<EProfileSetupSteps>(

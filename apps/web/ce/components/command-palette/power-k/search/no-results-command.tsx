@@ -13,7 +13,7 @@ export type TPowerKModalNoSearchResultsCommandProps = {
   updateSearchTerm: (value: string) => void;
 };
 
-export const PowerKModalNoSearchResultsCommand: React.FC<TPowerKModalNoSearchResultsCommandProps> = (props) => {
+export function PowerKModalNoSearchResultsCommand(props: TPowerKModalNoSearchResultsCommandProps) {
   const { updateSearchTerm } = props;
   // translation
   const { t } = useTranslation();
@@ -33,4 +33,4 @@ export const PowerKModalNoSearchResultsCommand: React.FC<TPowerKModalNoSearchRes
       />
     </Command.Group>
   );
-};
+}

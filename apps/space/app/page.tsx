@@ -11,7 +11,7 @@ import { AuthView } from "@/components/views";
 // hooks
 import { useUser } from "@/hooks/store/use-user";
 
-const HomePage = observer(() => {
+const HomePage = observer(function HomePage() {
   const { data: currentUser, isAuthenticated, isInitializing } = useUser();
   const searchParams = useSearchParams();
   const router = useRouter();

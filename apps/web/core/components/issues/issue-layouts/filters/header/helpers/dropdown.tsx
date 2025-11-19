@@ -21,7 +21,7 @@ type Props = {
   isFiltersApplied?: boolean;
 };
 
-export const FiltersDropdown: React.FC<Props> = (props) => {
+export function FiltersDropdown(props: Props) {
   const {
     children,
     miniIcon,
@@ -125,4 +125,4 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
       }}
     </Popover>
   );
-};
+}

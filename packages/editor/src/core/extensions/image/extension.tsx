@@ -24,7 +24,7 @@ type Props = {
   fileHandler: TFileHandler;
 };
 
-export const ImageExtension = (props: Props) => {
+export function ImageExtension(props: Props) {
   const { fileHandler } = props;
   // derived values
   const { getAssetSrc } = fileHandler;
@@ -61,4 +61,4 @@ export const ImageExtension = (props: Props) => {
       ));
     },
   });
-};
+}

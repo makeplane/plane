@@ -20,7 +20,7 @@ type Props = {
   tabIndex?: number;
 };
 
-export const ModuleStatusSelect: React.FC<Props> = ({ control, error, tabIndex }) => {
+export function ModuleStatusSelect({ control, error, tabIndex }: Props) {
   const { t } = useTranslation();
   return (
     <Controller
@@ -61,4 +61,4 @@ export const ModuleStatusSelect: React.FC<Props> = ({ control, error, tabIndex }
       }}
     />
   );
-};
+}

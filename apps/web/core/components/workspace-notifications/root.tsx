@@ -24,7 +24,7 @@ type NotificationsRootProps = {
   workspaceSlug?: string;
 };
 
-export const NotificationsRoot = observer(({ workspaceSlug }: NotificationsRootProps) => {
+export const NotificationsRoot = observer(function NotificationsRoot({ workspaceSlug }: NotificationsRootProps) {
   // plane hooks
   const { t } = useTranslation();
   // hooks

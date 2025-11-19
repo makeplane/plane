@@ -12,7 +12,7 @@ type TIssueLink = {
   activityId: string;
 };
 
-export const IssueLink: FC<TIssueLink> = (props) => {
+export function IssueLink(props: TIssueLink) {
   const { activityId } = props;
   // hooks
   const {
@@ -49,4 +49,4 @@ export const IssueLink: FC<TIssueLink> = (props) => {
       </a>
     </Tooltip>
   );
-};
+}

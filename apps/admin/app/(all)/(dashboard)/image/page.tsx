@@ -9,7 +9,7 @@ import { useInstance } from "@/hooks/store";
 import type { Route } from "./+types/page";
 import { InstanceImageConfigForm } from "./form";
 
-const InstanceImagePage = observer<React.FC<Route.ComponentProps>>(() => {
+const InstanceImagePage = observer(function InstanceImagePage(_props: Route.ComponentProps) {
   // store
   const { formattedConfig, fetchInstanceConfigurations } = useInstance();
 

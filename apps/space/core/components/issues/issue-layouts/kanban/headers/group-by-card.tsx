@@ -12,7 +12,7 @@ interface IHeaderGroupByCard {
   count: number;
 }
 
-export const HeaderGroupByCard: React.FC<IHeaderGroupByCard> = observer((props) => {
+export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHeaderGroupByCard) {
   const { icon, title, count } = props;
 
   return (

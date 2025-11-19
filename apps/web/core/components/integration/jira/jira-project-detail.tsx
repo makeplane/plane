@@ -31,7 +31,7 @@ type Props = {
 // services
 const jiraImporterService = new JiraImporterService();
 
-export const JiraProjectDetail: React.FC<Props> = (props) => {
+export function JiraProjectDetail(props: Props) {
   const { setCurrentStep, setDisableTopBarAfter } = props;
 
   const {
@@ -166,4 +166,4 @@ export const JiraProjectDetail: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

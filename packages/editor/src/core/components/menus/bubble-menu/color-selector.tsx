@@ -17,7 +17,7 @@ type Props = {
   editorState: EditorStateType;
 };
 
-export const BubbleMenuColorSelector: FC<Props> = (props) => {
+export function BubbleMenuColorSelector(props: Props) {
   const { editor, editorState } = props;
   // floating ui
   const { options, getReferenceProps, getFloatingProps } = useFloatingMenu({});
@@ -111,4 +111,4 @@ export const BubbleMenuColorSelector: FC<Props> = (props) => {
       </section>
     </FloatingMenuRoot>
   );
-};
+}

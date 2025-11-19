@@ -41,7 +41,7 @@ type Props = {
   moduleId: string;
 };
 
-export const ModuleCardItem: React.FC<Props> = observer((props) => {
+export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
   const { moduleId } = props;
   // refs
   const parentRef = useRef(null);

@@ -13,7 +13,7 @@ export interface Props {
   MENU_ITEMS: TContextMenuItem[];
 }
 
-export const WorkspaceDraftIssueQuickActions: React.FC<Props> = observer((props) => {
+export const WorkspaceDraftIssueQuickActions = observer(function WorkspaceDraftIssueQuickActions(props: Props) {
   const { parentRef, MENU_ITEMS } = props;
 
   const { t } = useTranslation();

@@ -9,4 +9,6 @@ type TIssueActivityWorklogCreateButton = {
   disabled: boolean;
 };
 
-export const IssueActivityWorklogCreateButton: FC<TIssueActivityWorklogCreateButton> = () => <></>;
+export function IssueActivityWorklogCreateButton(_props: TIssueActivityWorklogCreateButton) {
+  return <></>;
+}

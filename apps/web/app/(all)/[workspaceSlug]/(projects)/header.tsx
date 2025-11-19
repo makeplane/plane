@@ -14,7 +14,7 @@ import { useHome } from "@/hooks/store/use-home";
 // local imports
 import { StarUsOnGitHubLink } from "./star-us-link";
 
-export const WorkspaceDashboardHeader = observer(() => {
+export const WorkspaceDashboardHeader = observer(function WorkspaceDashboardHeader() {
   // plane hooks
   const { t } = useTranslation();
   // hooks

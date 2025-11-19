@@ -23,7 +23,7 @@ type Props = {
   view: IWorkspaceView;
 };
 
-export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
+export const WorkspaceViewQuickActions = observer(function WorkspaceViewQuickActions(props: Props) {
   const { workspaceSlug, view } = props;
   // states
   const [updateViewModal, setUpdateViewModal] = useState(false);

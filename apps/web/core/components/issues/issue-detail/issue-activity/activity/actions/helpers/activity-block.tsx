@@ -20,7 +20,7 @@ type TIssueActivityBlockComponent = {
   customUserName?: string;
 };
 
-export const IssueActivityBlockComponent: FC<TIssueActivityBlockComponent> = (props) => {
+export function IssueActivityBlockComponent(props: TIssueActivityBlockComponent) {
   const { icon, activityId, ends, children, customUserName } = props;
   // hooks
   const {
@@ -58,4 +58,4 @@ export const IssueActivityBlockComponent: FC<TIssueActivityBlockComponent> = (pr
       </div>
     </div>
   );
-};
+}

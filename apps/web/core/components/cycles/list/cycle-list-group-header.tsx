@@ -18,7 +18,7 @@ type Props = {
   isExpanded?: boolean;
 };
 
-export const CycleListGroupHeader: FC<Props> = (props) => {
+export function CycleListGroupHeader(props: Props) {
   const { type, title, count, showCount = false, isExpanded = false } = props;
   return (
     <Row className="flex items-center justify-between py-2.5">
@@ -39,4 +39,4 @@ export const CycleListGroupHeader: FC<Props> = (props) => {
       />
     </Row>
   );
-};
+}

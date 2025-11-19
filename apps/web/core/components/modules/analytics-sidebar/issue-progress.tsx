@@ -34,7 +34,7 @@ const moduleBurnDownChartOptions = [
   { value: "points", i18n_label: "points" },
 ];
 
-export const ModuleAnalyticsProgress: FC<TModuleAnalyticsProgress> = observer((props) => {
+export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress(props: TModuleAnalyticsProgress) {
   // props
   const { workspaceSlug, projectId, moduleId } = props;
   // router

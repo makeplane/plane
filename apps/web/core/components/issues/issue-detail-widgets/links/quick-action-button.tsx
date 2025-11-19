@@ -14,7 +14,7 @@ type Props = {
   issueServiceType: TIssueServiceType;
 };
 
-export const IssueLinksActionButton: FC<Props> = observer((props) => {
+export const IssueLinksActionButton = observer(function IssueLinksActionButton(props: Props) {
   const { customButton, disabled = false, issueServiceType } = props;
   // store hooks
   const { toggleIssueLinkModal } = useIssueDetail(issueServiceType);

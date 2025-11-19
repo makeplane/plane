@@ -21,7 +21,7 @@ type TPageListBlock = {
   storeType: EPageStoreType;
 };
 
-export const PageListBlock: FC<TPageListBlock> = observer((props) => {
+export const PageListBlock = observer(function PageListBlock(props: TPageListBlock) {
   const { pageId, storeType } = props;
   // refs
   const parentRef = useRef(null);

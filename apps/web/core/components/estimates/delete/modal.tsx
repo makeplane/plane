@@ -22,7 +22,7 @@ type TDeleteEstimateModal = {
   handleClose: () => void;
 };
 
-export const DeleteEstimateModal: FC<TDeleteEstimateModal> = observer((props) => {
+export const DeleteEstimateModal = observer(function DeleteEstimateModal(props: TDeleteEstimateModal) {
   // props
   const { workspaceSlug, projectId, estimateId, isOpen, handleClose } = props;
   // hooks

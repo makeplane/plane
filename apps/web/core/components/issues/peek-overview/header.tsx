@@ -66,7 +66,7 @@ export type PeekOverviewHeaderProps = {
   isSubmitting: TNameDescriptionLoader;
 };
 
-export const IssuePeekOverviewHeader: FC<PeekOverviewHeaderProps> = observer((props) => {
+export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader(props: PeekOverviewHeaderProps) {
   const {
     peekMode,
     setPeekMode,

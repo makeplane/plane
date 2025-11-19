@@ -22,14 +22,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const NewEmptyState: React.FC<Props> = ({
-  title,
-  description,
-  image,
-  primaryButton,
-  disabled = false,
-  comicBox,
-}) => {
+export function NewEmptyState({ title, description, image, primaryButton, disabled = false, comicBox }: Props) {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseEnter = () => {
@@ -109,4 +102,4 @@ export const NewEmptyState: React.FC<Props> = ({
       </div>
     </div>
   );
-};
+}

@@ -20,7 +20,7 @@ type IssueFiltersDropdownProps = {
   anchor: string;
 };
 
-export const IssueFiltersDropdown: React.FC<IssueFiltersDropdownProps> = observer((props) => {
+export const IssueFiltersDropdown = observer(function IssueFiltersDropdown(props: IssueFiltersDropdownProps) {
   const { anchor } = props;
   // router
   const router = useRouter();

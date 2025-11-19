@@ -70,7 +70,7 @@ interface Props {
   isEpic?: boolean;
 }
 
-export const ListGroup = observer((props: Props) => {
+export const ListGroup = observer(function ListGroup(props: Props) {
   const {
     groupIssueIds = [],
     group,

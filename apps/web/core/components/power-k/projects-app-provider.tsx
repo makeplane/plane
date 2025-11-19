@@ -22,7 +22,7 @@ import { ProjectsAppPowerKModalWrapper } from "./ui/modal/wrapper";
 /**
  * Projects App PowerK provider
  */
-export const ProjectsAppPowerKProvider = observer(() => {
+export const ProjectsAppPowerKProvider = observer(function ProjectsAppPowerKProvider() {
   // router
   const router = useAppRouter();
   const params = useParams();

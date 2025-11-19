@@ -17,7 +17,7 @@ type Props = {
   options: { value: ChartYAxisMetric; label: string }[];
 };
 
-export const SelectYAxis: React.FC<Props> = observer(({ value, onChange, hiddenOptions, options }) => {
+export const SelectYAxis = observer(function SelectYAxis({ value, onChange, hiddenOptions, options }: Props) {
   // hooks
   const { projectId } = useParams();
   const { areEstimateEnabledByProjectId, currentActiveEstimateId, estimateById } = useProjectEstimates();

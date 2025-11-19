@@ -30,7 +30,7 @@ export type TCreateProjectFormProps = {
   updateCoverImageStatus: (projectId: string, coverImage: string) => Promise<void>;
 };
 
-export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) => {
+export const CreateProjectForm = observer(function CreateProjectForm(props: TCreateProjectFormProps) {
   const { setToFavorite, workspaceSlug, data, onClose, handleNextStep, updateCoverImageStatus } = props;
   // store
   const { t } = useTranslation();

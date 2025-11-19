@@ -17,7 +17,7 @@ interface IDeleteWebhook {
   onClose: () => void;
 }
 
-export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
+export function DeleteWebhookModal(props: IDeleteWebhook) {
   const { isOpen, onClose } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);
@@ -84,4 +84,4 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
       }
     />
   );
-};
+}

@@ -21,7 +21,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const ProjectFeatureUpdate: FC<Props> = observer((props) => {
+export const ProjectFeatureUpdate = observer(function ProjectFeatureUpdate(props: Props) {
   const { workspaceSlug, projectId, onClose } = props;
   // store hooks
   const { t } = useTranslation();

@@ -36,7 +36,7 @@ const defaultValues: Partial<IModule> = {
   member_ids: [],
 };
 
-export const ModuleForm: React.FC<Props> = (props) => {
+export function ModuleForm(props: Props) {
   const { handleFormSubmit, handleClose, status, projectId, setActiveProject, data, isMobile = false } = props;
   // store hooks
   const { projectsWithCreatePermissions } = useUser();
@@ -244,4 +244,4 @@ export const ModuleForm: React.FC<Props> = (props) => {
       </div>
     </form>
   );
-};
+}

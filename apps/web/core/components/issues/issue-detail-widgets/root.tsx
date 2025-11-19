@@ -19,7 +19,7 @@ type Props = {
   hideWidgets?: TWorkItemWidgets[];
 };
 
-export const IssueDetailWidgets: FC<Props> = (props) => {
+export function IssueDetailWidgets(props: Props) {
   const {
     workspaceSlug,
     projectId,
@@ -61,4 +61,4 @@ export const IssueDetailWidgets: FC<Props> = (props) => {
       )}
     </>
   );
-};
+}

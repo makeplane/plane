@@ -45,7 +45,7 @@ const defaultFromData: TFormData = {
   password: "",
 };
 
-export const InstanceSignInForm: React.FC = () => {
+export function InstanceSignInForm() {
   // search params
   const searchParams = useSearchParams();
   const emailParam = searchParams.get("email") || undefined;
@@ -192,4 +192,4 @@ export const InstanceSignInForm: React.FC = () => {
       </div>
     </>
   );
-};
+}

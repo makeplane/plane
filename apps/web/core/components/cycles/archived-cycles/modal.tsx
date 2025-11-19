@@ -20,7 +20,7 @@ type Props = {
   onSubmit?: () => Promise<void>;
 };
 
-export const ArchiveCycleModal: React.FC<Props> = (props) => {
+export function ArchiveCycleModal(props: Props) {
   const { workspaceSlug, projectId, cycleId, isOpen, handleClose } = props;
   // router
   const router = useAppRouter();
@@ -118,4 +118,4 @@ export const ArchiveCycleModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+}

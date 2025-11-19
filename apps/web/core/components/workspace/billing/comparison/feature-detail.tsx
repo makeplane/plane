@@ -12,7 +12,7 @@ type TPlanFeatureDetailProps = {
   data: TPlanFeatureData;
 };
 
-export const PlanFeatureDetail: FC<TPlanFeatureDetailProps> = (props) => {
+export function PlanFeatureDetail(props: TPlanFeatureDetailProps) {
   const { subscriptionType, data } = props;
 
   if (data === null || data === undefined) {
@@ -25,4 +25,4 @@ export const PlanFeatureDetail: FC<TPlanFeatureDetailProps> = (props) => {
     return <MinusCircle className="size-4 text-custom-text-400" />;
   }
   return <>{data}</>;
-};
+}

@@ -24,7 +24,7 @@ type Props = {
   watch: UseFormWatch<TFormValues>;
 };
 
-export const GithubImportData: FC<Props> = observer((props) => {
+export const GithubImportData = observer(function GithubImportData(props: Props) {
   const { handleStepChange, integration, control, watch } = props;
   // store hooks
   const { workspaceProjectIds, getProjectById } = useProject();

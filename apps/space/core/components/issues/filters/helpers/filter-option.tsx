@@ -12,7 +12,7 @@ type Props = {
   multiple?: boolean;
 };
 
-export const FilterOption: React.FC<Props> = (props) => {
+export function FilterOption(props: Props) {
   const { icon, isChecked, multiple = true, onClick, title } = props;
 
   return (
@@ -34,4 +34,4 @@ export const FilterOption: React.FC<Props> = (props) => {
       </div>
     </button>
   );
-};
+}

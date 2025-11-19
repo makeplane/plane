@@ -40,7 +40,7 @@ type Props = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const RelationIssueListItem: FC<Props> = observer((props) => {
+export const RelationIssueListItem = observer(function RelationIssueListItem(props: Props) {
   const {
     workspaceSlug,
     issueId,

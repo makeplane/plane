@@ -21,7 +21,9 @@ type TNotificationItemReadOption = {
   notification: INotification;
 };
 
-export const NotificationItemReadOption: FC<TNotificationItemReadOption> = observer((props) => {
+export const NotificationItemReadOption = observer(function NotificationItemReadOption(
+  props: TNotificationItemReadOption
+) {
   const { workspaceSlug, notification } = props;
   // hooks
   const { currentNotificationTab } = useWorkspaceNotifications();

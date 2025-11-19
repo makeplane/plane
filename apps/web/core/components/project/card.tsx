@@ -32,7 +32,7 @@ type Props = {
   project: IProject;
 };
 
-export const ProjectCard: React.FC<Props> = observer((props) => {
+export const ProjectCard = observer(function ProjectCard(props: Props) {
   const { project } = props;
   // states
   const [deleteProjectModalOpen, setDeleteProjectModal] = useState(false);

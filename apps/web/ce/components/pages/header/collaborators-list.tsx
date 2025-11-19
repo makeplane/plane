@@ -7,4 +7,6 @@ export type TPageCollaboratorsListProps = {
   page: TPageInstance;
 };
 
-export const PageCollaboratorsList = ({}: TPageCollaboratorsListProps) => null;
+export function PageCollaboratorsList({}: TPageCollaboratorsListProps) {
+  return null;
+}

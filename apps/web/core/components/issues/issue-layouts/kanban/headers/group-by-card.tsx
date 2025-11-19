@@ -37,7 +37,7 @@ interface IHeaderGroupByCard {
   isEpic?: boolean;
 }
 
-export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
+export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHeaderGroupByCard) {
   const {
     group_by,
     sub_group_by,

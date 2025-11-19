@@ -10,7 +10,7 @@ type Props = {
   onClick: () => void;
 };
 
-export const ApiTokenEmptyState: React.FC<Props> = (props) => {
+export function ApiTokenEmptyState(props: Props) {
   const { onClick } = props;
 
   return (
@@ -29,4 +29,4 @@ export const ApiTokenEmptyState: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

@@ -33,7 +33,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const IssueGanttSidebar: React.FC<Props> = observer((props) => {
+export const IssueGanttSidebar = observer(function IssueGanttSidebar(props: Props) {
   const {
     blockUpdateHandler,
     blockIds,

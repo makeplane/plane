@@ -23,7 +23,7 @@ import { AppliedFilters } from "./filters/applied-filter";
 import { NotificationSidebarHeader } from "./header";
 import { NotificationsLoader } from "./loader";
 
-export const NotificationsSidebarRoot: FC = observer(() => {
+export const NotificationsSidebarRoot = observer(function NotificationsSidebarRoot() {
   const { workspaceSlug } = useParams();
   // hooks
   const { getWorkspaceBySlug } = useWorkspace();

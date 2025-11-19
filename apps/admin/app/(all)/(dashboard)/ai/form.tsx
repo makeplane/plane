@@ -17,7 +17,7 @@ type IInstanceAIForm = {
 
 type AIFormValues = Record<TInstanceAIConfigurationKeys, string>;
 
-export const InstanceAIForm: React.FC<IInstanceAIForm> = (props) => {
+export function InstanceAIForm(props: IInstanceAIForm) {
   const { config } = props;
   // store
   const { updateInstanceConfigurations } = useInstance();
@@ -133,4 +133,4 @@ export const InstanceAIForm: React.FC<IInstanceAIForm> = (props) => {
       </div>
     </div>
   );
-};
+}

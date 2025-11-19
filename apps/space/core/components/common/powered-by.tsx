@@ -8,7 +8,7 @@ type TPoweredBy = {
   disabled?: boolean;
 };
 
-export const PoweredBy: React.FC<TPoweredBy> = (props) => {
+export function PoweredBy(props: TPoweredBy) {
   // props
   const { disabled = false } = props;
 
@@ -27,4 +27,4 @@ export const PoweredBy: React.FC<TPoweredBy> = (props) => {
       </div>
     </a>
   );
-};
+}

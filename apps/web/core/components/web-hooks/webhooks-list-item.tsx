@@ -16,7 +16,7 @@ interface IWebhookListItem {
   webhook: IWebhook;
 }
 
-export const WebhooksListItem: FC<IWebhookListItem> = (props) => {
+export function WebhooksListItem(props: IWebhookListItem) {
   const { webhook } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -66,4 +66,4 @@ export const WebhooksListItem: FC<IWebhookListItem> = (props) => {
       </Link>
     </div>
   );
-};
+}

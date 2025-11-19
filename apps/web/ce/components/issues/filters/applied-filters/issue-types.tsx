@@ -8,4 +8,6 @@ type Props = {
   editable: boolean | undefined;
 };
 
-export const AppliedIssueTypeFilters: React.FC<Props> = observer(() => null);
+export const AppliedIssueTypeFilters = observer(function AppliedIssueTypeFilters(_props: Props) {
+  return null;
+});

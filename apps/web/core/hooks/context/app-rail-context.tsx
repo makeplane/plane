@@ -21,7 +21,7 @@ interface AppRailProviderProps {
   children: ReactNode;
 }
 
-export const AppRailProvider = observer(({ children }: AppRailProviderProps) => {
+export const AppRailProvider = observer(function AppRailProvider({ children }: AppRailProviderProps) {
   const { workspaceSlug } = useParams();
   const { storedValue: isAppRailVisible, setValue: setIsAppRailVisible } = useLocalStorage<boolean>(
     `APP_RAIL_${workspaceSlug}`,

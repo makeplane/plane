@@ -16,7 +16,7 @@ type TStoreWrapper = {
   children: ReactNode;
 };
 
-const StoreWrapper: FC<TStoreWrapper> = observer((props) => {
+const StoreWrapper = observer(function StoreWrapper(props: TStoreWrapper) {
   const { children } = props;
   // theme
   const { setTheme } = useTheme();

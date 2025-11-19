@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
@@ -14,7 +13,7 @@ import type { Route } from "./+types/layout";
 import { AdminHeader } from "./header";
 import { AdminSidebar } from "./sidebar";
 
-const AdminLayout: React.FC<Route.ComponentProps> = () => {
+function AdminLayout(_props: Route.ComponentProps) {
   // router
   const { replace } = useRouter();
   // store hooks
@@ -48,6 +47,6 @@ const AdminLayout: React.FC<Route.ComponentProps> = () => {
   }
 
   return <></>;
-};
+}
 
 export default observer(AdminLayout);

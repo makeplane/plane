@@ -10,7 +10,9 @@ import { getLegendProps } from "../components/legend";
 import { CustomXAxisTick, CustomYAxisTick } from "../components/tick";
 import { CustomTooltip } from "../components/tooltip";
 
-export const AreaChart = React.memo(<K extends string, T extends string>(props: TAreaChartProps<K, T>) => {
+export const AreaChart = React.memo(function AreaChart<K extends string, T extends string>(
+  props: TAreaChartProps<K, T>
+) {
   const {
     data,
     areas,

@@ -16,4 +16,6 @@ export type TEstimatePointDelete = {
   estimateSystem: TEstimateSystemKeys;
 };
 
-export const EstimatePointDelete: FC<TEstimatePointDelete> = () => <></>;
+export function EstimatePointDelete(_props: TEstimatePointDelete) {
+  return <></>;
+}

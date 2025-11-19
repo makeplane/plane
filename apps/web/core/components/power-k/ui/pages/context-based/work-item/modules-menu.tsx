@@ -14,7 +14,7 @@ type Props = {
   workItemDetails: TIssue;
 };
 
-export const PowerKWorkItemModulesMenu: React.FC<Props> = observer((props) => {
+export const PowerKWorkItemModulesMenu = observer(function PowerKWorkItemModulesMenu(props: Props) {
   const { handleSelect, workItemDetails } = props;
   // store hooks
   const { getProjectModuleIds, getModuleById } = useModule();

@@ -8,7 +8,7 @@ type Props = {
   onChange: (value: string) => void;
   hasError: boolean;
 };
-export const WebhookInput: React.FC<Props> = (props) => {
+export function WebhookInput(props: Props) {
   const { value, onChange, hasError } = props;
   const { t } = useTranslation();
 
@@ -27,4 +27,4 @@ export const WebhookInput: React.FC<Props> = (props) => {
       />
     </>
   );
-};
+}

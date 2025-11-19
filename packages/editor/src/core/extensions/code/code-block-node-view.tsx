@@ -19,7 +19,7 @@ type Props = {
   node: ProseMirrorNode;
 };
 
-export const CodeBlockComponent: React.FC<Props> = ({ node }) => {
+export function CodeBlockComponent({ node }: Props) {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -60,4 +60,4 @@ export const CodeBlockComponent: React.FC<Props> = ({ node }) => {
       </pre>
     </NodeViewWrapper>
   );
-};
+}

@@ -9,4 +9,6 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterIssueTypes: React.FC<Props> = observer(() => null);
+export const FilterIssueTypes = observer(function FilterIssueTypes(_props: Props) {
+  return null;
+});

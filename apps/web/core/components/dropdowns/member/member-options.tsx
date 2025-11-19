@@ -31,7 +31,7 @@ interface Props {
   referenceElement: HTMLButtonElement | null;
 }
 
-export const MemberOptions: React.FC<Props> = observer((props: Props) => {
+export const MemberOptions = observer(function MemberOptions(props: Props) {
   const {
     getUserDetails,
     isOpen,

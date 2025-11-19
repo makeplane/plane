@@ -15,7 +15,9 @@ export type TPowerKProjectStatesMenuItemsProps = {
   workspaceSlug: string;
 };
 
-export const PowerKProjectStatesMenuItems: React.FC<TPowerKProjectStatesMenuItemsProps> = observer((props) => {
+export const PowerKProjectStatesMenuItems = observer(function PowerKProjectStatesMenuItems(
+  props: TPowerKProjectStatesMenuItemsProps
+) {
   const { handleSelect, selectedStateId, states } = props;
 
   return (

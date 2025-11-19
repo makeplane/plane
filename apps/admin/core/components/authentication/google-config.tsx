@@ -17,7 +17,7 @@ type Props = {
   updateConfig: (key: TInstanceAuthenticationMethodKeys, value: string) => void;
 };
 
-export const GoogleConfiguration: React.FC<Props> = observer((props) => {
+export const GoogleConfiguration = observer(function GoogleConfiguration(props: Props) {
   const { disabled, updateConfig } = props;
   // store
   const { formattedConfig } = useInstance();

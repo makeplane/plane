@@ -10,7 +10,7 @@ type TSidebarNavItem = {
   children?: React.ReactNode;
 };
 
-export const SidebarNavItem: FC<TSidebarNavItem> = (props) => {
+export function SidebarNavItem(props: TSidebarNavItem) {
   const { className, isActive, children } = props;
   return (
     <div
@@ -27,4 +27,4 @@ export const SidebarNavItem: FC<TSidebarNavItem> = (props) => {
       {children}
     </div>
   );
-};
+}

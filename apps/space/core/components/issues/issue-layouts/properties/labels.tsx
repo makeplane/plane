@@ -12,7 +12,7 @@ type Props = {
   shouldShowLabel?: boolean;
 };
 
-export const IssueBlockLabels = observer(({ labelIds, shouldShowLabel = false }: Props) => {
+export const IssueBlockLabels = observer(function IssueBlockLabels({ labelIds, shouldShowLabel = false }: Props) {
   const { getLabelsByIds } = useLabel();
 
   const labels = getLabelsByIds(labelIds);

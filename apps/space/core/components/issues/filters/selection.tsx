@@ -16,7 +16,7 @@ type Props = {
   layoutDisplayFiltersOptions: TIssueFilterKeys[];
 };
 
-export const FilterSelection: React.FC<Props> = observer((props) => {
+export const FilterSelection = observer(function FilterSelection(props: Props) {
   const { filters, handleFilters, layoutDisplayFiltersOptions } = props;
 
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");

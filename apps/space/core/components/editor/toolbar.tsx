@@ -19,7 +19,7 @@ type Props = {
 
 const toolbarItems = TOOLBAR_ITEMS.lite;
 
-export const IssueCommentToolbar: React.FC<Props> = (props) => {
+export function IssueCommentToolbar(props: Props) {
   const { executeCommand, handleSubmit, isCommentEmpty, editorRef, isSubmitting, showSubmitButton } = props;
   // states
   const [activeStates, setActiveStates] = useState<Record<string, boolean>>({});
@@ -113,4 +113,4 @@ export const IssueCommentToolbar: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

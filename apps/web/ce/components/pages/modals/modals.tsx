@@ -12,4 +12,6 @@ export type TPageModalsProps = {
   storeType: EPageStoreType;
 };
 
-export const PageModals: React.FC<TPageModalsProps> = observer((props) => null);
+export const PageModals = observer(function PageModals(props: TPageModalsProps) {
+  return null;
+});

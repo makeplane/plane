@@ -26,7 +26,7 @@ type TEstimatePointItemPreview = {
   handleEstimatePointError?: (newValue: string, message: string | undefined) => void;
 };
 
-export const EstimatePointItemPreview: FC<TEstimatePointItemPreview> = observer((props) => {
+export const EstimatePointItemPreview = observer(function EstimatePointItemPreview(props: TEstimatePointItemPreview) {
   const {
     workspaceSlug,
     projectId,

@@ -13,7 +13,7 @@ type Props = {
   placement?: Placement;
 };
 
-export const FiltersDropdown: React.FC<Props> = (props) => {
+export function FiltersDropdown(props: Props) {
   const { children, title = "Dropdown", placement } = props;
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
@@ -62,4 +62,4 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
       }}
     </Popover>
   );
-};
+}

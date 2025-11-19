@@ -16,7 +16,7 @@ type TSwitchAccountDropdownProps = {
   fullName?: string;
 };
 
-export const SwitchAccountDropdown: FC<TSwitchAccountDropdownProps> = observer((props) => {
+export const SwitchAccountDropdown = observer(function SwitchAccountDropdown(props: TSwitchAccountDropdownProps) {
   const { fullName } = props;
   // states
   const [showSwitchAccountModal, setShowSwitchAccountModal] = useState(false);

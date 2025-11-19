@@ -22,7 +22,7 @@ export type TBasePaidPlanCardProps = {
   renderActionButton: (price: TSubscriptionPrice) => React.ReactNode;
 };
 
-export const BasePaidPlanCard: FC<TBasePaidPlanCardProps> = observer((props) => {
+export const BasePaidPlanCard = observer(function BasePaidPlanCard(props: TBasePaidPlanCardProps) {
   const {
     planVariant,
     features,

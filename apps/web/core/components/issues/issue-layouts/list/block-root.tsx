@@ -44,7 +44,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const IssueBlockRoot: FC<Props> = observer((props) => {
+export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
   const {
     issueId,
     issuesMap,

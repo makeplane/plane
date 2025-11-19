@@ -15,7 +15,7 @@ export type SlashCommandsMenuProps = SuggestionProps<TSlashCommandSection, ISlas
   onClose: () => void;
 };
 
-export const SlashCommandsMenu = forwardRef((props: SlashCommandsMenuProps, ref) => {
+export const SlashCommandsMenu = forwardRef(function SlashCommandsMenu(props: SlashCommandsMenuProps, ref) {
   const { items: sections, command, query, onClose } = props;
   // states
   const [selectedIndex, setSelectedIndex] = useState({

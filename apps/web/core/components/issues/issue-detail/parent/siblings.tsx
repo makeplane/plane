@@ -14,7 +14,7 @@ export type TIssueParentSiblings = {
   parentIssue: TIssue;
 };
 
-export const IssueParentSiblings: FC<TIssueParentSiblings> = observer((props) => {
+export const IssueParentSiblings = observer(function IssueParentSiblings(props: TIssueParentSiblings) {
   const { workspaceSlug, currentIssue, parentIssue } = props;
   // hooks
   const {

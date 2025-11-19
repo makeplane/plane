@@ -32,7 +32,7 @@ interface ProdErrorComponentProps {
   onGoHome: () => void;
 }
 
-export const ProdErrorComponent: React.FC<ProdErrorComponentProps> = ({ onGoHome }) => {
+export function ProdErrorComponent({ onGoHome }: ProdErrorComponentProps) {
   // hooks
   const { resolvedTheme } = useTheme();
 
@@ -86,4 +86,4 @@ export const ProdErrorComponent: React.FC<ProdErrorComponentProps> = ({ onGoHome
       </div>
     </DefaultLayout>
   );
-};
+}

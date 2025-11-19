@@ -1,5 +1,4 @@
 "use client";
-
 import type { ReactNode } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
@@ -30,22 +29,26 @@ type TDefaultSettingItemProps = {
   children: ReactNode;
 };
 
-const DefaultSettingItem: React.FC<TDefaultSettingItemProps> = ({ title, description, children }) => (
-  <div className="flex items-center justify-between gap-x-2">
-    <div className="flex flex-col gap-0.5">
-      <h4 className="text-sm font-medium">{title}</h4>
-      <p className="text-xs text-custom-text-300">{description}</p>
+function DefaultSettingItem({ title, description, children }: TDefaultSettingItemProps) {
+  return (
+    <div className="flex items-center justify-between gap-x-2">
+      <div className="flex flex-col gap-0.5">
+        <h4 className="text-sm font-medium">{title}</h4>
+        <p className="text-xs text-custom-text-300">{description}</p>
+      </div>
+      <div className="w-full max-w-48 sm:max-w-64">{children}</div>
     </div>
-    <div className="w-full max-w-48 sm:max-w-64">{children}</div>
-  </div>
-);
+  );
+}
 
 type TProjectSettingsMemberDefaultsProps = {
   workspaceSlug: string;
   projectId: string;
 };
 
-export const ProjectSettingsMemberDefaults: React.FC<TProjectSettingsMemberDefaultsProps> = observer((props) => {
+export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMemberDefaults(
+  props: TProjectSettingsMemberDefaultsProps
+) {
   const { workspaceSlug, projectId } = props;
   // plane hooks
   const { t } = useTranslation();

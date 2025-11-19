@@ -52,7 +52,7 @@ type Props = {
   isEditable: boolean;
 };
 
-export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
+export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: Props) {
   const { t } = useTranslation();
   const { workspaceSlug, projectId, issueId, issueOperations, isEditable } = props;
   // store hooks

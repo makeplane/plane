@@ -49,7 +49,7 @@ type Props = {
   renderInExtendedSidebar?: boolean;
 };
 
-export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
+export const SidebarProjectsListItem = observer(function SidebarProjectsListItem(props: Props) {
   const {
     projectId,
     handleCopyText,

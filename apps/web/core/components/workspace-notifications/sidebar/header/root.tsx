@@ -18,7 +18,9 @@ type TNotificationSidebarHeader = {
   workspaceSlug: string;
 };
 
-export const NotificationSidebarHeader: FC<TNotificationSidebarHeader> = observer((props) => {
+export const NotificationSidebarHeader = observer(function NotificationSidebarHeader(
+  props: TNotificationSidebarHeader
+) {
   const { workspaceSlug } = props;
   const { t } = useTranslation();
   const { sidebarCollapsed } = useAppTheme();

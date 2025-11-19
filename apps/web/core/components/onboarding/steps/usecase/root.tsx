@@ -27,7 +27,7 @@ const defaultValues = {
   use_case: "",
 };
 
-export const UseCaseSetupStep: FC<Props> = observer(({ handleStepChange }) => {
+export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepChange }: Props) {
   // store hooks
   const { data: profile, updateUserProfile } = useUserProfile();
   // form info

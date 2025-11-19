@@ -27,7 +27,7 @@ type Props = {
 
 type GoogleConfigFormValues = Record<TInstanceGoogleAuthenticationConfigurationKeys, string>;
 
-export const InstanceGoogleConfigForm: React.FC<Props> = (props) => {
+export function InstanceGoogleConfigForm(props: Props) {
   const { config } = props;
   // states
   const [isDiscardChangesModalOpen, setIsDiscardChangesModalOpen] = useState(false);
@@ -232,4 +232,4 @@ export const InstanceGoogleConfigForm: React.FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

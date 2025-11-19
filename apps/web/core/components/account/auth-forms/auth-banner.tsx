@@ -11,7 +11,7 @@ type TAuthBanner = {
   handleBannerData?: (bannerData: TAuthErrorInfo | undefined) => void;
 };
 
-export const AuthBanner: FC<TAuthBanner> = (props) => {
+export function AuthBanner(props: TAuthBanner) {
   const { bannerData, handleBannerData } = props;
   // translation
   const { t } = useTranslation();
@@ -37,4 +37,4 @@ export const AuthBanner: FC<TAuthBanner> = (props) => {
       </button>
     </div>
   );
-};
+}

@@ -7,7 +7,7 @@ import { useProject } from "@/hooks/store/use-project";
 import DurationDropdown from "./select/duration";
 import { ProjectSelect } from "./select/project";
 
-const AnalyticsFilterActions = observer(() => {
+const AnalyticsFilterActions = observer(function AnalyticsFilterActions() {
   const { selectedProjects, selectedDuration, updateSelectedProjects, updateSelectedDuration } = useAnalytics();
   const { joinedProjectIds } = useProject();
   return (

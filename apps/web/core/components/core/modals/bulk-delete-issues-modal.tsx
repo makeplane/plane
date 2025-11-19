@@ -42,7 +42,7 @@ type Props = {
 
 const projectService = new ProjectService();
 
-export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
+export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(props: Props) {
   const { isOpen, onClose } = props;
   // router params
   const { workspaceSlug, projectId } = useParams();

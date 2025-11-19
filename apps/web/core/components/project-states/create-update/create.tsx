@@ -18,7 +18,7 @@ type TStateCreate = {
   handleClose: () => void;
 };
 
-export const StateCreate: FC<TStateCreate> = observer((props) => {
+export const StateCreate = observer(function StateCreate(props: TStateCreate) {
   const { groupKey, shouldTrackEvents, createStateCallback, handleClose } = props;
 
   // states

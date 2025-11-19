@@ -16,7 +16,7 @@ type TWorkItemStateDropdownProps = Omit<
   stateIds?: string[];
 };
 
-export const StateDropdown: React.FC<TWorkItemStateDropdownProps> = observer((props) => {
+export const StateDropdown = observer(function StateDropdown(props: TWorkItemStateDropdownProps) {
   const { projectId, stateIds: propsStateIds } = props;
   // router params
   const { workspaceSlug } = useParams();

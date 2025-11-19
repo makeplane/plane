@@ -33,7 +33,7 @@ const defaultValues: TUniqueCodeFormValues = {
   code: "",
 };
 
-export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
+export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
   const { mode, email, nextPath, handleEmailClear, generateEmailUniqueCode } = props;
   // derived values
   const defaultResetTimerValue = 5;
@@ -150,4 +150,4 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
       </div>
     </form>
   );
-};
+}

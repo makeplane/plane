@@ -17,7 +17,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterModule: React.FC<Props> = observer((props) => {
+export const FilterModule = observer(function FilterModule(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery } = props;
   // hooks
   const { projectId } = useParams();

@@ -33,7 +33,7 @@ export interface IProjectDetailsForm {
   isAdmin: boolean;
 }
 const projectService = new ProjectService();
-export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
+export function ProjectDetailsForm(props: IProjectDetailsForm) {
   const { project, workspaceSlug, projectId, isAdmin } = props;
   const { t } = useTranslation();
   // states
@@ -440,4 +440,4 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       </div>
     </form>
   );
-};
+}

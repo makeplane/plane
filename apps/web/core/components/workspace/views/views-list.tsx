@@ -12,7 +12,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const GlobalViewsList: React.FC<Props> = observer((props) => {
+export const GlobalViewsList = observer(function GlobalViewsList(props: Props) {
   const { searchQuery } = props;
   // router
   const { workspaceSlug } = useParams();

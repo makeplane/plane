@@ -8,7 +8,9 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
 import { SubscriptionPill } from "@/plane-web/components/common/subscription/subscription-pill";
 
-export const SettingsSidebarHeader = observer((props: { customHeader?: React.ReactNode }) => {
+export const SettingsSidebarHeader = observer(function SettingsSidebarHeader(props: {
+  customHeader?: React.ReactNode;
+}) {
   const { customHeader } = props;
   const { currentWorkspace } = useWorkspace();
   return customHeader

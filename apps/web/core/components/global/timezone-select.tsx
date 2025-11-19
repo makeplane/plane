@@ -18,7 +18,7 @@ type TTimezoneSelect = {
   disabled?: boolean;
 };
 
-export const TimezoneSelect: FC<TTimezoneSelect> = observer((props) => {
+export const TimezoneSelect = observer(function TimezoneSelect(props: TTimezoneSelect) {
   // props
   const {
     value,

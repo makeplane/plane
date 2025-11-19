@@ -32,7 +32,7 @@ type Props = {
   handleLayout: () => void;
 };
 
-export const StickyDNDWrapper = observer((props: Props) => {
+export const StickyDNDWrapper = observer(function StickyDNDWrapper(props: Props) {
   const { stickyId, workspaceSlug, itemWidth, isLastChild, isInFirstRow, isInLastRow, handleDrop, handleLayout } =
     props;
   // states

@@ -25,7 +25,7 @@ interface PortalProps {
   asChild?: boolean;
 }
 
-const Portal: React.FC<PortalProps> = ({ children, container, asChild = false }) => {
+function Portal({ children, container, asChild = false }: PortalProps) {
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
@@ -44,7 +44,7 @@ const Portal: React.FC<PortalProps> = ({ children, container, asChild = false })
   }
 
   return ReactDOM.createPortal(<div data-radix-portal="">{children}</div>, targetContainer);
-};
+}
 
 // Context for main menu to communicate with submenus
 const MenuContext = React.createContext<{
@@ -52,7 +52,7 @@ const MenuContext = React.createContext<{
   registerSubmenu: (closeSubmenu: () => void) => () => void;
 } | null>(null);
 
-const CustomMenu = (props: ICustomMenuDropdownProps) => {
+function CustomMenu(props: ICustomMenuDropdownProps) {
   const {
     ariaLabel,
     buttonClassName = "",
@@ -295,7 +295,7 @@ const CustomMenu = (props: ICustomMenuDropdownProps) => {
       )}
     </Menu>
   );
-};
+}
 
 // SubMenu context for closing submenu from nested items
 const SubMenuContext = React.createContext<{ closeSubmenu: () => void } | null>(null);
@@ -304,7 +304,7 @@ const SubMenuContext = React.createContext<{ closeSubmenu: () => void } | null>(
 const useSubMenu = () => React.useContext(SubMenuContext);
 
 // SubMenu implementation
-const SubMenu: React.FC<ICustomSubMenuProps> = (props) => {
+function SubMenu(props: ICustomSubMenuProps) {
   const {
     children,
     trigger,
@@ -447,9 +447,9 @@ const SubMenu: React.FC<ICustomSubMenuProps> = (props) => {
       )}
     </div>
   );
-};
+}
 
-const MenuItem: React.FC<ICustomMenuItemProps> = (props) => {
+function MenuItem(props: ICustomMenuItemProps) {
   const { children, disabled = false, onClick, className } = props;
   const submenuContext = useSubMenu();
 
@@ -479,9 +479,9 @@ const MenuItem: React.FC<ICustomMenuItemProps> = (props) => {
       )}
     </Menu.Item>
   );
-};
+}
 
-const SubMenuTrigger: React.FC<ICustomSubMenuTriggerProps> = (props) => {
+function SubMenuTrigger(props: ICustomSubMenuTriggerProps) {
   const { children, disabled = false, className } = props;
 
   return (
@@ -505,9 +505,9 @@ const SubMenuTrigger: React.FC<ICustomSubMenuTriggerProps> = (props) => {
       )}
     </Menu.Item>
   );
-};
+}
 
-const SubMenuContent: React.FC<ICustomSubMenuContentProps> = (props) => {
+function SubMenuContent(props: ICustomSubMenuContentProps) {
   const { children, className } = props;
 
   return (
@@ -520,7 +520,7 @@ const SubMenuContent: React.FC<ICustomSubMenuContentProps> = (props) => {
       {children}
     </div>
   );
-};
+}
 
 // Add all components as static properties for external use
 CustomMenu.Portal = Portal;

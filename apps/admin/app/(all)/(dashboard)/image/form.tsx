@@ -14,7 +14,7 @@ type IInstanceImageConfigForm = {
 
 type ImageConfigFormValues = Record<TInstanceImageConfigurationKeys, string>;
 
-export const InstanceImageConfigForm: React.FC<IInstanceImageConfigForm> = (props) => {
+export function InstanceImageConfigForm(props: IInstanceImageConfigForm) {
   const { config } = props;
   // store hooks
   const { updateInstanceConfigurations } = useInstance();
@@ -77,4 +77,4 @@ export const InstanceImageConfigForm: React.FC<IInstanceImageConfigForm> = (prop
       </div>
     </div>
   );
-};
+}

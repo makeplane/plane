@@ -16,7 +16,7 @@ import { ProjectOrderByDropdown } from "@/components/project/dropdowns/order-by"
 import { useMember } from "@/hooks/store/use-member";
 import { useProjectFilter } from "@/hooks/store/use-project-filter";
 
-export const ProjectsListMobileHeader = observer(() => {
+export const ProjectsListMobileHeader = observer(function ProjectsListMobileHeader() {
   // i18n
   const { t } = useTranslation();
   // router

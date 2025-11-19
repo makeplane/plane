@@ -12,7 +12,7 @@ export type MentionNodeViewProps = NodeViewProps & {
   };
 };
 
-export const MentionNodeView: React.FC<MentionNodeViewProps> = (props) => {
+export function MentionNodeView(props: MentionNodeViewProps) {
   const {
     extension,
     node: { attrs },
@@ -26,4 +26,4 @@ export const MentionNodeView: React.FC<MentionNodeViewProps> = (props) => {
       })}
     </NodeViewWrapper>
   );
-};
+}

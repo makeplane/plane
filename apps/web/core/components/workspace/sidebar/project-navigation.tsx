@@ -35,7 +35,7 @@ type TProjectItemsProps = {
   additionalNavigationItems?: (workspaceSlug: string, projectId: string) => TNavigationItem[];
 };
 
-export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
+export const ProjectNavigation = observer(function ProjectNavigation(props: TProjectItemsProps) {
   const { workspaceSlug, projectId, additionalNavigationItems } = props;
   const { workItem: workItemIdentifierFromRoute } = useParams();
   // store hooks

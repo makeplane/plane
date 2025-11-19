@@ -32,7 +32,7 @@ type TEstimatePointUpdate = {
   handleEstimatePointError?: (newValue: string, message: string | undefined, mode?: "add" | "delete") => void;
 };
 
-export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) => {
+export const EstimatePointUpdate = observer(function EstimatePointUpdate(props: TEstimatePointUpdate) {
   const {
     workspaceSlug,
     projectId,

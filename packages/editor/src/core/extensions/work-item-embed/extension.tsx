@@ -15,8 +15,8 @@ type Props = {
   }) => React.ReactNode;
 };
 
-export const WorkItemEmbedExtension = (props: Props) =>
-  WorkItemEmbedExtensionConfig.extend({
+export function WorkItemEmbedExtension(props: Props) {
+  return WorkItemEmbedExtensionConfig.extend({
     addNodeView() {
       return ReactNodeViewRenderer((issueProps: NodeViewProps) => (
         <NodeViewWrapper>
@@ -29,3 +29,4 @@ export const WorkItemEmbedExtension = (props: Props) =>
       ));
     },
   });
+}

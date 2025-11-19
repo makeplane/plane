@@ -45,7 +45,7 @@ const defaultValues: FormValues = {
   ],
 };
 
-export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
+export const SendProjectInvitationModal = observer(function SendProjectInvitationModal(props: Props) {
   const { isOpen, onClose, onSuccess, projectId, workspaceSlug } = props;
   // plane hooks
   const { t } = useTranslation();

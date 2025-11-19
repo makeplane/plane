@@ -11,7 +11,7 @@ type TInstanceWrapper = {
   children: ReactNode;
 };
 
-export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
+export const InstanceWrapper = observer(function InstanceWrapper(props: TInstanceWrapper) {
   const { children } = props;
   // store
   const { isLoading, instance, error, fetchInstanceInfo } = useInstance();

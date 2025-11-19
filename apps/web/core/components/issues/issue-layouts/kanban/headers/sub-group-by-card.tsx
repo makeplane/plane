@@ -19,7 +19,7 @@ interface IHeaderSubGroupByCard {
   handleCollapsedGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
 }
 
-export const HeaderSubGroupByCard: FC<IHeaderSubGroupByCard> = observer((props) => {
+export const HeaderSubGroupByCard = observer(function HeaderSubGroupByCard(props: IHeaderSubGroupByCard) {
   const { icon, title, count, column_id, collapsedGroups, sub_group_by, handleCollapsedGroups } = props;
   return (
     <div

@@ -21,7 +21,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const DeleteProjectViewModal: React.FC<Props> = observer((props) => {
+export const DeleteProjectViewModal = observer(function DeleteProjectViewModal(props: Props) {
   const { data, isOpen, onClose } = props;
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);

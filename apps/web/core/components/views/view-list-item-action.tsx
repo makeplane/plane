@@ -28,7 +28,7 @@ type Props = {
   view: IProjectView;
 };
 
-export const ViewListItemAction: FC<Props> = observer((props) => {
+export const ViewListItemAction = observer(function ViewListItemAction(props: Props) {
   const { parentRef, view } = props;
   // states
   const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);

@@ -21,7 +21,7 @@ type CustomImageUploaderProps = CustomImageNodeViewProps & {
   setIsUploaded: (isUploaded: boolean) => void;
 };
 
-export const CustomImageUploader = (props: CustomImageUploaderProps) => {
+export function CustomImageUploader(props: CustomImageUploaderProps) {
   const {
     editor,
     extension,
@@ -214,4 +214,4 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
       />
     </div>
   );
-};
+}

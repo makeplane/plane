@@ -18,7 +18,7 @@ type Props = {
   excludedElementId: string;
 };
 
-export const ExtendedSidebarWrapper: FC<Props> = observer((props) => {
+export const ExtendedSidebarWrapper = observer(function ExtendedSidebarWrapper(props: Props) {
   const { children, extendedSidebarRef, isExtendedSidebarOpened, handleClose, excludedElementId } = props;
   // store hooks
   const { storedValue } = useLocalStorage("sidebarWidth", SIDEBAR_WIDTH);

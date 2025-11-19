@@ -27,7 +27,7 @@ export interface DraftIssueProps extends IssueFormProps {
   onChange: (formData: Partial<TIssue> | null) => void;
 }
 
-export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
+export const DraftIssueLayout = observer(function DraftIssueLayout(props: DraftIssueProps) {
   const { changesMade, data, onChange, onClose, projectId } = props;
   // states
   const [issueDiscardModal, setIssueDiscardModal] = useState(false);

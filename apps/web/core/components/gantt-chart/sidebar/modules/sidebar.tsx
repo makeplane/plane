@@ -20,7 +20,7 @@ type Props = {
   enableReorder: boolean;
 };
 
-export const ModuleGanttSidebar: React.FC<Props> = observer((props) => {
+export const ModuleGanttSidebar = observer(function ModuleGanttSidebar(props: Props) {
   const { blockUpdateHandler, blockIds, enableReorder } = props;
 
   const { getBlockById } = useTimeLineChart(GANTT_TIMELINE_TYPE.MODULE);

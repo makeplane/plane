@@ -1,3 +1,5 @@
 import { observer } from "mobx-react";
 
-export const TeamProjectWorkItemEmptyState: React.FC = observer(() => <></>);
+export const TeamProjectWorkItemEmptyState = observer(function TeamProjectWorkItemEmptyState() {
+  return <></>;
+});

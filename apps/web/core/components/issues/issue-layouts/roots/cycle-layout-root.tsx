@@ -24,11 +24,11 @@ import { CycleKanBanLayout } from "../kanban/roots/cycle-root";
 import { CycleListLayout } from "../list/roots/cycle-root";
 import { CycleSpreadsheetLayout } from "../spreadsheet/roots/cycle-root";
 
-const CycleIssueLayout = (props: {
+function CycleIssueLayout(props: {
   activeLayout: EIssueLayoutTypes | undefined;
   cycleId: string;
   isCompletedCycle: boolean;
-}) => {
+}) {
   switch (props.activeLayout) {
     case EIssueLayoutTypes.LIST:
       return <CycleListLayout />;
@@ -43,9 +43,9 @@ const CycleIssueLayout = (props: {
     default:
       return null;
   }
-};
+}
 
-export const CycleLayoutRoot: React.FC = observer(() => {
+export const CycleLayoutRoot = observer(function CycleLayoutRoot() {
   const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId, cycleId: routerCycleId } = useParams();
   const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
   const projectId = routerProjectId ? routerProjectId.toString() : undefined;

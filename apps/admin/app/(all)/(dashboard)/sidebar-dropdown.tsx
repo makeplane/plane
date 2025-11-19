@@ -16,7 +16,7 @@ import { useTheme, useUser } from "@/hooks/store";
 // service initialization
 const authService = new AuthService();
 
-export const AdminSidebarDropdown = observer(() => {
+export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
   // store hooks
   const { isSidebarCollapsed } = useTheme();
   const { currentUser, signOut } = useUser();

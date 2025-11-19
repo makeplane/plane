@@ -77,7 +77,7 @@ const TOUR_STEPS: {
   },
 ];
 
-export const TourRoot: React.FC<Props> = observer((props) => {
+export const TourRoot = observer(function TourRoot(props: Props) {
   const { onComplete } = props;
   // states
   const [step, setStep] = useState<TTourSteps>("welcome");

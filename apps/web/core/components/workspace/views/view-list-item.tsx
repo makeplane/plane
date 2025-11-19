@@ -19,7 +19,7 @@ import { CreateUpdateWorkspaceViewModal } from "./modal";
 
 type Props = { viewId: string };
 
-export const GlobalViewListItem: React.FC<Props> = observer((props) => {
+export const GlobalViewListItem = observer(function GlobalViewListItem(props: Props) {
   const { viewId } = props;
   // states
   const [updateViewModal, setUpdateViewModal] = useState(false);

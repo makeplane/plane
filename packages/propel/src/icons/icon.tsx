@@ -8,7 +8,7 @@ export interface IconProps extends Omit<ISvgIcons, "ref"> {
   name: IconName;
 }
 
-export const Icon: React.FC<IconProps> = ({ name, ...props }) => {
+export function Icon({ name, ...props }: IconProps) {
   const IconComponent = ICON_REGISTRY[name] || ICON_REGISTRY.default;
   return <IconComponent {...props} />;
-};
+}

@@ -55,7 +55,7 @@ type Props = {
 };
 
 // TODO: refactor this component
-export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
+export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(props: Props) {
   const { moduleId, handleClose, isArchived } = props;
   // states
   const [moduleLinkModal, setModuleLinkModal] = useState(false);

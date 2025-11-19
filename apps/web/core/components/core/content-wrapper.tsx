@@ -9,8 +9,10 @@ export interface ContentWrapperProps {
   children: ReactNode;
 }
 
-export const ContentWrapper = ({ className, children }: ContentWrapperProps) => (
-  <div className="h-full w-full overflow-hidden">
-    <div className={cn("relative h-full w-full overflow-x-hidden overflow-y-scroll", className)}>{children}</div>
-  </div>
-);
+export function ContentWrapper({ className, children }: ContentWrapperProps) {
+  return (
+    <div className="h-full w-full overflow-hidden">
+      <div className={cn("relative h-full w-full overflow-x-hidden overflow-y-scroll", className)}>{children}</div>
+    </div>
+  );
+}

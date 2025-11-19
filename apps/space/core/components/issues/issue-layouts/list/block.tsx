@@ -24,7 +24,7 @@ interface IssueBlockProps {
   displayProperties: IIssueDisplayProperties | undefined;
 }
 
-export const IssueBlock = observer((props: IssueBlockProps) => {
+export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
   const { anchor } = useParams();
   const { issueId, displayProperties } = props;
   const searchParams = useSearchParams();

@@ -29,7 +29,7 @@ type Props = {
   isWorkspaceLevel?: boolean;
 };
 
-export const WorkItemSelectionPage: React.FC<Props> = (props) => {
+export function WorkItemSelectionPage(props: Props) {
   const { workspaceSlug, projectId, debouncedSearchTerm, isWorkspaceLevel = false } = props;
   // router
   // const router = useAppRouter();
@@ -160,4 +160,4 @@ export const WorkItemSelectionPage: React.FC<Props> = (props) => {
       )} */}
     </>
   );
-};
+}

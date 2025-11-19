@@ -8,7 +8,7 @@ import { WorkspaceAppSwitcher } from "@/plane-web/components/workspace/app-switc
 import { UserMenuRoot } from "./user-menu-root";
 import { WorkspaceMenuRoot } from "./workspace-menu-root";
 
-export const SidebarDropdown = observer(() => {
+export const SidebarDropdown = observer(function SidebarDropdown() {
   // hooks
   const { shouldRenderAppRail, isEnabled: isAppRailEnabled } = useAppRail();
 

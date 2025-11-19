@@ -26,7 +26,7 @@ type Props<T extends IBaseLayoutsBaseItem> = {
   renderItem: (item: T) => React.ReactNode;
 };
 
-export const BaseGanttSidebar = observer(<T extends IBaseLayoutsBaseItem>(props: Props<T>) => {
+export const BaseGanttSidebar = observer(function BaseGanttSidebar<T extends IBaseLayoutsBaseItem>(props: Props<T>) {
   const {
     blockUpdateHandler,
     blockIds,

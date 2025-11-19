@@ -15,7 +15,7 @@ import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module
 import { useModule } from "@/hooks/store/use-module";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
 
-export const ArchivedModuleLayoutRoot: React.FC = observer(() => {
+export const ArchivedModuleLayoutRoot = observer(function ArchivedModuleLayoutRoot() {
   // router
   const { workspaceSlug, projectId } = useParams();
   // plane hooks

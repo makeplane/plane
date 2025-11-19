@@ -12,7 +12,7 @@ import TakeoffIconLight from "@/app/assets/logos/takeoff-icon-light.svg?url";
 import { useTheme } from "@/hooks/store";
 // icons
 
-export const NewUserPopup = observer(() => {
+export const NewUserPopup = observer(function NewUserPopup() {
   // hooks
   const { isNewUserPopup, toggleNewUserPopup } = useTheme();
   // theme

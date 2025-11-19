@@ -39,7 +39,7 @@ type Props = TDropdownProps & {
   renderByDefault?: boolean;
 };
 
-export const DateDropdown: React.FC<Props> = observer((props) => {
+export const DateDropdown = observer(function DateDropdown(props: Props) {
   const {
     buttonClassName = "",
     buttonContainerClassName,

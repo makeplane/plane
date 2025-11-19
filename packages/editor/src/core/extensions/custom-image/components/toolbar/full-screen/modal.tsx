@@ -20,7 +20,7 @@ type Props = {
   width: string;
 };
 
-const ImageFullScreenModalWithoutPortal = (props: Props) => {
+function ImageFullScreenModalWithoutPortal(props: Props) {
   const { aspectRatio, isFullScreenEnabled, isTouchDevice, downloadSrc, src, toggleFullScreenMode, width } = props;
   // refs
   const dragStart = useRef({ x: 0, y: 0 });
@@ -289,9 +289,9 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
       </div>
     </div>
   );
-};
+}
 
-export const ImageFullScreenModal: React.FC<Props> = (props) => {
+export function ImageFullScreenModal(props: Props) {
   let modal = <ImageFullScreenModalWithoutPortal {...props} />;
   const portal = document.querySelector("#editor-portal");
   if (portal) {
@@ -303,4 +303,4 @@ export const ImageFullScreenModal: React.FC<Props> = (props) => {
     }
   }
   return modal;
-};
+}

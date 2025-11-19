@@ -9,4 +9,6 @@ export type TPageShareControlProps = {
   storeType: EPageStoreType;
 };
 
-export const PageShareControl = ({}: TPageShareControlProps) => null;
+export function PageShareControl({}: TPageShareControlProps) {
+  return null;
+}

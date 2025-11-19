@@ -10,7 +10,7 @@ import { StickiesTruncated } from "./layout/stickies-truncated";
 import { StickySearch } from "./modal/search";
 import { useStickyOperations } from "./sticky/use-operations";
 
-export const StickiesWidget: React.FC = observer(() => {
+export const StickiesWidget = observer(function StickiesWidget() {
   // params
   const { workspaceSlug } = useParams();
   // store hooks

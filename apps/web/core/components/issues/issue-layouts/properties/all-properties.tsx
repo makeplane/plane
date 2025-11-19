@@ -58,7 +58,7 @@ export interface IIssueProperties {
   isEpic?: boolean;
 }
 
-export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
+export const IssueProperties = observer(function IssueProperties(props: IIssueProperties) {
   const { issue, updateIssue, displayProperties, isReadOnly, className, isEpic = false } = props;
   // i18n
   const { t } = useTranslation();

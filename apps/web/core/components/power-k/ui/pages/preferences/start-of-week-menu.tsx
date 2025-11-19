@@ -12,7 +12,7 @@ type Props = {
   onSelect: (day: EStartOfTheWeek) => void;
 };
 
-export const PowerKPreferencesStartOfWeekMenu: React.FC<Props> = (props) => {
+export function PowerKPreferencesStartOfWeekMenu(props: Props) {
   const { onSelect } = props;
 
   return (
@@ -22,4 +22,4 @@ export const PowerKPreferencesStartOfWeekMenu: React.FC<Props> = (props) => {
       ))}
     </Command.Group>
   );
-};
+}

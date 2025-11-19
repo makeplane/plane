@@ -15,7 +15,7 @@ type Props = {
   showDescription?: boolean;
 };
 
-export const InboxIssueStatus: React.FC<Props> = observer((props) => {
+export const InboxIssueStatus = observer(function InboxIssueStatus(props: Props) {
   const { inboxIssue, iconSize = 16, showDescription = false } = props;
   //hooks
   const { t } = useTranslation();

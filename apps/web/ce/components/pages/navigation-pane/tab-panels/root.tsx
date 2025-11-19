@@ -8,6 +8,6 @@ export type TPageNavigationPaneAdditionalTabPanelsRootProps = {
   page: TPageInstance;
 };
 
-export const PageNavigationPaneAdditionalTabPanelsRoot: React.FC<
-  TPageNavigationPaneAdditionalTabPanelsRootProps
-> = () => null;
+export function PageNavigationPaneAdditionalTabPanelsRoot(_props: TPageNavigationPaneAdditionalTabPanelsRootProps) {
+  return null;
+}

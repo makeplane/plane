@@ -63,7 +63,7 @@ export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
   },
 ];
 
-export const WorkspaceActiveCyclesUpgrade = observer(() => {
+export const WorkspaceActiveCyclesUpgrade = observer(function WorkspaceActiveCyclesUpgrade() {
   const { t } = useTranslation();
   // store hooks
   const {

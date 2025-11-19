@@ -18,7 +18,7 @@ type Props = {
   tokenDetails: IApiToken;
 };
 
-export const GeneratedTokenDetails: React.FC<Props> = (props) => {
+export function GeneratedTokenDetails(props: Props) {
   const { handleClose, tokenDetails } = props;
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
@@ -60,4 +60,4 @@ export const GeneratedTokenDetails: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

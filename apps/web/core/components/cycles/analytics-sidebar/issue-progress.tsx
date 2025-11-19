@@ -54,7 +54,7 @@ export const validateCycleSnapshot = (cycleDetails: ICycle | null): ICycle | nul
   return updatedCycleDetails;
 };
 
-export const CycleAnalyticsProgress: FC<TCycleAnalyticsProgress> = observer((props) => {
+export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(props: TCycleAnalyticsProgress) {
   // props
   const { workspaceSlug, projectId, cycleId } = props;
   // router

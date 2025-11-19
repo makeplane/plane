@@ -15,7 +15,7 @@ type TActivityFilter = {
   filterOptions: TActivityFilterOption[];
 };
 
-export const ActivityFilter: FC<TActivityFilter> = observer((props) => {
+export const ActivityFilter = observer(function ActivityFilter(props: TActivityFilter) {
   const { selectedFilters = [], filterOptions } = props;
 
   // hooks

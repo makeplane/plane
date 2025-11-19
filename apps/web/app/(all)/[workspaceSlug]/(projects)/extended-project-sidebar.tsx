@@ -20,7 +20,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import type { TProject } from "@/plane-web/types";
 import { ExtendedSidebarWrapper } from "./extended-sidebar-wrapper";
 
-export const ExtendedProjectSidebar = observer(() => {
+export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar() {
   // refs
   const extendedProjectSidebarRef = useRef<HTMLDivElement | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");

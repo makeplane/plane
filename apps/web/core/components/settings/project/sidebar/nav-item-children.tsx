@@ -11,7 +11,7 @@ import { useUserPermissions, useUserSettings } from "@/hooks/store/user";
 import { PROJECT_SETTINGS_LINKS } from "@/plane-web/constants/project";
 import { getProjectSettingsPageLabelI18nKey } from "@/plane-web/helpers/project-settings";
 
-export const NavItemChildren = observer((props: { projectId: string }) => {
+export const NavItemChildren = observer(function NavItemChildren(props: { projectId: string }) {
   const { projectId } = props;
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
