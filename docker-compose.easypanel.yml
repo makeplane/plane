@@ -1,0 +1,157 @@
+# Docker Compose configuration optimized for EasyPanel on Hetzner
+# EasyPanel works best with simpler configurations and pre-built images
+
+version: '3.8'
+
+services:
+  # Main Plane application
+  # Note: For EasyPanel, you can either:
+  # 1. Use the all-in-one pre-built image: artifacts.plane.so/makeplane/plane-aio-community:latest
+  # 2. Or build from the Dockerfile.hetzner in this repo
+  
+  plane:
+    # Option 1: Use pre-built image (recommended for EasyPanel)
+    image: artifacts.plane.so/makeplane/plane-aio-community:latest
+    # Option 2: Build from source (uncomment to use)
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile.hetzner
+    #   args:
+    #     NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://${DOMAIN_NAME}/api}
+    #     NEXT_PUBLIC_ADMIN_BASE_URL: ${NEXT_PUBLIC_ADMIN_BASE_URL:-http://${DOMAIN_NAME}/god-mode}
+    #     NEXT_PUBLIC_LIVE_BASE_URL: ${NEXT_PUBLIC_LIVE_BASE_URL:-http://${DOMAIN_NAME}/live}
+    #     NEXT_PUBLIC_SPACE_BASE_URL: ${NEXT_PUBLIC_SPACE_BASE_URL:-http://${DOMAIN_NAME}/spaces}
+    #     NEXT_PUBLIC_WEB_BASE_URL: ${NEXT_PUBLIC_WEB_BASE_URL:-http://${DOMAIN_NAME}}
+    
+    container_name: plane-app
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      # Required: Domain configuration
+      - DOMAIN_NAME=${DOMAIN_NAME}
+      - APP_DOMAIN=${DOMAIN_NAME}
+      - WEB_URL=${WEB_URL:-http://${DOMAIN_NAME}}
+      - APP_PROTOCOL=${APP_PROTOCOL:-http}
+      - SITE_ADDRESS=:80
+      
+      # Required: Database (use external or included postgres service)
+      - DATABASE_URL=${DATABASE_URL}
+      
+      # Required: Redis (use external or included redis service)
+      - REDIS_URL=${REDIS_URL}
+      
+      # Required: RabbitMQ (use external or included rabbitmq service)
+      - AMQP_URL=${AMQP_URL}
+      
+      # Required: S3/Storage
+      - AWS_REGION=${AWS_REGION}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
+      - AWS_S3_ENDPOINT_URL=${AWS_S3_ENDPOINT_URL:-https://s3.${AWS_REGION}.amazonaws.com}
+      - BUCKET_NAME=${AWS_S3_BUCKET_NAME}
+      - USE_MINIO=${USE_MINIO:-0}
+      
+      # Required: Security keys
+      - SECRET_KEY=${SECRET_KEY}
+      - LIVE_SERVER_SECRET_KEY=${LIVE_SERVER_SECRET_KEY}
+      
+      # Optional: File uploads
+      - FILE_SIZE_LIMIT=${FILE_SIZE_LIMIT:-5242880}
+      
+      # Optional: API
+      - API_KEY_RATE_LIMIT=${API_KEY_RATE_LIMIT:-60/minute}
+      
+      # Optional: CORS
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-http://${DOMAIN_NAME},https://${DOMAIN_NAME}}
+      
+      # Optional: SSL/TLS
+      - CERT_EMAIL=${CERT_EMAIL:-}
+      - CERT_ACME_CA=${CERT_ACME_CA:-https://acme-v02.api.letsencrypt.org/directory}
+      - CERT_ACME_DNS=${CERT_ACME_DNS:-}
+      
+      # Optional: Trusted proxies
+      - TRUSTED_PROXIES=${TRUSTED_PROXIES:-0.0.0.0/0}
+    volumes:
+      - plane_logs:/app/logs
+      - plane_data:/app/data
+    networks:
+      - plane-network
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # PostgreSQL Database (can be replaced with external database)
+  postgres:
+    image: postgres:15.7-alpine
+    container_name: plane-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-plane}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-plane}
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - plane-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-plane}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache (can be replaced with external Redis)
+  redis:
+    image: valkey/valkey:7.2.11-alpine
+    container_name: plane-redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    networks:
+      - plane-network
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # RabbitMQ Message Queue (can be replaced with external RabbitMQ)
+  rabbitmq:
+    image: rabbitmq:3.13.6-management-alpine
+    container_name: plane-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-plane}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-plane}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - plane-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  postgres_data:
+  redis_data:
+  rabbitmq_data:
+  plane_logs:
+  plane_data:
+
+networks:
+  plane-network:
+    driver: bridge
+

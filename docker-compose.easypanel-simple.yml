@@ -1,0 +1,71 @@
+# Simplified Docker Compose for EasyPanel - Single Service Version
+# This uses the pre-built all-in-one image and external services
+# Perfect for EasyPanel deployment with Hetzner Managed Database/Redis
+
+version: '3.8'
+
+services:
+  plane:
+    # Use pre-built all-in-one image (recommended for EasyPanel)
+    image: artifacts.plane.so/makeplane/plane-aio-community:latest
+    
+    container_name: plane-app
+    restart: unless-stopped
+    
+    ports:
+      - "80:80"
+      - "443:443"
+    
+    environment:
+      # Domain - REQUIRED
+      - DOMAIN_NAME=${DOMAIN_NAME}
+      - APP_DOMAIN=${DOMAIN_NAME}
+      - WEB_URL=${WEB_URL:-http://${DOMAIN_NAME}}
+      - APP_PROTOCOL=${APP_PROTOCOL:-http}
+      - SITE_ADDRESS=:80
+      
+      # Database - REQUIRED (use external or add postgres service)
+      - DATABASE_URL=${DATABASE_URL}
+      
+      # Redis - REQUIRED (use external or add redis service)
+      - REDIS_URL=${REDIS_URL}
+      
+      # RabbitMQ - REQUIRED (use external or add rabbitmq service)
+      - AMQP_URL=${AMQP_URL}
+      
+      # S3 Storage - REQUIRED
+      - AWS_REGION=${AWS_REGION}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
+      - AWS_S3_ENDPOINT_URL=${AWS_S3_ENDPOINT_URL}
+      - BUCKET_NAME=${AWS_S3_BUCKET_NAME}
+      - USE_MINIO=${USE_MINIO:-0}
+      
+      # Security - REQUIRED
+      - SECRET_KEY=${SECRET_KEY}
+      - LIVE_SERVER_SECRET_KEY=${LIVE_SERVER_SECRET_KEY}
+      
+      # Optional
+      - FILE_SIZE_LIMIT=${FILE_SIZE_LIMIT:-5242880}
+      - API_KEY_RATE_LIMIT=${API_KEY_RATE_LIMIT:-60/minute}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-http://${DOMAIN_NAME},https://${DOMAIN_NAME}}
+      - CERT_EMAIL=${CERT_EMAIL:-}
+      - CERT_ACME_CA=${CERT_ACME_CA:-https://acme-v02.api.letsencrypt.org/directory}
+      - TRUSTED_PROXIES=${TRUSTED_PROXIES:-0.0.0.0/0}
+    
+    volumes:
+      - plane_logs:/app/logs
+      - plane_data:/app/data
+    
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  plane_logs:
+  plane_data:
+
