@@ -1593,6 +1593,7 @@ export default {
         exporting: "내보내기 중",
         previous_exports: "이전 내보내기",
         export_separate_files: "데이터를 별도의 파일로 내보내기",
+        filters_info: "기준에 따라 특정 작업 항목을 내보내려면 필터를 적용하세요.",
         modal: {
           title: "내보내기",
           toasts: {
