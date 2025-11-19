@@ -29,7 +29,6 @@ class StickyViewSet(BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(owner_id=self.request.user.id)
-            .select_related("workspace", "owner")
             .distinct()
         )
 
