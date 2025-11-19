@@ -1,0 +1,891 @@
+{
+  "plane@1.1.0": {
+    "licenses": "UNLICENSED",
+    "private": true,
+    "repository": "https://github.com/makeplane/plane",
+    "path": ".",
+    "licenseFile": "LICENSE.txt",
+    "noticeFile": "NOTICE.md"
+  },
+  "@atlaskit/pragmatic-drag-and-drop-auto-scroll@1.4.0": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/atlassian/pragmatic-drag-and-drop",
+    "publisher": "Atlassian Pty Ltd",
+    "path": "/home/stephen/plane/apps/web/node_modules/@atlaskit/pragmatic-drag-and-drop-auto-scroll",
+    "licenseFile": "/home/stephen/plane/apps/web/node_modules/@atlaskit/pragmatic-drag-and-drop-auto-scroll/LICENSE.md"
+  },
+  "@atlaskit/pragmatic-drag-and-drop-hitbox@1.1.0": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/atlassian/pragmatic-drag-and-drop",
+    "publisher": "Atlassian Pty Ltd",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@atlaskit/pragmatic-drag-and-drop-hitbox",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@atlaskit/pragmatic-drag-and-drop-hitbox/LICENSE.md"
+  },
+  "@atlaskit/pragmatic-drag-and-drop@1.7.4": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/atlassian/pragmatic-drag-and-drop",
+    "publisher": "Atlassian Pty Ltd",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@atlaskit/pragmatic-drag-and-drop",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@atlaskit/pragmatic-drag-and-drop/LICENSE.md"
+  },
+  "@base-ui-components/react@1.0.0-beta.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mui/base-ui",
+    "publisher": "MUI Team",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@plane/propel/node_modules/@base-ui-components/react",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@plane/propel/node_modules/@base-ui-components/react/LICENSE"
+  },
+  "@blueprintjs/core@4.20.2": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/palantir/blueprint",
+    "publisher": "Palantir Technologies",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@blueprintjs/core",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@blueprintjs/core/LICENSE"
+  },
+  "@blueprintjs/popover2@1.14.11": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/palantir/blueprint",
+    "publisher": "Palantir Technologies",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@blueprintjs/popover2",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@blueprintjs/popover2/LICENSE"
+  },
+  "@bprogress/next@3.2.12": {
+    "licenses": "MIT",
+    "repository": "https://github.com/imskyleen/bprogress/tree/main/packages/next",
+    "publisher": "Skyleen",
+    "path": "/home/stephen/plane/apps/web/node_modules/@bprogress/next",
+    "licenseFile": "/home/stephen/plane/apps/web/node_modules/@bprogress/next/LICENSE"
+  },
+  "@floating-ui/dom@1.7.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/floating-ui/floating-ui",
+    "publisher": "atomiks",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@floating-ui/dom",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@floating-ui/dom/LICENSE"
+  },
+  "@floating-ui/react@0.26.28": {
+    "licenses": "MIT",
+    "repository": "https://github.com/floating-ui/floating-ui",
+    "publisher": "atomiks",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@floating-ui/react",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@floating-ui/react/LICENSE"
+  },
+  "@headlessui/react@1.7.19": {
+    "licenses": "MIT",
+    "repository": "https://github.com/tailwindlabs/headlessui",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@headlessui/react",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@headlessui/react/README.md"
+  },
+  "@hocuspocus/provider@2.15.2": {
+    "licenses": "MIT",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@hocuspocus/provider"
+  },
+  "@intercom/messenger-js-sdk@0.0.12": {
+    "licenses": "MIT",
+    "publisher": "intercom",
+    "path": "/home/stephen/plane/apps/web/node_modules/@intercom/messenger-js-sdk",
+    "licenseFile": "/home/stephen/plane/apps/web/node_modules/@intercom/messenger-js-sdk/LICENSE"
+  },
+  "@plane/constants@1.1.0": {
+    "licenses": "UNLICENSED",
+    "private": true,
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/constants"
+  },
+  "@plane/editor@1.1.0": {
+    "licenses": "UNLICENSED",
+    "private": true,
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/Readme.md"
+  },
+  "@plane/hooks@1.1.0": {
+    "licenses": "UNLICENSED",
+    "private": true,
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/hooks"
+  },
+  "@plane/i18n@1.1.0": {
+    "licenses": "UNLICENSED",
+    "private": true,
+    "path": "/home/stephen/plane/apps/space/node_modules/@plane/i18n"
+  },
+  "@plane/propel@1.1.0": {
+    "licenses": "UNLICENSED",
+    "private": true,
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@plane/propel"
+  },
+  "@plane/services@1.1.0": {
+    "licenses": "UNLICENSED",
+    "private": true,
+    "path": "/home/stephen/plane/apps/space/node_modules/@plane/services"
+  },
+  "@plane/shared-state@1.1.0": {
+    "licenses": "UNLICENSED",
+    "private": true,
+    "path": "/home/stephen/plane/apps/web/node_modules/@plane/shared-state"
+  },
+  "@plane/types@1.1.0": {
+    "licenses": "UNLICENSED",
+    "private": true,
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/types"
+  },
+  "@plane/ui@1.1.0": {
+    "licenses": "UNLICENSED",
+    "private": true,
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/README.md"
+  },
+  "@plane/utils@1.1.0": {
+    "licenses": "UNLICENSED",
+    "private": true,
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/utils"
+  },
+  "@popperjs/core@2.11.8": {
+    "licenses": "MIT",
+    "repository": "https://github.com/popperjs/popper-core",
+    "publisher": "Federico Zivolo",
+    "email": "federico.zivolo@gmail.com",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@popperjs/core",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@popperjs/core/LICENSE.md"
+  },
+  "@radix-ui/react-scroll-area@1.2.10": {
+    "licenses": "MIT",
+    "repository": "https://github.com/radix-ui/primitives",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@radix-ui/react-scroll-area",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@radix-ui/react-scroll-area/LICENSE"
+  },
+  "@react-pdf/renderer@3.4.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/diegomura/react-pdf",
+    "publisher": "Diego Muracciole",
+    "email": "diegomuracciole@gmail.com",
+    "path": "/home/stephen/plane/apps/web/node_modules/@react-pdf/renderer",
+    "licenseFile": "/home/stephen/plane/apps/web/node_modules/@react-pdf/renderer/README.md"
+  },
+  "@tanstack/react-table@8.21.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/TanStack/table",
+    "publisher": "Tanner Linsley",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@plane/propel/node_modules/@tanstack/react-table",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@plane/propel/node_modules/@tanstack/react-table/LICENSE"
+  },
+  "@tiptap/core@2.26.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ueberdosis/tiptap",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/core",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/core/README.md"
+  },
+  "@tiptap/extension-blockquote@2.26.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ueberdosis/tiptap",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/extension-blockquote",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/extension-blockquote/README.md"
+  },
+  "@tiptap/extension-character-count@2.26.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ueberdosis/tiptap",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/extension-character-count",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/extension-character-count/README.md"
+  },
+  "@tiptap/extension-collaboration@2.26.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ueberdosis/tiptap",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/extension-collaboration",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/extension-collaboration/README.md"
+  },
+  "@tiptap/extension-emoji@2.26.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ueberdosis/tiptap",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/extension-emoji"
+  },
+  "@tiptap/extension-image@2.26.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ueberdosis/tiptap",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/extension-image",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/extension-image/README.md"
+  },
+  "@tiptap/extension-list-item@2.26.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ueberdosis/tiptap",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/extension-list-item",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/extension-list-item/README.md"
+  },
+  "@tiptap/extension-mention@2.26.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ueberdosis/tiptap",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/extension-mention",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/extension-mention/README.md"
+  },
+  "@tiptap/extension-placeholder@2.26.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ueberdosis/tiptap",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/extension-placeholder",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/extension-placeholder/README.md"
+  },
+  "@tiptap/extension-task-item@2.26.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ueberdosis/tiptap",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/extension-task-item",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/extension-task-item/README.md"
+  },
+  "@tiptap/extension-task-list@2.26.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ueberdosis/tiptap",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/extension-task-list",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/extension-task-list/README.md"
+  },
+  "@tiptap/extension-text-align@2.26.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ueberdosis/tiptap",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/extension-text-align",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/extension-text-align/README.md"
+  },
+  "@tiptap/extension-text-style@2.26.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ueberdosis/tiptap",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/extension-text-style",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/extension-text-style/README.md"
+  },
+  "@tiptap/extension-underline@2.26.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ueberdosis/tiptap",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/extension-underline",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/extension-underline/README.md"
+  },
+  "@tiptap/html@2.26.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ueberdosis/tiptap",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/html",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/html/README.md"
+  },
+  "@tiptap/pm@2.26.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ueberdosis/tiptap",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/pm",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/pm/README.md"
+  },
+  "@tiptap/react@2.26.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ueberdosis/tiptap",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/react",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/react/README.md"
+  },
+  "@tiptap/starter-kit@2.26.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ueberdosis/tiptap",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/starter-kit",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/starter-kit/README.md"
+  },
+  "@tiptap/suggestion@2.26.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ueberdosis/tiptap",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/suggestion",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@tiptap/suggestion/README.md"
+  },
+  "axios@1.12.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/axios/axios",
+    "publisher": "Matt Zabriskie",
+    "path": "/home/stephen/plane/apps/live/node_modules/axios",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/axios/LICENSE"
+  },
+  "class-variance-authority@0.7.1": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/joe-bell/cva",
+    "publisher": "Joe Bell",
+    "url": "https://joebell.co.uk",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@plane/propel/node_modules/class-variance-authority",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@plane/propel/node_modules/class-variance-authority/LICENSE"
+  },
+  "clsx@2.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lukeed/clsx",
+    "publisher": "Luke Edwards",
+    "email": "luke.edwards05@gmail.com",
+    "url": "https://lukeed.com",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/clsx",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/clsx/license"
+  },
+  "cmdk@1.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/pacocoursey/cmdk",
+    "publisher": "Paco",
+    "url": "https://github.com/pacocoursey",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@plane/propel/node_modules/cmdk",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@plane/propel/node_modules/cmdk/LICENSE.md"
+  },
+  "comlink@4.4.2": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/GoogleChromeLabs/comlink",
+    "publisher": "Surma",
+    "email": "surma@google.com",
+    "path": "/home/stephen/plane/apps/web/node_modules/comlink",
+    "licenseFile": "/home/stephen/plane/apps/web/node_modules/comlink/LICENSE"
+  },
+  "date-fns@4.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/date-fns/date-fns",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/utils/node_modules/date-fns",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/utils/node_modules/date-fns/LICENSE.md"
+  },
+  "dotenv@16.6.1": {
+    "licenses": "BSD-2-Clause",
+    "repository": "https://github.com/motdotla/dotenv",
+    "path": "/home/stephen/plane/apps/live/node_modules/dotenv",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/dotenv/LICENSE"
+  },
+  "emoji-picker-react@4.12.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ealush/emoji-picker-react",
+    "publisher": "ealush",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/emoji-picker-react",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/emoji-picker-react/LICENSE"
+  },
+  "emoji-regex@10.5.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mathiasbynens/emoji-regex",
+    "publisher": "Mathias Bynens",
+    "url": "https://mathiasbynens.be/",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/emoji-regex",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/emoji-regex/LICENSE-MIT.txt"
+  },
+  "export-to-csv@1.4.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/alexcaza/export-to-csv",
+    "publisher": "alexcaza",
+    "path": "/home/stephen/plane/apps/web/node_modules/export-to-csv",
+    "licenseFile": "/home/stephen/plane/apps/web/node_modules/export-to-csv/LICENSE"
+  },
+  "file-type@21.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/file-type",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "/home/stephen/plane/apps/space/node_modules/@plane/services/node_modules/file-type",
+    "licenseFile": "/home/stephen/plane/apps/space/node_modules/@plane/services/node_modules/file-type/license"
+  },
+  "frimousse@0.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/liveblocks/frimousse",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@plane/propel/node_modules/frimousse",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@plane/propel/node_modules/frimousse/LICENSE"
+  },
+  "highlight.js@11.11.1": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/highlightjs/highlight.js",
+    "publisher": "Josh Goebel",
+    "email": "hello@joshgoebel.com",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/highlight.js",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/highlight.js/LICENSE"
+  },
+  "intl-messageformat@10.7.16": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/formatjs/formatjs",
+    "publisher": "Eric Ferraiuolo",
+    "email": "eferraiuolo@gmail.com",
+    "path": "/home/stephen/plane/apps/space/node_modules/@plane/i18n/node_modules/intl-messageformat",
+    "licenseFile": "/home/stephen/plane/apps/space/node_modules/@plane/i18n/node_modules/intl-messageformat/LICENSE.md"
+  },
+  "is-emoji-supported@0.0.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/koala-interactive/is-emoji-supported",
+    "publisher": "Vincent Thibault",
+    "email": "vthibault.mobile@gmail.com",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/is-emoji-supported",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/is-emoji-supported/README.md"
+  },
+  "isomorphic-dompurify@2.25.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/kkomelin/isomorphic-dompurify",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/utils/node_modules/isomorphic-dompurify",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/utils/node_modules/isomorphic-dompurify/LICENSE"
+  },
+  "jsx-dom-cjs@8.1.6": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/proteriax/jsx-dom",
+    "publisher": "proteriax",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/jsx-dom-cjs",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/jsx-dom-cjs/LICENSE"
+  },
+  "linkifyjs@4.3.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/nfrasser/linkifyjs",
+    "publisher": "Nick Frasser",
+    "url": "https://nfrasser.com",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/linkifyjs",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/linkifyjs/LICENSE"
+  },
+  "lodash-es@4.17.21": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lodash/lodash",
+    "publisher": "John-David Dalton",
+    "email": "john.david.dalton@gmail.com",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/lodash-es",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/lodash-es/LICENSE"
+  },
+  "lowlight@3.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wooorm/lowlight",
+    "publisher": "Titus Wormer",
+    "email": "tituswormer@gmail.com",
+    "url": "https://wooorm.com",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/lowlight",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/lowlight/license"
+  },
+  "lucide-react@0.469.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/lucide-icons/lucide",
+    "publisher": "Eric Fennis",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/lucide-react",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/lucide-react/LICENSE"
+  },
+  "mobx-react@9.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mobxjs/mobx",
+    "publisher": "Michel Weststrate",
+    "path": "/home/stephen/plane/apps/space/node_modules/mobx-react",
+    "licenseFile": "/home/stephen/plane/apps/space/node_modules/mobx-react/LICENSE"
+  },
+  "mobx-utils@6.0.8": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mobxjs/mobx-utils",
+    "publisher": "Michel Weststrate",
+    "path": "/home/stephen/plane/apps/space/node_modules/mobx-utils",
+    "licenseFile": "/home/stephen/plane/apps/space/node_modules/mobx-utils/LICENSE"
+  },
+  "mobx@6.12.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mobxjs/mobx",
+    "publisher": "Michel Weststrate",
+    "path": "/home/stephen/plane/apps/space/node_modules/mobx",
+    "licenseFile": "/home/stephen/plane/apps/space/node_modules/mobx/LICENSE"
+  },
+  "next-themes@0.2.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/pacocoursey/next-themes",
+    "path": "/home/stephen/plane/apps/space/node_modules/next-themes",
+    "licenseFile": "/home/stephen/plane/apps/space/node_modules/next-themes/license.md"
+  },
+  "next@14.2.32": {
+    "licenses": "MIT",
+    "repository": "https://github.com/vercel/next.js",
+    "path": "/home/stephen/plane/apps/space/node_modules/next",
+    "licenseFile": "/home/stephen/plane/apps/space/node_modules/next/license.md"
+  },
+  "posthog-js@1.255.1": {
+    "licenses": "MIT*",
+    "repository": "https://github.com/PostHog/posthog-js",
+    "publisher": "hey@posthog.com",
+    "path": "/home/stephen/plane/apps/web/node_modules/posthog-js",
+    "licenseFile": "/home/stephen/plane/apps/web/node_modules/posthog-js/LICENSE"
+  },
+  "prosemirror-codemark@0.4.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/curvenote/editor",
+    "publisher": "Rowan Cockett",
+    "email": "rowan@curvenote.com",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/prosemirror-codemark",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/prosemirror-codemark/README.md"
+  },
+  "react-color@2.19.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/casesandberg/react-color",
+    "publisher": "case",
+    "email": "case@casesandberg.com",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/react-color",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/react-color/LICENSE"
+  },
+  "react-day-picker@9.5.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/gpbl/react-day-picker",
+    "publisher": "Giampaolo Bellavite",
+    "email": "io@gpbl.dev",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/react-day-picker",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/react-day-picker/LICENSE"
+  },
+  "react-dom@18.3.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/facebook/react",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/react-dom",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/react-dom/LICENSE"
+  },
+  "react-dropzone@14.3.8": {
+    "licenses": "MIT",
+    "repository": "https://github.com/react-dropzone/react-dropzone",
+    "publisher": "Param Aggarwal",
+    "path": "/home/stephen/plane/apps/space/node_modules/react-dropzone",
+    "licenseFile": "/home/stephen/plane/apps/space/node_modules/react-dropzone/LICENSE"
+  },
+  "react-hook-form@7.51.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/react-hook-form/react-hook-form",
+    "email": "bluebill1049@hotmail.com",
+    "path": "/home/stephen/plane/apps/space/node_modules/react-hook-form",
+    "licenseFile": "/home/stephen/plane/apps/space/node_modules/react-hook-form/LICENSE"
+  },
+  "react-markdown@8.0.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/remarkjs/react-markdown",
+    "publisher": "Espen Hovlandsdal",
+    "email": "espen@hovlandsdal.com",
+    "path": "/home/stephen/plane/apps/web/node_modules/react-markdown",
+    "licenseFile": "/home/stephen/plane/apps/web/node_modules/react-markdown/license"
+  },
+  "react-masonry-component@6.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/eiriklv/react-masonry-component",
+    "publisher": "Eirik Vullum",
+    "email": "evullum@gmail.com",
+    "url": "http://www.evconsult.no/",
+    "path": "/home/stephen/plane/apps/web/node_modules/react-masonry-component",
+    "licenseFile": "/home/stephen/plane/apps/web/node_modules/react-masonry-component/LICENSE"
+  },
+  "react-pdf-html@2.1.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/danomatic/react-pdf-html",
+    "publisher": "Dan Blaisdell dan@manifestwebdesign.com",
+    "path": "/home/stephen/plane/apps/web/node_modules/react-pdf-html",
+    "licenseFile": "/home/stephen/plane/apps/web/node_modules/react-pdf-html/LICENSE"
+  },
+  "react-popper@2.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/popperjs/react-popper",
+    "publisher": "Travis Arnold",
+    "email": "travis@souporserious.com",
+    "url": "http://souporserious.com",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/react-popper",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/react-popper/LICENSE"
+  },
+  "react@18.3.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/facebook/react",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/react",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/react/LICENSE"
+  },
+  "recharts@2.15.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/recharts/recharts",
+    "publisher": "recharts group",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@plane/propel/node_modules/recharts",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@plane/propel/node_modules/recharts/LICENSE"
+  },
+  "sharp@0.33.5": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/lovell/sharp",
+    "publisher": "Lovell Fuller",
+    "email": "npm@lovell.info",
+    "path": "/home/stephen/plane/apps/space/node_modules/sharp",
+    "licenseFile": "/home/stephen/plane/apps/space/node_modules/sharp/LICENSE"
+  },
+  "smooth-scroll-into-view-if-needed@2.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/scroll-into-view/smooth-scroll-into-view-if-needed",
+    "publisher": "Cody Olsen",
+    "path": "/home/stephen/plane/apps/web/node_modules/smooth-scroll-into-view-if-needed",
+    "licenseFile": "/home/stephen/plane/apps/web/node_modules/smooth-scroll-into-view-if-needed/LICENSE"
+  },
+  "swr@2.2.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/vercel/swr",
+    "path": "/home/stephen/plane/apps/space/node_modules/swr",
+    "licenseFile": "/home/stephen/plane/apps/space/node_modules/swr/LICENSE"
+  },
+  "tailwind-merge@2.6.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/dcastil/tailwind-merge",
+    "publisher": "Dany Castillo",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/tailwind-merge",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/tailwind-merge/LICENSE.md"
+  },
+  "tailwind-merge@3.3.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/dcastil/tailwind-merge",
+    "publisher": "Dany Castillo",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@plane/propel/node_modules/tailwind-merge",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/@plane/propel/node_modules/tailwind-merge/LICENSE.md"
+  },
+  "tippy.js@6.3.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/atomiks/tippyjs",
+    "publisher": "atomiks",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/tippy.js",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/tippy.js/LICENSE"
+  },
+  "tiptap-markdown@0.8.10": {
+    "licenses": "MIT",
+    "repository": "https://github.com/aguingand/tiptap-markdown",
+    "publisher": "Antoine Guingand",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/tiptap-markdown",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/tiptap-markdown/LICENSE"
+  },
+  "use-font-face-observer@1.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/iamskok/use-font-face-observer",
+    "publisher": "Vladimir Skok",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/use-font-face-observer",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/@plane/ui/node_modules/use-font-face-observer/README.md"
+  },
+  "uuid@13.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/uuidjs/uuid",
+    "path": "/home/stephen/plane/apps/live/node_modules/uuid",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/uuid/LICENSE.md"
+  },
+  "web@1.1.0": {
+    "licenses": "UNLICENSED",
+    "private": true,
+    "path": "/home/stephen/plane/apps/web"
+  },
+  "y-indexeddb@9.0.12": {
+    "licenses": "MIT",
+    "repository": "https://github.com/yjs/y-indexeddb",
+    "publisher": "Kevin Jahns",
+    "email": "kevin.jahns@protonmail.com",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/y-indexeddb",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/editor/node_modules/y-indexeddb/LICENSE"
+  },
+  "y-prosemirror@1.3.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/yjs/y-prosemirror",
+    "publisher": "Kevin Jahns",
+    "email": "kevin.jahns@protonmail.com",
+    "path": "/home/stephen/plane/apps/live/node_modules/y-prosemirror",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/y-prosemirror/LICENSE"
+  },
+  "y-protocols@1.0.6": {
+    "licenses": "MIT",
+    "repository": "https://github.com/yjs/y-protocols",
+    "publisher": "Kevin Jahns",
+    "email": "kevin.jahns@protonmail.com",
+    "path": "/home/stephen/plane/apps/live/node_modules/y-protocols",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/y-protocols/LICENSE"
+  },
+  "yjs@13.6.27": {
+    "licenses": "MIT",
+    "repository": "https://github.com/yjs/yjs",
+    "publisher": "Kevin Jahns",
+    "path": "/home/stephen/plane/apps/live/node_modules/yjs",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/yjs/LICENSE"
+  },
+  "zod@3.25.76": {
+    "licenses": "MIT",
+    "repository": "https://github.com/colinhacks/zod",
+    "publisher": "Colin McDonnell",
+    "email": "zod@colinhacks.com",
+    "path": "/home/stephen/plane/apps/live/node_modules/zod",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/zod/LICENSE"
+  },
+  "admin@1.1.0": {
+    "licenses": "UNLICENSED",
+    "private": true,
+    "path": "/home/stephen/plane/apps/admin"
+  },
+  "autoprefixer@10.4.14": {
+    "licenses": "MIT",
+    "repository": "https://github.com/postcss/autoprefixer",
+    "publisher": "Andrey Sitnik",
+    "email": "andrey@sitnik.ru",
+    "path": "/home/stephen/plane/apps/admin/node_modules/autoprefixer",
+    "licenseFile": "/home/stephen/plane/apps/admin/node_modules/autoprefixer/LICENSE"
+  },
+  "postcss@8.5.6": {
+    "licenses": "MIT",
+    "repository": "https://github.com/postcss/postcss",
+    "publisher": "Andrey Sitnik",
+    "email": "andrey@sitnik.ru",
+    "path": "/home/stephen/plane/apps/admin/node_modules/postcss",
+    "licenseFile": "/home/stephen/plane/apps/admin/node_modules/postcss/LICENSE"
+  },
+  "@emotion/react@11.14.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/emotion-js/emotion/tree/main/packages/react",
+    "publisher": "Emotion Contributors",
+    "path": "/home/stephen/plane/apps/space/node_modules/@emotion/react",
+    "licenseFile": "/home/stephen/plane/apps/space/node_modules/@emotion/react/LICENSE"
+  },
+  "@emotion/styled@11.14.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/emotion-js/emotion/tree/main/packages/styled",
+    "path": "/home/stephen/plane/apps/space/node_modules/@emotion/styled",
+    "licenseFile": "/home/stephen/plane/apps/space/node_modules/@emotion/styled/LICENSE"
+  },
+  "@mui/material@5.17.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mui/material-ui",
+    "publisher": "MUI Team",
+    "path": "/home/stephen/plane/apps/space/node_modules/@mui/material",
+    "licenseFile": "/home/stephen/plane/apps/space/node_modules/@mui/material/LICENSE"
+  },
+  "dompurify@3.2.6": {
+    "licenses": "(MPL-2.0 OR Apache-2.0)",
+    "repository": "https://github.com/cure53/DOMPurify",
+    "publisher": "Dr.-Ing. Mario Heiderich, Cure53",
+    "email": "mario@cure53.de",
+    "url": "https://cure53.de/",
+    "path": "/home/stephen/plane/apps/space/node_modules/dompurify",
+    "licenseFile": "/home/stephen/plane/apps/space/node_modules/dompurify/LICENSE"
+  },
+  "lowlight@2.9.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/wooorm/lowlight",
+    "publisher": "Titus Wormer",
+    "email": "tituswormer@gmail.com",
+    "url": "https://wooorm.com",
+    "path": "/home/stephen/plane/apps/space/node_modules/lowlight",
+    "licenseFile": "/home/stephen/plane/apps/space/node_modules/lowlight/license"
+  },
+  "nprogress@0.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/rstacruz/nprogress",
+    "publisher": "Rico Sta. Cruz",
+    "email": "hi@ricostacruz.com",
+    "path": "/home/stephen/plane/apps/space/node_modules/nprogress",
+    "licenseFile": "/home/stephen/plane/apps/space/node_modules/nprogress/License.md"
+  },
+  "space@1.1.0": {
+    "licenses": "UNLICENSED",
+    "private": true,
+    "path": "/home/stephen/plane/apps/space",
+    "licenseFile": "/home/stephen/plane/apps/space/README.md"
+  },
+  "plane-api@1.1.0": {
+    "licenses": "UNLICENSED",
+    "private": true,
+    "path": "/home/stephen/plane/apps/api"
+  },
+  "@dotenvx/dotenvx@1.49.0": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/dotenvx/dotenvx",
+    "publisher": "@motdotla",
+    "path": "/home/stephen/plane/apps/live/node_modules/@dotenvx/dotenvx",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@dotenvx/dotenvx/LICENSE"
+  },
+  "@hocuspocus/extension-database@2.15.2": {
+    "licenses": "MIT",
+    "path": "/home/stephen/plane/apps/live/node_modules/@hocuspocus/extension-database",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@hocuspocus/extension-database/README.md"
+  },
+  "@hocuspocus/extension-logger@2.15.2": {
+    "licenses": "MIT",
+    "path": "/home/stephen/plane/apps/live/node_modules/@hocuspocus/extension-logger"
+  },
+  "@hocuspocus/extension-redis@2.15.2": {
+    "licenses": "MIT",
+    "path": "/home/stephen/plane/apps/live/node_modules/@hocuspocus/extension-redis"
+  },
+  "@hocuspocus/server@2.15.2": {
+    "licenses": "MIT",
+    "path": "/home/stephen/plane/apps/live/node_modules/@hocuspocus/server",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@hocuspocus/server/README.md"
+  },
+  "@hocuspocus/transformer@2.15.2": {
+    "licenses": "MIT",
+    "path": "/home/stephen/plane/apps/live/node_modules/@hocuspocus/transformer"
+  },
+  "@plane/decorators@0.1.0": {
+    "licenses": "UNLICENSED",
+    "private": true,
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/decorators",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/decorators/README.md"
+  },
+  "@plane/logger@1.1.0": {
+    "licenses": "UNLICENSED",
+    "private": true,
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/logger",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/logger/README.md"
+  },
+  "@sentry/node@10.5.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/getsentry/sentry-javascript",
+    "publisher": "Sentry",
+    "path": "/home/stephen/plane/apps/live/node_modules/@sentry/node",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@sentry/node/LICENSE"
+  },
+  "@sentry/profiling-node@10.5.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/getsentry/sentry-javascript",
+    "publisher": "Sentry",
+    "path": "/home/stephen/plane/apps/live/node_modules/@sentry/profiling-node",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@sentry/profiling-node/LICENSE"
+  },
+  "compression@1.8.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/expressjs/compression",
+    "path": "/home/stephen/plane/apps/live/node_modules/compression",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/compression/LICENSE"
+  },
+  "cors@2.8.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/expressjs/cors",
+    "publisher": "Troy Goode",
+    "email": "troygoode@gmail.com",
+    "url": "https://github.com/troygoode/",
+    "path": "/home/stephen/plane/apps/live/node_modules/cors",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/cors/LICENSE"
+  },
+  "express-winston@4.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/bithavoc/express-winston",
+    "publisher": "bithavoc",
+    "email": "im@bithavoc.io",
+    "url": "http://bithavoc.io",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/logger/node_modules/express-winston",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/logger/node_modules/express-winston/LICENSE"
+  },
+  "express-ws@5.0.2": {
+    "licenses": "BSD-2-Clause",
+    "repository": "https://github.com/HenningM/express-ws",
+    "publisher": "Henning Morud",
+    "email": "henning@morud.org",
+    "path": "/home/stephen/plane/apps/live/node_modules/express-ws",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/express-ws/LICENSE"
+  },
+  "express@4.21.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/expressjs/express",
+    "publisher": "TJ Holowaychuk",
+    "email": "tj@vision-media.ca",
+    "path": "/home/stephen/plane/apps/live/node_modules/express",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/express/LICENSE"
+  },
+  "helmet@7.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/helmetjs/helmet",
+    "publisher": "Adam Baldwin",
+    "email": "adam@npmjs.com",
+    "url": "https://evilpacket.net",
+    "path": "/home/stephen/plane/apps/live/node_modules/helmet",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/helmet/LICENSE"
+  },
+  "ioredis@5.7.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/luin/ioredis",
+    "publisher": "Zihua Li",
+    "email": "i@zihua.li",
+    "url": "http://zihua.li",
+    "path": "/home/stephen/plane/apps/live/node_modules/ioredis",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/ioredis/LICENSE"
+  },
+  "live@1.1.0": {
+    "licenses": "UNLICENSED",
+    "private": true,
+    "publisher": "Plane Software Inc.",
+    "path": "/home/stephen/plane/apps/live"
+  },
+  "winston@3.17.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/winstonjs/winston",
+    "publisher": "Charlie Robbins",
+    "email": "charlie.robbins@gmail.com",
+    "path": "/home/stephen/plane/apps/live/node_modules/@plane/logger/node_modules/winston",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/@plane/logger/node_modules/winston/LICENSE"
+  },
+  "ws@8.18.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/websockets/ws",
+    "publisher": "Einar Otto Stangvik",
+    "email": "einaros@gmail.com",
+    "url": "http://2x.io",
+    "path": "/home/stephen/plane/apps/live/node_modules/ws",
+    "licenseFile": "/home/stephen/plane/apps/live/node_modules/ws/LICENSE"
+  }
+}

@@ -1,6 +1,6 @@
 {
-  "name": "plane",
-  "description": "Open-source project management that unlocks customer value",
+  "name": "aha-projects",
+  "description": "AHA Projects - Modern project management for all teams",
   "repository": "https://github.com/makeplane/plane.git",
   "version": "1.1.0",
   "license": "AGPL-3.0",

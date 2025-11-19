@@ -98,7 +98,7 @@ export const UseCaseSetupStep: FC<Props> = observer(({ handleStepChange }) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-10">
       {/* Header */}
-      <CommonOnboardingHeader title="What brings you to Plane?" description="Tell us your goals and team size." />
+      <CommonOnboardingHeader title="What brings you to AHA Projects?" description="Tell us your goals and team size." />
 
       {/* Use Case Selection */}
       <div className="flex flex-col gap-3">
@@ -122,11 +122,10 @@ export const UseCaseSetupStep: FC<Props> = observer(({ handleStepChange }) => {
                       e.stopPropagation();
                       onChange(useCase);
                     }}
-                    className={`w-full px-3 py-2 rounded-lg border transition-all duration-200 flex items-center gap-2 ${
-                      isSelected
+                    className={`w-full px-3 py-2 rounded-lg border transition-all duration-200 flex items-center gap-2 ${isSelected
                         ? "border-custom-primary-100 bg-custom-primary-10 text-custom-primary-100"
                         : "border-custom-border-200 hover:border-custom-border-300 text-custom-text-300"
-                    }`}
+                      }`}
                   >
                     <span
                       className={cn(`size-4 rounded border-2 flex items-center justify-center`, {

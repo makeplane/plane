@@ -1,0 +1,112 @@
+name: Rebrand Security & License Checks
+
+on:
+  pull_request:
+    branches:
+      - rebrand/**
+  push:
+    branches:
+      - rebrand/**
+
+jobs:
+  license-scan:
+    name: License Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      
+      - name: Install license-checker
+        run: npm install -g license-checker
+      
+      - name: Scan Node.js licenses
+        run: |
+          npx license-checker --production --json > licenses.json || true
+          npx license-checker --production --summary > license-summary.txt || true
+      
+      - name: Upload license report
+        uses: actions/upload-artifact@v4
+        with:
+          name: license-report
+          path: |
+            licenses.json
+            license-summary.txt
+
+  secret-scan:
+    name: Secret Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          config-path: .gitleaks.toml
+          no-git: false
+          verbose: true
+      
+      - name: Upload gitleaks report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gitleaks-report
+          path: |
+            gitleaks-report.json
+
+  asset-scan:
+    name: Asset Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install ripgrep
+        run: sudo apt-get update && sudo apt-get install -y ripgrep
+      
+      - name: Scan assets
+        run: |
+          chmod +x scripts/scan-assets.sh
+          ./scripts/scan-assets.sh || true
+      
+      - name: Upload asset report
+        uses: actions/upload-artifact@v4
+        with:
+          name: asset-report
+          path: asset-reports/
+
+  build-check:
+    name: Build Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.21.0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Run type check
+        run: pnpm check:types || true
+      
+      - name: Run lint
+        run: pnpm check:lint || true
+      
+      - name: Build packages
+        run: pnpm build || true
+

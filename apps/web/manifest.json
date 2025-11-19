@@ -4,9 +4,9 @@
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
-  "name": "Plane | Accelerate software development with peace.",
-  "short_name": "Plane",
-  "description": "Plane accelerated the software development by order of magnitude for agencies and product companies.",
+  "name": "AHA Projects | Modern project management for all teams",
+  "short_name": "AHA Projects",
+  "description": "AHA Projects accelerates software development and project management for agencies and product companies.",
   "icons": [
     {
       "src": "/icon-192x192.png",

@@ -151,7 +151,7 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-10">
       {/* Header */}
-      <CommonOnboardingHeader title="Create your profile." description="This is how you will appear in Plane." />
+      <CommonOnboardingHeader title="Create your profile." description="This is how you will appear in AHA Projects." />
 
       {/* Profile Picture Section */}
       <Controller

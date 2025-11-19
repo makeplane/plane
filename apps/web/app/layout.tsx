@@ -13,11 +13,11 @@ import { cn } from "@plane/utils";
 import { AppProvider } from "./provider";
 
 export const metadata: Metadata = {
-  title: "Plane | Simple, extensible, open-source project management tool.",
+  title: "AHA Projects | Jira Project manager alternative",
   description: SITE_DESCRIPTION,
   metadataBase: new URL("https://app.plane.so"),
   openGraph: {
-    title: "Plane | Simple, extensible, open-source project management tool.",
+    title: "AHA Projects | Jira Project manager alternative",
     description: "Open-source project management tool to manage work items, cycles, and product roadmaps easily",
     url: "https://app.plane.so/",
     images: [

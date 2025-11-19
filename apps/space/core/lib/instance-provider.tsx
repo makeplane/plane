@@ -16,8 +16,8 @@ import { useUser } from "@/hooks/store/use-user";
 // assets
 import PlaneBackgroundPatternDark from "@/public/auth/background-pattern-dark.svg";
 import PlaneBackgroundPattern from "@/public/auth/background-pattern.svg";
-import BlackHorizontalLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
-import WhiteHorizontalLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
+import BlackHorizontalLogo from "@/public/aha-logos/black-horizontal-with-logo.png";
+import WhiteHorizontalLogo from "@/public/aha-logos/white-horizontal-with-logo.png";
 
 export const InstanceProvider = observer(({ children }: { children: ReactNode }) => {
   const { fetchInstanceInfo, instance, error } = useInstance();

@@ -1,0 +1,80 @@
+/**
+ * Brand Tokens
+ * 
+ * This file contains brand-specific design tokens that can be easily customized
+ * for rebranding. These tokens override the default primary colors.
+ * 
+ * To rebrand:
+ * 1. Update the --brand-* color values below
+ * 2. The primary color system will automatically use these values
+ * 3. All components using primary colors will reflect the new brand
+ */
+
+:root {
+  /* AHA Projects Brand Color Palette */
+  /* Primary: AHA Red (#DA4F36 = rgb(218, 79, 54)) */
+  /* Secondary: AHA Blue (#252D32 = rgb(37, 45, 50)) */
+
+  --brand-50: 254, 242, 242;
+  /* Lightest red tint */
+  --brand-100: 254, 226, 226;
+  /* Very light red */
+  --brand-200: 254, 202, 202;
+  /* Light red */
+  --brand-300: 252, 165, 165;
+  /* Medium-light red */
+  --brand-400: 248, 113, 113;
+  /* Medium red */
+  --brand-500: 218, 79, 54;
+  /* AHA RED - Primary brand color */
+  --brand-600: 185, 67, 46;
+  /* Medium-dark red */
+  --brand-700: 153, 56, 38;
+  /* Dark red */
+  --brand-800: 122, 44, 30;
+  /* Very dark red */
+  --brand-900: 91, 33, 23;
+  /* Darkest red */
+
+  /* Semantic brand colors */
+  --brand-primary: var(--brand-500);
+  /* AHA Red */
+  --brand-secondary: 37, 45, 50;
+  /* AHA Blue */
+  --brand-contrast: 255, 255, 255;
+  /* White text on brand background */
+  --brand-text: 37, 45, 50;
+  /* AHA Blue for text */
+
+  /* Apply brand colors as primary colors throughout the app */
+  --color-primary-10: var(--brand-50);
+  --color-primary-20: var(--brand-100);
+  --color-primary-30: var(--brand-200);
+  --color-primary-40: var(--brand-300);
+  --color-primary-50: var(--brand-400);
+  --color-primary-60: var(--brand-500);
+  --color-primary-70: var(--brand-600);
+  --color-primary-80: var(--brand-700);
+  --color-primary-90: var(--brand-800);
+  --color-primary-100: var(--brand-900);
+}
+
+[data-theme="dark"] {
+  --brand-text: 255, 255, 255;
+  /* AHA White for dark theme */
+  --brand-contrast: 37, 45, 50;
+  /* AHA Blue text on brand background in dark mode */
+}
+
+/**
+ * Runtime token update utility
+ * 
+ * Use this in JavaScript to update brand tokens at runtime:
+ * 
+ * import { updateBrandTokens } from '@plane/utils/brand-tokens';
+ * 
+ * updateBrandTokens({
+ *   '500': '14, 165, 233',  // Update primary brand color
+ *   '600': '2, 132, 199',   // Update secondary brand color
+ * });
+ */

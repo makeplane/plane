@@ -37,48 +37,48 @@ const TOUR_STEPS: {
   prevStep?: TTourSteps;
   nextStep?: TTourSteps;
 }[] = [
-  {
-    key: "work-items",
-    title: "Plan with work items",
-    description:
-      "The work item is the building block of the Plane. Most concepts in Plane are either associated with work items and their properties.",
-    image: IssuesTour,
-    nextStep: "cycles",
-  },
-  {
-    key: "cycles",
-    title: "Move with cycles",
-    description:
-      "Cycles help you and your team to progress faster, similar to the sprints commonly used in agile development.",
-    image: CyclesTour,
-    prevStep: "work-items",
-    nextStep: "modules",
-  },
-  {
-    key: "modules",
-    title: "Break into modules",
-    description: "Modules break your big thing into Projects or Features, to help you organize better.",
-    image: ModulesTour,
-    prevStep: "cycles",
-    nextStep: "views",
-  },
-  {
-    key: "views",
-    title: "Views",
-    description:
-      "Create custom filters to display only the work items that matter to you. Save and share your filters in just a few clicks.",
-    image: ViewsTour,
-    prevStep: "modules",
-    nextStep: "pages",
-  },
-  {
-    key: "pages",
-    title: "Document with pages",
-    description: "Use Pages to quickly jot down work items when you're in a meeting or starting a day.",
-    image: PagesTour,
-    prevStep: "views",
-  },
-];
+    {
+      key: "work-items",
+      title: "Plan with work items",
+      description:
+        "The work item is the building block of AHA Projects. Most concepts in AHA Projects are either associated with work items and their properties.",
+      image: IssuesTour,
+      nextStep: "cycles",
+    },
+    {
+      key: "cycles",
+      title: "Move with cycles",
+      description:
+        "Cycles help you and your team to progress faster, similar to the sprints commonly used in agile development.",
+      image: CyclesTour,
+      prevStep: "work-items",
+      nextStep: "modules",
+    },
+    {
+      key: "modules",
+      title: "Break into modules",
+      description: "Modules break your big thing into Projects or Features, to help you organize better.",
+      image: ModulesTour,
+      prevStep: "cycles",
+      nextStep: "views",
+    },
+    {
+      key: "views",
+      title: "Views",
+      description:
+        "Create custom filters to display only the work items that matter to you. Save and share your filters in just a few clicks.",
+      image: ViewsTour,
+      prevStep: "modules",
+      nextStep: "pages",
+    },
+    {
+      key: "pages",
+      title: "Document with pages",
+      description: "Use Pages to quickly jot down work items when you're in a meeting or starting a day.",
+      image: PagesTour,
+      prevStep: "views",
+    },
+  ];
 
 export const TourRoot: React.FC<Props> = observer((props) => {
   const { onComplete } = props;
@@ -101,10 +101,10 @@ export const TourRoot: React.FC<Props> = observer((props) => {
             </div>
             <div className="flex h-2/5 flex-col overflow-y-auto p-6">
               <h3 className="font-semibold sm:text-xl">
-                Welcome to Plane, {currentUser?.first_name} {currentUser?.last_name}
+                Welcome to AHA Projects, {currentUser?.first_name} {currentUser?.last_name}
               </h3>
               <p className="mt-3 text-sm text-custom-text-200">
-                We{"'"}re glad that you decided to try out Plane. You can now manage your projects with ease. Get
+                We{"'"}re glad that you decided to try out AHA Projects. You can now manage your projects with ease. Get
                 started by creating a project.
               </p>
               <div className="flex h-full items-end">
@@ -149,9 +149,8 @@ export const TourRoot: React.FC<Props> = observer((props) => {
           <TourSidebar step={step} setStep={setStep} />
           <div className="col-span-10 h-full overflow-hidden lg:col-span-7">
             <div
-              className={`flex h-1/2 items-end overflow-hidden bg-custom-primary-100 sm:h-3/5 ${
-                currentStepIndex % 2 === 0 ? "justify-end" : "justify-start"
-              }`}
+              className={`flex h-1/2 items-end overflow-hidden bg-custom-primary-100 sm:h-3/5 ${currentStepIndex % 2 === 0 ? "justify-end" : "justify-start"
+                }`}
             >
               <Image src={currentStep?.image} alt={currentStep?.title} />
             </div>

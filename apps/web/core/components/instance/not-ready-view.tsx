@@ -6,13 +6,11 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import { GOD_MODE_URL } from "@plane/constants";
 import { Button } from "@plane/propel/button";
-import { PlaneLockup } from "@plane/propel/icons";
-// helpers
-// images
+import AHALogo from "@/public/aha-logos/logo-only.png";
 // assets
 import PlaneBackgroundPatternDark from "@/public/auth/background-pattern-dark.svg";
 import PlaneBackgroundPattern from "@/public/auth/background-pattern.svg";
-import PlaneTakeOffImage from "@/public/plane-takeoff.png";
+import AhaMascotImage from "@/public/aha-logos/ahamascot.png";
 
 export const InstanceNotReady: FC = () => {
   const { resolvedTheme } = useTheme();
@@ -24,7 +22,7 @@ export const InstanceNotReady: FC = () => {
         <div className="container h-[110px] flex-shrink-0 mx-auto px-5 lg:px-0 flex items-center justify-between gap-5 z-50">
           <div className="flex items-center gap-x-2 py-10">
             <Link href={`/`}>
-              <PlaneLockup className="h-7 w-auto text-custom-text-100" />
+              <Image src={AHALogo} alt="AHA Projects" className="h-10 w-auto" />
             </Link>
           </div>
         </div>
@@ -37,15 +35,19 @@ export const InstanceNotReady: FC = () => {
           <div className="h-full w-full relative container px-5 mx-auto flex justify-center items-center">
             <div className="w-auto max-w-2xl relative space-y-8 py-10">
               <div className="relative flex flex-col justify-center items-center space-y-4">
-                <h1 className="text-3xl font-bold pb-3">Welcome aboard Plane!</h1>
-                <Image src={PlaneTakeOffImage} alt="Plane Logo" />
+                <h1 className="text-3xl font-bold pb-3">Welcome aboard AHA Projects!</h1>
+                <Image src={AhaMascotImage} alt="AHA Projects mascot" priority />
                 <p className="font-medium text-base text-custom-text-400">
                   Get started by setting up your instance and workspace
                 </p>
               </div>
               <div>
                 <a href={GOD_MODE_URL}>
-                  <Button size="lg" className="w-full">
+                  <Button
+                    size="lg"
+                    variant="primary"
+                    className="w-full bg-[#DA4F36] hover:bg-[#c4462f] focus-visible:ring-[#DA4F36]/40 border-transparent"
+                  >
                     Get started
                   </Button>
                 </a>

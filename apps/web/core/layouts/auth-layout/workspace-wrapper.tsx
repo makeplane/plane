@@ -29,8 +29,8 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // local
 import { persistence } from "@/local-db/storage.sqlite";
 // images
-import PlaneBlackLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
-import PlaneWhiteLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
+import PlaneBlackLogo from "@/public/aha-logos/black-horizontal-with-logo.png";
+import PlaneWhiteLogo from "@/public/aha-logos/white-horizontal-with-logo.png";
 import WorkSpaceNotAvailable from "@/public/workspace/workspace-not-available.png";
 
 interface IWorkspaceAuthWrapper {
@@ -120,12 +120,12 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     workspaceSlug ? `WORKSPACE_DB_${workspaceSlug}` : null,
     workspaceSlug
       ? async () => {
-          // persistence.reset();
-          await persistence.initialize(workspaceSlug.toString());
-          // Load common data
-          persistence.syncWorkspace();
-          return true;
-        }
+        // persistence.reset();
+        await persistence.initialize(workspaceSlug.toString());
+        // Load common data
+        persistence.syncWorkspace();
+        return true;
+      }
       : null
   );
 

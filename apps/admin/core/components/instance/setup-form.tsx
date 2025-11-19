@@ -2,11 +2,12 @@
 
 import type { FC } from "react";
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 // icons
 import { Eye, EyeOff } from "lucide-react";
 // plane internal packages
-import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
+import { API_BASE_URL, ADMIN_BASE_PATH, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { AuthService } from "@plane/services";
 import { Checkbox, Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
@@ -140,8 +141,8 @@ export const InstanceSetupForm: FC = (props) => {
       <div className="flex flex-col justify-center items-center flex-grow w-full py-6 mt-10">
         <div className="relative flex flex-col gap-6 max-w-[22.5rem] w-full">
           <FormHeader
-            heading="Setup your Plane Instance"
-            subHeading="Post setup you will be able to manage this Plane instance."
+            heading="Setup your AHA Projects Instance"
+            subHeading="Post setup you will be able to manage this AHA Projects instance."
           />
           {errorData.type &&
             errorData?.message &&
@@ -329,16 +330,14 @@ export const InstanceSetupForm: FC = (props) => {
                 />
               </div>
               <label className="text-sm text-custom-text-300 font-medium cursor-pointer" htmlFor="is_telemetry_enabled">
-                Allow Plane to anonymously collect usage events.{" "}
-                <a
+                Allow AHA Projects to anonymously collect usage events.{" "}
+                <Link
                   tabIndex={-1}
-                  href="https://developers.plane.so/self-hosting/telemetry"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href={`${ADMIN_BASE_PATH}/telemetry`}
                   className="text-sm font-medium text-blue-500 hover:text-blue-600 flex-shrink-0"
                 >
                   See More
-                </a>
+                </Link>
               </label>
             </div>
 

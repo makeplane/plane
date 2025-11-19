@@ -24,7 +24,7 @@ export const InstanceFailureView: FC = observer(() => {
       <div className="flex flex-col justify-center items-center flex-grow w-full py-6 mt-10">
         <div className="relative flex flex-col gap-6 max-w-[22.5rem] w-full">
           <div className="relative flex flex-col justify-center items-center space-y-4">
-            <Image src={instanceImage} alt="Plane Logo" />
+            <Image src={instanceImage} alt="AHA Projects logo" />
             <h3 className="font-medium text-2xl text-white text-center">Unable to fetch instance details.</h3>
             <p className="font-medium text-base text-center">
               We were unable to fetch the details of the instance. Fret not, it might just be a connectivity issue.

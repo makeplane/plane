@@ -1,0 +1,161 @@
+# Production Dockerfile for Plane on Hetzner
+# This is a multi-stage build that creates a production-ready image
+
+ARG PLANE_VERSION=latest
+FROM node:22-alpine AS node-base
+
+# Build stage for frontend services
+FROM node:22-alpine AS frontend-builder
+WORKDIR /app
+
+# Install pnpm and turbo
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+ARG TURBO_VERSION=2.5.6
+RUN corepack enable pnpm && pnpm add -g turbo@${TURBO_VERSION}
+
+# Copy package files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
+COPY packages ./packages
+COPY apps/web ./apps/web
+COPY apps/admin ./apps/admin
+COPY apps/space ./apps/space
+COPY apps/live ./apps/live
+
+# Build arguments for frontend
+ARG NEXT_PUBLIC_API_BASE_URL=""
+ARG NEXT_PUBLIC_ADMIN_BASE_URL=""
+ARG NEXT_PUBLIC_ADMIN_BASE_PATH="/god-mode"
+ARG NEXT_PUBLIC_LIVE_BASE_URL=""
+ARG NEXT_PUBLIC_LIVE_BASE_PATH="/live"
+ARG NEXT_PUBLIC_SPACE_BASE_URL=""
+ARG NEXT_PUBLIC_SPACE_BASE_PATH="/spaces"
+ARG NEXT_PUBLIC_WEB_BASE_URL=""
+
+# Install dependencies and build
+RUN apk add --no-cache libc6-compat && \
+    pnpm install --frozen-lockfile && \
+    NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL \
+    NEXT_PUBLIC_ADMIN_BASE_URL=$NEXT_PUBLIC_ADMIN_BASE_URL \
+    NEXT_PUBLIC_ADMIN_BASE_PATH=$NEXT_PUBLIC_ADMIN_BASE_PATH \
+    NEXT_PUBLIC_LIVE_BASE_URL=$NEXT_PUBLIC_LIVE_BASE_URL \
+    NEXT_PUBLIC_LIVE_BASE_PATH=$NEXT_PUBLIC_LIVE_BASE_PATH \
+    NEXT_PUBLIC_SPACE_BASE_URL=$NEXT_PUBLIC_SPACE_BASE_URL \
+    NEXT_PUBLIC_SPACE_BASE_PATH=$NEXT_PUBLIC_SPACE_BASE_PATH \
+    NEXT_PUBLIC_WEB_BASE_URL=$NEXT_PUBLIC_WEB_BASE_URL \
+    NEXT_TELEMETRY_DISABLED=1 \
+    TURBO_TELEMETRY_DISABLED=1 \
+    pnpm turbo run build --filter=web --filter=admin --filter=space --filter=live
+
+# Backend build stage
+FROM python:3.12.10-alpine AS backend-builder
+WORKDIR /code
+
+# Install system dependencies
+RUN apk update && apk upgrade && \
+    apk add --no-cache \
+    libpq \
+    libxslt \
+    xmlsec \
+    ca-certificates \
+    openssl \
+    postgresql-dev \
+    g++ \
+    gcc \
+    make \
+    libc-dev \
+    linux-headers \
+    libffi-dev \
+    bash \
+    git
+
+# Copy and install Python dependencies
+COPY apps/api/requirements.txt ./requirements.txt
+COPY apps/api/requirements ./requirements
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy backend code
+COPY apps/api/manage.py ./manage.py
+COPY apps/api/plane ./plane
+COPY apps/api/templates ./templates
+COPY apps/api/bin ./bin
+RUN chmod +x ./bin/*
+
+# Proxy build stage
+FROM caddy:2-alpine AS proxy-builder
+COPY apps/proxy/Caddyfile.ce /etc/caddy/Caddyfile
+
+# Final production image
+FROM python:3.12.10-alpine AS production
+
+WORKDIR /app
+
+# Install runtime dependencies
+RUN apk update && apk upgrade && \
+    apk add --no-cache \
+    libpq \
+    libxslt \
+    xmlsec \
+    ca-certificates \
+    openssl \
+    bash \
+    curl \
+    nss-tools \
+    supervisor \
+    nginx
+
+# Copy Node.js runtime from node-base
+COPY --from=node-base /usr/lib /usr/lib
+COPY --from=node-base /usr/local/lib /usr/local/lib
+COPY --from=node-base /usr/local/include /usr/local/include
+COPY --from=node-base /usr/local/bin /usr/local/bin
+
+# Copy built frontend applications
+COPY --from=frontend-builder /app/apps/web/.next/standalone ./web
+COPY --from=frontend-builder /app/apps/web/.next/static ./web/apps/web/.next/static
+COPY --from=frontend-builder /app/apps/web/public ./web/apps/web/public
+
+COPY --from=frontend-builder /app/apps/admin/.next/standalone ./admin
+COPY --from=frontend-builder /app/apps/admin/.next/static ./admin/apps/admin/.next/static
+COPY --from=frontend-builder /app/apps/admin/public ./admin/apps/admin/public
+
+COPY --from=frontend-builder /app/apps/space/.next/standalone ./space
+COPY --from=frontend-builder /app/apps/space/.next/static ./space/apps/space/.next/static
+COPY --from=frontend-builder /app/apps/space/public ./space/apps/space/public
+
+COPY --from=frontend-builder /app/apps/live/dist ./live/apps/live/dist
+
+# Copy backend
+COPY --from=backend-builder /code ./backend
+COPY --from=backend-builder /usr/local/lib/python3.12/site-packages/ /usr/local/lib/python3.12/site-packages/
+COPY --from=backend-builder /usr/local/bin/ /usr/local/bin/
+
+# Copy Caddy
+COPY --from=proxy-builder /usr/bin/caddy /usr/bin/caddy
+COPY apps/proxy/Caddyfile.ce ./proxy/Caddyfile
+
+# Create directories
+RUN mkdir -p /app/logs/access /app/logs/error /app/data && \
+    chmod -R 777 /app/logs /app/data
+
+# Copy supervisor configuration
+COPY deployments/aio/community/supervisor.conf /etc/supervisor/conf.d/supervisor.conf
+COPY deployments/aio/community/start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
+# Environment variables (can be overridden)
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV INSTANCE_CHANGELOG_URL=https://sites.plane.so/pages/691ef037bcfe416a902e48cb55f59891/
+
+# Expose ports
+EXPOSE 80 443
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost/ || exit 1
+
+# Start supervisor
+CMD ["/app/start.sh"]
+
