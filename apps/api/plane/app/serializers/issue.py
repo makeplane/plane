@@ -165,7 +165,7 @@ class IssueCreateSerializer(BaseSerializer):
             attrs.get("state_id")
             and not state_manager.filter(
                 project_id=self.context.get("project_id"),
-                pk=attrs.get("state_id").id,
+                pk=attrs.get("state_id"),
             ).exists()
         ):
             raise serializers.ValidationError("State is not valid please pass a valid state_id")
@@ -175,7 +175,7 @@ class IssueCreateSerializer(BaseSerializer):
             attrs.get("parent_id")
             and not Issue.objects.filter(
                 project_id=self.context.get("project_id"),
-                pk=attrs.get("parent_id").id,
+                pk=attrs.get("parent_id"),
             ).exists()
         ):
             raise serializers.ValidationError("Parent is not valid issue_id please pass a valid issue_id")

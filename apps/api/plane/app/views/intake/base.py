@@ -229,8 +229,8 @@ class IntakeIssueViewSet(BaseViewSet):
             return Response({"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST)
 
         # get the triage state
-        state_id = State.triage_objects.filter(project_id=project_id, workspace__slug=slug).first().id
-        request.data["issue"]["state_id"] = state_id
+        triage_state = State.triage_objects.filter(project_id=project_id, workspace__slug=slug).first().id
+        request.data["issue"]["state_id"] = triage_state
 
         # create an issue
         project = Project.objects.get(pk=project_id)

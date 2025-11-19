@@ -298,7 +298,7 @@ class ProjectViewSet(BaseViewSet):
                     "group": "cancelled",
                 },
                 {
-                    "name": "Triage",
+                    "name": "Intake Triage",
                     "color": "#9AA4BC",
                     "sequence": 65000,
                     "group": "triage",
