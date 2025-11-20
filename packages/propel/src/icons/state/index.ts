@@ -4,3 +4,4 @@ export * from "./completed-group-icon";
 export * from "./started-group-icon";
 export * from "./state-group-icon";
 export * from "./unstarted-group-icon";
+export * from "./intake-state-group-icon";

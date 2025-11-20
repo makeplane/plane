@@ -53,10 +53,6 @@ export const InboxIssueFilterSelection: FC = observer(() => {
         <div className="py-2">
           <FilterStatus searchQuery={filtersSearchQuery} />
         </div>
-        {/* state */}
-        <div className="py-2">
-          <FilterState states={projectStates} searchQuery={filtersSearchQuery} />
-        </div>
         {/* Priority */}
         <div className="py-2">
           <FilterPriority searchQuery={filtersSearchQuery} />

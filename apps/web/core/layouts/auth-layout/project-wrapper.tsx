@@ -22,6 +22,7 @@ import {
   PROJECT_ALL_CYCLES,
   PROJECT_MODULES,
   PROJECT_VIEWS,
+  PROJECT_INTAKE_STATE,
 } from "@/constants/fetch-keys";
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
@@ -59,7 +60,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const {
     project: { fetchProjectMembers },
   } = useMember();
-  const { fetchProjectStates } = useProjectState();
+  const { fetchProjectStates, fetchProjectIntakeState } = useProjectState();
   const { fetchProjectLabels } = useLabel();
   const { getProjectEstimates } = useProjectEstimates();
 
@@ -107,6 +108,12 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   useSWR(
     workspaceSlug && projectId ? PROJECT_STATES(workspaceSlug, projectId) : null,
     workspaceSlug && projectId ? () => fetchProjectStates(workspaceSlug, projectId) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+  // fetching project intake state
+  useSWR(
+    workspaceSlug && projectId ? PROJECT_INTAKE_STATE(workspaceSlug, projectId) : null,
+    workspaceSlug && projectId ? () => fetchProjectIntakeState(workspaceSlug, projectId) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project estimates
