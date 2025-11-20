@@ -7,11 +7,9 @@ interface Team {
 }
 
 interface OppositionTeamPropertyProps {
-  // onlyLogo?: boolean;
   value?: Team | null;
   onChange?: (team: Team | null) => void;
   disabled?: boolean;
-  /** UNIQUE KEY FOR EACH CARD */
   storageKey: string;  
 }
 
@@ -27,9 +25,7 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
   const [search, setSearch] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // -----------------------------------------------
-  // 1️⃣ Load saved team from localStorage (per card)
-  // -----------------------------------------------
+  // Load saved team
   useEffect(() => {
     const saved = localStorage.getItem(storageKey);
     if (saved) {
@@ -43,16 +39,20 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
     }
   }, [storageKey]);
 
-  // -----------------------------------------------
-  // 2️⃣ Fetch teams
-  // -----------------------------------------------
+  // Fetch teams
 useEffect(() => {
   const API_URL = `${process.env.NEXT_PUBLIC_CP_SERVER_URL}/meta-type?key='OPPOSITIONTEAM'`;
 
   fetch(API_URL)
     .then((res) => res.json())
     .then((data) => {
-      const values = data?.["Gateway Response"]?.result?.[0]?.[2]?.value || [];
+      let values: Team[] = data?.["Gateway Response"]?.result?.[0]?.[2]?.value || [];
+
+      // ✅ Sort alphabetically (A → Z)
+      values = values.sort((a: Team, b: Team) =>
+        a.name.localeCompare(b.name)
+      );
+
       setTeams(values);
     })
     .catch((err) => console.error("Fetch Error:", err));
@@ -70,15 +70,9 @@ useEffect(() => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // -----------------------------------------------
-  // 3️⃣ When a team is selected → save to localStorage
-  // -----------------------------------------------
   const handleSelect = (team: Team | null) => {
     setSelectedTeam(team);
-
-    // Save per-card (unique) key
     localStorage.setItem(storageKey, JSON.stringify(team));
-
     onChange?.(team);
     setOpen(false);
     setSearch("");
@@ -95,12 +89,13 @@ useEffect(() => {
         className="rounded-lg px-2 py-1 flex items-center justify-between cursor-pointer text-[#737373] hover:bg-custom-background-80"
       >
         {selectedTeam ? (
-          <div className="flex items-center gap-1.5">
-            <img
-              src={selectedTeam.logo}
-              className="w-5 h-5 rounded-full object-cover"
-            />
-            <span className="truncate text-xs">{selectedTeam.name}</span>
+          <div className="flex items-center gap-1.5 group">
+            <img src={selectedTeam.logo} className="w-5 h-5 rounded-full object-cover" />
+
+            {/* EXPAND ON HOVER */}
+            <span className="text-xs max-w-[90px] overflow-hidden text-ellipsis whitespace-nowrap group-hover:whitespace-normal group-hover:overflow-visible group-hover:break-words">
+              {selectedTeam.name}
+            </span>
           </div>
         ) : (
           <div className="flex items-center gap-1.5">
@@ -111,6 +106,7 @@ useEffect(() => {
           </div>
         )}
       </div>
+
       {open && !disabled && (
         <div className="absolute mt-1 w-full bg-custom-border-200 rounded-lg shadow-lg max-h-40 overflow-y-auto z-50 text-[#737373]">
           <div className="p-2">
@@ -135,6 +131,7 @@ useEffect(() => {
               />
             </div>
           </div>
+
           <div
             onClick={() => handleSelect(null)}
             className="flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-custom-background-80"
@@ -147,10 +144,14 @@ useEffect(() => {
             <div
               key={index}
               onClick={() => handleSelect(team)}
-              className="flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-custom-background-80"
+              className="flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-custom-background-80 group"
             >
               <img src={team.logo} className="w-5 h-5 rounded-full" />
-              <span className="truncate text-xs">{team.name}</span>
+
+              {/* EXPAND ON HOVER */}
+              <span className="text-xs max-w-[90px] overflow-hidden text-ellipsis whitespace-nowrap group-hover:whitespace-normal group-hover:overflow-visible group-hover:break-words">
+                {team.name}
+              </span>
             </div>
           ))}
         </div>
