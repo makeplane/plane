@@ -10,6 +10,7 @@ from plane.db.models import (
     ModuleMember,
     ModuleIssue,
     ProjectMember,
+    Project,
 )
 
 
@@ -53,6 +54,9 @@ class ModuleCreateSerializer(BaseSerializer):
         ]
 
     def validate(self, data):
+        project = Project.objects.get(id=self.context.get("project_id"))
+        if not project.module_view:
+            raise serializers.ValidationError("Modules are not enabled for this project")
         if (
             data.get("start_date", None) is not None
             and data.get("target_date", None) is not None

@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
-from plane.db.models import Cycle, CycleIssue, User
+from plane.db.models import Cycle, CycleIssue, User, Project
 from plane.utils.timezone_converter import convert_to_utc
 
 
@@ -69,6 +69,10 @@ class CycleCreateSerializer(BaseSerializer):
 
             if not project_id:
                 raise serializers.ValidationError("Project ID is required")
+
+            project = Project.objects.filter(id=project_id).first()
+            if not project.cycle_view:
+                raise serializers.ValidationError("Cycles are not enabled for this project")
 
             data["start_date"] = convert_to_utc(
                 date=str(data.get("start_date").date()),
