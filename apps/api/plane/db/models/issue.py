@@ -520,7 +520,7 @@ class IssueComment(ChangeTrackerMixin, ProjectBaseModel):
                 # Update description only if comment fields changed
                 if changed_fields and self.description_id:
                     Description.objects.filter(pk=self.description_id).update(
-                        **changed_fields, updated_by_id=self.updated_by_id
+                        **changed_fields, updated_by_id=self.updated_by_id, updated_at=self.updated_at
                     )
 
     class Meta:
