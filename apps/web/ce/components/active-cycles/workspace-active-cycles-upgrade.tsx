@@ -1,8 +1,6 @@
 "use client";
 
-import React from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { AlertOctagon, BarChart4, CircleDashed, Folder, Microscope, Search } from "lucide-react";
 // plane imports
 import { MARKETING_PRICING_PAGE_LINK } from "@plane/constants";
@@ -99,21 +97,19 @@ export const WorkspaceActiveCyclesUpgrade = observer(() => {
             </a>
           </div>
           <span className="absolute left-0 top-0">
-            <Image
+            <img
               src={isDarkMode ? ctaL1Dark : ctaL1Light}
-              height={125}
-              width={125}
-              className="rounded-xl"
+              className="w-[125px] h-[125px] object-contain rounded-xl"
               alt="l-1"
             />
           </span>
         </div>
         <div className="relative hidden w-1/2 lg:block">
           <span className="absolute bottom-0 right-0">
-            <Image src={isDarkMode ? ctaR1Dark : ctaR1Light} height={420} width={500} alt="r-1" />
+            <img src={isDarkMode ? ctaR1Dark : ctaR1Light} className="w-full h-full object-contain" alt="r-1" />
           </span>
           <span className="absolute -bottom-16 right-1/2 rounded-xl">
-            <Image src={isDarkMode ? ctaR2Dark : ctaR2Light} height={210} width={280} alt="r-2" />
+            <img src={isDarkMode ? ctaR2Dark : ctaR2Light} className="w-full h-full object-contain" alt="r-2" />
           </span>
         </div>
       </div>

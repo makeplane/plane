@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@plane/constants";
-import { ICycle } from "@plane/types";
+import type { ICycle } from "@plane/types";
 import { APIService } from "../api.service";
 
 /**

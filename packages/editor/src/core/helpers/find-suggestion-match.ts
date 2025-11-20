@@ -1,5 +1,5 @@
 import { escapeForRegEx } from "@tiptap/core";
-import { Trigger, SuggestionMatch } from "@tiptap/suggestion";
+import type { Trigger, SuggestionMatch } from "@tiptap/suggestion";
 
 export function customFindSuggestionMatch(config: Trigger): SuggestionMatch | null {
   const { char, allowSpaces: allowSpacesOption, allowToIncludeChar, allowedPrefixes, startOfLine, $position } = config;

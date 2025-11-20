@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { ISvgIcons } from "../type";
+import type { ISvgIcons } from "../type";
 
 export const PlaneLogo: React.FC<ISvgIcons> = ({ width = "85", height = "52", className, color = "currentColor" }) => (
   <svg

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { E_PASSWORD_STRENGTH } from "@plane/constants";
+import type { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { cn, getPasswordStrength } from "@plane/utils";
 import { PasswordStrengthIndicator } from "../form-fields/password/indicator";
 import { AuthInput } from "./auth-input";

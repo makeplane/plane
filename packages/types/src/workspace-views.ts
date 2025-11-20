@@ -1,10 +1,10 @@
-import {
+import type {
   IWorkspaceViewProps,
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   TWorkItemFilterExpression,
 } from "./view-props";
-import { EViewAccess } from "./views";
+import type { EViewAccess } from "./views";
 
 export interface IWorkspaceView {
   id: string;

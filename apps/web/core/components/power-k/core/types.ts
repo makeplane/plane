@@ -1,4 +1,4 @@
-import type { AppRouterProgressInstance } from "@bprogress/next";
+import type { useRouter } from "next/navigation";
 // plane web imports
 import type {
   TPowerKContextTypeExtended,
@@ -19,7 +19,7 @@ export type TPowerKContext = {
   shouldShowContextBasedActions: boolean;
   setShouldShowContextBasedActions: (shouldShowContextBasedActions: boolean) => void;
   // Router for navigation
-  router: AppRouterProgressInstance;
+  router: ReturnType<typeof useRouter>;
   // UI control
   closePalette: () => void;
   setActiveCommand: (command: TPowerKCommandConfig | null) => void;

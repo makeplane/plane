@@ -1,21 +1,10 @@
 // plane imports
-import {
-  COMPARISON_OPERATOR,
-  EQUALITY_OPERATOR,
-  IProject,
-  IUserLite,
-  TOperatorConfigMap,
-  TSupportedOperators,
-} from "@plane/types";
+import type { IProject, IUserLite, TOperatorConfigMap, TSupportedOperators } from "@plane/types";
+import { COMPARISON_OPERATOR, EQUALITY_OPERATOR } from "@plane/types";
 // local imports
 import { getDatePickerConfig, getDateRangePickerConfig, getMultiSelectConfig } from "../core";
-import {
-  createOperatorConfigEntry,
-  IFilterIconConfig,
-  TCreateDateFilterParams,
-  TCreateFilterConfigParams,
-  TFilterIconType,
-} from "../shared";
+import type { IFilterIconConfig, TCreateDateFilterParams, TCreateFilterConfigParams, TFilterIconType } from "../shared";
+import { createOperatorConfigEntry } from "../shared";
 
 // ------------ Base User Filter Types ------------
 

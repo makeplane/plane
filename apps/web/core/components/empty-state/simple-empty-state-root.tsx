@@ -1,8 +1,6 @@
 "use client";
 
-import React from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 // utils
 import { cn } from "@plane/utils";
 
@@ -39,14 +37,7 @@ export const SimpleEmptyState = observer((props: Props) => {
     <div className="text-center flex flex-col gap-2.5 items-center">
       {assetPath && (
         <div className={sizeConfig[size].container}>
-          <Image
-            src={assetPath}
-            alt={title}
-            height={sizeConfig[size].dimensions}
-            width={sizeConfig[size].dimensions}
-            layout="responsive"
-            lazyBoundary="100%"
-          />
+          <img src={assetPath} alt={title} className="h-full w-full object-contain" />
         </div>
       )}
 

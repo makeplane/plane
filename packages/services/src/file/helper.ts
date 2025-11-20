@@ -1,7 +1,7 @@
 // external imports
 import { fileTypeFromBuffer } from "file-type";
 // plane imports
-import { TFileMetaDataLite, TFileSignedURLResponse } from "@plane/types";
+import type { TFileMetaDataLite, TFileSignedURLResponse } from "@plane/types";
 
 /**
  * @description from the provided signed URL response, generate a payload to be used to upload the file

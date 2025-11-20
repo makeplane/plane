@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { EmojiReaction, EmojiReactionGroup, EmojiReactionButton, EmojiReactionType } from "./emoji-reaction";
+import type { EmojiReactionType } from "./emoji-reaction";
+import { EmojiReaction, EmojiReactionGroup, EmojiReactionButton } from "./emoji-reaction";
 
 const meta = {
   title: "Components/Emoji/EmojiReaction",

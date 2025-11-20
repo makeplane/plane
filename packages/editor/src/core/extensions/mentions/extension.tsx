@@ -1,10 +1,11 @@
 import { ReactNodeViewRenderer } from "@tiptap/react";
 // types
-import { TMentionHandler } from "@/types";
+import type { TMentionHandler } from "@/types";
 // extension config
 import { CustomMentionExtensionConfig } from "./extension-config";
 // node view
-import { MentionNodeView, MentionNodeViewProps } from "./mention-node-view";
+import type { MentionNodeViewProps } from "./mention-node-view";
+import { MentionNodeView } from "./mention-node-view";
 // utils
 import { renderMentionsDropdown } from "./utils";
 

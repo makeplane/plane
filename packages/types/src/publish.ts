@@ -1,5 +1,5 @@
-import { IProject, IProjectLite } from "./project";
-import { IWorkspaceLite } from "./workspace";
+import type { IProject, IProjectLite } from "./project";
+import type { IWorkspaceLite } from "./workspace";
 
 export type TPublishEntityType = "project" | "page";
 

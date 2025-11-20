@@ -3,7 +3,7 @@ import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-ico
 import type { TLogoProps } from "@plane/types";
 import { cn } from "@plane/utils";
 // types
-import { TCalloutBlockAttributes } from "./types";
+import type { TCalloutBlockAttributes } from "./types";
 // utils
 import { DEFAULT_CALLOUT_BLOCK_ATTRIBUTES, updateStoredLogo } from "./utils";
 

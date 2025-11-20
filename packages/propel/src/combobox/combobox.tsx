@@ -38,6 +38,7 @@ export interface ComboboxOptionsProps {
   searchQuery?: string;
   onSearchQueryChange?: (query: string) => void;
   onSearchQueryKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  dataPreventOutsideClick?: boolean;
 }
 
 export interface ComboboxOptionProps {
@@ -111,6 +112,7 @@ function ComboboxOptions({
   searchQuery: controlledSearchQuery,
   onSearchQueryChange,
   onSearchQueryKeyDown,
+  dataPreventOutsideClick,
 }: ComboboxOptionsProps) {
   // const [searchQuery, setSearchQuery] = React.useState("");
   const [internalSearchQuery, setInternalSearchQuery] = React.useState("");
@@ -164,6 +166,7 @@ function ComboboxOptions({
       <BaseCombobox.Positioner sideOffset={8} className={positionerClassName}>
         <BaseCombobox.Popup
           className={cn("rounded-md border border-custom-border-200 bg-custom-background-100 p-1 shadow-lg", className)}
+          data-prevent-outside-click={dataPreventOutsideClick}
         >
           <div className="flex flex-col gap-1">
             {showSearch && (

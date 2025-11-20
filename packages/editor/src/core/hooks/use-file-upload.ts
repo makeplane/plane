@@ -1,11 +1,13 @@
 import type { Editor, NodeViewProps } from "@tiptap/core";
-import { DragEvent, useCallback, useEffect, useState } from "react";
+import type { DragEvent } from "react";
+import { useCallback, useEffect, useState } from "react";
 // helpers
-import { EFileError, isFileValid } from "@/helpers/file";
+import type { EFileError } from "@/helpers/file";
+import { isFileValid } from "@/helpers/file";
 // plugins
 import { insertFilesSafely } from "@/plugins/drop";
 // types
-import { TEditorCommands } from "@/types";
+import type { TEditorCommands } from "@/types";
 
 type TUploaderArgs = {
   acceptedMimeTypes: string[];

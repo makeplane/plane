@@ -1,5 +1,5 @@
 import React from "react";
-import { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
+import type { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
 // plane imports
 import { Card, ECardSpacing } from "../../card";
 

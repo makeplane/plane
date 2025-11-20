@@ -1,4 +1,5 @@
-import { findParentNode, type Editor } from "@tiptap/core";
+import { findParentNode } from "@tiptap/core";
+import type { Editor } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { TableMap } from "@tiptap/pm/tables";
 import { Decoration, DecorationSet } from "@tiptap/pm/view";

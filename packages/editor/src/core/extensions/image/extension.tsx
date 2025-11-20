@@ -1,12 +1,13 @@
 import { ReactNodeViewRenderer } from "@tiptap/react";
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import type { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
 import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-paragraph-at-node-boundary";
 // types
 import type { TFileHandler } from "@/types";
 // local imports
-import { CustomImageNodeView, CustomImageNodeViewProps } from "../custom-image/components/node-view";
+import type { CustomImageNodeViewProps } from "../custom-image/components/node-view";
+import { CustomImageNodeView } from "../custom-image/components/node-view";
 import { ImageExtensionConfig } from "./extension-config";
 
 declare module "@tiptap/core" {

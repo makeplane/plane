@@ -18,12 +18,12 @@ import {
   Heading5,
   Heading6,
   CaseSensitive,
-  type LucideIcon,
   MinusSquare,
   Palette,
   AlignCenter,
   LinkIcon,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
@@ -49,7 +49,7 @@ import {
   unsetLinkEditor,
 } from "@/helpers/editor-commands";
 // types
-import { TCommandWithProps, TEditorCommands } from "@/types";
+import type { TCommandWithProps, TEditorCommands } from "@/types";
 
 type isActiveFunction<T extends TEditorCommands> = (params?: TCommandWithProps<T>) => boolean;
 type commandFunction<T extends TEditorCommands> = (params?: TCommandWithProps<T>) => void;

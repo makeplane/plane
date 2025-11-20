@@ -1,11 +1,12 @@
 import { Popover as HeadlessReactPopover, Transition } from "@headlessui/react";
 import { EllipsisVertical } from "lucide-react";
-import React, { Fragment, Ref, useState } from "react";
+import type { Ref } from "react";
+import React, { Fragment, useState } from "react";
 import { usePopper } from "react-popper";
 // helpers
 import { cn } from "../utils";
 // types
-import { TPopover } from "./types";
+import type { TPopover } from "./types";
 
 export const Popover = (props: TPopover) => {
   const {

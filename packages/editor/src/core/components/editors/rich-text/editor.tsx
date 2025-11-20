@@ -7,7 +7,7 @@ import { SideMenuExtension } from "@/extensions";
 // plane editor imports
 import { RichTextEditorAdditionalExtensions } from "@/plane-editor/extensions/rich-text-extensions";
 // types
-import { EditorRefApi, IRichTextEditorProps } from "@/types";
+import type { EditorRefApi, IRichTextEditorProps } from "@/types";
 
 const RichTextEditor: React.FC<IRichTextEditorProps> = (props) => {
   const {
@@ -18,6 +18,7 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = (props) => {
     fileHandler,
     flaggedExtensions,
     extendedEditorProps,
+    workItemIdentifier,
   } = props;
 
   const getExtensions = useCallback(() => {
@@ -43,7 +44,12 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = (props) => {
       {(editor) => (
         <>
           {editor && bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}
-          <BlockMenu editor={editor} flaggedExtensions={flaggedExtensions} disabledExtensions={disabledExtensions} />
+          <BlockMenu
+            editor={editor}
+            flaggedExtensions={flaggedExtensions}
+            disabledExtensions={disabledExtensions}
+            workItemIdentifier={workItemIdentifier}
+          />
         </>
       )}
     </EditorWrapper>

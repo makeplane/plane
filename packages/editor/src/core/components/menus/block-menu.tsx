@@ -9,7 +9,8 @@ import {
   FloatingPortal,
 } from "@floating-ui/react";
 import type { Editor } from "@tiptap/react";
-import { Copy, LucideIcon, Trash2 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { Copy, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@plane/utils";
 // constants
@@ -23,6 +24,7 @@ type Props = {
   disabledExtensions?: IEditorProps["disabledExtensions"];
   editor: Editor;
   flaggedExtensions?: IEditorProps["flaggedExtensions"];
+  workItemIdentifier?: IEditorProps["workItemIdentifier"];
 };
 export type BlockMenuOption = {
   icon: LucideIcon;
@@ -33,7 +35,7 @@ export type BlockMenuOption = {
 };
 
 export const BlockMenu = (props: Props) => {
-  const { editor } = props;
+  const { editor, workItemIdentifier } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimatedIn, setIsAnimatedIn] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);

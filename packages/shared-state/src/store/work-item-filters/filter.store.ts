@@ -1,14 +1,16 @@
 import { action, makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { TExpressionOptions } from "@plane/constants";
-import { EIssuesStoreType, LOGICAL_OPERATOR, TWorkItemFilterExpression, TWorkItemFilterProperty } from "@plane/types";
+import type { TExpressionOptions } from "@plane/constants";
+import type { EIssuesStoreType, TWorkItemFilterExpression, TWorkItemFilterProperty } from "@plane/types";
+import { LOGICAL_OPERATOR } from "@plane/types";
 import { getOperatorForPayload } from "@plane/utils";
 // local imports
-import { buildWorkItemFilterExpressionFromConditions, TWorkItemFilterCondition } from "../../utils";
+import type { TWorkItemFilterCondition } from "../../utils";
+import { buildWorkItemFilterExpressionFromConditions } from "../../utils";
 import { FilterInstance } from "../rich-filters/filter";
 import { workItemFiltersAdapter } from "./adapter";
-import { IWorkItemFilterInstance, TWorkItemFilterKey } from "./shared";
+import type { IWorkItemFilterInstance, TWorkItemFilterKey } from "./shared";
 
 type TGetOrCreateFilterParams = {
   showOnMount?: boolean;

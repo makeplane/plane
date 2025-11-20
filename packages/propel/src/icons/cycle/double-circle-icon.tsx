@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { ISvgIcons } from "../type";
+import type { ISvgIcons } from "../type";
 
 export const DoubleCircleIcon: React.FC<ISvgIcons> = ({ className = "text-current", ...rest }) => (
   <svg

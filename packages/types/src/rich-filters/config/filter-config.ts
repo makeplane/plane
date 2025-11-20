@@ -1,5 +1,5 @@
-import { TFilterProperty, TFilterValue } from "../expression";
-import { TOperatorConfigMap } from "../operator-configs";
+import type { TFilterProperty, TFilterValue } from "../expression";
+import type { TOperatorConfigMap } from "../operator-configs";
 
 /**
  * Main filter configuration type for different properties.

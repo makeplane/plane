@@ -1,20 +1,13 @@
 // plane imports
-import {
-  COMPARISON_OPERATOR,
-  EQUALITY_OPERATOR,
-  IProject,
-  TOperatorConfigMap,
-  TSupportedOperators,
-} from "@plane/types";
+import type { IProject, TOperatorConfigMap, TSupportedOperators } from "@plane/types";
+import { COMPARISON_OPERATOR, EQUALITY_OPERATOR } from "@plane/types";
 // local imports
+import type { IFilterIconConfig, TCreateDateFilterParams, TCreateFilterConfigParams } from "../../../rich-filters";
 import {
   createOperatorConfigEntry,
   getDatePickerConfig,
   getDateRangePickerConfig,
   getMultiSelectConfig,
-  IFilterIconConfig,
-  TCreateDateFilterParams,
-  TCreateFilterConfigParams,
 } from "../../../rich-filters";
 
 // ------------ Date filter ------------
