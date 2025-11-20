@@ -18,8 +18,7 @@ class StateSerializer(BaseSerializer):
             State.objects.filter(project_id=self.context.get("project_id")).update(default=False)
 
         if data.get("group", None) == "triage":
-            raise serializers.ValidationError("cannot create triage state")
-        
+            raise serializers.ValidationError("Cannot create triage state")
         return data
 
     class Meta:

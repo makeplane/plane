@@ -1601,6 +1601,7 @@ export default {
         exporting: "Exportovanie",
         previous_exports: "Predchádzajúce exporty",
         export_separate_files: "Exportovať dáta do samostatných súborov",
+        filters_info: "Použite filtre na export konkrétnych pracovných položiek podľa vašich kritérií.",
         modal: {
           title: "Exportovať do",
           toasts: {

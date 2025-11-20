@@ -20,20 +20,19 @@ def create_triage_state(apps, _schema_editor):
         workspace_id = state.workspace_id[:5]
         state.name = f"Intake-Triage-{workspace_id}"
         state.save()
-        print(f"Triage state name changed to 'Intake-Triage{workspace_id}:5'")
 
     states_to_create = []
     for proj in projects:
         states_to_create.append(
             State(
-            name="Intake Triage",
-            group="triage",
-            project_id=proj["id"],
-            workspace_id=proj["workspace_id"],
-            color="#9AA4BC",
-            sequence=65000,
-            default=False,
-        )
+                name="Intake Triage",
+                group="triage",
+                project_id=proj["id"],
+                workspace_id=proj["workspace_id"],
+                color="#9AA4BC",
+                sequence=65000,
+                default=False,
+            )
     )
 
     print(f"Creating {len(states_to_create)} triage states...")
@@ -49,7 +48,7 @@ def create_triage_state(apps, _schema_editor):
         triage_state_subquery = State.objects.filter(
             project_id=OuterRef('project_id'),
             group='triage',
-            name='Triage State'
+            name='Intake Triage'
         ).values('id')[:1]
         
         # Single UPDATE with subquery - Django generates optimized SQL

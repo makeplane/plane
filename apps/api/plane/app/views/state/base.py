@@ -134,4 +134,3 @@ class IntakeStateEndpoint(BaseAPIView):
     def get(self, request, slug, project_id):
         state = State.triage_objects.filter(workspace__slug=slug, project_id=project_id).first()
         return Response(StateSerializer(state).data, status=status.HTTP_200_OK)
- 

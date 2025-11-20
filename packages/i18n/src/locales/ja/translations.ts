@@ -1600,6 +1600,7 @@ export default {
         exporting: "エクスポート中",
         previous_exports: "過去のエクスポート",
         export_separate_files: "データを個別のファイルにエクスポート",
+        filters_info: "フィルターを適用して、条件に基づいて特定の作業項目をエクスポートします。",
         modal: {
           title: "エクスポート先",
           toasts: {

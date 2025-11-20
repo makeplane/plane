@@ -1609,6 +1609,7 @@ export default {
         exporting: "Dışa aktarılıyor",
         previous_exports: "Önceki dışa aktarımlar",
         export_separate_files: "Verileri ayrı dosyalara aktar",
+        filters_info: "Kriterlerinize göre belirli iş öğelerini dışa aktarmak için filtreler uygulayın.",
         modal: {
           title: "Şuraya aktar",
           toasts: {
