@@ -40,7 +40,7 @@ export const SidebarItemBase: FC<Props> = observer(({ item, additionalRender, ad
     if (isExtendedSidebarOpened) toggleExtendedSidebar(false);
   };
 
-  const staticItems = ["home", "inbox", "pi_chat", "projects", "your_work", ...(additionalStaticItems || [])];
+  const staticItems = ["home", "inbox", "pi_chat", "projects", "your_work", "opposition", ...(additionalStaticItems || [])];
   const slug = workspaceSlug?.toString() || "";
 
   if (!allowPermissions(item.access, EUserPermissionsLevel.WORKSPACE, slug)) return null;

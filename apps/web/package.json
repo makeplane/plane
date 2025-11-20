@@ -58,6 +58,7 @@
     "react-markdown": "^8.0.7",
     "react-masonry-component": "^6.3.0",
     "react-pdf-html": "^2.1.2",
+    "react-phone-input-2": "^2.15.1",
     "react-popper": "^2.3.0",
     "recharts": "^2.12.7",
     "sharp": "catalog:",
