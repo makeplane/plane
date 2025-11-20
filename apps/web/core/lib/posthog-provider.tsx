@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactNode } from "react";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { PostHogProvider as PHProvider } from "@posthog/react";

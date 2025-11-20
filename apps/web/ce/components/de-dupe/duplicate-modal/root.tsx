@@ -1,5 +1,3 @@
-"use-client";
-
 import type { FC } from "react";
 // types
 import type { TDeDupeIssue } from "@plane/types";

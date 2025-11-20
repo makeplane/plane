@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 
 import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";

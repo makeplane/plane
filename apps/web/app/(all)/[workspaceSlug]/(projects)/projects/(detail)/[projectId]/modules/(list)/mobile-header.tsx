@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { MODULE_VIEW_LAYOUTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";

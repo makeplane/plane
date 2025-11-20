@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 
 // Minimal shim so code using next/image compiles under React Router + Vite

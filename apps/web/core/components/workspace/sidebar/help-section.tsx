@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { HelpCircle, MessagesSquare, MoveLeft, User } from "lucide-react";

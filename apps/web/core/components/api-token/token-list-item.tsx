@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { XCircle } from "lucide-react";
 // plane imports

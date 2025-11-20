@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactNode } from "react";
 // plane imports
 import type { TAuthErrorInfo } from "@plane/constants";

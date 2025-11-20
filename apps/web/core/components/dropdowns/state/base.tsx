@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactNode } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";

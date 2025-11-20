@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane imports
 import { ENotificationFilterType, FILTER_TYPE_OPTIONS } from "@plane/constants";

@@ -1,4 +1,3 @@
-"use client";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import { Button } from "@plane/propel/button";

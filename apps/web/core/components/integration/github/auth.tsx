@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // types
 import { Button } from "@plane/propel/button";

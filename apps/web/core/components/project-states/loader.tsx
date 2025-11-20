@@ -1,5 +1,3 @@
-"use client";
-
 import { Loader } from "@plane/ui";
 
 export function ProjectStateLoader() {

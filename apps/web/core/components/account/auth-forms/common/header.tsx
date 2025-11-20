@@ -1,5 +1,3 @@
-"use client";
-
 export function AuthFormHeader({ title, description }: { title: string; description: string }) {
   return (
     <div className="flex flex-col gap-1">

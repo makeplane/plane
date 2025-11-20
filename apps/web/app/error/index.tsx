@@ -1,5 +1,3 @@
-"use client";
-
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 // layouts

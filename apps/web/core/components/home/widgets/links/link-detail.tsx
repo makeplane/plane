@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { Pencil, ExternalLink, Link, Trash2 } from "lucide-react";

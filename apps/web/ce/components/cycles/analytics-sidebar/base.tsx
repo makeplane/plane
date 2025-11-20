@@ -1,5 +1,3 @@
-"use client";
-
 import { Fragment } from "react";
 import { observer } from "mobx-react";
 // plane imports

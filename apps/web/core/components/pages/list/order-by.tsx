@@ -1,5 +1,3 @@
-"use client";
-
 import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check } from "lucide-react";
 // types
 import { getButtonStyling } from "@plane/propel/button";

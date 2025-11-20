@@ -1,5 +1,3 @@
-"use client";
-
 // components
 // ui
 import { useTranslation } from "@plane/i18n";

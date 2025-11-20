@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 // plane imports
 import type { IWorkspace } from "@plane/types";

@@ -1,5 +1,3 @@
-"use client";
-
 import { MARKETING_PLANE_ONE_PAGE_LINK } from "@plane/constants";
 import { getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";

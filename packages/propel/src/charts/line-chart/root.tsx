@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
-
 import React, { useMemo, useState } from "react";
 import {
   CartesianGrid,

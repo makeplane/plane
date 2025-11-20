@@ -1,5 +1,3 @@
-"use client";
-
 // plane imports
 import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";

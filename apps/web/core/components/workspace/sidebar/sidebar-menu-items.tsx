@@ -1,4 +1,3 @@
-"use client";
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";

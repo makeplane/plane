@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { Fragment, useMemo, useState } from "react";
 import { observer } from "mobx-react";

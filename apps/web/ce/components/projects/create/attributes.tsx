@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports

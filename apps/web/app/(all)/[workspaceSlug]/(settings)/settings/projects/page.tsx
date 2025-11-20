@@ -1,4 +1,3 @@
-"use client";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";

@@ -1,5 +1,3 @@
-"use client";
-
 import { CheckIcon } from "lucide-react";
 import * as React from "react";
 // ui

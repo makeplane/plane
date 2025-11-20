@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import { AccentureLogo, DolbyLogo, SonyLogo, ZerodhaLogo } from "@plane/propel/icons";
 

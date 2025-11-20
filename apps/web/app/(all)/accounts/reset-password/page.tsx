@@ -1,4 +1,3 @@
-"use client";
 // plane imports
 import { EAuthModes } from "@plane/constants";
 // components

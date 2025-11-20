@@ -1,5 +1,3 @@
-"use client";
-
 import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check } from "lucide-react";
 // types
 import { VIEW_SORT_BY_OPTIONS, VIEW_SORTING_KEY_OPTIONS } from "@plane/constants";

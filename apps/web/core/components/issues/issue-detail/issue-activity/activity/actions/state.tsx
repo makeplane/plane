@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // hooks
 import { StatePropertyIcon } from "@plane/propel/icons";

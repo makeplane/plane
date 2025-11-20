@@ -1,5 +1,3 @@
-"use client";
-
 import type { Ref } from "react";
 import React, { useEffect, useState, useRef, Fragment } from "react";
 import type { Placement } from "@popperjs/core";

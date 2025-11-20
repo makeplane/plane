@@ -1,5 +1,3 @@
-"use client";
-
 // components
 import { Loader } from "@plane/ui";
 

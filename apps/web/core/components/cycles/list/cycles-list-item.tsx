@@ -1,4 +1,3 @@
-"use client";
 import type { FC, MouseEvent } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";

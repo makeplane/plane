@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 // components
 import { Logo } from "@plane/propel/emoji-icon-picker";

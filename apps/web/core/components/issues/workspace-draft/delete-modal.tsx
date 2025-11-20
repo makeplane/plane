@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 // types
 import { PROJECT_ERROR_MESSAGES, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";

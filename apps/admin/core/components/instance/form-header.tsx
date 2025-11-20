@@ -1,5 +1,3 @@
-"use client";
-
 export function FormHeader({ heading, subHeading }: { heading: string; subHeading: string }) {
   return (
     <div className="flex flex-col gap-1">

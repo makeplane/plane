@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { CloseIcon, CycleGroupIcon } from "@plane/propel/icons";
 import type { TCycleGroups } from "@plane/types";

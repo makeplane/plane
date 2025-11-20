@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useParams } from "next/navigation";
 import { useFormContext, useFieldArray, Controller } from "react-hook-form";

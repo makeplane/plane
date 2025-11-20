@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
 // plane imports

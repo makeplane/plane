@@ -1,4 +1,3 @@
-"use client";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";

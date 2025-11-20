@@ -1,5 +1,3 @@
-"use client";
-
 // ui
 import type { FC } from "react";
 import { observer } from "mobx-react";

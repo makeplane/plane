@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 // plane imports
 import { ROLE, MEMBER_TRACKER_EVENTS, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";

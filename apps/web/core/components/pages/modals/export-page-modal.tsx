@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import type { PageProps } from "@react-pdf/renderer";
 import { pdf } from "@react-pdf/renderer";

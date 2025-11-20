@@ -1,5 +1,3 @@
-"use client";
-
 import type { Dispatch, FC, SetStateAction } from "react";
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";

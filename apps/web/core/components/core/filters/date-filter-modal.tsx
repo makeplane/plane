@@ -1,4 +1,3 @@
-"use client";
 import { Fragment } from "react";
 import { Controller, useForm } from "react-hook-form";
 

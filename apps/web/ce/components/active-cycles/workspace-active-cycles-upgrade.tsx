@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { AlertOctagon, BarChart4, CircleDashed, Folder, Microscope, Search } from "lucide-react";
 // plane imports

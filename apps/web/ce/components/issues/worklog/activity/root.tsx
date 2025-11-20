@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import type { TIssueActivityComment } from "@plane/types";
 

@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // components
 import { ForgotPasswordForm } from "@/components/account/auth-forms/forgot-password";

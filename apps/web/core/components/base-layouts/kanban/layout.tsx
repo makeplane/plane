@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import type { IBaseLayoutsKanbanItem, IBaseLayoutsKanbanProps } from "@plane/types";
 import { cn } from "@plane/utils";

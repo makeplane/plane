@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 // helpers
 import { cn } from "@plane/utils";

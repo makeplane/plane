@@ -1,5 +1,3 @@
-"use client";
-
 // components
 import { AuthRoot } from "@/components/account/auth-forms";
 import { PoweredBy } from "@/components/common/powered-by";

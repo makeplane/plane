@@ -1,4 +1,3 @@
-"use client";
 // plane package imports
 import type { ChartXAxisProperty } from "@plane/types";
 import { CustomSelect } from "@plane/ui";

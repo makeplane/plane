@@ -1,5 +1,3 @@
-"use client";
-
 import { cn } from "@plane/utils";
 import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
 

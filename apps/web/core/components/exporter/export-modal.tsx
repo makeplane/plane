@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { intersection } from "lodash-es";
 import { observer } from "mobx-react";

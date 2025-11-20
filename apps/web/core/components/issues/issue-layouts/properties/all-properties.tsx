@@ -1,5 +1,3 @@
-"use client";
-
 import type { SyntheticEvent } from "react";
 import { useCallback, useMemo } from "react";
 import { xor } from "lodash-es";
