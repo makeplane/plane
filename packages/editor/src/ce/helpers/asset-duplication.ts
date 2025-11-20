@@ -15,7 +15,8 @@ export type AssetDuplicationHandler = (context: AssetDuplicationContext) => Asse
 
 const imageComponentHandler: AssetDuplicationHandler = ({ element, originalHtml }) => {
   const src = element.getAttribute("src");
-  if (!src) {
+
+  if (!src || src.startsWith("http")) {
     return { modifiedHtml: originalHtml, shouldProcess: false };
   }
 
