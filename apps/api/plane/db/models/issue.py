@@ -538,8 +538,8 @@ class IssueComment(ChangeTrackerMixin, ProjectBaseModel):
                     else:
                         # Create description if it doesn't exist
                         description = Description.objects.create(**description_defaults)
-                        IssueComment.objects.filter(pk=self.pk).update(description_id=description.id)
                         self.description_id = description.id
+                        super(IssueComment, self).save(update_fields=["description_id"])
 
     class Meta:
         verbose_name = "Issue Comment"
