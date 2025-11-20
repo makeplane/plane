@@ -23,7 +23,6 @@ export type TEditorHookProps = TCoreHookProps &
     | "autofocus"
     | "fileHandler"
     | "forwardedRef"
-    | "getEditorMetaData"
     | "id"
     | "mentionHandler"
     | "onAssetChange"
