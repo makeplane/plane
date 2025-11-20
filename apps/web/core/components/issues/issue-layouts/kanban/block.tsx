@@ -34,6 +34,7 @@ import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-st
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { IssueProperties } from "../properties/all-properties";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+import OppositionTeamProperty from "@/plane-web/components/issues/issue-details/opposition-team-property";
 
 interface IssueBlockProps {
   issueId: string;
@@ -41,6 +42,7 @@ interface IssueBlockProps {
   subGroupId: string;
   issuesMap: IIssueMap;
   displayProperties: IIssueDisplayProperties | undefined;
+  
   draggableId: string;
   canDropOverIssue: boolean;
   canDragIssuesInCurrentGrouping: boolean;
@@ -125,16 +127,25 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
         </div>
       </Tooltip>
 
-      <IssueProperties
-        className="flex flex-wrap items-center gap-2 whitespace-nowrap text-custom-text-300 pt-1.5"
-        issue={issue}
-        displayProperties={displayProperties}
-        activeLayout="Kanban"
-        updateIssue={updateIssue}
-        isReadOnly={isReadOnly}
-        isEpic={isEpic}
-      />
+     <div className="flex items-center gap-2 ">
+  <IssueProperties
+    className="flex flex-wrap items-center gap-2 whitespace-nowrap text-custom-text-300 pt-1.5"
+    issue={issue}
+    displayProperties={displayProperties}
+    activeLayout="Kanban"
+    updateIssue={updateIssue}
+    isReadOnly={isReadOnly}
+    isEpic={isEpic}
+  />
 
+  {/* Show only the logo */}
+  {/* <div className="mt-2   gap-2 flex items-center">
+  <OppositionTeamProperty onlyLogo={true}
+  /> 
+</div> */}
+          
+  
+</div>
       {isEpic && displayProperties && (
         <WithDisplayPropertiesHOC
           displayProperties={displayProperties}
@@ -155,6 +166,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
     subGroupId,
     issuesMap,
     displayProperties,
+
     canDropOverIssue,
     canDragIssuesInCurrentGrouping,
     updateIssue,
