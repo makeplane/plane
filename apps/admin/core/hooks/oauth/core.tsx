@@ -8,9 +8,6 @@ import githubLightModeImage from "@/app/assets/logos/github-black.png?url";
 import githubDarkModeImage from "@/app/assets/logos/github-white.png?url";
 import gitlabLogo from "@/app/assets/logos/gitlab-logo.svg?url";
 import googleLogo from "@/app/assets/logos/google-logo.svg?url";
-import ldapLogo from "@/app/assets/logos/ldap.webp?url";
-import oidcLogo from "@/app/assets/logos/oidc-logo.svg?url";
-import samlLogo from "@/app/assets/logos/saml-logo.svg?url";
 // components
 import { EmailCodesConfiguration } from "@/components/authentication/email-config-switch";
 import { GiteaConfiguration } from "@/components/authentication/gitea-config";
@@ -18,8 +15,6 @@ import { GithubConfiguration } from "@/components/authentication/github-config";
 import { GitlabConfiguration } from "@/components/authentication/gitlab-config";
 import { GoogleConfiguration } from "@/components/authentication/google-config";
 import { PasswordLoginConfiguration } from "@/components/authentication/password-config-switch";
-// plane admin components
-import { UpgradeButton } from "@/plane-admin/components/common";
 
 // Authentication methods
 export const getCoreAuthenticationModesMap: (
@@ -78,29 +73,5 @@ export const getCoreAuthenticationModesMap: (
     description: "Allow members to log in or sign up to plane with their Gitea accounts.",
     icon: <img src={giteaLogo} height={20} width={20} alt="Gitea Logo" />,
     config: <GiteaConfiguration disabled={disabled} updateConfig={updateConfig} />,
-  },
-  oidc: {
-    key: "oidc",
-    name: "OIDC",
-    description: "Authenticate your users via the OpenID Connect protocol.",
-    icon: <img src={oidcLogo} height={22} width={22} alt="OIDC Logo" />,
-    config: <UpgradeButton level="workspace" />,
-    unavailable: true,
-  },
-  saml: {
-    key: "saml",
-    name: "SAML",
-    description: "Authenticate your users via the Security Assertion Markup Language protocol.",
-    icon: <img src={samlLogo} height={22} width={22} alt="SAML Logo" className="pl-0.5" />,
-    config: <UpgradeButton level="workspace" />,
-    unavailable: true,
-  },
-  ldap: {
-    key: "ldap",
-    name: "LDAP",
-    description: "Authenticate your users via LDAP directory services.",
-    icon: <img src={ldapLogo} height={22} width={22} alt="LDAP Logo" />,
-    config: <UpgradeButton level="instance" />,
-    unavailable: true,
   },
 });
