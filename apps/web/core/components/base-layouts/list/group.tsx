@@ -6,7 +6,9 @@ import { useGroupDropTarget } from "../hooks/use-group-drop-target";
 import { GroupHeader } from "./group-header";
 import { BaseListItem } from "./item";
 
-export const BaseListGroup = observer(<T extends IBaseLayoutsListItem>(props: IBaseLayoutsListGroupProps<T>) => {
+export const BaseListGroup = observer(function BaseListGroup<T extends IBaseLayoutsListItem>(
+  props: IBaseLayoutsListGroupProps<T>
+) {
   const {
     group,
     itemIds,

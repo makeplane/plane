@@ -50,7 +50,7 @@ type TIssueDescriptionEditorProps = {
   onClose: () => void;
 };
 
-export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = observer((props) => {
+export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(props: TIssueDescriptionEditorProps) {
   const {
     control,
     isDraft,

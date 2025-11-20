@@ -25,7 +25,7 @@ const SUPPORTED_LAYOUTS = [
   { key: "calendar", titleTranslationKey: "issue.layouts.calendar", icon: CalendarLayoutIcon },
 ];
 
-export const CycleIssuesMobileHeader = observer(() => {
+export const CycleIssuesMobileHeader = observer(function CycleIssuesMobileHeader() {
   // router
   const { workspaceSlug, projectId, cycleId } = useParams();
   // states

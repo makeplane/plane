@@ -17,7 +17,7 @@ type Props = {
   children: ReactNode;
 };
 
-const ComboDropDown = forwardRef((props: Props, ref) => {
+const ComboDropDown = forwardRef(function ComboDropDown(props: Props, ref) {
   const { button, renderByDefault = true, children, ...rest } = props;
 
   const dropDownButtonRef = useRef<HTMLDivElement | null>(null);

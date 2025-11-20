@@ -14,7 +14,7 @@ type TEstimateEmptyScreen = {
   onButtonClick: () => void;
 };
 
-export const EstimateEmptyScreen: FC<TEstimateEmptyScreen> = (props) => {
+export function EstimateEmptyScreen(props: TEstimateEmptyScreen) {
   // props
   const { onButtonClick } = props;
   const { resolvedTheme } = useTheme();
@@ -45,4 +45,4 @@ export const EstimateEmptyScreen: FC<TEstimateEmptyScreen> = (props) => {
       }}
     />
   );
-};
+}

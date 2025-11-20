@@ -20,7 +20,7 @@ export type TProjectLinkDetail = {
   linkOperations: TLinkOperations;
 };
 
-export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
+export const ProjectLinkDetail = observer(function ProjectLinkDetail(props: TProjectLinkDetail) {
   // props
   const { linkId, linkOperations } = props;
   // hooks

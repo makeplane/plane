@@ -18,7 +18,7 @@ type Props = {
   issueServiceType: TIssueServiceType;
 };
 
-export const IssueLinksCollapsibleTitle: FC<Props> = observer((props) => {
+export const IssueLinksCollapsibleTitle = observer(function IssueLinksCollapsibleTitle(props: Props) {
   const { isOpen, issueId, disabled, issueServiceType } = props;
   // translation
   const { t } = useTranslation();

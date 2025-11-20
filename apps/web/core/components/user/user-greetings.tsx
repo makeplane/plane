@@ -10,7 +10,7 @@ export interface IUserGreetingsView {
   user: IUser;
 }
 
-export const UserGreetingsView: FC<IUserGreetingsView> = (props) => {
+export function UserGreetingsView(props: IUserGreetingsView) {
   const { user } = props;
   // current time hook
   const { currentTime } = useCurrentTime();
@@ -53,4 +53,4 @@ export const UserGreetingsView: FC<IUserGreetingsView> = (props) => {
       </h5>
     </div>
   );
-};
+}

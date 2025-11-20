@@ -16,7 +16,7 @@ type TMemberDropdownProps = {
   renderByDefault?: boolean;
 } & MemberDropdownProps;
 
-export const MemberDropdown: React.FC<TMemberDropdownProps> = observer((props) => {
+export const MemberDropdown = observer(function MemberDropdown(props: TMemberDropdownProps) {
   const { memberIds: propsMemberIds, projectId } = props;
   // router params
   const { workspaceSlug } = useParams();

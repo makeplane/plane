@@ -14,7 +14,7 @@ type Props = {
   isDragging: boolean;
 };
 
-export const ModulesSidebarBlock: React.FC<Props> = observer((props) => {
+export const ModulesSidebarBlock = observer(function ModulesSidebarBlock(props: Props) {
   const { blockId, isDragging } = props;
   // store hooks
   const { getBlockById, updateActiveBlockId, isBlockActive, getNumberOfDaysFromPosition } = useTimeLineChartStore();

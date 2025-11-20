@@ -9,4 +9,6 @@ type TIssueWorklogProperty = {
   disabled: boolean;
 };
 
-export const IssueWorklogProperty: FC<TIssueWorklogProperty> = () => <></>;
+export function IssueWorklogProperty(_props: TIssueWorklogProperty) {
+  return <></>;
+}

@@ -1,5 +1,4 @@
 "use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -23,7 +22,7 @@ import { KanBanLayout } from "../kanban/roots/project-root";
 import { ListLayout } from "../list/roots/project-root";
 import { ProjectSpreadsheetLayout } from "../spreadsheet/roots/project-root";
 
-const ProjectIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined }) => {
+function ProjectIssueLayout(props: { activeLayout: EIssueLayoutTypes | undefined }) {
   switch (props.activeLayout) {
     case EIssueLayoutTypes.LIST:
       return <ListLayout />;
@@ -38,9 +37,9 @@ const ProjectIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined
     default:
       return null;
   }
-};
+}
 
-export const ProjectLayoutRoot: FC = observer(() => {
+export const ProjectLayoutRoot = observer(function ProjectLayoutRoot() {
   // router
   const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId } = useParams();
   const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;

@@ -17,7 +17,7 @@ type Props = {
   value: string[];
 };
 
-export const PowerKMembersMenu: React.FC<Props> = observer((props) => {
+export const PowerKMembersMenu = observer(function PowerKMembersMenu(props: Props) {
   const { handleSelect, heading, userIds, value } = props;
   // store hooks
   const { getUserDetails } = useMember();

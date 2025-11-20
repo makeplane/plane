@@ -24,7 +24,7 @@ type ToolbarButtonProps = {
   executeCommand: EditorRefApi["executeMenuItemCommand"];
 };
 
-const ToolbarButton: React.FC<ToolbarButtonProps> = React.memo((props) => {
+const ToolbarButton = React.memo(function ToolbarButton(props: ToolbarButtonProps) {
   const { item, isActive, executeCommand } = props;
 
   return (
@@ -67,7 +67,7 @@ ToolbarButton.displayName = "ToolbarButton";
 
 const toolbarItems = TOOLBAR_ITEMS.document;
 
-export const PageToolbar: React.FC<Props> = (props) => {
+export function PageToolbar(props: Props) {
   const { editorRef } = props;
   // states
   const [activeStates, setActiveStates] = useState<Record<string, boolean>>({});
@@ -165,4 +165,4 @@ export const PageToolbar: React.FC<Props> = (props) => {
       ))}
     </div>
   );
-};
+}

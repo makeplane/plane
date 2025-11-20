@@ -9,7 +9,7 @@ type TProjectItemsRootProps = {
   projectId: string;
 };
 
-export const ProjectNavigationRoot: FC<TProjectItemsRootProps> = (props) => {
+export function ProjectNavigationRoot(props: TProjectItemsRootProps) {
   const { workspaceSlug, projectId } = props;
   return <ProjectNavigation workspaceSlug={workspaceSlug} projectId={projectId} />;
-};
+}

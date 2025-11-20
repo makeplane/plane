@@ -14,7 +14,7 @@ type Props = {
   editable: boolean | undefined;
 };
 
-export const AppliedStateFilters: React.FC<Props> = observer((props) => {
+export const AppliedStateFilters = observer(function AppliedStateFilters(props: Props) {
   const { handleRemove, states, values, editable } = props;
 
   return (

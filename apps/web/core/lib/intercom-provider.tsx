@@ -13,7 +13,7 @@ export type IntercomProviderProps = {
   children: React.ReactNode;
 };
 
-const IntercomProvider: FC<IntercomProviderProps> = observer((props) => {
+const IntercomProvider = observer(function IntercomProvider(props: IntercomProviderProps) {
   const { children } = props;
   // hooks
   const { data: user } = useUser();

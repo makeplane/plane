@@ -25,7 +25,7 @@ import { IssueLayoutIcon } from "@/components/issues/issue-layouts/layout-icon";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 
-export const ProfileIssuesMobileHeader = observer(() => {
+export const ProfileIssuesMobileHeader = observer(function ProfileIssuesMobileHeader() {
   // plane i18n
   const { t } = useTranslation();
   // router

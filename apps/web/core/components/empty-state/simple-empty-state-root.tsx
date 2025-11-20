@@ -30,7 +30,7 @@ const getTitleClassName = (hasDescription: boolean) =>
     "text-lg text-custom-text-300": hasDescription,
   });
 
-export const SimpleEmptyState = observer((props: Props) => {
+export const SimpleEmptyState = observer(function SimpleEmptyState(props: Props) {
   const { title, description, size = "sm", assetPath } = props;
 
   return (

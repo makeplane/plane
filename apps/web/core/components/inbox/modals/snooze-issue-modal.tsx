@@ -15,7 +15,7 @@ export type InboxIssueSnoozeModalProps = {
   handleClose: () => void;
 };
 
-export const InboxIssueSnoozeModal: FC<InboxIssueSnoozeModalProps> = (props) => {
+export function InboxIssueSnoozeModal(props: InboxIssueSnoozeModalProps) {
   const { isOpen, handleClose, value, onConfirm } = props;
   // states
   const [date, setDate] = useState(value || new Date());
@@ -82,4 +82,4 @@ export const InboxIssueSnoozeModal: FC<InboxIssueSnoozeModalProps> = (props) => 
       </Dialog>
     </Transition.Root>
   );
-};
+}

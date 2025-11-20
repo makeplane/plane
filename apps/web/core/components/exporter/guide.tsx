@@ -8,7 +8,7 @@ import { EXPORT_SERVICES_LIST } from "@/constants/fetch-keys";
 import { ExportForm } from "./export-form";
 import { PrevExports } from "./prev-exports";
 
-const IntegrationGuide = observer(() => {
+const IntegrationGuide = observer(function IntegrationGuide() {
   // router
   const { workspaceSlug } = useParams();
   const searchParams = useSearchParams();

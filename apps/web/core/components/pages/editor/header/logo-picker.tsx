@@ -11,7 +11,7 @@ type Props = {
   page: TPageInstance;
 };
 
-export const PageEditorHeaderLogoPicker: React.FC<Props> = observer((props) => {
+export const PageEditorHeaderLogoPicker = observer(function PageEditorHeaderLogoPicker(props: Props) {
   const { className, page } = props;
   // states
   const [isLogoPickerOpen, setIsLogoPickerOpen] = useState(false);

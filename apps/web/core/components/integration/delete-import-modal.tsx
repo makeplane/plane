@@ -31,7 +31,7 @@ type Props = {
 // services
 const integrationService = new IntegrationService();
 
-export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data }) => {
+export function DeleteImportModal({ isOpen, handleClose, data }: Props) {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [confirmDeleteImport, setConfirmDeleteImport] = useState(false);
 
@@ -147,4 +147,4 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data }
       </Dialog>
     </Transition.Root>
   );
-};
+}

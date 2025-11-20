@@ -15,7 +15,7 @@ export interface IDeleteProjectSection {
   handleDelete: () => void;
 }
 
-export const DeleteProjectSection: React.FC<IDeleteProjectSection> = (props) => {
+export function DeleteProjectSection(props: IDeleteProjectSection) {
   const { projectDetails, handleDelete } = props;
 
   return (
@@ -66,4 +66,4 @@ export const DeleteProjectSection: React.FC<IDeleteProjectSection> = (props) => 
       )}
     </Disclosure>
   );
-};
+}

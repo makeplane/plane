@@ -4,6 +4,6 @@ import HtmlFileIcon from "@/app/assets/attachment/html-icon.png?url";
 // type
 import type { ImageIconPros } from "../types";
 
-export const HtmlIcon: React.FC<ImageIconPros> = ({ width, height }) => (
-  <img src={HtmlFileIcon} width={width} height={height} alt="HtmlFileIcon" />
-);
+export function HtmlIcon({ width, height }: ImageIconPros) {
+  return <img src={HtmlFileIcon} width={width} height={height} alt="HtmlFileIcon" />;
+}

@@ -19,7 +19,7 @@ type Props<T> = {
   emptyText?: string;
 };
 
-export const PowerKMenuBuilder = <T,>({
+export function PowerKMenuBuilder<T>({
   heading,
   items,
   onSelect,
@@ -30,7 +30,7 @@ export const PowerKMenuBuilder = <T,>({
   getValue,
   isSelected,
   emptyText,
-}: Props<T>) => {
+}: Props<T>) {
   if (items.length === 0) return <PowerKMenuEmptyState emptyText={emptyText} />;
 
   return (
@@ -48,4 +48,4 @@ export const PowerKMenuBuilder = <T,>({
       ))}
     </Command.Group>
   );
-};
+}

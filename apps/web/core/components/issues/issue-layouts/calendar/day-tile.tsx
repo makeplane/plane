@@ -55,7 +55,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const CalendarDayTile: React.FC<Props> = observer((props) => {
+export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
   const {
     issuesFilterStore,
     date,

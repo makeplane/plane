@@ -18,7 +18,7 @@ type Props = {
   onSubmit?: () => Promise<void>;
 };
 
-export const ArchiveModuleModal: React.FC<Props> = (props) => {
+export function ArchiveModuleModal(props: Props) {
   const { workspaceSlug, projectId, moduleId, isOpen, handleClose } = props;
   // router
   const router = useAppRouter();
@@ -104,4 +104,4 @@ export const ArchiveModuleModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+}

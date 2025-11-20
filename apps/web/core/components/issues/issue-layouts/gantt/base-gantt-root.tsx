@@ -38,7 +38,7 @@ export type GanttStoreType =
   | EIssuesStoreType.PROJECT_VIEW
   | EIssuesStoreType.EPIC;
 
-export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {
+export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRoot) {
   const { viewId, isCompletedCycle = false, isEpic = false } = props;
   const { t } = useTranslation();
   // router

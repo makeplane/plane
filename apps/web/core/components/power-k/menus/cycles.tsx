@@ -14,15 +14,17 @@ type Props = {
   value?: string | null;
 };
 
-export const PowerKCyclesMenu: React.FC<Props> = observer(({ cycles, onSelect, value }) => (
-  <PowerKMenuBuilder
-    items={cycles}
-    getIcon={() => ContrastIcon}
-    getKey={(cycle) => cycle.id}
-    getValue={(cycle) => cycle.name}
-    getLabel={(cycle) => cycle.name}
-    isSelected={(cycle) => value === cycle.id}
-    onSelect={onSelect}
-    emptyText="No cycles found"
-  />
-));
+export const PowerKCyclesMenu = observer(function PowerKCyclesMenu({ cycles, onSelect, value }: Props) {
+  return (
+    <PowerKMenuBuilder
+      items={cycles}
+      getIcon={() => ContrastIcon}
+      getKey={(cycle) => cycle.id}
+      getValue={(cycle) => cycle.name}
+      getLabel={(cycle) => cycle.name}
+      isSelected={(cycle) => value === cycle.id}
+      onSelect={onSelect}
+      emptyText="No cycles found"
+    />
+  );
+});

@@ -41,7 +41,7 @@ interface IWorkspaceAuthWrapper {
   isLoading?: boolean;
 }
 
-export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
+export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props: IWorkspaceAuthWrapper) {
   const { children, isLoading: isParentLoading = false } = props;
   // router params
   const { workspaceSlug } = useParams();

@@ -25,7 +25,7 @@ type Props = {
   hideWidgets?: TWorkItemWidgets[];
 };
 
-export const IssueDetailWidgetActionButtons: FC<Props> = (props) => {
+export function IssueDetailWidgetActionButtons(props: Props) {
   const { workspaceSlug, projectId, issueId, disabled, issueServiceType, hideWidgets } = props;
   // translation
   const { t } = useTranslation();
@@ -99,4 +99,4 @@ export const IssueDetailWidgetActionButtons: FC<Props> = (props) => {
       />
     </div>
   );
-};
+}

@@ -51,7 +51,7 @@ type Props = {
 // services
 const fileService = new FileService();
 
-export const ImagePickerPopover: React.FC<Props> = observer((props) => {
+export const ImagePickerPopover = observer(function ImagePickerPopover(props: Props) {
   const { label, value, control, onChange, disabled = false, tabIndex, isProfileCover = false, projectId } = props;
   // states
   const [image, setImage] = useState<File | null>(null);

@@ -42,7 +42,7 @@ type Props = {
   storeType?: EIssuesStoreType;
 };
 
-export const SubIssuesListItem: React.FC<Props> = observer((props) => {
+export const SubIssuesListItem = observer(function SubIssuesListItem(props: Props) {
   const {
     workspaceSlug,
     projectId,

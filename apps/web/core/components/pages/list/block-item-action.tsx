@@ -27,7 +27,7 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const BlockItemAction: FC<Props> = observer((props) => {
+export const BlockItemAction = observer(function BlockItemAction(props: Props) {
   const { page, parentRef, storeType } = props;
   // store hooks
   const { getUserDetails } = useMember();

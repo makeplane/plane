@@ -11,7 +11,7 @@ type FreePlanCardProps = {
   isOnFreePlan: boolean;
 };
 
-export const FreePlanCard = observer((props: FreePlanCardProps) => {
+export const FreePlanCard = observer(function FreePlanCard(props: FreePlanCardProps) {
   const { isOnFreePlan } = props;
   return (
     <div className="py-4 px-2 border border-custom-border-200 rounded-xl">

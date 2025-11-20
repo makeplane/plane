@@ -20,7 +20,9 @@ export type SidebarWorkspaceMenuHeaderProps = {
   toggleWorkspaceMenu: (value: boolean) => void;
 };
 
-export const SidebarWorkspaceMenuHeader: FC<SidebarWorkspaceMenuHeaderProps> = observer((props) => {
+export const SidebarWorkspaceMenuHeader = observer(function SidebarWorkspaceMenuHeader(
+  props: SidebarWorkspaceMenuHeaderProps
+) {
   const { isWorkspaceMenuOpen, toggleWorkspaceMenu } = props;
   // state
   const [isMenuActive, setIsMenuActive] = useState(false);

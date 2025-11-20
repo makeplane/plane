@@ -5,7 +5,7 @@ type TPageHeader = {
   description?: string;
 };
 
-export const PageHeader: React.FC<TPageHeader> = (props) => {
+export function PageHeader(props: TPageHeader) {
   const { title = "God Mode - Plane", description = "Plane god mode" } = props;
 
   return (
@@ -14,4 +14,4 @@ export const PageHeader: React.FC<TPageHeader> = (props) => {
       <meta name="description" content={description} />
     </>
   );
-};
+}

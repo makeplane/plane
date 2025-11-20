@@ -15,7 +15,7 @@ import { useWorkspace } from "@/hooks/store";
 
 const instanceWorkspaceService = new InstanceWorkspaceService();
 
-export const WorkspaceCreateForm = () => {
+export function WorkspaceCreateForm() {
   // router
   const router = useRouter();
   // states
@@ -209,4 +209,4 @@ export const WorkspaceCreateForm = () => {
       </div>
     </div>
   );
-};
+}

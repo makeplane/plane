@@ -10,7 +10,7 @@ type Props = {
   entities: Record<string, string[]>; // { groupID: entityIds[] }
 };
 
-export const MultipleSelectGroup: React.FC<Props> = observer((props) => {
+export const MultipleSelectGroup = observer(function MultipleSelectGroup(props: Props) {
   const { children, containerRef, disabled = false, entities } = props;
 
   const helpers = useMultipleSelect({

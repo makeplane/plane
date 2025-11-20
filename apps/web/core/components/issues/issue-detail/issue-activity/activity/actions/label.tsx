@@ -9,7 +9,7 @@ import { IssueActivityBlockComponent, IssueLink, LabelActivityChip } from "./";
 
 type TIssueLabelActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
-export const IssueLabelActivity: FC<TIssueLabelActivity> = observer((props) => {
+export const IssueLabelActivity = observer(function IssueLabelActivity(props: TIssueLabelActivity) {
   const { activityId, showIssue = true, ends } = props;
   // hooks
   const {

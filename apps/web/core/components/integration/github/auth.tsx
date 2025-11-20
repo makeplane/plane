@@ -14,7 +14,7 @@ type Props = {
   provider: string | undefined;
 };
 
-export const GithubAuth: React.FC<Props> = observer(({ workspaceIntegration, provider }) => {
+export const GithubAuth = observer(function GithubAuth({ workspaceIntegration, provider }: Props) {
   // store hooks
   const { config } = useInstance();
   // hooks

@@ -20,6 +20,9 @@
 //   }, []);
 // };
 
-export const PreloadResources = () =>
-  // usePreloadResources();
-  null;
+export function PreloadResources() {
+  return (
+    // usePreloadResources();
+    null
+  );
+}

@@ -18,7 +18,7 @@ type Props = {
   isDisabled?: boolean;
 };
 
-export const MemberSelect: React.FC<Props> = observer((props) => {
+export const MemberSelect = observer(function MemberSelect(props: Props) {
   const { value, onChange, isDisabled = false } = props;
   // router
   const { projectId } = useParams();

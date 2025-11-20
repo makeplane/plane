@@ -18,7 +18,7 @@ import useLocalStorage from "@/hooks/use-local-storage";
 // plane web components
 import { AppSearch } from "@/plane-web/components/workspace/sidebar/app-search";
 
-export const SidebarQuickActions = observer(() => {
+export const SidebarQuickActions = observer(function SidebarQuickActions() {
   const { t } = useTranslation();
   // states
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);

@@ -13,7 +13,7 @@ type Props = {
   stateId: string | undefined;
   shouldShowBorder?: boolean;
 };
-export const IssueBlockState = observer(({ stateId, shouldShowBorder = true }: Props) => {
+export const IssueBlockState = observer(function IssueBlockState({ stateId, shouldShowBorder = true }: Props) {
   const { getStateById } = useStates();
 
   const state = getStateById(stateId);

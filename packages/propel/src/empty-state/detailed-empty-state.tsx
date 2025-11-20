@@ -5,7 +5,7 @@ import { getDetailedAsset } from "./assets/asset-registry";
 import type { DetailedAssetType } from "./assets/asset-types";
 import type { BaseEmptyStateCommonProps } from "./types";
 
-export const EmptyStateDetailed: React.FC<BaseEmptyStateCommonProps> = ({
+export function EmptyStateDetailed({
   asset,
   assetKey,
   title,
@@ -15,7 +15,7 @@ export const EmptyStateDetailed: React.FC<BaseEmptyStateCommonProps> = ({
   rootClassName,
   assetClassName,
   customButton,
-}) => {
+}: BaseEmptyStateCommonProps) {
   // Determine which asset to use: assetKey takes precedence, fallback to custom asset
   const resolvedAsset = assetKey ? getDetailedAsset(assetKey as DetailedAssetType, assetClassName) : asset;
 
@@ -51,6 +51,6 @@ export const EmptyStateDetailed: React.FC<BaseEmptyStateCommonProps> = ({
       </div>
     </div>
   );
-};
+}
 
 EmptyStateDetailed.displayName = "EmptyStateDetailed";

@@ -10,7 +10,7 @@ import { usePublish } from "@/hooks/store/publish";
 import { useLabel } from "@/hooks/store/use-label";
 import { useStates } from "@/hooks/store/use-state";
 
-const IssuesPage = observer(() => {
+const IssuesPage = observer(function IssuesPage() {
   // params
   const params = useParams<{ anchor: string }>();
   const { anchor } = params;

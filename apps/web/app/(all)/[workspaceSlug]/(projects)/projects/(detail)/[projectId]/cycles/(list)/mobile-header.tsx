@@ -34,7 +34,7 @@ const CYCLE_VIEW_LAYOUTS: {
   },
 ];
 
-export const CyclesListMobileHeader = observer(() => {
+export const CyclesListMobileHeader = observer(function CyclesListMobileHeader() {
   const { currentProjectDetails } = useProject();
   // hooks
   const { updateDisplayFilters } = useCycleFilter();

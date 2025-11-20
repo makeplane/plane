@@ -40,7 +40,7 @@ export type TActivityOperations = {
   uploadCommentAsset: (blockId: string, file: File, commentId?: string) => Promise<TFileSignedURLResponse>;
 };
 
-export const IssueActivity: FC<TIssueActivity> = observer((props) => {
+export const IssueActivity = observer(function IssueActivity(props: TIssueActivity) {
   const { workspaceSlug, projectId, issueId, disabled = false, isIntakeIssue = false } = props;
   // i18n
   const { t } = useTranslation();

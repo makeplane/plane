@@ -30,7 +30,7 @@ type Props = {
   issueId: string;
 };
 
-export const IssueDetailQuickActions: FC<Props> = observer((props) => {
+export const IssueDetailQuickActions = observer(function IssueDetailQuickActions(props: Props) {
   const { workspaceSlug, projectId, issueId } = props;
   const { t } = useTranslation();
 

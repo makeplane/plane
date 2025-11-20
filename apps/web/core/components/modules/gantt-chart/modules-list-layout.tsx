@@ -12,7 +12,7 @@ import { useModule } from "@/hooks/store/use-module";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { useProject } from "@/hooks/store/use-project";
 
-export const ModulesListGanttChartView: React.FC = observer(() => {
+export const ModulesListGanttChartView = observer(function ModulesListGanttChartView() {
   // router
   const { workspaceSlug, projectId } = useParams();
   // store

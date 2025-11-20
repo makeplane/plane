@@ -33,7 +33,7 @@ type Props = {
   handleDrop: (self: DropTargetRecord, source: ElementDragPayload, location: DragLocationHistory) => void;
 };
 
-export const FavoriteRoot: FC<Props> = observer((props) => {
+export const FavoriteRoot = observer(function FavoriteRoot(props: Props) {
   // props
   const { isLastChild, parentId, workspaceSlug, favorite, handleRemoveFromFavorites, handleDrop } = props;
   // store hooks

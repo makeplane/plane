@@ -14,7 +14,7 @@ import { useProject } from "@/hooks/store/use-project";
 // plane web
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
-export const ProjectViewsHeader = observer(() => {
+export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
   // store hooks
   const { toggleCreateViewModal } = useCommandPalette();

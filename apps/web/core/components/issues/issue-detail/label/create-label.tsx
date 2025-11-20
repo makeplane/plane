@@ -29,7 +29,7 @@ const defaultValues: Partial<IIssueLabel> = {
   color: "#ff0000",
 };
 
-export const LabelCreate: FC<ILabelCreate> = (props) => {
+export function LabelCreate(props: ILabelCreate) {
   const { workspaceSlug, projectId, issueId, values, labelOperations, disabled = false } = props;
   // state
   const [isCreateToggle, setIsCreateToggle] = useState(false);
@@ -164,4 +164,4 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
       )}
     </>
   );
-};
+}

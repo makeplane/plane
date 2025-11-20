@@ -17,7 +17,7 @@ type Props = {
   uploadStatus: TAttachmentUploadStatus;
 };
 
-export const IssueAttachmentsUploadItem: React.FC<Props> = observer((props) => {
+export const IssueAttachmentsUploadItem = observer(function IssueAttachmentsUploadItem(props: Props) {
   // props
   const { uploadStatus } = props;
   // derived values

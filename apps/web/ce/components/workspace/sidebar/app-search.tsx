@@ -6,7 +6,7 @@ import { SidebarSearchButton } from "@/components/sidebar/search-button";
 // hooks
 import { usePowerK } from "@/hooks/store/use-power-k";
 
-export const AppSearch = observer(() => {
+export const AppSearch = observer(function AppSearch() {
   // store hooks
   const { togglePowerKModal } = usePowerK();
   // translation

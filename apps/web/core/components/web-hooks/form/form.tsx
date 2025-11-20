@@ -36,7 +36,7 @@ const initialWebhookPayload: Partial<IWebhook> = {
   url: "",
 };
 
-export const WebhookForm: FC<Props> = observer((props) => {
+export const WebhookForm = observer(function WebhookForm(props: Props) {
   const { data, onSubmit, handleClose } = props;
   // states
   const [webhookEventType, setWebhookEventType] = useState<TWebhookEventTypes>("all");

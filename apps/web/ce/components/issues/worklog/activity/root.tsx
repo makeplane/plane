@@ -11,4 +11,6 @@ type TIssueActivityWorklog = {
   ends?: "top" | "bottom";
 };
 
-export const IssueActivityWorklog: FC<TIssueActivityWorklog> = () => <></>;
+export function IssueActivityWorklog(_props: TIssueActivityWorklog) {
+  return <></>;
+}

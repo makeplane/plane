@@ -17,7 +17,7 @@ import { InstanceFailureView } from "@/components/instance/instance-failure-view
 import { useInstance } from "@/hooks/store/use-instance";
 import { useUser } from "@/hooks/store/use-user";
 
-export const InstanceProvider = observer(({ children }: { children: React.ReactNode }) => {
+export const InstanceProvider = observer(function InstanceProvider({ children }: { children: React.ReactNode }) {
   const { fetchInstanceInfo, instance, error } = useInstance();
   const { fetchCurrentUser } = useUser();
   const { resolvedTheme } = useTheme();

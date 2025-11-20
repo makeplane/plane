@@ -13,14 +13,16 @@ type Props = {
   onSelect: (view: IProjectView) => void;
 };
 
-export const PowerKViewsMenu: React.FC<Props> = observer(({ views, onSelect }) => (
-  <PowerKMenuBuilder
-    items={views}
-    getKey={(view) => view.id}
-    getIcon={() => Layers}
-    getValue={(view) => view.name}
-    getLabel={(view) => view.name}
-    onSelect={onSelect}
-    emptyText="No views found"
-  />
-));
+export const PowerKViewsMenu = observer(function PowerKViewsMenu({ views, onSelect }: Props) {
+  return (
+    <PowerKMenuBuilder
+      items={views}
+      getKey={(view) => view.id}
+      getIcon={() => Layers}
+      getValue={(view) => view.name}
+      getLabel={(view) => view.name}
+      onSelect={onSelect}
+      emptyText="No views found"
+    />
+  );
+});

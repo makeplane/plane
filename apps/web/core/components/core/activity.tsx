@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -37,7 +36,7 @@ import { useLabel } from "@/hooks/store/use-label";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 
-export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
+export function IssueLink({ activity }: { activity: IIssueActivity }) {
   // router params
   const { workspaceSlug } = useParams();
   const { isMobile } = usePlatformOS();
@@ -73,9 +72,9 @@ export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
       )}
     </Tooltip>
   );
-};
+}
 
-const UserLink = ({ activity }: { activity: IIssueActivity }) => {
+function UserLink({ activity }: { activity: IIssueActivity }) {
   // router params
   const { workspaceSlug } = useParams();
 
@@ -91,9 +90,9 @@ const UserLink = ({ activity }: { activity: IIssueActivity }) => {
       {activity.new_value && activity.new_value !== "" ? activity.new_value : activity.old_value}
     </a>
   );
-};
+}
 
-const LabelPill = observer(({ labelId, workspaceSlug }: { labelId: string; workspaceSlug: string }) => {
+const LabelPill = observer(function LabelPill({ labelId, workspaceSlug }: { labelId: string; workspaceSlug: string }) {
   // store hooks
   const { workspaceLabels, fetchWorkspaceLabels } = useLabel();
 
@@ -751,16 +750,16 @@ const activityDetails: {
   },
 };
 
-export const ActivityIcon = ({ activity }: { activity: IIssueActivity }) => (
-  <>{activityDetails[activity.field as keyof typeof activityDetails]?.icon}</>
-);
+export function ActivityIcon({ activity }: { activity: IIssueActivity }) {
+  return <>{activityDetails[activity.field as keyof typeof activityDetails]?.icon}</>;
+}
 
 type ActivityMessageProps = {
   activity: IIssueActivity;
   showIssue?: boolean;
 };
 
-export const ActivityMessage = ({ activity, showIssue = false }: ActivityMessageProps) => {
+export function ActivityMessage({ activity, showIssue = false }: ActivityMessageProps) {
   // router params
   const { workspaceSlug } = useParams();
   const activityField = activity.field ?? "issue";
@@ -774,4 +773,4 @@ export const ActivityMessage = ({ activity, showIssue = false }: ActivityMessage
       )}
     </>
   );
-};
+}

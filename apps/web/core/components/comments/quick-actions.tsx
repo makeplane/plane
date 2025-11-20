@@ -22,7 +22,7 @@ type TCommentCard = {
   showCopyLinkOption: boolean;
 };
 
-export const CommentQuickActions: FC<TCommentCard> = observer((props) => {
+export const CommentQuickActions = observer(function CommentQuickActions(props: TCommentCard) {
   const { activityOperations, comment, setEditMode, showAccessSpecifier, showCopyLinkOption } = props;
   // store hooks
   const { data: currentUser } = useUser();
@@ -33,8 +33,8 @@ export const CommentQuickActions: FC<TCommentCard> = observer((props) => {
   // translation
   const { t } = useTranslation();
 
-  const MENU_ITEMS: TContextMenuItem[] = useMemo(
-    () => [
+  const MENU_ITEMS = useMemo(function MENU_ITEMS() {
+    return [
       {
         key: "edit",
         action: setEditMode,
@@ -72,9 +72,8 @@ export const CommentQuickActions: FC<TCommentCard> = observer((props) => {
         icon: Trash2,
         shouldRender: canDelete,
       },
-    ],
-    [activityOperations, canDelete, canEdit, comment, setEditMode, showAccessSpecifier, showCopyLinkOption]
-  );
+    ];
+  });
 
   return (
     <CustomMenu ellipsis closeOnSelect>

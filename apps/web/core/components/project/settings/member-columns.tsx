@@ -32,7 +32,7 @@ type AccountTypeProps = {
   projectId: string;
 };
 
-export const NameColumn: React.FC<NameProps> = (props) => {
+export function NameColumn(props: NameProps) {
   const { rowData, workspaceSlug, isAdmin, currentUser, setRemoveMemberModal } = props;
   // derived values
   const { avatar_url, display_name, email, first_name, id, last_name } = rowData.member;
@@ -86,9 +86,9 @@ export const NameColumn: React.FC<NameProps> = (props) => {
       )}
     </Disclosure>
   );
-};
+}
 
-export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) => {
+export const AccountTypeColumn = observer(function AccountTypeColumn(props: AccountTypeProps) {
   const { rowData, projectId, workspaceSlug } = props;
   // store hooks
   const {

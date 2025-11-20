@@ -52,7 +52,7 @@ interface Props {
   isEpic?: boolean;
 }
 
-export const SpreadsheetIssueRow = observer((props: Props) => {
+export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: Props) {
   const {
     displayProperties,
     issueId,
@@ -164,7 +164,7 @@ interface IssueRowDetailsProps {
   isEpic?: boolean;
 }
 
-const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
+const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetailsProps) {
   const {
     displayProperties,
     issueId,

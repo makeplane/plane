@@ -121,9 +121,10 @@ export type TExtensionProps = Pick<IEditorProps, "disabledExtensions" | "flagged
   additionalOptions?: TSlashCommandAdditionalOption[];
 };
 
-export const SlashCommands = (props: TExtensionProps) =>
-  Command.configure({
+export function SlashCommands(props: TExtensionProps) {
+  return Command.configure({
     suggestion: {
       items: getSlashCommandFilteredSections(props),
     },
   });
+}

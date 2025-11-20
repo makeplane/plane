@@ -12,7 +12,7 @@ import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 import { cn } from "../utils";
 import type { ICustomSearchSelectProps } from "./helper";
 
-export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
+export function CustomSearchSelect(props: ICustomSearchSelectProps) {
   const {
     customButtonClassName = "",
     buttonClassName = "",
@@ -223,4 +223,4 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
       }}
     </Combobox>
   );
-};
+}

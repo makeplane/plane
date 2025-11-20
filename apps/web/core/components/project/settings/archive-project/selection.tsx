@@ -14,7 +14,7 @@ export interface IArchiveProject {
   handleArchive: () => void;
 }
 
-export const ArchiveProjectSelection: React.FC<IArchiveProject> = (props) => {
+export function ArchiveProjectSelection(props: IArchiveProject) {
   const { projectDetails, handleArchive } = props;
 
   return (
@@ -60,4 +60,4 @@ export const ArchiveProjectSelection: React.FC<IArchiveProject> = (props) => {
       )}
     </Disclosure>
   );
-};
+}

@@ -19,7 +19,7 @@ type Props = {
   workItemDetails: TIssue;
 };
 
-export const PowerKWorkItemEstimatesMenu: React.FC<Props> = observer((props) => {
+export const PowerKWorkItemEstimatesMenu = observer(function PowerKWorkItemEstimatesMenu(props: Props) {
   const { handleSelect, workItemDetails } = props;
   // store hooks
   const { currentActiveEstimateIdByProjectId, getEstimateById } = useProjectEstimates();

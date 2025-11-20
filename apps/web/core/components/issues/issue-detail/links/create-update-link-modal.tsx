@@ -33,7 +33,9 @@ const defaultValues: TIssueLinkCreateFormFieldOptions = {
   url: "",
 };
 
-export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = observer((props) => {
+export const IssueLinkCreateUpdateModal = observer(function IssueLinkCreateUpdateModal(
+  props: TIssueLinkCreateEditModal
+) {
   const { isModalOpen, handleOnClose, linkOperations, issueServiceType } = props;
   // i18n
   const { t } = useTranslation();

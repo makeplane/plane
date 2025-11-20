@@ -5,4 +5,6 @@ import { observer } from "mobx-react";
 
 export type TIssueTypeActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
-export const IssueTypeActivity: FC<TIssueTypeActivity> = observer(() => <></>);
+export const IssueTypeActivity = observer(function IssueTypeActivity(_props: TIssueTypeActivity) {
+  return <></>;
+});

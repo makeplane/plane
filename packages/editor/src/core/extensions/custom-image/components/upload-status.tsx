@@ -7,7 +7,7 @@ type Props = {
   nodeId: string;
 };
 
-export const ImageUploadStatus: React.FC<Props> = (props) => {
+export function ImageUploadStatus(props: Props) {
   const { editor, nodeId } = props;
   // Displayed status that will animate smoothly
   const [displayStatus, setDisplayStatus] = useState(0);
@@ -57,4 +57,4 @@ export const ImageUploadStatus: React.FC<Props> = (props) => {
       {displayStatus}%
     </div>
   );
-};
+}

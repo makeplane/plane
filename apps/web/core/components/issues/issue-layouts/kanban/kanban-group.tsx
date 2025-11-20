@@ -68,7 +68,7 @@ interface IKanbanGroup {
   isEpic?: boolean;
 }
 
-export const KanbanGroup = observer((props: IKanbanGroup) => {
+export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
   const {
     groupId,
     sub_group_id,

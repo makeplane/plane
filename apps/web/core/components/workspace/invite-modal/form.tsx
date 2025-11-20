@@ -12,7 +12,7 @@ type TInvitationFormProps = {
   className?: string;
 };
 
-export const InvitationForm = observer((props: TInvitationFormProps) => {
+export const InvitationForm = observer(function InvitationForm(props: TInvitationFormProps) {
   const { title, description, children, actions, onSubmit, className } = props;
 
   return (

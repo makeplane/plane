@@ -24,7 +24,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterMember: FC<Props> = observer((props: Props) => {
+export const FilterMember = observer(function FilterMember(props: Props) {
   const { filterKey, label = "Members", memberIds, searchQuery } = props;
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();

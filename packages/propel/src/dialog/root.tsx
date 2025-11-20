@@ -47,59 +47,72 @@ const getPositionClassNames = (position: DialogPosition) =>
     "top-8 left-1/2 -translate-x-1/2": position === "top",
   });
 
-const DialogPortal = memo<React.ComponentProps<typeof BaseDialog.Portal>>(({ children, ...props }) => (
-  <BaseDialog.Portal data-slot="dialog-portal" {...props}>
-    {children}
-  </BaseDialog.Portal>
-));
+const DialogPortal = memo(function DialogPortal({ children, ...props }) {
+  return (
+    <BaseDialog.Portal data-slot="dialog-portal" {...props}>
+      {children}
+    </BaseDialog.Portal>
+  );
+});
 DialogPortal.displayName = "DialogPortal";
 
-const DialogOverlay = memo<React.ComponentProps<typeof BaseDialog.Backdrop>>(({ className, ...props }) => (
-  <BaseDialog.Backdrop data-slot="dialog-overlay" className={cn(OVERLAY_CLASSNAME, className)} {...props} />
-));
+const DialogOverlay = memo(function DialogOverlay({ className, ...props }) {
+  return <BaseDialog.Backdrop data-slot="dialog-overlay" className={cn(OVERLAY_CLASSNAME, className)} {...props} />;
+});
 DialogOverlay.displayName = "DialogOverlay";
 
-const DialogComponent = memo<DialogProps>(({ children, ...props }) => (
-  <BaseDialog.Root data-slot="dialog" {...props}>
-    {children}
-  </BaseDialog.Root>
-));
+const DialogComponent = memo(function DialogComponent({ children, ...props }) {
+  return (
+    <BaseDialog.Root data-slot="dialog" {...props}>
+      {children}
+    </BaseDialog.Root>
+  );
+});
 DialogComponent.displayName = "Dialog";
 
-const DialogTrigger = memo<React.ComponentProps<typeof BaseDialog.Trigger>>(({ children, ...props }) => (
-  <BaseDialog.Trigger data-slot="dialog-trigger" {...props}>
-    {children}
-  </BaseDialog.Trigger>
-));
+const DialogTrigger = memo(function DialogTrigger({ children, ...props }) {
+  return (
+    <BaseDialog.Trigger data-slot="dialog-trigger" {...props}>
+      {children}
+    </BaseDialog.Trigger>
+  );
+});
 DialogTrigger.displayName = "DialogTrigger";
 
-const DialogPanel = forwardRef<React.ElementRef<typeof BaseDialog.Popup>, DialogPanelProps>(
-  ({ className, width = EDialogWidth.XXL, children, position = "center", ...props }, ref) => {
-    const positionClassNames = useMemo(() => getPositionClassNames(position), [position]);
-    return (
-      <DialogPortal>
-        <DialogOverlay />
-        <BaseDialog.Popup
-          ref={ref}
-          data-slot="dialog-content"
-          className={cn(BASE_CLASSNAME, positionClassNames, width, className)}
-          role="dialog"
-          aria-modal="true"
-          {...props}
-        >
-          {children}
-        </BaseDialog.Popup>
-      </DialogPortal>
-    );
-  }
-);
+const DialogPanel = forwardRef(function DialogPanel(
+  { className, width = EDialogWidth.XXL, children, position = "center", ...props }: DialogPanelProps,
+  ref: React.ForwardedRef<React.ElementRef<typeof BaseDialog.Popup>>
+) {
+  const positionClassNames = useMemo(() => getPositionClassNames(position), [position]);
+  return (
+    <DialogPortal>
+      <DialogOverlay />
+      <BaseDialog.Popup
+        ref={ref}
+        data-slot="dialog-content"
+        className={cn(BASE_CLASSNAME, positionClassNames, width, className)}
+        role="dialog"
+        aria-modal="true"
+        {...props}
+      >
+        {children}
+      </BaseDialog.Popup>
+    </DialogPortal>
+  );
+});
 DialogPanel.displayName = "DialogPanel";
 
-const DialogTitle = memo<DialogTitleProps>(({ className, children, ...props }) => (
-  <BaseDialog.Title data-slot="dialog-title" className={cn("text-lg leading-none font-semibold", className)} {...props}>
-    {children}
-  </BaseDialog.Title>
-));
+const DialogTitle = memo(function DialogTitle({ className, children, ...props }) {
+  return (
+    <BaseDialog.Title
+      data-slot="dialog-title"
+      className={cn("text-lg leading-none font-semibold", className)}
+      {...props}
+    >
+      {children}
+    </BaseDialog.Title>
+  );
+});
 
 DialogTitle.displayName = "DialogTitle";
 

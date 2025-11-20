@@ -16,7 +16,7 @@ type Props = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const IssueAttachmentsCollapsibleContent: FC<Props> = observer((props) => {
+export const IssueAttachmentsCollapsibleContent = observer(function IssueAttachmentsCollapsibleContent(props: Props) {
   const { workspaceSlug, projectId, issueId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
   // helper
   const attachmentHelpers = useAttachmentOperations(workspaceSlug, projectId, issueId, issueServiceType);

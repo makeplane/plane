@@ -19,7 +19,7 @@ type OnboardingHeaderProps = {
   hasInvitations: boolean;
 };
 
-export const OnboardingHeader: FC<OnboardingHeaderProps> = observer((props) => {
+export const OnboardingHeader = observer(function OnboardingHeader(props: OnboardingHeaderProps) {
   const { currentStep, updateCurrentStep, hasInvitations } = props;
   // store hooks
   const { data: user } = useUser();

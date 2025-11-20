@@ -19,7 +19,7 @@ type Props = {
   };
 };
 
-export const DefaultWorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
+export const DefaultWorkspaceViewQuickActions = observer(function DefaultWorkspaceViewQuickActions(props: Props) {
   const { workspaceSlug, view } = props;
 
   const { t } = useTranslation();

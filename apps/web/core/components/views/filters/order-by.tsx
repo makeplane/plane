@@ -18,7 +18,7 @@ type Props = {
   isMobile?: boolean;
 };
 
-export const ViewOrderByDropdown: React.FC<Props> = (props) => {
+export function ViewOrderByDropdown(props: Props) {
   const { onChange, sortBy, sortKey, isMobile = false } = props;
   const { t } = useTranslation();
 
@@ -82,4 +82,4 @@ export const ViewOrderByDropdown: React.FC<Props> = (props) => {
       })}
     </CustomMenu>
   );
-};
+}

@@ -22,7 +22,7 @@ type TProjectMemberListProps = {
   workspaceSlug: string;
 };
 
-export const ProjectMemberList: React.FC<TProjectMemberListProps> = observer((props) => {
+export const ProjectMemberList = observer(function ProjectMemberList(props: TProjectMemberListProps) {
   const { projectId, workspaceSlug } = props;
   // states
   const [inviteModal, setInviteModal] = useState(false);

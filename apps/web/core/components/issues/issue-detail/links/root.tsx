@@ -26,7 +26,7 @@ export type TIssueLinkRoot = {
   disabled?: boolean;
 };
 
-export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
+export function IssueLinkRoot(props: TIssueLinkRoot) {
   // props
   const { workspaceSlug, projectId, issueId, disabled = false } = props;
   // hooks
@@ -139,4 +139,4 @@ export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
       </div>
     </>
   );
-};
+}

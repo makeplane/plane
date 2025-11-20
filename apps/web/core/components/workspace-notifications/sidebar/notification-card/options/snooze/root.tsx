@@ -27,7 +27,9 @@ type TNotificationItemSnoozeOption = {
   setCustomSnoozeModal: Dispatch<SetStateAction<boolean>>;
 };
 
-export const NotificationItemSnoozeOption: FC<TNotificationItemSnoozeOption> = observer((props) => {
+export const NotificationItemSnoozeOption = observer(function NotificationItemSnoozeOption(
+  props: TNotificationItemSnoozeOption
+) {
   const { workspaceSlug, notification, setIsSnoozeStateModalOpen, customSnoozeModal, setCustomSnoozeModal } = props;
   // hooks
   const { isMobile } = usePlatformOS();

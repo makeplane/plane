@@ -37,7 +37,10 @@ interface StickyEditorWrapperProps
   handleDelete: () => void;
 }
 
-export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperProps>((props, ref) => {
+export const StickyEditor = React.forwardRef(function StickyEditor(
+  props: StickyEditorWrapperProps,
+  ref: React.ForwardedRef<EditorRefApi>
+) {
   const {
     containerClassName,
     workspaceSlug,

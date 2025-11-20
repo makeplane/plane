@@ -6,7 +6,7 @@ import { Button, getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 
-const ProjectSettingsPage = () => {
+function ProjectSettingsPage() {
   // store hooks
   const { resolvedTheme } = useTheme();
   const { toggleCreateProjectModal } = useCommandPalette();
@@ -37,6 +37,6 @@ const ProjectSettingsPage = () => {
       </div>
     </div>
   );
-};
+}
 
 export default ProjectSettingsPage;

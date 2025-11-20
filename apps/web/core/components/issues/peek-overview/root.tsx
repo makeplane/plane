@@ -22,7 +22,7 @@ import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
 import type { TIssueOperations } from "../issue-detail";
 import { IssueView } from "./view";
 
-export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => {
+export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWorkItemPeekOverview) {
   const {
     embedIssue = false,
     embedRemoveCurrentNotification,

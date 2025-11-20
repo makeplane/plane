@@ -1,5 +1,4 @@
 "use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 // ui
@@ -35,7 +34,7 @@ const sizeClasses = {
   lg: "md:min-w-[30rem] max-w-[60rem]",
 } as const;
 
-const CustomButton = ({
+function CustomButton({
   config,
   variant,
   size,
@@ -43,20 +42,22 @@ const CustomButton = ({
   config: ButtonConfig;
   variant: "primary" | "neutral-primary";
   size: EmptyStateSize;
-}) => (
-  <Button
-    variant={variant}
-    size={size}
-    onClick={config.onClick}
-    prependIcon={config.prependIcon}
-    appendIcon={config.appendIcon}
-    disabled={config.disabled}
-  >
-    {config.text}
-  </Button>
-);
+}) {
+  return (
+    <Button
+      variant={variant}
+      size={size}
+      onClick={config.onClick}
+      prependIcon={config.prependIcon}
+      appendIcon={config.appendIcon}
+      disabled={config.disabled}
+    >
+      {config.text}
+    </Button>
+  );
+}
 
-export const DetailedEmptyState: React.FC<Props> = observer((props) => {
+export const DetailedEmptyState = observer(function DetailedEmptyState(props: Props) {
   const {
     title,
     description,

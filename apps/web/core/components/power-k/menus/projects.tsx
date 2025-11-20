@@ -13,18 +13,20 @@ type Props = {
   onSelect: (project: TPartialProject) => void;
 };
 
-export const PowerKProjectsMenu: React.FC<Props> = ({ projects, onSelect }) => (
-  <PowerKMenuBuilder
-    items={projects}
-    getKey={(project) => project.id}
-    getIconNode={(project) => (
-      <span className="shrink-0">
-        <Logo logo={project.logo_props} size={14} />
-      </span>
-    )}
-    getValue={(project) => project.name}
-    getLabel={(project) => project.name}
-    onSelect={onSelect}
-    emptyText="No projects found"
-  />
-);
+export function PowerKProjectsMenu({ projects, onSelect }: Props) {
+  return (
+    <PowerKMenuBuilder
+      items={projects}
+      getKey={(project) => project.id}
+      getIconNode={(project) => (
+        <span className="shrink-0">
+          <Logo logo={project.logo_props} size={14} />
+        </span>
+      )}
+      getValue={(project) => project.name}
+      getLabel={(project) => project.name}
+      onSelect={onSelect}
+      emptyText="No projects found"
+    />
+  );
+}

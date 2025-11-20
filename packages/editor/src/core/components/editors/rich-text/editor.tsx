@@ -9,7 +9,7 @@ import { RichTextEditorAdditionalExtensions } from "@/plane-editor/extensions/ri
 // types
 import type { EditorRefApi, IRichTextEditorProps } from "@/types";
 
-const RichTextEditor: React.FC<IRichTextEditorProps> = (props) => {
+function RichTextEditor(props: IRichTextEditorProps) {
   const {
     bubbleMenuEnabled = true,
     disabledExtensions,
@@ -54,11 +54,14 @@ const RichTextEditor: React.FC<IRichTextEditorProps> = (props) => {
       )}
     </EditorWrapper>
   );
-};
+}
 
-const RichTextEditorWithRef = forwardRef<EditorRefApi, IRichTextEditorProps>((props, ref) => (
-  <RichTextEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
-));
+const RichTextEditorWithRef = forwardRef(function RichTextEditorWithRef(
+  props: IRichTextEditorProps,
+  ref: React.ForwardedRef<EditorRefApi>
+) {
+  return <RichTextEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />;
+});
 
 RichTextEditorWithRef.displayName = "RichTextEditorWithRef";
 

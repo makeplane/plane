@@ -8,7 +8,7 @@ import { cn } from "../utils";
 // types
 import type { TPopover } from "./types";
 
-export const Popover = (props: TPopover) => {
+export function Popover(props: TPopover) {
   const {
     popperPosition = "bottom-end",
     popperPadding = 0,
@@ -76,4 +76,4 @@ export const Popover = (props: TPopover) => {
       </Transition>
     </HeadlessReactPopover>
   );
-};
+}

@@ -12,7 +12,7 @@ type Props = {
   values: string[];
 };
 
-export const AppliedStateFilters: React.FC<Props> = observer((props) => {
+export const AppliedStateFilters = observer(function AppliedStateFilters(props: Props) {
   const { handleRemove, values } = props;
 
   const { sortedStates: states } = useStates();

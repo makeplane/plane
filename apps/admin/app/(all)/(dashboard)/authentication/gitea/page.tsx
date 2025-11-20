@@ -15,7 +15,7 @@ import { useInstance } from "@/hooks/store";
 import type { Route } from "./+types/page";
 import { InstanceGiteaConfigForm } from "./form";
 
-const InstanceGiteaAuthenticationPage = observer(() => {
+const InstanceGiteaAuthenticationPage = observer(function InstanceGiteaAuthenticationPage() {
   // store
   const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
   // state

@@ -37,7 +37,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
-export const ProjectViewIssuesHeader: React.FC = observer(() => {
+export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader() {
   // refs
   const parentRef = useRef(null);
   // router

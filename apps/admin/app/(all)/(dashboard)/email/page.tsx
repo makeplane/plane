@@ -11,7 +11,7 @@ import { useInstance } from "@/hooks/store";
 import type { Route } from "./+types/page";
 import { InstanceEmailForm } from "./email-config-form";
 
-const InstanceEmailPage = observer<React.FC<Route.ComponentProps>>(() => {
+const InstanceEmailPage = observer(function InstanceEmailPage(_props: Route.ComponentProps) {
   // store
   const { fetchInstanceConfigurations, formattedConfig, disableEmail } = useInstance();
 

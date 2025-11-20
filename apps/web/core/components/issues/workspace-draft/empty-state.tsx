@@ -12,7 +12,7 @@ import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // constants
 import { useUserPermissions } from "@/hooks/store/user";
 
-export const WorkspaceDraftEmptyState: FC = observer(() => {
+export const WorkspaceDraftEmptyState = observer(function WorkspaceDraftEmptyState() {
   // state
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
   // store hooks

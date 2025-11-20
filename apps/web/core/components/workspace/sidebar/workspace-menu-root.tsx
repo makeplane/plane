@@ -30,7 +30,7 @@ type WorkspaceMenuRootProps = {
   renderLogoOnly?: boolean;
 };
 
-export const WorkspaceMenuRoot = observer((props: WorkspaceMenuRootProps) => {
+export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: WorkspaceMenuRootProps) {
   const { renderLogoOnly } = props;
   // store hooks
   const { toggleSidebar, toggleAnySidebarDropdown } = useAppTheme();

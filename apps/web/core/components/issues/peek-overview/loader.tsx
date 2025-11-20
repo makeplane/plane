@@ -11,7 +11,7 @@ type TIssuePeekOverviewLoader = {
   removeRoutePeekId: () => void;
 };
 
-export const IssuePeekOverviewLoader: FC<TIssuePeekOverviewLoader> = (props) => {
+export function IssuePeekOverviewLoader(props: TIssuePeekOverviewLoader) {
   const { removeRoutePeekId } = props;
   // hooks
   const { isMobile } = usePlatformOS();
@@ -104,4 +104,4 @@ export const IssuePeekOverviewLoader: FC<TIssuePeekOverviewLoader> = (props) => 
       </div>
     </Loader>
   );
-};
+}

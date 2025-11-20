@@ -24,7 +24,9 @@ type TNotificationSidebarHeaderOptions = {
   workspaceSlug: string;
 };
 
-export const NotificationSidebarHeaderOptions: FC<TNotificationSidebarHeaderOptions> = observer((props) => {
+export const NotificationSidebarHeaderOptions = observer(function NotificationSidebarHeaderOptions(
+  props: TNotificationSidebarHeaderOptions
+) {
   const { workspaceSlug } = props;
   // hooks
   const { isMobile } = usePlatformOS();

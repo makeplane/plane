@@ -33,7 +33,10 @@ type RichTextEditorWrapperProps = MakeOptional<
       }
   );
 
-export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
+export const RichTextEditor = forwardRef(function RichTextEditor(
+  props: RichTextEditorWrapperProps,
+  ref: React.ForwardedRef<EditorRefApi>
+) {
   const {
     containerClassName,
     editable,

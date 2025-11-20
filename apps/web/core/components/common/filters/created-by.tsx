@@ -20,7 +20,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterCreatedBy: React.FC<Props> = observer((props: Props) => {
+export const FilterCreatedBy = observer(function FilterCreatedBy(props: Props) {
   const { appliedFilters, handleUpdate, memberIds, searchQuery } = props;
   // states
   const [itemsToRender, setItemsToRender] = useState(5);

@@ -25,7 +25,7 @@ export interface IIssueLabelSelect {
   onAddLabel: (workspaceSlug: string, projectId: string, data: Partial<IIssueLabel>) => Promise<any>;
 }
 
-export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) => {
+export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssueLabelSelect) {
   const { workspaceSlug, projectId, issueId, values, onSelect, onAddLabel } = props;
   const { t } = useTranslation();
   // store hooks

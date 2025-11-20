@@ -19,7 +19,7 @@ export type TReadonlyEstimateProps = {
   workspaceSlug: string;
 };
 
-export const ReadonlyEstimate: React.FC<TReadonlyEstimateProps> = observer((props) => {
+export const ReadonlyEstimate = observer(function ReadonlyEstimate(props: TReadonlyEstimateProps) {
   const { className, hideIcon = false, value, placeholder, projectId, workspaceSlug } = props;
 
   const { t } = useTranslation();

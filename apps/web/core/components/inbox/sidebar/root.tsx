@@ -40,7 +40,7 @@ const tabNavigationOptions: { key: TInboxIssueCurrentTab; i18n_label: string }[]
   },
 ];
 
-export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
+export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarProps) {
   const { workspaceSlug, projectId, inboxIssueId, setIsMobileSidebar } = props;
   // router
   const router = useAppRouter();

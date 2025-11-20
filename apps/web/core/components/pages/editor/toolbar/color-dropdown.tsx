@@ -20,7 +20,7 @@ type Props = {
   ) => boolean;
 };
 
-export const ColorDropdown: React.FC<Props> = memo((props) => {
+export const ColorDropdown = memo(function ColorDropdown(props: Props) {
   const { handleColorSelect, isColorActive } = props;
 
   const activeTextColor = COLORS_LIST.find((c) => isColorActive("text-color", c.key));

@@ -42,7 +42,7 @@ type Props = {
   parentRef: React.RefObject<HTMLDivElement>;
 };
 
-export const ModuleListItemAction: FC<Props> = observer((props) => {
+export const ModuleListItemAction = observer(function ModuleListItemAction(props: Props) {
   const { moduleId, moduleDetails, parentRef } = props;
   // router
   const { workspaceSlug, projectId } = useParams();

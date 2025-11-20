@@ -22,7 +22,9 @@ type TNotificationItemArchiveOption = {
   notification: INotification;
 };
 
-export const NotificationItemArchiveOption: FC<TNotificationItemArchiveOption> = observer((props) => {
+export const NotificationItemArchiveOption = observer(function NotificationItemArchiveOption(
+  props: TNotificationItemArchiveOption
+) {
   const { workspaceSlug, notification } = props;
   // hooks
   const { currentNotificationTab } = useWorkspaceNotifications();

@@ -23,7 +23,7 @@ type TStateDelete = {
   shouldTrackEvents: boolean;
 };
 
-export const StateDelete: FC<TStateDelete> = observer((props) => {
+export const StateDelete = observer(function StateDelete(props: TStateDelete) {
   const { totalStates, state, deleteStateCallback, shouldTrackEvents } = props;
   // hooks
   const { isMobile } = usePlatformOS();

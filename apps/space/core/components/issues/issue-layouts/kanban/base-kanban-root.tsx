@@ -15,7 +15,7 @@ import { KanBan } from "./default";
 type Props = {
   anchor: string;
 };
-export const IssueKanbanLayoutRoot: React.FC<Props> = observer((props: Props) => {
+export const IssueKanbanLayoutRoot = observer(function IssueKanbanLayoutRoot(props: Props) {
   const { anchor } = props;
   // store hooks
   const { groupedIssueIds, getIssueLoader, fetchNextPublicIssues, getGroupIssueCount, getPaginationData } = useIssue();

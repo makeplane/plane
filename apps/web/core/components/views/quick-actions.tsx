@@ -28,7 +28,7 @@ type Props = {
   customClassName?: string;
 };
 
-export const ViewQuickActions: React.FC<Props> = observer((props) => {
+export const ViewQuickActions = observer(function ViewQuickActions(props: Props) {
   const { parentRef, projectId, view, workspaceSlug, customClassName } = props;
   // states
   const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);
@@ -71,13 +71,16 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
 
   if (publishContextMenu) MENU_ITEMS.splice(2, 0, publishContextMenu);
 
-  const CONTEXT_MENU_ITEMS = MENU_ITEMS.map((item) => ({
-    ...item,
-    action: () => {
-      captureClick({ elementName: PROJECT_VIEW_TRACKER_ELEMENTS.LIST_ITEM_CONTEXT_MENU });
-      item.action();
-    },
-  }));
+  const CONTEXT_MENU_ITEMS = MENU_ITEMS.map(function CONTEXT_MENU_ITEMS(item) {
+    return {
+      ...item,
+
+      action: () => {
+        captureClick({ elementName: PROJECT_VIEW_TRACKER_ELEMENTS.LIST_ITEM_CONTEXT_MENU });
+        item.action();
+      },
+    };
+  });
 
   return (
     <>

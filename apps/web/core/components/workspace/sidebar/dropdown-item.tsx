@@ -19,7 +19,7 @@ type TProps = {
   handleWorkspaceNavigation: (workspace: IWorkspace) => void;
   handleClose: () => void;
 };
-const SidebarDropdownItem = observer((props: TProps) => {
+const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps) {
   const { workspace, activeWorkspace, handleItemClick, handleWorkspaceNavigation, handleClose } = props;
   // router
   const { workspaceSlug } = useParams();

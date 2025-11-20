@@ -56,7 +56,7 @@ export type TIssueDetailRoot = {
   is_archived?: boolean;
 };
 
-export const IssueDetailRoot: FC<TIssueDetailRoot> = observer((props) => {
+export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDetailRoot) {
   const { t } = useTranslation();
   const { workspaceSlug, projectId, issueId, is_archived = false } = props;
   // router

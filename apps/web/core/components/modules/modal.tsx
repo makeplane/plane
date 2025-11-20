@@ -36,7 +36,7 @@ const defaultValues: Partial<IModule> = {
   member_ids: [],
 };
 
-export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
+export const CreateUpdateModuleModal = observer(function CreateUpdateModuleModal(props: Props) {
   const { isOpen, onClose, data, workspaceSlug, projectId } = props;
   // states
   const [activeProject, setActiveProject] = useState<string | null>(null);

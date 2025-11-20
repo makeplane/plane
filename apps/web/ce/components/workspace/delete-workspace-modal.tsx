@@ -16,7 +16,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
+export const DeleteWorkspaceModal = observer(function DeleteWorkspaceModal(props: Props) {
   const { isOpen, data, onClose } = props;
 
   return (

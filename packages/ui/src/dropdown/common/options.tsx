@@ -8,7 +8,7 @@ import type { IMultiSelectDropdownOptions, ISingleSelectDropdownOptions } from "
 // components
 import { DropdownOptionsLoader, InputSearch } from ".";
 
-export const DropdownOptions: React.FC<IMultiSelectDropdownOptions | ISingleSelectDropdownOptions> = (props) => {
+export function DropdownOptions(props: IMultiSelectDropdownOptions | ISingleSelectDropdownOptions) {
   const {
     isOpen,
     query,
@@ -88,4 +88,4 @@ export const DropdownOptions: React.FC<IMultiSelectDropdownOptions | ISingleSele
       </div>
     </>
   );
-};
+}

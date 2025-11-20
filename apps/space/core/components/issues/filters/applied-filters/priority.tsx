@@ -8,7 +8,7 @@ type Props = {
   values: TIssuePriorities[];
 };
 
-export const AppliedPriorityFilters: React.FC<Props> = (props) => {
+export function AppliedPriorityFilters(props: Props) {
   const { handleRemove, values } = props;
 
   return (
@@ -30,4 +30,4 @@ export const AppliedPriorityFilters: React.FC<Props> = (props) => {
         ))}
     </>
   );
-};
+}

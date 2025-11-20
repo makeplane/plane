@@ -19,7 +19,7 @@ type Props = {
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
 };
 
-export const ChartAddBlock: React.FC<Props> = observer((props) => {
+export const ChartAddBlock = observer(function ChartAddBlock(props: Props) {
   const { block, blockUpdateHandler } = props;
   // states
   const [isButtonVisible, setIsButtonVisible] = useState(false);

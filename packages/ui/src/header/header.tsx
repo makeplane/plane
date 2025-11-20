@@ -13,7 +13,8 @@ export interface HeaderProps {
 }
 
 const HeaderContext = React.createContext<THeaderVariant | null>(null);
-const Header = (props: HeaderProps) => {
+
+function Header(props: HeaderProps) {
   const {
     variant = EHeaderVariant.PRIMARY,
     className = "",
@@ -35,19 +36,22 @@ const Header = (props: HeaderProps) => {
       </Row>
     </HeaderContext.Provider>
   );
-};
+}
 
-const LeftItem = (props: HeaderProps) => (
-  <div
-    className={cn(
-      "flex flex-wrap items-center gap-2 overflow-ellipsis whitespace-nowrap max-w-[80%] flex-grow",
-      props.className
-    )}
-  >
-    {props.children}
-  </div>
-);
-const RightItem = (props: HeaderProps) => {
+function LeftItem(props: HeaderProps) {
+  return (
+    <div
+      className={cn(
+        "flex flex-wrap items-center gap-2 overflow-ellipsis whitespace-nowrap max-w-[80%] flex-grow",
+        props.className
+      )}
+    >
+      {props.children}
+    </div>
+  );
+}
+
+function RightItem(props: HeaderProps) {
   const variant = React.useContext(HeaderContext);
   if (variant === undefined) throw new Error("RightItem must be used within Header");
   return (
@@ -63,7 +67,7 @@ const RightItem = (props: HeaderProps) => {
       {props.children}
     </div>
   );
-};
+}
 
 Header.LeftItem = LeftItem;
 Header.RightItem = RightItem;

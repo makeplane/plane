@@ -16,7 +16,7 @@ type TStateList = {
   stateItemClassName?: string;
 };
 
-export const StateList: FC<TStateList> = observer((props) => {
+export const StateList = observer(function StateList(props: TStateList) {
   const {
     groupKey,
     groupedStates,

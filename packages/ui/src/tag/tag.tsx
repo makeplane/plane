@@ -10,7 +10,7 @@ export interface TagProps extends React.ComponentProps<"div"> {
   children: React.ReactNode;
 }
 
-const Tag = React.forwardRef<HTMLDivElement, TagProps>((props, ref) => {
+const Tag = React.forwardRef(function Tag(props: TagProps, ref: React.ForwardedRef<HTMLDivElement>) {
   const { variant = ETagVariant.OUTLINED, className = "", size = ETagSize.SM, children, ...rest } = props;
 
   const style = getTagStyle(variant, size);

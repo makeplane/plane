@@ -10,4 +10,6 @@ export type TAdditionalPageNavigationPaneAssetItemProps = {
   page: TPageInstance;
 };
 
-export const AdditionalPageNavigationPaneAssetItem: React.FC<TAdditionalPageNavigationPaneAssetItemProps> = () => null;
+export function AdditionalPageNavigationPaneAssetItem(_props: TAdditionalPageNavigationPaneAssetItemProps) {
+  return null;
+}

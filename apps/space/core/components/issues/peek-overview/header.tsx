@@ -38,7 +38,7 @@ const PEEK_MODES: {
   },
 ];
 
-export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
+export const PeekOverviewHeader = observer(function PeekOverviewHeader(props: Props) {
   const { handleClose } = props;
 
   const { peekMode, setPeekMode } = useIssueDetails();

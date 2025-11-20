@@ -21,7 +21,7 @@ type TNotificationItem = {
   notificationId: string;
 };
 
-export const NotificationItem: FC<TNotificationItem> = observer((props) => {
+export const NotificationItem = observer(function NotificationItem(props: TNotificationItem) {
   const { workspaceSlug, notificationId } = props;
   // hooks
   const { currentSelectedNotificationId, setCurrentSelectedNotificationId } = useWorkspaceNotifications();

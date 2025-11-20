@@ -25,7 +25,9 @@ export type SidebarWorkspaceMenuItemProps = {
   };
 };
 
-export const SidebarWorkspaceMenuItem: FC<SidebarWorkspaceMenuItemProps> = observer((props) => {
+export const SidebarWorkspaceMenuItem = observer(function SidebarWorkspaceMenuItem(
+  props: SidebarWorkspaceMenuItemProps
+) {
   const { item } = props;
 
   const { t } = useTranslation();

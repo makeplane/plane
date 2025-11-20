@@ -9,7 +9,7 @@ export interface RowProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
 }
 
-const Row = React.forwardRef<HTMLDivElement, RowProps>((props, ref) => {
+const Row = React.forwardRef(function Row(props: RowProps, ref: React.ForwardedRef<HTMLDivElement>) {
   const { variant = ERowVariant.REGULAR, className = "", children, ...rest } = props;
 
   const style = rowStyle[variant];

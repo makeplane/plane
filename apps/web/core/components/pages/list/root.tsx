@@ -15,7 +15,7 @@ type TPagesListRoot = {
   storeType: EPageStoreType;
 };
 
-export const PagesListRoot: FC<TPagesListRoot> = observer((props) => {
+export const PagesListRoot = observer(function PagesListRoot(props: TPagesListRoot) {
   const { pageType, storeType } = props;
   // store hooks
   const { getCurrentProjectFilteredPageIdsByTab } = usePageStore(storeType);

@@ -8,7 +8,7 @@ type Props = {
   className?: string;
 };
 
-export const BulkOperationsUpgradeBanner: React.FC<Props> = (props) => {
+export function BulkOperationsUpgradeBanner(props: Props) {
   const { className } = props;
 
   return (
@@ -29,4 +29,4 @@ export const BulkOperationsUpgradeBanner: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

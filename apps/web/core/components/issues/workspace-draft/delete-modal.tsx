@@ -21,7 +21,7 @@ type Props = {
   onSubmit?: () => Promise<void>;
 };
 
-export const WorkspaceDraftIssueDeleteIssueModal: React.FC<Props> = (props) => {
+export function WorkspaceDraftIssueDeleteIssueModal(props: Props) {
   const { dataId, data, isOpen, handleClose, onSubmit } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);
@@ -102,4 +102,4 @@ export const WorkspaceDraftIssueDeleteIssueModal: React.FC<Props> = (props) => {
       secondaryButtonText={t("cancel")}
     />
   );
-};
+}

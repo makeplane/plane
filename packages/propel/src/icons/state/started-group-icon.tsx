@@ -5,13 +5,13 @@ import { DashedCircle } from "./dashed-circle";
 import { ProgressCircle } from "./progress-circle";
 
 // StateIcon component implementation
-export const StartedGroupIcon: React.FC<ISvgIcons> = ({
+export function StartedGroupIcon({
   width = "20",
   height = "20",
   className,
   color = "#F59E0B",
   percentage = 100,
-}) => {
+}: ISvgIcons) {
   // Ensure percentage is between 0 and 100
   const normalized =
     typeof percentage === "number"
@@ -62,4 +62,4 @@ export const StartedGroupIcon: React.FC<ISvgIcons> = ({
       />
     </svg>
   );
-};
+}

@@ -33,7 +33,10 @@ type DocumentEditorWrapperProps = MakeOptional<
       }
   );
 
-export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProps>((props, ref) => {
+export const DocumentEditor = forwardRef(function DocumentEditor(
+  props: DocumentEditorWrapperProps,
+  ref: React.ForwardedRef<EditorRefApi>
+) {
   const {
     containerClassName,
     editable,

@@ -29,7 +29,7 @@ type ButtonProps = {
   renderToolTipByDefault?: boolean;
 };
 
-export const DropdownButton: React.FC<DropdownButtonProps> = (props) => {
+export function DropdownButton(props: DropdownButtonProps) {
   const {
     children,
     className,
@@ -58,9 +58,9 @@ export const DropdownButton: React.FC<DropdownButtonProps> = (props) => {
       {children}
     </ButtonToRender>
   );
-};
+}
 
-const BorderButton: React.FC<ButtonProps> = (props) => {
+function BorderButton(props: ButtonProps) {
   const { children, className, isActive, tooltipContent, renderToolTipByDefault, tooltipHeading, showTooltip } = props;
   const { isMobile } = usePlatformOS();
 
@@ -83,9 +83,9 @@ const BorderButton: React.FC<ButtonProps> = (props) => {
       </div>
     </Tooltip>
   );
-};
+}
 
-const BackgroundButton: React.FC<ButtonProps> = (props) => {
+function BackgroundButton(props: ButtonProps) {
   const { children, className, tooltipContent, tooltipHeading, renderToolTipByDefault, showTooltip } = props;
   const { isMobile } = usePlatformOS();
   return (
@@ -106,9 +106,9 @@ const BackgroundButton: React.FC<ButtonProps> = (props) => {
       </div>
     </Tooltip>
   );
-};
+}
 
-const TransparentButton: React.FC<ButtonProps> = (props) => {
+function TransparentButton(props: ButtonProps) {
   const { children, className, isActive, tooltipContent, tooltipHeading, renderToolTipByDefault, showTooltip } = props;
   const { isMobile } = usePlatformOS();
   return (
@@ -130,4 +130,4 @@ const TransparentButton: React.FC<ButtonProps> = (props) => {
       </div>
     </Tooltip>
   );
-};
+}

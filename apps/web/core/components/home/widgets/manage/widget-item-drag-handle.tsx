@@ -12,7 +12,7 @@ type Props = {
   isDragging: boolean;
 };
 
-export const WidgetItemDragHandle: FC<Props> = observer((props) => {
+export const WidgetItemDragHandle = observer(function WidgetItemDragHandle(props: Props) {
   const { isDragging } = props;
 
   return (

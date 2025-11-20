@@ -15,7 +15,7 @@ type Props = {
   updateAttributes: (attrs: Partial<TCalloutBlockAttributes>) => void;
 };
 
-export const CalloutBlockLogoSelector: React.FC<Props> = (props) => {
+export function CalloutBlockLogoSelector(props: Props) {
   const { blockAttributes, disabled, handleOpen, isOpen, updateAttributes } = props;
 
   const logoValue: TLogoProps = {
@@ -93,4 +93,4 @@ export const CalloutBlockLogoSelector: React.FC<Props> = (props) => {
       />
     </div>
   );
-};
+}

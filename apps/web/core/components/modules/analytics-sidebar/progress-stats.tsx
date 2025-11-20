@@ -33,7 +33,7 @@ type TModuleProgressStats = {
   totalIssuesCount: number;
 };
 
-export const ModuleProgressStats: FC<TModuleProgressStats> = observer((props) => {
+export const ModuleProgressStats = observer(function ModuleProgressStats(props: TModuleProgressStats) {
   const {
     distribution,
     groupedIssues,

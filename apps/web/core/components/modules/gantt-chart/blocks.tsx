@@ -20,7 +20,7 @@ type Props = {
   moduleId: string;
 };
 
-export const ModuleGanttBlock: React.FC<Props> = observer((props) => {
+export const ModuleGanttBlock = observer(function ModuleGanttBlock(props: Props) {
   const { moduleId } = props;
   // router
   const router = useAppRouter();
@@ -69,7 +69,7 @@ export const ModuleGanttBlock: React.FC<Props> = observer((props) => {
   );
 });
 
-export const ModuleGanttSidebarBlock: React.FC<Props> = observer((props) => {
+export const ModuleGanttSidebarBlock = observer(function ModuleGanttSidebarBlock(props: Props) {
   const { moduleId } = props;
   const { workspaceSlug } = useParams();
   // store hooks

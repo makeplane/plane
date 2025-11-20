@@ -14,7 +14,7 @@ type TAppliedFilters = {
   workspaceSlug: string;
 };
 
-export const AppliedFilters: FC<TAppliedFilters> = observer((props) => {
+export const AppliedFilters = observer(function AppliedFilters(props: TAppliedFilters) {
   const { workspaceSlug } = props;
   // hooks
   const { filters, updateFilters } = useWorkspaceNotifications();

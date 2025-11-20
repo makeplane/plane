@@ -37,7 +37,7 @@ type FormData = {
   task: string;
 };
 
-export const GptAssistantPopover: React.FC<Props> = (props) => {
+export function GptAssistantPopover(props: Props) {
   const {
     isOpen,
     handleClose,
@@ -295,4 +295,4 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
       </Transition>
     </Popover>
   );
-};
+}

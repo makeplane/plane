@@ -13,7 +13,7 @@ import useLocalStorage from "@/hooks/use-local-storage";
 import { SidebarWorkspaceMenuHeader } from "./workspace-menu-header";
 import { SidebarWorkspaceMenuItem } from "./workspace-menu-item";
 
-export const SidebarWorkspaceMenu = observer(() => {
+export const SidebarWorkspaceMenu = observer(function SidebarWorkspaceMenu() {
   // router params
   const { workspaceSlug } = useParams();
   // local storage

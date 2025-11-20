@@ -37,7 +37,7 @@ const defaultValues = {
   role: "",
 };
 
-export const RoleSetupStep: FC<Props> = observer(({ handleStepChange }) => {
+export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange }: Props) {
   // store hooks
   const { data: profile, updateUserProfile } = useUserProfile();
   // form info

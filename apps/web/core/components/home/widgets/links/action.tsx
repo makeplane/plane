@@ -4,7 +4,7 @@ import { useTranslation } from "@plane/i18n";
 type TProps = {
   onClick: () => void;
 };
-export const AddLink = (props: TProps) => {
+export function AddLink(props: TProps) {
   const { onClick } = props;
   const { t } = useTranslation();
 
@@ -19,4 +19,4 @@ export const AddLink = (props: TProps) => {
       <div className="text-sm font-medium my-auto">{t("home.quick_links.add")}</div>
     </button>
   );
-};
+}

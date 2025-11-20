@@ -16,7 +16,7 @@ import { cn } from "@plane/utils";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import useSize from "@/hooks/use-window-size";
 
-export const InboxIssueOrderByDropdown: FC = observer(() => {
+export const InboxIssueOrderByDropdown = observer(function InboxIssueOrderByDropdown() {
   // hooks
   const { t } = useTranslation();
   const windowSize = useSize();

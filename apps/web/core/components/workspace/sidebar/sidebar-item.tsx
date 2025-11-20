@@ -25,7 +25,11 @@ type Props = {
   additionalStaticItems?: string[];
 };
 
-export const SidebarItemBase: FC<Props> = observer(({ item, additionalRender, additionalStaticItems }) => {
+export const SidebarItemBase = observer(function SidebarItemBase({
+  item,
+  additionalRender,
+  additionalStaticItems,
+}: Props) {
   const { t } = useTranslation();
   const pathname = usePathname();
   const { workspaceSlug } = useParams();

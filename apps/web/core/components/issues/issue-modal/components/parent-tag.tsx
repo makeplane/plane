@@ -23,7 +23,7 @@ type TIssueParentTagProps = {
   setSelectedParentIssue: (issue: ISearchIssueResponse | null) => void;
 };
 
-export const IssueParentTag: React.FC<TIssueParentTagProps> = observer((props) => {
+export const IssueParentTag = observer(function IssueParentTag(props: TIssueParentTagProps) {
   const { control, selectedParentIssue, handleFormChange, setSelectedParentIssue } = props;
   // store hooks
   const { isMobile } = usePlatformOS();

@@ -14,7 +14,7 @@ type TCommonProjectBreadcrumbProps = {
   isLast?: boolean;
 };
 
-export const CommonProjectBreadcrumbs: FC<TCommonProjectBreadcrumbProps> = (props) => {
+export function CommonProjectBreadcrumbs(props: TCommonProjectBreadcrumbProps) {
   const { workspaceSlug, projectId, featureKey, isLast = false } = props;
   return (
     <>
@@ -29,4 +29,4 @@ export const CommonProjectBreadcrumbs: FC<TCommonProjectBreadcrumbProps> = (prop
       )}
     </>
   );
-};
+}

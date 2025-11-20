@@ -29,7 +29,7 @@ type Props = {
   isTrialAllowed: boolean;
 };
 
-export const PlanCheckoutButton: FC<Props> = observer((props) => {
+export const PlanCheckoutButton = observer(function PlanCheckoutButton(props: Props) {
   const {
     planeName,
     planVariant,

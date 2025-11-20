@@ -12,7 +12,7 @@ type TIssueLabelSelectRoot = {
   labelOperations: TLabelOperations;
 };
 
-export const IssueLabelSelectRoot: FC<TIssueLabelSelectRoot> = (props) => {
+export function IssueLabelSelectRoot(props: TIssueLabelSelectRoot) {
   const { workspaceSlug, projectId, issueId, values, labelOperations } = props;
 
   const handleLabel = async (_labelIds: string[]) => {
@@ -29,4 +29,4 @@ export const IssueLabelSelectRoot: FC<TIssueLabelSelectRoot> = (props) => {
       onAddLabel={labelOperations.createLabel}
     />
   );
-};
+}

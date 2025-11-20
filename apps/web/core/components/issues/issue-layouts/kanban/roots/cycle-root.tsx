@@ -12,7 +12,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { CycleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseKanBanRoot } from "../base-kanban-root";
 
-export const CycleKanBanLayout: React.FC = observer(() => {
+export const CycleKanBanLayout = observer(function CycleKanBanLayout() {
   const { workspaceSlug, projectId, cycleId } = useParams();
 
   // store

@@ -35,7 +35,7 @@ const defaultValues: FormValues = {
 
 const timeStamps = allTimeIn30MinutesInterval12HoursFormat;
 
-export const NotificationSnoozeModal: FC<TNotificationSnoozeModal> = (props) => {
+export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
   const { isOpen, onClose, onSubmit: handleSubmitSnooze } = props;
 
   const { workspaceSlug } = useParams();
@@ -260,4 +260,4 @@ export const NotificationSnoozeModal: FC<TNotificationSnoozeModal> = (props) => 
       </Dialog>
     </Transition.Root>
   );
-};
+}

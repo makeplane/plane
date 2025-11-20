@@ -21,7 +21,7 @@ type TProjectCardListProps = {
   filteredProjectIds?: string[];
 };
 
-export const ProjectCardList = observer((props: TProjectCardListProps) => {
+export const ProjectCardList = observer(function ProjectCardList(props: TProjectCardListProps) {
   const { totalProjectIds: totalProjectIdsProps, filteredProjectIds: filteredProjectIdsProps } = props;
   // plane hooks
   const { t } = useTranslation();

@@ -20,7 +20,7 @@ type Props = {
   isTouchDevice: boolean;
 };
 
-export const EditorContainer: FC<Props> = (props) => {
+export function EditorContainer(props: Props) {
   const { children, displayConfig, editor, editorContainerClassName, id, isTouchDevice } = props;
   // refs
   const containerRef = useRef<HTMLDivElement>(null);
@@ -100,4 +100,4 @@ export const EditorContainer: FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

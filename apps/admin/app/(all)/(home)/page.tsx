@@ -1,5 +1,4 @@
 "use client";
-
 import { observer } from "mobx-react";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
@@ -11,7 +10,7 @@ import { useInstance } from "@/hooks/store";
 import type { Route } from "./+types/page";
 import { InstanceSignInForm } from "./sign-in-form";
 
-const HomePage = () => {
+function HomePage() {
   // store hooks
   const { instance, error } = useInstance();
 
@@ -36,7 +35,7 @@ const HomePage = () => {
 
   // if instance is fetched and setup is done, show sign in form
   return <InstanceSignInForm />;
-};
+}
 
 export default observer(HomePage);
 

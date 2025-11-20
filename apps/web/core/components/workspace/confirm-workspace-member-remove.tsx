@@ -20,7 +20,7 @@ export type Props = {
   };
 };
 
-export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) => {
+export const ConfirmWorkspaceMemberRemove = observer(function ConfirmWorkspaceMemberRemove(props: Props) {
   const { isOpen, onClose, onSubmit, userDetails } = props;
   // states
   const [isRemoving, setIsRemoving] = useState(false);

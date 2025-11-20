@@ -4,6 +4,6 @@ import JsFileIcon from "@/app/assets/attachment/js-icon.png?url";
 // type
 import type { ImageIconPros } from "../types";
 
-export const JavaScriptIcon: React.FC<ImageIconPros> = ({ width, height }) => (
-  <img src={JsFileIcon} width={width} height={height} alt="JsFileIcon" />
-);
+export function JavaScriptIcon({ width, height }: ImageIconPros) {
+  return <img src={JsFileIcon} width={width} height={height} alt="JsFileIcon" />;
+}

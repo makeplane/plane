@@ -27,7 +27,7 @@ export interface IIssueProperties {
   className: string;
 }
 
-export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
+export const IssueProperties = observer(function IssueProperties(props: IIssueProperties) {
   const { issue, displayProperties, className } = props;
 
   if (!displayProperties || !issue.project_id) return null;

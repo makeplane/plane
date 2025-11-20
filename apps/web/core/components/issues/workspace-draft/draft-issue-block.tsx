@@ -28,7 +28,7 @@ type Props = {
   issueId: string;
 };
 
-export const DraftIssueBlock: FC<Props> = observer((props) => {
+export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
   // props
   const { workspaceSlug, issueId } = props;
   // states

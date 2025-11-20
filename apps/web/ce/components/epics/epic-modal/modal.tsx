@@ -17,4 +17,6 @@ export interface EpicModalProps {
   isProjectSelectionDisabled?: boolean;
 }
 
-export const CreateUpdateEpicModal: FC<EpicModalProps> = (props) => <></>;
+export function CreateUpdateEpicModal(props: EpicModalProps) {
+  return <></>;
+}

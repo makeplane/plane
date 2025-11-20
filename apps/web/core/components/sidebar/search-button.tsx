@@ -7,7 +7,7 @@ type Props = {
   isActive?: boolean;
 };
 
-export const SidebarSearchButton: FC<Props> = (props) => {
+export function SidebarSearchButton(props: Props) {
   const { isActive } = props;
   return (
     <div
@@ -25,4 +25,4 @@ export const SidebarSearchButton: FC<Props> = (props) => {
       />
     </div>
   );
-};
+}

@@ -45,7 +45,7 @@ import useLocalStorage from "@/hooks/use-local-storage";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
-export const CycleIssuesHeader: React.FC = observer(() => {
+export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
   // refs
   const parentRef = useRef<HTMLDivElement>(null);
   // states

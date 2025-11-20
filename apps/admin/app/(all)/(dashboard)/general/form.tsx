@@ -19,7 +19,7 @@ export interface IGeneralConfigurationForm {
   instanceAdmins: IInstanceAdmin[];
 }
 
-export const GeneralConfigurationForm: React.FC<IGeneralConfigurationForm> = observer((props) => {
+export const GeneralConfigurationForm = observer(function GeneralConfigurationForm(props: IGeneralConfigurationForm) {
   const { instance, instanceAdmins } = props;
   // hooks
   const { instanceConfigurations, updateInstanceInfo, updateInstanceConfigurations } = useInstance();

@@ -19,7 +19,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 // constants
 
-export const ModulesListHeader: React.FC = observer(() => {
+export const ModulesListHeader = observer(function ModulesListHeader() {
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };

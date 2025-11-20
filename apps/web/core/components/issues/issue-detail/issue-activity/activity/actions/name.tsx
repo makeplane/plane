@@ -8,7 +8,7 @@ import { IssueActivityBlockComponent } from "./";
 
 type TIssueNameActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 
-export const IssueNameActivity: FC<TIssueNameActivity> = observer((props) => {
+export const IssueNameActivity = observer(function IssueNameActivity(props: TIssueNameActivity) {
   const { activityId, ends } = props;
   // hooks
   const {

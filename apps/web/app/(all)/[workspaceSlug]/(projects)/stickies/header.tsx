@@ -13,7 +13,7 @@ import { useStickyOperations } from "@/components/stickies/sticky/use-operations
 // hooks
 import { useSticky } from "@/hooks/use-stickies";
 
-export const WorkspaceStickyHeader = observer(() => {
+export const WorkspaceStickyHeader = observer(function WorkspaceStickyHeader() {
   const { workspaceSlug } = useParams();
   // hooks
   const { creatingSticky, toggleShowNewSticky } = useSticky();

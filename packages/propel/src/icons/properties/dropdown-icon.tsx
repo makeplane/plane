@@ -3,7 +3,7 @@ import * as React from "react";
 import { IconWrapper } from "../icon-wrapper";
 import type { ISvgIcons } from "../type";
 
-export const DropdownPropertyIcon: React.FC<ISvgIcons> = ({ color = "currentColor", ...rest }) => {
+export function DropdownPropertyIcon({ color = "currentColor", ...rest }: ISvgIcons) {
   const clipPathId = React.useId();
 
   return (
@@ -14,4 +14,4 @@ export const DropdownPropertyIcon: React.FC<ISvgIcons> = ({ color = "currentColo
       />
     </IconWrapper>
   );
-};
+}

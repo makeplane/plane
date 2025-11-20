@@ -10,7 +10,7 @@ type Props = {
   isMenuActive?: boolean;
 };
 
-export const FavoriteItemWrapper: FC<Props> = (props) => {
+export function FavoriteItemWrapper(props: Props) {
   const { children, elementRef, isMenuActive = false } = props;
   return (
     <>
@@ -27,4 +27,4 @@ export const FavoriteItemWrapper: FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

@@ -10,7 +10,7 @@ type MaterialIconListProps = {
   query: string;
 };
 
-export const MaterialIconList: React.FC<MaterialIconListProps> = (props) => {
+export function MaterialIconList(props: MaterialIconListProps) {
   const { query, onChange, activeColor } = props;
 
   const filteredArray = MATERIAL_ICONS_LIST.filter((icon) => icon.name.toLowerCase().includes(query.toLowerCase()));
@@ -52,4 +52,4 @@ export const MaterialIconList: React.FC<MaterialIconListProps> = (props) => {
       ))}
     </>
   );
-};
+}

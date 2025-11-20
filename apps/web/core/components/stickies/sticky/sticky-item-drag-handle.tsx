@@ -11,7 +11,7 @@ type Props = {
   isDragging: boolean;
 };
 
-export const StickyItemDragHandle: FC<Props> = observer((props) => {
+export const StickyItemDragHandle = observer(function StickyItemDragHandle(props: Props) {
   const { isDragging } = props;
 
   return (

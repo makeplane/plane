@@ -17,7 +17,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { ProjectAppliedFiltersList } from "./applied-filters";
 import { ProjectCardList } from "./card-list";
 
-export const ProjectRoot = observer(() => {
+export const ProjectRoot = observer(function ProjectRoot() {
   const { currentWorkspace } = useWorkspace();
   const { workspaceSlug } = useParams();
   const pathname = usePathname();

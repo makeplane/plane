@@ -6,7 +6,7 @@ type TBanner = {
   message: string;
 };
 
-export const Banner: FC<TBanner> = (props) => {
+export function Banner(props: TBanner) {
   const { type, message } = props;
 
   return (
@@ -29,4 +29,4 @@ export const Banner: FC<TBanner> = (props) => {
       </div>
     </div>
   );
-};
+}

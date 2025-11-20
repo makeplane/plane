@@ -21,7 +21,7 @@ type Props = {
 
 const DATE_FILTERS = ["start_date", "end_date"];
 
-export const CycleAppliedFiltersList: React.FC<Props> = observer((props) => {
+export const CycleAppliedFiltersList = observer(function CycleAppliedFiltersList(props: Props) {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, alwaysAllowEditing } = props;
   // store hooks
   const { allowPermissions } = useUserPermissions();

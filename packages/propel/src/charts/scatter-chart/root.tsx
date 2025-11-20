@@ -20,7 +20,9 @@ import { getLegendProps } from "../components/legend";
 import { CustomXAxisTick, CustomYAxisTick } from "../components/tick";
 import { CustomTooltip } from "../components/tooltip";
 
-export const ScatterChart = React.memo(<K extends string, T extends string>(props: TScatterChartProps<K, T>) => {
+export const ScatterChart = React.memo(function ScatterChart<K extends string, T extends string>(
+  props: TScatterChartProps<K, T>
+) {
   const {
     data,
     scatterPoints,

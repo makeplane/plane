@@ -41,7 +41,7 @@ type Props = {
   handleActionWithPermission: (isAdmin: boolean, action: () => void, errorMessage: string) => void;
 };
 
-export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) => {
+export const InboxIssueActionsMobileHeader = observer(function InboxIssueActionsMobileHeader(props: Props) {
   const {
     inboxIssue,
     isSubmitting,

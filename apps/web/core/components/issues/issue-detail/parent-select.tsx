@@ -34,7 +34,7 @@ type TIssueParentSelect = {
   workItemLink: string;
 };
 
-export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) => {
+export const IssueParentSelect = observer(function IssueParentSelect(props: TIssueParentSelect) {
   const {
     className = "",
     disabled = false,

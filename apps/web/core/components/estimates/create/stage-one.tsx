@@ -21,7 +21,7 @@ type TEstimateCreateStageOne = {
   handleEstimatePoints: (value: string) => void;
 };
 
-export const EstimateCreateStageOne: FC<TEstimateCreateStageOne> = (props) => {
+export function EstimateCreateStageOne(props: TEstimateCreateStageOne) {
   const { estimateSystem, handleEstimateSystem, handleEstimatePoints } = props;
 
   // i18n
@@ -116,6 +116,6 @@ export const EstimateCreateStageOne: FC<TEstimateCreateStageOne> = (props) => {
       )}
     </div>
   );
-};
+}
 
 //

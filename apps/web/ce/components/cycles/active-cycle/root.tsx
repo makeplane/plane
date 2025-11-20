@@ -29,7 +29,7 @@ interface IActiveCycleDetails {
   showHeader?: boolean;
 }
 
-export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) => {
+export const ActiveCycleRoot = observer(function ActiveCycleRoot(props: IActiveCycleDetails) {
   const { workspaceSlug, projectId, cycleId: propsCycleId, showHeader = true } = props;
   // theme hook
   const { resolvedTheme } = useTheme();
@@ -47,8 +47,8 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
     cycleIssueDetails,
   } = useCyclesDetails({ workspaceSlug, projectId, cycleId });
 
-  const ActiveCyclesComponent = useMemo(
-    () => (
+  const ActiveCyclesComponent = useMemo(function ActiveCyclesComponent() {
+    return (
       <>
         {!cycleId || !activeCycle ? (
           <DetailedEmptyState
@@ -89,9 +89,8 @@ export const ActiveCycleRoot: React.FC<IActiveCycleDetails> = observer((props) =
           </div>
         )}
       </>
-    ),
-    [cycleId, activeCycle, workspaceSlug, projectId, handleFiltersUpdate, cycleIssueDetails]
-  );
+    );
+  });
 
   return (
     <>

@@ -35,7 +35,7 @@ type Props = {
   isEditable?: boolean;
 };
 
-export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
+export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGroup(props: Props) {
   const {
     label,
     labelChildren,

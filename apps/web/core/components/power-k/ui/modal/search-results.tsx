@@ -17,7 +17,7 @@ type Props = {
   results: IWorkspaceSearchResults;
 };
 
-export const PowerKModalSearchResults: React.FC<Props> = observer((props) => {
+export const PowerKModalSearchResults = observer(function PowerKModalSearchResults(props: Props) {
   const { closePalette, results } = props;
   // router
   const router = useAppRouter();

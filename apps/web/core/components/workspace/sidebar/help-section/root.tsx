@@ -17,7 +17,7 @@ import { useTransient } from "@/hooks/store/use-transient";
 // plane web components
 import { PlaneVersionNumber } from "@/plane-web/components/global";
 
-export const HelpMenuRoot = observer(() => {
+export const HelpMenuRoot = observer(function HelpMenuRoot() {
   // store hooks
   const { t } = useTranslation();
   const { toggleShortcutsListModal } = usePowerK();

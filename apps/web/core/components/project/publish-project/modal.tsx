@@ -42,7 +42,7 @@ const VIEW_OPTIONS: {
   { key: "kanban", label: "Kanban" },
 ];
 
-export const PublishProjectModal: React.FC<Props> = observer((props) => {
+export const PublishProjectModal = observer(function PublishProjectModal(props: Props) {
   const { isOpen, onClose, projectId } = props;
   // states
   const [isUnPublishing, setIsUnPublishing] = useState(false);

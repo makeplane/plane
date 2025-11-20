@@ -25,7 +25,7 @@ type LabelDragPreviewProps = {
   isGroup: boolean;
 };
 
-export const LabelDragPreview = (props: LabelDragPreviewProps) => {
+export function LabelDragPreview(props: LabelDragPreviewProps) {
   const { label, isGroup } = props;
 
   return (
@@ -33,7 +33,7 @@ export const LabelDragPreview = (props: LabelDragPreviewProps) => {
       <LabelName name={label.name} color={label.color} isGroup={isGroup} />
     </div>
   );
-};
+}
 
 type Props = {
   label: IIssueLabel;
@@ -53,7 +53,7 @@ type Props = {
   ) => void;
 };
 
-export const LabelDndHOC = observer((props: Props) => {
+export const LabelDndHOC = observer(function LabelDndHOC(props: Props) {
   const { label, isGroup, isChild, isLastChild, children, onDrop } = props;
 
   const [isDragging, setIsDragging] = useState(false);

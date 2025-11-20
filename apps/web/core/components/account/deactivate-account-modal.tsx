@@ -18,7 +18,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const DeactivateAccountModal: React.FC<Props> = (props) => {
+export function DeactivateAccountModal(props: Props) {
   const router = useAppRouter();
   const { isOpen, onClose } = props;
   // hooks
@@ -125,4 +125,4 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+}

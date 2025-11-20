@@ -7,7 +7,7 @@ type Props = React.ComponentProps<"button"> & {
   onClick: () => void;
 };
 
-export const SidebarAddButton: FC<Props> = (props) => {
+export function SidebarAddButton(props: Props) {
   const { label, onClick, disabled, ...rest } = props;
   return (
     <button
@@ -23,4 +23,4 @@ export const SidebarAddButton: FC<Props> = (props) => {
       {label}
     </button>
   );
-};
+}

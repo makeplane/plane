@@ -18,7 +18,7 @@ type Props = {
   value: TModuleOrderByOptions | undefined;
 };
 
-export const ModuleOrderByDropdown: React.FC<Props> = (props) => {
+export function ModuleOrderByDropdown(props: Props) {
   const { onChange, value } = props;
   // hooks
   const { t } = useTranslation();
@@ -79,4 +79,4 @@ export const ModuleOrderByDropdown: React.FC<Props> = (props) => {
       )}
     </CustomMenu>
   );
-};
+}

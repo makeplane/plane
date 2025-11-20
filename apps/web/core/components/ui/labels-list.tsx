@@ -14,7 +14,7 @@ type IssueLabelsListProps = {
   showLength?: boolean;
 };
 
-export const IssueLabelsList: FC<IssueLabelsListProps> = (props) => {
+export function IssueLabelsList(props: IssueLabelsListProps) {
   const { labels } = props;
   const { isMobile } = usePlatformOS();
   return (
@@ -37,4 +37,4 @@ export const IssueLabelsList: FC<IssueLabelsListProps> = (props) => {
       )}
     </>
   );
-};
+}

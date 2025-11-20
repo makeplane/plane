@@ -45,7 +45,7 @@ export type RowDragHandleProps = {
   row: number;
 };
 
-export const RowDragHandle: React.FC<RowDragHandleProps> = (props) => {
+export function RowDragHandle(props: RowDragHandleProps) {
   const { editor, row } = props;
   // states
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -221,4 +221,4 @@ export const RowDragHandle: React.FC<RowDragHandleProps> = (props) => {
       )}
     </>
   );
-};
+}

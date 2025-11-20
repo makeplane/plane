@@ -4,7 +4,7 @@ import { EditorAdditionalMentionsRoot } from "@/plane-web/components/editor/embe
 // local imports
 import { EditorUserMention } from "./user";
 
-export const EditorMentionsRoot: React.FC<TEditorMentionComponentProps> = (props) => {
+export function EditorMentionsRoot(props: TEditorMentionComponentProps) {
   const { entity_identifier, entity_name } = props;
 
   switch (entity_name) {
@@ -13,4 +13,4 @@ export const EditorMentionsRoot: React.FC<TEditorMentionComponentProps> = (props
     default:
       return <EditorAdditionalMentionsRoot {...props} />;
   }
-};
+}

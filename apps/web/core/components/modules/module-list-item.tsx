@@ -21,7 +21,7 @@ type Props = {
   moduleId: string;
 };
 
-export const ModuleListItem: React.FC<Props> = observer((props) => {
+export const ModuleListItem = observer(function ModuleListItem(props: Props) {
   const { moduleId } = props;
   // refs
   const parentRef = useRef(null);

@@ -13,7 +13,7 @@ type TPlanFrequencyToggleProps = {
   setSelectedFrequency: (frequency: TBillingFrequency) => void;
 };
 
-export const PlanFrequencyToggle: FC<TPlanFrequencyToggleProps> = observer((props) => {
+export const PlanFrequencyToggle = observer(function PlanFrequencyToggle(props: TPlanFrequencyToggleProps) {
   const { subscriptionType, monthlyPrice, yearlyPrice, selectedFrequency, setSelectedFrequency } = props;
   // derived values
   const yearlyDiscount = calculateYearlyDiscount(monthlyPrice, yearlyPrice);

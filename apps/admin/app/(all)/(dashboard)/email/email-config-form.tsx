@@ -30,7 +30,7 @@ const EMAIL_SECURITY_OPTIONS: { [key in TEmailSecurityKeys]: string } = {
   NONE: "No email security",
 };
 
-export const InstanceEmailForm: React.FC<IInstanceEmailForm> = (props) => {
+export function InstanceEmailForm(props: IInstanceEmailForm) {
   const { config } = props;
   // states
   const [isSendTestEmailModalOpen, setIsSendTestEmailModalOpen] = useState(false);
@@ -224,4 +224,4 @@ export const InstanceEmailForm: React.FC<IInstanceEmailForm> = (props) => {
       </div>
     </div>
   );
-};
+}

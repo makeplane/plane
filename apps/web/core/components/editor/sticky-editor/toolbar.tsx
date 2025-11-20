@@ -24,7 +24,7 @@ type Props = {
 
 const toolbarItems = TOOLBAR_ITEMS.sticky;
 
-export const StickyEditorToolbar: React.FC<Props> = (props) => {
+export function StickyEditorToolbar(props: Props) {
   const { executeCommand, editorRef, handleColorChange, handleDelete } = props;
 
   // State to manage active states of toolbar items
@@ -133,4 +133,4 @@ export const StickyEditorToolbar: React.FC<Props> = (props) => {
       </Tooltip>
     </div>
   );
-};
+}

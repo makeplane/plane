@@ -5,7 +5,7 @@ import { useTheme } from "next-themes";
 import { Toast } from "@plane/propel/toast";
 import { resolveGeneralTheme } from "@plane/utils";
 
-export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
+export function ToastProvider({ children }: { children: React.ReactNode }) {
   // themes
   const { resolvedTheme } = useTheme();
 
@@ -15,4 +15,4 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
       {children}
     </>
   );
-};
+}

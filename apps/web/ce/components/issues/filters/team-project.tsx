@@ -9,4 +9,6 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterTeamProjects: React.FC<Props> = observer(() => null);
+export const FilterTeamProjects = observer(function FilterTeamProjects(_props: Props) {
+  return null;
+});

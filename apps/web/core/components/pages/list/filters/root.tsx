@@ -15,7 +15,7 @@ type Props = {
   memberIds?: string[] | undefined;
 };
 
-export const PageFiltersSelection: React.FC<Props> = observer((props) => {
+export const PageFiltersSelection = observer(function PageFiltersSelection(props: Props) {
   const { filters, handleFiltersUpdate, memberIds } = props;
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");

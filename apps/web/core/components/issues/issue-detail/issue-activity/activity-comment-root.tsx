@@ -27,7 +27,7 @@ type TIssueActivityCommentRoot = {
   sortOrder: E_SORT_ORDER;
 };
 
-export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer((props) => {
+export const IssueActivityCommentRoot = observer(function IssueActivityCommentRoot(props: TIssueActivityCommentRoot) {
   const {
     workspaceSlug,
     isIntakeIssue,

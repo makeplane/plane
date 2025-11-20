@@ -9,7 +9,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { CycleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseCalendarRoot } from "../base-calendar-root";
 
-export const CycleCalendarLayout: React.FC = observer(() => {
+export const CycleCalendarLayout = observer(function CycleCalendarLayout() {
   const { currentProjectCompletedCycleIds } = useCycle();
   const { workspaceSlug, projectId, cycleId } = useParams();
 

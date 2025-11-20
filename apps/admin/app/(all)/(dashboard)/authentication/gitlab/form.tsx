@@ -24,7 +24,7 @@ type Props = {
 
 type GitlabConfigFormValues = Record<TInstanceGitlabAuthenticationConfigurationKeys, string>;
 
-export const InstanceGitlabConfigForm: React.FC<Props> = (props) => {
+export function InstanceGitlabConfigForm(props: Props) {
   const { config } = props;
   // states
   const [isDiscardChangesModalOpen, setIsDiscardChangesModalOpen] = useState(false);
@@ -208,4 +208,4 @@ export const InstanceGitlabConfigForm: React.FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

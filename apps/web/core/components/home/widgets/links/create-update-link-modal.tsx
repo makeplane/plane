@@ -30,7 +30,7 @@ const defaultValues: TLinkCreateFormFieldOptions = {
   url: "",
 };
 
-export const LinkCreateUpdateModal: FC<TLinkCreateEditModal> = observer((props) => {
+export const LinkCreateUpdateModal = observer(function LinkCreateUpdateModal(props: TLinkCreateEditModal) {
   // props
   const { isModalOpen, handleOnClose, linkOperations, preloadedData } = props;
   // react hook form

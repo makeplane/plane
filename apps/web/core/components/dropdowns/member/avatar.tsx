@@ -18,7 +18,7 @@ type AvatarProps = {
   size?: "sm" | "md" | "base" | "lg" | number;
 };
 
-export const ButtonAvatars: React.FC<AvatarProps> = observer((props) => {
+export const ButtonAvatars = observer(function ButtonAvatars(props: AvatarProps) {
   const { showTooltip, userIds, icon: Icon, size = "md" } = props;
   // store hooks
   const { getUserDetails } = useMember();

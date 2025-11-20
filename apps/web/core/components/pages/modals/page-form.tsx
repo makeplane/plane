@@ -34,7 +34,7 @@ const PAGE_ACCESS_SPECIFIERS: {
   { key: EPageAccess.PRIVATE, i18n_label: "common.access.private", icon: Lock },
 ];
 
-export const PageForm: React.FC<Props> = (props) => {
+export function PageForm(props: Props) {
   const { formData, handleFormData, handleModalClose, handleFormSubmit } = props;
   // hooks
   const { isMobile } = usePlatformOS();
@@ -154,4 +154,4 @@ export const PageForm: React.FC<Props> = (props) => {
       </div>
     </form>
   );
-};
+}

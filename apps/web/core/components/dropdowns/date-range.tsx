@@ -66,7 +66,7 @@ type Props = {
   renderInPortal?: boolean;
 };
 
-export const DateRangeDropdown: React.FC<Props> = observer((props) => {
+export const DateRangeDropdown = observer(function DateRangeDropdown(props: Props) {
   const { t } = useTranslation();
   const {
     buttonClassName,

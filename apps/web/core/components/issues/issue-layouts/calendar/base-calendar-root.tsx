@@ -38,7 +38,7 @@ interface IBaseCalendarRoot {
   canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
 }
 
-export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
+export const BaseCalendarRoot = observer(function BaseCalendarRoot(props: IBaseCalendarRoot) {
   const {
     QuickActions,
     addIssuesToView,

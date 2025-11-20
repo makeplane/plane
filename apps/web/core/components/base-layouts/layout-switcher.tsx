@@ -12,7 +12,7 @@ type Props = {
   selectedLayout: TBaseLayoutType;
 };
 
-export const LayoutSwitcher: React.FC<Props> = (props) => {
+export function LayoutSwitcher(props: Props) {
   const { layouts, onChange, selectedLayout } = props;
   const { isMobile } = usePlatformOS();
 
@@ -47,4 +47,4 @@ export const LayoutSwitcher: React.FC<Props> = (props) => {
       })}
     </div>
   );
-};
+}

@@ -22,7 +22,7 @@ type TInvitationFieldsProps = {
   className?: string;
 };
 
-export const InvitationFields = observer((props: TInvitationFieldsProps) => {
+export const InvitationFields = observer(function InvitationFields(props: TInvitationFieldsProps) {
   const {
     workspaceSlug,
     fields,

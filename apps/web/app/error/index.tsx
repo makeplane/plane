@@ -6,7 +6,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { DevErrorComponent } from "./dev";
 import { ProdErrorComponent } from "./prod";
 
-export const CustomErrorComponent: React.FC<{ error: unknown }> = ({ error }) => {
+export function CustomErrorComponent({ error }: { error: unknown }) {
   // router
   const router = useAppRouter();
 
@@ -18,4 +18,4 @@ export const CustomErrorComponent: React.FC<{ error: unknown }> = ({ error }) =>
   }
 
   return <ProdErrorComponent onGoHome={handleGoHome} />;
-};
+}

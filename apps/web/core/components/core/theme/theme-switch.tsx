@@ -14,7 +14,7 @@ type Props = {
   onChange: (value: I_THEME_OPTION) => void;
 };
 
-export const ThemeSwitch: FC<Props> = (props) => {
+export function ThemeSwitch(props: Props) {
   const { value, onChange } = props;
   const { t } = useTranslation();
   return (
@@ -81,4 +81,4 @@ export const ThemeSwitch: FC<Props> = (props) => {
       ))}
     </CustomSelect>
   );
-};
+}

@@ -14,7 +14,7 @@ export type TProps = {
   handleOnClose?: () => void;
 };
 
-export const ManageWidgetsModal: FC<TProps> = observer((props) => {
+export const ManageWidgetsModal = observer(function ManageWidgetsModal(props: TProps) {
   // props
   const { workspaceSlug, isModalOpen, handleOnClose } = props;
   const { t } = useTranslation();

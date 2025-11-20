@@ -14,7 +14,7 @@ type Props = {
   onConfirm: () => Promise<void>;
 };
 
-export const ConfirmIssueDiscard: React.FC<Props> = (props) => {
+export function ConfirmIssueDiscard(props: Props) {
   const { isOpen, handleClose, onDiscard, onConfirm } = props;
 
   const [isLoading, setIsLoading] = useState(false);
@@ -93,4 +93,4 @@ export const ConfirmIssueDiscard: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+}

@@ -9,7 +9,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { ModuleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseCalendarRoot } from "../base-calendar-root";
 
-export const ModuleCalendarLayout: React.FC = observer(() => {
+export const ModuleCalendarLayout = observer(function ModuleCalendarLayout() {
   const { workspaceSlug, projectId, moduleId } = useParams();
 
   const { issues } = useIssues(EIssuesStoreType.MODULE);

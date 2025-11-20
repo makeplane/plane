@@ -28,7 +28,7 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const PagesListMainContent: React.FC<Props> = observer((props) => {
+export const PagesListMainContent = observer(function PagesListMainContent(props: Props) {
   const { children, pageType, storeType } = props;
   // plane hooks
   const { t } = useTranslation();

@@ -23,7 +23,7 @@ type TIssueTitleInputProps = {
   handleFormChange: () => void;
 };
 
-export const IssueTitleInput: React.FC<TIssueTitleInputProps> = observer((props) => {
+export const IssueTitleInput = observer(function IssueTitleInput(props: TIssueTitleInputProps) {
   const {
     control,
     issueTitleRef,

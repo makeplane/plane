@@ -20,7 +20,7 @@ export type TReadonlyModuleProps = {
   workspaceSlug: string;
 };
 
-export const ReadonlyModule: React.FC<TReadonlyModuleProps> = observer((props) => {
+export const ReadonlyModule = observer(function ReadonlyModule(props: TReadonlyModuleProps) {
   const {
     className,
     hideIcon = false,

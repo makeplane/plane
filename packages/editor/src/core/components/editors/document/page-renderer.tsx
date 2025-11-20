@@ -23,7 +23,7 @@ type Props = {
   disabledExtensions: IEditorProps["disabledExtensions"];
 };
 
-export const PageRenderer = (props: Props) => {
+export function PageRenderer(props: Props) {
   const {
     aiHandler,
     bubbleMenuEnabled,
@@ -71,4 +71,4 @@ export const PageRenderer = (props: Props) => {
       )}
     </div>
   );
-};
+}

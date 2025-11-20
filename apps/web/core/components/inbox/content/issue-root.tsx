@@ -49,7 +49,7 @@ type Props = {
   setIsSubmitting: Dispatch<SetStateAction<TNameDescriptionLoader>>;
 };
 
-export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
+export const InboxIssueMainContent = observer(function InboxIssueMainContent(props: Props) {
   const { workspaceSlug, projectId, inboxIssue, isEditable, isSubmitting, setIsSubmitting } = props;
   // refs
   const editorRef = useRef<EditorRefApi>(null);

@@ -80,7 +80,7 @@ const placeholderEmails = [
   "thomas.selfridge@frstflt.com",
   "albert.zahm@frstflt.com",
 ];
-const InviteMemberInput: React.FC<InviteMemberFormProps> = observer((props) => {
+const InviteMemberInput = observer(function InviteMemberInput(props: InviteMemberFormProps) {
   const {
     control,
     index,
@@ -261,7 +261,7 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = observer((props) => {
   );
 });
 
-export const InviteMembers: React.FC<Props> = (props) => {
+export function InviteMembers(props: Props) {
   const { finishOnboarding, totalSteps, workspace } = props;
 
   const [isInvitationDisabled, setIsInvitationDisabled] = useState(true);
@@ -417,4 +417,4 @@ export const InviteMembers: React.FC<Props> = (props) => {
       <SwitchAccountDropdown />
     </div>
   );
-};
+}

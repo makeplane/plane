@@ -2,11 +2,11 @@
 import { useTranslation } from "@plane/i18n";
 import packageJson from "package.json";
 
-export const PlaneVersionNumber: React.FC = () => {
+export function PlaneVersionNumber() {
   const { t } = useTranslation();
   return (
     <span>
       {t("version")}: v{packageJson.version}
     </span>
   );
-};
+}

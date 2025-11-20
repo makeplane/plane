@@ -25,7 +25,7 @@ const isValidURL = (url: string): boolean => {
   return !disallowedSchemes.test(url);
 };
 
-export const AuthenticationWrapper: FC<TAuthenticationWrapper> = observer((props) => {
+export const AuthenticationWrapper = observer(function AuthenticationWrapper(props: TAuthenticationWrapper) {
   const pathname = usePathname();
   const router = useAppRouter();
   const searchParams = useSearchParams();

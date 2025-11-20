@@ -18,7 +18,8 @@ type Props = {
   handleClose: () => void;
   isMobile?: boolean;
 };
-const ProjectCreateHeader: React.FC<Props> = (props) => {
+
+function ProjectCreateHeader(props: Props) {
   const { handleClose, isMobile = false } = props;
   const { watch, control } = useFormContext<IProject>();
   const { t } = useTranslation();
@@ -101,6 +102,6 @@ const ProjectCreateHeader: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}
 
 export default ProjectCreateHeader;

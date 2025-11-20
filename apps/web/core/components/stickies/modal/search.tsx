@@ -14,7 +14,7 @@ import { CloseIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import { useSticky } from "@/hooks/use-stickies";
 
-export const StickySearch: FC = observer(() => {
+export const StickySearch = observer(function StickySearch() {
   // router
   const { workspaceSlug } = useParams();
   // hooks

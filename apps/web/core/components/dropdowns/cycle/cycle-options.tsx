@@ -37,7 +37,7 @@ type CycleOptionsProps = {
   currentCycleId?: string;
 };
 
-export const CycleOptions: FC<CycleOptionsProps> = observer((props) => {
+export const CycleOptions = observer(function CycleOptions(props: CycleOptionsProps) {
   const { projectId, isOpen, referenceElement, placement, canRemoveCycle, currentCycleId } = props;
   // i18n
   const { t } = useTranslation();

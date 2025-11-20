@@ -26,7 +26,7 @@ type TIssueAttachmentsListItem = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer((props) => {
+export const IssueAttachmentsListItem = observer(function IssueAttachmentsListItem(props: TIssueAttachmentsListItem) {
   const { t } = useTranslation();
   // props
   const { attachmentId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;

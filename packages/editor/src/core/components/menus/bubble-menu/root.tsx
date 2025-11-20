@@ -64,7 +64,7 @@ type Props = {
   editor: Editor;
 };
 
-export const EditorBubbleMenu: FC<Props> = (props) => {
+export function EditorBubbleMenu(props: Props) {
   const { editor } = props;
   // states
   const [isSelecting, setIsSelecting] = useState(false);
@@ -223,4 +223,4 @@ export const EditorBubbleMenu: FC<Props> = (props) => {
       )}
     </BubbleMenu>
   );
-};
+}

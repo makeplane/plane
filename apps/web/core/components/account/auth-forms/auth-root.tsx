@@ -32,7 +32,7 @@ type TAuthRoot = {
   authMode: EAuthModes;
 };
 
-export const AuthRoot: FC<TAuthRoot> = observer((props) => {
+export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   //router
   const searchParams = useSearchParams();
   // query params

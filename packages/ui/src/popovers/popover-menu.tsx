@@ -6,7 +6,7 @@ import { Popover } from "./popover";
 // types
 import type { TPopoverMenu } from "./types";
 
-export const PopoverMenu = <T,>(props: TPopoverMenu<T>) => {
+export function PopoverMenu<T>(props: TPopoverMenu<T>) {
   const {
     popperPosition = "bottom-end",
     popperPadding = 0,
@@ -42,4 +42,4 @@ export const PopoverMenu = <T,>(props: TPopoverMenu<T>) => {
       </Fragment>
     </Popover>
   );
-};
+}

@@ -13,7 +13,7 @@ type Props = {
   webhookDetails: IWebhook;
 };
 
-export const GeneratedHookDetails: React.FC<Props> = (props) => {
+export function GeneratedHookDetails(props: Props) {
   const { handleClose, webhookDetails } = props;
   const { t } = useTranslation();
 
@@ -33,4 +33,4 @@ export const GeneratedHookDetails: React.FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

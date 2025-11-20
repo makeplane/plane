@@ -23,7 +23,7 @@ import { UserService } from "@/services/user.service";
 
 const userService = new UserService();
 
-export const ProfileActivity = observer(() => {
+export const ProfileActivity = observer(function ProfileActivity() {
   const { workspaceSlug, userId } = useParams();
   // store hooks
   const { data: currentUser } = useUser();

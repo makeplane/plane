@@ -26,7 +26,7 @@ type Props = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const RelationIssueList: FC<Props> = observer((props) => {
+export const RelationIssueList = observer(function RelationIssueList(props: Props) {
   const {
     workspaceSlug,
     issueId,

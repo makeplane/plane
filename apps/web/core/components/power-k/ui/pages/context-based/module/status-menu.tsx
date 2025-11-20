@@ -15,7 +15,7 @@ type Props = {
   value: TModuleStatus;
 };
 
-export const PowerKModuleStatusMenu: React.FC<Props> = observer((props) => {
+export const PowerKModuleStatusMenu = observer(function PowerKModuleStatusMenu(props: Props) {
   const { handleSelect, value } = props;
   // translation
   const { t } = useTranslation();

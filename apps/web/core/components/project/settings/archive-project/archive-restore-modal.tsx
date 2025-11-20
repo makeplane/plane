@@ -18,7 +18,7 @@ type Props = {
   archive: boolean;
 };
 
-export const ArchiveRestoreProjectModal: React.FC<Props> = (props) => {
+export function ArchiveRestoreProjectModal(props: Props) {
   const { workspaceSlug, projectId, isOpen, onClose, archive } = props;
   // router
   const router = useAppRouter();
@@ -136,4 +136,4 @@ export const ArchiveRestoreProjectModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+}

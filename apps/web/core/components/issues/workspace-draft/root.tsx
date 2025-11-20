@@ -27,7 +27,7 @@ type TWorkspaceDraftIssuesRoot = {
   workspaceSlug: string;
 };
 
-export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer((props) => {
+export const WorkspaceDraftIssuesRoot = observer(function WorkspaceDraftIssuesRoot(props: TWorkspaceDraftIssuesRoot) {
   const { workspaceSlug } = props;
   // plane hooks
   const { t } = useTranslation();

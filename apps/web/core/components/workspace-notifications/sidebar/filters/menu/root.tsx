@@ -14,7 +14,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
 import { NotificationFilterOptionItem } from "./menu-option-item";
 
-export const NotificationFilter: FC = observer(() => {
+export const NotificationFilter = observer(function NotificationFilter() {
   // hooks
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();

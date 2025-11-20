@@ -8,7 +8,7 @@ type Props = {
   issue: TIssue;
 };
 
-export const SpreadsheetLinkColumn: React.FC<Props> = observer((props: Props) => {
+export const SpreadsheetLinkColumn = observer(function SpreadsheetLinkColumn(props: Props) {
   const { issue } = props;
 
   return (

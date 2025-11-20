@@ -37,7 +37,7 @@ export type TRelationObject = {
   placeholder: string;
 };
 
-export const RelationsCollapsibleContent: FC<Props> = observer((props) => {
+export const RelationsCollapsibleContent = observer(function RelationsCollapsibleContent(props: Props) {
   const { workspaceSlug, issueId, disabled = false, issueServiceType = EIssueServiceType.ISSUES } = props;
   // plane hooks
   const { t } = useTranslation();

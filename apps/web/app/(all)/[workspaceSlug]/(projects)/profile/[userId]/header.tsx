@@ -24,7 +24,7 @@ type TUserProfileHeader = {
   showProfileIssuesFilter?: boolean;
 };
 
-export const UserProfileHeader: FC<TUserProfileHeader> = observer((props) => {
+export const UserProfileHeader = observer(function UserProfileHeader(props: TUserProfileHeader) {
   const { userProjectsData, type = undefined, showProfileIssuesFilter } = props;
   // router
   const { workspaceSlug, userId } = useParams();

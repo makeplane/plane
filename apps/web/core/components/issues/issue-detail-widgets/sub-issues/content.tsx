@@ -23,7 +23,7 @@ type Props = {
 
 type TIssueCrudState = { toggle: boolean; parentIssueId: string | undefined; issue: TIssue | undefined };
 
-export const SubIssuesCollapsibleContent: FC<Props> = observer((props) => {
+export const SubIssuesCollapsibleContent = observer(function SubIssuesCollapsibleContent(props: Props) {
   const { workspaceSlug, projectId, parentIssueId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
   // state
   const [issueCrudState, setIssueCrudState] = useState<{

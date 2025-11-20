@@ -12,7 +12,7 @@ type Props = {
   onCommandSelect: (command: TPowerKCommandConfig) => void;
 };
 
-export const PowerKModalDefaultPage: React.FC<Props> = (props) => {
+export function PowerKModalDefaultPage(props: Props) {
   const { context, onCommandSelect } = props;
   // store hooks
   const { commandRegistry } = usePowerK();
@@ -20,4 +20,4 @@ export const PowerKModalDefaultPage: React.FC<Props> = (props) => {
   const commands = commandRegistry.getVisibleCommands(context);
 
   return <CommandRenderer context={context} commands={commands} onCommandSelect={onCommandSelect} />;
-};
+}

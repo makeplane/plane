@@ -17,7 +17,7 @@ type Props = {
   updateConfig: (key: TInstanceAuthenticationMethodKeys, value: string) => void;
 };
 
-export const GitlabConfiguration: React.FC<Props> = observer((props) => {
+export const GitlabConfiguration = observer(function GitlabConfiguration(props: Props) {
   const { disabled, updateConfig } = props;
   // store
   const { formattedConfig } = useInstance();

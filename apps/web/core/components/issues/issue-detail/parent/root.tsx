@@ -31,7 +31,7 @@ export type TIssueParentDetail = {
   issueOperations: TIssueOperations;
 };
 
-export const IssueParentDetail: FC<TIssueParentDetail> = observer((props) => {
+export const IssueParentDetail = observer(function IssueParentDetail(props: TIssueParentDetail) {
   const { workspaceSlug, projectId, issueId, issue, issueOperations } = props;
   // router
   const router = useRouter();

@@ -25,7 +25,7 @@ type Props = {
 // services
 const apiTokenService = new APITokenService();
 
-export const CreateApiTokenModal: React.FC<Props> = (props) => {
+export function CreateApiTokenModal(props: Props) {
   const { isOpen, onClose } = props;
   // states
   const [neverExpires, setNeverExpires] = useState<boolean>(false);
@@ -104,4 +104,4 @@ export const CreateApiTokenModal: React.FC<Props> = (props) => {
       )}
     </ModalCore>
   );
-};
+}

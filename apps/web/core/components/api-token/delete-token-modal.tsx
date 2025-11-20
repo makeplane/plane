@@ -23,7 +23,7 @@ type Props = {
 
 const apiTokenService = new APITokenService();
 
-export const DeleteApiTokenModal: FC<Props> = (props) => {
+export function DeleteApiTokenModal(props: Props) {
   const { isOpen, onClose, tokenId } = props;
   // states
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
@@ -90,4 +90,4 @@ export const DeleteApiTokenModal: FC<Props> = (props) => {
       content={<>{t("workspace_settings.settings.api_tokens.delete.description")} </>}
     />
   );
-};
+}

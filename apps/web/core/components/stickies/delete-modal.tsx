@@ -13,7 +13,7 @@ interface IStickyDelete {
   handleClose: () => void;
 }
 
-export const StickyDeleteModal: React.FC<IStickyDelete> = observer((props) => {
+export const StickyDeleteModal = observer(function StickyDeleteModal(props: IStickyDelete) {
   const { isOpen, handleClose, handleSubmit } = props;
   // states
   const [loader, setLoader] = useState(false);

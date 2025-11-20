@@ -17,7 +17,7 @@ type TIssueParentSiblingItem = {
   issueId: string;
 };
 
-export const IssueParentSiblingItem: FC<TIssueParentSiblingItem> = observer((props) => {
+export const IssueParentSiblingItem = observer(function IssueParentSiblingItem(props: TIssueParentSiblingItem) {
   const { workspaceSlug, issueId } = props;
   // hooks
   const { getProjectById } = useProject();

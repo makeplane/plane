@@ -18,7 +18,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterState: React.FC<Props> = observer((props) => {
+export const FilterState = observer(function FilterState(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery } = props;
 
   const { sortedStates: states } = useStates();

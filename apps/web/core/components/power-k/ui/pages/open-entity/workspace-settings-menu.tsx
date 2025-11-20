@@ -17,7 +17,7 @@ type Props = {
   handleSelect: (href: string) => void;
 };
 
-export const PowerKOpenWorkspaceSettingsMenu: React.FC<Props> = observer((props) => {
+export const PowerKOpenWorkspaceSettingsMenu = observer(function PowerKOpenWorkspaceSettingsMenu(props: Props) {
   const { context, handleSelect } = props;
   // plane hooks
   const { t } = useTranslation();

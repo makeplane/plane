@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect } from "react";
 
 type ScriptProps = {
@@ -14,7 +13,7 @@ type ScriptProps = {
 };
 
 // Minimal shim for next/script that creates a script tag
-const Script: React.FC<ScriptProps> = ({ src, id, strategy: _strategy, onLoad, onError, children, ...rest }) => {
+function Script({ src, id, strategy: _strategy, onLoad, onError, children, ...rest }: ScriptProps) {
   useEffect(() => {
     if (src) {
       const script = document.createElement("script");
@@ -50,6 +49,6 @@ const Script: React.FC<ScriptProps> = ({ src, id, strategy: _strategy, onLoad, o
   }, [src, id, children, onLoad, onError, rest]);
 
   return null;
-};
+}
 
 export default Script;

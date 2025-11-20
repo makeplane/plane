@@ -17,7 +17,7 @@ type Props = {
   type?: "lucide" | "material";
 };
 
-export const Logo: FC<Props> = (props) => {
+export function Logo(props: Props) {
   const { logo, size = 16, type = "material" } = props;
 
   // destructuring the logo object
@@ -102,4 +102,4 @@ export const Logo: FC<Props> = (props) => {
 
   // if no value, return empty fragment
   return <></>;
-};
+}

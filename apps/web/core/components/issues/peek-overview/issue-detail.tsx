@@ -44,7 +44,7 @@ type Props = {
   setIsSubmitting: (value: TNameDescriptionLoader) => void;
 };
 
-export const PeekOverviewIssueDetails: FC<Props> = observer((props) => {
+export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetails(props: Props) {
   const { editorRef, workspaceSlug, issueId, issueOperations, disabled, isArchived, isSubmitting, setIsSubmitting } =
     props;
   // store hooks

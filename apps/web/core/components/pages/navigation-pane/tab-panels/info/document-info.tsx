@@ -17,7 +17,9 @@ const DEFAULT_DOCUMENT_INFO: TDocumentInfo = {
   paragraphs: 0,
 };
 
-export const PageNavigationPaneInfoTabDocumentInfo: React.FC<Props> = observer((props) => {
+export const PageNavigationPaneInfoTabDocumentInfo = observer(function PageNavigationPaneInfoTabDocumentInfo(
+  props: Props
+) {
   const { page } = props;
   // states
   const [documentInfo, setDocumentInfo] = useState<TDocumentInfo>(DEFAULT_DOCUMENT_INFO);

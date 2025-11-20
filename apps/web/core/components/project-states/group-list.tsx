@@ -19,7 +19,7 @@ type TGroupList = {
   stateItemClassName?: string;
 };
 
-export const GroupList: FC<TGroupList> = observer((props) => {
+export const GroupList = observer(function GroupList(props: TGroupList) {
   const {
     groupedStates,
     stateOperationsCallbacks,

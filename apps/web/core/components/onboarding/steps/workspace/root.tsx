@@ -15,7 +15,7 @@ type Props = {
   handleStepChange: (step: EOnboardingSteps, skipInvites?: boolean) => void;
 };
 
-export const WorkspaceSetupStep: React.FC<Props> = observer(({ invitations, handleStepChange }) => {
+export const WorkspaceSetupStep = observer(function WorkspaceSetupStep({ invitations, handleStepChange }: Props) {
   // states
   const [currentView, setCurrentView] = useState<ECreateOrJoinWorkspaceViews | null>(null);
   // store hooks

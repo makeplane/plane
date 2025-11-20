@@ -74,7 +74,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const CalendarChart: React.FC<Props> = observer((props) => {
+export const CalendarChart = observer(function CalendarChart(props: Props) {
   const {
     issuesFilterStore,
     issues,

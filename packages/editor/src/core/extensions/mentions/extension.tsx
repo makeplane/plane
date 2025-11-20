@@ -9,7 +9,7 @@ import { MentionNodeView } from "./mention-node-view";
 // utils
 import { renderMentionsDropdown } from "./utils";
 
-export const CustomMentionExtension = (props: TMentionHandler) => {
+export function CustomMentionExtension(props: TMentionHandler) {
   const { searchCallback, renderComponent, getMentionedEntityDetails } = props;
   return CustomMentionExtensionConfig.extend({
     addOptions(this) {
@@ -32,4 +32,4 @@ export const CustomMentionExtension = (props: TMentionHandler) => {
       }),
     },
   });
-};
+}

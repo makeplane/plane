@@ -22,7 +22,7 @@ import useLocalStorage from "@/hooks/use-local-storage";
 // plane-web imports
 import { SidebarItem } from "@/plane-web/components/workspace/sidebar/sidebar-item";
 
-export const SidebarMenuItems = observer(() => {
+export const SidebarMenuItems = observer(function SidebarMenuItems() {
   // routers
   const { workspaceSlug } = useParams();
   const { setValue: toggleWorkspaceMenu, storedValue: isWorkspaceMenuOpen } = useLocalStorage<boolean>(

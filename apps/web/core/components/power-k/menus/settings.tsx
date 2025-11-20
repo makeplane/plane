@@ -17,14 +17,16 @@ type Props = {
   onSelect: (setting: TSettingItem) => void;
 };
 
-export const PowerKSettingsMenu: React.FC<Props> = observer(({ settings, onSelect }) => (
-  <PowerKMenuBuilder
-    items={settings}
-    getKey={(setting) => setting.key}
-    getIcon={(setting) => setting.icon}
-    getValue={(setting) => setting.label}
-    getLabel={(setting) => setting.label}
-    onSelect={onSelect}
-    emptyText="No settings found"
-  />
-));
+export const PowerKSettingsMenu = observer(function PowerKSettingsMenu({ settings, onSelect }: Props) {
+  return (
+    <PowerKMenuBuilder
+      items={settings}
+      getKey={(setting) => setting.key}
+      getIcon={(setting) => setting.icon}
+      getValue={(setting) => setting.label}
+      getLabel={(setting) => setting.label}
+      onSelect={onSelect}
+      emptyText="No settings found"
+    />
+  );
+});

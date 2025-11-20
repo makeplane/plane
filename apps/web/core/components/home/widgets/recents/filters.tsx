@@ -15,12 +15,12 @@ export type TFiltersDropdown = {
   filters: { name: TRecentActivityFilterKeys; icon?: React.ReactNode; i18n_key: string }[];
 };
 
-export const FiltersDropdown: FC<TFiltersDropdown> = observer((props) => {
+export const FiltersDropdown = observer(function FiltersDropdown(props: TFiltersDropdown) {
   const { className, activeFilter, setActiveFilter, filters } = props;
   const { t } = useTranslation();
 
-  const DropdownOptions = () =>
-    filters?.map((filter) => (
+  function DropdownOptions() {
+    return filters?.map((filter) => (
       <CustomMenu.MenuItem
         key={filter.name}
         className="flex items-center gap-2 truncate text-custom-text-200"
@@ -31,6 +31,7 @@ export const FiltersDropdown: FC<TFiltersDropdown> = observer((props) => {
         <div className="truncate font-medium text-xs capitalize">{t(filter.i18n_key)}</div>
       </CustomMenu.MenuItem>
     ));
+  }
 
   const title = activeFilter ? filters?.find((filter) => filter.name === activeFilter)?.i18n_key : "";
   return (

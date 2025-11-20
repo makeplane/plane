@@ -28,7 +28,7 @@ type Props = {
 
 type GithubConfigFormValues = Record<TInstanceGithubAuthenticationConfigurationKeys, string>;
 
-export const InstanceGithubConfigForm: React.FC<Props> = (props) => {
+export function InstanceGithubConfigForm(props: Props) {
   const { config } = props;
   // states
   const [isDiscardChangesModalOpen, setIsDiscardChangesModalOpen] = useState(false);
@@ -245,4 +245,4 @@ export const InstanceGithubConfigForm: React.FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

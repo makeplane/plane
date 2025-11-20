@@ -23,7 +23,7 @@ export type TPopoverMenuOptions = {
   onClick?: (() => void) | undefined;
 };
 
-export const NotificationHeaderMenuOption = observer(() => {
+export const NotificationHeaderMenuOption = observer(function NotificationHeaderMenuOption() {
   // hooks
   const { filters, updateFilters, updateBulkFilters } = useWorkspaceNotifications();
   const { t } = useTranslation();

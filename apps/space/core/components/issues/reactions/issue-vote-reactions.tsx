@@ -19,7 +19,7 @@ type TIssueVotes = {
   size?: "md" | "sm";
 };
 
-export const IssueVotes: React.FC<TIssueVotes> = observer((props) => {
+export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
   const { anchor, issueIdFromProps, size = "md" } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);

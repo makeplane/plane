@@ -26,7 +26,7 @@ type Props = {
   updateSearchTerm: (value: string) => void;
 };
 
-export const PowerKModalSearchMenu: React.FC<Props> = (props) => {
+export function PowerKModalSearchMenu(props: Props) {
   const { activePage, context, isWorkspaceLevel, searchTerm, updateSearchTerm } = props;
   // states
   const [resultsCount, setResultsCount] = useState(0);
@@ -104,4 +104,4 @@ export const PowerKModalSearchMenu: React.FC<Props> = (props) => {
       )}
     </>
   );
-};
+}

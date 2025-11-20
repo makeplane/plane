@@ -50,7 +50,7 @@ export interface IBaseKanBanLayout {
   isEpic?: boolean;
 }
 
-export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBaseKanBanLayout) => {
+export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBanLayout) {
   const {
     QuickActions,
     addIssuesToView,

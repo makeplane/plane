@@ -38,7 +38,7 @@ const LAYOUTS = [
   EIssueLayoutTypes.GANTT,
 ];
 
-export const HeaderFilters = observer((props: Props) => {
+export const HeaderFilters = observer(function HeaderFilters(props: Props) {
   const {
     currentProjectDetails,
     projectId,

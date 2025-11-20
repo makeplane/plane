@@ -35,7 +35,7 @@ type TCycleProgressStats = {
   totalIssuesCount: number;
 };
 
-export const CycleProgressStats: FC<TCycleProgressStats> = observer((props) => {
+export const CycleProgressStats = observer(function CycleProgressStats(props: TCycleProgressStats) {
   const {
     cycleId,
     distribution,

@@ -28,7 +28,7 @@ export type PlanUpgradeCardProps = {
   isTrialAllowed: boolean;
 };
 
-export const PlanUpgradeCard: FC<PlanUpgradeCardProps> = observer((props) => {
+export const PlanUpgradeCard = observer(function PlanUpgradeCard(props: PlanUpgradeCardProps) {
   const {
     planVariant,
     features,

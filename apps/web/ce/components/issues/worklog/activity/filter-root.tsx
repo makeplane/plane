@@ -14,7 +14,7 @@ export type TActivityFilterRoot = {
   isIntakeIssue?: boolean;
 };
 
-export const ActivityFilterRoot: FC<TActivityFilterRoot> = (props) => {
+export function ActivityFilterRoot(props: TActivityFilterRoot) {
   const { selectedFilters, toggleFilter } = props;
 
   const filters: TActivityFilterOption[] = Object.entries(ACTIVITY_FILTER_TYPE_OPTIONS).map(([key, value]) => {
@@ -28,4 +28,4 @@ export const ActivityFilterRoot: FC<TActivityFilterRoot> = (props) => {
   });
 
   return <ActivityFilter selectedFilters={selectedFilters} filterOptions={filters} />;
-};
+}

@@ -15,7 +15,7 @@ export type TReadonlyPriorityProps = {
   placeholder?: string;
 };
 
-export const ReadonlyPriority: React.FC<TReadonlyPriorityProps> = observer((props) => {
+export const ReadonlyPriority = observer(function ReadonlyPriority(props: TReadonlyPriorityProps) {
   const { className, hideIcon = false, value, placeholder } = props;
 
   const { t } = useTranslation();

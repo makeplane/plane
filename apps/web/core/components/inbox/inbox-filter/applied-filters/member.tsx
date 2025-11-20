@@ -19,7 +19,9 @@ type InboxIssueAppliedFiltersMember = {
   label: string;
 };
 
-export const InboxIssueAppliedFiltersMember: FC<InboxIssueAppliedFiltersMember> = observer((props) => {
+export const InboxIssueAppliedFiltersMember = observer(function InboxIssueAppliedFiltersMember(
+  props: InboxIssueAppliedFiltersMember
+) {
   const { filterKey, label } = props;
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();

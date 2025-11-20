@@ -10,7 +10,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkItemFilterInstance } from "@/hooks/store/work-item-filters/use-work-item-filter-instance";
 import { useAppRouter } from "@/hooks/use-app-router";
 
-export const ProjectArchivedEmptyState: React.FC = observer(() => {
+export const ProjectArchivedEmptyState = observer(function ProjectArchivedEmptyState() {
   // router
   const router = useAppRouter();
   const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId } = useParams();

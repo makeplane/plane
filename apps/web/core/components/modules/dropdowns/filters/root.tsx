@@ -22,7 +22,7 @@ type Props = {
   isArchived?: boolean;
 };
 
-export const ModuleFiltersSelection: React.FC<Props> = observer((props) => {
+export const ModuleFiltersSelection = observer(function ModuleFiltersSelection(props: Props) {
   const {
     displayFilters,
     filters,

@@ -5,7 +5,7 @@ type PageHeadTitleProps = {
   description?: string;
 };
 
-export const PageHead: React.FC<PageHeadTitleProps> = (props) => {
+export function PageHead(props: PageHeadTitleProps) {
   const { title } = props;
 
   useEffect(() => {
@@ -15,4 +15,4 @@ export const PageHead: React.FC<PageHeadTitleProps> = (props) => {
   }, [title]);
 
   return null;
-};
+}

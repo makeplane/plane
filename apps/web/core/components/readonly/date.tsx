@@ -14,7 +14,7 @@ export type TReadonlyDateProps = {
   formatToken?: string;
 };
 
-export const ReadonlyDate: React.FC<TReadonlyDateProps> = observer((props) => {
+export const ReadonlyDate = observer(function ReadonlyDate(props: TReadonlyDateProps) {
   const { className, hideIcon = false, value, placeholder, formatToken } = props;
 
   const { t } = useTranslation();

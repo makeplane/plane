@@ -10,7 +10,7 @@ type Props = {
   targetDate: string | null;
 };
 
-export const WorkItemPreviewCardDate: React.FC<Props> = (props) => {
+export function WorkItemPreviewCardDate(props: Props) {
   const { startDate, stateGroup, targetDate } = props;
   // derived values
   const isDateRangeEnabled = Boolean(startDate && targetDate);
@@ -48,4 +48,4 @@ export const WorkItemPreviewCardDate: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+}

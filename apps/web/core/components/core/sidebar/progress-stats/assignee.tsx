@@ -24,7 +24,7 @@ type TAssigneeStatComponent = {
   isEditable?: boolean;
 };
 
-export const AssigneeStatComponent = observer((props: TAssigneeStatComponent) => {
+export const AssigneeStatComponent = observer(function AssigneeStatComponent(props: TAssigneeStatComponent) {
   const { distribution, isEditable, selectedAssigneeIds, handleAssigneeFiltersUpdate } = props;
   const { t } = useTranslation();
   return (

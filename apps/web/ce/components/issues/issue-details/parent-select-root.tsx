@@ -20,7 +20,7 @@ type TIssueParentSelect = {
   workspaceSlug: string;
 };
 
-export const IssueParentSelectRoot: React.FC<TIssueParentSelect> = observer((props) => {
+export const IssueParentSelectRoot = observer(function IssueParentSelectRoot(props: TIssueParentSelect) {
   const { issueId, issueOperations, projectId, workspaceSlug } = props;
   const { t } = useTranslation();
   // store hooks

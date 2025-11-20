@@ -9,7 +9,7 @@ type TCountChip = {
   className?: string;
 };
 
-export const CountChip: FC<TCountChip> = (props) => {
+export function CountChip(props: TCountChip) {
   const { count, className = "" } = props;
 
   return (
@@ -22,4 +22,4 @@ export const CountChip: FC<TCountChip> = (props) => {
       {count}
     </div>
   );
-};
+}

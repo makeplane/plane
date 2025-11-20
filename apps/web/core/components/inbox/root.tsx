@@ -23,7 +23,7 @@ type TInboxIssueRoot = {
   navigationTab?: EInboxIssueCurrentTab | undefined;
 };
 
-export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
+export const InboxIssueRoot = observer(function InboxIssueRoot(props: TInboxIssueRoot) {
   const { workspaceSlug, projectId, inboxIssueId, inboxAccessible, navigationTab } = props;
   // states
   const [isMobileSidebar, setIsMobileSidebar] = useState(true);
