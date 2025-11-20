@@ -22,7 +22,7 @@ export const ProjectEmptyState: React.FC = observer(() => {
   const { toggleCreateIssueModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
   // derived values
-  const projectWorkItemFilter = projectId ? useWorkItemFilterInstance(EIssuesStoreType.PROJECT, projectId) : undefined;
+  const projectWorkItemFilter = useWorkItemFilterInstance(EIssuesStoreType.PROJECT, projectId);
 
   const canPerformEmptyStateActions = allowPermissions(
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
