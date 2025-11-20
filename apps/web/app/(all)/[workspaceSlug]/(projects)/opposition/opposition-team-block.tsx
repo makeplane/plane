@@ -16,7 +16,7 @@ interface Team {
   logo: string;
   athletic_email: string;
   athletic_phone: string;
-  athletic_coach_name: string;
+  head_coach_name: string;
   asst_coach_name: string;
   asst_athletic_email: string;
   asst_athletic_phone: string;
