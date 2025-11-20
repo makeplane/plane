@@ -45,7 +45,7 @@ type Props = {
 export const FavoriteFolder: React.FC<Props> = (props) => {
   const { favorite, handleRemoveFromFavorites, isLastChild, handleDrop } = props;
   // store hooks
-  const { getGroupedFavorites } = useFavorite();
+  const { fetchGroupedFavorites } = useFavorite();
   const { isMobile } = usePlatformOS();
   const { workspaceSlug } = useParams();
   // states
@@ -61,9 +61,9 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (favorite.children === undefined && workspaceSlug) {
-      getGroupedFavorites(workspaceSlug.toString(), favorite.id);
+      fetchGroupedFavorites(workspaceSlug.toString(), favorite.id);
     }
-  }, [favorite.id, favorite.children, workspaceSlug, getGroupedFavorites]);
+  }, [favorite.id, favorite.children, workspaceSlug, fetchGroupedFavorites]);
 
   useEffect(() => {
     const element = elementRef.current;

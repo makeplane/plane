@@ -1,11 +1,10 @@
-// plane editor
-import type { TMentionComponentProps } from "@plane/editor";
-// plane web components
-import { EditorAdditionalMentionsRoot } from "@/plane-web/components/editor";
-// local components
+// plane web imports
+import type { TEditorMentionComponentProps } from "@/plane-web/components/editor/embeds/mentions";
+import { EditorAdditionalMentionsRoot } from "@/plane-web/components/editor/embeds/mentions";
+// local imports
 import { EditorUserMention } from "./user";
 
-export const EditorMentionsRoot: React.FC<TMentionComponentProps> = (props) => {
+export const EditorMentionsRoot: React.FC<TEditorMentionComponentProps> = (props) => {
   const { entity_identifier, entity_name } = props;
 
   switch (entity_name) {

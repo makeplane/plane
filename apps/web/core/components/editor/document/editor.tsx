@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import { forwardRef } from "react";
 // plane imports
 import { DocumentEditorWithRef } from "@plane/editor";
 import type { IEditorPropsExtended, EditorRefApi, IDocumentEditorProps, TFileHandler } from "@plane/editor";
@@ -50,6 +50,7 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
   });
   // use editor mention
   const { fetchMentions } = useEditorMention({
+    enableAdvancedMentions: true,
     searchEntity: editable ? async (payload) => await props.searchMentionCallback(payload) : async () => ({}),
   });
   // editor config
