@@ -5,7 +5,6 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
 import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { cn } from "@plane/utils";
 // components
@@ -25,8 +24,6 @@ type NotificationsRootProps = {
 };
 
 export const NotificationsRoot = observer(function NotificationsRoot({ workspaceSlug }: NotificationsRootProps) {
-  // plane hooks
-  const { t } = useTranslation();
   // hooks
   const { currentWorkspace } = useWorkspace();
   const {

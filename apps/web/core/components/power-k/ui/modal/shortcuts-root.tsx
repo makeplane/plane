@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { useState, Fragment } from "react";
 import { Search } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";

@@ -1,6 +1,6 @@
 "use client";
 
-import type { FC, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { PostHogProvider as PHProvider } from "@posthog/react";
 import { observer } from "mobx-react";

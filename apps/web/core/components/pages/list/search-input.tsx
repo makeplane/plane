@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { useState, useRef, useEffect } from "react";
 import { Search } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";

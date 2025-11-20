@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import Link from "next/link";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";

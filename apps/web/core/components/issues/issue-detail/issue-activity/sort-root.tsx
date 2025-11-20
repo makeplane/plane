@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { memo } from "react";
 import { ArrowUpWideNarrow, ArrowDownWideNarrow } from "lucide-react";
 // plane package imports

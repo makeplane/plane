@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // computed
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";

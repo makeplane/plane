@@ -1,4 +1,3 @@
-import type { FC } from "react";
 // plane types
 import { useTranslation } from "@plane/i18n";
 // hooks

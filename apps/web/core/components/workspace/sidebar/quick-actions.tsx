@@ -6,7 +6,6 @@ import { EUserPermissions, EUserPermissionsLevel, SIDEBAR_TRACKER_ELEMENTS } fro
 import { useTranslation } from "@plane/i18n";
 import { AddIcon } from "@plane/propel/icons";
 import type { TIssue } from "@plane/types";
-import { cn } from "@plane/utils";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 import { SidebarAddButton } from "@/components/sidebar/add-button";
@@ -22,7 +21,7 @@ export const SidebarQuickActions = observer(function SidebarQuickActions() {
   const { t } = useTranslation();
   // states
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
-  const [isDraftButtonOpen, setIsDraftButtonOpen] = useState(false);
+  const [_isDraftButtonOpen, setIsDraftButtonOpen] = useState(false);
   // refs
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const timeoutRef = useRef<any>();

@@ -1,4 +1,3 @@
-import type { FC } from "react";
 // components
 import type { TLabelOperations } from "../root";
 import { IssueLabelSelect } from "./label-select";

@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import { Logo } from "@plane/propel/emoji-icon-picker";

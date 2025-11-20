@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { useEffect, useState, useMemo } from "react";
 import { TwitterPicker } from "react-color";
 import { Button } from "@plane/propel/button";

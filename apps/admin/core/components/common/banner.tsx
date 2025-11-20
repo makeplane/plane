@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 
 type TBanner = {

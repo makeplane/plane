@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 // components
 import { Loader } from "@plane/ui";
 

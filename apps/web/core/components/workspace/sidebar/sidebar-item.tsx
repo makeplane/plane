@@ -1,6 +1,6 @@
-// SidebarItemBase.tsx
 "use client";
-import type { FC, ReactNode } from "react";
+
+import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";

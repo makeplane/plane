@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // components
 import { LabelListItem } from "./label-list-item";
