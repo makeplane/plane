@@ -21,7 +21,7 @@
     "./styles": "./dist/styles/index.css"
   },
   "scripts": {
-    "build": "tsc && tsdown",
+    "build": "tsdown",
     "dev": "tsdown --watch",
     "check:lint": "eslint . --max-warnings 30",
     "check:types": "tsc --noEmit",
