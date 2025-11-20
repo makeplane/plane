@@ -1618,6 +1618,8 @@ export default {
         exporting: "Wird exportiert",
         previous_exports: "Bisherige Exporte",
         export_separate_files: "Daten in separaten Dateien exportieren",
+        filters_info:
+          "Wenden Sie Filter an, um bestimmte Arbeitselemente basierend auf Ihren Kriterien zu exportieren.",
         modal: {
           title: "Exportieren nach",
           toasts: {

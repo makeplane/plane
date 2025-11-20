@@ -79,6 +79,10 @@ type Props = {
    * @description Workspace slug, this will be used to get the workspace details
    */
   workspaceSlug: string;
+  /**
+   * @description Issue sequence id, this will be used to get the issue sequence id
+   */
+  issueSequenceId?: number;
 };
 
 /**
@@ -100,6 +104,7 @@ export const DescriptionInput: React.FC<Props> = observer((props) => {
     setIsSubmitting,
     swrDescription,
     workspaceSlug,
+    issueSequenceId,
   } = props;
   // states
   const [localDescription, setLocalDescription] = useState<TFormData>({
@@ -110,7 +115,7 @@ export const DescriptionInput: React.FC<Props> = observer((props) => {
   const hasUnsavedChanges = useRef(false);
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   // derived values
   const workspaceDetails = getWorkspaceBySlug(workspaceSlug);
   // translation
@@ -195,6 +200,7 @@ export const DescriptionInput: React.FC<Props> = observer((props) => {
               editable={!disabled}
               ref={editorRef}
               id={entityId}
+              issueSequenceId={issueSequenceId}
               disabledExtensions={disabledExtensions}
               initialValue={localDescription.description_html ?? "<p></p>"}
               value={swrDescription ?? null}
@@ -232,6 +238,19 @@ export const DescriptionInput: React.FC<Props> = observer((props) => {
                 } catch (error) {
                   console.log("Error in uploading asset:", error);
                   throw new Error("Asset upload failed. Please try again later.");
+                }
+              }}
+              duplicateFile={async (assetId: string) => {
+                try {
+                  const { asset_id } = await duplicateEditorAsset({
+                    assetId,
+                    entityType: fileAssetType,
+                    projectId,
+                    workspaceSlug,
+                  });
+                  return asset_id;
+                } catch {
+                  throw new Error("Asset duplication failed. Please try again later.");
                 }
               }}
             />

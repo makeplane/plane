@@ -1605,6 +1605,7 @@ export default {
         exporting: "Експортування",
         previous_exports: "Попередні експорти",
         export_separate_files: "Експортувати дані в окремі файли",
+        filters_info: "Застосуйте фільтри для експорту конкретних робочих елементів за вашими критеріями.",
         modal: {
           title: "Експортувати в",
           toasts: {

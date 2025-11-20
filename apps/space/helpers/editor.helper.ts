@@ -58,6 +58,10 @@ export const getEditorFileHandlers = (args: TArgs): TFileHandler => {
         await sitesFileService.restoreNewAsset(anchor, src);
       }
     },
+    duplicate: async (assetId: string) =>
+      // Duplication is not supported for sites/space app
+      // Return the same assetId as a fallback
+      assetId,
     validation: {
       maxFileSize: MAX_FILE_SIZE,
     },

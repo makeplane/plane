@@ -1614,6 +1614,7 @@ export default {
         exporting: "Se exportă",
         previous_exports: "Exporturi anterioare",
         export_separate_files: "Exportă datele în fișiere separate",
+        filters_info: "Aplică filtre pentru a exporta elemente de lucru specifice în funcție de criteriile tale.",
         modal: {
           title: "Exportă în",
           toasts: {

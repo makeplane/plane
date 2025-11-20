@@ -13,6 +13,7 @@ import { IssueCommentToolbar } from "@/components/editor/lite-text/toolbar";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store/use-member";
+import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // plane web service
@@ -22,7 +23,7 @@ const workspaceService = new WorkspaceService();
 
 type LiteTextEditorWrapperProps = MakeOptional<
   Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler" | "extendedEditorProps">,
-  "disabledExtensions" | "flaggedExtensions"
+  "disabledExtensions" | "flaggedExtensions" | "getEditorMetaData"
 > & {
   workspaceSlug: string;
   workspaceId: string;
@@ -44,6 +45,7 @@ type LiteTextEditorWrapperProps = MakeOptional<
     | {
         editable: true;
         uploadFile: TFileHandler["upload"];
+        duplicateFile: TFileHandler["duplicate"];
       }
   );
 
@@ -73,12 +75,18 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   const isLiteVariant = variant === "lite";
   const isFullVariant = variant === "full";
   const [isFocused, setIsFocused] = useState(isFullVariant ? showToolbarInitially : true);
+  const [editorRef, setEditorRef] = useState<EditorRefApi | null>(null);
   // editor flaggings
   const { liteText: liteTextEditorExtensions } = useEditorFlagging({
     workspaceSlug: workspaceSlug?.toString() ?? "",
   });
   // store hooks
   const { getUserDetails } = useMember();
+  // parse content
+  const { getEditorMetaData } = useParseEditorContent({
+    projectId,
+    workspaceSlug,
+  });
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: async (payload) =>
@@ -95,7 +103,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   }
   // derived values
   const isEmpty = isCommentEmpty(props.initialValue);
-  const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
+
   return (
     <div
       className={cn(
@@ -120,9 +128,16 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
             fileHandler={getEditorFileHandlers({
               projectId,
               uploadFile: editable ? props.uploadFile : async () => "",
+              duplicateFile: editable ? props.duplicateFile : async () => "",
               workspaceId,
               workspaceSlug,
             })}
+            getEditorMetaData={getEditorMetaData}
+            handleEditorReady={(ready) => {
+              if (ready) {
+                setEditorRef(isMutableRefObject<EditorRefApi>(ref) ? ref.current : null);
+              }
+            }}
             mentionHandler={{
               searchCallback: async (query) => {
                 const res = await fetchMentions(query);

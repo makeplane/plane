@@ -23,6 +23,8 @@
   },
   "pnpm": {
     "overrides": {
+      "glob": "11.1.0",
+      "js-yaml": "4.1.1",
       "brace-expansion": "2.0.2",
       "nanoid": "3.3.8",
       "esbuild": "0.25.0",
