@@ -2,7 +2,8 @@ import { NodeViewWrapper } from "@tiptap/react";
 import type { NodeViewProps } from "@tiptap/react";
 import { useEffect, useRef, useState } from "react";
 // local imports
-import { CustomImageExtensionType, TCustomImageAttributes, ECustomImageStatus } from "../types";
+import type { CustomImageExtensionType, TCustomImageAttributes } from "../types";
+import { ECustomImageStatus } from "../types";
 import { hasImageDuplicationFailed } from "../utils";
 import { CustomImageBlock } from "./block";
 import { CustomImageUploader } from "./uploader";
@@ -87,7 +88,7 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
           src: newAssetId,
           status: ECustomImageStatus.UPLOADED,
         });
-      } catch (error) {
+      } catch (error: unknown) {
         console.error("Failed to duplicate image:", error);
         // Update status to failed
         updateAttributes({ status: ECustomImageStatus.DUPLICATION_FAILED });

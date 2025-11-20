@@ -11,12 +11,8 @@ import type { TFileHandler } from "@/types";
 import type { CustomImageNodeViewProps } from "./components/node-view";
 import { CustomImageNodeView } from "./components/node-view";
 import { CustomImageExtensionConfig } from "./extension-config";
-import {
-  CustomImageExtensionOptions,
-  CustomImageExtensionStorage,
-  ECustomImageAttributeNames,
-  ECustomImageStatus,
-} from "./types";
+import type { CustomImageExtensionOptions, CustomImageExtensionStorage } from "./types";
+import { ECustomImageAttributeNames, ECustomImageStatus } from "./types";
 import { getImageComponentImageFileMap } from "./utils";
 
 type Props = {
