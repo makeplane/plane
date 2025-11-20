@@ -83,6 +83,10 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
 
         const newAssetId = await extension.options.duplicateImage!(imgNodeSrc);
 
+        if (!newAssetId) {
+          throw new Error("Duplication returned invalid asset ID");
+        }
+
         // Update node with new source and success status
         updateAttributes({
           src: newAssetId,
