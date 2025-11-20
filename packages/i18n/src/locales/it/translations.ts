@@ -1614,6 +1614,7 @@ export default {
         exporting: "Esportazione in corso",
         previous_exports: "Esportazioni precedenti",
         export_separate_files: "Esporta i dati in file separati",
+        filters_info: "Applica filtri per esportare elementi di lavoro specifici in base ai tuoi criteri.",
         modal: {
           title: "Esporta in",
           toasts: {

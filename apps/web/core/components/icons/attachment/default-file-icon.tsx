@@ -5,11 +5,5 @@ import DefaultFileIcon from "@/app/assets/attachment/default-icon.png?url";
 import type { ImageIconPros } from "../types";
 
 export const DefaultIcon: React.FC<ImageIconPros> = ({ width, height }) => (
-  <img
-    src={DefaultFileIcon}
-    width={width}
-    height={height}
-    className="h-full w-full object-contain"
-    alt="DefaultFileIcon"
-  />
+  <img src={DefaultFileIcon} width={width} height={height} alt="DefaultFileIcon" />
 );

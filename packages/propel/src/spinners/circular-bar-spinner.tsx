@@ -1,6 +1,6 @@
 import * as React from "react";
 
-interface ICircularBarSpinner extends React.SVGAttributes<SVGElement> {
+export interface ICircularBarSpinner extends React.SVGAttributes<SVGElement> {
   height?: string;
   width?: string;
   className?: string | undefined;
