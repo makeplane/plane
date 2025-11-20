@@ -261,11 +261,15 @@ export class UserService extends APIService {
   }
 
   async checkEmail(token: string, email: string): Promise<IEmailCheckResponse> {
-    return this.post("/auth/email-check/", { email }, {
-      headers: {
-        "X-CSRFTOKEN": token,
-      },
-    })
+    return this.post(
+      "/auth/email-check/",
+      { email },
+      {
+        headers: {
+          "X-CSRFTOKEN": token,
+        },
+      }
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
