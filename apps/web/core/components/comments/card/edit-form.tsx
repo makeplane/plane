@@ -94,6 +94,10 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
             const { asset_id } = await activityOperations.uploadCommentAsset(blockId, file, comment.id);
             return asset_id;
           }}
+          duplicateFile={async (assetId: string) => {
+            const { asset_id } = await activityOperations.duplicateCommentAsset(assetId, comment.id);
+            return asset_id;
+          }}
           projectId={projectId}
           parentClassName="p-2"
           displayConfig={{

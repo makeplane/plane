@@ -1,5 +1,5 @@
 // local imports
-import { getFileURL } from "./file";
+import { getFileURL } from "../file";
 
 type TEditorSrcArgs = {
   assetId: string;

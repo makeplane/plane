@@ -11,6 +11,7 @@ export type TFileHandler = {
   getAssetSrc: (path: string) => Promise<string>;
   restore: (assetSrc: string) => Promise<void>;
   upload: (blockId: string, file: File) => Promise<string>;
+  duplicate: (assetId: string) => Promise<string>;
   validation: {
     /**
      * @description max file size in bytes

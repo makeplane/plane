@@ -28,6 +28,7 @@
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
+    "@prettier/plugin-oxc": "0.0.4",
     "@types/express": "4.17.23",
     "@types/node": "catalog:",
     "tsdown": "catalog:",

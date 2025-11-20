@@ -21,9 +21,7 @@ export const ProjectArchivedEmptyState = observer(function ProjectArchivedEmptyS
   // store hooks
   const { allowPermissions } = useUserPermissions();
   // derived values
-  const archivedWorkItemFilter = projectId
-    ? useWorkItemFilterInstance(EIssuesStoreType.ARCHIVED, projectId)
-    : undefined;
+  const archivedWorkItemFilter = useWorkItemFilterInstance(EIssuesStoreType.ARCHIVED, projectId);
   const canPerformEmptyStateActions = allowPermissions(
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
     EUserPermissionsLevel.PROJECT

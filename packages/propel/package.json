@@ -192,6 +192,7 @@
     "@plane/eslint-config": "workspace:*",
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
+    "@prettier/plugin-oxc": "0.0.4",
     "@storybook/addon-designs": "10.0.2",
     "@storybook/addon-docs": "9.1.10",
     "@storybook/react-vite": "9.1.10",
