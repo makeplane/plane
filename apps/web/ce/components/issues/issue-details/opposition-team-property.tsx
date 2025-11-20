@@ -46,15 +46,18 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
   // -----------------------------------------------
   // 2️⃣ Fetch teams
   // -----------------------------------------------
-  useEffect(() => {
-    fetch("http://drake.in:1437/api/meta-type?key='OPPOSITIONTEAM'")
-      .then((res) => res.json())
-      .then((data) => {
-        const values = data?.["Gateway Response"]?.result?.[0]?.[2]?.value || [];
-        setTeams(values);
-      })
-      .catch((err) => console.error("Fetch Error:", err));
-  }, []);
+useEffect(() => {
+  const API_URL = `${process.env.NEXT_PUBLIC_CP_SERVER_URL}/meta-type?key='OPPOSITIONTEAM'`;
+
+  fetch(API_URL)
+    .then((res) => res.json())
+    .then((data) => {
+      const values = data?.["Gateway Response"]?.result?.[0]?.[2]?.value || [];
+      setTeams(values);
+    })
+    .catch((err) => console.error("Fetch Error:", err));
+}, []);
+
 
   // Close dropdown on outside click
   useEffect(() => {
