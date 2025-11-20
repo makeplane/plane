@@ -474,11 +474,29 @@ class IssueComment(ChangeTrackerMixin, ProjectBaseModel):
     )
 
     def save(self, *args, **kwargs):
-        self.comment_stripped = strip_tags(self.comment_html) if self.comment_html != "" else ""
-        is_creating = self._state.adding or not self.pk
+        """
+        Custom save method for IssueComment that manages the associated Description model.
 
-        # Save the comment
-        super(IssueComment, self).save(*args, **kwargs)
+        This method handles creation and updates of both the comment and its description in a
+        single atomic transaction to ensure data consistency.
+
+        For new comments:
+            - Strips HTML tags from comment_html to create comment_stripped
+            - Saves the comment first
+            - Creates a new Description record with comment content
+            - Updates the comment with the description_id
+
+        For existing comments:
+            - Tracks changes to comment_html, comment_stripped, and comment_json
+            - Only updates Description if these fields have changed
+            - Updates existing Description or creates one if it doesn't exist
+            - Uses queryset.update() to avoid recursion and maintain sync
+
+        All operations are wrapped in transaction.atomic() to ensure rollback on failure.
+        """
+
+        self.comment_stripped = strip_tags(self.comment_html) if self.comment_html != "" else ""
+        is_creating = self._state.adding
 
         # Prepare description defaults
         description_defaults = {
@@ -491,34 +509,37 @@ class IssueComment(ChangeTrackerMixin, ProjectBaseModel):
             "description_html": self.comment_html,
         }
 
-        if is_creating:
-            # Create new description for new comment
-            description = Description.objects.create(**description_defaults)
-            self.description_id = description.id
-            super(IssueComment, self).save(update_fields=["description_id"])
-        else:
-            changed_fields = {}
+        with transaction.atomic():
+            super(IssueComment, self).save(*args, **kwargs)
 
-            if self.has_changed("comment_html"):
-                changed_fields["description_html"] = self.comment_html
+            if is_creating:
+                # Create new description for new comment
+                description = Description.objects.create(**description_defaults)
+                self.description_id = description.id
+                super(IssueComment, self).save(update_fields=["description_id"])
+            else:
+                changed_fields = {}
 
-            if self.has_changed("comment_stripped"):
-                changed_fields["description_stripped"] = self.comment_stripped
+                if self.has_changed("comment_html"):
+                    changed_fields["description_html"] = self.comment_html
 
-            if self.has_changed("comment_json"):
-                changed_fields["description_json"] = self.comment_json
+                if self.has_changed("comment_stripped"):
+                    changed_fields["description_stripped"] = self.comment_stripped
 
-            # Update description only if comment fields changed
-            if changed_fields:
-                if self.description_id:
-                    Description.objects.filter(pk=self.description_id).update(
-                        **changed_fields, updated_by_id=self.updated_by_id
-                    )
-                else:
-                    # Create description if it doesn't exist
-                    description = Description.objects.create(**description_defaults)
-                    IssueComment.objects.filter(pk=self.pk).update(description_id=description.id)
-                    self.description_id = description.id
+                if self.has_changed("comment_json"):
+                    changed_fields["description_json"] = self.comment_json
+
+                # Update description only if comment fields changed
+                if changed_fields:
+                    if self.description_id:
+                        Description.objects.filter(pk=self.description_id).update(
+                            **changed_fields, updated_by_id=self.updated_by_id
+                        )
+                    else:
+                        # Create description if it doesn't exist
+                        description = Description.objects.create(**description_defaults)
+                        IssueComment.objects.filter(pk=self.pk).update(description_id=description.id)
+                        self.description_id = description.id
 
     class Meta:
         verbose_name = "Issue Comment"
