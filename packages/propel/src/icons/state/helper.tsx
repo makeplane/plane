@@ -8,7 +8,17 @@ export interface IStateGroupIcon {
   percentage?: number;
 }
 
+export interface IIntakeStateGroupIcon {
+  className?: string;
+  color?: string;
+  stateGroup: TIntakeStateGroups;
+  size?: EIconSize;
+  percentage?: number;
+}
+
 export type TStateGroups = "backlog" | "unstarted" | "started" | "completed" | "cancelled";
+
+export type TIntakeStateGroups = "triage";
 
 export const STATE_GROUP_COLORS: {
   [key in TStateGroups]: string;
@@ -19,6 +29,8 @@ export const STATE_GROUP_COLORS: {
   completed: "#46A758",
   cancelled: "#9AA4BC",
 };
+
+export const INTAKE_STATE_GROUP_COLORS: { [key in TIntakeStateGroups]: string } = { triage: "#9AA4BC" };
 
 export const STATE_GROUP_SIZES: {
   [key in EIconSize]: string;
