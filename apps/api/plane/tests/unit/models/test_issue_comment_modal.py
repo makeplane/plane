@@ -101,7 +101,6 @@ class TestIssueCommentModel:
         )
 
         initial_description_id = issue_comment.description_id
-        initial_description = Description.objects.get(pk=initial_description_id)
 
         # Act - Update the comment
         updated_html = "<p>Updated comment</p>"
@@ -179,8 +178,6 @@ class TestIssueCommentModel:
         )
 
         initial_description_id = issue_comment.description_id
-        initial_description = Description.objects.get(pk=initial_description_id)
-        initial_updated_at = initial_description.updated_at
 
         # Act - Save without changing content
         issue_comment.save()
@@ -286,4 +283,4 @@ class TestIssueCommentModel:
         # Verify description was created with empty stripped content
         description = Description.objects.get(pk=issue_comment.description_id)
 
-        assert description.description_stripped == None
+        assert description.description_stripped is None
