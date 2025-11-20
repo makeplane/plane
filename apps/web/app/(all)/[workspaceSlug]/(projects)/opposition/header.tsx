@@ -10,17 +10,14 @@ import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import OppositionSearch from "./opposition-search";
-import { useOppositionSearch } from "./opposition-search-context";
+import { useOppositionSearch } from "./(context)/opposition-search-context";
 import { OppositionTeamModal } from "./opposition-team-form";
 // import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
-
-
-
 
 export const WorkspaceOppositionHeader = observer(() => {
   // state
   const [isOppositionTeamModalOpen, setIsOppositionTeamModalOpen] = useState(false);
-   const { search, setSearch } = useOppositionSearch();
+  const { search, setSearch } = useOppositionSearch();
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { joinedProjectIds } = useProject();
@@ -33,17 +30,17 @@ export const WorkspaceOppositionHeader = observer(() => {
   );
   return (
     <>
-      <OppositionTeamModal
-        isOpen={isOppositionTeamModalOpen}
-        onClose={() => setIsOppositionTeamModalOpen(false)}
-      />
+      <OppositionTeamModal isOpen={isOppositionTeamModalOpen} onClose={() => setIsOppositionTeamModalOpen(false)} />
       <Header>
         <Header.LeftItem>
           <div className="flex items-center gap-2.5">
             <Breadcrumbs>
               <Breadcrumbs.Item
                 component={
-                  <BreadcrumbLink label={t("Opposition teams")} icon={<UsersRoundIcon className="h-4 w-4 text-custom-text-300" />} />
+                  <BreadcrumbLink
+                    label={t("Opposition teams")}
+                    icon={<UsersRoundIcon className="h-4 w-4 text-custom-text-300" />}
+                  />
                 }
               />
             </Breadcrumbs>
@@ -51,8 +48,7 @@ export const WorkspaceOppositionHeader = observer(() => {
         </Header.LeftItem>
 
         <Header.RightItem>
-          <OppositionSearch  searchQuery={search}
-                updateSearchQuery={setSearch} />
+          <OppositionSearch searchQuery={search} updateSearchQuery={setSearch} />
           {joinedProjectIds && joinedProjectIds.length > 0 && (
             <Button
               variant="primary"

@@ -30,7 +30,7 @@ export async function loadOppositionTeams() {
         name: item.name,
         address: item.address,
         asst_coach_name: item.asst_coach_name,
-        athletic_coach_name: item.head_coach_name,
+        head_coach_name: item.head_coach_name,
         asst_athletic_email: item.asst_athletic_email,
         asst_athletic_phone: item.asst_athletic_phone,
         athletic_email: item.athletic_email,

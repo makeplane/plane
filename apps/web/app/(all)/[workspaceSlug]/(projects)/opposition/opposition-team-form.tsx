@@ -5,6 +5,7 @@ import PhoneInput from "react-phone-input-2";
 import { Pencil, Users } from "lucide-react";
 import { Button } from "@plane/propel/button";
 import { Input, ModalCore, EModalPosition, Label } from "@plane/ui";
+import { useOppositionTeams } from "./(context)/opposition-teams-context";
 import { updateEntity } from "./(opposition-api)/update-opposition";
 
 interface Team {
@@ -13,7 +14,7 @@ interface Team {
   logo: string;
   athletic_email: string;
   athletic_phone: string;
-  athletic_coach_name: string;
+  head_coach_name: string;
   asst_coach_name: string;
   asst_athletic_email: string;
   asst_athletic_phone: string;
@@ -35,6 +36,8 @@ const convertToBase64 = (file: File): Promise<string> =>
     reader.onload = () => resolve(reader.result as string);
     reader.onerror = reject;
   });
+
+
 
 async function getOppositionTeamBlock() {
   const res = await fetch(API_URL);
@@ -76,6 +79,8 @@ export const OppositionTeamModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const [logo, setLogo] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
 
+    const { refreshTeams } = useOppositionTeams();
+
   const handleImageChange = (e: any) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -103,7 +108,7 @@ const handleSubmit = async () => {
     address,
     athletic_email: athleticEmail,
     athletic_phone: athleticPhone,
-    athletic_coach_name: athleticDirector,
+    head_coach_name: athleticDirector,
     asst_coach_name: assistantDirector,
     asst_athletic_email: assistantEmail,
     asst_athletic_phone: assistantPhone,
@@ -120,6 +125,7 @@ const handleSubmit = async () => {
   };
 
   await updateEntity("meta-type", entity);
+  refreshTeams();
   onClose();
 };
 
@@ -247,11 +253,13 @@ export const EditOppositionTeamModal: React.FC<Props> = ({ isOpen, onClose, team
   const [logo, setLogo] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
 
+    const { refreshTeams } = useOppositionTeams();
+
   useEffect(() => {
     if (team) {
       setTeamName(team.name);
       setAddress(team.address);
-      setAthleticDirector(team.athletic_coach_name);
+      setAthleticDirector(team.head_coach_name);
       setAthleticEmail(team.athletic_email);
       setAthleticPhone(team.athletic_phone);
       setAssistantDirector(team.asst_coach_name);
@@ -272,22 +280,26 @@ export const EditOppositionTeamModal: React.FC<Props> = ({ isOpen, onClose, team
     }
   };
 
-  const handleUpdate = async () => {
-
+ const handleUpdate = async () => {
   const block = await getOppositionTeamBlock();
   if (!block) return;
 
   if (index === undefined) return;
 
-  let logoBase64 = "";
-    if (logo) logoBase64 = await convertToBase64(logo);
+  const oldTeam = block.values[index];
+
+  let logoBase64 = oldTeam.logo;  // default to existing logo
+
+  if (logo instanceof File) {
+    logoBase64 = await convertToBase64(logo);
+  }
 
   const updatedTeam = {
     name: teamName,
     address,
     athletic_email: athleticEmail,
     athletic_phone: athleticPhone,
-    athletic_coach_name: athleticDirector,
+    head_coach_name: athleticDirector,
     asst_coach_name: assistantDirector,
     asst_athletic_email: assistantEmail,
     asst_athletic_phone: assistantPhone,
@@ -305,8 +317,10 @@ export const EditOppositionTeamModal: React.FC<Props> = ({ isOpen, onClose, team
   };
 
   await updateEntity("meta-type", entity);
+  refreshTeams();
   onClose();
 };
+
 
 
   return (
@@ -370,7 +384,7 @@ export const EditOppositionTeamModal: React.FC<Props> = ({ isOpen, onClose, team
             onChange={(val, country) => setAthleticPhone(formatPhone(val, country))}
             inputClass="!bg-transparent border-[0.5px] !border-custom-border-200 !w-full "
             buttonClass="!bg-transparent border-[0.5px] !border-custom-border-200"
-            dropdownClass="!bg-zinc-800 border-[0.5px] !border-custom-border-200"
+            dropdownClass="!bg-custom-border-200 border-[0.5px] !border-custom-border-200"
             containerClass="w-full"
           />
         </div>
@@ -401,7 +415,7 @@ export const EditOppositionTeamModal: React.FC<Props> = ({ isOpen, onClose, team
             onChange={(val, country) => setAssistantPhone(formatPhone(val, country))}
             inputClass="!bg-transparent border-[0.5px] !border-custom-border-200 !w-full "
             buttonClass="!bg-transparent border-[0.5px] !border-custom-border-200"
-            dropdownClass="!bg-zinc-800 border-[0.5px] !border-custom-border-200"
+            dropdownClass="!bg-custom-border-200 border-[0.5px] !border-custom-border-200"
             containerClass="w-full"
           />
         </div>
