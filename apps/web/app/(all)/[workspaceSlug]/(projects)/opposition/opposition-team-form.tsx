@@ -272,15 +272,19 @@ export const EditOppositionTeamModal: React.FC<Props> = ({ isOpen, onClose, team
     }
   };
 
-  const handleUpdate = async () => {
-
+ const handleUpdate = async () => {
   const block = await getOppositionTeamBlock();
   if (!block) return;
 
   if (index === undefined) return;
 
-  let logoBase64 = "";
-    if (logo) logoBase64 = await convertToBase64(logo);
+  const oldTeam = block.values[index];
+
+  let logoBase64 = oldTeam.logo;  // default to existing logo
+
+  if (logo instanceof File) {
+    logoBase64 = await convertToBase64(logo);
+  }
 
   const updatedTeam = {
     name: teamName,
@@ -307,6 +311,7 @@ export const EditOppositionTeamModal: React.FC<Props> = ({ isOpen, onClose, team
   await updateEntity("meta-type", entity);
   onClose();
 };
+
 
 
   return (
