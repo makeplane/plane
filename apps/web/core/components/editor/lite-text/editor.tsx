@@ -13,6 +13,7 @@ import { IssueCommentToolbar } from "@/components/editor/lite-text/toolbar";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store/use-member";
+import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // plane web service
@@ -22,7 +23,7 @@ const workspaceService = new WorkspaceService();
 
 type LiteTextEditorWrapperProps = MakeOptional<
   Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler" | "extendedEditorProps">,
-  "disabledExtensions" | "flaggedExtensions"
+  "disabledExtensions" | "flaggedExtensions" | "getEditorMetaData"
 > & {
   workspaceSlug: string;
   workspaceId: string;
@@ -80,6 +81,11 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   });
   // store hooks
   const { getUserDetails } = useMember();
+  // parse content
+  const { getEditorMetaData } = useParseEditorContent({
+    projectId,
+    workspaceSlug,
+  });
   // use editor mention
   const { fetchMentions } = useEditorMention({
     searchEntity: async (payload) =>
@@ -124,6 +130,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
               workspaceId,
               workspaceSlug,
             })}
+            getEditorMetaData={getEditorMetaData}
             handleEditorReady={(ready) => {
               if (ready) {
                 setEditorRef(isMutableRefObject<EditorRefApi>(ref) ? ref.current : null);
