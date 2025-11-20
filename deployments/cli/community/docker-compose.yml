@@ -26,13 +26,13 @@ x-aws-s3-env: &aws-s3-env
 x-proxy-env: &proxy-env
   APP_DOMAIN: ${APP_DOMAIN:-localhost}
   FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
-  CERT_EMAIL: ${CERT_EMAIL}
-  CERT_ACME_CA: ${CERT_ACME_CA}
-  CERT_ACME_DNS: ${CERT_ACME_DNS}
-  LISTEN_HTTP_PORT: ${LISTEN_HTTP_PORT:-80}
-  LISTEN_HTTPS_PORT: ${LISTEN_HTTPS_PORT:-443}
+  CERT_EMAIL: ${CERT_EMAIL:-}
+  CERT_ACME_CA: ${CERT_ACME_CA:-https://acme-v02.api.letsencrypt.org/directory}
+  CERT_ACME_DNS: ${CERT_ACME_DNS:-}
+  LISTEN_HTTP_PORT: ${LISTEN_HTTP_PORT:-8081}
+#  LISTEN_HTTPS_PORT: ${LISTEN_HTTPS_PORT:-443}
   BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
-  SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+  SITE_ADDRESS: ${SITE_ADDRESS:-:8081}
 
 x-mq-env: &mq-env # RabbitMQ Settings
   RABBITMQ_HOST: ${RABBITMQ_HOST:-plane-mq}
@@ -54,10 +54,11 @@ x-app-env: &app-env
   USE_MINIO: ${USE_MINIO:-1}
   DATABASE_URL: ${DATABASE_URL:-postgresql://plane:plane@plane-db/plane}
   SECRET_KEY: ${SECRET_KEY:-60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5}
+  LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY:-2FiJk1U2aiVPEQtzLehYGlTSnTnrs7LW}
   AMQP_URL: ${AMQP_URL:-amqp://plane:plane@plane-mq:5672/plane}
   API_KEY_RATE_LIMIT: ${API_KEY_RATE_LIMIT:-60/minute}
   MINIO_ENDPOINT_SSL: ${MINIO_ENDPOINT_SSL:-0}
-  LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY:-2FiJk1U2aiVPEQtzLehYGlTSnTnrs7LW}
+  ENABLE_DRF_SPECTACULAR: 1
 
 services:
   web:
@@ -66,6 +67,8 @@ services:
       replicas: ${WEB_REPLICAS:-1}
       restart_policy:
         condition: any
+    profiles:
+      - full
     depends_on:
       - api
       - worker
@@ -76,6 +79,8 @@ services:
       replicas: ${SPACE_REPLICAS:-1}
       restart_policy:
         condition: any
+    profiles:
+      - full
     depends_on:
       - api
       - worker
@@ -87,6 +92,8 @@ services:
       replicas: ${ADMIN_REPLICAS:-1}
       restart_policy:
         condition: any
+    profiles:
+      - full
     depends_on:
       - api
       - web
@@ -94,11 +101,13 @@ services:
   live:
     image: artifacts.plane.so/makeplane/plane-live:${APP_RELEASE:-stable}
     environment:
-      <<: [*live-env]
+      <<: [*live-env, *redis-env]
     deploy:
       replicas: ${LIVE_REPLICAS:-1}
       restart_policy:
         condition: any
+    profiles:
+      - full
     depends_on:
       - api
       - web
@@ -112,6 +121,8 @@ services:
         condition: any
     volumes:
       - logs_api:/code/plane/logs
+    ports:
+      - "8000:8000"
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
     depends_on:
@@ -182,7 +193,7 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   plane-redis:
-    image: valkey/valkey:7.2.11-alpine
+    image: valkey/valkey:7.2.5-alpine
     deploy:
       replicas: 1
       restart_policy:
@@ -224,23 +235,25 @@ services:
     environment:
       <<: *proxy-env
     ports:
-      - target: 80
-        published: ${LISTEN_HTTP_PORT:-80}
+      - target: 8081
+        published: ${LISTEN_HTTP_PORT:-8081}
         protocol: tcp
         mode: host
-      - target: 443
-        published: ${LISTEN_HTTPS_PORT:-443}
-        protocol: tcp
-        mode: host
+#      - target: 443
+#        published: ${LISTEN_HTTPS_PORT:-443}
+#        protocol: tcp
+#        mode: host
     volumes:
       - proxy_config:/config
       - proxy_data:/data
+    profiles:
+      - full
     depends_on:
       - web
       - api
       - space
       - admin
-      - live
+#      - live
 
 volumes:
   pgdata:
