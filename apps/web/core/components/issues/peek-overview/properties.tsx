@@ -28,6 +28,7 @@ import type { TIssueOperations } from "../issue-detail";
 import { IssueCycleSelect } from "../issue-detail/cycle-select";
 import { IssueLabel } from "../issue-detail/label";
 import { IssueModuleSelect } from "../issue-detail/module-select";
+import OppositionTeamProperty from "@/plane-web/components/issues/issue-details/opposition-team-property";
 
 interface IPeekOverviewProperties {
   workspaceSlug: string;
@@ -167,8 +168,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             buttonClassName={`text-sm ${issue?.start_date ? "" : "text-custom-text-400"}`}
             hideIcon
             clearIconClassName="h-3 w-3 hidden group-hover:inline"
-            // TODO: add this logic
-            // showPlaceholderIcon
+          // TODO: add this logic
+          // showPlaceholderIcon
           />
         </div>
 
@@ -197,8 +198,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             })}
             hideIcon
             clearIconClassName="h-3 w-3 hidden group-hover:inline !text-custom-text-100"
-            // TODO: add this logic
-            // showPlaceholderIcon
+          // TODO: add this logic
+          // showPlaceholderIcon
           />
         </div>
 
@@ -287,21 +288,24 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           </div>
         </div>
 
-        <IssueWorklogProperty
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          issueId={issueId}
-          disabled={disabled}
-        />
 
-        <WorkItemAdditionalSidebarProperties
-          workItemId={issue.id}
-          workItemTypeId={issue.type_id}
-          projectId={projectId}
-          workspaceSlug={workspaceSlug}
-          isEditable={!disabled}
-          isPeekView
-        />
+        {/* opposition team */}
+        <div className="flex w-full items-center gap-3 h-8">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+            <Users className="h-4 w-4 flex-shrink-0" />
+            <p>Opposition</p>
+          </div>
+          <OppositionTeamProperty
+            storageKey={`opp-team-${issueId}`}   // unique key for each card ✔
+            value={issue?.opposition_team}
+            onChange={(team) =>
+              issueOperations.update(workspaceSlug, projectId, issueId, {
+                opposition_team: team,
+              })
+            }
+            disabled={disabled}
+          />
+        </div>
       </div>
     </div>
   );
