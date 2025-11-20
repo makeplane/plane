@@ -45,6 +45,7 @@ type LiteTextEditorWrapperProps = MakeOptional<
     | {
         editable: true;
         uploadFile: TFileHandler["upload"];
+        duplicateFile: TFileHandler["duplicate"];
       }
   );
 
@@ -127,6 +128,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
             fileHandler={getEditorFileHandlers({
               projectId,
               uploadFile: editable ? props.uploadFile : async () => "",
+              duplicateFile: editable ? props.duplicateFile : async () => "",
               workspaceId,
               workspaceSlug,
             })}

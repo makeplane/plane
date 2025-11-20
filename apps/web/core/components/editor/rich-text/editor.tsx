@@ -29,6 +29,7 @@ type RichTextEditorWrapperProps = MakeOptional<
         editable: true;
         searchMentionCallback: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
         uploadFile: TFileHandler["upload"];
+        duplicateFile: TFileHandler["duplicate"];
       }
   );
 
@@ -69,6 +70,7 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
       fileHandler={getEditorFileHandlers({
         projectId,
         uploadFile: editable ? props.uploadFile : async () => "",
+        duplicateFile: editable ? props.duplicateFile : async () => "",
         workspaceId,
         workspaceSlug,
       })}
