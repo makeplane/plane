@@ -17,7 +17,7 @@ def create_triage_state(apps, _schema_editor):
 
     # check any state with name "Intake Triage" exists
     for state in State.objects.filter(name="Intake Triage"):
-        workspace_id = state.workspace_id[:5]
+        workspace_id = str(state.workspace_id)[:5]
         state.name = f"Intake-Triage-{workspace_id}"
         state.save()
 

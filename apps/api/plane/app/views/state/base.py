@@ -133,4 +133,10 @@ class IntakeStateEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
         state = State.triage_objects.filter(workspace__slug=slug, project_id=project_id).first()
+        if not state:
+            return Response(
+                {"error": "Intake triage state not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         return Response(StateSerializer(state).data, status=status.HTTP_200_OK)

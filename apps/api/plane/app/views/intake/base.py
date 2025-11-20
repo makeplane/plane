@@ -421,7 +421,7 @@ class IntakeIssueViewSet(BaseViewSet):
                         workspace__slug=slug,
                         project_id=project_id,
                     )
-                    if issue.state.group == "triage":
+                    if issue.state and issue.state.group == "triage":
                         # get the default project state
                         default_state = State.objects.filter(
                             workspace__slug=slug, project_id=project_id, default=True

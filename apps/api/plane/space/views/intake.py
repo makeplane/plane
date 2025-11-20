@@ -126,6 +126,17 @@ class IntakeIssuePublicViewSet(BaseViewSet):
             project_id=project_deploy_board.project_id, workspace_id=project_deploy_board.workspace_id
         ).first()
 
+        if not triage_state:
+            triage_state = State.objects.create(
+                name="Intake Triage",
+                group="triage",
+                project_id=project_deploy_board.project_id,
+                workspace_id=project_deploy_board.workspace_id,
+                color="#9AA4BC",
+                sequence=65000,
+                default=False,
+            )
+
         # create an issue
         issue = Issue.objects.create(
             name=request.data.get("issue", {}).get("name"),
