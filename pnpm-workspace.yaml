@@ -32,7 +32,7 @@ catalog:
   react-router: 7.9.5
   react: 18.3.1
   swr: 2.2.4
-  tsdown: 0.15.5
+  tsdown: 0.16.0
   typescript: 5.8.3
   uuid: 13.0.0
   vite: 7.1.11
