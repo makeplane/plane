@@ -115,7 +115,7 @@ export const DescriptionInput: React.FC<Props> = observer((props) => {
   const hasUnsavedChanges = useRef(false);
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   // derived values
   const workspaceDetails = getWorkspaceBySlug(workspaceSlug);
   // translation
@@ -238,6 +238,19 @@ export const DescriptionInput: React.FC<Props> = observer((props) => {
                 } catch (error) {
                   console.log("Error in uploading asset:", error);
                   throw new Error("Asset upload failed. Please try again later.");
+                }
+              }}
+              duplicateFile={async (assetId: string) => {
+                try {
+                  const { asset_id } = await duplicateEditorAsset({
+                    assetId,
+                    entityType: fileAssetType,
+                    projectId,
+                    workspaceSlug,
+                  });
+                  return asset_id;
+                } catch {
+                  throw new Error("Asset duplication failed. Please try again later.");
                 }
               }}
             />

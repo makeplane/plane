@@ -24,6 +24,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser } from "@/hooks/store/user";
 import { usePageFilters } from "@/hooks/use-page-filters";
+import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 // plane web imports
 import { EditorAIMenu } from "@/plane-web/components/pages";
 import type { TExtendedEditorExtensionsConfig } from "@/plane-web/hooks/pages";
@@ -57,10 +58,9 @@ type Props = {
   isNavigationPaneOpen: boolean;
   page: TPageInstance;
   webhookConnectionParams: TWebhookConnectionQueryParams;
-  projectId: string;
+  projectId?: string;
   workspaceSlug: string;
   storeType: EPageStoreType;
-
   extendedEditorProps: TExtendedEditorExtensionsConfig;
 };
 
@@ -102,6 +102,11 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
   const { document: documentEditorExtensions } = useEditorFlagging({
     workspaceSlug,
     storeType,
+  });
+  // parse content
+  const { getEditorMetaData } = useParseEditorContent({
+    projectId,
+    workspaceSlug,
   });
   // page filters
   const { fontSize, fontStyle, isFullWidth } = usePageFilters();
@@ -235,6 +240,7 @@ export const PageEditorBody: React.FC<Props> = observer((props) => {
           ref={editorForwardRef}
           containerClassName="h-full p-0 pb-64"
           displayConfig={displayConfig}
+          getEditorMetaData={getEditorMetaData}
           mentionHandler={{
             searchCallback: async (query) => {
               const res = await fetchMentions(query);
