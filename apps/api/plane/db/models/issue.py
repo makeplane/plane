@@ -18,6 +18,7 @@ from plane.utils.exception_logger import log_exception
 from .project import ProjectBaseModel
 from plane.utils.uuid import convert_uuid_to_integer
 from .description import Description
+from plane.db.mixins import ChangeTrackerMixin
 
 
 def get_default_properties():
@@ -443,7 +444,8 @@ class IssueActivity(ProjectBaseModel):
         return str(self.issue)
 
 
-class IssueComment(ProjectBaseModel):
+class IssueComment(ChangeTrackerMixin, ProjectBaseModel):
+    TRACKED_FIELDS = ["comment_stripped", "comment_json", "comment_html"]
     comment_stripped = models.TextField(verbose_name="Comment", blank=True)
     comment_json = models.JSONField(blank=True, default=dict)
     comment_html = models.TextField(blank=True, default="<p></p>")
@@ -475,11 +477,10 @@ class IssueComment(ProjectBaseModel):
         self.comment_stripped = strip_tags(self.comment_html) if self.comment_html != "" else ""
         is_creating = self._state.adding or not self.pk
 
-        if not is_creating:
-            old_issue_comment = IssueComment.objects.get(pk=self.id)
-
+        # Save the comment
         super(IssueComment, self).save(*args, **kwargs)
 
+        # Prepare description defaults
         description_defaults = {
             "workspace_id": self.workspace_id,
             "project_id": self.project_id,
@@ -491,28 +492,30 @@ class IssueComment(ProjectBaseModel):
         }
 
         if is_creating:
+            # Create new description for new comment
             description = Description.objects.create(**description_defaults)
-
             self.description_id = description.id
             super(IssueComment, self).save(update_fields=["description_id"])
         else:
             changed_fields = {}
 
-            if old_issue_comment.comment_html != self.comment_html:
+            if self.has_changed("comment_html"):
                 changed_fields["description_html"] = self.comment_html
 
-            if old_issue_comment.comment_stripped != self.comment_stripped:
+            if self.has_changed("comment_stripped"):
                 changed_fields["description_stripped"] = self.comment_stripped
 
-            if old_issue_comment.comment_json != self.comment_json:
+            if self.has_changed("comment_json"):
                 changed_fields["description_json"] = self.comment_json
 
+            # Update description only if comment fields changed
             if changed_fields:
                 if self.description_id:
                     Description.objects.filter(pk=self.description_id).update(
                         **changed_fields, updated_by_id=self.updated_by_id
                     )
                 else:
+                    # Create description if it doesn't exist
                     description = Description.objects.create(**description_defaults)
                     IssueComment.objects.filter(pk=self.pk).update(description_id=description.id)
                     self.description_id = description.id
