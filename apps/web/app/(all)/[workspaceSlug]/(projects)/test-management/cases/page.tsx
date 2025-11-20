@@ -122,6 +122,8 @@ export default function TestCasesPage() {
     window.addEventListener("mousemove", onMouseMoveResize);
     window.addEventListener("mouseup", onMouseUpResize);
     document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+    if (e && typeof e.preventDefault === "function") e.preventDefault();
   };
   const onMouseMoveResize = (e: MouseEvent) => {
     if (!isDraggingRef.current) return;
@@ -134,6 +136,7 @@ export default function TestCasesPage() {
     window.removeEventListener("mousemove", onMouseMoveResize);
     window.removeEventListener("mouseup", onMouseUpResize);
     document.body.style.cursor = "auto";
+    document.body.style.userSelect = "auto";
   };
 
   // 自定义节点标题：统一图标+文案+间距
@@ -709,8 +712,7 @@ export default function TestCasesPage() {
               </Button>
             </div>
           </div>
-          {/* 修改列表区域：添加 Row/Col 布局 */}
-          <Row className="flex-1 overflow-hidden p-4 sm:p-5" gutter={[0, 16]}>
+          <Row wrap={false} className="flex-1 overflow-hidden p-4 sm:p-5" gutter={[0, 16]}>
             <Col
               className="relative border-r border-custom-border-200 overflow-y-auto"
               flex="0 0 auto"

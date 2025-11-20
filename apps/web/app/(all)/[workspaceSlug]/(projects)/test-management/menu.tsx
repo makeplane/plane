@@ -40,10 +40,10 @@ const MENU_ITEMS: TMenuItem[] = [
     isActive: (pathname, ws) => pathname.startsWith(`/${ws}/test-management/runs`),
   },
   {
-    key: "reports",
-    label: "报告",
-    href: (ws) => `/${ws}/test-management/reports`,
-    isActive: (pathname, ws) => pathname.startsWith(`/${ws}/test-management/reports`),
+    key: "reviews",
+    label: "评审",
+    href: (ws) => `/${ws}/test-management/reviews`,
+    isActive: (pathname, ws) => pathname.startsWith(`/${ws}/test-management/reviews`),
   },
 ];
 

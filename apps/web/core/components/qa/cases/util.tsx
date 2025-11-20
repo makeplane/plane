@@ -18,11 +18,13 @@ export const RichTextEditor = ({
   onChange,
   onBlur,
   placeholder = "请输入内容...",
+  editable = true,
 }: {
   value?: string;
   onChange: (value: string) => void;
   onBlur?: () => void;
   placeholder?: string;
+  editable?: boolean;
 }) => {
   const [editing, setEditing] = useState(false);
   const quillRef = useRef<ReactQuill | null>(null);
@@ -235,7 +237,7 @@ export const RichTextEditor = ({
           padding: 12px 14px;
           line-height: 1.7;
           color: var(--qaq-text);
-          min-height: 120px;
+          min-height: 60px;
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
           text-rendering: optimizeLegibility;
@@ -285,23 +287,23 @@ export const RichTextEditor = ({
           scrollingContainer=".qa-quill .ql-container"
         />
       ) : (
-        <div className="relative min-h-[120px] py-2 px-3 leading-7 text-gray-700 rounded-md">
+        <div className="relative min-h-[60px] py-2 px-3 leading-7 text-gray-700 rounded-md">
           {value && value.trim() ? (
             <div
               ref={contentRef}
               className={expanded ? "" : "max-h-[160px] overflow-hidden"}
-              tabIndex={0}
-              onClick={() => setEditing(true)}
-              onFocus={() => setEditing(true)}
+              tabIndex={editable ? 0 : -1}
+              onClick={() => editable && setEditing(true)}
+              onFocus={() => editable && setEditing(true)}
               aria-label={placeholder}
               dangerouslySetInnerHTML={{ __html: value }}
             />
           ) : (
             <span
               className="text-gray-400 cursor-text"
-              tabIndex={0}
-              onClick={() => setEditing(true)}
-              onFocus={() => setEditing(true)}
+              tabIndex={editable ? 0 : -1}
+              onClick={() => editable && setEditing(true)}
+              onFocus={() => editable && setEditing(true)}
               aria-label={placeholder}
             >
               {placeholder}

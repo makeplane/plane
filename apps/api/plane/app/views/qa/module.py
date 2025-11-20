@@ -10,7 +10,7 @@ class CaseModuleCountAPIView(BaseAPIView):
     queryset = CaseModule.objects.all()
     filterset_fields = {
         'name': ['exact', 'icontains', 'in'],
-        'repository_id': ['exact']
+        'repository_id': ['exact'],
     }
 
     def get(self, request, slug):

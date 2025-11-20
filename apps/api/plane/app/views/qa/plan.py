@@ -40,6 +40,7 @@ class RepositoryAPIView(BaseAPIView):
         serializer.is_valid(raise_exception=True)
         repository = serializer.save()
         serializer = TestCaseRepositoryDetailSerializer(instance=repository)
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get(self, request, slug):
@@ -115,12 +116,12 @@ class CaseAPIView(BaseAPIView):
         serializer = self.serializer_class(instance=test_plan)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def put(self,request,slug):
+    def put(self, request, slug):
         case_id = request.data.pop('id')
         case = self.queryset.get(id=case_id)
         update_serializer = CaseCreateUpdateSerializer(instance=case, data=request.data, partial=True)
         update_serializer.is_valid(raise_exception=True)
-        updated_plan = update_serializer.save()
+        update_serializer.save()
         serializer = self.serializer_class(instance=case)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -131,11 +132,10 @@ class CaseDetailAPIView(BaseAPIView):
     pagination_class = CustomPaginator
     serializer_class = CaseListSerializer
 
-    def get(self, request, slug,case_id):
+    def get(self, request, slug, case_id):
         case = self.queryset.get(id=case_id)
         serializer = self.serializer_class(instance=case)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 
 class CaseModuleAPIView(BaseAPIView):

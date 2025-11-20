@@ -107,16 +107,13 @@ class TestCase(BaseModel):
     module = models.ForeignKey(CaseModule, on_delete=models.CASCADE, blank=True, null=True,
                                related_name="cases")
     assignee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True,
-                               related_name="cases")
+                                 related_name="cases")
     labels = models.ManyToManyField(CaseLabel, blank=True, related_name="cases")
     issues = models.ManyToManyField(Issue, blank=True, related_name="cases")
 
     class Meta:
         db_table = "test_case"
         ordering = ("-created_at",)
-
-
-
 
 
 class TestPlan(BaseModel):
@@ -206,3 +203,91 @@ class TestCaseComment(BaseModel):
 
     def __str__(self):
         return str(self.content)[:50]
+
+
+class CaseReviewModule(BaseModel):
+    name = models.CharField(max_length=255)
+    repository = models.ForeignKey(TestCaseRepository, on_delete=models.CASCADE, verbose_name="CaseReviewModule",
+                                   related_name="review_modules")
+    is_default = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = "CaseReviewModule"
+        verbose_name_plural = "CaseReviewModule"
+        db_table = "test_review_module"
+        ordering = ("-created_at",)
+
+
+class CaseReview(BaseModel):
+    class State(models.TextChoices):
+        NOT_START = '未开始', 'gray'
+        PROGRESS = '进行中', 'blue'
+        COMPLETED = '已完成', 'green'
+
+    class ReviewMode(models.TextChoices):
+        SINGLE = '单人评审', 'green'
+        MULTIPLE = '多人评审', 'blue'
+
+    name = models.CharField(max_length=255)
+    description = models.TextField(verbose_name="CaseReview Description", blank=True)
+    state = models.CharField(choices=State.choices, default=State.NOT_START, verbose_name="CaseReview State")
+    assignees = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        related_name="review_assignee",
+    )
+    mode = models.CharField(choices=ReviewMode.choices, default=ReviewMode.SINGLE, verbose_name="CaseReview Mode")
+
+    module = models.ForeignKey(CaseReviewModule, on_delete=models.CASCADE, verbose_name="CaseReviewModule",
+                               related_name="reviews")
+    started_at = models.DateField(null=True, blank=True, verbose_name="CaseReview Started Time")
+    ended_at = models.DateField(null=True, blank=True, verbose_name="CaseReview Ended Time")
+
+    cases = models.ManyToManyField(TestCase, blank=True, related_name="reviews", through="CaseReviewThrough",
+                                   through_fields=("review", "case"))
+
+    class Meta:
+        verbose_name = "CaseReview"
+        verbose_name_plural = "CaseReview"
+        db_table = "test_case_review"
+        ordering = ("-created_at",)
+
+
+class CaseReviewThrough(BaseModel):
+    class Result(models.TextChoices):
+        PASS = '通过', 'green'
+        FAIL = '不通过', 'red'
+        RE_REVIEW = '重新提审', 'gold'
+        PROCESS = '评审中', 'blue'
+        NOT_START = '未评审', 'gray'
+
+    case = models.ForeignKey(TestCase, on_delete=models.CASCADE, related_name="review_cases")
+    review = models.ForeignKey(CaseReview, on_delete=models.CASCADE, related_name="review_cases")
+    result = models.CharField(choices=Result.choices, default=Result.NOT_START,
+                              verbose_name="CaseReview Result")
+
+    class Meta:
+        verbose_name = "CaseReviewThrough"
+        verbose_name_plural = "CaseReviewThrough"
+        db_table = "test_review_through"
+        ordering = ("-created_at",)
+
+
+class CaseReviewRecord(BaseModel):
+    class Result(models.TextChoices):
+        PASS = '通过', 'green'
+        FAIL = '不通过', 'red'
+        RE_REVIEW = '重新提审', 'gold'
+        SUGGEST = '建议', 'gold'
+
+    result = models.CharField(choices=Result.choices, default=Result.PASS,
+                              verbose_name="CaseReview Result")
+    reason = models.TextField(verbose_name="CaseReview Reason", blank=True, null=True)
+    assignee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True,
+                                 related_name="review_records")
+
+    crt = models.ForeignKey(CaseReviewThrough, on_delete=models.SET_NULL, blank=True, null=True,
+                            related_name="review_records")
+
+    class Meta:
+        ordering = ("-created_at",)

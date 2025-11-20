@@ -1,8 +1,13 @@
+from collections import defaultdict
+
+from django.db.models import Count
+from django.db.models.expressions import result
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
 from plane.app.serializers import UserLiteSerializer, BaseSerializer, IssueAssigneeSerializer, ProjectDetailSerializer
-from plane.db.models import TestPlan, TestCaseRepository, User, TestCase, CaseLabel, CaseModule, FileAsset, Issue, TestCaseComment
+from plane.db.models import TestPlan, TestCaseRepository, User, TestCase, CaseLabel, CaseModule, FileAsset, Issue, \
+    CaseReviewModule, CaseReview, CaseReviewThrough, TestCaseComment
 
 
 class TestPlanCreateUpdateSerializer(ModelSerializer):
@@ -34,16 +39,22 @@ class TestPlanDetailSerializer(ModelSerializer):
     assignees = UserLiteSerializer(many=True, read_only=True)
     cases = CaseDetailSerializer(many=True, read_only=True)
 
-
     class Meta:
         model = TestPlan
-        fields = ['id', 'name', 'begin_time', 'end_time', 'repository', 'assignees', 'cases', 'state','state_display']
+        fields = ['id', 'name', 'begin_time', 'end_time', 'repository', 'assignees', 'cases', 'state', 'state_display']
 
 
 class TestCaseRepositorySerializer(ModelSerializer):
     """
     Serializer for creating a TestPlan.
     """
+
+    def create(self, validated_data):
+        instance = super().create(validated_data)
+
+        # 给每个用例库创建统一模块
+        CaseReviewModule.objects.create(name='未规划用例', repository=instance, is_default=True)
+        return instance
 
     class Meta:
         model = TestCaseRepository
@@ -80,7 +91,7 @@ class CaseCreateUpdateSerializer(ModelSerializer):
     class Meta:
         model = TestCase
         fields = ['name', 'precondition', 'steps', 'remark', 'state', 'type', 'priority', 'repository', 'labels',
-                  'module', 'assignee', 'issues','test_type']
+                  'module', 'assignee', 'issues', 'test_type']
 
     def create(self, validated_data):
         labels = validated_data.pop('labels', [])
@@ -103,12 +114,9 @@ class CaseCreateUpdateSerializer(ModelSerializer):
         return instance
 
 
-
-
 class CaseListSerializer(ModelSerializer):
     """用例查询"""
     issues = ...
-
 
     class Meta:
         model = TestCase
@@ -164,6 +172,7 @@ class CaseLabelListSerializer(serializers.ModelSerializer):
         model = CaseLabel
         fields = '__all__'
 
+
 # 新增：测试用例附件序列化器（复用 FileAsset）
 class CaseAttachmentSerializer(BaseSerializer):
     asset_url = serializers.CharField(read_only=True)
@@ -185,20 +194,20 @@ class CaseAttachmentSerializer(BaseSerializer):
         ]
 
 
-
 class IssueListSerializer(BaseSerializer):
-    project = ProjectDetailSerializer( read_only=True)
+    project = ProjectDetailSerializer(read_only=True)
 
     class Meta:
         model = Issue
         fields = "__all__"
+
 
 class CaseIssueSerializer(ModelSerializer):
     issues = IssueListSerializer(many=True, read_only=True)
 
     class Meta:
         model = TestCase
-        fields = ['id','issues']
+        fields = ['id', 'issues']
 
 
 class TestCaseCommentSerializer(ModelSerializer):
@@ -217,3 +226,101 @@ class TestCaseCommentSerializer(ModelSerializer):
         qs = obj.children.filter(deleted_at__isnull=True).order_by("created_at")
         serializer = TestCaseCommentSerializer(qs, many=True, context={"current_depth": current_depth + 1, "max_depth": max_depth})
         return serializer.data
+
+
+# ----- review------
+class ReviewModuleCreateUpdateSerializer(ModelSerializer):
+    class Meta:
+        model = CaseReviewModule
+        fields = ['name', 'repository']
+
+
+class ReviewModuleDetailSerializer(ModelSerializer):
+    class Meta:
+        model = CaseReviewModule
+        fields = '__all__'
+
+
+class ReviewModuleListSerializer(ModelSerializer):
+    review_count = serializers.SerializerMethodField()
+
+    def get_review_count(self, obj: CaseReviewModule):
+        return obj.reviews.count()
+
+    class Meta:
+        model = CaseReviewModule
+        fields = '__all__'
+        read_only_fields = ['review_count']
+
+
+class ReviewCreateUpdateSerializer(ModelSerializer):
+    cases = serializers.PrimaryKeyRelatedField(queryset=TestCase.objects.all(), many=True, required=False)
+
+    def create(self, validated_data):
+        cases = validated_data.pop('cases', [])
+        instance = super().create(validated_data)
+        for case in cases:
+            CaseReviewThrough.objects.get_or_create(review=instance, case=case)
+        return instance
+
+    def update(self, instance, validated_data):
+        cases = validated_data.pop('cases', None)
+        instance = super().update(instance, validated_data)
+        if cases is not None:
+            current_ids = set(CaseReviewThrough.objects.filter(review=instance).values_list('case_id', flat=True))
+            new_ids = set([c.id for c in cases])
+            add_ids = new_ids - current_ids
+            remove_ids = current_ids - new_ids
+            if add_ids:
+                for case in TestCase.objects.filter(id__in=add_ids):
+                    CaseReviewThrough.objects.get_or_create(review=instance, case=case)
+            if remove_ids:
+                CaseReviewThrough.objects.filter(review=instance, case_id__in=remove_ids).delete()
+        return instance
+
+    class Meta:
+        model = CaseReview
+        fields = '__all__'
+
+
+class ReviewListSerializer(ModelSerializer):
+    case_count = serializers.SerializerMethodField()
+    pass_rate = serializers.SerializerMethodField()
+    module_name = serializers.SerializerMethodField()
+
+    def get_case_count(self, obj: CaseReview):
+        return obj.cases.count()
+
+    def get_pass_rate(self, obj: CaseReview):
+        queryset = CaseReviewThrough.objects.filter(review=obj).values('result').annotate(count=Count('result'))
+        statis = {label: 0 for label in CaseReviewThrough.Result.values}
+
+        for annotate_result in queryset:
+            statis[annotate_result['result']] = annotate_result['count']
+        return statis
+
+    def get_module_name(self, obj: CaseReview):
+        return obj.module.name
+
+    class Meta:
+        model = CaseReview
+        exclude = ['cases']
+
+
+class ReviewCaseListSerializer(ModelSerializer):
+    name = serializers.SerializerMethodField()
+    priority = serializers.SerializerMethodField()
+    assignees = serializers.SerializerMethodField()
+
+    def get_name(self, obj: CaseReviewThrough):
+        return obj.case.name
+
+    def get_priority(self, obj: CaseReviewThrough):
+        return obj.case.priority
+
+    def get_assignees(self, obj: CaseReviewThrough):
+        return obj.review.assignees.values_list('id',flat=True)
+
+    class Meta:
+        model = CaseReviewThrough
+        fields = ['id', 'name', 'priority', 'assignees', 'result', 'created_by','case_id']
