@@ -78,7 +78,7 @@ class IssueProjectLiteSerializer(BaseSerializer):
 class IssueCreateSerializer(BaseSerializer):
     # ids
     state_id = serializers.PrimaryKeyRelatedField(
-        source="state", queryset=State.objects.all(), required=False, allow_null=True
+        source="state", queryset=State.all_states_objects.all(), required=False, allow_null=True
     )
     parent_id = serializers.PrimaryKeyRelatedField(
         source="parent", queryset=Issue.objects.all(), required=False, allow_null=True
@@ -162,20 +162,20 @@ class IssueCreateSerializer(BaseSerializer):
 
         # Check state is from the project only else raise validation error
         if (
-            attrs.get("state_id")
+            attrs.get("state")
             and not state_manager.filter(
                 project_id=self.context.get("project_id"),
-                pk=attrs.get("state_id"),
+                pk=attrs.get("state").id,
             ).exists()
         ):
             raise serializers.ValidationError("State is not valid please pass a valid state_id")
 
         # Check parent issue is from workspace as it can be cross workspace
         if (
-            attrs.get("parent_id")
+            attrs.get("parent")
             and not Issue.objects.filter(
                 project_id=self.context.get("project_id"),
-                pk=attrs.get("parent_id"),
+                pk=attrs.get("parent").id,
             ).exists()
         ):
             raise serializers.ValidationError("Parent is not valid issue_id please pass a valid issue_id")

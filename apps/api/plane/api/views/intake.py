@@ -387,25 +387,21 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
 
             if serializer.is_valid():
                 serializer.save()
-                # Update the issue state if the issue is rejected or marked as duplicate
-                if serializer.data["status"] in [-1, 2]:
-                    issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
-                    state = State.objects.filter(group="cancelled", workspace__slug=slug, project_id=project_id).first()
-                    if state is not None:
-                        issue.state = state
-                        issue.save()
 
                 # Update the issue state if it is accepted
                 if serializer.data["status"] in [1]:
-                    issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
-
-                    # Update the issue state only if it is in triage state
-                    if issue.state.is_triage:
-                        # Move to default state
-                        state = State.objects.filter(workspace__slug=slug, project_id=project_id, default=True).first()
-                        if state is not None:
-                            issue.state = state
-                            issue.save()
+                    issue = Issue.objects.get(
+                        pk=intake_issue.issue_id,
+                        workspace__slug=slug,
+                        project_id=project_id,
+                    )
+                    if issue.state.group == "triage":
+                        # get the default project state
+                        default_state = State.objects.filter(
+                            workspace__slug=slug, project_id=project_id, default=True
+                        ).first()
+                        issue.state = default_state
+                        issue.save()
 
                 # create a activity for status change
                 issue_activity.delay(
