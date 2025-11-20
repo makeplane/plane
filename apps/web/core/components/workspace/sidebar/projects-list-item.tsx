@@ -196,16 +196,16 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
   useEffect(() => {
     if (isMenuActive) toggleAnySidebarDropdown(true);
     else toggleAnySidebarDropdown(false);
-  }, [isMenuActive]);
+  }, [isMenuActive, toggleAnySidebarDropdown]);
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
   useOutsideClickDetector(projectRef, () => projectRef?.current?.classList?.remove(HIGHLIGHT_CLASS));
 
-  if (!project) return null;
-
   useEffect(() => {
-    if (URLProjectId === project.id) setIsProjectListOpen(true);
-  }, [URLProjectId]);
+    if (URLProjectId === project?.id) setIsProjectListOpen(true);
+  }, [URLProjectId, project?.id, setIsProjectListOpen]);
+
+  if (!project) return null;
 
   const handleItemClick = () => setIsProjectListOpen(!isProjectListOpen);
   return (

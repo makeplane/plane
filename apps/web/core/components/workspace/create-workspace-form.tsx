@@ -1,6 +1,6 @@
 "use client";
 
-import type { Dispatch, SetStateAction, FC } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";

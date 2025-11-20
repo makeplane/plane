@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import React, { useEffect } from "react";
 import { Intercom, show, hide, onHide } from "@intercom/messenger-js-sdk";
 import { observer } from "mobx-react";

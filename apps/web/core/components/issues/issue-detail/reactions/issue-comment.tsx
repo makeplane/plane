@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { stringToEmoji } from "@plane/propel/emoji-icon-picker";
@@ -8,13 +7,9 @@ import { EmojiReactionGroup, EmojiReactionPicker } from "@plane/propel/emoji-rea
 import type { EmojiReactionType } from "@plane/propel/emoji-reaction";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser } from "@plane/types";
-// components
-import { cn, formatTextList } from "@plane/utils";
-// helper
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
-// types
 
 export type TIssueCommentReaction = {
   workspaceSlug: string;
@@ -50,7 +45,7 @@ export const IssueCommentReaction = observer(function IssueCommentReaction(props
             type: TOAST_TYPE.SUCCESS,
             message: "Reaction created successfully",
           });
-        } catch (error) {
+        } catch (_error) {
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
@@ -67,7 +62,7 @@ export const IssueCommentReaction = observer(function IssueCommentReaction(props
             type: TOAST_TYPE.SUCCESS,
             message: "Reaction removed successfully",
           });
-        } catch (error) {
+        } catch (_error) {
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,

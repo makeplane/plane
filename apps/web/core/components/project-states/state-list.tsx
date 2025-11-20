@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import type { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
 // components

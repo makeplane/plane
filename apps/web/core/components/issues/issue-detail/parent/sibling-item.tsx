@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // ui
 import { CustomMenu } from "@plane/ui";

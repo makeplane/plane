@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { AlignLeft } from "lucide-react";
 // hooks

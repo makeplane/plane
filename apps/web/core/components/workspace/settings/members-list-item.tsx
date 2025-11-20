@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports

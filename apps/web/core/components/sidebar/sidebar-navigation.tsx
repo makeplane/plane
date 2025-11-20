@@ -1,7 +1,5 @@
 "use client";
-import type { FC } from "react";
-import React from "react";
-// helpers
+
 import { cn } from "@plane/utils";
 
 type TSidebarNavItem = {

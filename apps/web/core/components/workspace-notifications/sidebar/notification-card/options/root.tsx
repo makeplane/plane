@@ -1,6 +1,6 @@
 "use client";
 
-import type { FC, Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { cn } from "@plane/utils";

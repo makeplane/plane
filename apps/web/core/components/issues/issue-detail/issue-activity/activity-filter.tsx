@@ -1,7 +1,6 @@
-import type { FC } from "react";
-import React from "react";
 import { observer } from "mobx-react";
 import { Check, ListFilter } from "lucide-react";
+// plane imports
 import type { TActivityFilters, TActivityFilterOption } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";

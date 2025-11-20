@@ -1,4 +1,3 @@
-import type { FC } from "react";
 // plane imports
 import type { TNotification } from "@plane/types";
 import {

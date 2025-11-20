@@ -34,7 +34,7 @@ export const PagesListMainContent = observer(function PagesListMainContent(props
   const { t } = useTranslation();
   // store hooks
   const { currentProjectDetails } = useProject();
-  const { isAnyPageAvailable, getCurrentProjectFilteredPageIdsByTab, getCurrentProjectPageIdsByTab, filters, loader } =
+  const { isAnyPageAvailable, getCurrentProjectFilteredPageIdsByTab, getCurrentProjectPageIdsByTab, loader } =
     usePageStore(storeType);
   const { allowPermissions } = useUserPermissions();
   const { createPage } = usePageStore(EPageStoreType.PROJECT);

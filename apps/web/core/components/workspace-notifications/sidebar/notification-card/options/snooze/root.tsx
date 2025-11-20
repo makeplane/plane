@@ -1,6 +1,6 @@
 "use client";
 
-import type { Dispatch, FC, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { Fragment } from "react";
 import { observer } from "mobx-react";
 import { Clock } from "lucide-react";

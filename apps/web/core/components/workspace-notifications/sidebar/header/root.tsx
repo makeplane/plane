@@ -1,6 +1,5 @@
 "use client";
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";

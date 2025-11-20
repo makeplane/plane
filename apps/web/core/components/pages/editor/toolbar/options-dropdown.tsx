@@ -5,8 +5,8 @@ import { observer } from "mobx-react";
 import { ArrowUpToLine, Clipboard, History } from "lucide-react";
 // plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { TContextMenuItem } from "@plane/ui";
 import { ToggleSwitch } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -18,8 +18,8 @@ import type { EPageStoreType } from "@/plane-web/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
-import type { TPageActions } from "../../dropdowns";
 import { PageActions } from "../../dropdowns";
+import type { TPageActions } from "../../dropdowns";
 import { ExportPageModal } from "../../modals/export-page-modal";
 import { PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM } from "../../navigation-pane";
 
@@ -45,8 +45,8 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
   // query params
   const { updateQueryParams } = useQueryParams();
   // menu items list
-  const EXTRA_MENU_OPTIONS = useMemo(function EXTRA_MENU_OPTIONS() {
-    return [
+  const EXTRA_MENU_OPTIONS: (TContextMenuItem & { key: TPageActions })[] = useMemo(
+    () => [
       {
         key: "full-screen",
         action: () => handleFullWidth(!isFullWidth),
@@ -108,8 +108,9 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
         icon: ArrowUpToLine,
         shouldRender: true,
       },
-    ];
-  });
+    ],
+    []
+  );
 
   return (
     <>

@@ -1,7 +1,6 @@
 "use client";
-import type { FC } from "react";
-import { useCallback } from "react";
 
+import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
