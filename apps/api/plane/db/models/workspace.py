@@ -315,6 +315,8 @@ class WorkspaceUserProperties(BaseModel):
     display_filters = models.JSONField(default=get_default_display_filters)
     display_properties = models.JSONField(default=get_default_display_properties)
     rich_filters = models.JSONField(default=dict)
+    num_of_projects = models.IntegerField(default=10)
+    is_horizontal_navigation_bar = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ["workspace", "user", "deleted_at"]
