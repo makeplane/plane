@@ -228,6 +228,11 @@ urlpatterns = [
         name="workspace-home-preference",
     ),
     path(
+        "workspaces/<str:slug>/home-preferences/<str:key>/",
+        WorkspaceHomePreferenceViewSet.as_view(),
+        name="workspace-home-preference",
+    ),
+    path(
         "workspaces/<str:slug>/recent-visits/",
         UserRecentVisitViewSet.as_view({"get": "list"}),
         name="workspace-recent-visits",
