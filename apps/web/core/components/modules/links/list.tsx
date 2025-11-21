@@ -1,4 +1,3 @@
-"use client";
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 // plane types

@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // hooks
 import { CycleIcon } from "@plane/propel/icons";

@@ -1,5 +1,3 @@
-"use client";
-
 import { cn } from "@plane/utils";
 
 type TSidebarNavItem = {

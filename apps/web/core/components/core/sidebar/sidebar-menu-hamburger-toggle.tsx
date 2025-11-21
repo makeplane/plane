@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { PanelRight } from "lucide-react";
 import { useAppTheme } from "@/hooks/store/use-app-theme";

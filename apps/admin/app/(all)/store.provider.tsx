@@ -1,5 +1,3 @@
-"use client";
-
 import { createContext } from "react";
 // plane admin store
 import { RootStore } from "@/plane-admin/store/root.store";

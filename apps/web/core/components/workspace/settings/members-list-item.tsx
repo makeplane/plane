@@ -1,5 +1,3 @@
-"use client";
-
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports

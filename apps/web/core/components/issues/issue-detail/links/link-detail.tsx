@@ -1,5 +1,3 @@
-"use client";
-
 import { Pencil, Trash2, ExternalLink } from "lucide-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";

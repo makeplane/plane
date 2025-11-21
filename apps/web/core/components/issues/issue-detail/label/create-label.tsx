@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, Fragment, useEffect } from "react";
 import { TwitterPicker } from "react-color";
 import { Controller, useForm } from "react-hook-form";

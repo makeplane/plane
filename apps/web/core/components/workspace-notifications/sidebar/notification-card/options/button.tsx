@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactNode } from "react";
 import { Tooltip } from "@plane/propel/tooltip";
 // helpers

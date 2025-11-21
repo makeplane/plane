@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import { observer } from "mobx-react";
 import { MoreHorizontal, Star } from "lucide-react";

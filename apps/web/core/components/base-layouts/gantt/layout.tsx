@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { GANTT_TIMELINE_TYPE } from "@plane/types";

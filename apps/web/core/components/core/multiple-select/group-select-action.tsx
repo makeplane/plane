@@ -1,4 +1,3 @@
-"use client";
 // ui
 import { Checkbox } from "@plane/ui";
 // helpers

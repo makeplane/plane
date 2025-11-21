@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, MouseEvent } from "react";
 import React, { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect, useMemo, useRef } from "react";
 // plane imports

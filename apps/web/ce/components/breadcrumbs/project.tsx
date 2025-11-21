@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ProjectIcon } from "@plane/propel/icons";

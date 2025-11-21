@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 // icons
 import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";

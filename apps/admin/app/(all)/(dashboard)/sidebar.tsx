@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 // plane helpers

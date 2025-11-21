@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 // ui
 import { Button } from "@plane/propel/button";

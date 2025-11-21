@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // ui
 import { GANTT_TIMELINE_TYPE } from "@plane/types";

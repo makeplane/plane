@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 // i18n

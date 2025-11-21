@@ -1,5 +1,3 @@
-"use client";
-
 import { Tooltip } from "@plane/propel/tooltip";
 import { generateWorkItemLink } from "@plane/utils";
 // hooks

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 // plane imports
 import type { I_THEME_OPTION } from "@plane/constants";

@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useEffect, useState, useRef } from "react";
 import { debounce } from "lodash-es";
 import { observer } from "mobx-react";

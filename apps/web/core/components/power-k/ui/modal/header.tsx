@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { Command } from "cmdk";
 import { X, Search } from "lucide-react";

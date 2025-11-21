@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TBaseLayoutType } from "@plane/types";

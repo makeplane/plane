@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { Menu, Settings } from "lucide-react";

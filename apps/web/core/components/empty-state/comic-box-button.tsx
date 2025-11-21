@@ -1,5 +1,3 @@
-"use client";
-
 import type { Ref } from "react";
 import { Fragment, useState } from "react";
 import { usePopper } from "react-popper";

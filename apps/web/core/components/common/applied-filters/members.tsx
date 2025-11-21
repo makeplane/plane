@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { CloseIcon } from "@plane/propel/icons";
 // plane ui

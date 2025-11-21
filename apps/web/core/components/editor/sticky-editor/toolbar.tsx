@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState, useCallback } from "react";
 import { Palette, Trash2 } from "lucide-react";
 // editor

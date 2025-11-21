@@ -1,5 +1,3 @@
-"use client";
-
 import { memo } from "react";
 import { ALargeSmall, Ban } from "lucide-react";
 import { Popover } from "@headlessui/react";

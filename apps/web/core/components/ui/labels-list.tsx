@@ -1,5 +1,3 @@
-"use client";
-
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IIssueLabel } from "@plane/types";

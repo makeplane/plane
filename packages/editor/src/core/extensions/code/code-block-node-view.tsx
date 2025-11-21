@@ -1,5 +1,3 @@
-"use client";
-
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { NodeViewWrapper, NodeViewContent } from "@tiptap/react";
 import ts from "highlight.js/lib/languages/typescript";

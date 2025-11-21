@@ -1,5 +1,3 @@
-"use client";
-
 import { Info } from "lucide-react";
 import { CloseIcon } from "@plane/propel/icons";
 // helpers

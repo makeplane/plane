@@ -1,12 +1,12 @@
+import { CommentKind } from "ast-types/gen/kinds";
 import {
   API,
   FileInfo,
   Options,
-  TSTypeReference,
   JSCodeshift,
+  TSTypeReference,
   Identifier,
   BlockStatement,
-  VariableDeclarator,
   Expression,
   Pattern,
   SpreadElement,
@@ -14,6 +14,10 @@ import {
   ASTNode,
   Node,
   FunctionDeclaration,
+  TSType,
+  VariableDeclarator,
+  ArrowFunctionExpression,
+  FunctionExpression,
 } from "jscodeshift";
 
 const COMPONENT_TYPE_NAMES = new Set([
@@ -58,7 +62,7 @@ function isComponentNameIdentifier(identifier: Identifier | null | undefined) {
   return COMPONENT_NAME_PATTERN.test(identifier.name);
 }
 
-function addComments(target: Node, comments: NonNullable<Node["comments"]>) {
+function addComments(target: Node, comments: CommentKind[]) {
   if (!comments || comments.length === 0) {
     return;
   }
@@ -76,7 +80,7 @@ function copyOuterComments(source: Node, target: Node, j: JSCodeshift) {
 
 function ensureParamType(
   param: Pattern,
-  propsType: ASTNode | null | undefined,
+  propsType: TSType | null | undefined,
   j: JSCodeshift
 ) {
   if (!j.Pattern.check(param)) {
@@ -117,7 +121,7 @@ function toBlockBody(j: JSCodeshift, body: BlockStatement | Expression) {
   return j.blockStatement([returnStatement]);
 }
 
-function isFunction(node: Node, j: JSCodeshift) {
+function isFunction(node: Node, j: JSCodeshift): node is ArrowFunctionExpression | FunctionExpression {
   return (
     j.ArrowFunctionExpression.check(node) || j.FunctionExpression.check(node)
   );
@@ -126,7 +130,7 @@ function isFunction(node: Node, j: JSCodeshift) {
 function extractArrowFunction(
   init: Expression | SpreadElement | JSXNamespacedName,
   j: JSCodeshift
-) {
+): ArrowFunctionExpression | FunctionExpression | undefined {
   if (isFunction(init, j)) {
     return init;
   }
@@ -210,7 +214,7 @@ function extractForwardRefTypes(
     return;
   }
 
-  if (!("typeParameters" in init)) {
+  if (!j.CallExpression.check(init) || !("typeParameters" in init)) {
     return;
   }
 
@@ -238,12 +242,12 @@ function extractForwardRefTypes(
     typeParams.length >= 2 && typeParams[1]
       ? typeParams[1]
       : j.tsTypeReference(
-          j.identifier("Record"),
-          j.tsTypeParameterInstantiation([
-            j.tsStringKeyword(),
-            j.tsUnknownKeyword(),
-          ])
-        );
+        j.identifier("Record"),
+        j.tsTypeParameterInstantiation([
+          j.tsStringKeyword(),
+          j.tsUnknownKeyword(),
+        ])
+      );
 
   // Create React.ForwardedRef<ElementType> for the ref parameter
   const refType = j.tsTypeReference(
@@ -254,7 +258,7 @@ function extractForwardRefTypes(
   return { propsType, refType };
 }
 
-function isEmptyObjectType(type: ASTNode, j: JSCodeshift) {
+function isEmptyObjectType(type: TSType, j: JSCodeshift) {
   return j.TSTypeLiteral.check(type) && type.members.length === 0;
 }
 
@@ -262,7 +266,7 @@ function convertToFunction(
   j: JSCodeshift,
   declaration: VariableDeclarator,
   init: Expression | SpreadElement | JSXNamespacedName,
-  propsType: ASTNode | null | undefined
+  propsType: TSType | null | undefined
 ) {
   if (!j.Identifier.check(declaration.id)) {
     throw new Error("Declaration id must be an identifier");
@@ -405,11 +409,11 @@ export default function transform(file: FileInfo, api: API, options: Options) {
       }
 
       // Try to get props type from variable type annotation first
-      let propsType: ASTNode | undefined =
-        j.TSTypeReference.check(typeAnnotation) &&
-        isReactComponentType(typeAnnotation, j)
-          ? typeAnnotation.typeParameters?.params?.[0]
-          : undefined;
+      let propsType: TSType | undefined = undefined;
+
+      if (j.TSTypeReference.check(typeAnnotation) && isReactComponentType(typeAnnotation, j)) {
+        propsType = typeAnnotation.typeParameters?.params?.[0];
+      }
 
       // If no props type from variable annotation, try to extract from wrapper's type parameters
       if (!propsType) {

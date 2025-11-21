@@ -1,4 +1,3 @@
-"use client";
 // components
 import { AuthBase } from "@/components/auth-screens/auth-base";
 // helpers

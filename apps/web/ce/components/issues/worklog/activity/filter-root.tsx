@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 // plane imports
 import type { TActivityFilters, TActivityFilterOption } from "@plane/constants";

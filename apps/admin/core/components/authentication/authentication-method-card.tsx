@@ -1,5 +1,3 @@
-"use client";
-
 // helpers
 import { cn } from "@plane/utils";
 

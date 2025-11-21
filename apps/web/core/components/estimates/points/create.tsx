@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, FormEvent } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";

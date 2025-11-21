@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import React, { useRef, useState } from "react";
 import { omit } from "lodash-es";

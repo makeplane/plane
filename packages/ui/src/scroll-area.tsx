@@ -1,4 +1,3 @@
-"use client";
 import * as RadixScrollArea from "@radix-ui/react-scroll-area";
 import type { FC } from "react";
 import React from "react";

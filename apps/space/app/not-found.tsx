@@ -1,4 +1,3 @@
-"use client";
 // assets
 import SomethingWentWrongImage from "@/app/assets/something-went-wrong.svg?url";
 

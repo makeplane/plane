@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { ChartNoAxesColumn, SlidersHorizontal } from "lucide-react";

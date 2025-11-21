@@ -1,5 +1,3 @@
-"use client";
-
 import { ThemeProvider } from "next-themes";
 import { SWRConfig } from "swr";
 import { AppProgressBar } from "@/lib/b-progress";

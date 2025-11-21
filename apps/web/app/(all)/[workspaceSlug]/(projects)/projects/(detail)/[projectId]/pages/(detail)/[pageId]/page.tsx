@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";

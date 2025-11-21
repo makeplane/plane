@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState, useCallback } from "react";
 import { Check } from "lucide-react";
 // plane imports

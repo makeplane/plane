@@ -1,5 +1,3 @@
-"use client";
-
 import { Disclosure, Transition } from "@headlessui/react";
 import { WORKSPACE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";

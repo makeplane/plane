@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { DueDatePropertyIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";

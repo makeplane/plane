@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { LockKeyhole, LockKeyholeOpen } from "lucide-react";

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useCallback, useRef, useState } from "react";
 import { debounce } from "lodash-es";

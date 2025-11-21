@@ -1,5 +1,3 @@
-"use client";
-
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { BarChart } from "@plane/propel/charts/bar-chart";

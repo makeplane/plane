@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { RotateCcw } from "lucide-react";
 // hooks

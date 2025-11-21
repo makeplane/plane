@@ -1,5 +1,3 @@
-"use client";
-
 import React, { Fragment, useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";

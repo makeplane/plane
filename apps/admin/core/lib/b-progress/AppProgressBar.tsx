@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef } from "react";
 import { BProgress } from "@bprogress/core";
 import { useNavigation } from "react-router";

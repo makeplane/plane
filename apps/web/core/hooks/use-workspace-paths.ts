@@ -1,5 +1,3 @@
-"use client";
-
 import { useParams, usePathname } from "next/navigation";
 
 /**

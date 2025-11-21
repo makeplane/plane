@@ -1,4 +1,3 @@
-"use client";
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { ClipboardList } from "lucide-react";

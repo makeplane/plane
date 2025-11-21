@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 // plane constants
 import { ISSUE_LAYOUTS } from "@plane/constants";

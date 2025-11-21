@@ -1,4 +1,3 @@
-"use client";
 // ui
 import { Button } from "@plane/propel/button";
 

@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { Earth, Info, Lock, Minus } from "lucide-react";
 // plane imports

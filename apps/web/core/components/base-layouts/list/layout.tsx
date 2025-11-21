@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import type { IBaseLayoutsListItem, IBaseLayoutsListProps } from "@plane/types";
 import { cn } from "@plane/ui";

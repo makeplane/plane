@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { ArrowUpToLine, Clipboard, History } from "lucide-react";
@@ -45,8 +43,8 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
   // query params
   const { updateQueryParams } = useQueryParams();
   // menu items list
-  const EXTRA_MENU_OPTIONS: (TContextMenuItem & { key: TPageActions })[] = useMemo(
-    () => [
+  const EXTRA_MENU_OPTIONS = useMemo(function EXTRA_MENU_OPTIONS() {
+    return [
       {
         key: "full-screen",
         action: () => handleFullWidth(!isFullWidth),
@@ -108,9 +106,8 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
         icon: ArrowUpToLine,
         shouldRender: true,
       },
-    ],
-    []
-  );
+    ];
+  });
 
   return (
     <>

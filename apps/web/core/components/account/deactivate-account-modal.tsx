@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { Trash2 } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";

@@ -1,4 +1,3 @@
-"use client";
 import React, { useState } from "react";
 // plane imports
 import { Loader } from "@plane/ui";

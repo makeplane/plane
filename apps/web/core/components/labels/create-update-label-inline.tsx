@@ -1,5 +1,3 @@
-"use client";
-
 import React, { forwardRef, useEffect } from "react";
 import { observer } from "mobx-react";
 import { TwitterPicker } from "react-color";

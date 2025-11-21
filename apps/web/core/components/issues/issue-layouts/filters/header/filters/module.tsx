@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useMemo, useState } from "react";
 import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";

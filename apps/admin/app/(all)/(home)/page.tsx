@@ -1,4 +1,3 @@
-"use client";
 import { observer } from "mobx-react";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";

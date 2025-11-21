@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane web components
 import { PageLockControl } from "@/plane-web/components/pages/header/lock-control";

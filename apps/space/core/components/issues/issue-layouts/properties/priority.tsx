@@ -1,5 +1,3 @@
-"use client";
-
 import { SignalHigh } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // types

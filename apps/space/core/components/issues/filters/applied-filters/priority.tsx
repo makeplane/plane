@@ -1,5 +1,3 @@
-"use client";
-
 import { CloseIcon, PriorityIcon } from "@plane/propel/icons";
 import type { TIssuePriorities } from "@plane/propel/icons";
 

@@ -1,5 +1,3 @@
-"use client";
-
 import { Fragment, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";

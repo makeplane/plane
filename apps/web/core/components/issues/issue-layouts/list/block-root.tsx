@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, MutableRefObject } from "react";
 import React, { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";

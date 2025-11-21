@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { Link, Paperclip } from "lucide-react";
 import { ViewsIcon } from "@plane/propel/icons";

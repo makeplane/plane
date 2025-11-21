@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";

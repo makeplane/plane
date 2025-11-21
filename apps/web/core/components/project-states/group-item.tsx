@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";

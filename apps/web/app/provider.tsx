@@ -1,4 +1,3 @@
-"use client";
 import type { FC, ReactNode } from "react";
 import { lazy, Suspense } from "react";
 import { useTheme, ThemeProvider } from "next-themes";

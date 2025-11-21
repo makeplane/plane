@@ -1,5 +1,3 @@
-"use client";
-
 import { range } from "lodash-es";
 import { Loader } from "@plane/ui";
 

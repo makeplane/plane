@@ -1,5 +1,3 @@
-"use client";
-
 import { useTheme } from "next-themes";
 // assets
 import LogoSpinnerDark from "@/app/assets/images/logo-spinner-dark.gif?url";

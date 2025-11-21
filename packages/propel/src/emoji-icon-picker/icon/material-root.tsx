@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import useFontFaceObserver from "use-font-face-observer";
 import { MATERIAL_ICONS_LIST } from "../material-icons";

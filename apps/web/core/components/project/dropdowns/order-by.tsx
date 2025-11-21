@@ -1,5 +1,3 @@
-"use client";
-
 import { ArrowDownWideNarrow, Check } from "lucide-react";
 import { PROJECT_ORDER_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";

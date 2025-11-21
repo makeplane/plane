@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { PROJECT_SETTINGS_TRACKER_ELEMENTS, PROJECT_SETTINGS_TRACKER_EVENTS } from "@plane/constants";

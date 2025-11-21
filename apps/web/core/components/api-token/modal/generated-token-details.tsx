@@ -1,5 +1,3 @@
-"use client";
-
 import { Copy } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
