@@ -104,5 +104,3 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
     </div>
   );
 });
-
-KanbanIssueBlock.displayName = "KanbanIssueBlock";

@@ -33,27 +33,27 @@ interface Props {
   options?: any;
 }
 
-function HeadingPrimary({ children }) {
+function HeadingPrimary({ children }: { children: React.ReactNode }) {
   return <h1 className="text-lg font-semibold text-custom-text-100">{children}</h1>;
 }
 
-function HeadingSecondary({ children }) {
+function HeadingSecondary({ children }: { children: React.ReactNode }) {
   return <h3 className="text-base font-semibold text-custom-text-100">{children}</h3>;
 }
 
-function Paragraph({ children }) {
+function Paragraph({ children }: { children: React.ReactNode }) {
   return <p className="text-sm text-custom-text-200">{children}</p>;
 }
 
-function OrderedList({ children }) {
+function OrderedList({ children }: { children: React.ReactNode }) {
   return <ol className="mb-4 ml-8 list-decimal text-sm text-custom-text-200">{children}</ol>;
 }
 
-function UnorderedList({ children }) {
+function UnorderedList({ children }: { children: React.ReactNode }) {
   return <ul className="mb-4 ml-8 list-disc text-sm text-custom-text-200">{children}</ul>;
 }
 
-function Link({ href, children }) {
+function Link({ href, children }: CustomComponentProps) {
   return (
     <a href={href} className="underline hover:no-underline" target="_blank" rel="noopener noreferrer">
       {children}

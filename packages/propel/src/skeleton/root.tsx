@@ -37,4 +37,4 @@ const Skeleton = Object.assign(SkeletonRoot, { Item: SkeletonItem });
 SkeletonRoot.displayName = "plane-ui-skeleton";
 SkeletonItem.displayName = "plane-ui-skeleton-item";
 
-export { Skeleton };
+export { Skeleton, SkeletonRoot, SkeletonItem };

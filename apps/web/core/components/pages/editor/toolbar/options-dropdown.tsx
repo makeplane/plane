@@ -43,8 +43,8 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
   // query params
   const { updateQueryParams } = useQueryParams();
   // menu items list
-  const EXTRA_MENU_OPTIONS = useMemo(function EXTRA_MENU_OPTIONS() {
-    return [
+  const EXTRA_MENU_OPTIONS = useMemo<(TContextMenuItem & { key: TPageActions })[]>(
+    () => [
       {
         key: "full-screen",
         action: () => handleFullWidth(!isFullWidth),
@@ -106,8 +106,19 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
         icon: ArrowUpToLine,
         shouldRender: true,
       },
-    ];
-  });
+    ],
+    [
+      handleFullWidth,
+      isFullWidth,
+      handleStickyToolbar,
+      isStickyToolbarEnabled,
+      isContentEditable,
+      editorRef,
+      updateQueryParams,
+      router,
+      setIsExportModalOpen,
+    ]
+  );
 
   return (
     <>
