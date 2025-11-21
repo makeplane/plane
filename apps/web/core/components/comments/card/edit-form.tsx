@@ -21,7 +21,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const CommentCardEditForm: React.FC<Props> = observer((props) => {
+export const CommentCardEditForm = observer(function CommentCardEditForm(props: Props) {
   const {
     activityOperations,
     comment,

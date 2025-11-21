@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
@@ -46,7 +44,9 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
   const pageTitle = currentWorkspace?.name
     ? t(`workspace_analytics.page_label`, { workspace: currentWorkspace?.name })
     : undefined;
-  const ANALYTICS_TABS = useMemo(() => getAnalyticsTabs(t), [t]);
+  const ANALYTICS_TABS = useMemo(function ANALYTICS_TABS() {
+    return getAnalyticsTabs(t);
+  });
   const tabs: TabItem[] = useMemo(
     () =>
       ANALYTICS_TABS.map((tab) => ({

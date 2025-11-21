@@ -9,7 +9,7 @@ export type IProjectAuthWrapper = {
   children: React.ReactNode;
 };
 
-export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
+export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IProjectAuthWrapper) {
   // props
   const { workspaceSlug, projectId, children } = props;
 

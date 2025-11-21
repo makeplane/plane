@@ -1,5 +1,3 @@
-"use client";
-
 import type React from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -12,7 +10,7 @@ type Props = {
   onWorkspaceLevelChange: (value: boolean) => void;
 };
 
-export const PowerKModalFooter: React.FC<Props> = observer((props) => {
+export const PowerKModalFooter = observer(function PowerKModalFooter(props: Props) {
   const { isWorkspaceLevel, projectId, onWorkspaceLevelChange } = props;
   // translation
   const { t } = useTranslation();

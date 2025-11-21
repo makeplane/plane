@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
@@ -42,7 +40,7 @@ type Props = {
   storeType?: EIssuesStoreType;
 };
 
-export const SubIssuesListItem: React.FC<Props> = observer((props) => {
+export const SubIssuesListItem = observer(function SubIssuesListItem(props: Props) {
   const {
     workspaceSlug,
     projectId,

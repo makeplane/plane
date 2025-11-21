@@ -16,7 +16,7 @@ export interface AuthPasswordInputProps extends Omit<React.InputHTMLAttributes<H
   onPasswordStrengthChange?: (strength: E_PASSWORD_STRENGTH) => void;
 }
 
-export const AuthPasswordInput: React.FC<AuthPasswordInputProps> = ({
+export function AuthPasswordInput({
   label = "Password",
   error,
   showPasswordStrength = true,
@@ -29,7 +29,7 @@ export const AuthPasswordInput: React.FC<AuthPasswordInputProps> = ({
   onPasswordChange,
   onPasswordStrengthChange,
   ...props
-}) => {
+}: AuthPasswordInputProps) {
   const [isFocused, setIsFocused] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,4 +74,4 @@ export const AuthPasswordInput: React.FC<AuthPasswordInputProps> = ({
       )}
     </div>
   );
-};
+}

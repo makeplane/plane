@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
@@ -25,7 +23,7 @@ import type { IQuickActionProps } from "../list/list-view-types";
 import type { MenuItemFactoryProps } from "./helper";
 import { useAllIssueMenuItems } from "./helper";
 
-export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {
+export const AllIssueQuickActions = observer(function AllIssueQuickActions(props: IQuickActionProps) {
   const {
     issue,
     handleDelete,
@@ -87,13 +85,16 @@ export const AllIssueQuickActions: React.FC<IQuickActionProps> = observer((props
 
   const MENU_ITEMS = useAllIssueMenuItems(menuItemProps);
 
-  const CONTEXT_MENU_ITEMS: TContextMenuItem[] = MENU_ITEMS.map((item) => ({
-    ...item,
-    onClick: () => {
-      captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.GLOBAL_VIEW });
-      item.action();
-    },
-  }));
+  const CONTEXT_MENU_ITEMS = MENU_ITEMS.map(function CONTEXT_MENU_ITEMS(item) {
+    return {
+      ...item,
+
+      onClick: () => {
+        captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.GLOBAL_VIEW });
+        item.action();
+      },
+    };
+  });
 
   return (
     <>

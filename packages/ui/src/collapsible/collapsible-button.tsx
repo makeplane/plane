@@ -15,7 +15,7 @@ type Props = {
   ChevronIcon?: React.FC<ISvgIcons>;
 };
 
-export const CollapsibleButton: FC<Props> = (props) => {
+export function CollapsibleButton(props: Props) {
   const {
     isOpen,
     title,
@@ -49,4 +49,4 @@ export const CollapsibleButton: FC<Props> = (props) => {
       {actionItemElement && isOpen && actionItemElement}
     </div>
   );
-};
+}

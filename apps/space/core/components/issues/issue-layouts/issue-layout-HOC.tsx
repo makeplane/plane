@@ -14,7 +14,7 @@ interface Props {
   getIssueLoader: (groupId?: string | undefined, subGroupId?: string | undefined) => TLoader;
 }
 
-export const IssueLayoutHOC = observer((props: Props) => {
+export const IssueLayoutHOC = observer(function IssueLayoutHOC(props: Props) {
   const { getIssueLoader, getGroupIssueCount } = props;
 
   const issueCount = getGroupIssueCount(undefined, undefined, false);

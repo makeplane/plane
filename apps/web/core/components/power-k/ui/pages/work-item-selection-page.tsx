@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useEffect } from "react";
 // plane imports
 // import { useTranslation } from "@plane/i18n";
@@ -29,7 +27,7 @@ type Props = {
   isWorkspaceLevel?: boolean;
 };
 
-export const WorkItemSelectionPage: React.FC<Props> = (props) => {
+export function WorkItemSelectionPage(props: Props) {
   const { workspaceSlug, projectId, debouncedSearchTerm, isWorkspaceLevel = false } = props;
   // router
   // const router = useAppRouter();
@@ -160,4 +158,4 @@ export const WorkItemSelectionPage: React.FC<Props> = (props) => {
       )} */}
     </>
   );
-};
+}

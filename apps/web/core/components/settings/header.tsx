@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
@@ -15,7 +13,7 @@ import { useUserSettings } from "@/hooks/store/user";
 import { WorkspaceLogo } from "../workspace/logo";
 import SettingsTabs from "./tabs";
 
-export const SettingsHeader = observer(() => {
+export const SettingsHeader = observer(function SettingsHeader() {
   // hooks
   const { t } = useTranslation();
   const { currentWorkspace } = useWorkspace();

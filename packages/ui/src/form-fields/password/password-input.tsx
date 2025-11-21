@@ -13,7 +13,7 @@ interface PasswordInputProps {
   error?: boolean;
 }
 
-export const PasswordInput: React.FC<PasswordInputProps> = ({
+export function PasswordInput({
   id,
   value,
   onChange,
@@ -21,7 +21,7 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
   className,
   showToggle = true,
   error = false,
-}) => {
+}: PasswordInputProps) {
   const [showPassword, setShowPassword] = useState(false);
   return (
     <div className="relative">
@@ -66,4 +66,4 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
       )}
     </div>
   );
-};
+}

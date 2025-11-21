@@ -9,7 +9,7 @@ type TAuthBanner = {
   handleBannerData?: (bannerData: TAdminAuthErrorInfo | undefined) => void;
 };
 
-export const AuthBanner: React.FC<TAuthBanner> = (props) => {
+export function AuthBanner(props: TAuthBanner) {
   const { bannerData, handleBannerData } = props;
 
   if (!bannerData) return <></>;
@@ -27,4 +27,4 @@ export const AuthBanner: React.FC<TAuthBanner> = (props) => {
       </div>
     </div>
   );
-};
+}

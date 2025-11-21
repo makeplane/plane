@@ -19,7 +19,7 @@ type TBreadcrumbNavigationSearchDropdownProps = {
   shouldTruncate?: boolean;
 };
 
-export const BreadcrumbNavigationSearchDropdown: React.FC<TBreadcrumbNavigationSearchDropdownProps> = (props) => {
+export function BreadcrumbNavigationSearchDropdown(props: TBreadcrumbNavigationSearchDropdownProps) {
   const {
     icon,
     title,
@@ -102,4 +102,4 @@ export const BreadcrumbNavigationSearchDropdown: React.FC<TBreadcrumbNavigationS
       )}
     />
   );
-};
+}

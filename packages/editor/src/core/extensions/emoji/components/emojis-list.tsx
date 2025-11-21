@@ -21,7 +21,10 @@ export type EmojisListDropdownProps = SuggestionProps<EmojiItem, { name: string 
   forceOpen?: boolean;
 };
 
-export const EmojisListDropdown = forwardRef<EmojiListRef, EmojisListDropdownProps>((props, ref) => {
+export const EmojisListDropdown = forwardRef(function EmojisListDropdown(
+  props: EmojisListDropdownProps,
+  ref: React.ForwardedRef<EmojiListRef>
+) {
   const { items, command, query, onClose, forceOpen = false } = props;
   // states
   const [selectedIndex, setSelectedIndex] = useState<number>(0);

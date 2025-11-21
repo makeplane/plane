@@ -26,7 +26,7 @@ type Props = {
   updateBlockDates?: (updates: IBlockUpdateDependencyData[]) => Promise<void>;
 };
 
-export const GanttChartBlock: React.FC<Props> = observer((props) => {
+export const GanttChartBlock = observer(function GanttChartBlock(props: Props) {
   const {
     blockId,
     showAllBlocks,

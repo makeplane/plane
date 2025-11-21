@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -40,7 +38,7 @@ interface ICalendarHeader {
   ) => Promise<void>;
 }
 
-export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((props) => {
+export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown(props: ICalendarHeader) {
   const { issuesFilterStore, updateFilters } = props;
 
   const { t } = useTranslation();

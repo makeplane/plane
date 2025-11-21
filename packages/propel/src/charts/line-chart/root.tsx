@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
-
 import React, { useMemo, useState } from "react";
 import {
   CartesianGrid,
@@ -20,7 +18,9 @@ import { getLegendProps } from "../components/legend";
 import { CustomXAxisTick, CustomYAxisTick } from "../components/tick";
 import { CustomTooltip } from "../components/tooltip";
 
-export const LineChart = React.memo(<K extends string, T extends string>(props: TLineChartProps<K, T>) => {
+export const LineChart = React.memo(function LineChart<K extends string, T extends string>(
+  props: TLineChartProps<K, T>
+) {
   const {
     data,
     lines,

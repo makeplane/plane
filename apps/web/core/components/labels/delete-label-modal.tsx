@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -19,7 +17,7 @@ type Props = {
   data: IIssueLabel | null;
 };
 
-export const DeleteLabelModal: React.FC<Props> = observer((props) => {
+export const DeleteLabelModal = observer(function DeleteLabelModal(props: Props) {
   const { isOpen, onClose, data } = props;
   // router
   const { workspaceSlug, projectId } = useParams();

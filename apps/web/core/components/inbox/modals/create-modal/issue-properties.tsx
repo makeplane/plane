@@ -28,7 +28,7 @@ type TInboxIssueProperties = {
   isVisible?: boolean;
 };
 
-export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) => {
+export const InboxIssueProperties = observer(function InboxIssueProperties(props: TInboxIssueProperties) {
   const { projectId, data, handleData, isVisible = false } = props;
   // hooks
   const { areEstimateEnabledByProjectId } = useProjectEstimates();

@@ -8,4 +8,6 @@ type TDuplicateWorkItemModalProps = {
   projectId: string;
 };
 
-export const DuplicateWorkItemModal: FC<TDuplicateWorkItemModalProps> = () => <></>;
+export function DuplicateWorkItemModal(_props: TDuplicateWorkItemModalProps) {
+  return <></>;
+}

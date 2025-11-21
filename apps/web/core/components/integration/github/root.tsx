@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
@@ -80,7 +78,7 @@ const integrationWorkflowData = [
 const integrationService = new IntegrationService();
 const githubIntegrationService = new GithubIntegrationService();
 
-export const GithubImporterRoot: React.FC = () => {
+export function GithubImporterRoot() {
   const [currentStep, setCurrentStep] = useState<IIntegrationData>({
     state: "import-configure",
   });
@@ -245,4 +243,4 @@ export const GithubImporterRoot: React.FC = () => {
       </div>
     </form>
   );
-};
+}

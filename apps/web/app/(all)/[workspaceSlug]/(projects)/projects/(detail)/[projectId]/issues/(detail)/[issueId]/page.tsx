@@ -1,5 +1,3 @@
-"use client";
-
 import { useTheme } from "next-themes";
 import { redirect } from "react-router";
 import { useTranslation } from "@plane/i18n";

@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -45,7 +43,7 @@ const integrationDetails: { [key: string]: any } = {
 // services
 const integrationService = new IntegrationService();
 
-export const SingleIntegrationCard: React.FC<Props> = observer(({ integration }) => {
+export const SingleIntegrationCard = observer(function SingleIntegrationCard({ integration }: Props) {
   // states
   const [deletingIntegration, setDeletingIntegration] = useState(false);
   // router

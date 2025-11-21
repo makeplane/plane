@@ -15,7 +15,7 @@ export type TProjectLinkList = {
   workspaceSlug: string;
 };
 
-export const ProjectLinkList: FC<TProjectLinkList> = observer((props) => {
+export const ProjectLinkList = observer(function ProjectLinkList(props: TProjectLinkList) {
   // props
   const { linkOperations, workspaceSlug } = props;
   // hooks

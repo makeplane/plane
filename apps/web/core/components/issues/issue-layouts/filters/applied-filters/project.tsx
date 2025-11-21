@@ -10,7 +10,7 @@ type Props = {
   editable: boolean | undefined;
 };
 
-export const AppliedProjectFilters: React.FC<Props> = observer((props) => {
+export const AppliedProjectFilters = observer(function AppliedProjectFilters(props: Props) {
   const { handleRemove, values, editable } = props;
   // store hooks
   const { projectMap } = useProject();

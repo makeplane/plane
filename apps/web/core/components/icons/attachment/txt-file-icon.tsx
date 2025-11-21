@@ -4,6 +4,6 @@ import TxtFileIcon from "@/app/assets/attachment/txt-icon.png?url";
 // type
 import type { ImageIconPros } from "../types";
 
-export const TxtIcon: React.FC<ImageIconPros> = ({ width, height }) => (
-  <img src={TxtFileIcon} width={width} height={height} alt="TxtFileIcon" />
-);
+export function TxtIcon({ width, height }: ImageIconPros) {
+  return <img src={TxtFileIcon} width={width} height={height} alt="TxtFileIcon" />;
+}

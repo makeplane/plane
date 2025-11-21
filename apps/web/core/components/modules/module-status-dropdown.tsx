@@ -14,7 +14,7 @@ type Props = {
   handleModuleDetailsChange: (payload: Partial<IModule>) => Promise<void>;
 };
 
-export const ModuleStatusDropdown: FC<Props> = observer((props: Props) => {
+export const ModuleStatusDropdown = observer(function ModuleStatusDropdown(props: Props) {
   const { isDisabled, moduleDetails, handleModuleDetailsChange } = props;
   const { t } = useTranslation();
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);

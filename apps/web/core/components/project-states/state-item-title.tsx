@@ -28,7 +28,7 @@ type TDisabledStateItemTitleProps = TBaseStateItemTitleProps & {
 
 export type TStateItemTitleProps = TEnabledStateItemTitleProps | TDisabledStateItemTitleProps;
 
-export const StateItemTitle = observer((props: TStateItemTitleProps) => {
+export const StateItemTitle = observer(function StateItemTitle(props: TStateItemTitleProps) {
   const { stateCount, setUpdateStateModal, disabled, state, shouldShowDescription = true } = props;
   // store hooks
   const { getStatePercentageInGroup } = useProjectState();

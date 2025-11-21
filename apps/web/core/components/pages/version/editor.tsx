@@ -19,7 +19,7 @@ export type TVersionEditorProps = {
   storeType: EPageStoreType;
 };
 
-export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props) => {
+export const PagesVersionEditor = observer(function PagesVersionEditor(props: TVersionEditorProps) {
   const { activeVersion, versionDetails } = props;
   // params
   const { workspaceSlug, projectId } = useParams();

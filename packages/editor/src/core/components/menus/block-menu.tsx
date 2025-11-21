@@ -34,7 +34,7 @@ export type BlockMenuOption = {
   isDisabled?: boolean;
 };
 
-export const BlockMenu = (props: Props) => {
+export function BlockMenu(props: Props) {
   const { editor, workItemIdentifier } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimatedIn, setIsAnimatedIn] = useState(false);
@@ -245,4 +245,4 @@ export const BlockMenu = (props: Props) => {
       </div>
     </FloatingPortal>
   );
-};
+}

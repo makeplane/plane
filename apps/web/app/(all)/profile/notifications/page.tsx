@@ -1,5 +1,3 @@
-"use client";
-
 import useSWR from "swr";
 // components
 import { useTranslation } from "@plane/i18n";

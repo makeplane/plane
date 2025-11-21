@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
@@ -31,7 +29,7 @@ type TAuthFormRoot = {
 
 const authService = new AuthService();
 
-export const AuthFormRoot = observer((props: TAuthFormRoot) => {
+export const AuthFormRoot = observer(function AuthFormRoot(props: TAuthFormRoot) {
   const { authStep, authMode, email, setEmail, setAuthMode, setAuthStep, setErrorInfo, currentAuthMode } = props;
   // router
   const router = useAppRouter();

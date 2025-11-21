@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import type { Control } from "react-hook-form";
@@ -21,7 +19,7 @@ type TIssueProjectSelectProps = {
   handleFormChange: () => void;
 };
 
-export const IssueProjectSelect: React.FC<TIssueProjectSelectProps> = observer((props) => {
+export const IssueProjectSelect = observer(function IssueProjectSelect(props: TIssueProjectSelectProps) {
   const { control, disabled = false, handleFormChange } = props;
   // store hooks
   const { isMobile } = usePlatformOS();

@@ -16,7 +16,7 @@ export type CustomImageNodeViewProps = Omit<NodeViewProps, "extension" | "update
   updateAttributes: (attrs: Partial<TCustomImageAttributes>) => void;
 };
 
-export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) => {
+export function CustomImageNodeView(props: CustomImageNodeViewProps) {
   const { editor, extension, node, updateAttributes } = props;
   const { src: imgNodeSrc, status } = node.attrs;
 
@@ -147,4 +147,4 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
       </div>
     </NodeViewWrapper>
   );
-};
+}

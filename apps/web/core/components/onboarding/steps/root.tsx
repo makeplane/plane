@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect, useMemo, useRef } from "react";
 // plane imports
@@ -18,7 +16,7 @@ type Props = {
   handleStepChange: (step: EOnboardingSteps, skipInvites?: boolean) => void;
 };
 
-export const OnboardingStepRoot: FC<Props> = (props) => {
+export function OnboardingStepRoot(props: Props) {
   const { currentStep, invitations, handleStepChange } = props;
   // ref for the scrollable container
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -54,4 +52,4 @@ export const OnboardingStepRoot: FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

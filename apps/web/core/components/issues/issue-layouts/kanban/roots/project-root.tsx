@@ -8,7 +8,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseKanBanRoot } from "../base-kanban-root";
 
-export const KanBanLayout: React.FC = observer(() => {
+export const KanBanLayout = observer(function KanBanLayout() {
   // router
   const { workspaceSlug } = useParams();
   // hooks

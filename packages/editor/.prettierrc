@@ -1,5 +1,6 @@
 {
   "printWidth": 120,
   "tabWidth": 2,
-  "trailingComma": "es5"
+  "trailingComma": "es5",
+  "plugins": ["@prettier/plugin-oxc"]
 }

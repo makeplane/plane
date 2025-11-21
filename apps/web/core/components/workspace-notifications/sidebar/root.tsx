@@ -1,7 +1,4 @@
-"use client";
-import type { FC } from "react";
 import { useCallback } from "react";
-
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -23,7 +20,7 @@ import { AppliedFilters } from "./filters/applied-filter";
 import { NotificationSidebarHeader } from "./header";
 import { NotificationsLoader } from "./loader";
 
-export const NotificationsSidebarRoot: FC = observer(() => {
+export const NotificationsSidebarRoot = observer(function NotificationsSidebarRoot() {
   const { workspaceSlug } = useParams();
   // hooks
   const { getWorkspaceBySlug } = useWorkspace();

@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -15,7 +13,9 @@ import { useInstance } from "@/hooks/store";
 import type { Route } from "./+types/page";
 import { InstanceGoogleConfigForm } from "./form";
 
-const InstanceGoogleAuthenticationPage = observer<React.FC<Route.ComponentProps>>(() => {
+const InstanceGoogleAuthenticationPage = observer(function InstanceGoogleAuthenticationPage(
+  _props: Route.ComponentProps
+) {
   // store
   const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
   // state

@@ -16,7 +16,7 @@ type Props = IEditorProps & {
   extensions: Extensions;
 };
 
-export const EditorWrapper: React.FC<Props> = (props) => {
+export function EditorWrapper(props: Props) {
   const {
     children,
     containerClassName,
@@ -93,4 +93,4 @@ export const EditorWrapper: React.FC<Props> = (props) => {
       </div>
     </EditorContainer>
   );
-};
+}

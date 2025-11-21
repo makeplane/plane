@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -25,7 +23,7 @@ const SUPPORTED_LAYOUTS = [
   { key: "calendar", i18n_title: "issue.layouts.calendar", icon: CalendarLayoutIcon },
 ];
 
-export const ModuleIssuesMobileHeader = observer(() => {
+export const ModuleIssuesMobileHeader = observer(function ModuleIssuesMobileHeader() {
   // router
   const { workspaceSlug, projectId, moduleId } = useParams() as {
     workspaceSlug: string;

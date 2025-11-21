@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -18,7 +15,9 @@ type TNotificationSidebarHeader = {
   workspaceSlug: string;
 };
 
-export const NotificationSidebarHeader: FC<TNotificationSidebarHeader> = observer((props) => {
+export const NotificationSidebarHeader = observer(function NotificationSidebarHeader(
+  props: TNotificationSidebarHeader
+) {
   const { workspaceSlug } = props;
   const { t } = useTranslation();
   const { sidebarCollapsed } = useAppTheme();

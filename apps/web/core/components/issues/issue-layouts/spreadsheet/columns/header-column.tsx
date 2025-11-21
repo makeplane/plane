@@ -1,4 +1,3 @@
-"use client";
 //ui
 import { ArrowDownWideNarrow, ArrowUpNarrowWide, CheckIcon, ChevronDownIcon, Eraser, MoveRight } from "lucide-react";
 // constants
@@ -19,7 +18,7 @@ interface Props {
   isEpic?: boolean;
 }
 
-export const HeaderColumn = (props: Props) => {
+export function HeaderColumn(props: Props) {
   const { displayFilters, handleDisplayFilterUpdate, property, onClose, isEpic = false } = props;
   // i18n
   const { t } = useTranslation();
@@ -126,4 +125,4 @@ export const HeaderColumn = (props: Props) => {
         )}
     </CustomMenu>
   );
-};
+}

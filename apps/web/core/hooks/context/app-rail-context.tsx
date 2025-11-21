@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactNode } from "react";
 import React, { createContext } from "react";
 import { observer } from "mobx-react";
@@ -21,7 +19,7 @@ interface AppRailProviderProps {
   children: ReactNode;
 }
 
-export const AppRailProvider = observer(({ children }: AppRailProviderProps) => {
+export const AppRailProvider = observer(function AppRailProvider({ children }: AppRailProviderProps) {
   const { workspaceSlug } = useParams();
   const { storedValue: isAppRailVisible, setValue: setIsAppRailVisible } = useLocalStorage<boolean>(
     `APP_RAIL_${workspaceSlug}`,

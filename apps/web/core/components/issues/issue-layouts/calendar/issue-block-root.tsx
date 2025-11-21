@@ -19,7 +19,7 @@ type Props = {
   canEditProperties: (projectId: string | undefined) => boolean;
 };
 
-export const CalendarIssueBlockRoot: React.FC<Props> = observer((props) => {
+export const CalendarIssueBlockRoot = observer(function CalendarIssueBlockRoot(props: Props) {
   const { issueId, quickActions, isDragDisabled, isEpic = false, canEditProperties } = props;
 
   const issueRef = useRef<HTMLAnchorElement | null>(null);

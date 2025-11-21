@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 // plane imports
@@ -19,7 +17,7 @@ type Props = {
   hideWidgets?: TWorkItemWidgets[];
 };
 
-export const IssueDetailWidgets: FC<Props> = (props) => {
+export function IssueDetailWidgets(props: Props) {
   const {
     workspaceSlug,
     projectId,
@@ -61,4 +59,4 @@ export const IssueDetailWidgets: FC<Props> = (props) => {
       )}
     </>
   );
-};
+}

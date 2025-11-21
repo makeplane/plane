@@ -21,7 +21,7 @@ type TLabelStatComponent = {
   isEditable?: boolean;
 };
 
-export const LabelStatComponent = observer((props: TLabelStatComponent) => {
+export const LabelStatComponent = observer(function LabelStatComponent(props: TLabelStatComponent) {
   const { distribution, isEditable, selectedLabelIds, handleLabelFiltersUpdate } = props;
   const { t } = useTranslation();
   return (

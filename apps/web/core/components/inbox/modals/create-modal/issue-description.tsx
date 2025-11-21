@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, RefObject } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -34,7 +32,7 @@ type TInboxIssueDescription = {
 };
 
 // TODO: have to implement GPT Assistance
-export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props) => {
+export const InboxIssueDescription = observer(function InboxIssueDescription(props: TInboxIssueDescription) {
   const {
     containerClassName,
     workspaceSlug,

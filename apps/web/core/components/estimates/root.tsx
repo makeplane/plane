@@ -24,7 +24,7 @@ type TEstimateRoot = {
   isAdmin: boolean;
 };
 
-export const EstimateRoot: FC<TEstimateRoot> = observer((props) => {
+export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot) {
   const { workspaceSlug, projectId, isAdmin } = props;
   // hooks
   const { currentProjectDetails } = useProject();

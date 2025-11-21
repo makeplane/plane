@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -49,7 +47,7 @@ type Props = {
   renderInExtendedSidebar?: boolean;
 };
 
-export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
+export const SidebarProjectsListItem = observer(function SidebarProjectsListItem(props: Props) {
   const {
     projectId,
     handleCopyText,
@@ -196,16 +194,16 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   useEffect(() => {
     if (isMenuActive) toggleAnySidebarDropdown(true);
     else toggleAnySidebarDropdown(false);
-  }, [isMenuActive]);
+  }, [isMenuActive, toggleAnySidebarDropdown]);
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
   useOutsideClickDetector(projectRef, () => projectRef?.current?.classList?.remove(HIGHLIGHT_CLASS));
 
-  if (!project) return null;
-
   useEffect(() => {
-    if (URLProjectId === project.id) setIsProjectListOpen(true);
-  }, [URLProjectId]);
+    if (URLProjectId === project?.id) setIsProjectListOpen(true);
+  }, [URLProjectId, project?.id, setIsProjectListOpen]);
+
+  if (!project) return null;
 
   const handleItemClick = () => setIsProjectListOpen(!isProjectListOpen);
   return (

@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
@@ -38,7 +36,7 @@ export interface IIssuePropertyLabels {
   fullHeight?: boolean;
 }
 
-export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((props) => {
+export const IssuePropertyLabels = observer(function IssuePropertyLabels(props: IIssuePropertyLabels) {
   const {
     projectId,
     value,
@@ -85,8 +83,8 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   let projectLabels: IIssueLabel[] = defaultOptions as IIssueLabel[];
   if (storeLabels && storeLabels.length > 0) projectLabels = storeLabels;
 
-  const NoLabel = useMemo(
-    () => (
+  const NoLabel = useMemo(function NoLabel() {
+    return (
       <Tooltip
         position="top"
         tooltipHeading={t("common.labels")}
@@ -105,12 +103,11 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
           {placeholderText}
         </div>
       </Tooltip>
-    ),
-    [placeholderText, fullWidth, noLabelBorder, isMobile]
-  );
+    );
+  });
 
-  const LabelSummary = useMemo(
-    () => (
+  const LabelSummary = useMemo(function LabelSummary() {
+    return (
       <div
         className={cn(
           "flex h-5 flex-shrink-0 items-center justify-center rounded px-2.5 text-xs",
@@ -135,12 +132,11 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
           </div>
         </Tooltip>
       </div>
-    ),
-    [fullWidth, disabled, noLabelBorder, isMobile, projectLabels, value]
-  );
+    );
+  });
 
-  const LabelItem = useCallback(
-    ({ label }: { label: IIssueLabel }) => (
+  const LabelItem = useCallback(function LabelItem({ label }: { label: IIssueLabel }) {
+    return (
       <Tooltip
         key={label.id}
         position="top"
@@ -169,9 +165,8 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
           </div>
         </div>
       </Tooltip>
-    ),
-    [disabled, fullWidth, isMobile, noLabelBorder, renderByDefault]
-  );
+    );
+  });
 
   return (
     <>

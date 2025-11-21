@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
@@ -36,7 +34,7 @@ const DEFAULT_VALUES: Partial<IWorkspaceView> = {
   }),
 };
 
-export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
+export const WorkspaceViewForm = observer(function WorkspaceViewForm(props: Props) {
   const { handleFormSubmit, handleClose, data, preLoadedData, workspaceSlug } = props;
   // i18n
   const { t } = useTranslation();

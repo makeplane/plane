@@ -15,7 +15,7 @@ type BlockProps = {
   workspaceSlug: string;
 };
 
-export const RecentPage = (props: BlockProps) => {
+export function RecentPage(props: BlockProps) {
   const { activity, ref, workspaceSlug } = props;
   // router
   const router = useRouter();
@@ -73,4 +73,4 @@ export const RecentPage = (props: BlockProps) => {
       }}
     />
   );
-};
+}

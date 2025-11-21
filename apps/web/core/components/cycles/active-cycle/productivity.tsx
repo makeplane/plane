@@ -23,7 +23,7 @@ export type ActiveCycleProductivityProps = {
   cycle: ICycle | null;
 };
 
-export const ActiveCycleProductivity: FC<ActiveCycleProductivityProps> = observer((props) => {
+export const ActiveCycleProductivity = observer(function ActiveCycleProductivity(props: ActiveCycleProductivityProps) {
   const { workspaceSlug, projectId, cycle } = props;
   // theme hook
   const { resolvedTheme } = useTheme();

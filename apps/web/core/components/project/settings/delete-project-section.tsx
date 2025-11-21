@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { Disclosure, Transition } from "@headlessui/react";
 // types
@@ -15,7 +13,7 @@ export interface IDeleteProjectSection {
   handleDelete: () => void;
 }
 
-export const DeleteProjectSection: React.FC<IDeleteProjectSection> = (props) => {
+export function DeleteProjectSection(props: IDeleteProjectSection) {
   const { projectDetails, handleDelete } = props;
 
   return (
@@ -66,4 +64,4 @@ export const DeleteProjectSection: React.FC<IDeleteProjectSection> = (props) => 
       )}
     </Disclosure>
   );
-};
+}

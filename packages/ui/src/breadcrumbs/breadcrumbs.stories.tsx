@@ -19,7 +19,7 @@ type TBreadcrumbBlockProps = {
 };
 
 // TODO: remove this component and use web Link component
-const BreadcrumbBlock: React.FC<TBreadcrumbBlockProps> = (props) => {
+function BreadcrumbBlock(props: TBreadcrumbBlockProps) {
   const { label, icon, disableTooltip = false } = props;
 
   return (
@@ -30,7 +30,7 @@ const BreadcrumbBlock: React.FC<TBreadcrumbBlockProps> = (props) => {
       </Breadcrumbs.ItemWrapper>
     </>
   );
-};
+}
 
 export default meta;
 type Story = StoryObj<typeof Breadcrumbs>;

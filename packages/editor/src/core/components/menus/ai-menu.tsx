@@ -10,7 +10,7 @@ type Props = {
   menu: TAIHandler["menu"];
 };
 
-export const AIFeaturesMenu: React.FC<Props> = (props) => {
+export function AIFeaturesMenu(props: Props) {
   const { menu } = props;
   // states
   const [isPopupVisible, setIsPopupVisible] = useState(false);
@@ -94,4 +94,4 @@ export const AIFeaturesMenu: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

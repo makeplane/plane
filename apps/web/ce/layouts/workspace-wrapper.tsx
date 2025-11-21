@@ -7,7 +7,7 @@ export type IWorkspaceAuthWrapper = {
   children: React.ReactNode;
 };
 
-export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
+export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props: IWorkspaceAuthWrapper) {
   // props
   const { children } = props;
 

@@ -6,7 +6,9 @@ import { useGroupDropTarget } from "../hooks/use-group-drop-target";
 import { GroupHeader } from "./group-header";
 import { BaseKanbanItem } from "./item";
 
-export const BaseKanbanGroup = observer(<T extends IBaseLayoutsKanbanItem>(props: IBaseLayoutsKanbanGroupProps<T>) => {
+export const BaseKanbanGroup = observer(function BaseKanbanGroup<T extends IBaseLayoutsKanbanItem>(
+  props: IBaseLayoutsKanbanGroupProps<T>
+) {
   const {
     group,
     itemIds,

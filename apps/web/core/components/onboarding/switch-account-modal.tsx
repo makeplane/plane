@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 
 import { useTheme } from "next-themes";
@@ -17,7 +15,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const SwitchAccountModal: React.FC<Props> = (props) => {
+export function SwitchAccountModal(props: Props) {
   const { isOpen, onClose } = props;
   // states
   const [switchingAccount, setSwitchingAccount] = useState(false);
@@ -111,4 +109,4 @@ export const SwitchAccountModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+}

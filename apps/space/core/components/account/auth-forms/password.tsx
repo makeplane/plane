@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Eye, EyeOff, XCircle } from "lucide-react";
@@ -35,7 +33,7 @@ const defaultValues: TPasswordFormValues = {
 
 const authService = new AuthService();
 
-export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
+export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props) {
   const { email, nextPath, isSMTPConfigured, handleAuthStep, handleEmailClear, mode } = props;
   // ref
   const formRef = useRef<HTMLFormElement>(null);

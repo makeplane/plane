@@ -1,5 +1,3 @@
-"use client";
-
 import type { MutableRefObject } from "react";
 import { useRef, useState } from "react";
 import type { LucideIcon } from "lucide-react";
@@ -36,7 +34,7 @@ interface ILabelItemBlock {
   draggable?: boolean;
 }
 
-export const LabelItemBlock = (props: ILabelItemBlock) => {
+export function LabelItemBlock(props: ILabelItemBlock) {
   const {
     label,
     isDragging,
@@ -107,4 +105,4 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
       )}
     </div>
   );
-};
+}

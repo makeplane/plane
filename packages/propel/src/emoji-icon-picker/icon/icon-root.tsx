@@ -12,7 +12,7 @@ type IconRootProps = {
   iconType: "material" | "lucide";
 };
 
-export const IconRoot: React.FC<IconRootProps> = (props) => {
+export function IconRoot(props: IconRootProps) {
   const { defaultColor, onChange, searchDisabled = false, iconType } = props;
   // states
   const [activeColor, setActiveColor] = useState(defaultColor);
@@ -125,4 +125,4 @@ export const IconRoot: React.FC<IconRootProps> = (props) => {
       </div>
     </>
   );
-};
+}

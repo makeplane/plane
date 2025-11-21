@@ -31,7 +31,7 @@ type TPlanDetailProps = {
 const COMMON_BUTTON_STYLE =
   "relative inline-flex items-center justify-center w-full px-4 py-1.5 text-xs font-medium rounded-lg focus:outline-none transition-all duration-300 animate-slide-up";
 
-export const PlanDetail: FC<TPlanDetailProps> = observer((props) => {
+export const PlanDetail = observer(function PlanDetail(props: TPlanDetailProps) {
   const { subscriptionType, planDetail, billingFrequency, setBillingFrequency } = props;
   // plane hooks
   const { t } = useTranslation();

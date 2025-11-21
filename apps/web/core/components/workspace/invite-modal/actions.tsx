@@ -19,7 +19,7 @@ type TInvitationModalActionsProps = {
   className?: string;
 };
 
-export const InvitationModalActions: React.FC<TInvitationModalActionsProps> = observer((props) => {
+export const InvitationModalActions = observer(function InvitationModalActions(props: TInvitationModalActionsProps) {
   const {
     isInviteDisabled = false,
     isSubmitting = false,

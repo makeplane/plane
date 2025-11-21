@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -11,7 +9,7 @@ import { useUserPermissions, useUser } from "@/hooks/store/user";
 // local imports
 import { SidebarUserMenuItem } from "./user-menu-item";
 
-export const SidebarUserMenu = observer(() => {
+export const SidebarUserMenu = observer(function SidebarUserMenu() {
   const { workspaceSlug } = useParams();
   const { workspaceUserInfo } = useUserPermissions();
   const { data: currentUser } = useUser();

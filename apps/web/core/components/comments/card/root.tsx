@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -24,7 +22,7 @@ type TCommentCard = {
   projectId?: string;
 };
 
-export const CommentCard: FC<TCommentCard> = observer((props) => {
+export const CommentCard = observer(function CommentCard(props: TCommentCard) {
   const {
     workspaceSlug,
     comment,

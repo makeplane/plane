@@ -33,7 +33,10 @@ type RichTextEditorWrapperProps = MakeOptional<
       }
   );
 
-export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
+export const RichTextEditor = forwardRef(function RichTextEditor(
+  props: RichTextEditorWrapperProps,
+  ref: React.ForwardedRef<EditorRefApi>
+) {
   const {
     containerClassName,
     editable,
@@ -47,7 +50,8 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
   const { getUserDetails } = useMember();
   // editor flaggings
   const { richText: richTextEditorExtensions } = useEditorFlagging({
-    workspaceSlug: workspaceSlug?.toString() ?? "",
+    workspaceSlug,
+    projectId,
   });
   // use editor mention
   const { fetchMentions } = useEditorMention({

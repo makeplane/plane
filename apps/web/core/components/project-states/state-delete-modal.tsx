@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -20,7 +18,7 @@ type TStateDeleteModal = {
   data: IState | null;
 };
 
-export const StateDeleteModal: React.FC<TStateDeleteModal> = observer((props) => {
+export const StateDeleteModal = observer(function StateDeleteModal(props: TStateDeleteModal) {
   const { isOpen, onClose, data } = props;
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);

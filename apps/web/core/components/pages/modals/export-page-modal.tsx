@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import type { PageProps } from "@react-pdf/renderer";
 import { pdf } from "@react-pdf/renderer";
@@ -97,7 +95,7 @@ const defaultValues: TFormValues = {
   content_variety: "everything",
 };
 
-export const ExportPageModal: React.FC<Props> = (props) => {
+export function ExportPageModal(props: Props) {
   const { editorRef, isOpen, onClose, pageTitle } = props;
   // states
   const [isExporting, setIsExporting] = useState(false);
@@ -288,4 +286,4 @@ export const ExportPageModal: React.FC<Props> = (props) => {
       </div>
     </ModalCore>
   );
-};
+}

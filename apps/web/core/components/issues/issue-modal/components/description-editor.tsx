@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import type { Control } from "react-hook-form";
@@ -50,7 +48,7 @@ type TIssueDescriptionEditorProps = {
   onClose: () => void;
 };
 
-export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = observer((props) => {
+export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(props: TIssueDescriptionEditorProps) {
   const {
     control,
     isDraft,

@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useEffect, useState, useRef } from "react";
 import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
@@ -89,7 +87,7 @@ type Props = {
  * @description DescriptionInput component for rich text editor with autosave functionality using debounce
  * The component also makes an API call to save the description on unmount
  */
-export const DescriptionInput: React.FC<Props> = observer((props) => {
+export const DescriptionInput = observer(function DescriptionInput(props: Props) {
   const {
     containerClassName,
     disabled,

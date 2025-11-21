@@ -21,7 +21,8 @@ type Props = {
   setIsChangeInIdentifierRequired: (value: boolean) => void;
   handleFormOnChange?: () => void;
 };
-const ProjectCommonAttributes: React.FC<Props> = (props) => {
+
+function ProjectCommonAttributes(props: Props) {
   const { setValue, isMobile, isChangeInIdentifierRequired, setIsChangeInIdentifierRequired, handleFormOnChange } =
     props;
   const {
@@ -146,6 +147,6 @@ const ProjectCommonAttributes: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}
 
 export default ProjectCommonAttributes;

@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -61,7 +59,7 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const PageActions: React.FC<Props> = observer((props) => {
+export const PageActions = observer(function PageActions(props: Props) {
   const { extraOptions, optionsOrder, page, parentRef, storeType } = props;
   // states
   const [deletePageModal, setDeletePageModal] = useState(false);
@@ -89,7 +87,7 @@ export const PageActions: React.FC<Props> = observer((props) => {
     canCurrentUserMovePage,
   } = page;
   // menu items
-  const MENU_ITEMS: (TContextMenuItem & { key: TPageActions })[] = useMemo(() => {
+  const MENU_ITEMS = useMemo(function MENU_ITEMS() {
     const menuItems: (TContextMenuItem & { key: TPageActions })[] = [
       {
         key: "toggle-lock",
@@ -177,20 +175,7 @@ export const PageActions: React.FC<Props> = observer((props) => {
       menuItems.push(...extraOptions);
     }
     return menuItems;
-  }, [
-    access,
-    archived_at,
-    extraOptions,
-    is_locked,
-    isMovePageEnabled,
-    canCurrentUserArchivePage,
-    canCurrentUserChangeAccess,
-    canCurrentUserDeletePage,
-    canCurrentUserDuplicatePage,
-    canCurrentUserLockPage,
-    canCurrentUserMovePage,
-    pageOperations,
-  ]);
+  });
   // arrange options
   const arrangedOptions = useMemo(
     () =>

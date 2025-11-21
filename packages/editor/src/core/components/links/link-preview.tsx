@@ -2,13 +2,13 @@ import { Copy, GlobeIcon, Link2Off, PencilIcon } from "lucide-react";
 // components
 import type { LinkViewProps, LinkViews } from "@/components/links";
 
-export const LinkPreview = ({
+export function LinkPreview({
   viewProps,
   switchView,
 }: {
   viewProps: LinkViewProps;
   switchView: (view: LinkViews) => void;
-}) => {
+}) {
   const { editor, from, to, url } = viewProps;
 
   const removeLink = () => {
@@ -52,4 +52,4 @@ export const LinkPreview = ({
       </div>
     </div>
   );
-};
+}

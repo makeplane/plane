@@ -24,7 +24,7 @@ type TInboxContentRoot = {
   embedRemoveCurrentNotification?: () => void;
 };
 
-export const InboxContentRoot: FC<TInboxContentRoot> = observer((props) => {
+export const InboxContentRoot = observer(function InboxContentRoot(props: TInboxContentRoot) {
   const {
     workspaceSlug,
     projectId,

@@ -15,7 +15,7 @@ interface Props {
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
   isEpic?: boolean;
 }
-export const SpreadsheetHeaderColumn = observer((props: Props) => {
+export const SpreadsheetHeaderColumn = observer(function SpreadsheetHeaderColumn(props: Props) {
   const { displayProperties, displayFilters, property, handleDisplayFilterUpdate, isEpic = false } = props;
 
   //hooks

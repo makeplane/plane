@@ -1,9 +1,7 @@
-"use client";
-
 import { range } from "lodash-es";
 import { Loader } from "@plane/ui";
 
-export const PageLoader: React.FC = (props) => {
+export function PageLoader(props) {
   const {} = props;
 
   return (
@@ -32,4 +30,4 @@ export const PageLoader: React.FC = (props) => {
       </div>
     </div>
   );
-};
+}

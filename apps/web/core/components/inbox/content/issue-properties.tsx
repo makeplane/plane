@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import {
@@ -34,7 +32,7 @@ type Props = {
   duplicateIssueDetails: TInboxDuplicateIssueDetails | undefined;
 };
 
-export const InboxIssueContentProperties: React.FC<Props> = observer((props) => {
+export const InboxIssueContentProperties = observer(function InboxIssueContentProperties(props: Props) {
   const { workspaceSlug, projectId, issue, issueOperations, isEditable, duplicateIssueDetails } = props;
 
   const router = useAppRouter();

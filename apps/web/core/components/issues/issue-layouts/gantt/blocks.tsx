@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -30,7 +28,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const IssueGanttBlock: React.FC<Props> = observer((props) => {
+export const IssueGanttBlock = observer(function IssueGanttBlock(props: Props) {
   const { issueId, isEpic } = props;
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
@@ -101,7 +99,7 @@ export const IssueGanttBlock: React.FC<Props> = observer((props) => {
 });
 
 // rendering issues on gantt sidebar
-export const IssueGanttSidebarBlock: React.FC<Props> = observer((props) => {
+export const IssueGanttSidebarBlock = observer(function IssueGanttSidebarBlock(props: Props) {
   const { issueId, isEpic = false } = props;
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();

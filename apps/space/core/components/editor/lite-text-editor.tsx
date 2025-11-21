@@ -32,7 +32,10 @@ type LiteTextEditorWrapperProps = MakeOptional<
       }
   );
 
-export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
+export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
+  props: LiteTextEditorWrapperProps,
+  ref: React.ForwardedRef<EditorRefApi>
+) {
   const {
     anchor,
     containerClassName,

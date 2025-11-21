@@ -13,7 +13,7 @@ export type TCollapsibleProps = {
   defaultOpen?: boolean;
 };
 
-export const Collapsible: FC<TCollapsibleProps> = (props) => {
+export function Collapsible(props: TCollapsibleProps) {
   const { title, children, buttonRef, className, buttonClassName, isOpen, onToggle, defaultOpen } = props;
   // state
   const [localIsOpen, setLocalIsOpen] = useState<boolean>(isOpen || defaultOpen ? true : false);
@@ -51,4 +51,4 @@ export const Collapsible: FC<TCollapsibleProps> = (props) => {
       </Transition>
     </Disclosure>
   );
-};
+}

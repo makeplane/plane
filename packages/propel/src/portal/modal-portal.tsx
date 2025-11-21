@@ -26,7 +26,7 @@ import type { ModalPortalProps } from "./types";
  * @param closeOnOverlayClick - Whether clicking overlay closes modal
  * @param closeOnEscape - Whether pressing Escape closes modal
  */
-export const ModalPortal: React.FC<ModalPortalProps> = ({
+export function ModalPortal({
   children,
   isOpen,
   onClose,
@@ -40,7 +40,7 @@ export const ModalPortal: React.FC<ModalPortalProps> = ({
   showOverlay = true,
   closeOnOverlayClick = true,
   closeOnEscape = true,
-}) => {
+}: ModalPortalProps) {
   const contentRef = useRef<HTMLDivElement>(null);
 
   // Memoized overlay click handler
@@ -107,4 +107,4 @@ export const ModalPortal: React.FC<ModalPortalProps> = ({
   );
 
   return <PortalWrapper portalId={portalId}>{content}</PortalWrapper>;
-};
+}

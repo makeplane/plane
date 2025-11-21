@@ -14,7 +14,7 @@ type Props = {
   editorState: EditorStateType;
 };
 
-export const TextAlignmentSelector: React.FC<Props> = (props) => {
+export function TextAlignmentSelector(props: Props) {
   const { editor, editorState } = props;
   const menuItem = TextAlignItem(editor);
 
@@ -80,4 +80,4 @@ export const TextAlignmentSelector: React.FC<Props> = (props) => {
       ))}
     </div>
   );
-};
+}

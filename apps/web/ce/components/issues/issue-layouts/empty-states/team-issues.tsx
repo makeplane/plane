@@ -1,3 +1,5 @@
 import { observer } from "mobx-react";
 
-export const TeamEmptyState: React.FC = observer(() => <></>);
+export const TeamEmptyState = observer(function TeamEmptyState() {
+  return <></>;
+});

@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { STATE_TRACKER_EVENTS, STATE_GROUPS } from "@plane/constants";
@@ -18,7 +15,7 @@ type TStateCreate = {
   handleClose: () => void;
 };
 
-export const StateCreate: FC<TStateCreate> = observer((props) => {
+export const StateCreate = observer(function StateCreate(props: TStateCreate) {
   const { groupKey, shouldTrackEvents, createStateCallback, handleClose } = props;
 
   // states

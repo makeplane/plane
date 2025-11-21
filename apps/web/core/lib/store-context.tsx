@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactElement } from "react";
 import { createContext } from "react";
 // plane web store
@@ -18,6 +16,6 @@ const initializeStore = () => {
 
 export const store = initializeStore();
 
-export const StoreProvider = ({ children }: { children: ReactElement }) => (
-  <StoreContext.Provider value={store}>{children}</StoreContext.Provider>
-);
+export function StoreProvider({ children }: { children: ReactElement }) {
+  return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>;
+}

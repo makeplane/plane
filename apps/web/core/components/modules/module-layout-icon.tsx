@@ -11,7 +11,7 @@ interface ILayoutIcon {
   withContainer?: boolean;
 }
 
-export const ModuleLayoutIcon: React.FC<ILayoutIcon> = (props) => {
+export function ModuleLayoutIcon(props: ILayoutIcon) {
   const { layoutType, className = "", containerClassName = "", size = 14, withContainer = false } = props;
 
   // get Layout icon
@@ -35,4 +35,4 @@ export const ModuleLayoutIcon: React.FC<ILayoutIcon> = (props) => {
       )}
     </>
   );
-};
+}

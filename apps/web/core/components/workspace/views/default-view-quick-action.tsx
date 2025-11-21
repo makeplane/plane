@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { ExternalLink, LinkIcon } from "lucide-react";
 // plane imports
@@ -19,7 +17,7 @@ type Props = {
   };
 };
 
-export const DefaultWorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
+export const DefaultWorkspaceViewQuickActions = observer(function DefaultWorkspaceViewQuickActions(props: Props) {
   const { workspaceSlug, view } = props;
 
   const { t } = useTranslation();

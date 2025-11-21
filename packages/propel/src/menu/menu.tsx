@@ -18,7 +18,7 @@ const SubMenuContext = React.createContext<{ closeSubmenu: () => void } | null>(
 const useSubMenu = () => React.useContext(SubMenuContext);
 
 // SubMenu implementation
-const SubMenu: React.FC<TSubMenuProps> = (props) => {
+function SubMenu(props: TSubMenuProps) {
   const { children, trigger, disabled = false, className = "" } = props;
 
   return (
@@ -34,9 +34,9 @@ const SubMenu: React.FC<TSubMenuProps> = (props) => {
       </BaseMenu.Portal>
     </BaseMenu.SubmenuRoot>
   );
-};
+}
 
-const MenuItem: React.FC<TMenuItemProps> = (props) => {
+function MenuItem(props: TMenuItemProps) {
   const { children, disabled = false, onClick, className } = props;
   const submenuContext = useSubMenu();
 
@@ -59,7 +59,7 @@ const MenuItem: React.FC<TMenuItemProps> = (props) => {
       {children}
     </BaseMenu.Item>
   );
-};
+}
 
 function Menu(props: TMenuProps) {
   const {

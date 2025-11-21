@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useMemo, useState } from "react";
 import { Area, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis, Line, ComposedChart, CartesianGrid } from "recharts";
 // plane imports
@@ -10,7 +8,9 @@ import { getLegendProps } from "../components/legend";
 import { CustomXAxisTick, CustomYAxisTick } from "../components/tick";
 import { CustomTooltip } from "../components/tooltip";
 
-export const AreaChart = React.memo(<K extends string, T extends string>(props: TAreaChartProps<K, T>) => {
+export const AreaChart = React.memo(function AreaChart<K extends string, T extends string>(
+  props: TAreaChartProps<K, T>
+) {
   const {
     data,
     areas,

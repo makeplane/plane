@@ -22,7 +22,7 @@ const TABS = {
   },
 };
 
-const SettingsTabs = observer(() => {
+const SettingsTabs = observer(function SettingsTabs() {
   // router
   const pathname = usePathname();
   const { workspaceSlug } = useParams();

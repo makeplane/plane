@@ -42,7 +42,7 @@ export type TProfileFormProps = {
   profile: TUserProfile;
 };
 
-export const ProfileForm = observer((props: TProfileFormProps) => {
+export const ProfileForm = observer(function ProfileForm(props: TProfileFormProps) {
   const { user, profile } = props;
   const { workspaceSlug } = useParams();
   // states

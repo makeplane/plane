@@ -13,7 +13,7 @@ type Props = {
   width?: EModalWidth;
   className?: string;
 };
-export const ModalCore: React.FC<Props> = (props) => {
+export function ModalCore(props: Props) {
   const {
     children,
     handleClose,
@@ -64,4 +64,4 @@ export const ModalCore: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+}

@@ -33,7 +33,10 @@ type DocumentEditorWrapperProps = MakeOptional<
       }
   );
 
-export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProps>((props, ref) => {
+export const DocumentEditor = forwardRef(function DocumentEditor(
+  props: DocumentEditorWrapperProps,
+  ref: React.ForwardedRef<EditorRefApi>
+) {
   const {
     containerClassName,
     editable,
@@ -53,7 +56,8 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
   });
   // editor flaggings
   const { document: documentEditorExtensions } = useEditorFlagging({
-    workspaceSlug: workspaceSlug?.toString() ?? "",
+    workspaceSlug,
+    projectId,
   });
   // use editor mention
   const { fetchMentions } = useEditorMention({

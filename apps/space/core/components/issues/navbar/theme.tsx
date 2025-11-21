@@ -1,5 +1,3 @@
-"use client";
-
 // next theme
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
@@ -7,7 +5,7 @@ import { useTheme } from "next-themes";
 
 // mobx react lite
 
-export const NavbarTheme = observer(() => {
+export const NavbarTheme = observer(function NavbarTheme() {
   const [appTheme, setAppTheme] = useState("light");
 
   const { setTheme, theme } = useTheme();

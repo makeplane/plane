@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, MouseEvent } from "react";
 import React, { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
@@ -54,7 +52,7 @@ const defaultValues: Partial<ICycle> = {
   end_date: null,
 };
 
-export const CycleListItemAction: FC<Props> = observer((props) => {
+export const CycleListItemAction = observer(function CycleListItemAction(props: Props) {
   const { workspaceSlug, projectId, cycleId, cycleDetails, parentRef, isActive = false } = props;
   // router
   const { projectId: routerProjectId } = useParams();

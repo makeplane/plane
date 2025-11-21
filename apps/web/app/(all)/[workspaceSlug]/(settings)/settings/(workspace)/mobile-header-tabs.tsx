@@ -8,7 +8,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 // plane web helpers
 import { shouldRenderSettingLink } from "@/plane-web/helpers/workspace.helper";
 
-export const MobileWorkspaceSettingsTabs = observer(() => {
+export const MobileWorkspaceSettingsTabs = observer(function MobileWorkspaceSettingsTabs() {
   const router = useAppRouter();
   const { workspaceSlug } = useParams();
   const pathname = usePathname();

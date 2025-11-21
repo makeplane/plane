@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, Fragment } from "react";
 
 import { Transition, Dialog } from "@headlessui/react";
@@ -20,7 +18,7 @@ type TJoinProjectModalProps = {
   handleClose: () => void;
 };
 
-export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
+export function JoinProjectModal(props: TJoinProjectModalProps) {
   const { handleClose, isOpen, project, workspaceSlug } = props;
   // states
   const [isJoiningLoading, setIsJoiningLoading] = useState(false);
@@ -104,4 +102,4 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+}

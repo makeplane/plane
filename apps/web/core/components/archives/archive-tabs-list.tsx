@@ -29,7 +29,7 @@ const ARCHIVES_TAB_LIST: {
   },
 ];
 
-export const ArchiveTabsList: FC = observer(() => {
+export const ArchiveTabsList = observer(function ArchiveTabsList() {
   // router
   const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();

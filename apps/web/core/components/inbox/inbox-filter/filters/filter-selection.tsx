@@ -16,7 +16,7 @@ import { FilterPriority } from "./priority";
 import { FilterState } from "./state";
 import { FilterStatus } from "./status";
 
-export const InboxIssueFilterSelection: FC = observer(() => {
+export const InboxIssueFilterSelection = observer(function InboxIssueFilterSelection() {
   // hooks
   const { isMobile } = usePlatformOS();
   const {

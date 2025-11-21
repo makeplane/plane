@@ -10,7 +10,7 @@ type Props = {
   stateDistribution: IUserStateDistribution[];
 };
 
-export const ProfileWorkload: React.FC<Props> = ({ stateDistribution }) => {
+export function ProfileWorkload({ stateDistribution }: Props) {
   const { t } = useTranslation();
 
   return (
@@ -44,4 +44,4 @@ export const ProfileWorkload: React.FC<Props> = ({ stateDistribution }) => {
       </div>
     </div>
   );
-};
+}

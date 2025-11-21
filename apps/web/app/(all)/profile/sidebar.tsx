@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -37,7 +35,7 @@ const WORKSPACE_ACTION_LINKS = [
   },
 ];
 
-const ProjectActionIcons = ({ type, size, className = "" }: { type: string; size?: number; className?: string }) => {
+function ProjectActionIcons({ type, size, className = "" }: { type: string; size?: number; className?: string }) {
   const icons = {
     profile: CircleUser,
     security: KeyRound,
@@ -51,8 +49,9 @@ const ProjectActionIcons = ({ type, size, className = "" }: { type: string; size
   const Icon = icons[type as keyof typeof icons];
   if (!Icon) return null;
   return <Icon size={size} className={className} />;
-};
-export const ProfileLayoutSidebar = observer(() => {
+}
+
+export const ProfileLayoutSidebar = observer(function ProfileLayoutSidebar() {
   // states
   const [isSigningOut, setIsSigningOut] = useState(false);
   // router

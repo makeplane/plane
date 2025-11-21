@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
@@ -14,7 +12,7 @@ type Props = {
   userProfile: IUserProfileData | undefined;
 };
 
-export const ProfileStats: React.FC<Props> = ({ userProfile }) => {
+export function ProfileStats({ userProfile }: Props) {
   const { workspaceSlug, userId } = useParams();
 
   const { t } = useTranslation();
@@ -68,4 +66,4 @@ export const ProfileStats: React.FC<Props> = ({ userProfile }) => {
       )}
     </div>
   );
-};
+}

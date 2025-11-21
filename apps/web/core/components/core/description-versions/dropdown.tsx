@@ -18,7 +18,7 @@ type Props = {
   versions: TDescriptionVersion[] | undefined;
 };
 
-export const DescriptionVersionsDropdown: React.FC<Props> = observer((props) => {
+export const DescriptionVersionsDropdown = observer(function DescriptionVersionsDropdown(props: Props) {
   const { disabled, entityInformation, onVersionClick, versions } = props;
   // store hooks
   const { getUserDetails } = useMember();

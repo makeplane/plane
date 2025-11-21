@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // computed
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -14,7 +13,7 @@ export type TIssueLinkList = {
   disabled?: boolean;
 };
 
-export const IssueLinkList: FC<TIssueLinkList> = observer((props) => {
+export const IssueLinkList = observer(function IssueLinkList(props: TIssueLinkList) {
   // props
   const { issueId, linkOperations, disabled = false } = props;
   // hooks

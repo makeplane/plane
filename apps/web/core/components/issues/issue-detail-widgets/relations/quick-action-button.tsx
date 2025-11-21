@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -20,7 +19,7 @@ type Props = {
   issueServiceType: TIssueServiceType;
 };
 
-export const RelationActionButton: FC<Props> = observer((props) => {
+export const RelationActionButton = observer(function RelationActionButton(props: Props) {
   const { customButton, issueId, disabled = false, issueServiceType } = props;
   const { t } = useTranslation();
   // store hooks

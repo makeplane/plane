@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -27,7 +25,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const DeleteIssueModal: React.FC<Props> = observer((props) => {
+export const DeleteIssueModal = observer(function DeleteIssueModal(props: Props) {
   const { dataId, data, isOpen, handleClose, isSubIssue = false, onSubmit, isEpic = false } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);

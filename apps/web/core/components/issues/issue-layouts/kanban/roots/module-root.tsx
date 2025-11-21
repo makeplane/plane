@@ -9,7 +9,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { ModuleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseKanBanRoot } from "../base-kanban-root";
 
-export const ModuleKanBanLayout: React.FC = observer(() => {
+export const ModuleKanBanLayout = observer(function ModuleKanBanLayout() {
   const { workspaceSlug, projectId, moduleId } = useParams();
 
   // store

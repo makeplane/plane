@@ -20,7 +20,7 @@ type CustomImageBlockProps = CustomImageNodeViewProps & {
   downloadSrc: string | undefined;
 };
 
-export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
+export function CustomImageBlock(props: CustomImageBlockProps) {
   // props
   const {
     editor,
@@ -339,4 +339,4 @@ export const CustomImageBlock: React.FC<CustomImageBlockProps> = (props) => {
       </div>
     </div>
   );
-};
+}

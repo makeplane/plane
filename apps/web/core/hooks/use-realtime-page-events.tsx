@@ -60,48 +60,50 @@ export const useRealtimePageEvents = ({
     [getUserDetails]
   );
 
-  const ACTION_HANDLERS = useMemo<
-    Partial<{
-      [K in keyof EventToPayloadMap]: PageUpdateHandler<K>;
-    }>
-  >(
-    () => ({
+  const ACTION_HANDLERS = useMemo(function ACTION_HANDLERS() {
+    return {
       archived: ({ pageIds, data }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getPageById(pageId);
           if (pageItem) pageItem.archive({ archived_at: data.archived_at, shouldSync: false });
         });
       },
+
       unarchived: ({ pageIds }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getPageById(pageId);
           if (pageItem) pageItem.restore({ shouldSync: false });
         });
       },
+
       locked: ({ pageIds }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getPageById(pageId);
           if (pageItem) pageItem.lock({ shouldSync: false, recursive: false });
         });
       },
+
       unlocked: ({ pageIds }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getPageById(pageId);
           if (pageItem) pageItem.unlock({ shouldSync: false, recursive: false });
         });
       },
+
       "made-public": ({ pageIds }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getPageById(pageId);
           if (pageItem) pageItem.makePublic({ shouldSync: false });
         });
       },
+
       "made-private": ({ pageIds }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getPageById(pageId);
           if (pageItem) pageItem.makePrivate({ shouldSync: false });
         });
       },
+
       deleted: ({ pageIds, data }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getPageById(pageId);
@@ -120,6 +122,7 @@ export const useRealtimePageEvents = ({
           }
         });
       },
+
       property_updated: ({ pageIds, data }) => {
         pageIds.forEach((pageId) => {
           const pageInstance = getPageById(pageId);
@@ -128,6 +131,7 @@ export const useRealtimePageEvents = ({
           pageInstance?.mutateProperties(rest);
         });
       },
+
       error: ({ pageIds, data }) => {
         const errorType = data.error_type;
         const errorMessage = data.error_message || "An error occurred";
@@ -158,10 +162,10 @@ export const useRealtimePageEvents = ({
           }
         }
       },
+
       ...customRealtimeEventHandlers,
-    }),
-    [getPageById, page, router, getUserDisplayText, removePage, currentUser, customRealtimeEventHandlers, handlers]
-  );
+    };
+  });
 
   // The main function that will be returned from this hook
   const updatePageProperties = useCallback(

@@ -11,33 +11,35 @@ type EmptySpaceProps = {
   link?: { text: string; href: string };
 };
 
-const EmptySpace: React.FC<EmptySpaceProps> = ({ title, description, children, Icon, link }) => (
-  <>
-    <div className="max-w-lg">
-      {Icon ? (
-        <div className="mb-4">
-          <Icon className="h-14 w-14 text-custom-text-200" />
-        </div>
-      ) : null}
+function EmptySpace({ title, description, children, Icon, link }: EmptySpaceProps) {
+  return (
+    <>
+      <div className="max-w-lg">
+        {Icon ? (
+          <div className="mb-4">
+            <Icon className="h-14 w-14 text-custom-text-200" />
+          </div>
+        ) : null}
 
-      <h2 className="text-lg font-medium text-custom-text-100">{title}</h2>
-      <div className="mt-1 text-sm text-custom-text-200">{description}</div>
-      <ul role="list" className="mt-6 divide-y divide-custom-border-200 border-b border-t border-custom-border-200">
-        {children}
-      </ul>
-      {link ? (
-        <div className="mt-6 flex">
-          <Link href={link.href}>
-            <span className="text-sm font-medium text-custom-primary hover:text-custom-primary">
-              {link.text}
-              <span aria-hidden="true"> &rarr;</span>
-            </span>
-          </Link>
-        </div>
-      ) : null}
-    </div>
-  </>
-);
+        <h2 className="text-lg font-medium text-custom-text-100">{title}</h2>
+        <div className="mt-1 text-sm text-custom-text-200">{description}</div>
+        <ul role="list" className="mt-6 divide-y divide-custom-border-200 border-b border-t border-custom-border-200">
+          {children}
+        </ul>
+        {link ? (
+          <div className="mt-6 flex">
+            <Link href={link.href}>
+              <span className="text-sm font-medium text-custom-primary hover:text-custom-primary">
+                {link.text}
+                <span aria-hidden="true"> &rarr;</span>
+              </span>
+            </Link>
+          </div>
+        ) : null}
+      </div>
+    </>
+  );
+}
 
 type EmptySpaceItemProps = {
   title: string;
@@ -47,7 +49,7 @@ type EmptySpaceItemProps = {
   href?: string;
 };
 
-const EmptySpaceItem: React.FC<EmptySpaceItemProps> = ({ title, description, Icon, action, href }) => {
+function EmptySpaceItem({ title, description, Icon, action, href }: EmptySpaceItemProps) {
   let spaceItem = (
     <div className={`group relative flex ${description ? "items-start" : "items-center"} space-x-3 py-4`}>
       <div className="flex-shrink-0">
@@ -79,6 +81,6 @@ const EmptySpaceItem: React.FC<EmptySpaceItemProps> = ({ title, description, Ico
       </li>
     </>
   );
-};
+}
 
 export { EmptySpace, EmptySpaceItem };

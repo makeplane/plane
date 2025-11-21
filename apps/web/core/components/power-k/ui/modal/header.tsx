@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { Command } from "cmdk";
 import { X, Search } from "lucide-react";
@@ -17,7 +15,7 @@ type Props = {
   searchTerm: string;
 };
 
-export const PowerKModalHeader: React.FC<Props> = (props) => {
+export function PowerKModalHeader(props: Props) {
   const { context, searchTerm, onSearchChange, activePage } = props;
   // translation
   const { t } = useTranslation();
@@ -57,4 +55,4 @@ export const PowerKModalHeader: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

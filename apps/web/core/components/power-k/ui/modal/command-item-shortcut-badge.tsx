@@ -61,7 +61,7 @@ export const formatShortcutForDisplay = (shortcut: string | undefined): string |
   return parts.join("");
 };
 
-export const ShortcutBadge = ({ shortcut }: { shortcut: string | undefined }) => {
+export function ShortcutBadge({ shortcut }: { shortcut: string | undefined }) {
   if (!shortcut) return null;
 
   const formatted = formatShortcutForDisplay(shortcut);
@@ -77,7 +77,7 @@ export const ShortcutBadge = ({ shortcut }: { shortcut: string | undefined }) =>
       ))}
     </div>
   );
-};
+}
 
 /**
  * Formats key sequence for display (e.g., "gm" -> "G then M")
@@ -89,7 +89,7 @@ export const formatKeySequenceForDisplay = (sequence: string | undefined): strin
   return chars.map((c) => c.toUpperCase()).join(" then ");
 };
 
-export const KeySequenceBadge = ({ sequence }: { sequence: string | undefined }) => {
+export function KeySequenceBadge({ sequence }: { sequence: string | undefined }) {
   if (!sequence) return null;
 
   const chars = sequence.split("");
@@ -106,4 +106,4 @@ export const KeySequenceBadge = ({ sequence }: { sequence: string | undefined })
       ))}
     </div>
   );
-};
+}

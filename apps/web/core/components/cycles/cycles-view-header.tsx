@@ -20,7 +20,7 @@ type Props = {
   projectId: string;
 };
 
-export const CyclesViewHeader: React.FC<Props> = observer((props) => {
+export const CyclesViewHeader = observer(function CyclesViewHeader(props: Props) {
   const { projectId } = props;
   // refs
   const inputRef = useRef<HTMLInputElement>(null);

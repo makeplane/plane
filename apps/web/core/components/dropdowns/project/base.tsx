@@ -43,7 +43,7 @@ type Props = TDropdownProps & {
       }
   );
 
-export const ProjectDropdownBase: React.FC<Props> = observer((props) => {
+export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: Props) {
   const {
     button,
     buttonClassName,

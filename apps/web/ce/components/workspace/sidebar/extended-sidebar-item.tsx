@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -37,7 +36,7 @@ type TExtendedSidebarItemProps = {
   isLastChild: boolean;
 };
 
-export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((props) => {
+export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: TExtendedSidebarItemProps) {
   const { item, handleOnNavigationItemDrop, disableDrag = false, disableDrop = false, isLastChild } = props;
   const { t } = useTranslation();
   // states
@@ -61,10 +60,6 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
   const isPinned = sidebarPreference?.[item.key]?.is_pinned;
 
   const handleLinkClick = () => toggleExtendedSidebar(true);
-
-  if (!allowPermissions(item.access as any, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString())) {
-    return null;
-  }
 
   const itemHref =
     item.key === "your_work"
@@ -150,6 +145,10 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
       })
     );
   }, [isLastChild, handleOnNavigationItemDrop, disableDrag, disableDrop, item.key]);
+
+  if (!allowPermissions(item.access as any, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString())) {
+    return null;
+  }
 
   return (
     <div

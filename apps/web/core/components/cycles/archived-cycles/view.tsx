@@ -16,7 +16,7 @@ export interface IArchivedCyclesView {
   projectId: string;
 }
 
-export const ArchivedCyclesView: FC<IArchivedCyclesView> = observer((props) => {
+export const ArchivedCyclesView = observer(function ArchivedCyclesView(props: IArchivedCyclesView) {
   const { workspaceSlug, projectId } = props;
   // store hooks
   const { getFilteredArchivedCycleIds, loader } = useCycle();

@@ -13,13 +13,13 @@ const iconComponents = {
   draft: Circle,
 };
 
-export const CycleGroupIcon: React.FC<ICycleGroupIcon> = ({
+export function CycleGroupIcon({
   className = "",
   color,
   cycleGroup,
   height = "12px",
   width = "12px",
-}) => {
+}: ICycleGroupIcon) {
   const CycleIconComponent = iconComponents[cycleGroup] || CycleIcon;
 
   return (
@@ -30,4 +30,4 @@ export const CycleGroupIcon: React.FC<ICycleGroupIcon> = ({
       className={`flex-shrink-0 ${className}`}
     />
   );
-};
+}

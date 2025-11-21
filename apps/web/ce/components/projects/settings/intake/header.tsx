@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -19,7 +17,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane web
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
-export const ProjectInboxHeader: FC = observer(() => {
+export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
   // states
   const [createIssueModal, setCreateIssueModal] = useState(false);
   // router

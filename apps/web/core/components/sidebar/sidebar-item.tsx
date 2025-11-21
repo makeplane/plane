@@ -60,7 +60,7 @@ const styles = {
 // SUB-COMPONENTS
 // ============================================================================
 
-const AppSidebarItemLabel: React.FC<AppSidebarItemLabelProps> = ({ highlight = false, label }) => {
+function AppSidebarItemLabel({ highlight = false, label }: AppSidebarItemLabelProps) {
   if (!label) return null;
 
   return (
@@ -73,9 +73,9 @@ const AppSidebarItemLabel: React.FC<AppSidebarItemLabelProps> = ({ highlight = f
       {label}
     </span>
   );
-};
+}
 
-const AppSidebarItemIcon: React.FC<AppSidebarItemIconProps> = ({ icon, highlight }) => {
+function AppSidebarItemIcon({ icon, highlight }: AppSidebarItemIconProps) {
   if (!icon) return null;
 
   return (
@@ -88,9 +88,9 @@ const AppSidebarItemIcon: React.FC<AppSidebarItemIconProps> = ({ icon, highlight
       {icon}
     </div>
   );
-};
+}
 
-const AppSidebarLinkItem: React.FC<AppSidebarLinkItemProps> = ({ href, children, className }) => {
+function AppSidebarLinkItem({ href, children, className }: AppSidebarLinkItemProps) {
   if (!href) return null;
 
   return (
@@ -98,31 +98,28 @@ const AppSidebarLinkItem: React.FC<AppSidebarLinkItemProps> = ({ href, children,
       {children}
     </Link>
   );
-};
+}
 
-const AppSidebarButtonItem: React.FC<AppSidebarButtonItemProps> = ({
-  children,
-  onClick,
-  disabled = false,
-  className,
-}) => (
-  <button className={cn(styles.base, className)} onClick={onClick} disabled={disabled} type="button">
-    {children}
-  </button>
-);
+function AppSidebarButtonItem({ children, onClick, disabled = false, className }: AppSidebarButtonItemProps) {
+  return (
+    <button className={cn(styles.base, className)} onClick={onClick} disabled={disabled} type="button">
+      {children}
+    </button>
+  );
+}
 
 // ============================================================================
 // MAIN COMPONENT
 // ============================================================================
 
-type AppSidebarItemComponent = React.FC<AppSidebarItemProps> & {
+export type AppSidebarItemComponent = React.FC<AppSidebarItemProps> & {
   Label: React.FC<AppSidebarItemLabelProps>;
   Icon: React.FC<AppSidebarItemIconProps>;
   Link: React.FC<AppSidebarLinkItemProps>;
   Button: React.FC<AppSidebarButtonItemProps>;
 };
 
-const AppSidebarItem: AppSidebarItemComponent = ({ variant = "link", item }) => {
+function AppSidebarItem({ variant = "link", item }) {
   if (!item) return null;
 
   const { icon, isActive, label, href, onClick, disabled } = item;
@@ -143,7 +140,7 @@ const AppSidebarItem: AppSidebarItemComponent = ({ variant = "link", item }) => 
       {commonItems}
     </AppSidebarButtonItem>
   );
-};
+}
 
 // ============================================================================
 // COMPOUND COMPONENT ASSIGNMENT
