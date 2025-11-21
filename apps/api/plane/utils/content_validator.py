@@ -119,6 +119,7 @@ ATTRIBUTES = {
         "aspectratio",
         "src",
         "alignment",
+        "status",
     },
     "img": {
         "width",
