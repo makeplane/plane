@@ -102,7 +102,7 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
         className="rounded-lg px-2 py-1 flex items-center justify-between cursor-pointer text-[#737373] hover:bg-custom-background-80"
       >
         {selectedTeam ? (
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 ">
             <img
               src={selectedTeam.logo}
               alt={`${selectedTeam.name} logo`}
@@ -119,14 +119,17 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
       </div>
 
       {open && !disabled && (
-        <div className="absolute mt-1 w-full bg-custom-border-200 rounded-lg shadow-lg max-h-40 overflow-y-auto z-50 text-[#737373]">
-          <div className="p-2 flex items-center gap-2 bg-custom-border-200">
+        <div className="absolute mt-1 w-full rounded border-[0.5px] border-custom-border-300 bg-custom-background-100
+ shadow-lg max-h-40 overflow-y-auto z-50 text-[#737373]">
+          <div className="p-2 flex items-center gap-2 rounded  bg-custom-background-100
+">
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search"
-              className="w-full py-1 text-xs bg-custom-border-200 pl-2 focus:outline-none"
+              className="w-full py-1 text-xs rounded border-[0.5px] border-custom-border-300 bg-custom-background-100
+ pl-2 focus:outline-none"
             />
           </div>
 
