@@ -21,4 +21,15 @@ class Migration(migrations.Migration):
             name='parent',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='parent_issue_comment', to='db.issuecomment'),
         ),
+        migrations.AddField(
+            model_name='workspaceuserproperties',
+            name='is_horizontal_navigation_bar',
+            field=models.BooleanField(default=False),
+        ),
+        migrations.AddField(
+            model_name='workspaceuserproperties',
+            name='num_of_projects',
+            field=models.IntegerField(default=10),
+        ),
+
     ]
