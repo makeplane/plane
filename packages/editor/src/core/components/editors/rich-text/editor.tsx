@@ -43,7 +43,14 @@ function RichTextEditor(props: IRichTextEditorProps) {
     <EditorWrapper {...props} extensions={getExtensions()}>
       {(editor) => (
         <>
-          {editor && bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}
+          {editor && bubbleMenuEnabled && (
+            <EditorBubbleMenu
+              disabledExtensions={disabledExtensions}
+              editor={editor}
+              extendedEditorProps={extendedEditorProps}
+              flaggedExtensions={flaggedExtensions}
+            />
+          )}
           <BlockMenu
             editor={editor}
             flaggedExtensions={flaggedExtensions}

@@ -56,7 +56,8 @@ export const DocumentEditor = forwardRef(function DocumentEditor(
   });
   // editor flaggings
   const { document: documentEditorExtensions } = useEditorFlagging({
-    workspaceSlug: workspaceSlug?.toString() ?? "",
+    workspaceSlug,
+    projectId,
   });
   // use editor mention
   const { fetchMentions } = useEditorMention({
