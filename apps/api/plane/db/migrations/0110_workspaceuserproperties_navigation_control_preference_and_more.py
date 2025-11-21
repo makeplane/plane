@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='workspaceuserproperties',
             name='navigation_control_preference',
-            field=models.CharField(choices=[('ACCORDION', 'Accordion'), ('HORIZONTAL', 'Horizontal')], default='ACCORDION', max_length=25),
+            field=models.CharField(choices=[('ACCORDION', 'Accordion'), ('TABBED', 'Tabbed')], default='ACCORDION', max_length=25),
         ),
         migrations.AddField(
             model_name='workspaceuserproperties',

@@ -303,7 +303,7 @@ class WorkspaceTheme(BaseModel):
 class WorkspaceUserProperties(BaseModel):
     class NavigationControlPreference(models.TextChoices):
         ACCORDION = "ACCORDION", "Accordion"
-        HORIZONTAL = "HORIZONTAL", "Horizontal"
+        TABBED = "TABBED", "Tabbed"
 
     workspace = models.ForeignKey(
         "db.Workspace",
