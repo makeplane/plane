@@ -104,4 +104,4 @@ Tabs.Trigger = TabsTrigger;
 Tabs.Content = TabsContent;
 Tabs.Indicator = TabsIndicator;
 
-export { Tabs };
+export { Tabs, TabsList, TabsTrigger, TabsContent, TabsIndicator };

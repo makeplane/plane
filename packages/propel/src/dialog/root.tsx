@@ -34,6 +34,18 @@ export interface DialogTitleProps extends React.ComponentProps<typeof BaseDialog
   children: React.ReactNode;
 }
 
+export interface DialogPortalProps extends React.ComponentProps<typeof BaseDialog.Portal> {
+  children: React.ReactNode;
+}
+
+export interface DialogOverlayProps extends React.ComponentProps<typeof BaseDialog.Backdrop> {
+  className?: string;
+}
+
+export interface DialogTriggerProps extends React.ComponentProps<typeof BaseDialog.Trigger> {
+  children: React.ReactNode;
+}
+
 // Constants
 const OVERLAY_CLASSNAME = cn("fixed inset-0 z-backdrop bg-custom-backdrop");
 const BASE_CLASSNAME = "relative text-left bg-custom-background-100 rounded-lg shadow-md w-full z-modal";
@@ -45,7 +57,7 @@ const getPositionClassNames = (position: DialogPosition) =>
     "top-8 left-1/2 -translate-x-1/2": position === "top",
   });
 
-const DialogPortal = memo(function DialogPortal({ children, ...props }: React.ComponentProps<typeof BaseDialog.Portal>) {
+const DialogPortal = memo<DialogPortalProps>(function DialogPortal({ children, ...props }: DialogPortalProps) {
   return (
     <BaseDialog.Portal data-slot="dialog-portal" {...props}>
       {children}
@@ -54,7 +66,7 @@ const DialogPortal = memo(function DialogPortal({ children, ...props }: React.Co
 });
 DialogPortal.displayName = "DialogPortal";
 
-const DialogOverlay = memo(function DialogOverlay({ className, ...props }: React.ComponentProps<typeof BaseDialog.Backdrop>) {
+const DialogOverlay = memo<DialogOverlayProps>(function DialogOverlay({ className, ...props }: DialogOverlayProps) {
   return <BaseDialog.Backdrop data-slot="dialog-overlay" className={cn(OVERLAY_CLASSNAME, className)} {...props} />;
 });
 DialogOverlay.displayName = "DialogOverlay";
@@ -68,7 +80,7 @@ const DialogComponent = memo<DialogProps>(function DialogComponent({ children, .
 });
 DialogComponent.displayName = "Dialog";
 
-const DialogTrigger = memo(function DialogTrigger({ children, ...props }: React.ComponentProps<typeof BaseDialog.Trigger>) {
+const DialogTrigger = memo<DialogTriggerProps>(function DialogTrigger({ children, ...props }: DialogTriggerProps) {
   return (
     <BaseDialog.Trigger data-slot="dialog-trigger" {...props}>
       {children}
@@ -118,8 +130,10 @@ DialogTitle.displayName = "DialogTitle";
 const Dialog = DialogComponent as typeof DialogComponent & {
   Panel: typeof DialogPanel;
   Title: typeof DialogTitle;
+  Trigger: typeof DialogTrigger;
 };
 Dialog.Panel = DialogPanel;
 Dialog.Title = DialogTitle;
+Dialog.Trigger = DialogTrigger;
 
-export { Dialog, DialogTitle, DialogPanel };
+export { Dialog, DialogTitle, DialogPanel, DialogTrigger };
