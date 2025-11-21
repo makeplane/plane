@@ -1,4 +1,4 @@
-import { Ban, CirclePlus } from "lucide-react";
+import { Ban, CirclePlus, Search } from "lucide-react";
 import React, { useEffect, useState, useRef } from "react";
 
 interface Team {
@@ -27,27 +27,19 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
   const [loadError, setLoadError] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // sync latest prop into component state
-  useEffect(() => {
-    setSelectedTeam(value);
-  }, [value]);
+  useEffect(() => setSelectedTeam(value), [value]);
 
-  // load saved local preference only as UI fallback (no onChange trigger)
   useEffect(() => {
     try {
       if (!value) {
         const saved = localStorage.getItem(storageKey);
-        if (saved) {
-          const parsed = JSON.parse(saved) as Team | null;
-          setSelectedTeam(parsed);
-        }
+        if (saved) setSelectedTeam(JSON.parse(saved) as Team | null);
       }
     } catch (e) {
       console.warn("LocalStorage read failed", e);
     }
   }, [storageKey, value]);
 
-  // fetch teams
   useEffect(() => {
     const API_URL = `${process.env.NEXT_PUBLIC_CP_SERVER_URL}/meta-type?key='OPPOSITIONTEAM'`;
     setLoading(true);
@@ -59,7 +51,6 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
 
         const items = data?.["Gateway Response"]?.result?.[0] ?? [];
         const values = items.find((i: any) => i?.field === "values")?.value;
-
         if (!Array.isArray(values)) throw new Error("Invalid structure");
 
         setTeams(values.sort((a: Team, b: Team) => a.name.localeCompare(b.name)));
@@ -68,7 +59,6 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
       .finally(() => setLoading(false));
   }, []);
 
-  // close dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (!dropdownRef.current?.contains(e.target as Node)) setOpen(false);
@@ -85,7 +75,6 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
       else localStorage.removeItem(storageKey);
     } catch {}
 
-    // only emit user-triggered change
     onChange?.(team);
     setOpen(false);
     setSearch("");
@@ -103,11 +92,7 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
       >
         {selectedTeam ? (
           <div className="flex items-center gap-1.5 ">
-            <img
-              src={selectedTeam.logo}
-              alt={`${selectedTeam.name} logo`}
-              className="w-5 h-5 rounded-full object-cover"
-            />
+            <img src={selectedTeam.logo} alt={selectedTeam.name} className="w-5 h-5 rounded-full object-cover" />
             <span className="text-xs whitespace-normal">{selectedTeam.name}</span>
           </div>
         ) : (
@@ -119,17 +104,18 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
       </div>
 
       {open && !disabled && (
-        <div className="absolute mt-1 w-full rounded border-[0.5px] border-custom-border-300 bg-custom-background-100
- shadow-lg max-h-40 overflow-y-auto z-50 text-[#737373]">
-          <div className="p-2 flex items-center gap-2 rounded  bg-custom-background-100
-">
+        <div className="absolute mt-1 w-full rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 shadow-lg max-h-40 overflow-y-auto z-50 text-[#737373]">
+
+          {/* Search input with icon */}
+          <div className="relative p-2">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-3 w-3 text-gray-400" />
+
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search"
-              className="w-full py-1 text-xs rounded border-[0.5px] border-custom-border-300 bg-custom-background-100
- pl-2 focus:outline-none"
+              className="w-full py-1 pl-8 pr-2 text-xs rounded bg-custom-background-90 focus:outline-none"
             />
           </div>
 
@@ -143,17 +129,14 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
 
           {loading && <div className="px-2 py-1 text-xs">Loading…</div>}
           {loadError && <div className="px-2 py-1 text-xs text-red-500">Failed to load</div>}
+
           {!loading && !loadError && filteredTeams.map((team) => (
             <div
               key={team.name}
               onClick={() => handleSelect(team)}
               className="flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-custom-background-80"
             >
-              <img
-                src={team.logo}
-                alt={`${team.name} logo`}
-                className="w-5 h-5 rounded-full object-cover"
-              />
+              <img src={team.logo} alt={team.name} className="w-5 h-5 rounded-full object-cover" />
               <span className="text-xs whitespace-normal">{team.name}</span>
             </div>
           ))}
