@@ -31,6 +31,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+import OppositionTeamProperty from "@/plane-web/components/issues/issue-details/opposition-team-property";
 
 type TIssueDefaultPropertiesProps = {
   control: Control<TIssue>;
@@ -54,6 +55,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
     workspaceSlug,
     selectedParentIssue,
     startDate,
+    
     targetDate,
     parentId,
     isDraft,
@@ -103,6 +105,10 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
           </div>
         )}
       />
+
+    
+
+      
       <Controller
         control={control}
         name="priority"
@@ -335,6 +341,30 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
           />
         )}
       />
+     
+<Controller
+  control={control}
+  name="opposition_team"
+  render={({ field: { value, onChange } }) => (
+    <div
+      className="h-7 w-fit border rounded-md px-2 flex items-center"
+      style={{ borderColor: "rgba(var(--color-border-300))" }}
+    >
+      <OppositionTeamProperty  
+        storageKey={`opp-team-${id}`}
+        value={value}
+        onChange={(team) => {
+          onChange(team);
+          handleFormChange();
+        }}
+        disabled={false}
+      />
+    </div>
+  )}
+/>
+
+
+
     </div>
   );
 });

@@ -2,7 +2,7 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { Signal, Tag, Triangle, LayoutPanelTop, CalendarClock, CalendarCheck2, Users, UserCircle2 } from "lucide-react";
+import { Signal, Tag, Triangle, LayoutPanelTop, CalendarClock, CalendarCheck2, Users, UserCircle2 ,Handshake} from "lucide-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // ui icons
@@ -292,7 +292,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         {/* opposition team */}
         <div className="flex w-full items-center gap-3 h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-            <Users className="h-4 w-4 flex-shrink-0" />
+            <Handshake className="h-4 w-4 flex-shrink-0" />
             <p>Opposition</p>
           </div>
           <OppositionTeamProperty

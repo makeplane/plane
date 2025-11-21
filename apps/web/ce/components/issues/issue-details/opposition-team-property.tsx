@@ -1,4 +1,4 @@
-import { Ban } from "lucide-react";
+import { Ban, CirclePlus } from "lucide-react";
 import React, { useEffect, useState, useRef } from "react";
 
 interface Team {
@@ -10,7 +10,7 @@ interface OppositionTeamPropertyProps {
   value?: Team | null;
   onChange?: (team: Team | null) => void;
   disabled?: boolean;
-  storageKey: string;  
+  storageKey: string;
 }
 
 const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
@@ -20,59 +20,72 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
   storageKey,
 }) => {
   const [teams, setTeams] = useState<Team[]>([]);
-  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
+  const [selectedTeam, setSelectedTeam] = useState<Team | null>(value);
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Load saved team
+  // sync latest prop into component state
   useEffect(() => {
-    const saved = localStorage.getItem(storageKey);
-    if (saved) {
-      try {
-        const parsed: Team | null = JSON.parse(saved);
-        setSelectedTeam(parsed);
-        onChange?.(parsed);
-      } catch {}
-    } else {
-      setSelectedTeam(value);
-    }
-  }, [storageKey]);
+    setSelectedTeam(value);
+  }, [value]);
 
-  // Fetch teams
-useEffect(() => {
-  const API_URL = `${process.env.NEXT_PUBLIC_CP_SERVER_URL}/meta-type?key='OPPOSITIONTEAM'`;
-
-  fetch(API_URL)
-    .then((res) => res.json())
-    .then((data) => {
-      let values: Team[] = data?.["Gateway Response"]?.result?.[0]?.[2]?.value || [];
-
-      // ✅ Sort alphabetically (A → Z)
-      values = values.sort((a: Team, b: Team) =>
-        a.name.localeCompare(b.name)
-      );
-
-      setTeams(values);
-    })
-    .catch((err) => console.error("Fetch Error:", err));
-}, []);
-
-
-  // Close dropdown on outside click
+  // load saved local preference only as UI fallback (no onChange trigger)
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setOpen(false);
+    try {
+      if (!value) {
+        const saved = localStorage.getItem(storageKey);
+        if (saved) {
+          const parsed = JSON.parse(saved) as Team | null;
+          setSelectedTeam(parsed);
+        }
       }
+    } catch (e) {
+      console.warn("LocalStorage read failed", e);
+    }
+  }, [storageKey, value]);
+
+  // fetch teams
+  useEffect(() => {
+    const API_URL = `${process.env.NEXT_PUBLIC_CP_SERVER_URL}/meta-type?key='OPPOSITIONTEAM'`;
+    setLoading(true);
+
+    fetch(API_URL)
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Failed to fetch");
+        const data = await res.json();
+
+        const items = data?.["Gateway Response"]?.result?.[0] ?? [];
+        const values = items.find((i: any) => i?.field === "values")?.value;
+
+        if (!Array.isArray(values)) throw new Error("Invalid structure");
+
+        setTeams(values.sort((a: Team, b: Team) => a.name.localeCompare(b.name)));
+      })
+      .catch((e) => setLoadError(e.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  // close dropdown on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (!dropdownRef.current?.contains(e.target as Node)) setOpen(false);
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
   }, []);
 
   const handleSelect = (team: Team | null) => {
     setSelectedTeam(team);
-    localStorage.setItem(storageKey, JSON.stringify(team));
+
+    try {
+      if (team) localStorage.setItem(storageKey, JSON.stringify(team));
+      else localStorage.removeItem(storageKey);
+    } catch {}
+
+    // only emit user-triggered change
     onChange?.(team);
     setOpen(false);
     setSearch("");
@@ -83,53 +96,38 @@ useEffect(() => {
   );
 
   return (
-    <div className="relative w-32" ref={dropdownRef}>
+    <div className="relative w-52" ref={dropdownRef}>
       <div
-        onClick={() => !disabled && setOpen(!open)}
+        onClick={() => !disabled && setOpen((o) => !o)}
         className="rounded-lg px-2 py-1 flex items-center justify-between cursor-pointer text-[#737373] hover:bg-custom-background-80"
       >
         {selectedTeam ? (
-          <div className="flex items-center gap-1.5 group">
-            <img src={selectedTeam.logo} className="w-5 h-5 rounded-full object-cover" />
-
-            {/* EXPAND ON HOVER */}
-            <span className="text-xs max-w-[90px] overflow-hidden text-ellipsis whitespace-nowrap group-hover:whitespace-normal group-hover:overflow-visible group-hover:break-words">
-              {selectedTeam.name}
-            </span>
+          <div className="flex items-center gap-1.5">
+            <img
+              src={selectedTeam.logo}
+              alt={`${selectedTeam.name} logo`}
+              className="w-5 h-5 rounded-full object-cover"
+            />
+            <span className="text-xs whitespace-normal">{selectedTeam.name}</span>
           </div>
         ) : (
           <div className="flex items-center gap-1.5">
-            <Ban className="w-4 h-4" style={{ color: "#737373" }} />
-            <span className="text-xs" style={{ color: "#737373" }}>
-              Add opposition
-            </span>
+            <CirclePlus className="w-4 h-4" />
+            <span className="text-xs">Add Opposition Team</span>
           </div>
         )}
       </div>
 
       {open && !disabled && (
         <div className="absolute mt-1 w-full bg-custom-border-200 rounded-lg shadow-lg max-h-40 overflow-y-auto z-50 text-[#737373]">
-          <div className="p-2">
-            <div className="flex items-center gap-2 bg-custom-border-200 rounded px-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-4 h-4"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search"
-                className="w-full py-1 text-xs bg-custom-border-200 pl-2 focus:outline-none"
-              />
-            </div>
+          <div className="p-2 flex items-center gap-2 bg-custom-border-200">
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search"
+              className="w-full py-1 text-xs bg-custom-border-200 pl-2 focus:outline-none"
+            />
           </div>
 
           <div
@@ -140,18 +138,20 @@ useEffect(() => {
             <span className="text-xs text-gray-400">None</span>
           </div>
 
-          {filteredTeams.map((team, index) => (
+          {loading && <div className="px-2 py-1 text-xs">Loading…</div>}
+          {loadError && <div className="px-2 py-1 text-xs text-red-500">Failed to load</div>}
+          {!loading && !loadError && filteredTeams.map((team) => (
             <div
-              key={index}
+              key={team.name}
               onClick={() => handleSelect(team)}
-              className="flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-custom-background-80 group"
+              className="flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-custom-background-80"
             >
-              <img src={team.logo} className="w-5 h-5 rounded-full" />
-
-              {/* EXPAND ON HOVER */}
-              <span className="text-xs max-w-[90px] overflow-hidden text-ellipsis whitespace-nowrap group-hover:whitespace-normal group-hover:overflow-visible group-hover:break-words">
-                {team.name}
-              </span>
+              <img
+                src={team.logo}
+                alt={`${team.name} logo`}
+                className="w-5 h-5 rounded-full object-cover"
+              />
+              <span className="text-xs whitespace-normal">{team.name}</span>
             </div>
           ))}
         </div>
