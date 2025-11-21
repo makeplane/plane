@@ -185,6 +185,7 @@ export type ICollaborativeDocumentEditorProps = Omit<IEditorProps, "initialValue
   serverHandler?: TServerHandler;
   user: TUserDetails;
   extendedDocumentEditorProps?: ICollaborativeDocumentEditorPropsExtended;
+  isFetchingFallbackBinary?: boolean;
 };
 
 export type IDocumentEditorProps = Omit<IEditorProps, "initialValue" | "onEnterKeyPress" | "value"> & {
