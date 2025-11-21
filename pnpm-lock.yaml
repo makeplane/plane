@@ -1330,6 +1330,9 @@ importers:
       '@prettier/plugin-oxc':
         specifier: 0.0.4
         version: 0.0.4
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.12.0
       '@types/react':
         specifier: 'catalog:'
         version: 18.3.11

@@ -1,9 +1,7 @@
 import { range } from "lodash-es";
 import { Loader } from "@plane/ui";
 
-export function PageLoader(props) {
-  const {} = props;
-
+export function PageLoader() {
   return (
     <div className="relative w-full h-full flex flex-col">
       <div className="px-3 border-b border-custom-border-100 py-3">
