@@ -228,11 +228,6 @@ urlpatterns = [
         name="workspace-home-preference",
     ),
     path(
-        "workspaces/<str:slug>/home-preferences/<str:key>/",
-        WorkspaceHomePreferenceViewSet.as_view(),
-        name="workspace-home-preference",
-    ),
-    path(
         "workspaces/<str:slug>/recent-visits/",
         UserRecentVisitViewSet.as_view({"get": "list"}),
         name="workspace-recent-visits",
@@ -250,11 +245,6 @@ urlpatterns = [
     # User Preference
     path(
         "workspaces/<str:slug>/sidebar-preferences/",
-        WorkspaceUserPreferenceViewSet.as_view(),
-        name="workspace-user-preference",
-    ),
-    path(
-        "workspaces/<str:slug>/sidebar-preferences/<str:key>/",
         WorkspaceUserPreferenceViewSet.as_view(),
         name="workspace-user-preference",
     ),
