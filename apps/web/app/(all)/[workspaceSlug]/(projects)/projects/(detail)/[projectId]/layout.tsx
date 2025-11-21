@@ -6,6 +6,7 @@ import type { Route } from "./+types/layout";
 export default function ProjectDetailLayout({ params }: Route.ComponentProps) {
   // router
   const { workspaceSlug, projectId } = params;
+
   return (
     <ProjectAuthWrapper workspaceSlug={workspaceSlug} projectId={projectId}>
       <Outlet />

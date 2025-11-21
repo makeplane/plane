@@ -108,9 +108,13 @@ export const coreRoutes: RouteConfigEntry[] = [
           ),
         ]),
 
-        // ====================================================================
-        // PROJECT LEVEL ROUTES
-        // ====================================================================
+        // Archived Projects
+        layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/archives/layout.tsx", [
+          route(
+            ":workspaceSlug/projects/archives",
+            "./(all)/[workspaceSlug]/(projects)/projects/(detail)/archives/page.tsx"
+          ),
+        ]),
 
         // --------------------------------------------------------------------
         // PROJECT LEVEL ROUTES
@@ -122,15 +126,7 @@ export const coreRoutes: RouteConfigEntry[] = [
         ]),
 
         // Project Detail
-        layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/layout.tsx", [
-          // Archived Projects
-          layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/archives/layout.tsx", [
-            route(
-              ":workspaceSlug/projects/archives",
-              "./(all)/[workspaceSlug]/(projects)/projects/(detail)/archives/page.tsx"
-            ),
-          ]),
-
+        layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/layout.tsx", [
           // Project Issues
           // Issues List
           layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/issues/(list)/layout.tsx", [
@@ -325,44 +321,46 @@ export const coreRoutes: RouteConfigEntry[] = [
         // --------------------------------------------------------------------
 
         layout("./(all)/[workspaceSlug]/(settings)/settings/projects/layout.tsx", [
-          // CORE Routes
-          // Project Settings
+          // No Projects available page
           route(":workspaceSlug/settings/projects", "./(all)/[workspaceSlug]/(settings)/settings/projects/page.tsx"),
-          route(
-            ":workspaceSlug/settings/projects/:projectId",
-            "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/page.tsx"
-          ),
-          // Project Members
-          route(
-            ":workspaceSlug/settings/projects/:projectId/members",
-            "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/members/page.tsx"
-          ),
-          // Project Features
-          route(
-            ":workspaceSlug/settings/projects/:projectId/features",
-            "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/page.tsx"
-          ),
-          // Project States
-          route(
-            ":workspaceSlug/settings/projects/:projectId/states",
-            "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/states/page.tsx"
-          ),
-          // Project Labels
-          route(
-            ":workspaceSlug/settings/projects/:projectId/labels",
-            "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/labels/page.tsx"
-          ),
-          // Project Estimates
-          route(
-            ":workspaceSlug/settings/projects/:projectId/estimates",
-            "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/estimates/page.tsx"
-          ),
-          // Project Automations
-          layout("./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/automations/layout.tsx", [
+          layout("./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/layout.tsx", [
+            // Project Settings
             route(
-              ":workspaceSlug/settings/projects/:projectId/automations",
-              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/automations/page.tsx"
+              ":workspaceSlug/settings/projects/:projectId",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/page.tsx"
             ),
+            // Project Members
+            route(
+              ":workspaceSlug/settings/projects/:projectId/members",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/members/page.tsx"
+            ),
+            // Project Features
+            route(
+              ":workspaceSlug/settings/projects/:projectId/features",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/page.tsx"
+            ),
+            // Project States
+            route(
+              ":workspaceSlug/settings/projects/:projectId/states",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/states/page.tsx"
+            ),
+            // Project Labels
+            route(
+              ":workspaceSlug/settings/projects/:projectId/labels",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/labels/page.tsx"
+            ),
+            // Project Estimates
+            route(
+              ":workspaceSlug/settings/projects/:projectId/estimates",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/estimates/page.tsx"
+            ),
+            // Project Automations
+            layout("./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/automations/layout.tsx", [
+              route(
+                ":workspaceSlug/settings/projects/:projectId/automations",
+                "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/automations/page.tsx"
+              ),
+            ]),
           ]),
         ]),
       ]),

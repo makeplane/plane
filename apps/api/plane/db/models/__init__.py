@@ -52,6 +52,7 @@ from .project import (
     ProjectIdentifier,
     ProjectMember,
     ProjectMemberInvite,
+    ProjectNetwork,
     ProjectPublicMember,
 )
 from .session import Session
