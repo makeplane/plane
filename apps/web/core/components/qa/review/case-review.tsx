@@ -568,7 +568,7 @@ export default function CaseReview() {
                     {activeTab === "basic" && (
                       <div className="flex flex-col gap-4 h-[550px] overflow-y-auto vertical-scrollbar scrollbar-sm">
                         <div className="text-lg font-semibold">{caseDetail?.name ?? "-"}</div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                           <div className="col-span-1">
                             <div className="text-xs text-custom-text-300 mb-1">维护人</div>
                             {caseDetail?.assignee ? (
