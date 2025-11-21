@@ -21,17 +21,4 @@ class Migration(migrations.Migration):
             name='parent',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='parent_issue_comment', to='db.issuecomment'),
         ),
-        migrations.AddField(
-            model_name='workspaceuserproperties',
-            name='navigation_project_limit',
-            field=models.IntegerField(default=10),
-        ),
-        migrations.AddField(
-            model_name='workspaceuserproperties',
-            name='navigation_control_preference',
-            field=models.CharField(
-                choices=[('ACCORDIAN', 'Accordian'), ('HORIZONTAL', 'Horizontal')],
-                default='ACCORDIAN',
-            ),
-        ),
     ]
