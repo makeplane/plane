@@ -11,11 +11,10 @@ import { CollaborationProvider, useCollaboration } from "@/contexts/collaboratio
 import { getEditorClassNames } from "@/helpers/common";
 // hooks
 import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
-// constants
-import { DocumentEditorSideEffects } from "@/plane-editor/components/document-editor-side-effects";
 // types
 import type { EditorRefApi, ICollaborativeDocumentEditorProps } from "@/types";
 
+// Inner component that has access to collaboration context
 const CollaborativeDocumentEditorInner: React.FC<ICollaborativeDocumentEditorProps> = (props) => {
   const {
     aiHandler,
@@ -49,8 +48,10 @@ const CollaborativeDocumentEditorInner: React.FC<ICollaborativeDocumentEditorPro
     isFetchingFallbackBinary,
   } = props;
 
+  // Get non-null provider from context
   const { provider, state, actions } = useCollaboration();
-  // use document editor
+
+  // Editor initialization with guaranteed non-null provider
   const { editor } = useCollaborativeEditor({
     provider,
     disabledExtensions,
@@ -61,9 +62,9 @@ const CollaborativeDocumentEditorInner: React.FC<ICollaborativeDocumentEditorPro
     extensions,
     fileHandler,
     flaggedExtensions,
+    getEditorMetaData,
     forwardedRef,
     handleEditorReady,
-    getEditorMetaData,
     id,
     dragDropEnabled,
     isTouchDevice,
@@ -95,31 +96,33 @@ const CollaborativeDocumentEditorInner: React.FC<ICollaborativeDocumentEditorPro
   if (!editor) return null;
 
   return (
-    <div
-      className={cn(
-        "transition-opacity duration-200",
-        showContentSkeleton && !isLoading && "opacity-0 pointer-events-none"
-      )}
-    >
-      <DocumentEditorSideEffects editor={editor} id={id} extendedEditorProps={extendedEditorProps} />
-      <PageRenderer
-        aiHandler={aiHandler}
-        bubbleMenuEnabled={bubbleMenuEnabled}
-        displayConfig={displayConfig}
-        documentLoaderClassName={documentLoaderClassName}
-        disabledExtensions={disabledExtensions}
-        extendedDocumentEditorProps={extendedDocumentEditorProps}
-        editor={editor}
-        flaggedExtensions={flaggedExtensions}
-        editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
-        id={id}
-        isLoading={isLoading}
-        isTouchDevice={!!isTouchDevice}
-        tabIndex={tabIndex}
-        provider={provider}
-        state={state}
-      />
-    </div>
+    <>
+      <div
+        className={cn(
+          "transition-opacity duration-200",
+          showContentSkeleton && !isLoading && "opacity-0 pointer-events-none"
+        )}
+      >
+        <PageRenderer
+          aiHandler={aiHandler}
+          bubbleMenuEnabled={bubbleMenuEnabled}
+          displayConfig={displayConfig}
+          documentLoaderClassName={documentLoaderClassName}
+          disabledExtensions={disabledExtensions}
+          extendedDocumentEditorProps={extendedDocumentEditorProps}
+          editor={editor}
+          flaggedExtensions={flaggedExtensions}
+          editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
+          extendedEditorProps={extendedEditorProps}
+          id={id}
+          isLoading={isLoading}
+          isTouchDevice={!!isTouchDevice}
+          tabIndex={tabIndex}
+          provider={provider}
+          state={state}
+        />
+      </div>
+    </>
   );
 };
 
@@ -143,7 +146,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
 
 const CollaborativeDocumentEditorWithRef = React.forwardRef<EditorRefApi, ICollaborativeDocumentEditorProps>(
   (props, ref) => (
-    <CollaborativeDocumentEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
+    <CollaborativeDocumentEditor key={props.id} {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi>} />
   )
 );
 
