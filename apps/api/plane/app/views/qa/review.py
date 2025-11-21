@@ -5,7 +5,8 @@ from rest_framework import status
 from django.db.models import Count
 
 from plane.app.serializers.qa import ReviewModuleCreateUpdateSerializer, ReviewModuleDetailSerializer, \
-    ReviewModuleListSerializer, ReviewListSerializer, ReviewCreateUpdateSerializer, ReviewCaseListSerializer
+    ReviewModuleListSerializer, ReviewListSerializer, ReviewCreateUpdateSerializer, ReviewCaseListSerializer, \
+    ReviewCaseRecordsSerializer
 from plane.app.views import BaseAPIView, BaseViewSet
 from plane.db.models import CaseReview, CaseReviewModule, CaseReviewThrough, CaseModule, TestCase, CaseReviewRecord
 from plane.utils.paginator import CustomPaginator
@@ -101,6 +102,8 @@ class CaseReviewView(BaseViewSet):
     @action(detail=False, methods=['get'], url_path='case-list')
     def case_list(self, request, slug):
         query = CaseReviewThrough.objects.filter(review_id=request.query_params['review_id'])
+        if name := request.query_params.get('name__icontains'):
+            query = query.filter(name__icontains=name)
         module_ids = request.query_params.getlist('module_id') or request.query_params.getlist('module_ids')
         if module_ids:
             expanded = set(module_ids)
@@ -237,9 +240,9 @@ class CaseReviewView(BaseViewSet):
             CaseReviewThrough.objects.filter(review=cr).values_list('result', flat=True)
         )
         if (
-            CaseReviewThrough.Result.NOT_START in through_results or
-            CaseReviewThrough.Result.PROCESS in through_results or
-            CaseReviewThrough.Result.RE_REVIEW in through_results
+                CaseReviewThrough.Result.NOT_START in through_results or
+                CaseReviewThrough.Result.PROCESS in through_results or
+                CaseReviewThrough.Result.RE_REVIEW in through_results
         ):
             cr.state = CaseReview.State.PROGRESS
         else:
@@ -247,4 +250,13 @@ class CaseReviewView(BaseViewSet):
         cr.save()
 
         serializer = ReviewCaseListSerializer(instance=crt)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'], url_path='records')
+    def get_records(self, request, slug):
+        review_id = request.query_params['review_id']
+        case_id = request.query_params['case_id']
+        crt = CaseReviewThrough.objects.get(review=review_id, case_id=case_id)
+        query = CaseReviewRecord.objects.filter(crt=crt)
+        serializer = ReviewCaseRecordsSerializer(instance=query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

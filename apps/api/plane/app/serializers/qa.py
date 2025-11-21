@@ -7,7 +7,7 @@ from rest_framework.serializers import ModelSerializer
 
 from plane.app.serializers import UserLiteSerializer, BaseSerializer, IssueAssigneeSerializer, ProjectDetailSerializer
 from plane.db.models import TestPlan, TestCaseRepository, User, TestCase, CaseLabel, CaseModule, FileAsset, Issue, \
-    CaseReviewModule, CaseReview, CaseReviewThrough, TestCaseComment
+    CaseReviewModule, CaseReview, CaseReviewThrough, TestCaseComment, CaseReviewRecord
 
 
 class TestPlanCreateUpdateSerializer(ModelSerializer):
@@ -324,3 +324,9 @@ class ReviewCaseListSerializer(ModelSerializer):
     class Meta:
         model = CaseReviewThrough
         fields = ['id', 'name', 'priority', 'assignees', 'result', 'created_by','case_id']
+
+class ReviewCaseRecordsSerializer(ModelSerializer):
+
+    class Meta:
+        model = CaseReviewRecord
+        fields = '__all__'

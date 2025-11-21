@@ -5,14 +5,19 @@ import { useParams, useSearchParams } from "next/navigation";
 import { PageHead } from "@/components/core/page-title";
 import { Breadcrumbs } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
-import { Row, Col, Card, Input, Pagination, Tag, Spin, message, Button, Table, Tooltip } from "antd";
+import { Row, Col, Card, Input, Pagination, Tag, Spin, message, Button, Table, Tooltip, Radio, Modal } from "antd";
+import { CheckCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import debounce from "lodash-es/debounce";
 import { CaseService as CaseApiService } from "@/services/qa/case.service";
 import { CaseService as ReviewApiService } from "@/services/qa/review.service";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { getEnums } from "app/(all)/[workspaceSlug]/(projects)/test-management/util";
 import * as LucideIcons from "lucide-react";
 import { useMember } from "@/hooks/store/use-member";
+import { useUser } from "@/hooks/store/user";
 import { RichTextEditor } from "../cases/util";
+import { WorkItemDisplayModal } from "../cases/work-item-display-modal";
+import { ReviewRecordsPanel } from "./review-records";
 
 type ReviewCaseRow = {
   id: string;
@@ -51,6 +56,7 @@ export default function CaseReview() {
     getUserDetails,
     workspace: { fetchWorkspaceMembers },
   } = useMember();
+  const { data: currentUser } = useUser();
 
   const [reviewEnums, setReviewEnums] = React.useState<
     Record<string, Record<string, { label: string; color: string }>>
@@ -73,6 +79,12 @@ export default function CaseReview() {
   }>({});
   const [attachments, setAttachments] = React.useState<any[]>([]);
   const [activeTab, setActiveTab] = React.useState<"basic" | "requirement" | "work" | "defect" | "history">("basic");
+  const [currentCount, setCurrentCount] = React.useState<number>(0);
+  const [reviewValue, setReviewValue] = React.useState<"通过" | "不通过" | "建议" | null>("通过");
+  const [reason, setReason] = React.useState<string>("");
+  const [reasonModalOpen, setReasonModalOpen] = React.useState<boolean>(false);
+  const [submitLoading, setSubmitLoading] = React.useState<boolean>(false);
+  const [recordsRefreshKey, setRecordsRefreshKey] = React.useState<number>(0);
 
   const fetchReviewEnums = async () => {
     if (!workspaceSlug) return;
@@ -176,6 +188,32 @@ export default function CaseReview() {
     if (initialCaseId) fetchCaseDetail(initialCaseId);
   }, [initialCaseId]);
 
+  React.useEffect(() => {
+    const map: Record<string, "Requirement" | "Task" | "Bug"> = {
+      requirement: "Requirement",
+      work: "Task",
+      defect: "Bug",
+    };
+    const typeName = map[activeTab];
+    if (!typeName || !workspaceSlug || !selectedCaseId) {
+      setCurrentCount(0);
+      return;
+    }
+    caseService
+      .getCaseIssueWithType(String(workspaceSlug), { id: String(selectedCaseId), issues__type__name: typeName })
+      .then((data) => {
+        let resolved: any[] = [];
+        if (Array.isArray(data)) {
+          const item = data.find((d: any) => String(d?.id) === String(selectedCaseId));
+          resolved = Array.isArray(item?.issues) ? (item.issues as any[]) : [];
+        } else if (data && typeof data === "object") {
+          resolved = Array.isArray((data as any).issues) ? ((data as any).issues as any[]) : [];
+        }
+        setCurrentCount(resolved.length);
+      })
+      .catch(() => setCurrentCount(0));
+  }, [activeTab, workspaceSlug, selectedCaseId]);
+
   const filteredList = React.useMemo(() => {
     const kw = keyword.trim();
     if (!kw) return cases;
@@ -234,6 +272,70 @@ export default function CaseReview() {
     );
   };
 
+  const handleRadioChange = (e: any) => {
+    const val = String(e?.target?.value || "") as "通过" | "不通过" | "建议";
+    if (val !== reviewValue) {
+      setReason("");
+    }
+    setReviewValue(val);
+    if (val === "不通过" || val === "建议") {
+      setReasonModalOpen(true);
+    }
+  };
+
+  const buildPayload = () => {
+    if (!workspaceSlug || !reviewId || !selectedCaseId || !reviewValue) return null;
+    const payload: any = {
+      review_id: String(reviewId),
+      case_id: String(selectedCaseId),
+      result: ({ 通过: "通过", 不通过: "不通过", 建议: "建议" } as const)[reviewValue],
+    };
+    if (reason && reason.trim()) payload.reason = reason.trim();
+    if (currentUser?.id) payload.assignee = String(currentUser.id);
+    return payload;
+  };
+
+  const debouncedSubmit = React.useMemo(
+    () =>
+      debounce(async (payload: any) => {
+        if (!payload) return;
+        setSubmitLoading(true);
+        try {
+          await caseService.submitCaseReview(String(workspaceSlug), payload);
+          message.success("评审提交成功");
+          setReasonModalOpen(false);
+          setReason("");
+          fetchCases(page, pageSize);
+          setRecordsRefreshKey((k) => k + 1);
+        } catch (e: any) {
+          const msg = e?.message || e?.detail || e?.error || "提交评审失败";
+          message.error(msg);
+        } finally {
+          setSubmitLoading(false);
+        }
+      }, 500),
+    [workspaceSlug, page, pageSize]
+  );
+
+  React.useEffect(() => {
+    return () => {
+      debouncedSubmit.cancel();
+    };
+  }, [debouncedSubmit]);
+
+  const handleSubmitReview = () => {
+    const payload = buildPayload();
+    if (!payload) {
+      message.warning("请选择评审结果");
+      return;
+    }
+    if ((reviewValue === "不通过" || reviewValue === "建议") && !reason.trim()) {
+      setReasonModalOpen(true);
+      return;
+    }
+    debouncedSubmit(payload);
+  };
+
   return (
     <div className="flex flex-col gap-3 p-4 w-full">
       <PageHead title="用例详情" />
@@ -253,7 +355,7 @@ export default function CaseReview() {
       </Breadcrumbs>
 
       <Row className="w-full rounded-md border border-custom-border-200 overflow-hidden" gutter={0}>
-        <Col flex="360px" className="border-r border-custom-border-200">
+        <Col flex="390px" className="border-r border-custom-border-200">
           <div className="p-4 flex flex-col gap-3">
             <Input.Search
               placeholder="按用例名称搜索"
@@ -271,48 +373,53 @@ export default function CaseReview() {
               </div>
             ) : (
               <div className="flex flex-col gap-3">
-                {filteredList.length === 0 ? (
-                  <div className="text-custom-text-300 py-12 text-center">暂无数据</div>
-                ) : (
-                  filteredList.map((item) => {
-                    const caseId = String(item.case_id ?? item.id);
-                    const isActive = String(selectedCaseId || "") === caseId;
-                    const color = reviewEnums?.CaseReviewThrough_Result?.[item.result]?.color || "default";
-                    return (
-                      <Card
-                        key={item.id}
-                        bordered
-                        hoverable
-                        onClick={() => {
-                          setSelectedCaseId(caseId);
-                          fetchCaseDetail(caseId);
-                        }}
-                        className={`${isActive ? "ring-2 ring-blue-500" : ""}`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="text-sm font-medium truncate">{item.name}</div>
-                          <div className="text-xs text-custom-text-300">{priorityLabelMap[item.priority] ?? "-"}</div>
-                        </div>
-                        <div className="mt-2 flex items-center gap-2">
-                          <MemberDropdown
-                            multiple={true}
-                            value={item.assignees}
-                            onChange={() => {}}
-                            disabled={true}
-                            placeholder={item.assignees?.length ? "" : "未知用户"}
-                            className="text-sm"
-                            buttonContainerClassName="p-0 cursor-default"
-                            buttonVariant="transparent-with-text"
-                            buttonClassName="text-sm p-0 hover:bg-transparent hover:bg-inherit"
-                            showUserDetails={true}
-                            optionsClassName="z-[60]"
-                          />
-                          <Tag color={color}>{item.result || "-"}</Tag>
-                        </div>
-                      </Card>
-                    );
-                  })
-                )}
+                <div
+                  className="h-[680px] overflow-y-auto vertical-scrollbar scrollbar-sm flex flex-col gap-3 pr-2 pl-1 py-1"
+                  style={{ scrollbarGutter: "stable" }}
+                >
+                  {filteredList.length === 0 ? (
+                    <div className="text-custom-text-300 py-12 text-center">暂无数据</div>
+                  ) : (
+                    filteredList.map((item) => {
+                      const caseId = String(item.case_id ?? item.id);
+                      const isActive = String(selectedCaseId || "") === caseId;
+                      const color = reviewEnums?.CaseReviewThrough_Result?.[item.result]?.color || "default";
+                      return (
+                        <Card
+                          key={item.id}
+                          bordered
+                          hoverable
+                          onClick={() => {
+                            setSelectedCaseId(caseId);
+                            fetchCaseDetail(caseId);
+                          }}
+                          className={`${isActive ? "ring-2 ring-blue-500" : ""} rounded-md hover:shadow-sm transition-shadow`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="text-sm font-medium truncate">{item.name}</div>
+                            <div className="text-xs text-custom-text-300">{priorityLabelMap[item.priority] ?? "-"}</div>
+                          </div>
+                          <div className="mt-2 flex items-center gap-2">
+                            <MemberDropdown
+                              multiple={true}
+                              value={item.assignees}
+                              onChange={() => {}}
+                              disabled={true}
+                              placeholder={item.assignees?.length ? "" : "未知用户"}
+                              className="text-sm"
+                              buttonContainerClassName="p-0 cursor-default"
+                              buttonVariant="transparent-with-text"
+                              buttonClassName="text-sm p-0 hover:bg-transparent hover:bg-inherit"
+                              showUserDetails={true}
+                              optionsClassName="z-[60]"
+                            />
+                            <Tag color={color}>{item.result || "-"}</Tag>
+                          </div>
+                        </Card>
+                      );
+                    })
+                  )}
+                </div>
                 <Pagination
                   size="small"
                   current={page}
@@ -423,7 +530,7 @@ export default function CaseReview() {
                     leaveTo="transform scale-95 opacity-0"
                   >
                     {activeTab === "basic" && (
-                      <div className="flex flex-col gap-4">
+                      <div className="flex flex-col gap-4 h-[550px] overflow-y-auto vertical-scrollbar scrollbar-sm">
                         <div className="text-lg font-semibold">{caseDetail?.name ?? "-"}</div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                           <div className="col-span-1">
@@ -443,9 +550,7 @@ export default function CaseReview() {
                                 optionsClassName="z-[60]"
                               />
                             ) : (
-                              <div className="rounded border border-custom-border-200 p-2 text-sm text-custom-text-300 h-8 flex items-center">
-                                未设置维护人
-                              </div>
+                              <div className="p-2 text-sm text-custom-text-300 h-8 flex items-center">未设置维护人</div>
                             )}
                           </div>
                           <div className="col-span-1">
@@ -520,9 +625,7 @@ export default function CaseReview() {
                             </span>
                           </div>
                           {attachments.length === 0 ? (
-                            <div className="rounded border border-custom-border-200 p-3 text-sm text-custom-text-300">
-                              暂无附件
-                            </div>
+                            <div className="p-3 text-sm text-custom-text-300">暂无附件</div>
                           ) : (
                             <Table
                               size="small"
@@ -569,13 +672,12 @@ export default function CaseReview() {
                     leaveFrom="transform scale-100 opacity-100"
                     leaveTo="transform scale-95 opacity-0"
                   >
-                    {activeTab === "requirement" && (
-                      <div className="rounded border border-custom-border-200 p-4 text-sm text-custom-text-300">
-                        <div className="flex items-center gap-2 mb-2 text-gray-700">
-                          <LucideIcons.FileText size={16} aria-hidden="true" />
-                          产品需求
+                    {activeTab === "requirement" && selectedCaseId && (
+                      <div className="mt-4 h-[550px] overflow-y-auto vertical-scrollbar scrollbar-sm">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="text-sm text-gray-600">{currentCount}个产品需求</div>
                         </div>
-                        暂未实现功能逻辑
+                        <WorkItemDisplayModal caseId={String(selectedCaseId)} defaultType="Requirement" />
                       </div>
                     )}
                   </Transition>
@@ -589,13 +691,12 @@ export default function CaseReview() {
                     leaveFrom="transform scale-100 opacity-100"
                     leaveTo="transform scale-95 opacity-0"
                   >
-                    {activeTab === "work" && (
-                      <div className="rounded border border-custom-border-200 p-4 text-sm text-custom-text-300">
-                        <div className="flex items-center gap-2 mb-2 text-gray-700">
-                          <LucideIcons.ListTodo size={16} aria-hidden="true" />
-                          工作项
+                    {activeTab === "work" && selectedCaseId && (
+                      <div className="mt-4 h-[550px] overflow-y-auto vertical-scrollbar scrollbar-sm">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="text-sm text-gray-600">{currentCount}个工作项</div>
                         </div>
-                        暂未实现功能逻辑
+                        <WorkItemDisplayModal caseId={String(selectedCaseId)} defaultType="Task" />
                       </div>
                     )}
                   </Transition>
@@ -609,13 +710,12 @@ export default function CaseReview() {
                     leaveFrom="transform scale-100 opacity-100"
                     leaveTo="transform scale-95 opacity-0"
                   >
-                    {activeTab === "defect" && (
-                      <div className="rounded border border-custom-border-200 p-4 text-sm text-custom-text-300">
-                        <div className="flex items-center gap-2 mb-2 text-gray-700">
-                          <LucideIcons.Bug size={16} aria-hidden="true" />
-                          缺陷
+                    {activeTab === "defect" && selectedCaseId && (
+                      <div className="mt-4 h-[550px] overflow-y-auto vertical-scrollbar scrollbar-sm">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="text-sm text-gray-600">{currentCount}个缺陷</div>
                         </div>
-                        暂未实现功能逻辑
+                        <WorkItemDisplayModal caseId={String(selectedCaseId)} defaultType="Bug" />
                       </div>
                     )}
                   </Transition>
@@ -630,21 +730,78 @@ export default function CaseReview() {
                     leaveTo="transform scale-95 opacity-0"
                   >
                     {activeTab === "history" && (
-                      <div className="rounded border border-custom-border-200 p-4 text-sm text-custom-text-300">
-                        <div className="flex items-center gap-2 mb-2 text-gray-700">
-                          <LucideIcons.History size={16} aria-hidden="true" />
-                          评审历史
-                        </div>
-                        暂未实现功能逻辑
-                      </div>
+                      <ReviewRecordsPanel
+                        key={`${selectedCaseId}-${recordsRefreshKey}`}
+                        workspaceSlug={workspaceSlug}
+                        reviewId={reviewId}
+                        caseId={selectedCaseId}
+                      />
                     )}
                   </Transition>
+                </div>
+                <div className="w-full" style={{ borderTop: "1px solid #f0f0f0" }}>
+                  <div className="px-0 py-3 flex flex-col gap-3">
+                    <div className="text-sm font-normal">开始评审</div>
+                    <Radio.Group onChange={handleRadioChange} value={reviewValue} disabled={!selectedCaseId}>
+                      <Radio value="通过">
+                        <span style={{ color: "#52c41a" }} className="flex items-center gap-1">
+                          <CheckCircleOutlined /> 通过
+                        </span>
+                      </Radio>
+                      <Radio value="不通过" className="ml-6">
+                        <span style={{ color: "#f5222d" }} className="flex items-center gap-1">
+                          <CloseCircleOutlined /> 不通过
+                        </span>
+                      </Radio>
+                      <Radio value="建议" className="ml-6">
+                        <span style={{ color: "#fa8c16" }} className="flex items-center gap-1">
+                          <ExclamationCircleOutlined /> 建议
+                        </span>
+                      </Radio>
+                    </Radio.Group>
+                    <div>
+                      <Button type="link" onClick={() => setReasonModalOpen(true)} disabled={!selectedCaseId}>
+                        添加原因
+                      </Button>
+                    </div>
+                    <div>
+                      <Button
+                        type="primary"
+                        onClick={handleSubmitReview}
+                        loading={submitLoading}
+                        disabled={!selectedCaseId}
+                      >
+                        提交评审
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
           </div>
         </Col>
       </Row>
+      <Modal
+        title="填写评审原因"
+        open={reasonModalOpen}
+        onCancel={() => setReasonModalOpen(false)}
+        footer={[
+          <Button key="cancel" onClick={() => setReasonModalOpen(false)}>
+            取消
+          </Button>,
+          <Button key="submit" type="primary" loading={submitLoading} onClick={handleSubmitReview}>
+            提交评审
+          </Button>,
+        ]}
+      >
+        <Input.TextArea
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          rows={4}
+          placeholder="请输入不通过或建议的原因"
+          allowClear
+        />
+      </Modal>
     </div>
   );
 }

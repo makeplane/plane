@@ -115,4 +115,13 @@ export class CaseService extends APIService {
       });
   }
 
+    async getRecords(workspaceSlug: string, review_id: string, case_id: string): Promise<any> {
+    const query = {review_id, case_id}
+    return this.get(`/api/workspaces/${workspaceSlug}/test/review/records/`, {params: query})
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
 }

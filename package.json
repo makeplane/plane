@@ -17,6 +17,7 @@
     "check:format": "turbo run check:format"
   },
   "devDependencies": {
+    "@types/quill": "^2.0.14",
     "prettier": "latest",
     "prettier-plugin-tailwindcss": "^0.6.14",
     "turbo": "^2.5.8"
@@ -51,6 +52,7 @@
     "node": ">=22.18.0"
   },
   "dependencies": {
-    "quill": "^2.0.3"
+    "quill": "^2.0.3",
+    "react-quill": "^2.0.0"
   }
 }
