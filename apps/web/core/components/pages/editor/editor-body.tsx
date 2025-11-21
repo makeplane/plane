@@ -1,10 +1,10 @@
-import type { Dispatch, SetStateAction } from "react";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@plane/constants";
 import { CollaborativeDocumentEditorWithRef } from "@plane/editor";
 import type {
+  CollaborationState,
   EditorRefApi,
   TAIMenuProps,
   TDisplayConfig,
@@ -26,6 +26,7 @@ import { useUser } from "@/hooks/store/user";
 import { usePageFilters } from "@/hooks/use-page-filters";
 import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 // plane web imports
+import type { TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 import { EditorAIMenu } from "@/plane-web/components/pages";
 import type { TExtendedEditorExtensionsConfig } from "@/plane-web/hooks/pages";
 import type { EPageStoreType } from "@/plane-web/hooks/store";
@@ -51,7 +52,6 @@ type Props = {
   config: TEditorBodyConfig;
   editorReady: boolean;
   editorForwardRef: React.RefObject<EditorRefApi>;
-  handleConnectionStatus: Dispatch<SetStateAction<boolean>>;
   handleEditorReady: (status: boolean) => void;
   handleOpenNavigationPane: () => void;
   handlers: TEditorBodyHandlers;
@@ -61,14 +61,16 @@ type Props = {
   projectId?: string;
   workspaceSlug: string;
   storeType: EPageStoreType;
+  customRealtimeEventHandlers?: TCustomEventHandlers;
   extendedEditorProps: TExtendedEditorExtensionsConfig;
+  isFetchingFallbackBinary?: boolean;
+  onCollaborationStateChange?: (state: CollaborationState) => void;
 };
 
 export const PageEditorBody = observer(function PageEditorBody(props: Props) {
   const {
     config,
     editorForwardRef,
-    handleConnectionStatus,
     handleEditorReady,
     handleOpenNavigationPane,
     handlers,
@@ -79,6 +81,8 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
     projectId,
     workspaceSlug,
     extendedEditorProps,
+    isFetchingFallbackBinary,
+    onCollaborationStateChange,
   } = props;
   // store hooks
   const { data: currentUser } = useUser();
@@ -91,6 +95,7 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
     isContentEditable,
     updateTitle,
     editor: { editorRef, updateAssetsList },
+    setSyncingStatus,
   } = page;
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
   // use editor mention
@@ -136,20 +141,35 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
     [editorRef, workspaceId, workspaceSlug]
   );
 
-  const handleServerConnect = useCallback(() => {
-    handleConnectionStatus(false);
-  }, [handleConnectionStatus]);
-
-  const handleServerError = useCallback(() => {
-    handleConnectionStatus(true);
-  }, [handleConnectionStatus]);
+  // Set syncing status when page changes and reset collaboration state
+  useEffect(() => {
+    setSyncingStatus("syncing");
+    onCollaborationStateChange?.({
+      stage: { kind: "connecting" },
+      isServerSynced: false,
+      isServerDisconnected: false,
+    });
+  }, [pageId, setSyncingStatus, onCollaborationStateChange]);
 
   const serverHandler: TServerHandler = useMemo(
     () => ({
-      onConnect: handleServerConnect,
-      onServerError: handleServerError,
+      onStateChange: (state) => {
+        // Pass full state to parent
+        onCollaborationStateChange?.(state);
+
+        // Map collaboration stage to UI syncing status
+        // Stage → UI mapping: disconnected → error | synced → synced | all others → syncing
+        if (state.stage.kind === "disconnected") {
+          setSyncingStatus("error");
+        } else if (state.stage.kind === "synced") {
+          setSyncingStatus("synced");
+        } else {
+          // initial, connecting, awaiting-sync, reconnecting → show as syncing
+          setSyncingStatus("syncing");
+        }
+      },
     }),
-    [handleServerConnect, handleServerError]
+    [setSyncingStatus, onCollaborationStateChange]
   );
 
   const realtimeConfig: TRealtimeConfig | undefined = useMemo(() => {
@@ -194,7 +214,9 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
     }
   );
 
-  if (pageId === undefined || !realtimeConfig) return <PageContentLoader className={blockWidthClassName} />;
+  const isPageLoading = pageId === undefined || !realtimeConfig;
+
+  if (isPageLoading) return <PageContentLoader className={blockWidthClassName} />;
 
   return (
     <Row
@@ -261,6 +283,7 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
           }}
           onAssetChange={updateAssetsList}
           extendedEditorProps={extendedEditorProps}
+          isFetchingFallbackBinary={isFetchingFallbackBinary}
         />
       </div>
     </Row>

@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import type { EditorRefApi } from "@plane/editor";
+import type { CollaborationState, EditorRefApi } from "@plane/editor";
 import type { TDocumentPayload, TPage, TPageVersion, TWebhookConnectionQueryParams } from "@plane/types";
 // hooks
-import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageFallback } from "@/hooks/use-page-fallback";
 // plane web import
+import type { PageUpdateHandler, TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 import { PageModals } from "@/plane-web/components/pages";
 import { usePagesPaneExtensions, useExtendedEditorProps } from "@/plane-web/hooks/pages";
 import type { EPageStoreType } from "@/plane-web/hooks/store";
@@ -16,6 +16,7 @@ import type { TPageInstance } from "@/store/pages/base-page";
 import { PageNavigationPaneRoot } from "../navigation-pane";
 import { PageVersionsOverlay } from "../version";
 import { PagesVersionEditor } from "../version/editor";
+import { ContentLimitBanner } from "./content-limit-banner";
 import { PageEditorBody } from "./editor-body";
 import type { TEditorBodyConfig, TEditorBodyHandlers } from "./editor-body";
 import { PageEditorToolbarRoot } from "./toolbar";
@@ -23,7 +24,7 @@ import { PageEditorToolbarRoot } from "./toolbar";
 export type TPageRootHandlers = {
   create: (payload: Partial<TPage>) => Promise<Partial<TPage> | undefined>;
   fetchAllVersions: (pageId: string) => Promise<TPageVersion[] | undefined>;
-  fetchDescriptionBinary: () => Promise<any>;
+  fetchDescriptionBinary: () => Promise<ArrayBuffer>;
   fetchVersionDetails: (pageId: string, versionId: string) => Promise<TPageVersion | undefined>;
   restoreVersion: (pageId: string, versionId: string) => Promise<void>;
   updateDescription: (document: TDocumentPayload) => Promise<void>;
@@ -39,27 +40,36 @@ type TPageRootProps = {
   webhookConnectionParams: TWebhookConnectionQueryParams;
   projectId?: string;
   workspaceSlug: string;
+  customRealtimeEventHandlers?: TCustomEventHandlers;
 };
 
-export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
-  const { config, handlers, page, projectId, storeType, webhookConnectionParams, workspaceSlug } = props;
+export const PageRoot = observer((props: TPageRootProps) => {
+  const {
+    config,
+    handlers,
+    page,
+    projectId,
+    storeType,
+    webhookConnectionParams,
+    workspaceSlug,
+    customRealtimeEventHandlers,
+  } = props;
   // states
   const [editorReady, setEditorReady] = useState(false);
-  const [hasConnectionFailed, setHasConnectionFailed] = useState(false);
+  const [collaborationState, setCollaborationState] = useState<CollaborationState | null>(null);
+  const [showContentTooLargeBanner, setShowContentTooLargeBanner] = useState(false);
   // refs
   const editorRef = useRef<EditorRefApi>(null);
-  // router
-  const router = useAppRouter();
   // derived values
   const {
     isContentEditable,
     editor: { setEditorRef },
   } = page;
   // page fallback
-  usePageFallback({
+  const { isFetchingFallbackBinary } = usePageFallback({
     editorRef,
     fetchPageDescription: handlers.fetchDescriptionBinary,
-    hasConnectionFailed,
+    collaborationState,
     updatePageDescription: handlers.updateDescription,
   });
 
@@ -90,6 +100,24 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
     page,
     editorRef,
   });
+
+  // Type-safe error handler for content too large errors
+  const errorHandler: PageUpdateHandler<"error"> = (params) => {
+    const { data } = params;
+
+    // Check if it's content too large error
+    if (data.error_code === "content_too_large") {
+      setShowContentTooLargeBanner(true);
+    }
+
+    // Call original error handler if exists
+    customRealtimeEventHandlers?.error?.(params);
+  };
+
+  const mergedCustomEventHandlers: TCustomEventHandlers = {
+    ...customRealtimeEventHandlers,
+    error: errorHandler,
+  };
 
   // Get extended editor extensions configuration
   const extendedEditorProps = useExtendedEditorProps({
@@ -134,11 +162,12 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
           isNavigationPaneOpen={isNavigationPaneOpen}
           page={page}
         />
+        {showContentTooLargeBanner && <ContentLimitBanner className="px-page-x" />}
         <PageEditorBody
           config={config}
+          customRealtimeEventHandlers={mergedCustomEventHandlers}
           editorReady={editorReady}
           editorForwardRef={editorRef}
-          handleConnectionStatus={setHasConnectionFailed}
           handleEditorReady={handleEditorReady}
           handleOpenNavigationPane={handleOpenNavigationPane}
           handlers={handlers}
@@ -149,6 +178,8 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
           webhookConnectionParams={webhookConnectionParams}
           workspaceSlug={workspaceSlug}
           extendedEditorProps={extendedEditorProps}
+          isFetchingFallbackBinary={isFetchingFallbackBinary}
+          onCollaborationStateChange={setCollaborationState}
         />
       </div>
       <PageNavigationPaneRoot
