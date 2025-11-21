@@ -13,7 +13,7 @@ export interface PopoverContentProps extends React.ComponentProps<typeof BasePop
 }
 
 // PopoverContent component
-const PopoverContent = React.memo(function PopoverContent({
+const PopoverContent = React.memo<PopoverContentProps>(function PopoverContent({
   children,
   className,
   placement,
@@ -23,7 +23,7 @@ const PopoverContent = React.memo(function PopoverContent({
   containerRef,
   positionerClassName,
   ...props
-}) {
+}: PopoverContentProps) {
   // side and align calculations
   const { finalSide, finalAlign } = React.useMemo(() => {
     if (placement) {
@@ -45,28 +45,29 @@ const PopoverContent = React.memo(function PopoverContent({
 });
 
 // wrapper components
-const PopoverTrigger = React.memo(function PopoverTrigger(props) {
+const PopoverTrigger = React.memo(function PopoverTrigger(props: React.ComponentProps<typeof BasePopover.Trigger>) {
   return <BasePopover.Trigger data-slot="popover-trigger" {...props} />;
 });
 
-const PopoverPortal = React.memo(function PopoverPortal(props) {
+const PopoverPortal = React.memo(function PopoverPortal(props: React.ComponentProps<typeof BasePopover.Portal>) {
   return <BasePopover.Portal data-slot="popover-portal" {...props} />;
 });
 
-const PopoverPositioner = React.memo(function PopoverPositioner(props) {
+const PopoverPositioner = React.memo(function PopoverPositioner(props: React.ComponentProps<typeof BasePopover.Positioner>) {
   return <BasePopover.Positioner data-slot="popover-positioner" {...props} />;
 });
 
 // compound components
-const Popover = Object.assign(
-  React.memo<React.ComponentProps<typeof BasePopover.Root>>(function Popover(props) {
-    return <BasePopover.Root data-slot="popover" {...props} />;
-  }),
-  {
-    Button: PopoverTrigger,
-    Panel: PopoverContent,
-  }
-);
+const PopoverRoot = React.memo<React.ComponentProps<typeof BasePopover.Root>>(function Popover(props) {
+  return <BasePopover.Root data-slot="popover" {...props} />;
+});
+
+const Popover = PopoverRoot as typeof PopoverRoot & {
+  Button: typeof PopoverTrigger;
+  Panel: typeof PopoverContent;
+};
+Popover.Button = PopoverTrigger;
+Popover.Panel = PopoverContent;
 
 // display names
 PopoverContent.displayName = "PopoverContent";

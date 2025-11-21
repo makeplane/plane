@@ -2,23 +2,6 @@ import * as React from "react";
 import { Tabs as TabsPrimitive } from "@base-ui-components/react/tabs";
 import { cn } from "../utils/classname";
 
-type TabsCompound = React.ForwardRefExoticComponent<
-  React.ComponentProps<typeof TabsPrimitive.Root> & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.Root>>
-> & {
-  List: React.ForwardRefExoticComponent<
-    React.ComponentProps<typeof TabsPrimitive.List> & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.List>>
-  >;
-  Trigger: React.ForwardRefExoticComponent<
-    React.ComponentProps<typeof TabsPrimitive.Tab> & { size?: "sm" | "md" | "lg" } & React.RefAttributes<
-        React.ElementRef<typeof TabsPrimitive.Tab>
-      >
-  >;
-  Content: React.ForwardRefExoticComponent<
-    React.ComponentProps<typeof TabsPrimitive.Panel> & React.RefAttributes<React.ElementRef<typeof TabsPrimitive.Panel>>
-  >;
-  Indicator: React.ForwardRefExoticComponent<React.ComponentProps<"div"> & React.RefAttributes<HTMLDivElement>>;
-};
-
 const TabsRoot = React.forwardRef(function TabsRoot(
   { className, ...props }: React.ComponentProps<typeof TabsPrimitive.Root>,
   ref: React.ForwardedRef<React.ElementRef<typeof TabsPrimitive.Root>>
@@ -104,11 +87,21 @@ const TabsIndicator = React.forwardRef(function TabsIndicator(
   );
 });
 
-export const Tabs = Object.assign(TabsRoot, {
-  List: TabsList,
-  Trigger: TabsTrigger,
-  Content: TabsContent,
-  Indicator: TabsIndicator,
-}) satisfies TabsCompound;
+TabsRoot.displayName = "TabsRoot";
+TabsList.displayName = "TabsList";
+TabsTrigger.displayName = "TabsTrigger";
+TabsContent.displayName = "TabsContent";
+TabsIndicator.displayName = "TabsIndicator";
 
-export { TabsList, TabsTrigger, TabsContent, TabsIndicator };
+const Tabs = TabsRoot as typeof TabsRoot & {
+  List: typeof TabsList;
+  Trigger: typeof TabsTrigger;
+  Content: typeof TabsContent;
+  Indicator: typeof TabsIndicator;
+};
+Tabs.List = TabsList;
+Tabs.Trigger = TabsTrigger;
+Tabs.Content = TabsContent;
+Tabs.Indicator = TabsIndicator;
+
+export { Tabs };
