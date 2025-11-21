@@ -15,9 +15,12 @@ def create_triage_state(apps, _schema_editor):
 
     # check any state with name "Intake Triage" exists
     for state in State.objects.filter(name="Intake Triage"):
-        workspace_id = str(state.workspace_id)[:5]
-        state.name = f"Intake-Triage-{workspace_id}"
+        project_id = str(state.project_id)[:5]
+        state.name = f"Intake-Triage-{project_id}"
         state.save()
+
+    # update the group of the states to backlog
+    State.objects.filter(group="triage").update(group="backlog")
 
     states_to_create = []
     for proj in projects:
