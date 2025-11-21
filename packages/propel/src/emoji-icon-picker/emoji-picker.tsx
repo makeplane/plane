@@ -1,6 +1,6 @@
 import { useMemo, useCallback } from "react";
 import { Tabs } from "@base-ui-components/react";
-import { Popover } from "../popover";
+import { Popover, PopoverTrigger, PopoverContent } from "../popover";
 import { cn } from "../utils/classname";
 import { convertPlacementToSideAndAlign } from "../utils/placement";
 import { EmojiRoot } from "./emoji/emoji";
@@ -95,10 +95,10 @@ export function EmojiPicker(props: TCustomEmojiPicker) {
 
   return (
     <Popover open={isOpen} onOpenChange={handleToggle}>
-      <Popover.Button className={cn("outline-none", buttonClassName)} disabled={disabled}>
+      <PopoverTrigger className={cn("outline-none", buttonClassName)} disabled={disabled}>
         {label}
-      </Popover.Button>
-      <Popover.Panel
+      </PopoverTrigger>
+      <PopoverContent
         positionerClassName="z-50"
         className={cn(
           "w-80 bg-custom-background-100 rounded-md border-[0.5px] border-custom-border-300 overflow-hidden",
@@ -132,7 +132,7 @@ export function EmojiPicker(props: TCustomEmojiPicker) {
             </Tabs.Panel>
           ))}
         </Tabs.Root>
-      </Popover.Panel>
+      </PopoverContent>
     </Popover>
   );
 }

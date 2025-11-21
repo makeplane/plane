@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from "react";
 import { EmojiRoot } from "../emoji-icon-picker/emoji/emoji";
 import { emojiToString } from "../emoji-icon-picker/helper";
-import { Popover } from "../popover";
+import { Popover, PopoverTrigger, PopoverContent } from "../popover";
 import { cn } from "../utils/classname";
 import { convertPlacementToSideAndAlign } from "../utils/placement";
 import type { TPlacement, TSide, TAlign } from "../utils/placement";
@@ -59,10 +59,10 @@ export function EmojiReactionPicker(props: EmojiReactionPickerProps) {
 
   return (
     <Popover open={isOpen} onOpenChange={handleToggle}>
-      <Popover.Button className={cn("outline-none", buttonClassName)} disabled={disabled}>
+      <PopoverTrigger className={cn("outline-none", buttonClassName)} disabled={disabled}>
         {label}
-      </Popover.Button>
-      <Popover.Panel
+      </PopoverTrigger>
+      <PopoverContent
         positionerClassName="z-50"
         className={cn(
           "w-80 bg-custom-background-100 rounded-md border-[0.5px] border-custom-border-300 overflow-hidden",
@@ -80,7 +80,7 @@ export function EmojiReactionPicker(props: EmojiReactionPickerProps) {
             searchDisabled={searchDisabled}
           />
         </div>
-      </Popover.Panel>
+      </PopoverContent>
     </Popover>
   );
 }

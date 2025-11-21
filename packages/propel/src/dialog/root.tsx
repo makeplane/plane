@@ -125,15 +125,6 @@ const DialogTitle = memo<DialogTitleProps>(function DialogTitle({ className, chi
 });
 
 DialogTitle.displayName = "DialogTitle";
+DialogComponent.displayName = "Dialog";
 
-// Create the compound Dialog component with proper typing
-const Dialog = DialogComponent as typeof DialogComponent & {
-  Panel: typeof DialogPanel;
-  Title: typeof DialogTitle;
-  Trigger: typeof DialogTrigger;
-};
-Dialog.Panel = DialogPanel;
-Dialog.Title = DialogTitle;
-Dialog.Trigger = DialogTrigger;
-
-export { Dialog, DialogTitle, DialogPanel, DialogTrigger };
+export { DialogComponent as Dialog, DialogTitle, DialogPanel, DialogTrigger };

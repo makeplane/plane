@@ -62,18 +62,11 @@ const PopoverRoot = React.memo<React.ComponentProps<typeof BasePopover.Root>>(fu
   return <BasePopover.Root data-slot="popover" {...props} />;
 });
 
-const Popover = PopoverRoot as typeof PopoverRoot & {
-  Button: typeof PopoverTrigger;
-  Panel: typeof PopoverContent;
-};
-Popover.Button = PopoverTrigger;
-Popover.Panel = PopoverContent;
-
 // display names
 PopoverContent.displayName = "PopoverContent";
-Popover.displayName = "Popover";
+PopoverRoot.displayName = "Popover";
 PopoverPortal.displayName = "PopoverPortal";
 PopoverTrigger.displayName = "PopoverTrigger";
 PopoverPositioner.displayName = "PopoverPositioner";
 
-export { Popover };
+export { PopoverRoot as Popover, PopoverTrigger, PopoverContent };

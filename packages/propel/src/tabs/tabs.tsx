@@ -87,21 +87,10 @@ const TabsIndicator = React.forwardRef(function TabsIndicator(
   );
 });
 
-TabsRoot.displayName = "TabsRoot";
+TabsRoot.displayName = "Tabs";
 TabsList.displayName = "TabsList";
 TabsTrigger.displayName = "TabsTrigger";
 TabsContent.displayName = "TabsContent";
 TabsIndicator.displayName = "TabsIndicator";
 
-const Tabs = TabsRoot as typeof TabsRoot & {
-  List: typeof TabsList;
-  Trigger: typeof TabsTrigger;
-  Content: typeof TabsContent;
-  Indicator: typeof TabsIndicator;
-};
-Tabs.List = TabsList;
-Tabs.Trigger = TabsTrigger;
-Tabs.Content = TabsContent;
-Tabs.Indicator = TabsIndicator;
-
-export { Tabs, TabsList, TabsTrigger, TabsContent, TabsIndicator };
+export { TabsRoot as Tabs, TabsList, TabsTrigger, TabsContent, TabsIndicator };

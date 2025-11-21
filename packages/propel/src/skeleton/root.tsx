@@ -35,9 +35,4 @@ function SkeletonItem({ height = "auto", width = "auto", className = "" }: Skele
 SkeletonRoot.displayName = "plane-ui-skeleton";
 SkeletonItem.displayName = "plane-ui-skeleton-item";
 
-const Skeleton = SkeletonRoot as typeof SkeletonRoot & {
-  Item: typeof SkeletonItem;
-};
-Skeleton.Item = SkeletonItem;
-
-export { Skeleton, SkeletonRoot, SkeletonItem };
+export { SkeletonRoot as Skeleton, SkeletonItem };

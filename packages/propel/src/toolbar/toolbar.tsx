@@ -164,16 +164,5 @@ ToolbarItem.displayName = "ToolbarItem";
 ToolbarSeparator.displayName = "ToolbarSeparator";
 ToolbarSubmitButton.displayName = "ToolbarSubmitButton";
 
-// compound components
-const Toolbar = ToolbarRoot as typeof ToolbarRoot & {
-  Group: typeof ToolbarGroup;
-  Item: typeof ToolbarItem;
-  Separator: typeof ToolbarSeparator;
-  SubmitButton: typeof ToolbarSubmitButton;
-};
-Toolbar.Group = ToolbarGroup;
-Toolbar.Item = ToolbarItem;
-Toolbar.Separator = ToolbarSeparator;
-Toolbar.SubmitButton = ToolbarSubmitButton;
 
-export { Toolbar };
+export { ToolbarRoot as Toolbar, ToolbarGroup, ToolbarItem, ToolbarSeparator, ToolbarSubmitButton };

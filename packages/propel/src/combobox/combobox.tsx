@@ -220,14 +220,10 @@ function ComboboxOption({ value, children, disabled, className }: ComboboxOption
   );
 }
 
+ComboboxRoot.displayName = "Combobox";
+ComboboxButton.displayName = "ComboboxButton";
+ComboboxOptions.displayName = "ComboboxOptions";
+ComboboxOption.displayName = "ComboboxOption";
 
-const Combobox = ComboboxRoot as typeof ComboboxRoot & {
-  Button: typeof ComboboxButton;
-  Options: typeof ComboboxOptions;
-  Option: typeof ComboboxOption;
-};
-Combobox.Button = ComboboxButton;
-Combobox.Options = ComboboxOptions;
-Combobox.Option = ComboboxOption;
 
-export { Combobox };
+export { ComboboxRoot as Combobox, ComboboxButton, ComboboxOptions, ComboboxOption };

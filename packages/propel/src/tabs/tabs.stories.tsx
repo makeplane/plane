@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Settings, User, Bell } from "lucide-react";
 import { HomeIcon } from "../icons/workspace/home-icon";
-import { Tabs } from "./tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent, TabsIndicator } from "./tabs";
 
 type TabOption = {
   label: string;
@@ -20,10 +20,10 @@ const meta: Meta<typeof Tabs> = {
   title: "Components/Tabs",
   component: Tabs,
   subcomponents: {
-    TabsList: Tabs.List,
-    TabsTrigger: Tabs.Trigger,
-    TabsContent: Tabs.Content,
-    TabsIndicator: Tabs.Indicator,
+    TabsList,
+    TabsTrigger,
+    TabsContent,
+    TabsIndicator,
   },
   parameters: {
     layout: "centered",
@@ -41,21 +41,21 @@ export const Basic: Story = {
     return (
       <div className="w-[400px]">
         <Tabs defaultValue={defaultValue}>
-          <Tabs.List>
+          <TabsList>
             {tabOptions.map((option) => (
-              <Tabs.Trigger key={option.value} value={option.value}>
+              <TabsTrigger key={option.value} value={option.value}>
                 {option.label}
-              </Tabs.Trigger>
+              </TabsTrigger>
             ))}
-            <Tabs.Indicator />
-          </Tabs.List>
+            <TabsIndicator />
+          </TabsList>
           {tabOptions.map((option) => (
-            <Tabs.Content key={option.value} value={option.value} className="p-4">
+            <TabsContent key={option.value} value={option.value} className="p-4">
               <div className="text-sm">
                 <h3 className="font-medium mb-2">{option.label}</h3>
                 <p className="text-custom-text-300">Content for the {option.label.toLowerCase()} tab.</p>
               </div>
-            </Tabs.Content>
+            </TabsContent>
           ))}
         </Tabs>
       </div>
@@ -77,14 +77,14 @@ export const Sizes: Story = {
           <div key={size} className="flex flex-col gap-2">
             <div className="text-sm font-medium">{sizeLabels[size]}</div>
             <Tabs defaultValue={defaultValue}>
-              <Tabs.List>
+              <TabsList>
                 {tabOptions.map((option) => (
-                  <Tabs.Trigger key={option.value} value={option.value} size={size}>
+                  <TabsTrigger key={option.value} value={option.value} size={size}>
                     {option.label}
-                  </Tabs.Trigger>
+                  </TabsTrigger>
                 ))}
-                <Tabs.Indicator />
-              </Tabs.List>
+                <TabsIndicator />
+              </TabsList>
             </Tabs>
           </div>
         ))}
@@ -103,18 +103,18 @@ export const Controlled: Story = {
           Active tab: <span className="font-medium">{activeTab}</span>
         </div>
         <Tabs value={activeTab} onValueChange={(value) => value && setActiveTab(value)}>
-          <Tabs.List>
+          <TabsList>
             {tabOptions.map((option) => (
-              <Tabs.Trigger key={option.value} value={option.value}>
+              <TabsTrigger key={option.value} value={option.value}>
                 {option.label}
-              </Tabs.Trigger>
+              </TabsTrigger>
             ))}
-            <Tabs.Indicator />
-          </Tabs.List>
+            <TabsIndicator />
+          </TabsList>
           {tabOptions.map((option) => (
-            <Tabs.Content key={option.value} value={option.value} className="p-4">
+            <TabsContent key={option.value} value={option.value} className="p-4">
               <div className="text-sm">Content for {option.label}</div>
-            </Tabs.Content>
+            </TabsContent>
           ))}
         </Tabs>
       </div>
@@ -127,23 +127,23 @@ export const DisabledTab: Story = {
     return (
       <div className="w-[400px]">
         <Tabs defaultValue={defaultValue}>
-          <Tabs.List>
-            <Tabs.Trigger value="account">Account</Tabs.Trigger>
-            <Tabs.Trigger value="password" disabled>
+          <TabsList>
+            <TabsTrigger value="account">Account</TabsTrigger>
+            <TabsTrigger value="password" disabled>
               Password
-            </Tabs.Trigger>
-            <Tabs.Trigger value="notifications">Notifications</Tabs.Trigger>
-            <Tabs.Indicator />
-          </Tabs.List>
-          <Tabs.Content value="account" className="p-4">
+            </TabsTrigger>
+            <TabsTrigger value="notifications">Notifications</TabsTrigger>
+            <TabsIndicator />
+          </TabsList>
+          <TabsContent value="account" className="p-4">
             <div className="text-sm">Account content</div>
-          </Tabs.Content>
-          <Tabs.Content value="password" className="p-4">
+          </TabsContent>
+          <TabsContent value="password" className="p-4">
             <div className="text-sm">Password content (disabled)</div>
-          </Tabs.Content>
-          <Tabs.Content value="notifications" className="p-4">
+          </TabsContent>
+          <TabsContent value="notifications" className="p-4">
             <div className="text-sm">Notifications content</div>
-          </Tabs.Content>
+          </TabsContent>
         </Tabs>
       </div>
     );
@@ -162,19 +162,19 @@ export const WithIcons: Story = {
     return (
       <div className="w-[500px]">
         <Tabs defaultValue={defaultValue || "home"}>
-          <Tabs.List>
+          <TabsList>
             {tabsWithIcons.map((tab) => (
-              <Tabs.Trigger key={tab.value} value={tab.value}>
+              <TabsTrigger key={tab.value} value={tab.value}>
                 <tab.icon className="w-4 h-4 mr-2" />
                 {tab.label}
-              </Tabs.Trigger>
+              </TabsTrigger>
             ))}
-            <Tabs.Indicator />
-          </Tabs.List>
+            <TabsIndicator />
+          </TabsList>
           {tabsWithIcons.map((tab) => (
-            <Tabs.Content key={tab.value} value={tab.value} className="p-4">
+            <TabsContent key={tab.value} value={tab.value} className="p-4">
               <div className="text-sm">Content for {tab.label}</div>
-            </Tabs.Content>
+            </TabsContent>
           ))}
         </Tabs>
       </div>
@@ -194,18 +194,18 @@ export const IconsOnly: Story = {
     return (
       <div className="w-[300px]">
         <Tabs defaultValue={defaultValue || "home"}>
-          <Tabs.List>
+          <TabsList>
             {iconTabs.map((tab) => (
-              <Tabs.Trigger key={tab.value} value={tab.value}>
+              <TabsTrigger key={tab.value} value={tab.value}>
                 <tab.icon className="w-4 h-4" />
-              </Tabs.Trigger>
+              </TabsTrigger>
             ))}
-            <Tabs.Indicator />
-          </Tabs.List>
+            <TabsIndicator />
+          </TabsList>
           {iconTabs.map((tab) => (
-            <Tabs.Content key={tab.value} value={tab.value} className="p-4">
+            <TabsContent key={tab.value} value={tab.value} className="p-4">
               <div className="text-sm">Content for {tab.value}</div>
-            </Tabs.Content>
+            </TabsContent>
           ))}
         </Tabs>
       </div>
@@ -245,9 +245,9 @@ export const DynamicTabs: Story = {
           </button>
         </div>
         <Tabs value={activeTab} onValueChange={(value) => value && setActiveTab(value)}>
-          <Tabs.List>
+          <TabsList>
             {tabs.map((tab) => (
-              <Tabs.Trigger key={tab.value} value={tab.value}>
+              <TabsTrigger key={tab.value} value={tab.value}>
                 {tab.label}
                 {tabs.length > 1 && (
                   <button
@@ -260,14 +260,14 @@ export const DynamicTabs: Story = {
                     ×
                   </button>
                 )}
-              </Tabs.Trigger>
+              </TabsTrigger>
             ))}
-            <Tabs.Indicator />
-          </Tabs.List>
+            <TabsIndicator />
+          </TabsList>
           {tabs.map((tab) => (
-            <Tabs.Content key={tab.value} value={tab.value} className="p-4">
+            <TabsContent key={tab.value} value={tab.value} className="p-4">
               <div className="text-sm">Content for {tab.label}</div>
-            </Tabs.Content>
+            </TabsContent>
           ))}
         </Tabs>
       </div>
@@ -280,22 +280,22 @@ export const FullWidth: Story = {
     return (
       <div className="w-full max-w-2xl">
         <Tabs defaultValue={defaultValue}>
-          <Tabs.List>
-            <Tabs.Trigger value="account" className="flex-1">
+          <TabsList>
+            <TabsTrigger value="account" className="flex-1">
               Account
-            </Tabs.Trigger>
-            <Tabs.Trigger value="password" className="flex-1">
+            </TabsTrigger>
+            <TabsTrigger value="password" className="flex-1">
               Password
-            </Tabs.Trigger>
-            <Tabs.Trigger value="notifications" className="flex-1">
+            </TabsTrigger>
+            <TabsTrigger value="notifications" className="flex-1">
               Notifications
-            </Tabs.Trigger>
-            <Tabs.Indicator />
-          </Tabs.List>
+            </TabsTrigger>
+            <TabsIndicator />
+          </TabsList>
           {tabOptions.map((option) => (
-            <Tabs.Content key={option.value} value={option.value} className="p-4">
+            <TabsContent key={option.value} value={option.value} className="p-4">
               <div className="text-sm">Content for {option.label}</div>
-            </Tabs.Content>
+            </TabsContent>
           ))}
         </Tabs>
       </div>
@@ -308,15 +308,15 @@ export const WithComplexContent: Story = {
     return (
       <div className="w-[600px]">
         <Tabs defaultValue={defaultValue}>
-          <Tabs.List>
+          <TabsList>
             {tabOptions.map((option) => (
-              <Tabs.Trigger key={option.value} value={option.value}>
+              <TabsTrigger key={option.value} value={option.value}>
                 {option.label}
-              </Tabs.Trigger>
+              </TabsTrigger>
             ))}
-            <Tabs.Indicator />
-          </Tabs.List>
-          <Tabs.Content value="account" className="p-4">
+            <TabsIndicator />
+          </TabsList>
+          <TabsContent value="account" className="p-4">
             <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium">Username</label>
@@ -327,8 +327,8 @@ export const WithComplexContent: Story = {
                 <input type="email" className="mt-1 w-full px-3 py-2 bg-custom-background-80 rounded" />
               </div>
             </div>
-          </Tabs.Content>
-          <Tabs.Content value="password" className="p-4">
+          </TabsContent>
+          <TabsContent value="password" className="p-4">
             <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium">Current Password</label>
@@ -339,8 +339,8 @@ export const WithComplexContent: Story = {
                 <input type="password" className="mt-1 w-full px-3 py-2 bg-custom-background-80 rounded" />
               </div>
             </div>
-          </Tabs.Content>
-          <Tabs.Content value="notifications" className="p-4">
+          </TabsContent>
+          <TabsContent value="notifications" className="p-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm">Email notifications</span>
@@ -351,7 +351,7 @@ export const WithComplexContent: Story = {
                 <input type="checkbox" />
               </div>
             </div>
-          </Tabs.Content>
+          </TabsContent>
         </Tabs>
       </div>
     );
