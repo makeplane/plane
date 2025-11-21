@@ -31,8 +31,8 @@ export const CommentQuickActions = observer(function CommentQuickActions(props: 
   // translation
   const { t } = useTranslation();
 
-  const MENU_ITEMS = useMemo(function MENU_ITEMS() {
-    return [
+  const MENU_ITEMS = useMemo<TContextMenuItem[]>(
+    () => [
       {
         key: "edit",
         action: setEditMode,
@@ -70,8 +70,9 @@ export const CommentQuickActions = observer(function CommentQuickActions(props: 
         icon: Trash2,
         shouldRender: canDelete,
       },
-    ];
-  });
+    ],
+    [t, setEditMode, canEdit, showCopyLinkOption, activityOperations, comment, showAccessSpecifier, canDelete]
+  );
 
   return (
     <CustomMenu ellipsis closeOnSelect>
