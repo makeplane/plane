@@ -302,7 +302,7 @@ class WorkspaceTheme(BaseModel):
 
 class WorkspaceUserProperties(BaseModel):
     class NavigationControlPreference(models.TextChoices):
-        ACCORDIAN = "ACCORDIAN", "Accordian"
+        ACCORDION = "ACCORDION", "Accordion"
         HORIZONTAL = "HORIZONTAL", "Horizontal"
 
     workspace = models.ForeignKey(
@@ -323,7 +323,7 @@ class WorkspaceUserProperties(BaseModel):
     navigation_control_preference = models.CharField(
         max_length=25,
         choices=NavigationControlPreference.choices,
-        default=NavigationControlPreference.ACCORDIAN,
+        default=NavigationControlPreference.ACCORDION,
     )
 
     class Meta:
