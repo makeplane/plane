@@ -10,6 +10,8 @@ import type { TContextMenuItem } from "@plane/ui";
 
 import { WorkspaceDraftIssueQuickActions } from "@/components/issues/workspace-draft/quick-action";
 import { EditOppositionTeamModal } from "./opposition-team-form";
+import { useOppositionTeams } from "./(context)/opposition-teams-context";
+import { updateEntity } from "./(opposition-api)/update-opposition";
 
 interface Team {
   name: string;
@@ -26,9 +28,36 @@ interface Team {
 type Props = {
   workspaceSlug: string;
   team: Team;
-  issueId: number;            // ← used as index
+  issueId: number;
   onDelete?: (index: number) => void;
 };
+
+const API_URL = `${process.env.NEXT_PUBLIC_CP_SERVER_URL}/meta-type`;
+
+async function getOppositionTeamBlock() {
+  const res = await fetch(API_URL);
+  const json = await res.json();
+
+  const list = json?.["Gateway Response"]?.result;
+  if (!Array.isArray(list)) return null;
+
+  const block = list.find(
+    (item: any) => Array.isArray(item) && item.some((f: any) => f?.field === "key" && f?.value === "OPPOSITIONTEAM")
+  );
+  if (!block) return null;
+
+  const getField = (key: string) => {
+    const found = block.find((x: any) => x?.field === key);
+    return found?.value;
+  };
+
+  return {
+    id: getField("id"),
+    name: getField("name"),
+    key: getField("key"),
+    values: getField("values") || [],
+  };
+}
 
 export const OppositionTeamBlock: FC<Props> = observer(
   ({ workspaceSlug, team, issueId, onDelete }) => {
@@ -53,10 +82,39 @@ export const OppositionTeamBlock: FC<Props> = observer(
       },
     ];
 
-    const handleDelete = () => {
-      onDelete?.(issueId);       // call parent delete
-      setIsDeleteOpen(false);    // close modal
+    const { refreshTeams } = useOppositionTeams();
+
+  const handleDelete = async () => {
+  try {
+    // 1. Load existing meta-type block (Opposition Teams)
+    const block = await getOppositionTeamBlock();
+    if (!block) {
+      alert("Opposition Team meta-type missing");
+      return;
+    }
+
+    // 2. Remove team by index (issueId)
+    const updatedValues = [...block.values];
+    updatedValues.splice(issueId, 1);
+
+    // 3. Prepare payload for update API
+    const payload = {
+      id: block.id,
+      name: block.name,
+      key: block.key,
+      values: updatedValues,
     };
+
+    // 4. Call PUT API to update meta-type
+    await updateEntity("meta-type", payload);
+      refreshTeams();
+
+    setIsDeleteOpen(false);
+  } catch (err) {
+    console.error("Delete failed", err);
+  }
+};
+
 
     return (
       <div className="flex">

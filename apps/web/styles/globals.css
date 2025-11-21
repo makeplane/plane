@@ -6,7 +6,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 /* Fix flag area */
 .react-tel-input .selected-flag {
   background: transparent !important;
@@ -14,28 +13,24 @@
 
 /* Country dropdown list */
 .react-tel-input .country-list {
-  color: #fff !important;
-  border: 1px solid #3f3f46 !important;
+  background-color: rgba(var(--color-background-90), 1)  !important;
 }
 
 .react-tel-input .country-list .country.highlight {
   background: #27272a !important;
-  color: #fff !important;
-  border: 1px solid #474545 !important;
+  border: 1px solid rgb(var(--color-background-80)) !important;
 }
 
 /* Selected country (after clicking) */
 .react-tel-input .country-list .country.active {
-  background: #3f3f46 !important;
-  color: #fff !important;
+  background: rgb(var(--color-background-80)) !important;
+  
 }
 
 /* Hover state */
 .react-tel-input .country-list .country:hover {
-  background: #27272a !important;
-  color: #fff !important;
+  background: rgb(var(--color-background-80)) !important;
 }
-
 
 @layer components {
   .text-1\.5xl {

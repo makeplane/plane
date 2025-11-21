@@ -81,6 +81,21 @@ export const OppositionTeamModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
     const { refreshTeams } = useOppositionTeams();
 
+    useEffect(() => {
+ if (isOpen) {
+    setTeamName("");
+    setAddress("");
+    setAthleticDirector("");
+    setAssistantDirector("");
+    setAthleticEmail("");
+    setAssistantEmail("");
+    setAthleticPhone("");
+    setAssistantPhone("");
+    setLogo(null);
+    setPreview(null);
+  }
+    },[isOpen])
+
   const handleImageChange = (e: any) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -128,8 +143,6 @@ const handleSubmit = async () => {
   refreshTeams();
   onClose();
 };
-
-
 
   return (
     <ModalCore position={EModalPosition.TOP} isOpen={isOpen}>
@@ -187,7 +200,7 @@ const handleSubmit = async () => {
           <PhoneInput
             country="us"
             value={athleticPhone}
-            onChange={(val, country) => setAthleticPhone(formatPhone(val, country))}
+            onChange={(val) => setAthleticPhone("+" + val)}
             inputClass="!bg-transparent border-[0.5px] !border-custom-border-200 !w-full "
             buttonClass="!bg-transparent border-[0.5px] !border-custom-border-200"
             dropdownClass="!bg-zinc-800 border-[0.5px] !border-custom-border-200"
@@ -214,7 +227,7 @@ const handleSubmit = async () => {
           <PhoneInput
             country="us"
             value={assistantPhone}
-            onChange={(val, country) => setAssistantPhone(formatPhone(val, country))}
+            onChange={(val) => setAssistantPhone("+" + val)}
             inputClass="!bg-transparent border-[0.5px] !border-custom-border-200 !w-full "
             buttonClass="!bg-transparent border-[0.5px] !border-custom-border-200"
             dropdownClass="!bg-zinc-800 border-[0.5px] !border-custom-border-200"
@@ -381,7 +394,7 @@ export const EditOppositionTeamModal: React.FC<Props> = ({ isOpen, onClose, team
           <PhoneInput
             value={athleticPhone}
             country="us"
-            onChange={(val, country) => setAthleticPhone(formatPhone(val, country))}
+            onChange={(val) => setAthleticPhone("+" + val)}
             inputClass="!bg-transparent border-[0.5px] !border-custom-border-200 !w-full "
             buttonClass="!bg-transparent border-[0.5px] !border-custom-border-200"
             dropdownClass="!bg-custom-border-200 border-[0.5px] !border-custom-border-200"
@@ -412,7 +425,7 @@ export const EditOppositionTeamModal: React.FC<Props> = ({ isOpen, onClose, team
           <PhoneInput
             value={assistantPhone}
             country="us"
-            onChange={(val, country) => setAssistantPhone(formatPhone(val, country))}
+            onChange={(val) => setAthleticPhone("+" + val)}
             inputClass="!bg-transparent border-[0.5px] !border-custom-border-200 !w-full "
             buttonClass="!bg-transparent border-[0.5px] !border-custom-border-200"
             dropdownClass="!bg-custom-border-200 border-[0.5px] !border-custom-border-200"
