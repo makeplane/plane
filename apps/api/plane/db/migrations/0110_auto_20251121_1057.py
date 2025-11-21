@@ -20,7 +20,7 @@ def create_triage_state(apps, _schema_editor):
         state.save()
 
     # update the group of the states to backlog
-    State.objects.filter(group="triage").update(group="backlog")
+    State.triage_objects.all().update(group="backlog")
 
     states_to_create = []
     for proj in projects:
@@ -46,10 +46,9 @@ def create_triage_state(apps, _schema_editor):
     # Single query using Django ORM with Subquery
     with transaction.atomic():
         # Subquery to get the triage state_id for each issue's project
-        triage_state_subquery = State.objects.filter(
+        triage_state_subquery = State.triage_objects.filter(
             project_id=OuterRef('project_id'),
-            group='triage',
-            name='Intake Triage'
+            workspace_id=OuterRef('workspace_id'),
         ).values('id')[:1]
         
         # Single UPDATE with subquery - Django generates optimized SQL
