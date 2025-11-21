@@ -9,15 +9,15 @@ import { Breadcrumbs, Button, Header } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-import OppositionSearch from "./opposition-search";
-import { useOppositionSearch } from "./(context)/opposition-search-context";
+// import OppositionSearch from "./opposition-search";
+// import { useOppositionSearch } from "./(context)/opposition-search-context";
 import { OppositionTeamModal } from "./opposition-team-form";
 // import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 
 export const WorkspaceOppositionHeader = observer(() => {
   // state
   const [isOppositionTeamModalOpen, setIsOppositionTeamModalOpen] = useState(false);
-  const { search, setSearch } = useOppositionSearch();
+  // const { search, setSearch } = useOppositionSearch();
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { joinedProjectIds } = useProject();
@@ -48,7 +48,7 @@ export const WorkspaceOppositionHeader = observer(() => {
         </Header.LeftItem>
 
         <Header.RightItem>
-          <OppositionSearch searchQuery={search} updateSearchQuery={setSearch} />
+          {/* <OppositionSearch searchQuery={search} updateSearchQuery={setSearch} /> */}
           {joinedProjectIds && joinedProjectIds.length > 0 && (
             <Button
               variant="primary"
