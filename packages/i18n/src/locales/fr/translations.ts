@@ -2183,8 +2183,7 @@ export default {
           text: "Créez votre première vue",
           comic: {
             title: "Les vues fonctionnent sur les propriétés des éléments de travail.",
-            description:
-              "Vous pouvez créer une vue ici avec autant de propriétés comme filtres que souhaité.",
+            description: "Vous pouvez créer une vue ici avec autant de propriétés comme filtres que souhaité.",
           },
         },
       },
@@ -2212,7 +2211,8 @@ export default {
       },
       private: {
         title: "Pas encore de pages privées",
-        description: "Ici vos écrits sont personnels et privés. Quand vous serez prêt à les partager, l'équipe n’est qu’à un clic.",
+        description:
+          "Ici vos écrits sont personnels et privés. Quand vous serez prêt à les partager, l'équipe n’est qu’à un clic.",
         primary_button: {
           text: "Créez votre première page",
         },
@@ -2403,15 +2403,13 @@ export default {
     title: "Vos post-it",
     placeholder: "cliquez pour écrire ici",
     all: "Toutes les post-it",
-    "no-data":
-      "Notez une idée, saisissez une intuition ou captez une inspiration. Ajoutez un post-it pour commencer.",
+    "no-data": "Notez une idée, saisissez une intuition ou captez une inspiration. Ajoutez un post-it pour commencer.",
     add: "Ajouter un post-it",
     search_placeholder: "Rechercher par titre",
     delete: "Supprimer le post-it",
     delete_confirmation: "Êtes-vous sûr de vouloir supprimer ce post-it ?",
     empty_state: {
-      simple:
-        "Notez une idée, saisissez une intuition ou captez une inspiration. Ajoutez un post-it pour commencer.",
+      simple: "Notez une idée, saisissez une intuition ou captez une inspiration. Ajoutez un post-it pour commencer.",
       general: {
         title: "Les post-it sont des notes rapides et des tâches que vous prenez à la volée.",
         description:
