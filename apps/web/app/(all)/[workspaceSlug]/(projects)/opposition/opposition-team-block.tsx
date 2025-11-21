@@ -119,7 +119,7 @@ export const OppositionTeamBlock: FC<Props> = observer(
 
 
     return (
-      <div className="flex">
+      <div ref={issueRef}  className="flex">
 
         {/* ACTION MENU */}
         <WorkspaceDraftIssueQuickActions
@@ -140,7 +140,7 @@ export const OppositionTeamBlock: FC<Props> = observer(
         <AlertModalCore
           isOpen={isDeleteOpen}
           title="Delete Opposition Team"
-          content="Are you sure you want to delete this team? This action cannot be undone."
+          content={`Are you sure you want to delete ${team?.name} team? This action cannot be undone.`}
           handleClose={() => setIsDeleteOpen(false)}
           handleSubmit={handleDelete}
           isSubmitting={false}
