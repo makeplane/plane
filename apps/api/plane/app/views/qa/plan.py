@@ -95,7 +95,6 @@ class CaseAPIView(BaseAPIView):
     filterset_fields = {
         'name': ['exact', 'icontains', 'in'],
         'repository_id': ['exact'],
-        'state': ['exact', 'in'],
         'type': ['exact', 'in'],
         'priority': ['exact', 'in'],
         'module_id': ['exact', 'in'],

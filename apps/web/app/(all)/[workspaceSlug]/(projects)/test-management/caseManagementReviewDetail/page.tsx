@@ -273,7 +273,7 @@ export default function CaseManagementReviewDetailPage() {
           value={assignees}
           onChange={() => {}}
           disabled={true}
-          placeholder={assignees?.length ? "" : "未知用户"}
+          placeholder={"未知用户"}
           className="w-full text-sm"
           buttonContainerClassName="w-full text-left p-0 cursor-default"
           buttonVariant="transparent-with-text"
@@ -302,7 +302,7 @@ export default function CaseManagementReviewDetailPage() {
           value={uid ?? null}
           onChange={() => {}}
           disabled={true}
-          placeholder={""}
+          placeholder={"未知用户"}
           className="w-full text-sm"
           buttonContainerClassName="w-full text-left p-0 cursor-default"
           buttonVariant="transparent-with-text"

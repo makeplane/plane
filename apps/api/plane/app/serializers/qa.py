@@ -8,6 +8,7 @@ from rest_framework.serializers import ModelSerializer
 from plane.app.serializers import UserLiteSerializer, BaseSerializer, IssueAssigneeSerializer, ProjectDetailSerializer
 from plane.db.models import TestPlan, TestCaseRepository, User, TestCase, CaseLabel, CaseModule, FileAsset, Issue, \
     CaseReviewModule, CaseReview, CaseReviewThrough, TestCaseComment, CaseReviewRecord
+from plane.utils.qa import re_approval_case
 
 
 class TestPlanCreateUpdateSerializer(ModelSerializer):
@@ -26,6 +27,10 @@ class CaseDetailSerializer(ModelSerializer):
     """
     Serializer for creating a TestPlan.
     """
+    review = serializers.SerializerMethodField()
+
+    def get_review(self, obj):
+        return obj.review
 
     class Meta:
         model = TestCase
@@ -88,6 +93,11 @@ class CaseCreateUpdateSerializer(ModelSerializer):
     labels = serializers.PrimaryKeyRelatedField(queryset=CaseLabel.objects.all(), many=True, required=False)
     issues = serializers.PrimaryKeyRelatedField(queryset=Issue.objects.all(), many=True, required=False)
 
+    review = serializers.SerializerMethodField()
+
+    def get_review(self, obj):
+        return obj.review
+
     class Meta:
         model = TestCase
         fields = ['name', 'precondition', 'steps', 'remark', 'state', 'type', 'priority', 'repository', 'labels',
@@ -106,6 +116,12 @@ class CaseCreateUpdateSerializer(ModelSerializer):
     def update(self, instance, validated_data):
         labels = validated_data.pop('labels', None)
         issues = validated_data.pop('issues', None)
+        if any([
+            validated_data.get('name') and validated_data['name'] != instance.name,
+            validated_data.get('precondition') and validated_data['precondition'] != instance.precondition,
+            validated_data.get('steps') and validated_data['steps'] != instance.steps,
+        ]):
+            re_approval_case(instance)
         instance = super().update(instance, validated_data)
         if labels is not None:
             instance.labels.set(labels)
@@ -117,6 +133,11 @@ class CaseCreateUpdateSerializer(ModelSerializer):
 class CaseListSerializer(ModelSerializer):
     """用例查询"""
     issues = ...
+
+    review = serializers.SerializerMethodField()
+
+    def get_review(self, obj):
+        return obj.review
 
     class Meta:
         model = TestCase

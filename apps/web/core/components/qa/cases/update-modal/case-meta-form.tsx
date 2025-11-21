@@ -49,7 +49,7 @@ export function CaseMetaForm(props: CaseMetaFormProps) {
 
   return (
     <div className="mb-5">
-      <div className="grid grid-cols-4 gap-4 ml-[10px]">
+      <div className="grid grid-cols-3 gap-3 ml-[10px]">
         <div>
           <label className="mb-1 block text-sm font-medium text-gray-700 ml-[10px]">维护人</label>
           <div className="w-full rounded-md border border-transparent text-sm  hover:border-blue-300 focus-within:border-blue-400 focus-within:ring-1 focus-within:ring-blue-300">
@@ -71,24 +71,7 @@ export function CaseMetaForm(props: CaseMetaFormProps) {
             />
           </div>
         </div>
-        <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700 ml-[10px]">状态</label>
-          <div className="w-full rounded-md border border-transparent text-sm hover:border-blue-300 focus-within:border-blue-400 focus-within:ring-1 focus-within:ring-blue-300">
-            <Select
-              placeholder="请选择状态"
-              options={caseStateOptions}
-              value={stateValue}
-              onChange={onStateChange}
-              onBlur={onStateBlur}
-              showSearch
-              optionFilterProp="title"
-              variant="borderless"
-              suffixIcon={null}
-              className="w-full text-sm"
-              filterOption={(input, option) => (option?.title ?? "").toLowerCase().includes(input.toLowerCase())}
-            />
-          </div>
-        </div>
+
         <div>
           <label className="mb-1 block text-sm font-medium text-gray-700 ml-[10px]">用例类型</label>
           <div className="w-full rounded-md border border-transparent text-sm  hover:border-blue-300 focus-within:border-blue-400 focus-within:ring-1 focus-within:ring-blue-300">

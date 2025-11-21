@@ -89,7 +89,7 @@ export class CaseService extends APIService {
   async getReviewCaseList(
     workspaceSlug: string,
     review_id: string,
-    queries?: { page?: number; page_size?: number; module_id?: string | null }
+    queries?: { page?: number; page_size?: number; module_id?: string | null; name__icontains?: string }
   ): Promise<{ data: Array<{ id: string; name: string; priority: number; assignees: string[]; result: string; created_by: string | null }>; count: number }> {
     const params = { review_id, ...(queries || {}) } as any;
     return this.get(`/api/workspaces/${workspaceSlug}/test/review/case-list/`, { params })

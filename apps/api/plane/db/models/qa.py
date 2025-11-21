@@ -97,7 +97,6 @@ class TestCase(BaseModel):
     precondition = models.TextField(verbose_name="TestCase Precondition", blank=True, default='<p></p>')
     steps = models.JSONField(verbose_name="TestCase Steps", blank=True, default=dict)
     remark = models.TextField(verbose_name="TestCase Remark", blank=True, default='<p></p>')
-    state = models.IntegerField(choices=State.choices, default=State.PENDING_REVIEW, verbose_name="TestCase State")
     type = models.IntegerField(choices=Type.choices, default=Type.FUNCTIONAL, verbose_name="TestCase Type")
     test_type = models.IntegerField(choices=TestType.choices, default=TestType.AUTO, verbose_name="TestType Type")
     priority = models.IntegerField(choices=Priority.choices, default=Priority.MEDIUM, verbose_name="TestCase Priority")
@@ -111,9 +110,16 @@ class TestCase(BaseModel):
     labels = models.ManyToManyField(CaseLabel, blank=True, related_name="cases")
     issues = models.ManyToManyField(Issue, blank=True, related_name="cases")
 
-    class Meta:
-        db_table = "test_case"
-        ordering = ("-created_at",)
+    @property
+    def review(self):
+        crr = CaseReviewRecord.objects.filter(crt__case=self).order_by("-created_at").first()
+
+        return crr.result if crr else CaseReviewThrough.Result.NOT_START
+
+
+class Meta:
+    db_table = "test_case"
+    ordering = ("-created_at",)
 
 
 class TestPlan(BaseModel):

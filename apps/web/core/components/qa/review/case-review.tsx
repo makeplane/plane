@@ -20,13 +20,13 @@ import { WorkItemDisplayModal } from "../cases/work-item-display-modal";
 import { ReviewRecordsPanel } from "./review-records";
 
 type ReviewCaseRow = {
-  id: string;
-  case_id: string;
+  id: string | number;
+  case_id: string | number;
   name: string;
   priority: number;
-  assignees: string[];
+  assignees: Array<string>;
   result: string;
-  created_by: string | null;
+  created_by: string | number | null;
 };
 
 const priorityLabelMap: Record<number, string> = { 0: "低", 1: "中", 2: "高" };
@@ -85,6 +85,7 @@ export default function CaseReview() {
   const [reasonModalOpen, setReasonModalOpen] = React.useState<boolean>(false);
   const [submitLoading, setSubmitLoading] = React.useState<boolean>(false);
   const [recordsRefreshKey, setRecordsRefreshKey] = React.useState<number>(0);
+  const [isCurrentUserReviewer, setIsCurrentUserReviewer] = React.useState<boolean>(false);
 
   const fetchReviewEnums = async () => {
     if (!workspaceSlug) return;
@@ -94,14 +95,16 @@ export default function CaseReview() {
     } catch {}
   };
 
-  const fetchCases = async (p = page, s = pageSize) => {
+  const fetchCases = async (p = page, s = pageSize, kw?: string) => {
     if (!workspaceSlug || !reviewId) return;
     try {
       setListLoading(true);
       setError(null);
+      const input = (kw ?? keyword).trim();
       const res = await reviewService.getReviewCaseList(String(workspaceSlug), String(reviewId), {
         page: p,
         page_size: s,
+        ...(input ? { name__icontains: input } : {}),
       });
       setCases(Array.isArray(res?.data) ? (res.data as ReviewCaseRow[]) : []);
       setTotal(Number(res?.count || 0));
@@ -214,11 +217,19 @@ export default function CaseReview() {
       .catch(() => setCurrentCount(0));
   }, [activeTab, workspaceSlug, selectedCaseId]);
 
-  const filteredList = React.useMemo(() => {
-    const kw = keyword.trim();
-    if (!kw) return cases;
-    return cases.filter((c) => String(c.name || "").includes(kw));
-  }, [cases, keyword]);
+  const debouncedSearch = React.useMemo(
+    () =>
+      debounce((v: string) => {
+        fetchCases(1, pageSize, v);
+      }, 300),
+    [pageSize, workspaceSlug, reviewId]
+  );
+
+  React.useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
 
   type StepItem = { result: string; description: string };
 
@@ -283,8 +294,25 @@ export default function CaseReview() {
     }
   };
 
+  React.useEffect(() => {
+    const row = cases.find((item) => String(item.case_id ?? item.id) === String(selectedCaseId || ""));
+    const reviewers = Array.isArray(row?.assignees) ? row!.assignees.map((id) => String(id)) : [];
+    const isReviewer = currentUser?.id ? reviewers.includes(String(currentUser.id)) : false;
+    setIsCurrentUserReviewer(isReviewer);
+  }, [cases, selectedCaseId, currentUser?.id]);
+
+  React.useEffect(() => {
+    if (!selectedCaseId) return;
+    const row = cases.find((item) => String(item.case_id ?? item.id) === String(selectedCaseId || ""));
+    const reviewers = Array.isArray(row?.assignees) ? row!.assignees.map((id) => String(id)) : [];
+    const isReviewer = currentUser?.id ? reviewers.includes(String(currentUser.id)) : false;
+    setReviewValue(isReviewer ? "通过" : "建议");
+    setReason("");
+  }, [selectedCaseId, cases, currentUser?.id]);
+
   const buildPayload = () => {
     if (!workspaceSlug || !reviewId || !selectedCaseId || !reviewValue) return null;
+    if (!isCurrentUserReviewer && reviewValue !== "建议") return null;
     const payload: any = {
       review_id: String(reviewId),
       case_id: String(selectedCaseId),
@@ -326,7 +354,11 @@ export default function CaseReview() {
   const handleSubmitReview = () => {
     const payload = buildPayload();
     if (!payload) {
-      message.warning("请选择评审结果");
+      if (!isCurrentUserReviewer) {
+        message.warning("您不是该评审的评审人员，仅可提交建议");
+      } else {
+        message.warning("请选择评审结果");
+      }
       return;
     }
     if ((reviewValue === "不通过" || reviewValue === "建议") && !reason.trim()) {
@@ -360,8 +392,21 @@ export default function CaseReview() {
             <Input.Search
               placeholder="按用例名称搜索"
               allowClear
-              onSearch={(v) => setKeyword(v)}
-              onChange={(e) => setKeyword(e.target.value)}
+              onSearch={(v) => {
+                setKeyword(v);
+                debouncedSearch.cancel();
+                fetchCases(1, pageSize, v);
+              }}
+              onChange={(e) => {
+                const v = e.target.value;
+                setKeyword(v);
+                if (v.trim() === "") {
+                  debouncedSearch.cancel();
+                  fetchCases(1, pageSize, "");
+                } else {
+                  debouncedSearch(v);
+                }
+              }}
             />
             {listLoading ? (
               <div className="flex items-center justify-center py-12">
@@ -377,10 +422,10 @@ export default function CaseReview() {
                   className="h-[680px] overflow-y-auto vertical-scrollbar scrollbar-sm flex flex-col gap-3 pr-2 pl-1 py-1"
                   style={{ scrollbarGutter: "stable" }}
                 >
-                  {filteredList.length === 0 ? (
+                  {cases.length === 0 ? (
                     <div className="text-custom-text-300 py-12 text-center">暂无数据</div>
                   ) : (
-                    filteredList.map((item) => {
+                    cases.map((item) => {
                       const caseId = String(item.case_id ?? item.id);
                       const isActive = String(selectedCaseId || "") === caseId;
                       const color = reviewEnums?.CaseReviewThrough_Result?.[item.result]?.color || "default";
@@ -390,31 +435,22 @@ export default function CaseReview() {
                           bordered
                           hoverable
                           onClick={() => {
+                            const reviewers = Array.isArray(item.assignees)
+                              ? item.assignees.map((id) => String(id))
+                              : [];
+                            const isReviewer = currentUser?.id ? reviewers.includes(String(currentUser.id)) : false;
                             setSelectedCaseId(caseId);
+                            setReviewValue(isReviewer ? "通过" : "建议");
+                            setReason("");
                             fetchCaseDetail(caseId);
                           }}
                           className={`${isActive ? "ring-2 ring-blue-500" : ""} rounded-md hover:shadow-sm transition-shadow`}
                         >
                           <div className="flex items-center justify-between">
                             <div className="text-sm font-medium truncate">{item.name}</div>
-                            <div className="text-xs text-custom-text-300">{priorityLabelMap[item.priority] ?? "-"}</div>
-                          </div>
-                          <div className="mt-2 flex items-center gap-2">
-                            <MemberDropdown
-                              multiple={true}
-                              value={item.assignees}
-                              onChange={() => {}}
-                              disabled={true}
-                              placeholder={item.assignees?.length ? "" : "未知用户"}
-                              className="text-sm"
-                              buttonContainerClassName="p-0 cursor-default"
-                              buttonVariant="transparent-with-text"
-                              buttonClassName="text-sm p-0 hover:bg-transparent hover:bg-inherit"
-                              showUserDetails={true}
-                              optionsClassName="z-[60]"
-                            />
                             <Tag color={color}>{item.result || "-"}</Tag>
                           </div>
+                          <div className="mt-2 flex items-center gap-2"></div>
                         </Card>
                       );
                     })
@@ -431,7 +467,7 @@ export default function CaseReview() {
                   onChange={(p, s) => {
                     setPage(p);
                     setPageSize(s);
-                    fetchCases(p, s);
+                    fetchCases(p, s, keyword);
                   }}
                 />
               </div>
@@ -532,7 +568,7 @@ export default function CaseReview() {
                     {activeTab === "basic" && (
                       <div className="flex flex-col gap-4 h-[550px] overflow-y-auto vertical-scrollbar scrollbar-sm">
                         <div className="text-lg font-semibold">{caseDetail?.name ?? "-"}</div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                           <div className="col-span-1">
                             <div className="text-xs text-custom-text-300 mb-1">维护人</div>
                             {caseDetail?.assignee ? (
@@ -552,18 +588,6 @@ export default function CaseReview() {
                             ) : (
                               <div className="p-2 text-sm text-custom-text-300 h-8 flex items-center">未设置维护人</div>
                             )}
-                          </div>
-                          <div className="col-span-1">
-                            <div className="text-xs text-custom-text-300 mb-1">状态</div>
-                            <div className="h-8 flex items-center">
-                              <Tag
-                                color={getCaseStateTagColor(
-                                  String(enumsData.case_state?.[String(caseDetail?.state)] || "")
-                                )}
-                              >
-                                {enumsData.case_state?.[String(caseDetail?.state)] ?? "-"}
-                              </Tag>
-                            </div>
                           </div>
                           <div className="col-span-1">
                             <div className="text-xs text-custom-text-300 mb-1">类型</div>
@@ -743,12 +767,12 @@ export default function CaseReview() {
                   <div className="px-0 py-3 flex flex-col gap-3">
                     <div className="text-sm font-normal">开始评审</div>
                     <Radio.Group onChange={handleRadioChange} value={reviewValue} disabled={!selectedCaseId}>
-                      <Radio value="通过">
+                      <Radio value="通过" disabled={!isCurrentUserReviewer}>
                         <span style={{ color: "#52c41a" }} className="flex items-center gap-1">
                           <CheckCircleOutlined /> 通过
                         </span>
                       </Radio>
-                      <Radio value="不通过" className="ml-6">
+                      <Radio value="不通过" className="ml-6" disabled={!isCurrentUserReviewer}>
                         <span style={{ color: "#f5222d" }} className="flex items-center gap-1">
                           <CloseCircleOutlined /> 不通过
                         </span>

@@ -1,9 +1,10 @@
 "use client";
 import React from "react";
-import { Select, Spin } from "antd";
+import { Select, Spin, Tag } from "antd";
 import { FolderOutlined } from "@ant-design/icons";
 import { useParams } from "next/navigation";
 import { CaseService } from "../../../../services/qa/case.service";
+import { CaseService as ReviewApiService } from "../../../../services/qa/review.service";
 import { getEnums } from "app/(all)/[workspaceSlug]/(projects)/test-management/util";
 import { formatCNDateTime } from "../util";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
@@ -19,6 +20,7 @@ type SideInfoPanelProps = {
 export function SideInfoPanel({ caseData, caseTestTypeMap }: SideInfoPanelProps) {
   const { workspaceSlug } = useParams() as { workspaceSlug?: string };
   const caseService = React.useMemo(() => new CaseService(), []);
+  const reviewService = React.useMemo(() => new ReviewApiService(), []);
 
   const [enumsData, setEnumsData] = React.useState<{ case_test_type?: Record<string, string> }>({});
   const [loadingEnums, setLoadingEnums] = React.useState<boolean>(false);
@@ -44,6 +46,17 @@ export function SideInfoPanel({ caseData, caseTestTypeMap }: SideInfoPanelProps)
       })
       .finally(() => setLoadingEnums(false));
   }, [workspaceSlug, caseTestTypeMap]);
+
+  const [reviewEnums, setReviewEnums] = React.useState<
+    Record<string, Record<string, { label: string; color: string }>>
+  >({});
+  React.useEffect(() => {
+    if (!workspaceSlug) return;
+    reviewService
+      .getReviewEnums(String(workspaceSlug))
+      .then((data) => setReviewEnums(data || {}))
+      .catch(() => {});
+  }, [workspaceSlug, reviewService]);
 
   const normalizeId = (v: any): string | undefined => {
     if (v === null || v === undefined) return undefined;
@@ -141,6 +154,16 @@ export function SideInfoPanel({ caseData, caseTestTypeMap }: SideInfoPanelProps)
           <div className="flex items-center gap-3 md:gap-4">
             <span className="text-sm text-gray-700 shrink-0 basis-28 md:basis-32">版本</span>
             <span className="text-sm text-gray-900 flex-1 min-w-0 truncate">v1</span>
+          </div>
+          <div className="flex items-center gap-3 md:gap-4">
+            <span className="text-sm text-gray-700 shrink-0 basis-28 md:basis-32">评审状态</span>
+            <span className="text-sm text-gray-900 flex-1 min-w-0 truncate">
+              {(() => {
+                const v = String(caseData?.review ?? "-");
+                const color = (reviewEnums?.CaseReviewThrough_Result?.[v]?.color as any) || "default";
+                return <Tag color={color}>{v || "-"}</Tag>;
+              })()}
+            </span>
           </div>
           <div className="flex items-center gap-3 md:gap-4">
             <span className="text-sm text-gray-700 shrink-0 basis-28 md:basis-32">基线</span>

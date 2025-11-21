@@ -24,6 +24,7 @@ import {
 import { CaseModuleService } from "@/services/qa";
 import UpdateModal from "@/components/qa/cases/update-modal";
 import { useQueryParams } from "@/hooks/use-query-params";
+import { CaseService as ReviewApiService } from "@/services/qa/review.service";
 
 type TCreator = {
   display_name?: string;
@@ -94,6 +95,8 @@ export default function TestCasesPage() {
 
   const caseService = new CaseService();
   const caseModuleService = new CaseModuleService();
+  const reviewService = new ReviewApiService();
+  const [reviewEnums, setReviewEnums] = useState<Record<string, Record<string, { label: string; color: string }>>>({});
   // 新增：创建子模块的临时状态
   const [creatingParentId, setCreatingParentId] = useState<string | "all" | null>(null);
   const [newModuleName, setNewModuleName] = useState<string>("");
@@ -174,6 +177,14 @@ export default function TestCasesPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [repositoryId]);
+
+  useEffect(() => {
+    if (!workspaceSlug) return;
+    reviewService
+      .getReviewEnums(String(workspaceSlug))
+      .then((data) => setReviewEnums(data || {}))
+      .catch(() => {});
+  }, [workspaceSlug]);
 
   // 解析 URL 参数以自动打开用例模态框
   useEffect(() => {
@@ -642,15 +653,18 @@ export default function TestCasesPage() {
       ),
     },
     {
-      title: "状态",
-      dataIndex: "state",
-      key: "state",
-      render: (v) => renderEnumTag("case_state", v, "processing"),
+      title: "评审",
+      dataIndex: "review",
+      key: "review",
+      render: (v: string) => {
+        const color = reviewEnums?.CaseReviewThrough_Result?.[v]?.color || "default";
+        return <Tag color={color}>{v || "-"}</Tag>;
+      },
       width: 140,
-      filters: Object.entries((globalEnums.Enums as any)?.case_state || {}).map(([value, label]) => ({
-        text: String(label),
-        value: Number(value),
-      })),
+      // filters: Object.entries((globalEnums.Enums as any)?.case_state || {}).map(([value, label]) => ({
+      //   text: String(label),
+      //   value: Number(value),
+      // })),
       filterMultiple: true,
       filteredValue: filters.state ?? null,
     },

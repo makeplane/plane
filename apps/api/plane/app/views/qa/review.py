@@ -10,6 +10,7 @@ from plane.app.serializers.qa import ReviewModuleCreateUpdateSerializer, ReviewM
 from plane.app.views import BaseAPIView, BaseViewSet
 from plane.db.models import CaseReview, CaseReviewModule, CaseReviewThrough, CaseModule, TestCase, CaseReviewRecord
 from plane.utils.paginator import CustomPaginator
+from plane.utils.qa import update_case_review_status
 from plane.utils.response import list_response
 
 
@@ -103,7 +104,7 @@ class CaseReviewView(BaseViewSet):
     def case_list(self, request, slug):
         query = CaseReviewThrough.objects.filter(review_id=request.query_params['review_id'])
         if name := request.query_params.get('name__icontains'):
-            query = query.filter(name__icontains=name)
+            query = query.filter(case__name__icontains=name)
         module_ids = request.query_params.getlist('module_id') or request.query_params.getlist('module_ids')
         if module_ids:
             expanded = set(module_ids)
@@ -185,69 +186,7 @@ class CaseReviewView(BaseViewSet):
             crt=crt,
         )
 
-        # SUGGEST 不参与最终结果判定，单人/多人均只取最后一次非 SUGGEST 的记录
-        if cr.mode == CaseReview.ReviewMode.SINGLE:
-            # 单人评审：取该评审人最后一次非 SUGGEST 的记录作为最终结果；若无记录则 NOT_START
-            target_assignee_id = assignee_id or cr.assignees.values_list('id', flat=True).first()
-            last_record = (
-                CaseReviewRecord.objects
-                .filter(crt=crt, assignee_id=target_assignee_id)
-                .exclude(result=CaseReviewRecord.Result.SUGGEST)
-                .order_by('-created_at')
-                .first()
-            )
-            crt.result = last_record.result if last_record else CaseReviewThrough.Result.NOT_START
-            crt.save()
-        else:
-            # 多人评审：每个评审人取其最后一次非 SUGGEST 的记录
-            assignee_ids = list(cr.assignees.values_list('id', flat=True))
-            if not assignee_ids:
-                crt.result = CaseReviewThrough.Result.NOT_START
-                crt.save()
-            else:
-                records = (
-                    CaseReviewRecord.objects
-                    .filter(crt=crt, assignee_id__in=assignee_ids)
-                    .exclude(result=CaseReviewRecord.Result.SUGGEST)
-                    .order_by('assignee_id', '-created_at')
-                )
-                last_by_assignee = {}
-                for r in records:
-                    if r.assignee_id not in last_by_assignee:
-                        last_by_assignee[r.assignee_id] = r.result
-
-                any_fail = any(res == CaseReviewRecord.Result.FAIL for res in last_by_assignee.values())
-                any_re_review = any(res == CaseReviewRecord.Result.RE_REVIEW for res in last_by_assignee.values())
-                any_missing = any(aid not in last_by_assignee for aid in assignee_ids)
-                all_pass = (not any_missing) and len(last_by_assignee) == len(assignee_ids) and all(
-                    res == CaseReviewRecord.Result.PASS for res in last_by_assignee.values()
-                )
-
-                if any_fail:
-                    crt.result = CaseReviewThrough.Result.FAIL
-                elif any_re_review:
-                    crt.result = CaseReviewThrough.Result.RE_REVIEW
-                elif any_missing:
-                    crt.result = CaseReviewThrough.Result.PROCESS
-                elif all_pass:
-                    crt.result = CaseReviewThrough.Result.PASS
-                else:
-                    crt.result = CaseReviewThrough.Result.PROCESS
-                crt.save()
-
-        # 评审单整体状态维护：存在 NOT_START/PROCESS/RE_REVIEW → 进行中；否则已完成
-        through_results = set(
-            CaseReviewThrough.objects.filter(review=cr).values_list('result', flat=True)
-        )
-        if (
-                CaseReviewThrough.Result.NOT_START in through_results or
-                CaseReviewThrough.Result.PROCESS in through_results or
-                CaseReviewThrough.Result.RE_REVIEW in through_results
-        ):
-            cr.state = CaseReview.State.PROGRESS
-        else:
-            cr.state = CaseReview.State.COMPLETED
-        cr.save()
+        update_case_review_status(cr, crt, assignee_id)
 
         serializer = ReviewCaseListSerializer(instance=crt)
         return Response(serializer.data, status=status.HTTP_200_OK)
