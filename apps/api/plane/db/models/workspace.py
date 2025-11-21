@@ -301,6 +301,10 @@ class WorkspaceTheme(BaseModel):
 
 
 class WorkspaceUserProperties(BaseModel):
+    class NavigationControlPreference(models.TextChoices):
+        ACCORDIAN = "ACCORDIAN", "Accordian"
+        HORIZONTAL = "HORIZONTAL", "Horizontal"
+
     workspace = models.ForeignKey(
         "db.Workspace",
         on_delete=models.CASCADE,
@@ -315,8 +319,12 @@ class WorkspaceUserProperties(BaseModel):
     display_filters = models.JSONField(default=get_default_display_filters)
     display_properties = models.JSONField(default=get_default_display_properties)
     rich_filters = models.JSONField(default=dict)
-    num_of_projects = models.IntegerField(default=10)
-    is_horizontal_navigation_bar = models.BooleanField(default=False)
+    navigation_project_limit = models.IntegerField(default=10)
+    navigation_control_preference = models.CharField(
+        max_length=20,
+        choices=NavigationControlPreference.choices,
+        default=NavigationControlPreference.ACCORDIAN,
+    )
 
     class Meta:
         unique_together = ["workspace", "user", "deleted_at"]

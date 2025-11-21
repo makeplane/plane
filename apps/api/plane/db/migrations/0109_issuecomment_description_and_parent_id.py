@@ -23,13 +23,15 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='workspaceuserproperties',
-            name='is_horizontal_navigation_bar',
-            field=models.BooleanField(default=False),
+            name='navigation_project_limit',
+            field=models.IntegerField(default=10),
         ),
         migrations.AddField(
             model_name='workspaceuserproperties',
-            name='num_of_projects',
-            field=models.IntegerField(default=10),
+            name='navigation_control_preference',
+            field=models.CharField(
+                choices=[('ACCORDIAN', 'Accordian'), ('HORIZONTAL', 'Horizontal')],
+                default='ACCORDIAN',
+            ),
         ),
-
     ]
