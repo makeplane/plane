@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import PhoneInput from "react-phone-input-2";
+import { v4 as uuidv4 } from 'uuid';
 import { Pencil, Users } from "lucide-react";
 import { Button } from "@plane/propel/button";
 import { Input, ModalCore, EModalPosition, Label } from "@plane/ui";
@@ -9,6 +10,7 @@ import { useOppositionTeams } from "./(context)/opposition-teams-context";
 import { updateEntity } from "./(opposition-api)/update-opposition";
 
 interface Team {
+  id: string;
   name: string;
   address: string;
   logo: string;
@@ -24,7 +26,6 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   team?: Team;
-  index?: number;
 }
 
 const API_URL = `${process.env.NEXT_PUBLIC_CP_SERVER_URL}/meta-type`;
@@ -82,7 +83,7 @@ export const OppositionTeamModal: React.FC<Props> = ({ isOpen, onClose }) => {
     const { refreshTeams } = useOppositionTeams();
 
     useEffect(() => {
- if (isOpen) {
+    if (isOpen) {
     setTeamName("");
     setAddress("");
     setAthleticDirector("");
@@ -104,9 +105,6 @@ export const OppositionTeamModal: React.FC<Props> = ({ isOpen, onClose }) => {
     setPreview(URL.createObjectURL(file));
   };
 
-  const formatPhone = (value: string, country: any) =>
-    `+${country.dialCode}${value.replace(`+${country.dialCode}`, "")}`;
-
 
 const handleSubmit = async () => {
    const block = await getOppositionTeamBlock();
@@ -119,6 +117,7 @@ const handleSubmit = async () => {
     if (logo) logoBase64 = await convertToBase64(logo);
 
   const newTeam = {
+    id: uuidv4(),
     name: teamName,
     address,
     athletic_email: athleticEmail,
@@ -251,7 +250,8 @@ const handleSubmit = async () => {
 /* -------------------------------------------------------
    EDIT TEAM MODAL
 ---------------------------------------------------------*/
-export const EditOppositionTeamModal: React.FC<Props> = ({ isOpen, onClose, team, index }) => {
+export const EditOppositionTeamModal: React.FC<Props> = ({ isOpen, onClose, team }) => {
+  const [id, setId] = useState("");
   const [teamName, setTeamName] = useState("");
   const [address, setAddress] = useState("");
   const [athleticDirector, setAthleticDirector] = useState("");
@@ -270,6 +270,7 @@ export const EditOppositionTeamModal: React.FC<Props> = ({ isOpen, onClose, team
 
   useEffect(() => {
     if (team) {
+      setId(team.id);
       setTeamName(team.name);
       setAddress(team.address);
       setAthleticDirector(team.head_coach_name);
@@ -282,8 +283,6 @@ export const EditOppositionTeamModal: React.FC<Props> = ({ isOpen, onClose, team
     }
   }, [team]);
 
-  const formatPhone = (value: string, country: any) =>
-    `+${country.dialCode}${value.replace(`+${country.dialCode}`, "")}`;
 
   const handleImageChange = (e: any) => {
     const file = e.target.files?.[0];
@@ -295,19 +294,15 @@ export const EditOppositionTeamModal: React.FC<Props> = ({ isOpen, onClose, team
 
  const handleUpdate = async () => {
   const block = await getOppositionTeamBlock();
-  if (!block) return;
+  if (!block || !team?.id) return;
 
-  if (index === undefined) return;
-
-  const oldTeam = block.values[index];
-
-  let logoBase64 = oldTeam.logo;  // default to existing logo
-
+  let logoBase64 = team.logo;
   if (logo instanceof File) {
     logoBase64 = await convertToBase64(logo);
   }
 
-  const updatedTeam = {
+  const updatedTeam: Team = {
+    id: team.id,
     name: teamName,
     address,
     athletic_email: athleticEmail,
@@ -319,8 +314,9 @@ export const EditOppositionTeamModal: React.FC<Props> = ({ isOpen, onClose, team
     logo: logoBase64,
   };
 
-  const updatedValues = [...block.values];
-  updatedValues[index] = updatedTeam;
+  const updatedValues = block.values.map((t: Team) =>
+    t.id === team.id ? updatedTeam : t
+  );
 
   const entity = {
     id: block.id,

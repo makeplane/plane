@@ -5,6 +5,7 @@ import React from "react";
 import { OppositionTeamBlock } from "./opposition-team-block";
 
 interface Team {
+  id: string;
   name: string;
   address: string;
   logo: string;
@@ -60,17 +61,11 @@ export default function OppositionTeamsList({ teams, workspaceSlug, searchQuery 
 
           {/* RIGHT */}
           <div className="flex items-center gap-4">
-            {/* Requests Badge */}
-            {/* <div className="flex items-center gap-1 text-sm border border-custom-border-200  bg-transparent px-3 py-1 rounded-md">
-              <Users className="h-4 w-4" />
-              0 requests
-            </div> */}
 
           {/* MENU OPENED */}
             <div >
               <OppositionTeamBlock
                 workspaceSlug={workspaceSlug}
-                issueId={index}
                 team={team}
               />
             </div>

@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { loadOppositionTeams } from "../(opposition-api)/loadOppositionTeams";
 
 interface Team {
+  id: string;
   name: string;
   address: string;
   logo: string;
