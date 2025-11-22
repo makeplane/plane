@@ -3,6 +3,9 @@
 import React from "react";
 // import {  Users } from "lucide-react";
 import { OppositionTeamBlock } from "./opposition-team-block";
+import { TeamLogo } from "./opposition-team-logo";
+
+const baseUrl = process.env.NEXT_PUBLIC_CP_SERVER_URL;
 
 interface Team {
   id: string;
@@ -24,10 +27,7 @@ interface Props {
 }
 
 export default function OppositionTeamsList({ teams, workspaceSlug, searchQuery = "" }: Props) {
-
-  const filteredTeams = teams.filter((team) =>
-    team.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredTeams = teams.filter((team) => team.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
     <div className="w-full border-b border-custom-border-200">
@@ -36,38 +36,23 @@ export default function OppositionTeamsList({ teams, workspaceSlug, searchQuery 
           key={index}
           className="flex items-center justify-between px-4 py-4 border-b border-custom-border-200 last:border-b-0 transition"
         >
-         <div className="flex items-center gap-4">
-           {/* Logo */}
+          <div className="flex items-center gap-4">
+            {/* Logo */}
             <div className="w-12 h-12 rounded-md border border-custom-border-200 overflow-hidden bg-zinc-900">
-              {team.logo ? (
-                <img src={team.logo} alt={team.name.charAt(0).toUpperCase()} className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-500 text-xl">
-                  {team.name.charAt(0).toUpperCase()}
-                </div>
-              )}
+              <TeamLogo path={team.logo} name={team.name} />
             </div>
-          {/* LEFT */}
-          <div>
-            <h3 className="text-base font-medium">{team.name}</h3>
-            <span
-              className="text-sm text-gray-500 hover:underline"
-            >
-              {team.address}
-            </span>
+            {/* LEFT */}
+            <div>
+              <h3 className="text-base font-medium">{team.name}</h3>
+              <span className="text-sm text-gray-500 hover:underline">{team.address}</span>
+            </div>
           </div>
-          </div>
-
 
           {/* RIGHT */}
           <div className="flex items-center gap-4">
-
-          {/* MENU OPENED */}
-            <div >
-              <OppositionTeamBlock
-                workspaceSlug={workspaceSlug}
-                team={team}
-              />
+            {/* MENU OPENED */}
+            <div>
+              <OppositionTeamBlock workspaceSlug={workspaceSlug} team={team} />
             </div>
           </div>
         </div>
