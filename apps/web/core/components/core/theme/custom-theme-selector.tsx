@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";

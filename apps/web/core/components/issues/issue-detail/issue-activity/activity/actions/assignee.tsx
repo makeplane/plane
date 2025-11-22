@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // icons
 import { MembersPropertyIcon } from "@plane/propel/icons";

@@ -1,6 +1,4 @@
-"use client";
-
-import type { FC, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -12,13 +10,12 @@ import { Button, getButtonStyling } from "@plane/propel/button";
 import { PlaneLogo } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-// components
 import { cn } from "@plane/utils";
 // assets
 import WorkSpaceNotAvailable from "@/app/assets/workspace/workspace-not-available.png?url";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
-// hooks
+// constants
 import {
   WORKSPACE_MEMBERS,
   WORKSPACE_PARTIAL_PROJECTS,
@@ -28,6 +25,7 @@ import {
   WORKSPACE_STATES,
   WORKSPACE_SIDEBAR_PREFERENCES,
 } from "@/constants/fetch-keys";
+// hooks
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";

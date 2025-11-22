@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import { CircleCheck, CircleX, Clock, ExternalLink, FileStack, Link, Trash2, PanelLeft, MoveRight } from "lucide-react";

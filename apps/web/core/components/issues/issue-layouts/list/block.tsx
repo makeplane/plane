@@ -1,5 +1,3 @@
-"use client";
-
 import type { Dispatch, MouseEvent, SetStateAction } from "react";
 import { useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";

@@ -1,5 +1,3 @@
-"use client";
-
 import { LayoutGrid } from "lucide-react";
 // plane imports
 import { CycleIcon, ModuleIcon, PageIcon, ProjectIcon, ViewsIcon } from "@plane/propel/icons";

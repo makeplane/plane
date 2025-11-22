@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef, useState } from "react";
 import { addDays } from "date-fns";
 import { observer } from "mobx-react";

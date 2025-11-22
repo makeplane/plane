@@ -1,4 +1,4 @@
-"use client";
+
 
 import { useMemo, useState, useEffect } from "react";
 import { observer } from "mobx-react";
@@ -77,7 +77,7 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
                       "px-6 py-2 border-b border-custom-border-200 flex items-center gap-4 overflow-hidden w-full justify-between"
                     )}
                   >
-                    <Tabs.List className={"my-2  overflow-x-auto flex w-fit"}>
+                    <Tabs.List className={"my-2 overflow-x-auto flex w-fit"}>
                       {ANALYTICS_TABS.map((tab) => (
                         <Tabs.Trigger
                           key={tab.key}

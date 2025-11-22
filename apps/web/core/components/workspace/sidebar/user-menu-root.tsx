@@ -1,5 +1,3 @@
-"use client";
-
 import type { Ref } from "react";
 import { Fragment, useState, useEffect } from "react";
 import { observer } from "mobx-react";

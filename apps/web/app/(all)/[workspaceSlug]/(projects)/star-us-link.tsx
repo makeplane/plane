@@ -1,5 +1,3 @@
-"use client";
-
 import { useTheme } from "next-themes";
 // plane imports
 import { HEADER_GITHUB_ICON, GITHUB_REDIRECTED_TRACKER_EVENT } from "@plane/constants";

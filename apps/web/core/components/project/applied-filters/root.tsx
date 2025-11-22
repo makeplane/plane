@@ -1,5 +1,3 @@
-"use client";
-
 import { useTranslation } from "@plane/i18n";
 import { CloseIcon } from "@plane/propel/icons";
 // plane imports

@@ -1,5 +1,3 @@
-"use client";
-
 import type { IProjectView } from "@plane/types";
 
 type Props = {

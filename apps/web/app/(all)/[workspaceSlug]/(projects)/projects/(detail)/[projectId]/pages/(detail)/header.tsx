@@ -1,4 +1,3 @@
-"use client";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { EProjectFeatureKey } from "@plane/constants";

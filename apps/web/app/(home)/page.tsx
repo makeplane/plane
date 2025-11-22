@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 // components
 import { AuthBase } from "@/components/auth-screens/auth-base";

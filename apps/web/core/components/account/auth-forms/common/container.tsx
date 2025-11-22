@@ -1,5 +1,3 @@
-"use client";
-
 export function FormContainer({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-col justify-center items-center flex-grow w-full py-6 mt-10">

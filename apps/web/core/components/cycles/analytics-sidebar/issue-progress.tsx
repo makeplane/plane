@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useMemo } from "react";
 import { isEmpty } from "lodash-es";

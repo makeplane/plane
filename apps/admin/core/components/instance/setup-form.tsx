@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 // icons
@@ -53,8 +51,7 @@ const defaultFromData: TFormData = {
   is_telemetry_enabled: true,
 };
 
-export function InstanceSetupForm(props) {
-  const {} = props;
+export function InstanceSetupForm() {
   // search params
   const searchParams = useSearchParams();
   const firstNameParam = searchParams.get("first_name") || undefined;

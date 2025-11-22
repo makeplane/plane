@@ -1,5 +1,3 @@
-"use client";
-
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane types

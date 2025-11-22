@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { MoveRight } from "lucide-react";
 import { Tooltip } from "@plane/propel/tooltip";

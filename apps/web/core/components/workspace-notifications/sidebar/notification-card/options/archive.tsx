@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { ArchiveRestore } from "lucide-react";
 // plane imports

@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";

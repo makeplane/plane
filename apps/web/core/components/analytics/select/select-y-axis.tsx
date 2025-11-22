@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { EEstimateSystem } from "@plane/constants";

@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useCallback, useMemo } from "react";
 import { Lock } from "lucide-react";
 import { ChevronDownIcon } from "@plane/propel/icons";

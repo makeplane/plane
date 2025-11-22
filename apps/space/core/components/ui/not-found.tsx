@@ -1,5 +1,3 @@
-"use client";
-
 // images
 import Image404 from "@/app/assets/404.svg?url";
 

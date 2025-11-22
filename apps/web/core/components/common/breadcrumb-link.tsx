@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactNode, FC } from "react";
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
@@ -81,5 +79,3 @@ export const BreadcrumbLink = observer(function BreadcrumbLink(props: Props) {
 
   return <ItemWrapper {...itemWrapperProps}>{content}</ItemWrapper>;
 });
-
-BreadcrumbLink.displayName = "BreadcrumbLink";

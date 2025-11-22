@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { Info } from "lucide-react";
 // plane imports

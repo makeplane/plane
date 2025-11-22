@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import type { LucideIcon } from "lucide-react";
 import { MembersPropertyIcon } from "@plane/propel/icons";

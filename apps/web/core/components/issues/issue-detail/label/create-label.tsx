@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useState, Fragment, useEffect } from "react";
 import { TwitterPicker } from "react-color";
 import { Controller, useForm } from "react-hook-form";

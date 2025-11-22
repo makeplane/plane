@@ -1,5 +1,3 @@
-"use client";
-
 import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
@@ -89,8 +87,6 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
     }
   );
 
-  if (!issue) return <></>;
-
   const issueOperations: TIssueOperations = useMemo(
     () => ({
       // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars, arrow-body-style
@@ -163,6 +159,8 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
     }),
     [inboxIssue]
   );
+
+  if (!issue) return <></>;
 
   if (!issue?.project_id || !issue?.id) return <></>;
 

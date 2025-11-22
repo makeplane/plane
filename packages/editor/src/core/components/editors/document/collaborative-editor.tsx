@@ -95,6 +95,7 @@ function CollaborativeDocumentEditor(props: ICollaborativeDocumentEditorProps) {
         documentLoaderClassName={documentLoaderClassName}
         editor={editor}
         editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
+        extendedEditorProps={extendedEditorProps}
         id={id}
         isTouchDevice={!!isTouchDevice}
         isLoading={!hasServerSynced && !hasServerConnectionFailed}

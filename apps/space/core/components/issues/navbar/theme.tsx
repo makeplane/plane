@@ -1,5 +1,3 @@
-"use client";
-
 // next theme
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";

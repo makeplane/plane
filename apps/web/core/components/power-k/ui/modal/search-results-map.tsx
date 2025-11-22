@@ -1,5 +1,3 @@
-"use client";
-
 import { Briefcase, FileText, Layers, LayoutGrid } from "lucide-react";
 // plane imports
 import { ContrastIcon, DiceIcon } from "@plane/propel/icons";

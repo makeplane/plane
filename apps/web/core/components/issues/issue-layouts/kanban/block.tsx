@@ -1,5 +1,3 @@
-"use client";
-
 import type { MutableRefObject } from "react";
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
@@ -301,5 +299,3 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
     </>
   );
 });
-
-KanbanIssueBlock.displayName = "KanbanIssueBlock";

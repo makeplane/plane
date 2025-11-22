@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, RefObject } from "react";
 import { observer } from "mobx-react";
 // plane imports

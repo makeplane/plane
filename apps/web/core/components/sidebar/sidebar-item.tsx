@@ -112,14 +112,14 @@ function AppSidebarButtonItem({ children, onClick, disabled = false, className }
 // MAIN COMPONENT
 // ============================================================================
 
-type AppSidebarItemComponent = React.FC<AppSidebarItemProps> & {
+export type AppSidebarItemComponent = React.FC<AppSidebarItemProps> & {
   Label: React.FC<AppSidebarItemLabelProps>;
   Icon: React.FC<AppSidebarItemIconProps>;
   Link: React.FC<AppSidebarLinkItemProps>;
   Button: React.FC<AppSidebarButtonItemProps>;
 };
 
-function AppSidebarItem({ variant = "link", item }) {
+function AppSidebarItem({ variant = "link", item }: AppSidebarItemProps) {
   if (!item) return null;
 
   const { icon, isActive, label, href, onClick, disabled } = item;

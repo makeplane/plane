@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane types
 import { EUserPermissionsLevel } from "@plane/constants";

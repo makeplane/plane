@@ -1,7 +1,4 @@
-"use client";
-
-import type { FC } from "react";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import type {
   DropTargetRecord,

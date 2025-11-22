@@ -1,5 +1,3 @@
-"use client";
-
 import type { PageProps } from "@react-pdf/renderer";
 import { Document, Font, Page } from "@react-pdf/renderer";
 import { Html } from "react-pdf-html";

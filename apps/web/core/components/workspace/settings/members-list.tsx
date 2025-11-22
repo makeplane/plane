@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";

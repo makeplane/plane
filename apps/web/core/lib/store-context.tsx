@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactElement } from "react";
 import { createContext } from "react";
 // plane web store

@@ -1,4 +1,3 @@
-"use client";
 import { useForm } from "react-hook-form";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";

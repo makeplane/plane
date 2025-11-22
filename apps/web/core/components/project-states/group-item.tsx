@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";

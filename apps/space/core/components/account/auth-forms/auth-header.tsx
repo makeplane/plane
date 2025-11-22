@@ -1,5 +1,3 @@
-"use client";
-
 // helpers
 import { EAuthModes } from "@/types/auth";
 

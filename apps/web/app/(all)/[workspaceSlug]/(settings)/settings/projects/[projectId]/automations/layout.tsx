@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { Outlet } from "react-router";
 // plane web imports

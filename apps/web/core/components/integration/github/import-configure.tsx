@@ -1,5 +1,3 @@
-"use client";
-
 // components
 import { Button } from "@plane/propel/button";
 import type { IAppIntegration, IWorkspaceIntegration } from "@plane/types";

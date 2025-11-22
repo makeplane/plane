@@ -1,5 +1,3 @@
-"use client";
-
 // plane imports
 import { CloseIcon, ModuleIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";

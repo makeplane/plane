@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { TIssueServiceType } from "@plane/types";

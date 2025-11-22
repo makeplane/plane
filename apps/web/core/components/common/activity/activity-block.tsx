@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, ReactNode } from "react";
 import { Network } from "lucide-react";
 // types

@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 // ui
 import { Copy } from "lucide-react";

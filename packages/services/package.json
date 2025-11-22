@@ -6,8 +6,8 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "types": "./dist/index-BliaS-AT.d.ts",
+      "import": "./dist/index.js"
     },
     "./package.json": "./package.json"
   },
@@ -34,7 +34,7 @@
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },
-  "main": "./dist/index.cjs",
+  "main": "./dist/index.js",
   "module": "./dist/index.js",
-  "types": "./dist/index.d.cts"
+  "types": "./dist/index.d.ts"
 }

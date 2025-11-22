@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useCallback, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 // plane imports

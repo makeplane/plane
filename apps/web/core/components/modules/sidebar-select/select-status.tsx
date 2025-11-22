@@ -1,5 +1,3 @@
-"use client";
-
 // react
 import React from "react";
 // react-hook-form

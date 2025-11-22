@@ -1,5 +1,3 @@
-"use client";
-
 // icons
 import { CycleIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
 // types

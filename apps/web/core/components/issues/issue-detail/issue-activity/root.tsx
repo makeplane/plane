@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useMemo } from "react";
 import uniq from "lodash-es/uniq";
 import { observer } from "mobx-react";

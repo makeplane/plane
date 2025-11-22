@@ -206,11 +206,13 @@ export const LinkItem = (editor: Editor): EditorMenuItem<"link"> =>
     key: "link",
     name: "Link",
     isActive: () => editor?.isActive("link"),
+
     command: (props) => {
       if (!props) return;
       if (props.url) setLinkEditor(editor, props.url, props.text);
       else unsetLinkEditor(editor);
     },
+
     icon: LinkIcon,
   }) as const;
 

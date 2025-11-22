@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";

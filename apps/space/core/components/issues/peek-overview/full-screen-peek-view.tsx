@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane imports
 import { Loader } from "@plane/ui";

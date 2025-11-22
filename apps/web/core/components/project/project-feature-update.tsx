@@ -1,7 +1,3 @@
-"use client";
-
-import type { FC } from "react";
-import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useTranslation } from "@plane/i18n";

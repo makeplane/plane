@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { Fragment, useCallback, useRef, useState } from "react";
 import { isEmpty } from "lodash-es";
@@ -46,7 +44,7 @@ export type ActiveCycleStatsProps = {
   cycle: ICycle | null;
   cycleId?: string | null;
   handleFiltersUpdate: (conditions: TWorkItemFilterCondition[]) => void;
-  cycleIssueDetails: ActiveCycleIssueDetails;
+  cycleIssueDetails?: ActiveCycleIssueDetails | { nextPageResults: boolean };
 };
 
 export const ActiveCycleStats = observer(function ActiveCycleStats(props: ActiveCycleStatsProps) {

@@ -1,5 +1,3 @@
-"use client";
-
 import type { MutableRefObject } from "react";
 import { Fragment, forwardRef, useRef, useState } from "react";
 import { observer } from "mobx-react";

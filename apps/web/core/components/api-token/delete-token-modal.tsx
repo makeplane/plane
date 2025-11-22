@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { mutate } from "swr";

@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import Link from "next/link";
 // types
 import type { TPageNavigationTabs } from "@plane/types";

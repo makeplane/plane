@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 // ui
 import { Button } from "@plane/propel/button";

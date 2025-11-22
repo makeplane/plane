@@ -1,4 +1,3 @@
-"use client";
 // plane imports
 import { isRouteErrorResponse } from "react-router";
 import { Banner } from "@plane/propel/banner";

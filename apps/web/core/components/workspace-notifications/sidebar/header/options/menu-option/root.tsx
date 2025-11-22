@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { Check, CheckCircle, Clock } from "lucide-react";

@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState, useCallback } from "react";
 // plane imports
 import { TOOLBAR_ITEMS } from "@plane/editor";

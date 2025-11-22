@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";

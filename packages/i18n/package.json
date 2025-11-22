@@ -4,10 +4,11 @@
   "license": "AGPL-3.0",
   "description": "I18n shared across multiple apps internally",
   "private": true,
+  "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
     "./package.json": "./package.json"
   },
@@ -40,6 +41,6 @@
     "typescript": "catalog:"
   },
   "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts"
 }

@@ -1,5 +1,3 @@
-"use client";
-
 import { CloseIcon } from "@plane/propel/icons";
 // types
 import type { IIssueLabel } from "@/types/issue";

@@ -1,5 +1,3 @@
-"use client";
-
 import { useTheme } from "next-themes";
 // plane imports
 import { Button } from "@plane/propel/button";

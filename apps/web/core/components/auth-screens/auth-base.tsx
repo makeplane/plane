@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import { AuthRoot } from "@/components/account/auth-forms/auth-root";
 import type { EAuthModes } from "@/helpers/authentication.helper";

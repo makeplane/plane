@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane types
 import type { ICycle, TIssue } from "@plane/types";

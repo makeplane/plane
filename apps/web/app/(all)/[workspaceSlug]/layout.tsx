@@ -1,5 +1,3 @@
-"use client";
-
 import { Outlet } from "react-router";
 import { AppRailProvider } from "@/hooks/context/app-rail-context";
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";

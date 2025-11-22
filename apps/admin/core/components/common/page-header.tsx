@@ -1,5 +1,3 @@
-"use client";
-
 type TPageHeader = {
   title?: string;
   description?: string;

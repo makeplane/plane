@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { PlaneLockup } from "@plane/propel/icons";
 // assets

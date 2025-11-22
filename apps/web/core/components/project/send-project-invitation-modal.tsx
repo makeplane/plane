@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";

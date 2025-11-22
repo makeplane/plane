@@ -1,5 +1,3 @@
-"use client";
-
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 

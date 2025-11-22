@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { getAssetIdFromUrl, checkURLValidity } from "@plane/utils";

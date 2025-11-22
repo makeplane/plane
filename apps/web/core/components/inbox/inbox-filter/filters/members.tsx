@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useMemo, useState } from "react";
 import { sortBy } from "lodash-es";

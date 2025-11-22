@@ -1,4 +1,3 @@
-"use client";
 import type { ReactNode } from "react";
 import { Fragment, useRef, useState } from "react";
 import { useTheme } from "next-themes";

@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -61,10 +60,6 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
   const isPinned = sidebarPreference?.[item.key]?.is_pinned;
 
   const handleLinkClick = () => toggleExtendedSidebar(true);
-
-  if (!allowPermissions(item.access as any, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString())) {
-    return null;
-  }
 
   const itemHref =
     item.key === "your_work"
@@ -150,6 +145,10 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
       })
     );
   }, [isLastChild, handleOnNavigationItemDrop, disableDrag, disableDrop, item.key]);
+
+  if (!allowPermissions(item.access as any, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString())) {
+    return null;
+  }
 
   return (
     <div

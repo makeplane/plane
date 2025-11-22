@@ -1,5 +1,3 @@
-"use client";
-
 import type { SyntheticEvent } from "react";
 import React, { useRef } from "react";
 import { observer } from "mobx-react";

@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { mutate } from "swr";
 // plane imports

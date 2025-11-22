@@ -1,5 +1,3 @@
-"use client";
-
 import { format } from "date-fns";
 import { get, set } from "lodash-es";
 // plane imports

@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 // hooks
 import { usePowerK } from "@/hooks/store/use-power-k";

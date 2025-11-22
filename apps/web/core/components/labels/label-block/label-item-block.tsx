@@ -1,5 +1,3 @@
-"use client";
-
 import type { MutableRefObject } from "react";
 import { useRef, useState } from "react";
 import type { LucideIcon } from "lucide-react";
