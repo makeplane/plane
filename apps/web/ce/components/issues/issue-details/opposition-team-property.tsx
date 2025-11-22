@@ -13,33 +13,34 @@ interface OppositionTeamPropertyProps {
   storageKey: string;
 }
 
+
+
 const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
-  value = null,
+  value,
   onChange,
   disabled = false,
   storageKey,
 }) => {
   const [teams, setTeams] = useState<Team[]>([]);
-  const [selectedTeam, setSelectedTeam] = useState<Team | null>(value);
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [loadError, setLoadError] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => setSelectedTeam(value), [value]);
-
+  // Load from localStorage ONLY when value is undefined (not null)
   useEffect(() => {
-    try {
-      if (!value) {
+    if (value === undefined) {
+      try {
         const saved = localStorage.getItem(storageKey);
-        if (saved) setSelectedTeam(JSON.parse(saved) as Team | null);
+        if (saved) onChange?.(JSON.parse(saved) as Team | null);
+      } catch (e) {
+        console.warn("LocalStorage read failed", e);
       }
-    } catch (e) {
-      console.warn("LocalStorage read failed", e);
     }
-  }, [storageKey, value]);
+  }, [storageKey, value, onChange]);
 
+  // Fetch Teams
   useEffect(() => {
     const API_URL = `${process.env.NEXT_PUBLIC_CP_SERVER_URL}/meta-type?key='OPPOSITIONTEAM'`;
     setLoading(true);
@@ -59,6 +60,7 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
       .finally(() => setLoading(false));
   }, []);
 
+  // Outside click handler
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (!dropdownRef.current?.contains(e.target as Node)) setOpen(false);
@@ -68,14 +70,12 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
   }, []);
 
   const handleSelect = (team: Team | null) => {
-    setSelectedTeam(team);
-
     try {
       if (team) localStorage.setItem(storageKey, JSON.stringify(team));
       else localStorage.removeItem(storageKey);
     } catch {}
 
-    onChange?.(team);
+    onChange?.(team);   // send updated value to form
     setOpen(false);
     setSearch("");
   };
@@ -90,10 +90,10 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
         onClick={() => !disabled && setOpen((o) => !o)}
         className="rounded-lg px-2 py-1 flex items-center justify-between cursor-pointer text-[#737373] hover:bg-custom-background-80"
       >
-        {selectedTeam ? (
-          <div className="flex items-center gap-1.5 ">
-            <img src={selectedTeam.logo} alt={selectedTeam.name} className="w-5 h-5 rounded-full object-cover" />
-            <span className="text-xs whitespace-normal">{selectedTeam.name}</span>
+        {value ? (
+          <div className="flex items-center gap-1.5">
+            <img src={`${process.env.NEXT_PUBLIC_CP_SERVER_URL}/blobs/${value.logo}`} alt={value.name} className="w-5 h-5 rounded-full object-cover" />
+            <span className="text-xs whitespace-normal">{value.name}</span>
           </div>
         ) : (
           <div className="flex items-center gap-1.5">
@@ -105,11 +105,8 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
 
       {open && !disabled && (
         <div className="absolute mt-1 w-full rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 shadow-lg max-h-40 overflow-y-auto z-50 text-[#737373]">
-
-          {/* Search input with icon */}
           <div className="relative p-2">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-3 w-3 text-gray-400" />
-
             <input
               type="text"
               value={search}
@@ -136,7 +133,7 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
               onClick={() => handleSelect(team)}
               className="flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-custom-background-80"
             >
-              <img src={team.logo} alt={team.name} className="w-5 h-5 rounded-full object-cover" />
+              <img src={`${process.env.NEXT_PUBLIC_CP_SERVER_URL}/blobs/${team.logo}`} alt={team.name} className="w-5 h-5 rounded-full object-cover" />
               <span className="text-xs whitespace-normal">{team.name}</span>
             </div>
           ))}
