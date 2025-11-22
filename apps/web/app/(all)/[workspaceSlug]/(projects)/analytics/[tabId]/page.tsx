@@ -1,6 +1,6 @@
+"use client";
 
-
-import { useMemo, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 // plane package imports
@@ -18,7 +18,7 @@ import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
-import { getAnalyticsTabs } from "@/plane-web/components/analytics/tabs";
+import { useAnalyticsTabs } from "@/plane-web/components/analytics/use-analytics-tabs";
 import type { Route } from "./+types/page";
 
 function AnalyticsPage({ params }: Route.ComponentProps) {
@@ -36,18 +36,18 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
   const { currentWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
 
+  const pageTitle = currentWorkspace?.name
+  ? t(`workspace_analytics.page_label`, { workspace: currentWorkspace?.name })
+  : undefined;
+
   // permissions
   const canPerformEmptyStateActions = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
 
-  // derived values
-  const pageTitle = currentWorkspace?.name
-    ? t(`workspace_analytics.page_label`, { workspace: currentWorkspace?.name })
-    : undefined;
-
-  const ANALYTICS_TABS = useMemo(() => getAnalyticsTabs(t), [t]);
+  const workspaceSlug = params.workspaceSlug;
+  const ANALYTICS_TABS = useAnalyticsTabs(workspaceSlug.toString());
 
   const [selectedTab, setSelectedTab] = useState(tabId || ANALYTICS_TABS[0]?.key);
 
