@@ -2,12 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import PhoneInput from "react-phone-input-2";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import { Pencil, Users } from "lucide-react";
 import { Button } from "@plane/propel/button";
 import { Input, ModalCore, EModalPosition, Label } from "@plane/ui";
 import { useOppositionTeams } from "./(context)/opposition-teams-context";
 import { updateEntity } from "./(opposition-api)/update-opposition";
+import { generateFileOppositionName, getAbsoluteImageUrl, uploadImageToServer } from "./(opposition-api)/upload-service";
 
 interface Team {
   id: string;
@@ -37,8 +38,6 @@ const convertToBase64 = (file: File): Promise<string> =>
     reader.onload = () => resolve(reader.result as string);
     reader.onerror = reject;
   });
-
-
 
 async function getOppositionTeamBlock() {
   const res = await fetch(API_URL);
@@ -80,22 +79,22 @@ export const OppositionTeamModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const [logo, setLogo] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
 
-    const { refreshTeams } = useOppositionTeams();
+  const { refreshTeams } = useOppositionTeams();
 
-    useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
-    setTeamName("");
-    setAddress("");
-    setAthleticDirector("");
-    setAssistantDirector("");
-    setAthleticEmail("");
-    setAssistantEmail("");
-    setAthleticPhone("");
-    setAssistantPhone("");
-    setLogo(null);
-    setPreview(null);
-  }
-    },[isOpen])
+      setTeamName("");
+      setAddress("");
+      setAthleticDirector("");
+      setAssistantDirector("");
+      setAthleticEmail("");
+      setAssistantEmail("");
+      setAthleticPhone("");
+      setAssistantPhone("");
+      setLogo(null);
+      setPreview(null);
+    }
+  }, [isOpen]);
 
   const handleImageChange = (e: any) => {
     const file = e.target.files?.[0];
@@ -105,43 +104,59 @@ export const OppositionTeamModal: React.FC<Props> = ({ isOpen, onClose }) => {
     setPreview(URL.createObjectURL(file));
   };
 
-
-const handleSubmit = async () => {
-   const block = await getOppositionTeamBlock();
+  const handleSubmit = async () => {
+    const block = await getOppositionTeamBlock();
     if (!block) {
       alert("Opposition Team meta-type missing");
       return;
     }
 
-    let logoBase64 = "";
-    if (logo) logoBase64 = await convertToBase64(logo);
+    const newId = uuidv4();
+    let logoPath = ""; // Default to empty if no logo
 
-  const newTeam = {
-    id: uuidv4(),
-    name: teamName,
-    address,
-    athletic_email: athleticEmail,
-    athletic_phone: athleticPhone,
-    head_coach_name: athleticDirector,
-    asst_coach_name: assistantDirector,
-    asst_athletic_email: assistantEmail,
-    asst_athletic_phone: assistantPhone,
-    logo: logoBase64,
+    // --- NEW UPLOAD LOGIC START ---
+    if (logo) {
+      try {
+        const folderName = "opposition-teams"; // Define your folder path
+        const fileName = generateFileOppositionName(teamName, newId, logo);
+        // 1. Upload the file
+        await uploadImageToServer(logo, folderName, fileName);
+        // 2. Set the path to be saved in JSON (e.g., "opposition-teams/name_id.png")
+        logoPath = `${folderName}/${fileName}`;
+      } catch (error) {
+        console.error("Upload failed", error);
+        alert("Failed to upload image");
+        return;
+      }
+    }
+    // --- NEW UPLOAD LOGIC END ---
+
+    const newTeam = {
+      id: newId,
+      name: teamName,
+      address,
+      athletic_email: athleticEmail,
+      athletic_phone: athleticPhone,
+      head_coach_name: athleticDirector,
+      asst_coach_name: assistantDirector,
+      asst_athletic_email: assistantEmail,
+      asst_athletic_phone: assistantPhone,
+      logo: logoPath, // Saving the path string, not Base64
+    };
+
+    const updatedValues = [...block.values, newTeam];
+
+    const entity = {
+      id: block.id,
+      name: block.name,
+      key: block.key,
+      values: updatedValues,
+    };
+
+    await updateEntity("meta-type", entity);
+    refreshTeams();
+    onClose();
   };
-
-  const updatedValues = [...block.values, newTeam];
-
-  const entity = {
-    id: block.id,
-    name: block.name,
-    key: block.key,
-    values: updatedValues,
-  };
-
-  await updateEntity("meta-type", entity);
-  refreshTeams();
-  onClose();
-};
 
   return (
     <ModalCore position={EModalPosition.TOP} isOpen={isOpen}>
@@ -156,7 +171,11 @@ const handleSubmit = async () => {
             <div className="relative">
               <div className="w-[50px] h-[50px] border border-custom-border-200 rounded overflow-hidden flex items-center justify-center">
                 {preview ? (
-                  <img src={preview} alt="logo" className="w-full h-full object-cover" />
+                  <img
+                    src={preview} // preview contains either blob:url (new file) or http://server/blobs/path (existing)
+                    alt="logo"
+                    className="w-full h-full object-cover"
+                  />
                 ) : (
                   <Users className="text-zinc-500 text-3xl" />
                 )}
@@ -266,7 +285,7 @@ export const EditOppositionTeamModal: React.FC<Props> = ({ isOpen, onClose, team
   const [logo, setLogo] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
 
-    const { refreshTeams } = useOppositionTeams();
+  const { refreshTeams } = useOppositionTeams();
 
   useEffect(() => {
     if (team) {
@@ -279,10 +298,9 @@ export const EditOppositionTeamModal: React.FC<Props> = ({ isOpen, onClose, team
       setAssistantDirector(team.asst_coach_name);
       setAssistantEmail(team.asst_athletic_email);
       setAssistantPhone(team.asst_athletic_phone);
-      setPreview(team.logo || null);
+      setPreview(team.logo ? getAbsoluteImageUrl(team.logo) : null);
     }
   }, [team]);
-
 
   const handleImageChange = (e: any) => {
     const file = e.target.files?.[0];
@@ -292,14 +310,31 @@ export const EditOppositionTeamModal: React.FC<Props> = ({ isOpen, onClose, team
     }
   };
 
- const handleUpdate = async () => {
+  const handleUpdate = async () => {
   const block = await getOppositionTeamBlock();
   if (!block || !team?.id) return;
 
-  let logoBase64 = team.logo;
+  let logoPath = team.logo; // Default to existing value
+
+  // --- NEW UPLOAD LOGIC START ---
   if (logo instanceof File) {
-    logoBase64 = await convertToBase64(logo);
+    try {
+      const folderName = "opposition-teams";
+      // Use existing ID to overwrite or maintain consistency
+      const fileName = generateFileOppositionName(teamName, team.id, logo);
+
+      // 1. Upload new file
+      await uploadImageToServer(logo, folderName, fileName);
+
+      // 2. Update path
+      logoPath = `${folderName}/${fileName}`;
+    } catch (error) {
+      console.error("Upload failed", error);
+      alert("Failed to upload image");
+      return;
+    }
   }
+  // --- NEW UPLOAD LOGIC END ---
 
   const updatedTeam: Team = {
     id: team.id,
@@ -311,7 +346,7 @@ export const EditOppositionTeamModal: React.FC<Props> = ({ isOpen, onClose, team
     asst_coach_name: assistantDirector,
     asst_athletic_email: assistantEmail,
     asst_athletic_phone: assistantPhone,
-    logo: logoBase64,
+    logo: logoPath,
   };
 
   const updatedValues = block.values.map((t: Team) =>
@@ -329,8 +364,6 @@ export const EditOppositionTeamModal: React.FC<Props> = ({ isOpen, onClose, team
   refreshTeams();
   onClose();
 };
-
-
 
   return (
     <ModalCore position={EModalPosition.TOP} isOpen={isOpen}>

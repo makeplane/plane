@@ -3,6 +3,10 @@
 import React from "react";
 // import {  Users } from "lucide-react";
 import { OppositionTeamBlock } from "./opposition-team-block";
+import { TeamLogo } from "./opposition-team-logo";
+
+
+const baseUrl = process.env.NEXT_PUBLIC_CP_SERVER_URL;
 
 interface Team {
   id: string;
@@ -29,6 +33,7 @@ export default function OppositionTeamsList({ teams, workspaceSlug, searchQuery 
     team.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+
   return (
     <div className="w-full border-b border-custom-border-200">
       {filteredTeams.map((team, index) => (
@@ -40,7 +45,7 @@ export default function OppositionTeamsList({ teams, workspaceSlug, searchQuery 
            {/* Logo */}
             <div className="w-12 h-12 rounded-md border border-custom-border-200 overflow-hidden bg-zinc-900">
               {team.logo ? (
-                <img src={team.logo} alt={team.name.charAt(0).toUpperCase()} className="w-full h-full object-cover" />
+               <TeamLogo path={team.logo} name={team.name} />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-500 text-xl">
                   {team.name.charAt(0).toUpperCase()}
