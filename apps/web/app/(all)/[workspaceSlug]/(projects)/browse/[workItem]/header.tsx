@@ -1,61 +1,43 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane imports
-import { EProjectFeatureKey } from "@plane/constants";
-import { Breadcrumbs, Header } from "@plane/ui";
-// components
-import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
-import { IssueDetailQuickActions } from "@/components/issues/issue-detail/issue-detail-quick-actions";
 // hooks
+import { Header, Row } from "@plane/ui";
+import { AppHeader } from "@/components/core/app-header";
+import { TabNavigationRoot } from "@/components/navigation";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { useProject } from "@/hooks/store/use-project";
-import { useAppRouter } from "@/hooks/use-app-router";
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
+// local components
+import { WorkItemDetailsHeader } from "./work-item-header";
 
-export const ProjectIssueDetailsHeader = observer(function ProjectIssueDetailsHeader() {
+export const ProjectWorkItemDetailsHeader = observer(function ProjectWorkItemDetailsHeader() {
   // router
-  const router = useAppRouter();
   const { workspaceSlug, workItem } = useParams();
   // store hooks
-  const { getProjectById, loader } = useProject();
   const {
     issue: { getIssueById, getIssueIdByIdentifier },
   } = useIssueDetail();
   // derived values
   const issueId = getIssueIdByIdentifier(workItem?.toString());
-  const issueDetails = issueId ? getIssueById(issueId.toString()) : undefined;
-  const projectId = issueDetails ? issueDetails?.project_id : undefined;
-  const projectDetails = projectId ? getProjectById(projectId?.toString()) : undefined;
-
-  if (!workspaceSlug || !projectId || !issueId) return null;
+  const issueDetails = issueId ? getIssueById(issueId?.toString()) : undefined;
 
   return (
-    <Header>
-      <Header.LeftItem>
-        <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-          <CommonProjectBreadcrumbs
-            workspaceSlug={workspaceSlug?.toString()}
-            projectId={projectId?.toString()}
-            featureKey={EProjectFeatureKey.WORK_ITEMS}
-          />
-          <Breadcrumbs.Item
-            component={
-              <BreadcrumbLink
-                label={projectDetails && issueDetails ? `${projectDetails.identifier}-${issueDetails.sequence_id}` : ""}
-              />
-            }
-          />
-        </Breadcrumbs>
-      </Header.LeftItem>
-      <Header.RightItem>
-        {projectId && issueId && (
-          <IssueDetailQuickActions
-            workspaceSlug={workspaceSlug?.toString()}
-            projectId={projectId?.toString()}
-            issueId={issueId?.toString()}
-          />
-        )}
-      </Header.RightItem>
-    </Header>
+    <>
+      <div className="z-20">
+        <Row className="h-header flex gap-2 w-full items-center border-b border-custom-border-200 bg-custom-sidebar-background-100">
+          <div className="flex items-center gap-2 divide-x divide-custom-border-100 h-full w-full">
+            <div className="flex items-center h-full w-full flex-1">
+              <Header className="h-full">
+                <Header.LeftItem className="h-full max-w-full">
+                  <TabNavigationRoot
+                    workspaceSlug={workspaceSlug}
+                    projectId={issueDetails?.project_id?.toString() ?? ""}
+                  />
+                </Header.LeftItem>
+              </Header>
+            </div>
+          </div>
+        </Row>
+      </div>
+      <AppHeader header={<WorkItemDetailsHeader />} />
+    </>
   );
 });

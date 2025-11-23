@@ -9,7 +9,6 @@ import {
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
   EUserPermissions,
   EUserPermissionsLevel,
-  EProjectFeatureKey,
   WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { Button } from "@plane/propel/button";
@@ -21,6 +20,7 @@ import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/
 import { cn } from "@plane/utils";
 // components
 import { WorkItemsModal } from "@/components/analytics/work-items/modal";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SwitcherLabel } from "@/components/common/switcher-label";
 import {
   DisplayFiltersSelection,
@@ -40,8 +40,6 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
   // refs
@@ -128,10 +126,16 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
         <Header.LeftItem>
           <div className="flex items-center gap-2">
             <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-              <CommonProjectBreadcrumbs
-                workspaceSlug={workspaceSlug?.toString() ?? ""}
-                projectId={projectId?.toString() ?? ""}
-                featureKey={EProjectFeatureKey.MODULES}
+              <Breadcrumbs.Item
+                component={
+                  <BreadcrumbLink
+                    label="Modules"
+                    href={`/${workspaceSlug}/projects/${projectId}/modules/`}
+                    icon={<ModuleIcon className="h-4 w-4 text-custom-text-300" />}
+                    isLast
+                  />
+                }
+                isLast
               />
               <Breadcrumbs.Item
                 component={
