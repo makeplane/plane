@@ -38,7 +38,7 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
           <AppSidebarItem
             variant="button"
             item={{
-              icon: <HelpCircle className="size-5" />,
+              icon: <HelpCircle className="size-4" />,
               isActive: isNeedHelpOpen,
             }}
           />
@@ -46,7 +46,7 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
         // customButtonClassName="relative grid place-items-center rounded-md p-1.5 outline-none"
         menuButtonOnClick={() => !isNeedHelpOpen && setIsNeedHelpOpen(true)}
         onMenuClose={() => setIsNeedHelpOpen(false)}
-        placement="top-end"
+        placement="bottom-end"
         maxHeight="lg"
         closeOnSelect
       >
