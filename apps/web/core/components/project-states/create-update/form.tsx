@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { TwitterPicker } from "react-color";
 import { Button } from "@plane/propel/button";
 import type { IState } from "@plane/types";
@@ -11,6 +11,17 @@ type TStateForm = {
   buttonDisabled: boolean;
   buttonTitle: string;
 };
+
+function PopoverButton({ color }: { color?: string }) {
+  return (
+    <div
+      className="group inline-flex items-center text-base font-medium focus:outline-none h-5 w-5 rounded transition-all"
+      style={{
+        backgroundColor: color ?? "black",
+      }}
+    />
+  );
+}
 
 export function StateForm(props: TStateForm) {
   const { data, onSubmit, onCancel, buttonDisabled, buttonTitle } = props;
@@ -45,22 +56,11 @@ export function StateForm(props: TStateForm) {
     }
   };
 
-  const PopoverButton = useMemo(function PopoverButton() {
-    return (
-      <div
-        className="group inline-flex items-center text-base font-medium focus:outline-none h-5 w-5 rounded transition-all"
-        style={{
-          backgroundColor: formData?.color ?? "black",
-        }}
-      />
-    );
-  });
-
   return (
     <div className="relative flex space-x-2 bg-custom-background-100 p-3 rounded">
       {/* color */}
       <div className="flex-shrink-0 h-full mt-2">
-        <Popover button={PopoverButton} panelClassName="mt-4 -ml-3">
+        <Popover button={<PopoverButton color={formData?.color} />} panelClassName="mt-4 -ml-3">
           <TwitterPicker color={formData?.color} onChange={(value) => handleFormData("color", value.hex)} />
         </Popover>
       </div>

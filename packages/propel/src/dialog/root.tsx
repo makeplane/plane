@@ -57,7 +57,10 @@ const getPositionClassNames = (position: DialogPosition) =>
     "top-8 left-1/2 -translate-x-1/2": position === "top",
   });
 
-const DialogPortal = memo<DialogPortalProps>(function DialogPortal({ children, ...props }: DialogPortalProps) {
+const DialogPortal = memo(function DialogPortal({
+  children,
+  ...props
+}: React.ComponentProps<typeof BaseDialog.Portal>) {
   return (
     <BaseDialog.Portal data-slot="dialog-portal" {...props}>
       {children}
@@ -66,12 +69,15 @@ const DialogPortal = memo<DialogPortalProps>(function DialogPortal({ children, .
 });
 DialogPortal.displayName = "DialogPortal";
 
-const DialogOverlay = memo<DialogOverlayProps>(function DialogOverlay({ className, ...props }: DialogOverlayProps) {
+const DialogOverlay = memo(function DialogOverlay({
+  className,
+  ...props
+}: React.ComponentProps<typeof BaseDialog.Backdrop>) {
   return <BaseDialog.Backdrop data-slot="dialog-overlay" className={cn(OVERLAY_CLASSNAME, className)} {...props} />;
 });
 DialogOverlay.displayName = "DialogOverlay";
 
-const DialogComponent = memo<DialogProps>(function DialogComponent({ children, ...props }: DialogProps) {
+const DialogComponent = memo(function DialogComponent({ children, ...props }: DialogProps) {
   return (
     <BaseDialog.Root data-slot="dialog" {...props}>
       {children}
@@ -80,7 +86,10 @@ const DialogComponent = memo<DialogProps>(function DialogComponent({ children, .
 });
 DialogComponent.displayName = "Dialog";
 
-const DialogTrigger = memo<DialogTriggerProps>(function DialogTrigger({ children, ...props }: DialogTriggerProps) {
+const DialogTrigger = memo(function DialogTrigger({
+  children,
+  ...props
+}: React.ComponentProps<typeof BaseDialog.Trigger>) {
   return (
     <BaseDialog.Trigger data-slot="dialog-trigger" {...props}>
       {children}
@@ -112,7 +121,7 @@ const DialogPanel = forwardRef(function DialogPanel(
 });
 DialogPanel.displayName = "DialogPanel";
 
-const DialogTitle = memo<DialogTitleProps>(function DialogTitle({ className, children, ...props }: DialogTitleProps) {
+const DialogTitle = memo(function DialogTitle({ className, children, ...props }: DialogTitleProps) {
   return (
     <BaseDialog.Title
       data-slot="dialog-title"

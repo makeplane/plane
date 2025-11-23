@@ -21,5 +21,3 @@ export const MultipleSelectGroup = observer(function MultipleSelectGroup(props: 
 
   return <>{children(helpers)}</>;
 });
-
-MultipleSelectGroup.displayName = "MultipleSelectGroup";

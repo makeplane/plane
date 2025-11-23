@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 // plane helpers
@@ -36,6 +36,126 @@ export interface IIssuePropertyLabels {
   fullHeight?: boolean;
 }
 
+type NoLabelProps = {
+  isMobile: boolean;
+  noLabelBorder: boolean;
+  fullWidth: boolean;
+  placeholderText?: string;
+};
+
+const NoLabel = observer(function NoLabel({ isMobile, noLabelBorder, fullWidth, placeholderText }: NoLabelProps) {
+  const { t } = useTranslation();
+
+  return (
+    <Tooltip
+      position="top"
+      tooltipHeading={t("common.labels")}
+      tooltipContent="None"
+      isMobile={isMobile}
+      renderByDefault={false}
+    >
+      <div
+        className={cn(
+          "flex h-full items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80",
+          noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300",
+          fullWidth && "w-full"
+        )}
+      >
+        <LabelPropertyIcon className="h-3.5 w-3.5" />
+        {placeholderText}
+      </div>
+    </Tooltip>
+  );
+});
+
+type LabelSummaryProps = {
+  isMobile: boolean;
+  fullWidth: boolean;
+  noLabelBorder: boolean;
+  disabled?: boolean;
+  projectLabels: IIssueLabel[];
+  value: string[];
+};
+
+function LabelSummary({ isMobile, fullWidth, noLabelBorder, disabled, projectLabels, value }: LabelSummaryProps) {
+  const { t } = useTranslation();
+  return (
+    <div
+      className={cn(
+        "flex h-5 flex-shrink-0 items-center justify-center rounded px-2.5 text-xs",
+        fullWidth && "w-full",
+        noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300",
+        disabled ? "cursor-not-allowed" : "cursor-pointer"
+      )}
+    >
+      <Tooltip
+        isMobile={isMobile}
+        position="top"
+        tooltipHeading={t("common.labels")}
+        tooltipContent={projectLabels
+          ?.filter((l) => value.includes(l?.id))
+          .map((l) => l?.name)
+          .join(", ")}
+        renderByDefault={false}
+      >
+        <div className="flex h-full items-center gap-1.5 text-custom-text-200">
+          <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
+          {`${value.length} Labels`}
+        </div>
+      </Tooltip>
+    </div>
+  );
+}
+
+type LabelItemProps = {
+  label: IIssueLabel;
+  isMobile: boolean;
+  renderByDefault: boolean;
+  disabled?: boolean;
+  fullWidth: boolean;
+  noLabelBorder: boolean;
+};
+
+const LabelItem = observer(function LabelItem({
+  label,
+  isMobile,
+  renderByDefault,
+  disabled,
+  fullWidth,
+  noLabelBorder,
+}: LabelItemProps) {
+  const { t } = useTranslation();
+
+  return (
+    <Tooltip
+      position="top"
+      tooltipHeading={t("common.labels")}
+      tooltipContent={label?.name ?? ""}
+      isMobile={isMobile}
+      renderByDefault={renderByDefault}
+    >
+      <div
+        className={cn(
+          "flex overflow-hidden justify-center hover:bg-custom-background-80 max-w-full h-full flex-shrink-0 items-center rounded px-2.5 text-xs",
+          !disabled && "cursor-pointer",
+          fullWidth && "w-full",
+          noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300"
+        )}
+      >
+        <div className="flex max-w-full items-center gap-1.5 overflow-hidden text-custom-text-200">
+          <span
+            className="h-2 w-2 flex-shrink-0 rounded-full"
+            style={{
+              backgroundColor: label?.color ?? "#000000",
+            }}
+          />
+          <div className="line-clamp-1 inline-block w-auto max-w-[200px] truncate">{label?.name}</div>
+        </div>
+      </div>
+    </Tooltip>
+  );
+});
+
 export const IssuePropertyLabels = observer(function IssuePropertyLabels(props: IIssuePropertyLabels) {
   const {
     projectId,
@@ -54,8 +174,6 @@ export const IssuePropertyLabels = observer(function IssuePropertyLabels(props: 
     fullWidth = false,
     fullHeight = false,
   } = props;
-  // i18n
-  const { t } = useTranslation();
   // states
   const [isOpen, setIsOpen] = useState(false);
   // refs
@@ -83,91 +201,6 @@ export const IssuePropertyLabels = observer(function IssuePropertyLabels(props: 
   let projectLabels: IIssueLabel[] = defaultOptions as IIssueLabel[];
   if (storeLabels && storeLabels.length > 0) projectLabels = storeLabels;
 
-  const NoLabel = useMemo(function NoLabel() {
-    return (
-      <Tooltip
-        position="top"
-        tooltipHeading={t("common.labels")}
-        tooltipContent="None"
-        isMobile={isMobile}
-        renderByDefault={false}
-      >
-        <div
-          className={cn(
-            "flex h-full items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80",
-            noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300",
-            fullWidth && "w-full"
-          )}
-        >
-          <LabelPropertyIcon className="h-3.5 w-3.5" />
-          {placeholderText}
-        </div>
-      </Tooltip>
-    );
-  });
-
-  const LabelSummary = useMemo(function LabelSummary() {
-    return (
-      <div
-        className={cn(
-          "flex h-5 flex-shrink-0 items-center justify-center rounded px-2.5 text-xs",
-          fullWidth && "w-full",
-          noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300",
-          disabled ? "cursor-not-allowed" : "cursor-pointer"
-        )}
-      >
-        <Tooltip
-          isMobile={isMobile}
-          position="top"
-          tooltipHeading={t("common.labels")}
-          tooltipContent={projectLabels
-            ?.filter((l) => value.includes(l?.id))
-            .map((l) => l?.name)
-            .join(", ")}
-          renderByDefault={false}
-        >
-          <div className="flex h-full items-center gap-1.5 text-custom-text-200">
-            <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
-            {`${value.length} Labels`}
-          </div>
-        </Tooltip>
-      </div>
-    );
-  });
-
-  const LabelItem = useCallback(function LabelItem({ label }: { label: IIssueLabel }) {
-    return (
-      <Tooltip
-        key={label.id}
-        position="top"
-        tooltipHeading={t("common.labels")}
-        tooltipContent={label?.name ?? ""}
-        isMobile={isMobile}
-        renderByDefault={renderByDefault}
-      >
-        <div
-          key={label?.id}
-          className={cn(
-            "flex overflow-hidden justify-center hover:bg-custom-background-80 max-w-full h-full flex-shrink-0 items-center rounded px-2.5 text-xs",
-            !disabled && "cursor-pointer",
-            fullWidth && "w-full",
-            noLabelBorder ? "rounded-none" : "border-[0.5px] border-custom-border-300"
-          )}
-        >
-          <div className="flex max-w-full items-center gap-1.5 overflow-hidden text-custom-text-200">
-            <span
-              className="h-2 w-2 flex-shrink-0 rounded-full"
-              style={{
-                backgroundColor: label?.color ?? "#000000",
-              }}
-            />
-            <div className="line-clamp-1 inline-block w-auto max-w-[200px] truncate">{label?.name}</div>
-          </div>
-        </div>
-      </Tooltip>
-    );
-  });
-
   return (
     <>
       {value.length > 0 ? (
@@ -185,7 +218,16 @@ export const IssuePropertyLabels = observer(function IssuePropertyLabels(props: 
                 hideDropdownArrow={hideDropdownArrow}
                 fullWidth={fullWidth}
                 fullHeight={fullHeight}
-                label={<LabelItem label={label} />}
+                label={
+                  <LabelItem
+                    label={label}
+                    isMobile={isMobile}
+                    renderByDefault={renderByDefault}
+                    disabled={disabled}
+                    fullWidth={fullWidth}
+                    noLabelBorder={noLabelBorder}
+                  />
+                }
               />
             ))
         ) : (
@@ -198,7 +240,16 @@ export const IssuePropertyLabels = observer(function IssuePropertyLabels(props: 
             placement={placement}
             fullWidth={fullWidth}
             fullHeight={fullHeight}
-            label={LabelSummary}
+            label={
+              <LabelSummary
+                isMobile={isMobile}
+                fullWidth={fullWidth}
+                noLabelBorder={noLabelBorder}
+                disabled={disabled}
+                projectLabels={projectLabels}
+                value={value}
+              />
+            }
           />
         )
       ) : (
@@ -211,7 +262,14 @@ export const IssuePropertyLabels = observer(function IssuePropertyLabels(props: 
           placement={placement}
           fullWidth={fullWidth}
           fullHeight={fullHeight}
-          label={NoLabel}
+          label={
+            <NoLabel
+              isMobile={isMobile}
+              noLabelBorder={noLabelBorder}
+              fullWidth={fullWidth}
+              placeholderText={placeholderText}
+            />
+          }
         />
       )}
     </>

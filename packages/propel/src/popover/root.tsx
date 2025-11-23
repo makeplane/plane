@@ -1,4 +1,4 @@
-import * as React from "react";
+import { memo, useMemo } from "react";
 import { Popover as BasePopover } from "@base-ui-components/react/popover";
 import type { TPlacement, TSide, TAlign } from "../utils/placement";
 import { convertPlacementToSideAndAlign } from "../utils/placement";
@@ -13,7 +13,7 @@ export interface PopoverContentProps extends React.ComponentProps<typeof BasePop
 }
 
 // PopoverContent component
-const PopoverContent = React.memo<PopoverContentProps>(function PopoverContent({
+const PopoverContent = memo(function PopoverContent({
   children,
   className,
   placement,
@@ -25,7 +25,7 @@ const PopoverContent = React.memo<PopoverContentProps>(function PopoverContent({
   ...props
 }: PopoverContentProps) {
   // side and align calculations
-  const { finalSide, finalAlign } = React.useMemo(() => {
+  const { finalSide, finalAlign } = useMemo(() => {
     if (placement) {
       const converted = convertPlacementToSideAndAlign(placement);
       return { finalSide: converted.side, finalAlign: converted.align };
@@ -54,6 +54,15 @@ const PopoverPortal = React.memo(function PopoverPortal(props: React.ComponentPr
 });
 
 const PopoverPositioner = React.memo(function PopoverPositioner(props: React.ComponentProps<typeof BasePopover.Positioner>) {
+const PopoverTrigger = memo(function PopoverTrigger(props: React.ComponentProps<typeof BasePopover.Trigger>) {
+  return <BasePopover.Trigger data-slot="popover-trigger" {...props} />;
+});
+
+const PopoverPortal = memo(function PopoverPortal(props: React.ComponentProps<typeof BasePopover.Portal>) {
+  return <BasePopover.Portal data-slot="popover-portal" {...props} />;
+});
+
+const PopoverPositioner = memo(function PopoverPositioner(props: React.ComponentProps<typeof BasePopover.Positioner>) {
   return <BasePopover.Positioner data-slot="popover-positioner" {...props} />;
 });
 
@@ -61,6 +70,15 @@ const PopoverPositioner = React.memo(function PopoverPositioner(props: React.Com
 const PopoverRoot = React.memo<React.ComponentProps<typeof BasePopover.Root>>(function Popover(props) {
   return <BasePopover.Root data-slot="popover" {...props} />;
 });
+const Popover = Object.assign(
+  memo(function Popover(props: React.ComponentProps<typeof BasePopover.Root>) {
+    return <BasePopover.Root data-slot="popover" {...props} />;
+  }),
+  {
+    Button: PopoverTrigger,
+    Panel: PopoverContent,
+  }
+);
 
 // display names
 PopoverContent.displayName = "PopoverContent";

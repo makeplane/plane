@@ -35,4 +35,4 @@ function SkeletonItem({ height = "auto", width = "auto", className = "" }: Skele
 SkeletonRoot.displayName = "plane-ui-skeleton";
 SkeletonItem.displayName = "plane-ui-skeleton-item";
 
-export { SkeletonRoot as Skeleton, SkeletonItem };
+export { Skeleton, SkeletonRoot, SkeletonItem };
