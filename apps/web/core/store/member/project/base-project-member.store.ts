@@ -3,7 +3,13 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // plane imports
 import { EUserPermissions } from "@plane/constants";
-import type { EUserProjectRoles, IProjectBulkAddFormData, IUserLite, TProjectMembership } from "@plane/types";
+import type {
+  EUserProjectRoles,
+  IProjectBulkAddFormData,
+  IProjectMemberNavigationPreferences,
+  IUserLite,
+  TProjectMembership,
+} from "@plane/types";
 // plane web imports
 import type { RootStore } from "@/plane-web/store/root.store";
 // services
@@ -30,6 +36,9 @@ export interface IBaseProjectMemberStore {
   projectMemberMap: {
     [projectId: string]: Record<string, TProjectMembership>;
   };
+  projectMemberPreferencesMap: {
+    [projectId: string]: IProjectMemberNavigationPreferences;
+  };
   // filters store
   filters: IProjectMemberFiltersStore;
   // computed
@@ -39,12 +48,25 @@ export interface IBaseProjectMemberStore {
   getProjectMemberDetails: (userId: string, projectId: string) => IProjectMemberDetails | null;
   getProjectMemberIds: (projectId: string, includeGuestUsers: boolean) => string[] | null;
   getFilteredProjectMemberDetails: (userId: string, projectId: string) => IProjectMemberDetails | null;
+  getProjectMemberPreferences: (projectId: string) => IProjectMemberNavigationPreferences | null;
   // fetch actions
   fetchProjectMembers: (
     workspaceSlug: string,
     projectId: string,
     clearExistingMembers?: boolean
   ) => Promise<TProjectMembership[]>;
+  fetchProjectMemberPreferences: (
+    workspaceSlug: string,
+    projectId: string,
+    memberId: string
+  ) => Promise<IProjectMemberNavigationPreferences>;
+  // update actions
+  updateProjectMemberPreferences: (
+    workspaceSlug: string,
+    projectId: string,
+    memberId: string,
+    preferences: IProjectMemberNavigationPreferences
+  ) => Promise<void>;
   // bulk operation actions
   bulkAddMembersToProject: (
     workspaceSlug: string,
@@ -69,6 +91,9 @@ export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore 
   projectMemberMap: {
     [projectId: string]: Record<string, TProjectMembership>;
   } = {};
+  projectMemberPreferencesMap: {
+    [projectId: string]: IProjectMemberNavigationPreferences;
+  } = {};
   // filters store
   filters: IProjectMemberFiltersStore;
   // stores
@@ -84,10 +109,13 @@ export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore 
     makeObservable(this, {
       // observables
       projectMemberMap: observable,
+      projectMemberPreferencesMap: observable,
       // computed
       projectMemberIds: computed,
       // actions
       fetchProjectMembers: action,
+      fetchProjectMemberPreferences: action,
+      updateProjectMemberPreferences: action,
       bulkAddMembersToProject: action,
       updateMemberRole: action,
       removeMemberFromProject: action,
@@ -406,5 +434,71 @@ export abstract class BaseProjectMemberStore implements IBaseProjectMemberStore 
         this.processMemberRemoval(projectId, userId);
       });
     });
+  };
+
+  /**
+   * @description get project member preferences
+   * @param projectId
+   */
+  getProjectMemberPreferences = computedFn(
+    (projectId: string): IProjectMemberNavigationPreferences | null =>
+      this.projectMemberPreferencesMap[projectId] || null
+  );
+
+  /**
+   * @description fetch project member preferences
+   * @param workspaceSlug
+   * @param projectId
+   * @param memberId
+   */
+  fetchProjectMemberPreferences = async (
+    workspaceSlug: string,
+    projectId: string,
+    memberId: string
+  ): Promise<IProjectMemberNavigationPreferences> => {
+    const response = await this.projectMemberService.getProjectMemberPreferences(workspaceSlug, projectId, memberId);
+    const preferences: IProjectMemberNavigationPreferences = {
+      default_tab: response.preferences.navigation.default_tab,
+      hide_in_more_menu: response.preferences.navigation.hide_in_more_menu || [],
+    };
+    runInAction(() => {
+      set(this.projectMemberPreferencesMap, [projectId], preferences);
+    });
+    return preferences;
+  };
+
+  /**
+   * @description update project member preferences
+   * @param workspaceSlug
+   * @param projectId
+   * @param memberId
+   * @param preferences
+   */
+  updateProjectMemberPreferences = async (
+    workspaceSlug: string,
+    projectId: string,
+    memberId: string,
+    preferences: IProjectMemberNavigationPreferences
+  ): Promise<void> => {
+    const previousPreferences = this.projectMemberPreferencesMap[projectId];
+    try {
+      // Optimistically update the store
+      runInAction(() => {
+        set(this.projectMemberPreferencesMap, [projectId], preferences);
+      });
+      await this.projectMemberService.updateProjectMemberPreferences(workspaceSlug, projectId, memberId, {
+        navigation: preferences,
+      });
+    } catch (error) {
+      // Revert on error
+      runInAction(() => {
+        if (previousPreferences) {
+          set(this.projectMemberPreferencesMap, [projectId], previousPreferences);
+        } else {
+          unset(this.projectMemberPreferencesMap, [projectId]);
+        }
+      });
+      throw error;
+    }
   };
 }
