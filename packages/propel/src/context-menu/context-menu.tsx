@@ -16,6 +16,7 @@ export interface ContextMenuContentProps extends React.ComponentProps<typeof Con
   className?: string;
   side?: "top" | "right" | "bottom" | "left";
   sideOffset?: number;
+  positionerClassName?: string;
 }
 
 export interface ContextMenuItemProps extends React.ComponentProps<typeof ContextMenuPrimitive.Item> {
@@ -45,11 +46,17 @@ const ContextMenuTrigger = React.forwardRef(function ContextMenuTrigger(
 const ContextMenuPortal = ContextMenuPrimitive.Portal;
 
 const ContextMenuContent = React.forwardRef(function ContextMenuContent(
-  { className, children, side = "bottom", sideOffset = 4, ...props }: ContextMenuContentProps,
+  { positionerClassName, className, children, side = "bottom", sideOffset = 4, ...props }: ContextMenuContentProps,
   ref: React.ForwardedRef<React.ElementRef<typeof ContextMenuPrimitive.Positioner>>
 ) {
   return (
-    <ContextMenuPrimitive.Positioner ref={ref} side={side} sideOffset={sideOffset} {...props}>
+    <ContextMenuPrimitive.Positioner
+    ref={ref}
+    side={side}
+    sideOffset={sideOffset}
+    {...props}
+    className={positionerClassName}
+  >
       <ContextMenuPrimitive.Popup
         className={cn(
           "z-50 min-w-32 overflow-hidden rounded-md border border-custom-border-200 bg-custom-background-100 p-1 shadow-md",
