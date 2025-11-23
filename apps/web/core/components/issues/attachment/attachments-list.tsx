@@ -1,9 +1,9 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // types
-import { TAttachmentHelpers } from "../issue-detail-widgets/attachments/helper";
+import type { TAttachmentHelpers } from "../issue-detail-widgets/attachments/helper";
 // components
 import { IssueAttachmentsDetail } from "./attachment-detail";
 import { IssueAttachmentsUploadDetails } from "./attachment-upload-details";
@@ -14,7 +14,7 @@ type TIssueAttachmentsList = {
   disabled?: boolean;
 };
 
-export const IssueAttachmentsList: FC<TIssueAttachmentsList> = observer((props) => {
+export const IssueAttachmentsList = observer(function IssueAttachmentsList(props: TIssueAttachmentsList) {
   const { issueId, attachmentHelpers, disabled } = props;
   // store hooks
   const {

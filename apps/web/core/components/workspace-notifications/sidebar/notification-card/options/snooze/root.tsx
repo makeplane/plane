@@ -1,20 +1,19 @@
-"use client";
-
-import { Dispatch, FC, Fragment, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
+import { Fragment } from "react";
 import { observer } from "mobx-react";
 import { Clock } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
 // plane imports
 import { NOTIFICATION_SNOOZE_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { setToast, TOAST_TYPE } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // store
-import { INotification } from "@/store/notifications/notification";
+import type { INotification } from "@/store/notifications/notification";
 // local imports
 import { NotificationSnoozeModal } from "./modal";
 
@@ -26,7 +25,9 @@ type TNotificationItemSnoozeOption = {
   setCustomSnoozeModal: Dispatch<SetStateAction<boolean>>;
 };
 
-export const NotificationItemSnoozeOption: FC<TNotificationItemSnoozeOption> = observer((props) => {
+export const NotificationItemSnoozeOption = observer(function NotificationItemSnoozeOption(
+  props: TNotificationItemSnoozeOption
+) {
   const { workspaceSlug, notification, setIsSnoozeStateModalOpen, customSnoozeModal, setCustomSnoozeModal } = props;
   // hooks
   const { isMobile } = usePlatformOS();

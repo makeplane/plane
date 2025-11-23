@@ -1,10 +1,8 @@
-"use client";
-
 // components
 // ui
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { IWebhook } from "@plane/types";
+import type { IWebhook } from "@plane/types";
 // types
 import { WebhookSecretKey } from "./form";
 
@@ -13,7 +11,7 @@ type Props = {
   webhookDetails: IWebhook;
 };
 
-export const GeneratedHookDetails: React.FC<Props> = (props) => {
+export function GeneratedHookDetails(props: Props) {
   const { handleClose, webhookDetails } = props;
   const { t } = useTranslation();
 
@@ -33,4 +31,4 @@ export const GeneratedHookDetails: React.FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

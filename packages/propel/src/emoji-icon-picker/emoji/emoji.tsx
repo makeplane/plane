@@ -7,7 +7,7 @@ type EmojiRootProps = {
   searchDisabled?: boolean;
 };
 
-export const EmojiRoot = (props: EmojiRootProps) => {
+export function EmojiRoot(props: EmojiRootProps) {
   const { onChange, searchPlaceholder = "Search", searchDisabled = false } = props;
   return (
     <EmojiPicker.Root
@@ -63,4 +63,4 @@ export const EmojiRoot = (props: EmojiRootProps) => {
       </EmojiPicker.Viewport>
     </EmojiPicker.Root>
   );
-};
+}

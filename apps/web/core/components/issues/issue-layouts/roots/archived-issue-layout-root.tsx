@@ -9,14 +9,14 @@ import { EIssuesStoreType } from "@plane/types";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
 // hooks
-import { WorkItemFiltersRow } from "@/components/work-item-filters/work-item-filters-row";
+import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 // local imports
 import { IssuePeekOverview } from "../../peek-overview";
 import { ArchivedIssueListLayout } from "../list/roots/archived-issue-root";
 
-export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
+export const ArchivedIssueLayoutRoot = observer(function ArchivedIssueLayoutRoot() {
   // router
   const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId } = useParams();
   const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;

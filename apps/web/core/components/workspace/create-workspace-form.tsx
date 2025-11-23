@@ -1,6 +1,5 @@
-"use client";
-
-import { Dispatch, SetStateAction, useEffect, useState, FC } from "react";
+import type { Dispatch, SetStateAction } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import {
@@ -10,12 +9,11 @@ import {
   WORKSPACE_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// constants
-// types
 import { Button } from "@plane/propel/button";
-import { IWorkspace } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IWorkspace } from "@plane/types";
 // ui
-import { CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomSelect, Input } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -40,7 +38,7 @@ type Props = {
 
 const workspaceService = new WorkspaceService();
 
-export const CreateWorkspaceForm: FC<Props> = observer((props) => {
+export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: Props) {
   const { t } = useTranslation();
   const {
     onSubmit,
@@ -244,7 +242,6 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
           </div>
         </div>
       </div>
-
       <div className="flex items-center gap-4">
         {secondaryButton}
         <Button

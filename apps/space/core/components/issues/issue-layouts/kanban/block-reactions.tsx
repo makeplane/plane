@@ -11,7 +11,7 @@ import { usePublish } from "@/hooks/store/publish";
 type Props = {
   issueId: string;
 };
-export const BlockReactions = observer((props: Props) => {
+export const BlockReactions = observer(function BlockReactions(props: Props) {
   const { issueId } = props;
   const { anchor } = useParams();
   const { canVote, canReact } = usePublish(anchor.toString());
@@ -37,7 +37,7 @@ export const BlockReactions = observer((props: Props) => {
         )}
         {canReact && (
           <div className="flex flex-wrap items-center gap-2">
-            <IssueEmojiReactions anchor={anchor.toString()} issueIdFromProps={issueId} size="sm" />
+            <IssueEmojiReactions anchor={anchor.toString()} issueIdFromProps={issueId} />
           </div>
         )}
       </div>

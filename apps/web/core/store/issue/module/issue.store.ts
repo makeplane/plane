@@ -1,6 +1,6 @@
 import { action, makeObservable, runInAction } from "mobx";
 // base class
-import {
+import type {
   TIssue,
   TLoader,
   ViewFlags,
@@ -10,10 +10,11 @@ import {
 } from "@plane/types";
 // helpers
 import { getDistributionPathsPostUpdate } from "@plane/utils";
-import { BaseIssuesStore, IBaseIssuesStore } from "../helpers/base-issues.store";
+import type { IBaseIssuesStore } from "../helpers/base-issues.store";
+import { BaseIssuesStore } from "../helpers/base-issues.store";
 //
-import { IIssueRootStore } from "../root.store";
-import { IModuleIssuesFilter } from "./filter.store";
+import type { IIssueRootStore } from "../root.store";
+import type { IModuleIssuesFilter } from "./filter.store";
 
 export interface IModuleIssues extends IBaseIssuesStore {
   viewFlags: ViewFlags;
@@ -136,8 +137,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
       // set loader and clear store
       runInAction(() => {
         this.setLoader(loadType);
-        this.clear(!isExistingPaginationOptions, false); // clear while fetching from server.
-        if (!this.groupBy) this.clear(!isExistingPaginationOptions, true); // clear while using local to have the no load effect.
+        this.clear(!isExistingPaginationOptions); // clear while fetching from server.
       });
 
       // get params from pagination options

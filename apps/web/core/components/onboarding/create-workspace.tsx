@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -13,9 +11,10 @@ import {
 // types
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // ui
-import { CustomSelect, Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomSelect, Input, Spinner } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -33,7 +32,7 @@ type Props = {
 // services
 const workspaceService = new WorkspaceService();
 
-export const CreateWorkspace: React.FC<Props> = observer((props) => {
+export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
   const { stepChange, user, invitedWorkspaces, handleCurrentViewChange } = props;
   // states
   const [slugError, setSlugError] = useState(false);

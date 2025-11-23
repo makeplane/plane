@@ -1,13 +1,13 @@
-"use client";
-
-import { FC, useCallback, useEffect, useRef, useState } from "react";
+import type { FC } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { EIssueFilterType, EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
-import { EIssueServiceType, EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
+import type { EIssuesStoreType } from "@plane/types";
+import { EIssueServiceType, EIssueLayoutTypes } from "@plane/types";
 //constants
 //hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
@@ -23,7 +23,7 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 // types
 import { DeleteIssueModal } from "../../delete-issue-modal";
 import { IssueLayoutHOC } from "../issue-layout-HOC";
-import { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types";
+import type { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types";
 //components
 import { getSourceFromDropPayload } from "../utils";
 import { KanBan } from "./default";
@@ -48,7 +48,7 @@ export interface IBaseKanBanLayout {
   isEpic?: boolean;
 }
 
-export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBaseKanBanLayout) => {
+export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBanLayout) {
   const {
     QuickActions,
     addIssuesToView,

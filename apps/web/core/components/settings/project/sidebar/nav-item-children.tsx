@@ -11,7 +11,7 @@ import { useUserPermissions, useUserSettings } from "@/hooks/store/user";
 import { PROJECT_SETTINGS_LINKS } from "@/plane-web/constants/project";
 import { getProjectSettingsPageLabelI18nKey } from "@/plane-web/helpers/project-settings";
 
-export const NavItemChildren = observer((props: { projectId: string }) => {
+export const NavItemChildren = observer(function NavItemChildren(props: { projectId: string }) {
   const { projectId } = props;
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
@@ -60,11 +60,11 @@ export const NavItemChildren = observer((props: { projectId: string }) => {
                     className={cn(
                       "cursor-pointer relative group w-full flex items-center justify-between gap-1.5 rounded p-1 px-1.5 outline-none",
                       {
-                        "text-custom-primary-200 bg-custom-primary-100/10": isActive,
+                        "text-custom-text-200 bg-custom-background-80/75": isActive,
                         "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 active:bg-custom-sidebar-background-90":
                           !isActive,
                       },
-                      "text-sm font-medium"
+                      "text-xs font-medium"
                     )}
                   >
                     {t(getProjectSettingsPageLabelI18nKey(link.key, link.i18n_label))}

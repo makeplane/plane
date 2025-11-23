@@ -1,10 +1,8 @@
-"use client";
-
-import React, { FC } from "react";
-import { ChevronDown } from "lucide-react";
+import type { FC } from "react";
+import React from "react";
 // types
-import { CycleGroupIcon } from "@plane/propel/icons";
-import { TCycleGroups } from "@plane/types";
+import { CycleGroupIcon, ChevronDownIcon } from "@plane/propel/icons";
+import type { TCycleGroups } from "@plane/types";
 // icons
 import { Row } from "@plane/ui";
 // helpers
@@ -18,7 +16,7 @@ type Props = {
   isExpanded?: boolean;
 };
 
-export const CycleListGroupHeader: FC<Props> = (props) => {
+export function CycleListGroupHeader(props: Props) {
   const { type, title, count, showCount = false, isExpanded = false } = props;
   return (
     <Row className="flex items-center justify-between py-2.5">
@@ -32,11 +30,11 @@ export const CycleListGroupHeader: FC<Props> = (props) => {
           {showCount && <div className="pl-2 text-sm font-medium text-custom-text-300">{`${count ?? "0"}`}</div>}
         </div>
       </div>
-      <ChevronDown
+      <ChevronDownIcon
         className={cn("h-4 w-4 text-custom-sidebar-text-300 duration-300 ", {
           "rotate-180": isExpanded,
         })}
       />
     </Row>
   );
-};
+}

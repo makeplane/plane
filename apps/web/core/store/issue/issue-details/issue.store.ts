@@ -1,13 +1,12 @@
 import { makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { EIssueServiceType, TIssue, TIssueServiceType } from "@plane/types";
-// local
-import { persistence } from "@/local-db/storage.sqlite";
+import type { TIssue, TIssueServiceType } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // services
 import { IssueArchiveService, WorkspaceDraftService, IssueService } from "@/services/issue";
 // types
-import { IIssueDetail } from "./root.store";
+import type { IIssueDetail } from "./root.store";
 
 export interface IIssueStoreActions {
   // actions
@@ -31,7 +30,6 @@ export interface IIssueStoreActions {
 
 export interface IIssueStore extends IIssueStoreActions {
   getIsFetchingIssueDetails: (issueId: string | undefined) => boolean;
-  getIsLocalDBIssueDescription: (issueId: string | undefined) => boolean;
   // helper methods
   getIssueById: (issueId: string) => TIssue | undefined;
   getIssueIdByIdentifier: (issueIdentifier: string) => string | undefined;
@@ -39,7 +37,6 @@ export interface IIssueStore extends IIssueStoreActions {
 
 export class IssueStore implements IIssueStore {
   fetchingIssueDetails: string | undefined = undefined;
-  localDBIssueDescription: string | undefined = undefined;
   // root store
   rootIssueDetailStore: IIssueDetail;
   // services
@@ -52,7 +49,6 @@ export class IssueStore implements IIssueStore {
   constructor(rootStore: IIssueDetail, serviceType: TIssueServiceType) {
     makeObservable(this, {
       fetchingIssueDetails: observable.ref,
-      localDBIssueDescription: observable.ref,
     });
     // root store
     this.rootIssueDetailStore = rootStore;
@@ -68,12 +64,6 @@ export class IssueStore implements IIssueStore {
     if (!issueId) return false;
 
     return this.fetchingIssueDetails === issueId;
-  });
-
-  getIsLocalDBIssueDescription = computedFn((issueId: string | undefined) => {
-    if (!issueId) return false;
-
-    return this.localDBIssueDescription === issueId;
   });
 
   // helper methods
@@ -93,26 +83,12 @@ export class IssueStore implements IIssueStore {
       expand: "issue_reactions,issue_attachments,issue_link,parent",
     };
 
-    let issue: TIssue | undefined;
-
-    // fetch issue from local db
-    if (this.serviceType === EIssueServiceType.ISSUES) {
-      issue = await persistence.getIssue(issueId);
-    }
-
     this.fetchingIssueDetails = issueId;
-
-    if (issue) {
-      this.addIssueToStore(issue);
-      this.localDBIssueDescription = issueId;
-    }
-
-    issue = await this.issueService.retrieve(workspaceSlug, projectId, issueId, query);
+    const issue = await this.issueService.retrieve(workspaceSlug, projectId, issueId, query);
 
     if (!issue) throw new Error("Work item not found");
 
     const issuePayload = this.addIssueToStore(issue);
-    this.localDBIssueDescription = undefined;
 
     this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload]);
 

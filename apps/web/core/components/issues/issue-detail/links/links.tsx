@@ -1,10 +1,9 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 // computed
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { IssueLinkDetail } from "./link-detail";
 // hooks
-import { TLinkOperations } from "./root";
+import type { TLinkOperations } from "./root";
 
 export type TLinkOperationsModal = Exclude<TLinkOperations, "create">;
 
@@ -14,7 +13,7 @@ export type TIssueLinkList = {
   disabled?: boolean;
 };
 
-export const IssueLinkList: FC<TIssueLinkList> = observer((props) => {
+export const IssueLinkList = observer(function IssueLinkList(props: TIssueLinkList) {
   // props
   const { issueId, linkOperations, disabled = false } = props;
   // hooks

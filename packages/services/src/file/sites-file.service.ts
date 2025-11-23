@@ -1,7 +1,7 @@
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
 // local services
-import { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
+import type { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
 import { FileUploadService } from "./file-upload.service";
 // helpers
 import { FileService } from "./file.service";
@@ -74,7 +74,7 @@ export class SitesFileService extends FileService {
    * @throws {Error} If the request fails
    */
   async uploadAsset(anchor: string, data: TFileEntityInfo, file: File): Promise<TFileSignedURLResponse> {
-    const fileMetaData = getFileMetaDataForUpload(file);
+    const fileMetaData = await getFileMetaDataForUpload(file);
     return this.post(`/api/public/assets/v2/anchor/${anchor}/`, {
       ...data,
       ...fileMetaData,

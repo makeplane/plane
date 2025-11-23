@@ -1,16 +1,14 @@
 import { clone, set } from "lodash-es";
 import { makeObservable, observable, runInAction, action } from "mobx";
-import {
+import type {
   TInboxIssue,
   TInboxIssueStatus,
   EInboxIssueSource,
-  EInboxIssueStatus,
   TIssue,
   TInboxDuplicateIssueDetails,
 } from "@plane/types";
+import { EInboxIssueStatus } from "@plane/types";
 // helpers
-// local db
-import { addIssueToPersistanceLayer } from "@/local-db/utils/utils";
 // services
 import { InboxIssueService } from "@/services/inbox";
 import { IssueService } from "@/services/issue";
@@ -109,7 +107,6 @@ export class InboxIssueStore implements IInboxIssueStore {
       if (status === EInboxIssueStatus.ACCEPTED) {
         const updatedIssue = { ...this.issue, ...inboxIssue.issue };
         this.store.issue.issues.addIssue([updatedIssue]);
-        await addIssueToPersistanceLayer(updatedIssue);
       }
     } catch {
       runInAction(() => set(this, "status", previousData.status));

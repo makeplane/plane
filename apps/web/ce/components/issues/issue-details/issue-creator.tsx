@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import Link from "next/link";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -8,7 +8,7 @@ type TIssueUser = {
   customUserName?: string;
 };
 
-export const IssueCreatorDisplay: FC<TIssueUser> = (props) => {
+export function IssueCreatorDisplay(props: TIssueUser) {
   const { activityId, customUserName } = props;
   // hooks
   const {
@@ -33,4 +33,4 @@ export const IssueCreatorDisplay: FC<TIssueUser> = (props) => {
       )}
     </>
   );
-};
+}

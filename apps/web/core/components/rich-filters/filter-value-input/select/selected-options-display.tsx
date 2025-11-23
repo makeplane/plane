@@ -1,8 +1,9 @@
 import React from "react";
 import { Transition } from "@headlessui/react";
 // plane imports
-import { SingleOrArray, IFilterOption, TFilterValue } from "@plane/types";
+import type { SingleOrArray, IFilterOption, TFilterValue } from "@plane/types";
 import { cn, toFilterArray } from "@plane/utils";
+import { EMPTY_FILTER_PLACEHOLDER_TEXT } from "../../shared";
 
 type TSelectedOptionsDisplayProps<V extends TFilterValue> = {
   selectedValue: SingleOrArray<V>;
@@ -12,8 +13,8 @@ type TSelectedOptionsDisplayProps<V extends TFilterValue> = {
   fallbackText?: string;
 };
 
-export const SelectedOptionsDisplay = <V extends TFilterValue>(props: TSelectedOptionsDisplayProps<V>) => {
-  const { selectedValue, options, displayCount = 2, emptyValue = "--", fallbackText } = props;
+export function SelectedOptionsDisplay<V extends TFilterValue>(props: TSelectedOptionsDisplayProps<V>) {
+  const { selectedValue, options, displayCount = 2, emptyValue = EMPTY_FILTER_PLACEHOLDER_TEXT, fallbackText } = props;
   // derived values
   const selectedArray = toFilterArray(selectedValue);
   const remainingCount = selectedArray.length - displayCount;
@@ -58,4 +59,4 @@ export const SelectedOptionsDisplay = <V extends TFilterValue>(props: TSelectedO
       )}
     </div>
   );
-};
+}

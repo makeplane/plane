@@ -4,21 +4,22 @@ import { useParams, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { GLOBAL_VIEW_TRACKER_ELEMENTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
-import { EIssuesStoreType, EIssueLayoutTypes, STATIC_VIEW_TYPES } from "@plane/types";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
+import type { EIssueLayoutTypes } from "@plane/types";
+import { EIssuesStoreType, STATIC_VIEW_TYPES } from "@plane/types";
+// assets
+import emptyView from "@/app/assets/empty-state/view.svg?url";
 // components
-import { EmptyState } from "@/components/common/empty-state";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 import { WorkspaceActiveLayout } from "@/components/views/helper";
 import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
-import { WorkItemFiltersRow } from "@/components/work-item-filters/work-item-filters-row";
+import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 // hooks
 import { useGlobalView } from "@/hooks/store/use-global-view";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
-// public imports
-import emptyView from "@/public/empty-state/view.svg";
 
 type Props = {
   isDefaultView: boolean;
@@ -26,7 +27,7 @@ type Props = {
   toggleLoading: (value: boolean) => void;
 };
 
-export const AllIssueLayoutRoot: React.FC<Props> = observer((props: Props) => {
+export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Props) {
   const { isDefaultView, isLoading = false, toggleLoading } = props;
   // router
   const router = useAppRouter();
@@ -108,14 +109,17 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props: Props) => {
   // Empty state
   if (!isLoading && !globalViewsLoading && !issuesLoading && !viewDetails && !isDefaultView) {
     return (
-      <EmptyState
-        image={emptyView}
+      <EmptyStateDetailed
         title="View does not exist"
         description="The view you are looking for does not exist or you don't have permission to view it."
-        primaryButton={{
-          text: "Go to All work items",
-          onClick: () => router.push(`/${workspaceSlug}/workspace-views/all-issues`),
-        }}
+        assetKey="view"
+        actions={[
+          {
+            label: "Go to All work items",
+            onClick: () => router.push(`/${workspaceSlug}/workspace-views/all-issues`),
+            variant: "primary",
+          },
+        ]}
       />
     );
   }

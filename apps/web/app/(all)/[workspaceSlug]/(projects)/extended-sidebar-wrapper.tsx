@@ -1,6 +1,5 @@
-"use client";
-
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { EXTENDED_SIDEBAR_WIDTH, SIDEBAR_WIDTH } from "@plane/constants";
@@ -17,7 +16,7 @@ type Props = {
   excludedElementId: string;
 };
 
-export const ExtendedSidebarWrapper: FC<Props> = observer((props) => {
+export const ExtendedSidebarWrapper = observer(function ExtendedSidebarWrapper(props: Props) {
   const { children, extendedSidebarRef, isExtendedSidebarOpened, handleClose, excludedElementId } = props;
   // store hooks
   const { storedValue } = useLocalStorage("sidebarWidth", SIDEBAR_WIDTH);

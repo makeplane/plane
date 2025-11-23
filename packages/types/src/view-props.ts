@@ -1,6 +1,6 @@
-import { TIssue } from "./issues/issue";
-import { LOGICAL_OPERATOR, TSupportedOperators } from "./rich-filters";
-import { CompleteOrEmpty } from "./utils";
+import type { TIssue } from "./issues/issue";
+import type { LOGICAL_OPERATOR, TSupportedOperators } from "./rich-filters";
+import type { CompleteOrEmpty } from "./utils";
 
 export type TIssueLayouts = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
 
@@ -100,13 +100,15 @@ export const WORK_ITEM_FILTER_PROPERTY_KEYS = [
   "cycle_id",
   "module_id",
   "project_id",
+  "created_at",
+  "updated_at",
 ] as const;
 export type TWorkItemFilterProperty = (typeof WORK_ITEM_FILTER_PROPERTY_KEYS)[number];
 
 export type TWorkItemFilterConditionKey = `${TWorkItemFilterProperty}__${TSupportedOperators}`;
 
 export type TWorkItemFilterConditionData = Partial<{
-  [K in TWorkItemFilterConditionKey]: string;
+  [K in TWorkItemFilterConditionKey]: string | boolean | number;
 }>;
 
 export type TWorkItemFilterAndGroup = {

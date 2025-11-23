@@ -1,10 +1,8 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // components
 import type { TIssueOperations } from "@/components/issues/issue-detail";
 import { IssueParentSelect } from "@/components/issues/issue-detail/parent-select";
@@ -20,7 +18,7 @@ type TIssueParentSelect = {
   workspaceSlug: string;
 };
 
-export const IssueParentSelectRoot: React.FC<TIssueParentSelect> = observer((props) => {
+export const IssueParentSelectRoot = observer(function IssueParentSelectRoot(props: TIssueParentSelect) {
   const { issueId, issueOperations, projectId, workspaceSlug } = props;
   const { t } = useTranslation();
   // store hooks

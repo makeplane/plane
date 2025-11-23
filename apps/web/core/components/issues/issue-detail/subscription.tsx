@@ -1,6 +1,5 @@
-"use client";
-
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { isNil } from "lodash-es";
 import { observer } from "mobx-react";
 import { Bell, BellOff } from "lucide-react";
@@ -9,8 +8,9 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // UI
 import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssueServiceType } from "@plane/types";
-import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -22,7 +22,7 @@ export type TIssueSubscription = {
   serviceType?: EIssueServiceType;
 };
 
-export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
+export const IssueSubscription = observer(function IssueSubscription(props: TIssueSubscription) {
   const { workspaceSlug, projectId, issueId, serviceType = EIssueServiceType.ISSUES } = props;
   const { t } = useTranslation();
   // hooks

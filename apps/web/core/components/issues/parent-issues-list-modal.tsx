@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 // icons
@@ -9,7 +7,7 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
-import { ISearchIssueResponse } from "@plane/types";
+import type { ISearchIssueResponse } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
 import { generateWorkItemLink, getTabIndex } from "@plane/utils";
@@ -37,7 +35,7 @@ type Props = {
 // services
 const projectService = new ProjectService();
 
-export const ParentIssuesListModal: React.FC<Props> = ({
+export function ParentIssuesListModal({
   isOpen,
   handleClose: onClose,
   value,
@@ -45,7 +43,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
   projectId,
   issueId,
   searchEpic = false,
-}) => {
+}: Props) {
   // i18n
   const { t } = useTranslation();
 
@@ -226,4 +224,4 @@ export const ParentIssuesListModal: React.FC<Props> = ({
       </Transition.Root>
     </>
   );
-};
+}

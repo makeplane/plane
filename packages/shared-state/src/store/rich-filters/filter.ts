@@ -1,17 +1,17 @@
-import { cloneDeep } from "lodash-es";
+import { cloneDeep, isEqual } from "lodash-es";
 import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
 // plane imports
-import {
+import type {
   TClearFilterOptions,
   TExpressionOptions,
   TFilterOptions,
   TSaveViewOptions,
   TUpdateViewOptions,
 } from "@plane/constants";
-import {
-  FILTER_NODE_TYPE,
+import { DEFAULT_FILTER_VISIBILITY_OPTIONS } from "@plane/constants";
+import type {
   IFilterAdapter,
   SingleOrArray,
   TAllAvailableOperatorsForDisplay,
@@ -25,6 +25,7 @@ import {
   TLogicalOperator,
   TSupportedOperators,
 } from "@plane/types";
+import { FILTER_NODE_TYPE } from "@plane/types";
 // local imports
 import {
   deepCompareFilterExpressions,
@@ -38,8 +39,10 @@ import {
   shouldNotifyChangeForExpression,
   updateNodeInExpression,
 } from "@plane/utils";
-import { FilterConfigManager, IFilterConfigManager } from "./config-manager";
-import { FilterInstanceHelper, IFilterInstanceHelper } from "./filter-helpers";
+import type { IFilterConfigManager } from "./config-manager";
+import { FilterConfigManager } from "./config-manager";
+import type { IFilterInstanceHelper } from "./filter-helpers";
+import { FilterInstanceHelper } from "./filter-helpers";
 
 /**
  * Interface for a filter instance.
@@ -71,6 +74,7 @@ export interface IFilterInstance<P extends TFilterProperty, E extends TExternalF
   // computed
   hasActiveFilters: boolean;
   hasChanges: boolean;
+  isVisible: boolean;
   allConditions: TFilterConditionNode<P, TFilterValue>[];
   allConditionsForDisplay: TFilterConditionNodeForDisplay<P, TFilterValue>[];
   // computed option helpers
@@ -81,6 +85,8 @@ export interface IFilterInstance<P extends TFilterProperty, E extends TExternalF
   canClearFilters: boolean;
   canSaveView: boolean;
   canUpdateView: boolean;
+  // visibility
+  toggleVisibility: (isVisible?: boolean) => void;
   // filter expression actions
   resetExpression: (externalExpression: E, shouldResetInitialExpression?: boolean) => void;
   // filter condition
@@ -97,6 +103,12 @@ export interface IFilterInstance<P extends TFilterProperty, E extends TExternalF
     condition: TFilterConditionPayload<P, V>,
     isNegation: boolean
   ) => void;
+  updateConditionProperty: (
+    conditionId: string,
+    property: P,
+    operator: TSupportedOperators,
+    isNegation: boolean
+  ) => void;
   updateConditionOperator: (conditionId: string, operator: TSupportedOperators, isNegation: boolean) => void;
   updateConditionValue: <V extends TFilterValue>(conditionId: string, value: SingleOrArray<V>) => void;
   removeCondition: (conditionId: string) => void;
@@ -108,7 +120,7 @@ export interface IFilterInstance<P extends TFilterProperty, E extends TExternalF
   updateExpressionOptions: (newOptions: Partial<TExpressionOptions<E>>) => void;
 }
 
-export type TFilterParams<P extends TFilterProperty, E extends TExternalFilter> = {
+type TFilterParams<P extends TFilterProperty, E extends TExternalFilter> = {
   adapter: IFilterAdapter<P, E>;
   options?: Partial<TFilterOptions<E>>;
   initialExpression?: E;
@@ -131,7 +143,9 @@ export class FilterInstance<P extends TFilterProperty, E extends TExternalFilter
   constructor(params: TFilterParams<P, E>) {
     this.id = uuidv4();
     this.adapter = params.adapter;
-    this.helper = new FilterInstanceHelper<P, E>(this.adapter);
+    this.helper = new FilterInstanceHelper<P, E>(this, {
+      adapter: this.adapter,
+    });
     this.configManager = new FilterConfigManager<P, E>(this, {
       options: params.options?.config,
     });
@@ -141,18 +155,20 @@ export class FilterInstance<P extends TFilterProperty, E extends TExternalFilter
     this.expression = cloneDeep(initialExpression);
     this.expressionOptions = this.helper.initializeExpressionOptions(params.options?.expression);
     this.onExpressionChange = params.onExpressionChange;
+    this.helper.setInitialVisibility(params.options?.visibility ?? DEFAULT_FILTER_VISIBILITY_OPTIONS);
 
     makeObservable(this, {
       // observables
       id: observable,
       initialFilterExpression: observable,
       expression: observable,
-      expressionOptions: observable,
+      expressionOptions: observable.struct,
       adapter: observable,
       configManager: observable,
       // computed
       hasActiveFilters: computed,
       hasChanges: computed,
+      isVisible: computed,
       allConditions: computed,
       allConditionsForDisplay: computed,
       // computed option helpers
@@ -199,6 +215,14 @@ export class FilterInstance<P extends TFilterProperty, E extends TExternalFilter
    */
   get hasChanges(): IFilterInstance<P, E>["hasChanges"] {
     return !deepCompareFilterExpressions(this.initialFilterExpression, this.expression);
+  }
+
+  /**
+   * Returns the visibility of the filter instance.
+   * @returns The visibility of the filter instance.
+   */
+  get isVisible(): IFilterInstance<P, E>["isVisible"] {
+    return this.helper.isVisible;
   }
 
   /**
@@ -280,6 +304,14 @@ export class FilterInstance<P extends TFilterProperty, E extends TExternalFilter
   // ------------ actions ------------
 
   /**
+   * Toggles the visibility of the filter instance.
+   * @param isVisible - The visibility to set.
+   */
+  toggleVisibility: IFilterInstance<P, E>["toggleVisibility"] = action((isVisible) => {
+    this.helper.toggleVisibility(isVisible);
+  });
+
+  /**
    * Resets the filter expression to the initial expression.
    * @param externalExpression - The external expression to reset to.
    */
@@ -337,6 +369,33 @@ export class FilterInstance<P extends TFilterProperty, E extends TExternalFilter
   });
 
   /**
+   * Updates the property of a condition in the filter expression.
+   * @param conditionId - The id of the condition to update.
+   * @param property - The new property for the condition.
+   */
+  updateConditionProperty: IFilterInstance<P, E>["updateConditionProperty"] = action(
+    (conditionId: string, property: P, operator: TSupportedOperators, isNegation: boolean) => {
+      if (!this.expression) return;
+      const conditionBeforeUpdate = cloneDeep(findNodeById(this.expression, conditionId));
+      if (!conditionBeforeUpdate || conditionBeforeUpdate.type !== FILTER_NODE_TYPE.CONDITION) return;
+
+      // Update the condition property
+      const updatedExpression = this.helper.handleConditionPropertyUpdate(
+        this.expression,
+        conditionId,
+        property,
+        operator,
+        isNegation
+      );
+
+      if (updatedExpression) {
+        this.expression = updatedExpression;
+        this._notifyExpressionChange();
+      }
+    }
+  );
+
+  /**
    * Updates the operator of a condition in the filter expression.
    * @param conditionId - The id of the condition to update.
    * @param operator - The new operator for the condition.
@@ -386,9 +445,20 @@ export class FilterInstance<P extends TFilterProperty, E extends TExternalFilter
       // If the expression is not valid, return
       if (!this.expression) return;
 
+      // Get the condition before update
+      const conditionBeforeUpdate = cloneDeep(findNodeById(this.expression, conditionId));
+
+      // If the condition is not valid, return
+      if (!conditionBeforeUpdate || conditionBeforeUpdate.type !== FILTER_NODE_TYPE.CONDITION) return;
+
       // If the value is not valid, remove the condition
       if (!hasValidValue(value)) {
         this.removeCondition(conditionId);
+        return;
+      }
+
+      // If the value is the same as the condition before update, return
+      if (isEqual(conditionBeforeUpdate.value, value)) {
         return;
       }
 

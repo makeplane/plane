@@ -1,9 +1,8 @@
-"use client";
-
 // components
 import { Button } from "@plane/propel/button";
-import { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
-import { GithubAuth, TIntegrationSteps } from "@/components/integration";
+import type { IAppIntegration, IWorkspaceIntegration } from "@plane/types";
+import type { TIntegrationSteps } from "@/components/integration";
+import { GithubAuth } from "@/components/integration";
 // types
 
 type Props = {
@@ -13,12 +12,7 @@ type Props = {
   workspaceIntegrations: IWorkspaceIntegration[] | undefined;
 };
 
-export const GithubImportConfigure: React.FC<Props> = ({
-  handleStepChange,
-  provider,
-  appIntegrations,
-  workspaceIntegrations,
-}) => {
+export function GithubImportConfigure({ handleStepChange, provider, appIntegrations, workspaceIntegrations }: Props) {
   // current integration from all the integrations available
   const integration =
     appIntegrations && appIntegrations.length > 0 && appIntegrations.find((i) => i.provider === provider);
@@ -53,4 +47,4 @@ export const GithubImportConfigure: React.FC<Props> = ({
       </div>
     </div>
   );
-};
+}

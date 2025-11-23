@@ -3,8 +3,8 @@
 # Import all utilities from base modules
 from .filter_backend import ComplexFilterBackend
 from .converters import LegacyToRichFiltersConverter
-from .filterset import IssueFilterSet
+from .filterset import BaseFilterSet, IssueFilterSet
 
 
 # Public API exports
-__all__ = ["ComplexFilterBackend", "LegacyToRichFiltersConverter", "IssueFilterSet"]
+__all__ = ["ComplexFilterBackend", "LegacyToRichFiltersConverter", "BaseFilterSet", "IssueFilterSet"]

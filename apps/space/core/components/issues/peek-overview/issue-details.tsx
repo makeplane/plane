@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { RichTextEditor } from "@/components/editor/rich-text-editor";
 import { usePublish } from "@/hooks/store/publish";
 // types
-import { IIssue } from "@/types/issue";
+import type { IIssue } from "@/types/issue";
 // local imports
 import { IssueReactions } from "./issue-reaction";
 
@@ -12,7 +12,7 @@ type Props = {
   issueDetails: IIssue;
 };
 
-export const PeekOverviewIssueDetails: React.FC<Props> = observer((props) => {
+export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetails(props: Props) {
   const { anchor, issueDetails } = props;
   // store hooks
   const { project_details, workspace: workspaceID } = usePublish(anchor);

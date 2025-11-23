@@ -1,6 +1,6 @@
 import { range } from "lodash-es";
 import { useTranslation } from "@plane/i18n";
-export const APITokenSettingsLoader = () => {
+export function APITokenSettingsLoader() {
   const { t } = useTranslation();
   return (
     <section className="w-full overflow-y-auto">
@@ -21,4 +21,4 @@ export const APITokenSettingsLoader = () => {
       </div>
     </section>
   );
-};
+}

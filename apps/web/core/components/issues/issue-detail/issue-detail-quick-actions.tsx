@@ -1,14 +1,13 @@
-"use client";
-
-import React, { FC, useRef } from "react";
+import type { FC } from "react";
+import React, { useRef } from "react";
 import { observer } from "mobx-react";
 import { LinkIcon } from "lucide-react";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
 import { generateWorkItemLink, copyTextToClipboard } from "@plane/utils";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
@@ -29,7 +28,7 @@ type Props = {
   issueId: string;
 };
 
-export const IssueDetailQuickActions: FC<Props> = observer((props) => {
+export const IssueDetailQuickActions = observer(function IssueDetailQuickActions(props: Props) {
   const { workspaceSlug, projectId, issueId } = props;
   const { t } = useTranslation();
 

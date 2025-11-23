@@ -1,16 +1,16 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
-import { Rocket, Search, X } from "lucide-react";
+import React, { useEffect, useState, useRef } from "react";
+import { Rocket, Search } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@plane/propel/button";
+import { CloseIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
+import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // ui
-import { Loader, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+import { Loader, ToggleSwitch } from "@plane/ui";
 import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // helpers
 // hooks
@@ -32,13 +32,13 @@ type Props = {
   handleOnSubmit: (data: ISearchIssueResponse[]) => Promise<void>;
   workspaceLevelToggle?: boolean;
   shouldHideIssue?: (issue: ISearchIssueResponse) => boolean;
-  selectedWorkItems?: ISearchIssueResponse[];
+  selectedWorkItemIds?: string[];
   workItemSearchServiceCallback?: (params: TProjectIssuesSearchParams) => Promise<ISearchIssueResponse[]>;
 };
 
 const projectService = new ProjectService();
 
-export const ExistingIssuesListModal: React.FC<Props> = (props) => {
+export function ExistingIssuesListModal(props: Props) {
   const { t } = useTranslation();
 
   const {
@@ -50,7 +50,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
     handleOnSubmit,
     workspaceLevelToggle = false,
     shouldHideIssue,
-    selectedWorkItems,
+    selectedWorkItemIds,
     workItemSearchServiceCallback,
   } = props;
   // states
@@ -64,12 +64,14 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
   const { isMobile } = usePlatformOS();
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
   const { baseTabIndex } = getTabIndex(undefined, isMobile);
+  const hasInitializedSelection = useRef(false);
 
   const handleClose = () => {
     onClose();
     setSearchTerm("");
     setSelectedIssues([]);
     setIsWorkspaceLevel(false);
+    hasInitializedSelection.current = false;
   };
 
   const onSubmit = async () => {
@@ -116,10 +118,11 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    if (selectedWorkItems) {
-      setSelectedIssues(selectedWorkItems);
+    if (isOpen && !hasInitializedSelection.current && selectedWorkItemIds && issues.length > 0) {
+      setSelectedIssues(issues.filter((issue) => selectedWorkItemIds.includes(issue.id)));
+      hasInitializedSelection.current = true;
     }
-  }, [isOpen, selectedWorkItems]);
+  }, [isOpen, issues, selectedWorkItemIds]);
 
   useEffect(() => {
     handleSearch();
@@ -196,7 +199,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                               className="group p-1"
                               onClick={() => setSelectedIssues((prevData) => prevData.filter((i) => i.id !== issue.id))}
                             >
-                              <X className="h-3 w-3 text-custom-text-200 group-hover:text-custom-text-100" />
+                              <CloseIcon className="h-3 w-3 text-custom-text-200 group-hover:text-custom-text-100" />
                             </button>
                           </div>
                         ))}
@@ -356,4 +359,4 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
       </Transition.Root>
     </>
   );
-};
+}

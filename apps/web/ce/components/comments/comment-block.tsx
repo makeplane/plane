@@ -1,8 +1,10 @@
-import { FC, ReactNode, useRef } from "react";
+import type { FC, ReactNode } from "react";
+import { useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EIssueCommentAccessSpecifier, TIssueComment } from "@plane/types";
+import type { TIssueComment } from "@plane/types";
+import { EIssueCommentAccessSpecifier } from "@plane/types";
 import { Avatar, Tooltip } from "@plane/ui";
 import { calculateTimeAgo, cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // hooks
@@ -15,7 +17,7 @@ type TCommentBlock = {
   children: ReactNode;
 };
 
-export const CommentBlock: FC<TCommentBlock> = observer((props) => {
+export const CommentBlock = observer(function CommentBlock(props: TCommentBlock) {
   const { comment, ends, quickActions, children } = props;
   // refs
   const commentBlockRef = useRef<HTMLDivElement>(null);

@@ -1,13 +1,23 @@
-import { List, Kanban, LucideProps } from "lucide-react";
-import { TIssueLayout } from "@plane/constants";
+import type { TIssueLayout } from "@plane/constants";
+import { ListLayoutIcon, BoardLayoutIcon } from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/propel/icons";
 
-export const IssueLayoutIcon = ({ layout, ...props }: { layout: TIssueLayout } & LucideProps) => {
+export function IssueLayoutIcon({
+  layout,
+  size,
+  ...props
+}: { layout: TIssueLayout; size?: number } & Omit<ISvgIcons, "width" | "height">) {
+  const iconProps = {
+    ...props,
+    ...(size && { width: size, height: size }),
+  };
+
   switch (layout) {
     case "list":
-      return <List {...props} />;
+      return <ListLayoutIcon {...iconProps} />;
     case "kanban":
-      return <Kanban {...props} />;
+      return <BoardLayoutIcon {...iconProps} />;
     default:
       return null;
   }
-};
+}

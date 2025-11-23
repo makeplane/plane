@@ -1,4 +1,5 @@
-import { callOrReturn, getExtensionField, mergeAttributes, Node, ParentConfig } from "@tiptap/core";
+import type { ParentConfig } from "@tiptap/core";
+import { callOrReturn, getExtensionField, mergeAttributes, Node } from "@tiptap/core";
 import { TextSelection } from "@tiptap/pm/state";
 import {
   addColumnAfter,
@@ -18,7 +19,6 @@ import {
   toggleHeader,
   toggleHeaderCell,
 } from "@tiptap/pm/tables";
-import type { Decoration } from "@tiptap/pm/view";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // local imports
@@ -264,7 +264,7 @@ export const Table = Node.create<TableOptions>({
     return ({ editor, node, decorations, getPos }) => {
       const { cellMinWidth } = this.options;
 
-      return new TableView(node, cellMinWidth, decorations as Decoration[], editor, getPos);
+      return new TableView(node, cellMinWidth, decorations, editor, getPos);
     };
   },
 

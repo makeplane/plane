@@ -1,14 +1,13 @@
-"use client";
-
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
-import { Eye, EyeOff, Info, X, XCircle } from "lucide-react";
+import { Eye, EyeOff, Info, XCircle } from "lucide-react";
 // plane imports
 import { API_BASE_URL, E_PASSWORD_STRENGTH, AUTH_TRACKER_EVENTS, AUTH_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { CloseIcon } from "@plane/propel/icons";
 import { Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
 import { getPasswordStrength } from "@plane/utils";
 // components
@@ -43,7 +42,7 @@ const defaultValues: TPasswordFormValues = {
 
 const authService = new AuthService();
 
-export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
+export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props) {
   const { email, isSMTPConfigured, handleAuthStep, handleEmailClear, mode, nextPath } = props;
   // plane imports
   const { t } = useTranslation();
@@ -134,7 +133,7 @@ export const AuthPasswordForm: React.FC<Props> = observer((props: Props) => {
             className="relative ml-auto w-6 h-6 rounded-sm flex justify-center items-center transition-all cursor-pointer hover:bg-red-500/20 text-custom-primary-100/80"
             onClick={() => setBannerMessage(false)}
           >
-            <X className="w-4 h-4 flex-shrink-0 text-red-500" />
+            <CloseIcon className="w-4 h-4 flex-shrink-0 text-red-500" />
           </div>
         </div>
       )}

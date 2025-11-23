@@ -2,15 +2,15 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
 // plane imports
-import { TPageVersion } from "@plane/types";
+import type { TPageVersion } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
 import { useQueryParams } from "@/hooks/use-query-params";
 // plane web imports
-import { EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
 // local imports
 import { PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM, PAGE_NAVIGATION_PANE_WIDTH } from "../navigation-pane";
-import { TVersionEditorProps } from "./editor";
+import type { TVersionEditorProps } from "./editor";
 import { PageVersionsMainContent } from "./main-content";
 
 type Props = {
@@ -22,7 +22,7 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const PageVersionsOverlay: React.FC<Props> = observer((props) => {
+export const PageVersionsOverlay = observer(function PageVersionsOverlay(props: Props) {
   const { editorComponent, fetchVersionDetails, handleRestore, pageId, restoreEnabled, storeType } = props;
   // navigation
   const router = useRouter();

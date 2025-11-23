@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 
 type TDuplicateWorkItemModalProps = {
   workItemId: string;
@@ -8,4 +8,6 @@ type TDuplicateWorkItemModalProps = {
   projectId: string;
 };
 
-export const DuplicateWorkItemModal: FC<TDuplicateWorkItemModalProps> = () => <></>;
+export function DuplicateWorkItemModal(_props: TDuplicateWorkItemModalProps) {
+  return <></>;
+}

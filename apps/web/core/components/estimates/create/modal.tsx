@@ -1,14 +1,14 @@
-"use client";
-
-import { FC, useEffect, useMemo, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronLeft } from "lucide-react";
 // plane imports
 import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { IEstimateFormData, TEstimateSystemKeys, TEstimatePointsObject, TEstimateTypeError } from "@plane/types";
-import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { ChevronLeftIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IEstimateFormData, TEstimateSystemKeys, TEstimatePointsObject, TEstimateTypeError } from "@plane/types";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 // local imports
@@ -22,7 +22,7 @@ type TCreateEstimateModal = {
   handleClose: () => void;
 };
 
-export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) => {
+export const CreateEstimateModal = observer(function CreateEstimateModal(props: TCreateEstimateModal) {
   // props
   const { workspaceSlug, projectId, isOpen, handleClose } = props;
   // hooks
@@ -150,7 +150,7 @@ export const CreateEstimateModal: FC<TCreateEstimateModal> = observer((props) =>
                 }}
                 className="flex-shrink-0 cursor-pointer w-5 h-5 flex justify-center items-center"
               >
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeftIcon className="w-4 h-4" />
               </div>
             )}
             <div className="text-xl font-medium text-custom-text-100">{t("project_settings.estimates.new")}</div>

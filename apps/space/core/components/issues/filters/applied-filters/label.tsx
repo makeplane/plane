@@ -1,8 +1,6 @@
-"use client";
-
-import { X } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 // types
-import { IIssueLabel } from "@/types/issue";
+import type { IIssueLabel } from "@/types/issue";
 
 type Props = {
   handleRemove: (val: string) => void;
@@ -10,7 +8,7 @@ type Props = {
   values: string[];
 };
 
-export const AppliedLabelsFilters: React.FC<Props> = (props) => {
+export function AppliedLabelsFilters(props: Props) {
   const { handleRemove, labels, values } = props;
 
   return (
@@ -34,11 +32,11 @@ export const AppliedLabelsFilters: React.FC<Props> = (props) => {
               className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
               onClick={() => handleRemove(labelId)}
             >
-              <X size={10} strokeWidth={2} />
+              <CloseIcon height={10} width={10} strokeWidth={2} />
             </button>
           </div>
         );
       })}
     </>
   );
-};
+}

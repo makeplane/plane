@@ -1,4 +1,6 @@
-export enum EAttributeNames {
+import type { Node as ProseMirrorNode } from "@tiptap/core";
+
+export enum ECalloutAttributeNames {
   ICON_COLOR = "data-icon-color",
   ICON_NAME = "data-icon-name",
   EMOJI_UNICODE = "data-emoji-unicode",
@@ -9,18 +11,23 @@ export enum EAttributeNames {
 }
 
 export type TCalloutBlockIconAttributes = {
-  [EAttributeNames.ICON_COLOR]: string | undefined;
-  [EAttributeNames.ICON_NAME]: string | undefined;
+  [ECalloutAttributeNames.ICON_COLOR]: string | undefined;
+  [ECalloutAttributeNames.ICON_NAME]: string | undefined;
 };
 
 export type TCalloutBlockEmojiAttributes = {
-  [EAttributeNames.EMOJI_UNICODE]: string | undefined;
-  [EAttributeNames.EMOJI_URL]: string | undefined;
+  [ECalloutAttributeNames.EMOJI_UNICODE]: string | undefined;
+  [ECalloutAttributeNames.EMOJI_URL]: string | undefined;
 };
 
 export type TCalloutBlockAttributes = {
-  [EAttributeNames.LOGO_IN_USE]: "emoji" | "icon";
-  [EAttributeNames.BACKGROUND]: string | undefined;
-  [EAttributeNames.BLOCK_TYPE]: "callout-component";
+  [ECalloutAttributeNames.LOGO_IN_USE]: "emoji" | "icon";
+  [ECalloutAttributeNames.BACKGROUND]: string | undefined;
+  [ECalloutAttributeNames.BLOCK_TYPE]: "callout-component";
 } & TCalloutBlockIconAttributes &
   TCalloutBlockEmojiAttributes;
+
+export type CustomCalloutExtensionOptions = unknown;
+export type CustomCalloutExtensionStorage = unknown;
+
+export type CustomCalloutExtensionType = ProseMirrorNode<CustomCalloutExtensionOptions, CustomCalloutExtensionStorage>;

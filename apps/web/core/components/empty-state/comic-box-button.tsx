@@ -1,6 +1,5 @@
-"use client";
-
-import { Fragment, Ref, useState } from "react";
+import type { Ref } from "react";
+import { Fragment, useState } from "react";
 import { usePopper } from "react-popper";
 import { Popover } from "@headlessui/react";
 // popper
@@ -16,7 +15,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const ComicBoxButton: React.FC<Props> = (props) => {
+export function ComicBoxButton(props: Props) {
   const { label, icon, title, description, onClick, disabled = false } = props;
   const [isHovered, setIsHovered] = useState(false);
 
@@ -76,4 +75,4 @@ export const ComicBoxButton: React.FC<Props> = (props) => {
       )}
     </Popover>
   );
-};
+}

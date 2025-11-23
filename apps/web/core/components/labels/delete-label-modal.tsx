@@ -1,13 +1,12 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { PROJECT_SETTINGS_TRACKER_ELEMENTS, PROJECT_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
+import { PROJECT_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IIssueLabel } from "@plane/types";
 // ui
-import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { AlertModalCore } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useLabel } from "@/hooks/store/use-label";
@@ -18,7 +17,7 @@ type Props = {
   data: IIssueLabel | null;
 };
 
-export const DeleteLabelModal: React.FC<Props> = observer((props) => {
+export const DeleteLabelModal = observer(function DeleteLabelModal(props: Props) {
   const { isOpen, onClose, data } = props;
   // router
   const { workspaceSlug, projectId } = useParams();

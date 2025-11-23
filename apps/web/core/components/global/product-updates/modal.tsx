@@ -1,4 +1,5 @@
-import { FC, useEffect } from "react";
+import type { FC } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { USER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -18,7 +19,7 @@ export type ProductUpdatesModalProps = {
   handleClose: () => void;
 };
 
-export const ProductUpdatesModal: FC<ProductUpdatesModalProps> = observer((props) => {
+export const ProductUpdatesModal = observer(function ProductUpdatesModal(props: ProductUpdatesModalProps) {
   const { isOpen, handleClose } = props;
   const { t } = useTranslation();
   const { config } = useInstance();

@@ -1,5 +1,5 @@
 // types
-import { TDisplayConfig } from "@/types";
+import type { TDisplayConfig } from "@/types";
 
 export const DEFAULT_DISPLAY_CONFIG: TDisplayConfig = {
   fontSize: "large-font",

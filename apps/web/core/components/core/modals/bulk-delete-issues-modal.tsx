@@ -1,23 +1,29 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useTheme } from "next-themes";
+import type { SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Search } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { EIssuesStoreType, ISearchIssueResponse, IUser } from "@plane/types";
-import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { ISearchIssueResponse, IUser } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
+import { Loader } from "@plane/ui";
+// assets
+import darkIssuesAsset from "@/app/assets/empty-state/search/issues-dark.webp?url";
+import lightIssuesAsset from "@/app/assets/empty-state/search/issues-light.webp?url";
+import darkSearchAsset from "@/app/assets/empty-state/search/search-dark.webp?url";
+import lightSearchAsset from "@/app/assets/empty-state/search/search-light.webp?url";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import useDebounce from "@/hooks/use-debounce";
 // services
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { ProjectService } from "@/services/project";
 // local components
 import { BulkDeleteIssuesModalItem } from "./bulk-delete-issues-modal-item";
@@ -34,7 +40,7 @@ type Props = {
 
 const projectService = new ProjectService();
 
-export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
+export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(props: Props) {
   const { isOpen, onClose } = props;
   // router params
   const { workspaceSlug, projectId } = useParams();
@@ -42,6 +48,8 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
   const [query, setQuery] = useState("");
   const [issues, setIssues] = useState<ISearchIssueResponse[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // hooks
   const {
     issues: { removeBulkIssues },
@@ -49,8 +57,8 @@ export const BulkDeleteIssuesModal: React.FC<Props> = observer((props) => {
   const { t } = useTranslation();
   // derived values
   const debouncedSearchTerm: string = useDebounce(query, 500);
-  const searchResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/search" });
-  const issuesResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/issues" });
+  const searchResolvedPath = resolvedTheme === "light" ? lightSearchAsset : darkSearchAsset;
+  const issuesResolvedPath = resolvedTheme === "light" ? lightIssuesAsset : darkIssuesAsset;
 
   useEffect(() => {
     if (!isOpen || !workspaceSlug || !projectId) return;

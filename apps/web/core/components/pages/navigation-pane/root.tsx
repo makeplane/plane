@@ -9,15 +9,15 @@ import { Tooltip } from "@plane/propel/tooltip";
 // hooks
 import { useQueryParams } from "@/hooks/use-query-params";
 // plane web components
-import { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
+import type { TPageNavigationPaneTab } from "@/plane-web/components/pages/navigation-pane";
 // store
-import { type EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
-import { TPageRootHandlers } from "../editor/page-root";
+import type { TPageRootHandlers } from "../editor/page-root";
 import { PageNavigationPaneTabPanelsRoot } from "./tab-panels/root";
 import { PageNavigationPaneTabsList } from "./tabs-list";
-import { INavigationPaneExtension } from "./types/extensions";
+import type { INavigationPaneExtension } from "./types/extensions";
 
 import {
   PAGE_NAVIGATION_PANE_TAB_KEYS,
@@ -36,7 +36,7 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const PageNavigationPaneRoot: React.FC<Props> = observer((props) => {
+export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(props: Props) {
   const { handleClose, isNavigationPaneOpen, page, versionHistory, extensions = [], storeType } = props;
 
   // navigation
@@ -52,7 +52,7 @@ export const PageNavigationPaneRoot: React.FC<Props> = observer((props) => {
   const selectedIndex = PAGE_NAVIGATION_PANE_TAB_KEYS.indexOf(activeTab);
 
   // Check if any extension is currently active based on query parameters
-  const ActiveExtension = extensions.find((extension) => {
+  const ActiveExtension = extensions.find(function ActiveExtension(extension) {
     const paneTabValue = searchParams.get(PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM);
     const hasVersionParam = searchParams.get(PAGE_NAVIGATION_PANE_VERSION_QUERY_PARAM);
 

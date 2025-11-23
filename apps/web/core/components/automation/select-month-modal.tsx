@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { useParams } from "next/navigation";
 // react-hook-form
@@ -21,7 +19,7 @@ type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;
 };
 
-export const SelectMonthModal: React.FC<Props> = ({ type, initialValues, isOpen, handleClose, handleChange }) => {
+export function SelectMonthModal({ type, initialValues, isOpen, handleClose, handleChange }: Props) {
   const { workspaceSlug, projectId } = useParams();
 
   const {
@@ -165,4 +163,4 @@ export const SelectMonthModal: React.FC<Props> = ({ type, initialValues, isOpen,
       </Dialog>
     </Transition.Root>
   );
-};
+}

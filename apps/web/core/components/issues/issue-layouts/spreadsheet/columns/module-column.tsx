@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 // components
 import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 // constants
@@ -18,7 +18,7 @@ type Props = {
   disabled: boolean;
 };
 
-export const SpreadsheetModuleColumn: React.FC<Props> = observer((props) => {
+export const SpreadsheetModuleColumn = observer(function SpreadsheetModuleColumn(props: Props) {
   const { issue, disabled, onClose } = props;
   // router
   const { workspaceSlug } = useParams();

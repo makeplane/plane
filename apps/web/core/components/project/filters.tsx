@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import { ListFilter } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TProjectFilters } from "@plane/types";
+import type { TProjectFilters } from "@plane/types";
 import { cn, calculateTotalFilters } from "@plane/utils";
 // components
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
@@ -22,7 +22,12 @@ type Props = {
   isMobile?: boolean;
 };
 
-const HeaderFilters = observer(({ filterMenuButton, isMobile, classname = "", filterClassname = "" }: Props) => {
+const HeaderFilters = observer(function HeaderFilters({
+  filterMenuButton,
+  isMobile,
+  classname = "",
+  filterClassname = "",
+}: Props) {
   // i18n
   const { t } = useTranslation();
   // router

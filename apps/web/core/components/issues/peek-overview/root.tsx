@@ -1,13 +1,14 @@
-"use client";
-
-import { FC, useEffect, useState, useMemo, useCallback } from "react";
+import type { FC } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // Plane imports
+import useSWR from "swr";
 import { EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EIssueServiceType, EIssuesStoreType, IWorkItemPeekOverview, TIssue } from "@plane/types";
-import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
+import type { IWorkItemPeekOverview, TIssue } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -16,10 +17,10 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
 // local imports
-import { TIssueOperations } from "../issue-detail";
+import type { TIssueOperations } from "../issue-detail";
 import { IssueView } from "./view";
 
-export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => {
+export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWorkItemPeekOverview) {
   const {
     embedIssue = false,
     embedRemoveCurrentNotification,
@@ -38,7 +39,7 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
   const {
     peekIssue,
     setPeekIssue,
-    issue: { fetchIssue, getIsFetchingIssueDetails },
+    issue: { fetchIssue },
     fetchActivities,
   } = useIssueDetail();
   const issueStoreType = useIssueStoreType();
@@ -281,11 +282,15 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
     [fetchIssue, is_draft, issues, fetchActivities, pathname, removeRoutePeekId, restoreIssue]
   );
 
-  useEffect(() => {
-    if (peekIssue) {
-      issueOperations.fetch(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId);
+  const { isLoading } = useSWR(
+    ["peek-issue", peekIssue?.workspaceSlug, peekIssue?.projectId, peekIssue?.issueId],
+    () => peekIssue && issueOperations.fetch(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId),
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
     }
-  }, [peekIssue, issueOperations]);
+  );
 
   if (!peekIssue?.workspaceSlug || !peekIssue?.projectId || !peekIssue?.issueId) return <></>;
 
@@ -302,7 +307,7 @@ export const IssuePeekOverview: FC<IWorkItemPeekOverview> = observer((props) => 
       workspaceSlug={peekIssue.workspaceSlug}
       projectId={peekIssue.projectId}
       issueId={peekIssue.issueId}
-      isLoading={getIsFetchingIssueDetails(peekIssue.issueId)}
+      isLoading={isLoading}
       isError={error}
       is_archived={!!peekIssue.isArchived}
       disabled={!isEditable}

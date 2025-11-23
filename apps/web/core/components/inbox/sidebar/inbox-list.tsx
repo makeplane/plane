@@ -1,4 +1,5 @@
-import { FC, Fragment } from "react";
+import type { FC } from "react";
+import { Fragment } from "react";
 import { observer } from "mobx-react";
 // local imports
 import { InboxIssueListItem } from "./inbox-list-item";
@@ -11,7 +12,7 @@ export type InboxIssueListProps = {
   setIsMobileSidebar: (value: boolean) => void;
 };
 
-export const InboxIssueList: FC<InboxIssueListProps> = observer((props) => {
+export const InboxIssueList = observer(function InboxIssueList(props: InboxIssueListProps) {
   const { workspaceSlug, projectId, projectIdentifier, inboxIssueIds, setIsMobileSidebar } = props;
 
   return (

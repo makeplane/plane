@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
@@ -33,7 +31,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
 import { CommonProjectBreadcrumbs } from "../breadcrumbs/common";
 
-export const IssuesHeader = observer(() => {
+export const IssuesHeader = observer(function IssuesHeader() {
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };

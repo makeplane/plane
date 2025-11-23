@@ -1,6 +1,6 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 // plane imports
-import { IUserSettings } from "@plane/types";
+import type { IUserSettings } from "@plane/types";
 // services
 import { UserService } from "@/services/user.service";
 
@@ -14,7 +14,6 @@ export interface IUserSettingsStore {
   isLoading: boolean;
   error: TError | undefined;
   data: IUserSettings;
-  canUseLocalDB: boolean;
   sidebarCollapsed: boolean;
   isScrolled: boolean;
   // actions
@@ -42,7 +41,6 @@ export class UserSettingsStore implements IUserSettingsStore {
       invites: undefined,
     },
   };
-  canUseLocalDB: boolean = false;
   // services
   userService: UserService;
 
@@ -52,7 +50,6 @@ export class UserSettingsStore implements IUserSettingsStore {
       isLoading: observable.ref,
       error: observable,
       data: observable,
-      canUseLocalDB: observable.ref,
       sidebarCollapsed: observable.ref,
       isScrolled: observable.ref,
       // actions

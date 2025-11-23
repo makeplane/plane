@@ -1,4 +1,4 @@
-import { TFilterValue } from "../expression";
+import type { TFilterValue } from "../expression";
 
 // ----------------------------- EXACT Operator -----------------------------
 export type TExtendedExactOperatorConfigs<_V extends TFilterValue> = never;

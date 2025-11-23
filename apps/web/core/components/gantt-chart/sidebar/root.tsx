@@ -1,4 +1,4 @@
-import { RefObject } from "react";
+import type { RefObject } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // components
@@ -8,7 +8,7 @@ import { cn } from "@plane/utils";
 import { MultipleSelectGroupAction } from "@/components/core/multiple-select";
 // helpers
 // hooks
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // constants
 import { GANTT_SELECT_GROUP, HEADER_HEIGHT, SIDEBAR_WIDTH } from "../constants";
 
@@ -24,10 +24,11 @@ type Props = {
   title: string;
   quickAdd?: React.ReactNode | undefined;
   selectionHelpers: TSelectionHelper;
+  showAllBlocks?: boolean;
   isEpic?: boolean;
 };
 
-export const GanttChartSidebar: React.FC<Props> = observer((props) => {
+export const GanttChartSidebar = observer(function GanttChartSidebar(props: Props) {
   const { t } = useTranslation();
   const {
     blockIds,
@@ -41,6 +42,7 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
     title,
     quickAdd,
     selectionHelpers,
+    showAllBlocks = false,
     isEpic = false,
   } = props;
 
@@ -94,6 +96,7 @@ export const GanttChartSidebar: React.FC<Props> = observer((props) => {
             ganttContainerRef,
             loadMoreBlocks,
             selectionHelpers,
+            showAllBlocks,
             isEpic,
           })}
       </Row>

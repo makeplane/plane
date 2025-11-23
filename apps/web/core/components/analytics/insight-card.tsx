@@ -1,6 +1,6 @@
 // plane package imports
 import React from "react";
-import { IAnalyticsResponseFields } from "@plane/types";
+import type { IAnalyticsResponseFields } from "@plane/types";
 import { Loader } from "@plane/ui";
 
 export type InsightCardProps = {
@@ -9,7 +9,7 @@ export type InsightCardProps = {
   isLoading?: boolean;
 };
 
-const InsightCard = (props: InsightCardProps) => {
+function InsightCard(props: InsightCardProps) {
   const { data, label, isLoading = false } = props;
   const count = data?.count ?? 0;
 
@@ -25,6 +25,6 @@ const InsightCard = (props: InsightCardProps) => {
       )}
     </div>
   );
-};
+}
 
 export default InsightCard;

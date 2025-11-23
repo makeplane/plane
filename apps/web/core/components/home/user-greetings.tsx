@@ -1,7 +1,7 @@
-import { FC } from "react";
+import type { FC } from "react";
 // plane types
 import { useTranslation } from "@plane/i18n";
-import { IUser } from "@plane/types";
+import type { IUser } from "@plane/types";
 // plane ui
 // hooks
 import { useCurrentTime } from "@/hooks/use-current-time";
@@ -10,7 +10,7 @@ export interface IUserGreetingsView {
   user: IUser;
 }
 
-export const UserGreetingsView: FC<IUserGreetingsView> = (props) => {
+export function UserGreetingsView(props: IUserGreetingsView) {
   const { user } = props;
   // current time hook
   const { currentTime } = useCurrentTime();
@@ -53,4 +53,4 @@ export const UserGreetingsView: FC<IUserGreetingsView> = (props) => {
       </h5>
     </div>
   );
-};
+}

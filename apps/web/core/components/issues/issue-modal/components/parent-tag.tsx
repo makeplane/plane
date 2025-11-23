@@ -1,13 +1,12 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
-import { Control, Controller } from "react-hook-form";
-import { X } from "lucide-react";
-// plane imports
+import type { Control } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { ETabIndices } from "@plane/constants";
+import { CloseIcon } from "@plane/propel/icons";
+// plane imports
 // types
-import { ISearchIssueResponse, TIssue } from "@plane/types";
+import type { ISearchIssueResponse, TIssue } from "@plane/types";
 // helpers
 import { getTabIndex } from "@plane/utils";
 // hooks
@@ -22,7 +21,7 @@ type TIssueParentTagProps = {
   setSelectedParentIssue: (issue: ISearchIssueResponse | null) => void;
 };
 
-export const IssueParentTag: React.FC<TIssueParentTagProps> = observer((props) => {
+export const IssueParentTag = observer(function IssueParentTag(props: TIssueParentTagProps) {
   const { control, selectedParentIssue, handleFormChange, setSelectedParentIssue } = props;
   // store hooks
   const { isMobile } = usePlatformOS();
@@ -64,7 +63,7 @@ export const IssueParentTag: React.FC<TIssueParentTagProps> = observer((props) =
               }}
               tabIndex={getIndex("remove_parent")}
             >
-              <X className="h-3 w-3 cursor-pointer" />
+              <CloseIcon className="h-3 w-3 cursor-pointer" />
             </button>
           </div>
         </div>

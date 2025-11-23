@@ -2,15 +2,18 @@ import { clone, set } from "lodash-es";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 // types
 import { computedFn } from "mobx-utils";
-import { IWorkspaceSidebarNavigationItem, IWorkspace, IWorkspaceSidebarNavigation } from "@plane/types";
+import type { IWorkspaceSidebarNavigationItem, IWorkspace, IWorkspaceSidebarNavigation } from "@plane/types";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // store
 import type { CoreRootStore } from "@/store/root.store";
 // sub-stores
-import { ApiTokenStore, IApiTokenStore } from "./api-token.store";
-import { HomeStore, IHomeStore } from "./home";
-import { IWebhookStore, WebhookStore } from "./webhook.store";
+import type { IApiTokenStore } from "./api-token.store";
+import { ApiTokenStore } from "./api-token.store";
+import type { IHomeStore } from "./home";
+import { HomeStore } from "./home";
+import type { IWebhookStore } from "./webhook.store";
+import { WebhookStore } from "./webhook.store";
 
 export interface IWorkspaceRootStore {
   loader: boolean;

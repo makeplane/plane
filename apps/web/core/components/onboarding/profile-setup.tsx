@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -13,9 +11,10 @@ import {
 // types
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { IUser, TUserProfile, TOnboardingSteps } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IUser, TUserProfile, TOnboardingSteps } from "@plane/types";
 // ui
-import { Input, PasswordStrengthIndicator, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import { Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
 // components
 import { getFileURL, getPasswordStrength } from "@plane/utils";
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
@@ -77,7 +76,7 @@ const USER_DOMAIN = [
 
 const authService = new AuthService();
 
-export const ProfileSetup: React.FC<Props> = observer((props) => {
+export const ProfileSetup = observer(function ProfileSetup(props: Props) {
   const { user, totalSteps, stepChange, finishOnboarding } = props;
   // states
   const [profileSetupStep, setProfileSetupStep] = useState<EProfileSetupSteps>(

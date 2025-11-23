@@ -3,7 +3,8 @@ import { EmojiRoot } from "../emoji-icon-picker/emoji/emoji";
 import { emojiToString } from "../emoji-icon-picker/helper";
 import { Popover } from "../popover";
 import { cn } from "../utils/classname";
-import { convertPlacementToSideAndAlign, type TPlacement, type TSide, type TAlign } from "../utils/placement";
+import { convertPlacementToSideAndAlign } from "../utils/placement";
+import type { TPlacement, TSide, TAlign } from "../utils/placement";
 
 export interface EmojiReactionPickerProps {
   isOpen: boolean;
@@ -21,7 +22,7 @@ export interface EmojiReactionPickerProps {
   align?: TAlign;
 }
 
-export const EmojiReactionPicker: React.FC<EmojiReactionPickerProps> = (props) => {
+export function EmojiReactionPicker(props: EmojiReactionPickerProps) {
   const {
     isOpen,
     handleToggle,
@@ -70,6 +71,7 @@ export const EmojiReactionPicker: React.FC<EmojiReactionPickerProps> = (props) =
         side={finalSide}
         align={finalAlign}
         sideOffset={8}
+        data-prevent-outside-click="true"
       >
         <div className="h-80 overflow-hidden overflow-y-auto">
           <EmojiRoot
@@ -81,4 +83,4 @@ export const EmojiReactionPicker: React.FC<EmojiReactionPickerProps> = (props) =
       </Popover.Panel>
     </Popover>
   );
-};
+}

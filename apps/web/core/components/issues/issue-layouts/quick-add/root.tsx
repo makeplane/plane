@@ -1,15 +1,15 @@
-"use client";
-
-import { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { useForm, UseFormRegister } from "react-hook-form";
+import type { UseFormRegister } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IProject, TIssue, EIssueLayoutTypes } from "@plane/types";
-import { setPromiseToast } from "@plane/ui";
+import { setPromiseToast } from "@plane/propel/toast";
+import type { IProject, TIssue, EIssueLayoutTypes } from "@plane/types";
 import { cn, createIssuePayload } from "@plane/utils";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
@@ -49,7 +49,7 @@ const defaultValues: Partial<TIssue> = {
   name: "",
 };
 
-export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
+export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQuickAddIssueRoot) {
   const {
     isQuickAddOpen,
     layout,

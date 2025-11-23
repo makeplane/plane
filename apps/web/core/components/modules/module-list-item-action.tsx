@@ -1,6 +1,5 @@
-"use client";
-
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
@@ -16,10 +15,11 @@ import {
 } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { IModule } from "@plane/types";
+import type { IModule } from "@plane/types";
 // ui
-import { FavoriteStar, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
+import { FavoriteStar } from "@plane/ui";
 // components
 import { renderFormattedPayloadDate, getDate } from "@plane/utils";
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
@@ -40,7 +40,7 @@ type Props = {
   parentRef: React.RefObject<HTMLDivElement>;
 };
 
-export const ModuleListItemAction: FC<Props> = observer((props) => {
+export const ModuleListItemAction = observer(function ModuleListItemAction(props: Props) {
   const { moduleId, moduleDetails, parentRef } = props;
   // router
   const { workspaceSlug, projectId } = useParams();

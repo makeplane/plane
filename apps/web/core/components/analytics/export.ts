@@ -1,4 +1,4 @@
-import { ColumnDef, Row } from "@tanstack/react-table";
+import type { ColumnDef, Row } from "@tanstack/react-table";
 import { download, generateCsv, mkConfig } from "export-to-csv";
 
 export const csvConfig = (workspaceSlug: string) =>

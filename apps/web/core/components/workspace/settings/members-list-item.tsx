@@ -1,13 +1,11 @@
-"use client";
-
-import { FC } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
 import { MEMBER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IWorkspaceMember } from "@plane/types";
-import { TOAST_TYPE, Table, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IWorkspaceMember } from "@plane/types";
+import { Table } from "@plane/ui";
 // components
 import { MembersLayoutLoader } from "@/components/ui/loader/layouts/members-layout-loader";
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace/confirm-workspace-member-remove";
@@ -25,7 +23,7 @@ type Props = {
   memberDetails: (IWorkspaceMember | null)[];
 };
 
-export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
+export const WorkspaceMembersListItem = observer(function WorkspaceMembersListItem(props: Props) {
   const { memberDetails } = props;
   const { columns, workspaceSlug, removeMemberModal, setRemoveMemberModal } = useMemberColumns();
   // router

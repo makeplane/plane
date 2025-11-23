@@ -17,7 +17,7 @@ export type TWorkspaceLayoutProps = {
   issuesLoading: boolean;
 };
 
-export const WorkspaceActiveLayout = (props: TWorkspaceLayoutProps) => {
+export function WorkspaceActiveLayout(props: TWorkspaceLayoutProps) {
   const {
     activeLayout = EIssueLayoutTypes.SPREADSHEET,
     isDefaultView,
@@ -48,4 +48,4 @@ export const WorkspaceActiveLayout = (props: TWorkspaceLayoutProps) => {
     default:
       return <WorkspaceAdditionalLayouts {...props} />;
   }
-};
+}

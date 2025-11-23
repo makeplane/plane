@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { ISSUE_GROUP_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IIssueDisplayFilterOptions, TIssueGroupByOptions } from "@plane/types";
+import type { IIssueDisplayFilterOptions, TIssueGroupByOptions } from "@plane/types";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
+import { useGroupByOptions } from "@/plane-web/components/issues/issue-layouts/utils";
 
 type Props = {
   displayFilters: IIssueDisplayFilterOptions | undefined;
@@ -13,7 +13,7 @@ type Props = {
   ignoreGroupedFilters: Partial<TIssueGroupByOptions>[];
 };
 
-export const FilterGroupBy: React.FC<Props> = observer((props) => {
+export const FilterGroupBy = observer(function FilterGroupBy(props: Props) {
   const { displayFilters, groupByOptions, handleUpdate, ignoreGroupedFilters } = props;
   // hooks
   const { t } = useTranslation();
@@ -21,6 +21,8 @@ export const FilterGroupBy: React.FC<Props> = observer((props) => {
 
   const selectedGroupBy = displayFilters?.group_by ?? null;
   const selectedSubGroupBy = displayFilters?.sub_group_by ?? null;
+
+  const options = useGroupByOptions(groupByOptions);
 
   return (
     <>
@@ -31,7 +33,7 @@ export const FilterGroupBy: React.FC<Props> = observer((props) => {
       />
       {previewEnabled && (
         <div>
-          {ISSUE_GROUP_BY_OPTIONS.filter((option) => groupByOptions.includes(option.key)).map((groupBy) => {
+          {options.map((groupBy) => {
             if (
               displayFilters?.layout === "kanban" &&
               selectedSubGroupBy !== null &&

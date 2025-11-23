@@ -1,13 +1,12 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
-import { Control, Controller, FormState } from "react-hook-form";
+import type { Control, FormState } from "react-hook-form";
+import { Controller } from "react-hook-form";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 // ui
 import { Input } from "@plane/ui";
 // helpers
@@ -22,7 +21,7 @@ type TIssueTitleInputProps = {
   handleFormChange: () => void;
 };
 
-export const IssueTitleInput: React.FC<TIssueTitleInputProps> = observer((props) => {
+export const IssueTitleInput = observer(function IssueTitleInput(props: TIssueTitleInputProps) {
   const {
     control,
     issueTitleRef,

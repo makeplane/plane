@@ -1,4 +1,4 @@
-# Module improts
+# Module imports
 from .base import BaseSerializer
 from .issue import IssueExpandSerializer
 from plane.db.models import IntakeIssue, Issue
@@ -44,24 +44,7 @@ class IntakeIssueCreateSerializer(BaseSerializer):
 
     class Meta:
         model = IntakeIssue
-        fields = [
-            "issue",
-            "intake",
-            "status",
-            "snoozed_till",
-            "duplicate_to",
-            "source",
-            "source_email",
-        ]
-        read_only_fields = [
-            "id",
-            "workspace",
-            "project",
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-        ]
+        fields = ["issue"]
 
 
 class IntakeIssueSerializer(BaseSerializer):

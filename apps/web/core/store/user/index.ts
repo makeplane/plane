@@ -2,20 +2,21 @@ import { cloneDeep, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction, computed } from "mobx";
 // plane imports
 import { EUserPermissions, API_BASE_URL } from "@plane/constants";
-import { IUser, TUserPermissions } from "@plane/types";
-// local
-import { persistence } from "@/local-db/storage.sqlite";
+import type { IUser, TUserPermissions } from "@plane/types";
 // plane web imports
 import type { RootStore } from "@/plane-web/store/root.store";
-import { IUserPermissionStore, UserPermissionStore } from "@/plane-web/store/user/permission.store";
+import type { IUserPermissionStore } from "@/plane-web/store/user/permission.store";
+import { UserPermissionStore } from "@/plane-web/store/user/permission.store";
 // services
 import { AuthService } from "@/services/auth.service";
 import { UserService } from "@/services/user.service";
 // stores
-import { IAccountStore } from "@/store/user/account.store";
-import { ProfileStore, IUserProfileStore } from "@/store/user/profile.store";
+import type { IAccountStore } from "@/store/user/account.store";
+import type { IUserProfileStore } from "@/store/user/profile.store";
+import { ProfileStore } from "@/store/user/profile.store";
 // local imports
-import { IUserSettingsStore, UserSettingsStore } from "./settings.store";
+import type { IUserSettingsStore } from "./settings.store";
+import { UserSettingsStore } from "./settings.store";
 
 type TUserErrorStatus = {
   status: string;
@@ -45,7 +46,6 @@ export interface IUserStore {
   reset: () => void;
   signOut: () => Promise<void>;
   // computed
-  localDBEnabled: boolean;
   canPerformAnyCreateAction: boolean;
   projectsWithCreatePermissions: { [projectId: string]: number } | null;
 }
@@ -96,8 +96,6 @@ export class UserStore implements IUserStore {
       // computed
       canPerformAnyCreateAction: computed,
       projectsWithCreatePermissions: computed,
-
-      localDBEnabled: computed,
     });
   }
 
@@ -250,13 +248,12 @@ export class UserStore implements IUserStore {
    */
   signOut = async (): Promise<void> => {
     await this.authService.signOut(API_BASE_URL);
-    await persistence.clearStorage(true);
     this.store.resetOnSignOut();
   };
 
   // helper actions
   /**
-   * @description fetches the prjects with write permissions
+   * @description fetches the projects with write permissions
    * @returns {{[projectId: string]: number} || null}
    */
   fetchProjectsWithCreatePermissions = (): { [key: string]: TUserPermissions } => {
@@ -292,9 +289,5 @@ export class UserStore implements IUserStore {
   get canPerformAnyCreateAction() {
     const filteredProjects = this.fetchProjectsWithCreatePermissions();
     return filteredProjects ? Object.keys(filteredProjects).length > 0 : false;
-  }
-
-  get localDBEnabled() {
-    return this.userSettings.canUseLocalDB;
   }
 }

@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 // plane constants
-import { EIssueCommentAccessSpecifier } from "@plane/constants";
+import type { EIssueCommentAccessSpecifier } from "@plane/constants";
 // plane editor
-import { type EditorRefApi, type ILiteTextEditorProps, LiteTextEditorWithRef, type TFileHandler } from "@plane/editor";
+import { LiteTextEditorWithRef } from "@plane/editor";
+import type { EditorRefApi, ILiteTextEditorProps, TFileHandler } from "@plane/editor";
 // components
-import { TSticky } from "@plane/types";
+import type { TSticky } from "@plane/types";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
 import { useEditorConfig } from "@/hooks/editor";
+import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { StickyEditorToolbar } from "./toolbar";
@@ -16,7 +18,7 @@ import { StickyEditorToolbar } from "./toolbar";
 interface StickyEditorWrapperProps
   extends Omit<
     Omit<ILiteTextEditorProps, "extendedEditorProps">,
-    "disabledExtensions" | "editable" | "flaggedExtensions" | "fileHandler" | "mentionHandler"
+    "disabledExtensions" | "editable" | "flaggedExtensions" | "fileHandler" | "mentionHandler" | "getEditorMetaData"
   > {
   workspaceSlug: string;
   workspaceId: string;
@@ -29,12 +31,16 @@ interface StickyEditorWrapperProps
   showToolbarInitially?: boolean;
   showToolbar?: boolean;
   uploadFile: TFileHandler["upload"];
+  duplicateFile: TFileHandler["duplicate"];
   parentClassName?: string;
   handleColorChange: (data: Partial<TSticky>) => Promise<void>;
   handleDelete: () => void;
 }
 
-export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperProps>((props, ref) => {
+export const StickyEditor = React.forwardRef(function StickyEditor(
+  props: StickyEditorWrapperProps,
+  ref: React.ForwardedRef<EditorRefApi>
+) {
   const {
     containerClassName,
     workspaceSlug,
@@ -46,13 +52,20 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
     showToolbar = true,
     parentClassName = "",
     uploadFile,
+    duplicateFile,
     ...rest
   } = props;
   // states
   const [isFocused, setIsFocused] = useState(showToolbarInitially);
   // editor flaggings
   const { liteText: liteTextEditorExtensions } = useEditorFlagging({
-    workspaceSlug: workspaceSlug?.toString() ?? "",
+    workspaceSlug,
+    projectId,
+  });
+  // parse content
+  const { getEditorMetaData } = useParseEditorContent({
+    projectId,
+    workspaceSlug,
   });
   // editor config
   const { getEditorFileHandlers } = useEditorConfig();
@@ -61,6 +74,7 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
   }
   // derived values
   const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
+
   return (
     <div
       className={cn("relative border border-custom-border-200 rounded", parentClassName)}
@@ -75,9 +89,11 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
         fileHandler={getEditorFileHandlers({
           projectId,
           uploadFile,
+          duplicateFile,
           workspaceId,
           workspaceSlug,
         })}
+        getEditorMetaData={getEditorMetaData}
         mentionHandler={{
           renderComponent: () => <></>,
         }}

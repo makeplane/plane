@@ -1,12 +1,12 @@
-"use client";
-
-import React, { FC, useCallback, useState } from "react";
+import type { FC } from "react";
+import React, { useCallback, useState } from "react";
 import { observer } from "mobx-react";
-import { FileRejection, useDropzone } from "react-dropzone";
+import type { FileRejection } from "react-dropzone";
+import { useDropzone } from "react-dropzone";
 import { Plus } from "lucide-react";
 // plane imports
-import { TIssueServiceType } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TIssueServiceType } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web hooks
@@ -23,7 +23,7 @@ type Props = {
   issueServiceType: TIssueServiceType;
 };
 
-export const IssueAttachmentActionButton: FC<Props> = observer((props) => {
+export const IssueAttachmentActionButton = observer(function IssueAttachmentActionButton(props: Props) {
   const { workspaceSlug, projectId, issueId, customButton, disabled = false, issueServiceType } = props;
   // state
   const [isLoading, setIsLoading] = useState(false);

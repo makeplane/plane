@@ -1,4 +1,4 @@
-import { TSticky } from "@plane/types";
+import type { TSticky } from "@plane/types";
 
 export const STICKY_COLORS_LIST: {
   key: string;
@@ -51,7 +51,7 @@ type TProps = {
   handleUpdate: (data: Partial<TSticky>) => Promise<void>;
 };
 
-export const ColorPalette = (props: TProps) => {
+export function ColorPalette(props: TProps) {
   const { handleUpdate } = props;
   return (
     <div className="absolute z-10 bottom-5 left-0 w-56 shadow p-2 rounded-md bg-custom-background-100 mb-2">
@@ -75,4 +75,4 @@ export const ColorPalette = (props: TProps) => {
       </div>
     </div>
   );
-};
+}

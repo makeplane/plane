@@ -3,7 +3,8 @@ import { useState, useEffect, useCallback } from "react";
 import type { EditorRefApi, IMarking } from "@plane/editor";
 import { cn } from "@plane/utils";
 // components
-import { OutlineHeading1, OutlineHeading2, OutlineHeading3, THeadingComponentProps } from "./heading-components";
+import type { THeadingComponentProps } from "./heading-components";
+import { OutlineHeading1, OutlineHeading2, OutlineHeading3 } from "./heading-components";
 
 type Props = {
   className?: string;
@@ -13,7 +14,7 @@ type Props = {
   showOutline?: boolean;
 };
 
-export const PageContentBrowser: React.FC<Props> = (props) => {
+export function PageContentBrowser(props: Props) {
   const { className, editorRef, emptyState, setSidePeekVisible, showOutline = false } = props;
   // states
   const [headings, setHeadings] = useState<IMarking[]>([]);
@@ -78,4 +79,4 @@ export const PageContentBrowser: React.FC<Props> = (props) => {
       })}
     </div>
   );
-};
+}

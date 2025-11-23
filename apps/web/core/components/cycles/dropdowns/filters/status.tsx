@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { CYCLE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TCycleGroups } from "@plane/types";
+import type { TCycleGroups } from "@plane/types";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // types
@@ -14,7 +14,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterStatus: React.FC<Props> = observer((props) => {
+export const FilterStatus = observer(function FilterStatus(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery } = props;
   // states
   const [previewEnabled, setPreviewEnabled] = useState(true);

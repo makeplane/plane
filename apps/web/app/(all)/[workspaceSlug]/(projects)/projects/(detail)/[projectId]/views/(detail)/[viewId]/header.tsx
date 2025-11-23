@@ -1,9 +1,7 @@
-"use client";
-
 import { useCallback, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Layers, Lock } from "lucide-react";
+import { Lock } from "lucide-react";
 // plane constants
 import {
   EIssueFilterType,
@@ -15,15 +13,10 @@ import {
 } from "@plane/constants";
 // types
 import { Button } from "@plane/propel/button";
+import { ViewsIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import {
-  EIssuesStoreType,
-  EViewAccess,
-  ICustomSearchSelectOption,
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  EIssueLayoutTypes,
-} from "@plane/types";
+import type { ICustomSearchSelectOption, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+import { EIssuesStoreType, EViewAccess, EIssueLayoutTypes } from "@plane/types";
 // ui
 import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
@@ -31,6 +24,7 @@ import { SwitcherIcon, SwitcherLabel } from "@/components/common/switcher-label"
 import { DisplayFiltersSelection, FiltersDropdown, LayoutSelection } from "@/components/issues/issue-layouts/filters";
 // constants
 import { ViewQuickActions } from "@/components/views/quick-actions";
+import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-toggle";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssues } from "@/hooks/store/use-issues";
@@ -41,12 +35,13 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
-export const ProjectViewIssuesHeader: React.FC = observer(() => {
+export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader() {
   // refs
   const parentRef = useRef(null);
   // router
-  const { workspaceSlug, projectId, viewId } = useParams();
   const router = useAppRouter();
+  const { workspaceSlug, projectId, viewId: routerViewId } = useParams();
+  const viewId = routerViewId ? routerViewId.toString() : undefined;
   // store hooks
   const {
     issuesFilter: { issueFilters, updateFilters },
@@ -117,7 +112,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
       return {
         value: _view.id,
         query: _view.name,
-        content: <SwitcherLabel logo_props={_view.logo_props} name={_view.name} LabelIcon={Layers} />,
+        content: <SwitcherLabel logo_props={_view.logo_props} name={_view.name} LabelIcon={ViewsIcon} />,
       };
     })
     .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
@@ -143,7 +138,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                 title={viewDetails?.name}
                 icon={
                   <Breadcrumbs.Icon>
-                    <SwitcherIcon logo_props={viewDetails.logo_props} LabelIcon={Layers} size={16} />
+                    <SwitcherIcon logo_props={viewDetails.logo_props} LabelIcon={ViewsIcon} size={16} />
                   </Breadcrumbs.Icon>
                 }
                 isLast
@@ -163,8 +158,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         )}
       </Header.LeftItem>
       <Header.RightItem className="items-center">
-        {!viewDetails?.is_locked ? (
-          <>
+        <>
+          {!viewDetails.is_locked && (
             <LayoutSelection
               layouts={[
                 EIssueLayoutTypes.LIST,
@@ -176,6 +171,9 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
               onChange={(layout) => handleLayoutChange(layout)}
               selectedLayout={activeLayout}
             />
+          )}
+          {viewId && <WorkItemFiltersToggle entityType={EIssuesStoreType.PROJECT_VIEW} entityId={viewId} />}
+          {!viewDetails.is_locked && (
             <FiltersDropdown title="Display" placement="bottom-end">
               <DisplayFiltersSelection
                 layoutDisplayFiltersOptions={
@@ -189,10 +187,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                 moduleViewDisabled={!currentProjectDetails?.module_view}
               />
             </FiltersDropdown>
-          </>
-        ) : (
-          <></>
-        )}
+          )}
+        </>
         {canUserCreateIssue ? (
           <Button
             onClick={() => {

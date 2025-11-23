@@ -1,7 +1,6 @@
-"use client";
-
 import React, { useEffect, useState, useCallback } from "react";
-import { Globe2, Lock, LucideIcon } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { Globe2, Lock } from "lucide-react";
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 // editor
 import type { EditorRefApi } from "@plane/editor";
@@ -12,7 +11,8 @@ import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
 // constants
 import { cn } from "@plane/utils";
-import { TOOLBAR_ITEMS, ToolbarMenuItem } from "@/constants/editor";
+import type { ToolbarMenuItem } from "@/constants/editor";
+import { TOOLBAR_ITEMS } from "@/constants/editor";
 // helpers
 
 type Props = {
@@ -48,7 +48,7 @@ const COMMENT_ACCESS_SPECIFIERS: TCommentAccessType[] = [
 
 const toolbarItems = TOOLBAR_ITEMS.lite;
 
-export const IssueCommentToolbar: React.FC<Props> = (props) => {
+export function IssueCommentToolbar(props: Props) {
   const { t } = useTranslation();
   const {
     accessSpecifier,
@@ -182,4 +182,4 @@ export const IssueCommentToolbar: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

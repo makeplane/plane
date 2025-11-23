@@ -1,26 +1,16 @@
-"use client";
-
-import { FC, useCallback, useEffect, useState } from "react";
+import type { FC } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import {
-  CircleCheck,
-  CircleX,
-  ChevronDown,
-  ChevronUp,
-  Clock,
-  ExternalLink,
-  FileStack,
-  Link,
-  Trash2,
-  MoveRight,
-  Copy,
-} from "lucide-react";
+import { CircleCheck, CircleX, Clock, ExternalLink, FileStack, Link, Trash2, MoveRight, Copy } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { EInboxIssueStatus, TNameDescriptionLoader } from "@plane/types";
-import { ControlLink, CustomMenu, Row, TOAST_TYPE, setToast } from "@plane/ui";
+import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TNameDescriptionLoader } from "@plane/types";
+import { EInboxIssueStatus } from "@plane/types";
+import { ControlLink, CustomMenu, Row } from "@plane/ui";
 import { copyUrlToClipboard, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
@@ -51,7 +41,7 @@ type TInboxIssueActionsHeader = {
   embedRemoveCurrentNotification?: () => void;
 };
 
-export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((props) => {
+export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader(props: TInboxIssueActionsHeader) {
   const {
     workspaceSlug,
     projectId,
@@ -305,14 +295,14 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                 className="rounded border border-custom-border-200 p-1.5"
                 onClick={() => handleInboxIssueNavigation("prev")}
               >
-                <ChevronUp size={14} strokeWidth={2} />
+                <ChevronUpIcon height={14} width={14} strokeWidth={2} />
               </button>
               <button
                 type="button"
                 className="rounded border border-custom-border-200 p-1.5"
                 onClick={() => handleInboxIssueNavigation("next")}
               >
-                <ChevronDown size={14} strokeWidth={2} />
+                <ChevronDownIcon height={14} width={14} strokeWidth={2} />
               </button>
             </div>
           )}
@@ -324,7 +314,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                   variant="neutral-primary"
                   size="sm"
                   prependIcon={<CircleCheck className="w-3 h-3" />}
-                  className="text-green-500 border-0.5 border-green-500 bg-green-500/20 focus:bg-green-500/20 focus:text-green-500 hover:bg-green-500/40 bg-opacity-20"
+                  className="text-green-500 border border-green-500 bg-green-500/20 focus:bg-green-500/20 focus:text-green-500 hover:bg-green-500/40 bg-opacity-20"
                   onClick={() =>
                     handleActionWithPermission(
                       isProjectAdmin,
@@ -344,7 +334,7 @@ export const InboxIssueActionsHeader: FC<TInboxIssueActionsHeader> = observer((p
                   variant="neutral-primary"
                   size="sm"
                   prependIcon={<CircleX className="w-3 h-3" />}
-                  className="text-red-500 border-0.5 border-red-500 bg-red-500/20 focus:bg-red-500/20 focus:text-red-500 hover:bg-red-500/40 bg-opacity-20"
+                  className="text-red-500 border border-red-500 bg-red-500/20 focus:bg-red-500/20 focus:text-red-500 hover:bg-red-500/40 bg-opacity-20"
                   onClick={() =>
                     handleActionWithPermission(
                       isProjectAdmin,

@@ -1,8 +1,9 @@
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { concat, uniq } from "lodash-es";
 import { observer } from "mobx-react";
 import { PAST_DURATION_FILTER_OPTIONS } from "@plane/constants";
-import { TInboxIssueFilterDateKeys } from "@plane/types";
+import type { TInboxIssueFilterDateKeys } from "@plane/types";
 // components
 import { DateFilterModal } from "@/components/core/filters/date-filter-modal";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
@@ -21,7 +22,7 @@ const isDate = (date: string) => {
   return datePattern.test(date);
 };
 
-export const FilterDate: FC<Props> = observer((props) => {
+export const FilterDate = observer(function FilterDate(props: Props) {
   const { filterKey, label, searchQuery } = props;
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();

@@ -1,23 +1,23 @@
-"use client";
-
-import { FC, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { Pencil, ExternalLink, Link, Trash2 } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast, TContextMenuItem, LinkItemBlock } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TContextMenuItem } from "@plane/ui";
+import { LinkItemBlock } from "@plane/ui";
 // plane utils
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
 import { useHome } from "@/hooks/store/use-home";
 // types
-import { TLinkOperations } from "./use-links";
+import type { TLinkOperations } from "./use-links";
 
 export type TProjectLinkDetail = {
   linkId: string;
   linkOperations: TLinkOperations;
 };
 
-export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
+export const ProjectLinkDetail = observer(function ProjectLinkDetail(props: TProjectLinkDetail) {
   // props
   const { linkId, linkOperations } = props;
   // hooks
@@ -27,8 +27,7 @@ export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
   const { t } = useTranslation();
   // derived values
   const linkDetail = getLinkById(linkId);
-
-  if (!linkDetail) return null;
+  const linkUrl = linkDetail?.url;
 
   // handlers
   const handleEdit = useCallback(
@@ -40,18 +39,19 @@ export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
   );
 
   const handleCopyText = useCallback(() => {
-    copyTextToClipboard(linkDetail.url).then(() => {
+    if (!linkUrl) return;
+    copyTextToClipboard(linkUrl).then(() => {
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("link_copied"),
         message: t("view_link_copied_to_clipboard"),
       });
     });
-  }, [linkDetail.url, t]);
+  }, [linkUrl, t]);
 
   const handleOpenInNewTab = useCallback(() => {
-    window.open(linkDetail.url, "_blank", "noopener,noreferrer");
-  }, [linkDetail.url]);
+    window.open(linkUrl, "_blank", "noopener,noreferrer");
+  }, [linkUrl]);
 
   const handleDelete = useCallback(() => {
     linkOperations.remove(linkId);
@@ -87,6 +87,8 @@ export const ProjectLinkDetail: FC<TProjectLinkDetail> = observer((props) => {
     ],
     [handleEdit, handleOpenInNewTab, handleCopyText, handleDelete, t]
   );
+
+  if (!linkDetail) return null;
 
   return (
     <LinkItemBlock

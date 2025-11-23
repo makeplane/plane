@@ -2,7 +2,13 @@ import { useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
-import { ChartDataType, IBlockUpdateData, IBlockUpdateDependencyData, IGanttBlock, TGanttViews } from "@plane/types";
+import type {
+  ChartDataType,
+  IBlockUpdateData,
+  IBlockUpdateDependencyData,
+  IGanttBlock,
+  TGanttViews,
+} from "@plane/types";
 import { cn, getDate } from "@plane/utils";
 // components
 import { MultipleSelectGroup } from "@/components/core/multiple-select";
@@ -50,7 +56,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const GanttChartMainContent: React.FC<Props> = observer((props) => {
+export const GanttChartMainContent = observer(function GanttChartMainContent(props: Props) {
   const {
     blockIds,
     loadMoreBlocks,
@@ -181,6 +187,7 @@ export const GanttChartMainContent: React.FC<Props> = observer((props) => {
                 title={title}
                 quickAdd={quickAdd}
                 selectionHelpers={helpers}
+                showAllBlocks={showAllBlocks}
                 isEpic={isEpic}
               />
               <div className="relative min-h-full h-max flex-shrink-0 flex-grow">

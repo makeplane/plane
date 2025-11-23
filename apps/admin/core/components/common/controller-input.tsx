@@ -1,7 +1,6 @@
-"use client";
-
 import React, { useState } from "react";
-import { Controller, Control } from "react-hook-form";
+import type { Control } from "react-hook-form";
+import { Controller } from "react-hook-form";
 // icons
 import { Eye, EyeOff } from "lucide-react";
 // plane internal packages
@@ -29,7 +28,7 @@ export type TControllerInputFormField = {
   required: boolean;
 };
 
-export const ControllerInput: React.FC<Props> = (props) => {
+export function ControllerInput(props: Props) {
   const { name, control, type, label, description, placeholder, error, required } = props;
   // states
   const [showPassword, setShowPassword] = useState(false);
@@ -80,4 +79,4 @@ export const ControllerInput: React.FC<Props> = (props) => {
       {description && <p className="pt-0.5 text-xs text-custom-text-300">{description}</p>}
     </div>
   );
-};
+}

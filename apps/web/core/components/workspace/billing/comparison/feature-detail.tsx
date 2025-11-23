@@ -1,18 +1,17 @@
-import { FC } from "react";
 import { CheckCircle2, Minus, MinusCircle } from "lucide-react";
-import { EProductSubscriptionEnum } from "@plane/types";
+import type { EProductSubscriptionEnum } from "@plane/types";
 // plane imports
 import { getSubscriptionTextColor } from "@plane/ui";
 import { cn } from "@plane/utils";
 // constants
-import { TPlanFeatureData } from "@/constants/plans";
+import type { TPlanFeatureData } from "@/constants/plans";
 
 type TPlanFeatureDetailProps = {
   subscriptionType: EProductSubscriptionEnum;
   data: TPlanFeatureData;
 };
 
-export const PlanFeatureDetail: FC<TPlanFeatureDetailProps> = (props) => {
+export function PlanFeatureDetail(props: TPlanFeatureDetailProps) {
   const { subscriptionType, data } = props;
 
   if (data === null || data === undefined) {
@@ -25,4 +24,4 @@ export const PlanFeatureDetail: FC<TPlanFeatureDetailProps> = (props) => {
     return <MinusCircle className="size-4 text-custom-text-400" />;
   }
   return <>{data}</>;
-};
+}

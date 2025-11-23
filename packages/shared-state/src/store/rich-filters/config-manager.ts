@@ -1,11 +1,13 @@
 import { action, computed, makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { DEFAULT_FILTER_CONFIG_OPTIONS, TConfigOptions } from "@plane/constants";
-import { TExternalFilter, TFilterConfig, TFilterProperty, TFilterValue } from "@plane/types";
+import type { TConfigOptions } from "@plane/constants";
+import { DEFAULT_FILTER_CONFIG_OPTIONS } from "@plane/constants";
+import type { TExternalFilter, TFilterConfig, TFilterProperty, TFilterValue } from "@plane/types";
 // local imports
-import { FilterConfig, IFilterConfig } from "./config";
-import { IFilterInstance } from "./filter";
+import type { IFilterConfig } from "./config";
+import { FilterConfig } from "./config";
+import type { IFilterInstance } from "./filter";
 
 /**
  * Interface for managing filter configurations.
@@ -24,6 +26,7 @@ export interface IFilterConfigManager<P extends TFilterProperty> {
   // observables
   filterConfigs: Map<P, IFilterConfig<P, TFilterValue>>; // filter property -> config
   configOptions: TConfigOptions;
+  areConfigsReady: boolean;
   // computed
   allAvailableConfigs: IFilterConfig<P, TFilterValue>[];
   // computed functions
@@ -32,6 +35,7 @@ export interface IFilterConfigManager<P extends TFilterProperty> {
   register: <C extends TFilterConfig<P, TFilterValue>>(config: C) => void;
   registerAll: (configs: TFilterConfig<P, TFilterValue>[]) => void;
   updateConfigByProperty: (property: P, configUpdates: Partial<TFilterConfig<P, TFilterValue>>) => void;
+  setAreConfigsReady: (value: boolean) => void;
 }
 
 /**
@@ -57,8 +61,9 @@ export class FilterConfigManager<P extends TFilterProperty, E extends TExternalF
   // observables
   filterConfigs: IFilterConfigManager<P>["filterConfigs"];
   configOptions: IFilterConfigManager<P>["configOptions"];
+  areConfigsReady: IFilterConfigManager<P>["areConfigsReady"];
   // parent filter instance
-  _filterInstance: IFilterInstance<P, E>;
+  private _filterInstance: IFilterInstance<P, E>;
 
   /**
    * Creates a new FilterConfigManager instance.
@@ -69,18 +74,21 @@ export class FilterConfigManager<P extends TFilterProperty, E extends TExternalF
   constructor(filterInstance: IFilterInstance<P, E>, params: TConfigManagerParams) {
     this.filterConfigs = new Map<P, IFilterConfig<P>>();
     this.configOptions = this._initializeConfigOptions(params.options);
+    this.areConfigsReady = true;
     // parent filter instance
     this._filterInstance = filterInstance;
 
     makeObservable(this, {
       filterConfigs: observable,
       configOptions: observable,
+      areConfigsReady: observable,
       // computed
       allAvailableConfigs: computed,
       // helpers
       register: action,
       registerAll: action,
       updateConfigByProperty: action,
+      setAreConfigsReady: action,
     });
   }
 
@@ -144,6 +152,14 @@ export class FilterConfigManager<P extends TFilterProperty, E extends TExternalF
   updateConfigByProperty: IFilterConfigManager<P>["updateConfigByProperty"] = action((property, configUpdates) => {
     const prevConfig = this.filterConfigs.get(property);
     prevConfig?.mutate(configUpdates);
+  });
+
+  /**
+   * Updates the configs ready state.
+   * @param value - The new configs ready state.
+   */
+  setAreConfigsReady: IFilterConfigManager<P>["setAreConfigsReady"] = action((value) => {
+    this.areConfigsReady = value;
   });
 
   // ------------ private computed ------------

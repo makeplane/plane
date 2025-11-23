@@ -1,8 +1,6 @@
-"use client";
-
-import { FC } from "react";
+import type { FC } from "react";
 // plane imports
-import { EProjectFeatureKey } from "@plane/constants";
+import type { EProjectFeatureKey } from "@plane/constants";
 // local components
 import { ProjectBreadcrumb } from "./project";
 import { ProjectFeatureBreadcrumb } from "./project-feature";
@@ -14,7 +12,7 @@ type TCommonProjectBreadcrumbProps = {
   isLast?: boolean;
 };
 
-export const CommonProjectBreadcrumbs: FC<TCommonProjectBreadcrumbProps> = (props) => {
+export function CommonProjectBreadcrumbs(props: TCommonProjectBreadcrumbProps) {
   const { workspaceSlug, projectId, featureKey, isLast = false } = props;
   return (
     <>
@@ -29,4 +27,4 @@ export const CommonProjectBreadcrumbs: FC<TCommonProjectBreadcrumbProps> = (prop
       )}
     </>
   );
-};
+}

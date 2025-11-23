@@ -10,7 +10,7 @@ import { Row, ERowVariant } from "@plane/ui";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 // hooks
 import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
-import { WorkItemFiltersRow } from "@/components/work-item-filters/work-item-filters-row";
+import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 // local imports
@@ -21,7 +21,7 @@ import { ModuleKanBanLayout } from "../kanban/roots/module-root";
 import { ModuleListLayout } from "../list/roots/module-root";
 import { ModuleSpreadsheetLayout } from "../spreadsheet/roots/module-root";
 
-const ModuleIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined; moduleId: string }) => {
+function ModuleIssueLayout(props: { activeLayout: EIssueLayoutTypes | undefined; moduleId: string }) {
   switch (props.activeLayout) {
     case EIssueLayoutTypes.LIST:
       return <ModuleListLayout />;
@@ -36,9 +36,9 @@ const ModuleIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined;
     default:
       return null;
   }
-};
+}
 
-export const ModuleLayoutRoot: React.FC = observer(() => {
+export const ModuleLayoutRoot = observer(function ModuleLayoutRoot() {
   // router
   const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId, moduleId: routerModuleId } = useParams();
   const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;

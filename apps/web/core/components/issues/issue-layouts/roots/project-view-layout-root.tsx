@@ -9,7 +9,7 @@ import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 // hooks
 import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
-import { WorkItemFiltersRow } from "@/components/work-item-filters/work-item-filters-row";
+import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProjectView } from "@/hooks/store/use-project-view";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
@@ -21,7 +21,7 @@ import { ProjectViewKanBanLayout } from "../kanban/roots/project-view-root";
 import { ProjectViewListLayout } from "../list/roots/project-view-root";
 import { ProjectViewSpreadsheetLayout } from "../spreadsheet/roots/project-view-root";
 
-const ProjectViewIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined; viewId: string }) => {
+function ProjectViewIssueLayout(props: { activeLayout: EIssueLayoutTypes | undefined; viewId: string }) {
   switch (props.activeLayout) {
     case EIssueLayoutTypes.LIST:
       return <ProjectViewListLayout />;
@@ -36,9 +36,9 @@ const ProjectViewIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undef
     default:
       return null;
   }
-};
+}
 
-export const ProjectViewLayoutRoot: React.FC = observer(() => {
+export const ProjectViewLayoutRoot = observer(function ProjectViewLayoutRoot() {
   // router
   const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId, viewId: routerViewId } = useParams();
   const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug?.toString() : undefined;

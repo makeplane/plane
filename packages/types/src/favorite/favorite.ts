@@ -1,4 +1,4 @@
-import { TLogoProps } from "../common";
+import type { TLogoProps } from "../common";
 
 export type IFavorite = {
   id: string;
@@ -16,4 +16,5 @@ export type IFavorite = {
   children: IFavorite[];
   project_id: string | null;
   sequence: number;
+  workspace_id: string;
 };

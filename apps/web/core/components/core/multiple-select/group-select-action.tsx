@@ -1,10 +1,9 @@
-"use client";
 // ui
 import { Checkbox } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 
 type Props = {
   className?: string;
@@ -13,7 +12,7 @@ type Props = {
   selectionHelpers: TSelectionHelper;
 };
 
-export const MultipleSelectGroupAction: React.FC<Props> = (props) => {
+export function MultipleSelectGroupAction(props: Props) {
   const { className, disabled = false, groupID, selectionHelpers } = props;
   // derived values
   const groupSelectionStatus = selectionHelpers.isGroupSelected(groupID);
@@ -30,4 +29,4 @@ export const MultipleSelectGroupAction: React.FC<Props> = (props) => {
       disabled={disabled}
     />
   );
-};
+}

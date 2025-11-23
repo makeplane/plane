@@ -1,11 +1,10 @@
-"use client";
-
-import { FC, useMemo } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { EIssueServiceType, IIssueLabel, TIssue, TIssueServiceType } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IIssueLabel, TIssue, TIssueServiceType } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // components
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useLabel } from "@/hooks/store/use-label";
@@ -31,7 +30,7 @@ export type TLabelOperations = {
   createLabel: (workspaceSlug: string, projectId: string, data: Partial<IIssueLabel>) => Promise<any>;
 };
 
-export const IssueLabel: FC<TIssueLabel> = observer((props) => {
+export const IssueLabel = observer(function IssueLabel(props: TIssueLabel) {
   const {
     workspaceSlug,
     projectId,

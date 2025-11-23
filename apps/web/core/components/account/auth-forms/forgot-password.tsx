@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -10,7 +8,8 @@ import { CircleCheck } from "lucide-react";
 import { AUTH_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, getButtonStyling } from "@plane/propel/button";
-import { Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Input } from "@plane/ui";
 import { cn, checkEmailValidity } from "@plane/utils";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
@@ -33,7 +32,7 @@ const defaultValues: TForgotPasswordFormValues = {
 // services
 const authService = new AuthService();
 
-export const ForgotPasswordForm = observer(() => {
+export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
   // search params
   const searchParams = useSearchParams();
   const email = searchParams.get("email");

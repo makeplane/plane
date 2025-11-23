@@ -1,11 +1,10 @@
-// SidebarItemBase.tsx
-"use client";
-import { FC, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel, IWorkspaceSidebarNavigationItem } from "@plane/constants";
+import type { IWorkspaceSidebarNavigationItem } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { joinUrlPath } from "@plane/utils";
 // components
@@ -24,7 +23,11 @@ type Props = {
   additionalStaticItems?: string[];
 };
 
-export const SidebarItemBase: FC<Props> = observer(({ item, additionalRender, additionalStaticItems }) => {
+export const SidebarItemBase = observer(function SidebarItemBase({
+  item,
+  additionalRender,
+  additionalStaticItems,
+}: Props) {
   const { t } = useTranslation();
   const pathname = usePathname();
   const { workspaceSlug } = useParams();

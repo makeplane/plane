@@ -1,14 +1,14 @@
-"use client";
-
 import React, { useEffect, useState, useCallback } from "react";
-import { Check, ChevronDown } from "lucide-react";
+import { Check } from "lucide-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // constants
-import { TOOLBAR_ITEMS, TYPOGRAPHY_ITEMS, ToolbarMenuItem } from "@/constants/editor";
+import type { ToolbarMenuItem } from "@/constants/editor";
+import { TOOLBAR_ITEMS, TYPOGRAPHY_ITEMS } from "@/constants/editor";
 // local imports
 import { ColorDropdown } from "./color-dropdown";
 
@@ -22,7 +22,7 @@ type ToolbarButtonProps = {
   executeCommand: EditorRefApi["executeMenuItemCommand"];
 };
 
-const ToolbarButton: React.FC<ToolbarButtonProps> = React.memo((props) => {
+const ToolbarButton = React.memo(function ToolbarButton(props: ToolbarButtonProps) {
   const { item, isActive, executeCommand } = props;
 
   return (
@@ -44,9 +44,12 @@ const ToolbarButton: React.FC<ToolbarButtonProps> = React.memo((props) => {
             ...item.extraProps,
           })
         }
-        className={cn("grid size-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80", {
-          "bg-custom-background-80 text-custom-text-100": isActive,
-        })}
+        className={cn(
+          "shrink-0 grid size-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80",
+          {
+            "bg-custom-background-80 text-custom-text-100": isActive,
+          }
+        )}
       >
         <item.icon
           className={cn("size-4", {
@@ -62,7 +65,7 @@ ToolbarButton.displayName = "ToolbarButton";
 
 const toolbarItems = TOOLBAR_ITEMS.document;
 
-export const PageToolbar: React.FC<Props> = (props) => {
+export function PageToolbar(props: Props) {
   const { editorRef } = props;
   // states
   const [activeStates, setActiveStates] = useState<Record<string, boolean>>({});
@@ -101,7 +104,7 @@ export const PageToolbar: React.FC<Props> = (props) => {
         customButton={
           <span className="text-custom-text-300 text-sm border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 h-7 w-24 rounded px-2 flex items-center justify-between gap-2 whitespace-nowrap text-left">
             {activeTypography?.name || "Text"}
-            <ChevronDown className="flex-shrink-0 size-3" />
+            <ChevronDownIcon className="flex-shrink-0 size-3" />
           </span>
         }
         className="pr-2"
@@ -160,4 +163,4 @@ export const PageToolbar: React.FC<Props> = (props) => {
       ))}
     </div>
   );
-};
+}

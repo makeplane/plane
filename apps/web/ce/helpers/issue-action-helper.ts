@@ -1,4 +1,4 @@
-import { IssueActions } from "@/hooks/use-issues-actions";
+import type { IssueActions } from "@/hooks/use-issues-actions";
 
 export const useTeamIssueActions: () => IssueActions = () => ({
   fetchIssues: () => Promise.resolve(undefined),

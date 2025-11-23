@@ -1,12 +1,10 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane imports
 import { Loader } from "@plane/ui";
 // store hooks
 import { usePublish } from "@/hooks/store/publish";
 // types
-import { IIssue } from "@/types/issue";
+import type { IIssue } from "@/types/issue";
 // local imports
 import { PeekOverviewHeader } from "./header";
 import { PeekOverviewIssueActivity } from "./issue-activity";
@@ -19,7 +17,7 @@ type Props = {
   issueDetails: IIssue | undefined;
 };
 
-export const SidePeekView: React.FC<Props> = observer((props) => {
+export const SidePeekView = observer(function SidePeekView(props: Props) {
   const { anchor, handleClose, issueDetails } = props;
   // store hooks
   const { canComment } = usePublish(anchor);

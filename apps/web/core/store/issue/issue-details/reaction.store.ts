@@ -6,7 +6,7 @@ import { groupReactions } from "@plane/utils";
 // services
 import { IssueReactionService } from "@/services/issue";
 // types
-import { IIssueDetail } from "./root.store";
+import type { IIssueDetail } from "./root.store";
 
 export interface IIssueReactionStoreActions {
   // actions

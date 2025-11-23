@@ -1,10 +1,8 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EIssuesStoreType, TIssue } from "@plane/types";
+import type { EIssuesStoreType, TIssue } from "@plane/types";
 // plane web imports
 import { IssueModalProvider } from "@/plane-web/components/issues/issue-modal/provider";
 import { CreateUpdateIssueModalBase } from "./base";
@@ -30,7 +28,7 @@ export interface IssuesModalProps {
   allowedProjectIds?: string[];
 }
 
-export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((props) => {
+export const CreateUpdateIssueModal = observer(function CreateUpdateIssueModal(props: IssuesModalProps) {
   // router params
   const { cycleId, moduleId } = useParams();
   // derived values

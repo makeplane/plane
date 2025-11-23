@@ -1,6 +1,12 @@
 import { sortBy } from "lodash-es";
 // plane imports
-import { TPage, TPageFilterProps, TPageFiltersSortBy, TPageFiltersSortKey, TPageNavigationTabs } from "@plane/types";
+import type {
+  TPage,
+  TPageFilterProps,
+  TPageFiltersSortBy,
+  TPageFiltersSortKey,
+  TPageNavigationTabs,
+} from "@plane/types";
 // local imports
 import { getDate } from "./datetime";
 import { satisfiesDateFilter } from "./filter";

@@ -1,4 +1,4 @@
-import tlds from "tlds";
+import tlds from "./tlds";
 
 const PROTOCOL_REGEX = /^[a-zA-Z]+:\/\//;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

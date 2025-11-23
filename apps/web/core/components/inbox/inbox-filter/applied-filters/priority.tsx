@@ -1,17 +1,14 @@
-"use client";
-
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { PriorityIcon } from "@plane/propel/icons";
-import { TIssuePriorities } from "@plane/types";
+import { PriorityIcon, CloseIcon } from "@plane/propel/icons";
+import type { TIssuePriorities } from "@plane/types";
 import { Tag } from "@plane/ui";
 // hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 
-export const InboxIssueAppliedFiltersPriority: FC = observer(() => {
+export const InboxIssueAppliedFiltersPriority = observer(function InboxIssueAppliedFiltersPriority() {
   // hooks
   const { t } = useTranslation();
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
@@ -42,7 +39,7 @@ export const InboxIssueAppliedFiltersPriority: FC = observer(() => {
               className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
               onClick={() => handleInboxIssueFilters("priority", handleFilterValue(optionDetail?.key))}
             >
-              <X className={`w-3 h-3`} />
+              <CloseIcon className={`w-3 h-3`} />
             </div>
           </div>
         );
@@ -52,7 +49,7 @@ export const InboxIssueAppliedFiltersPriority: FC = observer(() => {
         className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
         onClick={clearFilter}
       >
-        <X className={`w-3 h-3`} />
+        <CloseIcon className={`w-3 h-3`} />
       </div>
     </Tag>
   );

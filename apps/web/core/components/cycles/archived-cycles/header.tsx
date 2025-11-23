@@ -1,10 +1,12 @@
-import { FC, useCallback, useRef, useState } from "react";
+import type { FC } from "react";
+import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { ListFilter, Search, X } from "lucide-react";
-// plane helpers
+import { ListFilter, Search } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
+import { CloseIcon } from "@plane/propel/icons";
+// plane helpers
 // types
 import type { TCycleFilters } from "@plane/types";
 import { cn, calculateTotalFilters } from "@plane/utils";
@@ -16,7 +18,7 @@ import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
 // local imports
 import { CycleFiltersSelection } from "../dropdowns";
 
-export const ArchivedCyclesHeader: FC = observer(() => {
+export const ArchivedCyclesHeader = observer(function ArchivedCyclesHeader() {
   // router
   const { projectId } = useParams();
   // refs
@@ -108,7 +110,7 @@ export const ArchivedCyclesHeader: FC = observer(() => {
                 setIsSearchOpen(false);
               }}
             >
-              <X className="h-3 w-3" />
+              <CloseIcon className="h-3 w-3" />
             </button>
           )}
         </div>

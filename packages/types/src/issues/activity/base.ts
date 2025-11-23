@@ -2,7 +2,7 @@ export * from "./issue_activity";
 export * from "./issue_comment";
 export * from "./issue_comment_reaction";
 
-import { TIssuePriorities } from "../../issues";
+import type { TIssuePriorities } from "../../issues";
 
 // root types
 export type TIssueActivityWorkspaceDetail = {
@@ -54,6 +54,21 @@ export type TIssueActivityComment =
   | {
       id: string;
       activity_type: "ACTIVITY";
+      created_at?: string;
+    }
+  | {
+      id: string;
+      activity_type: "STATE";
+      created_at?: string;
+    }
+  | {
+      id: string;
+      activity_type: "ASSIGNEE";
+      created_at?: string;
+    }
+  | {
+      id: string;
+      activity_type: "DEFAULT";
       created_at?: string;
     }
   | {

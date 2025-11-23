@@ -3,13 +3,13 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Plus } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { THomeWidgetProps } from "@plane/types";
+import type { THomeWidgetProps } from "@plane/types";
 import { useHome } from "@/hooks/store/use-home";
 import { LinkCreateUpdateModal } from "./create-update-link-modal";
 import { ProjectLinkList } from "./links";
 import { useLinks } from "./use-links";
 
-export const DashboardQuickLinks = observer((props: THomeWidgetProps) => {
+export const DashboardQuickLinks = observer(function DashboardQuickLinks(props: THomeWidgetProps) {
   const { workspaceSlug } = props;
   const { linkOperations } = useLinks(workspaceSlug);
   const {

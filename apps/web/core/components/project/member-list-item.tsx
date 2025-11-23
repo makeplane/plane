@@ -1,9 +1,8 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane imports
 import { MEMBER_TRACKER_EVENTS } from "@plane/constants";
-import { TOAST_TYPE, Table, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Table } from "@plane/ui";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
@@ -13,7 +12,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { useProjectColumns } from "@/plane-web/components/projects/settings/useProjectColumns";
 // store
-import { IProjectMemberDetails } from "@/store/member/project/base-project-member.store";
+import type { IProjectMemberDetails } from "@/store/member/project/base-project-member.store";
 // local imports
 import { ConfirmProjectMemberRemove } from "./confirm-project-member-remove";
 
@@ -23,7 +22,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
+export const ProjectMemberListItem = observer(function ProjectMemberListItem(props: Props) {
   const { memberDetails, projectId, workspaceSlug } = props;
   // router
   const router = useAppRouter();

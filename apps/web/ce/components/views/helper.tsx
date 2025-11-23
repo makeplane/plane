@@ -1,8 +1,8 @@
 import { ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { EIssueLayoutTypes, IProjectView } from "@plane/types";
-import { TContextMenuItem } from "@plane/ui";
-import { TWorkspaceLayoutProps } from "@/components/views/helper";
+import type { EIssueLayoutTypes, IProjectView } from "@plane/types";
+import type { TContextMenuItem } from "@plane/ui";
+import type { TWorkspaceLayoutProps } from "@/components/views/helper";
 
 export type TLayoutSelectionProps = {
   onChange: (layout: EIssueLayoutTypes) => void;
@@ -10,9 +10,13 @@ export type TLayoutSelectionProps = {
   workspaceSlug: string;
 };
 
-export const GlobalViewLayoutSelection = (props: TLayoutSelectionProps) => <></>;
+export function GlobalViewLayoutSelection(props: TLayoutSelectionProps) {
+  return <></>;
+}
 
-export const WorkspaceAdditionalLayouts = (props: TWorkspaceLayoutProps) => <></>;
+export function WorkspaceAdditionalLayouts(props: TWorkspaceLayoutProps) {
+  return <></>;
+}
 
 export type TMenuItemsFactoryProps = {
   isOwner: boolean;
@@ -77,4 +81,6 @@ export const useViewMenuItems = (props: TMenuItemsFactoryProps): TContextMenuIte
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const AdditionalHeaderItems = (view: IProjectView) => <></>;
+export function AdditionalHeaderItems(view: IProjectView) {
+  return <></>;
+}

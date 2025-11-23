@@ -1,15 +1,14 @@
-"use client";
-
-import { FC, useEffect } from "react";
+import type { FC } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane types
 // plane ui
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { TLink, TLinkEditableFields } from "@plane/types";
+import type { TLinkEditableFields } from "@plane/types";
 import { Input, ModalCore } from "@plane/ui";
-import { TLinkOperations } from "./use-links";
+import type { TLinkOperations } from "./use-links";
 
 export type TLinkOperationsModal = Exclude<TLinkOperations, "remove">;
 
@@ -29,7 +28,7 @@ const defaultValues: TLinkCreateFormFieldOptions = {
   url: "",
 };
 
-export const LinkCreateUpdateModal: FC<TLinkCreateEditModal> = observer((props) => {
+export const LinkCreateUpdateModal = observer(function LinkCreateUpdateModal(props: TLinkCreateEditModal) {
   // props
   const { isModalOpen, handleOnClose, linkOperations, preloadedData } = props;
   // react hook form

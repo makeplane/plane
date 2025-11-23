@@ -2,7 +2,8 @@ import type { Editor } from "@tiptap/core";
 import type { Selection } from "@tiptap/pm/state";
 import { TableMap } from "@tiptap/pm/tables";
 // extensions
-import { getSelectedRect, isCellSelection, type TableNodeLocation } from "@/extensions/table/table/utilities/helpers";
+import { getSelectedRect, isCellSelection } from "@/extensions/table/table/utilities/helpers";
+import type { TableNodeLocation } from "@/extensions/table/table/utilities/helpers";
 // local imports
 import { cloneTableCell, constructDragPreviewTable, updateCellContentVisibility } from "../utils";
 

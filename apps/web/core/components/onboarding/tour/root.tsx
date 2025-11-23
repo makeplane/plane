@@ -1,24 +1,20 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Image, { StaticImageData } from "next/image";
-import { X } from "lucide-react";
 // plane imports
 import { PRODUCT_TOUR_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
-import { PlaneLockup } from "@plane/propel/icons";
+import { CloseIcon, PlaneLockup } from "@plane/propel/icons";
+// assets
+import CyclesTour from "@/app/assets/onboarding/cycles.webp?url";
+import IssuesTour from "@/app/assets/onboarding/issues.webp?url";
+import ModulesTour from "@/app/assets/onboarding/modules.webp?url";
+import PagesTour from "@/app/assets/onboarding/pages.webp?url";
+import ViewsTour from "@/app/assets/onboarding/views.webp?url";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useUser } from "@/hooks/store/user";
-// assets
-import CyclesTour from "@/public/onboarding/cycles.webp";
-import IssuesTour from "@/public/onboarding/issues.webp";
-import ModulesTour from "@/public/onboarding/modules.webp";
-import PagesTour from "@/public/onboarding/pages.webp";
-import ViewsTour from "@/public/onboarding/views.webp";
 // local imports
 import { TourSidebar } from "./sidebar";
 
@@ -32,7 +28,7 @@ const TOUR_STEPS: {
   key: TTourSteps;
   title: string;
   description: string;
-  image: StaticImageData;
+  image: any;
   prevStep?: TTourSteps;
   nextStep?: TTourSteps;
 }[] = [
@@ -79,7 +75,7 @@ const TOUR_STEPS: {
   },
 ];
 
-export const TourRoot: React.FC<Props> = observer((props) => {
+export const TourRoot = observer(function TourRoot(props: Props) {
   const { onComplete } = props;
   // states
   const [step, setStep] = useState<TTourSteps>("welcome");
@@ -143,7 +139,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
             className="fixed right-[9%] top-[19%] z-10 -translate-y-1/2 translate-x-1/2 cursor-pointer rounded-full border border-custom-text-100 p-1 sm:top-[11.5%] md:right-[24%] lg:right-[19%]"
             onClick={onComplete}
           >
-            <X className="h-3 w-3 text-custom-text-100" />
+            <CloseIcon className="h-3 w-3 text-custom-text-100" />
           </button>
           <TourSidebar step={step} setStep={setStep} />
           <div className="col-span-10 h-full overflow-hidden lg:col-span-7">
@@ -152,7 +148,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
                 currentStepIndex % 2 === 0 ? "justify-end" : "justify-start"
               }`}
             >
-              <Image src={currentStep?.image} alt={currentStep?.title} />
+              <img src={currentStep?.image} className="w-full h-full object-cover" alt={currentStep?.title} />
             </div>
             <div className="flex h-1/2 flex-col overflow-y-auto p-4 sm:h-2/5">
               <h3 className="font-semibold sm:text-xl">{currentStep?.title}</h3>

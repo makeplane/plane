@@ -1,25 +1,22 @@
-"use client";
-
-import { FC, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // icons
-import { ChevronDown, Pencil } from "lucide-react";
+import { Pencil } from "lucide-react";
 // headless ui
 import { Disclosure, Transition } from "@headlessui/react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { useTranslation } from "@plane/i18n";
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { IUserProfileProjectSegregation } from "@plane/types";
+import type { IUserProfileProjectSegregation } from "@plane/types";
 // plane ui
 import { Loader } from "@plane/ui";
 import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
-// components
-import { Logo } from "@/components/common/logo";
-// helpers
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useProject } from "@/hooks/store/use-project";
@@ -33,7 +30,7 @@ type TProfileSidebar = {
   className?: string;
 };
 
-export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
+export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSidebar) {
   const { userProjectsData, className = "" } = props;
   // refs
   const ref = useRef<HTMLDivElement>(null);
@@ -181,7 +178,7 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
                                 </div>
                               </Tooltip>
                             )}
-                            <ChevronDown className="h-4 w-4" />
+                            <ChevronDownIcon className="h-4 w-4" />
                           </div>
                         </Disclosure.Button>
                         <Transition

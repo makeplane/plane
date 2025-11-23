@@ -1,16 +1,16 @@
-"use client";
-
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { Check } from "lucide-react";
 // plane imports
-import { ENotificationFilterType } from "@plane/constants";
+import type { ENotificationFilterType } from "@plane/constants";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 
-export const NotificationFilterOptionItem: FC<{ label: string; value: ENotificationFilterType }> = observer((props) => {
+export const NotificationFilterOptionItem = observer(function NotificationFilterOptionItem(props: {
+  label: string;
+  value: ENotificationFilterType;
+}) {
   const { value, label } = props;
   // hooks
   const { filters, updateFilters } = useWorkspaceNotifications();

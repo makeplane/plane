@@ -1,11 +1,8 @@
-"use client";
-
 import React from "react";
 // ui
 import { Copy } from "lucide-react";
 import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/ui";
-// icons
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 
 type Props = {
   label: string;
@@ -20,7 +17,7 @@ export type TCopyField = {
   description: string | React.ReactNode;
 };
 
-export const CopyField: React.FC<Props> = (props) => {
+export function CopyField(props: Props) {
   const { label, url, description } = props;
 
   return (
@@ -44,4 +41,4 @@ export const CopyField: React.FC<Props> = (props) => {
       <div className="text-xs text-custom-text-300">{description}</div>
     </div>
   );
-};
+}

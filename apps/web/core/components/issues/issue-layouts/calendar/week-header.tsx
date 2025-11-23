@@ -11,7 +11,7 @@ type Props = {
   showWeekends: boolean;
 };
 
-export const CalendarWeekHeader: React.FC<Props> = observer((props) => {
+export const CalendarWeekHeader = observer(function CalendarWeekHeader(props: Props) {
   const { isLoading, showWeekends } = props;
   // hooks
   const { data } = useUserProfile();

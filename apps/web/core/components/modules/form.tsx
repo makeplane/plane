@@ -1,12 +1,10 @@
-"use client";
-
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { IModule } from "@plane/types";
+import type { IModule } from "@plane/types";
 // ui
 import { Input, TextArea } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
@@ -36,7 +34,7 @@ const defaultValues: Partial<IModule> = {
   member_ids: [],
 };
 
-export const ModuleForm: React.FC<Props> = (props) => {
+export function ModuleForm(props: Props) {
   const { handleFormSubmit, handleClose, status, projectId, setActiveProject, data, isMobile = false } = props;
   // store hooks
   const { projectsWithCreatePermissions } = useUser();
@@ -244,4 +242,4 @@ export const ModuleForm: React.FC<Props> = (props) => {
       </div>
     </form>
   );
-};
+}

@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { CalendarDays } from "lucide-react";
 // hooks
@@ -10,7 +10,7 @@ import { IssueActivityBlockComponent, IssueLink } from "./";
 
 type TIssueTargetDateActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
-export const IssueTargetDateActivity: FC<TIssueTargetDateActivity> = observer((props) => {
+export const IssueTargetDateActivity = observer(function IssueTargetDateActivity(props: TIssueTargetDateActivity) {
   const { activityId, showIssue = true, ends } = props;
   // hooks
   const {

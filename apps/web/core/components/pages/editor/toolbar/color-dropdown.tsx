@@ -1,10 +1,9 @@
-"use client";
-
 import { memo } from "react";
 import { ALargeSmall, Ban } from "lucide-react";
 import { Popover } from "@headlessui/react";
 // plane editor
-import { COLORS_LIST, type TEditorCommands } from "@plane/editor";
+import { COLORS_LIST } from "@plane/editor";
+import type { TEditorCommands } from "@plane/editor";
 // helpers
 import { cn } from "@plane/utils";
 
@@ -19,7 +18,7 @@ type Props = {
   ) => boolean;
 };
 
-export const ColorDropdown: React.FC<Props> = memo((props) => {
+export const ColorDropdown = memo(function ColorDropdown(props: Props) {
   const { handleColorSelect, isColorActive } = props;
 
   const activeTextColor = COLORS_LIST.find((c) => isColorActive("text-color", c.key));

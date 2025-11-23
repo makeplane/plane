@@ -7,7 +7,10 @@ export interface OAuthButtonProps extends React.ButtonHTMLAttributes<HTMLButtonE
   compact?: boolean;
 }
 
-const OAuthButton = React.forwardRef<HTMLButtonElement, OAuthButtonProps>((props, ref) => {
+const OAuthButton = React.forwardRef(function OAuthButton(
+  props: OAuthButtonProps,
+  ref: React.ForwardedRef<HTMLButtonElement>
+) {
   const { text, icon, compact = false, className = "", ...rest } = props;
 
   return (

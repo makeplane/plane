@@ -1,13 +1,11 @@
-"use client";
-
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm, Controller } from "react-hook-form";
 // plane imports
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { SitesFileService } from "@plane/services";
-import { TIssuePublicComment } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import type { TIssuePublicComment } from "@plane/types";
 // editor components
 import { LiteTextEditor } from "@/components/editor/lite-text-editor";
 // hooks
@@ -26,7 +24,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const AddComment: React.FC<Props> = observer((props) => {
+export const AddComment = observer(function AddComment(props: Props) {
   const { anchor } = props;
   // states
   const [uploadedAssetIds, setUploadAssetIds] = useState<string[]>([]);

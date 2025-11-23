@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -8,9 +6,10 @@ import { Check, ExternalLink, Globe2 } from "lucide-react";
 // types
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { Button } from "@plane/propel/button";
-import { TProjectPublishLayouts, TProjectPublishSettings } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TProjectPublishLayouts, TProjectPublishSettings } from "@plane/types";
 // ui
-import { Loader, ToggleSwitch, TOAST_TYPE, setToast, CustomSelect, ModalCore, EModalWidth } from "@plane/ui";
+import { Loader, ToggleSwitch, CustomSelect, ModalCore, EModalWidth } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
@@ -41,7 +40,7 @@ const VIEW_OPTIONS: {
   { key: "kanban", label: "Kanban" },
 ];
 
-export const PublishProjectModal: React.FC<Props> = observer((props) => {
+export const PublishProjectModal = observer(function PublishProjectModal(props: Props) {
   const { isOpen, onClose, projectId } = props;
   // states
   const [isUnPublishing, setIsUnPublishing] = useState(false);

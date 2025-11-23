@@ -1,9 +1,11 @@
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { MODULE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ModuleStatusIcon, TModuleStatus } from "@plane/propel/icons";
-import { IModule } from "@plane/types";
+import type { TModuleStatus } from "@plane/propel/icons";
+import { ModuleStatusIcon } from "@plane/propel/icons";
+import type { IModule } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 
 type Props = {
@@ -12,7 +14,7 @@ type Props = {
   handleModuleDetailsChange: (payload: Partial<IModule>) => Promise<void>;
 };
 
-export const ModuleStatusDropdown: FC<Props> = observer((props: Props) => {
+export const ModuleStatusDropdown = observer(function ModuleStatusDropdown(props: Props) {
   const { isDisabled, moduleDetails, handleModuleDetailsChange } = props;
   const { t } = useTranslation();
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);

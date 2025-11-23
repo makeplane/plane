@@ -3,7 +3,8 @@ import { observer } from "mobx-react";
 // plane constants
 import { SPREADSHEET_SELECT_GROUP, SPREADSHEET_PROPERTY_LIST } from "@plane/constants";
 // types
-import { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, EIssueLayoutTypes } from "@plane/types";
+import type { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+import { EIssueLayoutTypes } from "@plane/types";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { MultipleSelectGroup } from "@/components/core/multiple-select";
@@ -36,7 +37,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const SpreadsheetView: React.FC<Props> = observer((props) => {
+export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
   const {
     displayProperties,
     displayFilters,

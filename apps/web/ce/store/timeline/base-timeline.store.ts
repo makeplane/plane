@@ -313,7 +313,7 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
   });
 
   /**
-   * updates the block's position such as marginLeft and width wile dragging
+   * updates the block's position such as marginLeft and width while dragging
    * @param id
    * @param deltaLeft
    * @param deltaWidth

@@ -1,16 +1,15 @@
-"use client";
-
-import { Fragment, ReactNode, useRef, useState } from "react";
+import type { ReactNode } from "react";
+import { Fragment, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { usePopper } from "react-popper";
-import { Check, ChevronDown, Search, SignalHigh } from "lucide-react";
+import { Check, Search, SignalHigh } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
-import { PriorityIcon } from "@plane/propel/icons";
+import { PriorityIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { TIssuePriorities } from "@plane/types";
+import type { TIssuePriorities } from "@plane/types";
 // ui
 import { ComboDropDown } from "@plane/ui";
 // helpers
@@ -21,7 +20,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // constants
 import { BACKGROUND_BUTTON_VARIANTS, BORDER_BUTTON_VARIANTS, BUTTON_VARIANTS_WITHOUT_TEXT } from "./constants";
 // types
-import { TDropdownProps } from "./types";
+import type { TDropdownProps } from "./types";
 
 type Props = TDropdownProps & {
   button?: ReactNode;
@@ -48,7 +47,7 @@ type ButtonProps = {
   renderToolTipByDefault?: boolean;
 };
 
-const BorderButton = (props: ButtonProps) => {
+function BorderButton(props: ButtonProps) {
   const {
     className,
     dropdownArrow,
@@ -124,14 +123,14 @@ const BorderButton = (props: ButtonProps) => {
           ))}
         {!hideText && <span className="flex-grow truncate">{priorityDetails?.title ?? placeholder}</span>}
         {dropdownArrow && (
-          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+          <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
       </div>
     </Tooltip>
   );
-};
+}
 
-const BackgroundButton = (props: ButtonProps) => {
+function BackgroundButton(props: ButtonProps) {
   const {
     className,
     dropdownArrow,
@@ -209,14 +208,14 @@ const BackgroundButton = (props: ButtonProps) => {
           <span className="flex-grow truncate">{priorityDetails?.title ?? t("common.priority") ?? placeholder}</span>
         )}
         {dropdownArrow && (
-          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+          <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
       </div>
     </Tooltip>
   );
-};
+}
 
-const TransparentButton = (props: ButtonProps) => {
+function TransparentButton(props: ButtonProps) {
   const {
     className,
     dropdownArrow,
@@ -296,14 +295,14 @@ const TransparentButton = (props: ButtonProps) => {
           <span className="flex-grow truncate">{priorityDetails?.title ?? t("common.priority") ?? placeholder}</span>
         )}
         {dropdownArrow && (
-          <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+          <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
         )}
       </div>
     </Tooltip>
   );
-};
+}
 
-export const PriorityDropdown: React.FC<Props> = (props) => {
+export function PriorityDropdown(props: Props) {
   //hooks
   const { t } = useTranslation();
   const {
@@ -503,4 +502,4 @@ export const PriorityDropdown: React.FC<Props> = (props) => {
       )}
     </ComboDropDown>
   );
-};
+}

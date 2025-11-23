@@ -1,7 +1,7 @@
 import React from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
-import {
+import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   ILayoutDisplayFiltersOptions,
@@ -28,7 +28,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
+export const DisplayFiltersSelection = observer(function DisplayFiltersSelection(props: Props) {
   const {
     displayFilters,
     displayProperties,

@@ -1,8 +1,9 @@
 import * as React from "react";
 import { Menu as BaseMenu } from "@base-ui-components/react/menu";
-import { ChevronDown, ChevronRight, MoreHorizontal } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
+import { ChevronDownIcon, ChevronRightIcon } from "../icons";
 import { cn } from "../utils/classname";
-import { TMenuProps, TSubMenuProps, TMenuItemProps } from "./types";
+import type { TMenuProps, TSubMenuProps, TMenuItemProps } from "./types";
 
 // Context for main menu to communicate with submenus
 const MenuContext = React.createContext<{
@@ -17,14 +18,14 @@ const SubMenuContext = React.createContext<{ closeSubmenu: () => void } | null>(
 const useSubMenu = () => React.useContext(SubMenuContext);
 
 // SubMenu implementation
-const SubMenu: React.FC<TSubMenuProps> = (props) => {
+function SubMenu(props: TSubMenuProps) {
   const { children, trigger, disabled = false, className = "" } = props;
 
   return (
     <BaseMenu.SubmenuRoot disabled={disabled}>
       <BaseMenu.SubmenuTrigger className={""}>
         <span className="flex-1">{trigger}</span>
-        <ChevronRight />
+        <ChevronRightIcon />
       </BaseMenu.SubmenuTrigger>
       <BaseMenu.Portal>
         <BaseMenu.Positioner className={""} alignOffset={-4} sideOffset={-4}>
@@ -33,9 +34,9 @@ const SubMenu: React.FC<TSubMenuProps> = (props) => {
       </BaseMenu.Portal>
     </BaseMenu.SubmenuRoot>
   );
-};
+}
 
-const MenuItem: React.FC<TMenuItemProps> = (props) => {
+function MenuItem(props: TMenuItemProps) {
   const { children, disabled = false, onClick, className } = props;
   const submenuContext = useSubMenu();
 
@@ -58,7 +59,7 @@ const MenuItem: React.FC<TMenuItemProps> = (props) => {
       {children}
     </BaseMenu.Item>
   );
-};
+}
 
 function Menu(props: TMenuProps) {
   const {
@@ -163,7 +164,7 @@ function Menu(props: TMenuProps) {
               aria-label={ariaLabel}
             >
               {label}
-              {!noChevron && <ChevronDown className="h-3.5 w-3.5" />}
+              {!noChevron && <ChevronDownIcon className="h-3.5 w-3.5" />}
             </BaseMenu.Trigger>
           )}
         </>

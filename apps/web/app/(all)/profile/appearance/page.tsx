@@ -1,13 +1,12 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
-import { I_THEME_OPTION, THEME_OPTIONS } from "@plane/constants";
+import type { I_THEME_OPTION } from "@plane/constants";
+import { THEME_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IUserTheme } from "@plane/types";
-import { setPromiseToast } from "@plane/ui";
+import { setPromiseToast } from "@plane/propel/toast";
+import type { IUserTheme } from "@plane/types";
 // components
 import { applyTheme, unsetCustomCssVariables } from "@plane/utils";
 import { LogoSpinner } from "@/components/common/logo-spinner";
@@ -19,7 +18,7 @@ import { ProfileSettingContentWrapper } from "@/components/profile/profile-setti
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
 
-const ProfileAppearancePage = observer(() => {
+function ProfileAppearancePage() {
   const { t } = useTranslation();
   const { setTheme } = useTheme();
   // states
@@ -85,6 +84,6 @@ const ProfileAppearancePage = observer(() => {
       )}
     </>
   );
-});
+}
 
-export default ProfileAppearancePage;
+export default observer(ProfileAppearancePage);

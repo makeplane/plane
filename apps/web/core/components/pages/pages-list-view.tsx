@@ -1,8 +1,9 @@
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { TPageNavigationTabs } from "@plane/types";
+import type { TPageNavigationTabs } from "@plane/types";
 // plane web hooks
-import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
+import { usePageStore } from "@/plane-web/hooks/store";
 // local imports
 import { PagesListHeaderRoot } from "./header";
 import { PagesListMainContent } from "./pages-list-main-content";
@@ -15,7 +16,7 @@ type TPageView = {
   workspaceSlug: string;
 };
 
-export const PagesListView: React.FC<TPageView> = observer((props) => {
+export const PagesListView = observer(function PagesListView(props: TPageView) {
   const { children, pageType, projectId, storeType, workspaceSlug } = props;
   // store hooks
   const { isAnyPageAvailable, fetchPagesList } = usePageStore(storeType);

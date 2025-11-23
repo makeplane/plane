@@ -1,19 +1,17 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import { Link2, MoveRight } from "lucide-react";
 import { Listbox, Transition } from "@headlessui/react";
 // ui
 import { CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // helpers
 import { copyTextToClipboard } from "@/helpers/string.helper";
 // hooks
 import { useIssueDetails } from "@/hooks/store/use-issue-details";
 import useClipboardWritePermission from "@/hooks/use-clipboard-write-permission";
 // types
-import { IIssue, IPeekMode } from "@/types/issue";
+import type { IIssue, IPeekMode } from "@/types/issue";
 
 type Props = {
   handleClose: () => void;
@@ -38,7 +36,7 @@ const PEEK_MODES: {
   },
 ];
 
-export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
+export const PeekOverviewHeader = observer(function PeekOverviewHeader(props: Props) {
   const { handleClose } = props;
 
   const { peekMode, setPeekMode } = useIssueDetails();

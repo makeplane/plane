@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -13,7 +11,7 @@ import {
   PROJECT_SETTINGS_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IProject } from "@plane/types";
+import type { IProject } from "@plane/types";
 // ui
 import { CustomSelect, Loader, ToggleSwitch } from "@plane/ui";
 // component
@@ -30,7 +28,7 @@ type Props = {
 
 const initialValues: Partial<IProject> = { archive_in: 1 };
 
-export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
+export const AutoArchiveAutomation = observer(function AutoArchiveAutomation(props: Props) {
   const { handleChange } = props;
   // router
   const { workspaceSlug } = useParams();

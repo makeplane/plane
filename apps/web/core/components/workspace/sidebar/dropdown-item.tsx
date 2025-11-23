@@ -1,4 +1,3 @@
-"use client";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -7,7 +6,7 @@ import { Menu } from "@headlessui/react";
 // plane imports
 import { EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IWorkspace } from "@plane/types";
+import type { IWorkspace } from "@plane/types";
 import { cn, getFileURL, getUserRole } from "@plane/utils";
 // plane web imports
 import { SubscriptionPill } from "@/plane-web/components/common/subscription/subscription-pill";
@@ -19,7 +18,7 @@ type TProps = {
   handleWorkspaceNavigation: (workspace: IWorkspace) => void;
   handleClose: () => void;
 };
-const SidebarDropdownItem = observer((props: TProps) => {
+const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps) {
   const { workspace, activeWorkspace, handleItemClick, handleWorkspaceNavigation, handleClose } = props;
   // router
   const { workspaceSlug } = useParams();

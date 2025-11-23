@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
@@ -11,13 +9,13 @@ import { getFileIcon } from "@/components/icons";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
-import { TAttachmentUploadStatus } from "@/store/issue/issue-details/attachment.store";
+import type { TAttachmentUploadStatus } from "@/store/issue/issue-details/attachment.store";
 
 type Props = {
   uploadStatus: TAttachmentUploadStatus;
 };
 
-export const IssueAttachmentsUploadItem: React.FC<Props> = observer((props) => {
+export const IssueAttachmentsUploadItem = observer(function IssueAttachmentsUploadItem(props: Props) {
   // props
   const { uploadStatus } = props;
   // derived values

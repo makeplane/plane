@@ -1,14 +1,13 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
 import { PROJECT_ERROR_MESSAGES, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TDeDupeIssue, TIssue } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TDeDupeIssue, TIssue } from "@plane/types";
 // ui
-import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { AlertModalCore } from "@plane/ui";
 // constants
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
@@ -26,7 +25,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const DeleteIssueModal: React.FC<Props> = observer((props) => {
+export const DeleteIssueModal = observer(function DeleteIssueModal(props: Props) {
   const { dataId, data, isOpen, handleClose, isSubIssue = false, onSubmit, isEpic = false } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);

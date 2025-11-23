@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 
@@ -14,7 +12,9 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ArchiveIcon } from "@plane/propel/icons";
-import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TContextMenuItem } from "@plane/ui";
+import { ContextMenu, CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // helpers
 // hooks
@@ -36,7 +36,7 @@ type Props = {
   customClassName?: string;
 };
 
-export const CycleQuickActions: React.FC<Props> = observer((props) => {
+export const CycleQuickActions = observer(function CycleQuickActions(props: Props) {
   const { parentRef, cycleId, projectId, workspaceSlug, customClassName } = props;
   // router
   const router = useAppRouter();
@@ -168,15 +168,18 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
 
   if (endCycleContextMenu) MENU_ITEMS.splice(3, 0, endCycleContextMenu);
 
-  const CONTEXT_MENU_ITEMS = MENU_ITEMS.map((item) => ({
-    ...item,
-    action: () => {
-      captureClick({
-        elementName: CYCLE_TRACKER_ELEMENTS.CONTEXT_MENU,
-      });
-      item.action();
-    },
-  }));
+  const CONTEXT_MENU_ITEMS = MENU_ITEMS.map(function CONTEXT_MENU_ITEMS(item) {
+    return {
+      ...item,
+
+      action: () => {
+        captureClick({
+          elementName: CYCLE_TRACKER_ELEMENTS.CONTEXT_MENU,
+        });
+        item.action();
+      },
+    };
+  });
 
   return (
     <>
@@ -223,9 +226,7 @@ export const CycleQuickActions: React.FC<Props> = observer((props) => {
           return (
             <CustomMenu.MenuItem
               key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 captureClick({
                   elementName: CYCLE_TRACKER_ELEMENTS.QUICK_ACTIONS,
                 });

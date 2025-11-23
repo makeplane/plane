@@ -1,11 +1,9 @@
-"use client";
-
 import React, { useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS } from "@plane/constants";
-import { EUserWorkspaceRoles } from "@plane/types";
+import type { EUserWorkspaceRoles } from "@plane/types";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -13,7 +11,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { ExtendedSidebarItem } from "@/plane-web/components/workspace/sidebar/extended-sidebar-item";
 import { ExtendedSidebarWrapper } from "./extended-sidebar-wrapper";
 
-export const ExtendedAppSidebar = observer(() => {
+export const ExtendedAppSidebar = observer(function ExtendedAppSidebar() {
   // refs
   const extendedSidebarRef = useRef<HTMLDivElement | null>(null);
   // routers

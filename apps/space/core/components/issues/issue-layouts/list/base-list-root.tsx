@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 // types
-import { IIssueDisplayProperties, TGroupedIssues } from "@plane/types";
+import type { IIssueDisplayProperties, TGroupedIssues } from "@plane/types";
 // constants
 // components
 import { IssueLayoutHOC } from "@/components/issues/issue-layouts/issue-layout-HOC";
@@ -13,7 +13,7 @@ type Props = {
   anchor: string;
 };
 
-export const IssuesListLayoutRoot = observer((props: Props) => {
+export const IssuesListLayoutRoot = observer(function IssuesListLayoutRoot(props: Props) {
   const { anchor } = props;
   // store hooks
   const {

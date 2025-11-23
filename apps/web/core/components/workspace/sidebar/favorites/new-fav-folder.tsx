@@ -1,13 +1,15 @@
 import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import type { SubmitHandler } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 // plane helpers
 // plane ui
 import { FavoriteFolderIcon } from "@plane/propel/icons";
-import { Input, setToast, TOAST_TYPE } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Input } from "@plane/ui";
 // hooks
 import { useFavorite } from "@/hooks/store/use-favorite";
 
@@ -24,7 +26,7 @@ type TProps = {
   defaultName?: string;
   favoriteId?: string;
 };
-export const NewFavoriteFolder = observer((props: TProps) => {
+export const NewFavoriteFolder = observer(function NewFavoriteFolder(props: TProps) {
   const { setCreateNewFolder, actionType, defaultName, favoriteId } = props;
   const { t } = useTranslation();
   const { workspaceSlug } = useParams();

@@ -1,13 +1,13 @@
 import { observer } from "mobx-react";
-import Image from "next/image";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Avatar } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
+// assets
+import emptyMembers from "@/app/assets/empty-state/empty_members.svg?url";
+import userImage from "@/app/assets/user.png?url";
 // components
 import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
-// public
-import emptyMembers from "@/public/empty-state/empty_members.svg";
 
 export type TAssigneeData = {
   id: string | undefined;
@@ -24,7 +24,7 @@ type TAssigneeStatComponent = {
   isEditable?: boolean;
 };
 
-export const AssigneeStatComponent = observer((props: TAssigneeStatComponent) => {
+export const AssigneeStatComponent = observer(function AssigneeStatComponent(props: TAssigneeStatComponent) {
   const { distribution, isEditable, selectedAssigneeIds, handleAssigneeFiltersUpdate } = props;
   const { t } = useTranslation();
   return (
@@ -56,7 +56,7 @@ export const AssigneeStatComponent = observer((props: TAssigneeStatComponent) =>
                 title={
                   <div className="flex items-center gap-2">
                     <div className="h-4 w-4 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
-                      <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
+                      <img src={userImage} className="rounded-full w-full h-full object-cover" alt="User" />
                     </div>
                     <span>{t("no_assignee")}</span>
                   </div>
@@ -69,7 +69,7 @@ export const AssigneeStatComponent = observer((props: TAssigneeStatComponent) =>
       ) : (
         <div className="flex h-full flex-col items-center justify-center gap-2">
           <div className="flex h-20 w-20 items-center justify-center rounded-full bg-custom-background-80">
-            <Image src={emptyMembers} className="h-12 w-12" alt="empty members" />
+            <img src={emptyMembers} className="h-12 w-12 object-contain" alt="empty members" />
           </div>
           <h6 className="text-base text-custom-text-300">{t("no_assignee")}</h6>
         </div>

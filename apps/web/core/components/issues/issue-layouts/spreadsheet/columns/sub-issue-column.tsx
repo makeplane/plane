@@ -2,7 +2,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 // helpers
 import { Row } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -14,7 +14,7 @@ type Props = {
   issue: TIssue;
 };
 
-export const SpreadsheetSubIssueColumn: React.FC<Props> = observer((props: Props) => {
+export const SpreadsheetSubIssueColumn = observer(function SpreadsheetSubIssueColumn(props: Props) {
   const { issue } = props;
   // router
   const router = useAppRouter();

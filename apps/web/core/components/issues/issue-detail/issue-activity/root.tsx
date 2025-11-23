@@ -1,14 +1,14 @@
-"use client";
-
-import { FC, useMemo } from "react";
+import { useMemo } from "react";
+import uniq from "lodash-es/uniq";
 import { observer } from "mobx-react";
 // plane package imports
-import { E_SORT_ORDER, TActivityFilters, defaultActivityFilters, EUserPermissions } from "@plane/constants";
+import type { TActivityFilters } from "@plane/constants";
+import { E_SORT_ORDER, defaultActivityFilters, EUserPermissions } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 // i18n
 import { useTranslation } from "@plane/i18n";
 //types
-import { TFileSignedURLResponse, TIssueComment } from "@plane/types";
+import type { TFileSignedURLResponse, TIssueComment } from "@plane/types";
 // components
 import { CommentCreate } from "@/components/comments/comment-create";
 // hooks
@@ -37,7 +37,7 @@ export type TActivityOperations = {
   uploadCommentAsset: (blockId: string, file: File, commentId?: string) => Promise<TFileSignedURLResponse>;
 };
 
-export const IssueActivity: FC<TIssueActivity> = observer((props) => {
+export const IssueActivity = observer(function IssueActivity(props: TIssueActivity) {
   const { workspaceSlug, projectId, issueId, disabled = false, isIntakeIssue = false } = props;
   // i18n
   const { t } = useTranslation();
@@ -73,7 +73,7 @@ export const IssueActivity: FC<TIssueActivity> = observer((props) => {
       _filters = [...selectedFilters, filter];
     }
 
-    setFilterValue(_filters);
+    setFilterValue(uniq(_filters));
   };
 
   const toggleSortOrder = () => {

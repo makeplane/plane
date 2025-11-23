@@ -1,10 +1,8 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // ui
-import { ArchiveIcon, LayersIcon } from "@plane/propel/icons";
+import { ArchiveIcon, WorkItemsIcon } from "@plane/propel/icons";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
@@ -20,7 +18,7 @@ import { IssueService } from "@/services/issue";
 
 const issueService = new IssueService();
 
-export const ProjectArchivedIssueDetailsHeader = observer(() => {
+export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchivedIssueDetailsHeader() {
   // router
   const { workspaceSlug, projectId, archivedIssueId } = useParams();
   // store hooks
@@ -52,7 +50,7 @@ export const ProjectArchivedIssueDetailsHeader = observer(() => {
               <BreadcrumbLink
                 href={`/${workspaceSlug}/projects/${projectId}/archives/issues`}
                 label="Work items"
-                icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />}
+                icon={<WorkItemsIcon className="h-4 w-4 text-custom-text-300" />}
               />
             }
           />

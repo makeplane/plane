@@ -8,8 +8,11 @@ import { insertEmptyParagraphAtNodeBoundaries } from "@/helpers/insert-empty-par
 // types
 import type { TFileHandler } from "@/types";
 // local imports
-import { CustomImageNodeView, CustomImageNodeViewProps } from "./components/node-view";
+import type { CustomImageNodeViewProps } from "./components/node-view";
+import { CustomImageNodeView } from "./components/node-view";
 import { CustomImageExtensionConfig } from "./extension-config";
+import type { CustomImageExtensionOptions, CustomImageExtensionStorage } from "./types";
+import { ECustomImageAttributeNames, ECustomImageStatus } from "./types";
 import { getImageComponentImageFileMap } from "./utils";
 
 type Props = {
@@ -17,24 +20,25 @@ type Props = {
   isEditable: boolean;
 };
 
-export const CustomImageExtension = (props: Props) => {
+export function CustomImageExtension(props: Props) {
   const { fileHandler, isEditable } = props;
   // derived values
   const { getAssetSrc, getAssetDownloadSrc, restore: restoreImageFn } = fileHandler;
 
-  return CustomImageExtensionConfig.extend({
+  return CustomImageExtensionConfig.extend<CustomImageExtensionOptions, CustomImageExtensionStorage>({
     selectable: isEditable,
     draggable: isEditable,
 
     addOptions() {
       const upload = "upload" in fileHandler ? fileHandler.upload : undefined;
-
+      const duplicate = "duplicate" in fileHandler ? fileHandler.duplicate : undefined;
       return {
         ...this.parent?.(),
         getImageDownloadSource: getAssetDownloadSrc,
         getImageSource: getAssetSrc,
         restoreImage: restoreImageFn,
         uploadImage: upload,
+        duplicateImage: duplicate,
       };
     },
 
@@ -91,7 +95,8 @@ export const CustomImageExtension = (props: Props) => {
             }
 
             const attributes = {
-              id: fileId,
+              [ECustomImageAttributeNames.ID]: fileId,
+              [ECustomImageAttributeNames.STATUS]: ECustomImageStatus.PENDING,
             };
 
             if (props.pos) {
@@ -114,11 +119,10 @@ export const CustomImageExtension = (props: Props) => {
         ArrowUp: insertEmptyParagraphAtNodeBoundaries("up", this.name),
       };
     },
-
     addNodeView() {
       return ReactNodeViewRenderer((props) => (
         <CustomImageNodeView {...props} node={props.node as CustomImageNodeViewProps["node"]} />
       ));
     },
   });
-};
+}

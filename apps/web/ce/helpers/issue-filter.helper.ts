@@ -1,5 +1,5 @@
 // types
-import { IIssueDisplayProperties } from "@plane/types";
+import type { IIssueDisplayProperties } from "@plane/types";
 // lib
 import { store } from "@/lib/store-context";
 

@@ -7,7 +7,7 @@ interface OnboardingStepIndicatorProps {
   totalSteps: number;
 }
 
-export const OnboardingStepIndicator: React.FC<OnboardingStepIndicatorProps> = ({ currentStep, totalSteps }) => {
+export function OnboardingStepIndicator({ currentStep, totalSteps }: OnboardingStepIndicatorProps) {
   const renderIndicators = () => {
     const indicators = [];
 
@@ -42,4 +42,4 @@ export const OnboardingStepIndicator: React.FC<OnboardingStepIndicatorProps> = (
       <div className="flex items-center justify-center my-0.5 mx-1 w-40 lg:w-52">{renderIndicators()}</div>
     </div>
   );
-};
+}

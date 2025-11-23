@@ -1,13 +1,12 @@
-"use client";
-
-import { FC } from "react";
+import type { FC } from "react";
 
 // react-hook-form
-import { UseFormWatch } from "react-hook-form";
+import type { UseFormWatch } from "react-hook-form";
 // ui
 import { Button } from "@plane/propel/button";
 // types
-import { IUserDetails, SingleUserSelect, TFormValues, TIntegrationSteps } from "@/components/integration";
+import type { IUserDetails, TFormValues, TIntegrationSteps } from "@/components/integration";
+import { SingleUserSelect } from "@/components/integration";
 
 type Props = {
   handleStepChange: (value: TIntegrationSteps) => void;
@@ -16,7 +15,7 @@ type Props = {
   watch: UseFormWatch<TFormValues>;
 };
 
-export const GithubImportUsers: FC<Props> = ({ handleStepChange, users, setUsers, watch }) => {
+export function GithubImportUsers({ handleStepChange, users, setUsers, watch }: Props) {
   const isInvalid = users.filter((u) => u.import !== false && u.email === "").length > 0;
 
   return (
@@ -49,4 +48,4 @@ export const GithubImportUsers: FC<Props> = ({ handleStepChange, users, setUsers
       </div>
     </div>
   );
-};
+}

@@ -2,7 +2,7 @@ import { clone } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane imports
 import { SitesStateService } from "@plane/services";
-import { IState } from "@plane/types";
+import type { IState } from "@plane/types";
 // helpers
 import { sortStates } from "@/helpers/state.helper";
 // store

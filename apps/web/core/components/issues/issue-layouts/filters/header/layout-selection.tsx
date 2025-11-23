@@ -1,11 +1,9 @@
-"use client";
-
 import React from "react";
 // plane constants
 import { ISSUE_LAYOUTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
-import { EIssueLayoutTypes } from "@plane/types";
+import type { EIssueLayoutTypes } from "@plane/types";
 // ui
 // types
 import { IssueLayoutIcon } from "@/components/issues/issue-layouts/layout-icon";
@@ -18,7 +16,7 @@ type Props = {
   selectedLayout: EIssueLayoutTypes | undefined;
 };
 
-export const LayoutSelection: React.FC<Props> = (props) => {
+export function LayoutSelection(props: Props) {
   const { layouts, onChange, selectedLayout } = props;
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
@@ -52,4 +50,4 @@ export const LayoutSelection: React.FC<Props> = (props) => {
       ))}
     </div>
   );
-};
+}

@@ -1,13 +1,13 @@
-"use client";
-
-import { FC, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
-import { Loader, X } from "lucide-react";
-// plane imports
+import { Loader } from "lucide-react";
 import { STATE_TRACKER_EVENTS, STATE_TRACKER_ELEMENTS } from "@plane/constants";
+import { CloseIcon } from "@plane/propel/icons";
+// plane imports
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { IState, TStateOperationsCallbacks } from "@plane/types";
-import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import type { IState, TStateOperationsCallbacks } from "@plane/types";
+import { AlertModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
@@ -20,7 +20,7 @@ type TStateDelete = {
   shouldTrackEvents: boolean;
 };
 
-export const StateDelete: FC<TStateDelete> = observer((props) => {
+export const StateDelete = observer(function StateDelete(props: TStateDelete) {
   const { totalStates, state, deleteStateCallback, shouldTrackEvents } = props;
   // hooks
   const { isMobile } = usePlatformOS();
@@ -112,7 +112,7 @@ export const StateDelete: FC<TStateDelete> = observer((props) => {
           disabled={!isDeleteDisabled}
           className="focus:outline-none"
         >
-          {isDelete ? <Loader className="w-3.5 h-3.5 text-custom-text-200" /> : <X className="w-3.5 h-3.5" />}
+          {isDelete ? <Loader className="w-3.5 h-3.5 text-custom-text-200" /> : <CloseIcon className="w-3.5 h-3.5" />}
         </Tooltip>
       </button>
     </>

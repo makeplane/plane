@@ -1,14 +1,14 @@
-"use client";
-
-import { FC, FormEvent, useCallback, useEffect, useRef, useState } from "react";
+import type { FC, FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ETabIndices, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { TIssue } from "@plane/types";
-import { ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TIssue } from "@plane/types";
+import { ToggleSwitch } from "@plane/ui";
 import { renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
@@ -52,7 +52,7 @@ export const defaultIssueData: Partial<TIssue> = {
   target_date: "",
 };
 
-export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) => {
+export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props: TInboxIssueCreateRoot) {
   const { workspaceSlug, projectId, handleModalClose, isDuplicateModalOpen, handleDuplicateIssueModal } = props;
   // states
   const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);

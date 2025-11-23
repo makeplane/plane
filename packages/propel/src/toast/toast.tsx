@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Toast as BaseToast } from "@base-ui-components/react/toast";
-import { AlertTriangle, CheckCircle2, X, XCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle2, XCircle } from "lucide-react";
+import { CloseIcon } from "../icons";
 // spinner
 import { CircularBarSpinner } from "../spinners/circular-bar-spinner";
 import { cn } from "../utils/classname";
@@ -11,6 +12,7 @@ export enum TOAST_TYPE {
   INFO = "info",
   WARNING = "warning",
   LOADING = "loading",
+  LOADING_TOAST = "loading-toast",
 }
 
 type SetToastProps =
@@ -47,15 +49,17 @@ export type ToastProps = {
 
 const toastManager = BaseToast.createToastManager();
 
-export const Toast = (props: ToastProps) => (
-  <BaseToast.Provider toastManager={toastManager}>
-    <BaseToast.Portal>
-      <BaseToast.Viewport data-theme={props.theme}>
-        <ToastList />
-      </BaseToast.Viewport>
-    </BaseToast.Portal>
-  </BaseToast.Provider>
-);
+export function Toast(props: ToastProps) {
+  return (
+    <BaseToast.Provider toastManager={toastManager}>
+      <BaseToast.Portal>
+        <BaseToast.Viewport data-theme={props.theme}>
+          <ToastList />
+        </BaseToast.Viewport>
+      </BaseToast.Portal>
+    </BaseToast.Provider>
+  );
+}
 
 const TOAST_DATA = {
   [TOAST_TYPE.SUCCESS]: {
@@ -88,13 +92,20 @@ const TOAST_DATA = {
     backgroundColorClassName: "bg-toast-background-loading",
     borderColorClassName: "border-toast-border-loading",
   },
-};
-const ToastList = () => {
-  const { toasts } = BaseToast.useToastManager();
-  return toasts.map((toast) => <ToastRender key={toast.id} id={toast.id} toast={toast} />);
+  [TOAST_TYPE.LOADING_TOAST]: {
+    icon: <CircularBarSpinner className="text-toast-text-tertiary" />,
+    textColorClassName: "text-toast-text-loading",
+    backgroundColorClassName: "bg-toast-background-loading",
+    borderColorClassName: "border-toast-border-loading",
+  },
 };
 
-const ToastRender = ({ id, toast }: { id: React.Key; toast: BaseToast.Root.ToastObject }) => {
+function ToastList() {
+  const { toasts } = BaseToast.useToastManager();
+  return toasts.map((toast) => <ToastRender key={toast.id} id={toast.id} toast={toast} />);
+}
+
+function ToastRender({ id, toast }: { id: React.Key; toast: BaseToast.Root.ToastObject }) {
   const toastData = toast.data as SetToastProps;
   const type = toastData.type as TOAST_TYPE;
   const data = TOAST_DATA[type];
@@ -104,7 +115,35 @@ const ToastRender = ({ id, toast }: { id: React.Key; toast: BaseToast.Root.Toast
       toast={toast}
       key={id}
       className={cn(
-        "flex items-center rounded-lg border shadow-sm p-2 w-[350px] absolute right-3 bottom-3 z-[calc(1000-var(--toast-index))] [transform:translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)+calc(min(var(--toast-index),10)*-10px)))_scale(calc(max(0,1-(var(--toast-index)*0.1))))] transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] select-none after:absolute after:bottom-full after:left-0 after:h-[calc(var(--gap)+1px)] after:w-full after:content-[''] data-[ending-style]:opacity-0 data-[expanded]:[transform:translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-offset-y)*-1+calc(var(--toast-index)*var(--gap)*-1)+var(--toast-swipe-movement-y)))] data-[limited]:opacity-0 data-[starting-style]:[transform:translateY(150%)] data-[ending-style]:data-[swipe-direction=down]:[transform:translateY(calc(var(--toast-swipe-movement-y)+150%))] data-[expanded]:data-[ending-style]:data-[swipe-direction=down]:[transform:translateY(calc(var(--toast-swipe-movement-y)+150%))] data-[ending-style]:data-[swipe-direction=left]:[transform:translateX(calc(var(--toast-swipe-movement-x)-150%))_translateY(var(--offset-y))] data-[expanded]:data-[ending-style]:data-[swipe-direction=left]:[transform:translateX(calc(var(--toast-swipe-movement-x)-150%))_translateY(var(--offset-y))] data-[ending-style]:data-[swipe-direction=right]:[transform:translateX(calc(var(--toast-swipe-movement-x)+150%))_translateY(var(--offset-y))] data-[expanded]:data-[ending-style]:data-[swipe-direction=right]:[transform:translateX(calc(var(--toast-swipe-movement-x)+150%))_translateY(var(--offset-y))] data-[ending-style]:data-[swipe-direction=up]:[transform:translateY(calc(var(--toast-swipe-movement-y)-150%))] data-[expanded]:data-[ending-style]:data-[swipe-direction=up]:[transform:translateY(calc(var(--toast-swipe-movement-y)-150%))] data-[ending-style]:[&:not([data-limited])]:[transform:translateY(150%)]",
+        // Base layout and positioning
+        "flex group items-center rounded-lg border shadow-sm p-2 w-[350px]",
+        "absolute right-3 bottom-3 z-[calc(1000-var(--toast-index))]",
+        "select-none transition-[opacity,transform] duration-500 ease-&lsqb;cubic-bezier(0.22,1,0.36,1)&rsqb;",
+
+        // Default transform with stacking and scaling
+        "[transform:translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)+calc(min(var(--toast-index),10)*-10px)))_scale(calc(max(0,1-(var(--toast-index)*0.1))))]",
+
+        // Pseudo-element for gap spacing
+        "after:absolute after:bottom-full after:left-0 after:h-[calc(var(--gap)+1px)] after:w-full after:content-['']",
+
+        // State-based opacity
+        "data-[ending-style]:opacity-0 data-[limited]:opacity-0",
+
+        // Starting animation
+        "data-[starting-style]:[transform:translateY(150%)]",
+
+        // Expanded state transform
+        "data-[expanded]:[transform:translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-offset-y)*-1+calc(var(--toast-index)*var(--gap)*-1)+var(--toast-swipe-movement-y)))]",
+
+        // Swipe direction endings - consolidated
+        "data-[ending-style]:data-[swipe-direction=down]:[transform:translateY(calc(var(--toast-swipe-movement-y)+150%))]",
+        "data-[ending-style]:data-[swipe-direction=up]:[transform:translateY(calc(var(--toast-swipe-movement-y)-150%))]",
+        "data-[ending-style]:data-[swipe-direction=left]:[transform:translateX(calc(var(--toast-swipe-movement-x)-150%))_translateY(var(--offset-y))]",
+        "data-[ending-style]:data-[swipe-direction=right]:[transform:translateX(calc(var(--toast-swipe-movement-x)+150%))_translateY(var(--offset-y))]",
+
+        // Default ending transform for non-limited toasts
+        "data-[ending-style]:[&:not([data-limited])]:[transform:translateY(150%)]",
+
         data.backgroundColorClassName,
         data.borderColorClassName
       )}
@@ -129,14 +168,14 @@ const ToastRender = ({ id, toast }: { id: React.Key; toast: BaseToast.Root.Toast
               className="absolute top-2 right-2.5 text-toast-text-secondary hover:text-toast-text-tertiary cursor-pointer"
               aria-label="Close"
             >
-              <X strokeWidth={1.5} width={14} height={14} />
+              <CloseIcon strokeWidth={1.5} width={14} height={14} />
             </BaseToast.Close>
           </div>
         </div>
       ) : (
         <>
           <BaseToast.Close className="absolute top-2 right-2.5 text-toast-text-secondary hover:text-toast-text-tertiary cursor-pointer">
-            <X strokeWidth={1.5} width={14} height={14} />
+            <CloseIcon strokeWidth={1.5} width={14} height={14} />
           </BaseToast.Close>
           <div className="w-full flex flex-col gap-2 p-2">
             <div className="flex items-center w-full">
@@ -158,7 +197,7 @@ const ToastRender = ({ id, toast }: { id: React.Key; toast: BaseToast.Root.Toast
       )}
     </BaseToast.Root>
   );
-};
+}
 
 export const setToast = (props: SetToastProps) => {
   let toastId: string | undefined;
@@ -229,4 +268,8 @@ export const setPromiseToast = <ToastData,>(
       },
     }),
   });
+};
+
+export const dismissToast = (tId: string) => {
+  toastManager.close(tId);
 };

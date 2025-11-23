@@ -1,14 +1,13 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
 import { MODULE_TRACKER_EVENTS, PROJECT_ERROR_MESSAGES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IModule } from "@plane/types";
 // ui
-import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { AlertModalCore } from "@plane/ui";
 // constants
 // helpers
 import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
@@ -22,7 +21,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const DeleteModuleModal: React.FC<Props> = observer((props) => {
+export const DeleteModuleModal = observer(function DeleteModuleModal(props: Props) {
   const { data, isOpen, onClose } = props;
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);

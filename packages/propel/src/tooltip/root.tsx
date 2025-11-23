@@ -1,7 +1,8 @@
 import * as React from "react";
 import { Tooltip as BaseTooltip } from "@base-ui-components/react/tooltip";
 import { cn } from "../utils/classname";
-import { TPlacement, TSide, TAlign, convertPlacementToSideAndAlign } from "../utils/placement";
+import type { TPlacement, TSide, TAlign } from "../utils/placement";
+import { convertPlacementToSideAndAlign } from "../utils/placement";
 
 type ITooltipProps = {
   tooltipHeading?: string;

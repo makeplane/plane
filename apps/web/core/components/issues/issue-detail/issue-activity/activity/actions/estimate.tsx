@@ -1,6 +1,5 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
-import { Triangle } from "lucide-react";
+import { EstimatePropertyIcon } from "@plane/propel/icons";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
@@ -8,7 +7,7 @@ import { IssueActivityBlockComponent, IssueLink } from "./";
 
 type TIssueEstimateActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
-export const IssueEstimateActivity: FC<TIssueEstimateActivity> = observer((props) => {
+export const IssueEstimateActivity = observer(function IssueEstimateActivity(props: TIssueEstimateActivity) {
   const { activityId, showIssue = true, ends } = props;
   // hooks
   const {
@@ -21,7 +20,7 @@ export const IssueEstimateActivity: FC<TIssueEstimateActivity> = observer((props
 
   return (
     <IssueActivityBlockComponent
-      icon={<Triangle size={14} className="text-custom-text-200" aria-hidden="true" />}
+      icon={<EstimatePropertyIcon className="h-3.5 w-3.5 text-custom-text-200" aria-hidden="true" />}
       activityId={activityId}
       ends={ends}
     >

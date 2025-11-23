@@ -1,7 +1,9 @@
 .next/*
+.react-router/*
+.vite/*
+build/*
 out/*
 public/*
-core/local-db/worker/wa-sqlite/src/*
 dist/*
 node_modules/*
 .turbo/*

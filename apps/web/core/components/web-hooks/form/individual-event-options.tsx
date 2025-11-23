@@ -1,5 +1,6 @@
-import { Control, Controller } from "react-hook-form";
-import { IWebhook } from "@plane/types";
+import type { Control } from "react-hook-form";
+import { Controller } from "react-hook-form";
+import type { IWebhook } from "@plane/types";
 
 export const INDIVIDUAL_WEBHOOK_OPTIONS: {
   key: keyof IWebhook;
@@ -37,31 +38,33 @@ type Props = {
   control: Control<IWebhook, any>;
 };
 
-export const WebhookIndividualEventOptions = ({ control }: Props) => (
-  <div className="grid grid-cols-1 gap-x-4 gap-y-8 px-6 lg:grid-cols-2">
-    {INDIVIDUAL_WEBHOOK_OPTIONS.map((option) => (
-      <Controller
-        key={option.key}
-        control={control}
-        name={option.key}
-        render={({ field: { onChange, value } }) => (
-          <div>
-            <div className="flex items-center gap-2">
-              <input
-                id={option.key}
-                onChange={() => onChange(!value)}
-                type="checkbox"
-                name="selectIndividualEvents"
-                checked={value === true}
-              />
-              <label className="text-sm" htmlFor={option.key}>
-                {option.label}
-              </label>
+export function WebhookIndividualEventOptions({ control }: Props) {
+  return (
+    <div className="grid grid-cols-1 gap-x-4 gap-y-8 px-6 lg:grid-cols-2">
+      {INDIVIDUAL_WEBHOOK_OPTIONS.map((option) => (
+        <Controller
+          key={option.key}
+          control={control}
+          name={option.key}
+          render={({ field: { onChange, value } }) => (
+            <div>
+              <div className="flex items-center gap-2">
+                <input
+                  id={option.key}
+                  onChange={() => onChange(!value)}
+                  type="checkbox"
+                  name="selectIndividualEvents"
+                  checked={value === true}
+                />
+                <label className="text-sm" htmlFor={option.key}>
+                  {option.label}
+                </label>
+              </div>
+              <p className="ml-6 mt-0.5 text-xs text-custom-text-300">{option.description}</p>
             </div>
-            <p className="ml-6 mt-0.5 text-xs text-custom-text-300">{option.description}</p>
-          </div>
-        )}
-      />
-    ))}
-  </div>
-);
+          )}
+        />
+      ))}
+    </div>
+  );
+}

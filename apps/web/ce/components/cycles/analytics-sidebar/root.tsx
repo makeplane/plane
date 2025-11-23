@@ -1,5 +1,5 @@
-"use client";
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 // components
 import { SidebarChart } from "./base";
 
@@ -9,4 +9,6 @@ type Props = {
   cycleId: string;
 };
 
-export const SidebarChartRoot: FC<Props> = (props) => <SidebarChart {...props} />;
+export function SidebarChartRoot(props: Props) {
+  return <SidebarChart {...props} />;
+}

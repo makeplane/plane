@@ -1,6 +1,4 @@
-"use client";
-
-import { FC } from "react";
+import type { FC } from "react";
 import { useTheme } from "next-themes";
 import { PROJECT_SETTINGS_TRACKER_ELEMENTS, PROJECT_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 // plane imports
@@ -14,7 +12,7 @@ type TEstimateEmptyScreen = {
   onButtonClick: () => void;
 };
 
-export const EstimateEmptyScreen: FC<TEstimateEmptyScreen> = (props) => {
+export function EstimateEmptyScreen(props: TEstimateEmptyScreen) {
   // props
   const { onButtonClick } = props;
   const { resolvedTheme } = useTheme();
@@ -45,4 +43,4 @@ export const EstimateEmptyScreen: FC<TEstimateEmptyScreen> = (props) => {
       }}
     />
   );
-};
+}

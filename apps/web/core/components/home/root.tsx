@@ -18,7 +18,7 @@ import { HomePeekOverviewsRoot } from "@/plane-web/components/home";
 import { DashboardWidgets } from "./home-dashboard-widgets";
 import { UserGreetingsView } from "./user-greetings";
 
-export const WorkspaceHomeView = observer(() => {
+export const WorkspaceHomeView = observer(function WorkspaceHomeView() {
   // store hooks
   const { workspaceSlug } = useParams();
   const { data: currentUser } = useUser();

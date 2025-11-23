@@ -1,8 +1,6 @@
-"use client";
-
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import {
+import type {
   DragLocationHistory,
   DropTargetRecord,
   ElementDragPayload,
@@ -11,14 +9,15 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { orderBy } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronRight, FolderPlus } from "lucide-react";
+import { FolderPlus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import { IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { ChevronRightIcon } from "@plane/propel/icons";
 // ui
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { IFavorite } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
+import type { IFavorite } from "@plane/types";
 // constants
 
 // helpers
@@ -29,10 +28,11 @@ import useLocalStorage from "@/hooks/use-local-storage";
 // plane web components
 import { FavoriteFolder } from "./favorite-folder";
 import { FavoriteRoot } from "./favorite-items";
-import { getInstructionFromPayload, TargetData } from "./favorites.helpers";
+import type { TargetData } from "./favorites.helpers";
+import { getInstructionFromPayload } from "./favorites.helpers";
 import { NewFavoriteFolder } from "./new-fav-folder";
 
-export const SidebarFavoritesMenu = observer(() => {
+export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
   // states
   const [createNewFolder, setCreateNewFolder] = useState<boolean | string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -224,7 +224,7 @@ export const SidebarFavoritesMenu = observer(() => {
                   : "aria_labels.projects_sidebar.open_favorites_menu"
               )}
             >
-              <ChevronRight
+              <ChevronRightIcon
                 className={cn("flex-shrink-0 size-3 transition-all", {
                   "rotate-90": isFavoriteMenuOpen,
                 })}

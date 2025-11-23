@@ -1,4 +1,5 @@
-import React, { FC, useState } from "react";
+import type { FC } from "react";
+import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Earth, Lock } from "lucide-react";
@@ -6,7 +7,8 @@ import { Earth, Lock } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { Tooltip } from "@plane/propel/tooltip";
-import { EViewAccess, IProjectView } from "@plane/types";
+import type { IProjectView } from "@plane/types";
+import { EViewAccess } from "@plane/types";
 import { FavoriteStar } from "@plane/ui";
 import { getPublishViewLink } from "@plane/utils";
 // hooks
@@ -26,7 +28,7 @@ type Props = {
   view: IProjectView;
 };
 
-export const ViewListItemAction: FC<Props> = observer((props) => {
+export const ViewListItemAction = observer(function ViewListItemAction(props: Props) {
   const { parentRef, view } = props;
   // states
   const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);

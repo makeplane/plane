@@ -1,6 +1,3 @@
-"use client";
-
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
 // ui
@@ -13,14 +10,14 @@ import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
 import { useIssueFilter } from "@/hooks/store/use-issue-filter";
 // mobx
-import { TIssueLayout } from "@/types/issue";
+import type { TIssueLayout } from "@/types/issue";
 import { IssueLayoutIcon } from "./layout-icon";
 
 type Props = {
   anchor: string;
 };
 
-export const IssuesLayoutSelection: FC<Props> = observer((props) => {
+export const IssuesLayoutSelection = observer(function IssuesLayoutSelection(props: Props) {
   const { anchor } = props;
   // hooks
   const { t } = useTranslation();

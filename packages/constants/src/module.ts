@@ -1,5 +1,5 @@
 // types
-import { TModuleLayoutOptions, TModuleOrderByOptions, TModuleStatus } from "@plane/types";
+import type { TModuleLayoutOptions, TModuleOrderByOptions, TModuleStatus } from "@plane/types";
 
 export const MODULE_STATUS_COLORS: {
   [key in TModuleStatus]: string;

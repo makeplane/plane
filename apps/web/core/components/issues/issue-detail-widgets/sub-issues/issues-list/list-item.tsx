@@ -1,11 +1,11 @@
-"use client";
-
 import { observer } from "mobx-react";
-import { ChevronRight, X, Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
-// plane imports
+import { Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon, ChevronRightIcon } from "@plane/propel/icons";
+// plane imports
 import { Tooltip } from "@plane/propel/tooltip";
-import { EIssueServiceType, EIssuesStoreType, TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
+import type { TIssue, TIssueServiceType, TSubIssueOperations } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 import { ControlLink, CustomMenu } from "@plane/ui";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // helpers
@@ -40,7 +40,7 @@ type Props = {
   storeType?: EIssuesStoreType;
 };
 
-export const SubIssuesListItem: React.FC<Props> = observer((props) => {
+export const SubIssuesListItem = observer(function SubIssuesListItem(props: Props) {
   const {
     workspaceSlug,
     projectId,
@@ -132,7 +132,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
                         setSubIssueHelpers(parentIssueId, "issue_visibility", issueId);
                       }}
                     >
-                      <ChevronRight
+                      <ChevronRightIcon
                         className={cn("size-3.5 transition-all", {
                           "rotate-90": subIssueHelpers.issue_visibility.includes(issue.id),
                         })}
@@ -185,9 +185,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
               <CustomMenu placement="bottom-end" ellipsis>
                 {canEdit && (
                   <CustomMenu.MenuItem
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
+                    onClick={() => {
                       handleIssueCrudState("update", parentIssueId, { ...issue });
                       toggleCreateIssueModal(true);
                     }}
@@ -200,9 +198,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
                 )}
 
                 <CustomMenu.MenuItem
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
+                  onClick={() => {
                     subIssueOperations.copyLink(workItemLink);
                   }}
                 >
@@ -214,15 +210,13 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
 
                 {canEdit && (
                   <CustomMenu.MenuItem
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
+                    onClick={() => {
                       if (issue.project_id)
                         subIssueOperations.removeSubIssue(workspaceSlug, issue.project_id, parentIssueId, issue.id);
                     }}
                   >
                     <div className="flex items-center gap-2">
-                      <X className="h-3.5 w-3.5" strokeWidth={2} />
+                      <CloseIcon className="h-3.5 w-3.5" strokeWidth={2} />
                       {issueServiceType === EIssueServiceType.ISSUES
                         ? t("issue.remove.parent.label")
                         : t("issue.remove.label")}
@@ -232,9 +226,7 @@ export const SubIssuesListItem: React.FC<Props> = observer((props) => {
 
                 {canEdit && (
                   <CustomMenu.MenuItem
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
+                    onClick={() => {
                       handleIssueCrudState("delete", parentIssueId, issue);
                       toggleDeleteIssueModal(issue.id);
                     }}

@@ -1,7 +1,7 @@
 import React from "react";
 // plane imports
 import { AreaChart } from "@plane/propel/charts/area-chart";
-import { TChartData, TModuleCompletionChartDistribution } from "@plane/types";
+import type { TChartData, TModuleCompletionChartDistribution } from "@plane/types";
 import { renderFormattedDateWithoutYear } from "@plane/utils";
 
 type Props = {
@@ -11,7 +11,7 @@ type Props = {
   plotTitle?: string;
 };
 
-const ProgressChart: React.FC<Props> = ({ distribution, totalIssues, className = "", plotTitle = "work items" }) => {
+function ProgressChart({ distribution, totalIssues, className = "", plotTitle = "work items" }: Props) {
   const chartData: TChartData<string, string>[] = Object.keys(distribution ?? []).map((key, index) => ({
     name: renderFormattedDateWithoutYear(key),
     current: distribution[key] ?? 0,
@@ -65,6 +65,6 @@ const ProgressChart: React.FC<Props> = ({ distribution, totalIssues, className =
       />
     </div>
   );
-};
+}
 
 export default ProgressChart;

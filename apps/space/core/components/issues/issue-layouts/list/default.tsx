@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // types
-import {
+import type {
   GroupByColumnTypes,
   TGroupedIssues,
   IIssueDisplayProperties,
@@ -35,7 +35,7 @@ export interface IList {
   getIssueLoader: (groupId?: string | undefined, subGroupId?: string | undefined) => TLoader;
 }
 
-export const List: React.FC<IList> = observer((props) => {
+export const List = observer(function List(props: IList) {
   const {
     groupedIssueIds,
     groupBy,

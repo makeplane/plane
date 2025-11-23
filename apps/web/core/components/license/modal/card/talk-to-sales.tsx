@@ -1,11 +1,9 @@
-"use client";
-
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // types
 // plane imports
 import { getButtonStyling } from "@plane/propel/button";
-import { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
+import type { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
 import { getUpgradeButtonStyle, Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // local imports
@@ -26,7 +24,7 @@ export type TalkToSalesCardProps = {
   renderTrialButton?: (props: { productId: string | undefined; priceId: string | undefined }) => React.ReactNode;
 };
 
-export const TalkToSalesCard: FC<TalkToSalesCardProps> = observer((props) => {
+export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSalesCardProps) {
   const {
     planVariant,
     href,

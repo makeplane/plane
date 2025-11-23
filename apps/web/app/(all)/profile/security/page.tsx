@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -8,14 +6,16 @@ import { Eye, EyeOff } from "lucide-react";
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { Input, PasswordStrengthIndicator, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Input, PasswordStrengthIndicator } from "@plane/ui";
 // components
 import { getPasswordStrength } from "@plane/utils";
 import { PageHead } from "@/components/core/page-title";
 import { ProfileSettingContentHeader } from "@/components/profile/profile-setting-content-header";
 import { ProfileSettingContentWrapper } from "@/components/profile/profile-setting-content-wrapper";
 // helpers
-import { authErrorHandler, type EAuthenticationErrorCodes } from "@/helpers/authentication.helper";
+import { authErrorHandler } from "@/helpers/authentication.helper";
+import type { EAuthenticationErrorCodes } from "@/helpers/authentication.helper";
 // hooks
 import { useUser } from "@/hooks/store/user";
 // services
@@ -41,7 +41,7 @@ const defaultShowPassword = {
   confirmPassword: false,
 };
 
-const SecurityPage = observer(() => {
+function SecurityPage() {
   // store
   const { data: currentUser, changePassword } = useUser();
   // states
@@ -252,6 +252,6 @@ const SecurityPage = observer(() => {
       </ProfileSettingContentWrapper>
     </>
   );
-});
+}
 
-export default SecurityPage;
+export default observer(SecurityPage);

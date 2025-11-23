@@ -3,14 +3,21 @@ import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 // plane package imports
 import { useTranslation } from "@plane/i18n";
-import { ChartXAxisProperty, ChartYAxisMetric, IAnalyticsParams } from "@plane/types";
+import type { IAnalyticsParams } from "@plane/types";
+import { ChartXAxisProperty, ChartYAxisMetric } from "@plane/types";
 import { cn } from "@plane/utils";
 // plane web components
 import AnalyticsSectionWrapper from "../analytics-section-wrapper";
 import { AnalyticsSelectParams } from "../select/analytics-params";
 import PriorityChart from "./priority-chart";
 
-const CustomizedInsights = observer(({ peekView, isEpic }: { peekView?: boolean; isEpic?: boolean }) => {
+const CustomizedInsights = observer(function CustomizedInsights({
+  peekView,
+  isEpic,
+}: {
+  peekView?: boolean;
+  isEpic?: boolean;
+}) {
   const { t } = useTranslation();
   const { workspaceSlug } = useParams();
   const { control, watch, setValue } = useForm<IAnalyticsParams>({

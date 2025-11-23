@@ -1,5 +1,5 @@
-"use client";
-import { FC, MouseEvent, useRef } from "react";
+import type { FC, MouseEvent } from "react";
+import { useRef } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Check } from "lucide-react";
@@ -28,7 +28,7 @@ type TCyclesListItem = {
   className?: string;
 };
 
-export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
+export const CyclesListItem = observer(function CyclesListItem(props: TCyclesListItem) {
   const { cycleId, workspaceSlug, projectId, className = "" } = props;
   // refs
   const parentRef = useRef(null);
@@ -58,9 +58,9 @@ export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
 
     const query = generateQueryParams(searchParams, ["peekCycle"]);
     if (searchParams.has("peekCycle") && searchParams.get("peekCycle") === cycleId) {
-      router.push(`${pathname}?${query}`, { showProgress: false });
+      router.push(`${pathname}?${query}`);
     } else {
-      router.push(`${pathname}?${query && `${query}&`}peekCycle=${cycleId}`, { showProgress: false });
+      router.push(`${pathname}?${query && `${query}&`}peekCycle=${cycleId}`);
     }
   };
 

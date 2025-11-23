@@ -4,8 +4,7 @@ import { computedFn } from "mobx-utils";
 // plane constants
 import { ALL_ISSUES, ISSUE_PRIORITIES } from "@plane/constants";
 // types
-import {
-  EIssueServiceType,
+import type {
   TIssue,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
@@ -20,20 +19,18 @@ import {
   TPaginationData,
   TBulkOperationsPayload,
   IBlockUpdateDependencyData,
-  EIssueLayoutTypes,
 } from "@plane/types";
+import { EIssueServiceType, EIssueLayoutTypes } from "@plane/types";
 // helpers
 import { convertToISODateString } from "@plane/utils";
-// local-db
-import { SPECIAL_ORDER_BY } from "@/local-db/utils/query-constructor";
-import { updatePersistentLayer } from "@/local-db/utils/utils";
+// plane web imports
 import { workItemSortWithOrderByExtended } from "@/plane-web/store/issue/helpers/base-issue.store";
 // services
 import { CycleService } from "@/services/cycle.service";
 import { IssueArchiveService, IssueService } from "@/services/issue";
 import { ModuleService } from "@/services/module.service";
 //
-import { IIssueRootStore } from "../root.store";
+import type { IIssueRootStore } from "../root.store";
 import {
   getDifference,
   getGroupIssueKeyActions,
@@ -42,7 +39,7 @@ import {
   getSortOrderToFilterEmptyValues,
   getSubGroupIssueKeyActions,
 } from "./base-issues-utils";
-import { IBaseIssueFilterStore } from "./issue-filter-helper.store";
+import type { IBaseIssueFilterStore } from "./issue-filter-helper.store";
 
 export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date";
 
@@ -61,7 +58,7 @@ export interface IBaseIssuesStore {
 
   //actions
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
-  clear(shouldClearPaginationOptions?: boolean, clearForLocal?: boolean): void;
+  clear(shouldClearPaginationOptions?: boolean): void;
   // helper methods
   getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
   issuesSortWithOrderBy(issueIds: string[], key: Partial<TIssueOrderByOptions>): string[];
@@ -278,20 +275,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     const displayFilters = this.issueFilterStore?.issueFilters?.displayFilters;
     if (!displayFilters) return;
 
-    const layout = displayFilters.layout;
-    const orderBy = displayFilters.order_by;
-
-    // Temporary code to fix no load order by
-    if (
-      this.rootIssueStore.rootStore.user.localDBEnabled &&
-      this.rootIssueStore.rootStore.router.projectId &&
-      layout !== EIssueLayoutTypes.SPREADSHEET &&
-      orderBy &&
-      Object.keys(SPECIAL_ORDER_BY).includes(orderBy)
-    ) {
-      return "sort_order";
-    }
-
     return displayFilters?.order_by;
   }
 
@@ -484,7 +467,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     // Update all the GroupIds to this Store's groupedIssueIds and update Individual group issue counts
     runInAction(() => {
-      this.clear(shouldClearPaginationOptions, true);
+      this.clear(shouldClearPaginationOptions);
       this.updateGroupedIssueIds(groupedIssues, groupedIssueCount);
       this.loader[getGroupKey()] = undefined;
     });
@@ -549,8 +532,6 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     // If shouldUpdateList is true, call fetchParentStats
     shouldUpdateList && (await this.fetchParentStats(workspaceSlug, projectId));
-
-    updatePersistentLayer(response.id);
 
     return response;
   }
@@ -1163,22 +1144,17 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   /**
    * Method called to clear out the current store
    */
-  clear(shouldClearPaginationOptions = true, clearForLocal = false) {
-    if (
-      (this.rootIssueStore.rootStore.user?.localDBEnabled && clearForLocal) ||
-      (!this.rootIssueStore.rootStore.user?.localDBEnabled && !clearForLocal)
-    ) {
-      runInAction(() => {
-        this.groupedIssueIds = undefined;
-        this.issuePaginationData = {};
-        this.groupedIssueCount = {};
-        if (shouldClearPaginationOptions) {
-          this.paginationOptions = undefined;
-        }
-      });
-      this.controller.abort();
-      this.controller = new AbortController();
-    }
+  clear(shouldClearPaginationOptions = true) {
+    runInAction(() => {
+      this.groupedIssueIds = undefined;
+      this.issuePaginationData = {};
+      this.groupedIssueCount = {};
+      if (shouldClearPaginationOptions) {
+        this.paginationOptions = undefined;
+      }
+    });
+    this.controller.abort();
+    this.controller = new AbortController();
   }
 
   /**
@@ -1673,7 +1649,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   };
 
   /**
-   * This Method is used to get data of the issue based on the ids of the data for states, labels adn assignees
+   * This Method is used to get data of the issue based on the ids of the data for states, labels and assignees
    * @param dataType what type of data is being sent
    * @param dataIds id/ids of the data that is to be populated
    * @param order ascending or descending for arrays of data

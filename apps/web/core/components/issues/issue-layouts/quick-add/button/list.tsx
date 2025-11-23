@@ -1,11 +1,11 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { PlusIcon } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Row } from "@plane/ui";
-import { TQuickAddIssueButton } from "../root";
+import type { TQuickAddIssueButton } from "../root";
 
-export const ListQuickAddIssueButton: FC<TQuickAddIssueButton> = observer((props) => {
+export const ListQuickAddIssueButton = observer(function ListQuickAddIssueButton(props: TQuickAddIssueButton) {
   const { onClick, isEpic = false } = props;
   const { t } = useTranslation();
   return (

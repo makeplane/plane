@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { add } from "date-fns";
 import { Controller, useForm } from "react-hook-form";
@@ -7,9 +5,10 @@ import { Calendar } from "lucide-react";
 // types
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { IApiToken } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IApiToken } from "@plane/types";
 // ui
-import { CustomSelect, Input, TextArea, ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomSelect, Input, TextArea, ToggleSwitch } from "@plane/ui";
 import { cn, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -65,7 +64,7 @@ const getFormattedDate = (date: Date): Date => {
   return add(date, { hours, minutes, seconds });
 };
 
-export const CreateApiTokenForm: React.FC<Props> = (props) => {
+export function CreateApiTokenForm(props: Props) {
   const { handleClose, neverExpires, toggleNeverExpires, onSubmit } = props;
   // states
   const [customDate, setCustomDate] = useState<Date | null>(null);
@@ -252,4 +251,4 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
       </div>
     </form>
   );
-};
+}

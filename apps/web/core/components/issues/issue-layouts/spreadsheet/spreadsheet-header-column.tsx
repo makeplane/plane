@@ -1,7 +1,7 @@
 import { useRef } from "react";
 //types
 import { observer } from "mobx-react";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 //components
 import { shouldRenderColumn } from "@/plane-web/helpers/issue-filter.helper";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
@@ -15,7 +15,7 @@ interface Props {
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
   isEpic?: boolean;
 }
-export const SpreadsheetHeaderColumn = observer((props: Props) => {
+export const SpreadsheetHeaderColumn = observer(function SpreadsheetHeaderColumn(props: Props) {
   const { displayProperties, displayFilters, property, handleDisplayFilterUpdate, isEpic = false } = props;
 
   //hooks

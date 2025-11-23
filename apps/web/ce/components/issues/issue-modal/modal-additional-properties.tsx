@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 
 export type TWorkItemModalAdditionalPropertiesProps = {
   isDraft?: boolean;
@@ -7,4 +7,6 @@ export type TWorkItemModalAdditionalPropertiesProps = {
   workspaceSlug: string;
 };
 
-export const WorkItemModalAdditionalProperties: React.FC<TWorkItemModalAdditionalPropertiesProps> = () => null;
+export function WorkItemModalAdditionalProperties(_props: TWorkItemModalAdditionalPropertiesProps) {
+  return null;
+}

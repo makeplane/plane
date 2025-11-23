@@ -1,16 +1,15 @@
 import { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { X } from "lucide-react";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
+import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
+import { CloseIcon } from "@plane/propel/icons";
 // plane types
-import { IProject } from "@plane/types";
+import type { IProject } from "@plane/types";
 // plane ui
 import { getFileURL, getTabIndex } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 // plane web imports
 import { ProjectTemplateSelect } from "@/plane-web/components/projects/create/template-select";
@@ -19,7 +18,8 @@ type Props = {
   handleClose: () => void;
   isMobile?: boolean;
 };
-const ProjectCreateHeader: React.FC<Props> = (props) => {
+
+function ProjectCreateHeader(props: Props) {
   const { handleClose, isMobile = false } = props;
   const { watch, control } = useFormContext<IProject>();
   const { t } = useTranslation();
@@ -43,7 +43,7 @@ const ProjectCreateHeader: React.FC<Props> = (props) => {
       </div>
       <div className="absolute right-2 top-2 p-2">
         <button data-posthog="PROJECT_MODAL_CLOSE" type="button" onClick={handleClose} tabIndex={getIndex("close")}>
-          <X className="h-5 w-5 text-white" />
+          <CloseIcon className="h-5 w-5 text-white" />
         </button>
       </div>
       <div className="absolute bottom-2 right-2">
@@ -102,6 +102,6 @@ const ProjectCreateHeader: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}
 
 export default ProjectCreateHeader;

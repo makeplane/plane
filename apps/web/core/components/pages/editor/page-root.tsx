@@ -9,14 +9,15 @@ import { usePageFallback } from "@/hooks/use-page-fallback";
 // plane web import
 import { PageModals } from "@/plane-web/components/pages";
 import { usePagesPaneExtensions, useExtendedEditorProps } from "@/plane-web/hooks/pages";
-import { EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { PageNavigationPaneRoot } from "../navigation-pane";
 import { PageVersionsOverlay } from "../version";
 import { PagesVersionEditor } from "../version/editor";
-import { PageEditorBody, type TEditorBodyConfig, type TEditorBodyHandlers } from "./editor-body";
+import { PageEditorBody } from "./editor-body";
+import type { TEditorBodyConfig, TEditorBodyHandlers } from "./editor-body";
 import { PageEditorToolbarRoot } from "./toolbar";
 
 export type TPageRootHandlers = {
@@ -36,11 +37,11 @@ type TPageRootProps = {
   page: TPageInstance;
   storeType: EPageStoreType;
   webhookConnectionParams: TWebhookConnectionQueryParams;
-  projectId: string;
+  projectId?: string;
   workspaceSlug: string;
 };
 
-export const PageRoot = observer((props: TPageRootProps) => {
+export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
   const { config, handlers, page, projectId, storeType, webhookConnectionParams, workspaceSlug } = props;
   // states
   const [editorReady, setEditorReady] = useState(false);

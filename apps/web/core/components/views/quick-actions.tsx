@@ -1,12 +1,12 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 // types
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
-import { IProjectView } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IProjectView } from "@plane/types";
 // ui
-import { ContextMenu, CustomMenu, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { ContextMenu, CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // helpers
 import { captureClick } from "@/helpers/event-tracker.helper";
@@ -26,7 +26,7 @@ type Props = {
   customClassName?: string;
 };
 
-export const ViewQuickActions: React.FC<Props> = observer((props) => {
+export const ViewQuickActions = observer(function ViewQuickActions(props: Props) {
   const { parentRef, projectId, view, workspaceSlug, customClassName } = props;
   // states
   const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);
@@ -69,13 +69,16 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
 
   if (publishContextMenu) MENU_ITEMS.splice(2, 0, publishContextMenu);
 
-  const CONTEXT_MENU_ITEMS = MENU_ITEMS.map((item) => ({
-    ...item,
-    action: () => {
-      captureClick({ elementName: PROJECT_VIEW_TRACKER_ELEMENTS.LIST_ITEM_CONTEXT_MENU });
-      item.action();
-    },
-  }));
+  const CONTEXT_MENU_ITEMS = MENU_ITEMS.map(function CONTEXT_MENU_ITEMS(item) {
+    return {
+      ...item,
+
+      action: () => {
+        captureClick({ elementName: PROJECT_VIEW_TRACKER_ELEMENTS.LIST_ITEM_CONTEXT_MENU });
+        item.action();
+      },
+    };
+  });
 
   return (
     <>
@@ -95,9 +98,7 @@ export const ViewQuickActions: React.FC<Props> = observer((props) => {
           return (
             <CustomMenu.MenuItem
               key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 captureClick({ elementName: PROJECT_VIEW_TRACKER_ELEMENTS.QUICK_ACTIONS });
                 item.action();
               }}

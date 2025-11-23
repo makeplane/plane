@@ -1,12 +1,10 @@
-"use client";
-
-import { FC } from "react";
+import type { FC } from "react";
 import { Info } from "lucide-react";
 // plane imports
 import { EEstimateSystem, ESTIMATE_SYSTEMS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
-import { TEstimateSystemKeys } from "@plane/types";
+import type { TEstimateSystemKeys } from "@plane/types";
 // components
 import { convertMinutesToHoursMinutesString } from "@plane/utils";
 // plane web imports
@@ -21,7 +19,7 @@ type TEstimateCreateStageOne = {
   handleEstimatePoints: (value: string) => void;
 };
 
-export const EstimateCreateStageOne: FC<TEstimateCreateStageOne> = (props) => {
+export function EstimateCreateStageOne(props: TEstimateCreateStageOne) {
   const { estimateSystem, handleEstimateSystem, handleEstimatePoints } = props;
 
   // i18n
@@ -116,6 +114,6 @@ export const EstimateCreateStageOne: FC<TEstimateCreateStageOne> = (props) => {
       )}
     </div>
   );
-};
+}
 
 //

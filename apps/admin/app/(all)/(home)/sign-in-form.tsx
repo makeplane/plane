@@ -1,10 +1,9 @@
-"use client";
-
-import { FC, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 // plane internal packages
-import { API_BASE_URL, EAdminAuthErrorCodes, TAdminAuthErrorInfo } from "@plane/constants";
+import type { EAdminAuthErrorCodes, TAdminAuthErrorInfo } from "@plane/constants";
+import { API_BASE_URL } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { AuthService } from "@plane/services";
 import { Input, Spinner } from "@plane/ui";
@@ -44,7 +43,7 @@ const defaultFromData: TFormData = {
   password: "",
 };
 
-export const InstanceSignInForm: FC = () => {
+export function InstanceSignInForm() {
   // search params
   const searchParams = useSearchParams();
   const emailParam = searchParams.get("email") || undefined;
@@ -191,4 +190,4 @@ export const InstanceSignInForm: FC = () => {
       </div>
     </>
   );
-};
+}

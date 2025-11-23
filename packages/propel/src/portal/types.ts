@@ -1,5 +1,5 @@
 import type { ReactNode, MouseEvent as ReactMouseEvent } from "react";
-import { EPortalWidth, EPortalPosition } from "./constants";
+import type { EPortalWidth, EPortalPosition } from "./constants";
 
 export interface BasePortalProps {
   children: ReactNode;

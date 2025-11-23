@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -15,15 +13,10 @@ import {
   WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { Button } from "@plane/propel/button";
-import { DiceIcon } from "@plane/propel/icons";
+import { ModuleIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import {
-  EIssuesStoreType,
-  ICustomSearchSelectOption,
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  EIssueLayoutTypes,
-} from "@plane/types";
+import type { ICustomSearchSelectOption, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
@@ -35,8 +28,8 @@ import {
   LayoutSelection,
   MobileLayoutSelection,
 } from "@/components/issues/issue-layouts/filters";
-// helpers
 import { ModuleQuickActions } from "@/components/modules";
+import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-toggle";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssues } from "@/hooks/store/use-issues";
@@ -50,14 +43,15 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
-export const ModuleIssuesHeader: React.FC = observer(() => {
+export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
   // refs
   const parentRef = useRef<HTMLDivElement>(null);
   // states
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId, moduleId } = useParams();
+  const { workspaceSlug, projectId, moduleId: routerModuleId } = useParams();
+  const moduleId = routerModuleId ? routerModuleId.toString() : undefined;
   // hooks
   const { isMobile } = usePlatformOS();
   // store hooks
@@ -75,7 +69,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   // derived values
   const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
   const activeLayout = issueFilters?.displayFilters?.layout;
-  const moduleDetails = moduleId ? getModuleById(moduleId.toString()) : undefined;
+  const moduleDetails = moduleId ? getModuleById(moduleId) : undefined;
   const canUserCreateIssue = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT
@@ -117,7 +111,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
       return {
         value: _module.id,
         query: _module.name,
-        content: <SwitcherLabel name={_module.name} LabelIcon={DiceIcon} />,
+        content: <SwitcherLabel name={_module.name} LabelIcon={ModuleIcon} />,
       };
     })
     .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
@@ -148,7 +142,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                       router.push(`/${workspaceSlug}/projects/${projectId}/modules/${value}`);
                     }}
                     title={moduleDetails?.name}
-                    icon={<DiceIcon className="size-3.5 flex-shrink-0 text-custom-text-300" />}
+                    icon={<ModuleIcon className="size-3.5 flex-shrink-0 text-custom-text-300" />}
                     isLast
                   />
                 }
@@ -197,6 +191,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                 activeLayout={activeLayout}
               />
             </div>
+            {moduleId && <WorkItemFiltersToggle entityType={EIssuesStoreType.MODULE} entityId={moduleId} />}
             <FiltersDropdown
               title="Display"
               placement="bottom-end"
@@ -251,13 +246,15 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
           >
             <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
           </button>
-          <ModuleQuickActions
-            parentRef={parentRef}
-            moduleId={moduleId?.toString()}
-            projectId={projectId.toString()}
-            workspaceSlug={workspaceSlug.toString()}
-            customClassName="flex-shrink-0 flex items-center justify-center bg-custom-background-80/70 rounded size-[26px]"
-          />
+          {moduleId && (
+            <ModuleQuickActions
+              parentRef={parentRef}
+              moduleId={moduleId}
+              projectId={projectId.toString()}
+              workspaceSlug={workspaceSlug.toString()}
+              customClassName="flex-shrink-0 flex items-center justify-center bg-custom-background-80/70 rounded size-[26px]"
+            />
+          )}
         </Header.RightItem>
       </Header>
     </>

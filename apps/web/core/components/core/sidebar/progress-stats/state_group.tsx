@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import { StateGroupIcon } from "@plane/propel/icons";
-import { TStateGroups } from "@plane/types";
+import type { TStateGroups } from "@plane/types";
 // components
 import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
 
@@ -19,7 +19,7 @@ type TStateGroupStatComponent = {
   isEditable?: boolean;
 };
 
-export const StateGroupStatComponent = observer((props: TStateGroupStatComponent) => {
+export const StateGroupStatComponent = observer(function StateGroupStatComponent(props: TStateGroupStatComponent) {
   const { distribution, isEditable, totalIssuesCount, selectedStateGroups, handleStateGroupFiltersUpdate } = props;
 
   return (

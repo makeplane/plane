@@ -8,7 +8,7 @@ import { MultipleSelectEntityAction } from "@/components/core/multiple-select";
 import { IssueGanttSidebarBlock } from "@/components/issues/issue-layouts/gantt/blocks";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 // local imports
 import { BLOCK_HEIGHT, GANTT_SELECT_GROUP } from "../../constants";
@@ -21,7 +21,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const IssuesSidebarBlock = observer((props: Props) => {
+export const IssuesSidebarBlock = observer(function IssuesSidebarBlock(props: Props) {
   const { block, enableSelection, isDragging, selectionHelpers, isEpic = false } = props;
   // store hooks
   const { updateActiveBlockId, isBlockActive, getNumberOfDaysFromPosition } = useTimeLineChartStore();

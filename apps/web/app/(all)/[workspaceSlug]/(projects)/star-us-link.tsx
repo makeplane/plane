@@ -1,17 +1,14 @@
-"use client";
-
-import Image from "next/image";
 import { useTheme } from "next-themes";
 // plane imports
 import { HEADER_GITHUB_ICON, GITHUB_REDIRECTED_TRACKER_EVENT } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+// assets
+import githubBlackImage from "@/app/assets/logos/github-black.png?url";
+import githubWhiteImage from "@/app/assets/logos/github-white.png?url";
 // helpers
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
-// public imports
-import githubBlackImage from "@/public/logos/github-black.png";
-import githubWhiteImage from "@/public/logos/github-white.png";
 
-export const StarUsOnGitHubLink = () => {
+export function StarUsOnGitHubLink() {
   // plane hooks
   const { t } = useTranslation();
   // hooks
@@ -37,8 +34,8 @@ export const StarUsOnGitHubLink = () => {
       target="_blank"
       rel="noopener noreferrer"
     >
-      <Image src={imageSrc} height={16} width={16} alt="GitHub Logo" aria-hidden="true" />
+      <img src={imageSrc} className="h-4 w-4 object-contain" alt="GitHub Logo" aria-hidden="true" />
       <span className="hidden text-xs font-medium sm:hidden md:block">{t("home.star_us_on_github")}</span>
     </a>
   );
-};
+}

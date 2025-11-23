@@ -1,10 +1,9 @@
-"use client";
-
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { PROJECT_SETTINGS_TRACKER_ELEMENTS, PROJECT_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, ToggleSwitch, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { ToggleSwitch } from "@plane/ui";
 // hooks
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 import { useProjectEstimates } from "@/hooks/store/estimates";
@@ -16,7 +15,7 @@ type TEstimateDisableSwitch = {
   isAdmin: boolean;
 };
 
-export const EstimateDisableSwitch: FC<TEstimateDisableSwitch> = observer((props) => {
+export const EstimateDisableSwitch = observer(function EstimateDisableSwitch(props: TEstimateDisableSwitch) {
   const { workspaceSlug, projectId, isAdmin } = props;
   // i18n
   const { t } = useTranslation();

@@ -1,18 +1,15 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Home, Inbox, PenSquare } from "lucide-react";
 // plane imports
-import { UserActivityIcon } from "@plane/propel/icons";
+import { DraftIcon, HomeIcon, InboxIcon, YourWorkIcon } from "@plane/propel/icons";
 import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
 import { useUserPermissions, useUser } from "@/hooks/store/user";
 // local imports
 import { SidebarUserMenuItem } from "./user-menu-item";
 
-export const SidebarUserMenu = observer(() => {
+export const SidebarUserMenu = observer(function SidebarUserMenu() {
   const { workspaceSlug } = useParams();
   const { workspaceUserInfo } = useUserPermissions();
   const { data: currentUser } = useUser();
@@ -23,28 +20,28 @@ export const SidebarUserMenu = observer(() => {
       labelTranslationKey: "sidebar.home",
       href: `/${workspaceSlug.toString()}/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
-      Icon: Home,
+      Icon: HomeIcon,
     },
     {
       key: "your-work",
       labelTranslationKey: "sidebar.your_work",
       href: `/${workspaceSlug.toString()}/profile/${currentUser?.id}/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-      Icon: UserActivityIcon,
+      Icon: YourWorkIcon,
     },
     {
       key: "notifications",
       labelTranslationKey: "sidebar.inbox",
       href: `/${workspaceSlug.toString()}/notifications/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
-      Icon: Inbox,
+      Icon: InboxIcon,
     },
     {
       key: "drafts",
       labelTranslationKey: "sidebar.drafts",
       href: `/${workspaceSlug.toString()}/drafts/`,
       access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-      Icon: PenSquare,
+      Icon: DraftIcon,
     },
   ];
 

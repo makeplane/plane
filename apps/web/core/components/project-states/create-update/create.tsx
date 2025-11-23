@@ -1,10 +1,8 @@
-"use client";
-
-import { FC, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { STATE_TRACKER_EVENTS, STATE_GROUPS } from "@plane/constants";
-import { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
 // components
 import { StateForm } from "@/components/project-states";
 // hooks
@@ -17,7 +15,7 @@ type TStateCreate = {
   handleClose: () => void;
 };
 
-export const StateCreate: FC<TStateCreate> = observer((props) => {
+export const StateCreate = observer(function StateCreate(props: TStateCreate) {
   const { groupKey, shouldTrackEvents, createStateCallback, handleClose } = props;
 
   // states

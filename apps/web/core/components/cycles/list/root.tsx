@@ -1,4 +1,5 @@
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { Disclosure } from "@headlessui/react";
 // components
@@ -20,7 +21,7 @@ export interface ICyclesList {
   isArchived?: boolean;
 }
 
-export const CyclesList: FC<ICyclesList> = observer((props) => {
+export const CyclesList = observer(function CyclesList(props: ICyclesList) {
   const { completedCycleIds, upcomingCycleIds, cycleIds, workspaceSlug, projectId, isArchived = false } = props;
   const { t } = useTranslation();
 

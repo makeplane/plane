@@ -1,57 +1,49 @@
 import { isEmpty } from "lodash-es";
 import { autorun, makeObservable, observable } from "mobx";
 // types
-import {
-  EIssueServiceType,
-  ICycle,
-  IIssueLabel,
-  IModule,
-  IProject,
-  IState,
-  IUserLite,
-  TIssueServiceType,
-} from "@plane/types";
+import type { ICycle, IIssueLabel, IModule, IProject, IState, IUserLite, TIssueServiceType } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // plane web store
-import { IProjectEpics, IProjectEpicsFilter, ProjectEpics, ProjectEpicsFilter } from "@/plane-web/store/issue/epic";
-import { IIssueDetail, IssueDetail } from "@/plane-web/store/issue/issue-details/root.store";
-import { ITeamIssuesFilter, ITeamIssues, TeamIssues, TeamIssuesFilter } from "@/plane-web/store/issue/team";
-import {
-  ITeamProjectWorkItemsFilter,
-  TeamProjectWorkItemsFilter,
-} from "@/plane-web/store/issue/team-project/filter.store";
-import { ITeamProjectWorkItems, TeamProjectWorkItems } from "@/plane-web/store/issue/team-project/issue.store";
-import {
-  ITeamViewIssues,
-  ITeamViewIssuesFilter,
-  TeamViewIssues,
-  TeamViewIssuesFilter,
-} from "@/plane-web/store/issue/team-views";
+import type { IProjectEpics, IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
+import { ProjectEpics, ProjectEpicsFilter } from "@/plane-web/store/issue/epic";
+import type { IIssueDetail } from "@/plane-web/store/issue/issue-details/root.store";
+import { IssueDetail } from "@/plane-web/store/issue/issue-details/root.store";
+import type { ITeamIssuesFilter, ITeamIssues } from "@/plane-web/store/issue/team";
+import { TeamIssues, TeamIssuesFilter } from "@/plane-web/store/issue/team";
+import type { ITeamProjectWorkItemsFilter } from "@/plane-web/store/issue/team-project/filter.store";
+import { TeamProjectWorkItemsFilter } from "@/plane-web/store/issue/team-project/filter.store";
+import type { ITeamProjectWorkItems } from "@/plane-web/store/issue/team-project/issue.store";
+import { TeamProjectWorkItems } from "@/plane-web/store/issue/team-project/issue.store";
+import type { ITeamViewIssues, ITeamViewIssuesFilter } from "@/plane-web/store/issue/team-views";
+import { TeamViewIssues, TeamViewIssuesFilter } from "@/plane-web/store/issue/team-views";
 // root store
-import { IWorkspaceIssues, WorkspaceIssues } from "@/plane-web/store/issue/workspace/issue.store";
+import type { IWorkspaceIssues } from "@/plane-web/store/issue/workspace/issue.store";
+import { WorkspaceIssues } from "@/plane-web/store/issue/workspace/issue.store";
 import type { RootStore } from "@/plane-web/store/root.store";
-import { IWorkspaceMembership } from "@/store/member/workspace/workspace-member.store";
+import type { IWorkspaceMembership } from "@/store/member/workspace/workspace-member.store";
 // issues data store
-import { IArchivedIssuesFilter, ArchivedIssuesFilter, IArchivedIssues, ArchivedIssues } from "./archived";
-import { ICycleIssuesFilter, CycleIssuesFilter, ICycleIssues, CycleIssues } from "./cycle";
-import { IIssueStore, IssueStore } from "./issue.store";
-import { ICalendarStore, CalendarStore } from "./issue_calendar_view.store";
-import { IIssueKanBanViewStore, IssueKanBanViewStore } from "./issue_kanban_view.store";
-import { IModuleIssuesFilter, ModuleIssuesFilter, IModuleIssues, ModuleIssues } from "./module";
-import { IProfileIssuesFilter, ProfileIssuesFilter, IProfileIssues, ProfileIssues } from "./profile";
-import { IProjectIssuesFilter, ProjectIssuesFilter, IProjectIssues, ProjectIssues } from "./project";
-import {
-  IProjectViewIssuesFilter,
-  ProjectViewIssuesFilter,
-  IProjectViewIssues,
-  ProjectViewIssues,
-} from "./project-views";
-import { WorkspaceIssuesFilter, IWorkspaceIssuesFilter } from "./workspace";
-import {
-  IWorkspaceDraftIssues,
-  IWorkspaceDraftIssuesFilter,
-  WorkspaceDraftIssues,
-  WorkspaceDraftIssuesFilter,
-} from "./workspace-draft";
+import type { IArchivedIssuesFilter, IArchivedIssues } from "./archived";
+import { ArchivedIssuesFilter, ArchivedIssues } from "./archived";
+import type { ICycleIssuesFilter, ICycleIssues } from "./cycle";
+import { CycleIssuesFilter, CycleIssues } from "./cycle";
+import type { IIssueStore } from "./issue.store";
+import { IssueStore } from "./issue.store";
+import type { ICalendarStore } from "./issue_calendar_view.store";
+import { CalendarStore } from "./issue_calendar_view.store";
+import type { IIssueKanBanViewStore } from "./issue_kanban_view.store";
+import { IssueKanBanViewStore } from "./issue_kanban_view.store";
+import type { IModuleIssuesFilter, IModuleIssues } from "./module";
+import { ModuleIssuesFilter, ModuleIssues } from "./module";
+import type { IProfileIssuesFilter, IProfileIssues } from "./profile";
+import { ProfileIssuesFilter, ProfileIssues } from "./profile";
+import type { IProjectIssuesFilter, IProjectIssues } from "./project";
+import { ProjectIssuesFilter, ProjectIssues } from "./project";
+import type { IProjectViewIssuesFilter, IProjectViewIssues } from "./project-views";
+import { ProjectViewIssuesFilter, ProjectViewIssues } from "./project-views";
+import type { IWorkspaceIssuesFilter } from "./workspace";
+import { WorkspaceIssuesFilter } from "./workspace";
+import type { IWorkspaceDraftIssues, IWorkspaceDraftIssuesFilter } from "./workspace-draft";
+import { WorkspaceDraftIssues, WorkspaceDraftIssuesFilter } from "./workspace-draft";
 
 export interface IIssueRootStore {
   currentUserId: string | undefined;
@@ -274,7 +266,7 @@ export class IssueRootStore implements IIssueRootStore {
     this.archivedIssues = new ArchivedIssues(this, this.archivedIssuesFilter);
 
     this.issueKanBanView = new IssueKanBanViewStore(this);
-    this.issueCalendarView = new CalendarStore();
+    this.issueCalendarView = new CalendarStore(this);
 
     this.projectEpicsFilter = new ProjectEpicsFilter(this);
     this.projectEpics = new ProjectEpics(this, this.projectEpicsFilter);

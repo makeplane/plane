@@ -11,7 +11,7 @@ import { DocumentEditor } from "@/components/editor/document/editor";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePageFilters } from "@/hooks/use-page-filters";
 // plane web hooks
-import { EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
 
 export type TVersionEditorProps = {
   activeVersion: string | null;
@@ -19,7 +19,7 @@ export type TVersionEditorProps = {
   storeType: EPageStoreType;
 };
 
-export const PagesVersionEditor: React.FC<TVersionEditorProps> = observer((props) => {
+export const PagesVersionEditor = observer(function PagesVersionEditor(props: TVersionEditorProps) {
   const { activeVersion, versionDetails } = props;
   // params
   const { workspaceSlug, projectId } = useParams();

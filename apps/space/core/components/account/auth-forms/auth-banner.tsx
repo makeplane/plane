@@ -1,16 +1,14 @@
-"use client";
-
-import { FC } from "react";
-import { Info, X } from "lucide-react";
+import { Info } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 // helpers
-import { TAuthErrorInfo } from "@/helpers/authentication.helper";
+import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
 
 type TAuthBanner = {
   bannerData: TAuthErrorInfo | undefined;
   handleBannerData?: (bannerData: TAuthErrorInfo | undefined) => void;
 };
 
-export const AuthBanner: FC<TAuthBanner> = (props) => {
+export function AuthBanner(props: TAuthBanner) {
   const { bannerData, handleBannerData } = props;
 
   if (!bannerData) return <></>;
@@ -24,8 +22,8 @@ export const AuthBanner: FC<TAuthBanner> = (props) => {
         className="relative ml-auto w-6 h-6 rounded-sm flex justify-center items-center transition-all cursor-pointer hover:bg-custom-primary-100/20 text-custom-primary-100/80"
         onClick={() => handleBannerData && handleBannerData(undefined)}
       >
-        <X className="w-4 h-4 flex-shrink-0" />
+        <CloseIcon className="w-4 h-4 flex-shrink-0" />
       </div>
     </div>
   );
-};
+}

@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import {
@@ -10,12 +10,13 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
-import { EProductSubscriptionEnum, TBillingFrequency } from "@plane/types";
+import type { TBillingFrequency } from "@plane/types";
+import { EProductSubscriptionEnum } from "@plane/types";
 import { getUpgradeButtonStyle } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // components
 import { DiscountInfo } from "@/components/license/modal/card/discount-info";
-import { TPlanDetail } from "@/constants/plans";
+import type { TPlanDetail } from "@/constants/plans";
 // local imports
 import { captureSuccess } from "@/helpers/event-tracker.helper";
 import { PlanFrequencyToggle } from "./frequency-toggle";
@@ -30,7 +31,7 @@ type TPlanDetailProps = {
 const COMMON_BUTTON_STYLE =
   "relative inline-flex items-center justify-center w-full px-4 py-1.5 text-xs font-medium rounded-lg focus:outline-none transition-all duration-300 animate-slide-up";
 
-export const PlanDetail: FC<TPlanDetailProps> = observer((props) => {
+export const PlanDetail = observer(function PlanDetail(props: TPlanDetailProps) {
   const { subscriptionType, planDetail, billingFrequency, setBillingFrequency } = props;
   // plane hooks
   const { t } = useTranslation();

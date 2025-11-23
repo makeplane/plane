@@ -1,9 +1,9 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // local imports
-import { TDropdownProps } from "../types";
+import type { TDropdownProps } from "../types";
 import { ProjectDropdownBase } from "./base";
 
 type Props = TDropdownProps & {
@@ -27,7 +27,7 @@ type Props = TDropdownProps & {
       }
   );
 
-export const ProjectDropdown: React.FC<Props> = observer((props) => {
+export const ProjectDropdown = observer(function ProjectDropdown(props: Props) {
   // store hooks
   const { joinedProjectIds, getProjectById } = useProject();
 

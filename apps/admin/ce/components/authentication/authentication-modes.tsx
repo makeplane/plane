@@ -1,17 +1,24 @@
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useTheme } from "next-themes";
 import { KeyRound, Mails } from "lucide-react";
 // types
-import {
+import type {
   TGetBaseAuthenticationModeProps,
   TInstanceAuthenticationMethodKeys,
   TInstanceAuthenticationModes,
 } from "@plane/types";
 import { resolveGeneralTheme } from "@plane/utils";
 // components
+import giteaLogo from "@/app/assets/logos/gitea-logo.svg?url";
+import githubLightModeImage from "@/app/assets/logos/github-black.png?url";
+import githubDarkModeImage from "@/app/assets/logos/github-white.png?url";
+import GitlabLogo from "@/app/assets/logos/gitlab-logo.svg?url";
+import GoogleLogo from "@/app/assets/logos/google-logo.svg?url";
+import OIDCLogo from "@/app/assets/logos/oidc-logo.svg?url";
+import SAMLLogo from "@/app/assets/logos/saml-logo.svg?url";
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 import { EmailCodesConfiguration } from "@/components/authentication/email-config-switch";
+import { GiteaConfiguration } from "@/components/authentication/gitea-config";
 import { GithubConfiguration } from "@/components/authentication/github-config";
 import { GitlabConfiguration } from "@/components/authentication/gitlab-config";
 import { GoogleConfiguration } from "@/components/authentication/google-config";
@@ -19,12 +26,6 @@ import { PasswordLoginConfiguration } from "@/components/authentication/password
 // plane admin components
 import { UpgradeButton } from "@/plane-admin/components/common";
 // assets
-import githubLightModeImage from "@/public/logos/github-black.png";
-import githubDarkModeImage from "@/public/logos/github-white.png";
-import GitlabLogo from "@/public/logos/gitlab-logo.svg";
-import GoogleLogo from "@/public/logos/google-logo.svg";
-import OIDCLogo from "@/public/logos/oidc-logo.svg";
-import SAMLLogo from "@/public/logos/saml-logo.svg";
 
 export type TAuthenticationModeProps = {
   disabled: boolean;
@@ -56,7 +57,7 @@ export const getAuthenticationModes: (props: TGetBaseAuthenticationModeProps) =>
     key: "google",
     name: "Google",
     description: "Allow members to log in or sign up for Plane with their Google accounts.",
-    icon: <Image src={GoogleLogo} height={20} width={20} alt="Google Logo" />,
+    icon: <img src={GoogleLogo} height={20} width={20} alt="Google Logo" />,
     config: <GoogleConfiguration disabled={disabled} updateConfig={updateConfig} />,
   },
   {
@@ -64,7 +65,7 @@ export const getAuthenticationModes: (props: TGetBaseAuthenticationModeProps) =>
     name: "GitHub",
     description: "Allow members to log in or sign up for Plane with their GitHub accounts.",
     icon: (
-      <Image
+      <img
         src={resolveGeneralTheme(resolvedTheme) === "dark" ? githubDarkModeImage : githubLightModeImage}
         height={20}
         width={20}
@@ -77,14 +78,21 @@ export const getAuthenticationModes: (props: TGetBaseAuthenticationModeProps) =>
     key: "gitlab",
     name: "GitLab",
     description: "Allow members to log in or sign up to plane with their GitLab accounts.",
-    icon: <Image src={GitlabLogo} height={20} width={20} alt="GitLab Logo" />,
+    icon: <img src={GitlabLogo} height={20} width={20} alt="GitLab Logo" />,
     config: <GitlabConfiguration disabled={disabled} updateConfig={updateConfig} />,
+  },
+  {
+    key: "gitea",
+    name: "Gitea",
+    description: "Allow members to log in or sign up to plane with their Gitea accounts.",
+    icon: <img src={giteaLogo} height={20} width={20} alt="Gitea Logo" />,
+    config: <GiteaConfiguration disabled={disabled} updateConfig={updateConfig} />,
   },
   {
     key: "oidc",
     name: "OIDC",
     description: "Authenticate your users via the OpenID Connect protocol.",
-    icon: <Image src={OIDCLogo} height={22} width={22} alt="OIDC Logo" />,
+    icon: <img src={OIDCLogo} height={22} width={22} alt="OIDC Logo" />,
     config: <UpgradeButton />,
     unavailable: true,
   },
@@ -92,13 +100,13 @@ export const getAuthenticationModes: (props: TGetBaseAuthenticationModeProps) =>
     key: "saml",
     name: "SAML",
     description: "Authenticate your users via the Security Assertion Markup Language protocol.",
-    icon: <Image src={SAMLLogo} height={22} width={22} alt="SAML Logo" className="pl-0.5" />,
+    icon: <img src={SAMLLogo} height={22} width={22} alt="SAML Logo" className="pl-0.5" />,
     config: <UpgradeButton />,
     unavailable: true,
   },
 ];
 
-export const AuthenticationModes: React.FC<TAuthenticationModeProps> = observer((props) => {
+export const AuthenticationModes = observer(function AuthenticationModes(props: TAuthenticationModeProps) {
   const { disabled, updateConfig } = props;
   // next-themes
   const { resolvedTheme } = useTheme();

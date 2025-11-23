@@ -1,7 +1,6 @@
-import { ReactNode } from "react";
 import Link from "next/link";
 // helpers
-import { SUPPORT_EMAIL } from "./common.helper";
+import { SUPPORT_EMAIL } from "@plane/constants";
 
 export enum EPageTypes {
   INIT = "INIT",
@@ -66,7 +65,7 @@ export enum EAuthenticationErrorCodes {
   INCORRECT_OLD_PASSWORD = "5135",
   MISSING_PASSWORD = "5138",
   INVALID_NEW_PASSWORD = "5140",
-  // set passowrd
+  // set password
   PASSWORD_ALREADY_SET = "5145",
   // Admin
   ADMIN_ALREADY_EXIST = "5150",
@@ -83,11 +82,11 @@ export type TAuthErrorInfo = {
   type: EErrorAlertType;
   code: EAuthenticationErrorCodes;
   title: string;
-  message: ReactNode;
+  message: React.ReactNode;
 };
 
 const errorCodeMessages: {
-  [key in EAuthenticationErrorCodes]: { title: string; message: (email?: string | undefined) => ReactNode };
+  [key in EAuthenticationErrorCodes]: { title: string; message: (email?: string | undefined) => React.ReactNode };
 } = {
   // global
   [EAuthenticationErrorCodes.INSTANCE_NOT_CONFIGURED]: {

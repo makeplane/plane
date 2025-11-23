@@ -1,5 +1,4 @@
-"use client";
-import React, { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -12,7 +11,7 @@ type Props = {
   icon: React.ReactNode;
 };
 
-export const FavoriteItemTitle: FC<Props> = observer((props) => {
+export const FavoriteItemTitle = observer(function FavoriteItemTitle(props: Props) {
   const { href, title, icon } = props;
   // store hooks
   const { toggleSidebar } = useAppTheme();

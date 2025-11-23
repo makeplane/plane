@@ -1,4 +1,5 @@
-import { FC, useRef, useState } from "react";
+import type { FC } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm, Controller } from "react-hook-form";
 // plane imports
@@ -25,7 +26,7 @@ type TCommentCreate = {
 // services
 const fileService = new FileService();
 
-export const CommentCreate: FC<TCommentCreate> = observer((props) => {
+export const CommentCreate = observer(function CommentCreate(props: TCommentCreate) {
   const {
     workspaceSlug,
     entityId,
@@ -129,6 +130,11 @@ export const CommentCreate: FC<TCommentCreate> = observer((props) => {
                 isSubmitting={isSubmitting}
                 uploadFile={async (blockId, file) => {
                   const { asset_id } = await activityOperations.uploadCommentAsset(blockId, file);
+                  setUploadedAssetIds((prev) => [...prev, asset_id]);
+                  return asset_id;
+                }}
+                duplicateFile={async (assetId: string) => {
+                  const { asset_id } = await activityOperations.duplicateCommentAsset(assetId);
                   setUploadedAssetIds((prev) => [...prev, asset_id]);
                   return asset_id;
                 }}

@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane utils
 import { cn } from "@plane/utils";
@@ -6,9 +6,9 @@ import { cn } from "@plane/utils";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 //
 import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "../../constants";
-import { IWeekBlock } from "../../views";
+import type { IWeekBlock } from "../../views";
 
-export const WeekChartView: FC<any> = observer(() => {
+export const WeekChartView = observer(function WeekChartView(_props: any) {
   const { currentViewData, renderView } = useTimeLineChartStore();
   const weekBlocks: IWeekBlock[] = renderView;
 

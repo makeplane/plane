@@ -1,11 +1,10 @@
-"use client";
-
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Trash } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
-import { EIssueServiceType, TIssueServiceType } from "@plane/types";
+import type { TIssueServiceType } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
 import { convertBytesToSize, getFileExtension, getFileName, getFileURL, renderFormattedDate } from "@plane/utils";
@@ -25,7 +24,7 @@ type TIssueAttachmentsListItem = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer((props) => {
+export const IssueAttachmentsListItem = observer(function IssueAttachmentsListItem(props: TIssueAttachmentsListItem) {
   const { t } = useTranslation();
   // props
   const { attachmentId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
@@ -83,9 +82,7 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
 
             <CustomMenu ellipsis closeOnSelect placement="bottom-end" disabled={disabled}>
               <CustomMenu.MenuItem
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
+                onClick={() => {
                   toggleDeleteAttachmentModal(attachmentId);
                 }}
               >

@@ -1,10 +1,9 @@
-"use client";
-import { FC, useCallback } from "react";
-
+import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { NOTIFICATION_TABS, TNotificationTab } from "@plane/constants";
+import type { TNotificationTab } from "@plane/constants";
+import { NOTIFICATION_TABS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Header, Row, ERowVariant, EHeaderVariant, ContentWrapper } from "@plane/ui";
 import { cn, getNumberCount } from "@plane/utils";
@@ -21,7 +20,7 @@ import { AppliedFilters } from "./filters/applied-filter";
 import { NotificationSidebarHeader } from "./header";
 import { NotificationsLoader } from "./loader";
 
-export const NotificationsSidebarRoot: FC = observer(() => {
+export const NotificationsSidebarRoot = observer(function NotificationsSidebarRoot() {
   const { workspaceSlug } = useParams();
   // hooks
   const { getWorkspaceBySlug } = useWorkspace();
@@ -105,7 +104,7 @@ export const NotificationsSidebarRoot: FC = observer(() => {
               </ContentWrapper>
             ) : (
               <div className="relative w-full h-full flex justify-center items-center">
-                <NotificationEmptyState />
+                <NotificationEmptyState currentNotificationTab={currentNotificationTab} />
               </div>
             )}
           </>

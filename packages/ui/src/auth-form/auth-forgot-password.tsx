@@ -8,12 +8,12 @@ export interface AuthForgotPasswordProps {
   disabled?: boolean;
 }
 
-export const AuthForgotPassword: React.FC<AuthForgotPasswordProps> = ({
+export function AuthForgotPassword({
   onForgotPassword,
   className = "",
   text = "Forgot your password?",
   disabled = false,
-}) => {
+}: AuthForgotPasswordProps) {
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     if (!disabled && onForgotPassword) {
@@ -38,4 +38,4 @@ export const AuthForgotPassword: React.FC<AuthForgotPasswordProps> = ({
       {text}
     </button>
   );
-};
+}

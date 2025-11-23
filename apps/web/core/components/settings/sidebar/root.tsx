@@ -2,7 +2,8 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 import { SettingsSidebarHeader } from "./header";
-import SettingsSidebarNavItem, { TSettingItem } from "./nav-item";
+import type { TSettingItem } from "./nav-item";
+import SettingsSidebarNavItem from "./nav-item";
 
 interface SettingsSidebarProps {
   isMobile?: boolean;
@@ -19,7 +20,7 @@ interface SettingsSidebarProps {
   renderChildren?: (key: string) => React.ReactNode;
 }
 
-export const SettingsSidebar = observer((props: SettingsSidebarProps) => {
+export const SettingsSidebar = observer(function SettingsSidebar(props: SettingsSidebarProps) {
   const {
     isMobile = false,
     customHeader,

@@ -1,13 +1,12 @@
-"use client";
-
-import React, { FC, useEffect, useRef, useState } from "react";
+import type { FC } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import { DropTargetRecord, DragLocationHistory } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
-import {
-  draggable,
-  dropTargetForElements,
-  ElementDragPayload,
-} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import type {
+  DropTargetRecord,
+  DragLocationHistory,
+} from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
+import type { ElementDragPayload } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
@@ -16,7 +15,7 @@ import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
 // plane types
 import { useTranslation } from "@plane/i18n";
-import { InstructionType, TWidgetEntityData } from "@plane/types";
+import type { InstructionType, TWidgetEntityData } from "@plane/types";
 // plane ui
 import { DropIndicator, ToggleSwitch } from "@plane/ui";
 // plane utils
@@ -34,7 +33,7 @@ type Props = {
   handleToggle: (workspaceSlug: string, widgetKey: string, is_enabled: boolean) => void;
 };
 
-export const WidgetItem: FC<Props> = observer((props) => {
+export const WidgetItem = observer(function WidgetItem(props: Props) {
   // props
   const { widgetId, isLastChild, handleDrop, handleToggle } = props;
   const { workspaceSlug } = useParams();

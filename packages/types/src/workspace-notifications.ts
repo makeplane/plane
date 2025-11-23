@@ -1,4 +1,4 @@
-import { ENotificationFilterType } from "./enums";
+import type { ENotificationFilterType } from "./enums";
 import type { IUserLite } from "./users";
 
 // filters

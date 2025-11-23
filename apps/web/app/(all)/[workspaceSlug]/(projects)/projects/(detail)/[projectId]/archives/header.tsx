@@ -1,9 +1,7 @@
-"use client";
-
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ArchiveIcon, ContrastIcon, DiceIcon, LayersIcon } from "@plane/propel/icons";
+import { ArchiveIcon, CycleIcon, ModuleIcon, WorkItemsIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType } from "@plane/types";
 // ui
@@ -32,21 +30,21 @@ const PROJECT_ARCHIVES_BREADCRUMB_LIST: {
   issues: {
     label: "Work items",
     href: "/issues",
-    icon: LayersIcon,
+    icon: WorkItemsIcon,
   },
   cycles: {
     label: "Cycles",
     href: "/cycles",
-    icon: ContrastIcon,
+    icon: CycleIcon,
   },
   modules: {
     label: "Modules",
     href: "/modules",
-    icon: DiceIcon,
+    icon: ModuleIcon,
   },
 };
 
-export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
+export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(props: TProps) {
   const { activeTab } = props;
   // router
   const router = useAppRouter();

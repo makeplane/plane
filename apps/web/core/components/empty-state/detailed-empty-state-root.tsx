@@ -1,8 +1,5 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 // ui
 import { Button } from "@plane/propel/button";
 // utils
@@ -36,7 +33,7 @@ const sizeClasses = {
   lg: "md:min-w-[30rem] max-w-[60rem]",
 } as const;
 
-const CustomButton = ({
+function CustomButton({
   config,
   variant,
   size,
@@ -44,20 +41,22 @@ const CustomButton = ({
   config: ButtonConfig;
   variant: "primary" | "neutral-primary";
   size: EmptyStateSize;
-}) => (
-  <Button
-    variant={variant}
-    size={size}
-    onClick={config.onClick}
-    prependIcon={config.prependIcon}
-    appendIcon={config.appendIcon}
-    disabled={config.disabled}
-  >
-    {config.text}
-  </Button>
-);
+}) {
+  return (
+    <Button
+      variant={variant}
+      size={size}
+      onClick={config.onClick}
+      prependIcon={config.prependIcon}
+      appendIcon={config.appendIcon}
+      disabled={config.disabled}
+    >
+      {config.text}
+    </Button>
+  );
+}
 
-export const DetailedEmptyState: React.FC<Props> = observer((props) => {
+export const DetailedEmptyState = observer(function DetailedEmptyState(props: Props) {
   const {
     title,
     description,
@@ -85,9 +84,7 @@ export const DetailedEmptyState: React.FC<Props> = observer((props) => {
           {description && <p className="text-sm">{description}</p>}
         </div>
 
-        {assetPath && (
-          <Image src={assetPath} alt={title} width={384} height={250} layout="responsive" lazyBoundary="100%" />
-        )}
+        {assetPath && <img src={assetPath} alt={title} className="w-full h-auto" loading="lazy" />}
 
         {hasButtons && (
           <div className="relative flex items-center justify-center gap-2 flex-shrink-0 w-full">

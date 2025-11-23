@@ -1,6 +1,5 @@
-"use client";
-
-import { FC, Fragment, useState } from "react";
+import type { FC } from "react";
+import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { useTranslation } from "@plane/i18n";
@@ -14,7 +13,7 @@ export type InboxIssueSnoozeModalProps = {
   handleClose: () => void;
 };
 
-export const InboxIssueSnoozeModal: FC<InboxIssueSnoozeModalProps> = (props) => {
+export function InboxIssueSnoozeModal(props: InboxIssueSnoozeModalProps) {
   const { isOpen, handleClose, value, onConfirm } = props;
   // states
   const [date, setDate] = useState(value || new Date());
@@ -81,4 +80,4 @@ export const InboxIssueSnoozeModal: FC<InboxIssueSnoozeModalProps> = (props) => 
       </Dialog>
     </Transition.Root>
   );
-};
+}

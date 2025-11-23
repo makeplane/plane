@@ -1,13 +1,12 @@
-"use client";
 import { Fragment } from "react";
 import { Controller, useForm } from "react-hook-form";
 
-import { X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 
 import { Button } from "@plane/propel/button";
 import { Calendar } from "@plane/propel/calendar";
 
+import { CloseIcon } from "@plane/propel/icons";
 import { renderFormattedPayloadDate, renderFormattedDate, getDate } from "@plane/utils";
 import { DateFilterSelect } from "./date-filter-select";
 type Props = {
@@ -29,7 +28,7 @@ const defaultValues: TFormValues = {
   date2: new Date(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()),
 };
 
-export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, onSelect }) => {
+export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props) {
   const { handleSubmit, watch, control } = useForm<TFormValues>({
     defaultValues,
   });
@@ -84,7 +83,7 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                         <DateFilterSelect title={title} value={value} onChange={onChange} />
                       )}
                     />
-                    <X className="h-4 w-4 cursor-pointer" onClick={handleClose} />
+                    <CloseIcon className="h-4 w-4 cursor-pointer" onClick={handleClose} />
                   </div>
                   <div className="flex w-full justify-between gap-4">
                     <Controller
@@ -164,4 +163,4 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
       </Dialog>
     </Transition.Root>
   );
-};
+}

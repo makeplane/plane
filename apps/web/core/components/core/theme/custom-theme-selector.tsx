@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -7,9 +5,10 @@ import { Controller, useForm } from "react-hook-form";
 import { PROFILE_SETTINGS_TRACKER_ELEMENTS, PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { IUserTheme } from "@plane/types";
+import { setPromiseToast } from "@plane/propel/toast";
+import type { IUserTheme } from "@plane/types";
 // ui
-import { InputColorPicker, setPromiseToast } from "@plane/ui";
+import { InputColorPicker } from "@plane/ui";
 // hooks
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 import { useUserProfile } from "@/hooks/store/user";
@@ -18,7 +17,7 @@ type TCustomThemeSelector = {
   applyThemeChange: (theme: Partial<IUserTheme>) => void;
 };
 
-export const CustomThemeSelector: React.FC<TCustomThemeSelector> = observer((props) => {
+export const CustomThemeSelector = observer(function CustomThemeSelector(props: TCustomThemeSelector) {
   const { applyThemeChange } = props;
   // hooks
   const { data: userProfile, updateUserTheme } = useUserProfile();

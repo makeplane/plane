@@ -1,10 +1,9 @@
-"use client";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { FileText } from "lucide-react";
 import { EProjectFeatureKey } from "@plane/constants";
+import { PageIcon } from "@plane/propel/icons";
 // types
-import { ICustomSearchSelectOption } from "@plane/types";
+import type { ICustomSearchSelectOption } from "@plane/types";
 // ui
 import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
@@ -28,7 +27,7 @@ export interface IPagesHeaderProps {
 
 const storeType = EPageStoreType.PROJECT;
 
-export const PageDetailsHeader = observer(() => {
+export const PageDetailsHeader = observer(function PageDetailsHeader() {
   // router
   const router = useAppRouter();
   const { workspaceSlug, pageId, projectId } = useParams();
@@ -51,7 +50,7 @@ export const PageDetailsHeader = observer(() => {
         query: _page.name,
         content: (
           <div className="flex gap-2 items-center justify-between">
-            <SwitcherLabel logo_props={_page.logo_props} name={getPageName(_page.name)} LabelIcon={FileText} />
+            <SwitcherLabel logo_props={_page.logo_props} name={getPageName(_page.name)} LabelIcon={PageIcon} />
             <PageAccessIcon {..._page} />
           </div>
         ),
@@ -83,7 +82,7 @@ export const PageDetailsHeader = observer(() => {
                   title={getPageName(page?.name)}
                   icon={
                     <Breadcrumbs.Icon>
-                      <SwitcherIcon logo_props={page.logo_props} LabelIcon={FileText} size={16} />
+                      <SwitcherIcon logo_props={page.logo_props} LabelIcon={PageIcon} size={16} />
                     </Breadcrumbs.Icon>
                   }
                   isLast

@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 // helpers
 import { getValidKeysFromObject } from "@plane/utils";
@@ -34,7 +33,7 @@ type TIssueActivityItem = {
   ends: "top" | "bottom" | undefined;
 };
 
-export const IssueActivityItem: FC<TIssueActivityItem> = observer((props) => {
+export const IssueActivityItem = observer(function IssueActivityItem(props: TIssueActivityItem) {
   const { activityId, ends } = props;
   // hooks
   const {

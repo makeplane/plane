@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@plane/constants";
-import { IGithubRepoInfo, IGithubServiceImportFormData } from "@plane/types";
+import type { IGithubRepoInfo, IGithubServiceImportFormData } from "@plane/types";
 import { APIService } from "@/services/api.service";
 // helpers
 // types

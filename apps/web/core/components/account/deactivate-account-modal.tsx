@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { Trash2 } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
@@ -7,7 +5,7 @@ import { PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useUser } from "@/hooks/store/user";
@@ -18,7 +16,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const DeactivateAccountModal: React.FC<Props> = (props) => {
+export function DeactivateAccountModal(props: Props) {
   const router = useAppRouter();
   const { isOpen, onClose } = props;
   // hooks
@@ -125,4 +123,4 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+}

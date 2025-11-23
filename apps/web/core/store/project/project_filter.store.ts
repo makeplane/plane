@@ -2,7 +2,7 @@ import { set } from "lodash-es";
 import { action, computed, observable, makeObservable, runInAction, reaction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { TProjectDisplayFilters, TProjectFilters, TProjectAppliedDisplayFilterKeys } from "@plane/types";
+import type { TProjectDisplayFilters, TProjectFilters, TProjectAppliedDisplayFilterKeys } from "@plane/types";
 // store
 import type { CoreRootStore } from "../root.store";
 

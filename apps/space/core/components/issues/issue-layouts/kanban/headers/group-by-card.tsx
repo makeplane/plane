@@ -1,10 +1,7 @@
-"use client";
-
-import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { Circle } from "lucide-react";
 // types
-import { TIssueGroupByOptions } from "@plane/types";
+import type { TIssueGroupByOptions } from "@plane/types";
 
 interface IHeaderGroupByCard {
   groupBy: TIssueGroupByOptions | undefined;
@@ -13,7 +10,7 @@ interface IHeaderGroupByCard {
   count: number;
 }
 
-export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
+export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHeaderGroupByCard) {
   const { icon, title, count } = props;
 
   return (

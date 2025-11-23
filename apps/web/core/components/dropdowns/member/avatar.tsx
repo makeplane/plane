@@ -1,7 +1,6 @@
-"use client";
-
 import { observer } from "mobx-react";
-import { LucideIcon, Users } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { MembersPropertyIcon } from "@plane/propel/icons";
 // plane ui
 import { Avatar, AvatarGroup } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
@@ -17,7 +16,7 @@ type AvatarProps = {
   size?: "sm" | "md" | "base" | "lg" | number;
 };
 
-export const ButtonAvatars: React.FC<AvatarProps> = observer((props) => {
+export const ButtonAvatars = observer(function ButtonAvatars(props: AvatarProps) {
   const { showTooltip, userIds, icon: Icon, size = "md" } = props;
   // store hooks
   const { getUserDetails } = useMember();
@@ -48,5 +47,9 @@ export const ButtonAvatars: React.FC<AvatarProps> = observer((props) => {
     }
   }
 
-  return Icon ? <Icon className="h-3 w-3 flex-shrink-0" /> : <Users className={cn("h-3 w-3 mx-[4px] flex-shrink-0")} />;
+  return Icon ? (
+    <Icon className="h-3 w-3 flex-shrink-0" />
+  ) : (
+    <MembersPropertyIcon className={cn("h-3 w-3 mx-[4px] flex-shrink-0")} />
+  );
 });

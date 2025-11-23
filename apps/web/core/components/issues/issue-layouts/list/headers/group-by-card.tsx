@@ -1,14 +1,13 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { CircleDashed, Plus } from "lucide-react";
 // types
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
-import { TIssue, ISearchIssueResponse, TIssueGroupByOptions } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TIssue, ISearchIssueResponse, TIssueGroupByOptions } from "@plane/types";
 // ui
-import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
@@ -17,7 +16,7 @@ import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // constants
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // plane-web
 import { CreateUpdateEpicModal } from "@/plane-web/components/epics/epic-modal";
 // Plane-web
@@ -38,7 +37,7 @@ interface IHeaderGroupByCard {
   isEpic?: boolean;
 }
 
-export const HeaderGroupByCard = observer((props: IHeaderGroupByCard) => {
+export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHeaderGroupByCard) {
   const {
     groupID,
     groupBy,

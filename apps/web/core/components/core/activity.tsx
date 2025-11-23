@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -13,23 +11,31 @@ import {
   Users2Icon,
   ArchiveIcon,
   PaperclipIcon,
-  ContrastIcon,
   TriangleIcon,
   LayoutGridIcon,
   SignalMediumIcon,
   MessageSquareIcon,
   UsersIcon,
 } from "lucide-react";
-import { BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon, EpicIcon, Intake } from "@plane/propel/icons";
+import {
+  BlockedIcon,
+  BlockerIcon,
+  CycleIcon,
+  EpicIcon,
+  IntakeIcon,
+  ModuleIcon,
+  RelatedIcon,
+  WorkItemsIcon,
+} from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { IIssueActivity } from "@plane/types";
+import type { IIssueActivity } from "@plane/types";
 import { renderFormattedDate, generateWorkItemLink, capitalizeFirstLetter } from "@plane/utils";
 // helpers
 import { useLabel } from "@/hooks/store/use-label";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 
-export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
+export function IssueLink({ activity }: { activity: IIssueActivity }) {
   // router params
   const { workspaceSlug } = useParams();
   const { isMobile } = usePlatformOS();
@@ -65,9 +71,9 @@ export const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
       )}
     </Tooltip>
   );
-};
+}
 
-const UserLink = ({ activity }: { activity: IIssueActivity }) => {
+function UserLink({ activity }: { activity: IIssueActivity }) {
   // router params
   const { workspaceSlug } = useParams();
 
@@ -83,9 +89,9 @@ const UserLink = ({ activity }: { activity: IIssueActivity }) => {
       {activity.new_value && activity.new_value !== "" ? activity.new_value : activity.old_value}
     </a>
   );
-};
+}
 
-const LabelPill = observer(({ labelId, workspaceSlug }: { labelId: string; workspaceSlug: string }) => {
+const LabelPill = observer(function LabelPill({ labelId, workspaceSlug }: { labelId: string; workspaceSlug: string }) {
   // store hooks
   const { workspaceLabels, fetchWorkspaceLabels } = useLabel();
 
@@ -283,7 +289,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <LayersIcon width={12} height={12} className="text-custom-text-200" aria-hidden="true" />,
+    icon: <WorkItemsIcon width={12} height={12} className="text-custom-text-200" aria-hidden="true" />,
   },
   epic: {
     message: (activity) => {
@@ -462,7 +468,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <ContrastIcon size={12} className="text-custom-text-200" aria-hidden="true" />,
+    icon: <CycleIcon height={12} width={12} className="text-custom-text-200" aria-hidden="true" />,
   },
   modules: {
     message: (activity, showIssue, workspaceSlug) => {
@@ -509,7 +515,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <DiceIcon className="h-3 w-3 !text-custom-text-200" aria-hidden="true" />,
+    icon: <ModuleIcon className="h-3 w-3 !text-custom-text-200" aria-hidden="true" />,
   },
   name: {
     message: (activity, showIssue) => (
@@ -739,20 +745,20 @@ const activityDetails: {
         {activity.verb === "2" && ` from intake by marking a duplicate work item.`}
       </>
     ),
-    icon: <Intake className="size-3 text-custom-text-200" aria-hidden="true" />,
+    icon: <IntakeIcon className="size-3 text-custom-text-200" aria-hidden="true" />,
   },
 };
 
-export const ActivityIcon = ({ activity }: { activity: IIssueActivity }) => (
-  <>{activityDetails[activity.field as keyof typeof activityDetails]?.icon}</>
-);
+export function ActivityIcon({ activity }: { activity: IIssueActivity }) {
+  return <>{activityDetails[activity.field as keyof typeof activityDetails]?.icon}</>;
+}
 
 type ActivityMessageProps = {
   activity: IIssueActivity;
   showIssue?: boolean;
 };
 
-export const ActivityMessage = ({ activity, showIssue = false }: ActivityMessageProps) => {
+export function ActivityMessage({ activity, showIssue = false }: ActivityMessageProps) {
   // router params
   const { workspaceSlug } = useParams();
   const activityField = activity.field ?? "issue";
@@ -766,4 +772,4 @@ export const ActivityMessage = ({ activity, showIssue = false }: ActivityMessage
       )}
     </>
   );
-};
+}

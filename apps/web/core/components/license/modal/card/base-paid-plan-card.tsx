@@ -1,12 +1,11 @@
-"use client";
-
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { CheckCircle } from "lucide-react";
 import { Tab } from "@headlessui/react";
 // plane imports
 // helpers
-import { EProductSubscriptionEnum, TBillingFrequency, TSubscriptionPrice } from "@plane/types";
+import type { EProductSubscriptionEnum, TBillingFrequency, TSubscriptionPrice } from "@plane/types";
 import { getSubscriptionBackgroundColor, getUpgradeCardVariantStyle } from "@plane/ui";
 import { cn, getBaseSubscriptionName, getSubscriptionName } from "@plane/utils";
 
@@ -21,7 +20,7 @@ export type TBasePaidPlanCardProps = {
   renderActionButton: (price: TSubscriptionPrice) => React.ReactNode;
 };
 
-export const BasePaidPlanCard: FC<TBasePaidPlanCardProps> = observer((props) => {
+export const BasePaidPlanCard = observer(function BasePaidPlanCard(props: TBasePaidPlanCardProps) {
   const {
     planVariant,
     features,

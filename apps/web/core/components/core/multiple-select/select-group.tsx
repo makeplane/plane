@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 // hooks
-import { TSelectionHelper, useMultipleSelect } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
+import { useMultipleSelect } from "@/hooks/use-multiple-select";
 
 type Props = {
   children: (helpers: TSelectionHelper) => React.ReactNode;
@@ -9,7 +10,7 @@ type Props = {
   entities: Record<string, string[]>; // { groupID: entityIds[] }
 };
 
-export const MultipleSelectGroup: React.FC<Props> = observer((props) => {
+export const MultipleSelectGroup = observer(function MultipleSelectGroup(props: Props) {
   const { children, containerRef, disabled = false, entities } = props;
 
   const helpers = useMultipleSelect({
@@ -20,5 +21,3 @@ export const MultipleSelectGroup: React.FC<Props> = observer((props) => {
 
   return <>{children(helpers)}</>;
 });
-
-MultipleSelectGroup.displayName = "MultipleSelectGroup";

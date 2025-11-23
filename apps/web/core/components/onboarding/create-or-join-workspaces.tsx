@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { OctagonAlert } from "lucide-react";
 // plane imports
-import { IWorkspaceMemberInvitation, TOnboardingSteps } from "@plane/types";
+import type { IWorkspaceMemberInvitation, TOnboardingSteps } from "@plane/types";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 // hooks
@@ -26,7 +26,7 @@ type Props = {
   finishOnboarding: () => Promise<void>;
 };
 
-export const CreateOrJoinWorkspaces: React.FC<Props> = observer((props) => {
+export const CreateOrJoinWorkspaces = observer(function CreateOrJoinWorkspaces(props: Props) {
   const { invitations, totalSteps, stepChange, finishOnboarding } = props;
   // states
   const [currentView, setCurrentView] = useState<ECreateOrJoinWorkspaceViews | null>(null);

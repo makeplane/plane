@@ -1,6 +1,4 @@
-"use client";
-
-import { FC, useCallback } from "react";
+import { useCallback } from "react";
 import { cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
@@ -15,7 +13,7 @@ type TIssueAppliedFilters = {
   anchor: string;
 };
 
-export const IssueAppliedFilters: FC<TIssueAppliedFilters> = observer((props) => {
+export const IssueAppliedFilters = observer(function IssueAppliedFilters(props: TIssueAppliedFilters) {
   const { anchor } = props;
   // router
   const router = useRouter();

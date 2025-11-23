@@ -1,11 +1,10 @@
 import { useRouter } from "next/navigation";
-import { FileText } from "lucide-react";
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import { PageIcon } from "@plane/propel/icons";
 // plane import
 import type { TActivityEntityData, TPageEntityData } from "@plane/types";
 import { Avatar } from "@plane/ui";
 import { calculateTimeAgo, getFileURL, getPageName } from "@plane/utils";
-// components
-import { Logo } from "@/components/common/logo";
 import { ListItem } from "@/components/core/list";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
@@ -16,7 +15,7 @@ type BlockProps = {
   workspaceSlug: string;
 };
 
-export const RecentPage = (props: BlockProps) => {
+export function RecentPage(props: BlockProps) {
   const { activity, ref, workspaceSlug } = props;
   // router
   const router = useRouter();
@@ -43,7 +42,7 @@ export const RecentPage = (props: BlockProps) => {
             {pageDetails?.logo_props?.in_use ? (
               <Logo logo={pageDetails?.logo_props} size={16} type="lucide" />
             ) : (
-              <FileText className="size-4 text-custom-text-350" />
+              <PageIcon className="size-4 text-custom-text-350" />
             )}
           </div>
           {pageDetails?.project_identifier && (
@@ -74,4 +73,4 @@ export const RecentPage = (props: BlockProps) => {
       }}
     />
   );
-};
+}

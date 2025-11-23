@@ -1,6 +1,5 @@
-"use client";
-
-import React, { Dispatch, ReactElement, SetStateAction, useCallback, useEffect, useState, useRef } from "react";
+import type { Dispatch, ReactElement, SetStateAction } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 // helpers
 import { cn } from "@plane/utils";
 

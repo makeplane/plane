@@ -1,10 +1,9 @@
-"use client";
-
-import { ReactNode, useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { IModule } from "@plane/types";
+import type { IModule } from "@plane/types";
 import { ComboDropDown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
@@ -13,7 +12,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
 import { DropdownButton } from "../buttons";
 import { BUTTON_VARIANTS_WITHOUT_TEXT } from "../constants";
-import { TDropdownProps } from "../types";
+import type { TDropdownProps } from "../types";
 import { ModuleButtonContent } from "./button-content";
 import { ModuleOptions } from "./module-options";
 
@@ -42,7 +41,7 @@ type TModuleDropdownBaseProps = TDropdownProps & {
       }
   );
 
-export const ModuleDropdownBase: React.FC<TModuleDropdownBaseProps> = observer((props) => {
+export const ModuleDropdownBase = observer(function ModuleDropdownBase(props: TModuleDropdownBaseProps) {
   const {
     button,
     buttonClassName,

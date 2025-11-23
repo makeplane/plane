@@ -1,13 +1,10 @@
-"use client";
-
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
 // ui
-import { UserCircle2 } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { CreateIcon, LayerStackIcon } from "@plane/propel/icons";
-import { IUserProfileData } from "@plane/types";
+import { UserCirclePropertyIcon, CreateIcon, LayerStackIcon } from "@plane/propel/icons";
+import type { IUserProfileData } from "@plane/types";
 import { Loader, Card, ECardSpacing, ECardDirection } from "@plane/ui";
 // types
 
@@ -15,7 +12,7 @@ type Props = {
   userProfile: IUserProfileData | undefined;
 };
 
-export const ProfileStats: React.FC<Props> = ({ userProfile }) => {
+export function ProfileStats({ userProfile }: Props) {
   const { workspaceSlug, userId } = useParams();
 
   const { t } = useTranslation();
@@ -28,7 +25,7 @@ export const ProfileStats: React.FC<Props> = ({ userProfile }) => {
       value: userProfile?.created_issues ?? "...",
     },
     {
-      icon: UserCircle2,
+      icon: UserCirclePropertyIcon,
       route: "assigned",
       i18n_title: "profile.stats.assigned",
       value: userProfile?.assigned_issues ?? "...",
@@ -69,4 +66,4 @@ export const ProfileStats: React.FC<Props> = ({ userProfile }) => {
       )}
     </div>
   );
-};
+}

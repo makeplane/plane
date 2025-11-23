@@ -1,6 +1,4 @@
-"use client";
-
-import { useEffect, useState, FC } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Pencil } from "lucide-react";
@@ -14,14 +12,14 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { IWorkspace } from "@plane/types";
-import { CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IWorkspace } from "@plane/types";
+import { CustomSelect, Input } from "@plane/ui";
 import { copyUrlToClipboard, getFileURL } from "@plane/utils";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { WorkspaceImageUploadModal } from "@/components/core/modals/workspace-image-upload-modal";
 // helpers
-// hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -35,7 +33,7 @@ const defaultValues: Partial<IWorkspace> = {
   logo_url: null,
 };
 
-export const WorkspaceDetails: FC = observer(() => {
+export const WorkspaceDetails = observer(function WorkspaceDetails() {
   // states
   const [isLoading, setIsLoading] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);

@@ -1,14 +1,11 @@
-"use client";
-
 import { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@plane/propel/button";
-import { TDeDupeIssue, TIssue } from "@plane/types";
-// ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TDeDupeIssue, TIssue } from "@plane/types";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
@@ -21,7 +18,7 @@ type Props = {
   onSubmit?: () => Promise<void>;
 };
 
-export const ArchiveIssueModal: React.FC<Props> = (props) => {
+export function ArchiveIssueModal(props: Props) {
   const { dataId, data, isOpen, handleClose, onSubmit } = props;
   const { t } = useTranslation();
   // states
@@ -111,4 +108,4 @@ export const ArchiveIssueModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+}

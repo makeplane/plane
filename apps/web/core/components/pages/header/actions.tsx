@@ -1,12 +1,10 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane web components
 import { PageLockControl } from "@/plane-web/components/pages/header/lock-control";
 import { PageMoveControl } from "@/plane-web/components/pages/header/move-control";
 import { PageShareControl } from "@/plane-web/components/pages/header/share-control";
 // plane web hooks
-import { EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
@@ -21,7 +19,7 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const PageHeaderActions: React.FC<Props> = observer((props) => {
+export const PageHeaderActions = observer(function PageHeaderActions(props: Props) {
   const { page, storeType } = props;
 
   return (

@@ -1,6 +1,8 @@
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
-import { Search, X } from "lucide-react";
+import { Search } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
@@ -14,7 +16,7 @@ import { FilterPriority } from "./priority";
 import { FilterState } from "./state";
 import { FilterStatus } from "./status";
 
-export const InboxIssueFilterSelection: FC = observer(() => {
+export const InboxIssueFilterSelection = observer(function InboxIssueFilterSelection() {
   // hooks
   const { isMobile } = usePlatformOS();
   const {
@@ -40,7 +42,7 @@ export const InboxIssueFilterSelection: FC = observer(() => {
           />
           {filtersSearchQuery !== "" && (
             <button type="button" className="grid place-items-center" onClick={() => setFiltersSearchQuery("")}>
-              <X className="text-custom-text-300" size={12} strokeWidth={2} />
+              <CloseIcon className="text-custom-text-300" height={12} width={12} strokeWidth={2} />
             </button>
           )}
         </div>

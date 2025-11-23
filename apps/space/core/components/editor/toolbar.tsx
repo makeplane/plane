@@ -1,8 +1,7 @@
-"use client";
-
 import React, { useEffect, useState, useCallback } from "react";
 // plane imports
-import { TOOLBAR_ITEMS, type ToolbarMenuItem, type EditorRefApi } from "@plane/editor";
+import { TOOLBAR_ITEMS } from "@plane/editor";
+import type { ToolbarMenuItem, EditorRefApi } from "@plane/editor";
 import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
@@ -18,7 +17,7 @@ type Props = {
 
 const toolbarItems = TOOLBAR_ITEMS.lite;
 
-export const IssueCommentToolbar: React.FC<Props> = (props) => {
+export function IssueCommentToolbar(props: Props) {
   const { executeCommand, handleSubmit, isCommentEmpty, editorRef, isSubmitting, showSubmitButton } = props;
   // states
   const [activeStates, setActiveStates] = useState<Record<string, boolean>>({});
@@ -112,4 +111,4 @@ export const IssueCommentToolbar: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

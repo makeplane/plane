@@ -1,6 +1,5 @@
-"use client";
-
-import { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
+import type { MutableRefObject } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
@@ -10,7 +9,8 @@ import { DRAG_ALLOWED_GROUPS } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 //types
-import {
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type {
   TGroupedIssues,
   TIssue,
   IIssueDisplayProperties,
@@ -18,11 +18,16 @@ import {
   TSubGroupedIssues,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
-  EIssueLayoutTypes,
 } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { EIssueLayoutTypes } from "@plane/types";
 import { cn } from "@plane/utils";
-import { highlightIssueOnDrop } from "@/components/issues/issue-layouts/utils";
+import type { GroupDropLocation } from "@/components/issues/issue-layouts/utils";
+import {
+  highlightIssueOnDrop,
+  getSourceFromDropPayload,
+  getDestinationFromDropPayload,
+  getIssueBlockId,
+} from "@/components/issues/issue-layouts/utils";
 import { KanbanIssueBlockLoader } from "@/components/ui/loader/layouts/kanban-layout-loader";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
@@ -32,9 +37,8 @@ import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { useWorkFlowFDragNDrop } from "@/plane-web/components/workflow";
 //
 import { GroupDragOverlay } from "../group-drag-overlay";
-import { TRenderQuickActions } from "../list/list-view-types";
+import type { TRenderQuickActions } from "../list/list-view-types";
 import { KanbanQuickAddIssueButton, QuickAddIssueRoot } from "../quick-add";
-import { GroupDropLocation, getSourceFromDropPayload, getDestinationFromDropPayload, getIssueBlockId } from "../utils";
 import { KanbanIssueBlocksList } from "./blocks-list";
 
 interface IKanbanGroup {
@@ -62,7 +66,7 @@ interface IKanbanGroup {
   isEpic?: boolean;
 }
 
-export const KanbanGroup = observer((props: IKanbanGroup) => {
+export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
   const {
     groupId,
     sub_group_id,

@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
@@ -7,7 +5,7 @@ import { ETabIndices } from "@plane/constants";
 // types
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { ICycle } from "@plane/types";
+import type { ICycle } from "@plane/types";
 // ui
 import { Input, TextArea } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
@@ -34,7 +32,7 @@ const defaultValues: Partial<ICycle> = {
   end_date: null,
 };
 
-export const CycleForm: React.FC<Props> = (props) => {
+export function CycleForm(props: Props) {
   const { handleFormSubmit, handleClose, status, projectId, setActiveProject, data, isMobile = false } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -195,4 +193,4 @@ export const CycleForm: React.FC<Props> = (props) => {
       </div>
     </form>
   );
-};
+}

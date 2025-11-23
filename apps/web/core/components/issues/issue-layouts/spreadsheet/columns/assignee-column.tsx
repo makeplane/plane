@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 // types
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 // components
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 
@@ -12,7 +12,7 @@ type Props = {
   disabled: boolean;
 };
 
-export const SpreadsheetAssigneeColumn: React.FC<Props> = observer((props: Props) => {
+export const SpreadsheetAssigneeColumn = observer(function SpreadsheetAssigneeColumn(props: Props) {
   const { issue, onChange, disabled, onClose } = props;
 
   return (

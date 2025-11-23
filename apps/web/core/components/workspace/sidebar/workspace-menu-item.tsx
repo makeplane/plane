@@ -1,11 +1,10 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EUserWorkspaceRoles } from "@plane/types";
+import type { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
@@ -25,7 +24,9 @@ export type SidebarWorkspaceMenuItemProps = {
   };
 };
 
-export const SidebarWorkspaceMenuItem: FC<SidebarWorkspaceMenuItemProps> = observer((props) => {
+export const SidebarWorkspaceMenuItem = observer(function SidebarWorkspaceMenuItem(
+  props: SidebarWorkspaceMenuItemProps
+) {
   const { item } = props;
 
   const { t } = useTranslation();

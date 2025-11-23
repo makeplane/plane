@@ -1,12 +1,11 @@
-"use client";
-
-import { FC, FormEvent, useMemo, useRef, useState } from "react";
+import type { FormEvent } from "react";
+import { useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // icons
 import { CircleAlert, XCircle } from "lucide-react";
 // types
 import { Button } from "@plane/propel/button";
-import { IEmailCheckData } from "@plane/types";
+import type { IEmailCheckData } from "@plane/types";
 // ui
 import { Input, Spinner } from "@plane/ui";
 // helpers
@@ -18,7 +17,7 @@ type TAuthEmailForm = {
   onSubmit: (data: IEmailCheckData) => Promise<void>;
 };
 
-export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
+export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailForm) {
   const { onSubmit, defaultEmail } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);

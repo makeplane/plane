@@ -1,10 +1,8 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { PanelRight } from "lucide-react";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 
-export const SidebarHamburgerToggle = observer(() => {
+export const SidebarHamburgerToggle = observer(function SidebarHamburgerToggle() {
   // store hooks
   const { toggleSidebar } = useAppTheme();
 

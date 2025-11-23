@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 // plane imports
 import { Loader } from "@plane/ui";
@@ -9,9 +7,9 @@ import type { IIssueLabel } from "@/types/issue";
 import { FilterHeader } from "./helpers/filter-header";
 import { FilterOption } from "./helpers/filter-option";
 
-const LabelIcons = ({ color }: { color: string }) => (
-  <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />
-);
+function LabelIcons({ color }: { color: string }) {
+  return <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />;
+}
 
 type Props = {
   appliedFilters: string[] | null;
@@ -20,7 +18,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterLabels: React.FC<Props> = (props) => {
+export function FilterLabels(props: Props) {
   const { appliedFilters, handleUpdate, labels, searchQuery } = props;
 
   const [itemsToRender, setItemsToRender] = useState(5);
@@ -82,4 +80,4 @@ export const FilterLabels: React.FC<Props> = (props) => {
       )}
     </>
   );
-};
+}

@@ -1,15 +1,17 @@
-import { Editor } from "@tiptap/core";
-import { EditorState, Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
-// constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import type { Editor } from "@tiptap/core";
+import { Plugin, PluginKey } from "@tiptap/pm/state";
+import type { EditorState, Transaction } from "@tiptap/pm/state";
+// plane imports
+import { CORE_EXTENSIONS } from "@plane/utils";
 // helpers
 import { CORE_ASSETS_META_DATA_RECORD } from "@/helpers/assets";
 // plane editor imports
 import { NODE_FILE_MAP } from "@/plane-editor/constants/utility";
 // types
-import { TFileHandler } from "@/types";
+import type { TFileHandler } from "@/types";
 // local imports
-import { TFileNode } from "./types";
+import type { NodeFileMapType } from "../../../ce/constants/utility";
+import type { TFileNode } from "./types";
 
 const RESTORE_PLUGIN_KEY = new PluginKey("restore-utility");
 
@@ -23,7 +25,7 @@ export const TrackFileRestorationPlugin = (editor: Editor, restoreHandler: TFile
         [key: string]: Set<string> | undefined;
       } = {};
       oldState.doc.descendants((node) => {
-        const nodeType = node.type.name;
+        const nodeType = node.type.name as keyof NodeFileMapType;
         const nodeFileSetDetails = NODE_FILE_MAP[nodeType];
         if (nodeFileSetDetails) {
           if (oldFileSources[nodeType]) {
@@ -38,7 +40,7 @@ export const TrackFileRestorationPlugin = (editor: Editor, restoreHandler: TFile
         const addedFiles: TFileNode[] = [];
 
         newState.doc.descendants((node, pos) => {
-          const nodeType = node.type.name;
+          const nodeType = node.type.name as keyof NodeFileMapType;
           const isAValidNode = NODE_FILE_MAP[nodeType];
           // if the node doesn't match, then return as no point in checking
           if (!isAValidNode) return;
@@ -58,9 +60,10 @@ export const TrackFileRestorationPlugin = (editor: Editor, restoreHandler: TFile
         });
 
         addedFiles.forEach(async (node) => {
-          const nodeType = node.type.name;
+          const nodeType = node.type.name as keyof NodeFileMapType;
           const src = node.attrs.src;
           const nodeFileSetDetails = NODE_FILE_MAP[nodeType];
+          if (!nodeFileSetDetails) return;
           const extensionFileSetStorage = editor.storage[nodeType]?.[nodeFileSetDetails.fileSetName];
           const wasDeleted = extensionFileSetStorage?.get(src);
           if (!nodeFileSetDetails || !src) return;

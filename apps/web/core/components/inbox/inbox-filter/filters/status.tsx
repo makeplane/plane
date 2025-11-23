@@ -1,9 +1,10 @@
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // types
 import { INBOX_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TInboxIssueStatus } from "@plane/types";
+import type { TInboxIssueStatus } from "@plane/types";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // constants
@@ -15,7 +16,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterStatus: FC<Props> = observer((props) => {
+export const FilterStatus = observer(function FilterStatus(props: Props) {
   const { searchQuery } = props;
   // hooks
   const { currentTab, inboxFilters, handleInboxIssueFilters } = useProjectInbox();

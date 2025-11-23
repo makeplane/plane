@@ -1,6 +1,4 @@
-"use client";
-
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -11,7 +9,7 @@ import { Spinner } from "@plane/ui";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
-import { WorkItemFiltersRow } from "@/components/work-item-filters/work-item-filters-row";
+import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
@@ -23,7 +21,7 @@ import { KanBanLayout } from "../kanban/roots/project-root";
 import { ListLayout } from "../list/roots/project-root";
 import { ProjectSpreadsheetLayout } from "../spreadsheet/roots/project-root";
 
-const ProjectIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined }) => {
+function ProjectIssueLayout(props: { activeLayout: EIssueLayoutTypes | undefined }) {
   switch (props.activeLayout) {
     case EIssueLayoutTypes.LIST:
       return <ListLayout />;
@@ -38,9 +36,9 @@ const ProjectIssueLayout = (props: { activeLayout: EIssueLayoutTypes | undefined
     default:
       return null;
   }
-};
+}
 
-export const ProjectLayoutRoot: FC = observer(() => {
+export const ProjectLayoutRoot = observer(function ProjectLayoutRoot() {
   // router
   const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId } = useParams();
   const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;

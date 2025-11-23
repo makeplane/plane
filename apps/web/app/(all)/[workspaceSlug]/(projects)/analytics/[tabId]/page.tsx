@@ -1,36 +1,26 @@
-"use client";
-
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 // plane package imports
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { type TabItem, Tabs } from "@plane/ui";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
+import type { AnalyticsTab } from "@plane/types";
+import { Tabs } from "@plane/ui";
+import type { TabItem } from "@plane/ui";
 // components
 import AnalyticsFilterActions from "@/components/analytics/analytics-filter-actions";
 import { PageHead } from "@/components/core/page-title";
-import { ComicBoxButton } from "@/components/empty-state/comic-box-button";
-import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { getAnalyticsTabs } from "@/plane-web/components/analytics/tabs";
+import type { Route } from "./+types/page";
 
-type Props = {
-  params: {
-    tabId: string;
-    workspaceSlug: string;
-  };
-};
-
-const AnalyticsPage = observer((props: Props) => {
-  // props
-  const { params } = props;
+function AnalyticsPage({ params }: Route.ComponentProps) {
   const { tabId } = params;
 
   // hooks
@@ -45,9 +35,6 @@ const AnalyticsPage = observer((props: Props) => {
   const { currentWorkspace } = useWorkspace();
   const { allowPermissions } = useUserPermissions();
 
-  // helper hooks
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/analytics" });
-
   // permissions
   const canPerformEmptyStateActions = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -58,7 +45,7 @@ const AnalyticsPage = observer((props: Props) => {
   const pageTitle = currentWorkspace?.name
     ? t(`workspace_analytics.page_label`, { workspace: currentWorkspace?.name })
     : undefined;
-  const ANALYTICS_TABS = useMemo(() => getAnalyticsTabs(t), [t]);
+  const ANALYTICS_TABS = useMemo<AnalyticsTab[]>(() => getAnalyticsTabs(t), [t]);
   const tabs: TabItem[] = useMemo(
     () =>
       ANALYTICS_TABS.map((tab) => ({
@@ -72,7 +59,7 @@ const AnalyticsPage = observer((props: Props) => {
       })),
     [ANALYTICS_TABS, router, currentWorkspace?.slug]
   );
-  const defaultTab = tabId || ANALYTICS_TABS[0].key;
+  const defaultTab = tabId;
 
   return (
     <>
@@ -95,28 +82,26 @@ const AnalyticsPage = observer((props: Props) => {
               />
             </div>
           ) : (
-            <DetailedEmptyState
-              title={t("workspace_analytics.empty_state.general.title")}
-              description={t("workspace_analytics.empty_state.general.description")}
-              assetPath={resolvedPath}
-              customPrimaryButton={
-                <ComicBoxButton
-                  label={t("workspace_analytics.empty_state.general.primary_button.text")}
-                  title={t("workspace_analytics.empty_state.general.primary_button.comic.title")}
-                  description={t("workspace_analytics.empty_state.general.primary_button.comic.description")}
-                  onClick={() => {
+            <EmptyStateDetailed
+              assetKey="project"
+              title={t("workspace_projects.empty_state.no_projects.title")}
+              description={t("workspace_projects.empty_state.no_projects.description")}
+              actions={[
+                {
+                  label: "Create a project",
+                  onClick: () => {
                     toggleCreateProjectModal(true);
                     captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON });
-                  }}
-                  disabled={!canPerformEmptyStateActions}
-                />
-              }
+                  },
+                  disabled: !canPerformEmptyStateActions,
+                },
+              ]}
             />
           )}
         </>
       )}
     </>
   );
-});
+}
 
-export default AnalyticsPage;
+export default observer(AnalyticsPage);

@@ -1,27 +1,29 @@
-import { ImageIcon } from "lucide-react";
-import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from "react";
+import { ImageIcon, RotateCcw } from "lucide-react";
+import type { ChangeEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 // plane imports
 import { cn } from "@plane/utils";
 // constants
 import { ACCEPTED_IMAGE_MIME_TYPES } from "@/constants/config";
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
-import { EFileError } from "@/helpers/file";
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
+import type { EFileError } from "@/helpers/file";
 // hooks
 import { useUploader, useDropZone, uploadFirstFileAndInsertRemaining } from "@/hooks/use-file-upload";
 // local imports
+import { ECustomImageStatus } from "../types";
 import { getImageComponentImageFileMap } from "../utils";
 import type { CustomImageNodeViewProps } from "./node-view";
 
 type CustomImageUploaderProps = CustomImageNodeViewProps & {
   failedToLoadImage: boolean;
+  hasDuplicationFailed: boolean;
   loadImageFromFileSystem: (file: string) => void;
   maxFileSize: number;
   setIsUploaded: (isUploaded: boolean) => void;
 };
 
-export const CustomImageUploader = (props: CustomImageUploaderProps) => {
+export function CustomImageUploader(props: CustomImageUploaderProps) {
   const {
     editor,
     extension,
@@ -33,6 +35,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     selected,
     setIsUploaded,
     updateAttributes,
+    hasDuplicationFailed,
   } = props;
   // refs
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -40,7 +43,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
   const { id: imageEntityId } = node.attrs;
   // derived values
   const imageComponentImageFileMap = useMemo(() => getImageComponentImageFileMap(editor), [editor]);
-  const isTouchDevice = !!getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY).isTouchDevice;
+  const isTouchDevice = !!editor.storage.utility.isTouchDevice;
 
   const onUpload = useCallback(
     (url: string) => {
@@ -50,6 +53,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
         // Update the node view's src attribute post upload
         updateAttributes({
           src: url,
+          status: ECustomImageStatus.UPLOADED,
         });
         imageComponentImageFileMap?.delete(imageEntityId);
 
@@ -60,7 +64,12 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
 
         // only if the cursor is at the current image component, manipulate
         // the cursor position
-        if (currentNode && currentNode.type.name === node.type.name && currentNode.attrs.src === url) {
+        if (
+          currentNode &&
+          currentNode.type.name === node.type.name &&
+          currentNode.attrs.src === url &&
+          pos !== undefined
+        ) {
           // control cursor position after upload
           const nextNode = editor.state.doc.nodeAt(pos + 1);
 
@@ -79,13 +88,16 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
   );
 
   const uploadImageEditorCommand = useCallback(
-    async (file: File) => await extension.options.uploadImage?.(imageEntityId ?? "", file),
-    [extension.options, imageEntityId]
+    async (file: File) => {
+      updateAttributes({ status: ECustomImageStatus.UPLOADING });
+      return await extension.options.uploadImage?.(imageEntityId ?? "", file);
+    },
+    [extension.options, imageEntityId, updateAttributes]
   );
 
   const handleProgressStatus = useCallback(
     (isUploading: boolean) => {
-      getExtensionStorage(editor, CORE_EXTENSIONS.UTILITY).uploadInProgress = isUploading;
+      editor.storage.utility.uploadInProgress = isUploading;
     },
     [editor]
   );
@@ -107,7 +119,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
 
   const { draggedInside, onDrop, onDragEnter, onDragLeave } = useDropZone({
     editor,
-    pos: getPos(),
+    getPos,
     type: "image",
     uploader: uploadFile,
   });
@@ -139,13 +151,14 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     async (e: ChangeEvent<HTMLInputElement>) => {
       e.preventDefault();
       const filesList = e.target.files;
-      if (!filesList) {
+      const pos = getPos();
+      if (!filesList || pos === undefined) {
         return;
       }
       await uploadFirstFileAndInsertRemaining({
         editor,
         filesList,
-        pos: getPos(),
+        pos,
         type: "image",
         uploader: uploadFile,
       });
@@ -155,7 +168,7 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
 
   const getDisplayMessage = useCallback(() => {
     const isUploading = isImageBeingUploaded;
-    if (failedToLoadImage) {
+    if (failedToLoadImage || hasDuplicationFailed) {
       return "Error loading image";
     }
 
@@ -168,7 +181,17 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
     }
 
     return "Add an image";
-  }, [draggedInside, editor.isEditable, failedToLoadImage, isImageBeingUploaded]);
+  }, [draggedInside, editor.isEditable, failedToLoadImage, isImageBeingUploaded, hasDuplicationFailed]);
+
+  const handleRetryClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (hasDuplicationFailed && editor.isEditable) {
+        updateAttributes({ status: ECustomImageStatus.DUPLICATING });
+      }
+    },
+    [hasDuplicationFailed, editor.isEditable, updateAttributes]
+  );
 
   return (
     <div
@@ -179,10 +202,10 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
           "bg-custom-background-80 text-custom-text-200": draggedInside && editor.isEditable,
           "text-custom-primary-200 bg-custom-primary-100/10 border-custom-primary-200/10 hover:bg-custom-primary-100/10 hover:text-custom-primary-200":
             selected && editor.isEditable,
-          "text-red-500 cursor-default": failedToLoadImage,
-          "hover:text-red-500": failedToLoadImage && editor.isEditable,
-          "bg-red-500/10": failedToLoadImage && selected,
-          "hover:bg-red-500/10": failedToLoadImage && selected && editor.isEditable,
+          "text-red-500 cursor-default": failedToLoadImage || hasDuplicationFailed,
+          "hover:text-red-500": (failedToLoadImage || hasDuplicationFailed) && editor.isEditable,
+          "bg-red-500/10": (failedToLoadImage || hasDuplicationFailed) && selected,
+          "hover:bg-red-500/10": (failedToLoadImage || hasDuplicationFailed) && selected && editor.isEditable,
         }
       )}
       onDrop={onDrop}
@@ -190,13 +213,29 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
       onDragLeave={onDragLeave}
       contentEditable={false}
       onClick={() => {
-        if (!failedToLoadImage && editor.isEditable) {
+        if (!failedToLoadImage && editor.isEditable && !hasDuplicationFailed) {
           fileInputRef.current?.click();
         }
       }}
     >
       <ImageIcon className="size-4" />
-      <div className="text-base font-medium">{getDisplayMessage()}</div>
+      <div className="text-base font-medium flex-1">{getDisplayMessage()}</div>
+      {hasDuplicationFailed && editor.isEditable && (
+        <button
+          type="button"
+          onClick={handleRetryClick}
+          className={cn(
+            "flex items-center gap-1 px-2 py-1 text-xs font-medium text-custom-text-300 hover:bg-custom-background-90 hover:text-custom-text-200 rounded-md transition-all duration-200 ease-in-out",
+            {
+              "hover:bg-red-500/20": selected,
+            }
+          )}
+          title="Retry duplication"
+        >
+          <RotateCcw className="size-3" />
+          Retry
+        </button>
+      )}
       <input
         className="size-0 overflow-hidden"
         ref={fileInputRef}
@@ -208,4 +247,4 @@ export const CustomImageUploader = (props: CustomImageUploaderProps) => {
       />
     </div>
   );
-};
+}

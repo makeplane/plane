@@ -1,5 +1,5 @@
 import React from "react";
-import { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
+import type { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
 // plane imports
 import { Card, ECardSpacing } from "../../card";
 
@@ -9,7 +9,7 @@ type Props = {
   payload: Payload<ValueType, NameType>[];
 };
 
-export const CustomPieChartTooltip = React.memo((props: Props) => {
+export const CustomPieChartTooltip = React.memo(function CustomPieChartTooltip(props: Props) {
   const { dotColor, label, payload } = props;
 
   return (

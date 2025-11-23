@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 
 import { useParams } from "next/navigation";
@@ -11,8 +9,9 @@ import { AlertTriangle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import { Button } from "@plane/propel/button";
-import { IUser, IImporterService } from "@plane/types";
-import { Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IUser, IImporterService } from "@plane/types";
+import { Input } from "@plane/ui";
 import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
 import { IntegrationService } from "@/services/integrations/integration.service";
 // ui
@@ -30,7 +29,7 @@ type Props = {
 // services
 const integrationService = new IntegrationService();
 
-export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data }) => {
+export function DeleteImportModal({ isOpen, handleClose, data }: Props) {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [confirmDeleteImport, setConfirmDeleteImport] = useState(false);
 
@@ -146,4 +145,4 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data }
       </Dialog>
     </Transition.Root>
   );
-};
+}

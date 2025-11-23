@@ -1,10 +1,7 @@
-"use client";
-
-import { FC } from "react";
 import { observer } from "mobx-react";
-import { Inbox } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { InboxIcon } from "@plane/propel/icons";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
@@ -18,7 +15,9 @@ type TNotificationSidebarHeader = {
   workspaceSlug: string;
 };
 
-export const NotificationSidebarHeader: FC<TNotificationSidebarHeader> = observer((props) => {
+export const NotificationSidebarHeader = observer(function NotificationSidebarHeader(
+  props: TNotificationSidebarHeader
+) {
   const { workspaceSlug } = props;
   const { t } = useTranslation();
   const { sidebarCollapsed } = useAppTheme();
@@ -34,7 +33,7 @@ export const NotificationSidebarHeader: FC<TNotificationSidebarHeader> = observe
             component={
               <BreadcrumbLink
                 label={t("notification.label")}
-                icon={<Inbox className="h-4 w-4 text-custom-text-300" />}
+                icon={<InboxIcon className="h-4 w-4 text-custom-text-300" />}
                 disableTooltip
               />
             }

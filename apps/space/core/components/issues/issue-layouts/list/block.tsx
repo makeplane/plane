@@ -1,12 +1,10 @@
-"use client";
-
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 // plane types
 import { Tooltip } from "@plane/propel/tooltip";
-import { IIssueDisplayProperties } from "@plane/types";
+import type { IIssueDisplayProperties } from "@plane/types";
 // plane ui
 // plane utils
 import { cn } from "@plane/utils";
@@ -24,7 +22,7 @@ interface IssueBlockProps {
   displayProperties: IIssueDisplayProperties | undefined;
 }
 
-export const IssueBlock = observer((props: IssueBlockProps) => {
+export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
   const { anchor } = useParams();
   const { issueId, displayProperties } = props;
   const searchParams = useSearchParams();

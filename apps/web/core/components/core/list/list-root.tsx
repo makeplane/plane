@@ -1,11 +1,12 @@
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { Row, ERowVariant } from "@plane/ui";
 
 interface IListContainer {
   children: React.ReactNode;
 }
 
-export const ListLayout: FC<IListContainer> = (props) => {
+export function ListLayout(props: IListContainer) {
   const { children } = props;
   return (
     <Row
@@ -15,4 +16,4 @@ export const ListLayout: FC<IListContainer> = (props) => {
       {children}
     </Row>
   );
-};
+}

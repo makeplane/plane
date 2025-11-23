@@ -1,8 +1,8 @@
 import { observer } from "mobx-react";
 
 // icons
-import { X } from "lucide-react";
-import { IIssueLabel } from "@plane/types";
+import { CloseIcon } from "@plane/propel/icons";
+import type { IIssueLabel } from "@plane/types";
 // types
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
   editable: boolean | undefined;
 };
 
-export const AppliedLabelsFilters: React.FC<Props> = observer((props) => {
+export const AppliedLabelsFilters = observer(function AppliedLabelsFilters(props: Props) {
   const { handleRemove, labels, values, editable } = props;
 
   return (
@@ -37,7 +37,7 @@ export const AppliedLabelsFilters: React.FC<Props> = observer((props) => {
                 className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
                 onClick={() => handleRemove(labelId)}
               >
-                <X size={10} strokeWidth={2} />
+                <CloseIcon height={10} width={10} strokeWidth={2} />
               </button>
             )}
           </div>

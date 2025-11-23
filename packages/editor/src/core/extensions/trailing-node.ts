@@ -1,5 +1,5 @@
 import { Extension } from "@tiptap/core";
-import { NodeType, Node as ProseMirrorNode } from "@tiptap/pm/model";
+import type { NodeType, Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";

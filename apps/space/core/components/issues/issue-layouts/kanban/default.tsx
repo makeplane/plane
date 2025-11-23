@@ -1,8 +1,8 @@
-import { MutableRefObject } from "react";
+import type { MutableRefObject } from "react";
 import { isNil } from "lodash-es";
 import { observer } from "mobx-react";
 // types
-import {
+import type {
   GroupByColumnTypes,
   IGroupByColumn,
   TGroupedIssues,
@@ -42,7 +42,7 @@ export interface IKanBan {
   showEmptyGroup?: boolean;
 }
 
-export const KanBan: React.FC<IKanBan> = observer((props) => {
+export const KanBan = observer(function KanBan(props: IKanBan) {
   const {
     groupedIssueIds,
     displayProperties,

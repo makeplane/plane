@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Tab } from "@headlessui/react";
 // plane package imports
-import { ICycle, IModule, IProject } from "@plane/types";
+import type { ICycle, IModule, IProject } from "@plane/types";
 import { Spinner } from "@plane/ui";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
@@ -20,7 +20,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const WorkItemsModalMainContent: React.FC<Props> = observer((props) => {
+export const WorkItemsModalMainContent = observer(function WorkItemsModalMainContent(props: Props) {
   const { projectDetails, cycleDetails, moduleDetails, fullScreen, isEpic } = props;
   const { updateSelectedProjects, updateSelectedCycle, updateSelectedModule, updateIsPeekView } = useAnalytics();
   const [isModalConfigured, setIsModalConfigured] = useState(false);

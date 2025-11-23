@@ -1,10 +1,14 @@
 import React from "react";
 // plane imports
-import { type EditorRefApi, type ILiteTextEditorProps, LiteTextEditorWithRef, type TFileHandler } from "@plane/editor";
+import { LiteTextEditorWithRef } from "@plane/editor";
+import type { EditorRefApi, ILiteTextEditorProps, TFileHandler } from "@plane/editor";
 import type { MakeOptional } from "@plane/types";
 import { cn, isCommentEmpty } from "@plane/utils";
 // helpers
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
+// hooks
+import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
+// plane web imports
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 // local imports
 import { EditorMentionsRoot } from "./embeds/mentions";
@@ -12,7 +16,7 @@ import { IssueCommentToolbar } from "./toolbar";
 
 type LiteTextEditorWrapperProps = MakeOptional<
   Omit<ILiteTextEditorProps, "fileHandler" | "mentionHandler" | "extendedEditorProps">,
-  "disabledExtensions" | "flaggedExtensions"
+  "disabledExtensions" | "flaggedExtensions" | "getEditorMetaData"
 > & {
   anchor: string;
   isSubmitting?: boolean;
@@ -28,7 +32,10 @@ type LiteTextEditorWrapperProps = MakeOptional<
       }
   );
 
-export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
+export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
+  props: LiteTextEditorWrapperProps,
+  ref: React.ForwardedRef<EditorRefApi>
+) {
   const {
     anchor,
     containerClassName,
@@ -46,6 +53,10 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   const isEmpty = isCommentEmpty(props.initialValue);
   const editorRef = isMutableRefObject<EditorRefApi>(ref) ? ref.current : null;
   const { liteText: liteTextEditorExtensions } = useEditorFlagging(anchor);
+  // parse content
+  const { getEditorMetaData } = useParseEditorContent({
+    anchor,
+  });
 
   return (
     <div className="border border-custom-border-200 rounded p-3 space-y-3">
@@ -59,6 +70,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
           uploadFile: editable ? props.uploadFile : async () => "",
           workspaceId,
         })}
+        getEditorMetaData={getEditorMetaData}
         mentionHandler={{
           renderComponent: (props) => <EditorMentionsRoot {...props} />,
         }}

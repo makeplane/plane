@@ -1,7 +1,6 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 // components
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -14,7 +13,7 @@ export type TIssueParentSiblings = {
   parentIssue: TIssue;
 };
 
-export const IssueParentSiblings: FC<TIssueParentSiblings> = observer((props) => {
+export const IssueParentSiblings = observer(function IssueParentSiblings(props: TIssueParentSiblings) {
   const { workspaceSlug, currentIssue, parentIssue } = props;
   // hooks
   const {

@@ -1,11 +1,13 @@
 import { mergeAttributes } from "@tiptap/core";
-import Mention, { MentionOptions } from "@tiptap/extension-mention";
-import { MarkdownSerializerState } from "@tiptap/pm/markdown";
-import { Node as NodeType } from "@tiptap/pm/model";
+import type { MentionOptions } from "@tiptap/extension-mention";
+import Mention from "@tiptap/extension-mention";
+import type { MarkdownSerializerState } from "@tiptap/pm/markdown";
+import type { Node as NodeType } from "@tiptap/pm/model";
 // types
-import { TMentionHandler } from "@/types";
+import type { TMentionHandler } from "@/types";
 // local types
-import { EMentionComponentAttributeNames, TMentionComponentAttributes } from "./types";
+import type { TMentionComponentAttributes } from "./types";
+import { EMentionComponentAttributeNames } from "./types";
 
 export type TMentionExtensionOptions = MentionOptions & {
   renderComponent: TMentionHandler["renderComponent"];
@@ -37,10 +39,6 @@ export const CustomMentionExtensionConfig = Mention.extend<TMentionExtensionOpti
 
   renderHTML({ HTMLAttributes }) {
     return ["mention-component", mergeAttributes(HTMLAttributes)];
-  },
-
-  HTMLAttributes: {
-    class: "mention",
   },
 
   renderText({ node }) {

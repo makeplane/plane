@@ -2,9 +2,7 @@ import { defineConfig } from "tsdown";
 
 export default defineConfig({
   entry: ["src/index.ts"],
-  outDir: "dist",
-  format: ["esm", "cjs"],
+  format: ["esm"],
   dts: true,
-  external: ["react", "lodash", "mobx", "mobx-react", "intl-messageformat"],
-  sourcemap: true,
+  platform: "neutral",
 });

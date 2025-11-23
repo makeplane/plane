@@ -1,6 +1,6 @@
 {
   "name": "@plane/shared-state",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "AGPL-3.0",
   "description": "Shared state shared across multiple apps internally",
   "private": true,
@@ -27,9 +27,9 @@
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@types/node": "^22.5.4",
+    "@prettier/plugin-oxc": "0.0.4",
     "@types/lodash-es": "catalog:",
-    "@types/uuid": "catalog:",
+    "@types/node": "catalog:",
     "typescript": "catalog:"
   }
 }

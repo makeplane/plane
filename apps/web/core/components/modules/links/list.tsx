@@ -1,8 +1,7 @@
-"use client";
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 // plane types
-import { ILinkDetails } from "@plane/types";
+import type { ILinkDetails } from "@plane/types";
 // components
 import { ModulesLinksListItem } from "@/components/modules";
 // hooks
@@ -15,7 +14,7 @@ type Props = {
   moduleId: string;
 };
 
-export const ModuleLinksList: React.FC<Props> = observer((props) => {
+export const ModuleLinksList = observer(function ModuleLinksList(props: Props) {
   const { moduleId, handleDeleteLink, handleEditLink, disabled } = props;
   // store hooks
   const { getModuleById } = useModule();

@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
@@ -13,12 +11,8 @@ import { Input, PasswordStrengthIndicator } from "@plane/ui";
 // components
 import { getPasswordStrength } from "@plane/utils";
 // helpers
-import {
-  EAuthenticationErrorCodes,
-  EErrorAlertType,
-  TAuthErrorInfo,
-  authErrorHandler,
-} from "@/helpers/authentication.helper";
+import type { EAuthenticationErrorCodes, TAuthErrorInfo } from "@/helpers/authentication.helper";
+import { EErrorAlertType, authErrorHandler } from "@/helpers/authentication.helper";
 // services
 import { AuthService } from "@/services/auth.service";
 // local imports
@@ -40,7 +34,7 @@ const defaultValues: TResetPasswordFormValues = {
 // services
 const authService = new AuthService();
 
-export const ResetPasswordForm = observer(() => {
+export const ResetPasswordForm = observer(function ResetPasswordForm() {
   // search params
   const searchParams = useSearchParams();
   const uidb64 = searchParams.get("uidb64");

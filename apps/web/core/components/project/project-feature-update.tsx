@@ -1,17 +1,15 @@
-"use client";
-
-import React, { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Button, getButtonStyling } from "@plane/propel/button";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { Row } from "@plane/ui";
 // components
-import { Logo } from "@/components/common/logo";
-import { ProjectFeaturesList } from "@/components/project/settings/features-list";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
+// plane web imports
+import { ProjectFeaturesList } from "@/plane-web/components/projects/settings/features-list";
 
 type Props = {
   workspaceSlug: string;
@@ -19,7 +17,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const ProjectFeatureUpdate: FC<Props> = observer((props) => {
+export const ProjectFeatureUpdate = observer(function ProjectFeatureUpdate(props: Props) {
   const { workspaceSlug, projectId, onClose } = props;
   // store hooks
   const { t } = useTranslation();

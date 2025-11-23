@@ -2,10 +2,10 @@ import { observer } from "mobx-react";
 import { Copy, Pencil, Trash2 } from "lucide-react";
 // plane types
 import { MODULE_TRACKER_ELEMENTS } from "@plane/constants";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { ILinkDetails } from "@plane/types";
+import type { ILinkDetails } from "@plane/types";
 // plane ui
-import { setToast, TOAST_TYPE } from "@plane/ui";
 import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@plane/utils";
 // helpers
 //
@@ -20,7 +20,7 @@ type Props = {
   link: ILinkDetails;
 };
 
-export const ModulesLinksListItem: React.FC<Props> = observer((props) => {
+export const ModulesLinksListItem = observer(function ModulesLinksListItem(props: Props) {
   const { handleDeleteLink, handleEditLink, isEditingAllowed, link } = props;
   // store hooks
   const { getUserDetails } = useMember();

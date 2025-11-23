@@ -1,6 +1,5 @@
-"use client";
-
-import { useState, FC } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { range } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -8,12 +7,11 @@ import { useParams } from "next/navigation";
 import { Copy, Eye, EyeOff, RefreshCw } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { IWebhook } from "@plane/types";
+import type { IWebhook } from "@plane/types";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
 import { csvDownload, copyTextToClipboard } from "@plane/utils";
-// helpers
 // hooks
 import { useWebhook } from "@/hooks/store/use-webhook";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -27,7 +25,7 @@ type Props = {
   data: Partial<IWebhook>;
 };
 
-export const WebhookSecretKey: FC<Props> = observer((props) => {
+export const WebhookSecretKey = observer(function WebhookSecretKey(props: Props) {
   const { data } = props;
   // states
   const [isRegenerating, setIsRegenerating] = useState(false);

@@ -1,11 +1,11 @@
 // plane editor
-import { TMentionComponentProps } from "@plane/editor";
+import type { TCallbackMentionComponentProps } from "@plane/editor";
 // plane web components
 import { EditorAdditionalMentionsRoot } from "@/plane-web/components/editor";
 // local components
 import { EditorUserMention } from "./user";
 
-export const EditorMentionsRoot: React.FC<TMentionComponentProps> = (props) => {
+export function EditorMentionsRoot(props: TCallbackMentionComponentProps) {
   const { entity_identifier, entity_name } = props;
 
   switch (entity_name) {
@@ -14,4 +14,4 @@ export const EditorMentionsRoot: React.FC<TMentionComponentProps> = (props) => {
     default:
       return <EditorAdditionalMentionsRoot {...props} />;
   }
-};
+}

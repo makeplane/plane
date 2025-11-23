@@ -1,4 +1,5 @@
 # Third party imports
+import random
 from rest_framework import serializers
 
 # Module imports
@@ -24,6 +25,47 @@ class ProjectCreateSerializer(BaseSerializer):
     and workspace association for new project initialization.
     """
 
+    PROJECT_ICON_DEFAULT_COLORS = [
+        "#95999f",
+        "#6d7b8a",
+        "#5e6ad2",
+        "#02b5ed",
+        "#02b55c",
+        "#f2be02",
+        "#e57a00",
+        "#f38e82",
+    ]
+    PROJECT_ICON_DEFAULT_ICONS = [
+        "home",
+        "apps",
+        "settings",
+        "star",
+        "favorite",
+        "done",
+        "check_circle",
+        "add_task",
+        "create_new_folder",
+        "dataset",
+        "terminal",
+        "key",
+        "rocket",
+        "public",
+        "quiz",
+        "mood",
+        "gavel",
+        "eco",
+        "diamond",
+        "forest",
+        "bolt",
+        "sync",
+        "cached",
+        "library_add",
+        "view_timeline",
+        "view_kanban",
+        "empty_dashboard",
+        "cycle",
+    ]
+
     class Meta:
         model = Project
         fields = [
@@ -44,10 +86,10 @@ class ProjectCreateSerializer(BaseSerializer):
             "archive_in",
             "close_in",
             "timezone",
-            "logo_props",
             "external_source",
             "external_id",
             "is_issue_type_enabled",
+            "is_time_tracking_enabled",
         ]
 
         read_only_fields = [
@@ -57,6 +99,7 @@ class ProjectCreateSerializer(BaseSerializer):
             "updated_at",
             "created_by",
             "updated_by",
+            "logo_props",
         ]
 
     def validate(self, data):
@@ -85,6 +128,16 @@ class ProjectCreateSerializer(BaseSerializer):
 
         if ProjectIdentifier.objects.filter(name=identifier, workspace_id=self.context["workspace_id"]).exists():
             raise serializers.ValidationError(detail="Project Identifier is taken")
+
+        if validated_data.get("logo_props", None) is None:
+            # Generate a random icon and color for the project icon
+            validated_data["logo_props"] = {
+                "in_use": "icon",
+                "icon": {
+                    "name": random.choice(self.PROJECT_ICON_DEFAULT_ICONS),
+                    "color": random.choice(self.PROJECT_ICON_DEFAULT_COLORS),
+                },
+            }
 
         project = Project.objects.create(**validated_data, workspace_id=self.context["workspace_id"])
         return project

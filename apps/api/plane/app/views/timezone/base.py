@@ -99,7 +99,7 @@ class TimezoneEndpoint(APIView):
             ("Tunis", "Africa/Tunis"),  # UTC+01:00
             (
                 "Eastern European Time (Cairo, Helsinki, Kyiv)",
-                "Europe/Kiev",
+                "Europe/Kyiv",
             ),  # UTC+02:00 (DST: UTC+03:00)
             ("Athens", "Europe/Athens"),  # UTC+02:00 (DST: UTC+03:00)
             ("Jerusalem", "Asia/Jerusalem"),  # UTC+02:00 (DST: UTC+03:00)

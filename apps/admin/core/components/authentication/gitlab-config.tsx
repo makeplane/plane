@@ -1,13 +1,10 @@
-"use client";
-
-import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
 import { Settings2 } from "lucide-react";
 // plane internal packages
 import { getButtonStyling } from "@plane/propel/button";
-import { TInstanceAuthenticationMethodKeys } from "@plane/types";
+import type { TInstanceAuthenticationMethodKeys } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
@@ -18,7 +15,7 @@ type Props = {
   updateConfig: (key: TInstanceAuthenticationMethodKeys, value: string) => void;
 };
 
-export const GitlabConfiguration: React.FC<Props> = observer((props) => {
+export const GitlabConfiguration = observer(function GitlabConfiguration(props: Props) {
   const { disabled, updateConfig } = props;
   // store
   const { formattedConfig } = useInstance();

@@ -1,6 +1,4 @@
-"use client";
-
-import { FC, MouseEvent } from "react";
+import type { FC, MouseEvent } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -29,7 +27,7 @@ type InboxIssueListItemProps = {
   setIsMobileSidebar: (value: boolean) => void;
 };
 
-export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) => {
+export const InboxIssueListItem = observer(function InboxIssueListItem(props: InboxIssueListItemProps) {
   const { workspaceSlug, projectId, inboxIssueId, projectIdentifier, setIsMobileSidebar } = props;
   // router
   const searchParams = useSearchParams();

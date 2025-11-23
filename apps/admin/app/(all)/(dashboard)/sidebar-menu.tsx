@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -50,7 +48,7 @@ const INSTANCE_ADMIN_LINKS = [
   },
 ];
 
-export const AdminSidebarMenu = observer(() => {
+export const AdminSidebarMenu = observer(function AdminSidebarMenu() {
   // store hooks
   const { isSidebarCollapsed, toggleSidebar } = useTheme();
   // router

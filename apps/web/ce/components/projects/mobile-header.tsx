@@ -1,11 +1,11 @@
-"use client";
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronDown, ListFilter } from "lucide-react";
+import { ListFilter } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TProjectFilters } from "@plane/types";
+import { ChevronDownIcon } from "@plane/propel/icons";
+import type { TProjectFilters } from "@plane/types";
 import { calculateTotalFilters } from "@plane/utils";
 // components
 import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
@@ -15,7 +15,7 @@ import { ProjectOrderByDropdown } from "@/components/project/dropdowns/order-by"
 import { useMember } from "@/hooks/store/use-member";
 import { useProjectFilter } from "@/hooks/store/use-project-filter";
 
-export const ProjectsListMobileHeader = observer(() => {
+export const ProjectsListMobileHeader = observer(function ProjectsListMobileHeader() {
   // i18n
   const { t } = useTranslation();
   // router
@@ -72,7 +72,7 @@ export const ProjectsListMobileHeader = observer(() => {
             <div className="flex text-sm items-center gap-2 neutral-primary text-custom-text-200">
               <ListFilter className="h-3 w-3" />
               {t("common.filters")}
-              <ChevronDown className="h-3 w-3" strokeWidth={2} />
+              <ChevronDownIcon className="h-3 w-3" strokeWidth={2} />
             </div>
           }
           isFiltersApplied={isFiltersApplied}

@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { TDescriptionVersionDetails, TDescriptionVersionsListResponse } from "@plane/types";
+import type { TDescriptionVersionDetails, TDescriptionVersionsListResponse } from "@plane/types";
 import { cn } from "@plane/utils";
 // local imports
 import { DescriptionVersionsDropdown } from "./dropdown";
@@ -27,7 +27,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const DescriptionVersionsRoot: React.FC<Props> = observer((props) => {
+export const DescriptionVersionsRoot = observer(function DescriptionVersionsRoot(props: Props) {
   const { className, entityInformation, fetchHandlers, handleRestore, projectId, workspaceSlug } = props;
   // states
   const [isModalOpen, setIsModalOpen] = useState(false);

@@ -1,28 +1,24 @@
-import { Editor, NodeViewProps, NodeViewWrapper } from "@tiptap/react";
+import { NodeViewWrapper } from "@tiptap/react";
+import type { NodeViewProps } from "@tiptap/react";
 import { useEffect, useRef, useState } from "react";
-// constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
-// helpers
-import { getExtensionStorage } from "@/helpers/get-extension-storage";
 // local imports
-import type { CustomImageExtension, TCustomImageAttributes } from "../types";
+import type { CustomImageExtensionType, TCustomImageAttributes } from "../types";
+import { ECustomImageStatus } from "../types";
+import { hasImageDuplicationFailed } from "../utils";
 import { CustomImageBlock } from "./block";
 import { CustomImageUploader } from "./uploader";
 
 export type CustomImageNodeViewProps = Omit<NodeViewProps, "extension" | "updateAttributes"> & {
-  extension: CustomImageExtension;
-  getPos: () => number;
-  editor: Editor;
+  extension: CustomImageExtensionType;
   node: NodeViewProps["node"] & {
     attrs: TCustomImageAttributes;
   };
   updateAttributes: (attrs: Partial<TCustomImageAttributes>) => void;
-  selected: boolean;
 };
 
-export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) => {
-  const { editor, extension, node } = props;
-  const { src: imgNodeSrc } = node.attrs;
+export function CustomImageNodeView(props: CustomImageNodeViewProps) {
+  const { editor, extension, node, updateAttributes } = props;
+  const { src: imgNodeSrc, status } = node.attrs;
 
   const [isUploaded, setIsUploaded] = useState(!!imgNodeSrc);
   const [resolvedSrc, setResolvedSrc] = useState<string | undefined>(undefined);
@@ -32,6 +28,8 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
 
   const [editorContainer, setEditorContainer] = useState<HTMLDivElement | null>(null);
   const imageComponentRef = useRef<HTMLDivElement>(null);
+  const hasRetriedOnMount = useRef(false);
+  const isDuplicatingRef = useRef(false);
 
   useEffect(() => {
     const closestEditorContainer = imageComponentRef.current?.closest(".editor-container");
@@ -67,10 +65,66 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
     getImageSource();
   }, [imgNodeSrc, extension.options]);
 
+  // Handle image duplication when status is duplicating
+  useEffect(() => {
+    const handleDuplication = async () => {
+      if (status !== ECustomImageStatus.DUPLICATING || !extension.options.duplicateImage || !imgNodeSrc) {
+        return;
+      }
+
+      // Prevent duplicate calls - check if already duplicating this asset
+      if (isDuplicatingRef.current) {
+        return;
+      }
+
+      isDuplicatingRef.current = true;
+      try {
+        hasRetriedOnMount.current = true;
+
+        const newAssetId = await extension.options.duplicateImage!(imgNodeSrc);
+
+        if (!newAssetId) {
+          throw new Error("Duplication returned invalid asset ID");
+        }
+
+        // Update node with new source and success status
+        updateAttributes({
+          src: newAssetId,
+          status: ECustomImageStatus.UPLOADED,
+        });
+      } catch (error: unknown) {
+        console.error("Failed to duplicate image:", error);
+        // Update status to failed
+        updateAttributes({ status: ECustomImageStatus.DUPLICATION_FAILED });
+      } finally {
+        isDuplicatingRef.current = false;
+      }
+    };
+
+    handleDuplication();
+  }, [status, imgNodeSrc, extension.options.duplicateImage, updateAttributes]);
+
+  useEffect(() => {
+    if (hasImageDuplicationFailed(status) && !hasRetriedOnMount.current && imgNodeSrc) {
+      hasRetriedOnMount.current = true;
+      // Add a small delay before retrying to avoid immediate retries
+      updateAttributes({ status: ECustomImageStatus.DUPLICATING });
+    }
+  }, [status, imgNodeSrc, updateAttributes]);
+
+  useEffect(() => {
+    if (status === ECustomImageStatus.UPLOADED) {
+      hasRetriedOnMount.current = false;
+    }
+  }, [status]);
+
+  const hasDuplicationFailed = hasImageDuplicationFailed(status);
+  const shouldShowBlock = (isUploaded || imageFromFileSystem) && !failedToLoadImage;
+
   return (
     <NodeViewWrapper>
       <div className="p-0 mx-0 my-2" data-drag-handle ref={imageComponentRef}>
-        {(isUploaded || imageFromFileSystem) && !failedToLoadImage ? (
+        {shouldShowBlock && !hasDuplicationFailed ? (
           <CustomImageBlock
             editorContainer={editorContainer}
             imageFromFileSystem={imageFromFileSystem}
@@ -83,8 +137,9 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
         ) : (
           <CustomImageUploader
             failedToLoadImage={failedToLoadImage}
+            hasDuplicationFailed={hasDuplicationFailed}
             loadImageFromFileSystem={setImageFromFileSystem}
-            maxFileSize={getExtensionStorage(editor, CORE_EXTENSIONS.CUSTOM_IMAGE).maxFileSize}
+            maxFileSize={editor.storage.imageComponent?.maxFileSize}
             setIsUploaded={setIsUploaded}
             {...props}
           />
@@ -92,4 +147,4 @@ export const CustomImageNodeView: React.FC<CustomImageNodeViewProps> = (props) =
       </div>
     </NodeViewWrapper>
   );
-};
+}

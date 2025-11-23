@@ -2,7 +2,7 @@ import { endOfMonth, endOfWeek, endOfYear, startOfMonth, startOfWeek, startOfYea
 // helpers
 // types
 import { DURATION_FILTER_OPTIONS, EDurationFilters } from "@plane/constants";
-import { TIssuesListTypes } from "@plane/types";
+import type { TIssuesListTypes } from "@plane/types";
 // constants
 import { renderFormattedDate, renderFormattedPayloadDate } from "@plane/utils";
 

@@ -14,6 +14,7 @@ export * from "./file";
 export * from "./filter";
 export * from "./get-icon-for-link";
 export * from "./intake";
+export * from "./loader";
 export * from "./math";
 export * from "./module";
 export * from "./notification";

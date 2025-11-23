@@ -1,12 +1,11 @@
-"use client";
-import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { Lightbulb } from "lucide-react";
 import { Button } from "@plane/propel/button";
-import { IFormattedInstanceConfiguration, TInstanceAIConfigurationKeys } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IFormattedInstanceConfiguration, TInstanceAIConfigurationKeys } from "@plane/types";
 // components
-import { ControllerInput, TControllerInputFormField } from "@/components/common/controller-input";
+import type { TControllerInputFormField } from "@/components/common/controller-input";
+import { ControllerInput } from "@/components/common/controller-input";
 // hooks
 import { useInstance } from "@/hooks/store";
 
@@ -16,7 +15,7 @@ type IInstanceAIForm = {
 
 type AIFormValues = Record<TInstanceAIConfigurationKeys, string>;
 
-export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
+export function InstanceAIForm(props: IInstanceAIForm) {
   const { config } = props;
   // store
   const { updateInstanceConfigurations } = useInstance();
@@ -132,4 +131,4 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
       </div>
     </div>
   );
-};
+}

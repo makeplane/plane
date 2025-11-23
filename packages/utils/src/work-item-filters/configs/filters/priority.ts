@@ -1,15 +1,11 @@
 // plane imports
-import { ISSUE_PRIORITIES, TIssuePriorities } from "@plane/constants";
-import { EQUALITY_OPERATOR, TFilterProperty, COLLECTION_OPERATOR, TSupportedOperators } from "@plane/types";
+import type { TIssuePriorities } from "@plane/constants";
+import { ISSUE_PRIORITIES } from "@plane/constants";
+import type { TFilterProperty, TSupportedOperators } from "@plane/types";
+import { EQUALITY_OPERATOR, COLLECTION_OPERATOR } from "@plane/types";
 // local imports
-import {
-  createFilterConfig,
-  TCreateFilterConfigParams,
-  IFilterIconConfig,
-  TCreateFilterConfig,
-  getMultiSelectConfig,
-  createOperatorConfigEntry,
-} from "../../../rich-filters";
+import type { TCreateFilterConfigParams, IFilterIconConfig, TCreateFilterConfig } from "../../../rich-filters";
+import { createFilterConfig, getMultiSelectConfig, createOperatorConfigEntry } from "../../../rich-filters";
 
 // ------------ Priority filter ------------
 
@@ -56,8 +52,8 @@ export const getPriorityFilterConfig =
     createFilterConfig<P, TIssuePriorities>({
       id: key,
       label: "Priority",
+      ...params,
       icon: params.filterIcon,
-      isEnabled: params.isEnabled,
       supportedOperatorConfigsMap: new Map([
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
           getPriorityMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)

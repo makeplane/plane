@@ -1,11 +1,9 @@
-"use client";
-
-import { FC } from "react";
+import type { FC } from "react";
 import { useParams } from "next/navigation";
 import { useFormContext, useFieldArray, Controller } from "react-hook-form";
 import useSWR from "swr";
 // plane types
-import { IJiraImporterForm } from "@plane/types";
+import type { IJiraImporterForm } from "@plane/types";
 // plane ui
 import { Avatar, CustomSelect, CustomSearchSelect, Input, ToggleSwitch } from "@plane/ui";
 // constants
@@ -17,7 +15,7 @@ import { WorkspaceService } from "@/plane-web/services";
 
 const workspaceService = new WorkspaceService();
 
-export const JiraImportUsers: FC = () => {
+export function JiraImportUsers() {
   const { workspaceSlug } = useParams();
   // form info
   const {
@@ -151,4 +149,4 @@ export const JiraImportUsers: FC = () => {
       )}
     </div>
   );
-};
+}

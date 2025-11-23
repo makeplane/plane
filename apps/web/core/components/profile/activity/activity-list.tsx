@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { History, MessageSquare } from "lucide-react";
 // plane imports
-import { IUserActivityResponse } from "@plane/types";
+import type { IUserActivityResponse } from "@plane/types";
 import { calculateTimeAgo, getFileURL } from "@plane/utils";
 // components
 import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core/activity";
@@ -17,7 +17,7 @@ type Props = {
   activity: IUserActivityResponse | undefined;
 };
 
-export const ActivityList: React.FC<Props> = observer((props) => {
+export const ActivityList = observer(function ActivityList(props: Props) {
   const { activity } = props;
   // params
   const { workspaceSlug } = useParams();

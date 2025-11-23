@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -21,7 +19,8 @@ import { EPageAccess, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 // plane ui
 import { ArchiveIcon } from "@plane/propel/icons";
-import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { ContextMenu, CustomMenu } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
 import { DeletePageModal } from "@/components/pages/modals/delete-page-modal";
@@ -32,7 +31,7 @@ import { usePageOperations } from "@/hooks/use-page-operations";
 // plane web components
 import { MovePageModal } from "@/plane-web/components/pages";
 // plane web hooks
-import { EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
 import { usePageFlag } from "@/plane-web/hooks/use-page-flag";
 // store types
 import type { TPageInstance } from "@/store/pages/base-page";
@@ -53,7 +52,6 @@ export type TPageActions =
   | "move";
 
 type Props = {
-  editorRef?: EditorRefApi | null;
   extraOptions?: (TContextMenuItem & { key: TPageActions })[];
   optionsOrder: TPageActions[];
   page: TPageInstance;
@@ -61,8 +59,8 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const PageActions: React.FC<Props> = observer((props) => {
-  const { editorRef, extraOptions, optionsOrder, page, parentRef, storeType } = props;
+export const PageActions = observer(function PageActions(props: Props) {
+  const { extraOptions, optionsOrder, page, parentRef, storeType } = props;
   // states
   const [deletePageModal, setDeletePageModal] = useState(false);
   const [movePageModal, setMovePageModal] = useState(false);
@@ -74,7 +72,6 @@ export const PageActions: React.FC<Props> = observer((props) => {
   });
   // page operations
   const { pageOperations } = usePageOperations({
-    editorRef,
     page,
   });
   // derived values
@@ -90,7 +87,7 @@ export const PageActions: React.FC<Props> = observer((props) => {
     canCurrentUserMovePage,
   } = page;
   // menu items
-  const MENU_ITEMS: (TContextMenuItem & { key: TPageActions })[] = useMemo(() => {
+  const MENU_ITEMS = useMemo(() => {
     const menuItems: (TContextMenuItem & { key: TPageActions })[] = [
       {
         key: "toggle-lock",
@@ -179,25 +176,25 @@ export const PageActions: React.FC<Props> = observer((props) => {
     }
     return menuItems;
   }, [
-    access,
-    archived_at,
     extraOptions,
     is_locked,
-    isMovePageEnabled,
-    canCurrentUserArchivePage,
-    canCurrentUserChangeAccess,
-    canCurrentUserDeletePage,
-    canCurrentUserDuplicatePage,
     canCurrentUserLockPage,
+    access,
+    canCurrentUserChangeAccess,
+    archived_at,
+    canCurrentUserDuplicatePage,
+    canCurrentUserArchivePage,
+    canCurrentUserDeletePage,
     canCurrentUserMovePage,
+    isMovePageEnabled,
     pageOperations,
   ]);
   // arrange options
-  const arrangedOptions = useMemo(
+  const arrangedOptions = useMemo<(TContextMenuItem & { key: TPageActions })[]>(
     () =>
       optionsOrder
         .map((key) => MENU_ITEMS.find((item) => item.key === key))
-        .filter((item) => !!item) as (TContextMenuItem & { key: TPageActions })[],
+        .filter((item): item is TContextMenuItem & { key: TPageActions } => !!item),
     [optionsOrder, MENU_ITEMS]
   );
 
@@ -217,9 +214,7 @@ export const PageActions: React.FC<Props> = observer((props) => {
           return (
             <CustomMenu.MenuItem
               key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 item.action?.();
               }}
               className={cn("flex items-center gap-2", item.className)}

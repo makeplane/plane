@@ -1,9 +1,7 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 // hooks
-import { TInstanceAuthenticationMethodKeys } from "@plane/types";
+import type { TInstanceAuthenticationMethodKeys } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 import { useInstance } from "@/hooks/store";
 // ui
@@ -14,7 +12,7 @@ type Props = {
   updateConfig: (key: TInstanceAuthenticationMethodKeys, value: string) => void;
 };
 
-export const EmailCodesConfiguration: React.FC<Props> = observer((props) => {
+export const EmailCodesConfiguration = observer(function EmailCodesConfiguration(props: Props) {
   const { disabled, updateConfig } = props;
   // store
   const { formattedConfig } = useInstance();

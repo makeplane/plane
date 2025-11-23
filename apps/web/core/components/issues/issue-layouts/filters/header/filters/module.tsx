@@ -1,11 +1,9 @@
-"use client";
-
 import React, { useMemo, useState } from "react";
 import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // components
-import { DiceIcon } from "@plane/propel/icons";
+import { ModuleIcon } from "@plane/propel/icons";
 import { Loader } from "@plane/ui";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 import { useModule } from "@/hooks/store/use-module";
@@ -17,7 +15,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterModule: React.FC<Props> = observer((props) => {
+export const FilterModule = observer(function FilterModule(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery } = props;
   // hooks
   const { projectId } = useParams();
@@ -66,7 +64,7 @@ export const FilterModule: React.FC<Props> = observer((props) => {
                     key={cycle.id}
                     isChecked={appliedFilters?.includes(cycle.id) ? true : false}
                     onClick={() => handleUpdate(cycle.id)}
-                    icon={<DiceIcon className="h-3 w-3 flex-shrink-0" />}
+                    icon={<ModuleIcon className="h-3 w-3 flex-shrink-0" />}
                     title={cycle.name}
                   />
                 ))}

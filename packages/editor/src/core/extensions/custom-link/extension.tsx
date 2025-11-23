@@ -1,5 +1,6 @@
-import { Mark, markPasteRule, mergeAttributes, PasteRuleMatch } from "@tiptap/core";
-import { Plugin } from "@tiptap/pm/state";
+import type { PasteRuleMatch } from "@tiptap/core";
+import { Mark, markPasteRule, mergeAttributes } from "@tiptap/core";
+import type { Plugin } from "@tiptap/pm/state";
 import { find, registerCustomProtocol, reset } from "linkifyjs";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
@@ -75,6 +76,9 @@ declare module "@tiptap/core" {
        */
       unsetLink: () => ReturnType;
     };
+  }
+  interface Storage {
+    [CORE_EXTENSIONS.CUSTOM_LINK]: CustomLinkStorage;
   }
 }
 

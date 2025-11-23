@@ -8,12 +8,12 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import { TRadarChartProps } from "@plane/types";
+import type { TRadarChartProps } from "@plane/types";
 import { getLegendProps } from "../components/legend";
 import { CustomRadarAxisTick } from "../components/tick";
 import { CustomTooltip } from "../components/tooltip";
 
-const RadarChart = <T extends string, K extends string>(props: TRadarChartProps<T, K>) => {
+function RadarChart<T extends string, K extends string>(props: TRadarChartProps<T, K>) {
   const { data, radars, margin, showTooltip, legend, className, angleAxis } = props;
 
   // states
@@ -90,6 +90,6 @@ const RadarChart = <T extends string, K extends string>(props: TRadarChartProps<
       </ResponsiveContainer>
     </div>
   );
-};
+}
 
 export { RadarChart };

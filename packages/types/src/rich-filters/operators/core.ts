@@ -27,6 +27,11 @@ export const CORE_COMPARISON_OPERATOR = {
 } as const;
 
 /**
+ * Core operators that support multiple values
+ */
+export const CORE_MULTI_VALUE_OPERATORS = [CORE_COLLECTION_OPERATOR.IN, CORE_COMPARISON_OPERATOR.RANGE] as const;
+
+/**
  * All core operators
  */
 export const CORE_OPERATORS = {

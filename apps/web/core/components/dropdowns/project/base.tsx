@@ -1,22 +1,24 @@
-import { ReactNode, useRef, useState } from "react";
+import type { ReactNode } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Briefcase, Check, ChevronDown, Search } from "lucide-react";
+import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import { ProjectIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { ComboDropDown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
 // plane web imports
-import { TProject } from "@/plane-web/types";
+import type { TProject } from "@/plane-web/types";
 // local imports
 import { DropdownButton } from "../buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
-import { TDropdownProps } from "../types";
+import type { TDropdownProps } from "../types";
 
 type Props = TDropdownProps & {
   button?: ReactNode;
@@ -41,7 +43,7 @@ type Props = TDropdownProps & {
       }
   );
 
-export const ProjectDropdownBase: React.FC<Props> = observer((props) => {
+export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: Props) {
   const {
     button,
     buttonClassName,
@@ -154,7 +156,7 @@ export const ProjectDropdownBase: React.FC<Props> = observer((props) => {
               return projectDetails?.logo_props ? renderIcon(projectDetails.logo_props) : null;
             })
           ) : (
-            <Briefcase className="size-3 text-custom-text-300" />
+            <ProjectIcon className="size-3 text-custom-text-300" />
           )}
         </div>
       );
@@ -205,7 +207,7 @@ export const ProjectDropdownBase: React.FC<Props> = observer((props) => {
               <span className="truncate max-w-40">{getDisplayName(value, placeholder)}</span>
             )}
             {dropdownArrow && (
-              <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+              <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
             )}
           </DropdownButton>
         </button>

@@ -1,7 +1,7 @@
 // constants
-import { CORE_EXTENSIONS } from "@/constants/extension";
+import type { CORE_EXTENSIONS } from "@/constants/extension";
 // plane editor imports
-import { TAdditionalEditorAsset } from "@/plane-editor/types/asset";
+import type { TAdditionalEditorAsset } from "@/plane-editor/types/asset";
 
 export type TEditorImageAsset = {
   href: string;

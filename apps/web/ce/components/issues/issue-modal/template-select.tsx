@@ -13,4 +13,6 @@ export type TWorkItemTemplateSelect = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const WorkItemTemplateSelect = (props: TWorkItemTemplateSelect) => <></>;
+export function WorkItemTemplateSelect(props: TWorkItemTemplateSelect) {
+  return <></>;
+}

@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 // types
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
 // components
@@ -14,7 +14,7 @@ type Props = {
   disabled: boolean;
 };
 
-export const SpreadsheetLabelColumn: React.FC<Props> = observer((props: Props) => {
+export const SpreadsheetLabelColumn = observer(function SpreadsheetLabelColumn(props: Props) {
   const { issue, onChange, disabled, onClose } = props;
   // hooks
   const { labelMap } = useLabel();

@@ -1,8 +1,9 @@
-import React from "react";
-import Image from "next/image";
+import { useTheme } from "next-themes";
 // plane package imports
 import { cn } from "@plane/utils";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// assets
+import darkBackgroundAsset from "@/app/assets/empty-state/analytics/empty-grid-background-dark.webp?url";
+import lightBackgroundAsset from "@/app/assets/empty-state/analytics/empty-grid-background-light.webp?url";
 
 type Props = {
   title: string;
@@ -11,8 +12,10 @@ type Props = {
   className?: string;
 };
 
-const AnalyticsEmptyState = ({ title, description, assetPath, className }: Props) => {
-  const backgroundReolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics/empty-grid-background" });
+function AnalyticsEmptyState({ title, description, assetPath, className }: Props) {
+  // theme hook
+  const { resolvedTheme } = useTheme();
+  const backgroundReolvedPath = resolvedTheme === "light" ? lightBackgroundAsset : darkBackgroundAsset;
 
   return (
     <div
@@ -24,16 +27,9 @@ const AnalyticsEmptyState = ({ title, description, assetPath, className }: Props
       <div className={cn("flex flex-col items-center")}>
         {assetPath && (
           <div className="relative flex max-h-[200px] max-w-[200px] items-center justify-center">
-            <Image src={assetPath} alt={title} width={100} height={100} layout="fixed" className="z-10 h-2/3 w-2/3" />
+            <img src={assetPath} alt={title} className="z-10 h-2/3 w-2/3 object-contain" />
             <div className="absolute inset-0">
-              <Image
-                src={backgroundReolvedPath}
-                alt={title}
-                width={100}
-                height={100}
-                layout="fixed"
-                className="h-full w-full"
-              />
+              <img src={backgroundReolvedPath} alt={title} className="h-full w-full object-contain" />
             </div>
           </div>
         )}
@@ -44,5 +40,6 @@ const AnalyticsEmptyState = ({ title, description, assetPath, className }: Props
       </div>
     </div>
   );
-};
+}
+
 export default AnalyticsEmptyState;

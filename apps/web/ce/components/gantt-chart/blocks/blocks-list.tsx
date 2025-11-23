@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 //
 import type { IBlockUpdateDependencyData } from "@plane/types";
 import { GanttChartBlock } from "@/components/gantt-chart/blocks/block";
@@ -15,7 +15,7 @@ export type GanttChartBlocksProps = {
   enableDependency: boolean | ((blockId: string) => boolean);
 };
 
-export const GanttChartBlocksList: FC<GanttChartBlocksProps> = (props) => {
+export function GanttChartBlocksList(props: GanttChartBlocksProps) {
   const {
     blockIds,
     blockToRender,
@@ -50,4 +50,4 @@ export const GanttChartBlocksList: FC<GanttChartBlocksProps> = (props) => {
       ))}
     </>
   );
-};
+}

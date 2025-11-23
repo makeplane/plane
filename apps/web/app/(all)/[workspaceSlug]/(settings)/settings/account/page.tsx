@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // components
@@ -9,7 +7,7 @@ import { ProfileForm } from "@/components/profile/form";
 // hooks
 import { useUser } from "@/hooks/store/user";
 
-const ProfileSettingsPage = observer(() => {
+function ProfileSettingsPage() {
   const { t } = useTranslation();
   // store hooks
   const { data: currentUser, userProfile } = useUser();
@@ -27,6 +25,6 @@ const ProfileSettingsPage = observer(() => {
       <ProfileForm user={currentUser} profile={userProfile.data} />
     </>
   );
-});
+}
 
-export default ProfileSettingsPage;
+export default observer(ProfileSettingsPage);

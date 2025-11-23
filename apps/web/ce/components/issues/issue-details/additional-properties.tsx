@@ -1,4 +1,5 @@
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 // plane imports
 
 export type TWorkItemAdditionalSidebarProperties = {
@@ -10,4 +11,6 @@ export type TWorkItemAdditionalSidebarProperties = {
   isPeekView?: boolean;
 };
 
-export const WorkItemAdditionalSidebarProperties: FC<TWorkItemAdditionalSidebarProperties> = () => <></>;
+export function WorkItemAdditionalSidebarProperties(_props: TWorkItemAdditionalSidebarProperties) {
+  return <></>;
+}

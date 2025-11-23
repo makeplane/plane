@@ -1,13 +1,12 @@
-"use client";
-
 import React, { useState } from "react";
 import { useParams } from "next/navigation";
 // types
 import { WORKSPACE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IWebhook, IWorkspace, TWebhookEventTypes } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IWebhook, IWorkspace, TWebhookEventTypes } from "@plane/types";
 // ui
-import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // helpers
 import { csvDownload } from "@plane/utils";
 // hooks
@@ -33,7 +32,7 @@ interface ICreateWebhookModal {
   onClose: () => void;
 }
 
-export const CreateWebhookModal: React.FC<ICreateWebhookModal> = (props) => {
+export function CreateWebhookModal(props: ICreateWebhookModal) {
   const { isOpen, onClose, currentWorkspace, createWebhook, clearSecretKey } = props;
   // states
   const [generatedWebhook, setGeneratedKey] = useState<IWebhook | null>(null);
@@ -123,4 +122,4 @@ export const CreateWebhookModal: React.FC<ICreateWebhookModal> = (props) => {
       )}
     </ModalCore>
   );
-};
+}

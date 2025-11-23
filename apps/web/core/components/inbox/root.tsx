@@ -1,19 +1,19 @@
-import { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { PanelLeft } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Intake } from "@plane/propel/icons";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
+import { IntakeIcon } from "@plane/propel/icons";
 import { EInboxIssueCurrentTab } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
-import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 import { InboxContentRoot } from "@/components/inbox/content";
 import { InboxSidebar } from "@/components/inbox/sidebar";
 import { InboxLayoutLoader } from "@/components/ui/loader/layouts/project-inbox/inbox-layout-loader";
 // hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 
 type TInboxIssueRoot = {
   workspaceSlug: string;
@@ -23,7 +23,7 @@ type TInboxIssueRoot = {
   navigationTab?: EInboxIssueCurrentTab | undefined;
 };
 
-export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
+export const InboxIssueRoot = observer(function InboxIssueRoot(props: TInboxIssueRoot) {
   const { workspaceSlug, projectId, inboxIssueId, inboxAccessible, navigationTab } = props;
   // states
   const [isMobileSidebar, setIsMobileSidebar] = useState(true);
@@ -31,8 +31,6 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
   const { t } = useTranslation();
   // hooks
   const { loader, error, currentTab, handleCurrentTab, fetchInboxIssues } = useProjectInbox();
-  // derived values
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/intake/issue-detail" });
 
   useEffect(() => {
     if (!inboxAccessible || !workspaceSlug || !projectId) return;
@@ -61,7 +59,7 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
   if (error && error?.status === "init-error")
     return (
       <div className="relative w-full h-full flex flex-col gap-3 justify-center items-center">
-        <Intake className="size-[60px]" strokeWidth={1.5} />
+        <IntakeIcon className="size-[60px]" strokeWidth={1.5} />
         <div className="text-custom-text-200">{error?.message}</div>
       </div>
     );
@@ -100,9 +98,11 @@ export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
             inboxIssueId={inboxIssueId.toString()}
           />
         ) : (
-          <div className="w-full h-full relative flex justify-center items-center">
-            <SimpleEmptyState title={t("inbox_issue.empty_state.detail.title")} assetPath={resolvedPath} />
-          </div>
+          <EmptyStateCompact
+            assetKey="intake"
+            title={t("project_empty_state.intake_main.title")}
+            assetClassName="size-20"
+          />
         )}
       </div>
     </>

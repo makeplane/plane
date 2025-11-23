@@ -1,11 +1,9 @@
-"use client";
-
 import { useState } from "react";
 import { XCircle } from "lucide-react";
 // plane imports
 import { PROFILE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { Tooltip } from "@plane/propel/tooltip";
-import { IApiToken } from "@plane/types";
+import type { IApiToken } from "@plane/types";
 import { renderFormattedDate, calculateTimeAgo, renderFormattedTime } from "@plane/utils";
 // components
 import { DeleteApiTokenModal } from "@/components/api-token/delete-token-modal";
@@ -16,7 +14,7 @@ type Props = {
   token: IApiToken;
 };
 
-export const ApiTokenListItem: React.FC<Props> = (props) => {
+export function ApiTokenListItem(props: Props) {
   const { token } = props;
   // states
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -61,4 +59,4 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

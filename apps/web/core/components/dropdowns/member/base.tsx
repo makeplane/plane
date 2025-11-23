@@ -1,9 +1,10 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { ChevronDown, LucideIcon } from "lucide-react";
-// plane imports
+import type { LucideIcon } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { IUserLite } from "@plane/types";
+import { ChevronDownIcon } from "@plane/propel/icons";
+// plane imports
+import type { IUserLite } from "@plane/types";
 import { ComboDropDown } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
@@ -14,7 +15,7 @@ import { DropdownButton } from "../buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
 import { ButtonAvatars } from "./avatar";
 import { MemberOptions } from "./member-options";
-import { MemberDropdownProps } from "./types";
+import type { MemberDropdownProps } from "./types";
 
 type TMemberDropdownBaseProps = {
   getUserDetails: (userId: string) => IUserLite | undefined;
@@ -26,7 +27,7 @@ type TMemberDropdownBaseProps = {
   renderByDefault?: boolean;
 } & MemberDropdownProps;
 
-export const MemberDropdownBase: React.FC<TMemberDropdownBaseProps> = observer((props) => {
+export const MemberDropdownBase = observer(function MemberDropdownBase(props: TMemberDropdownBaseProps) {
   const { t } = useTranslation();
   const {
     button,
@@ -148,7 +149,7 @@ export const MemberDropdownBase: React.FC<TMemberDropdownBaseProps> = observer((
               </span>
             )}
             {dropdownArrow && (
-              <ChevronDown className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
+              <ChevronDownIcon className={cn("h-2.5 w-2.5 flex-shrink-0", dropdownArrowClassName)} aria-hidden="true" />
             )}
           </DropdownButton>
         </button>

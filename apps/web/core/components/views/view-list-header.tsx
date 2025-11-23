@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // icons
-import { ListFilter, Search, X } from "lucide-react";
-// plane helpers
+import { ListFilter, Search } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
+import { CloseIcon } from "@plane/propel/icons";
+// plane helpers
 // helpers
 import { cn } from "@plane/utils";
 // hooks
@@ -13,7 +14,7 @@ import { FiltersDropdown } from "../issues/issue-layouts/filters";
 import { ViewFiltersSelection } from "./filters/filter-selection";
 import { ViewOrderByDropdown } from "./filters/order-by";
 
-export const ViewListHeader = observer(() => {
+export const ViewListHeader = observer(function ViewListHeader() {
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   // refs
@@ -86,7 +87,7 @@ export const ViewListHeader = observer(() => {
                 setIsSearchOpen(false);
               }}
             >
-              <X className="h-3 w-3" />
+              <CloseIcon className="h-3 w-3" />
             </button>
           )}
         </div>

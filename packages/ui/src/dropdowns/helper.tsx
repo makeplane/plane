@@ -1,5 +1,5 @@
 // FIXME: fix this!!!
-import { ICustomSearchSelectOption } from "@plane/types";
+import type { ICustomSearchSelectOption } from "@plane/types";
 
 type Placement =
   | "top"
@@ -24,7 +24,7 @@ export interface IDropdownProps {
   disabled?: boolean;
   input?: boolean;
   label?: string | React.ReactNode;
-  maxHeight?: "sm" | "rg" | "md" | "lg" | "full";
+  maxHeight?: "sm" | "rg" | "md" | "lg" | "xl" | "2xl";
   noChevron?: boolean;
   chevronClassName?: string;
   onOpen?: () => void;

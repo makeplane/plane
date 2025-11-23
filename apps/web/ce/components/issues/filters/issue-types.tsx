@@ -1,6 +1,4 @@
-"use client";
-
-import React from "react";
+import type React from "react";
 import { observer } from "mobx-react";
 
 type Props = {
@@ -9,4 +7,6 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterIssueTypes: React.FC<Props> = observer(() => null);
+export const FilterIssueTypes = observer(function FilterIssueTypes(_props: Props) {
+  return null;
+});

@@ -1,6 +1,5 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
-import { LayoutPanelTop } from "lucide-react";
+import { ParentPropertyIcon } from "@plane/propel/icons";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
@@ -8,7 +7,7 @@ import { IssueActivityBlockComponent, IssueLink } from "./";
 
 type TIssueParentActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
-export const IssueParentActivity: FC<TIssueParentActivity> = observer((props) => {
+export const IssueParentActivity = observer(function IssueParentActivity(props: TIssueParentActivity) {
   const { activityId, showIssue = true, ends } = props;
   // hooks
   const {
@@ -20,7 +19,7 @@ export const IssueParentActivity: FC<TIssueParentActivity> = observer((props) =>
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<LayoutPanelTop size={14} className="text-custom-text-200" aria-hidden="true" />}
+      icon={<ParentPropertyIcon className="h-3.5 w-3.5 text-custom-text-200" aria-hidden="true" />}
       activityId={activityId}
       ends={ends}
     >

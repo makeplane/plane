@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -9,21 +7,14 @@ import { ArchiveRestoreIcon, Check, ExternalLink, LinkIcon, Lock, Settings, Tras
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { Button } from "@plane/propel/button";
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IProject } from "@plane/types";
-import {
-  Avatar,
-  AvatarGroup,
-  TOAST_TYPE,
-  setToast,
-  setPromiseToast,
-  ContextMenu,
-  TContextMenuItem,
-  FavoriteStar,
-} from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { Avatar, AvatarGroup, ContextMenu, FavoriteStar } from "@plane/ui";
 import { copyUrlToClipboard, cn, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
@@ -39,7 +30,7 @@ type Props = {
   project: IProject;
 };
 
-export const ProjectCard: React.FC<Props> = observer((props) => {
+export const ProjectCard = observer(function ProjectCard(props: Props) {
   const { project } = props;
   // states
   const [deleteProjectModalOpen, setDeleteProjectModal] = useState(false);
@@ -126,7 +117,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "settings",
-      action: () => router.push(`/${workspaceSlug}/settings/projects/${project.id}`, { showProgress: false }),
+      action: () => router.push(`/${workspaceSlug}/settings/projects/${project.id}`),
       title: "Settings",
       icon: Settings,
       shouldRender: !isArchived && (hasAdminRole || hasMemberRole),

@@ -1,7 +1,6 @@
 // plane imports
 import { isEmpty } from "lodash-es";
-import {
-  LOGICAL_OPERATOR,
+import type {
   SingleOrArray,
   TFilterExpression,
   TFilterValue,
@@ -11,8 +10,8 @@ import {
   TWorkItemFilterExpression,
   TWorkItemFilterExpressionData,
   TWorkItemFilterProperty,
-  WORK_ITEM_FILTER_PROPERTY_KEYS,
 } from "@plane/types";
+import { LOGICAL_OPERATOR, MULTI_VALUE_OPERATORS, WORK_ITEM_FILTER_PROPERTY_KEYS } from "@plane/types";
 import { createConditionNode, createAndGroupNode, isAndGroupNode, isConditionNode } from "@plane/utils";
 // local imports
 import { FilterAdapter } from "../rich-filters/adapter";
@@ -161,7 +160,8 @@ class WorkItemFiltersAdapter extends FilterAdapter<TWorkItemFilterProperty, TWor
     const operator = key.substring(lastDoubleUnderscoreIndex + 2);
 
     // Validate property is in allowed list
-    if (!WORK_ITEM_FILTER_PROPERTY_KEYS.includes(property as TWorkItemFilterProperty)) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (!WORK_ITEM_FILTER_PROPERTY_KEYS.includes(property as any) && !property.startsWith("customproperty_")) {
       return false;
     }
 
@@ -192,17 +192,12 @@ class WorkItemFiltersAdapter extends FilterAdapter<TWorkItemFilterProperty, TWor
     // Find the last occurrence of '__' to separate property from operator
     const lastDoubleUnderscoreIndex = key.lastIndexOf("__");
     const property = key.substring(0, lastDoubleUnderscoreIndex);
-    const operator = key.substring(lastDoubleUnderscoreIndex + 2);
+    const operator = key.substring(lastDoubleUnderscoreIndex + 2) as TSupportedOperators;
 
     const rawValue = data[key as TWorkItemFilterConditionKey];
 
-    if (typeof rawValue !== "string") {
-      console.error(`Filter value must be a string, got: ${typeof rawValue}`);
-      return null;
-    }
-
     // Parse comma-separated values
-    const parsedValue = this._parseFilterValue(rawValue);
+    const parsedValue = MULTI_VALUE_OPERATORS.includes(operator) ? this._parseFilterValue(rawValue) : rawValue;
 
     return [property as TWorkItemFilterProperty, operator as TSupportedOperators, parsedValue];
   };
@@ -212,7 +207,9 @@ class WorkItemFiltersAdapter extends FilterAdapter<TWorkItemFilterProperty, TWor
    * @param value - The string value to parse
    * @returns Parsed value as string or array of strings
    */
-  private _parseFilterValue = (value: string): SingleOrArray<TFilterValue> => {
+  private _parseFilterValue = (value: TFilterValue): SingleOrArray<TFilterValue> => {
+    if (!value) return value;
+
     if (typeof value !== "string") return value;
 
     // Handle empty string

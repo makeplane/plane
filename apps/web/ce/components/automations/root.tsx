@@ -1,10 +1,11 @@
-"use client";
-
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 
 export type TCustomAutomationsRootProps = {
   projectId: string;
   workspaceSlug: string;
 };
 
-export const CustomAutomationsRoot: FC<TCustomAutomationsRootProps> = () => <></>;
+export function CustomAutomationsRoot(_props: TCustomAutomationsRootProps) {
+  return <></>;
+}

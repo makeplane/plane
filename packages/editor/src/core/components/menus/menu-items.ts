@@ -1,4 +1,4 @@
-import { Editor } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 import {
   BoldIcon,
   Heading1,
@@ -18,12 +18,12 @@ import {
   Heading5,
   Heading6,
   CaseSensitive,
-  LucideIcon,
   MinusSquare,
   Palette,
   AlignCenter,
   LinkIcon,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
@@ -49,7 +49,7 @@ import {
   unsetLinkEditor,
 } from "@/helpers/editor-commands";
 // types
-import { TCommandWithProps, TEditorCommands } from "@/types";
+import type { TCommandWithProps, TEditorCommands } from "@/types";
 
 type isActiveFunction<T extends TEditorCommands> = (params?: TCommandWithProps<T>) => boolean;
 type commandFunction<T extends TEditorCommands> = (params?: TCommandWithProps<T>) => void;
@@ -70,7 +70,7 @@ export const TextItem = (editor: Editor): EditorMenuItem<"text"> => ({
   icon: CaseSensitive,
 });
 
-type SupportedHeadingLevels = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+type SupportedHeadingLevels = Extract<TEditorCommands, "h1" | "h2" | "h3" | "h4" | "h5" | "h6">;
 
 const HeadingItem = <T extends SupportedHeadingLevels>(
   editor: Editor,
@@ -206,11 +206,13 @@ export const LinkItem = (editor: Editor): EditorMenuItem<"link"> =>
     key: "link",
     name: "Link",
     isActive: () => editor?.isActive("link"),
+
     command: (props) => {
       if (!props) return;
       if (props.url) setLinkEditor(editor, props.url, props.text);
       else unsetLinkEditor(editor);
     },
+
     icon: LinkIcon,
   }) as const;
 
@@ -274,5 +276,5 @@ export const getEditorMenuItems = (editor: Editor | null): EditorMenuItem<TEdito
     TextColorItem(editor),
     BackgroundColorItem(editor),
     TextAlignItem(editor),
-  ];
+  ] as EditorMenuItem<TEditorCommands>[];
 };

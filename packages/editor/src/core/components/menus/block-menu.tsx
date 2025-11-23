@@ -1,29 +1,41 @@
 import {
   useFloating,
+  autoUpdate,
   offset,
   flip,
   shift,
-  autoUpdate,
   useDismiss,
   useInteractions,
   FloatingPortal,
 } from "@floating-ui/react";
 import type { Editor } from "@tiptap/react";
-import { Copy, LucideIcon, Trash2 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { Copy, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-// constants
 import { cn } from "@plane/utils";
+// constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
-import { IEditorProps } from "@/types";
+// types
+import type { IEditorProps } from "@/types";
+// components
+import { getNodeOptions } from "./block-menu-options";
 
 type Props = {
+  disabledExtensions?: IEditorProps["disabledExtensions"];
   editor: Editor;
   flaggedExtensions?: IEditorProps["flaggedExtensions"];
-  disabledExtensions?: IEditorProps["disabledExtensions"];
+  workItemIdentifier?: IEditorProps["workItemIdentifier"];
+};
+export type BlockMenuOption = {
+  icon: LucideIcon;
+  key: string;
+  label: string;
+  onClick: (e: React.MouseEvent) => void;
+  isDisabled?: boolean;
 };
 
-export const BlockMenu = (props: Props) => {
-  const { editor } = props;
+export function BlockMenu(props: Props) {
+  const { editor, workItemIdentifier } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimatedIn, setIsAnimatedIn] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -74,15 +86,6 @@ export const BlockMenu = (props: Props) => {
         // Set the virtual reference as the reference element
         refs.setReference(virtualReferenceRef.current);
 
-        // Ensure the targeted block is selected
-        const rect = dragHandle.getBoundingClientRect();
-        const coords = { left: rect.left + rect.width / 2, top: rect.top + rect.height / 2 };
-        const posAtCoords = editor.view.posAtCoords(coords);
-        if (posAtCoords) {
-          const $pos = editor.state.doc.resolve(posAtCoords.pos);
-          const nodePos = $pos.before($pos.depth);
-          editor.chain().setNodeSelection(nodePos).run();
-        }
         // Show the menu
         openBlockMenu();
         return;
@@ -93,9 +96,10 @@ export const BlockMenu = (props: Props) => {
         closeBlockMenu();
       }
     },
-    [editor, refs, openBlockMenu, closeBlockMenu]
+    [refs, openBlockMenu, closeBlockMenu]
   );
 
+  // Set up event listeners
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -106,10 +110,11 @@ export const BlockMenu = (props: Props) => {
     const handleScroll = () => {
       closeBlockMenu();
     };
+
     document.addEventListener("click", handleClickDragHandle);
     document.addEventListener("contextmenu", handleClickDragHandle);
     document.addEventListener("keydown", handleKeyDown);
-    document.addEventListener("scroll", handleScroll, true); // Using capture phase
+    document.addEventListener("scroll", handleScroll, true);
 
     return () => {
       document.removeEventListener("click", handleClickDragHandle);
@@ -136,13 +141,7 @@ export const BlockMenu = (props: Props) => {
     }
   }, [isOpen]);
 
-  const MENU_ITEMS: {
-    icon: LucideIcon;
-    key: string;
-    label: string;
-    onClick: (e: React.MouseEvent) => void;
-    isDisabled?: boolean;
-  }[] = [
+  const MENU_ITEMS: BlockMenuOption[] = [
     {
       icon: Trash2,
       key: "delete",
@@ -195,11 +194,13 @@ export const BlockMenu = (props: Props) => {
         }
       },
     },
+    ...getNodeOptions(editor),
   ];
 
   if (!isOpen) {
     return null;
   }
+
   return (
     <FloatingPortal>
       <div
@@ -209,22 +210,20 @@ export const BlockMenu = (props: Props) => {
         }}
         style={{
           ...floatingStyles,
-          zIndex: 99,
           animationFillMode: "forwards",
           transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)", // Expo ease out
+          zIndex: 100,
         }}
         className={cn(
-          "z-20 max-h-60 min-w-[7rem] overflow-y-scroll rounded-lg border border-custom-border-200 bg-custom-background-100 p-1.5 shadow-custom-shadow-rg",
+          "max-h-60 min-w-[7rem] overflow-y-scroll rounded-lg border border-custom-border-200 bg-custom-background-100 p-1.5 shadow-custom-shadow-rg",
           "transition-all duration-300 transform origin-top-right",
           isAnimatedIn ? "opacity-100 scale-100" : "opacity-0 scale-75"
         )}
-        data-prevent-outside-click
         {...getFloatingProps()}
       >
         {MENU_ITEMS.map((item) => {
-          if (item.isDisabled) {
-            return null;
-          }
+          if (item.isDisabled) return null;
+
           return (
             <button
               key={item.key}
@@ -246,4 +245,4 @@ export const BlockMenu = (props: Props) => {
       </div>
     </FloatingPortal>
   );
-};
+}

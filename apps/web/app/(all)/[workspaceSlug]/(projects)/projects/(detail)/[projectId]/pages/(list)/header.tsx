@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
@@ -12,9 +10,10 @@ import {
 } from "@plane/constants";
 // plane types
 import { Button } from "@plane/propel/button";
-import { TPage } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TPage } from "@plane/types";
 // plane ui
-import { Breadcrumbs, Header, setToast, TOAST_TYPE } from "@plane/ui";
+import { Breadcrumbs, Header } from "@plane/ui";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
@@ -24,7 +23,7 @@ import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/com
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
-export const PagesListHeader = observer(() => {
+export const PagesListHeader = observer(function PagesListHeader() {
   // states
   const [isCreatingPage, setIsCreatingPage] = useState(false);
   // router

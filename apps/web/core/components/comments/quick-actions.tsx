@@ -1,13 +1,13 @@
-"use client";
-
-import { FC, useMemo } from "react";
+import type { FC } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Globe2, Link, Lock, Pencil, Trash2 } from "lucide-react";
 // plane imports
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TIssueComment, TCommentsOperations } from "@plane/types";
-import { CustomMenu, TContextMenuItem } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useUser } from "@/hooks/store/user";
@@ -20,7 +20,7 @@ type TCommentCard = {
   showCopyLinkOption: boolean;
 };
 
-export const CommentQuickActions: FC<TCommentCard> = observer((props) => {
+export const CommentQuickActions = observer(function CommentQuickActions(props: TCommentCard) {
   const { activityOperations, comment, setEditMode, showAccessSpecifier, showCopyLinkOption } = props;
   // store hooks
   const { data: currentUser } = useUser();
@@ -31,7 +31,7 @@ export const CommentQuickActions: FC<TCommentCard> = observer((props) => {
   // translation
   const { t } = useTranslation();
 
-  const MENU_ITEMS: TContextMenuItem[] = useMemo(
+  const MENU_ITEMS = useMemo<TContextMenuItem[]>(
     () => [
       {
         key: "edit",
@@ -71,7 +71,7 @@ export const CommentQuickActions: FC<TCommentCard> = observer((props) => {
         shouldRender: canDelete,
       },
     ],
-    [activityOperations, canDelete, canEdit, comment, setEditMode, showAccessSpecifier, showCopyLinkOption]
+    [t, setEditMode, canEdit, showCopyLinkOption, activityOperations, comment, showAccessSpecifier, canDelete]
   );
 
   return (

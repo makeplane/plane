@@ -1,9 +1,6 @@
-"use client";
-
-import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { DiceIcon } from "@plane/propel/icons";
+import { ModuleIcon } from "@plane/propel/icons";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
 import { IssueActivityBlockComponent } from "./";
@@ -11,7 +8,7 @@ import { IssueActivityBlockComponent } from "./";
 
 type TIssueModuleActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 
-export const IssueModuleActivity: FC<TIssueModuleActivity> = observer((props) => {
+export const IssueModuleActivity = observer(function IssueModuleActivity(props: TIssueModuleActivity) {
   const { activityId, ends } = props;
   // hooks
   const {
@@ -23,7 +20,7 @@ export const IssueModuleActivity: FC<TIssueModuleActivity> = observer((props) =>
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<DiceIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />}
+      icon={<ModuleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />}
       activityId={activityId}
       ends={ends}
     >

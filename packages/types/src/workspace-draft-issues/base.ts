@@ -1,4 +1,4 @@
-import { TIssuePriorities } from "../issues";
+import type { TIssuePriorities } from "../issues";
 
 export type TWorkspaceDraftIssue = {
   id: string;

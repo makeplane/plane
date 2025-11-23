@@ -1,37 +1,35 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import {
+import type {
   Control,
-  Controller,
   FieldArrayWithId,
   UseFieldArrayRemove,
   UseFormGetValues,
   UseFormSetValue,
   UseFormWatch,
-  useFieldArray,
-  useForm,
 } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 // icons
 import { usePopper } from "react-popper";
-import { Check, ChevronDown, Plus, XCircle } from "lucide-react";
+import { Check, Plus, XCircle } from "lucide-react";
 import { Listbox } from "@headlessui/react";
 // plane imports
-import { ROLE, ROLE_DETAILS, EUserPermissions, MEMBER_TRACKER_EVENTS, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
+import type { EUserPermissions } from "@plane/constants";
+import { ROLE, ROLE_DETAILS, MEMBER_TRACKER_EVENTS, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// types
 import { Button } from "@plane/propel/button";
-import { EOnboardingSteps, IWorkspace } from "@plane/types";
+import { ChevronDownIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+// types
+import { EOnboardingSteps } from "@plane/types";
 // ui
-import { Input, Spinner, TOAST_TYPE, setToast } from "@plane/ui";
+import { Input, Spinner } from "@plane/ui";
 // constants
 // helpers
 
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUser, useUserProfile } from "@/hooks/store/user";
 // services
 import { WorkspaceService } from "@/plane-web/services";
 // components
@@ -81,7 +79,7 @@ const placeholderEmails = [
   "thomas.selfridge@frstflt.com",
   "albert.zahm@frstflt.com",
 ];
-const InviteMemberInput: React.FC<InviteMemberFormProps> = observer((props) => {
+const InviteMemberInput = observer(function InviteMemberInput(props: InviteMemberFormProps) {
   const {
     control,
     index,
@@ -198,7 +196,7 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = observer((props) => {
                     {ROLE[value]}
                   </span>
 
-                  <ChevronDown
+                  <ChevronDownIcon
                     className={`size-3 ${
                       !getValues(`emails.${index}.role_active`)
                         ? "stroke-onboarding-text-400"
@@ -262,7 +260,7 @@ const InviteMemberInput: React.FC<InviteMemberFormProps> = observer((props) => {
   );
 });
 
-export const InviteTeamStep: React.FC<Props> = observer((props) => {
+export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
   const { handleStepChange } = props;
 
   const [isInvitationDisabled, setIsInvitationDisabled] = useState(true);
