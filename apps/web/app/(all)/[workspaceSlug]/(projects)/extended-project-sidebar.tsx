@@ -152,7 +152,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
                 projectListType={"JOINED"}
                 disableDrag={false}
                 disableDrop={false}
-                isLastChild={index === joinedProjects.length - 1}
+                isLastChild={index === filteredProjects.length - 1}
                 handleOnProjectDrop={handleOnProjectDrop}
                 renderInExtendedSidebar
               />

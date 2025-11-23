@@ -55,9 +55,7 @@ export const useTabPreferences = (workspaceSlug: string, projectId: string): TTa
    * Update preferences via store
    */
   const updatePreferences = async (newPreferences: TTabPreferences) => {
-    console.log("log3");
     if (!memberId) return;
-    console.log("log4");
 
     try {
       await updateProjectMemberPreferences(workspaceSlug, projectId, memberId, {
@@ -71,7 +69,6 @@ export const useTabPreferences = (workspaceSlug: string, projectId: string): TTa
         title: "Error!",
         message: "Something went wrong. Please try again later.",
       });
-
     }
   };
 

@@ -4,10 +4,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { GripVertical, X } from "lucide-react";
 // plane imports
-import {
-  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS,
-  EUserPermissionsLevel,
-} from "@plane/constants";
+import { WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Checkbox, EModalPosition, EModalWidth, ModalCore, Sortable } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -21,9 +18,7 @@ import {
 // helpers
 import { getSidebarNavigationItemIcon } from "@/plane-web/components/workspace/sidebar/helper";
 // types
-import type {
-  TPersonalNavigationItemKey,
-} from "@/types/navigation-preferences";
+import type { TPersonalNavigationItemKey } from "@/types/navigation-preferences";
 
 type TCustomizeNavigationDialogProps = {
   isOpen: boolean;
@@ -66,20 +61,24 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
   const {
     preferences: workspacePreferences,
     toggleWorkspaceItem,
-    updateWorkspaceItemOrder
+    updateWorkspaceItemOrder,
   } = useWorkspaceNavigationPreferences();
 
   // local state for limited projects count input
   const [projectCountInput, setProjectCountInput] = useState(projectPreferences.limitedProjectsCount.toString());
 
   // Filter personal items by feature flags
-  const filteredPersonalItems = PERSONAL_ITEMS
+  const filteredPersonalItems = PERSONAL_ITEMS;
 
   // Filter workspace items by permissions and feature flags, then get pinned/unpinned items
   const { pinnedItems, unpinnedItems } = useMemo(() => {
     const items = WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS.filter((item) => {
       // Permission check
-      const hasPermission = allowPermissions(item.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug?.toString() || "");
+      const hasPermission = allowPermissions(
+        item.access,
+        EUserPermissionsLevel.WORKSPACE,
+        workspaceSlug?.toString() || ""
+      );
       return hasPermission;
     }).map((item) => {
       // Get pinned status and sort order from localStorage
