@@ -37,8 +37,8 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
   const { allowPermissions } = useUserPermissions();
 
   const pageTitle = currentWorkspace?.name
-  ? t(`workspace_analytics.page_label`, { workspace: currentWorkspace?.name })
-  : undefined;
+    ? t(`workspace_analytics.page_label`, { workspace: currentWorkspace?.name })
+    : undefined;
 
   // permissions
   const canPerformEmptyStateActions = allowPermissions(
@@ -85,11 +85,6 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
                           disabled={tab.isDisabled}
                           size="md"
                           className="px-3"
-                          onClick={() => {
-                            if (!tab.isDisabled) {
-                              handleTabChange(tab.key);
-                            }
-                          }}
                         >
                           {tab.label}
                         </Tabs.Trigger>
