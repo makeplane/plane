@@ -1540,6 +1540,47 @@ export default {
         "Wenn Sie bestätigen, werden alle Sortier-, Filter- und Anzeigeoptionen + das Layout, das Sie für diese Ansicht gewählt haben, dauerhaft gelöscht und können nicht wiederhergestellt werden.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "E-Mail ändern",
+        description: "Gib eine neue E-Mail-Adresse ein, um einen Verifizierungslink zu erhalten.",
+        toasts: {
+          success_title: "Erfolg!",
+          success_message: "E-Mail erfolgreich aktualisiert. Bitte melde dich erneut an.",
+        },
+        form: {
+          email: {
+            label: "Neue E-Mail",
+            placeholder: "Gib deine E-Mail ein",
+            errors: {
+              required: "E-Mail ist erforderlich",
+              invalid: "E-Mail ist ungültig",
+              exists: "E-Mail existiert bereits. Bitte nutze eine andere.",
+              validation_failed: "E-Mail-Verifizierung fehlgeschlagen. Bitte versuche es erneut.",
+            },
+          },
+          code: {
+            label: "Einmaliger Code",
+            placeholder: "gets-sets-flys",
+            helper_text: "Verifizierungscode wurde an deine neue E-Mail gesendet.",
+            errors: {
+              required: "Einmaliger Code ist erforderlich",
+              invalid: "Ungültiger Verifizierungscode. Bitte versuche es erneut.",
+            },
+          },
+        },
+        actions: {
+          continue: "Weiter",
+          confirm: "Bestätigen",
+          cancel: "Abbrechen",
+        },
+        states: {
+          sending: "Wird gesendet…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "Arbeitsbereich-Einstellungen",
     page_label: "{workspace} - Allgemeine Einstellungen",
@@ -2599,4 +2640,5 @@ export default {
     close_button: "Navigationsbereich schließen",
     outline_floating_button: "Gliederung öffnen",
   },
+
 } as const;

@@ -368,7 +368,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
                     className="text-xs underline btn w-fit text-custom-text-200"
                     onClick={() => setIsChangeEmailModalOpen(true)}
                   >
-                    Change Email
+                    {t("change_email")}
                   </button>
                 )}
               </div>

@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Transition, Dialog } from "@headlessui/react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Input } from "@plane/ui";
@@ -25,15 +26,17 @@ type TUniqueCodeValuesForm = { email: string; code: string };
 
 const defaultValues: TUniqueCodeValuesForm = { email: "", code: "" };
 
+// service initialization
+const authService = new AuthService();
+
 export const ChangeEmailModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose } = props;
   // states
   const [currentStep, setCurrentStep] = useState<TModalStep>("EMAIL");
   // store hooks
   const { signOut } = useUser();
-  // services
-  const authService = new AuthService();
-
+  const { t } = useTranslation();
+  const changeEmailT = (path: string) => t(`account_settings.profile.change_email_modal.${path}`);
   // form info
   const {
     handleSubmit,
@@ -55,8 +58,8 @@ export const ChangeEmailModal: React.FC<Props> = observer((props) => {
     await signOut().catch(() =>
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Failed to sign out. Please try again.",
+        title: t("sign_out.toast.error.title"),
+        message: t("sign_out.toast.error.message"),
       })
     );
   };
@@ -69,8 +72,8 @@ export const ChangeEmailModal: React.FC<Props> = observer((props) => {
 
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Email updated successfully. Please sign in again.",
+          title: changeEmailT("toasts.success_title"),
+          message: changeEmailT("toasts.success_message"),
         });
 
         // Sign out the user after successful email update
@@ -80,7 +83,7 @@ export const ChangeEmailModal: React.FC<Props> = observer((props) => {
         const errorMessage =
           (error as { error?: string; message?: string })?.error ||
           (error as { error?: string; message?: string })?.message ||
-          "Invalid verification code. Please try again.";
+          changeEmailT("form.code.errors.invalid");
         setError("code", { type: "custom", message: errorMessage });
       }
       return;
@@ -97,7 +100,7 @@ export const ChangeEmailModal: React.FC<Props> = observer((props) => {
 
       // Check if email already exists
       if (emailCheckResponse?.existing === true) {
-        setError("email", { type: "custom", message: "Email already exists. Please use a different one." });
+        setError("email", { type: "custom", message: changeEmailT("form.email.errors.exists") });
         return;
       }
 
@@ -119,7 +122,7 @@ export const ChangeEmailModal: React.FC<Props> = observer((props) => {
         ? typeof errorInfo.message === "string"
           ? errorInfo.message
           : String(errorInfo.message)
-        : err?.error_message || "Email validation failed. Please try again.";
+        : err?.error_message || changeEmailT("form.email.errors.validation_failed");
 
       setError("email", { type: "custom", message: errorMessage });
     }
@@ -154,23 +157,23 @@ export const ChangeEmailModal: React.FC<Props> = observer((props) => {
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 px-4 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-[30rem]">
                 <div className="py-4 space-y-0">
                   <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
-                    Change email
+                    {changeEmailT("title")}
                   </Dialog.Title>
-                  <p className="my-4 text-sm text-custom-text-200">
-                    Enter a new email address to receive a verification link.
-                  </p>
+                  <p className="my-4 text-sm text-custom-text-200">{changeEmailT("description")}</p>
                 </div>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
                   <div className="flex flex-col gap-1">
-                    {secondStep && <h4 className="text-sm font-medium text-custom-text-200">New email</h4>}
+                    {secondStep && (
+                      <h4 className="text-sm font-medium text-custom-text-200">{changeEmailT("form.email.label")}</h4>
+                    )}
                     <Controller
                       control={control}
                       name="email"
                       rules={{
-                        required: "Email is required",
+                        required: changeEmailT("form.email.errors.required"),
                         pattern: {
                           value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                          message: "Email is invalid",
+                          message: changeEmailT("form.email.errors.invalid"),
                         },
                       }}
                       render={({ field: { value, onChange, ref } }) => (
@@ -182,7 +185,7 @@ export const ChangeEmailModal: React.FC<Props> = observer((props) => {
                           onChange={onChange}
                           ref={ref}
                           hasError={Boolean(errors.email)}
-                          placeholder="Enter your email"
+                          placeholder={changeEmailT("form.email.placeholder")}
                           className={cn(
                             { "border-red-500": errors.email },
                             { "cursor-not-allowed !bg-custom-background-90": secondStep }
@@ -196,11 +199,11 @@ export const ChangeEmailModal: React.FC<Props> = observer((props) => {
 
                   {secondStep && (
                     <div className="flex flex-col gap-1">
-                      <h4 className="text-sm font-medium text-custom-text-200">Unique code</h4>
+                      <h4 className="text-sm font-medium text-custom-text-200">{changeEmailT("form.code.label")}</h4>
                       <Controller
                         control={control}
                         name="code"
-                        rules={{ required: "Unique code is required" }}
+                        rules={{ required: changeEmailT("form.code.errors.required") }}
                         render={({ field: { value, onChange, ref } }) => (
                           <Input
                             id="code"
@@ -208,7 +211,7 @@ export const ChangeEmailModal: React.FC<Props> = observer((props) => {
                             value={value}
                             onChange={onChange}
                             ref={ref}
-                            placeholder="gets-sets-flys"
+                            placeholder={changeEmailT("form.code.placeholder")}
                             className={cn({ "border-red-500": errors.code })}
                             autoFocus
                           />
@@ -217,16 +220,20 @@ export const ChangeEmailModal: React.FC<Props> = observer((props) => {
                       {errors?.code ? (
                         <span className="text-xs text-red-500">{errors?.code?.message}</span>
                       ) : (
-                        <span className="text-xs text-green-700">Verification code sent to your new email.</span>
+                        <span className="text-xs text-green-700">{changeEmailT("form.code.helper_text")}</span>
                       )}
                     </div>
                   )}
                   <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200 py-4">
                     <Button type="button" variant="neutral-primary" size="sm" onClick={handleClose}>
-                      Cancel
+                      {changeEmailT("actions.cancel")}
                     </Button>
                     <Button type="submit" variant="primary" size="sm" disabled={isSubmitting}>
-                      {isSubmitting ? "Sending" : secondStep ? "Confirm" : "Continue"}
+                      {isSubmitting
+                        ? changeEmailT("states.sending")
+                        : secondStep
+                          ? changeEmailT("actions.confirm")
+                          : changeEmailT("actions.continue")}
                     </Button>
                   </div>
                 </form>

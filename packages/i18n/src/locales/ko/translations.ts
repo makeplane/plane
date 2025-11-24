@@ -1514,6 +1514,47 @@ export default {
         "확인하면 이 뷰에 대해 선택한 모든 정렬, 필터 및 표시 옵션 + 레이아웃이 복원할 수 없는 방식으로 영구적으로 삭제됩니다.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "이메일 변경",
+        description: "확인 링크를 받으려면 새 이메일 주소를 입력하세요.",
+        toasts: {
+          success_title: "성공!",
+          success_message: "이메일이 업데이트되었습니다. 다시 로그인하세요.",
+        },
+        form: {
+          email: {
+            label: "새 이메일",
+            placeholder: "이메일을 입력하세요",
+            errors: {
+              required: "이메일은 필수입니다",
+              invalid: "유효하지 않은 이메일입니다",
+              exists: "이미 존재하는 이메일입니다. 다른 주소를 사용하세요.",
+              validation_failed: "이메일 확인에 실패했습니다. 다시 시도하세요.",
+            },
+          },
+          code: {
+            label: "고유 코드",
+            placeholder: "gets-sets-flys",
+            helper_text: "인증 코드가 새 이메일로 전송되었습니다.",
+            errors: {
+              required: "고유 코드는 필수입니다",
+              invalid: "잘못된 인증 코드입니다. 다시 시도하세요.",
+            },
+          },
+        },
+        actions: {
+          continue: "계속",
+          confirm: "확인",
+          cancel: "취소",
+        },
+        states: {
+          sending: "전송 중…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "작업 공간 설정",
     page_label: "{workspace} - 일반 설정",
@@ -2582,4 +2623,5 @@ export default {
     close_button: "네비게이션 패널 닫기",
     outline_floating_button: "개요 열기",
   },
+
 } as const;
