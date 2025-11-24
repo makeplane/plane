@@ -288,11 +288,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
       // Optimistically update store
       const updatedPreferences: IWorkspaceSidebarNavigation = {};
       data.forEach((item) => {
-        updatedPreferences[item.key] = {
-          key: item.key,
-          is_pinned: item.is_pinned,
-          sort_order: item.sort_order,
-        };
+        updatedPreferences[item.key] = item;
       });
 
       runInAction(() => {
