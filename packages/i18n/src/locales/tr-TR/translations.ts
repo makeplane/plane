@@ -1529,6 +1529,47 @@ export default {
         "Onaylarsanız, bu görünüm için seçtiğiniz tüm sıralama, filtreleme ve görüntüleme seçenekleri + düzen kalıcı olarak silinecek ve geri yükleme imkanı olmayacaktır.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "E-postayı değiştir",
+        description: "Doğrulama bağlantısı almak için yeni bir e-posta adresi girin.",
+        toasts: {
+          success_title: "Başarılı!",
+          success_message: "E-posta başarıyla güncellendi. Lütfen tekrar giriş yapın.",
+        },
+        form: {
+          email: {
+            label: "Yeni e-posta",
+            placeholder: "E-postanızı girin",
+            errors: {
+              required: "E-posta zorunludur",
+              invalid: "E-posta geçersiz",
+              exists: "E-posta zaten mevcut. Başka bir tane kullanın.",
+              validation_failed: "E-posta doğrulaması başarısız oldu. Lütfen tekrar deneyin.",
+            },
+          },
+          code: {
+            label: "Benzersiz kod",
+            placeholder: "gets-sets-flys",
+            helper_text: "Doğrulama kodu yeni e-postanıza gönderildi.",
+            errors: {
+              required: "Benzersiz kod zorunludur",
+              invalid: "Geçersiz doğrulama kodu. Lütfen tekrar deneyin.",
+            },
+          },
+        },
+        actions: {
+          continue: "Devam et",
+          confirm: "Onayla",
+          cancel: "İptal et",
+        },
+        states: {
+          sending: "Gönderiliyor…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "Çalışma Alanı Ayarları",
     page_label: "{workspace} - Genel ayarlar",
