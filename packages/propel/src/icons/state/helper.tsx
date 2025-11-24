@@ -1,4 +1,5 @@
 import { EIconSize } from "@plane/constants";
+import type { TIntakeStateGroups } from "@plane/types";
 
 export interface IStateGroupIcon {
   className?: string;
@@ -17,8 +18,6 @@ export interface IIntakeStateGroupIcon {
 }
 
 export type TStateGroups = "backlog" | "unstarted" | "started" | "completed" | "cancelled";
-
-export type TIntakeStateGroups = "triage";
 
 export const STATE_GROUP_COLORS: {
   [key in TStateGroups]: string;

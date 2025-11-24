@@ -1,5 +1,4 @@
 export type TStateGroups = "backlog" | "unstarted" | "started" | "completed" | "cancelled";
-export type TIntakeStateGroups = "triage";
 
 export interface IState {
   readonly id: string;
@@ -12,18 +11,6 @@ export interface IState {
   sequence: number;
   workspace_id: string;
   order: number;
-}
-
-export interface IIntakeState {
-  readonly id: string;
-  color: string;
-  default: boolean;
-  description: string;
-  group: TIntakeStateGroups;
-  name: string;
-  project_id: string;
-  sequence: number;
-  workspace_id: string;
 }
 
 export interface IStateLite {
