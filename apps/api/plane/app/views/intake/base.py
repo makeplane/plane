@@ -238,7 +238,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 group=State.TRIAGE,
                 project_id=project_id,
                 workspace_id=project.workspace_id,
-                color="#9AA4BC",
+                color="#4E5355",
                 sequence=65000,
                 default=False,
             )

@@ -31,7 +31,7 @@ def create_triage_state(apps, _schema_editor):
                 group="triage",
                 project_id=proj["id"],
                 workspace_id=proj["workspace_id"],
-                color="#9AA4BC",
+                color="#4E5355",
                 sequence=65000,
                 default=False,
             )

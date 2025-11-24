@@ -299,7 +299,7 @@ class ProjectViewSet(BaseViewSet):
                 },
                 {
                     "name": "Intake Triage",
-                    "color": "#9AA4BC",
+                    "color": "#4E5355",
                     "sequence": 65000,
                     "group": State.TRIAGE,
                 },

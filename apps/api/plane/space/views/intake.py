@@ -132,7 +132,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
                 group=State.TRIAGE,
                 project_id=project_deploy_board.project_id,
                 workspace_id=project_deploy_board.workspace_id,
-                color="#9AA4BC",
+                color="#4E5355",
                 sequence=65000,
                 default=False,
             )
