@@ -13,13 +13,13 @@ from django import apps
 
 # Module imports
 from plane.utils.html_processor import strip_tags
-from plane.db.models import State
 from plane.db.mixins import SoftDeletionManager
 from plane.utils.exception_logger import log_exception
 from .project import ProjectBaseModel
 from plane.utils.uuid import convert_uuid_to_integer
 from .description import Description
 from plane.db.mixins import ChangeTrackerMixin
+from .state import State
 
 
 def get_default_properties():
