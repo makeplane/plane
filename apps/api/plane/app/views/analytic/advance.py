@@ -1,3 +1,4 @@
+from dateutil.relativedelta import relativedelta
 from rest_framework.response import Response
 from rest_framework import status
 from typing import Dict, List, Any
@@ -219,7 +220,7 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
         )
 
         workspace = Workspace.objects.get(slug=self._workspace_slug)
-        start_date = workspace.created_at.date().replace(day=1)
+        workspace_start_date = workspace.created_at.date().replace(day=1)
 
         # Apply date range filter if available
         if self.filters["chart_period_range"]:
@@ -250,6 +251,9 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
         data = []
         # include the current date at the end
         end_date = timezone.now().date()
+
+        twelve_months_ago = end_date.replace(day=1) - relativedelta(months=12)
+        start_date = max(workspace_start_date, twelve_months_ago)
         last_month = end_date.replace(day=1)
         current_month = start_date
 
