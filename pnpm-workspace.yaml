@@ -12,7 +12,7 @@ catalog:
   "@react-router/dev": 7.9.5
   "@react-router/node": 7.9.5
   "@react-router/serve": 7.9.5
-  "@sentry/node": 10.24.0
+  "@sentry/node": 10.27.0
   "@sentry/profiling-node": 10.24.0
   "@sentry/react-router": 10.24.0
   "@tiptap/core": ^2.22.3
