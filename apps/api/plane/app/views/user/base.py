@@ -2,6 +2,8 @@
 import uuid
 import json
 import logging
+import random
+import string
 
 # Django imports
 from django.db.models import Case, Count, IntegerField, Q, When
@@ -11,6 +13,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from django.views.decorators.vary import vary_on_cookie
 from django.core.validators import validate_email
+from django.core.cache import cache
 
 # Third party imports
 from rest_framework import status
@@ -42,12 +45,8 @@ from plane.utils.paginator import BasePaginator
 from plane.authentication.utils.host import user_ip
 from plane.bgtasks.user_deactivation_email_task import user_deactivation_email
 from plane.utils.host import base_host
-from plane.authentication.provider.credentials.magic_code import MagicCodeProvider
-from plane.authentication.adapter.error import (
-    AuthenticationException,
-)
 from plane.bgtasks.user_email_update_task import send_email_update_magic_code, send_email_update_confirmation
-from plane.settings.redis import redis_instance
+from plane.authentication.rate_limit import EmailVerificationThrottle
 
 
 logger = logging.getLogger("plane")
@@ -60,6 +59,14 @@ class UserEndpoint(BaseViewSet):
 
     def get_object(self):
         return self.request.user
+
+    def get_throttles(self):
+        """
+        Apply rate limiting to specific endpoints.
+        """
+        if self.action == "generate_email_verification_code":
+            return [EmailVerificationThrottle()]
+        return super().get_throttles()
 
     @method_decorator(cache_control(private=True, max_age=12))
     @method_decorator(vary_on_cookie)
@@ -126,6 +133,8 @@ class UserEndpoint(BaseViewSet):
     def generate_email_verification_code(self, request):
         """
         Generate and send a magic code to the new email address for verification.
+        Rate limited to 3 requests per hour per user (enforced by EmailVerificationThrottle).
+        Additional per-email cooldown of 60 seconds prevents rapid repeated requests.
         """
         user = self.get_object()
         new_email = request.data.get("email", "").strip().lower()
@@ -138,8 +147,18 @@ class UserEndpoint(BaseViewSet):
         try:
             # Generate magic code for email verification
             # Use a special key prefix to distinguish from regular magic signin
-            adapter = MagicCodeProvider(request=request, key=f"email_update_{new_email}")
-            key, token = adapter.initiate()
+            cache_key = f"magic_email_update_{new_email}"
+            ## Generate a random token
+            token = (
+                "".join(random.choices(string.ascii_lowercase, k=4))
+                + "-"
+                + "".join(random.choices(string.ascii_lowercase, k=4))
+                + "-"
+                + "".join(random.choices(string.ascii_lowercase, k=4))
+            )
+            # Store in cache with 10 minute expiration
+            cache_data = json.dumps({"token": token})
+            cache.set(cache_key, cache_data, timeout=600)
 
             # Send magic code to the new email
             send_email_update_magic_code.delay(new_email, token)
@@ -148,9 +167,10 @@ class UserEndpoint(BaseViewSet):
                 {"message": "Verification code sent to email"},
                 status=status.HTTP_200_OK,
             )
-        except AuthenticationException as e:
+        except Exception as e:
+            logger.error("Failed to generate verification code: %s", str(e), exc_info=True)
             return Response(
-                e.get_error_dict(),
+                {"error": "Failed to generate verification code. Please try again."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -177,18 +197,17 @@ class UserEndpoint(BaseViewSet):
 
         # Verify the magic code
         try:
-            # MagicCodeProvider.initiate() prepends "magic_" to the key, so we need to match that
-            redis_key = f"magic_email_update_{new_email}"
-            ri = redis_instance()
+            cache_key = f"magic_email_update_{new_email}"
+            cached_data = cache.get(cache_key)
 
-            if not ri.exists(redis_key):
-                logger.warning("Redis key not found: %s. Code may have expired or was never generated.", redis_key)
+            if not cached_data:
+                logger.warning("Cache key not found: %s. Code may have expired or was never generated.", cache_key)
                 return Response(
                     {"error": "Verification code has expired or is invalid"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            data = json.loads(ri.get(redis_key))
+            data = json.loads(cached_data)
             stored_token = data.get("token")
 
             if str(stored_token) != str(code):
@@ -197,8 +216,8 @@ class UserEndpoint(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            # Code is valid, delete it from redis
-            ri.delete(redis_key)
+            # Code is valid, delete it from cache
+            cache.delete(cache_key)
 
         except Exception as e:
             logger.error(f"Exception during verification: {type(e).__name__}: {str(e)}", exc_info=True)
@@ -213,7 +232,7 @@ class UserEndpoint(BaseViewSet):
                 {"error": "An account with this email already exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
+        old_email = user.email
         # Update the email - this updates the existing user record without creating a new user
         user.email = new_email
         # Reset email verification status when email is changed
@@ -226,7 +245,7 @@ class UserEndpoint(BaseViewSet):
         # Send confirmation email to the new email address
         send_email_update_confirmation.delay(new_email)
         # send the email to the old email address
-        send_email_update_confirmation.delay(user.email)
+        send_email_update_confirmation.delay(old_email)
 
         # Return updated user data
         serialized_data = UserMeSerializer(user).data
