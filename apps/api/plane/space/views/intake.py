@@ -129,7 +129,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
         if not triage_state:
             triage_state = State.objects.create(
                 name="Intake Triage",
-                group="triage",
+                group=State.TRIAGE,
                 project_id=project_deploy_board.project_id,
                 workspace_id=project_deploy_board.workspace_id,
                 color="#9AA4BC",

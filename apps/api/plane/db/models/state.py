@@ -11,17 +11,32 @@ class StateManager(models.Manager):
     """Default manager - excludes triage states"""
 
     def get_queryset(self):
-        return super().get_queryset().exclude(group="triage")
+        return super().get_queryset().exclude(group=State.TRIAGE)
 
 
 class TriageStateManager(models.Manager):
     """Manager for triage states only"""
 
     def get_queryset(self):
-        return super().get_queryset().filter(group="triage")
+        return super().get_queryset().filter(group=State.TRIAGE)
 
 
 class State(ProjectBaseModel):
+    BACKLOG = "backlog"
+    UNSTARTED = "unstarted"
+    STARTED = "started"
+    COMPLETED = "completed"
+    CANCELLED = "cancelled"
+    TRIAGE = "triage"
+
+    GROUP_CHOICES = (
+        (BACKLOG, "Backlog"),
+        (UNSTARTED, "Unstarted"),
+        (STARTED, "Started"),
+        (COMPLETED, "Completed"),
+        (CANCELLED, "Cancelled"),
+        (TRIAGE, "Triage"),
+    )
     name = models.CharField(max_length=255, verbose_name="State Name")
     description = models.TextField(verbose_name="State Description", blank=True)
     color = models.CharField(max_length=255, verbose_name="State Color")
@@ -45,7 +60,7 @@ class State(ProjectBaseModel):
     external_id = models.CharField(max_length=255, blank=True, null=True)
 
     objects = StateManager()
-    all_states_objects = models.Manager()
+    all_state_objects = models.Manager()
     triage_objects = TriageStateManager()
 
     def __str__(self):

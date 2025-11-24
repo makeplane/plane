@@ -171,7 +171,7 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
         if not triage_state:
             triage_state = State.objects.create(
                 name="Intake Triage",
-                group="triage",
+                group=State.TRIAGE,
                 project_id=project_id,
                 workspace_id=project.workspace_id,
                 color="#9AA4BC",
@@ -406,7 +406,7 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
                         workspace__slug=slug,
                         project_id=project_id,
                     )
-                    if issue.state and issue.state.group == "triage":
+                    if issue.state and issue.state.group == State.TRIAGE:
                         # get the default project state
                         default_state = State.objects.filter(
                             workspace__slug=slug, project_id=project_id, default=True

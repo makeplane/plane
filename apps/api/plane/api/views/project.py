@@ -269,7 +269,7 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                         "name": "Intake Triage",
                         "color": "#9AA4BC",
                         "sequence": 65000,
-                        "group": "triage",
+                        "group": State.TRIAGE,
                     },
                 ]
 

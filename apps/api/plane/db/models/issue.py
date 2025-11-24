@@ -13,6 +13,7 @@ from django import apps
 
 # Module imports
 from plane.utils.html_processor import strip_tags
+from plane.db.models import State
 from plane.db.mixins import SoftDeletionManager
 from plane.utils.exception_logger import log_exception
 from .project import ProjectBaseModel
@@ -97,6 +98,7 @@ class IssueManager(SoftDeletionManager):
             )
             .filter(deleted_at__isnull=True)
             .filter(state__is_triage=False)
+            .exclude(state__group=State.TRIAGE)
             .exclude(archived_at__isnull=False)
             .exclude(project__archived_at__isnull=False)
             .exclude(is_draft=True)

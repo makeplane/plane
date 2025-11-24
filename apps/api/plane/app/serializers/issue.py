@@ -78,7 +78,7 @@ class IssueProjectLiteSerializer(BaseSerializer):
 class IssueCreateSerializer(BaseSerializer):
     # ids
     state_id = serializers.PrimaryKeyRelatedField(
-        source="state", queryset=State.all_states_objects.all(), required=False, allow_null=True
+        source="state", queryset=State.all_state_objects.all(), required=False, allow_null=True
     )
     parent_id = serializers.PrimaryKeyRelatedField(
         source="parent", queryset=Issue.objects.all(), required=False, allow_null=True
