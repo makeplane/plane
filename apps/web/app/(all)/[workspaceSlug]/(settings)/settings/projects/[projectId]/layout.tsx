@@ -18,14 +18,14 @@ function ProjectDetailSettingsLayout({ params }: Route.ComponentProps) {
   return (
     <>
       <SettingsMobileNav hamburgerContent={ProjectSettingsSidebar} activePath={getProjectActivePath(pathname) || ""} />
-      <ProjectAuthWrapper workspaceSlug={workspaceSlug} projectId={projectId}>
-        <div className="relative flex h-full w-full">
-          <div className="hidden md:block">{projectId && <ProjectSettingsSidebar />}</div>
+      <div className="relative flex h-full w-full">
+        <div className="hidden md:block">{projectId && <ProjectSettingsSidebar />}</div>
+        <ProjectAuthWrapper workspaceSlug={workspaceSlug} projectId={projectId}>
           <div className="w-full h-full overflow-y-scroll md:pt-page-y">
             <Outlet />
           </div>
-        </div>
-      </ProjectAuthWrapper>
+        </ProjectAuthWrapper>
+      </div>
     </>
   );
 }
