@@ -159,13 +159,12 @@ export class StateStore implements IStateStore {
   });
 
   /**
-   * Returns the intakeStateMap belongs to a project by projectId
+   * Returns the intake state for a project by projectId
    * @param projectId
-   * @returns IIntakeState[]
+   * @returns IIntakeState | undefined
    */
   getProjectIntakeState = computedFn((projectId: string | null | undefined) => {
-    const workspaceSlug = this.router.workspaceSlug || "";
-    if (!projectId || !(this.fetchedIntakeMap[projectId] || this.fetchedMap[workspaceSlug])) return;
+    if (!projectId || !this.fetchedIntakeMap[projectId]) return;
     return Object.values(this.intakeStateMap).find((state) => state.project_id === projectId);
   });
 
@@ -189,8 +188,7 @@ export class StateStore implements IStateStore {
    */
   getProjectIntakeStateIds = computedFn((projectId: string | null | undefined) => {
     const workspaceSlug = this.router.workspaceSlug;
-    if (!workspaceSlug || !projectId || !(this.fetchedIntakeMap[projectId] || this.fetchedMap[workspaceSlug]))
-      return undefined;
+    if (!workspaceSlug || !projectId || !this.fetchedIntakeMap[projectId]) return undefined;
     const projectIntakeState = this.getProjectIntakeState(projectId);
     return projectIntakeState?.id ? [projectIntakeState.id] : [];
   });
