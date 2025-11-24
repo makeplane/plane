@@ -36,6 +36,28 @@ class IntakeIssueSerializer(BaseSerializer):
         ]
         read_only_fields = ["project", "workspace"]
 
+    def update(self, instance, validated_data):
+        from plane.db.models import State
+
+        # Update the intake issue
+        instance = super().update(instance, validated_data)
+
+        # If status is accepted (1), transition the issue state from TRIAGE to default
+        if validated_data.get("status") == 1:
+            issue = instance.issue
+            if issue.state and issue.state.group == State.TRIAGE:
+                # Get the default project state
+                default_state = State.objects.filter(
+                    workspace=instance.workspace,
+                    project=instance.project,
+                    default=True
+                ).first()
+                if default_state:
+                    issue.state = default_state
+                    issue.save()
+
+        return instance
+
     def to_representation(self, instance):
         # Pass the annotated fields to the Issue instance if they exist
         if hasattr(instance, "label_ids"):

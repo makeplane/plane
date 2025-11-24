@@ -335,7 +335,10 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
 
         # Get issue data
         issue_data = request.data.pop("issue", False)
+        issue_serializer = None
+        intake_serializer = None
 
+        # Validate issue data if provided
         if bool(issue_data):
             issue = Issue.objects.annotate(
                 label_ids=Coalesce(
@@ -359,6 +362,7 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
             ).get(pk=issue_id, workspace__slug=slug, project_id=project_id)
+
             # Only allow guests to edit name and description
             if project_member.role <= 5:
                 issue_data = {
@@ -369,67 +373,55 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
 
             issue_serializer = IssueSerializer(issue, data=issue_data, partial=True)
 
-            if issue_serializer.is_valid():
-                current_instance = issue
-                # Log all the updates
-                requested_data = json.dumps(issue_data, cls=DjangoJSONEncoder)
-                if issue is not None:
-                    issue_activity.delay(
-                        type="issue.activity.updated",
-                        requested_data=requested_data,
-                        actor_id=str(request.user.id),
-                        issue_id=str(issue_id),
-                        project_id=str(project_id),
-                        current_instance=json.dumps(
-                            IssueSerializer(current_instance).data,
-                            cls=DjangoJSONEncoder,
-                        ),
-                        epoch=int(timezone.now().timestamp()),
-                        intake=(intake_issue.id),
-                    )
-                issue_serializer.save()
-            else:
+            if not issue_serializer.is_valid():
                 return Response(issue_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # Only project admins and members can edit intake issue attributes
         if project_member.role > 15:
-            serializer = IntakeIssueUpdateSerializer(intake_issue, data=request.data, partial=True)
+            intake_serializer = IntakeIssueUpdateSerializer(intake_issue, data=request.data, partial=True)
+
+            if not intake_serializer.is_valid():
+                return Response(intake_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # Both serializers are valid, now save them
+        if issue_serializer:
+            current_instance = issue
+            # Log all the updates
+            requested_data = json.dumps(issue_data, cls=DjangoJSONEncoder)
+            issue_activity.delay(
+                type="issue.activity.updated",
+                requested_data=requested_data,
+                actor_id=str(request.user.id),
+                issue_id=str(issue_id),
+                project_id=str(project_id),
+                current_instance=json.dumps(
+                    IssueSerializer(current_instance).data,
+                    cls=DjangoJSONEncoder,
+                ),
+                epoch=int(timezone.now().timestamp()),
+                intake=(intake_issue.id),
+            )
+            issue_serializer.save()
+
+        # Save intake issue (state transition happens in serializer's update method)
+        if intake_serializer:
             current_instance = json.dumps(IntakeIssueSerializer(intake_issue).data, cls=DjangoJSONEncoder)
+            intake_serializer.save()
 
-            if serializer.is_valid():
-                serializer.save()
-
-                # Update the issue state if it is accepted
-                if serializer.data["status"] in [1]:
-                    issue = Issue.objects.get(
-                        pk=intake_issue.issue_id,
-                        workspace__slug=slug,
-                        project_id=project_id,
-                    )
-                    if issue.state and issue.state.group == State.TRIAGE:
-                        # get the default project state
-                        default_state = State.objects.filter(
-                            workspace__slug=slug, project_id=project_id, default=True
-                        ).first()
-                        issue.state = default_state
-                        issue.save()
-
-                # create a activity for status change
-                issue_activity.delay(
-                    type="intake.activity.created",
-                    requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
-                    actor_id=str(request.user.id),
-                    issue_id=str(issue_id),
-                    project_id=str(project_id),
-                    current_instance=current_instance,
-                    epoch=int(timezone.now().timestamp()),
-                    notification=False,
-                    origin=base_host(request=request, is_app=True),
-                    intake=str(intake_issue.id),
-                )
-                serializer = IntakeIssueSerializer(intake_issue)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # create a activity for status change
+            issue_activity.delay(
+                type="intake.activity.created",
+                requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+                actor_id=str(request.user.id),
+                issue_id=str(issue_id),
+                project_id=str(project_id),
+                current_instance=current_instance,
+                epoch=int(timezone.now().timestamp()),
+                notification=False,
+                origin=base_host(request=request, is_app=True),
+                intake=str(intake_issue.id),
+            )
+            return Response(IntakeIssueSerializer(intake_issue).data, status=status.HTTP_200_OK)
         else:
             return Response(IntakeIssueSerializer(intake_issue).data, status=status.HTTP_200_OK)
 
