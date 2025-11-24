@@ -14,7 +14,8 @@
     "fix:format": "turbo run fix:format",
     "check": "turbo run check",
     "check:lint": "turbo run check:lint",
-    "check:format": "turbo run check:format"
+    "check:format": "turbo run check:format",
+    "check:types": "turbo run check:types"
   },
   "devDependencies": {
     "@prettier/plugin-oxc": "0.0.4",

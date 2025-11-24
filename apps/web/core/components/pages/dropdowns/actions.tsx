@@ -87,7 +87,7 @@ export const PageActions = observer(function PageActions(props: Props) {
     canCurrentUserMovePage,
   } = page;
   // menu items
-  const MENU_ITEMS = useMemo(function MENU_ITEMS() {
+  const MENU_ITEMS = useMemo(() => {
     const menuItems: (TContextMenuItem & { key: TPageActions })[] = [
       {
         key: "toggle-lock",
@@ -175,13 +175,26 @@ export const PageActions = observer(function PageActions(props: Props) {
       menuItems.push(...extraOptions);
     }
     return menuItems;
-  });
+  }, [
+    extraOptions,
+    is_locked,
+    canCurrentUserLockPage,
+    access,
+    canCurrentUserChangeAccess,
+    archived_at,
+    canCurrentUserDuplicatePage,
+    canCurrentUserArchivePage,
+    canCurrentUserDeletePage,
+    canCurrentUserMovePage,
+    isMovePageEnabled,
+    pageOperations,
+  ]);
   // arrange options
-  const arrangedOptions = useMemo(
+  const arrangedOptions = useMemo<(TContextMenuItem & { key: TPageActions })[]>(
     () =>
       optionsOrder
         .map((key) => MENU_ITEMS.find((item) => item.key === key))
-        .filter((item) => !!item) as (TContextMenuItem & { key: TPageActions })[],
+        .filter((item): item is TContextMenuItem & { key: TPageActions } => !!item),
     [optionsOrder, MENU_ITEMS]
   );
 
