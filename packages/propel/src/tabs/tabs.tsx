@@ -41,7 +41,7 @@ const TabsList = React.forwardRef(function TabsList(
     <TabsPrimitive.List
       data-slot="tabs-list"
       className={cn(
-        "flex w-full min-w-fit items-center justify-between gap-1.5 rounded-md text-sm p-0.5 bg-custom-background-80/60 relative overflow-auto",
+        "flex w-full items-center justify-between gap-1.5 rounded-md text-sm p-0.5 bg-custom-background-80/60 relative overflow-auto",
         className
       )}
       {...props}
