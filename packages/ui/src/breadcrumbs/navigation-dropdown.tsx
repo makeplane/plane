@@ -29,7 +29,7 @@ export function BreadcrumbNavigationDropdown(props: TBreadcrumbNavigationDropdow
 
   function NavigationButton() {
     return (
-      <Tooltip tooltipContent={selectedItem.title} position="bottom" disabled={isOpen}>
+      <Tooltip tooltipContent={selectedItem?.title} position="bottom" disabled={isOpen}>
         <button
           onClick={(e) => {
             if (!isLast) {
@@ -48,7 +48,7 @@ export function BreadcrumbNavigationDropdown(props: TBreadcrumbNavigationDropdow
           <div className="flex @4xl:hidden text-custom-text-300">...</div>
           <div className="hidden @4xl:flex gap-2">
             {selectedItemIcon && <Breadcrumbs.Icon>{selectedItemIcon}</Breadcrumbs.Icon>}
-            <Breadcrumbs.Label>{selectedItem.title}</Breadcrumbs.Label>
+            <Breadcrumbs.Label>{selectedItem?.title}</Breadcrumbs.Label>
           </div>
         </button>
       </Tooltip>

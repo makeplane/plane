@@ -7,13 +7,13 @@ import { WorkspaceAuthWrapper } from "@/plane-web/layouts/workspace-wrapper";
 export default function WorkspaceLayout() {
   return (
     <AuthenticationWrapper>
-      <WorkspaceAuthWrapper>
-        <AppRailProvider>
+      <AppRailProvider>
+        <WorkspaceAuthWrapper>
           <WorkspaceContentWrapper>
             <Outlet />
           </WorkspaceContentWrapper>
-        </AppRailProvider>
-      </WorkspaceAuthWrapper>
+        </WorkspaceAuthWrapper>
+      </AppRailProvider>
     </AuthenticationWrapper>
   );
 }

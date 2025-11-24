@@ -119,7 +119,7 @@ export type AppSidebarItemComponent = React.FC<AppSidebarItemProps> & {
   Button: React.FC<AppSidebarButtonItemProps>;
 };
 
-function AppSidebarItem({ variant = "link", item }) {
+function AppSidebarItem({ variant = "link", item }: AppSidebarItemProps) {
   if (!item) return null;
 
   const { icon, isActive, label, href, onClick, disabled } = item;

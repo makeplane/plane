@@ -32,7 +32,7 @@ type Props = {
 };
 
 export const CalendarIssueBlock = observer(
-  forwardRef<HTMLAnchorElement, Props>((props, ref) => {
+  forwardRef(function CalendarIssueBlock(props: Props, ref: React.ForwardedRef<HTMLAnchorElement>) {
     const { issue, quickActions, isDragging = false, isEpic = false } = props;
     // states
     const [isMenuActive, setIsMenuActive] = useState(false);

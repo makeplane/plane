@@ -79,5 +79,3 @@ export const BreadcrumbLink = observer(function BreadcrumbLink(props: Props) {
 
   return <ItemWrapper {...itemWrapperProps}>{content}</ItemWrapper>;
 });
-
-BreadcrumbLink.displayName = "BreadcrumbLink";

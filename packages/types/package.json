@@ -26,6 +26,7 @@
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "@prettier/plugin-oxc": "0.0.4",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "tsdown": "catalog:",
