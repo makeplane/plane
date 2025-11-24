@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -19,7 +17,7 @@ import { useAppRouter } from "@/hooks/use-app-router";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 // constants
 
-export const CyclesListHeader: FC = observer(() => {
+export const CyclesListHeader = observer(function CyclesListHeader() {
   // router
   const router = useAppRouter();
   const { workspaceSlug } = useParams();

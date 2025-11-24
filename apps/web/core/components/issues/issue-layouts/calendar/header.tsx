@@ -30,7 +30,7 @@ interface ICalendarHeader {
   setSelectedDate: (date: Date) => void;
 }
 
-export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
+export const CalendarHeader = observer(function CalendarHeader(props: ICalendarHeader) {
   const { issuesFilterStore, updateFilters, setSelectedDate } = props;
 
   const { t } = useTranslation();

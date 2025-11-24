@@ -14,7 +14,7 @@ type Props = {
   isArchived?: boolean;
 };
 
-export const CyclePeekOverview: React.FC<Props> = observer((props) => {
+export const CyclePeekOverview = observer(function CyclePeekOverview(props: Props) {
   const { projectId: propsProjectId, workspaceSlug, isArchived } = props;
   // router
   const router = useAppRouter();

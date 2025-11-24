@@ -33,7 +33,7 @@ export type TWorkItemLabelSelectBaseProps = {
   value: string[];
 };
 
-export const WorkItemLabelSelectBase: React.FC<TWorkItemLabelSelectBaseProps> = observer((props) => {
+export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase(props: TWorkItemLabelSelectBaseProps) {
   const {
     buttonClassName,
     buttonContainerClassName,

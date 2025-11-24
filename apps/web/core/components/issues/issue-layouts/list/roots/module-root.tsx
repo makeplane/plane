@@ -9,7 +9,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { ModuleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseListRoot } from "../base-list-root";
 
-export const ModuleListLayout: React.FC = observer(() => {
+export const ModuleListLayout = observer(function ModuleListLayout() {
   const { workspaceSlug, projectId, moduleId } = useParams();
 
   const { issues } = useIssues(EIssuesStoreType.MODULE);

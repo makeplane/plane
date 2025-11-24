@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -13,7 +11,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { ExtendedSidebarItem } from "@/plane-web/components/workspace/sidebar/extended-sidebar-item";
 import { ExtendedSidebarWrapper } from "./extended-sidebar-wrapper";
 
-export const ExtendedAppSidebar = observer(() => {
+export const ExtendedAppSidebar = observer(function ExtendedAppSidebar() {
   // refs
   const extendedSidebarRef = useRef<HTMLDivElement | null>(null);
   // routers

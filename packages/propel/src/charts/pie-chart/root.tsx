@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useMemo, useState } from "react";
 import { Cell, PieChart as CorePieChart, Label, Legend, Pie, ResponsiveContainer, Tooltip } from "recharts";
 // plane imports
@@ -9,7 +7,7 @@ import { getLegendProps } from "../components/legend";
 import { CustomActiveShape } from "./active-shape";
 import { CustomPieChartTooltip } from "./tooltip";
 
-export const PieChart = React.memo(<K extends string, T extends string>(props: TPieChartProps<K, T>) => {
+export const PieChart = React.memo(function PieChart<K extends string, T extends string>(props: TPieChartProps<K, T>) {
   const {
     data,
     dataKey,

@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -21,7 +19,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const ConfirmProjectMemberRemove: React.FC<Props> = observer((props) => {
+export const ConfirmProjectMemberRemove = observer(function ConfirmProjectMemberRemove(props: Props) {
   const { data, onSubmit, isOpen, onClose } = props;
   // router
   const { projectId } = useParams();

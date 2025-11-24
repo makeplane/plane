@@ -7,4 +7,6 @@ export type TWorkItemLayoutAdditionalProperties = {
   issue: TIssue;
 };
 
-export const WorkItemLayoutAdditionalProperties: FC<TWorkItemLayoutAdditionalProperties> = (props) => <></>;
+export function WorkItemLayoutAdditionalProperties(props: TWorkItemLayoutAdditionalProperties) {
+  return <></>;
+}

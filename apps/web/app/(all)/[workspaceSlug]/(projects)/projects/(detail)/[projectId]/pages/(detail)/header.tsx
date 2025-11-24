@@ -1,4 +1,3 @@
-"use client";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { EProjectFeatureKey } from "@plane/constants";
@@ -28,7 +27,7 @@ export interface IPagesHeaderProps {
 
 const storeType = EPageStoreType.PROJECT;
 
-export const PageDetailsHeader = observer(() => {
+export const PageDetailsHeader = observer(function PageDetailsHeader() {
   // router
   const router = useAppRouter();
   const { workspaceSlug, pageId, projectId } = useParams();

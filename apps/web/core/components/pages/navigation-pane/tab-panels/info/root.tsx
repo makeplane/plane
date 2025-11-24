@@ -13,7 +13,7 @@ type Props = {
   versionHistory: Pick<TPageRootHandlers, "fetchAllVersions" | "fetchVersionDetails">;
 };
 
-export const PageNavigationPaneInfoTabPanel: React.FC<Props> = observer((props) => {
+export const PageNavigationPaneInfoTabPanel = observer(function PageNavigationPaneInfoTabPanel(props: Props) {
   const { page, versionHistory } = props;
 
   return (

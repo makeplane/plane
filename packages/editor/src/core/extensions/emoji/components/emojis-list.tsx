@@ -10,7 +10,6 @@ export type EmojiItem = {
   emoji: string;
   shortcodes: string[];
   tags: string[];
-  fallbackImage?: string;
 };
 
 export type EmojiListRef = {
@@ -22,7 +21,10 @@ export type EmojisListDropdownProps = SuggestionProps<EmojiItem, { name: string 
   forceOpen?: boolean;
 };
 
-export const EmojisListDropdown = forwardRef<EmojiListRef, EmojisListDropdownProps>((props, ref) => {
+export const EmojisListDropdown = forwardRef(function EmojisListDropdown(
+  props: EmojisListDropdownProps,
+  ref: React.ForwardedRef<EmojiListRef>
+) {
   const { items, command, query, onClose, forceOpen = false } = props;
   // states
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
@@ -156,13 +158,7 @@ export const EmojisListDropdown = forwardRef<EmojiListRef, EmojisListDropdownPro
                 onClick={() => selectItem(index)}
                 onMouseEnter={() => setSelectedIndex(index)}
               >
-                <span className="size-5 grid place-items-center flex-shrink-0 text-base">
-                  {item.fallbackImage ? (
-                    <img src={item.fallbackImage} alt={item.name} className="size-4 object-contain" />
-                  ) : (
-                    item.emoji
-                  )}
-                </span>
+                <span className="size-5 grid place-items-center flex-shrink-0 text-base">{item.emoji}</span>
                 <span className="flex-grow truncate">
                   <span className="font-medium">:{item.name}:</span>
                 </span>

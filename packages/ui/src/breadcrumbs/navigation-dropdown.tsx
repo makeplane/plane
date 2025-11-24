@@ -1,5 +1,3 @@
-"use client";
-
 import { CheckIcon } from "lucide-react";
 import * as React from "react";
 // ui
@@ -17,7 +15,7 @@ type TBreadcrumbNavigationDropdownProps = {
   isLast?: boolean;
 };
 
-export const BreadcrumbNavigationDropdown = (props: TBreadcrumbNavigationDropdownProps) => {
+export function BreadcrumbNavigationDropdown(props: TBreadcrumbNavigationDropdownProps) {
   const { selectedItemKey, navigationItems, navigationDisabled = false, handleOnClick, isLast = false } = props;
   const [isOpen, setIsOpen] = React.useState(false);
   // derived values
@@ -29,31 +27,33 @@ export const BreadcrumbNavigationDropdown = (props: TBreadcrumbNavigationDropdow
   // if no selected item, return null
   if (!selectedItem) return null;
 
-  const NavigationButton = () => (
-    <Tooltip tooltipContent={selectedItem.title} position="bottom" disabled={isOpen}>
-      <button
-        onClick={(e) => {
-          if (!isLast) {
-            e.preventDefault();
-            e.stopPropagation();
-            handleOnClick?.();
-          }
-        }}
-        className={cn(
-          "group h-full flex items-center gap-2 px-1.5 py-1 text-sm font-medium text-custom-text-300 cursor-pointer rounded rounded-r-none",
-          {
-            "hover:bg-custom-background-80 hover:text-custom-text-100": !isLast,
-          }
-        )}
-      >
-        <div className="flex @4xl:hidden text-custom-text-300">...</div>
-        <div className="hidden @4xl:flex gap-2">
-          {selectedItemIcon && <Breadcrumbs.Icon>{selectedItemIcon}</Breadcrumbs.Icon>}
-          <Breadcrumbs.Label>{selectedItem.title}</Breadcrumbs.Label>
-        </div>
-      </button>
-    </Tooltip>
-  );
+  function NavigationButton() {
+    return (
+      <Tooltip tooltipContent={selectedItem?.title} position="bottom" disabled={isOpen}>
+        <button
+          onClick={(e) => {
+            if (!isLast) {
+              e.preventDefault();
+              e.stopPropagation();
+              handleOnClick?.();
+            }
+          }}
+          className={cn(
+            "group h-full flex items-center gap-2 px-1.5 py-1 text-sm font-medium text-custom-text-300 cursor-pointer rounded rounded-r-none",
+            {
+              "hover:bg-custom-background-80 hover:text-custom-text-100": !isLast,
+            }
+          )}
+        >
+          <div className="flex @4xl:hidden text-custom-text-300">...</div>
+          <div className="hidden @4xl:flex gap-2">
+            {selectedItemIcon && <Breadcrumbs.Icon>{selectedItemIcon}</Breadcrumbs.Icon>}
+            <Breadcrumbs.Label>{selectedItem?.title}</Breadcrumbs.Label>
+          </div>
+        </button>
+      </Tooltip>
+    );
+  }
 
   if (navigationDisabled) {
     return <NavigationButton />;
@@ -133,4 +133,4 @@ export const BreadcrumbNavigationDropdown = (props: TBreadcrumbNavigationDropdow
       })}
     </CustomMenu>
   );
-};
+}

@@ -13,7 +13,7 @@ type Props = {
   itemDotColors: Record<string, string>;
 };
 
-export const CustomTooltip = React.memo((props: Props) => {
+export const CustomTooltip = React.memo(function CustomTooltip(props: Props) {
   const { active, activeKey, label, payload, itemKeys, itemLabels, itemDotColors } = props;
   // derived values
   const filteredPayload = payload?.filter((item) => item.dataKey && itemKeys.includes(`${item.dataKey}`));

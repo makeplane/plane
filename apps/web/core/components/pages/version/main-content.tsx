@@ -23,7 +23,7 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const PageVersionsMainContent: React.FC<Props> = observer((props) => {
+export const PageVersionsMainContent = observer(function PageVersionsMainContent(props: Props) {
   const {
     activeVersion,
     editorComponent,

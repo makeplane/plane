@@ -4,7 +4,7 @@ import { PlusIcon } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import type { TQuickAddIssueButton } from "../root";
 
-export const KanbanQuickAddIssueButton: FC<TQuickAddIssueButton> = observer((props) => {
+export const KanbanQuickAddIssueButton = observer(function KanbanQuickAddIssueButton(props: TQuickAddIssueButton) {
   const { onClick, isEpic = false } = props;
   const { t } = useTranslation();
   return (

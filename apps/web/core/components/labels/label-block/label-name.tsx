@@ -6,7 +6,7 @@ interface ILabelName {
   isGroup: boolean;
 }
 
-export const LabelName = (props: ILabelName) => {
+export function LabelName(props: ILabelName) {
   const { name, color, isGroup } = props;
 
   return (
@@ -24,4 +24,4 @@ export const LabelName = (props: ILabelName) => {
       <h6 className="text-sm">{name}</h6>
     </div>
   );
-};
+}

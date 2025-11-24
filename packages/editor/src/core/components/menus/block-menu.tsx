@@ -24,6 +24,7 @@ type Props = {
   disabledExtensions?: IEditorProps["disabledExtensions"];
   editor: Editor;
   flaggedExtensions?: IEditorProps["flaggedExtensions"];
+  workItemIdentifier?: IEditorProps["workItemIdentifier"];
 };
 export type BlockMenuOption = {
   icon: LucideIcon;
@@ -33,8 +34,8 @@ export type BlockMenuOption = {
   isDisabled?: boolean;
 };
 
-export const BlockMenu = (props: Props) => {
-  const { editor } = props;
+export function BlockMenu(props: Props) {
+  const { editor, workItemIdentifier } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimatedIn, setIsAnimatedIn] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -244,4 +245,4 @@ export const BlockMenu = (props: Props) => {
       </div>
     </FloatingPortal>
   );
-};
+}

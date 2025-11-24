@@ -28,7 +28,7 @@ interface PortalProps {
   container?: Element | null;
 }
 
-export const Portal: React.FC<PortalProps> = ({ children, container }) => {
+export function Portal({ children, container }: PortalProps) {
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
@@ -42,7 +42,7 @@ export const Portal: React.FC<PortalProps> = ({ children, container }) => {
 
   const targetContainer = container || document.body;
   return ReactDOM.createPortal(children, targetContainer);
-};
+}
 
 // Context for managing nested menus
 export const ContextMenuContext = React.createContext<{
@@ -57,7 +57,7 @@ type ContextMenuProps = {
   portalContainer?: Element | null;
 };
 
-const ContextMenuWithoutPortal: React.FC<ContextMenuProps> = (props) => {
+function ContextMenuWithoutPortal(props: ContextMenuProps) {
   const { parentRef, items, portalContainer } = props;
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -227,11 +227,11 @@ const ContextMenuWithoutPortal: React.FC<ContextMenuProps> = (props) => {
       </div>
     </div>
   );
-};
+}
 
-export const ContextMenu: React.FC<ContextMenuProps> = (props) => {
+export function ContextMenu(props: ContextMenuProps) {
   let contextMenu = <ContextMenuWithoutPortal {...props} />;
   const portal = document.querySelector("#context-menu-portal");
   if (portal) contextMenu = ReactDOM.createPortal(contextMenu, portal);
   return contextMenu;
-};
+}

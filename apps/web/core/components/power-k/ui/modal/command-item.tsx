@@ -18,7 +18,7 @@ type Props = {
   value?: string;
 };
 
-export const PowerKModalCommandItem: React.FC<Props> = (props) => {
+export function PowerKModalCommandItem(props: Props) {
   const { icon: Icon, iconNode, isDisabled, isSelected, keySequence, label, onSelect, shortcut, value } = props;
 
   return (
@@ -39,4 +39,4 @@ export const PowerKModalCommandItem: React.FC<Props> = (props) => {
       </div>
     </Command.Item>
   );
-};
+}

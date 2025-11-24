@@ -12,7 +12,7 @@ type Props = {
   disabled: boolean;
 };
 
-export const SpreadsheetAssigneeColumn: React.FC<Props> = observer((props: Props) => {
+export const SpreadsheetAssigneeColumn = observer(function SpreadsheetAssigneeColumn(props: Props) {
   const { issue, onChange, disabled, onClose } = props;
 
   return (

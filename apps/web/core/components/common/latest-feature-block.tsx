@@ -5,7 +5,7 @@ import { Lightbulb } from "lucide-react";
 // images
 import latestFeatures from "@/app/assets/onboarding/onboarding-pages.webp?url";
 
-export const LatestFeatureBlock = () => {
+export function LatestFeatureBlock() {
   const { resolvedTheme } = useTheme();
 
   return (
@@ -36,4 +36,4 @@ export const LatestFeatureBlock = () => {
       </div>
     </>
   );
-};
+}

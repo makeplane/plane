@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -22,7 +20,7 @@ type Props = {
 
 const appInstallationService = new AppInstallationService();
 
-export const SelectChannel: React.FC<Props> = observer(({ integration }) => {
+export const SelectChannel = observer(function SelectChannel({ integration }: Props) {
   // store hooks
   const { config } = useInstance();
   // states

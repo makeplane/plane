@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -20,7 +18,7 @@ type Props = {
   commentId: string;
 };
 
-export const CommentReactions: React.FC<Props> = observer((props) => {
+export const CommentReactions = observer(function CommentReactions(props: Props) {
   const { anchor, commentId } = props;
   // state
   const [isPickerOpen, setIsPickerOpen] = useState(false);

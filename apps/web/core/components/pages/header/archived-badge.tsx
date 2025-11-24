@@ -9,7 +9,7 @@ type Props = {
   page: TPageInstance;
 };
 
-export const PageArchivedBadge = observer(({ page }: Props) => {
+export const PageArchivedBadge = observer(function PageArchivedBadge({ page }: Props) {
   if (!page.archived_at) return null;
 
   return (

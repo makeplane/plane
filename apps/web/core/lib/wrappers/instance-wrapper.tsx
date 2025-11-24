@@ -1,4 +1,4 @@
-import type { FC, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
@@ -11,7 +11,7 @@ type TInstanceWrapper = {
   children: ReactNode;
 };
 
-export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
+export const InstanceWrapper = observer(function InstanceWrapper(props: TInstanceWrapper) {
   const { children } = props;
   // store
   const { isLoading, instance, error, fetchInstanceInfo } = useInstance();

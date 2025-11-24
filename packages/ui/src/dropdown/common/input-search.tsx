@@ -16,7 +16,7 @@ interface IInputSearch {
   isMobile: boolean;
 }
 
-export const InputSearch: FC<IInputSearch> = (props) => {
+export function InputSearch(props: IInputSearch) {
   const { isOpen, query, updateQuery, inputIcon, inputContainerClassName, inputClassName, inputPlaceholder, isMobile } =
     props;
 
@@ -58,4 +58,4 @@ export const InputSearch: FC<IInputSearch> = (props) => {
       />
     </div>
   );
-};
+}

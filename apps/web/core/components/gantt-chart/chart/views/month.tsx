@@ -10,7 +10,7 @@ import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 import type { IMonthView } from "../../views";
 import { getNumberOfDaysBetweenTwoDates } from "../../views/helpers";
 
-export const MonthChartView: FC<any> = observer(() => {
+export const MonthChartView = observer(function MonthChartView(_props: any) {
   // chart hook
   const { currentViewData, renderView } = useTimeLineChartStore();
   const monthView: IMonthView = renderView;

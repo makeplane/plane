@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Search } from "lucide-react";
@@ -14,7 +11,7 @@ import { cn } from "@plane/utils";
 // hooks
 import { useProjectFilter } from "@/hooks/store/use-project-filter";
 
-export const ProjectSearch: FC = observer(() => {
+export const ProjectSearch = observer(function ProjectSearch() {
   // i18n
   const { t } = useTranslation();
   // hooks

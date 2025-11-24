@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { Fragment, useCallback, useRef, useState } from "react";
 import { isEmpty } from "lodash-es";
@@ -46,10 +44,10 @@ export type ActiveCycleStatsProps = {
   cycle: ICycle | null;
   cycleId?: string | null;
   handleFiltersUpdate: (conditions: TWorkItemFilterCondition[]) => void;
-  cycleIssueDetails: ActiveCycleIssueDetails;
+  cycleIssueDetails?: ActiveCycleIssueDetails | { nextPageResults: boolean };
 };
 
-export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
+export const ActiveCycleStats = observer(function ActiveCycleStats(props: ActiveCycleStatsProps) {
   const { workspaceSlug, projectId, cycle, cycleId, handleFiltersUpdate, cycleIssueDetails } = props;
   // local storage
   const { storedValue: tab, setValue: setTab } = useLocalStorage("activeCycleTab", "Assignees");

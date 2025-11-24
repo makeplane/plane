@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import React, { useState } from "react";
 import { observer } from "mobx-react";
@@ -16,7 +15,9 @@ type TCreateIssueToastActionItems = {
   isEpic?: boolean;
 };
 
-export const CreateIssueToastActionItems: FC<TCreateIssueToastActionItems> = observer((props) => {
+export const CreateIssueToastActionItems = observer(function CreateIssueToastActionItems(
+  props: TCreateIssueToastActionItems
+) {
   const { workspaceSlug, projectId, issueId, isEpic = false } = props;
   // state
   const [copied, setCopied] = useState(false);

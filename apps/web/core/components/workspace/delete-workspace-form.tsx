@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -29,7 +27,7 @@ const defaultValues = {
   confirmDelete: "",
 };
 
-export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
+export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: Props) {
   const { data, onClose } = props;
   // router
   const router = useAppRouter();

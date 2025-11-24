@@ -1582,6 +1582,7 @@ export default {
         exporting: "匯出中",
         previous_exports: "先前的匯出",
         export_separate_files: "將資料匯出為個別檔案",
+        filters_info: "應用篩選器以根據您的條件匯出特定工作項。",
         modal: {
           title: "匯出至",
           toasts: {

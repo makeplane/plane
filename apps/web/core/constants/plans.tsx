@@ -45,20 +45,22 @@ type PlanePlans = {
   planComparison: TPlansComparisonDetails[];
 };
 
-const RiDiscordFill = ({ className }: { className?: string }) => (
-  <DiscordIcon className={cn(className, "size-5 text-custom-text-200")} />
-);
+function RiDiscordFill({ className }: { className?: string }) {
+  return <DiscordIcon className={cn(className, "size-5 text-custom-text-200")} />;
+}
 
-export const ComingSoonBadge = ({ className }: { className?: string }) => (
-  <span
-    className={cn(
-      "bg-[#3f76ff] text-white font-semibold text-[8px] py-0.5 px-1.5 w-fit whitespace-nowrap rounded",
-      className
-    )}
-  >
-    COMING SOON
-  </span>
-);
+export function ComingSoonBadge({ className }: { className?: string }) {
+  return (
+    <span
+      className={cn(
+        "bg-[#3f76ff] text-white font-semibold text-[8px] py-0.5 px-1.5 w-fit whitespace-nowrap rounded",
+        className
+      )}
+    >
+      COMING SOON
+    </span>
+  );
+}
 
 export const PLANS_LIST: TPlanePlans[] = ["free", "one", "pro", "business", "enterprise"];
 

@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -12,7 +10,7 @@ export interface AppHeaderProps {
   mobileHeader?: ReactNode;
 }
 
-export const AppHeader = observer((props: AppHeaderProps) => {
+export const AppHeader = observer(function AppHeader(props: AppHeaderProps) {
   const { header, mobileHeader } = props;
 
   return (

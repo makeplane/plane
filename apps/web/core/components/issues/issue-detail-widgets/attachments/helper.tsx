@@ -1,4 +1,3 @@
-"use client";
 import { useMemo } from "react";
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { setPromiseToast, TOAST_TYPE, setToast } from "@plane/propel/toast";

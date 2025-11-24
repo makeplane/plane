@@ -17,7 +17,7 @@ type TCommentBlock = {
   children: ReactNode;
 };
 
-export const CommentBlock: FC<TCommentBlock> = observer((props) => {
+export const CommentBlock = observer(function CommentBlock(props: TCommentBlock) {
   const { comment, ends, quickActions, children } = props;
   // refs
   const commentBlockRef = useRef<HTMLDivElement>(null);

@@ -23,7 +23,7 @@ type Props = {
   showToday: boolean;
 };
 
-export const GanttChartHeader: React.FC<Props> = observer((props) => {
+export const GanttChartHeader = observer(function GanttChartHeader(props: Props) {
   const { t } = useTranslation();
   const { blockIds, fullScreenMode, handleChartView, handleToday, loaderTitle, toggleFullScreenMode, showToday } =
     props;

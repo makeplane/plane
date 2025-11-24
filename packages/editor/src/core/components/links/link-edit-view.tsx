@@ -14,26 +14,28 @@ type InputViewProps = {
   autoFocus?: boolean;
 };
 
-const InputView = ({ label, value, placeholder, onChange, autoFocus }: InputViewProps) => (
-  <div className="flex flex-col gap-1">
-    <label className="inline-block font-semibold text-xs text-custom-text-400">{label}</label>
-    <input
-      placeholder={placeholder}
-      onClick={(e) => e.stopPropagation()}
-      className="w-[280px] outline-none bg-custom-background-90 text-custom-text-900 text-sm border border-custom-border-300 rounded-md p-2"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      autoFocus={autoFocus}
-    />
-  </div>
-);
+function InputView({ label, value, placeholder, onChange, autoFocus }: InputViewProps) {
+  return (
+    <div className="flex flex-col gap-1">
+      <label className="inline-block font-semibold text-xs text-custom-text-400">{label}</label>
+      <input
+        placeholder={placeholder}
+        onClick={(e) => e.stopPropagation()}
+        className="w-[280px] outline-none bg-custom-background-90 text-custom-text-900 text-sm border border-custom-border-300 rounded-md p-2"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        autoFocus={autoFocus}
+      />
+    </div>
+  );
+}
 
 type LinkEditViewProps = {
   viewProps: LinkViewProps;
   switchView: (view: LinkViews) => void;
 };
 
-export const LinkEditView = ({ viewProps }: LinkEditViewProps) => {
+export function LinkEditView({ viewProps }: LinkEditViewProps) {
   const { editor, from, to, url: initialUrl, text: initialText, closeLinkView } = viewProps;
 
   // State
@@ -147,4 +149,4 @@ export const LinkEditView = ({ viewProps }: LinkEditViewProps) => {
       </div>
     </div>
   );
-};
+}

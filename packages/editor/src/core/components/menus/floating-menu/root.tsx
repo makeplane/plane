@@ -14,7 +14,7 @@ type Props = {
   options: UseFloatingReturn;
 };
 
-export const FloatingMenuRoot: React.FC<Props> = (props) => {
+export function FloatingMenuRoot(props: Props) {
   const { children, classNames, getFloatingProps, getReferenceProps, menuButton, onClick, options } = props;
   // derived values
   const { refs, floatingStyles, context } = options;
@@ -58,4 +58,4 @@ export const FloatingMenuRoot: React.FC<Props> = (props) => {
       )}
     </>
   );
-};
+}

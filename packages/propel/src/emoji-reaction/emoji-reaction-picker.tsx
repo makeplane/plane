@@ -22,7 +22,7 @@ export interface EmojiReactionPickerProps {
   align?: TAlign;
 }
 
-export const EmojiReactionPicker: React.FC<EmojiReactionPickerProps> = (props) => {
+export function EmojiReactionPicker(props: EmojiReactionPickerProps) {
   const {
     isOpen,
     handleToggle,
@@ -83,4 +83,4 @@ export const EmojiReactionPicker: React.FC<EmojiReactionPickerProps> = (props) =
       </Popover.Panel>
     </Popover>
   );
-};
+}

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -22,7 +20,7 @@ export type TBasePaidPlanCardProps = {
   renderActionButton: (price: TSubscriptionPrice) => React.ReactNode;
 };
 
-export const BasePaidPlanCard: FC<TBasePaidPlanCardProps> = observer((props) => {
+export const BasePaidPlanCard = observer(function BasePaidPlanCard(props: TBasePaidPlanCardProps) {
   const {
     planVariant,
     features,

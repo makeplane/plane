@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -23,7 +21,9 @@ type TProjectFeatureBreadcrumbProps = {
   additionalNavigationItems?: TNavigationItem[];
 };
 
-export const ProjectFeatureBreadcrumb = observer((props: TProjectFeatureBreadcrumbProps) => {
+export const ProjectFeatureBreadcrumb = observer(function ProjectFeatureBreadcrumb(
+  props: TProjectFeatureBreadcrumbProps
+) {
   const { workspaceSlug, projectId, featureKey, isLast = false, additionalNavigationItems } = props;
   // router
   const router = useAppRouter();

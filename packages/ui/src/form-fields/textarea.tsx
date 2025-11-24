@@ -11,7 +11,10 @@ export interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextArea
   className?: string;
 }
 
-const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>((props, ref) => {
+const TextArea = React.forwardRef(function TextArea(
+  props: TextAreaProps,
+  ref: React.ForwardedRef<HTMLTextAreaElement>
+) {
   const {
     id,
     name,

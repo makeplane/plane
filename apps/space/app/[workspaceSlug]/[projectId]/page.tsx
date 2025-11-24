@@ -1,5 +1,3 @@
-"use client";
-
 import { redirect } from "react-router";
 // plane imports
 import { SitesProjectPublishService } from "@plane/services";

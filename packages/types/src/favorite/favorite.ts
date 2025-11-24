@@ -16,4 +16,5 @@ export type IFavorite = {
   children: IFavorite[];
   project_id: string | null;
   sequence: number;
+  workspace_id: string;
 };

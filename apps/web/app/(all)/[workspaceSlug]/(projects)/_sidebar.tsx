@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -14,7 +13,7 @@ import { useAppRail } from "@/hooks/use-app-rail";
 import { ExtendedAppSidebar } from "./extended-sidebar";
 import { AppSidebar } from "./sidebar";
 
-export const ProjectAppSidebar: FC = observer(() => {
+export const ProjectAppSidebar = observer(function ProjectAppSidebar() {
   // store hooks
   const {
     sidebarCollapsed,

@@ -36,57 +36,70 @@ export interface EmojiReactionButtonProps extends React.ButtonHTMLAttributes<HTM
   className?: string;
 }
 
-const EmojiReaction = React.forwardRef<HTMLButtonElement, EmojiReactionProps>(
-  ({ emoji, count, reacted = false, users = [], onReactionClick, className, showCount = true, ...props }, ref) => {
-    const handleClick = () => {
-      onReactionClick?.(emoji);
-    };
+const EmojiReaction = React.forwardRef(function EmojiReaction(
+  {
+    emoji,
+    count,
+    reacted = false,
+    users = [],
+    onReactionClick,
+    className,
+    showCount = true,
+    ...props
+  }: EmojiReactionProps,
+  ref: React.ForwardedRef<HTMLButtonElement>
+) {
+  const handleClick = () => {
+    onReactionClick?.(emoji);
+  };
 
-    const tooltipContent = React.useMemo(() => {
-      if (!users.length) return null;
+  const tooltipContent = React.useMemo(() => {
+    if (!users.length) return null;
 
-      const displayUsers = users.slice(0, 5);
-      const remainingCount = users.length - displayUsers.length;
+    const displayUsers = users.slice(0, 5);
+    const remainingCount = users.length - displayUsers.length;
 
-      return (
-        <div className="text-xs">
-          <div className="font-medium mb-1">{stringToEmoji(emoji)}</div>
-          <div>
-            {displayUsers.join(", ")}
-            {remainingCount > 0 && ` and ${remainingCount} more`}
-          </div>
+    return (
+      <div className="text-xs">
+        <div className="font-medium mb-1">{stringToEmoji(emoji)}</div>
+        <div>
+          {displayUsers.join(", ")}
+          {remainingCount > 0 && ` and ${remainingCount} more`}
         </div>
-      );
-    }, [emoji, users]);
-
-    const button = (
-      <button
-        ref={ref}
-        onClick={handleClick}
-        className={cn(
-          "inline-flex items-center rounded-full border px-1.5 text-xs gap-0.5 transition-all duration-200",
-          reacted
-            ? "bg-custom-primary-100/10 border-custom-primary-100 text-custom-primary-100"
-            : "bg-custom-background-100 border-custom-border-200 text-custom-text-300 hover:border-custom-border-300 hover:bg-custom-background-90",
-          className
-        )}
-        {...props}
-      >
-        <span className="text-base leading-unset">{emoji}</span>
-        {showCount && count > 0 && <AnimatedCounter count={count} size="sm" className="text-xs leading-normal" />}
-      </button>
+      </div>
     );
+  }, [emoji, users]);
 
-    if (tooltipContent && users.length > 0) {
-      return <Tooltip tooltipContent={tooltipContent}>{button}</Tooltip>;
-    }
+  const button = (
+    <button
+      ref={ref}
+      onClick={handleClick}
+      className={cn(
+        "inline-flex items-center rounded-full border px-1.5 text-xs gap-0.5 transition-all duration-200",
+        reacted
+          ? "bg-custom-primary-100/10 border-custom-primary-100 text-custom-primary-100"
+          : "bg-custom-background-100 border-custom-border-200 text-custom-text-300 hover:border-custom-border-300 hover:bg-custom-background-90",
+        className
+      )}
+      {...props}
+    >
+      <span className="text-base leading-unset">{emoji}</span>
+      {showCount && count > 0 && <AnimatedCounter count={count} size="sm" className="text-xs leading-normal" />}
+    </button>
+  );
 
-    return button;
+  if (tooltipContent && users.length > 0) {
+    return <Tooltip tooltipContent={tooltipContent}>{button}</Tooltip>;
   }
-);
 
-const EmojiReactionButton = React.forwardRef<HTMLButtonElement, EmojiReactionButtonProps>(
-  ({ onAddReaction, className, ...props }, ref) => (
+  return button;
+});
+
+const EmojiReactionButton = React.forwardRef(function EmojiReactionButton(
+  { onAddReaction, className, ...props }: EmojiReactionButtonProps,
+  ref: React.ForwardedRef<HTMLButtonElement>
+) {
+  return (
     <button
       ref={ref}
       onClick={onAddReaction}
@@ -103,14 +116,22 @@ const EmojiReactionButton = React.forwardRef<HTMLButtonElement, EmojiReactionBut
     >
       <AddReactionIcon className="h-3 w-3" />
     </button>
-  )
-);
+  );
+});
 
-const EmojiReactionGroup = React.forwardRef<HTMLDivElement, EmojiReactionGroupProps>(
-  (
-    { reactions, onReactionClick, onAddReaction, className, showAddButton = true, maxDisplayUsers = 5, ...props },
-    ref
-  ) => (
+const EmojiReactionGroup = React.forwardRef(function EmojiReactionGroup(
+  {
+    reactions,
+    onReactionClick,
+    onAddReaction,
+    className,
+    showAddButton = true,
+    maxDisplayUsers = 5,
+    ...props
+  }: EmojiReactionGroupProps,
+  ref: React.ForwardedRef<HTMLDivElement>
+) {
+  return (
     <div ref={ref} className={cn("flex flex-wrap items-center gap-2", className)} {...props}>
       {reactions.map((reaction, index) => (
         <EmojiReaction
@@ -124,8 +145,8 @@ const EmojiReactionGroup = React.forwardRef<HTMLDivElement, EmojiReactionGroupPr
       ))}
       {showAddButton && <EmojiReactionButton onAddReaction={onAddReaction} />}
     </div>
-  )
-);
+  );
+});
 
 EmojiReaction.displayName = "EmojiReaction";
 EmojiReactionButton.displayName = "EmojiReactionButton";

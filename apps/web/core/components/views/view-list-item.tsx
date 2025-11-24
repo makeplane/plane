@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
@@ -20,7 +18,7 @@ type Props = {
   view: IProjectView;
 };
 
-export const ProjectViewListItem: FC<Props> = observer((props) => {
+export const ProjectViewListItem = observer(function ProjectViewListItem(props: Props) {
   const { view } = props;
   // refs
   const parentRef = useRef(null);

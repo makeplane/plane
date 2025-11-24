@@ -14,7 +14,7 @@ export type TLinkItemBlockProps = {
   onClick?: () => void;
 };
 
-export const LinkItemBlock: FC<TLinkItemBlockProps> = (props) => {
+export function LinkItemBlock(props: TLinkItemBlockProps) {
   // props
   const { title, url, createdAt, menuItems, onClick } = props;
   // icons
@@ -67,4 +67,4 @@ export const LinkItemBlock: FC<TLinkItemBlockProps> = (props) => {
       )}
     </div>
   );
-};
+}

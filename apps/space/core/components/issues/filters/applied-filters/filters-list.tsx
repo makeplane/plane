@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { CloseIcon } from "@plane/propel/icons";
@@ -17,7 +15,7 @@ type Props = {
 
 export const replaceUnderscoreIfSnakeCase = (str: string) => str.replace(/_/g, " ");
 
-export const AppliedFiltersList: React.FC<Props> = observer((props) => {
+export const AppliedFiltersList = observer(function AppliedFiltersList(props: Props) {
   const { appliedFilters = {}, handleRemoveAllFilters, handleRemoveFilter } = props;
   const { t } = useTranslation();
 

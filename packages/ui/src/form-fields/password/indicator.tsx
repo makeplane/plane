@@ -10,11 +10,11 @@ export interface PasswordStrengthIndicatorProps {
   isFocused?: boolean;
 }
 
-export const PasswordStrengthIndicator: React.FC<PasswordStrengthIndicatorProps> = ({
+export function PasswordStrengthIndicator({
   password,
   showCriteria = true,
   isFocused = false,
-}) => {
+}: PasswordStrengthIndicatorProps) {
   const strength = getPasswordStrength(password);
   const criteria = getPasswordCriteria(password);
   const strengthInfo = getStrengthInfo(strength);
@@ -72,4 +72,4 @@ export const PasswordStrengthIndicator: React.FC<PasswordStrengthIndicatorProps>
       )}
     </div>
   );
-};
+}

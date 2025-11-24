@@ -6,7 +6,7 @@ import type { EIssueLayoutTypes } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import { IssueLayoutIcon } from "../../layout-icon";
 
-export const MobileLayoutSelection = ({
+export function MobileLayoutSelection({
   layouts,
   onChange,
   activeLayout,
@@ -15,7 +15,7 @@ export const MobileLayoutSelection = ({
   onChange: (layout: EIssueLayoutTypes) => void;
   activeLayout?: EIssueLayoutTypes;
   isMobile?: boolean;
-}) => {
+}) {
   const { t } = useTranslation();
   return (
     <CustomMenu
@@ -47,4 +47,4 @@ export const MobileLayoutSelection = ({
       ))}
     </CustomMenu>
   );
-};
+}

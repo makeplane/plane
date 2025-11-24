@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 // plane imports
 import { MEMBER_TRACKER_ELEMENTS, MEMBER_TRACKER_EVENTS, ROLE } from "@plane/constants";
@@ -26,7 +24,7 @@ type Props = {
 };
 const workspaceService = new WorkspaceService();
 
-export const WorkspaceJoinInvitesStep: React.FC<Props> = (props) => {
+export function WorkspaceJoinInvitesStep(props: Props) {
   const { invitations, handleNextStep, handleCurrentViewChange } = props;
   // states
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
@@ -134,4 +132,4 @@ export const WorkspaceJoinInvitesStep: React.FC<Props> = (props) => {
   ) : (
     <div>No Invitations found</div>
   );
-};
+}

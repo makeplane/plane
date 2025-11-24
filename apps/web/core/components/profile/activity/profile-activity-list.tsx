@@ -25,7 +25,7 @@ type Props = {
   updateEmptyState: (state: boolean) => void;
 };
 
-export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
+export const ProfileActivityListPage = observer(function ProfileActivityListPage(props: Props) {
   const { cursor, perPage, updateResultsCount, updateTotalPages, updateEmptyState } = props;
   // store hooks
   const { data: currentUser } = useUser();

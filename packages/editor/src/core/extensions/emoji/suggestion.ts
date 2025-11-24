@@ -16,27 +16,17 @@ const DEFAULT_EMOJIS = ["+1", "-1", "smile", "orange_heart", "eyes"];
 
 export const emojiSuggestion: EmojiOptions["suggestion"] = {
   items: ({ editor, query }: { editor: Editor; query: string }): EmojiItem[] => {
-    const { emojis, isSupported } = editor.storage.emoji as EmojiStorage;
-    const filteredEmojis = emojis.filter((emoji) => {
-      const hasEmoji = !!emoji?.emoji;
-      const hasFallbackImage = !!emoji?.fallbackImage;
-      const renderFallbackImage =
-        (emoji.forceFallbackImages && !hasEmoji) ||
-        (emoji.forceFallbackImages && hasFallbackImage) ||
-        (emoji.forceFallbackImages && !isSupported(emoji) && hasFallbackImage) ||
-        ((!isSupported(emoji) || !hasEmoji) && hasFallbackImage);
-      return !renderFallbackImage;
-    });
+    const { emojis } = editor.storage.emoji as EmojiStorage;
 
     if (query.trim() === "") {
       const defaultEmojis = DEFAULT_EMOJIS.map((name) =>
-        filteredEmojis.find((emoji) => emoji.shortcodes.includes(name) || emoji.name === name)
+        emojis.find((emoji) => emoji.shortcodes.includes(name) || emoji.name === name)
       )
         .filter(Boolean)
         .slice(0, 5);
       return defaultEmojis as EmojiItem[];
     }
-    return filteredEmojis
+    return emojis
       .filter(({ shortcodes, tags }) => {
         const lowerQuery = query.toLowerCase();
         return (

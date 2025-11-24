@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { useParams } from "next/navigation";
 // services
@@ -12,7 +10,7 @@ import { UserService } from "@/services/user.service";
 
 const userService = new UserService();
 
-export const DownloadActivityButton = () => {
+export function DownloadActivityButton() {
   // states
   const [isDownloading, setIsDownloading] = useState(false);
   // router
@@ -58,4 +56,4 @@ export const DownloadActivityButton = () => {
       {isDownloading ? t("profile.stats.recent_activity.button_loading") : t("profile.stats.recent_activity.button")}
     </Button>
   );
-};
+}

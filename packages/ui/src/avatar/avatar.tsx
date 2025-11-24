@@ -113,7 +113,7 @@ export const getBorderRadius = (shape: "circle" | "square") => {
  */
 export const isAValidNumber = (value: any) => typeof value === "number" && !isNaN(value);
 
-export const Avatar: React.FC<Props> = (props) => {
+export function Avatar(props: Props) {
   const {
     name,
     fallbackBackgroundColor,
@@ -166,4 +166,4 @@ export const Avatar: React.FC<Props> = (props) => {
       </div>
     </Tooltip>
   );
-};
+}

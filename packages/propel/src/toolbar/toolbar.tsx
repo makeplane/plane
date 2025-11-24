@@ -35,18 +35,26 @@ export interface ToolbarSubmitButtonProps extends React.ButtonHTMLAttributes<HTM
   children: React.ReactNode;
 }
 
-const ToolbarRoot = React.forwardRef<HTMLDivElement, ToolbarProps>(({ className, children, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("flex h-9 w-full items-stretch gap-1.5 bg-custom-background-90 overflow-x-scroll", className)}
-    {...props}
-  >
-    {children}
-  </div>
-));
+const ToolbarRoot = React.forwardRef(function ToolbarRoot(
+  { className, children, ...props }: ToolbarProps,
+  ref: React.ForwardedRef<HTMLDivElement>
+) {
+  return (
+    <div
+      ref={ref}
+      className={cn("flex h-9 w-full items-stretch gap-1.5 bg-custom-background-90 overflow-x-scroll", className)}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+});
 
-const ToolbarGroup = React.forwardRef<HTMLDivElement, ToolbarGroupProps>(
-  ({ className, children, isFirst = false, ...props }, ref) => (
+const ToolbarGroup = React.forwardRef(function ToolbarGroup(
+  { className, children, isFirst = false, ...props }: ToolbarGroupProps,
+  ref: React.ForwardedRef<HTMLDivElement>
+) {
+  return (
     <div
       ref={ref}
       className={cn(
@@ -60,56 +68,60 @@ const ToolbarGroup = React.forwardRef<HTMLDivElement, ToolbarGroupProps>(
     >
       {children}
     </div>
-  )
-);
+  );
+});
 
-const ToolbarItem = React.forwardRef<HTMLButtonElement, ToolbarItemProps>(
-  ({ icon: Icon, isActive = false, tooltip, shortcut, className, children, ...props }, ref) => {
-    const button = (
-      <button
-        ref={ref}
-        type="button"
-        className={cn(
-          "grid place-items-center aspect-square rounded-sm p-0.5 text-custom-text-400 hover:bg-custom-background-80 transition-colors",
-          {
-            "bg-custom-background-80 text-custom-text-100": isActive,
-          },
-          className
-        )}
-        {...props}
+const ToolbarItem = React.forwardRef(function ToolbarItem(
+  { icon: Icon, isActive = false, tooltip, shortcut, className, children, ...props }: ToolbarItemProps,
+  ref: React.ForwardedRef<HTMLButtonElement>
+) {
+  const button = (
+    <button
+      ref={ref}
+      type="button"
+      className={cn(
+        "grid place-items-center aspect-square rounded-sm p-0.5 text-custom-text-400 hover:bg-custom-background-80 transition-colors",
+        {
+          "bg-custom-background-80 text-custom-text-100": isActive,
+        },
+        className
+      )}
+      {...props}
+    >
+      <Icon
+        className={cn("h-3.5 w-3.5", {
+          "text-custom-text-100": isActive,
+        })}
+        strokeWidth={2.5}
+      />
+      {children}
+    </button>
+  );
+
+  if (tooltip) {
+    return (
+      <Tooltip
+        tooltipContent={
+          <div className="flex flex-col gap-1 text-center text-xs">
+            <span className="font-medium">{tooltip}</span>
+            {shortcut && <kbd className="text-custom-text-400">{shortcut.join(" + ")}</kbd>}
+          </div>
+        }
       >
-        <Icon
-          className={cn("h-3.5 w-3.5", {
-            "text-custom-text-100": isActive,
-          })}
-          strokeWidth={2.5}
-        />
-        {children}
-      </button>
+        {button}
+      </Tooltip>
     );
-
-    if (tooltip) {
-      return (
-        <Tooltip
-          tooltipContent={
-            <div className="flex flex-col gap-1 text-center text-xs">
-              <span className="font-medium">{tooltip}</span>
-              {shortcut && <kbd className="text-custom-text-400">{shortcut.join(" + ")}</kbd>}
-            </div>
-          }
-        >
-          {button}
-        </Tooltip>
-      );
-    }
-
-    return button;
   }
-);
 
-const ToolbarSeparator = React.forwardRef<HTMLDivElement, ToolbarSeparatorProps>(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("h-full w-px bg-custom-border-200 mx-1", className)} {...props} />
-));
+  return button;
+});
+
+const ToolbarSeparator = React.forwardRef(function ToolbarSeparator(
+  { className, ...props }: ToolbarSeparatorProps,
+  ref: React.ForwardedRef<HTMLDivElement>
+) {
+  return <div ref={ref} className={cn("h-full w-px bg-custom-border-200 mx-1", className)} {...props} />;
+});
 
 const buttonVariants = {
   primary: "bg-custom-primary-100 text-white hover:bg-custom-primary-200 focus:bg-custom-primary-200",
@@ -121,8 +133,11 @@ const buttonVariants = {
   destructive: "bg-red-500 text-white hover:bg-red-600 focus:bg-red-600",
 };
 
-const ToolbarSubmitButton = React.forwardRef<HTMLButtonElement, ToolbarSubmitButtonProps>(
-  ({ loading = false, variant = "primary", className, children, disabled, ...props }, ref) => (
+const ToolbarSubmitButton = React.forwardRef(function ToolbarSubmitButton(
+  { loading = false, variant = "primary", className, children, disabled, ...props }: ToolbarSubmitButtonProps,
+  ref: React.ForwardedRef<HTMLButtonElement>
+) {
+  return (
     <div className="sticky right-1">
       <button
         ref={ref}
@@ -140,8 +155,8 @@ const ToolbarSubmitButton = React.forwardRef<HTMLButtonElement, ToolbarSubmitBut
         {children}
       </button>
     </div>
-  )
-);
+  );
+});
 
 ToolbarRoot.displayName = "ToolbarRoot";
 ToolbarGroup.displayName = "ToolbarGroup";

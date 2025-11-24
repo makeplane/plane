@@ -6,4 +6,6 @@ type Props = {
   item: IWorkspaceSidebarNavigationItem;
 };
 
-export const SidebarItem: FC<Props> = ({ item }) => <SidebarItemBase item={item} />;
+export function SidebarItem({ item }: Props) {
+  return <SidebarItemBase item={item} />;
+}

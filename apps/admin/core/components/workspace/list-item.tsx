@@ -11,7 +11,7 @@ type TWorkspaceListItemProps = {
   workspaceId: string;
 };
 
-export const WorkspaceListItem = observer(({ workspaceId }: TWorkspaceListItemProps) => {
+export const WorkspaceListItem = observer(function WorkspaceListItem({ workspaceId }: TWorkspaceListItemProps) {
   // store hooks
   const { getWorkspaceById } = useWorkspace();
   // derived values

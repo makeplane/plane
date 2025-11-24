@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IIssueLabel } from "@plane/types";
@@ -14,7 +11,7 @@ type IssueLabelsListProps = {
   showLength?: boolean;
 };
 
-export const IssueLabelsList: FC<IssueLabelsListProps> = (props) => {
+export function IssueLabelsList(props: IssueLabelsListProps) {
   const { labels } = props;
   const { isMobile } = usePlatformOS();
   return (
@@ -37,4 +34,4 @@ export const IssueLabelsList: FC<IssueLabelsListProps> = (props) => {
       )}
     </>
   );
-};
+}

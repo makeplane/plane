@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
@@ -12,7 +10,7 @@ type Props = {
   onSelect: (language: string) => void;
 };
 
-export const PowerKPreferencesLanguagesMenu: React.FC<Props> = observer((props) => {
+export const PowerKPreferencesLanguagesMenu = observer(function PowerKPreferencesLanguagesMenu(props: Props) {
   const { onSelect } = props;
 
   return (

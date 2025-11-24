@@ -30,7 +30,7 @@ type Props = {
   editor: Editor;
 };
 
-export const BubbleMenuNodeSelector: FC<Props> = (props) => {
+export function BubbleMenuNodeSelector(props: Props) {
   const { editor } = props;
   // floating ui
   const { options, getReferenceProps, getFloatingProps } = useFloatingMenu({});
@@ -102,4 +102,4 @@ export const BubbleMenuNodeSelector: FC<Props> = (props) => {
       </section>
     </FloatingMenuRoot>
   );
-};
+}

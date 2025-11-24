@@ -1,4 +1,3 @@
-"use-client";
 import type { FC } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
@@ -44,7 +43,7 @@ type Props = {
   setIsSubmitting: (value: TNameDescriptionLoader) => void;
 };
 
-export const PeekOverviewIssueDetails: FC<Props> = observer((props) => {
+export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetails(props: Props) {
   const { editorRef, workspaceSlug, issueId, issueOperations, disabled, isArchived, isSubmitting, setIsSubmitting } =
     props;
   // store hooks
@@ -128,6 +127,7 @@ export const PeekOverviewIssueDetails: FC<Props> = observer((props) => {
       />
 
       <DescriptionInput
+        issueSequenceId={issue.sequence_id}
         containerClassName="-ml-3 border-none"
         disabled={disabled || isArchived}
         editorRef={editorRef}

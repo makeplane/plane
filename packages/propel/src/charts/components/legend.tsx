@@ -31,12 +31,12 @@ export const getLegendProps = (args: TChartLegend): LegendProps => {
   };
 };
 
-const CustomLegend = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<"div"> &
+const CustomLegend = React.forwardRef(function CustomLegend(
+  props: React.ComponentProps<"div"> &
     Pick<LegendProps, "payload" | "formatter" | "onClick" | "onMouseEnter" | "onMouseLeave"> &
-    TChartLegend
->((props, ref) => {
+    TChartLegend,
+  ref: React.ForwardedRef<HTMLDivElement>
+) {
   const { formatter, layout, onClick, onMouseEnter, onMouseLeave, payload } = props;
 
   if (!payload?.length) return null;

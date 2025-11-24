@@ -11,14 +11,14 @@ type Props = {
   barClassName?: string;
 };
 
-export const LinearProgressIndicator: React.FC<Props> = ({
+export function LinearProgressIndicator({
   data,
   noTooltip = false,
   inPercentage = false,
   size = "sm",
   className = "",
   barClassName = "",
-}) => {
+}: Props) {
   const total = data.reduce((acc: any, cur: any) => acc + cur.value, 0);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let progress = 0;
@@ -54,4 +54,4 @@ export const LinearProgressIndicator: React.FC<Props> = ({
       </div>
     </div>
   );
-};
+}

@@ -4,7 +4,9 @@ import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-d
 import { observer } from "mobx-react";
 import type { IBaseLayoutsKanbanItem, IBaseLayoutsKanbanItemProps } from "@plane/types";
 
-export const BaseKanbanItem = observer(<T extends IBaseLayoutsKanbanItem>(props: IBaseLayoutsKanbanItemProps<T>) => {
+export const BaseKanbanItem = observer(function BaseKanbanItem<T extends IBaseLayoutsKanbanItem>(
+  props: IBaseLayoutsKanbanItemProps<T>
+) {
   const { item, groupId, renderItem, enableDragDrop, canDrag } = props;
 
   const itemRef = useRef<HTMLDivElement | null>(null);

@@ -8,7 +8,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseListRoot } from "../base-list-root";
 
-export const ProfileIssuesListLayout: FC = observer(() => {
+export const ProfileIssuesListLayout = observer(function ProfileIssuesListLayout() {
   // router
   const { workspaceSlug, profileViewId } = useParams();
   // store

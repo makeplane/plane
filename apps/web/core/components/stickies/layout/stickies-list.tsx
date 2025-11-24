@@ -40,7 +40,7 @@ type TProps = TStickiesLayout & {
   columnCount: number;
 };
 
-export const StickiesList = observer((props: TProps) => {
+export const StickiesList = observer(function StickiesList(props: TProps) {
   const { workspaceSlug, intersectionElement, columnCount } = props;
   // navigation
   const pathname = usePathname();
@@ -166,7 +166,7 @@ export const StickiesList = observer((props: TProps) => {
   );
 });
 
-export const StickiesLayout = (props: TStickiesLayout) => {
+export function StickiesLayout(props: TStickiesLayout) {
   // states
   const [containerWidth, setContainerWidth] = useState<number | null>(null);
   // refs
@@ -203,4 +203,4 @@ export const StickiesLayout = (props: TStickiesLayout) => {
       <StickiesList {...props} columnCount={columnCount} />
     </div>
   );
-};
+}

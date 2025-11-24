@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import React from "react";
 import type { TIssueServiceType } from "@plane/types";
@@ -15,7 +14,7 @@ type Props = {
   issueServiceType: TIssueServiceType;
 };
 
-export const IssueLinksCollapsibleContent: FC<Props> = (props) => {
+export function IssueLinksCollapsibleContent(props: Props) {
   const { workspaceSlug, projectId, issueId, disabled, issueServiceType } = props;
 
   // helper
@@ -29,4 +28,4 @@ export const IssueLinksCollapsibleContent: FC<Props> = (props) => {
       issueServiceType={issueServiceType}
     />
   );
-};
+}

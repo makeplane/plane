@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
@@ -33,7 +30,7 @@ export type TLabelOperations = {
   createLabel: (workspaceSlug: string, projectId: string, data: Partial<IIssueLabel>) => Promise<any>;
 };
 
-export const IssueLabel: FC<TIssueLabel> = observer((props) => {
+export const IssueLabel = observer(function IssueLabel(props: TIssueLabel) {
   const {
     workspaceSlug,
     projectId,

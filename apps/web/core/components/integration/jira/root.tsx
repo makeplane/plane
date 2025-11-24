@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -53,7 +51,7 @@ const integrationWorkflowData: Array<{
 // services
 const jiraImporterService = new JiraImporterService();
 
-export const JiraImporterRoot: React.FC = () => {
+export function JiraImporterRoot() {
   const [currentStep, setCurrentStep] = useState<IJiraIntegrationData>({
     state: "import-configure",
   });
@@ -199,4 +197,4 @@ export const JiraImporterRoot: React.FC = () => {
       </div>
     </div>
   );
-};
+}

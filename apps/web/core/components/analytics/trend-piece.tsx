@@ -49,7 +49,7 @@ const variants: Record<NonNullable<Props["variant"]>, Record<"ontrack" | "offtra
   },
 } as const;
 
-const TrendPiece = (props: Props) => {
+function TrendPiece(props: Props) {
   const { percentage, className, trendIconVisible = true, size = "sm", variant = "simple" } = props;
   const isOnTrack = percentage >= 66;
   const isOffTrack = percentage >= 33 && percentage < 66;
@@ -75,6 +75,6 @@ const TrendPiece = (props: Props) => {
       {Math.round(Math.abs(percentage))}%
     </div>
   );
-};
+}
 
 export default TrendPiece;

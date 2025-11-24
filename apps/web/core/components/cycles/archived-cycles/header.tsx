@@ -18,7 +18,7 @@ import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
 // local imports
 import { CycleFiltersSelection } from "../dropdowns";
 
-export const ArchivedCyclesHeader: FC = observer(() => {
+export const ArchivedCyclesHeader = observer(function ArchivedCyclesHeader() {
   // router
   const { projectId } = useParams();
   // refs

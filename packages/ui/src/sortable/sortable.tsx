@@ -59,7 +59,7 @@ const moveItem = <T,>(
   };
 };
 
-export const Sortable = <T,>({ data, render, onChange, keyExtractor, containerClassName, id }: Props<T>) => {
+export function Sortable<T>({ data, render, onChange, keyExtractor, containerClassName, id }: Props<T>) {
   useEffect(() => {
     const unsubscribe = monitorForElements({
       // @ts-expect-error Due to live server dependencies
@@ -100,6 +100,6 @@ export const Sortable = <T,>({ data, render, onChange, keyExtractor, containerCl
       ))}
     </>
   );
-};
+}
 
 export default Sortable;

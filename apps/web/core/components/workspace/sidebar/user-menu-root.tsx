@@ -1,5 +1,3 @@
-"use client";
-
 import type { Ref } from "react";
 import { Fragment, useState, useEffect } from "react";
 import { observer } from "mobx-react";
@@ -25,7 +23,7 @@ type Props = {
   size?: "sm" | "md";
 };
 
-export const UserMenuRoot = observer((props: Props) => {
+export const UserMenuRoot = observer(function UserMenuRoot(props: Props) {
   const { size = "sm" } = props;
   const { workspaceSlug } = useParams();
   // store hooks

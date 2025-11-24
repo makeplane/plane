@@ -13,16 +13,17 @@ type Props = {
   };
   isLoading?: boolean;
 };
-const CompletionPercentage = ({ percentage }: { percentage: number }) => {
+
+function CompletionPercentage({ percentage }: { percentage: number }) {
   const percentageColor = percentage > 50 ? "bg-green-500/30 text-green-500" : "bg-red-500/30 text-red-500";
   return (
     <div className={cn("flex items-center gap-2 rounded p-1 text-xs", percentageColor)}>
       <span>{percentage}%</span>
     </div>
   );
-};
+}
 
-const ActiveProjectItem = (props: Props) => {
+function ActiveProjectItem(props: Props) {
   const { project } = props;
   const { getProjectById } = useProject();
   const { id, completed_issues, total_issues } = project;
@@ -52,6 +53,6 @@ const ActiveProjectItem = (props: Props) => {
       />
     </div>
   );
-};
+}
 
 export default ActiveProjectItem;

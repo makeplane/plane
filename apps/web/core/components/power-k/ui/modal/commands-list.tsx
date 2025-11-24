@@ -13,7 +13,7 @@ export type TPowerKCommandsListProps = {
   setSearchTerm: (value: string) => void;
 };
 
-export const ProjectsAppPowerKCommandsList: React.FC<TPowerKCommandsListProps> = (props) => {
+export function ProjectsAppPowerKCommandsList(props: TPowerKCommandsListProps) {
   const {
     activePage,
     context,
@@ -46,4 +46,4 @@ export const ProjectsAppPowerKCommandsList: React.FC<TPowerKCommandsListProps> =
       />
     </>
   );
-};
+}

@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ENotificationFilterType, FILTER_TYPE_OPTIONS } from "@plane/constants";
@@ -14,7 +11,7 @@ type TAppliedFilters = {
   workspaceSlug: string;
 };
 
-export const AppliedFilters: FC<TAppliedFilters> = observer((props) => {
+export const AppliedFilters = observer(function AppliedFilters(props: TAppliedFilters) {
   const { workspaceSlug } = props;
   // hooks
   const { filters, updateFilters } = useWorkspaceNotifications();

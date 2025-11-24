@@ -1,6 +1,4 @@
-"use client";
-
-import type { FC, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { PostHogProvider as PHProvider } from "@posthog/react";
 import { observer } from "mobx-react";
@@ -16,13 +14,15 @@ import { useInstance } from "@/hooks/store/use-instance";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 // dynamic imports
-const PostHogPageView = lazy(() => import("@/lib/posthog-view"));
+const PostHogPageView = lazy(function PostHogPageView() {
+  return import("@/lib/posthog-view");
+});
 
 export interface IPosthogWrapper {
   children: ReactNode;
 }
 
-const PostHogProvider: FC<IPosthogWrapper> = observer((props) => {
+const PostHogProvider = observer(function PostHogProvider(props: IPosthogWrapper) {
   const { children } = props;
   const { data: user } = useUser();
   const { currentWorkspace } = useWorkspace();

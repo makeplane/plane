@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactNode } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -41,7 +39,9 @@ export type TWorkItemStateDropdownBaseProps = TDropdownProps & {
   value: string | undefined | null;
 };
 
-export const WorkItemStateDropdownBase: React.FC<TWorkItemStateDropdownBaseProps> = observer((props) => {
+export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdownBase(
+  props: TWorkItemStateDropdownBaseProps
+) {
   const {
     button,
     buttonClassName,

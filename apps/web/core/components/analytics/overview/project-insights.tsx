@@ -14,15 +14,15 @@ import { AnalyticsService } from "@/services/analytics.service";
 import AnalyticsSectionWrapper from "../analytics-section-wrapper";
 import { ProjectInsightsLoader } from "../loaders";
 
-const RadarChart = lazy(() =>
-  import("@plane/propel/charts/radar-chart").then((mod) => ({
+const RadarChart = lazy(function RadarChart() {
+  return import("@plane/propel/charts/radar-chart").then((mod) => ({
     default: mod.RadarChart,
-  }))
-);
+  }));
+});
 
 const analyticsService = new AnalyticsService();
 
-const ProjectInsights = observer(() => {
+const ProjectInsights = observer(function ProjectInsights() {
   const params = useParams();
   const { t } = useTranslation();
   const workspaceSlug = params.workspaceSlug.toString();

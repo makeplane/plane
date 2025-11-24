@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
@@ -32,7 +30,7 @@ interface Props {
   referenceElement: HTMLButtonElement | null;
 }
 
-export const ModuleOptions = observer((props: Props) => {
+export const ModuleOptions = observer(function ModuleOptions(props: Props) {
   const { getModuleById, isOpen, moduleIds, multiple, onDropdownOpen, placement, referenceElement } = props;
   // refs
   const inputRef = useRef<HTMLInputElement | null>(null);

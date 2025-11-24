@@ -12,7 +12,7 @@ import { DropdownButton } from "./common";
 import { DropdownOptions } from "./common/options";
 import type { ISingleSelectDropdown } from "./dropdown";
 
-export const Dropdown: FC<ISingleSelectDropdown> = (props) => {
+export function Dropdown(props: ISingleSelectDropdown) {
   const {
     value,
     onChange,
@@ -165,4 +165,4 @@ export const Dropdown: FC<ISingleSelectDropdown> = (props) => {
       )}
     </Combobox>
   );
-};
+}

@@ -1,4 +1,8 @@
-// plane editor
-import type { TMentionComponentProps } from "@plane/editor";
+// plane imports
+import type { TCallbackMentionComponentProps } from "@plane/editor";
 
-export const EditorAdditionalMentionsRoot: React.FC<TMentionComponentProps> = () => null;
+export type TEditorMentionComponentProps = TCallbackMentionComponentProps;
+
+export function EditorAdditionalMentionsRoot(_props: TEditorMentionComponentProps) {
+  return null;
+}
