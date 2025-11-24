@@ -56,9 +56,10 @@ COPY --from=installer /app/packages ./packages
 COPY --from=installer /app/apps/live/dist ./apps/live/dist
 COPY --from=installer /app/apps/live/node_modules ./apps/live/node_modules
 COPY --from=installer /app/node_modules ./node_modules
+COPY --from=installer /app/apps/live/package.json ./apps/live/package.json
 
 ENV TURBO_TELEMETRY_DISABLED=1
 
 EXPOSE 3000
 
-CMD ["node", "apps/live/dist/start.js"]
+CMD ["node", "apps/live"]

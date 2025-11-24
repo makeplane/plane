@@ -17,10 +17,12 @@ import { cn, getFileURL } from "@plane/utils";
 // components
 import { DeactivateAccountModal } from "@/components/account/deactivate-account-modal";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
+import { ChangeEmailModal } from "@/components/core/modals/change-email-modal";
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
 // helpers
 import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
+import { useInstance } from "@/hooks/store/use-instance";
 import { useUser, useUserProfile } from "@/hooks/store/user";
 
 type TUserProfileForm = {
@@ -49,6 +51,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
   const [isLoading, setIsLoading] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   const [deactivateAccountModal, setDeactivateAccountModal] = useState(false);
+  const [isChangeEmailModalOpen, setIsChangeEmailModalOpen] = useState(false);
   // language support
   const { t } = useTranslation();
   // form info
@@ -78,6 +81,9 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
   // store hooks
   const { data: currentUser, updateCurrentUser } = useUser();
   const { updateUserProfile } = useUserProfile();
+  const { config } = useInstance();
+
+  const isSMTPConfigured = config?.is_smtp_configured || false;
 
   const handleProfilePictureDelete = async (url: string | null | undefined) => {
     if (!url) return;
@@ -156,6 +162,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
   return (
     <>
       <DeactivateAccountModal isOpen={deactivateAccountModal} onClose={() => setDeactivateAccountModal(false)} />
+      <ChangeEmailModal isOpen={isChangeEmailModalOpen} onClose={() => setIsChangeEmailModalOpen(false)} />
       <Controller
         control={control}
         name="avatar_url"
@@ -355,6 +362,15 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
                     />
                   )}
                 />
+                {isSMTPConfigured && (
+                  <button
+                    type="button"
+                    className="text-xs underline btn w-fit text-custom-text-200"
+                    onClick={() => setIsChangeEmailModalOpen(true)}
+                  >
+                    {t("change_email")}
+                  </button>
+                )}
               </div>
             </div>
           </div>
