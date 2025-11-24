@@ -58,95 +58,82 @@ async function getOppositionTeamBlock() {
   };
 }
 
-export const OppositionTeamBlock: FC<Props> = observer(
-  ({ workspaceSlug, team }) => {
+export const OppositionTeamBlock: FC<Props> = observer(({ workspaceSlug, team }) => {
+  const issueRef = useRef<HTMLDivElement | null>(null);
 
-    const issueRef = useRef<HTMLDivElement | null>(null);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-    const [isEditOpen, setIsEditOpen] = useState(false);
-    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const MENU_ITEMS: TContextMenuItem[] = [
+    {
+      key: "edit",
+      title: "Edit",
+      icon: Pencil,
+      action: () => setIsEditOpen(true),
+    },
+    {
+      key: "delete",
+      title: "Delete",
+      icon: Trash2,
+      action: () => setIsDeleteOpen(true),
+    },
+  ];
 
-    const MENU_ITEMS: TContextMenuItem[] = [
-      {
-        key: "edit",
-        title: "Edit",
-        icon: Pencil,
-        action: () => setIsEditOpen(true),
-      },
-      {
-        key: "delete",
-        title: "Delete",
-        icon: Trash2,
-        action: () => setIsDeleteOpen(true),
-      },
-    ];
+  const { refreshTeams } = useOppositionTeams();
 
-    const { refreshTeams } = useOppositionTeams();
+  const handleDelete = async () => {
+    try {
+      const block = await getOppositionTeamBlock();
+      if (!block) {
+        alert("Opposition Team meta-type missing");
+        return;
+      }
 
- const handleDelete = async () => {
-  try {
-    const block = await getOppositionTeamBlock();
-    if (!block) {
-      alert("Opposition Team meta-type missing");
-      return;
+      if (!team?.id) {
+        console.error("Team UID missing");
+        return;
+      }
+
+      const updatedValues = block.values.filter((t: any) => t.id !== team.id);
+
+      const payload = {
+        id: block.id,
+        name: block.name,
+        key: block.key,
+        values: updatedValues,
+      };
+
+      await updateEntity("meta-type", payload);
+      refreshTeams();
+
+      setIsDeleteOpen(false);
+    } catch (err) {
+      console.error("Delete failed", err);
     }
+  };
 
-    if (!team?.id) {
-      console.error("Team UID missing");
-      return;
-    }
+  return (
+    <div ref={issueRef} className="flex">
+      {/* ACTION MENU */}
+      <WorkspaceDraftIssueQuickActions parentRef={issueRef} MENU_ITEMS={MENU_ITEMS} />
 
-    const updatedValues = block.values.filter(
-      (t: any) => t.id !== team.id
-    );
+      {/* EDIT MODAL */}
+      {isEditOpen && <EditOppositionTeamModal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} team={team} />}
 
-    const payload = {
-      id: block.id,
-      name: block.name,
-      key: block.key,
-      values: updatedValues,
-    };
-
-    await updateEntity("meta-type", payload);
-    refreshTeams();
-
-    setIsDeleteOpen(false);
-  } catch (err) {
-    console.error("Delete failed", err);
-  }
-};
-
-
-
-    return (
-      <div ref={issueRef}  className="flex">
-
-        {/* ACTION MENU */}
-        <WorkspaceDraftIssueQuickActions
-          parentRef={issueRef}
-          MENU_ITEMS={MENU_ITEMS}
-        />
-
-        {/* EDIT MODAL */}
-        {isEditOpen && (
-          <EditOppositionTeamModal
-            isOpen={isEditOpen}
-            onClose={() => setIsEditOpen(false)}
-            team={team}
-          />
-        )}
-
-        {/* DELETE CONFIRMATION MODAL */}
-        <AlertModalCore
-          isOpen={isDeleteOpen}
-          title="Delete Opposition Team"
-          content={`Are you sure you want to delete ${team?.name} team? This action cannot be undone.`}
-          handleClose={() => setIsDeleteOpen(false)}
-          handleSubmit={handleDelete}
-          isSubmitting={false}
-          variant="danger"
-        />
-      </div>
-    );
-  }
-);
+      {/* DELETE CONFIRMATION MODAL */}
+      <AlertModalCore
+        isOpen={isDeleteOpen}
+        title="Delete Opposition Team"
+        content={
+          <>
+            Are you sure you want to delete <strong className="font-medium text-custom-text-100">{team?.name}</strong> team? This action cannot be undone.
+          </>
+        }
+        handleClose={() => setIsDeleteOpen(false)}
+        handleSubmit={handleDelete}
+        isSubmitting={false}
+        variant="danger"
+      />
+    </div>
+  );
+});

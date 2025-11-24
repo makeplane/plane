@@ -5,7 +5,6 @@ import React from "react";
 import { OppositionTeamBlock } from "./opposition-team-block";
 import { TeamLogo } from "./opposition-team-logo";
 
-const baseUrl = process.env.NEXT_PUBLIC_CP_SERVER_URL;
 
 interface Team {
   id: string;
