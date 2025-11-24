@@ -274,6 +274,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
       });
   };
 
+
   const handleMoveToProjects = async () => {
     if (!data?.id || !data?.project_id || !data) return;
     setIsMoving(true);

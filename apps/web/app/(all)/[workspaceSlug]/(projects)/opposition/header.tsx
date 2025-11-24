@@ -57,7 +57,7 @@ export const WorkspaceOppositionHeader = observer(() => {
               onClick={() => setIsOppositionTeamModalOpen(true)}
               disabled={!isAuthorizedUser}
             >
-              Create Opposition Team
+             Create Opposition Team
             </Button>
           )}
         </Header.RightItem>

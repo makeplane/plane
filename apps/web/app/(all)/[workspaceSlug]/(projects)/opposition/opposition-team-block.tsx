@@ -85,7 +85,7 @@ export const OppositionTeamBlock: FC<Props> = observer(({ workspaceSlug, team })
     try {
       const block = await getOppositionTeamBlock();
       if (!block) {
-        alert("Opposition Team meta-type missing");
+        // alert("Opposition Team meta-type missing");
         return;
       }
 

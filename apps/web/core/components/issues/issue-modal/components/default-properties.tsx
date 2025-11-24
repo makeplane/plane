@@ -342,7 +342,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
         defaultValue={null}
         render={({ field: { value, onChange } }) => (
           <div
-            className="h-7 w-fit border rounded-md px-2 flex items-center"
+            className="h-7 w-fit border rounded-md flex items-center"
             style={{ borderColor: "rgba(var(--color-border-300))" }}
           >
             <OppositionTeamProperty
