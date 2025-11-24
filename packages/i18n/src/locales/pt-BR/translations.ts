@@ -2660,5 +2660,4 @@ export default {
     close_button: "Fechar painel de navegação",
     outline_floating_button: "Abrir estrutura",
   },
-
 } as const;

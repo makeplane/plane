@@ -2623,5 +2623,4 @@ export default {
     close_button: "Navigasyon panelini kapat",
     outline_floating_button: "Ana hatları aç",
   },
-
 } as const;

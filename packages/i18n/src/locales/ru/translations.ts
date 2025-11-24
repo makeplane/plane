@@ -2629,5 +2629,4 @@ export default {
     close_button: "Закрыть панель навигации",
     outline_floating_button: "Открыть структуру",
   },
-
 } as const;

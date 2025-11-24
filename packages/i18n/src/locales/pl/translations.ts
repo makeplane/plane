@@ -2614,5 +2614,4 @@ export default {
     close_button: "Zamknij panel nawigacji",
     outline_floating_button: "Otwórz konspekt",
   },
-
 } as const;

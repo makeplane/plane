@@ -2646,5 +2646,4 @@ export default {
     close_button: "Đóng bảng điều hướng",
     outline_floating_button: "Mở phác thảo",
   },
-
 } as const;

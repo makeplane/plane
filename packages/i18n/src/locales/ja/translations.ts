@@ -2637,5 +2637,4 @@ export default {
     close_button: "ナビゲーションパネルを閉じる",
     outline_floating_button: "アウトラインを開く",
   },
-
 } as const;

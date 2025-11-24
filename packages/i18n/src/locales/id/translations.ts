@@ -2648,5 +2648,4 @@ export default {
     close_button: "Tutup panel navigasi",
     outline_floating_button: "Buka garis besar",
   },
-
 } as const;

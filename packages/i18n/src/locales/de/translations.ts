@@ -2640,5 +2640,4 @@ export default {
     close_button: "Navigationsbereich schließen",
     outline_floating_button: "Gliederung öffnen",
   },
-
 } as const;

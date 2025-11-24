@@ -2652,5 +2652,4 @@ export default {
     close_button: "Închide panoul de navigare",
     outline_floating_button: "Deschide conturul",
   },
-
 } as const;

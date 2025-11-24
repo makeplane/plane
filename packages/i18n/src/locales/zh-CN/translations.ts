@@ -2579,5 +2579,4 @@ export default {
     close_button: "关闭导航面板",
     outline_floating_button: "打开大纲",
   },
-
 } as const;

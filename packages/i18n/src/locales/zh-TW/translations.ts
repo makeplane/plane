@@ -2600,5 +2600,4 @@ export default {
     close_button: "關閉導航面板",
     outline_floating_button: "打開大綱",
   },
-
 } as const;

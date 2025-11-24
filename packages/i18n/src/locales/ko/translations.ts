@@ -2623,5 +2623,4 @@ export default {
     close_button: "네비게이션 패널 닫기",
     outline_floating_button: "개요 열기",
   },
-
 } as const;

@@ -2656,5 +2656,4 @@ export default {
     close_button: "Chiudi pannello di navigazione",
     outline_floating_button: "Apri schema",
   },
-
 } as const;

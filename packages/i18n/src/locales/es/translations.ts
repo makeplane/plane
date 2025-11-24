@@ -2671,5 +2671,4 @@ export default {
     close_button: "Cerrar panel de navegación",
     outline_floating_button: "Abrir esquema",
   },
-
 } as const;

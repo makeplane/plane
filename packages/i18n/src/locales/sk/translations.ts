@@ -2613,5 +2613,4 @@ export default {
     close_button: "Zavrieť navigačný panel",
     outline_floating_button: "Otvoriť osnovu",
   },
-
 } as const;
