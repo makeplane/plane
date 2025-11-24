@@ -135,25 +135,21 @@ class IntakeIssueUpdateSerializer(BaseSerializer):
         """
         from plane.db.models import State
 
-        # Save the intake issue with validated data
-        intake_issue = super().update(instance, validated_data)
+        # Update the intake issue with validated data
+        instance = super().update(instance, validated_data)
 
         # If status is accepted (1), update the associated issue state from TRIAGE to default
-        if intake_issue.status == 1:
-            issue = intake_issue.issue
-
-            # Check if issue is in TRIAGE state
+        if validated_data.get("status") == 1:
+            issue = instance.issue
             if issue.state and issue.state.group == State.TRIAGE:
-                # Get the default project state (we already validated it exists)
+                # Get the default project state
                 default_state = State.objects.filter(
-                    workspace=intake_issue.workspace, project=intake_issue.project, default=True
+                    workspace=instance.workspace, project=instance.project, default=True
                 ).first()
-
-                # Update issue to default state
-                issue.state = default_state
-                issue.save(update_fields=["state", "updated_at"])
-
-        return intake_issue
+                if default_state:
+                    issue.state = default_state
+                    issue.save()
+        return instance
 
 
 class IssueDataSerializer(serializers.Serializer):
