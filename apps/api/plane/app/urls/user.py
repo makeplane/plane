@@ -30,6 +30,16 @@ urlpatterns = [
         UserEndpoint.as_view({"get": "retrieve_user_settings"}),
         name="users",
     ),
+    path(
+        "users/me/email/generate-code/",
+        UserEndpoint.as_view({"post": "generate_email_verification_code"}),
+        name="user-email-verify-code",
+    ),
+    path(
+        "users/me/email/",
+        UserEndpoint.as_view({"patch": "update_email"}),
+        name="user-email-update",
+    ),
     # Profile
     path("users/me/profile/", ProfileEndpoint.as_view(), name="accounts"),
     # End profile

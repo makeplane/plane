@@ -1534,6 +1534,47 @@ export default {
         "Se confermi, tutte le opzioni di ordinamento, filtro e visualizzazione + il layout che hai scelto per questa visualizzazione saranno eliminate permanentemente senza possibilità di ripristinarle.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "Cambia email",
+        description: "Inserisci un nuovo indirizzo email per ricevere un link di verifica.",
+        toasts: {
+          success_title: "Successo!",
+          success_message: "Email aggiornata con successo. Accedi di nuovo.",
+        },
+        form: {
+          email: {
+            label: "Nuova email",
+            placeholder: "Inserisci la tua email",
+            errors: {
+              required: "L’email è obbligatoria",
+              invalid: "L’email non è valida",
+              exists: "L’email esiste già. Usane un’altra.",
+              validation_failed: "La verifica dell’email non è riuscita. Riprova.",
+            },
+          },
+          code: {
+            label: "Codice univoco",
+            placeholder: "gets-sets-flys",
+            helper_text: "Codice di verifica inviato alla tua nuova email.",
+            errors: {
+              required: "Il codice univoco è obbligatorio",
+              invalid: "Codice di verifica non valido. Riprova.",
+            },
+          },
+        },
+        actions: {
+          continue: "Continua",
+          confirm: "Conferma",
+          cancel: "Annulla",
+        },
+        states: {
+          sending: "Invio…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "Impostazioni dello spazio di lavoro",
     page_label: "{workspace} - Impostazioni generali",
