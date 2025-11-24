@@ -227,7 +227,7 @@ class IntakeIssueViewSet(BaseViewSet):
             "none",
         ]:
             return Response({"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         project = Project.objects.get(pk=project_id)
 
         # get the triage state
@@ -433,7 +433,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 )
                 # updated issue description version
                 issue_description_version_task.delay(
-                    updated_issue=issue_current_instance,
+                    updated_issue=issue_requested_data,
                     issue_id=str(pk),
                     user_id=request.user.id,
                 )
