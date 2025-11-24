@@ -1,17 +1,17 @@
-"use client";
-
 import { observer } from "mobx-react";
 // icons
-import { ChevronDown, ListFilter } from "lucide-react";
+import { ListFilter } from "lucide-react";
+import { ChevronDownIcon } from "@plane/propel/icons";
 // components
 import { Row } from "@plane/ui";
-import { FiltersDropdown } from "@/components/issues/issue-layouts";
+import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { ViewFiltersSelection } from "@/components/views/filters/filter-selection";
 import { ViewOrderByDropdown } from "@/components/views/filters/order-by";
 // hooks
-import { useMember, useProjectView } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useProjectView } from "@/hooks/store/use-project-view";
 
-export const ViewMobileHeader = observer(() => {
+export const ViewMobileHeader = observer(function ViewMobileHeader() {
   // store hooks
   const { filters, updateFilters } = useProjectView();
   const {
@@ -41,7 +41,7 @@ export const ViewMobileHeader = observer(() => {
             menuButton={
               <Row className="flex items-center text-sm text-custom-text-200">
                 Filters
-                <ChevronDown className="ml-2 h-4 w-4 text-custom-text-200" strokeWidth={2} />
+                <ChevronDownIcon className="ml-2 h-4 w-4 text-custom-text-200" strokeWidth={2} />
               </Row>
             }
           >

@@ -55,9 +55,7 @@ class ForgotPasswordEndpoint(APIView):
             )
             return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
 
-        (EMAIL_HOST,) = get_configuration_value(
-            [{"key": "EMAIL_HOST", "default": os.environ.get("EMAIL_HOST")}]
-        )
+        (EMAIL_HOST,) = get_configuration_value([{"key": "EMAIL_HOST", "default": os.environ.get("EMAIL_HOST")}])
 
         if not (EMAIL_HOST):
             exc = AuthenticationException(
@@ -82,9 +80,7 @@ class ForgotPasswordEndpoint(APIView):
             uidb64, token = generate_password_token(user=user)
             current_site = base_host(request=request, is_app=True)
             # send the forgot password email
-            forgot_password.delay(
-                user.first_name, user.email, uidb64, token, current_site
-            )
+            forgot_password.delay(user.first_name, user.email, uidb64, token, current_site)
             return Response(
                 {"message": "Check your email to reset your password"},
                 status=status.HTTP_200_OK,

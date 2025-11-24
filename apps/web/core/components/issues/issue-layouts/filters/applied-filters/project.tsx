@@ -1,9 +1,8 @@
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
-// components
-import { Logo } from "@/components/common";
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import { CloseIcon } from "@plane/propel/icons";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 
 type Props = {
   handleRemove: (val: string) => void;
@@ -11,7 +10,7 @@ type Props = {
   editable: boolean | undefined;
 };
 
-export const AppliedProjectFilters: React.FC<Props> = observer((props) => {
+export const AppliedProjectFilters = observer(function AppliedProjectFilters(props: Props) {
   const { handleRemove, values, editable } = props;
   // store hooks
   const { projectMap } = useProject();
@@ -35,7 +34,7 @@ export const AppliedProjectFilters: React.FC<Props> = observer((props) => {
                 className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
                 onClick={() => handleRemove(projectId)}
               >
-                <X size={10} strokeWidth={2} />
+                <CloseIcon height={10} width={10} strokeWidth={2} />
               </button>
             )}
           </div>

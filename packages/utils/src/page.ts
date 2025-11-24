@@ -1,6 +1,12 @@
-import sortBy from "lodash/sortBy";
+import { sortBy } from "lodash-es";
 // plane imports
-import { TPage, TPageFilterProps, TPageFiltersSortBy, TPageFiltersSortKey, TPageNavigationTabs } from "@plane/types";
+import type {
+  TPage,
+  TPageFilterProps,
+  TPageFiltersSortBy,
+  TPageFiltersSortKey,
+  TPageNavigationTabs,
+} from "@plane/types";
 // local imports
 import { getDate } from "./datetime";
 import { satisfiesDateFilter } from "./filter";
@@ -61,7 +67,7 @@ export const shouldFilterPage = (page: TPage, filters: TPageFilterProps | undefi
   Object.keys(filters ?? {}).forEach((key) => {
     const filterKey = key as keyof TPageFilterProps;
     if (filterKey === "created_by" && filters?.created_by && filters.created_by.length > 0)
-      fallsInFilters = fallsInFilters && filters.created_by.includes(`${page.created_by}`);
+      fallsInFilters = fallsInFilters && filters.created_by.includes(`${page.owned_by}`);
     if (filterKey === "created_at" && filters?.created_at && filters.created_at.length > 0) {
       const createdDate = getDate(page.created_at);
       filters?.created_at.forEach((dateFilter) => {

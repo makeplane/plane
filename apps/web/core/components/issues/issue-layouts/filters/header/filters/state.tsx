@@ -1,13 +1,12 @@
-"use client";
-
 import React, { useMemo, useState } from "react";
-import sortBy from "lodash/sortBy";
+import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
 import { EIconSize } from "@plane/constants";
-import { IState } from "@plane/types";
+import { StateGroupIcon } from "@plane/propel/icons";
+import type { IState } from "@plane/types";
 // components
-import { Loader, StateGroupIcon } from "@plane/ui";
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { Loader } from "@plane/ui";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // ui
 // types
 
@@ -18,7 +17,7 @@ type Props = {
   states: IState[] | undefined;
 };
 
-export const FilterState: React.FC<Props> = observer((props) => {
+export const FilterState = observer(function FilterState(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery, states } = props;
 
   const [itemsToRender, setItemsToRender] = useState(5);

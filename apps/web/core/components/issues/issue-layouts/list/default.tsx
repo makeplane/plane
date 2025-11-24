@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 // plane constants
 import { ALL_ISSUES } from "@plane/constants";
 // types
-import {
+import type {
   GroupByColumnTypes,
   TGroupedIssues,
   TIssue,
@@ -17,17 +17,18 @@ import {
   TIssueKanbanFilters,
 } from "@plane/types";
 // components
-import { MultipleSelectGroup } from "@/components/core";
+import { MultipleSelectGroup } from "@/components/core/multiple-select";
 // hooks
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // plane web components
-import { IssueBulkOperationsRoot } from "@/plane-web/components/issues";
+import { IssueBulkOperationsRoot } from "@/plane-web/components/issues/bulk-operations";
 // plane web hooks
 import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
 // utils
-import { getGroupByColumns, isWorkspaceLevel, GroupDropLocation, isSubGrouped } from "../utils";
+import type { GroupDropLocation } from "../utils";
+import { getGroupByColumns, isWorkspaceLevel, isSubGrouped } from "../utils";
 import { ListGroup } from "./list-group";
-import { TRenderQuickActions } from "./list-view-types";
+import type { TRenderQuickActions } from "./list-view-types";
 
 export interface IList {
   groupedIssueIds: TGroupedIssues;
@@ -51,7 +52,7 @@ export interface IList {
   isEpic?: boolean;
 }
 
-export const List: React.FC<IList> = observer((props) => {
+export const List = observer(function List(props: IList) {
   const {
     groupedIssueIds,
     issuesMap,

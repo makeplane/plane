@@ -1,6 +1,7 @@
-import { FC } from "react";
-import { TLogoProps } from "@plane/types";
-import { ISvgIcons, Logo } from "@plane/ui";
+import type { FC } from "react";
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import type { ISvgIcons } from "@plane/propel/icons";
+import type { TLogoProps } from "@plane/types";
 import { getFileURL, truncateText } from "@plane/utils";
 
 type TSwitcherIconProps = {
@@ -8,11 +9,12 @@ type TSwitcherIconProps = {
   logo_url?: string;
   LabelIcon: FC<ISvgIcons>;
   size?: number;
+  type?: "lucide" | "material";
 };
 
-export const SwitcherIcon: FC<TSwitcherIconProps> = ({ logo_props, logo_url, LabelIcon, size = 12 }) => {
+export function SwitcherIcon({ logo_props, logo_url, LabelIcon, size = 12, type = "lucide" }: TSwitcherIconProps) {
   if (logo_props?.in_use) {
-    return <Logo logo={logo_props} size={size} type="lucide" />;
+    return <Logo logo={logo_props} size={size} type={type} />;
   }
 
   if (logo_url) {
@@ -26,21 +28,22 @@ export const SwitcherIcon: FC<TSwitcherIconProps> = ({ logo_props, logo_url, Lab
     );
   }
   return <LabelIcon height={size} width={size} />;
-};
+}
 
 type TSwitcherLabelProps = {
   logo_props?: TLogoProps;
   logo_url?: string;
   name?: string;
   LabelIcon: FC<ISvgIcons>;
+  type?: "lucide" | "material";
 };
 
-export const SwitcherLabel: FC<TSwitcherLabelProps> = (props) => {
-  const { logo_props, name, LabelIcon, logo_url } = props;
+export function SwitcherLabel(props: TSwitcherLabelProps) {
+  const { logo_props, name, LabelIcon, logo_url, type = "lucide" } = props;
   return (
     <div className="flex items-center gap-1 text-custom-text-200">
-      <SwitcherIcon logo_props={logo_props} logo_url={logo_url} LabelIcon={LabelIcon} />
+      <SwitcherIcon logo_props={logo_props} logo_url={logo_url} LabelIcon={LabelIcon} type={type} />
       {truncateText(name ?? "", 40)}
     </div>
   );
-};
+}

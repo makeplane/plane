@@ -1,24 +1,23 @@
-"use client";
-import { FC, Fragment } from "react";
+import { Fragment } from "react";
 import { observer } from "mobx-react";
-// plane ui
+// plane imports
 import { useTranslation } from "@plane/i18n";
-import { TCycleEstimateType } from "@plane/types";
+import type { TCycleEstimateType } from "@plane/types";
 import { Loader } from "@plane/ui";
-// components
 import { getDate } from "@plane/utils";
+// components
 import ProgressChart from "@/components/core/sidebar/progress-chart";
-import { EstimateTypeDropdown, validateCycleSnapshot } from "@/components/cycles";
-// helpers
+import { validateCycleSnapshot } from "@/components/cycles/analytics-sidebar/issue-progress";
+import { EstimateTypeDropdown } from "@/components/cycles/dropdowns";
 // hooks
-import { useCycle } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
 
 type ProgressChartProps = {
   workspaceSlug: string;
   projectId: string;
   cycleId: string;
 };
-export const SidebarChart: FC<ProgressChartProps> = observer((props) => {
+export const SidebarChart = observer(function SidebarChart(props: ProgressChartProps) {
   const { workspaceSlug, projectId, cycleId } = props;
 
   // hooks

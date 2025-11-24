@@ -3,17 +3,19 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EUserProjectRoles } from "@plane/types";
 // components
 import { ListLayout } from "@/components/core/list";
-import { ComicBoxButton, DetailedEmptyState, SimpleEmptyState } from "@/components/empty-state";
-import { ViewListLoader } from "@/components/ui";
-import { ProjectViewListItem } from "@/components/views";
+import { ViewListLoader } from "@/components/ui/loader/view-list-loader";
 // hooks
-import { useCommandPalette, useProjectView, useUserPermissions } from "@/hooks/store";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useProjectView } from "@/hooks/store/use-project-view";
+import { useUserPermissions } from "@/hooks/store/user";
+// local imports
+import { ProjectViewListItem } from "./view-list-item";
 
-export const ProjectViewsList = observer(() => {
+export const ProjectViewsList = observer(function ProjectViewsList() {
   const { projectId } = useParams();
   // plane hooks
   const { t } = useTranslation();
@@ -28,24 +30,16 @@ export const ProjectViewsList = observer(() => {
     [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER, EUserProjectRoles.GUEST],
     EUserPermissionsLevel.PROJECT
   );
-  const generalViewResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/onboarding/views",
-  });
-  const filteredViewResolvedPath = useResolvedAssetPath({
-    basePath: "/empty-state/search/views",
-  });
 
   if (loader || !projectViews || !filteredProjectViews) return <ViewListLoader />;
 
   if (filteredProjectViews.length === 0 && projectViews.length > 0) {
     return (
-      <div className="flex items-center justify-center h-full w-full">
-        <SimpleEmptyState
-          title={t("project_views.empty_state.filter.title")}
-          description={t("project_views.empty_state.filter.description")}
-          assetPath={filteredViewResolvedPath}
-        />
-      </div>
+      <EmptyStateDetailed
+        assetKey="search"
+        title={t("common_empty_state.search.title")}
+        description={t("common_empty_state.search.description")}
+      />
     );
   }
 
@@ -62,19 +56,18 @@ export const ProjectViewsList = observer(() => {
           </ListLayout>
         </div>
       ) : (
-        <DetailedEmptyState
-          title={t("project_views.empty_state.general.title")}
-          description={t("project_views.empty_state.general.description")}
-          assetPath={generalViewResolvedPath}
-          customPrimaryButton={
-            <ComicBoxButton
-              label={t("project_views.empty_state.general.primary_button.text")}
-              title={t("project_views.empty_state.general.primary_button.comic.title")}
-              description={t("project_views.empty_state.general.primary_button.comic.description")}
-              onClick={() => toggleCreateViewModal(true)}
-              disabled={!canPerformEmptyStateActions}
-            />
-          }
+        <EmptyStateDetailed
+          assetKey="view"
+          title={t("project_empty_state.views.title")}
+          description={t("project_empty_state.views.description")}
+          actions={[
+            {
+              label: t("project_empty_state.views.cta_primary"),
+              onClick: () => toggleCreateViewModal(true),
+              disabled: !canPerformEmptyStateActions,
+              variant: "primary",
+            },
+          ]}
         />
       )}
     </>

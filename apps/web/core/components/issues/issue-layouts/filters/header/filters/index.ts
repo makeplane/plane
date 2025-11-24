@@ -2,7 +2,6 @@ export * from "./assignee";
 export * from "./mentions";
 export * from "./created-by";
 export * from "./due-date";
-export * from "./filters-selection";
 export * from "./labels";
 export * from "./priority";
 export * from "./project";

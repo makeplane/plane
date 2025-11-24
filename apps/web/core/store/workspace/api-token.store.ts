@@ -2,10 +2,10 @@ import { action, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
 import { APITokenService } from "@plane/services";
-import { IApiToken } from "@plane/types";
+import type { IApiToken } from "@plane/types";
 // services
 // store
-import { CoreRootStore } from "../root.store";
+import type { CoreRootStore } from "../root.store";
 
 export interface IApiTokenStore {
   // observables

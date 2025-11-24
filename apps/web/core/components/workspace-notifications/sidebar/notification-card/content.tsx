@@ -1,5 +1,5 @@
-import { FC } from "react";
-import { TNotification } from "@plane/types";
+// plane imports
+import type { TNotification } from "@plane/types";
 import {
   convertMinutesToHoursMinutesString,
   renderFormattedDate,
@@ -8,16 +8,21 @@ import {
   stripAndTruncateHTML,
 } from "@plane/utils";
 // components
-// helpers
-import { LiteTextReadOnlyEditor } from "@/components/editor";
+import { LiteTextEditor } from "@/components/editor/lite-text";
 
-export const NotificationContent: FC<{
+export function NotificationContent({
+  notification,
+  workspaceId,
+  workspaceSlug,
+  projectId,
+  renderCommentBox = false,
+}: {
   notification: TNotification;
   workspaceId: string;
   workspaceSlug: string;
   projectId: string;
   renderCommentBox?: boolean;
-}> = ({ notification, workspaceId, workspaceSlug, projectId, renderCommentBox = false }) => {
+}) {
   const { data, triggered_by_details: triggeredBy } = notification;
   const notificationField = data?.issue_activity.field;
   const newValue = data?.issue_activity.new_value;
@@ -100,7 +105,8 @@ export const NotificationContent: FC<{
           <span className="text-custom-text-100 font-medium">{renderValue()}</span>
           {notificationField === "comment" && renderCommentBox && (
             <div className="scale-75 origin-left">
-              <LiteTextReadOnlyEditor
+              <LiteTextEditor
+                editable={false}
                 id=""
                 initialValue={newValue ?? ""}
                 workspaceId={workspaceId}
@@ -117,4 +123,4 @@ export const NotificationContent: FC<{
       )}
     </>
   );
-};
+}

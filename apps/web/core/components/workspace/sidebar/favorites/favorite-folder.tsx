@@ -1,8 +1,6 @@
-"use client";
-
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import {
+import type {
   DragLocationHistory,
   ElementDragPayload,
   DropTargetRecord,
@@ -12,16 +10,18 @@ import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/eleme
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 
-import orderBy from "lodash/orderBy";
+import { orderBy } from "lodash-es";
 import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
-import { PenSquare, Star, MoreHorizontal, ChevronRight, GripVertical } from "lucide-react";
+import { Star, MoreHorizontal, GripVertical } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { IFavorite, InstructionType } from "@plane/types";
-import { CustomMenu, Tooltip, DropIndicator, FavoriteFolderIcon, DragHandle } from "@plane/ui";
+import { DraftIcon, FavoriteFolderIcon, ChevronRightIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { IFavorite, InstructionType } from "@plane/types";
+import { CustomMenu, DropIndicator, DragHandle } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
@@ -40,10 +40,10 @@ type Props = {
   handleDrop: (self: DropTargetRecord, source: ElementDragPayload, location: DragLocationHistory) => void;
 };
 
-export const FavoriteFolder: React.FC<Props> = (props) => {
+export function FavoriteFolder(props: Props) {
   const { favorite, handleRemoveFromFavorites, isLastChild, handleDrop } = props;
   // store hooks
-  const { getGroupedFavorites } = useFavorite();
+  const { fetchGroupedFavorites } = useFavorite();
   const { isMobile } = usePlatformOS();
   const { workspaceSlug } = useParams();
   // states
@@ -59,9 +59,9 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (favorite.children === undefined && workspaceSlug) {
-      getGroupedFavorites(workspaceSlug.toString(), favorite.id);
+      fetchGroupedFavorites(workspaceSlug.toString(), favorite.id);
     }
-  }, [favorite.id, favorite.children, workspaceSlug, getGroupedFavorites]);
+  }, [favorite.id, favorite.children, workspaceSlug, fetchGroupedFavorites]);
 
   useEffect(() => {
     const element = elementRef.current;
@@ -179,7 +179,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                         tooltipContent={
                           favorite.sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"
                         }
-                        position="top-right"
+                        position="top-end"
                         disabled={isDragging}
                       >
                         <button
@@ -230,7 +230,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                   </CustomMenu.MenuItem>
                   <CustomMenu.MenuItem onClick={() => setFolderToRename(favorite.id)}>
                     <div className="flex items-center justify-start gap-2">
-                      <PenSquare className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
+                      <DraftIcon className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
                       <span>Rename Folder</span>
                     </div>
                   </CustomMenu.MenuItem>
@@ -248,7 +248,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                     open ? "aria_labels.projects_sidebar.close_folder" : "aria_labels.projects_sidebar.open_folder"
                   )}
                 >
-                  <ChevronRight
+                  <ChevronRightIcon
                     className={cn("size-3 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
                       "rotate-90": open,
                     })}
@@ -287,4 +287,4 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
       </Disclosure>
     </>
   );
-};
+}

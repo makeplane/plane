@@ -1,32 +1,29 @@
-"use client";
-
-import { FC, useCallback, useEffect, useRef, useState } from "react";
+import type { FC } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import {
-  EIssueLayoutTypes,
-  EIssueFilterType,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  WORK_ITEM_TRACKER_EVENTS,
-} from "@plane/constants";
-import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
-import { DeleteIssueModal } from "@/components/issues";
+import { EIssueFilterType, EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
+import type { EIssuesStoreType } from "@plane/types";
+import { EIssueServiceType, EIssueLayoutTypes } from "@plane/types";
 //constants
 //hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useIssueDetail, useIssues, useKanbanView, useUserPermissions } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useKanbanView } from "@/hooks/store/use-kanban-view";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useGroupIssuesDragNDrop } from "@/hooks/use-group-dragndrop";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // store
 // ui
 // types
+import { DeleteIssueModal } from "../../delete-issue-modal";
 import { IssueLayoutHOC } from "../issue-layout-HOC";
-import { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types";
+import type { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types";
 //components
 import { getSourceFromDropPayload } from "../utils";
 import { KanBan } from "./default";
@@ -37,7 +34,6 @@ export type KanbanStoreType =
   | EIssuesStoreType.MODULE
   | EIssuesStoreType.CYCLE
   | EIssuesStoreType.PROJECT_VIEW
-  | EIssuesStoreType.DRAFT
   | EIssuesStoreType.PROFILE
   | EIssuesStoreType.TEAM
   | EIssuesStoreType.TEAM_VIEW
@@ -52,7 +48,7 @@ export interface IBaseKanBanLayout {
   isEpic?: boolean;
 }
 
-export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBaseKanBanLayout) => {
+export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBanLayout) {
   const {
     QuickActions,
     addIssuesToView,
@@ -243,64 +239,65 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const collapsedGroups = issuesFilter?.issueFilters?.kanbanFilters || { group_by: [], sub_group_by: [] };
 
   return (
-    <IssueLayoutHOC layout={EIssueLayoutTypes.KANBAN}>
+    <>
       <DeleteIssueModal
         dataId={draggedIssueId}
         isOpen={deleteIssueModal}
         handleClose={() => setDeleteIssueModal(false)}
         onSubmit={handleDeleteIssue}
+        isEpic={isEpic}
       />
-
+      {/* drag and delete component */}
       <div
-        className={`horizontal-scrollbar scrollbar-lg relative flex h-full w-full bg-custom-background-90 ${sub_group_by ? "vertical-scrollbar overflow-y-auto" : "overflow-x-auto overflow-y-hidden"}`}
-        ref={scrollableContainerRef}
+        className={`fixed left-1/2 -translate-x-1/2 ${
+          isDragging ? "z-40" : ""
+        } top-3 mx-3 flex w-72 items-center justify-center`}
+        ref={deleteAreaRef}
       >
-        <div className="relative h-full w-max min-w-full bg-custom-background-90">
-          {/* drag and delete component */}
-          <div
-            className={`fixed left-1/2 -translate-x-1/2 ${
-              isDragging ? "z-40" : ""
-            } top-3 mx-3 flex w-72 items-center justify-center`}
-            ref={deleteAreaRef}
-          >
-            <div
-              className={`${
-                isDragging ? `opacity-100` : `opacity-0`
-              } flex w-full items-center justify-center rounded border-2 border-red-500/20 bg-custom-background-100 px-3 py-5 text-xs font-medium italic text-red-500 ${
-                isDragOverDelete ? "bg-red-500 opacity-70 blur-2xl" : ""
-              } transition duration-300`}
-            >
-              Drop here to delete the work item.
-            </div>
-          </div>
-
-          <div className="h-full w-max">
-            <KanBanView
-              issuesMap={issueMap}
-              groupedIssueIds={groupedIssueIds ?? {}}
-              getGroupIssueCount={issues.getGroupIssueCount}
-              displayProperties={displayProperties}
-              sub_group_by={sub_group_by}
-              group_by={group_by}
-              orderBy={orderBy}
-              updateIssue={updateIssue}
-              quickActions={renderQuickActions}
-              handleCollapsedGroups={handleCollapsedGroups}
-              collapsedGroups={collapsedGroups}
-              enableQuickIssueCreate={enableQuickAdd}
-              showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}
-              quickAddCallback={quickAddIssue}
-              disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
-              canEditProperties={canEditProperties}
-              addIssuesToView={addIssuesToView}
-              scrollableContainerRef={scrollableContainerRef}
-              handleOnDrop={handleOnDrop}
-              loadMoreIssues={fetchMoreIssues}
-              isEpic={isEpic}
-            />
-          </div>
+        <div
+          className={`${
+            isDragging ? `opacity-100` : `opacity-0`
+          } flex w-full items-center justify-center rounded border-2 border-red-500/20 bg-custom-background-100 px-3 py-5 text-xs font-medium italic text-red-500 ${
+            isDragOverDelete ? "bg-red-500 opacity-70 blur-2xl" : ""
+          } transition duration-300`}
+        >
+          Drop here to delete the work item.
         </div>
       </div>
-    </IssueLayoutHOC>
+      <IssueLayoutHOC layout={EIssueLayoutTypes.KANBAN}>
+        <div
+          className={`horizontal-scrollbar scrollbar-lg relative flex h-full w-full bg-custom-background-90 ${sub_group_by ? "vertical-scrollbar overflow-y-auto" : "overflow-x-auto overflow-y-hidden"}`}
+          ref={scrollableContainerRef}
+        >
+          <div className="relative h-full w-max min-w-full bg-custom-background-90">
+            <div className="h-full w-max">
+              <KanBanView
+                issuesMap={issueMap}
+                groupedIssueIds={groupedIssueIds ?? {}}
+                getGroupIssueCount={issues.getGroupIssueCount}
+                displayProperties={displayProperties}
+                sub_group_by={sub_group_by}
+                group_by={group_by}
+                orderBy={orderBy}
+                updateIssue={updateIssue}
+                quickActions={renderQuickActions}
+                handleCollapsedGroups={handleCollapsedGroups}
+                collapsedGroups={collapsedGroups}
+                enableQuickIssueCreate={enableQuickAdd}
+                showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}
+                quickAddCallback={quickAddIssue}
+                disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
+                canEditProperties={canEditProperties}
+                addIssuesToView={addIssuesToView}
+                scrollableContainerRef={scrollableContainerRef}
+                handleOnDrop={handleOnDrop}
+                loadMoreIssues={fetchMoreIssues}
+                isEpic={isEpic}
+              />
+            </div>
+          </div>
+        </div>
+      </IssueLayoutHOC>
+    </>
   );
 });

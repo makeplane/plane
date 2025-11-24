@@ -3,20 +3,25 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { ChevronDown, CircleUserRound, InfoIcon } from "lucide-react";
+import { CircleUserRound, InfoIcon } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
+import { PROFILE_SETTINGS_TRACKER_ELEMENTS, PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button, getButtonStyling } from "@plane/propel/button";
+import { ChevronDownIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import type { IUser, TUserProfile } from "@plane/types";
-import { Button, Input, TOAST_TYPE, setPromiseToast, setToast } from "@plane/ui";
-// components
-import { getButtonStyling } from "@plane/ui/src/button";
+import { Input } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
-import { DeactivateAccountModal } from "@/components/account";
-import { ImagePickerPopover, UserImageUploadModal } from "@/components/core";
+// components
+import { DeactivateAccountModal } from "@/components/account/deactivate-account-modal";
+import { ImagePickerPopover } from "@/components/core/image-picker-popover";
+import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
 // helpers
+import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
-import { useUser, useUserProfile } from "@/hooks/store";
+import { useUser, useUserProfile } from "@/hooks/store/user";
 
 type TUserProfileForm = {
   avatar_url: string;
@@ -37,7 +42,7 @@ export type TProfileFormProps = {
   profile: TUserProfile;
 };
 
-export const ProfileForm = observer((props: TProfileFormProps) => {
+export const ProfileForm = observer(function ProfileForm(props: TProfileFormProps) {
   const { user, profile } = props;
   const { workspaceSlug } = useParams();
   // states
@@ -135,6 +140,17 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
         message: () => `There was some error in updating your profile. Please try again.`,
       },
     });
+    updateUserAndProfile
+      .then(() => {
+        captureSuccess({
+          eventName: PROFILE_SETTINGS_TRACKER_EVENTS.update_profile,
+        });
+      })
+      .catch(() => {
+        captureError({
+          eventName: PROFILE_SETTINGS_TRACKER_EVENTS.update_profile,
+        });
+      });
   };
 
   return (
@@ -344,7 +360,12 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
           </div>
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between pt-6 pb-8">
-              <Button variant="primary" type="submit" loading={isLoading}>
+              <Button
+                variant="primary"
+                type="submit"
+                loading={isLoading}
+                data-ph-element={PROFILE_SETTINGS_TRACKER_ELEMENTS.SAVE_CHANGES_BUTTON}
+              >
                 {isLoading ? t("saving") : t("save_changes")}
               </Button>
             </div>
@@ -356,7 +377,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
           <>
             <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">
               <span className="text-lg font-medium tracking-tight">{t("deactivate_account")}</span>
-              <ChevronDown className={`h-5 w-5 transition-all ${open ? "rotate-180" : ""}`} />
+              <ChevronDownIcon className={`h-5 w-5 transition-all ${open ? "rotate-180" : ""}`} />
             </Disclosure.Button>
             <Transition
               show={open}
@@ -371,7 +392,11 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                 <div className="flex flex-col gap-8">
                   <span className="text-sm tracking-tight">{t("deactivate_account_description")}</span>
                   <div>
-                    <Button variant="danger" onClick={() => setDeactivateAccountModal(true)}>
+                    <Button
+                      variant="danger"
+                      onClick={() => setDeactivateAccountModal(true)}
+                      data-ph-element={PROFILE_SETTINGS_TRACKER_ELEMENTS.DEACTIVATE_ACCOUNT_BUTTON}
+                    >
                       {t("deactivate_account")}
                     </Button>
                   </div>

@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 // types
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 // helpers
 import { Row } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
@@ -10,7 +10,7 @@ type Props = {
   issue: TIssue;
 };
 
-export const SpreadsheetUpdatedOnColumn: React.FC<Props> = observer((props: Props) => {
+export const SpreadsheetUpdatedOnColumn = observer(function SpreadsheetUpdatedOnColumn(props: Props) {
   const { issue } = props;
 
   return (

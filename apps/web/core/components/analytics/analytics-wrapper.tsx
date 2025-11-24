@@ -9,7 +9,7 @@ type Props = {
   className?: string;
 };
 
-const AnalyticsWrapper: React.FC<Props> = (props) => {
+function AnalyticsWrapper(props: Props) {
   const { i18nTitle, children, className } = props;
   const { t } = useTranslation();
   return (
@@ -18,6 +18,6 @@ const AnalyticsWrapper: React.FC<Props> = (props) => {
       {children}
     </div>
   );
-};
+}
 
 export default AnalyticsWrapper;

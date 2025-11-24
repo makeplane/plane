@@ -1,22 +1,29 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 // constants
-import { EPageAccess, EProjectFeatureKey, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+import {
+  EPageAccess,
+  EProjectFeatureKey,
+  PROJECT_PAGE_TRACKER_EVENTS,
+  PROJECT_TRACKER_ELEMENTS,
+} from "@plane/constants";
 // plane types
-import { TPage } from "@plane/types";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TPage } from "@plane/types";
 // plane ui
-import { Breadcrumbs, Button, Header, setToast, TOAST_TYPE } from "@plane/ui";
+import { Breadcrumbs, Header } from "@plane/ui";
+// helpers
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 // plane web
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
-export const PagesListHeader = observer(() => {
+export const PagesListHeader = observer(function PagesListHeader() {
   // states
   const [isCreatingPage, setIsCreatingPage] = useState(false);
   // router
@@ -37,16 +44,29 @@ export const PagesListHeader = observer(() => {
 
     await createPage(payload)
       .then((res) => {
+        captureSuccess({
+          eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
+          payload: {
+            id: res?.id,
+            state: "SUCCESS",
+          },
+        });
         const pageId = `/${workspaceSlug}/projects/${currentProjectDetails?.id}/pages/${res?.id}`;
         router.push(pageId);
       })
-      .catch((err) =>
+      .catch((err) => {
+        captureError({
+          eventName: PROJECT_PAGE_TRACKER_EVENTS.create,
+          payload: {
+            state: "ERROR",
+          },
+        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: err?.data?.error || "Page could not be created. Please try again.",
-        })
-      )
+        });
+      })
       .finally(() => setIsCreatingPage(false));
   };
 

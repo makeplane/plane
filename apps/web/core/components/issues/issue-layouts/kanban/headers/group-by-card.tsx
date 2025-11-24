@@ -1,17 +1,17 @@
-"use client";
-
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 // lucide icons
 import { Minimize2, Maximize2, Circle, Plus } from "lucide-react";
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
-import { TIssue, ISearchIssueResponse, TIssueKanbanFilters, TIssueGroupByOptions } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TIssue, ISearchIssueResponse, TIssueKanbanFilters, TIssueGroupByOptions } from "@plane/types";
 // ui
-import { CustomMenu, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 // components
-import { ExistingIssuesListModal } from "@/components/core";
-import { CreateUpdateIssueModal } from "@/components/issues";
+import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
+import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/modal";
 // constants
 import { captureClick } from "@/helpers/event-tracker.helper";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
@@ -35,7 +35,7 @@ interface IHeaderGroupByCard {
   isEpic?: boolean;
 }
 
-export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
+export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHeaderGroupByCard) {
   const {
     group_by,
     sub_group_by,
@@ -58,9 +58,6 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
   const storeType = useIssueStoreType();
   // router
   const { workspaceSlug, projectId, moduleId, cycleId } = useParams();
-  const pathname = usePathname();
-
-  const isDraftIssue = pathname.includes("draft-issue");
 
   const renderExistingIssueModal = moduleId || cycleId;
   const ExistingIssuesListModalPayload = moduleId ? { module: moduleId.toString() } : { cycle: true };
@@ -97,7 +94,6 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
           onClose={() => setIsOpen(false)}
           data={issuePayload}
           storeType={storeType}
-          isDraft={isDraftIssue}
         />
       )}
 

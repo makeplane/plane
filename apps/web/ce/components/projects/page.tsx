@@ -1,14 +1,13 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // components
-import Root from "@/components/project/root";
+import { ProjectRoot } from "@/components/project/root";
 // hooks
-import { useProject, useWorkspace } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
-export const ProjectPageRoot = observer(() => {
+export const ProjectPageRoot = observer(function ProjectPageRoot() {
   // router
   const { workspaceSlug } = useParams();
   // store
@@ -21,5 +20,5 @@ export const ProjectPageRoot = observer(() => {
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  return <Root />;
+  return <ProjectRoot />;
 });

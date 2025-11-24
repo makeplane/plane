@@ -1,22 +1,21 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useFormContext, Controller } from "react-hook-form";
 import { Plus } from "lucide-react";
 import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
-import { IJiraImporterForm } from "@plane/types";
+import type { IJiraImporterForm } from "@plane/types";
 // hooks
 // components
 import { CustomSelect, Input } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "@plane/utils";
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useCommandPalette, useProject } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useProject } from "@/hooks/store/use-project";
 // types
 
-export const JiraGetImportDetail: React.FC = observer(() => {
+export const JiraGetImportDetail = observer(function JiraGetImportDetail() {
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
   const { workspaceProjectIds, getProjectById } = useProject();
@@ -63,7 +62,6 @@ export const JiraGetImportDetail: React.FC = observer(() => {
           {errors.metadata?.api_token && <p className="text-xs text-red-500">{errors.metadata.api_token.message}</p>}
         </div>
       </div>
-
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Jira Project Key</h3>
@@ -94,7 +92,6 @@ export const JiraGetImportDetail: React.FC = observer(() => {
           )}
         </div>
       </div>
-
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Jira Email Address</h3>
@@ -124,7 +121,6 @@ export const JiraGetImportDetail: React.FC = observer(() => {
           {errors.metadata?.email && <p className="text-xs text-red-500">{errors.metadata.email.message}</p>}
         </div>
       </div>
-
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Jira Installation or Cloud Host Name</h3>
@@ -155,7 +151,6 @@ export const JiraGetImportDetail: React.FC = observer(() => {
           )}
         </div>
       </div>
-
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Import to project</h3>
@@ -180,7 +175,6 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                     )}
                   </span>
                 }
-                optionsClassName="w-full"
               >
                 {workspaceProjectIds && workspaceProjectIds.length > 0 ? (
                   workspaceProjectIds.map((projectId) => {

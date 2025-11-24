@@ -1,15 +1,17 @@
-"use client";
-
 import React, { forwardRef, useEffect } from "react";
 import { observer } from "mobx-react";
 import { TwitterPicker } from "react-color";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import type { SubmitHandler } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { Popover, Transition } from "@headlessui/react";
 // plane imports
-import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "@plane/constants";
+import { getRandomLabelColor, LABEL_COLOR_OPTIONS, PROJECT_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IIssueLabel } from "@plane/types";
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IIssueLabel } from "@plane/types";
+import { Input } from "@plane/ui";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 
 export type TLabelOperationsCallbacks = {
   createLabel: (data: Partial<IIssueLabel>) => Promise<IIssueLabel>;
@@ -31,7 +33,10 @@ const defaultValues: Partial<IIssueLabel> = {
 };
 
 export const CreateUpdateLabelInline = observer(
-  forwardRef<HTMLDivElement, TCreateUpdateLabelInlineProps>(function CreateUpdateLabelInline(props, ref) {
+  forwardRef(function CreateUpdateLabelInline(
+    props: TCreateUpdateLabelInlineProps,
+    ref: React.ForwardedRef<HTMLDivElement>
+  ) {
     const { labelForm, setLabelForm, isUpdating, labelOperationsCallbacks, labelToUpdate, onClose } = props;
     // form info
     const {
@@ -59,11 +64,25 @@ export const CreateUpdateLabelInline = observer(
 
       await labelOperationsCallbacks
         .createLabel(formData)
-        .then(() => {
+        .then((res) => {
+          captureSuccess({
+            eventName: PROJECT_SETTINGS_TRACKER_EVENTS.label_created,
+            payload: {
+              name: res.name,
+              id: res.id,
+            },
+          });
           handleClose();
           reset(defaultValues);
         })
         .catch((error) => {
+          captureError({
+            eventName: PROJECT_SETTINGS_TRACKER_EVENTS.label_created,
+            payload: {
+              name: formData.name,
+            },
+            error,
+          });
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
@@ -78,11 +97,26 @@ export const CreateUpdateLabelInline = observer(
 
       await labelOperationsCallbacks
         .updateLabel(labelToUpdate.id, formData)
-        .then(() => {
+        .then((res) => {
+          captureSuccess({
+            eventName: PROJECT_SETTINGS_TRACKER_EVENTS.label_updated,
+            payload: {
+              name: res.name,
+              id: res.id,
+            },
+          });
           reset(defaultValues);
           handleClose();
         })
         .catch((error) => {
+          captureError({
+            eventName: PROJECT_SETTINGS_TRACKER_EVENTS.label_updated,
+            payload: {
+              name: formData.name,
+              id: labelToUpdate.id,
+            },
+            error,
+          });
           setToast({
             title: "Oops!",
             type: TOAST_TYPE.ERROR,

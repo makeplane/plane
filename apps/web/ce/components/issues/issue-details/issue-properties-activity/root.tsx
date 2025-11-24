@@ -1,8 +1,10 @@
-import { FC } from "react";
+import type { FC } from "react";
 
 type TIssueAdditionalPropertiesActivity = {
   activityId: string;
   ends: "top" | "bottom" | undefined;
 };
 
-export const IssueAdditionalPropertiesActivity: FC<TIssueAdditionalPropertiesActivity> = () => <></>;
+export function IssueAdditionalPropertiesActivity(_props: TIssueAdditionalPropertiesActivity) {
+  return <></>;
+}

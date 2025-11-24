@@ -1,11 +1,6 @@
-import { Editor } from "@tiptap/react";
-
-export interface IMarking {
-  type: "heading";
-  level: number;
-  text: string;
-  sequence: number;
-}
+import type { Editor } from "@tiptap/react";
+// types
+import type { IMarking } from "@/types";
 
 function findNthH1(editor: Editor, n: number, level: number): number {
   let count = 0;
@@ -32,6 +27,7 @@ function scrollToNode(editor: Editor, pos: number): void {
   }
 }
 
+// eslint-disable-next-line no-undef
 export function scrollToNodeViaDOMCoordinates(editor: Editor, pos: number, behavior?: ScrollBehavior): void {
   const view = editor.view;
 

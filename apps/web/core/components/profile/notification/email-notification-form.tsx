@@ -1,12 +1,14 @@
-"use client";
-
-import React, { FC, useEffect } from "react";
+import type { FC } from "react";
+import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { PROFILE_SETTINGS_TRACKER_ELEMENTS, PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IUserEmailNotificationSettings } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IUserEmailNotificationSettings } from "@plane/types";
 // ui
-import { ToggleSwitch, TOAST_TYPE, setToast } from "@plane/ui";
+import { ToggleSwitch } from "@plane/ui";
 // services
+import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { UserService } from "@/services/user.service";
 // types
 interface IEmailNotificationFormProps {
@@ -16,7 +18,7 @@ interface IEmailNotificationFormProps {
 // services
 const userService = new UserService();
 
-export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) => {
+export function EmailNotificationForm(props: IEmailNotificationFormProps) {
   const { data } = props;
   const { t } = useTranslation();
   // form data
@@ -31,6 +33,12 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
       await userService.updateCurrentUserEmailNotificationSettings({
         [key]: value,
       });
+      captureSuccess({
+        eventName: PROFILE_SETTINGS_TRACKER_EVENTS.notifications_updated,
+        payload: {
+          [key]: value,
+        },
+      });
       setToast({
         title: t("success"),
         type: TOAST_TYPE.SUCCESS,
@@ -38,6 +46,12 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
       });
     } catch (err) {
       console.error(err);
+      captureError({
+        eventName: PROFILE_SETTINGS_TRACKER_EVENTS.notifications_updated,
+        payload: {
+          [key]: value,
+        },
+      });
       setToast({
         title: t("error"),
         type: TOAST_TYPE.ERROR,
@@ -68,6 +82,9 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
                   value={value}
                   onChange={(newValue) => {
                     onChange(newValue);
+                    captureClick({
+                      elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.PROPERTY_CHANGES_TOGGLE,
+                    });
                     handleSettingChange("property_change", newValue);
                   }}
                   size="sm"
@@ -90,6 +107,9 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
                   value={value}
                   onChange={(newValue) => {
                     onChange(newValue);
+                    captureClick({
+                      elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.STATE_CHANGES_TOGGLE,
+                    });
                     handleSettingChange("state_change", newValue);
                   }}
                   size="sm"
@@ -134,6 +154,9 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
                   value={value}
                   onChange={(newValue) => {
                     onChange(newValue);
+                    captureClick({
+                      elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.COMMENTS_TOGGLE,
+                    });
                     handleSettingChange("comment", newValue);
                   }}
                   size="sm"
@@ -156,6 +179,9 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
                   value={value}
                   onChange={(newValue) => {
                     onChange(newValue);
+                    captureClick({
+                      elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.MENTIONS_TOGGLE,
+                    });
                     handleSettingChange("mention", newValue);
                   }}
                   size="sm"
@@ -167,4 +193,4 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
       </div>
     </>
   );
-};
+}

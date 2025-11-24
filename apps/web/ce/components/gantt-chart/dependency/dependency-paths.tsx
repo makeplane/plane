@@ -1,9 +1,9 @@
-import { FC } from "react";
+import type { FC } from "react";
 
 type Props = {
   isEpic?: boolean;
 };
-export const TimelineDependencyPaths: FC<Props> = (props) => {
+export function TimelineDependencyPaths(props: Props) {
   const { isEpic = false } = props;
   return <></>;
-};
+}

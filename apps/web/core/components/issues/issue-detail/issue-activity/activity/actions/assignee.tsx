@@ -1,15 +1,14 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 // icons
-import { Users } from "lucide-react";
+import { MembersPropertyIcon } from "@plane/propel/icons";
 // hooks;
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
 import { IssueActivityBlockComponent, IssueLink } from "./";
 
 type TIssueAssigneeActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
-export const IssueAssigneeActivity: FC<TIssueAssigneeActivity> = observer((props) => {
+export const IssueAssigneeActivity = observer(function IssueAssigneeActivity(props: TIssueAssigneeActivity) {
   const { activityId, ends, showIssue = true } = props;
   // hooks
   const {
@@ -21,7 +20,7 @@ export const IssueAssigneeActivity: FC<TIssueAssigneeActivity> = observer((props
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<Users className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />}
+      icon={<MembersPropertyIcon className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-200" />}
       activityId={activityId}
       ends={ends}
     >

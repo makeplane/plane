@@ -1,36 +1,30 @@
-"use client";
-
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
-// components
-import { EmptyState } from "@/components/common";
-import { PageHead } from "@/components/core";
-import { ProjectViewLayoutRoot } from "@/components/issues";
-// hooks
-import { useProject, useProjectView } from "@/hooks/store";
 // assets
+import emptyView from "@/app/assets/empty-state/view.svg?url";
+// components
+import { EmptyState } from "@/components/common/empty-state";
+import { PageHead } from "@/components/core/page-title";
+import { ProjectViewLayoutRoot } from "@/components/issues/issue-layouts/roots/project-view-layout-root";
+// hooks
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectView } from "@/hooks/store/use-project-view";
 import { useAppRouter } from "@/hooks/use-app-router";
-import emptyView from "@/public/empty-state/view.svg";
+import type { Route } from "./+types/page";
 
-const ProjectViewIssuesPage = observer(() => {
+function ProjectViewIssuesPage({ params }: Route.ComponentProps) {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId, viewId } = useParams();
+  const { workspaceSlug, projectId, viewId } = params;
   // store hooks
   const { fetchViewDetails, getViewById } = useProjectView();
   const { getProjectById } = useProject();
   // derived values
-  const projectView = viewId ? getViewById(viewId.toString()) : undefined;
-  const project = projectId ? getProjectById(projectId.toString()) : undefined;
+  const projectView = getViewById(viewId);
+  const project = getProjectById(projectId);
   const pageTitle = project?.name && projectView?.name ? `${project?.name} - ${projectView?.name}` : undefined;
 
-  const { error } = useSWR(
-    workspaceSlug && projectId && viewId ? `VIEW_DETAILS_${viewId.toString()}` : null,
-    workspaceSlug && projectId && viewId
-      ? () => fetchViewDetails(workspaceSlug.toString(), projectId.toString(), viewId.toString())
-      : null
-  );
+  const { error } = useSWR(`VIEW_DETAILS_${viewId}`, () => fetchViewDetails(workspaceSlug, projectId, viewId));
 
   if (error) {
     return (
@@ -52,6 +46,6 @@ const ProjectViewIssuesPage = observer(() => {
       <ProjectViewLayoutRoot />
     </>
   );
-});
+}
 
-export default ProjectViewIssuesPage;
+export default observer(ProjectViewIssuesPage);

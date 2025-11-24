@@ -1,15 +1,15 @@
-"use client";
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 // helpers
 import { cn } from "@plane/utils";
 
 type Props = {
-  icon: JSX.Element;
+  icon: React.ReactNode;
   title: string;
   disabled?: boolean;
 };
 
-export const IssueDetailWidgetButton: FC<Props> = (props) => {
+export function IssueDetailWidgetButton(props: Props) {
   const { icon, title, disabled = false } = props;
   return (
     <div
@@ -25,4 +25,4 @@ export const IssueDetailWidgetButton: FC<Props> = (props) => {
       <span className="text-sm font-medium">{title}</span>
     </div>
   );
-};
+}

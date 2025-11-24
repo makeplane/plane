@@ -2,7 +2,7 @@ import { useContext } from "react";
 // context
 import { StoreContext } from "@/lib/store-context";
 // mobx store
-import { IWorkspaceNotificationStore } from "@/store/notifications/workspace-notifications.store";
+import type { IWorkspaceNotificationStore } from "@/store/notifications/workspace-notifications.store";
 
 export const useWorkspaceNotifications = (): IWorkspaceNotificationStore => {
   const context = useContext(StoreContext);

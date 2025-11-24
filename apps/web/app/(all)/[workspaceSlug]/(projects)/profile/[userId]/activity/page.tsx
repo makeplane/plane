@@ -1,21 +1,19 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
-// ui
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 // components
-import { PageHead } from "@/components/core";
-import { DownloadActivityButton, WorkspaceActivityListPage } from "@/components/profile";
+import { PageHead } from "@/components/core/page-title";
+import { DownloadActivityButton } from "@/components/profile/activity/download-button";
+import { WorkspaceActivityListPage } from "@/components/profile/activity/workspace-activity-list";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
-// plane-web constants
+import { useUserPermissions } from "@/hooks/store/user";
 
 const PER_PAGE = 100;
 
-const ProfileActivityPage = observer(() => {
+function ProfileActivityPage() {
   // states
   const [pageCount, setPageCount] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -31,7 +29,7 @@ const ProfileActivityPage = observer(() => {
 
   const handleLoadMore = () => setPageCount((prev) => prev + 1);
 
-  const activityPages: JSX.Element[] = [];
+  const activityPages: React.ReactNode[] = [];
   for (let i = 0; i < pageCount; i++)
     activityPages.push(
       <WorkspaceActivityListPage
@@ -69,6 +67,6 @@ const ProfileActivityPage = observer(() => {
       </div>
     </>
   );
-});
+}
 
-export default ProfileActivityPage;
+export default observer(ProfileActivityPage);

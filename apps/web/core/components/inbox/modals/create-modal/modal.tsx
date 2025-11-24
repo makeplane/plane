@@ -1,12 +1,11 @@
-"use-client";
-
-import { FC, useState } from "react";
-// ui
+import type { FC } from "react";
+import { useState } from "react";
+// plane imports
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-// components
-import { InboxIssueCreateRoot } from "@/components/inbox/modals/create-modal";
 // hooks
 import useKeypress from "@/hooks/use-keypress";
+// local imports
+import { InboxIssueCreateRoot } from "./create-root";
 
 type TInboxIssueCreateModalRoot = {
   workspaceSlug: string;
@@ -15,7 +14,7 @@ type TInboxIssueCreateModalRoot = {
   handleModalClose: () => void;
 };
 
-export const InboxIssueCreateModalRoot: FC<TInboxIssueCreateModalRoot> = (props) => {
+export function InboxIssueCreateModalRoot(props: TInboxIssueCreateModalRoot) {
   const { workspaceSlug, projectId, modalState, handleModalClose } = props;
   // states
   const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
@@ -45,4 +44,4 @@ export const InboxIssueCreateModalRoot: FC<TInboxIssueCreateModalRoot> = (props)
       />
     </ModalCore>
   );
-};
+}

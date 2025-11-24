@@ -1,9 +1,8 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 // types
-import { useLabel } from "@/hooks/store";
-import { TLabelOperations } from "./root";
+import { useLabel } from "@/hooks/store/use-label";
+import type { TLabelOperations } from "./root";
 
 type TLabelListItem = {
   workspaceSlug: string;
@@ -15,7 +14,7 @@ type TLabelListItem = {
   disabled: boolean;
 };
 
-export const LabelListItem: FC<TLabelListItem> = observer((props) => {
+export const LabelListItem = observer(function LabelListItem(props: TLabelListItem) {
   const { workspaceSlug, projectId, issueId, labelId, values, labelOperations, disabled } = props;
   // hooks
   const { getLabelById } = useLabel();
@@ -47,7 +46,7 @@ export const LabelListItem: FC<TLabelListItem> = observer((props) => {
       <div className="truncate">{label.name}</div>
       {!disabled && (
         <div className="flex-shrink-0">
-          <X className="transition-all h-2.5 w-2.5 group-hover:text-red-500" />
+          <CloseIcon className="transition-all h-2.5 w-2.5 group-hover:text-red-500" />
         </div>
       )}
     </div>

@@ -1,26 +1,51 @@
-import { Editor } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 // plane imports
 import { cn } from "@plane/utils";
 // components
 import { DocumentContentLoader, EditorContainer, EditorContentWrapper } from "@/components/editors";
 import { AIFeaturesMenu, BlockMenu, EditorBubbleMenu } from "@/components/menus";
 // types
-import { TAIHandler, TDisplayConfig } from "@/types";
+import type {
+  ICollaborativeDocumentEditorPropsExtended,
+  IEditorProps,
+  IEditorPropsExtended,
+  TAIHandler,
+  TDisplayConfig,
+} from "@/types";
 
 type Props = {
   aiHandler?: TAIHandler;
   bubbleMenuEnabled: boolean;
+  disabledExtensions: IEditorProps["disabledExtensions"];
   displayConfig: TDisplayConfig;
+  documentLoaderClassName?: string;
   editor: Editor;
   editorContainerClassName: string;
+  extendedDocumentEditorProps?: ICollaborativeDocumentEditorPropsExtended;
+  extendedEditorProps: IEditorPropsExtended;
+  flaggedExtensions: IEditorProps["flaggedExtensions"];
   id: string;
   isLoading?: boolean;
+  isTouchDevice: boolean;
   tabIndex?: number;
 };
 
-export const PageRenderer = (props: Props) => {
-  const { aiHandler, bubbleMenuEnabled, displayConfig, editor, editorContainerClassName, id, isLoading, tabIndex } =
-    props;
+export function PageRenderer(props: Props) {
+  const {
+    aiHandler,
+    bubbleMenuEnabled,
+    disabledExtensions,
+    displayConfig,
+    documentLoaderClassName,
+    editor,
+    editorContainerClassName,
+    extendedEditorProps,
+    flaggedExtensions,
+    id,
+    isLoading,
+    isTouchDevice,
+    tabIndex,
+  } = props;
 
   return (
     <div
@@ -29,19 +54,31 @@ export const PageRenderer = (props: Props) => {
       })}
     >
       {isLoading ? (
-        <DocumentContentLoader />
+        <DocumentContentLoader className={documentLoaderClassName} />
       ) : (
         <EditorContainer
           displayConfig={displayConfig}
           editor={editor}
           editorContainerClassName={editorContainerClassName}
           id={id}
+          isTouchDevice={isTouchDevice}
         >
           <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
-          {editor.isEditable && (
+          {editor.isEditable && !isTouchDevice && (
             <div>
-              {bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}
-              <BlockMenu editor={editor} />
+              {bubbleMenuEnabled && (
+                <EditorBubbleMenu
+                  disabledExtensions={disabledExtensions}
+                  editor={editor}
+                  extendedEditorProps={extendedEditorProps}
+                  flaggedExtensions={flaggedExtensions}
+                />
+              )}
+              <BlockMenu
+                editor={editor}
+                flaggedExtensions={flaggedExtensions}
+                disabledExtensions={disabledExtensions}
+              />
               <AIFeaturesMenu menu={aiHandler?.menu} />
             </div>
           )}
@@ -49,4 +86,4 @@ export const PageRenderer = (props: Props) => {
       )}
     </div>
   );
-};
+}

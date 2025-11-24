@@ -1,13 +1,9 @@
-"use client";
-
 import { observer } from "mobx-react";
-
 // icons
-import { X } from "lucide-react";
+// plane imports
 import { EIconSize } from "@plane/constants";
-import { IState } from "@plane/types";
-import { StateGroupIcon } from "@plane/ui";
-// types
+import { CloseIcon, StateGroupIcon } from "@plane/propel/icons";
+import type { IState } from "@plane/types";
 
 type Props = {
   handleRemove: (val: string) => void;
@@ -16,7 +12,7 @@ type Props = {
   editable: boolean | undefined;
 };
 
-export const AppliedStateFilters: React.FC<Props> = observer((props) => {
+export const AppliedStateFilters = observer(function AppliedStateFilters(props: Props) {
   const { handleRemove, states, values, editable } = props;
 
   return (
@@ -41,7 +37,7 @@ export const AppliedStateFilters: React.FC<Props> = observer((props) => {
                 className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
                 onClick={() => handleRemove(stateId)}
               >
-                <X size={10} strokeWidth={2} />
+                <CloseIcon height={10} width={10} strokeWidth={2} />
               </button>
             )}
           </div>

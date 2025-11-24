@@ -1,8 +1,8 @@
-"use client";
 import React from "react";
 import { AlertCircle } from "lucide-react";
 // ui
-import { Button, TransferIcon } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { TransferIcon } from "@plane/propel/icons";
 
 type Props = {
   handleClick: () => void;
@@ -10,7 +10,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const TransferIssues: React.FC<Props> = (props) => {
+export function TransferIssues(props: Props) {
   const { handleClick, canTransferIssues = false, disabled = false } = props;
   return (
     <div className="-mt-2 mb-4 flex items-center justify-between px-4 pt-6">
@@ -33,4 +33,4 @@ export const TransferIssues: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+}

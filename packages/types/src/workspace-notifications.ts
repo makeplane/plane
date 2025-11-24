@@ -1,5 +1,5 @@
+import type { ENotificationFilterType } from "./enums";
 import type { IUserLite } from "./users";
-import { ENotificationFilterType } from "./enums";
 
 // filters
 export type TNotificationFilter = {

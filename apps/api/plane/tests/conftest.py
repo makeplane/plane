@@ -1,15 +1,13 @@
 import pytest
-from django.conf import settings
 from rest_framework.test import APIClient
 from pytest_django.fixtures import django_db_setup
-from unittest.mock import patch, MagicMock
 
 from plane.db.models import User, Workspace, WorkspaceMember
 from plane.db.models.api import APIToken
 
 
 @pytest.fixture(scope="session")
-def django_db_setup(django_db_setup):
+def django_db_setup(django_db_setup):  # noqa: F811
     """Set up the Django database for the test session"""
     pass
 
@@ -133,8 +131,6 @@ def workspace(create_user):
         slug="test-workspace",
     )
 
-    WorkspaceMember.objects.create(
-        workspace=created_workspace, member=create_user, role=20
-    )
+    WorkspaceMember.objects.create(workspace=created_workspace, member=create_user, role=20)
 
     return created_workspace

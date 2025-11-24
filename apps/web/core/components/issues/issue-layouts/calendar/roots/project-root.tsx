@@ -1,15 +1,14 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// hooks
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { ProjectIssueQuickActions } from "@/components/issues";
 // hooks
-import { useUserPermissions } from "@/hooks/store";
-// plane web constants
-// components
+import { useUserPermissions } from "@/hooks/store/user";
+// local imports
+import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseCalendarRoot } from "../base-calendar-root";
 
-export const CalendarLayout: React.FC = observer(() => {
+export const CalendarLayout = observer(function CalendarLayout() {
   // router
   const { workspaceSlug } = useParams();
   // hooks

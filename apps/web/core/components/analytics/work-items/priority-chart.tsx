@@ -1,30 +1,24 @@
 import { useMemo } from "react";
-import { ColumnDef, Row, RowData, Table } from "@tanstack/react-table";
+import type { ColumnDef, Row, RowData, Table } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane package imports
 import { Download } from "lucide-react";
-import {
-  ANALYTICS_X_AXIS_VALUES,
-  ANALYTICS_Y_AXIS_VALUES,
-  CHART_COLOR_PALETTES,
-  ChartXAxisDateGrouping,
-  EChartModels,
-} from "@plane/constants";
+import type { ChartXAxisDateGrouping } from "@plane/constants";
+import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES, CHART_COLOR_PALETTES, EChartModels } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { BarChart } from "@plane/propel/charts/bar-chart";
-import { TBarItem, TChart, TChartDatum, ChartXAxisProperty, ChartYAxisMetric } from "@plane/types";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
+import type { TBarItem, TChart, TChartDatum, ChartXAxisProperty, ChartYAxisMetric } from "@plane/types";
 // plane web components
-import { Button } from "@plane/ui";
 import { generateExtendedColors, parseChartData } from "@/components/chart/utils";
 // hooks
-import { useProjectState } from "@/hooks/store";
 import { useAnalytics } from "@/hooks/store/use-analytics";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { AnalyticsService } from "@/services/analytics.service";
-import AnalyticsEmptyState from "../empty-state";
 import { exportCSV } from "../export";
 import { DataTable } from "../insight-table/data-table";
 import { ChartLoader } from "../loaders";
@@ -48,10 +42,9 @@ interface Props {
 }
 
 const analyticsService = new AnalyticsService();
-const PriorityChart = observer((props: Props) => {
+const PriorityChart = observer(function PriorityChart(props: Props) {
   const { x_axis, y_axis, group_by } = props;
   const { t } = useTranslation();
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/analytics/empty-chart-bar" });
   // store hooks
   const { selectedDuration, selectedProjects, selectedCycle, selectedModule, isPeekView, isEpic } = useAnalytics();
   const { workspaceStates } = useProjectState();
@@ -237,11 +230,11 @@ const PriorityChart = observer((props: Props) => {
           />
         </>
       ) : (
-        <AnalyticsEmptyState
-          title={t("workspace_analytics.empty_state.customized_insights.title")}
-          description={t("workspace_analytics.empty_state.customized_insights.description")}
-          className="h-[350px]"
-          assetPath={resolvedPath}
+        <EmptyStateCompact
+          assetKey="unknown"
+          assetClassName="size-20"
+          rootClassName="border border-custom-border-100 px-5 py-10 md:py-20 md:px-20"
+          title={t("workspace_empty_state.analytics_work_items.title")}
         />
       )}
     </div>

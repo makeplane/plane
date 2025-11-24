@@ -13,6 +13,9 @@ from plane.db.models import (
     DeployBoard,
     ProjectPublicMember,
 )
+from plane.utils.content_validator import (
+    validate_html_content,
+)
 
 
 class ProjectSerializer(BaseSerializer):
@@ -24,54 +27,59 @@ class ProjectSerializer(BaseSerializer):
         fields = "__all__"
         read_only_fields = ["workspace", "deleted_at"]
 
+    def validate_name(self, name):
+        project_id = self.instance.id if self.instance else None
+        workspace_id = self.context["workspace_id"]
+
+        project = Project.objects.filter(name=name, workspace_id=workspace_id)
+
+        if project_id:
+            project = project.exclude(id=project_id)
+
+        if project.exists():
+            raise serializers.ValidationError(
+                detail="PROJECT_NAME_ALREADY_EXIST",
+            )
+
+        return name
+
+    def validate_identifier(self, identifier):
+        project_id = self.instance.id if self.instance else None
+        workspace_id = self.context["workspace_id"]
+
+        project = Project.objects.filter(identifier=identifier, workspace_id=workspace_id)
+
+        if project_id:
+            project = project.exclude(id=project_id)
+
+        if project.exists():
+            raise serializers.ValidationError(
+                detail="PROJECT_IDENTIFIER_ALREADY_EXIST",
+            )
+
+        return identifier
+
+    def validate(self, data):
+        # Validate description content for security
+        if "description_html" in data and data["description_html"]:
+            is_valid, error_msg, sanitized_html = validate_html_content(str(data["description_html"]))
+            # Update the data with sanitized HTML if available
+            if sanitized_html is not None:
+                data["description_html"] = sanitized_html
+
+            if not is_valid:
+                raise serializers.ValidationError({"error": "html content is not valid"})
+
+        return data
+
     def create(self, validated_data):
-        identifier = validated_data.get("identifier", "").strip().upper()
-        if identifier == "":
-            raise serializers.ValidationError(detail="Project Identifier is required")
+        workspace_id = self.context["workspace_id"]
 
-        if ProjectIdentifier.objects.filter(
-            name=identifier, workspace_id=self.context["workspace_id"]
-        ).exists():
-            raise serializers.ValidationError(detail="Project Identifier is taken")
-        project = Project.objects.create(
-            **validated_data, workspace_id=self.context["workspace_id"]
-        )
-        _ = ProjectIdentifier.objects.create(
-            name=project.identifier,
-            project=project,
-            workspace_id=self.context["workspace_id"],
-        )
+        project = Project.objects.create(**validated_data, workspace_id=workspace_id)
+
+        ProjectIdentifier.objects.create(name=project.identifier, project=project, workspace_id=workspace_id)
+
         return project
-
-    def update(self, instance, validated_data):
-        identifier = validated_data.get("identifier", "").strip().upper()
-
-        # If identifier is not passed update the project and return
-        if identifier == "":
-            project = super().update(instance, validated_data)
-            return project
-
-        # If no Project Identifier is found create it
-        project_identifier = ProjectIdentifier.objects.filter(
-            name=identifier, workspace_id=instance.workspace_id
-        ).first()
-        if project_identifier is None:
-            project = super().update(instance, validated_data)
-            project_identifier = ProjectIdentifier.objects.filter(
-                project=project
-            ).first()
-            if project_identifier is not None:
-                project_identifier.name = identifier
-                project_identifier.save()
-            return project
-        # If found check if the project_id to be updated and identifier project id is same
-        if project_identifier.project_id == instance.id:
-            # If same pass update
-            project = super().update(instance, validated_data)
-            return project
-
-        # If not same fail update
-        raise serializers.ValidationError(detail="Project Identifier is already taken")
 
 
 class ProjectLiteSerializer(BaseSerializer):
@@ -102,11 +110,7 @@ class ProjectListSerializer(DynamicBaseSerializer):
         project_members = getattr(obj, "members_list", None)
         if project_members is not None:
             # Filter members by the project ID
-            return [
-                member.member_id
-                for member in project_members
-                if member.is_active and not member.member.is_bot
-            ]
+            return [member.member_id for member in project_members if member.is_active and not member.member.is_bot]
         return []
 
     class Meta:

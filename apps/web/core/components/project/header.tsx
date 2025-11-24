@@ -1,24 +1,23 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
-import { Briefcase } from "lucide-react";
 // i18n
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { Breadcrumbs, Button, Header } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { ProjectIcon } from "@plane/propel/icons";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
-import { captureClick } from "@/helpers/event-tracker.helper";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
-import { useCommandPalette, useUserPermissions } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web constants
 // components
 import HeaderFilters from "./filters";
 import { ProjectSearch } from "./search-projects";
 
-export const ProjectsBaseHeader = observer(() => {
+export const ProjectsBaseHeader = observer(function ProjectsBaseHeader() {
   // i18n
   const { t } = useTranslation();
   // store hooks
@@ -41,7 +40,7 @@ export const ProjectsBaseHeader = observer(() => {
             component={
               <BreadcrumbLink
                 label={t("workspace_projects.label", { count: 2 })}
-                icon={<Briefcase className="h-4 w-4 text-custom-text-300" />}
+                icon={<ProjectIcon className="h-4 w-4 text-custom-text-300" />}
               />
             }
           />

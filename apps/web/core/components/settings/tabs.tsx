@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { cn } from "@plane/utils";
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 
 const TABS = {
   account: {
@@ -22,7 +22,7 @@ const TABS = {
   },
 };
 
-const SettingsTabs = observer(() => {
+const SettingsTabs = observer(function SettingsTabs() {
   // router
   const pathname = usePathname();
   const { workspaceSlug } = useParams();

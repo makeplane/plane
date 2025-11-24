@@ -1,27 +1,36 @@
-"use client";
-
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
 import { ArchiveX } from "lucide-react";
 // types
-import { PROJECT_AUTOMATION_MONTHS, EUserPermissions, EUserPermissionsLevel, EIconSize } from "@plane/constants";
+import {
+  PROJECT_AUTOMATION_MONTHS,
+  EUserPermissions,
+  EUserPermissionsLevel,
+  EIconSize,
+  PROJECT_SETTINGS_TRACKER_ELEMENTS,
+  PROJECT_SETTINGS_TRACKER_EVENTS,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IProject } from "@plane/types";
+import { StateGroupIcon, StatePropertyIcon } from "@plane/propel/icons";
+import type { IProject } from "@plane/types";
 // ui
-import { CustomSelect, CustomSearchSelect, ToggleSwitch, StateGroupIcon, DoubleCircleIcon, Loader } from "@plane/ui";
+import { CustomSelect, CustomSearchSelect, ToggleSwitch, Loader } from "@plane/ui";
 // component
 import { SelectMonthModal } from "@/components/automation";
 // constants
 // hooks
-import { useProject, useProjectState, useUserPermissions } from "@/hooks/store";
+import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
+import { useUserPermissions } from "@/hooks/store/user";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;
 };
 
-export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
+export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: Props) {
   const { handleChange } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -67,6 +76,11 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
     currentProjectDetails?.id
   );
 
+  const autoCloseStatus = useMemo(() => {
+    if (currentProjectDetails?.close_in === undefined) return false;
+    return currentProjectDetails.close_in !== 0;
+  }, [currentProjectDetails]);
+
   return (
     <>
       <SelectMonthModal
@@ -76,7 +90,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
         handleClose={() => setmonthModal(false)}
         handleChange={handleChange}
       />
-      <div className="flex flex-col gap-4 border-b border-custom-border-200 py-6">
+      <div className="flex flex-col gap-4 py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-start gap-3">
             <div className="flex items-center justify-center rounded bg-custom-background-90 p-3">
@@ -90,19 +104,30 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
             </div>
           </div>
           <ToggleSwitch
-            value={currentProjectDetails?.close_in !== 0}
-            onChange={() =>
-              currentProjectDetails?.close_in === 0
-                ? handleChange({ close_in: 1, default_state: defaultState })
-                : handleChange({ close_in: 0, default_state: null })
-            }
+            value={autoCloseStatus}
+            onChange={async () => {
+              if (currentProjectDetails?.close_in === 0) {
+                await handleChange({ close_in: 1, default_state: defaultState });
+              } else {
+                await handleChange({ close_in: 0, default_state: null });
+              }
+              captureElementAndEvent({
+                element: {
+                  elementName: PROJECT_SETTINGS_TRACKER_ELEMENTS.AUTOMATIONS_CLOSE_TOGGLE_BUTTON,
+                },
+                event: {
+                  eventName: PROJECT_SETTINGS_TRACKER_EVENTS.auto_close_workitems,
+                  state: "SUCCESS",
+                },
+              });
+            }}
             size="sm"
             disabled={!isAdmin}
           />
         </div>
 
         {currentProjectDetails ? (
-          currentProjectDetails.close_in !== 0 && (
+          autoCloseStatus && (
             <div className="mx-6">
               <div className="flex flex-col rounded border border-custom-border-200 bg-custom-background-90">
                 <div className="flex w-full items-center justify-between gap-2 px-5 py-4">
@@ -161,7 +186,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
                               size={EIconSize.LG}
                             />
                           ) : (
-                            <DoubleCircleIcon className="h-3.5 w-3.5 text-custom-text-200" />
+                            <StatePropertyIcon className="h-3.5 w-3.5 text-custom-text-200" />
                           )}
                           {selectedOption?.name
                             ? selectedOption.name

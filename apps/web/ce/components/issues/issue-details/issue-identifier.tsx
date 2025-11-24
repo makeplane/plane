@@ -1,13 +1,15 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // types
-import { IIssueDisplayProperties } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { IIssueDisplayProperties } from "@plane/types";
 // ui
-import { setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { useIssueDetail, useProject } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProject } from "@/hooks/store/use-project";
 
 type TIssueIdentifierBaseProps = {
   projectId: string;
@@ -34,7 +36,9 @@ type TIssueTypeIdentifier = {
   size?: "xs" | "sm" | "md" | "lg";
 };
 
-export const IssueTypeIdentifier: FC<TIssueTypeIdentifier> = observer((props) => <></>);
+export const IssueTypeIdentifier = observer(function IssueTypeIdentifier(_props: TIssueTypeIdentifier) {
+  return <></>;
+});
 
 type TIdentifierTextProps = {
   identifier: string;
@@ -42,7 +46,7 @@ type TIdentifierTextProps = {
   textContainerClassName?: string;
 };
 
-export const IdentifierText: React.FC<TIdentifierTextProps> = (props) => {
+export function IdentifierText(props: TIdentifierTextProps) {
   const { identifier, enableClickToCopyIdentifier = false, textContainerClassName } = props;
   // handlers
   const handleCopyIssueIdentifier = () => {
@@ -72,9 +76,9 @@ export const IdentifierText: React.FC<TIdentifierTextProps> = (props) => {
       </span>
     </Tooltip>
   );
-};
+}
 
-export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props) => {
+export const IssueIdentifier = observer(function IssueIdentifier(props: TIssueIdentifierProps) {
   const { projectId, textContainerClassName, displayProperties, enableClickToCopyIdentifier = false } = props;
   // store hooks
   const { getProjectIdentifierById } = useProject();
@@ -92,7 +96,7 @@ export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props)
   if (!shouldRenderIssueID) return null;
 
   return (
-    <div className="flex items-center space-x-2">
+    <div className="shrink-0 flex items-center space-x-2">
       <IdentifierText
         identifier={`${projectIdentifier}-${issueSequenceId}`}
         enableClickToCopyIdentifier={enableClickToCopyIdentifier}

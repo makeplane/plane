@@ -1,18 +1,18 @@
-"use client";
-
-import { FC, useCallback, useRef, useState } from "react";
-import { debounce } from "lodash";
+import type { FC } from "react";
+import { useCallback, useRef, useState } from "react";
+import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Search, X } from "lucide-react";
+import { Search } from "lucide-react";
 // plane hooks
 import { useOutsideClickDetector } from "@plane/hooks";
 // helpers
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import { useSticky } from "@/hooks/use-stickies";
 
-export const StickySearch: FC = observer(() => {
+export const StickySearch = observer(function StickySearch() {
   // router
   const { workspaceSlug } = useParams();
   // hooks
@@ -91,7 +91,7 @@ export const StickySearch: FC = observer(() => {
               fetchStickies();
             }}
           >
-            <X className="h-3 w-3" />
+            <CloseIcon className="h-3 w-3" />
           </button>
         )}
       </div>

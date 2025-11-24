@@ -1,17 +1,19 @@
-"use client";
-
-import { FC, useEffect, useState, FormEvent } from "react";
+import type { FC, FormEvent } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { Check, Info, X } from "lucide-react";
+import { Check, Info } from "lucide-react";
 import { EEstimateSystem, MAX_ESTIMATE_POINT_INPUT_LENGTH } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
-import { Spinner, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { CloseIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
+import { Spinner } from "@plane/ui";
 import { cn, isEstimatePointValuesRepeated } from "@plane/utils";
 import { EstimateInputRoot } from "@/components/estimates/inputs/root";
 // helpers
 // hooks
-import { useEstimatePoint } from "@/hooks/store";
+import { useEstimatePoint } from "@/hooks/store/estimates/use-estimate-point";
 // plane web constants
 
 type TEstimatePointUpdate = {
@@ -28,7 +30,7 @@ type TEstimatePointUpdate = {
   handleEstimatePointError?: (newValue: string, message: string | undefined, mode?: "add" | "delete") => void;
 };
 
-export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) => {
+export const EstimatePointUpdate = observer(function EstimatePointUpdate(props: TEstimatePointUpdate) {
   const {
     workspaceSlug,
     projectId,
@@ -209,7 +211,7 @@ export const EstimatePointUpdate: FC<TEstimatePointUpdate> = observer((props) =>
         onClick={handleClose}
         disabled={loader}
       >
-        <X size={14} className="text-custom-text-200" />
+        <CloseIcon height={14} width={14} className="text-custom-text-200" />
       </button>
     </form>
   );

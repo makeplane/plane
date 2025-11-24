@@ -1,17 +1,14 @@
-"use client";
-
-import { FC, ReactNode } from "react";
+import type { FC, ReactNode } from "react";
 import { Network } from "lucide-react";
-// hooks
-import { Tooltip } from "@plane/ui";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
 import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@plane/utils";
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// ui
-// components
-import { IssueCreatorDisplay } from "@/plane-web/components/issues";
+// plane web imports
+import { IssueCreatorDisplay } from "@/plane-web/components/issues/issue-details/issue-creator";
+// local imports
 import { IssueUser } from "../";
-// helpers
 
 type TIssueActivityBlockComponent = {
   icon?: ReactNode;
@@ -21,7 +18,7 @@ type TIssueActivityBlockComponent = {
   customUserName?: string;
 };
 
-export const IssueActivityBlockComponent: FC<TIssueActivityBlockComponent> = (props) => {
+export function IssueActivityBlockComponent(props: TIssueActivityBlockComponent) {
   const { icon, activityId, ends, children, customUserName } = props;
   // hooks
   const {
@@ -59,4 +56,4 @@ export const IssueActivityBlockComponent: FC<TIssueActivityBlockComponent> = (pr
       </div>
     </div>
   );
-};
+}

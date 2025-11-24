@@ -1,13 +1,11 @@
-"use client";
-
-import { FC, useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { observer } from "mobx-react";
-import { ChevronDown, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 // plane imports
 import { EIconSize, STATE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
-import { StateGroupIcon } from "@plane/ui";
+import { StateGroupIcon, ChevronDownIcon } from "@plane/propel/icons";
+import type { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import { StateList, StateCreate } from "@/components/project-states";
@@ -26,7 +24,7 @@ type TGroupItem = {
   handleExpand: (groupKey: TStateGroups) => void;
 };
 
-export const GroupItem: FC<TGroupItem> = observer((props) => {
+export const GroupItem = observer(function GroupItem(props: TGroupItem) {
   const {
     groupKey,
     groupedStates,
@@ -72,7 +70,7 @@ export const GroupItem: FC<TGroupItem> = observer((props) => {
               }
             )}
           >
-            <ChevronDown className="w-4 h-4" />
+            <ChevronDownIcon className="w-4 h-4" />
           </div>
           <div className="flex-shrink-0 w-6 h-6 rounded flex justify-center items-center overflow-hidden">
             <StateGroupIcon stateGroup={groupKey} size={EIconSize.XL} />

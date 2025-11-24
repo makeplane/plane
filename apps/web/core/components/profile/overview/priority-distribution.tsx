@@ -1,16 +1,10 @@
-"use client";
-
-// ui
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { BarChart } from "@plane/propel/charts/bar-chart";
-import { IUserProfileData } from "@plane/types";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
+import type { IUserProfileData } from "@plane/types";
 import { Loader, Card } from "@plane/ui";
 import { capitalizeFirstLetter } from "@plane/utils";
-import { ProfileEmptyState } from "@/components/ui";
-// image
-import emptyBarGraph from "@/public/empty-state/empty_bar_graph.svg";
-// helpers
-// types
 
 type Props = {
   userProfile: IUserProfileData | undefined;
@@ -24,7 +18,7 @@ const priorityColors = {
   none: "#e5e5e5",
 };
 
-export const ProfilePriorityDistribution: React.FC<Props> = ({ userProfile }) => {
+export function ProfilePriorityDistribution({ userProfile }: Props) {
   const { t } = useTranslation();
   return (
     <div className="flex flex-col space-y-2">
@@ -45,7 +39,7 @@ export const ProfilePriorityDistribution: React.FC<Props> = ({ userProfile }) =>
                   key: "count",
                   label: "Count",
                   stackId: "bar-one",
-                  fill: (payload) => priorityColors[payload.key as keyof typeof priorityColors],
+                  fill: (payload: any) => priorityColors[payload.key as keyof typeof priorityColors], // TODO: fix types
                   textClassName: "",
                   showPercentage: false,
                   showTopBorderRadius: () => true,
@@ -63,13 +57,11 @@ export const ProfilePriorityDistribution: React.FC<Props> = ({ userProfile }) =>
               barSize={20}
             />
           ) : (
-            <div className="flex-grow p-7">
-              <ProfileEmptyState
-                title={t("no_data_yet")}
-                description={t("profile.stats.priority_distribution.empty")}
-                image={emptyBarGraph}
-              />
-            </div>
+            <EmptyStateCompact
+              assetKey="priority"
+              assetClassName="size-20"
+              title={t("workspace_empty_state.your_work_by_priority.title")}
+            />
           )}
         </Card>
       ) : (
@@ -85,4 +77,4 @@ export const ProfilePriorityDistribution: React.FC<Props> = ({ userProfile }) =>
       )}
     </div>
   );
-};
+}

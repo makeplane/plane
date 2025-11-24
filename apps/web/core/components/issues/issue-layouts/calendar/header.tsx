@@ -1,24 +1,19 @@
 import { observer } from "mobx-react";
 
 // components
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { EIssueFilterType } from "@plane/constants";
+import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import {
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  IIssueFilterOptions,
-  TIssueKanbanFilters,
-} from "@plane/types";
+import { ChevronLeftIcon, ChevronRightIcon } from "@plane/propel/icons";
+import type { TSupportedFilterForUpdate } from "@plane/types";
 import { Row } from "@plane/ui";
-import { CalendarMonthsDropdown, CalendarOptionsDropdown } from "@/components/issues";
 // icons
 import { useCalendarView } from "@/hooks/store/use-calendar-view";
-import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
-import { ICycleIssuesFilter } from "@/store/issue/cycle";
-import { IModuleIssuesFilter } from "@/store/issue/module";
-import { IProjectIssuesFilter } from "@/store/issue/project";
-import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
+import type { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
+import type { ICycleIssuesFilter } from "@/store/issue/cycle";
+import type { IModuleIssuesFilter } from "@/store/issue/module";
+import type { IProjectIssuesFilter } from "@/store/issue/project";
+import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
+import { CalendarMonthsDropdown, CalendarOptionsDropdown } from "./dropdowns";
 
 interface ICalendarHeader {
   issuesFilterStore:
@@ -29,13 +24,13 @@ interface ICalendarHeader {
     | IProjectEpicsFilter;
   updateFilters?: (
     projectId: string,
-    filterType: EIssueFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties | TIssueKanbanFilters
+    filterType: TSupportedFilterTypeForUpdate,
+    filters: TSupportedFilterForUpdate
   ) => Promise<void>;
   setSelectedDate: (date: Date) => void;
 }
 
-export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
+export const CalendarHeader = observer(function CalendarHeader(props: ICalendarHeader) {
   const { issuesFilterStore, updateFilters, setSelectedDate } = props;
 
   const { t } = useTranslation();
@@ -109,10 +104,10 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
     <Row className="mb-4 flex items-center justify-between gap-2">
       <div className="flex items-center gap-1.5">
         <button type="button" className="grid place-items-center" onClick={handlePrevious}>
-          <ChevronLeft size={16} strokeWidth={2} />
+          <ChevronLeftIcon height={16} width={16} strokeWidth={2} />
         </button>
         <button type="button" className="grid place-items-center" onClick={handleNext}>
-          <ChevronRight size={16} strokeWidth={2} />
+          <ChevronRightIcon height={16} width={16} strokeWidth={2} />
         </button>
         <CalendarMonthsDropdown issuesFilterStore={issuesFilterStore} />
       </div>

@@ -1,14 +1,17 @@
-import React, { forwardRef } from "react";
 import { MoreVertical } from "lucide-react";
+import React, { forwardRef } from "react";
 // helpers
-import { cn } from "../helpers";
+import { cn } from "./utils";
 
 interface IDragHandle {
   className?: string;
   disabled?: boolean;
 }
 
-export const DragHandle = forwardRef<HTMLButtonElement | null, IDragHandle>((props, ref) => {
+export const DragHandle = forwardRef(function DragHandle(
+  props: IDragHandle,
+  ref: React.ForwardedRef<HTMLButtonElement | null>
+) {
   const { className, disabled = false } = props;
 
   if (disabled) {

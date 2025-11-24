@@ -1,15 +1,14 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 // plane imports
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
-import { useIssueDetails, useUser } from "@/hooks/store";
+import { useIssueDetails } from "@/hooks/store/use-issue-details";
+import { useUser } from "@/hooks/store/use-user";
 import useIsInIframe from "@/hooks/use-is-in-iframe";
 
 type TIssueVotes = {
@@ -18,7 +17,7 @@ type TIssueVotes = {
   size?: "md" | "sm";
 };
 
-export const IssueVotes: React.FC<TIssueVotes> = observer((props) => {
+export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
   const { anchor, issueIdFromProps, size = "md" } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);

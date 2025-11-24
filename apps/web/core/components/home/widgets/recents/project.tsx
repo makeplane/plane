@@ -1,12 +1,11 @@
 import { useRouter } from "next/navigation";
 // plane types
-import { TActivityEntityData, TProjectEntityData } from "@plane/types";
-// plane ui
-import { Logo } from "@plane/ui";
-// components
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import type { TActivityEntityData, TProjectEntityData } from "@plane/types";
 import { calculateTimeAgo } from "@plane/utils";
+// components
 import { ListItem } from "@/components/core/list";
-import { MemberDropdown } from "@/components/dropdowns";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 // helpers
 
 type BlockProps = {
@@ -14,7 +13,7 @@ type BlockProps = {
   ref: React.RefObject<HTMLDivElement>;
   workspaceSlug: string;
 };
-export const RecentProject = (props: BlockProps) => {
+export function RecentProject(props: BlockProps) {
   const { activity, ref, workspaceSlug } = props;
   // router
   const router = useRouter();
@@ -77,4 +76,4 @@ export const RecentProject = (props: BlockProps) => {
       }}
     />
   );
-};
+}

@@ -1,5 +1,5 @@
 import { GROUPED_PROFILE_SETTINGS, GROUPED_WORKSPACE_SETTINGS } from "@plane/constants";
-import { PROJECT_SETTINGS_LINKS } from "@/plane-web/constants";
+import { PROJECT_SETTINGS_LINKS } from "@/plane-web/constants/project";
 
 const hrefToLabelMap = (options: Record<string, Array<{ href: string; i18n_label: string; [key: string]: any }>>) =>
   Object.values(options)

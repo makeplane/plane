@@ -1,8 +1,7 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane ui
-import { DiceIcon, Tooltip } from "@plane/ui";
+import { ModuleIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 // plane utils
 import { cn } from "@plane/utils";
 // hooks
@@ -13,7 +12,7 @@ type Props = {
   shouldShowBorder?: boolean;
 };
 
-export const IssueBlockModules = observer(({ moduleIds, shouldShowBorder = true }: Props) => {
+export const IssueBlockModules = observer(function IssueBlockModules({ moduleIds, shouldShowBorder = true }: Props) {
   const { getModulesByIds } = useModule();
 
   const modules = getModulesByIds(moduleIds ?? []);
@@ -31,7 +30,7 @@ export const IssueBlockModules = observer(({ moduleIds, shouldShowBorder = true 
             })}
           >
             <div className="flex items-center gap-1.5 text-custom-text-200">
-              <DiceIcon className="h-3 w-3 flex-shrink-0" />
+              <ModuleIcon className="h-3 w-3 flex-shrink-0" />
               <div className="text-xs">{modules?.[0]?.name ?? "No Modules"}</div>
             </div>
           </div>

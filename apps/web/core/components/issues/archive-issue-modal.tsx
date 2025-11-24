@@ -1,16 +1,14 @@
-"use client";
-
 import { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
-import { TDeDupeIssue, TIssue } from "@plane/types";
-// ui
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TDeDupeIssue, TIssue } from "@plane/types";
 // hooks
-import { useProject } from "@/hooks/store";
 import { useIssues } from "@/hooks/store/use-issues";
+import { useProject } from "@/hooks/store/use-project";
 
 type Props = {
   data?: TIssue | TDeDupeIssue;
@@ -20,7 +18,7 @@ type Props = {
   onSubmit?: () => Promise<void>;
 };
 
-export const ArchiveIssueModal: React.FC<Props> = (props) => {
+export function ArchiveIssueModal(props: Props) {
   const { dataId, data, isOpen, handleClose, onSubmit } = props;
   const { t } = useTranslation();
   // states
@@ -64,7 +62,7 @@ export const ArchiveIssueModal: React.FC<Props> = (props) => {
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={onClose}>
+      <Dialog as="div" className="relative z-30" onClose={onClose}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -77,7 +75,7 @@ export const ArchiveIssueModal: React.FC<Props> = (props) => {
           <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-10 overflow-y-auto">
+        <div className="fixed inset-0 z-30 overflow-y-auto">
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <Transition.Child
               as={Fragment}
@@ -110,4 +108,4 @@ export const ArchiveIssueModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+}

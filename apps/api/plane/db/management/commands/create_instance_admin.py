@@ -28,9 +28,7 @@ class Command(BaseCommand):
             instance = Instance.objects.last()
 
             # Get or create an instance admin
-            _, created = InstanceAdmin.objects.get_or_create(
-                user=user, instance=instance, role=20
-            )
+            _, created = InstanceAdmin.objects.get_or_create(user=user, instance=instance, role=20)
 
             if not created:
                 raise CommandError("The provided email is already an instance admin.")

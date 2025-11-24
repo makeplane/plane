@@ -1,22 +1,19 @@
-"use client";
-
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ENotificationLoader, ENotificationQueryParamType } from "@plane/constants";
-// components
 import { useTranslation } from "@plane/i18n";
-import { NotificationItem } from "@/components/workspace-notifications";
-// constants
+// components
+import { NotificationItem } from "@/components/workspace-notifications/sidebar/notification-card/item";
 // hooks
-import { useWorkspaceNotifications } from "@/hooks/store";
+import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 
 type TNotificationCardListRoot = {
   workspaceSlug: string;
   workspaceId: string;
 };
 
-export const NotificationCardListRoot: FC<TNotificationCardListRoot> = observer((props) => {
+export const NotificationCardListRoot = observer(function NotificationCardListRoot(props: TNotificationCardListRoot) {
   const { workspaceSlug, workspaceId } = props;
   // hooks
   const { loader, paginationInfo, getNotifications, notificationIdsByWorkspaceId } = useWorkspaceNotifications();

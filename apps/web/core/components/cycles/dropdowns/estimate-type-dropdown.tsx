@@ -1,9 +1,12 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { EEstimateSystem, TCycleEstimateType } from "@plane/types";
+import type { TCycleEstimateType } from "@plane/types";
+import { EEstimateSystem } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
-import { useCycle, useProjectEstimates } from "@/hooks/store";
-import { cycleEstimateOptions } from "../analytics-sidebar";
+import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useCycle } from "@/hooks/store/use-cycle";
+// local imports
+import { cycleEstimateOptions } from "../analytics-sidebar/issue-progress";
 
 type TProps = {
   value: TCycleEstimateType;
@@ -13,7 +16,7 @@ type TProps = {
   cycleId: string;
 };
 
-export const EstimateTypeDropdown = observer((props: TProps) => {
+export const EstimateTypeDropdown = observer(function EstimateTypeDropdown(props: TProps) {
   const { value, onChange, projectId, cycleId, showDefault = false } = props;
   const { getIsPointsDataAvailable } = useCycle();
   const { areEstimateEnabledByProjectId, currentProjectEstimateType } = useProjectEstimates();
@@ -36,6 +39,6 @@ export const EstimateTypeDropdown = observer((props: TProps) => {
       </CustomSelect>
     </div>
   ) : showDefault ? (
-    <span className="capitalize">{value}</span>
+    <span className="capitalize">{cycleEstimateOptions.find((v) => v.value === value)?.label ?? value}</span>
   ) : null;
 });

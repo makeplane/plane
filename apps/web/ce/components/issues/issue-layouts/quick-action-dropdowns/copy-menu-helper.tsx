@@ -1,5 +1,5 @@
-import { Copy } from "lucide-react";
-import { TContextMenuItem } from "@plane/ui";
+import type { Copy } from "lucide-react";
+import type { TContextMenuItem } from "@plane/ui";
 
 export interface CopyMenuHelperProps {
   baseItem: {
@@ -12,6 +12,7 @@ export interface CopyMenuHelperProps {
   activeLayout: string;
   setCreateUpdateIssueModal: (open: boolean) => void;
   setDuplicateWorkItemModal?: (open: boolean) => void;
+  workspaceSlug?: string;
 }
 
 export const createCopyMenuWithDuplication = (props: CopyMenuHelperProps): TContextMenuItem => {

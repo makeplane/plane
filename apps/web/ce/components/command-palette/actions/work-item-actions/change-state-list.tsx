@@ -3,9 +3,10 @@ import { observer } from "mobx-react";
 import { Check } from "lucide-react";
 // plane imports
 import { EIconSize } from "@plane/constants";
-import { Spinner, StateGroupIcon } from "@plane/ui";
+import { StateGroupIcon } from "@plane/propel/icons";
+import { Spinner } from "@plane/ui";
 // store hooks
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 
 export type TChangeWorkItemStateListProps = {
   projectId: string | null;
@@ -13,7 +14,7 @@ export type TChangeWorkItemStateListProps = {
   handleStateChange: (stateId: string) => void;
 };
 
-export const ChangeWorkItemStateList = observer((props: TChangeWorkItemStateListProps) => {
+export const ChangeWorkItemStateList = observer(function ChangeWorkItemStateList(props: TChangeWorkItemStateListProps) {
   const { projectId, currentStateId, handleStateChange } = props;
   // store hooks
   const { getProjectStates } = useProjectState();

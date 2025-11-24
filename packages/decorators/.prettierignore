@@ -1,0 +1,2 @@
+# Ignore generated build artifacts
+dist/

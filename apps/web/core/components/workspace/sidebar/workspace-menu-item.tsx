@@ -1,18 +1,18 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EUserWorkspaceRoles } from "@plane/types";
+import type { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
-import { SidebarNavItem } from "@/components/sidebar";
+import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // hooks
-import { useAppTheme, useUserPermissions } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { UpgradeBadge } from "@/plane-web/components/workspace";
+import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
 
 export type SidebarWorkspaceMenuItemProps = {
   item: {
@@ -24,7 +24,9 @@ export type SidebarWorkspaceMenuItemProps = {
   };
 };
 
-export const SidebarWorkspaceMenuItem: FC<SidebarWorkspaceMenuItemProps> = observer((props) => {
+export const SidebarWorkspaceMenuItem = observer(function SidebarWorkspaceMenuItem(
+  props: SidebarWorkspaceMenuItemProps
+) {
   const { item } = props;
 
   const { t } = useTranslation();

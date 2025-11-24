@@ -37,11 +37,7 @@ class SessionMiddleware(MiddlewareMixin):
         # First check if we need to delete this cookie.
         # The session should be deleted only if the session is entirely empty.
         is_admin_path = "instances" in request.path
-        cookie_name = (
-            settings.ADMIN_SESSION_COOKIE_NAME
-            if is_admin_path
-            else settings.SESSION_COOKIE_NAME
-        )
+        cookie_name = settings.ADMIN_SESSION_COOKIE_NAME if is_admin_path else settings.SESSION_COOKIE_NAME
 
         if cookie_name in request.COOKIES and empty:
             response.delete_cookie(

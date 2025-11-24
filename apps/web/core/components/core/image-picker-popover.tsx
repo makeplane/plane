@@ -1,18 +1,18 @@
-"use client";
-
 import React, { useState, useRef, useCallback } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useDropzone } from "react-dropzone";
-import { Control, Controller } from "react-hook-form";
+import type { Control } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import useSWR from "swr";
 import { Tab, Popover } from "@headlessui/react";
 // plane imports
 import { ACCEPTED_COVER_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
-import { Button, Input, Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { Input, Loader } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
@@ -49,7 +49,7 @@ type Props = {
 // services
 const fileService = new FileService();
 
-export const ImagePickerPopover: React.FC<Props> = observer((props) => {
+export const ImagePickerPopover = observer(function ImagePickerPopover(props: Props) {
   const { label, value, control, onChange, disabled = false, tabIndex, isProfileCover = false, projectId } = props;
   // states
   const [image, setImage] = useState<File | null>(null);
@@ -326,12 +326,10 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                         </button>
                         {image !== null || (value && value !== "") ? (
                           <>
-                            <Image
-                              layout="fill"
-                              objectFit="cover"
+                            <img
                               src={image ? URL.createObjectURL(image) : value ? (getFileURL(value) ?? "") : ""}
                               alt="image"
-                              className="rounded-lg"
+                              className="rounded-lg h-full w-full object-cover"
                             />
                           </>
                         ) : (

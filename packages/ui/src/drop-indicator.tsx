@@ -1,12 +1,12 @@
 import React from "react";
-import { cn } from "../helpers";
+import { cn } from "./utils";
 
 type Props = {
   isVisible: boolean;
   classNames?: string;
 };
 
-export const DropIndicator = (props: Props) => {
+export function DropIndicator(props: Props) {
   const { isVisible, classNames = "" } = props;
 
   return (
@@ -22,4 +22,4 @@ export const DropIndicator = (props: Props) => {
       )}
     />
   );
-};
+}

@@ -1,17 +1,14 @@
-"use client";
-
-import { FC } from "react";
 import { observer } from "mobx-react";
 // hooks
-import { DoubleCircleIcon } from "@plane/ui";
-import { useIssueDetail } from "@/hooks/store";
+import { StatePropertyIcon } from "@plane/propel/icons";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
 import { IssueActivityBlockComponent, IssueLink } from "./";
 // icons
 
 type TIssueStateActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
-export const IssueStateActivity: FC<TIssueStateActivity> = observer((props) => {
+export const IssueStateActivity = observer(function IssueStateActivity(props: TIssueStateActivity) {
   const { activityId, showIssue = true, ends } = props;
   // hooks
   const {
@@ -23,7 +20,7 @@ export const IssueStateActivity: FC<TIssueStateActivity> = observer((props) => {
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<DoubleCircleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />}
+      icon={<StatePropertyIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />}
       activityId={activityId}
       ends={ends}
     >

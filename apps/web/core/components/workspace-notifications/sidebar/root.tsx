@@ -1,27 +1,26 @@
-"use client";
-import { FC, useCallback } from "react";
-
+import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { NOTIFICATION_TABS, TNotificationTab } from "@plane/constants";
+import type { TNotificationTab } from "@plane/constants";
+import { NOTIFICATION_TABS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// components
 import { Header, Row, ERowVariant, EHeaderVariant, ContentWrapper } from "@plane/ui";
 import { cn, getNumberCount } from "@plane/utils";
-import { CountChip } from "@/components/common";
-import {
-  NotificationsLoader,
-  NotificationEmptyState,
-  NotificationSidebarHeader,
-  AppliedFilters,
-} from "@/components/workspace-notifications";
+// components
+import { CountChip } from "@/components/common/count-chip";
 // hooks
-import { useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
+import { useWorkspaceNotifications } from "@/hooks/store/notifications";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 import { NotificationListRoot } from "@/plane-web/components/workspace-notifications/list-root";
+// local imports
+import { NotificationEmptyState } from "./empty-state";
+import { AppliedFilters } from "./filters/applied-filter";
+import { NotificationSidebarHeader } from "./header";
+import { NotificationsLoader } from "./loader";
 
-export const NotificationsSidebarRoot: FC = observer(() => {
+export const NotificationsSidebarRoot = observer(function NotificationsSidebarRoot() {
   const { workspaceSlug } = useParams();
   // hooks
   const { getWorkspaceBySlug } = useWorkspace();
@@ -58,7 +57,7 @@ export const NotificationsSidebarRoot: FC = observer(() => {
       )}
     >
       <div className="relative w-full h-full flex flex-col">
-        <Row className="h-[3.75rem] border-b border-custom-border-200 flex">
+        <Row className="h-header border-b border-custom-border-200 flex flex-shrink-0">
           <NotificationSidebarHeader workspaceSlug={workspaceSlug.toString()} />
         </Row>
 
@@ -105,7 +104,7 @@ export const NotificationsSidebarRoot: FC = observer(() => {
               </ContentWrapper>
             ) : (
               <div className="relative w-full h-full flex justify-center items-center">
-                <NotificationEmptyState />
+                <NotificationEmptyState currentNotificationTab={currentNotificationTab} />
               </div>
             )}
           </>

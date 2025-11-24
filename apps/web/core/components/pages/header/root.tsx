@@ -1,24 +1,24 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
-import { TPageFilterProps, TPageNavigationTabs } from "@plane/types";
-// components
+import type { TPageFilterProps, TPageNavigationTabs } from "@plane/types";
 import { Header, EHeaderVariant } from "@plane/ui";
 import { calculateTotalFilters } from "@plane/utils";
-import { FiltersDropdown } from "@/components/issues";
-import {
-  PageAppliedFiltersList,
-  PageFiltersSelection,
-  PageOrderByDropdown,
-  PageSearchInput,
-  PageTabNavigation,
-} from "@/components/pages";
-// helpers
+// components
+import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // plane web hooks
-import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
+import { usePageStore } from "@/plane-web/hooks/store";
+// local imports
+import { PageAppliedFiltersList } from "../list/applied-filters";
+import { PageFiltersSelection } from "../list/filters";
+import { PageOrderByDropdown } from "../list/order-by";
+import { PageSearchInput } from "../list/search-input";
+import { PageTabNavigation } from "../list/tab-navigation";
 
 type Props = {
   pageType: TPageNavigationTabs;
@@ -27,7 +27,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
+export const PagesListHeaderRoot = observer(function PagesListHeaderRoot(props: Props) {
   const { pageType, projectId, storeType, workspaceSlug } = props;
   const { t } = useTranslation();
   // store hooks

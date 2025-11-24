@@ -1,17 +1,17 @@
-import { FC, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
-import { LogoSpinner } from "@/components/common";
+import { LogoSpinner } from "@/components/common/logo-spinner";
 import { InstanceNotReady, MaintenanceView } from "@/components/instance";
 // hooks
-import { useInstance } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance";
 
 type TInstanceWrapper = {
   children: ReactNode;
 };
 
-export const InstanceWrapper: FC<TInstanceWrapper> = observer((props) => {
+export const InstanceWrapper = observer(function InstanceWrapper(props: TInstanceWrapper) {
   const { children } = props;
   // store
   const { isLoading, instance, error, fetchInstanceInfo } = useInstance();

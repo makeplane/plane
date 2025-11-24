@@ -4,11 +4,8 @@ import type {
   DropTargetRecord,
   DragLocationHistory,
 } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
-import {
-  draggable,
-  dropTargetForElements,
-  ElementDragPayload,
-} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import type { ElementDragPayload } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
@@ -16,9 +13,7 @@ import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { createRoot } from "react-dom/client";
 // plane types
-import { InstructionType } from "@plane/types";
-// plane ui
-import { DropIndicator } from "@plane/ui";
+import type { InstructionType } from "@plane/types";
 // components
 import { StickyNote } from "../sticky";
 // helpers
@@ -35,12 +30,11 @@ type Props = {
   handleLayout: () => void;
 };
 
-export const StickyDNDWrapper = observer((props: Props) => {
-  const { stickyId, workspaceSlug, itemWidth, isLastChild, isInFirstRow, isInLastRow, handleDrop, handleLayout } =
-    props;
+export const StickyDNDWrapper = observer(function StickyDNDWrapper(props: Props) {
+  const { stickyId, workspaceSlug, itemWidth, isLastChild, handleDrop, handleLayout } = props;
   // states
   const [isDragging, setIsDragging] = useState(false);
-  const [instruction, setInstruction] = useState<InstructionType | undefined>(undefined);
+  const [_instruction, setInstruction] = useState<InstructionType | undefined>(undefined);
   // refs
   const elementRef = useRef<HTMLDivElement>(null);
   // navigation

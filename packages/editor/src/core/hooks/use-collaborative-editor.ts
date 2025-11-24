@@ -9,7 +9,7 @@ import { useEditor } from "@/hooks/use-editor";
 // plane editor extensions
 import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
-import { TCollaborativeEditorHookProps } from "@/types";
+import type { TCollaborativeEditorHookProps } from "@/types";
 
 export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => {
   const {
@@ -20,14 +20,18 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     editable,
     editorClassName = "",
     editorProps = {},
-    embedHandler,
+    extendedEditorProps,
     extensions = [],
     fileHandler,
     flaggedExtensions,
+    getEditorMetaData,
     forwardedRef,
     handleEditorReady,
     id,
+    dragDropEnabled = true,
+    isTouchDevice,
     mentionHandler,
+    onEditorFocus,
     placeholder,
     realtimeConfig,
     serverHandler,
@@ -42,7 +46,6 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     () =>
       new HocuspocusProvider({
         name: id,
-        parameters: realtimeConfig.queryParams,
         // using user id as a token to verify the user on the server
         token: JSON.stringify(user),
         url: realtimeConfig.url,
@@ -78,6 +81,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
 
   const editor = useEditor({
     disabledExtensions,
+    extendedEditorProps,
     id,
     editable,
     editorProps,
@@ -86,7 +90,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     extensions: [
       SideMenuExtension({
         aiEnabled: !disabledExtensions?.includes("ai"),
-        dragDropEnabled: true,
+        dragDropEnabled,
       }),
       HeadingListExtension,
       Collaboration.configure({
@@ -95,9 +99,10 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
       ...extensions,
       ...DocumentEditorAdditionalExtensions({
         disabledExtensions,
-        embedConfig: embedHandler,
+        extendedEditorProps,
         fileHandler,
         flaggedExtensions,
+        isEditable: editable,
         provider,
         userDetails: user,
       }),
@@ -105,10 +110,13 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     fileHandler,
     flaggedExtensions,
     forwardedRef,
+    getEditorMetaData,
     handleEditorReady,
+    isTouchDevice,
     mentionHandler,
     onAssetChange,
     onChange,
+    onEditorFocus,
     onTransaction,
     placeholder,
     provider,

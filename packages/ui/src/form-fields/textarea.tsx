@@ -1,8 +1,8 @@
 import React, { useRef } from "react";
 // helpers
-import { cn } from "../../helpers";
-// hooks
 import { useAutoResizeTextArea } from "../hooks/use-auto-resize-textarea";
+import { cn } from "../utils";
+// hooks
 
 export interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   mode?: "primary" | "transparent" | "true-transparent";
@@ -11,7 +11,10 @@ export interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextArea
   className?: string;
 }
 
-const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>((props, ref) => {
+const TextArea = React.forwardRef(function TextArea(
+  props: TextAreaProps,
+  ref: React.ForwardedRef<HTMLTextAreaElement>
+) {
   const {
     id,
     name,

@@ -4,4 +4,6 @@ type Props = {
   className?: string;
 };
 
-export const WorkFlowDisabledMessage = (props: Props) => <></>;
+export function WorkFlowDisabledMessage(props: Props) {
+  return <></>;
+}

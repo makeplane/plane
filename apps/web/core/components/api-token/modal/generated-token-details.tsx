@@ -1,10 +1,10 @@
-"use client";
-
 import { Copy } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { IApiToken } from "@plane/types";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { IApiToken } from "@plane/types";
 // ui
-import { Button, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
 import { renderFormattedDate, renderFormattedTime, copyTextToClipboard } from "@plane/utils";
 // helpers
 // types
@@ -16,7 +16,7 @@ type Props = {
   tokenDetails: IApiToken;
 };
 
-export const GeneratedTokenDetails: React.FC<Props> = (props) => {
+export function GeneratedTokenDetails(props: Props) {
   const { handleClose, tokenDetails } = props;
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
@@ -58,4 +58,4 @@ export const GeneratedTokenDetails: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

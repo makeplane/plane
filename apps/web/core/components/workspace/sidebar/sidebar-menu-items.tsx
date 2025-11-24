@@ -1,8 +1,7 @@
-"use client";
 import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronRight, Ellipsis } from "lucide-react";
+import { Ellipsis } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import {
@@ -11,16 +10,18 @@ import {
   WORKSPACE_SIDEBAR_STATIC_PINNED_NAVIGATION_ITEMS_LINKS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { ChevronRightIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 // components
-import { SidebarNavItem } from "@/components/sidebar";
+import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // store hooks
-import { useAppTheme, useWorkspace } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import useLocalStorage from "@/hooks/use-local-storage";
 // plane-web imports
-import { SidebarItem } from "@/plane-web/components/workspace/sidebar";
+import { SidebarItem } from "@/plane-web/components/workspace/sidebar/sidebar-item";
 
-export const SidebarMenuItems = observer(() => {
+export const SidebarMenuItems = observer(function SidebarMenuItems() {
   // routers
   const { workspaceSlug } = useParams();
   const { setValue: toggleWorkspaceMenu, storedValue: isWorkspaceMenuOpen } = useLocalStorage<boolean>(
@@ -86,7 +87,7 @@ export const SidebarMenuItems = observer(() => {
                   : "aria_labels.app_sidebar.open_workspace_menu"
               )}
             >
-              <ChevronRight
+              <ChevronRightIcon
                 className={cn("flex-shrink-0 size-3 transition-all", {
                   "rotate-90": isWorkspaceMenuOpen,
                 })}

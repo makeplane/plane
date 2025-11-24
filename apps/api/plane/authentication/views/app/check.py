@@ -83,9 +83,7 @@ class EmailCheckEndpoint(APIView):
                     "existing": True,
                     "status": (
                         "MAGIC_CODE"
-                        if existing_user.is_password_autoset
-                        and smtp_configured
-                        and is_magic_login_enabled
+                        if existing_user.is_password_autoset and smtp_configured and is_magic_login_enabled
                         else "CREDENTIAL"
                     ),
                 },
@@ -95,11 +93,7 @@ class EmailCheckEndpoint(APIView):
         return Response(
             {
                 "existing": False,
-                "status": (
-                    "MAGIC_CODE"
-                    if smtp_configured and is_magic_login_enabled
-                    else "CREDENTIAL"
-                ),
+                "status": ("MAGIC_CODE" if smtp_configured and is_magic_login_enabled else "CREDENTIAL"),
             },
             status=status.HTTP_200_OK,
         )

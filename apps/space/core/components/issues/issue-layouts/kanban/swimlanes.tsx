@@ -1,7 +1,8 @@
-import { MutableRefObject, useState } from "react";
+import type { MutableRefObject } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // types
-import {
+import type {
   GroupByColumnTypes,
   IGroupByColumn,
   TGroupedIssues,
@@ -13,7 +14,11 @@ import {
   TLoader,
 } from "@plane/types";
 // hooks
-import { useMember, useModule, useStates, useLabel, useCycle } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
+import { useLabel } from "@/hooks/store/use-label";
+import { useMember } from "@/hooks/store/use-member";
+import { useModule } from "@/hooks/store/use-module";
+import { useStates } from "@/hooks/store/use-state";
 //
 import { getGroupByColumns } from "../utils";
 import { KanBan } from "./default";
@@ -38,7 +43,7 @@ export interface IKanBanSwimLanes {
   orderBy: TIssueOrderByOptions | undefined;
 }
 
-export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
+export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanSwimLanes) {
   const {
     groupedIssueIds,
     displayProperties,
@@ -120,8 +125,14 @@ const visibilitySubGroupByGroupCount = (subGroupIssueCount: number, showEmptyGro
   return subGroupHeaderVisibility;
 };
 
-const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = observer(
-  ({ subGroupBy, groupBy, groupList, showEmptyGroup, getGroupIssueCount }) => (
+const SubGroupSwimlaneHeader = observer(function SubGroupSwimlaneHeader({
+  subGroupBy,
+  groupBy,
+  groupList,
+  showEmptyGroup,
+  getGroupIssueCount,
+}: ISubGroupSwimlaneHeader) {
+  return (
     <div className="relative flex h-max min-h-full w-full items-center gap-2">
       {groupList &&
         groupList.length > 0 &&
@@ -138,8 +149,8 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = observer(
           );
         })}
     </div>
-  )
-);
+  );
+});
 
 interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   groupedIssueIds: TGroupedIssues | TSubGroupedIssues;
@@ -157,7 +168,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
 }
 
-const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
+const SubGroupSwimlane = observer(function SubGroupSwimlane(props: ISubGroupSwimlane) {
   const {
     groupedIssueIds,
     subGroupBy,
@@ -214,7 +225,7 @@ interface ISubGroup {
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
 }
 
-const SubGroup: React.FC<ISubGroup> = observer((props) => {
+const SubGroup = observer(function SubGroup(props: ISubGroup) {
   const {
     groupedIssueIds,
     subGroupBy,

@@ -2,18 +2,19 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { SmilePlus } from "lucide-react";
 // plane imports
-import { EmojiIconPicker, EmojiIconPickerTypes } from "@plane/ui";
+import { EmojiPicker, EmojiIconPickerTypes } from "@plane/propel/emoji-icon-picker";
 import { cn } from "@plane/utils";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { PageEditorHeaderLogoPicker } from "./logo-picker";
 
 type Props = {
   page: TPageInstance;
+  projectId?: string;
 };
 
-export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
+export const PageEditorHeaderRoot = observer(function PageEditorHeaderRoot(props: Props) {
   const { page } = props;
   // states
   const [isLogoPickerOpen, setIsLogoPickerOpen] = useState(false);
@@ -31,7 +32,7 @@ export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
               "opacity-100": isTitleEmpty,
             })}
           >
-            <EmojiIconPicker
+            <EmojiPicker
               isOpen={isLogoPickerOpen}
               handleToggle={(val) => setIsLogoPickerOpen(val)}
               className="flex items-center justify-center"

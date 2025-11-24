@@ -1,13 +1,14 @@
-"use client";
-import React, { FC, useEffect, useState, useCallback } from "react";
+import type { FC } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { observer } from "mobx-react";
-import { EIssueServiceType, EIssuesStoreType, TIssue, TIssueServiceType } from "@plane/types";
+import type { TIssue, TIssueServiceType } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 // components
 import { DeleteIssueModal } from "@/components/issues/delete-issue-modal";
-import { CreateUpdateIssueModal } from "@/components/issues/issue-modal";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
+import { CreateUpdateIssueModal } from "../../issue-modal/modal";
 import { useSubIssueOperations } from "./helper";
 import { SubIssuesListRoot } from "./issues-list/root";
 
@@ -21,7 +22,7 @@ type Props = {
 
 type TIssueCrudState = { toggle: boolean; parentIssueId: string | undefined; issue: TIssue | undefined };
 
-export const SubIssuesCollapsibleContent: FC<Props> = observer((props) => {
+export const SubIssuesCollapsibleContent = observer(function SubIssuesCollapsibleContent(props: Props) {
   const { workspaceSlug, projectId, parentIssueId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
   // state
   const [issueCrudState, setIssueCrudState] = useState<{
@@ -122,7 +123,7 @@ export const SubIssuesCollapsibleContent: FC<Props> = observer((props) => {
           parentIssueId={parentIssueId}
           rootIssueId={parentIssueId}
           spacingLeft={6}
-          disabled={!disabled}
+          canEdit={!disabled}
           handleIssueCrudState={handleIssueCrudState}
           subIssueOperations={subIssueOperations}
           issueServiceType={issueServiceType}

@@ -1,6 +1,6 @@
 import * as React from "react";
 // helpers
-import { cn } from "../../helpers";
+import { cn } from "../utils";
 
 export interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
   containerClassName?: string;
@@ -8,7 +8,7 @@ export interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElemen
   indeterminate?: boolean;
 }
 
-const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>((props, ref) => {
+const Checkbox = React.forwardRef(function Checkbox(props: CheckboxProps, ref: React.ForwardedRef<HTMLInputElement>) {
   const {
     id,
     name,
@@ -78,7 +78,7 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>((props, ref) 
         strokeLinecap="round"
         strokeLinejoin="round"
       >
-        <path d="M5.75 4H2.25" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M5.75 4H2.25" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     </div>
   );

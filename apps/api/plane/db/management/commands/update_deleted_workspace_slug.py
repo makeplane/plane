@@ -1,13 +1,10 @@
-import time
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from plane.db.models import Workspace
 
 
 class Command(BaseCommand):
-    help = (
-        "Updates the slug of a soft-deleted workspace by appending the epoch timestamp"
-    )
+    help = "Updates the slug of a soft-deleted workspace by appending the epoch timestamp"
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -29,17 +26,13 @@ class Command(BaseCommand):
         try:
             workspace = Workspace.all_objects.get(slug=slug)
         except Workspace.DoesNotExist:
-            self.stdout.write(
-                self.style.ERROR(f"Workspace with slug '{slug}' not found.")
-            )
+            self.stdout.write(self.style.ERROR(f"Workspace with slug '{slug}' not found."))
             return
 
         # Check if the workspace is soft-deleted
         if workspace.deleted_at is None:
             self.stdout.write(
-                self.style.WARNING(
-                    f"Workspace '{workspace.name}' (slug: {workspace.slug}) is not deleted."
-                )
+                self.style.WARNING(f"Workspace '{workspace.name}' (slug: {workspace.slug}) is not deleted.")
             )
             return
 
@@ -59,9 +52,7 @@ class Command(BaseCommand):
         new_slug = f"{workspace.slug}__{deletion_timestamp}"
 
         if dry_run:
-            self.stdout.write(
-                f"Would update workspace '{workspace.name}' slug from '{workspace.slug}' to '{new_slug}'"
-            )
+            self.stdout.write(f"Would update workspace '{workspace.name}' slug from '{workspace.slug}' to '{new_slug}'")
         else:
             try:
                 with transaction.atomic():
@@ -73,8 +64,4 @@ class Command(BaseCommand):
                         )
                     )
             except Exception as e:
-                self.stdout.write(
-                    self.style.ERROR(
-                        f"Error updating workspace '{workspace.name}': {str(e)}"
-                    )
-                )
+                self.stdout.write(self.style.ERROR(f"Error updating workspace '{workspace.name}': {str(e)}"))

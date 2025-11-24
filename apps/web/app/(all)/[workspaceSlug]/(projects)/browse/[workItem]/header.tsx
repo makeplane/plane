@@ -1,19 +1,18 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { EProjectFeatureKey } from "@plane/constants";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
-import { BreadcrumbLink } from "@/components/common";
-import { IssueDetailQuickActions } from "@/components/issues";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
+import { IssueDetailQuickActions } from "@/components/issues/issue-detail/issue-detail-quick-actions";
 // hooks
-import { useIssueDetail, useProject } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
-export const ProjectIssueDetailsHeader = observer(() => {
+export const ProjectIssueDetailsHeader = observer(function ProjectIssueDetailsHeader() {
   // router
   const router = useAppRouter();
   const { workspaceSlug, workItem } = useParams();

@@ -1,22 +1,18 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-// icons
 import { Search } from "lucide-react";
 // plane imports
 import { DEFAULT_GLOBAL_VIEWS_LIST } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// ui
 import { Input } from "@plane/ui";
 // components
-import { PageHead } from "@/components/core";
-import { GlobalDefaultViewListItem, GlobalViewsList } from "@/components/workspace";
-// constants
+import { PageHead } from "@/components/core/page-title";
+import { GlobalDefaultViewListItem } from "@/components/workspace/views/default-view-list-item";
+import { GlobalViewsList } from "@/components/workspace/views/views-list";
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
-const WorkspaceViewsPage = observer(() => {
+function WorkspaceViewsPage() {
   const [query, setQuery] = useState("");
   // store
   const { currentWorkspace } = useWorkspace();
@@ -49,6 +45,6 @@ const WorkspaceViewsPage = observer(() => {
       </div>
     </>
   );
-});
+}
 
-export default WorkspaceViewsPage;
+export default observer(WorkspaceViewsPage);

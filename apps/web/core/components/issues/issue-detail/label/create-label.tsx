@@ -1,17 +1,16 @@
-"use client";
-
-import { FC, useState, Fragment, useEffect } from "react";
+import { useState, Fragment, useEffect } from "react";
 import { TwitterPicker } from "react-color";
 import { Controller, useForm } from "react-hook-form";
 import { usePopper } from "react-popper";
-import { Plus, X, Loader } from "lucide-react";
+import { Plus, Loader } from "lucide-react";
 import { Popover } from "@headlessui/react";
-import { IIssueLabel } from "@plane/types";
+import { CloseIcon } from "@plane/propel/icons";
+import type { IIssueLabel } from "@plane/types";
 // hooks
 import { Input } from "@plane/ui";
 // ui
 // types
-import { TLabelOperations } from "./root";
+import type { TLabelOperations } from "./root";
 
 type ILabelCreate = {
   workspaceSlug: string;
@@ -27,7 +26,7 @@ const defaultValues: Partial<IIssueLabel> = {
   color: "#ff0000",
 };
 
-export const LabelCreate: FC<ILabelCreate> = (props) => {
+export function LabelCreate(props: ILabelCreate) {
   const { workspaceSlug, projectId, issueId, values, labelOperations, disabled = false } = props;
   // state
   const [isCreateToggle, setIsCreateToggle] = useState(false);
@@ -81,7 +80,7 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
         onClick={handleIsCreateToggle}
       >
         <div className="flex-shrink-0">
-          {isCreateToggle ? <X className="h-2.5 w-2.5" /> : <Plus className="h-2.5 w-2.5" />}
+          {isCreateToggle ? <CloseIcon className="h-2.5 w-2.5" /> : <Plus className="h-2.5 w-2.5" />}
         </div>
         <div className="flex-shrink-0">{isCreateToggle ? "Cancel" : "New"}</div>
       </div>
@@ -149,7 +148,7 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
             onClick={() => setIsCreateToggle(false)}
             disabled={disabled}
           >
-            <X className="h-3.5 w-3.5 text-white" />
+            <CloseIcon className="h-3.5 w-3.5 text-white" />
           </button>
           <button type="submit" className="grid place-items-center rounded bg-green-500 p-1" disabled={isSubmitting}>
             {isSubmitting ? (
@@ -162,4 +161,4 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
       )}
     </>
   );
-};
+}

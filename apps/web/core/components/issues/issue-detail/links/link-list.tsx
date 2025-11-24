@@ -1,12 +1,11 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { TIssueServiceType } from "@plane/types";
+import type { TIssueServiceType } from "@plane/types";
 // computed
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
 import { IssueLinkItem } from "./link-item";
-import { TLinkOperations } from "./root";
+import type { TLinkOperations } from "./root";
 
 type TLinkOperationsModal = Exclude<TLinkOperations, "create">;
 
@@ -17,7 +16,7 @@ type TLinkList = {
   issueServiceType: TIssueServiceType;
 };
 
-export const LinkList: FC<TLinkList> = observer((props) => {
+export const LinkList = observer(function LinkList(props: TLinkList) {
   // props
   const { issueId, linkOperations, disabled = false, issueServiceType } = props;
   // hooks

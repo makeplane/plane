@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -7,14 +5,16 @@ import { AlertTriangle } from "lucide-react";
 // types
 import { WORKSPACE_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspace } from "@plane/types";
 // ui
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
-// constants
+import { Input } from "@plane/ui";
 // hooks
 import { cn } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useUserSettings, useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserSettings } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
@@ -27,7 +27,7 @@ const defaultValues = {
   confirmDelete: "",
 };
 
-export const DeleteWorkspaceForm: React.FC<Props> = observer((props) => {
+export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: Props) {
   const { data, onClose } = props;
   // router
   const router = useAppRouter();

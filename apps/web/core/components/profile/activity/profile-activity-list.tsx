@@ -6,17 +6,15 @@ import useSWR from "swr";
 import { History, MessageSquare } from "lucide-react";
 import { calculateTimeAgo, getFileURL } from "@plane/utils";
 // hooks
-import { ActivityIcon, ActivityMessage } from "@/components/core";
-import { RichTextEditor } from "@/components/editor";
-import { ActivitySettingsLoader } from "@/components/ui";
+import { ActivityIcon, ActivityMessage } from "@/components/core/activity";
+import { RichTextEditor } from "@/components/editor/rich-text";
+import { ActivitySettingsLoader } from "@/components/ui/loader/settings/activity";
 // constants
 import { USER_ACTIVITY } from "@/constants/fetch-keys";
-// helpers
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/user";
 // services
 import { UserService } from "@/services/user.service";
-
 const userService = new UserService();
 
 type Props = {
@@ -27,7 +25,7 @@ type Props = {
   updateEmptyState: (state: boolean) => void;
 };
 
-export const ProfileActivityListPage: React.FC<Props> = observer((props) => {
+export const ProfileActivityListPage = observer(function ProfileActivityListPage(props: Props) {
   const { cursor, perPage, updateResultsCount, updateTotalPages, updateEmptyState } = props;
   // store hooks
   const { data: currentUser } = useUser();

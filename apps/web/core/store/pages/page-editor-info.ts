@@ -1,6 +1,6 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 // plane imports
-import { EditorRefApi, TEditorAsset } from "@plane/editor";
+import type { EditorRefApi, TEditorAsset } from "@plane/editor";
 
 export type TPageEditorInstance = {
   // observables

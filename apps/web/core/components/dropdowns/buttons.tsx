@@ -1,18 +1,17 @@
-"use client";
-
+import React from "react";
 // helpers
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // types
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { BACKGROUND_BUTTON_VARIANTS, BORDER_BUTTON_VARIANTS } from "./constants";
-import { TButtonVariants } from "./types";
+import type { TButtonVariants } from "./types";
 
 export type DropdownButtonProps = {
   children: React.ReactNode;
   className?: string;
   isActive: boolean;
-  tooltipContent: string | React.ReactNode;
+  tooltipContent?: string | React.ReactNode | null;
   tooltipHeading: string;
   showTooltip: boolean;
   variant: TButtonVariants;
@@ -23,13 +22,13 @@ type ButtonProps = {
   children: React.ReactNode;
   className?: string;
   isActive: boolean;
-  tooltipContent: string | React.ReactNode;
+  tooltipContent?: string | React.ReactNode | null;
   tooltipHeading: string;
   showTooltip: boolean;
   renderToolTipByDefault?: boolean;
 };
 
-export const DropdownButton: React.FC<DropdownButtonProps> = (props) => {
+export function DropdownButton(props: DropdownButtonProps) {
   const {
     children,
     className,
@@ -58,16 +57,16 @@ export const DropdownButton: React.FC<DropdownButtonProps> = (props) => {
       {children}
     </ButtonToRender>
   );
-};
+}
 
-const BorderButton: React.FC<ButtonProps> = (props) => {
+function BorderButton(props: ButtonProps) {
   const { children, className, isActive, tooltipContent, renderToolTipByDefault, tooltipHeading, showTooltip } = props;
   const { isMobile } = usePlatformOS();
 
   return (
     <Tooltip
       tooltipHeading={tooltipHeading}
-      tooltipContent={tooltipContent}
+      tooltipContent={<>{tooltipContent}</>}
       disabled={!showTooltip}
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
@@ -83,15 +82,15 @@ const BorderButton: React.FC<ButtonProps> = (props) => {
       </div>
     </Tooltip>
   );
-};
+}
 
-const BackgroundButton: React.FC<ButtonProps> = (props) => {
+function BackgroundButton(props: ButtonProps) {
   const { children, className, tooltipContent, tooltipHeading, renderToolTipByDefault, showTooltip } = props;
   const { isMobile } = usePlatformOS();
   return (
     <Tooltip
       tooltipHeading={tooltipHeading}
-      tooltipContent={tooltipContent}
+      tooltipContent={<>{tooltipContent}</>}
       disabled={!showTooltip}
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
@@ -106,15 +105,15 @@ const BackgroundButton: React.FC<ButtonProps> = (props) => {
       </div>
     </Tooltip>
   );
-};
+}
 
-const TransparentButton: React.FC<ButtonProps> = (props) => {
+function TransparentButton(props: ButtonProps) {
   const { children, className, isActive, tooltipContent, tooltipHeading, renderToolTipByDefault, showTooltip } = props;
   const { isMobile } = usePlatformOS();
   return (
     <Tooltip
       tooltipHeading={tooltipHeading}
-      tooltipContent={tooltipContent}
+      tooltipContent={<>{tooltipContent}</>}
       disabled={!showTooltip}
       isMobile={isMobile}
       renderByDefault={renderToolTipByDefault}
@@ -130,4 +129,4 @@ const TransparentButton: React.FC<ButtonProps> = (props) => {
       </div>
     </Tooltip>
   );
-};
+}

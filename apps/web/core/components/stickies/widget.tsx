@@ -1,14 +1,16 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Plus } from "lucide-react";
-// hooks
+// plane imports
 import { useTranslation } from "@plane/i18n";
+// hooks
 import { useSticky } from "@/hooks/use-stickies";
-import { StickiesTruncated } from "./layout";
+// local imports
+import { StickiesTruncated } from "./layout/stickies-truncated";
 import { StickySearch } from "./modal/search";
 import { useStickyOperations } from "./sticky/use-operations";
 
-export const StickiesWidget: React.FC = observer(() => {
+export const StickiesWidget = observer(function StickiesWidget() {
   // params
   const { workspaceSlug } = useParams();
   // store hooks

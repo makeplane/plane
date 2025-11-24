@@ -1,24 +1,24 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { CircleDot, CopyPlus, Pencil, X, XCircle } from "lucide-react";
+import { Pencil } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 // Plane
-import { ISearchIssueResponse } from "@plane/types";
-import { RelatedIcon, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { ISearchIssueResponse } from "@plane/types";
 import { cn, generateWorkItemLink } from "@plane/utils";
 // components
-import { ExistingIssuesListModal } from "@/components/core";
-// helpers
+import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 // hooks
-import { useIssueDetail, useIssues, useProject } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// Plane-web
+// Plane web imports
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
-import { TIssueRelationTypes } from "@/plane-web/types";
-//
-import { TRelationObject } from "../issue-detail-widgets";
+import type { TIssueRelationTypes } from "@/plane-web/types";
+import type { TRelationObject } from "../issue-detail-widgets/relations";
 
 type TIssueRelationSelect = {
   className?: string;
@@ -29,7 +29,7 @@ type TIssueRelationSelect = {
   disabled?: boolean;
 };
 
-export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((props) => {
+export const IssueRelationSelect = observer(function IssueRelationSelect(props: TIssueRelationSelect) {
   const { className = "", workspaceSlug, projectId, issueId, relationKey, disabled = false } = props;
   // hooks
   const { getProjectById } = useProject();
@@ -139,7 +139,7 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
                             removeRelation(workspaceSlug, projectId, issueId, relationKey, relationIssueId);
                           }}
                         >
-                          <X className="h-2.5 w-2.5 text-custom-text-300 hover:text-red-500" />
+                          <CloseIcon className="h-2.5 w-2.5 text-custom-text-300 hover:text-red-500" />
                         </span>
                       </Tooltip>
                     )}

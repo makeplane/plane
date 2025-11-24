@@ -1,13 +1,14 @@
-import {
+import type { JSONContent } from "../../editor";
+import type { EIssueCommentAccessSpecifier } from "../../enums";
+import type { TFileSignedURLResponse } from "../../file";
+import type { IUserLite } from "../../users";
+import type { IWorkspaceLite } from "../../workspace";
+import type {
   TIssueActivityWorkspaceDetail,
   TIssueActivityProjectDetail,
   TIssueActivityIssueDetail,
   TIssueActivityUserDetail,
 } from "./base";
-import { EIssueCommentAccessSpecifier } from "../../enums";
-import { TFileSignedURLResponse } from "../../file";
-import { IUserLite } from "../../users";
-import { IWorkspaceLite } from "../../workspace";
 
 export type TCommentReaction = {
   id: string;
@@ -34,19 +35,21 @@ export type TIssueComment = {
   comment_reactions: any[];
   comment_stripped: string;
   comment_html: string;
-  comment_json: object;
+  comment_json: JSONContent;
   external_id: string | undefined;
   external_source: string | undefined;
   access: EIssueCommentAccessSpecifier;
 };
 
 export type TCommentsOperations = {
+  copyCommentLink: (commentId: string) => void;
   createComment: (data: Partial<TIssueComment>) => Promise<Partial<TIssueComment> | undefined>;
   updateComment: (commentId: string, data: Partial<TIssueComment>) => Promise<void>;
   removeComment: (commentId: string) => Promise<void>;
   uploadCommentAsset: (blockId: string, file: File, commentId?: string) => Promise<TFileSignedURLResponse>;
+  duplicateCommentAsset: (assetId: string, commentId?: string) => Promise<{ asset_id: string }>;
   addCommentReaction: (commentId: string, reactionEmoji: string) => Promise<void>;
-  deleteCommentReaction: (commentId: string, reactionEmoji: string, userReactions: TCommentReaction[]) => Promise<void>;
+  deleteCommentReaction: (commentId: string, reactionEmoji: string) => Promise<void>;
   react: (commentId: string, reactionEmoji: string, userReactions: string[]) => Promise<void>;
   reactionIds: (commentId: string) =>
     | {

@@ -1,10 +1,10 @@
-import { MutableRefObject } from "react";
+import type { MutableRefObject } from "react";
 import { observer } from "mobx-react";
-//types
-import { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
-import { KanbanIssueBlock } from "@/components/issues";
-import { TRenderQuickActions } from "../list/list-view-types";
-// components
+// plane imports
+import type { TIssue, IIssueDisplayProperties, IIssueMap } from "@plane/types";
+// local imports
+import type { TRenderQuickActions } from "../list/list-view-types";
+import { KanbanIssueBlock } from "./block";
 
 interface IssueBlocksListProps {
   sub_group_id: string;
@@ -21,7 +21,7 @@ interface IssueBlocksListProps {
   isEpic?: boolean;
 }
 
-export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = observer((props) => {
+export const KanbanIssueBlocksList = observer(function KanbanIssueBlocksList(props: IssueBlocksListProps) {
   const {
     sub_group_id,
     groupId,

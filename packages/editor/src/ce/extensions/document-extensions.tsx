@@ -1,16 +1,14 @@
 import type { HocuspocusProvider } from "@hocuspocus/provider";
 import type { AnyExtension } from "@tiptap/core";
 import { SlashCommands } from "@/extensions";
-// plane editor types
-import type { TEmbedConfig } from "@/plane-editor/types";
 // types
 import type { IEditorProps, TExtensions, TUserDetails } from "@/types";
 
 export type TDocumentEditorAdditionalExtensionsProps = Pick<
   IEditorProps,
-  "disabledExtensions" | "flaggedExtensions" | "fileHandler"
+  "disabledExtensions" | "flaggedExtensions" | "fileHandler" | "extendedEditorProps"
 > & {
-  embedConfig: TEmbedConfig | undefined;
+  isEditable: boolean;
   provider?: HocuspocusProvider;
   userDetails: TUserDetails;
 };
@@ -28,7 +26,7 @@ const extensionRegistry: TDocumentEditorAdditionalExtensionsRegistry[] = [
   },
 ];
 
-export const DocumentEditorAdditionalExtensions = (props: TDocumentEditorAdditionalExtensionsProps) => {
+export function DocumentEditorAdditionalExtensions(props: TDocumentEditorAdditionalExtensionsProps) {
   const { disabledExtensions, flaggedExtensions } = props;
 
   const documentExtensions = extensionRegistry
@@ -36,4 +34,4 @@ export const DocumentEditorAdditionalExtensions = (props: TDocumentEditorAdditio
     .map((config) => config.getExtension(props));
 
   return documentExtensions;
-};
+}

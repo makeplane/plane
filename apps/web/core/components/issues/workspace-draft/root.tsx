@@ -1,22 +1,20 @@
-"use client";
-
-import { FC, Fragment } from "react";
+import type { FC } from "react";
+import { Fragment } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
 import { EUserPermissionsLevel, EDraftIssuePaginationType, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { cn } from "@plane/utils";
-import { ComicBoxButton, DetailedEmptyState } from "@/components/empty-state";
 import { captureClick } from "@/helpers/event-tracker.helper";
-// constants
-
-// helpers
 // hooks
-import { useCommandPalette, useProject, useUserPermissions, useWorkspaceDraftIssues } from "@/hooks/store";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
+import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 // components
 import { DraftIssueBlock } from "./draft-issue-block";
@@ -27,7 +25,7 @@ type TWorkspaceDraftIssuesRoot = {
   workspaceSlug: string;
 };
 
-export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer((props) => {
+export const WorkspaceDraftIssuesRoot = observer(function WorkspaceDraftIssuesRoot(props: TWorkspaceDraftIssuesRoot) {
   const { workspaceSlug } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -41,7 +39,6 @@ export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer(
     [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-  const noProjectResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/onboarding/projects" });
 
   //swr hook for fetching issue properties
   useWorkspaceIssueProperties(workspaceSlug);
@@ -65,23 +62,22 @@ export const WorkspaceDraftIssuesRoot: FC<TWorkspaceDraftIssuesRoot> = observer(
 
   if (workspaceProjectIds?.length === 0)
     return (
-      <DetailedEmptyState
-        size="sm"
+      <EmptyStateDetailed
         title={t("workspace_projects.empty_state.no_projects.title")}
         description={t("workspace_projects.empty_state.no_projects.description")}
-        assetPath={noProjectResolvedPath}
-        customPrimaryButton={
-          <ComicBoxButton
-            label={t("workspace_projects.empty_state.no_projects.primary_button.text")}
-            title={t("workspace_projects.empty_state.no_projects.primary_button.comic.title")}
-            description={t("workspace_projects.empty_state.no_projects.primary_button.comic.description")}
-            onClick={() => {
+        assetKey="project"
+        assetClassName="size-40"
+        actions={[
+          {
+            label: t("workspace_projects.empty_state.no_projects.primary_button.text"),
+            onClick: () => {
               toggleCreateProjectModal(true);
               captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON });
-            }}
-            disabled={!hasMemberLevelPermission}
-          />
-        }
+            },
+            disabled: !hasMemberLevelPermission,
+            variant: "primary",
+          },
+        ]}
       />
     );
 

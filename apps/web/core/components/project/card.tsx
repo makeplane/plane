@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -8,33 +6,31 @@ import { ArchiveRestoreIcon, Check, ExternalLink, LinkIcon, Lock, Settings, Tras
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
+import { Button } from "@plane/propel/button";
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
 import type { IProject } from "@plane/types";
-import {
-  Avatar,
-  AvatarGroup,
-  Button,
-  Tooltip,
-  TOAST_TYPE,
-  setToast,
-  setPromiseToast,
-  ContextMenu,
-  TContextMenuItem,
-  FavoriteStar,
-} from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { Avatar, AvatarGroup, ContextMenu, FavoriteStar } from "@plane/ui";
 import { copyUrlToClipboard, cn, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
-import { ArchiveRestoreProjectModal, DeleteProjectModal, JoinProjectModal } from "@/components/project";
 // hooks
-import { useMember, useProject, useUserPermissions } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// local imports
+import { DeleteProjectModal } from "./delete-project-modal";
+import { JoinProjectModal } from "./join-project-modal";
+import { ArchiveRestoreProjectModal } from "./settings/archive-project/archive-restore-modal";
 
 type Props = {
   project: IProject;
 };
 
-export const ProjectCard: React.FC<Props> = observer((props) => {
+export const ProjectCard = observer(function ProjectCard(props: Props) {
   const { project } = props;
   // states
   const [deleteProjectModalOpen, setDeleteProjectModal] = useState(false);
@@ -121,7 +117,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
   const MENU_ITEMS: TContextMenuItem[] = [
     {
       key: "settings",
-      action: () => router.push(`/${workspaceSlug}/settings/projects/${project.id}`, {}, { showProgressBar: false }),
+      action: () => router.push(`/${workspaceSlug}/settings/projects/${project.id}`),
       title: "Settings",
       icon: Settings,
       shouldRender: !isArchived && (hasAdminRole || hasMemberRole),
@@ -200,7 +196,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
             if (!isArchived) setJoinProjectModal(true);
           }
         }}
-        data-prevent-nprogress={!isMemberOfProject || isArchived}
+        data-prevent-progress={!isMemberOfProject || isArchived}
         className="flex flex-col rounded border border-custom-border-200 bg-custom-background-100"
       >
         <ContextMenu parentRef={projectCardRef} items={MENU_ITEMS} />
@@ -232,7 +228,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
             </div>
 
             {!isArchived && (
-              <div data-prevent-nprogress className="flex h-full flex-shrink-0 items-center gap-2">
+              <div data-prevent-progress className="flex h-full flex-shrink-0 items-center gap-2">
                 <button
                   className="flex h-6 w-6 items-center justify-center rounded bg-white/10"
                   onClick={(e) => {

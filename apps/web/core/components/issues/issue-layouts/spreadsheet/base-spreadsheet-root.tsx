@@ -1,22 +1,19 @@
-import { FC, useCallback, useEffect } from "react";
+import type { FC } from "react";
+import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import {
-  ALL_ISSUES,
-  EIssueLayoutTypes,
-  EIssueFilterType,
-  EUserPermissions,
-  EUserPermissionsLevel,
-} from "@plane/constants";
-import { EIssuesStoreType, IIssueDisplayFilterOptions } from "@plane/types";
+import { ALL_ISSUES, EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import type { EIssuesStoreType, IIssueDisplayFilterOptions } from "@plane/types";
+import { EIssueLayoutTypes } from "@plane/types";
 // hooks
-import { useIssues, useUserPermissions } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // local imports
 import { IssueLayoutHOC } from "../issue-layout-HOC";
-import { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types";
+import type { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types";
 import { SpreadsheetView } from "./spreadsheet-view";
 
 export type SpreadsheetStoreType =
@@ -36,7 +33,7 @@ interface IBaseSpreadsheetRoot {
   isEpic?: boolean;
 }
 
-export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
+export const BaseSpreadsheetRoot = observer(function BaseSpreadsheetRoot(props: IBaseSpreadsheetRoot) {
   const { QuickActions, canEditPropertiesBasedOnProject, isCompletedCycle = false, viewId, isEpic = false } = props;
   // router
   const { projectId } = useParams();

@@ -1,25 +1,18 @@
-import set from "lodash/set";
-import unset from "lodash/unset";
+import { unset, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
+import type { TUserPermissions, TUserPermissionsLevel } from "@plane/constants";
 import {
   EUserPermissions,
   EUserPermissionsLevel,
-  TUserPermissions,
-  TUserPermissionsLevel,
   WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS,
 } from "@plane/constants";
-import {
-  EUserProjectRoles,
-  EUserWorkspaceRoles,
-  IUserProjectsRole,
-  IWorkspaceMemberMe,
-  TProjectMembership,
-} from "@plane/types";
+import type { EUserProjectRoles, IUserProjectsRole, IWorkspaceMemberMe, TProjectMembership } from "@plane/types";
+import { EUserWorkspaceRoles } from "@plane/types";
 // plane web imports
-import { WorkspaceService } from "@/plane-web/services/workspace.service";
-import { RootStore } from "@/plane-web/store/root.store";
+import { WorkspaceService } from "@/plane-web/services";
+import type { RootStore } from "@/plane-web/store/root.store";
 // services
 import projectMemberService from "@/services/project/project-member.service";
 import userService from "@/services/user.service";
@@ -39,7 +32,10 @@ export interface IBaseUserPermissionStore {
   workspaceInfoBySlug: (workspaceSlug: string) => IWorkspaceMemberMe | undefined;
   getWorkspaceRoleByWorkspaceSlug: (workspaceSlug: string) => TUserPermissions | EUserWorkspaceRoles | undefined;
   getProjectRolesByWorkspaceSlug: (workspaceSlug: string) => IUserProjectsRole;
-  getProjectRoleByWorkspaceSlugAndProjectId: (workspaceSlug: string, projectId: string) => EUserPermissions | undefined;
+  getProjectRoleByWorkspaceSlugAndProjectId: (
+    workspaceSlug: string,
+    projectId?: string
+  ) => EUserPermissions | undefined;
   allowPermissions: (
     allowPermissions: ETempUserRole[],
     level: TUserPermissionsLevel,
@@ -116,9 +112,13 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
    * @param { string } projectId
    * @returns { EUserPermissions | undefined }
    */
-  protected getProjectRole = computedFn((workspaceSlug: string, projectId: string): EUserPermissions | undefined => {
+  protected getProjectRole = computedFn((workspaceSlug: string, projectId?: string): EUserPermissions | undefined => {
     if (!workspaceSlug || !projectId) return undefined;
-    return this.workspaceProjectsPermissions?.[workspaceSlug]?.[projectId] || undefined;
+    const projectRole = this.workspaceProjectsPermissions?.[workspaceSlug]?.[projectId];
+    if (!projectRole) return undefined;
+    const workspaceRole = this.workspaceUserInfo?.[workspaceSlug]?.role;
+    if (workspaceRole === EUserWorkspaceRoles.ADMIN) return EUserPermissions.ADMIN;
+    else return projectRole;
   });
 
   /**
@@ -145,7 +145,7 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
    */
   abstract getProjectRoleByWorkspaceSlugAndProjectId: (
     workspaceSlug: string,
-    projectId: string
+    projectId?: string
   ) => EUserPermissions | undefined;
 
   /**

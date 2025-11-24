@@ -1,4 +1,5 @@
-import { FC, useEffect } from "react";
+import type { FC } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 // components
 import type { IBlockUpdateData, IBlockUpdateDependencyData } from "@plane/types";
@@ -14,7 +15,7 @@ type GanttChartRootProps = {
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   blockToRender: (data: any) => React.ReactNode;
   sidebarToRender: (props: any) => React.ReactNode;
-  quickAdd?: React.JSX.Element | undefined;
+  quickAdd?: React.ReactNode | undefined;
   canLoadMoreBlocks?: boolean;
   loadMoreBlocks?: () => void;
   updateBlockDates?: (updates: IBlockUpdateDependencyData[]) => Promise<void>;
@@ -31,7 +32,7 @@ type GanttChartRootProps = {
   isEpic?: boolean;
 };
 
-export const GanttChartRoot: FC<GanttChartRootProps> = observer((props) => {
+export const GanttChartRoot = observer(function GanttChartRoot(props: GanttChartRootProps) {
   const {
     border = true,
     title,

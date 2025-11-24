@@ -1,12 +1,14 @@
+import type { LucideIcon } from "lucide-react";
+import { AlertTriangle, Info } from "lucide-react";
 import React from "react";
-import { AlertTriangle, Info, LucideIcon } from "lucide-react";
 // components
-import { Button, TButtonVariant } from "../button";
+import type { TButtonVariant } from "../button";
+import { Button } from "../button";
+import { cn } from "../utils";
+import { EModalPosition, EModalWidth } from "./constants";
 import { ModalCore } from "./modal-core";
 // constants
-import { EModalPosition, EModalWidth } from "./constants";
 // helpers
-import { cn } from "../../helpers";
 
 export type TModalVariant = "danger" | "primary";
 
@@ -43,7 +45,7 @@ const VARIANT_CLASSES: Record<TModalVariant, string> = {
   primary: "bg-custom-primary-100/20 text-custom-primary-100",
 };
 
-export const AlertModalCore: React.FC<Props> = (props) => {
+export function AlertModalCore(props: Props) {
   const {
     content,
     handleClose,
@@ -92,4 +94,4 @@ export const AlertModalCore: React.FC<Props> = (props) => {
       </div>
     </ModalCore>
   );
-};
+}

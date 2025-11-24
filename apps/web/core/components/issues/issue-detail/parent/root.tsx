@@ -1,24 +1,23 @@
-"use client";
-
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import { MinusCircle } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 // component
 // ui
 import { ControlLink, CustomMenu } from "@plane/ui";
 // helpers
 import { generateWorkItemLink } from "@plane/utils";
 // hooks
-import { useIssues, useProject, useProjectState } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // types
-import { TIssueOperations } from "../root";
+import type { TIssueOperations } from "../root";
 import { IssueParentSiblings } from "./siblings";
 
 export type TIssueParentDetail = {
@@ -29,7 +28,7 @@ export type TIssueParentDetail = {
   issueOperations: TIssueOperations;
 };
 
-export const IssueParentDetail: FC<TIssueParentDetail> = observer((props) => {
+export const IssueParentDetail = observer(function IssueParentDetail(props: TIssueParentDetail) {
   const { workspaceSlug, projectId, issueId, issue, issueOperations } = props;
   // router
   const router = useRouter();

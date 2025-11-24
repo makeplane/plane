@@ -1,18 +1,16 @@
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TCycleFilters } from "@plane/types";
-// hooks
+import { CloseIcon } from "@plane/propel/icons";
+import type { TCycleFilters } from "@plane/types";
 import { Tag } from "@plane/ui";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
-import { AppliedDateFilters, AppliedStatusFilters } from "@/components/cycles";
-import { useUserPermissions } from "@/hooks/store";
-
-// components
-// helpers
-// types
-// constants
+// hooks
+import { useUserPermissions } from "@/hooks/store/user";
+// local imports
+import { AppliedDateFilters } from "./date";
+import { AppliedStatusFilters } from "./status";
 
 type Props = {
   appliedFilters: TCycleFilters;
@@ -23,7 +21,7 @@ type Props = {
 
 const DATE_FILTERS = ["start_date", "end_date"];
 
-export const CycleAppliedFiltersList: React.FC<Props> = observer((props) => {
+export const CycleAppliedFiltersList = observer(function CycleAppliedFiltersList(props: Props) {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, alwaysAllowEditing } = props;
   // store hooks
   const { allowPermissions } = useUserPermissions();
@@ -69,7 +67,7 @@ export const CycleAppliedFiltersList: React.FC<Props> = observer((props) => {
                   className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
                   onClick={() => handleRemoveFilter(filterKey, null)}
                 >
-                  <X size={12} strokeWidth={2} />
+                  <CloseIcon height={12} width={12} strokeWidth={2} />
                 </button>
               )}
             </div>
@@ -80,7 +78,7 @@ export const CycleAppliedFiltersList: React.FC<Props> = observer((props) => {
         <button type="button" onClick={handleClearAllFilters}>
           <Tag>
             {t("common.clear_all")}
-            <X size={12} strokeWidth={2} />
+            <CloseIcon height={12} width={12} strokeWidth={2} />
           </Tag>
         </button>
       )}

@@ -1,18 +1,20 @@
-"use client";
-import React, { FC } from "react";
-import isEmpty from "lodash/isEmpty";
+import type { FC } from "react";
+import React from "react";
+import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
-import { LayersIcon, SquareUser, Users } from "lucide-react";
+import { SquareUser } from "lucide-react";
 // plane types
 import { EEstimateSystem } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ICycle } from "@plane/types";
+import { MembersPropertyIcon, WorkItemsIcon } from "@plane/propel/icons";
+import type { ICycle } from "@plane/types";
 // plane ui
 import { Avatar, AvatarGroup, TextArea } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
-import { useMember, useProjectEstimates } from "@/hooks/store";
+import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useMember } from "@/hooks/store/use-member";
 // plane web constants
 
 type Props = {
@@ -20,7 +22,7 @@ type Props = {
   cycleDetails: ICycle;
 };
 
-export const CycleSidebarDetails: FC<Props> = observer((props) => {
+export const CycleSidebarDetails = observer(function CycleSidebarDetails(props: Props) {
   const { projectId, cycleDetails } = props;
   // hooks
   const { getUserDetails } = useMember();
@@ -84,7 +86,7 @@ export const CycleSidebarDetails: FC<Props> = observer((props) => {
 
         <div className="flex items-center justify-start gap-1">
           <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
-            <Users className="h-4 w-4" />
+            <MembersPropertyIcon className="h-4 w-4" />
             <span className="text-base">{t("members")}</span>
           </div>
           <div className="flex w-3/5 items-center rounded-sm">
@@ -114,7 +116,7 @@ export const CycleSidebarDetails: FC<Props> = observer((props) => {
 
         <div className="flex items-center justify-start gap-1">
           <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
-            <LayersIcon className="h-4 w-4" />
+            <WorkItemsIcon className="h-4 w-4" />
             <span className="text-base">{t("work_items")}</span>
           </div>
           <div className="flex w-3/5 items-center">
@@ -128,7 +130,7 @@ export const CycleSidebarDetails: FC<Props> = observer((props) => {
         {isEstimatePointValid && !isCompleted && (
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
-              <LayersIcon className="h-4 w-4" />
+              <WorkItemsIcon className="h-4 w-4" />
               <span className="text-base">{t("points")}</span>
             </div>
             <div className="flex w-3/5 items-center">

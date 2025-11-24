@@ -1,27 +1,21 @@
 import { useCallback, useRef } from "react";
 import { observer } from "mobx-react";
-import { ChevronLeft, ChevronRight, Copy } from "lucide-react";
+import { Copy } from "lucide-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import { TDescriptionVersion } from "@plane/types";
-import {
-  Avatar,
-  Button,
-  EModalPosition,
-  EModalWidth,
-  getButtonStyling,
-  Loader,
-  ModalCore,
-  setToast,
-  TOAST_TYPE,
-  Tooltip,
-} from "@plane/ui";
+import { Button, getButtonStyling } from "@plane/propel/button";
+import { ChevronLeftIcon, ChevronRightIcon } from "@plane/propel/icons";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TDescriptionVersion } from "@plane/types";
+import { Avatar, EModalPosition, EModalWidth, Loader, ModalCore } from "@plane/ui";
 import { calculateTimeAgo, cn, copyTextToClipboard, getFileURL } from "@plane/utils";
 // components
-import { RichTextEditor } from "@/components/editor";
+import { RichTextEditor } from "@/components/editor/rich-text";
 // hooks
-import { useMember, useWorkspace } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 type Props = {
   activeVersionDescription: string | undefined;
@@ -37,7 +31,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const DescriptionVersionsModal: React.FC<Props> = observer((props) => {
+export const DescriptionVersionsModal = observer(function DescriptionVersionsModal(props: Props) {
   const {
     activeVersionDescription,
     activeVersionDetails,
@@ -109,7 +103,7 @@ export const DescriptionVersionsModal: React.FC<Props> = observer((props) => {
               )}
               disabled={isPrevDisabled}
             >
-              <ChevronLeft className="size-4" />
+              <ChevronLeftIcon className="size-4" />
             </button>
             <button
               type="button"
@@ -123,20 +117,21 @@ export const DescriptionVersionsModal: React.FC<Props> = observer((props) => {
               )}
               disabled={isNextDisabled}
             >
-              <ChevronRight className="size-4" />
+              <ChevronRightIcon className="size-4" />
             </button>
           </div>
         </div>
         {/* End header */}
         {/* Version description */}
         <div className="mt-4 pb-4">
-          {activeVersionDescription ? (
+          {activeVersionId && activeVersionDescription ? (
             <RichTextEditor
+              key={activeVersionId}
               editable={false}
               containerClassName="p-0 !pl-0 border-none"
               editorClassName="pl-0"
-              id={activeVersionId ?? ""}
-              initialValue={activeVersionDescription ?? "<p></p>"}
+              id={activeVersionId}
+              initialValue={activeVersionDescription}
               projectId={projectId}
               ref={editorRef}
               workspaceId={workspaceId}

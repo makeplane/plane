@@ -1,28 +1,34 @@
-import React, { FC, useState } from "react";
+import type { FC } from "react";
+import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Earth, Lock } from "lucide-react";
-// types
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
-import { EViewAccess, IProjectView } from "@plane/types";
-// ui
-import { Tooltip, FavoriteStar } from "@plane/ui";
-import { calculateTotalFilters, getPublishViewLink } from "@plane/utils";
-// components
-import { DeleteProjectViewModal, CreateUpdateProjectViewModal, ViewQuickActions } from "@/components/views";
-// helpers
+import { Tooltip } from "@plane/propel/tooltip";
+import type { IProjectView } from "@plane/types";
+import { EViewAccess } from "@plane/types";
+import { FavoriteStar } from "@plane/ui";
+import { getPublishViewLink } from "@plane/utils";
 // hooks
-import { useMember, useProjectView, useUserPermissions } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useProjectView } from "@/hooks/store/use-project-view";
+import { useUserPermissions } from "@/hooks/store/user";
+// plane web imports
 import { PublishViewModal } from "@/plane-web/components/views/publish";
+// local imports
 import { ButtonAvatars } from "../dropdowns/member/avatar";
+import { DeleteProjectViewModal } from "./delete-view-modal";
+import { CreateUpdateProjectViewModal } from "./modal";
+import { ViewQuickActions } from "./quick-actions";
 
 type Props = {
   parentRef: React.RefObject<HTMLElement>;
   view: IProjectView;
 };
 
-export const ViewListItemAction: FC<Props> = observer((props) => {
+export const ViewListItemAction = observer(function ViewListItemAction(props: Props) {
   const { parentRef, view } = props;
   // states
   const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);
@@ -47,8 +53,6 @@ export const ViewListItemAction: FC<Props> = observer((props) => {
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.PROJECT
   );
-
-  const totalFilters = calculateTotalFilters(view.filters ?? {});
 
   const access = view.access;
 
@@ -83,10 +87,6 @@ export const ViewListItemAction: FC<Props> = observer((props) => {
         />
       )}
       <DeleteProjectViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
-      <p className="hidden rounded bg-custom-background-80 px-2 py-1 text-xs text-custom-text-200 group-hover:block">
-        {totalFilters} {totalFilters === 1 ? "filter" : "filters"}
-      </p>
-
       <div className="cursor-default text-custom-text-300">
         <Tooltip tooltipContent={access === EViewAccess.PUBLIC ? "Public" : "Private"}>
           {access === EViewAccess.PUBLIC ? <Earth className="h-4 w-4" /> : <Lock className="h-4 w-4" />}

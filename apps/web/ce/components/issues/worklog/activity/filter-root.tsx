@@ -1,10 +1,9 @@
-"use client";
-
-import { FC } from "react";
+import type { FC } from "react";
+// plane imports
+import type { TActivityFilters, TActivityFilterOption } from "@plane/constants";
+import { ACTIVITY_FILTER_TYPE_OPTIONS } from "@plane/constants";
 // components
-import { TActivityFilters, ACTIVITY_FILTER_TYPE_OPTIONS, TActivityFilterOption } from "@plane/constants";
-import { ActivityFilter } from "@/components/issues";
-// plane web constants
+import { ActivityFilter } from "@/components/issues/issue-detail/issue-activity";
 
 export type TActivityFilterRoot = {
   selectedFilters: TActivityFilters[];
@@ -13,7 +12,7 @@ export type TActivityFilterRoot = {
   isIntakeIssue?: boolean;
 };
 
-export const ActivityFilterRoot: FC<TActivityFilterRoot> = (props) => {
+export function ActivityFilterRoot(props: TActivityFilterRoot) {
   const { selectedFilters, toggleFilter } = props;
 
   const filters: TActivityFilterOption[] = Object.entries(ACTIVITY_FILTER_TYPE_OPTIONS).map(([key, value]) => {
@@ -27,4 +26,4 @@ export const ActivityFilterRoot: FC<TActivityFilterRoot> = (props) => {
   });
 
   return <ActivityFilter selectedFilters={selectedFilters} filterOptions={filters} />;
-};
+}

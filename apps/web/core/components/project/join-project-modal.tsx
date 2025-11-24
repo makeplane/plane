@@ -1,14 +1,13 @@
-"use client";
-
 import { useState, Fragment } from "react";
 
 import { Transition, Dialog } from "@headlessui/react";
 // types
+import { Button } from "@plane/propel/button";
 import type { IProject } from "@plane/types";
 // ui
-import { Button } from "@plane/ui";
 // hooks
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 // type
@@ -19,7 +18,7 @@ type TJoinProjectModalProps = {
   handleClose: () => void;
 };
 
-export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
+export function JoinProjectModal(props: TJoinProjectModalProps) {
   const { handleClose, isOpen, project, workspaceSlug } = props;
   // states
   const [isJoiningLoading, setIsJoiningLoading] = useState(false);
@@ -103,4 +102,4 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+}

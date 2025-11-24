@@ -1,23 +1,24 @@
-"use client";
-
-import { FC, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { Clock } from "lucide-react";
+// plane imports
 import { Avatar, Row } from "@plane/ui";
 import { cn, calculateTimeAgo, renderFormattedDate, renderFormattedTime, getFileURL } from "@plane/utils";
-// components
-import { NotificationOption } from "@/components/workspace-notifications";
-// helpers
 // hooks
-import { useIssueDetail, useNotification, useWorkspace, useWorkspaceNotifications } from "@/hooks/store";
+import { useWorkspaceNotifications } from "@/hooks/store/notifications";
+import { useNotification } from "@/hooks/store/notifications/use-notification";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+// local imports
 import { NotificationContent } from "./content";
+import { NotificationOption } from "./options";
 
 type TNotificationItem = {
   workspaceSlug: string;
   notificationId: string;
 };
 
-export const NotificationItem: FC<TNotificationItem> = observer((props) => {
+export const NotificationItem = observer(function NotificationItem(props: TNotificationItem) {
   const { workspaceSlug, notificationId } = props;
   // hooks
   const { currentSelectedNotificationId, setCurrentSelectedNotificationId } = useWorkspaceNotifications();
@@ -51,7 +52,9 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
       }
 
       if (notification?.is_inbox_issue === false) {
-        !getIsIssuePeeked(issueId) && setPeekIssue({ workspaceSlug, projectId, issueId });
+        if (!getIsIssuePeeked(issueId)) {
+          setPeekIssue({ workspaceSlug, projectId, issueId });
+        }
       }
     }
   };

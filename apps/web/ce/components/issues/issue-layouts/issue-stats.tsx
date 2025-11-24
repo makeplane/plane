@@ -1,6 +1,5 @@
-"use client";
-
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 
 type Props = {
   issueId: string;
@@ -10,4 +9,6 @@ type Props = {
   showLabel?: boolean;
 };
 
-export const IssueStats: FC<Props> = (props) => <></>;
+export function IssueStats(props: Props) {
+  return <></>;
+}

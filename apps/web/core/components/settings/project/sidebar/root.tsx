@@ -2,20 +2,20 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { PROJECT_SETTINGS_CATEGORIES, PROJECT_SETTINGS_CATEGORY } from "@plane/constants";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { getUserRole } from "@plane/utils";
 // components
-import { Logo } from "@/components/common";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // local imports
-import { SettingsSidebar } from "../..";
+import { SettingsSidebar } from "../../sidebar";
 import { NavItemChildren } from "./nav-item-children";
 
 type TProjectSettingsSidebarProps = {
   isMobile?: boolean;
 };
 
-export const ProjectSettingsSidebar = observer((props: TProjectSettingsSidebarProps) => {
+export const ProjectSettingsSidebar = observer(function ProjectSettingsSidebar(props: TProjectSettingsSidebarProps) {
   const { isMobile = false } = props;
   const { workspaceSlug } = useParams();
   // store hooks

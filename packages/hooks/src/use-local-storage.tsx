@@ -5,7 +5,7 @@ export const getValueFromLocalStorage = (key: string, defaultValue: any) => {
   try {
     const item = window.localStorage.getItem(key);
     return item ? JSON.parse(item) : defaultValue;
-  } catch (error) {
+  } catch (_error) {
     window.localStorage.removeItem(key);
     return defaultValue;
   }
@@ -16,7 +16,7 @@ export const setValueIntoLocalStorage = (key: string, value: any) => {
   try {
     window.localStorage.setItem(key, JSON.stringify(value));
     return true;
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 };

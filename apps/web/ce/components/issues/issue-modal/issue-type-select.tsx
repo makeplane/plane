@@ -1,8 +1,8 @@
-import { Control } from "react-hook-form";
+import type { Control } from "react-hook-form";
 // plane imports
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 // types
-import { TBulkIssueProperties, TIssue } from "@plane/types";
+import type { TBulkIssueProperties, TIssue } from "@plane/types";
 
 export type TIssueFields = TIssue & TBulkIssueProperties;
 
@@ -23,4 +23,6 @@ export type TIssueTypeSelectProps<T extends Partial<TIssueFields>> = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const IssueTypeSelect = <T extends Partial<TIssueFields>>(props: TIssueTypeSelectProps<T>) => <></>;
+export function IssueTypeSelect<T extends Partial<TIssueFields>>(props: TIssueTypeSelectProps<T>) {
+  return <></>;
+}

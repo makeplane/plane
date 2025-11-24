@@ -1,13 +1,12 @@
-"use client";
-
 import { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { CYCLE_TRACKER_EVENTS } from "@plane/constants";
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useCycle } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
@@ -19,7 +18,7 @@ type Props = {
   onSubmit?: () => Promise<void>;
 };
 
-export const ArchiveCycleModal: React.FC<Props> = (props) => {
+export function ArchiveCycleModal(props: Props) {
   const { workspaceSlug, projectId, cycleId, isOpen, handleClose } = props;
   // router
   const router = useAppRouter();
@@ -117,4 +116,4 @@ export const ArchiveCycleModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+}

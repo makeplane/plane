@@ -1,6 +1,4 @@
-"use client";
-
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { CustomSearchSelect } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -18,7 +16,7 @@ type TTimezoneSelect = {
   disabled?: boolean;
 };
 
-export const TimezoneSelect: FC<TTimezoneSelect> = observer((props) => {
+export const TimezoneSelect = observer(function TimezoneSelect(props: TTimezoneSelect) {
   // props
   const {
     value,

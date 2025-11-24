@@ -9,6 +9,7 @@ export type TIssueCommentReaction = {
   updated_at: Date;
   created_by: string;
   updated_by: string;
+  display_name: string;
 };
 
 export type TIssueCommentReactionMap = {

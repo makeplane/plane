@@ -1,21 +1,22 @@
-"use client";
-
-import { FC, useMemo } from "react";
+import type { FC } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
 import { EUserPermissionsLevel } from "@plane/constants";
-import { EUserProjectRoles, IState, TStateOperationsCallbacks } from "@plane/types";
+import type { IState, TStateOperationsCallbacks } from "@plane/types";
+import { EUserProjectRoles } from "@plane/types";
 import { ProjectStateLoader, GroupList } from "@/components/project-states";
 // hooks
-import { useProjectState, useUserPermissions } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
+import { useUserPermissions } from "@/hooks/store/user";
 
 type TProjectState = {
   workspaceSlug: string;
   projectId: string;
 };
 
-export const ProjectStateRoot: FC<TProjectState> = observer((props) => {
+export const ProjectStateRoot = observer(function ProjectStateRoot(props: TProjectState) {
   const { workspaceSlug, projectId } = props;
   // hooks
   const {

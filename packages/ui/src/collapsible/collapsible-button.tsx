@@ -1,6 +1,8 @@
-import React, { FC } from "react";
-import { cn } from "../../helpers";
-import { DropdownIcon, ISvgIcons } from "../icons";
+import type { FC } from "react";
+import React from "react";
+import type { ISvgIcons } from "@plane/propel/icons";
+import { DropdownIcon } from "@plane/propel/icons";
+import { cn } from "../utils";
 
 type Props = {
   isOpen: boolean;
@@ -13,7 +15,7 @@ type Props = {
   ChevronIcon?: React.FC<ISvgIcons>;
 };
 
-export const CollapsibleButton: FC<Props> = (props) => {
+export function CollapsibleButton(props: Props) {
   const {
     isOpen,
     title,
@@ -47,4 +49,4 @@ export const CollapsibleButton: FC<Props> = (props) => {
       {actionItemElement && isOpen && actionItemElement}
     </div>
   );
-};
+}

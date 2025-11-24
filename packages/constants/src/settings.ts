@@ -1,4 +1,4 @@
-import { PROFILE_SETTINGS } from ".";
+import { PROFILE_SETTINGS } from "./profile";
 import { WORKSPACE_SETTINGS } from "./workspace";
 
 export enum WORKSPACE_SETTINGS_CATEGORY {

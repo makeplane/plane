@@ -1,14 +1,12 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Briefcase } from "lucide-react";
 import { EEstimateSystem } from "@plane/constants";
-import { ChartYAxisMetric } from "@plane/types";
+import { ProjectIcon } from "@plane/propel/icons";
+import type { ChartYAxisMetric } from "@plane/types";
 // plane package imports
 import { CustomSelect } from "@plane/ui";
 // hooks
-import { useProjectEstimates } from "@/hooks/store";
+import { useProjectEstimates } from "@/hooks/store/estimates";
 // plane web constants
 type Props = {
   value: ChartYAxisMetric;
@@ -17,7 +15,7 @@ type Props = {
   options: { value: ChartYAxisMetric; label: string }[];
 };
 
-export const SelectYAxis: React.FC<Props> = observer(({ value, onChange, hiddenOptions, options }) => {
+export const SelectYAxis = observer(function SelectYAxis({ value, onChange, hiddenOptions, options }: Props) {
   // hooks
   const { projectId } = useParams();
   const { areEstimateEnabledByProjectId, currentActiveEstimateId, estimateById } = useProjectEstimates();
@@ -44,7 +42,7 @@ export const SelectYAxis: React.FC<Props> = observer(({ value, onChange, hiddenO
       value={value}
       label={
         <div className="flex items-center gap-2">
-          <Briefcase className="h-3 w-3" />
+          <ProjectIcon className="h-3 w-3" />
           <span>{options.find((v) => v.value === value)?.label ?? "Add Metric"}</span>
         </div>
       }

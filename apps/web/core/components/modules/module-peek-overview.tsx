@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { usePathname, useSearchParams } from "next/navigation";
 // hooks
 import { generateQueryParams } from "@plane/utils";
-import { useModule } from "@/hooks/store";
+import { useModule } from "@/hooks/store/use-module";
 import { useAppRouter } from "@/hooks/use-app-router";
 // components
 import { ModuleAnalyticsSidebar } from "./";
@@ -14,7 +14,11 @@ type Props = {
   isArchived?: boolean;
 };
 
-export const ModulePeekOverview: React.FC<Props> = observer(({ projectId, workspaceSlug, isArchived = false }) => {
+export const ModulePeekOverview = observer(function ModulePeekOverview({
+  projectId,
+  workspaceSlug,
+  isArchived = false,
+}: Props) {
   // router
   const router = useAppRouter();
   const pathname = usePathname();

@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
@@ -6,13 +5,14 @@ import { useParams, usePathname } from "next/navigation";
 import { EUserPermissionsLevel, SIDEBAR_TRACKER_ELEMENTS } from "@plane/constants";
 
 import { useTranslation } from "@plane/i18n";
-import { EUserWorkspaceRoles } from "@plane/types";
+import type { EUserWorkspaceRoles } from "@plane/types";
 // components
-import { SidebarNavItem } from "@/components/sidebar";
-import { NotificationAppSidebarOption } from "@/components/workspace-notifications";
+import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
+import { NotificationAppSidebarOption } from "@/components/workspace-notifications/notification-app-sidebar-option";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useAppTheme, useUserPermissions } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useUserPermissions } from "@/hooks/store/user";
 
 export interface SidebarUserMenuItemProps {
   item: {
@@ -26,7 +26,7 @@ export interface SidebarUserMenuItemProps {
   draftIssueCount: number;
 }
 
-export const SidebarUserMenuItem: FC<SidebarUserMenuItemProps> = observer((props) => {
+export const SidebarUserMenuItem = observer(function SidebarUserMenuItem(props: SidebarUserMenuItemProps) {
   const { item, draftIssueCount } = props;
   // nextjs hooks
   const { workspaceSlug } = useParams();

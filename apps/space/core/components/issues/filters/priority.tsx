@@ -1,14 +1,12 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
+// plane imports
 import { ISSUE_PRIORITY_FILTERS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// ui
-import { PriorityIcon } from "@plane/ui";
-// components
-import { FilterHeader, FilterOption } from "./helpers";
-// constants
+import { PriorityIcon } from "@plane/propel/icons";
+// local imports
+import { FilterHeader } from "./helpers/filter-header";
+import { FilterOption } from "./helpers/filter-option";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -16,7 +14,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterPriority: React.FC<Props> = observer((props) => {
+export const FilterPriority = observer(function FilterPriority(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery } = props;
 
   // hooks

@@ -1,13 +1,12 @@
-"use client";
-
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EIssueServiceType, TIssueServiceType } from "@plane/types";
+import type { TIssueServiceType } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 import { CircularProgressIndicator, CollapsibleButton } from "@plane/ui";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { SubWorkItemTitleActions } from "./title-actions";
 
 type Props = {
@@ -19,7 +18,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const SubIssuesCollapsibleTitle: FC<Props> = observer((props) => {
+export const SubIssuesCollapsibleTitle = observer(function SubIssuesCollapsibleTitle(props: Props) {
   const {
     isOpen,
     parentIssueId,

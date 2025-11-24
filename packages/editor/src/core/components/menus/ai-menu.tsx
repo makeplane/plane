@@ -1,15 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import tippy, { Instance } from "tippy.js";
+import tippy from "tippy.js";
+import type { Instance } from "tippy.js";
 // plane utils
 import { cn } from "@plane/utils";
 // types
-import { TAIHandler } from "@/types";
+import type { TAIHandler } from "@/types";
 
 type Props = {
   menu: TAIHandler["menu"];
 };
 
-export const AIFeaturesMenu: React.FC<Props> = (props) => {
+export function AIFeaturesMenu(props: Props) {
   const { menu } = props;
   // states
   const [isPopupVisible, setIsPopupVisible] = useState(false);
@@ -93,4 +94,4 @@ export const AIFeaturesMenu: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

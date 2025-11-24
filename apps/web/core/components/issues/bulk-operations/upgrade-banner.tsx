@@ -1,14 +1,12 @@
-"use client";
-
 import { MARKETING_PLANE_ONE_PAGE_LINK } from "@plane/constants";
-import { getButtonStyling } from "@plane/ui";
+import { getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 
 type Props = {
   className?: string;
 };
 
-export const BulkOperationsUpgradeBanner: React.FC<Props> = (props) => {
+export function BulkOperationsUpgradeBanner(props: Props) {
   const { className } = props;
 
   return (
@@ -29,4 +27,4 @@ export const BulkOperationsUpgradeBanner: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

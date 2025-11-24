@@ -1,2 +1,2 @@
 export * from "./project";
-export * from "./workspace.service";
+export * from "@/services/workspace.service";

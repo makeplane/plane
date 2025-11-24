@@ -1,34 +1,23 @@
-"use client";
-
 import { observer } from "mobx-react";
-import Image from "next/image";
-import { useTheme } from "next-themes";
-// components
-import { PoweredBy } from "@/components/common";
-import { UserAvatar } from "@/components/issues";
-// hooks
-import { useUser } from "@/hooks/store";
+import { PlaneLockup } from "@plane/propel/icons";
 // assets
-import PlaneBlackLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
-import PlaneWhiteLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
-import UserLoggedInImage from "@/public/user-logged-in.svg";
+import UserLoggedInImage from "@/app/assets/user-logged-in.svg?url";
+// components
+import { PoweredBy } from "@/components/common/powered-by";
+import { UserAvatar } from "@/components/issues/navbar/user-avatar";
+// hooks
+import { useUser } from "@/hooks/store/use-user";
 
-export const UserLoggedIn = observer(() => {
+export const UserLoggedIn = observer(function UserLoggedIn() {
   // store hooks
   const { data: user } = useUser();
-  // next-themes
-  const { resolvedTheme } = useTheme();
-
-  const logo = resolvedTheme === "dark" ? PlaneWhiteLogo : PlaneBlackLogo;
 
   if (!user) return null;
 
   return (
     <div className="flex flex-col h-screen w-screen">
       <div className="relative flex w-full items-center justify-between gap-4 border-b border-custom-border-200 px-6 py-5">
-        <div className="h-[30px] w-[133px]">
-          <Image src={logo} alt="Plane logo" />
-        </div>
+        <PlaneLockup className="h-6 w-auto text-custom-text-100" />
         <UserAvatar />
       </div>
 
@@ -36,7 +25,7 @@ export const UserLoggedIn = observer(() => {
         <div className="text-center">
           <div className="mx-auto size-32 md:size-52 grid place-items-center rounded-full bg-custom-background-80">
             <div className="size-16 md:size-32 grid place-items-center">
-              <Image src={UserLoggedInImage} alt="User already logged in" />
+              <img src={UserLoggedInImage} alt="User already logged in" className="w-full h-full object-cover" />
             </div>
           </div>
           <h1 className="mt-8 md:mt-12 text-xl md:text-3xl font-semibold">Nice! Just one more step.</h1>

@@ -1,9 +1,9 @@
-"use client";
+import { IssuePeekOverview } from "@/components/issues/peek-overview";
 
-import { IssuePeekOverview } from "@/components/issues";
-
-export const HomePeekOverviewsRoot = () => (
-  <>
-    <IssuePeekOverview />
-  </>
-);
+export function HomePeekOverviewsRoot() {
+  return (
+    <>
+      <IssuePeekOverview />
+    </>
+  );
+}

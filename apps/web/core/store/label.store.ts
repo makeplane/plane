@@ -1,16 +1,14 @@
-import set from "lodash/set";
-import sortBy from "lodash/sortBy";
+import { set, sortBy } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { IIssueLabel, IIssueLabelTree } from "@plane/types";
+import type { IIssueLabel, IIssueLabelTree } from "@plane/types";
 // helpers
 import { buildTree } from "@plane/utils";
 // services
-import { syncIssuesWithDeletedLabels } from "@/local-db/utils/load-workspace";
 import { IssueLabelService } from "@/services/issue";
 // store
-import { CoreRootStore } from "./root.store";
+import type { CoreRootStore } from "./root.store";
 
 export interface ILabelStore {
   //Loaders
@@ -22,6 +20,8 @@ export interface ILabelStore {
   projectLabelsTree: IIssueLabelTree[] | undefined;
   workspaceLabels: IIssueLabel[] | undefined;
   //computed actions
+  getWorkspaceLabels: (workspaceSlug: string) => IIssueLabel[] | undefined;
+  getWorkspaceLabelIds: (workspaceSlug: string) => string[] | undefined;
   getProjectLabels: (projectId: string | undefined | null) => IIssueLabel[] | undefined;
   getProjectLabelIds: (projectId: string | undefined | null) => string[] | undefined;
   getLabelById: (labelId: string) => IIssueLabel | null;
@@ -83,12 +83,8 @@ export class LabelStore implements ILabelStore {
    */
   get workspaceLabels() {
     const currentWorkspaceDetails = this.rootStore.workspaceRoot.currentWorkspace;
-    const workspaceSlug = this.rootStore.router.workspaceSlug || "";
-    if (!currentWorkspaceDetails || !this.fetchedMap[workspaceSlug]) return;
-    return sortBy(
-      Object.values(this.labelMap).filter((label) => label.workspace_id === currentWorkspaceDetails.id),
-      "sort_order"
-    );
+    if (!currentWorkspaceDetails) return;
+    return this.getWorkspaceLabels(currentWorkspaceDetails.slug);
   }
 
   /**
@@ -111,6 +107,19 @@ export class LabelStore implements ILabelStore {
     if (!this.projectLabels) return;
     return buildTree(this.projectLabels);
   }
+
+  getWorkspaceLabels = computedFn((workspaceSlug: string) => {
+    const workspaceDetails = this.rootStore.workspaceRoot.getWorkspaceBySlug(workspaceSlug);
+    if (!workspaceDetails || !this.fetchedMap[workspaceSlug]) return;
+    return sortBy(
+      Object.values(this.labelMap).filter((label) => label.workspace_id === workspaceDetails.id),
+      "sort_order"
+    );
+  });
+
+  getWorkspaceLabelIds = computedFn(
+    (workspaceSlug: string) => this.getWorkspaceLabels(workspaceSlug)?.map((label) => label.id) ?? undefined
+  );
 
   getProjectLabels = computedFn((projectId: string | undefined | null) => {
     const workspaceSlug = this.rootStore.router.workspaceSlug || "";
@@ -289,7 +298,6 @@ export class LabelStore implements ILabelStore {
       runInAction(() => {
         delete this.labelMap[labelId];
       });
-      syncIssuesWithDeletedLabels([labelId]);
     });
   };
 }

@@ -1,28 +1,27 @@
-"use client";
-
 import React, { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IIssueLabel } from "@plane/types";
-import { Button, Loader } from "@plane/ui";
-import { DetailedEmptyState } from "@/components/empty-state";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
+import type { IIssueLabel } from "@plane/types";
+import { Loader } from "@plane/ui";
+import type { TLabelOperationsCallbacks } from "@/components/labels";
 import {
   CreateUpdateLabelInline,
   DeleteLabelModal,
   ProjectSettingLabelGroup,
   ProjectSettingLabelItem,
-  TLabelOperationsCallbacks,
 } from "@/components/labels";
 // hooks
-import { useLabel, useUserPermissions } from "@/hooks/store";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-import { SettingsHeading } from "../settings";
-// plane web imports
+import { captureClick } from "@/helpers/event-tracker.helper";
+import { useLabel } from "@/hooks/store/use-label";
+import { useUserPermissions } from "@/hooks/store/user";
+// local imports
+import { SettingsHeading } from "../settings/heading";
 
-export const ProjectSettingsLabelList: React.FC = observer(() => {
+export const ProjectSettingsLabelList = observer(function ProjectSettingsLabelList() {
   // router
   const { workspaceSlug, projectId } = useParams();
   // refs
@@ -38,7 +37,6 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
   const { allowPermissions } = useUserPermissions();
   // derived values
   const isEditable = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/project-settings/labels" });
   const labelOperationsCallbacks: TLabelOperationsCallbacks = {
     createLabel: (data: Partial<IIssueLabel>) => createLabel(workspaceSlug?.toString(), projectId?.toString(), data),
     updateLabel: (labelId: string, data: Partial<IIssueLabel>) =>
@@ -81,7 +79,12 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
         description={t("project_settings.labels.description")}
         button={{
           label: t("common.add_label"),
-          onClick: newLabel,
+          onClick: () => {
+            newLabel();
+            captureClick({
+              elementName: PROJECT_SETTINGS_TRACKER_ELEMENTS.LABELS_HEADER_CREATE_BUTTON,
+            });
+          },
         }}
         showButton={isEditable}
       />
@@ -104,19 +107,25 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
         )}
         {projectLabels ? (
           projectLabels.length === 0 && !showLabelForm ? (
-            <div className="flex items-center justify-center h-full w-full">
-              <DetailedEmptyState
-                title={""}
-                description={""}
-                primaryButton={{
-                  text: "Create your first label",
-                  onClick: newLabel,
-                }}
-                assetPath={resolvedPath}
-                className="w-full !px-0 !py-0"
-                size="md"
-              />
-            </div>
+            <EmptyStateCompact
+              assetKey="label"
+              assetClassName="size-20"
+              title={t("settings_empty_state.labels.title")}
+              description={t("settings_empty_state.labels.description")}
+              actions={[
+                {
+                  label: t("settings_empty_state.labels.cta_primary"),
+                  onClick: () => {
+                    newLabel();
+                    captureClick({
+                      elementName: PROJECT_SETTINGS_TRACKER_ELEMENTS.LABELS_EMPTY_STATE_CREATE_BUTTON,
+                    });
+                  },
+                },
+              ]}
+              align="start"
+              rootClassName="py-20"
+            />
           ) : (
             projectLabelsTree && (
               <div className="mt-3">

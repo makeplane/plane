@@ -1,25 +1,24 @@
-"use client";
-
-import { FC, useRef } from "react";
+import { useRef } from "react";
 import { observer } from "mobx-react";
-import { FileText } from "lucide-react";
-// components
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import { PageIcon } from "@plane/propel/icons";
+// plane imports
 import { getPageName } from "@plane/utils";
-import { Logo } from "@/components/common";
+// components
 import { ListItem } from "@/components/core/list";
-import { BlockItemAction } from "@/components/pages/list";
-// helpers
+import { BlockItemAction } from "@/components/pages/list/block-item-action";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web hooks
-import { EPageStoreType, usePage } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
+import { usePage } from "@/plane-web/hooks/store";
 
 type TPageListBlock = {
   pageId: string;
   storeType: EPageStoreType;
 };
 
-export const PageListBlock: FC<TPageListBlock> = observer((props) => {
+export const PageListBlock = observer(function PageListBlock(props: TPageListBlock) {
   const { pageId, storeType } = props;
   // refs
   const parentRef = useRef(null);
@@ -41,7 +40,7 @@ export const PageListBlock: FC<TPageListBlock> = observer((props) => {
           {logo_props?.in_use ? (
             <Logo logo={logo_props} size={16} type="lucide" />
           ) : (
-            <FileText className="h-4 w-4 text-custom-text-300" />
+            <PageIcon className="h-4 w-4 text-custom-text-300" />
           )}
         </>
       }

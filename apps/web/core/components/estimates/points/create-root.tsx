@@ -1,14 +1,15 @@
-"use client";
-
-import { Dispatch, FC, SetStateAction, useCallback, useState } from "react";
+import type { Dispatch, FC, SetStateAction } from "react";
+import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
+// plane imports
 import { estimateCount } from "@plane/constants";
-import { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeError } from "@plane/types";
-import { Button, Sortable } from "@plane/ui";
-// components
-import { EstimatePointCreate, EstimatePointItemPreview } from "@/components/estimates/points";
-// plane web constants
+import { Button } from "@plane/propel/button";
+import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeError } from "@plane/types";
+import { Sortable } from "@plane/ui";
+// local imports
+import { EstimatePointCreate } from "./create";
+import { EstimatePointItemPreview } from "./preview";
 
 type TEstimatePointCreateRoot = {
   workspaceSlug: string;
@@ -27,7 +28,7 @@ type TEstimatePointCreateRoot = {
   ) => void;
 };
 
-export const EstimatePointCreateRoot: FC<TEstimatePointCreateRoot> = observer((props) => {
+export const EstimatePointCreateRoot = observer(function EstimatePointCreateRoot(props: TEstimatePointCreateRoot) {
   // props
   const {
     workspaceSlug,
@@ -102,7 +103,7 @@ export const EstimatePointCreateRoot: FC<TEstimatePointCreateRoot> = observer((p
         key: currentKey,
         value: "",
       });
-      handleEstimatePointError && handleEstimatePointError(currentKey, "", "", undefined, "add");
+      handleEstimatePointError?.(currentKey, "", "", undefined, "add");
     }
   };
 

@@ -1,16 +1,16 @@
 import { observer } from "mobx-react";
 import { Combobox } from "@headlessui/react";
 // hooks
-import { ISearchIssueResponse } from "@plane/types";
+import type { ISearchIssueResponse } from "@plane/types";
 // plane web hooks
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 
 interface Props {
   issue: ISearchIssueResponse;
   canDeleteIssueIds: boolean;
 }
 
-export const BulkDeleteIssuesModalItem: React.FC<Props> = observer((props: Props) => {
+export const BulkDeleteIssuesModalItem = observer(function BulkDeleteIssuesModalItem(props: Props) {
   const { issue, canDeleteIssueIds } = props;
 
   const color = issue.state__color;

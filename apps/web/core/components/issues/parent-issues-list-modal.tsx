@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 // icons
@@ -9,18 +7,18 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
-import { ISearchIssueResponse } from "@plane/types";
+import type { ISearchIssueResponse } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
 import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // components
-import { IssueSearchModalEmptyState } from "@/components/core";
+import { IssueSearchModalEmptyState } from "@/components/core/modals/issue-search-modal-empty-state";
 // helpers
 // hooks
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // services
 import { ProjectService } from "@/services/project";
 
@@ -37,7 +35,7 @@ type Props = {
 // services
 const projectService = new ProjectService();
 
-export const ParentIssuesListModal: React.FC<Props> = ({
+export function ParentIssuesListModal({
   isOpen,
   handleClose: onClose,
   value,
@@ -45,7 +43,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
   projectId,
   issueId,
   searchEpic = false,
-}) => {
+}: Props) {
   // i18n
   const { t } = useTranslation();
 
@@ -89,7 +87,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
   return (
     <>
       <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setSearchTerm("")} appear>
-        <Dialog as="div" className="relative z-20" onClose={handleClose}>
+        <Dialog as="div" className="relative z-30" onClose={handleClose}>
           <Transition.Child
             as={React.Fragment}
             enter="ease-out duration-300"
@@ -102,7 +100,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
             <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
           </Transition.Child>
 
-          <div className="fixed inset-0 z-20 overflow-y-auto p-4 sm:p-6 md:p-20">
+          <div className="fixed inset-0 z-30 overflow-y-auto p-4 sm:p-6 md:p-20">
             <Transition.Child
               as={React.Fragment}
               enter="ease-out duration-300"
@@ -226,4 +224,4 @@ export const ParentIssuesListModal: React.FC<Props> = ({
       </Transition.Root>
     </>
   );
-};
+}

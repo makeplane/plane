@@ -1,19 +1,22 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Placement } from "@popperjs/core";
+import type { Placement } from "@popperjs/core";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
-import { Check, ChevronDown, Loader, Search } from "lucide-react";
+import { Check, Loader, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
+import { ChevronDownIcon } from "@plane/propel/icons";
 // types
-import { EUserProjectRoles, IIssueLabel } from "@plane/types";
+import type { IIssueLabel } from "@plane/types";
+import { EUserProjectRoles } from "@plane/types";
 // components
 import { ComboDropDown } from "@plane/ui";
 // hooks
-import { useLabel, useUserPermissions } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -36,7 +39,7 @@ export interface ILabelDropdownProps {
   label: React.ReactNode;
 }
 
-export const LabelDropdown = (props: ILabelDropdownProps) => {
+export function LabelDropdown(props: ILabelDropdownProps) {
   const {
     projectId,
     value,
@@ -198,7 +201,7 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
         disabled={disabled}
       >
         {label}
-        {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
+        {!hideDropdownArrow && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
       </button>
     ),
     [buttonClassName, disabled, fullWidth, handleOnClick, hideDropdownArrow, label, maxRender, value.length]
@@ -276,7 +279,7 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
                     </Combobox.Option>
                   ))
                 ) : submitting ? (
-                  <Loader className="spin  h-3.5 w-3.5" />
+                  <Loader className="animate-spin h-3.5 w-3.5" />
                 ) : canCreateLabel ? (
                   <p
                     onClick={() => {
@@ -304,4 +307,4 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
       </ComboDropDown>
     </div>
   );
-};
+}

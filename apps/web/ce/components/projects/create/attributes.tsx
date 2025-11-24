@@ -1,22 +1,20 @@
-"use client";
-import { FC } from "react";
+import type { FC } from "react";
 import { Controller, useFormContext } from "react-hook-form";
+// plane imports
 import { NETWORK_CHOICES, ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IProject } from "@plane/types";
-// ui
+import type { IProject } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
-// components
 import { getTabIndex } from "@plane/utils";
-import { MemberDropdown } from "@/components/dropdowns";
-import { ProjectNetworkIcon } from "@/components/project";
-// helpers
+// components
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { ProjectNetworkIcon } from "@/components/project/project-network-icon";
 
 type Props = {
   isMobile?: boolean;
 };
 
-const ProjectAttributes: FC<Props> = (props) => {
+function ProjectAttributes(props: Props) {
   const { isMobile = false } = props;
   const { t } = useTranslation();
   const { control } = useFormContext<IProject>();
@@ -90,6 +88,6 @@ const ProjectAttributes: FC<Props> = (props) => {
       />
     </div>
   );
-};
+}
 
 export default ProjectAttributes;

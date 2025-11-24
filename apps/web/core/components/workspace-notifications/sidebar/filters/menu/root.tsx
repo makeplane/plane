@@ -1,19 +1,17 @@
-"use client";
-
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { ListFilter } from "lucide-react";
 // plane imports
-import { ENotificationFilterType, FILTER_TYPE_OPTIONS } from "@plane/constants";
+import type { ENotificationFilterType } from "@plane/constants";
+import { FILTER_TYPE_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { PopoverMenu, Tooltip } from "@plane/ui";
-// components
-import { NotificationFilterOptionItem } from "@/components/workspace-notifications";
-// constants
+import { Tooltip } from "@plane/propel/tooltip";
+import { PopoverMenu } from "@plane/ui";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// local imports
+import { NotificationFilterOptionItem } from "./menu-option-item";
 
-export const NotificationFilter: FC = observer(() => {
+export const NotificationFilter = observer(function NotificationFilter() {
   // hooks
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();

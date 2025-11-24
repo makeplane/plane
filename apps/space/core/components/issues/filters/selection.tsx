@@ -1,12 +1,12 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { Search, X } from "lucide-react";
+import { Search } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 // types
-import { IIssueFilterOptions, TIssueFilterKeys } from "@/types/issue";
-// components
-import { FilterPriority, FilterState } from ".";
+import type { IIssueFilterOptions, TIssueFilterKeys } from "@/types/issue";
+// local imports
+import { FilterPriority } from "./priority";
+import { FilterState } from "./state";
 
 type Props = {
   filters: IIssueFilterOptions;
@@ -14,7 +14,7 @@ type Props = {
   layoutDisplayFiltersOptions: TIssueFilterKeys[];
 };
 
-export const FilterSelection: React.FC<Props> = observer((props) => {
+export const FilterSelection = observer(function FilterSelection(props: Props) {
   const { filters, handleFilters, layoutDisplayFiltersOptions } = props;
 
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
@@ -36,7 +36,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
           />
           {filtersSearchQuery !== "" && (
             <button type="button" className="grid place-items-center" onClick={() => setFiltersSearchQuery("")}>
-              <X className="text-custom-text-300" size={12} strokeWidth={2} />
+              <CloseIcon className="text-custom-text-300" height={12} width={12} strokeWidth={2} />
             </button>
           )}
         </div>

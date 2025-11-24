@@ -1,17 +1,17 @@
-"use client";
-
-import { FC, useEffect } from "react";
+import type { FC } from "react";
+import { useEffect } from "react";
 
 import { useParams } from "next/navigation";
 
 // react-hook-form
-import { UseFormSetValue } from "react-hook-form";
+import type { UseFormSetValue } from "react-hook-form";
 import useSWR from "swr";
 // services
 // ui
-import { Button, Loader } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Loader } from "@plane/ui";
 // types
-import { IUserDetails, TFormValues, TIntegrationSteps } from "@/components/integration";
+import type { IUserDetails, TFormValues, TIntegrationSteps } from "@/components/integration";
 // fetch-keys
 import { GITHUB_REPOSITORY_INFO } from "@/constants/fetch-keys";
 import { GithubIntegrationService } from "@/services/integrations";
@@ -26,7 +26,7 @@ type Props = {
 // services
 const githubIntegrationService = new GithubIntegrationService();
 
-export const GithubRepoDetails: FC<Props> = ({ selectedRepo, handleStepChange, setUsers, setValue }) => {
+export function GithubRepoDetails({ selectedRepo, handleStepChange, setUsers, setValue }: Props) {
   const { workspaceSlug } = useParams();
 
   const { data: repoInfo } = useSWR(
@@ -101,4 +101,4 @@ export const GithubRepoDetails: FC<Props> = ({ selectedRepo, handleStepChange, s
       </div>
     </div>
   );
-};
+}

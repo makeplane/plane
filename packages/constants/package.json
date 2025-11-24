@@ -1,25 +1,12 @@
 {
   "name": "@plane/constants",
-  "version": "0.27.1",
+  "version": "1.1.0",
   "private": true,
   "license": "AGPL-3.0",
   "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist/**/*"
-  ],
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "require": "./dist/index.js",
-      "import": "./dist/index.js"
-    }
-  },
   "scripts": {
-    "dev": "tsup --watch",
-    "build": "tsc --noEmit && tsup",
+    "dev": "tsdown --watch",
+    "build": "tsdown",
     "check:lint": "eslint . --max-warnings 0",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
@@ -28,11 +15,22 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "@plane/types": "*"
+    "@plane/types": "workspace:*"
   },
   "devDependencies": {
-    "@plane/eslint-config": "*",
-    "@plane/typescript-config": "*",
-    "tsup": "8.4.0"
+    "@plane/eslint-config": "workspace:*",
+    "@plane/typescript-config": "workspace:*",
+    "@prettier/plugin-oxc": "0.0.4",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
+  },
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./package.json": "./package.json"
   }
 }

@@ -1,12 +1,12 @@
 import React, { Fragment } from "react";
 // components
+import { cn } from "../utils";
 import { Popover } from "./popover";
 // helpers
-import { cn } from "../../helpers";
 // types
-import { TPopoverMenu } from "./types";
+import type { TPopoverMenu } from "./types";
 
-export const PopoverMenu = <T,>(props: TPopoverMenu<T>) => {
+export function PopoverMenu<T>(props: TPopoverMenu<T>) {
   const {
     popperPosition = "bottom-end",
     popperPadding = 0,
@@ -42,4 +42,4 @@ export const PopoverMenu = <T,>(props: TPopoverMenu<T>) => {
       </Fragment>
     </Popover>
   );
-};
+}

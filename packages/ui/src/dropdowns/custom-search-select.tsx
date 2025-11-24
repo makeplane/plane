@@ -1,17 +1,18 @@
 import { Combobox } from "@headlessui/react";
-import { Check, ChevronDown, Info, Search } from "lucide-react";
+import { Check, Info, Search } from "lucide-react";
 import React, { useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
-// plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
+import { ChevronDownIcon } from "@plane/propel/icons";
+// plane imports
 // local imports
-import { cn } from "../../helpers";
+import { Tooltip } from "@plane/propel/tooltip";
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
-import { Tooltip } from "../tooltip";
-import { ICustomSearchSelectProps } from "./helper";
+import { cn } from "../utils";
+import type { ICustomSearchSelectProps } from "./helper";
 
-export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
+export function CustomSearchSelect(props: ICustomSearchSelectProps) {
   const {
     customButtonClassName = "",
     buttonClassName = "",
@@ -34,12 +35,13 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
     value,
     tabIndex,
     noResultsMessage = "No matches found",
+    defaultOpen = false,
   } = props;
   const [query, setQuery] = useState("");
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
@@ -128,7 +130,7 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                 >
                   {label}
                   {!noChevron && !disabled && (
-                    <ChevronDown className={cn("h-3 w-3 flex-shrink-0", chevronClassName)} aria-hidden="true" />
+                    <ChevronDownIcon className={cn("h-3 w-3 flex-shrink-0", chevronClassName)} aria-hidden="true" />
                   )}
                 </button>
               </Combobox.Button>
@@ -138,14 +140,14 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                 <Combobox.Options data-prevent-outside-click static>
                   <div
                     className={cn(
-                      "my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-48 whitespace-nowrap z-20",
+                      "my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-48 whitespace-nowrap z-30",
                       optionsClassName
                     )}
                     ref={setPopperElement}
                     style={styles.popper}
                     {...attributes.popper}
                   >
-                    <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
+                    <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2 mx-2">
                       <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
                       <Combobox.Input
                         className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
@@ -156,7 +158,9 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
                       />
                     </div>
                     <div
-                      className={cn("mt-2 space-y-1 overflow-y-scroll", {
+                      className={cn("mt-2 px-2 space-y-1 overflow-y-scroll vertical-scrollbar scrollbar-xs", {
+                        "max-h-96": maxHeight === "2xl",
+                        "max-h-80": maxHeight === "xl",
                         "max-h-60": maxHeight === "lg",
                         "max-h-48": maxHeight === "md",
                         "max-h-36": maxHeight === "rg",
@@ -219,4 +223,4 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
       }}
     </Combobox>
   );
-};
+}

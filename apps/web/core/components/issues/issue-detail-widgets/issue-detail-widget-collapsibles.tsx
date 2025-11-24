@@ -1,20 +1,18 @@
-"use client";
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
-// components
-import {
-  AttachmentsCollapsible,
-  LinksCollapsible,
-  RelationsCollapsible,
-  SubIssuesCollapsible,
-} from "@/components/issues/issue-detail-widgets";
+import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // Plane-web
 import { WorkItemAdditionalWidgetCollapsibles } from "@/plane-web/components/issues/issue-detail-widgets/collapsibles";
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
+// local imports
+import { AttachmentsCollapsible } from "./attachments";
+import { LinksCollapsible } from "./links";
+import { RelationsCollapsible } from "./relations";
+import { SubIssuesCollapsible } from "./sub-issues";
 
 type Props = {
   workspaceSlug: string;
@@ -25,7 +23,7 @@ type Props = {
   hideWidgets?: TWorkItemWidgets[];
 };
 
-export const IssueDetailWidgetCollapsibles: FC<Props> = observer((props) => {
+export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidgetCollapsibles(props: Props) {
   const { workspaceSlug, projectId, issueId, disabled, issueServiceType, hideWidgets } = props;
   // store hooks
   const {

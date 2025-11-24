@@ -1,36 +1,29 @@
-"use client";
-
-import { useParams } from "next/navigation";
 import useSWR from "swr";
-// types
+// plane imports
 import { GROUP_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IUserStateDistribution, TStateGroups } from "@plane/types";
-// components
+import type { IUserStateDistribution, TStateGroups } from "@plane/types";
 import { ContentWrapper } from "@plane/ui";
-import { PageHead } from "@/components/core";
-import {
-  ProfileActivity,
-  ProfilePriorityDistribution,
-  ProfileStateDistribution,
-  ProfileStats,
-  ProfileWorkload,
-} from "@/components/profile";
+// components
+import { PageHead } from "@/components/core/page-title";
+import { ProfileActivity } from "@/components/profile/overview/activity";
+import { ProfilePriorityDistribution } from "@/components/profile/overview/priority-distribution";
+import { ProfileStateDistribution } from "@/components/profile/overview/state-distribution";
+import { ProfileStats } from "@/components/profile/overview/stats";
+import { ProfileWorkload } from "@/components/profile/overview/workload";
 // constants
 import { USER_PROFILE_DATA } from "@/constants/fetch-keys";
 // services
 import { UserService } from "@/services/user.service";
-
-// services
+import type { Route } from "./+types/page";
 const userService = new UserService();
 
-export default function ProfileOverviewPage() {
-  const { workspaceSlug, userId } = useParams();
+export default function ProfileOverviewPage({ params }: Route.ComponentProps) {
+  const { workspaceSlug, userId } = params;
 
   const { t } = useTranslation();
-  const { data: userProfile } = useSWR(
-    workspaceSlug && userId ? USER_PROFILE_DATA(workspaceSlug.toString(), userId.toString()) : null,
-    workspaceSlug && userId ? () => userService.getUserProfileData(workspaceSlug.toString(), userId.toString()) : null
+  const { data: userProfile } = useSWR(USER_PROFILE_DATA(workspaceSlug, userId), () =>
+    userService.getUserProfileData(workspaceSlug, userId)
   );
 
   const stateDistribution: IUserStateDistribution[] = Object.keys(GROUP_CHOICES).map((key) => {

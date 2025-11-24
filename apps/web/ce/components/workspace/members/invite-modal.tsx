@@ -1,15 +1,13 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { IWorkspaceBulkInviteFormData } from "@plane/types";
-// ui
+import type { IWorkspaceBulkInviteFormData } from "@plane/types";
 import { EModalWidth, EModalPosition, ModalCore } from "@plane/ui";
 // components
-import { InvitationFields, InvitationModalActions } from "@/components/workspace/invite-modal";
+import { InvitationModalActions } from "@/components/workspace/invite-modal/actions";
+import { InvitationFields } from "@/components/workspace/invite-modal/fields";
 import { InvitationForm } from "@/components/workspace/invite-modal/form";
 // hooks
 import { useWorkspaceInvitationActions } from "@/hooks/use-workspace-invitation";
@@ -20,7 +18,9 @@ export type TSendWorkspaceInvitationModalProps = {
   onSubmit: (data: IWorkspaceBulkInviteFormData) => Promise<void> | undefined;
 };
 
-export const SendWorkspaceInvitationModal: React.FC<TSendWorkspaceInvitationModalProps> = observer((props) => {
+export const SendWorkspaceInvitationModal = observer(function SendWorkspaceInvitationModal(
+  props: TSendWorkspaceInvitationModalProps
+) {
   const { isOpen, onClose, onSubmit } = props;
   // store hooks
   const { t } = useTranslation();

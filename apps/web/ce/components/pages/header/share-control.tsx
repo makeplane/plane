@@ -1,12 +1,12 @@
-"use client";
-
-import { type EPageStoreType } from "@/plane-web/hooks/store";
+import type { EPageStoreType } from "@/plane-web/hooks/store";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 export type TPageShareControlProps = {
   page: TPageInstance;
   storeType: EPageStoreType;
 };
 
-export const PageShareControl = ({}: TPageShareControlProps) => null;
+export function PageShareControl({}: TPageShareControlProps) {
+  return null;
+}

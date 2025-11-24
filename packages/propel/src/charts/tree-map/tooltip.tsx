@@ -1,13 +1,13 @@
 import React from "react";
 // plane imports
-import { Card, ECardSpacing } from "@plane/ui";
+import { Card, ECardSpacing } from "../../card";
 
 interface TreeMapTooltipProps {
   active: boolean | undefined;
   payload: any[] | undefined;
 }
 
-export const TreeMapTooltip = React.memo(({ active, payload }: TreeMapTooltipProps) => {
+export const TreeMapTooltip = React.memo(function TreeMapTooltip({ active, payload }: TreeMapTooltipProps) {
   if (!active || !payload || !payload[0]?.payload) return null;
 
   const data = payload[0].payload;

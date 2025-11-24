@@ -2,6 +2,7 @@
 import { ORDERED_PAGE_NAVIGATION_TABS_LIST } from "@/plane-web/components/pages/navigation-pane";
 
 export * from "./root";
+export * from "./types";
 
 export const PAGE_NAVIGATION_PANE_WIDTH = 294;
 

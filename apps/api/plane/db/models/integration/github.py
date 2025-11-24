@@ -26,20 +26,14 @@ class GithubRepository(ProjectBaseModel):
 
 
 class GithubRepositorySync(ProjectBaseModel):
-    repository = models.OneToOneField(
-        "db.GithubRepository", on_delete=models.CASCADE, related_name="syncs"
-    )
+    repository = models.OneToOneField("db.GithubRepository", on_delete=models.CASCADE, related_name="syncs")
     credentials = models.JSONField(default=dict)
     # Bot user
-    actor = models.ForeignKey(
-        "db.User", related_name="user_syncs", on_delete=models.CASCADE
-    )
+    actor = models.ForeignKey("db.User", related_name="user_syncs", on_delete=models.CASCADE)
     workspace_integration = models.ForeignKey(
         "db.WorkspaceIntegration", related_name="github_syncs", on_delete=models.CASCADE
     )
-    label = models.ForeignKey(
-        "db.Label", on_delete=models.SET_NULL, null=True, related_name="repo_syncs"
-    )
+    label = models.ForeignKey("db.Label", on_delete=models.SET_NULL, null=True, related_name="repo_syncs")
 
     def __str__(self):
         """Return the repo sync"""
@@ -57,12 +51,8 @@ class GithubIssueSync(ProjectBaseModel):
     repo_issue_id = models.BigIntegerField()
     github_issue_id = models.BigIntegerField()
     issue_url = models.URLField(blank=False)
-    issue = models.ForeignKey(
-        "db.Issue", related_name="github_syncs", on_delete=models.CASCADE
-    )
-    repository_sync = models.ForeignKey(
-        "db.GithubRepositorySync", related_name="issue_syncs", on_delete=models.CASCADE
-    )
+    issue = models.ForeignKey("db.Issue", related_name="github_syncs", on_delete=models.CASCADE)
+    repository_sync = models.ForeignKey("db.GithubRepositorySync", related_name="issue_syncs", on_delete=models.CASCADE)
 
     def __str__(self):
         """Return the github issue sync"""
@@ -78,12 +68,8 @@ class GithubIssueSync(ProjectBaseModel):
 
 class GithubCommentSync(ProjectBaseModel):
     repo_comment_id = models.BigIntegerField()
-    comment = models.ForeignKey(
-        "db.IssueComment", related_name="comment_syncs", on_delete=models.CASCADE
-    )
-    issue_sync = models.ForeignKey(
-        "db.GithubIssueSync", related_name="comment_syncs", on_delete=models.CASCADE
-    )
+    comment = models.ForeignKey("db.IssueComment", related_name="comment_syncs", on_delete=models.CASCADE)
+    issue_sync = models.ForeignKey("db.GithubIssueSync", related_name="comment_syncs", on_delete=models.CASCADE)
 
     def __str__(self):
         """Return the github issue sync"""

@@ -1,29 +1,31 @@
-"use client";
-
-import { useState, FC, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { ChevronRight, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// ui
-import { Loader, TOAST_TYPE, Tooltip, setToast } from "@plane/ui";
+import { ChevronRightIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
+import { Loader } from "@plane/ui";
 import { copyUrlToClipboard, cn, orderJoinedProjects } from "@plane/utils";
 // components
-import { CreateProjectModal } from "@/components/project";
-import { SidebarProjectsListItem } from "@/components/workspace";
-// helpers
+import { CreateProjectModal } from "@/components/project/create-project-modal";
 // hooks
-import { useCommandPalette, useProject, useUserPermissions } from "@/hooks/store";
-// plane web types
-import { TProject } from "@/plane-web/types";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
+// plane web imports
+import type { TProject } from "@/plane-web/types";
+// local imports
+import { SidebarProjectsListItem } from "./projects-list-item";
 
-export const SidebarProjectsList: FC = observer(() => {
+export const SidebarProjectsList = observer(function SidebarProjectsList() {
   // states
-
   const [isAllProjectsListOpen, setIsAllProjectsListOpen] = useState(true);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false); // scroll animation state
@@ -189,7 +191,7 @@ export const SidebarProjectsList: FC = observer(() => {
                       : "aria_labels.projects_sidebar.open_projects_menu"
                   )}
                 >
-                  <ChevronRight
+                  <ChevronRightIcon
                     className={cn("flex-shrink-0 size-3 transition-all", {
                       "rotate-90": isAllProjectsListOpen,
                     })}

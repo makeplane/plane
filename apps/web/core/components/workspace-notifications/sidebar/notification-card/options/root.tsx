@@ -1,17 +1,13 @@
-"use client";
-
-import { FC, Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { observer } from "mobx-react";
-// components
+// plane imports
 import { cn } from "@plane/utils";
-import {
-  NotificationItemReadOption,
-  NotificationItemArchiveOption,
-  NotificationItemSnoozeOption,
-} from "@/components/workspace-notifications";
-// helpers
 // hooks
-import { useNotification } from "@/hooks/store";
+import { useNotification } from "@/hooks/store/notifications/use-notification";
+// local imports
+import { NotificationItemArchiveOption } from "./archive";
+import { NotificationItemReadOption } from "./read";
+import { NotificationItemSnoozeOption } from "./snooze";
 
 type TNotificationOption = {
   workspaceSlug: string;
@@ -22,7 +18,7 @@ type TNotificationOption = {
   setCustomSnoozeModal: Dispatch<SetStateAction<boolean>>;
 };
 
-export const NotificationOption: FC<TNotificationOption> = observer((props) => {
+export const NotificationOption = observer(function NotificationOption(props: TNotificationOption) {
   const {
     workspaceSlug,
     notificationId,

@@ -1,16 +1,14 @@
-import React from "react";
-// headless ui
 import { Combobox } from "@headlessui/react";
-// icons
 import { Check } from "lucide-react";
+import React from "react";
+// helpers
+import { cn } from "../../utils";
+// types
+import type { IMultiSelectDropdownOptions, ISingleSelectDropdownOptions } from "../dropdown";
 // components
 import { DropdownOptionsLoader, InputSearch } from ".";
-// helpers
-import { cn } from "../../../helpers";
-// types
-import { IMultiSelectDropdownOptions, ISingleSelectDropdownOptions } from "../dropdown";
 
-export const DropdownOptions: React.FC<IMultiSelectDropdownOptions | ISingleSelectDropdownOptions> = (props) => {
+export function DropdownOptions(props: IMultiSelectDropdownOptions | ISingleSelectDropdownOptions) {
   const {
     isOpen,
     query,
@@ -90,4 +88,4 @@ export const DropdownOptions: React.FC<IMultiSelectDropdownOptions | ISingleSele
       </div>
     </>
   );
-};
+}

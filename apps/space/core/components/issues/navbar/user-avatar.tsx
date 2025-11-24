@@ -1,6 +1,4 @@
-"use client";
-
-import { FC, Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -9,17 +7,18 @@ import { LogOut } from "lucide-react";
 import { Popover, Transition } from "@headlessui/react";
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
+import { Button } from "@plane/propel/button";
 import { AuthService } from "@plane/services";
-import { Avatar, Button } from "@plane/ui";
+import { Avatar } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
-import { useUser } from "@/hooks/store";
+import { useUser } from "@/hooks/store/use-user";
 
 const authService = new AuthService();
 
-export const UserAvatar: FC = observer(() => {
+export const UserAvatar = observer(function UserAvatar() {
   const pathName = usePathname();
   const searchParams = useSearchParams();
   // query params

@@ -1,7 +1,7 @@
 import { Tooltip2 } from "@blueprintjs/popover2";
 import React, { useEffect, useRef, useState } from "react";
 // helpers
-import { cn } from "../../helpers";
+import { cn } from "../utils";
 
 export type TPosition =
   | "top"
@@ -24,7 +24,7 @@ interface ITooltipProps {
   tooltipHeading?: string;
   tooltipContent: string | React.ReactNode;
   position?: TPosition;
-  children: JSX.Element;
+  children: React.ReactElement;
   disabled?: boolean;
   className?: string;
   openDelay?: number;
@@ -33,7 +33,7 @@ interface ITooltipProps {
   renderByDefault?: boolean;
 }
 
-export const Tooltip: React.FC<ITooltipProps> = ({
+export function Tooltip({
   tooltipHeading,
   tooltipContent,
   position = "top",
@@ -43,8 +43,10 @@ export const Tooltip: React.FC<ITooltipProps> = ({
   openDelay = 200,
   closeDelay,
   isMobile = false,
-  renderByDefault = true, //FIXME: tooltip should always render on hover and not by default, this is a temporary fix
-}) => {
+
+  //FIXME: tooltip should always render on hover and not by default, this is a temporary fix
+  renderByDefault = true,
+}: ITooltipProps) {
   const toolTipRef = useRef<HTMLDivElement | null>(null);
 
   const [shouldRender, setShouldRender] = useState(renderByDefault);
@@ -107,4 +109,4 @@ export const Tooltip: React.FC<ITooltipProps> = ({
       }
     />
   );
-};
+}

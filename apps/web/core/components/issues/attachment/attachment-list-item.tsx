@@ -1,12 +1,12 @@
-"use client";
-
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Trash } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { EIssueServiceType, TIssueServiceType } from "@plane/types";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TIssueServiceType } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // ui
-import { CustomMenu, Tooltip } from "@plane/ui";
+import { CustomMenu } from "@plane/ui";
 import { convertBytesToSize, getFileExtension, getFileName, getFileURL, renderFormattedDate } from "@plane/utils";
 // components
 //
@@ -14,7 +14,8 @@ import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { getFileIcon } from "@/components/icons";
 // helpers
 // hooks
-import { useIssueDetail, useMember } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useMember } from "@/hooks/store/use-member";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TIssueAttachmentsListItem = {
@@ -23,7 +24,7 @@ type TIssueAttachmentsListItem = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer((props) => {
+export const IssueAttachmentsListItem = observer(function IssueAttachmentsListItem(props: TIssueAttachmentsListItem) {
   const { t } = useTranslation();
   // props
   const { attachmentId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
@@ -81,9 +82,7 @@ export const IssueAttachmentsListItem: FC<TIssueAttachmentsListItem> = observer(
 
             <CustomMenu ellipsis closeOnSelect placement="bottom-end" disabled={disabled}>
               <CustomMenu.MenuItem
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
+                onClick={() => {
                   toggleDeleteAttachmentModal(attachmentId);
                 }}
               >

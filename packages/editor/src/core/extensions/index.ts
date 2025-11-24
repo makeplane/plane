@@ -17,7 +17,6 @@ export * from "./headings-list";
 export * from "./horizontal-rule";
 export * from "./keymap";
 export * from "./quote";
-export * from "./read-only-extensions";
 export * from "./side-menu";
 export * from "./text-align";
 export * from "./utility";

@@ -1,12 +1,11 @@
-"use client";
-
-import { FC, useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 // plane imports
-import { EIssueServiceType, TIssueLink } from "@plane/types";
-import { TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TIssueLink } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
 import { IssueLinkCreateUpdateModal } from "./create-update-link-modal";
 import { IssueLinkList } from "./links";
@@ -24,7 +23,7 @@ export type TIssueLinkRoot = {
   disabled?: boolean;
 };
 
-export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
+export function IssueLinkRoot(props: TIssueLinkRoot) {
   // props
   const { workspaceSlug, projectId, issueId, disabled = false } = props;
   // hooks
@@ -137,4 +136,4 @@ export const IssueLinkRoot: FC<TIssueLinkRoot> = (props) => {
       </div>
     </>
   );
-};
+}

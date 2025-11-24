@@ -3,9 +3,9 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 // components
-import { CycleDropdown } from "@/components/dropdowns";
+import { CycleDropdown } from "@/components/dropdowns/cycle";
 // hooks
 import { captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
@@ -16,7 +16,7 @@ type Props = {
   disabled: boolean;
 };
 
-export const SpreadsheetCycleColumn: React.FC<Props> = observer((props) => {
+export const SpreadsheetCycleColumn = observer(function SpreadsheetCycleColumn(props: Props) {
   const { issue, disabled, onClose } = props;
   // router
   const { workspaceSlug } = useParams();

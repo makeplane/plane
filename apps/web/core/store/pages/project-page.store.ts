@@ -1,20 +1,21 @@
-import set from "lodash/set";
-import unset from "lodash/unset";
+import { unset, set } from "lodash-es";
 import { makeObservable, observable, runInAction, action, reaction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
 import { EUserPermissions } from "@plane/constants";
-import { EUserProjectRoles, TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
+import type { TPage, TPageFilters, TPageNavigationTabs } from "@plane/types";
+import { EUserProjectRoles } from "@plane/types";
 // helpers
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
 // plane web constants
 // plane web store
-import { RootStore } from "@/plane-web/store/root.store";
+import type { RootStore } from "@/plane-web/store/root.store";
 // services
 import { ProjectPageService } from "@/services/page";
 // store
-import { CoreRootStore } from "../root.store";
-import { ProjectPage, TProjectPage } from "./project-page";
+import type { CoreRootStore } from "../root.store";
+import type { TProjectPage } from "./project-page";
+import { ProjectPage } from "./project-page";
 
 type TLoader = "init-loader" | "mutation-loader" | undefined;
 
@@ -49,9 +50,14 @@ export interface IProjectPageStore {
     projectId: string,
     pageType?: TPageNavigationTabs
   ) => Promise<TPage[] | undefined>;
-  fetchPageDetails: (workspaceSlug: string, projectId: string, pageId: string) => Promise<TPage | undefined>;
+  fetchPageDetails: (
+    workspaceSlug: string,
+    projectId: string,
+    pageId: string,
+    options?: { trackVisit?: boolean }
+  ) => Promise<TPage | undefined>;
   createPage: (pageData: Partial<TPage>) => Promise<TPage | undefined>;
-  removePage: (pageId: string) => Promise<void>;
+  removePage: (params: { pageId: string; shouldSync?: boolean }) => Promise<void>;
   movePage: (workspaceSlug: string, projectId: string, pageId: string, newProjectId: string) => Promise<void>;
 }
 
@@ -211,6 +217,7 @@ export class ProjectPageStore implements IProjectPageStore {
             const existingPage = this.getPageById(page.id);
             if (existingPage) {
               // If page already exists, update all fields except name
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
               const { name, ...otherFields } = page;
               existingPage.mutateProperties(otherFields, false);
             } else {
@@ -239,7 +246,9 @@ export class ProjectPageStore implements IProjectPageStore {
    * @description fetch the details of a page
    * @param {string} pageId
    */
-  fetchPageDetails = async (workspaceSlug: string, projectId: string, pageId: string) => {
+  fetchPageDetails = async (...args: Parameters<IProjectPageStore["fetchPageDetails"]>) => {
+    const [workspaceSlug, projectId, pageId, options] = args;
+    const { trackVisit } = options || {};
     try {
       if (!workspaceSlug || !projectId || !pageId) return undefined;
 
@@ -249,7 +258,7 @@ export class ProjectPageStore implements IProjectPageStore {
         this.error = undefined;
       });
 
-      const page = await this.service.fetchById(workspaceSlug, projectId, pageId);
+      const page = await this.service.fetchById(workspaceSlug, projectId, pageId, trackVisit ?? true);
 
       runInAction(() => {
         if (page?.id) {
@@ -313,7 +322,7 @@ export class ProjectPageStore implements IProjectPageStore {
    * @description delete a page
    * @param {string} pageId
    */
-  removePage = async (pageId: string) => {
+  removePage = async ({ pageId, shouldSync = true }: { pageId: string; shouldSync?: boolean }) => {
     try {
       const { workspaceSlug, projectId } = this.store.router;
       if (!workspaceSlug || !projectId || !pageId) return undefined;

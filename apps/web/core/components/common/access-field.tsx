@@ -1,7 +1,7 @@
-import { LucideIcon } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 // plane ui
 import { useTranslation } from "@plane/i18n";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // plane utils
 import { cn } from "@plane/utils";
 
@@ -18,7 +18,7 @@ type Props = {
 };
 
 // TODO: Remove label once i18n is done
-export const AccessField = (props: Props) => {
+export function AccessField(props: Props) {
   const { onChange, value, accessSpecifiers, isMobile = false } = props;
   const { t } = useTranslation();
 
@@ -50,4 +50,4 @@ export const AccessField = (props: Props) => {
       })}
     </div>
   );
-};
+}

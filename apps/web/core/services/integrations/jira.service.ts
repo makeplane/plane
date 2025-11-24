@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@plane/constants";
-import { IJiraMetadata, IJiraResponse, IJiraImporterForm } from "@plane/types";
+import type { IJiraMetadata, IJiraResponse, IJiraImporterForm } from "@plane/types";
 import { APIService } from "@/services/api.service";
 // types
 

@@ -1,15 +1,14 @@
-"use client";
-
 import React, { useEffect, useRef, useState } from "react";
+import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 // Plane imports
 import { useTranslation } from "@plane/i18n";
-import { EIssuesStoreType, TBaseIssue, TIssue } from "@plane/types";
-import { EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
-// components
-import { CreateIssueToastActionItems, IssuesModalProps } from "@/components/issues";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TBaseIssue, TIssue } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
@@ -23,11 +22,14 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 // services
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();
-// local components
+// local imports
+import { CreateIssueToastActionItems } from "../create-issue-toast-action-items";
 import { DraftIssueLayout } from "./draft-issue-layout";
-import { type IssueFormProps, IssueFormRoot } from "./form";
+import { IssueFormRoot } from "./form";
+import type { IssueFormProps } from "./form";
+import type { IssuesModalProps } from "./modal";
 
-export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((props) => {
+export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueModalBase(props: IssuesModalProps) {
   const {
     data,
     isOpen,
@@ -68,7 +70,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const { issues: projectIssues } = useIssues(EIssuesStoreType.PROJECT);
   const { issues: draftIssues } = useIssues(EIssuesStoreType.WORKSPACE_DRAFT);
   const { fetchIssue } = useIssueDetail();
-  const { allowedProjectIds, handleCreateUpdatePropertyValues } = useIssueModal();
+  const { allowedProjectIds, handleCreateUpdatePropertyValues, handleCreateSubWorkItem } = useIssueModal();
   const { getProjectByIdentifier } = useProject();
   // current store details
   const { createIssue, updateIssue } = useIssuesActions(storeType);
@@ -86,12 +88,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       setDescription(data?.description_html || "<p></p>");
       return;
     }
-    const response = await fetchIssue(
-      workspaceSlug.toString(),
-      projectId.toString(),
-      issueId,
-      isDraft ? "DRAFT" : "DEFAULT"
-    );
+    const response = await fetchIssue(workspaceSlug.toString(), projectId.toString(), issueId);
     if (response) setDescription(response?.description_html || "<p></p>");
   };
 
@@ -222,6 +219,13 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
           workspaceSlug: workspaceSlug?.toString(),
           isDraft: is_draft_issue,
         });
+
+        // create sub work item
+        await handleCreateSubWorkItem({
+          workspaceSlug: workspaceSlug?.toString(),
+          projectId: response.project_id,
+          parentId: response.id,
+        });
       }
 
       setToast({
@@ -267,7 +271,7 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       if (isDraft) await draftIssues.updateIssue(workspaceSlug.toString(), data.id, payload);
       else if (updateIssue) await updateIssue(payload.project_id, data.id, payload);
 
-      // check if we should add issue to cycle/module
+      // check if we should add/remove issue to/from cycle
       if (
         payload.cycle_id &&
         payload.cycle_id !== "" &&
@@ -275,12 +279,30 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
       ) {
         await addIssueToCycle(data as TBaseIssue, payload.cycle_id);
       }
-      if (
-        payload.module_ids &&
-        payload.module_ids.length > 0 &&
-        (!payload.module_ids.includes(moduleId?.toString()) || storeType !== EIssuesStoreType.MODULE)
-      ) {
-        await addIssueToModule(data as TBaseIssue, payload.module_ids);
+      if (data.cycle_id && !payload.cycle_id && data.project_id) {
+        await issues.removeIssueFromCycle(workspaceSlug.toString(), data.project_id, data.cycle_id, data.id);
+        fetchCycleDetails(workspaceSlug.toString(), data.project_id, data.cycle_id);
+      }
+
+      if (data.module_ids && payload.module_ids && data.project_id) {
+        const updatedModuleIds = xor(data.module_ids, payload.module_ids);
+        const modulesToAdd: string[] = [];
+        const modulesToRemove: string[] = [];
+
+        for (const moduleId of updatedModuleIds) {
+          if (data.module_ids.includes(moduleId)) {
+            modulesToRemove.push(moduleId);
+          } else {
+            modulesToAdd.push(moduleId);
+          }
+        }
+        await issues.changeModulesInIssue(
+          workspaceSlug.toString(),
+          data.project_id,
+          data.id,
+          modulesToAdd,
+          modulesToRemove
+        );
       }
 
       // add other property values
@@ -363,7 +385,6 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     isDuplicateModalOpen: isDuplicateModalOpen,
     handleDuplicateIssueModal: handleDuplicateIssueModal,
     isProjectSelectionDisabled: isProjectSelectionDisabled,
-    storeType: storeType,
   };
 
   return (

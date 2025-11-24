@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
@@ -7,14 +7,18 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { Pin, PinOff } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel, IWorkspaceSidebarNavigationItem } from "@plane/constants";
+import type { IWorkspaceSidebarNavigationItem } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { DragHandle, DropIndicator, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import { DragHandle, DropIndicator } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { SidebarNavItem } from "@/components/sidebar";
+import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // hooks
-import { useAppTheme, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 // local imports
 import { UpgradeBadge } from "../upgrade-badge";
@@ -32,7 +36,7 @@ type TExtendedSidebarItemProps = {
   isLastChild: boolean;
 };
 
-export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((props) => {
+export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: TExtendedSidebarItemProps) {
   const { item, handleOnNavigationItemDrop, disableDrag = false, disableDrop = false, isLastChild } = props;
   const { t } = useTranslation();
   // states
@@ -56,10 +60,6 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
   const isPinned = sidebarPreference?.[item.key]?.is_pinned;
 
   const handleLinkClick = () => toggleExtendedSidebar(true);
-
-  if (!allowPermissions(item.access as any, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString())) {
-    return null;
-  }
 
   const itemHref =
     item.key === "your_work"
@@ -146,6 +146,10 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
     );
   }, [isLastChild, handleOnNavigationItemDrop, disableDrag, disableDrop, item.key]);
 
+  if (!allowPermissions(item.access as any, EUserPermissionsLevel.WORKSPACE, workspaceSlug.toString())) {
+    return null;
+  }
+
   return (
     <div
       id={`sidebar-${item.key}`}
@@ -163,7 +167,7 @@ export const ExtendedSidebarItem: FC<TExtendedSidebarItemProps> = observer((prop
           <Tooltip
             // isMobile={isMobile}
             tooltipContent={t("drag_to_rearrange")}
-            position="top-right"
+            position="top-end"
             disabled={isDragging}
           >
             <button

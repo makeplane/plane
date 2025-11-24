@@ -1,57 +1,48 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
-// components
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { PageHead } from "@/components/core";
-import {
-  ArchiveRestoreProjectModal,
-  ArchiveProjectSelection,
-  DeleteProjectModal,
-  DeleteProjectSection,
-  ProjectDetailsForm,
-  ProjectDetailsFormLoader,
-} from "@/components/project";
+// components
+import { PageHead } from "@/components/core/page-title";
+import { DeleteProjectModal } from "@/components/project/delete-project-modal";
+import { ProjectDetailsForm } from "@/components/project/form";
+import { ProjectDetailsFormLoader } from "@/components/project/form-loader";
+import { ArchiveRestoreProjectModal } from "@/components/project/settings/archive-project/archive-restore-modal";
+import { ArchiveProjectSelection } from "@/components/project/settings/archive-project/selection";
+import { DeleteProjectSection } from "@/components/project/settings/delete-project-section";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 // hooks
-import { SettingsContentWrapper } from "@/components/settings";
-import { useProject, useUserPermissions } from "@/hooks/store";
-const ProjectSettingsPage = observer(() => {
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
+import type { Route } from "./+types/page";
+
+function ProjectSettingsPage({ params }: Route.ComponentProps) {
   // states
   const [selectProject, setSelectedProject] = useState<string | null>(null);
   const [archiveProject, setArchiveProject] = useState<boolean>(false);
   // router
-  const { workspaceSlug, projectId } = useParams();
+  const { workspaceSlug, projectId } = params;
   // store hooks
   const { currentProjectDetails, fetchProjectDetails } = useProject();
   const { allowPermissions } = useUserPermissions();
 
   // api call to fetch project details
   // TODO: removed this API if not necessary
-  const { isLoading } = useSWR(
-    workspaceSlug && projectId ? `PROJECT_DETAILS_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchProjectDetails(workspaceSlug.toString(), projectId.toString()) : null
-  );
+  const { isLoading } = useSWR(`PROJECT_DETAILS_${projectId}`, () => fetchProjectDetails(workspaceSlug, projectId));
   // derived values
-  const isAdmin = allowPermissions(
-    [EUserPermissions.ADMIN],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug.toString(),
-    projectId.toString()
-  );
+  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
 
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - General Settings` : undefined;
 
   return (
     <SettingsContentWrapper>
       <PageHead title={pageTitle} />
-      {currentProjectDetails && workspaceSlug && projectId && (
+      {currentProjectDetails && (
         <>
           <ArchiveRestoreProjectModal
-            workspaceSlug={workspaceSlug.toString()}
-            projectId={projectId.toString()}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
             isOpen={archiveProject}
             onClose={() => setArchiveProject(false)}
             archive
@@ -65,11 +56,11 @@ const ProjectSettingsPage = observer(() => {
       )}
 
       <div className={`w-full ${isAdmin ? "" : "opacity-60"}`}>
-        {currentProjectDetails && workspaceSlug && projectId && !isLoading ? (
+        {currentProjectDetails && !isLoading ? (
           <ProjectDetailsForm
             project={currentProjectDetails}
-            workspaceSlug={workspaceSlug.toString()}
-            projectId={projectId.toString()}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
             isAdmin={isAdmin}
           />
         ) : (
@@ -91,6 +82,6 @@ const ProjectSettingsPage = observer(() => {
       </div>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default ProjectSettingsPage;
+export default observer(ProjectSettingsPage);

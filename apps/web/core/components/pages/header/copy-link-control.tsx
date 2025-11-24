@@ -3,13 +3,13 @@ import { Link } from "lucide-react";
 // hooks
 import { usePageOperations } from "@/hooks/use-page-operations";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
   page: TPageInstance;
 };
 
-export const PageCopyLinkControl = observer(({ page }: Props) => {
+export const PageCopyLinkControl = observer(function PageCopyLinkControl({ page }: Props) {
   // page operations
   const { pageOperations } = usePageOperations({
     page,

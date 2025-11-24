@@ -4,7 +4,7 @@ import { useDropzone } from "react-dropzone";
 // plane web hooks
 import { useFileSize } from "@/plane-web/hooks/use-file-size";
 // types
-import { TAttachmentOperations } from "../issue-detail-widgets/attachments/helper";
+import type { TAttachmentOperations } from "../issue-detail-widgets/attachments/helper";
 
 type TAttachmentOperationsModal = Pick<TAttachmentOperations, "create">;
 
@@ -14,7 +14,7 @@ type Props = {
   attachmentOperations: TAttachmentOperationsModal;
 };
 
-export const IssueAttachmentUpload: React.FC<Props> = observer((props) => {
+export const IssueAttachmentUpload = observer(function IssueAttachmentUpload(props: Props) {
   const { workspaceSlug, disabled = false, attachmentOperations } = props;
   // states
   const [isLoading, setIsLoading] = useState(false);

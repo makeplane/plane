@@ -2,11 +2,11 @@ import React from "react";
 
 // react hook form
 import { useFormContext } from "react-hook-form";
-import { IJiraImporterForm } from "@plane/types";
+import type { IJiraImporterForm } from "@plane/types";
 
 // types
 
-export const JiraConfirmImport: React.FC = () => {
+export function JiraConfirmImport() {
   const { watch } = useFormContext<IJiraImporterForm>();
 
   return (
@@ -44,4 +44,4 @@ export const JiraConfirmImport: React.FC = () => {
       </div>
     </div>
   );
-};
+}

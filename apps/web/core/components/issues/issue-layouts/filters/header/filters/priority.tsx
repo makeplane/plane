@@ -1,22 +1,20 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // plane constants
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { PriorityIcon } from "@plane/ui";
+import { PriorityIcon } from "@plane/propel/icons";
 
 // components
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 type Props = {
   appliedFilters: string[] | null;
   handleUpdate: (val: string) => void;
   searchQuery: string;
 };
 
-export const FilterPriority: React.FC<Props> = observer((props) => {
+export const FilterPriority = observer(function FilterPriority(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery } = props;
   // hooks
   const { t } = useTranslation();

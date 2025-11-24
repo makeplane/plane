@@ -1,9 +1,8 @@
-"use client";
-
-import { MutableRefObject, forwardRef, useCallback, useRef, useState } from "react";
+import type { MutableRefObject } from "react";
+import { forwardRef, useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 //types
-import {
+import type {
   TGroupedIssues,
   IIssueDisplayProperties,
   TSubGroupedIssues,
@@ -14,8 +13,8 @@ import {
 import { cn } from "@plane/utils";
 // hooks
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
-//
-import { KanbanIssueBlocksList } from ".";
+// local imports
+import { KanbanIssueBlocksList } from "./blocks-list";
 
 interface IKanbanGroup {
   groupId: string;
@@ -35,12 +34,15 @@ interface IKanbanGroup {
 }
 
 // Loader components
-const KanbanIssueBlockLoader = forwardRef<HTMLSpanElement>((props, ref) => (
-  <span ref={ref} className="block h-28 m-1.5 animate-pulse bg-custom-background-80 rounded" />
-));
+const KanbanIssueBlockLoader = forwardRef(function KanbanIssueBlockLoader(
+  props: Record<string, unknown>,
+  ref: React.ForwardedRef<HTMLSpanElement>
+) {
+  return <span ref={ref} className="block h-28 m-1.5 animate-pulse bg-custom-background-80 rounded" />;
+});
 KanbanIssueBlockLoader.displayName = "KanbanIssueBlockLoader";
 
-export const KanbanGroup = observer((props: IKanbanGroup) => {
+export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
   const {
     groupId,
     subGroupId,

@@ -1,7 +1,6 @@
-import { CSSProperties } from "react";
-import { Editor, Range } from "@tiptap/core";
-// types
-import { TEditorCommands } from "@/types";
+import type { Editor, Range } from "@tiptap/core";
+import type { CSSProperties } from "react";
+import type { TEditorCommands } from "@/types";
 
 export type CommandProps = {
   editor: Editor;
@@ -19,4 +18,5 @@ export type ISlashCommandItem = {
   icon: React.ReactNode;
   iconContainerStyle?: CSSProperties;
   command: ({ editor, range }: CommandProps) => void;
+  badge?: React.ReactNode;
 };

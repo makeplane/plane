@@ -1,4 +1,5 @@
-import React, { RefObject } from "react";
+import type { RefObject } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 // hooks
 import type { IGanttBlock } from "@plane/types";
@@ -22,7 +23,7 @@ type Props = {
   ganttContainerRef: RefObject<HTMLDivElement>;
 };
 
-export const ChartDraggable: React.FC<Props> = observer((props) => {
+export const ChartDraggable = observer(function ChartDraggable(props: Props) {
   const {
     block,
     blockToRender,
@@ -53,7 +54,7 @@ export const ChartDraggable: React.FC<Props> = observer((props) => {
         })}
         onMouseDown={(e) => enableBlockMove && handleBlockDrag(e, "move")}
       >
-        {blockToRender(block.data)}
+        {blockToRender({ ...block.data, meta: block.meta })}
       </div>
       {/* right resize drag handle */}
       <RightResizable

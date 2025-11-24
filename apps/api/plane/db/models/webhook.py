@@ -7,7 +7,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 
 # Module imports
-from plane.db.models import BaseModel
+from plane.db.models import BaseModel, ProjectBaseModel
 
 
 def generate_token():
@@ -28,12 +28,8 @@ def validate_domain(value):
 
 
 class Webhook(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="workspace_webhooks"
-    )
-    url = models.URLField(
-        validators=[validate_schema, validate_domain], max_length=1024
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="workspace_webhooks")
+    url = models.URLField(validators=[validate_schema, validate_domain], max_length=1024)
     is_active = models.BooleanField(default=True)
     secret_key = models.CharField(max_length=255, default=generate_token)
     project = models.BooleanField(default=False)
@@ -62,9 +58,7 @@ class Webhook(BaseModel):
 
 
 class WebhookLog(BaseModel):
-    workspace = models.ForeignKey(
-        "db.Workspace", on_delete=models.CASCADE, related_name="webhook_logs"
-    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="webhook_logs")
     # Associated webhook
     webhook = models.UUIDField()
 
@@ -90,3 +84,21 @@ class WebhookLog(BaseModel):
 
     def __str__(self):
         return f"{self.event_type} {str(self.webhook)}"
+
+
+class ProjectWebhook(ProjectBaseModel):
+    webhook = models.ForeignKey("db.Webhook", on_delete=models.CASCADE, related_name="project_webhooks")
+
+    class Meta:
+        unique_together = ["project", "webhook", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["project", "webhook"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="project_webhook_unique_project_webhook_when_deleted_at_null",
+            )
+        ]
+        verbose_name = "Project Webhook"
+        verbose_name_plural = "Project Webhooks"
+        db_table = "project_webhooks"
+        ordering = ("-created_at",)

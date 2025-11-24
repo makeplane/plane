@@ -1,8 +1,8 @@
 import { observer } from "mobx-react";
 // components
-import { TPageRootHandlers } from "@/components/pages/editor";
+import type { TPageRootHandlers } from "@/components/pages/editor/page-root";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { PageNavigationPaneInfoTabActorsInfo } from "./actors-info";
 import { PageNavigationPaneInfoTabDocumentInfo } from "./document-info";
@@ -13,7 +13,7 @@ type Props = {
   versionHistory: Pick<TPageRootHandlers, "fetchAllVersions" | "fetchVersionDetails">;
 };
 
-export const PageNavigationPaneInfoTabPanel: React.FC<Props> = observer((props) => {
+export const PageNavigationPaneInfoTabPanel = observer(function PageNavigationPaneInfoTabPanel(props: Props) {
   const { page, versionHistory } = props;
 
   return (

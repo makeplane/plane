@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Search, X } from "lucide-react";
-import { TPageFilterProps, TPageFilters } from "@plane/types";
+import { Search } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
+import type { TPageFilterProps, TPageFilters } from "@plane/types";
 // components
-import { FilterCreatedBy, FilterCreatedDate } from "@/components/common/filters";
-import { FilterOption } from "@/components/issues";
+import { FilterCreatedDate } from "@/components/common/filters/created-at";
+import { FilterCreatedBy } from "@/components/common/filters/created-by";
+import { FilterOption } from "@/components/issues/issue-layouts/filters";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
@@ -13,7 +15,7 @@ type Props = {
   memberIds?: string[] | undefined;
 };
 
-export const PageFiltersSelection: React.FC<Props> = observer((props) => {
+export const PageFiltersSelection = observer(function PageFiltersSelection(props: Props) {
   const { filters, handleFiltersUpdate, memberIds } = props;
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
@@ -58,7 +60,7 @@ export const PageFiltersSelection: React.FC<Props> = observer((props) => {
           />
           {filtersSearchQuery !== "" && (
             <button type="button" className="grid place-items-center" onClick={() => setFiltersSearchQuery("")}>
-              <X className="text-custom-text-300" size={12} strokeWidth={2} />
+              <CloseIcon className="text-custom-text-300" height={12} width={12} strokeWidth={2} />
             </button>
           )}
         </div>

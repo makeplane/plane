@@ -1,18 +1,19 @@
-"use client";
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { SIDEBAR_WIDTH } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
+// components
+import { ResizableSidebar } from "@/components/sidebar/resizable-sidebar";
 // hooks
-import { ResizableSidebar } from "@/components/sidebar";
-import { useAppTheme } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useAppRail } from "@/hooks/use-app-rail";
 // local imports
 import { ExtendedAppSidebar } from "./extended-sidebar";
 import { AppSidebar } from "./sidebar";
 
-export const ProjectAppSidebar: FC = observer(() => {
+export const ProjectAppSidebar = observer(function ProjectAppSidebar() {
   // store hooks
   const {
     sidebarCollapsed,

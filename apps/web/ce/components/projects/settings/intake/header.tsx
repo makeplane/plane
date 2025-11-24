@@ -1,21 +1,23 @@
-"use client";
-
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { RefreshCcw } from "lucide-react";
 // ui
 import { EProjectFeatureKey, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Breadcrumbs, Button, Header } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { Breadcrumbs, Header } from "@plane/ui";
 // components
-import { InboxIssueCreateModalRoot } from "@/components/inbox";
+import { InboxIssueCreateModalRoot } from "@/components/inbox/modals/create-modal";
 // hooks
-import { useProject, useProjectInbox, useUserPermissions } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs";
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
-export const ProjectInboxHeader: FC = observer(() => {
+export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
   // states
   const [createIssueModal, setCreateIssueModal] = useState(false);
   // router

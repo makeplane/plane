@@ -1,26 +1,24 @@
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
-import { LayoutPanelTop } from "lucide-react";
-// plane imports
 import { ETabIndices } from "@plane/constants";
-import { ISearchIssueResponse, TIssue } from "@plane/types";
+import { ParentPropertyIcon } from "@plane/propel/icons";
+import type { ISearchIssueResponse, TIssue } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import { renderFormattedPayloadDate, getDate, getTabIndex } from "@plane/utils";
 // components
-import {
-  CycleDropdown,
-  DateDropdown,
-  EstimateDropdown,
-  ModuleDropdown,
-  PriorityDropdown,
-  MemberDropdown,
-  StateDropdown,
-} from "@/components/dropdowns";
-import { ParentIssuesListModal } from "@/components/issues";
+import { CycleDropdown } from "@/components/dropdowns/cycle";
+import { DateDropdown } from "@/components/dropdowns/date";
+import { EstimateDropdown } from "@/components/dropdowns/estimate";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
+import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
+import { ParentIssuesListModal } from "@/components/issues/parent-issues-list-modal";
 import { IssueLabelSelect } from "@/components/issues/select";
 // helpers
 // hooks
-import { useProjectEstimates } from "@/hooks/store";
+import { useProjectEstimates } from "@/hooks/store/estimates";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TInboxIssueProperties = {
@@ -30,7 +28,7 @@ type TInboxIssueProperties = {
   isVisible?: boolean;
 };
 
-export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) => {
+export const InboxIssueProperties = observer(function InboxIssueProperties(props: TInboxIssueProperties) {
   const { projectId, data, handleData, isVisible = false } = props;
   // hooks
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
@@ -91,7 +89,6 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
       {/* labels */}
       <div className="h-7">
         <IssueLabelSelect
-          setIsOpen={() => {}}
           value={data?.label_ids || []}
           onChange={(labelIds) => handleData("label_ids", labelIds)}
           projectId={projectId}
@@ -179,7 +176,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
                   type="button"
                   className="flex cursor-pointer items-center justify-between gap-1 h-full rounded border-[0.5px] border-custom-border-300 px-2 py-0.5 text-xs hover:bg-custom-background-80"
                 >
-                  <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
+                  <ParentPropertyIcon className="h-3 w-3 flex-shrink-0" />
                   <span className="whitespace-nowrap">
                     {selectedParentIssue
                       ? `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`
@@ -213,7 +210,7 @@ export const InboxIssueProperties: FC<TInboxIssueProperties> = observer((props) 
               className="flex cursor-pointer items-center justify-between gap-1 h-full rounded border-[0.5px] border-custom-border-300 px-2 py-0.5 text-xs hover:bg-custom-background-80"
               onClick={() => setParentIssueModalOpen(true)}
             >
-              <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
+              <ParentPropertyIcon className="h-3 w-3 flex-shrink-0" />
               <span className="whitespace-nowrap">Add parent</span>
             </button>
           )}

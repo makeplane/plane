@@ -1,11 +1,12 @@
-"use client";
-
-import React, { FC, useState } from "react";
+import { useState } from "react";
 import { useParams } from "next/navigation";
 // ui
-import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { WORKSPACE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { AlertModalCore } from "@plane/ui";
 // hooks
-import { useWebhook } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useWebhook } from "@/hooks/store/use-webhook";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 interface IDeleteWebhook {
@@ -13,7 +14,7 @@ interface IDeleteWebhook {
   onClose: () => void;
 }
 
-export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
+export function DeleteWebhookModal(props: IDeleteWebhook) {
   const { isOpen, onClose } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);
@@ -35,6 +36,12 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
 
     removeWebhook(workspaceSlug.toString(), webhookId.toString())
       .then(() => {
+        captureSuccess({
+          eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_deleted,
+          payload: {
+            webhook: webhookId,
+          },
+        });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
@@ -42,13 +49,20 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
         });
         router.replace(`/${workspaceSlug}/settings/webhooks/`);
       })
-      .catch((error) =>
+      .catch((error) => {
+        captureError({
+          eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_deleted,
+          payload: {
+            webhook: webhookId,
+          },
+          error: error as Error,
+        });
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: error?.error ?? "Something went wrong. Please try again.",
-        })
-      )
+        });
+      })
       .finally(() => setIsDeleting(false));
   };
 
@@ -67,4 +81,4 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
       }
     />
   );
-};
+}

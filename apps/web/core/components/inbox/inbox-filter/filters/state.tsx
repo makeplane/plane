@@ -1,21 +1,21 @@
-"use client";
-
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { EIconSize } from "@plane/constants";
-import { IState } from "@plane/types";
-import { Loader, StateGroupIcon } from "@plane/ui";
+import { StateGroupIcon } from "@plane/propel/icons";
+import type { IState } from "@plane/types";
+import { Loader } from "@plane/ui";
 // components
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // hooks
-import { useProjectInbox } from "@/hooks/store";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 
 type Props = {
   states: IState[] | undefined;
   searchQuery: string;
 };
 
-export const FilterState: FC<Props> = observer((props) => {
+export const FilterState = observer(function FilterState(props: Props) {
   const { states, searchQuery } = props;
 
   const [itemsToRender, setItemsToRender] = useState(5);

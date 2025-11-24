@@ -12,20 +12,23 @@ from django.db.models import (
     OuterRef,
     Q,
     Sum,
-    FloatField,
-    Case,
-    When,
-    Value,
 )
-from django.db.models.functions import Cast, Concat
-from django.db import models
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+from drf_spectacular.utils import OpenApiRequest, OpenApiResponse
 
 # Module imports
-from plane.api.serializers import CycleIssueSerializer, CycleSerializer
+from plane.api.serializers import (
+    CycleIssueSerializer,
+    CycleSerializer,
+    CycleIssueRequestSerializer,
+    TransferCycleIssueRequestSerializer,
+    CycleCreateSerializer,
+    CycleUpdateSerializer,
+    IssueSerializer,
+)
 from plane.app.permissions import ProjectEntityPermission
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
@@ -38,23 +41,46 @@ from plane.db.models import (
     ProjectMember,
     UserFavorite,
 )
-from plane.utils.analytics_plot import burndown_plot
+from plane.utils.cycle_transfer_issues import transfer_cycle_issues
 from plane.utils.host import base_host
 from .base import BaseAPIView
 from plane.bgtasks.webhook_task import model_activity
+from plane.utils.openapi.decorators import cycle_docs
+from plane.utils.openapi import (
+    CURSOR_PARAMETER,
+    PER_PAGE_PARAMETER,
+    CYCLE_VIEW_PARAMETER,
+    ORDER_BY_PARAMETER,
+    FIELDS_PARAMETER,
+    EXPAND_PARAMETER,
+    create_paginated_response,
+    # Request Examples
+    CYCLE_CREATE_EXAMPLE,
+    CYCLE_UPDATE_EXAMPLE,
+    CYCLE_ISSUE_REQUEST_EXAMPLE,
+    TRANSFER_CYCLE_ISSUE_EXAMPLE,
+    # Response Examples
+    CYCLE_EXAMPLE,
+    CYCLE_ISSUE_EXAMPLE,
+    TRANSFER_CYCLE_ISSUE_SUCCESS_EXAMPLE,
+    TRANSFER_CYCLE_ISSUE_ERROR_EXAMPLE,
+    TRANSFER_CYCLE_COMPLETED_ERROR_EXAMPLE,
+    DELETED_RESPONSE,
+    ARCHIVED_RESPONSE,
+    CYCLE_CANNOT_ARCHIVE_RESPONSE,
+    UNARCHIVED_RESPONSE,
+    REQUIRED_FIELDS_RESPONSE,
+)
 
 
-class CycleAPIEndpoint(BaseAPIView):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions related to cycle.
-
-    """
+class CycleListCreateAPIEndpoint(BaseAPIView):
+    """Cycle List and Create Endpoint"""
 
     serializer_class = CycleSerializer
     model = Cycle
     webhook_event = "cycle"
     permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
 
     def get_queryset(self):
         return (
@@ -136,17 +162,34 @@ class CycleAPIEndpoint(BaseAPIView):
             .distinct()
         )
 
-    def get(self, request, slug, project_id, pk=None):
+    @cycle_docs(
+        operation_id="list_cycles",
+        summary="List cycles",
+        description="Retrieve all cycles in a project. Supports filtering by cycle status like current, upcoming, completed, or draft.",  # noqa: E501
+        parameters=[
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+            CYCLE_VIEW_PARAMETER,
+            ORDER_BY_PARAMETER,
+            FIELDS_PARAMETER,
+            EXPAND_PARAMETER,
+        ],
+        responses={
+            200: create_paginated_response(
+                CycleSerializer,
+                "PaginatedCycleResponse",
+                "Paginated list of cycles",
+                "Paginated Cycles",
+            ),
+        },
+    )
+    def get(self, request, slug, project_id):
+        """List cycles
+
+        Retrieve all cycles in a project.
+        Supports filtering by cycle status like current, upcoming, completed, or draft.
+        """
         project = Project.objects.get(workspace__slug=slug, pk=project_id)
-        if pk:
-            queryset = self.get_queryset().filter(archived_at__isnull=True).get(pk=pk)
-            data = CycleSerializer(
-                queryset,
-                fields=self.fields,
-                expand=self.expand,
-                context={"project": project},
-            ).data
-            return Response(data, status=status.HTTP_200_OK)
         queryset = self.get_queryset().filter(archived_at__isnull=True)
         cycle_view = request.GET.get("cycle_view", "all")
 
@@ -237,7 +280,28 @@ class CycleAPIEndpoint(BaseAPIView):
             ).data,
         )
 
+    @cycle_docs(
+        operation_id="create_cycle",
+        summary="Create cycle",
+        description="Create a new development cycle with specified name, description, and date range. Supports external ID tracking for integration purposes.",  # noqa: E501
+        request=OpenApiRequest(
+            request=CycleCreateSerializer,
+            examples=[CYCLE_CREATE_EXAMPLE],
+        ),
+        responses={
+            201: OpenApiResponse(
+                description="Cycle created",
+                response=CycleSerializer,
+                examples=[CYCLE_EXAMPLE],
+            ),
+        },
+    )
     def post(self, request, slug, project_id):
+        """Create cycle
+
+        Create a new development cycle with specified name, description, and date range.
+        Supports external ID tracking for integration purposes.
+        """
         if (
             request.data.get("start_date", None) is None
             and request.data.get("end_date", None) is None
@@ -245,7 +309,10 @@ class CycleAPIEndpoint(BaseAPIView):
             request.data.get("start_date", None) is not None
             and request.data.get("end_date", None) is not None
         ):
-            serializer = CycleSerializer(data=request.data)
+
+            serializer = CycleCreateSerializer(
+                data=request.data, context={"request": request}
+            )
             if serializer.is_valid():
                 if (
                     request.data.get("external_id")
@@ -270,17 +337,20 @@ class CycleAPIEndpoint(BaseAPIView):
                         },
                         status=status.HTTP_409_CONFLICT,
                     )
-                serializer.save(project_id=project_id, owned_by=request.user)
+                serializer.save(project_id=project_id)
                 # Send the model activity
                 model_activity.delay(
                     model_name="cycle",
-                    model_id=str(serializer.data["id"]),
+                    model_id=str(serializer.instance.id),
                     requested_data=request.data,
                     current_instance=None,
                     actor_id=request.user.id,
                     slug=slug,
                     origin=base_host(request=request, is_app=True),
                 )
+
+                cycle = Cycle.objects.get(pk=serializer.instance.id)
+                serializer = CycleSerializer(cycle)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
@@ -291,7 +361,148 @@ class CycleAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+
+class CycleDetailAPIEndpoint(BaseAPIView):
+    """
+    This viewset automatically provides `retrieve`, `update` and `destroy` actions related to cycle.
+    """
+
+    serializer_class = CycleSerializer
+    model = Cycle
+    webhook_event = "cycle"
+    permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
+
+    def get_queryset(self):
+        return (
+            Cycle.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("owned_by")
+            .annotate(
+                total_issues=Count(
+                    "issue_cycle",
+                    filter=Q(
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
+                    ),
+                )
+            )
+            .annotate(
+                completed_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(
+                        issue_cycle__issue__state__group="completed",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
+                    ),
+                )
+            )
+            .annotate(
+                cancelled_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(
+                        issue_cycle__issue__state__group="cancelled",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
+                    ),
+                )
+            )
+            .annotate(
+                started_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(
+                        issue_cycle__issue__state__group="started",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
+                    ),
+                )
+            )
+            .annotate(
+                unstarted_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(
+                        issue_cycle__issue__state__group="unstarted",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
+                    ),
+                )
+            )
+            .annotate(
+                backlog_issues=Count(
+                    "issue_cycle__issue__state__group",
+                    filter=Q(
+                        issue_cycle__issue__state__group="backlog",
+                        issue_cycle__issue__archived_at__isnull=True,
+                        issue_cycle__issue__is_draft=False,
+                        issue_cycle__deleted_at__isnull=True,
+                    ),
+                )
+            )
+            .order_by(self.kwargs.get("order_by", "-created_at"))
+            .distinct()
+        )
+
+    @cycle_docs(
+        operation_id="retrieve_cycle",
+        summary="Retrieve cycle",
+        description="Retrieve details of a specific cycle by its ID. Supports cycle status filtering.",
+        responses={
+            200: OpenApiResponse(
+                description="Cycles",
+                response=CycleSerializer,
+                examples=[CYCLE_EXAMPLE],
+            ),
+        },
+    )
+    def get(self, request, slug, project_id, pk):
+        """List or retrieve cycles
+
+        Retrieve all cycles in a project or get details of a specific cycle.
+        Supports filtering by cycle status like current, upcoming, completed, or draft.
+        """
+        project = Project.objects.get(workspace__slug=slug, pk=project_id)
+        queryset = self.get_queryset().filter(archived_at__isnull=True).get(pk=pk)
+        data = CycleSerializer(
+            queryset,
+            fields=self.fields,
+            expand=self.expand,
+            context={"project": project},
+        ).data
+        return Response(data, status=status.HTTP_200_OK)
+
+    @cycle_docs(
+        operation_id="update_cycle",
+        summary="Update cycle",
+        description="Modify an existing cycle's properties like name, description, or date range. Completed cycles can only have their sort order changed.",  # noqa: E501
+        request=OpenApiRequest(
+            request=CycleUpdateSerializer,
+            examples=[CYCLE_UPDATE_EXAMPLE],
+        ),
+        responses={
+            200: OpenApiResponse(
+                description="Cycle updated",
+                response=CycleSerializer,
+                examples=[CYCLE_EXAMPLE],
+            ),
+        },
+    )
     def patch(self, request, slug, project_id, pk):
+        """Update cycle
+
+        Modify an existing cycle's properties like name, description, or date range.
+        Completed cycles can only have their sort order changed.
+        """
         cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
 
         current_instance = json.dumps(
@@ -320,7 +531,9 @@ class CycleAPIEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-        serializer = CycleSerializer(cycle, data=request.data, partial=True)
+        serializer = CycleUpdateSerializer(
+            cycle, data=request.data, partial=True, context={"request": request}
+        )
         if serializer.is_valid():
             if (
                 request.data.get("external_id")
@@ -346,17 +559,32 @@ class CycleAPIEndpoint(BaseAPIView):
             # Send the model activity
             model_activity.delay(
                 model_name="cycle",
-                model_id=str(serializer.data["id"]),
+                model_id=str(serializer.instance.id),
                 requested_data=request.data,
                 current_instance=current_instance,
                 actor_id=request.user.id,
                 slug=slug,
                 origin=base_host(request=request, is_app=True),
             )
+            cycle = Cycle.objects.get(pk=serializer.instance.id)
+            serializer = CycleSerializer(cycle)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @cycle_docs(
+        operation_id="delete_cycle",
+        summary="Delete cycle",
+        description="Permanently remove a cycle and all its associated issue relationships",
+        responses={
+            204: DELETED_RESPONSE,
+        },
+    )
     def delete(self, request, slug, project_id, pk):
+        """Delete cycle
+
+        Permanently remove a cycle and all its associated issue relationships.
+        Only admins or the cycle creator can perform this action.
+        """
         cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
         if cycle.owned_by_id != request.user.id and (
             not ProjectMember.objects.filter(
@@ -403,7 +631,10 @@ class CycleAPIEndpoint(BaseAPIView):
 
 
 class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
+    """Cycle Archive and Unarchive Endpoint"""
+
     permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
 
     def get_queryset(self):
         return (
@@ -482,10 +713,10 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
                     ),
                 )
             )
-            .annotate(total_estimates=Sum("issue_cycle__issue__estimate_point"))
+            .annotate(total_estimates=Sum("issue_cycle__issue__estimate_point__key"))
             .annotate(
                 completed_estimates=Sum(
-                    "issue_cycle__issue__estimate_point",
+                    "issue_cycle__issue__estimate_point__key",
                     filter=Q(
                         issue_cycle__issue__state__group="completed",
                         issue_cycle__issue__archived_at__isnull=True,
@@ -496,7 +727,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             )
             .annotate(
                 started_estimates=Sum(
-                    "issue_cycle__issue__estimate_point",
+                    "issue_cycle__issue__estimate_point__key",
                     filter=Q(
                         issue_cycle__issue__state__group="started",
                         issue_cycle__issue__archived_at__isnull=True,
@@ -509,7 +740,27 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             .distinct()
         )
 
+    @cycle_docs(
+        operation_id="list_archived_cycles",
+        description="Retrieve all cycles that have been archived in the project.",
+        summary="List archived cycles",
+        parameters=[CURSOR_PARAMETER, PER_PAGE_PARAMETER],
+        request={},
+        responses={
+            200: create_paginated_response(
+                CycleSerializer,
+                "PaginatedArchivedCycleResponse",
+                "Paginated list of archived cycles",
+                "Paginated Archived Cycles",
+            ),
+        },
+    )
     def get(self, request, slug, project_id):
+        """List archived cycles
+
+        Retrieve all cycles that have been archived in the project.
+        Returns paginated results with cycle statistics and completion data.
+        """
         return self.paginate(
             request=request,
             queryset=(self.get_queryset()),
@@ -518,7 +769,22 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             ).data,
         )
 
+    @cycle_docs(
+        operation_id="archive_cycle",
+        summary="Archive cycle",
+        description="Move a completed cycle to archived status for historical tracking. Only cycles that have ended can be archived.",  # noqa: E501
+        request={},
+        responses={
+            204: ARCHIVED_RESPONSE,
+            400: CYCLE_CANNOT_ARCHIVE_RESPONSE,
+        },
+    )
     def post(self, request, slug, project_id, cycle_id):
+        """Archive cycle
+
+        Move a completed cycle to archived status for historical tracking.
+        Only cycles that have ended can be archived.
+        """
         cycle = Cycle.objects.get(
             pk=cycle_id, project_id=project_id, workspace__slug=slug
         )
@@ -537,7 +803,21 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @cycle_docs(
+        operation_id="unarchive_cycle",
+        summary="Unarchive cycle",
+        description="Restore an archived cycle to active status, making it available for regular use.",
+        request={},
+        responses={
+            204: UNARCHIVED_RESPONSE,
+        },
+    )
     def delete(self, request, slug, project_id, cycle_id):
+        """Unarchive cycle
+
+        Restore an archived cycle to active status, making it available for regular use.
+        The cycle will reappear in active cycle lists.
+        """
         cycle = Cycle.objects.get(
             pk=cycle_id, project_id=project_id, workspace__slug=slug
         )
@@ -546,18 +826,14 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class CycleIssueAPIEndpoint(BaseAPIView):
-    """
-    This viewset automatically provides `list`, `create`,
-    and `destroy` actions related to cycle issues.
-
-    """
+class CycleIssueListCreateAPIEndpoint(BaseAPIView):
+    """Cycle Issue List and Create Endpoint"""
 
     serializer_class = CycleIssueSerializer
     model = CycleIssue
     webhook_event = "cycle_issue"
-    bulk = True
     permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
 
     def get_queryset(self):
         return (
@@ -583,20 +859,27 @@ class CycleIssueAPIEndpoint(BaseAPIView):
             .distinct()
         )
 
-    def get(self, request, slug, project_id, cycle_id, issue_id=None):
-        # Get
-        if issue_id:
-            cycle_issue = CycleIssue.objects.get(
-                workspace__slug=slug,
-                project_id=project_id,
-                cycle_id=cycle_id,
-                issue_id=issue_id,
-            )
-            serializer = CycleIssueSerializer(
-                cycle_issue, fields=self.fields, expand=self.expand
-            )
-            return Response(serializer.data, status=status.HTTP_200_OK)
+    @cycle_docs(
+        operation_id="list_cycle_work_items",
+        summary="List cycle work items",
+        description="Retrieve all work items assigned to a cycle.",
+        parameters=[CURSOR_PARAMETER, PER_PAGE_PARAMETER],
+        request={},
+        responses={
+            200: create_paginated_response(
+                IssueSerializer,
+                "PaginatedCycleIssueResponse",
+                "Paginated list of cycle work items",
+                "Paginated Cycle Work Items",
+            ),
+        },
+    )
+    def get(self, request, slug, project_id, cycle_id):
+        """List or retrieve cycle work items
 
+        Retrieve all work items assigned to a cycle or get details of a specific cycle work item.
+        Returns paginated results with work item details, assignees, and labels.
+        """
         # List
         order_by = request.GET.get("order_by", "created_at")
         issues = (
@@ -639,28 +922,59 @@ class CycleIssueAPIEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             queryset=(issues),
-            on_results=lambda issues: CycleSerializer(
+            on_results=lambda issues: IssueSerializer(
                 issues, many=True, fields=self.fields, expand=self.expand
             ).data,
         )
 
+    @cycle_docs(
+        operation_id="add_cycle_work_items",
+        summary="Add Work Items to Cycle",
+        description="Assign multiple work items to a cycle. Automatically handles bulk creation and updates with activity tracking.",  # noqa: E501
+        request=OpenApiRequest(
+            request=CycleIssueRequestSerializer,
+            examples=[CYCLE_ISSUE_REQUEST_EXAMPLE],
+        ),
+        responses={
+            200: OpenApiResponse(
+                description="Cycle work items added",
+                response=CycleIssueSerializer,
+                examples=[CYCLE_ISSUE_EXAMPLE],
+            ),
+            400: REQUIRED_FIELDS_RESPONSE,
+        },
+    )
     def post(self, request, slug, project_id, cycle_id):
+        """Add cycle issues
+
+        Assign multiple work items to a cycle or move them from another cycle.
+        Automatically handles bulk creation and updates with activity tracking.
+        """
         issues = request.data.get("issues", [])
 
         if not issues:
             return Response(
-                {"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Work items are required", "code": "MISSING_WORK_ITEMS"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         cycle = Cycle.objects.get(
             workspace__slug=slug, project_id=project_id, pk=cycle_id
         )
 
-        # Get all CycleIssues already created
+        if cycle.end_date is not None and cycle.end_date < timezone.now():
+            return Response(
+                {
+                    "code": "CYCLE_COMPLETED",
+                    "message": "The Cycle has already been completed so no new issues can be added",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Get all CycleWorkItems already created
         cycle_issues = list(
             CycleIssue.objects.filter(~Q(cycle_id=cycle_id), issue_id__in=issues)
         )
-
         existing_issues = [
             str(cycle_issue.issue_id)
             for cycle_issue in cycle_issues
@@ -730,7 +1044,88 @@ class CycleIssueAPIEndpoint(BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
+
+class CycleIssueDetailAPIEndpoint(BaseAPIView):
+    """
+    This viewset automatically provides `list`, `create`,
+    and `destroy` actions related to cycle issues.
+
+    """
+
+    serializer_class = CycleIssueSerializer
+    model = CycleIssue
+    webhook_event = "cycle_issue"
+    bulk = True
+    permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
+
+    def get_queryset(self):
+        return (
+            CycleIssue.objects.annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("issue_id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(
+                project__project_projectmember__member=self.request.user,
+                project__project_projectmember__is_active=True,
+            )
+            .filter(cycle_id=self.kwargs.get("cycle_id"))
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("cycle")
+            .select_related("issue", "issue__state", "issue__project")
+            .prefetch_related("issue__assignees", "issue__labels")
+            .order_by(self.kwargs.get("order_by", "-created_at"))
+            .distinct()
+        )
+
+    @cycle_docs(
+        operation_id="retrieve_cycle_work_item",
+        summary="Retrieve cycle work item",
+        description="Retrieve details of a specific cycle work item.",
+        responses={
+            200: OpenApiResponse(
+                description="Cycle work items",
+                response=CycleIssueSerializer,
+                examples=[CYCLE_ISSUE_EXAMPLE],
+            ),
+        },
+    )
+    def get(self, request, slug, project_id, cycle_id, issue_id):
+        """Retrieve cycle work item
+
+        Retrieve details of a specific cycle work item.
+        Returns paginated results with work item details, assignees, and labels.
+        """
+        cycle_issue = CycleIssue.objects.get(
+            workspace__slug=slug,
+            project_id=project_id,
+            cycle_id=cycle_id,
+            issue_id=issue_id,
+        )
+        serializer = CycleIssueSerializer(
+            cycle_issue, fields=self.fields, expand=self.expand
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @cycle_docs(
+        operation_id="delete_cycle_work_item",
+        summary="Delete cycle work item",
+        description="Remove a work item from a cycle while keeping the work item in the project.",
+        responses={
+            204: DELETED_RESPONSE,
+        },
+    )
     def delete(self, request, slug, project_id, cycle_id, issue_id):
+        """Remove cycle work item
+
+        Remove a work item from a cycle while keeping the work item in the project.
+        Records the removal activity for tracking purposes.
+        """
         cycle_issue = CycleIssue.objects.get(
             issue_id=issue_id,
             workspace__slug=slug,
@@ -764,7 +1159,54 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
 
     permission_classes = [ProjectEntityPermission]
 
+    @cycle_docs(
+        operation_id="transfer_cycle_work_items",
+        summary="Transfer cycle work items",
+        description="Move incomplete work items from the current cycle to a new target cycle. Captures progress snapshot and transfers only unfinished work items.",  # noqa: E501
+        request=OpenApiRequest(
+            request=TransferCycleIssueRequestSerializer,
+            examples=[TRANSFER_CYCLE_ISSUE_EXAMPLE],
+        ),
+        responses={
+            200: OpenApiResponse(
+                description="Work items transferred successfully",
+                response={
+                    "type": "object",
+                    "properties": {
+                        "message": {
+                            "type": "string",
+                            "description": "Success message",
+                            "example": "Success",
+                        },
+                    },
+                },
+                examples=[TRANSFER_CYCLE_ISSUE_SUCCESS_EXAMPLE],
+            ),
+            400: OpenApiResponse(
+                description="Bad request",
+                response={
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string",
+                            "description": "Error message",
+                            "example": "New Cycle Id is required",
+                        },
+                    },
+                },
+                examples=[
+                    TRANSFER_CYCLE_ISSUE_ERROR_EXAMPLE,
+                    TRANSFER_CYCLE_COMPLETED_ERROR_EXAMPLE,
+                ],
+            ),
+        },
+    )
     def post(self, request, slug, project_id, cycle_id):
+        """Transfer cycle issues
+
+        Move incomplete issues from the current cycle to a new target cycle.
+        Captures progress snapshot and transfers only unfinished work items.
+        """
         new_cycle_id = request.data.get("new_cycle_id", False)
 
         if not new_cycle_id:
@@ -772,434 +1214,34 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
                 {"error": "New Cycle Id is required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
-        new_cycle = Cycle.objects.filter(
-            workspace__slug=slug, project_id=project_id, pk=new_cycle_id
-        ).first()
-
-        old_cycle = (
-            Cycle.objects.filter(
-                workspace__slug=slug, project_id=project_id, pk=cycle_id
-            )
-            .annotate(
-                total_issues=Count(
-                    "issue_cycle",
-                    filter=Q(
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                        issue_cycle__deleted_at__isnull=True,
-                        issue_cycle__issue__deleted_at__isnull=True,
-                    ),
-                )
-            )
-            .annotate(
-                completed_issues=Count(
-                    "issue_cycle__issue__state__group",
-                    filter=Q(
-                        issue_cycle__issue__state__group="completed",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                        issue_cycle__deleted_at__isnull=True,
-                        issue_cycle__issue__deleted_at__isnull=True,
-                    ),
-                )
-            )
-            .annotate(
-                cancelled_issues=Count(
-                    "issue_cycle__issue__state__group",
-                    filter=Q(
-                        issue_cycle__issue__state__group="cancelled",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                        issue_cycle__deleted_at__isnull=True,
-                    ),
-                )
-            )
-            .annotate(
-                started_issues=Count(
-                    "issue_cycle__issue__state__group",
-                    filter=Q(
-                        issue_cycle__issue__state__group="started",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                        issue_cycle__deleted_at__isnull=True,
-                    ),
-                )
-            )
-            .annotate(
-                unstarted_issues=Count(
-                    "issue_cycle__issue__state__group",
-                    filter=Q(
-                        issue_cycle__issue__state__group="unstarted",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                        issue_cycle__deleted_at__isnull=True,
-                    ),
-                )
-            )
-            .annotate(
-                backlog_issues=Count(
-                    "issue_cycle__issue__state__group",
-                    filter=Q(
-                        issue_cycle__issue__state__group="backlog",
-                        issue_cycle__issue__archived_at__isnull=True,
-                        issue_cycle__issue__is_draft=False,
-                        issue_cycle__deleted_at__isnull=True,
-                    ),
-                )
-            )
-        )
-        old_cycle = old_cycle.first()
-
-        estimate_type = Project.objects.filter(
+        
+        old_cycle = Cycle.objects.get(
             workspace__slug=slug,
-            pk=project_id,
-            estimate__isnull=False,
-            estimate__type="points",
-        ).exists()
-
-        if estimate_type:
-            assignee_estimate_data = (
-                Issue.issue_objects.filter(
-                    issue_cycle__cycle_id=cycle_id,
-                    issue_cycle__deleted_at__isnull=True,
-                    workspace__slug=slug,
-                    project_id=project_id,
-                )
-                .annotate(display_name=F("assignees__display_name"))
-                .annotate(assignee_id=F("assignees__id"))
-                .annotate(avatar=F("assignees__avatar"))
-                .annotate(
-                    avatar_url=Case(
-                        # If `avatar_asset` exists, use it to generate the asset URL
-                        When(
-                            assignees__avatar_asset__isnull=False,
-                            then=Concat(
-                                Value("/api/assets/v2/static/"),
-                                "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
-                                Value("/"),
-                            ),
-                        ),
-                        # If `avatar_asset` is None, fall back to using `avatar` field directly
-                        When(
-                            assignees__avatar_asset__isnull=True,
-                            then="assignees__avatar",
-                        ),
-                        default=Value(None),
-                        output_field=models.CharField(),
-                    )
-                )
-                .values("display_name", "assignee_id", "avatar", "avatar_url")
-                .annotate(
-                    total_estimates=Sum(Cast("estimate_point__value", FloatField()))
-                )
-                .annotate(
-                    completed_estimates=Sum(
-                        Cast("estimate_point__value", FloatField()),
-                        filter=Q(
-                            completed_at__isnull=False,
-                            archived_at__isnull=True,
-                            is_draft=False,
-                        ),
-                    )
-                )
-                .annotate(
-                    pending_estimates=Sum(
-                        Cast("estimate_point__value", FloatField()),
-                        filter=Q(
-                            completed_at__isnull=True,
-                            archived_at__isnull=True,
-                            is_draft=False,
-                        ),
-                    )
-                )
-                .order_by("display_name")
-            )
-            # assignee distribution serialization
-            assignee_estimate_distribution = [
-                {
-                    "display_name": item["display_name"],
-                    "assignee_id": (
-                        str(item["assignee_id"]) if item["assignee_id"] else None
-                    ),
-                    "avatar": item.get("avatar", None),
-                    "avatar_url": item.get("avatar_url", None),
-                    "total_estimates": item["total_estimates"],
-                    "completed_estimates": item["completed_estimates"],
-                    "pending_estimates": item["pending_estimates"],
-                }
-                for item in assignee_estimate_data
-            ]
-
-            label_distribution_data = (
-                Issue.issue_objects.filter(
-                    issue_cycle__cycle_id=cycle_id,
-                    issue_cycle__deleted_at__isnull=True,
-                    workspace__slug=slug,
-                    project_id=project_id,
-                )
-                .annotate(label_name=F("labels__name"))
-                .annotate(color=F("labels__color"))
-                .annotate(label_id=F("labels__id"))
-                .values("label_name", "color", "label_id")
-                .annotate(
-                    total_estimates=Sum(Cast("estimate_point__value", FloatField()))
-                )
-                .annotate(
-                    completed_estimates=Sum(
-                        Cast("estimate_point__value", FloatField()),
-                        filter=Q(
-                            completed_at__isnull=False,
-                            archived_at__isnull=True,
-                            is_draft=False,
-                        ),
-                    )
-                )
-                .annotate(
-                    pending_estimates=Sum(
-                        Cast("estimate_point__value", FloatField()),
-                        filter=Q(
-                            completed_at__isnull=True,
-                            archived_at__isnull=True,
-                            is_draft=False,
-                        ),
-                    )
-                )
-                .order_by("label_name")
-            )
-
-            estimate_completion_chart = burndown_plot(
-                queryset=old_cycle,
-                slug=slug,
-                project_id=project_id,
-                plot_type="points",
-                cycle_id=cycle_id,
-            )
-            # Label distribution serialization
-            label_estimate_distribution = [
-                {
-                    "label_name": item["label_name"],
-                    "color": item["color"],
-                    "label_id": (str(item["label_id"]) if item["label_id"] else None),
-                    "total_estimates": item["total_estimates"],
-                    "completed_estimates": item["completed_estimates"],
-                    "pending_estimates": item["pending_estimates"],
-                }
-                for item in label_distribution_data
-            ]
-
-        # Get the assignee distribution
-        assignee_distribution = (
-            Issue.issue_objects.filter(
-                issue_cycle__cycle_id=cycle_id,
-                issue_cycle__deleted_at__isnull=True,
-                workspace__slug=slug,
-                project_id=project_id,
-            )
-            .annotate(display_name=F("assignees__display_name"))
-            .annotate(assignee_id=F("assignees__id"))
-            .annotate(avatar=F("assignees__avatar"))
-            .annotate(
-                avatar_url=Case(
-                    # If `avatar_asset` exists, use it to generate the asset URL
-                    When(
-                        assignees__avatar_asset__isnull=False,
-                        then=Concat(
-                            Value("/api/assets/v2/static/"),
-                            "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
-                            Value("/"),
-                        ),
-                    ),
-                    # If `avatar_asset` is None, fall back to using `avatar` field directly
-                    When(
-                        assignees__avatar_asset__isnull=True, then="assignees__avatar"
-                    ),
-                    default=Value(None),
-                    output_field=models.CharField(),
-                )
-            )
-            .values("display_name", "assignee_id", "avatar_url")
-            .annotate(
-                total_issues=Count(
-                    "id", filter=Q(archived_at__isnull=True, is_draft=False)
-                )
-            )
-            .annotate(
-                completed_issues=Count(
-                    "id",
-                    filter=Q(
-                        completed_at__isnull=False,
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                )
-            )
-            .annotate(
-                pending_issues=Count(
-                    "id",
-                    filter=Q(
-                        completed_at__isnull=True,
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                )
-            )
-            .order_by("display_name")
-        )
-        # assignee distribution serialized
-        assignee_distribution_data = [
-            {
-                "display_name": item["display_name"],
-                "assignee_id": (
-                    str(item["assignee_id"]) if item["assignee_id"] else None
-                ),
-                "avatar": item.get("avatar", None),
-                "avatar_url": item.get("avatar_url", None),
-                "total_issues": item["total_issues"],
-                "completed_issues": item["completed_issues"],
-                "pending_issues": item["pending_issues"],
-            }
-            for item in assignee_distribution
-        ]
-
-        # Get the label distribution
-        label_distribution = (
-            Issue.issue_objects.filter(
-                issue_cycle__cycle_id=cycle_id,
-                issue_cycle__deleted_at__isnull=True,
-                workspace__slug=slug,
-                project_id=project_id,
-            )
-            .annotate(label_name=F("labels__name"))
-            .annotate(color=F("labels__color"))
-            .annotate(label_id=F("labels__id"))
-            .values("label_name", "color", "label_id")
-            .annotate(
-                total_issues=Count(
-                    "id", filter=Q(archived_at__isnull=True, is_draft=False)
-                )
-            )
-            .annotate(
-                completed_issues=Count(
-                    "id",
-                    filter=Q(
-                        completed_at__isnull=False,
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                )
-            )
-            .annotate(
-                pending_issues=Count(
-                    "id",
-                    filter=Q(
-                        completed_at__isnull=True,
-                        archived_at__isnull=True,
-                        is_draft=False,
-                    ),
-                )
-            )
-            .order_by("label_name")
-        )
-
-        # Label distribution serilization
-        label_distribution_data = [
-            {
-                "label_name": item["label_name"],
-                "color": item["color"],
-                "label_id": (str(item["label_id"]) if item["label_id"] else None),
-                "total_issues": item["total_issues"],
-                "completed_issues": item["completed_issues"],
-                "pending_issues": item["pending_issues"],
-            }
-            for item in label_distribution
-        ]
-
-        # Pass the new_cycle queryset to burndown_plot
-        completion_chart = burndown_plot(
-            queryset=old_cycle,
-            slug=slug,
             project_id=project_id,
-            plot_type="issues",
-            cycle_id=cycle_id,
+            pk=cycle_id,
         )
-
-        current_cycle = Cycle.objects.filter(
-            workspace__slug=slug, project_id=project_id, pk=cycle_id
-        ).first()
-
-        current_cycle.progress_snapshot = {
-            "total_issues": old_cycle.total_issues,
-            "completed_issues": old_cycle.completed_issues,
-            "cancelled_issues": old_cycle.cancelled_issues,
-            "started_issues": old_cycle.started_issues,
-            "unstarted_issues": old_cycle.unstarted_issues,
-            "backlog_issues": old_cycle.backlog_issues,
-            "distribution": {
-                "labels": label_distribution_data,
-                "assignees": assignee_distribution_data,
-                "completion_chart": completion_chart,
-            },
-            "estimate_distribution": (
-                {}
-                if not estimate_type
-                else {
-                    "labels": label_estimate_distribution,
-                    "assignees": assignee_estimate_distribution,
-                    "completion_chart": estimate_completion_chart,
-                }
-            ),
-        }
-        current_cycle.save(update_fields=["progress_snapshot"])
-
-        if new_cycle.end_date is not None and new_cycle.end_date < timezone.now():
+        # transfer work items only when cycle is completed (passed the end data)
+        if old_cycle.end_date is not None and old_cycle.end_date > timezone.now():
             return Response(
-                {
-                    "error": "The cycle where the issues are transferred is already completed"
-                },
+                {"error": "The old cycle is not completed yet"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        cycle_issues = CycleIssue.objects.filter(
-            cycle_id=cycle_id,
+        # Call the utility function to handle the transfer
+        result = transfer_cycle_issues(
+            slug=slug,
             project_id=project_id,
-            workspace__slug=slug,
-            issue__state__group__in=["backlog", "unstarted", "started"],
+            cycle_id=cycle_id,
+            new_cycle_id=new_cycle_id,
+            request=request,
+            user_id=self.request.user.id,
         )
 
-        updated_cycles = []
-        update_cycle_issue_activity = []
-        for cycle_issue in cycle_issues:
-            cycle_issue.cycle_id = new_cycle_id
-            updated_cycles.append(cycle_issue)
-            update_cycle_issue_activity.append(
-                {
-                    "old_cycle_id": str(cycle_id),
-                    "new_cycle_id": str(new_cycle_id),
-                    "issue_id": str(cycle_issue.issue_id),
-                }
+        # Handle the result
+        if result.get("success"):
+            return Response({"message": "Success"}, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                {"error": result.get("error")},
+                status=status.HTTP_400_BAD_REQUEST,
             )
-
-        cycle_issues = CycleIssue.objects.bulk_update(
-            updated_cycles, ["cycle_id"], batch_size=100
-        )
-
-        # Capture Issue Activity
-        issue_activity.delay(
-            type="cycle.activity.created",
-            requested_data=json.dumps({"cycles_list": []}),
-            actor_id=str(self.request.user.id),
-            issue_id=None,
-            project_id=str(self.kwargs.get("project_id", None)),
-            current_instance=json.dumps(
-                {
-                    "updated_cycle_issues": update_cycle_issue_activity,
-                    "created_cycle_issues": "[]",
-                }
-            ),
-            epoch=int(timezone.now().timestamp()),
-            notification=True,
-            origin=base_host(request=request, is_app=True),
-        )
-
-        return Response({"message": "Success"}, status=status.HTTP_200_OK)

@@ -1,16 +1,10 @@
-import cloneDeep from "lodash/cloneDeep";
-import groupBy from "lodash/groupBy";
-import indexOf from "lodash/indexOf";
-import isEmpty from "lodash/isEmpty";
-import orderBy from "lodash/orderBy";
-import set from "lodash/set";
-import uniq from "lodash/uniq";
+import { uniq, orderBy, isEmpty, indexOf, groupBy, cloneDeep, set } from "lodash-es";
 import { ALL_ISSUES, EIssueFilterType, FILTER_TO_ISSUE_MAP, ISSUE_PRIORITIES } from "@plane/constants";
-import {
+import type {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
-  IIssueFilters,
+  ISubWorkItemFilters,
   TIssue,
   TIssueGroupByOptions,
   TIssueOrderByOptions,
@@ -357,8 +351,8 @@ export const getGroupedWorkItemIds = (
  * @param filters - The filters to update.
  * @param workItemId - The ID of the work item to update.
  */
-export const updateFilters = (
-  filtersMap: Record<string, Partial<IIssueFilters>>,
+export const updateSubWorkItemFilters = (
+  filtersMap: Record<string, Partial<ISubWorkItemFilters>>,
   filterType: EIssueFilterType,
   filters: IIssueDisplayFilterOptions | IIssueDisplayProperties | IIssueFilterOptions,
   workItemId: string

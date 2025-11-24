@@ -1,13 +1,14 @@
-"use client";
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { TIssueServiceType } from "@plane/types";
+import type { TIssueServiceType } from "@plane/types";
 import { Collapsible } from "@plane/ui";
-// components
-import { IssueLinksCollapsibleContent, IssueLinksCollapsibleTitle } from "@/components/issues/issue-detail-widgets";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+// local imports
+import { IssueLinksCollapsibleContent } from "./content";
+import { IssueLinksCollapsibleTitle } from "./title";
 
 type Props = {
   workspaceSlug: string;
@@ -17,7 +18,7 @@ type Props = {
   issueServiceType: TIssueServiceType;
 };
 
-export const LinksCollapsible: FC<Props> = observer((props) => {
+export const LinksCollapsible = observer(function LinksCollapsible(props: Props) {
   const { workspaceSlug, projectId, issueId, disabled = false, issueServiceType } = props;
   // store hooks
   const { openWidgets, toggleOpenWidget } = useIssueDetail(issueServiceType);

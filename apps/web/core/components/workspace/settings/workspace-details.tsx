@@ -1,6 +1,4 @@
-"use client";
-
-import { useEffect, useState, FC } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { Pencil } from "lucide-react";
@@ -13,18 +11,20 @@ import {
   WORKSPACE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IWorkspace } from "@plane/types";
-import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IWorkspace } from "@plane/types";
+import { CustomSelect, Input } from "@plane/ui";
 import { copyUrlToClipboard, getFileURL } from "@plane/utils";
 // components
-import { LogoSpinner } from "@/components/common";
-import { WorkspaceImageUploadModal } from "@/components/core";
+import { LogoSpinner } from "@/components/common/logo-spinner";
+import { WorkspaceImageUploadModal } from "@/components/core/modals/workspace-image-upload-modal";
 // helpers
-// hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useUserPermissions, useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
-import { DeleteWorkspaceSection } from "@/plane-web/components/workspace";
+import { DeleteWorkspaceSection } from "@/plane-web/components/workspace/delete-workspace-section";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
@@ -33,7 +33,7 @@ const defaultValues: Partial<IWorkspace> = {
   logo_url: null,
 };
 
-export const WorkspaceDetails: FC = observer(() => {
+export const WorkspaceDetails = observer(function WorkspaceDetails() {
   // states
   const [isLoading, setIsLoading] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
@@ -66,7 +66,7 @@ export const WorkspaceDetails: FC = observer(() => {
     };
 
     await updateWorkspace(currentWorkspace.slug, payload)
-      .then((res) => {
+      .then(() => {
         captureSuccess({
           eventName: WORKSPACE_TRACKER_EVENTS.update,
           payload: { slug: currentWorkspace.slug },
@@ -167,7 +167,7 @@ export const WorkspaceDetails: FC = observer(() => {
                   />
                 </div>
               ) : (
-                <div className="relative flex h-14 w-14 items-center justify-center rounded bg-gray-700 p-4 uppercase text-white">
+                <div className="relative flex h-14 w-14 items-center justify-center rounded bg-[#026292] p-4 uppercase text-white">
                   {currentWorkspace?.name?.charAt(0) ?? "N"}
                 </div>
               )}
@@ -240,7 +240,6 @@ export const WorkspaceDetails: FC = observer(() => {
                       ORGANIZATION_SIZE.find((c) => c === value) ??
                       t("workspace_settings.settings.general.errors.company_size.select_a_range")
                     }
-                    optionsClassName="w-full"
                     buttonClassName="!border-[0.5px] !border-custom-border-200 !shadow-none"
                     input
                     disabled={!isAdmin}

@@ -1,14 +1,14 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import { EIconSize } from "@plane/constants";
-import { Loader, StateGroupIcon } from "@plane/ui";
-// components
-import { FilterHeader, FilterOption } from "@/components/issues/filters/helpers";
+import { StateGroupIcon } from "@plane/propel/icons";
+import { Loader } from "@plane/ui";
 // hooks
-import { useStates } from "@/hooks/store";
+import { useStates } from "@/hooks/store/use-state";
+// local imports
+import { FilterHeader } from "./helpers/filter-header";
+import { FilterOption } from "./helpers/filter-option";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -16,7 +16,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterState: React.FC<Props> = observer((props) => {
+export const FilterState = observer(function FilterState(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery } = props;
 
   const { sortedStates: states } = useStates();

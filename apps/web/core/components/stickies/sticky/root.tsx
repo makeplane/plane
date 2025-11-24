@@ -1,9 +1,9 @@
 import { useCallback, useState } from "react";
-import { debounce } from "lodash";
+import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
 import { Minimize2 } from "lucide-react";
 // plane types
-import { TSticky } from "@plane/types";
+import type { TSticky } from "@plane/types";
 // plane utils
 import { cn } from "@plane/utils";
 // hooks
@@ -22,7 +22,7 @@ type TProps = {
   showToolbar?: boolean;
   handleLayout?: () => void;
 };
-export const StickyNote = observer((props: TProps) => {
+export const StickyNote = observer(function StickyNote(props: TProps) {
   const { onClose, workspaceSlug, className = "", stickyId, showToolbar, handleLayout } = props;
   // navigation
   // const pathName = usePathname();

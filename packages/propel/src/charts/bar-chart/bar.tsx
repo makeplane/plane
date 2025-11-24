@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 // plane imports
-import { TBarChartShapeVariant, TBarItem, TChartData } from "@plane/types";
-import { cn } from "@plane/utils";
+import type { TBarChartShapeVariant, TBarItem, TChartData } from "@plane/types";
+import { cn } from "../../utils/classname";
 
 // Constants
 const MIN_BAR_HEIGHT_FOR_INTERNAL_TEXT = 14; // Minimum height required to show text inside bar
@@ -23,7 +23,7 @@ interface TShapeProps {
 }
 
 interface TBarProps extends TShapeProps {
-  fill: string | ((payload: any) => string);
+  fill: string;
   stackKeys: string[];
   textClassName?: string;
   showPercentage?: boolean;
@@ -54,7 +54,7 @@ const getBarPath = (x: number, y: number, width: number, height: number, topRadi
   Z
 `;
 
-const PercentageText = ({
+function PercentageText({
   x,
   y,
   percentage,
@@ -64,14 +64,16 @@ const PercentageText = ({
   y: number;
   percentage: number;
   className?: string;
-}) => (
-  <text x={x} y={y} textAnchor="middle" className={cn("text-xs font-medium", className)} fill="currentColor">
-    {percentage}%
-  </text>
-);
+}) {
+  return (
+    <text x={x} y={y} textAnchor="middle" className={cn("text-xs font-medium", className)} fill="currentColor">
+      {percentage}%
+    </text>
+  );
+}
 
 // Base Components
-const CustomBar = React.memo((props: TBarProps) => {
+const CustomBar = React.memo(function CustomBar(props: TBarProps) {
   const {
     opacity,
     fill,
@@ -108,7 +110,7 @@ const CustomBar = React.memo((props: TBarProps) => {
       <path
         d={getBarPath(x, y, width, height, topBorderRadius, bottomBorderRadius)}
         className="transition-opacity duration-200"
-        fill={typeof fill === "function" ? fill(payload) : fill}
+        fill={fill}
         opacity={opacity}
       />
       {showText && (
@@ -118,7 +120,7 @@ const CustomBar = React.memo((props: TBarProps) => {
   );
 });
 
-const CustomBarLollipop = React.memo((props: TBarProps) => {
+const CustomBarLollipop = React.memo(function CustomBarLollipop(props: TBarProps) {
   const { fill, x, y, width, height, dataKey, stackKeys, payload, textClassName, showPercentage, dotted } = props;
 
   const currentBarPercentage = calculatePercentage(payload, stackKeys, dataKey);
@@ -130,18 +132,12 @@ const CustomBarLollipop = React.memo((props: TBarProps) => {
         y1={y + height}
         x2={x + width / 2}
         y2={y}
-        stroke={typeof fill === "function" ? fill(payload) : fill}
+        stroke={fill}
         strokeWidth={DEFAULT_LOLLIPOP_LINE_WIDTH}
         strokeLinecap="round"
         strokeDasharray={dotted ? "4 4" : "0"}
       />
-      <circle
-        cx={x + width / 2}
-        cy={y}
-        r={DEFAULT_LOLLIPOP_CIRCLE_RADIUS}
-        fill={typeof fill === "function" ? fill(payload) : fill}
-        stroke="none"
-      />
+      <circle cx={x + width / 2} cy={y} r={DEFAULT_LOLLIPOP_CIRCLE_RADIUS} fill={fill} stroke="none" />
       {showPercentage && (
         <PercentageText x={x + width / 2} y={y} percentage={currentBarPercentage} className={textClassName} />
       )}
@@ -158,7 +154,7 @@ const CustomBarLollipop = React.memo((props: TBarProps) => {
  */
 const createShapeVariant =
   (Component: React.ComponentType<TBarProps>, factoryProps?: Partial<TBarProps>) =>
-  (shapeProps: TShapeProps, bar: TBarItem<string>, stackKeys: string[]): JSX.Element => {
+  (shapeProps: TShapeProps, bar: TBarItem<string>, stackKeys: string[]): React.ReactNode => {
     const showTopBorderRadius = bar.showTopBorderRadius?.(shapeProps.dataKey, shapeProps.payload);
     const showBottomBorderRadius = bar.showBottomBorderRadius?.(shapeProps.dataKey, shapeProps.payload);
 
@@ -178,7 +174,7 @@ const createShapeVariant =
 
 export const barShapeVariants: Record<
   TBarChartShapeVariant,
-  (props: TShapeProps, bar: TBarItem<string>, stackKeys: string[]) => JSX.Element
+  (props: TShapeProps, bar: TBarItem<string>, stackKeys: string[]) => React.ReactNode
 > = {
   bar: createShapeVariant(CustomBar), // Standard bar with rounded corners
   lollipop: createShapeVariant(CustomBarLollipop), // Line with circle at top

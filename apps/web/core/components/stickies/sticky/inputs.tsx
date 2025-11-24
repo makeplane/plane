@@ -1,16 +1,17 @@
 import { useCallback, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-// plane editor
-import { EditorRefApi } from "@plane/editor";
-// plane types
-import { TSticky } from "@plane/types";
-// plane utils
+// plane imports
+import type { EditorRefApi } from "@plane/editor";
+import type { TSticky } from "@plane/types";
 import { cn, isCommentEmpty } from "@plane/utils";
+import { StickyEditor } from "@/components/editor/sticky-editor";
 // hooks
-import { useWorkspace } from "@/hooks/store";
-// components
-import { StickyEditor } from "../../editor";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+
+// const StickyEditor = dynamic(() => import("../../editor/sticky-editor").then((mod) => mod.StickyEditor), {
+//   ssr: false,
+// });
 
 type TProps = {
   stickyData: Partial<TSticky> | undefined;
@@ -22,7 +23,7 @@ type TProps = {
   handleDelete: () => void;
 };
 
-export const StickyInput = (props: TProps) => {
+export function StickyInput(props: TProps) {
   const { stickyData, workspaceSlug, handleUpdate, stickyId, handleDelete, handleChange, showToolbar } = props;
   // refs
   const editorRef = useRef<EditorRefApi>(null);
@@ -85,6 +86,7 @@ export const StickyInput = (props: TProps) => {
               }
             )}
             uploadFile={async () => ""}
+            duplicateFile={async () => ""}
             showToolbar={showToolbar}
             parentClassName="border-none p-0"
             handleDelete={handleDelete}
@@ -95,4 +97,4 @@ export const StickyInput = (props: TProps) => {
       />
     </div>
   );
-};
+}

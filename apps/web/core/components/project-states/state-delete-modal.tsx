@@ -1,17 +1,16 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // types
 import { STATE_TRACKER_EVENTS } from "@plane/constants";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IState } from "@plane/types";
 // ui
-import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { AlertModalCore } from "@plane/ui";
 // constants
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 
 type TStateDeleteModal = {
   isOpen: boolean;
@@ -19,7 +18,7 @@ type TStateDeleteModal = {
   data: IState | null;
 };
 
-export const StateDeleteModal: React.FC<TStateDeleteModal> = observer((props) => {
+export const StateDeleteModal = observer(function StateDeleteModal(props: TStateDeleteModal) {
   const { isOpen, onClose, data } = props;
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);

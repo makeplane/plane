@@ -1,11 +1,13 @@
-"use client";
-
-import { MutableRefObject, useRef, useState } from "react";
-import { LucideIcon, X } from "lucide-react";
+import type { MutableRefObject } from "react";
+import { useRef, useState } from "react";
+import type { LucideIcon } from "lucide-react";
 // plane helpers
+import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
+import type { ISvgIcons } from "@plane/propel/icons";
+import { CloseIcon } from "@plane/propel/icons";
 // types
-import { IIssueLabel } from "@plane/types";
+import type { IIssueLabel } from "@plane/types";
 // ui
 import { CustomMenu, DragHandle } from "@plane/ui";
 // helpers
@@ -14,7 +16,7 @@ import { cn } from "@plane/utils";
 import { LabelName } from "./label-name";
 
 export interface ICustomMenuItem {
-  CustomIcon: LucideIcon;
+  CustomIcon: LucideIcon | React.FC<ISvgIcons>;
   onClick: (label: IIssueLabel) => void;
   isVisible: boolean;
   text: string;
@@ -32,7 +34,7 @@ interface ILabelItemBlock {
   draggable?: boolean;
 }
 
-export const LabelItemBlock = (props: ILabelItemBlock) => {
+export function LabelItemBlock(props: ILabelItemBlock) {
   const {
     label,
     isDragging,
@@ -90,9 +92,12 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
             <div className="py-0.5">
               <button
                 className="flex size-5 items-center justify-center rounded hover:bg-custom-background-80"
-                onClick={() => handleLabelDelete(label)}
+                onClick={() => {
+                  handleLabelDelete(label);
+                }}
+                data-ph-element={PROJECT_SETTINGS_TRACKER_ELEMENTS.LABELS_DELETE_BUTTON}
               >
-                <X className="size-3.5 flex-shrink-0 text-custom-sidebar-text-300" />
+                <CloseIcon className="size-3.5 flex-shrink-0 text-custom-sidebar-text-300" />
               </button>
             </div>
           )}
@@ -100,4 +105,4 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
       )}
     </div>
   );
-};
+}

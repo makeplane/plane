@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
@@ -13,7 +11,7 @@ import { ListItem } from "@/components/core/list";
 import { ModuleListItemAction, ModuleQuickActions } from "@/components/modules";
 // helpers
 // hooks
-import { useModule } from "@/hooks/store";
+import { useModule } from "@/hooks/store/use-module";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -21,7 +19,7 @@ type Props = {
   moduleId: string;
 };
 
-export const ModuleListItem: React.FC<Props> = observer((props) => {
+export const ModuleListItem = observer(function ModuleListItem(props: Props) {
   const { moduleId } = props;
   // refs
   const parentRef = useRef(null);

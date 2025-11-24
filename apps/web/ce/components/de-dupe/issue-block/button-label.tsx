@@ -1,13 +1,11 @@
-"use client";
-
-import { FC } from "react";
+import type { FC } from "react";
 
 type TDeDupeIssueButtonLabelProps = {
   isOpen: boolean;
   buttonLabel: string;
 };
 
-export const DeDupeIssueButtonLabel: FC<TDeDupeIssueButtonLabelProps> = (props) => {
+export function DeDupeIssueButtonLabel(props: TDeDupeIssueButtonLabelProps) {
   const { isOpen, buttonLabel } = props;
   return <></>;
-};
+}

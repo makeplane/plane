@@ -1,13 +1,11 @@
-"use client";
-
-import { FC, Fragment, useCallback, useEffect, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { attachClosestEdge, extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { observer } from "mobx-react";
 // Plane
-import { TDraggableData } from "@plane/constants";
-import { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
+import type { TDraggableData } from "@plane/constants";
+import type { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
 import { DropIndicator } from "@plane/ui";
 import { cn, getCurrentStateSequence } from "@plane/utils";
 // components
@@ -24,7 +22,7 @@ type TStateItem = {
   stateItemClassName?: string;
 };
 
-export const StateItem: FC<TStateItem> = observer((props) => {
+export const StateItem = observer(function StateItem(props: TStateItem) {
   const {
     groupKey,
     groupedStates,

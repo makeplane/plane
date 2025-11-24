@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 
 type TInvitationModalActionsProps = {
@@ -19,7 +19,7 @@ type TInvitationModalActionsProps = {
   className?: string;
 };
 
-export const InvitationModalActions: React.FC<TInvitationModalActionsProps> = observer((props) => {
+export const InvitationModalActions = observer(function InvitationModalActions(props: TInvitationModalActionsProps) {
   const {
     isInviteDisabled = false,
     isSubmitting = false,

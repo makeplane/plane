@@ -1,8 +1,7 @@
-"use client";
-import { FC } from "react";
 import { useForm } from "react-hook-form";
-import { IFormattedInstanceConfiguration, TInstanceImageConfigurationKeys } from "@plane/types";
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IFormattedInstanceConfiguration, TInstanceImageConfigurationKeys } from "@plane/types";
 // components
 import { ControllerInput } from "@/components/common/controller-input";
 // hooks
@@ -14,7 +13,7 @@ type IInstanceImageConfigForm = {
 
 type ImageConfigFormValues = Record<TInstanceImageConfigurationKeys, string>;
 
-export const InstanceImageConfigForm: FC<IInstanceImageConfigForm> = (props) => {
+export function InstanceImageConfigForm(props: IInstanceImageConfigForm) {
   const { config } = props;
   // store hooks
   const { updateInstanceConfigurations } = useInstance();
@@ -77,4 +76,4 @@ export const InstanceImageConfigForm: FC<IInstanceImageConfigForm> = (props) => 
       </div>
     </div>
   );
-};
+}

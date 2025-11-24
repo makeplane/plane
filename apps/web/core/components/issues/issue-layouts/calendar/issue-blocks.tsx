@@ -1,12 +1,13 @@
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { TIssue, TPaginationData } from "@plane/types";
+import type { TIssue, TPaginationData } from "@plane/types";
 // components
 import { renderFormattedPayloadDate } from "@plane/utils";
-import { CalendarQuickAddIssueActions, CalendarIssueBlockRoot } from "@/components/issues";
 // helpers
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
-import { TRenderQuickActions } from "../list/list-view-types";
+import type { TRenderQuickActions } from "../list/list-view-types";
+import { CalendarIssueBlockRoot } from "./issue-block-root";
+import { CalendarQuickAddIssueActions } from "./quick-add-issue-actions";
 // types
 
 type Props = {
@@ -27,7 +28,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
+export const CalendarIssueBlocks = observer(function CalendarIssueBlocks(props: Props) {
   const {
     date,
     issueIdList,

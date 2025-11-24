@@ -1,13 +1,14 @@
-"use client";
-
-import React, { FC, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 // types
-import { IFormattedInstanceConfiguration, TInstanceEmailConfigurationKeys } from "@plane/types";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IFormattedInstanceConfiguration, TInstanceEmailConfigurationKeys } from "@plane/types";
 // ui
-import { Button, CustomSelect, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomSelect } from "@plane/ui";
 // components
-import { ControllerInput, TControllerInputFormField } from "@/components/common/controller-input";
+import type { TControllerInputFormField } from "@/components/common/controller-input";
+import { ControllerInput } from "@/components/common/controller-input";
 // hooks
 import { useInstance } from "@/hooks/store";
 // local components
@@ -27,7 +28,7 @@ const EMAIL_SECURITY_OPTIONS: { [key in TEmailSecurityKeys]: string } = {
   NONE: "No email security",
 };
 
-export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
+export function InstanceEmailForm(props: IInstanceEmailForm) {
   const { config } = props;
   // states
   const [isSendTestEmailModalOpen, setIsSendTestEmailModalOpen] = useState(false);
@@ -49,9 +50,9 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
       EMAIL_USE_TLS: config["EMAIL_USE_TLS"],
       EMAIL_USE_SSL: config["EMAIL_USE_SSL"],
       EMAIL_FROM: config["EMAIL_FROM"],
+      ENABLE_SMTP: config["ENABLE_SMTP"],
     },
   });
-
   const emailFormFields: TControllerInputFormField[] = [
     {
       key: "EMAIL_HOST",
@@ -101,7 +102,7 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
   ];
 
   const onSubmit = async (formData: EmailFormValues) => {
-    const payload: Partial<EmailFormValues> = { ...formData };
+    const payload: Partial<EmailFormValues> = { ...formData, ENABLE_SMTP: "1" };
 
     await updateInstanceConfigurations(payload)
       .then(() =>
@@ -221,4 +222,4 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
       </div>
     </div>
   );
-};
+}

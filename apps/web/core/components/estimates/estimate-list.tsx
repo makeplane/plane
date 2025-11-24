@@ -1,7 +1,7 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
-// components
-import { EstimateListItem } from "@/components/estimates";
+// local imports
+import { EstimateListItem } from "./estimate-list-item";
 
 type TEstimateList = {
   estimateIds: string[] | undefined;
@@ -12,7 +12,7 @@ type TEstimateList = {
   onDeleteClick?: (estimateId: string) => void;
 };
 
-export const EstimateList: FC<TEstimateList> = observer((props) => {
+export const EstimateList = observer(function EstimateList(props: TEstimateList) {
   const { estimateIds, isAdmin, isEstimateEnabled = false, isEditable = false, onEditClick, onDeleteClick } = props;
 
   if (!estimateIds || estimateIds?.length <= 0) return <></>;

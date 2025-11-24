@@ -1,17 +1,21 @@
-import React, { forwardRef } from "react";
+import { forwardRef } from "react";
 // plane imports
-import { EditorRefApi, IRichTextEditorProps, RichTextEditorWithRef, TFileHandler } from "@plane/editor";
-import { MakeOptional } from "@plane/types";
-// components
-import { EditorMentionsRoot } from "@/components/editor";
+import { RichTextEditorWithRef } from "@plane/editor";
+import type { EditorRefApi, IRichTextEditorProps, TFileHandler } from "@plane/editor";
+import type { MakeOptional } from "@plane/types";
 // helpers
 import { getEditorFileHandlers } from "@/helpers/editor.helper";
-// store hooks
-import { useMember } from "@/hooks/store";
+// hooks
+import { useMember } from "@/hooks/store/use-member";
+import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
+// plane web imports
+import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
+// local imports
+import { EditorMentionsRoot } from "./embeds/mentions";
 
 type RichTextEditorWrapperProps = MakeOptional<
-  Omit<IRichTextEditorProps, "editable" | "fileHandler" | "mentionHandler">,
-  "disabledExtensions" | "flaggedExtensions"
+  Omit<IRichTextEditorProps, "editable" | "fileHandler" | "mentionHandler" | "extendedEditorProps">,
+  "disabledExtensions" | "flaggedExtensions" | "getEditorMetaData"
 > & {
   anchor: string;
   workspaceId: string;
@@ -25,9 +29,27 @@ type RichTextEditorWrapperProps = MakeOptional<
       }
   );
 
-export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProps>((props, ref) => {
-  const { anchor, containerClassName, editable, workspaceId, disabledExtensions, flaggedExtensions, ...rest } = props;
+export const RichTextEditor = forwardRef(function RichTextEditor(
+  props: RichTextEditorWrapperProps,
+  ref: React.ForwardedRef<EditorRefApi>
+) {
+  const {
+    anchor,
+    containerClassName,
+    editable,
+    workspaceId,
+    disabledExtensions: additionalDisabledExtensions = [],
+    ...rest
+  } = props;
+  // store hooks
   const { getMemberById } = useMember();
+  // parse content
+  const { getEditorMetaData } = useParseEditorContent({
+    anchor,
+  });
+  // editor flaggings
+  const { richText: richTextEditorExtensions } = useEditorFlagging(anchor);
+
   return (
     <RichTextEditorWithRef
       mentionHandler={{
@@ -37,17 +59,19 @@ export const RichTextEditor = forwardRef<EditorRefApi, RichTextEditorWrapperProp
         }),
       }}
       ref={ref}
-      disabledExtensions={disabledExtensions ?? []}
+      disabledExtensions={[...richTextEditorExtensions.disabled, ...additionalDisabledExtensions]}
       editable={editable}
       fileHandler={getEditorFileHandlers({
         anchor,
         uploadFile: editable ? props.uploadFile : async () => "",
         workspaceId,
       })}
-      flaggedExtensions={flaggedExtensions ?? []}
+      getEditorMetaData={getEditorMetaData}
+      flaggedExtensions={richTextEditorExtensions.flagged}
+      extendedEditorProps={{}}
       {...rest}
       containerClassName={containerClassName}
-      editorClassName="min-h-[100px] max-h-[200px] border-[0.5px] border-custom-border-300 rounded-md pl-3 py-2 overflow-hidden"
+      editorClassName="min-h-[100px] py-2 overflow-hidden"
       displayConfig={{ fontSize: "large-font" }}
     />
   );

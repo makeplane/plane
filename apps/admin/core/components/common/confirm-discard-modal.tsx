@@ -1,11 +1,9 @@
-"use client";
-
 import React from "react";
 import Link from "next/link";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // ui
-import { Button, getButtonStyling } from "@plane/ui";
+import { Button, getButtonStyling } from "@plane/propel/button";
 
 type Props = {
   isOpen: boolean;
@@ -13,7 +11,7 @@ type Props = {
   onDiscardHref: string;
 };
 
-export const ConfirmDiscardModal: React.FC<Props> = (props) => {
+export function ConfirmDiscardModal(props: Props) {
   const { isOpen, handleClose, onDiscardHref } = props;
 
   return (
@@ -71,4 +69,4 @@ export const ConfirmDiscardModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+}

@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -9,25 +7,29 @@ import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import { createRoot } from "react-dom/client";
-import { LinkIcon, Settings, Share2, LogOut, MoreHorizontal, ChevronRight } from "lucide-react";
+import { LinkIcon, Settings, Share2, LogOut, MoreHorizontal } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
-// plane helpers
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-// ui
-import { CustomMenu, Tooltip, ArchiveIcon, DropIndicator, DragHandle, ControlLink } from "@plane/ui";
-// components
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import { ArchiveIcon, ChevronRightIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
+import { CustomMenu, DropIndicator, DragHandle, ControlLink } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { Logo } from "@/components/common/logo";
-import { LeaveProjectModal, PublishProjectModal } from "@/components/project";
-// helpers
+// components
+import { LeaveProjectModal } from "@/components/project/leave-project-modal";
+import { PublishProjectModal } from "@/components/project/publish-project/modal";
 // hooks
-import { useAppTheme, useCommandPalette, useProject, useUserPermissions } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane-web components
+// plane web imports
 import { ProjectNavigationRoot } from "@/plane-web/components/sidebar";
-// constants
+// local imports
 import { HIGHLIGHT_CLASS, highlightIssueOnDrop } from "../../issues/issue-layouts/utils";
 
 type Props = {
@@ -45,7 +47,7 @@ type Props = {
   renderInExtendedSidebar?: boolean;
 };
 
-export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
+export const SidebarProjectsListItem = observer(function SidebarProjectsListItem(props: Props) {
   const {
     projectId,
     handleCopyText,
@@ -192,16 +194,16 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
   useEffect(() => {
     if (isMenuActive) toggleAnySidebarDropdown(true);
     else toggleAnySidebarDropdown(false);
-  }, [isMenuActive]);
+  }, [isMenuActive, toggleAnySidebarDropdown]);
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
   useOutsideClickDetector(projectRef, () => projectRef?.current?.classList?.remove(HIGHLIGHT_CLASS));
 
-  if (!project) return null;
-
   useEffect(() => {
-    if (URLProjectId === project.id) setIsProjectListOpen(true);
-  }, [URLProjectId]);
+    if (URLProjectId === project?.id) setIsProjectListOpen(true);
+  }, [URLProjectId, project?.id, setIsProjectListOpen]);
+
+  if (!project) return null;
 
   const handleItemClick = () => setIsProjectListOpen(!isProjectListOpen);
   return (
@@ -232,7 +234,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                 tooltipContent={
                   project.sort_order === null ? t("join_the_project_to_rearrange") : t("drag_to_rearrange")
                 }
-                position="top-right"
+                position="top-end"
                 disabled={isDragging}
               >
                 <button
@@ -380,7 +382,7 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
                     : "aria_labels.projects_sidebar.open_project_menu"
                 )}
               >
-                <ChevronRight
+                <ChevronRightIcon
                   className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
                     "rotate-90": isProjectListOpen,
                   })}
@@ -398,7 +400,8 @@ export const SidebarProjectsListItem: React.FC<Props> = observer((props) => {
             leaveTo="transform scale-95 opacity-0"
           >
             {isProjectListOpen && (
-              <Disclosure.Panel as="div" className="flex flex-col gap-0.5 mt-1">
+              <Disclosure.Panel as="div" className="relative flex flex-col gap-0.5 mt-1 pl-6 mb-1.5">
+                <div className="absolute left-[15px] top-0 bottom-1 w-[1px] bg-custom-border-200" />
                 <ProjectNavigationRoot workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
               </Disclosure.Panel>
             )}

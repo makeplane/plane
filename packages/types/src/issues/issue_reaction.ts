@@ -1,10 +1,11 @@
-import { IUserLite } from "../users";
+import type { IUserLite } from "../users";
 
 export type TIssueReaction = {
   actor: string;
   id: string;
   issue: string;
   reaction: string;
+  display_name: string;
 };
 
 export interface IIssuePublicReaction {

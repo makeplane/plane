@@ -1,18 +1,19 @@
-"use client";
-
-import { FC, useMemo, useState } from "react";
-import sortBy from "lodash/sortBy";
+import type { FC } from "react";
+import { useMemo, useState } from "react";
+import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
 // plane types
-import { TInboxIssueFilterMemberKeys } from "@plane/types";
+import type { TInboxIssueFilterMemberKeys } from "@plane/types";
 // plane ui
 import { Avatar, Loader } from "@plane/ui";
 // components
 import { getFileURL } from "@plane/utils";
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // helpers
 // hooks
-import { useMember, useProjectInbox, useUser } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
+import { useUser } from "@/hooks/store/user";
 
 type Props = {
   filterKey: TInboxIssueFilterMemberKeys;
@@ -21,7 +22,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterMember: FC<Props> = observer((props: Props) => {
+export const FilterMember = observer(function FilterMember(props: Props) {
   const { filterKey, label = "Members", memberIds, searchQuery } = props;
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();

@@ -3,8 +3,8 @@ import { observer } from "mobx-react";
 // constants
 import { DATE_AFTER_FILTER_OPTIONS } from "@plane/constants";
 // components
-import { DateFilterModal } from "@/components/core";
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { DateFilterModal } from "@/components/core/filters/date-filter-modal";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -12,7 +12,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterDueDate: React.FC<Props> = observer((props) => {
+export const FilterDueDate = observer(function FilterDueDate(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);

@@ -1,4 +1,4 @@
-import { EEstimateSystem, EEstimateUpdateStages } from "./enums";
+import type { EEstimateSystem, EEstimateUpdateStages } from "./enums";
 
 export interface IEstimatePoint {
   id: string | undefined;

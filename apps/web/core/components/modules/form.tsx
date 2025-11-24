@@ -1,16 +1,17 @@
-"use client";
-
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IModule } from "@plane/types";
+import { Button } from "@plane/propel/button";
+import type { IModule } from "@plane/types";
 // ui
-import { Button, Input, TextArea } from "@plane/ui";
+import { Input, TextArea } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 // components
-import { DateRangeDropdown, ProjectDropdown, MemberDropdown } from "@/components/dropdowns";
+import { DateRangeDropdown } from "@/components/dropdowns/date-range";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";
 import { ModuleStatusSelect } from "@/components/modules";
 // hooks
 import { useUser } from "@/hooks/store/user/user-user";
@@ -33,7 +34,7 @@ const defaultValues: Partial<IModule> = {
   member_ids: [],
 };
 
-export const ModuleForm: React.FC<Props> = (props) => {
+export function ModuleForm(props: Props) {
   const { handleFormSubmit, handleClose, status, projectId, setActiveProject, data, isMobile = false } = props;
   // store hooks
   const { projectsWithCreatePermissions } = useUser();
@@ -93,7 +94,7 @@ export const ModuleForm: React.FC<Props> = (props) => {
                     }}
                     multiple={false}
                     buttonVariant="border-with-text"
-                    renderCondition={(project) => !!projectsWithCreatePermissions?.[project.id]}
+                    renderCondition={(projectId) => !!projectsWithCreatePermissions?.[projectId]}
                     tabIndex={getIndex("cover_image")}
                   />
                 </div>
@@ -241,4 +242,4 @@ export const ModuleForm: React.FC<Props> = (props) => {
       </div>
     </form>
   );
-};
+}

@@ -2,14 +2,18 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR, { mutate } from "swr";
 import { MoveLeft, MoveRight, RefreshCw } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
-import { IExportData } from "@plane/types";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
+import type { IExportData } from "@plane/types";
 import { Table } from "@plane/ui";
+// components
+import { ImportExportSettingsLoader } from "@/components/ui/loader/settings/import-and-export";
+// constants
 import { EXPORT_SERVICES_LIST } from "@/constants/fetch-keys";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+// services
 import { IntegrationService } from "@/services/integrations";
-import { DetailedEmptyState } from "../empty-state";
-import { ImportExportSettingsLoader } from "../ui";
+// local imports
 import { useExportColumns } from "./column";
 
 const integrationService = new IntegrationService();
@@ -21,7 +25,7 @@ type Props = {
   setCursor: (cursor: string) => void;
 };
 type RowData = IExportData;
-export const PrevExports = observer((props: Props) => {
+export const PrevExports = observer(function PrevExports(props: Props) {
   // props
   const { workspaceSlug, cursor, per_page, setCursor } = props;
   // state
@@ -29,7 +33,6 @@ export const PrevExports = observer((props: Props) => {
   // hooks
   const { t } = useTranslation();
   const columns = useExportColumns();
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/workspace-settings/exports" });
 
   const { data: exporterServices } = useSWR(
     workspaceSlug && cursor ? EXPORT_SERVICES_LIST(workspaceSlug as string, cursor, `${per_page}`) : null,
@@ -119,12 +122,12 @@ export const PrevExports = observer((props: Props) => {
             </div>
           ) : (
             <div className="flex h-full w-full items-center justify-center">
-              <DetailedEmptyState
-                title={t("workspace_settings.empty_state.exports.title")}
-                description={t("workspace_settings.empty_state.exports.description")}
-                assetPath={resolvedPath}
-                className="w-full !px-0"
-                size="sm"
+              <EmptyStateCompact
+                assetKey="export"
+                title={t("settings_empty_state.exports.title")}
+                description={t("settings_empty_state.exports.description")}
+                align="start"
+                rootClassName="py-20"
               />
             </div>
           )

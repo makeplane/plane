@@ -1,12 +1,10 @@
-"use client";
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
-import { getButtonStyling, Loader } from "@plane/ui";
+import { getButtonStyling } from "@plane/propel/button";
+import type { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
+import { getUpgradeButtonStyle, Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
-// components
-import { getUpgradeButtonStyle } from "@/components/workspace/billing/subscription";
 // local imports
 import { DiscountInfo } from "./discount-info";
 
@@ -30,7 +28,7 @@ type Props = {
   isTrialAllowed: boolean;
 };
 
-export const PlanCheckoutButton: FC<Props> = observer((props) => {
+export const PlanCheckoutButton = observer(function PlanCheckoutButton(props: Props) {
   const {
     planeName,
     planVariant,

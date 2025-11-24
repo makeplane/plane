@@ -1,14 +1,13 @@
-"use client";
-
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssuePriorities } from "@plane/types";
-import { PriorityIcon } from "@plane/ui";
+import { PriorityIcon } from "@plane/propel/icons";
+import type { TIssuePriorities } from "@plane/types";
 // plane constants
 // components
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 
@@ -16,7 +15,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterPriority: FC<Props> = observer((props) => {
+export const FilterPriority = observer(function FilterPriority(props: Props) {
   const { searchQuery } = props;
   // hooks
   const { t } = useTranslation();

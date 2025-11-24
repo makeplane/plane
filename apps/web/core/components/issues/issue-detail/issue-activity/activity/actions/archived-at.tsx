@@ -1,18 +1,15 @@
-"use client";
-
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { RotateCcw } from "lucide-react";
 // hooks
-import { ArchiveIcon } from "@plane/ui";
-import { useIssueDetail } from "@/hooks/store";
+import { ArchiveIcon } from "@plane/propel/icons";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
 import { IssueActivityBlockComponent } from "./";
 // ui
 
 type TIssueArchivedAtActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 
-export const IssueArchivedAtActivity: FC<TIssueArchivedAtActivity> = observer((props) => {
+export const IssueArchivedAtActivity = observer(function IssueArchivedAtActivity(props: TIssueArchivedAtActivity) {
   const { activityId, ends } = props;
   // hooks
   const {

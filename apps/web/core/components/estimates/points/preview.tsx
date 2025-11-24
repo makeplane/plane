@@ -1,15 +1,16 @@
-import { FC, useEffect, useRef, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { GripVertical, Pencil, Trash2 } from "lucide-react";
+// plane imports
 import { EEstimateSystem, estimateCount } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
-// components
+import type { TEstimatePointsObject, TEstimateSystemKeys, TEstimateTypeErrorObject } from "@plane/types";
 import { convertMinutesToHoursMinutesString } from "@plane/utils";
-import { EstimatePointUpdate } from "@/components/estimates/points";
-// plane web components
+// plane web imports
 import { EstimatePointDelete } from "@/plane-web/components/estimates";
-// plane web constants
+// local imports
+import { EstimatePointUpdate } from "./update";
 
 type TEstimatePointItemPreview = {
   workspaceSlug: string;
@@ -25,7 +26,7 @@ type TEstimatePointItemPreview = {
   handleEstimatePointError?: (newValue: string, message: string | undefined) => void;
 };
 
-export const EstimatePointItemPreview: FC<TEstimatePointItemPreview> = observer((props) => {
+export const EstimatePointItemPreview = observer(function EstimatePointItemPreview(props: TEstimatePointItemPreview) {
   const {
     workspaceSlug,
     projectId,

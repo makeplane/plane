@@ -1,27 +1,22 @@
-/* eslint-disable no-useless-catch */
-
-import concat from "lodash/concat";
-import orderBy from "lodash/orderBy";
-import set from "lodash/set";
-import uniq from "lodash/uniq";
-import update from "lodash/update";
+import { concat, orderBy, set, uniq, update } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane package imports
-import { E_SORT_ORDER, EActivityFilterType } from "@plane/constants";
-import {
-  EIssueServiceType,
+import type { E_SORT_ORDER } from "@plane/constants";
+import { EActivityFilterType } from "@plane/constants";
+import type {
   TIssueActivityComment,
   TIssueActivity,
   TIssueActivityMap,
   TIssueActivityIdMap,
   TIssueServiceType,
 } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // plane web constants
 // services
 import { IssueActivityService } from "@/services/issue";
 // store
-import { CoreRootStore } from "@/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 
 export type TActivityLoader = "fetch" | "mutate" | undefined;
 
@@ -43,7 +38,7 @@ export interface IIssueActivityStore extends IIssueActivityStoreActions {
   // helper methods
   getActivitiesByIssueId: (issueId: string) => string[] | undefined;
   getActivityById: (activityId: string) => TIssueActivity | undefined;
-  getActivityCommentByIssueId: (issueId: string, sortOrder: E_SORT_ORDER) => TIssueActivityComment[] | undefined;
+  getActivityAndCommentsByIssueId: (issueId: string, sortOrder: E_SORT_ORDER) => TIssueActivityComment[] | undefined;
 }
 
 export class IssueActivityStore implements IIssueActivityStore {
@@ -51,7 +46,6 @@ export class IssueActivityStore implements IIssueActivityStore {
   loader: TActivityLoader = "fetch";
   activities: TIssueActivityIdMap = {};
   activityMap: TIssueActivityMap = {};
-
   // services
   serviceType;
   issueActivityService;
@@ -84,23 +78,33 @@ export class IssueActivityStore implements IIssueActivityStore {
     return this.activityMap[activityId] ?? undefined;
   };
 
-  getActivityCommentByIssueId = computedFn((issueId: string, sortOrder: E_SORT_ORDER) => {
+  protected buildActivityAndCommentItems(issueId: string): TIssueActivityComment[] | undefined {
     if (!issueId) return undefined;
 
-    let activityComments: TIssueActivityComment[] = [];
+    const activityComments: TIssueActivityComment[] = [];
 
     const currentStore =
       this.serviceType === EIssueServiceType.EPICS ? this.store.issue.epicDetail : this.store.issue.issueDetail;
 
-    const activities = this.getActivitiesByIssueId(issueId) || [];
-    const comments = currentStore.comment.getCommentsByIssueId(issueId) || [];
+    const activities = this.getActivitiesByIssueId(issueId);
+    const comments = currentStore.comment.getCommentsByIssueId(issueId);
+
+    if (!activities || !comments) return undefined;
 
     activities.forEach((activityId) => {
       const activity = this.getActivityById(activityId);
       if (!activity) return;
+      const type =
+        activity.field === "state"
+          ? EActivityFilterType.STATE
+          : activity.field === "assignees"
+            ? EActivityFilterType.ASSIGNEE
+            : activity.field === null
+              ? EActivityFilterType.DEFAULT
+              : EActivityFilterType.ACTIVITY;
       activityComments.push({
         id: activity.id,
-        activity_type: EActivityFilterType.ACTIVITY,
+        activity_type: type,
         created_at: activity.created_at,
       });
     });
@@ -108,16 +112,25 @@ export class IssueActivityStore implements IIssueActivityStore {
     comments.forEach((commentId) => {
       const comment = currentStore.comment.getCommentById(commentId);
       if (!comment) return;
+      const commentTimestamp = comment.edited_at ?? comment.updated_at ?? comment.created_at;
       activityComments.push({
         id: comment.id,
         activity_type: EActivityFilterType.COMMENT,
-        created_at: comment.created_at,
+        created_at: commentTimestamp,
       });
     });
 
-    activityComments = orderBy(activityComments, (e) => new Date(e.created_at || 0), sortOrder);
-
     return activityComments;
+  }
+
+  protected sortActivityComments(items: TIssueActivityComment[], sortOrder: E_SORT_ORDER): TIssueActivityComment[] {
+    return orderBy(items, (e) => new Date(e.created_at || 0), sortOrder);
+  }
+
+  getActivityAndCommentsByIssueId = computedFn((issueId: string, sortOrder: E_SORT_ORDER) => {
+    const baseItems = this.buildActivityAndCommentItems(issueId);
+    if (!baseItems) return undefined;
+    return this.sortActivityComments(baseItems, sortOrder);
   });
 
   // actions

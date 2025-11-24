@@ -20,9 +20,7 @@ class SizedTimedRotatingFileHandler(handlers.TimedRotatingFileHandler):
         interval=1,
         utc=False,
     ):
-        handlers.TimedRotatingFileHandler.__init__(
-            self, filename, when, interval, backupCount, encoding, delay, utc
-        )
+        handlers.TimedRotatingFileHandler.__init__(self, filename, when, interval, backupCount, encoding, delay, utc)
         self.maxBytes = maxBytes
 
     def shouldRollover(self, record):

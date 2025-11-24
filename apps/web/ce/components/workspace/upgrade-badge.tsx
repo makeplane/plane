@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 // helpers
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
@@ -8,7 +8,7 @@ type TUpgradeBadge = {
   size?: "sm" | "md";
 };
 
-export const UpgradeBadge: FC<TUpgradeBadge> = (props) => {
+export function UpgradeBadge(props: TUpgradeBadge) {
   const { className, size = "sm" } = props;
 
   const { t } = useTranslation();
@@ -27,4 +27,4 @@ export const UpgradeBadge: FC<TUpgradeBadge> = (props) => {
       {t("sidebar.pro")}
     </div>
   );
-};
+}

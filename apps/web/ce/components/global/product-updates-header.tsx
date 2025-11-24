@@ -1,14 +1,12 @@
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useTranslation } from "@plane/i18n";
+import { PlaneLogo } from "@plane/propel/icons";
 // helpers
 import { cn } from "@plane/utils";
-// assets
-import PlaneLogo from "@/public/plane-logos/blue-without-text.png";
 // package.json
 import packageJson from "package.json";
 
-export const ProductUpdatesHeader = observer(() => {
+export const ProductUpdatesHeader = observer(function ProductUpdatesHeader() {
   const { t } = useTranslation();
   return (
     <div className="flex gap-2 mx-6 my-4 items-center justify-between flex-shrink-0">
@@ -23,7 +21,7 @@ export const ProductUpdatesHeader = observer(() => {
         </div>
       </div>
       <div className="flex flex-shrink-0 items-center gap-8">
-        <Image src={PlaneLogo} alt="Plane" width={24} height={24} />
+        <PlaneLogo className="h-6 w-auto text-custom-text-100" />
       </div>
     </div>
   );

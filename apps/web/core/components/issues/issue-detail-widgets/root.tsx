@@ -1,14 +1,11 @@
-"use client";
-
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 // plane imports
-import { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
-// components
-import {
-  IssueDetailWidgetActionButtons,
-  IssueDetailWidgetCollapsibles,
-  IssueDetailWidgetModals,
-} from "@/components/issues/issue-detail-widgets";
+import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
+// local imports
+import { IssueDetailWidgetActionButtons } from "./action-buttons";
+import { IssueDetailWidgetCollapsibles } from "./issue-detail-widget-collapsibles";
+import { IssueDetailWidgetModals } from "./issue-detail-widget-modals";
 
 type Props = {
   workspaceSlug: string;
@@ -20,7 +17,7 @@ type Props = {
   hideWidgets?: TWorkItemWidgets[];
 };
 
-export const IssueDetailWidgets: FC<Props> = (props) => {
+export function IssueDetailWidgets(props: Props) {
   const {
     workspaceSlug,
     projectId,
@@ -62,4 +59,4 @@ export const IssueDetailWidgets: FC<Props> = (props) => {
       )}
     </>
   );
-};
+}

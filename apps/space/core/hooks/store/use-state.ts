@@ -2,7 +2,7 @@ import { useContext } from "react";
 // lib
 import { StoreContext } from "@/lib/store-provider";
 // store
-import { IStateStore } from "@/store/state.store";
+import type { IStateStore } from "@/store/state.store";
 
 export const useStates = (): IStateStore => {
   const context = useContext(StoreContext);

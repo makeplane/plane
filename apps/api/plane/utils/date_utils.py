@@ -42,44 +42,30 @@ def get_analytics_date_range(
                 "lte": datetime.combine(today, datetime.max.time()),
             },
             "previous": {
-                "gte": datetime.combine(
-                    today - timedelta(days=14), datetime.min.time()
-                ),
+                "gte": datetime.combine(today - timedelta(days=14), datetime.min.time()),
                 "lte": datetime.combine(today - timedelta(days=8), datetime.max.time()),
             },
         }
     elif date_filter == "last_30_days":
         return {
             "current": {
-                "gte": datetime.combine(
-                    today - timedelta(days=30), datetime.min.time()
-                ),
+                "gte": datetime.combine(today - timedelta(days=30), datetime.min.time()),
                 "lte": datetime.combine(today, datetime.max.time()),
             },
             "previous": {
-                "gte": datetime.combine(
-                    today - timedelta(days=60), datetime.min.time()
-                ),
-                "lte": datetime.combine(
-                    today - timedelta(days=31), datetime.max.time()
-                ),
+                "gte": datetime.combine(today - timedelta(days=60), datetime.min.time()),
+                "lte": datetime.combine(today - timedelta(days=31), datetime.max.time()),
             },
         }
     elif date_filter == "last_3_months":
         return {
             "current": {
-                "gte": datetime.combine(
-                    today - timedelta(days=90), datetime.min.time()
-                ),
+                "gte": datetime.combine(today - timedelta(days=90), datetime.min.time()),
                 "lte": datetime.combine(today, datetime.max.time()),
             },
             "previous": {
-                "gte": datetime.combine(
-                    today - timedelta(days=180), datetime.min.time()
-                ),
-                "lte": datetime.combine(
-                    today - timedelta(days=91), datetime.max.time()
-                ),
+                "gte": datetime.combine(today - timedelta(days=180), datetime.min.time()),
+                "lte": datetime.combine(today - timedelta(days=91), datetime.max.time()),
             },
         }
     elif date_filter == "custom" and start_date and end_date:

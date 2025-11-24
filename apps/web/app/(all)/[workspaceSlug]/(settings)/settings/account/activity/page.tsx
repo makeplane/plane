@@ -1,30 +1,33 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+// assets
+import darkActivityAsset from "@/app/assets/empty-state/profile/activity-dark.webp?url";
+import lightActivityAsset from "@/app/assets/empty-state/profile/activity-light.webp?url";
 // components
-import { PageHead } from "@/components/core";
-import { DetailedEmptyState } from "@/components/empty-state";
-import { ProfileActivityListPage } from "@/components/profile";
+import { PageHead } from "@/components/core/page-title";
+import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import { ProfileActivityListPage } from "@/components/profile/activity/profile-activity-list";
 // hooks
-import { SettingsHeading } from "@/components/settings";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+import { SettingsHeading } from "@/components/settings/heading";
 
 const PER_PAGE = 100;
 
-const ProfileActivityPage = observer(() => {
+function ProfileActivityPage() {
   // states
   const [pageCount, setPageCount] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [resultsCount, setResultsCount] = useState(0);
   const [isEmpty, setIsEmpty] = useState(false);
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // plane hooks
   const { t } = useTranslation();
   // derived values
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/profile/activity" });
+  const resolvedPath = resolvedTheme === "light" ? lightActivityAsset : darkActivityAsset;
 
   const updateTotalPages = (count: number) => setTotalPages(count);
 
@@ -34,7 +37,7 @@ const ProfileActivityPage = observer(() => {
 
   const handleLoadMore = () => setPageCount((prev) => prev + 1);
 
-  const activityPages: JSX.Element[] = [];
+  const activityPages: React.ReactNode[] = [];
   for (let i = 0; i < pageCount; i++)
     activityPages.push(
       <ProfileActivityListPage
@@ -84,6 +87,6 @@ const ProfileActivityPage = observer(() => {
       )}
     </>
   );
-});
+}
 
-export default ProfileActivityPage;
+export default observer(ProfileActivityPage);

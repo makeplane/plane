@@ -1,12 +1,12 @@
-import { SetStateAction } from "react";
+import type { SetStateAction } from "react";
 import { observer } from "mobx-react";
 import { GripVertical, Pencil } from "lucide-react";
 // plane imports
 import { EIconSize, STATE_TRACKER_ELEMENTS } from "@plane/constants";
-import { IState, TStateOperationsCallbacks } from "@plane/types";
-import { StateGroupIcon } from "@plane/ui";
+import { StateGroupIcon } from "@plane/propel/icons";
+import type { IState, TStateOperationsCallbacks } from "@plane/types";
 // local imports
-import { useProjectState } from "@/hooks/store";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { StateDelete, StateMarksAsDefault } from "./options";
 
 type TBaseStateItemTitleProps = {
@@ -28,7 +28,7 @@ type TDisabledStateItemTitleProps = TBaseStateItemTitleProps & {
 
 export type TStateItemTitleProps = TEnabledStateItemTitleProps | TDisabledStateItemTitleProps;
 
-export const StateItemTitle = observer((props: TStateItemTitleProps) => {
+export const StateItemTitle = observer(function StateItemTitle(props: TStateItemTitleProps) {
   const { stateCount, setUpdateStateModal, disabled, state, shouldShowDescription = true } = props;
   // store hooks
   const { getStatePercentageInGroup } = useProjectState();

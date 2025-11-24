@@ -7,9 +7,7 @@ from .project import ProjectBaseModel
 
 
 class Importer(ProjectBaseModel):
-    service = models.CharField(
-        max_length=50, choices=(("github", "GitHub"), ("jira", "Jira"))
-    )
+    service = models.CharField(max_length=50, choices=(("github", "GitHub"), ("jira", "Jira")))
     status = models.CharField(
         max_length=50,
         choices=(
@@ -20,15 +18,11 @@ class Importer(ProjectBaseModel):
         ),
         default="queued",
     )
-    initiated_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="imports"
-    )
+    initiated_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="imports")
     metadata = models.JSONField(default=dict)
     config = models.JSONField(default=dict)
     data = models.JSONField(default=dict)
-    token = models.ForeignKey(
-        "db.APIToken", on_delete=models.CASCADE, related_name="importer"
-    )
+    token = models.ForeignKey("db.APIToken", on_delete=models.CASCADE, related_name="importer")
     imported_data = models.JSONField(null=True)
 
     class Meta:

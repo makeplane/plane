@@ -3,7 +3,7 @@ import { AlertCircle } from "lucide-react";
 // plane imports
 import { ISSUE_ORDER_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TIssueOrderByOptions } from "@plane/types";
+import type { TIssueOrderByOptions } from "@plane/types";
 // helpers
 import { cn } from "@plane/utils";
 // plane web imports
@@ -20,7 +20,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const GroupDragOverlay = (props: Props) => {
+export function GroupDragOverlay(props: Props) {
   const {
     dragColumnOrientation,
     canOverlayBeVisible,
@@ -85,4 +85,4 @@ export const GroupDragOverlay = (props: Props) => {
       )}
     </div>
   );
-};
+}

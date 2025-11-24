@@ -1,9 +1,9 @@
 import React from "react";
 import { observer } from "mobx-react";
 // types
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 // hooks
-import { useLabel } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label";
 // components
 import { IssuePropertyLabels } from "../../properties";
 
@@ -14,7 +14,7 @@ type Props = {
   disabled: boolean;
 };
 
-export const SpreadsheetLabelColumn: React.FC<Props> = observer((props: Props) => {
+export const SpreadsheetLabelColumn = observer(function SpreadsheetLabelColumn(props: Props) {
   const { issue, onChange, disabled, onClose } = props;
   // hooks
   const { labelMap } = useLabel();
@@ -25,7 +25,7 @@ export const SpreadsheetLabelColumn: React.FC<Props> = observer((props: Props) =
     <div className="h-11 border-b-[0.5px] border-custom-border-200 w-full">
       <IssuePropertyLabels
         projectId={issue.project_id ?? null}
-        value={issue.label_ids}
+        value={issue.label_ids || []}
         defaultOptions={defaultLabelOptions}
         onChange={(data) => onChange(issue, { label_ids: data }, { changed_property: "labels", change_details: data })}
         className="h-full w-full "

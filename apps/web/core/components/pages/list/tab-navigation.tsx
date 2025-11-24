@@ -1,7 +1,6 @@
-import { FC } from "react";
 import Link from "next/link";
 // types
-import { TPageNavigationTabs } from "@plane/types";
+import type { TPageNavigationTabs } from "@plane/types";
 // helpers
 import { cn } from "@plane/utils";
 
@@ -27,7 +26,7 @@ const pageTabs: { key: TPageNavigationTabs; label: string }[] = [
   },
 ];
 
-export const PageTabNavigation: FC<TPageTabNavigation> = (props) => {
+export function PageTabNavigation(props: TPageTabNavigation) {
   const { workspaceSlug, projectId, pageType } = props;
 
   const handleTabClick = (e: React.MouseEvent<HTMLAnchorElement>, tabKey: TPageNavigationTabs) => {
@@ -58,4 +57,4 @@ export const PageTabNavigation: FC<TPageTabNavigation> = (props) => {
       ))}
     </div>
   );
-};
+}

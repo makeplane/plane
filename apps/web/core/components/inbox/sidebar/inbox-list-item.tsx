@@ -1,19 +1,23 @@
-"use client";
-
-import { FC, MouseEvent } from "react";
+import type { FC, MouseEvent } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Tooltip, PriorityIcon, Row, Avatar } from "@plane/ui";
+// plane imports
+import { PriorityIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
+import { Row, Avatar } from "@plane/ui";
 import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import { InboxIssueStatus } from "@/components/inbox";
-// helpers
 // hooks
-import { useLabel, useMember, useProjectInbox } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label";
+import { useMember } from "@/hooks/store/use-member";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web imports
 import { InboxSourcePill } from "@/plane-web/components/inbox/source-pill";
+// local imports
+import { InboxIssueStatus } from "../inbox-issue-status";
 
 type InboxIssueListItemProps = {
   workspaceSlug: string;
@@ -23,7 +27,7 @@ type InboxIssueListItemProps = {
   setIsMobileSidebar: (value: boolean) => void;
 };
 
-export const InboxIssueListItem: FC<InboxIssueListItemProps> = observer((props) => {
+export const InboxIssueListItem = observer(function InboxIssueListItem(props: InboxIssueListItemProps) {
   const { workspaceSlug, projectId, inboxIssueId, projectIdentifier, setIsMobileSidebar } = props;
   // router
   const searchParams = useSearchParams();

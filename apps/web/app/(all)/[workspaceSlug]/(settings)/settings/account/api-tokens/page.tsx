@@ -1,26 +1,25 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
+import { PROFILE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // component
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { APITokenService } from "@plane/services";
-import { ApiTokenListItem, CreateApiTokenModal } from "@/components/api-token";
-import { PageHead } from "@/components/core";
-import { DetailedEmptyState } from "@/components/empty-state";
-import { SettingsHeading } from "@/components/settings";
-import { APITokenSettingsLoader } from "@/components/ui";
+import { CreateApiTokenModal } from "@/components/api-token/modal/create-token-modal";
+import { ApiTokenListItem } from "@/components/api-token/token-list-item";
+import { PageHead } from "@/components/core/page-title";
+import { SettingsHeading } from "@/components/settings/heading";
+import { APITokenSettingsLoader } from "@/components/ui/loader/settings/api-token";
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";
 // store hooks
-import { useWorkspace } from "@/hooks/store";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-// services
+import { captureClick } from "@/helpers/event-tracker.helper";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 const apiTokenService = new APITokenService();
 
-const ApiTokensPage = observer(() => {
+function ApiTokensPage() {
   // states
   const [isCreateTokenModalOpen, setIsCreateTokenModalOpen] = useState(false);
   // router
@@ -28,8 +27,6 @@ const ApiTokensPage = observer(() => {
   const { t } = useTranslation();
   // store hooks
   const { currentWorkspace } = useWorkspace();
-  // derived values
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/workspace-settings/api-tokens" });
 
   const { data: tokens } = useSWR(API_TOKENS_LIST, () => apiTokenService.list());
 
@@ -53,7 +50,12 @@ const ApiTokensPage = observer(() => {
               description={t("account_settings.api_tokens.description")}
               button={{
                 label: t("workspace_settings.settings.api_tokens.add_token"),
-                onClick: () => setIsCreateTokenModalOpen(true),
+                onClick: () => {
+                  captureClick({
+                    elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.HEADER_ADD_PAT_BUTTON,
+                  });
+                  setIsCreateTokenModalOpen(true);
+                },
               }}
             />
             <div>
@@ -63,33 +65,45 @@ const ApiTokensPage = observer(() => {
             </div>
           </>
         ) : (
-          <div className="flex h-full w-full flex-col">
+          <div className="flex h-full w-full flex-col py-">
             <SettingsHeading
               title={t("account_settings.api_tokens.heading")}
               description={t("account_settings.api_tokens.description")}
               button={{
                 label: t("workspace_settings.settings.api_tokens.add_token"),
-                onClick: () => setIsCreateTokenModalOpen(true),
+                onClick: () => {
+                  captureClick({
+                    elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.HEADER_ADD_PAT_BUTTON,
+                  });
+                  setIsCreateTokenModalOpen(true);
+                },
               }}
             />
-            <div className="h-full w-full flex items-center justify-center">
-              <DetailedEmptyState
-                title=""
-                description=""
-                assetPath={resolvedPath}
-                className="w-full !p-0 justify-center mx-auto"
-                size="md"
-                primaryButton={{
-                  text: t("workspace_settings.settings.api_tokens.add_token"),
-                  onClick: () => setIsCreateTokenModalOpen(true),
-                }}
-              />
-            </div>
+
+            <EmptyStateCompact
+              assetKey="token"
+              assetClassName="size-20"
+              title={t("settings_empty_state.tokens.title")}
+              description={t("settings_empty_state.tokens.description")}
+              actions={[
+                {
+                  label: t("settings_empty_state.tokens.cta_primary"),
+                  onClick: () => {
+                    captureClick({
+                      elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.EMPTY_STATE_ADD_PAT_BUTTON,
+                    });
+                    setIsCreateTokenModalOpen(true);
+                  },
+                },
+              ]}
+              align="start"
+              rootClassName="py-20"
+            />
           </div>
         )}
       </section>
     </div>
   );
-});
+}
 
-export default ApiTokensPage;
+export default observer(ApiTokensPage);

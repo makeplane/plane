@@ -1,17 +1,15 @@
-"use client";
-
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { TALK_TO_SALES_URL } from "@plane/constants";
-import { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
+import type { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
+import { getDiscountPillStyle } from "@plane/ui";
 import { calculateYearlyDiscount, cn, getSubscriptionName, getSubscriptionPriceDetails } from "@plane/utils";
 // components
 import { BasePaidPlanCard, TalkToSalesCard } from "@/components/license";
-// helpers
-import { getDiscountPillStyle } from "@/components/workspace/billing/subscription";
 // local components
-import { PlanCheckoutButton, TCheckoutParams } from "./checkout-button";
+import type { TCheckoutParams } from "./checkout-button";
+import { PlanCheckoutButton } from "./checkout-button";
 
 export type PlanUpgradeCardProps = {
   planVariant: EProductSubscriptionEnum;
@@ -28,7 +26,7 @@ export type PlanUpgradeCardProps = {
   isTrialAllowed: boolean;
 };
 
-export const PlanUpgradeCard: FC<PlanUpgradeCardProps> = observer((props) => {
+export const PlanUpgradeCard = observer(function PlanUpgradeCard(props: PlanUpgradeCardProps) {
   const {
     planVariant,
     features,
@@ -108,7 +106,6 @@ export const PlanUpgradeCard: FC<PlanUpgradeCardProps> = observer((props) => {
           isTrialAllowed={isTrialAllowed}
         />
       )}
-      isSelfHosted={isSelfHosted}
     />
   );
 });

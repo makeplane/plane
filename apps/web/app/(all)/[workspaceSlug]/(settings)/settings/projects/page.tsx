@@ -1,13 +1,11 @@
-"use client";
-import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
-import { Button, getButtonStyling } from "@plane/ui";
+import { Button, getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";
-import { useCommandPalette } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 
-const ProjectSettingsPage = () => {
+function ProjectSettingsPage() {
   // store hooks
   const { resolvedTheme } = useTheme();
   const { toggleCreateProjectModal } = useCommandPalette();
@@ -18,7 +16,7 @@ const ProjectSettingsPage = () => {
       : "/empty-state/project-settings/no-projects-light.png";
   return (
     <div className="flex flex-col gap-4 items-center justify-center h-full max-w-[480px] mx-auto">
-      <Image src={resolvedPath} alt="No projects yet" width={384} height={250} />
+      <img src={resolvedPath} className="w-full h-full object-contain" alt="No projects yet" />
       <div className="text-lg font-semibold text-custom-text-350">No projects yet</div>
       <div className="text-sm text-custom-text-350 text-center">
         Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you
@@ -38,6 +36,6 @@ const ProjectSettingsPage = () => {
       </div>
     </div>
   );
-};
+}
 
 export default ProjectSettingsPage;

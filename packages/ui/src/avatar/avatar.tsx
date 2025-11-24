@@ -1,8 +1,8 @@
 import React from "react";
 // ui
-import { Tooltip } from "../tooltip";
+import { Tooltip } from "@plane/propel/tooltip";
 // helpers
-import { cn } from "../../helpers";
+import { cn } from "../utils";
 
 export type TAvatarSize = "sm" | "md" | "base" | "lg" | number;
 
@@ -113,7 +113,7 @@ export const getBorderRadius = (shape: "circle" | "square") => {
  */
 export const isAValidNumber = (value: any) => typeof value === "number" && !isNaN(value);
 
-export const Avatar: React.FC<Props> = (props) => {
+export function Avatar(props: Props) {
   const {
     name,
     fallbackBackgroundColor,
@@ -156,7 +156,7 @@ export const Avatar: React.FC<Props> = (props) => {
               className
             )}
             style={{
-              backgroundColor: fallbackBackgroundColor ?? "rgba(var(--color-primary-500))",
+              backgroundColor: fallbackBackgroundColor ?? "#028375",
               color: fallbackTextColor ?? "#ffffff",
             }}
           >
@@ -166,4 +166,4 @@ export const Avatar: React.FC<Props> = (props) => {
       </div>
     </Tooltip>
   );
-};
+}

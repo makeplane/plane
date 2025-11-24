@@ -1,20 +1,26 @@
-"use client";
-
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ArchiveRestore } from "lucide-react";
 // types
-import { PROJECT_AUTOMATION_MONTHS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import {
+  PROJECT_AUTOMATION_MONTHS,
+  EUserPermissions,
+  EUserPermissionsLevel,
+  PROJECT_SETTINGS_TRACKER_ELEMENTS,
+  PROJECT_SETTINGS_TRACKER_EVENTS,
+} from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IProject } from "@plane/types";
+import type { IProject } from "@plane/types";
 // ui
 import { CustomSelect, Loader, ToggleSwitch } from "@plane/ui";
 // component
 import { SelectMonthModal } from "@/components/automation";
 // constants
 // hooks
-import { useProject, useUserPermissions } from "@/hooks/store";
+import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;
@@ -22,7 +28,7 @@ type Props = {
 
 const initialValues: Partial<IProject> = { archive_in: 1 };
 
-export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
+export const AutoArchiveAutomation = observer(function AutoArchiveAutomation(props: Props) {
   const { handleChange } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -40,6 +46,11 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
     workspaceSlug?.toString(),
     currentProjectDetails?.id
   );
+
+  const autoArchiveStatus = useMemo(() => {
+    if (currentProjectDetails?.archive_in === undefined) return false;
+    return currentProjectDetails.archive_in !== 0;
+  }, [currentProjectDetails]);
 
   return (
     <>
@@ -64,19 +75,30 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
             </div>
           </div>
           <ToggleSwitch
-            value={currentProjectDetails?.archive_in !== 0}
-            onChange={() =>
-              currentProjectDetails?.archive_in === 0
-                ? handleChange({ archive_in: 1 })
-                : handleChange({ archive_in: 0 })
-            }
+            value={autoArchiveStatus}
+            onChange={async () => {
+              if (currentProjectDetails?.archive_in === 0) {
+                await handleChange({ archive_in: 1 });
+              } else {
+                await handleChange({ archive_in: 0 });
+              }
+              captureElementAndEvent({
+                element: {
+                  elementName: PROJECT_SETTINGS_TRACKER_ELEMENTS.AUTOMATIONS_ARCHIVE_TOGGLE_BUTTON,
+                },
+                event: {
+                  eventName: PROJECT_SETTINGS_TRACKER_EVENTS.auto_archive_workitems,
+                  state: "SUCCESS",
+                },
+              });
+            }}
             size="sm"
             disabled={!isAdmin}
           />
         </div>
 
         {currentProjectDetails ? (
-          currentProjectDetails.archive_in !== 0 && (
+          autoArchiveStatus && (
             <div className="mx-6">
               <div className="flex w-full items-center justify-between gap-2 rounded border border-custom-border-200 bg-custom-background-90 px-5 py-4">
                 <div className="w-1/2 text-sm font-medium">

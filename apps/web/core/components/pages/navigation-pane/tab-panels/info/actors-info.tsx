@@ -6,15 +6,15 @@ import { useTranslation } from "@plane/i18n";
 import { Avatar } from "@plane/ui";
 import { calculateTimeAgoShort, getFileURL, renderFormattedDate } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
   page: TPageInstance;
 };
 
-export const PageNavigationPaneInfoTabActorsInfo: React.FC<Props> = observer((props) => {
+export const PageNavigationPaneInfoTabActorsInfo = observer(function PageNavigationPaneInfoTabActorsInfo(props: Props) {
   const { page } = props;
   // navigation
   const { workspaceSlug } = useParams();

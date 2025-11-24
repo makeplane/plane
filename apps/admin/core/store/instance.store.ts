@@ -1,9 +1,10 @@
-import set from "lodash/set";
+import { set } from "lodash-es";
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // plane internal packages
-import { EInstanceStatus, TInstanceStatus } from "@plane/constants";
+import type { TInstanceStatus } from "@plane/constants";
+import { EInstanceStatus } from "@plane/constants";
 import { InstanceService } from "@plane/services";
-import {
+import type {
   IInstance,
   IInstanceAdmin,
   IInstanceConfiguration,
@@ -12,7 +13,7 @@ import {
   IInstanceConfig,
 } from "@plane/types";
 // root store
-import { CoreRootStore } from "@/store/root.store";
+import type { CoreRootStore } from "@/store/root.store";
 
 export interface IInstanceStore {
   // issues
@@ -32,6 +33,7 @@ export interface IInstanceStore {
   fetchInstanceAdmins: () => Promise<IInstanceAdmin[] | undefined>;
   fetchInstanceConfigurations: () => Promise<IInstanceConfiguration[] | undefined>;
   updateInstanceConfigurations: (data: Partial<IFormattedInstanceConfiguration>) => Promise<IInstanceConfiguration[]>;
+  disableEmail: () => Promise<void>;
 }
 
 export class InstanceStore implements IInstanceStore {
@@ -185,6 +187,32 @@ export class InstanceStore implements IInstanceStore {
     } catch (error) {
       console.error("Error updating the instance configurations");
       throw error;
+    }
+  };
+
+  disableEmail = async () => {
+    const instanceConfigurations = this.instanceConfigurations;
+    try {
+      runInAction(() => {
+        this.instanceConfigurations = this.instanceConfigurations?.map((config) => {
+          if (
+            [
+              "EMAIL_HOST",
+              "EMAIL_PORT",
+              "EMAIL_HOST_USER",
+              "EMAIL_HOST_PASSWORD",
+              "EMAIL_FROM",
+              "ENABLE_SMTP",
+            ].includes(config.key)
+          )
+            return { ...config, value: "" };
+          return config;
+        });
+      });
+      await this.instanceService.disableEmail();
+    } catch (_error) {
+      console.error("Error disabling the email");
+      this.instanceConfigurations = instanceConfigurations;
     }
   };
 }

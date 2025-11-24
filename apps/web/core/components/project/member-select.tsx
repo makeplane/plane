@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -10,7 +8,7 @@ import { Avatar, CustomSearchSelect } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 
 type Props = {
   value: any;
@@ -18,7 +16,7 @@ type Props = {
   isDisabled?: boolean;
 };
 
-export const MemberSelect: React.FC<Props> = observer((props) => {
+export const MemberSelect = observer(function MemberSelect(props: Props) {
   const { value, onChange, isDisabled = false } = props;
   // router
   const { projectId } = useParams();
@@ -50,7 +48,7 @@ export const MemberSelect: React.FC<Props> = observer((props) => {
     | {
         value: string;
         query: string;
-        content: React.JSX.Element;
+        content: React.ReactNode;
       }[]
     | undefined;
   const selectedOption = projectId ? getProjectMemberDetails(value, projectId.toString()) : null;

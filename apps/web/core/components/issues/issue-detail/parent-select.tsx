@@ -1,22 +1,20 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { Pencil, X } from "lucide-react";
+import { Pencil } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-// ui
-import { Tooltip } from "@plane/ui";
-// components
+import { CloseIcon } from "@plane/propel/icons";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
-import { ParentIssuesListModal } from "@/components/issues";
-// helpers
 // hooks
-import { useIssueDetail, useProject } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
-// types
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+// local imports
+import { ParentIssuesListModal } from "../parent-issues-list-modal";
 
 type TIssueParentSelect = {
   className?: string;
@@ -34,7 +32,7 @@ type TIssueParentSelect = {
   workItemLink: string;
 };
 
-export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) => {
+export const IssueParentSelect = observer(function IssueParentSelect(props: TIssueParentSelect) {
   const {
     className = "",
     disabled = false,
@@ -110,7 +108,7 @@ export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) 
                     handleRemoveSubIssue(workspaceSlug, projectId, parentIssue.id, issueId);
                   }}
                 >
-                  <X className="h-2.5 w-2.5 text-custom-text-300 hover:text-red-500" />
+                  <CloseIcon className="h-2.5 w-2.5 text-custom-text-300 hover:text-red-500" />
                 </span>
               </Tooltip>
             )}

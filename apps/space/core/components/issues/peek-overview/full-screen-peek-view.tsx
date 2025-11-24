@@ -1,16 +1,13 @@
-"use client";
-
 import { observer } from "mobx-react";
-// components
+// plane imports
 import { Loader } from "@plane/ui";
-import {
-  PeekOverviewHeader,
-  PeekOverviewIssueActivity,
-  PeekOverviewIssueDetails,
-  PeekOverviewIssueProperties,
-} from "@/components/issues/peek-overview";
 // types
-import { IIssue } from "@/types/issue";
+import type { IIssue } from "@/types/issue";
+// local imports
+import { PeekOverviewHeader } from "./header";
+import { PeekOverviewIssueActivity } from "./issue-activity";
+import { PeekOverviewIssueDetails } from "./issue-details";
+import { PeekOverviewIssueProperties } from "./issue-properties";
 
 type Props = {
   anchor: string;
@@ -18,7 +15,7 @@ type Props = {
   issueDetails: IIssue | undefined;
 };
 
-export const FullScreenPeekView: React.FC<Props> = observer((props) => {
+export const FullScreenPeekView = observer(function FullScreenPeekView(props: Props) {
   const { anchor, handleClose, issueDetails } = props;
 
   return (

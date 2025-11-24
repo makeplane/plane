@@ -1,9 +1,10 @@
 import { observer } from "mobx-react";
 // plane imports
-import { EProductSubscriptionEnum, TBillingFrequency } from "@plane/types";
+import type { EProductSubscriptionEnum, TBillingFrequency } from "@plane/types";
 // components
 import { PlansComparisonBase, shouldRenderPlanDetail } from "@/components/workspace/billing/comparison/base";
-import { PLANE_PLANS, TPlanePlans } from "@/constants/plans";
+import type { TPlanePlans } from "@/constants/plans";
+import { PLANE_PLANS } from "@/constants/plans";
 // plane web imports
 import { PlanDetail } from "./plan-detail";
 
@@ -14,7 +15,7 @@ type TPlansComparisonProps = {
   setIsCompareAllFeaturesSectionOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const PlansComparison = observer((props: TPlansComparisonProps) => {
+export const PlansComparison = observer(function PlansComparison(props: TPlansComparisonProps) {
   const {
     isCompareAllFeaturesSectionOpen,
     getBillingFrequency,

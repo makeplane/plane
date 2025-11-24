@@ -1,15 +1,13 @@
-"use client";
-
 import React from "react";
 // components
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 type Props = {
   labelDetails: any[];
   maxRender?: number;
 };
 
-export const ViewIssueLabel: React.FC<Props> = ({ labelDetails, maxRender = 1 }) => {
+export function ViewIssueLabel({ labelDetails, maxRender = 1 }: Props) {
   const { isMobile } = usePlatformOS();
   return (
     <>
@@ -55,4 +53,4 @@ export const ViewIssueLabel: React.FC<Props> = ({ labelDetails, maxRender = 1 })
       )}
     </>
   );
-};
+}

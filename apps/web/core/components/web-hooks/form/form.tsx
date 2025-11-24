@@ -1,12 +1,11 @@
-"use client";
-
-import React, { FC, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
+import { WORKSPACE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IWebhook, TWebhookEventTypes } from "@plane/types";
+import { Button } from "@plane/propel/button";
+import type { IWebhook, TWebhookEventTypes } from "@plane/types";
 // hooks
-import { Button } from "@plane/ui";
 import {
   WebhookIndividualEventOptions,
   WebhookInput,
@@ -14,7 +13,7 @@ import {
   WebhookSecretKey,
   WebhookToggle,
 } from "@/components/web-hooks";
-import { useWebhook } from "@/hooks/store";
+import { useWebhook } from "@/hooks/store/use-webhook";
 // components
 // ui
 // types
@@ -34,7 +33,7 @@ const initialWebhookPayload: Partial<IWebhook> = {
   url: "",
 };
 
-export const WebhookForm: FC<Props> = observer((props) => {
+export const WebhookForm = observer(function WebhookForm(props: Props) {
   const { data, onSubmit, handleClose } = props;
   // states
   const [webhookEventType, setWebhookEventType] = useState<TWebhookEventTypes>("all");
@@ -93,7 +92,11 @@ export const WebhookForm: FC<Props> = observer((props) => {
       {data ? (
         <div className="pt-0 space-y-5">
           <WebhookSecretKey data={data} />
-          <Button type="submit" loading={isSubmitting}>
+          <Button
+            type="submit"
+            loading={isSubmitting}
+            data-ph-element={WORKSPACE_SETTINGS_TRACKER_ELEMENTS.WEBHOOK_UPDATE_BUTTON}
+          >
             {isSubmitting ? t("updating") : t("update")}
           </Button>
         </div>

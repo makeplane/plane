@@ -1,8 +1,5 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { Search } from "lucide-react";
 // types
 import {
@@ -12,34 +9,38 @@ import {
   MEMBER_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IWorkspaceBulkInviteFormData } from "@plane/types";
-// ui
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IWorkspaceBulkInviteFormData } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens";
-import { CountChip } from "@/components/common";
-import { PageHead } from "@/components/core";
-import { SettingsContentWrapper } from "@/components/settings";
-import { WorkspaceMembersList } from "@/components/workspace";
+import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+import { CountChip } from "@/components/common/count-chip";
+import { PageHead } from "@/components/core/page-title";
+import { MemberListFiltersDropdown } from "@/components/project/dropdowns/filters/member-list";
+import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
+import { WorkspaceMembersList } from "@/components/workspace/settings/members-list";
 // helpers
-// hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useMember, useUserPermissions, useWorkspace } from "@/hooks/store";
+// hooks
+import { useMember } from "@/hooks/store/use-member";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
-import { BillingActionsButton } from "@/plane-web/components/workspace/billing";
-import { SendWorkspaceInvitationModal } from "@/plane-web/components/workspace/members";
+import { BillingActionsButton } from "@/plane-web/components/workspace/billing/billing-actions-button";
+import { SendWorkspaceInvitationModal } from "@/plane-web/components/workspace/members/invite-modal";
+import type { Route } from "./+types/page";
 
-const WorkspaceMembersSettingsPage = observer(() => {
+function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
   // states
   const [inviteModal, setInviteModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug } = params;
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const {
-    workspace: { workspaceMemberIds, inviteMembersToWorkspace },
+    workspace: { workspaceMemberIds, inviteMembersToWorkspace, filtersStore },
   } = useMember();
   const { currentWorkspace } = useWorkspace();
   const { t } = useTranslation();
@@ -51,43 +52,58 @@ const WorkspaceMembersSettingsPage = observer(() => {
     EUserPermissionsLevel.WORKSPACE
   );
 
-  const handleWorkspaceInvite = (data: IWorkspaceBulkInviteFormData) => {
-    if (!workspaceSlug) return;
+  const handleWorkspaceInvite = async (data: IWorkspaceBulkInviteFormData) => {
+    try {
+      await inviteMembersToWorkspace(workspaceSlug, data);
 
-    return inviteMembersToWorkspace(workspaceSlug.toString(), data)
-      .then(() => {
-        setInviteModal(false);
-        captureSuccess({
-          eventName: MEMBER_TRACKER_EVENTS.invite,
-          payload: {
-            emails: [...data.emails.map((email) => email.email)],
-          },
-        });
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: t("workspace_settings.settings.members.invitations_sent_successfully"),
-        });
-      })
-      .catch((err) => {
-        captureError({
-          eventName: MEMBER_TRACKER_EVENTS.invite,
-          payload: {
-            emails: [...data.emails.map((email) => email.email)],
-          },
-          error: err,
-        });
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: "Error!",
-          message: `${err.error ?? t("something_went_wrong_please_try_again")}`,
-        });
-        throw err;
+      setInviteModal(false);
+
+      captureSuccess({
+        eventName: MEMBER_TRACKER_EVENTS.invite,
+        payload: {
+          emails: data.emails.map((email) => email.email),
+        },
       });
+
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Success!",
+        message: t("workspace_settings.settings.members.invitations_sent_successfully"),
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      captureError({
+        eventName: MEMBER_TRACKER_EVENTS.invite,
+        payload: {
+          emails: data.emails.map((email) => email.email),
+        },
+        error: err,
+      });
+
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: `${err.error ?? t("something_went_wrong_please_try_again")}`,
+      });
+
+      throw err;
+    }
+  };
+
+  // Handler for role filter updates
+  const handleRoleFilterUpdate = (role: string) => {
+    const currentFilters = filtersStore.filters;
+    const currentRoles = currentFilters?.roles || [];
+    const updatedRoles = currentRoles.includes(role) ? currentRoles.filter((r) => r !== role) : [...currentRoles, role];
+
+    filtersStore.updateFilters({
+      roles: updatedRoles.length > 0 ? updatedRoles : undefined,
+    });
   };
 
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Members` : undefined;
+  const appliedRoleFilters = filtersStore.filters?.roles || [];
 
   // if user is not authorized to view this page
   if (workspaceUserInfo && !canPerformWorkspaceMemberActions) {
@@ -114,32 +130,39 @@ const WorkspaceMembersSettingsPage = observer(() => {
               <CountChip count={workspaceMemberIds.length} className="h-5 m-auto" />
             )}
           </h4>
-          <div className="ml-auto flex items-center gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5">
-            <Search className="h-3.5 w-3.5 text-custom-text-400" />
-            <input
-              className="w-full max-w-[234px] border-none bg-transparent text-sm outline-none placeholder:text-custom-text-400"
-              placeholder={`${t("search")}...`}
-              value={searchQuery}
-              autoFocus
-              onChange={(e) => setSearchQuery(e.target.value)}
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5">
+              <Search className="h-3.5 w-3.5 text-custom-text-400" />
+              <input
+                className="w-full max-w-[234px] border-none bg-transparent text-sm outline-none placeholder:text-custom-text-400"
+                placeholder={`${t("search")}...`}
+                value={searchQuery}
+                autoFocus
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <MemberListFiltersDropdown
+              appliedFilters={appliedRoleFilters}
+              handleUpdate={handleRoleFilterUpdate}
+              memberType="workspace"
             />
+            {canPerformWorkspaceAdminActions && (
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => setInviteModal(true)}
+                data-ph-element={MEMBER_TRACKER_ELEMENTS.HEADER_ADD_BUTTON}
+              >
+                {t("workspace_settings.settings.members.add_member")}
+              </Button>
+            )}
+            <BillingActionsButton canPerformWorkspaceAdminActions={canPerformWorkspaceAdminActions} />
           </div>
-          {canPerformWorkspaceAdminActions && (
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => setInviteModal(true)}
-              data-ph-element={MEMBER_TRACKER_ELEMENTS.HEADER_ADD_BUTTON}
-            >
-              {t("workspace_settings.settings.members.add_member")}
-            </Button>
-          )}
-          <BillingActionsButton canPerformWorkspaceAdminActions={canPerformWorkspaceAdminActions} />
         </div>
         <WorkspaceMembersList searchQuery={searchQuery} isAdmin={canPerformWorkspaceAdminActions} />
       </section>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default WorkspaceMembersSettingsPage;
+export default observer(WorkspaceMembersSettingsPage);

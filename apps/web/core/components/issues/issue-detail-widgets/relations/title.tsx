@@ -1,15 +1,16 @@
-"use client";
-import React, { FC, useMemo } from "react";
+import type { FC } from "react";
+import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { EIssueServiceType, TIssueServiceType } from "@plane/types";
+import type { TIssueServiceType } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 import { CollapsibleButton } from "@plane/ui";
-// components
-import { RelationActionButton } from "@/components/issues/issue-detail-widgets";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // Plane-web
 import { useTimeLineRelationOptions } from "@/plane-web/components/relations";
+// local imports
+import { RelationActionButton } from "./quick-action-button";
 
 type Props = {
   isOpen: boolean;
@@ -18,7 +19,7 @@ type Props = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const RelationsCollapsibleTitle: FC<Props> = observer((props) => {
+export const RelationsCollapsibleTitle = observer(function RelationsCollapsibleTitle(props: Props) {
   const { isOpen, issueId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
   const { t } = useTranslation();
   // store hook

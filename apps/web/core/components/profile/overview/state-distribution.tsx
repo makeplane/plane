@@ -2,21 +2,17 @@
 import { STATE_GROUPS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { PieChart } from "@plane/propel/charts/pie-chart";
-import { IUserProfileData, IUserStateDistribution } from "@plane/types";
-// ui
+import { EmptyStateCompact } from "@plane/propel/empty-state";
+import type { IUserProfileData, IUserStateDistribution } from "@plane/types";
 import { Card } from "@plane/ui";
 import { capitalizeFirstLetter } from "@plane/utils";
-import { ProfileEmptyState } from "@/components/ui";
-// helpers
-// image
-import stateGraph from "@/public/empty-state/state_graph.svg";
 
 type Props = {
   stateDistribution: IUserStateDistribution[];
   userProfile: IUserProfileData | undefined;
 };
 
-export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, userProfile }) => {
+export function ProfileStateDistribution({ stateDistribution, userProfile }: Props) {
   const { t } = useTranslation();
   if (!userProfile) return null;
 
@@ -75,13 +71,13 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
             </div>
           </div>
         ) : (
-          <ProfileEmptyState
-            title={t("no_data_yet")}
-            description={t("profile.stats.state_distribution.empty")}
-            image={stateGraph}
+          <EmptyStateCompact
+            assetKey="priority"
+            assetClassName="size-20"
+            title={t("workspace_empty_state.your_work_by_priority.title")}
           />
         )}
       </Card>
     </div>
   );
-};
+}

@@ -1,8 +1,9 @@
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 // plane utils
 import { calculateTimeAgo, cn, getIconForLink } from "@plane/utils";
 // plane ui
-import { TContextMenuItem } from "../dropdowns/context-menu/root";
+import type { TContextMenuItem } from "../dropdowns/context-menu/root";
 import { CustomMenu } from "../dropdowns/custom-menu";
 
 export type TLinkItemBlockProps = {
@@ -13,7 +14,7 @@ export type TLinkItemBlockProps = {
   onClick?: () => void;
 };
 
-export const LinkItemBlock: FC<TLinkItemBlockProps> = (props) => {
+export function LinkItemBlock(props: TLinkItemBlockProps) {
   // props
   const { title, url, createdAt, menuItems, onClick } = props;
   // icons
@@ -66,4 +67,4 @@ export const LinkItemBlock: FC<TLinkItemBlockProps> = (props) => {
       )}
     </div>
   );
-};
+}

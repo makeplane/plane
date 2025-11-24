@@ -1,8 +1,8 @@
-import { ColumnDef, Row, Table } from "@tanstack/react-table";
+import type { ColumnDef, Row, Table } from "@tanstack/react-table";
 import { Download } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { AnalyticsTableDataMap, TAnalyticsTabsBase } from "@plane/types";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import type { AnalyticsTableDataMap, TAnalyticsTabsBase } from "@plane/types";
 import { DataTable } from "./data-table";
 import { TableLoader } from "./loader";
 interface InsightTableProps<T extends Exclude<TAnalyticsTabsBase, "overview">> {
@@ -15,9 +15,9 @@ interface InsightTableProps<T extends Exclude<TAnalyticsTabsBase, "overview">> {
   onExport?: (rows: Row<AnalyticsTableDataMap[T]>[]) => void;
 }
 
-export const InsightTable = <T extends Exclude<TAnalyticsTabsBase, "overview">>(
+export function InsightTable<T extends Exclude<TAnalyticsTabsBase, "overview">>(
   props: InsightTableProps<T>
-): React.ReactElement => {
+): React.ReactElement {
   const { data, isLoading, columns, headerText, onExport } = props;
   const { t } = useTranslation();
   if (isLoading) {
@@ -42,4 +42,4 @@ export const InsightTable = <T extends Exclude<TAnalyticsTabsBase, "overview">>(
       />
     </div>
   );
-};
+}

@@ -1,7 +1,7 @@
 // plane imports
-import { TEditorAsset } from "@plane/editor";
+import type { TEditorAsset } from "@plane/editor";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 export type TAdditionalPageNavigationPaneAssetItemProps = {
   asset: TEditorAsset;
@@ -10,4 +10,6 @@ export type TAdditionalPageNavigationPaneAssetItemProps = {
   page: TPageInstance;
 };
 
-export const AdditionalPageNavigationPaneAssetItem: React.FC<TAdditionalPageNavigationPaneAssetItemProps> = () => null;
+export function AdditionalPageNavigationPaneAssetItem(_props: TAdditionalPageNavigationPaneAssetItemProps) {
+  return null;
+}

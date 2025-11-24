@@ -1,12 +1,12 @@
-"use client";
-
-import { FC } from "react";
+import type { FC } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { IWebhook } from "@plane/types";
+import { WORKSPACE_SETTINGS_TRACKER_ELEMENTS, WORKSPACE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
+import type { IWebhook } from "@plane/types";
 // hooks
 import { ToggleSwitch } from "@plane/ui";
-import { useWebhook } from "@/hooks/store";
+import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
+import { useWebhook } from "@/hooks/store/use-webhook";
 // ui
 // types
 
@@ -14,7 +14,7 @@ interface IWebhookListItem {
   webhook: IWebhook;
 }
 
-export const WebhooksListItem: FC<IWebhookListItem> = (props) => {
+export function WebhooksListItem(props: IWebhookListItem) {
   const { webhook } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -23,8 +23,35 @@ export const WebhooksListItem: FC<IWebhookListItem> = (props) => {
 
   const handleToggle = () => {
     if (!workspaceSlug || !webhook.id) return;
-
-    updateWebhook(workspaceSlug.toString(), webhook.id, { is_active: !webhook.is_active });
+    updateWebhook(workspaceSlug.toString(), webhook.id, { is_active: !webhook.is_active })
+      .then(() => {
+        captureElementAndEvent({
+          element: {
+            elementName: WORKSPACE_SETTINGS_TRACKER_ELEMENTS.WEBHOOK_LIST_ITEM_TOGGLE_SWITCH,
+          },
+          event: {
+            eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_toggled,
+            state: "SUCCESS",
+            payload: {
+              webhook: webhook.url,
+            },
+          },
+        });
+      })
+      .catch(() => {
+        captureElementAndEvent({
+          element: {
+            elementName: WORKSPACE_SETTINGS_TRACKER_ELEMENTS.WEBHOOK_LIST_ITEM_TOGGLE_SWITCH,
+          },
+          event: {
+            eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.webhook_toggled,
+            state: "ERROR",
+            payload: {
+              webhook: webhook.url,
+            },
+          },
+        });
+      });
   };
 
   return (
@@ -37,4 +64,4 @@ export const WebhooksListItem: FC<IWebhookListItem> = (props) => {
       </Link>
     </div>
   );
-};
+}

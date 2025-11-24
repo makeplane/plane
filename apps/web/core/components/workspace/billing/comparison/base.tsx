@@ -1,10 +1,11 @@
 import { observer } from "mobx-react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 // plane imports
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 // constants
-import { ComingSoonBadge, PLANE_PLANS, PLANS_LIST, TPlanePlans } from "@/constants/plans";
+import type { TPlanePlans } from "@/constants/plans";
+import { ComingSoonBadge, PLANE_PLANS, PLANS_LIST } from "@/constants/plans";
 // local imports
 import { PlanFeatureDetail } from "./feature-detail";
 
@@ -23,7 +24,7 @@ export const shouldRenderPlanDetail = (planKey: TPlanePlans) => {
   return true;
 };
 
-export const PlansComparisonBase = observer((props: TPlansComparisonBaseProps) => {
+export const PlansComparisonBase = observer(function PlansComparisonBase(props: TPlansComparisonBaseProps) {
   const { planeDetails, isSelfManaged, isCompareAllFeaturesSectionOpen, setIsCompareAllFeaturesSectionOpen } = props;
   // plan details
   const { planDetails, planHighlights, planComparison } = PLANE_PLANS;

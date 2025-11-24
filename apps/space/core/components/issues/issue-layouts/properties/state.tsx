@@ -1,18 +1,17 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane ui
-import { StateGroupIcon, Tooltip } from "@plane/ui";
+import { StateGroupIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 // plane utils
 import { cn } from "@plane/utils";
 //hooks
-import { useStates } from "@/hooks/store";
+import { useStates } from "@/hooks/store/use-state";
 
 type Props = {
   stateId: string | undefined;
   shouldShowBorder?: boolean;
 };
-export const IssueBlockState = observer(({ stateId, shouldShowBorder = true }: Props) => {
+export const IssueBlockState = observer(function IssueBlockState({ stateId, shouldShowBorder = true }: Props) {
   const { getStateById } = useStates();
 
   const state = getStateById(stateId);

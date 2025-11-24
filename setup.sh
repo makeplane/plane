@@ -77,10 +77,10 @@ else
     success=false
 fi
 
-# Activate Yarn (version set in package.json)
-corepack enable yarn || success=false
+# Activate pnpm (version set in package.json)
+corepack enable pnpm || success=false
 # Install Node dependencies
-yarn install || success=false
+pnpm install || success=false
 
 # Summary
 echo -e "\n${YELLOW}Setup status:${NC}"

@@ -107,6 +107,7 @@ from .asset.v2 import (
     ProjectAssetEndpoint,
     ProjectBulkAssetEndpoint,
     AssetCheckEndpoint,
+    DuplicateAssetEndpoint,
     WorkspaceAssetDownloadEndpoint,
     ProjectAssetDownloadEndpoint,
 )
@@ -165,8 +166,6 @@ from .api import ApiTokenEndpoint, ServiceApiTokenEndpoint
 from .page.base import (
     PageViewSet,
     PageFavoriteViewSet,
-    PageLogEndpoint,
-    SubPagesEndpoint,
     PagesDescriptionViewSet,
     PageDuplicateEndpoint,
 )

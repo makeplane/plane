@@ -1,9 +1,7 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 // hooks
-import { TInstanceAuthenticationMethodKeys } from "@plane/types";
+import type { TInstanceAuthenticationMethodKeys } from "@plane/types";
 import { ToggleSwitch } from "@plane/ui";
 import { useInstance } from "@/hooks/store";
 // ui
@@ -14,7 +12,7 @@ type Props = {
   updateConfig: (key: TInstanceAuthenticationMethodKeys, value: string) => void;
 };
 
-export const PasswordLoginConfiguration: React.FC<Props> = observer((props) => {
+export const PasswordLoginConfiguration = observer(function PasswordLoginConfiguration(props: Props) {
   const { disabled, updateConfig } = props;
   // store
   const { formattedConfig } = useInstance();
@@ -25,9 +23,8 @@ export const PasswordLoginConfiguration: React.FC<Props> = observer((props) => {
     <ToggleSwitch
       value={Boolean(parseInt(enableEmailPassword))}
       onChange={() => {
-        Boolean(parseInt(enableEmailPassword)) === true
-          ? updateConfig("ENABLE_EMAIL_PASSWORD", "0")
-          : updateConfig("ENABLE_EMAIL_PASSWORD", "1");
+        const newEnableEmailPassword = Boolean(parseInt(enableEmailPassword)) === true ? "0" : "1";
+        updateConfig("ENABLE_EMAIL_PASSWORD", newEnableEmailPassword);
       }}
       size="sm"
       disabled={disabled}

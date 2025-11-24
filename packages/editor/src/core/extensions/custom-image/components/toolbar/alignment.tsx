@@ -1,7 +1,7 @@
-import { ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/ui";
 // local imports
 import type { TCustomImageAlignment } from "../../types";
@@ -10,11 +10,12 @@ import { IMAGE_ALIGNMENT_OPTIONS } from "../../utils";
 type Props = {
   activeAlignment: TCustomImageAlignment;
   handleChange: (alignment: TCustomImageAlignment) => void;
+  isTouchDevice: boolean;
   toggleToolbarViewStatus: (val: boolean) => void;
 };
 
-export const ImageAlignmentAction: React.FC<Props> = (props) => {
-  const { activeAlignment, handleChange, toggleToolbarViewStatus } = props;
+export function ImageAlignmentAction(props: Props) {
+  const { activeAlignment, handleChange, isTouchDevice, toggleToolbarViewStatus } = props;
   // states
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   // refs
@@ -30,20 +31,20 @@ export const ImageAlignmentAction: React.FC<Props> = (props) => {
 
   return (
     <div ref={dropdownRef} className="h-full relative">
-      <Tooltip tooltipContent="Align">
+      <Tooltip disabled={isTouchDevice} tooltipContent="Align">
         <button
           type="button"
           className="h-full flex items-center gap-1 text-white/60 hover:text-white transition-colors"
           onClick={() => setIsDropdownOpen((prev) => !prev)}
         >
           {activeAlignmentDetails && <activeAlignmentDetails.icon className="flex-shrink-0 size-3" />}
-          <ChevronDown className="flex-shrink-0 size-2" />
+          <ChevronDownIcon className="flex-shrink-0 size-2" />
         </button>
       </Tooltip>
       {isDropdownOpen && (
         <div className="absolute top-full left-1/2 -translate-x-1/2 mt-0.5 h-7 bg-black/80 flex items-center gap-2 px-2 rounded">
           {IMAGE_ALIGNMENT_OPTIONS.map((option) => (
-            <Tooltip key={option.value} tooltipContent={option.label}>
+            <Tooltip disabled={isTouchDevice} key={option.value} tooltipContent={option.label}>
               <button
                 type="button"
                 className="flex-shrink-0 h-full grid place-items-center text-white/60 hover:text-white transition-colors"
@@ -60,4 +61,4 @@ export const ImageAlignmentAction: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+}

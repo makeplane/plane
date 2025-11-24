@@ -1,36 +1,40 @@
-"use client";
-
-import { Dispatch, SetStateAction, useEffect, useMemo, useRef } from "react";
+import type { Dispatch, SetStateAction } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
-import { EditorRefApi } from "@plane/editor";
-import { EInboxIssueSource, TIssue, TNameDescriptionLoader } from "@plane/types";
-import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
-// components
+import type { EditorRefApi } from "@plane/editor";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TIssue, TNameDescriptionLoader } from "@plane/types";
+import { EFileAssetType, EInboxIssueSource } from "@plane/types";
 import { getTextContent } from "@plane/utils";
+// components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
-import { InboxIssueContentProperties } from "@/components/inbox/content";
-import {
-  IssueDescriptionInput,
-  IssueTitleInput,
-  IssueActivity,
-  IssueReaction,
-  TIssueOperations,
-  IssueAttachmentRoot,
-} from "@/components/issues";
+import { DescriptionInput } from "@/components/editor/rich-text/description-input";
+import { DescriptionInputLoader } from "@/components/editor/rich-text/description-input/loader";
+import { IssueAttachmentRoot } from "@/components/issues/attachment";
+import type { TIssueOperations } from "@/components/issues/issue-detail";
+import { IssueActivity } from "@/components/issues/issue-detail/issue-activity";
+import { IssueReaction } from "@/components/issues/issue-detail/reactions";
+import { IssueTitleInput } from "@/components/issues/title-input";
 // helpers
-// hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useIssueDetail, useMember, useProject, useProjectInbox, useUser } from "@/hooks/store";
+// hooks
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useMember } from "@/hooks/store/use-member";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
+import { useUser } from "@/hooks/store/user";
 import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 // store types
-import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe";
+import { DeDupeIssuePopoverRoot } from "@/plane-web/components/de-dupe/duplicate-popover";
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
 // services
 import { IntakeWorkItemVersionService } from "@/services/inbox";
 // stores
-import { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
+import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
+// local imports
+import { InboxIssueContentProperties } from "./issue-properties";
 // services init
 const intakeWorkItemVersionService = new IntakeWorkItemVersionService();
 
@@ -43,7 +47,7 @@ type Props = {
   setIsSubmitting: Dispatch<SetStateAction<TNameDescriptionLoader>>;
 };
 
-export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
+export const InboxIssueMainContent = observer(function InboxIssueMainContent(props: Props) {
   const { workspaceSlug, projectId, inboxIssue, isEditable, isSubmitting, setIsSubmitting } = props;
   // refs
   const editorRef = useRef<EditorRefApi>(null);
@@ -82,8 +86,6 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
       issueId: issue?.id,
     }
   );
-
-  if (!issue) return <></>;
 
   const issueOperations: TIssueOperations = useMemo(
     () => ({
@@ -146,7 +148,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
             payload: { id: issueId },
           });
         } catch (error) {
-          console.log("Error in archiving issue:", error);
+          console.error("Error in archiving issue:", error);
           captureError({
             eventName: WORK_ITEM_TRACKER_EVENTS.archive,
             payload: { id: issueId },
@@ -157,6 +159,8 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
     }),
     [inboxIssue]
   );
+
+  if (!issue) return <></>;
 
   if (!issue?.project_id || !issue?.id) return <></>;
 
@@ -185,22 +189,27 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           containerClassName="-ml-3"
         />
 
-        {loader === "issue-loading" ? (
-          <Loader className="min-h-[6rem] rounded-md border border-custom-border-200">
-            <Loader.Item width="100%" height="140px" />
-          </Loader>
+        {loader === "issue-loading" || issue.description_html === undefined ? (
+          <DescriptionInputLoader />
         ) : (
-          <IssueDescriptionInput
-            editorRef={editorRef}
-            workspaceSlug={workspaceSlug}
-            projectId={issue.project_id}
-            issueId={issue.id}
-            swrIssueDescription={issue.description_html ?? "<p></p>"}
-            initialValue={issue.description_html ?? "<p></p>"}
-            disabled={!isEditable}
-            issueOperations={issueOperations}
-            setIsSubmitting={(value) => setIsSubmitting(value)}
+          <DescriptionInput
+            issueSequenceId={issue.sequence_id}
             containerClassName="-ml-3 border-none"
+            disabled={!isEditable}
+            editorRef={editorRef}
+            entityId={issue.id}
+            fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
+            initialValue={issue.description_html ?? "<p></p>"}
+            onSubmit={async (value) => {
+              if (!issue.id || !issue.project_id) return;
+              await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
+                description_html: value,
+              });
+            }}
+            projectId={issue.project_id}
+            setIsSubmitting={(value) => setIsSubmitting(value)}
+            swrDescription={issue.description_html ?? "<p></p>"}
+            workspaceSlug={workspaceSlug}
           />
         )}
 

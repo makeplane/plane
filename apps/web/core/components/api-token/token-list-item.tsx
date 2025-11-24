@@ -1,22 +1,20 @@
-"use client";
-
 import { useState } from "react";
 import { XCircle } from "lucide-react";
-import { IApiToken } from "@plane/types";
-// components
-import { Tooltip } from "@plane/ui";
+// plane imports
+import { PROFILE_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { IApiToken } from "@plane/types";
 import { renderFormattedDate, calculateTimeAgo, renderFormattedTime } from "@plane/utils";
-import { DeleteApiTokenModal } from "@/components/api-token";
+// components
+import { DeleteApiTokenModal } from "@/components/api-token/delete-token-modal";
+// hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// ui
-// helpers
-// types
 
 type Props = {
   token: IApiToken;
 };
 
-export const ApiTokenListItem: React.FC<Props> = (props) => {
+export function ApiTokenListItem(props: Props) {
   const { token } = props;
   // states
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -31,6 +29,7 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
           <button
             onClick={() => setDeleteModalOpen(true)}
             className="absolute right-4 hidden place-items-center group-hover:grid"
+            data-ph-element={PROFILE_SETTINGS_TRACKER_ELEMENTS.LIST_ITEM_DELETE_ICON}
           >
             <XCircle className="h-4 w-4 text-red-500" />
           </button>
@@ -60,4 +59,4 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

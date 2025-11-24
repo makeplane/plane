@@ -1,13 +1,12 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
-// ui
+// plane imports
 import { Loader } from "@plane/ui";
-// components
-import { CycleAnalyticsProgress, CycleSidebarHeader, CycleSidebarDetails } from "@/components/cycles";
-// hooks
+// local imports
 import useCyclesDetails from "../active-cycle/use-cycles-details";
+import { CycleAnalyticsProgress } from "./issue-progress";
+import { CycleSidebarDetails } from "./sidebar-details";
+import { CycleSidebarHeader } from "./sidebar-header";
 
 type Props = {
   handleClose: () => void;
@@ -17,7 +16,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
+export const CycleDetailsSidebar = observer(function CycleDetailsSidebar(props: Props) {
   const { handleClose, isArchived, projectId, workspaceSlug, cycleId } = props;
 
   // store hooks

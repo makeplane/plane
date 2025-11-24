@@ -1,7 +1,9 @@
-import { IWorkspace } from "@plane/types";
+import type { IWorkspace } from "@plane/types";
 
 type TProps = {
   workspace?: IWorkspace;
 };
 
-export const SubscriptionPill = (props: TProps) => <></>;
+export function SubscriptionPill(props: TProps) {
+  return <></>;
+}

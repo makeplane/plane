@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { CircleArrowUp, CornerDownRight, RefreshCcw, Sparkles } from "lucide-react";
 // ui
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // components
 import { cn } from "@plane/utils";
-import { RichTextEditor } from "@/components/editor";
+import { RichTextEditor } from "@/components/editor/rich-text";
 // helpers
 // hooks
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 type Props = {
   handleInsertText: (insertOnNextLine: boolean) => void;
@@ -17,7 +17,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const AskPiMenu: React.FC<Props> = (props) => {
+export function AskPiMenu(props: Props) {
   const { handleInsertText, handleRegenerate, isRegenerating, response, workspaceSlug } = props;
   // states
   const [query, setQuery] = useState("");
@@ -110,4 +110,4 @@ export const AskPiMenu: React.FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

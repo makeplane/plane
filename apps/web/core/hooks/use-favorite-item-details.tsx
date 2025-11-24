@@ -1,5 +1,5 @@
 // plane imports
-import { IFavorite } from "@plane/types";
+import type { IFavorite } from "@plane/types";
 // components
 import { getPageName } from "@plane/utils";
 import {
@@ -8,7 +8,10 @@ import {
 } from "@/components/workspace/sidebar/favorites/favorite-items/common";
 // helpers
 // hooks
-import { useProject, useProjectView, useCycle, useModule } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
+import { useModule } from "@/hooks/store/use-module";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectView } from "@/hooks/store/use-project-view";
 // plane web hooks
 import { EPageStoreType, usePage } from "@/plane-web/hooks/store";
 import { useAdditionalFavoriteItemDetails } from "@/plane-web/hooks/use-additional-favorite-item-details";

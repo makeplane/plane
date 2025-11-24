@@ -4,14 +4,14 @@ import { getOrderedDays } from "@plane/utils";
 import { DAYS_LIST } from "@/constants/calendar";
 // helpers
 // hooks
-import { useUserProfile } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store/user";
 
 type Props = {
   isLoading: boolean;
   showWeekends: boolean;
 };
 
-export const CalendarWeekHeader: React.FC<Props> = observer((props) => {
+export const CalendarWeekHeader = observer(function CalendarWeekHeader(props: Props) {
   const { isLoading, showWeekends } = props;
   // hooks
   const { data } = useUserProfile();

@@ -1,7 +1,7 @@
-"use client";
 import * as RadixScrollArea from "@radix-ui/react-scroll-area";
-import React, { FC } from "react";
-import { cn } from "../helpers";
+import type { FC } from "react";
+import React from "react";
+import { cn } from "./utils";
 
 type TScrollAreaProps = {
   type?: "auto" | "always" | "scroll" | "hover";
@@ -23,7 +23,7 @@ const thumbSizeStyles = {
   lg: "before:absolute before:left-1/2 before:top-1/2 before:size-full before:min-h-17 before:min-w-17 before:-translate-x-1/2 before:-translate-y-1/2",
 };
 
-export const ScrollArea: FC<TScrollAreaProps> = (props) => {
+export function ScrollArea(props: TScrollAreaProps) {
   const { type = "always", className = "", scrollHideDelay = 600, size = "md", children } = props;
 
   return (
@@ -63,4 +63,4 @@ export const ScrollArea: FC<TScrollAreaProps> = (props) => {
       </RadixScrollArea.Scrollbar>
     </RadixScrollArea.Root>
   );
-};
+}

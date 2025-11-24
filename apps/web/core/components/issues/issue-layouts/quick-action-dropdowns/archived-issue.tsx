@@ -1,25 +1,23 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
 import { EUserPermissions, EUserPermissionsLevel, WORK_ITEM_TRACKER_ELEMENTS } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
-import { ContextMenu, CustomMenu, TContextMenuItem } from "@plane/ui";
+import type { TContextMenuItem } from "@plane/ui";
+import { ContextMenu, CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
-// components
-import { DeleteIssueModal } from "@/components/issues";
-// helpers
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { useIssues, useUserPermissions } from "@/hooks/store";
-// types
-import { IQuickActionProps } from "../list/list-view-types";
-// helper
-import { useArchivedIssueMenuItems, MenuItemFactoryProps } from "./helper";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useUserPermissions } from "@/hooks/store/user";
+// local imports
+import { DeleteIssueModal } from "../../delete-issue-modal";
+import type { IQuickActionProps } from "../list/list-view-types";
+import type { MenuItemFactoryProps } from "./helper";
+import { useArchivedIssueMenuItems } from "./helper";
 
-export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = observer((props) => {
+export const ArchivedIssueQuickActions = observer(function ArchivedIssueQuickActions(props: IQuickActionProps) {
   const {
     issue,
     handleDelete,
@@ -63,13 +61,16 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = observer((
 
   const MENU_ITEMS = useArchivedIssueMenuItems(menuItemProps);
 
-  const CONTEXT_MENU_ITEMS: TContextMenuItem[] = MENU_ITEMS.map((item) => ({
-    ...item,
-    onClick: () => {
-      captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.ARCHIVED });
-      item.action();
-    },
-  }));
+  const CONTEXT_MENU_ITEMS = MENU_ITEMS.map(function CONTEXT_MENU_ITEMS(item) {
+    return {
+      ...item,
+
+      onClick: () => {
+        captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.ARCHIVED });
+        item.action();
+      },
+    };
+  });
   return (
     <>
       {/* Modals */}
@@ -96,9 +97,7 @@ export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = observer((
           return (
             <CustomMenu.MenuItem
               key={item.key}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
+              onClick={() => {
                 item.action();
                 captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.QUICK_ACTIONS.ARCHIVED });
               }}

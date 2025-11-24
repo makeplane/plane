@@ -1,6 +1,4 @@
-"use client";
-
-import { FC, Fragment } from "react";
+import { Fragment } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
@@ -9,13 +7,15 @@ import { AlertTriangleIcon } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // types
 import { MEMBER_TRACKER_EVENTS } from "@plane/constants";
-import { IProject } from "@plane/types";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IProject } from "@plane/types";
 // ui
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { Input } from "@plane/ui";
 // constants
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useUserPermissions } from "@/hooks/store";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type FormData = {
@@ -34,7 +34,7 @@ export interface ILeaveProjectModal {
   onClose: () => void;
 }
 
-export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
+export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILeaveProjectModal) {
   const { project, isOpen, onClose } = props;
   // router
   const router = useAppRouter();

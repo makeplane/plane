@@ -1,18 +1,17 @@
-"use client";
-
 import React, { useMemo, useState } from "react";
-import sortBy from "lodash/sortBy";
+import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
-import { IIssueLabel } from "@plane/types";
+import type { IIssueLabel } from "@plane/types";
 // components
 import { Loader } from "@plane/ui";
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
+
 // ui
 // types
 
-const LabelIcons = ({ color }: { color: string }) => (
-  <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />
-);
+function LabelIcons({ color }: { color: string }) {
+  return <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />;
+}
 
 type Props = {
   appliedFilters: string[] | null;
@@ -21,7 +20,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterLabels: React.FC<Props> = observer((props) => {
+export const FilterLabels = observer(function FilterLabels(props: Props) {
   const { appliedFilters, handleUpdate, labels, searchQuery } = props;
 
   const [itemsToRender, setItemsToRender] = useState(5);

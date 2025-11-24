@@ -1,21 +1,23 @@
-"use client";
-
 import React, { Fragment, useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
-import { ChevronDown, CirclePlus, LogOut, Mails } from "lucide-react";
+import { CirclePlus, LogOut, Mails } from "lucide-react";
 // ui
 import { Menu, Transition } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { IWorkspace } from "@plane/types";
-import { Loader, TOAST_TYPE, setToast } from "@plane/ui";
+import { ChevronDownIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IWorkspace } from "@plane/types";
+import { Loader } from "@plane/ui";
 import { orderWorkspacesList, cn } from "@plane/utils";
 // helpers
-import { AppSidebarItem } from "@/components/sidebar";
+import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 // hooks
-import { useAppTheme, useUser, useUserProfile, useWorkspace } from "@/hooks/store";
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser, useUserProfile } from "@/hooks/store/user";
 // plane web helpers
 import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
 // components
@@ -26,7 +28,7 @@ type WorkspaceMenuRootProps = {
   renderLogoOnly?: boolean;
 };
 
-export const WorkspaceMenuRoot = observer((props: WorkspaceMenuRootProps) => {
+export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: WorkspaceMenuRootProps) {
   const { renderLogoOnly } = props;
   // store hooks
   const { toggleSidebar, toggleAnySidebarDropdown } = useAppTheme();
@@ -66,9 +68,6 @@ export const WorkspaceMenuRoot = observer((props: WorkspaceMenuRootProps) => {
     if (isWorkspaceMenuOpen) toggleAnySidebarDropdown(true);
     else toggleAnySidebarDropdown(false);
   }, [isWorkspaceMenuOpen]);
-
-  const logo = activeWorkspace?.logo_url;
-  const name = activeWorkspace?.name;
 
   return (
     <Menu
@@ -118,7 +117,7 @@ export const WorkspaceMenuRoot = observer((props: WorkspaceMenuRootProps) => {
                     {activeWorkspace?.name ?? t("loading")}
                   </h4>
                 </div>
-                <ChevronDown
+                <ChevronDownIcon
                   className={cn(
                     "flex-shrink-0 mx-1 hidden size-4 group-hover/menu-button:block text-custom-sidebar-text-400 duration-300",
                     { "rotate-180": open }

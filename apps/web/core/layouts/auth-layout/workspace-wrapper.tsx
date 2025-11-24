@@ -1,42 +1,48 @@
-"use client";
-
-import { FC, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useTheme } from "next-themes";
 import useSWR from "swr";
-import useSWRImmutable from "swr/immutable";
 // ui
 import { LogOut } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { Button, getButtonStyling, setToast, TOAST_TYPE, Tooltip } from "@plane/ui";
-// components
+import { Button, getButtonStyling } from "@plane/propel/button";
+import { PlaneLogo } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
-import { LogoSpinner } from "@/components/common";
+// assets
+import WorkSpaceNotAvailable from "@/app/assets/workspace/workspace-not-available.png?url";
+// components
+import { LogoSpinner } from "@/components/common/logo-spinner";
+// constants
+import {
+  WORKSPACE_MEMBERS,
+  WORKSPACE_PARTIAL_PROJECTS,
+  WORKSPACE_MEMBER_ME_INFORMATION,
+  WORKSPACE_PROJECTS_ROLES_INFORMATION,
+  WORKSPACE_FAVORITE,
+  WORKSPACE_STATES,
+  WORKSPACE_SIDEBAR_PREFERENCES,
+} from "@/constants/fetch-keys";
 // hooks
-import { useMember, useProject, useProjectState, useUser, useUserPermissions, useWorkspace } from "@/hooks/store";
 import { useFavorite } from "@/hooks/store/use-favorite";
+import { useMember } from "@/hooks/store/use-member";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// local
-import { persistence } from "@/local-db/storage.sqlite";
-// images
-import PlaneBlackLogo from "@/public/plane-logos/black-horizontal-with-blue-logo.png";
-import PlaneWhiteLogo from "@/public/plane-logos/white-horizontal-with-blue-logo.png";
-import WorkSpaceNotAvailable from "@/public/workspace/workspace-not-available.png";
 
 interface IWorkspaceAuthWrapper {
   children: ReactNode;
   isLoading?: boolean;
 }
 
-export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
+export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props: IWorkspaceAuthWrapper) {
   const { children, isLoading: isParentLoading = false } = props;
   // router params
   const { workspaceSlug } = useParams();
-  // next themes
-  const { resolvedTheme } = useTheme();
   // store hooks
   const { signOut, data: currentUser } = useUser();
   const { fetchPartialProjects } = useProject();
@@ -54,7 +60,6 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-  const planeLogo = resolvedTheme === "dark" ? PlaneWhiteLogo : PlaneBlackLogo;
   const allWorkspaces = workspaces ? Object.values(workspaces) : undefined;
   const currentWorkspace =
     (allWorkspaces && allWorkspaces.find((workspace) => workspace?.slug === workspaceSlug)) || undefined;
@@ -62,32 +67,32 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
 
   // fetching user workspace information
   useSWR(
-    workspaceSlug && currentWorkspace ? `WORKSPACE_MEMBER_ME_INFORMATION_${workspaceSlug}` : null,
+    workspaceSlug && currentWorkspace ? WORKSPACE_MEMBER_ME_INFORMATION(workspaceSlug.toString()) : null,
     workspaceSlug && currentWorkspace ? () => fetchUserWorkspaceInfo(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   useSWR(
-    workspaceSlug && currentWorkspace ? `WORKSPACE_PROJECTS_ROLES_INFORMATION_${workspaceSlug}` : null,
+    workspaceSlug && currentWorkspace ? WORKSPACE_PROJECTS_ROLES_INFORMATION(workspaceSlug.toString()) : null,
     workspaceSlug && currentWorkspace ? () => fetchUserProjectPermissions(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // fetching workspace projects
   useSWR(
-    workspaceSlug && currentWorkspace ? `WORKSPACE_PARTIAL_PROJECTS_${workspaceSlug}` : null,
+    workspaceSlug && currentWorkspace ? WORKSPACE_PARTIAL_PROJECTS(workspaceSlug.toString()) : null,
     workspaceSlug && currentWorkspace ? () => fetchPartialProjects(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetch workspace members
   useSWR(
-    workspaceSlug && currentWorkspace ? `WORKSPACE_MEMBERS_${workspaceSlug}` : null,
+    workspaceSlug && currentWorkspace ? WORKSPACE_MEMBERS(workspaceSlug.toString()) : null,
     workspaceSlug && currentWorkspace ? () => fetchWorkspaceMembers(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetch workspace favorite
   useSWR(
     workspaceSlug && currentWorkspace && canPerformWorkspaceMemberActions
-      ? `WORKSPACE_FAVORITE_${workspaceSlug}`
+      ? WORKSPACE_FAVORITE(workspaceSlug.toString())
       : null,
     workspaceSlug && currentWorkspace && canPerformWorkspaceMemberActions
       ? () => fetchFavorite(workspaceSlug.toString())
@@ -96,30 +101,16 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   );
   // fetch workspace states
   useSWR(
-    workspaceSlug ? `WORKSPACE_STATES_${workspaceSlug}` : null,
+    workspaceSlug ? WORKSPACE_STATES(workspaceSlug.toString()) : null,
     workspaceSlug ? () => fetchWorkspaceStates(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // fetch workspace sidebar preferences
   useSWR(
-    workspaceSlug ? `WORKSPACE_SIDEBAR_PREFERENCES_${workspaceSlug}` : null,
+    workspaceSlug ? WORKSPACE_SIDEBAR_PREFERENCES(workspaceSlug.toString()) : null,
     workspaceSlug ? () => fetchSidebarNavigationPreferences(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
-  );
-
-  // initialize the local database
-  const { isLoading: isDBInitializing } = useSWRImmutable(
-    workspaceSlug ? `WORKSPACE_DB_${workspaceSlug}` : null,
-    workspaceSlug
-      ? async () => {
-          // persistence.reset();
-          await persistence.initialize(workspaceSlug.toString());
-          // Load common data
-          persistence.syncWorkspace();
-          return true;
-        }
-      : null
   );
 
   const handleSignOut = async () => {
@@ -133,7 +124,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   };
 
   // if list of workspaces are not there then we have to render the spinner
-  if (isParentLoading || allWorkspaces === undefined || loader || isDBInitializing) {
+  if (isParentLoading || allWorkspaces === undefined || loader) {
     return (
       <div className="grid h-full place-items-center bg-custom-background-100 p-4 rounded-lg border border-custom-border-200">
         <div className="flex flex-col items-center gap-3 text-center">
@@ -150,7 +141,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
         <div className="container relative mx-auto flex h-full w-full flex-col overflow-hidden overflow-y-auto px-5 py-14 md:px-0">
           <div className="relative flex flex-shrink-0 items-center justify-between gap-4">
             <div className="z-10 flex-shrink-0 bg-custom-background-90 py-4">
-              <Image src={planeLogo} height={26} className="h-[26px]" alt="Plane logo" />
+              <PlaneLogo className="h-9 w-auto text-custom-text-100" />
             </div>
             <div className="relative flex items-center gap-2">
               <div className="text-sm font-medium">{currentUser?.email}</div>
@@ -166,7 +157,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
           </div>
           <div className="relative flex h-full w-full flex-grow flex-col items-center justify-center space-y-3">
             <div className="relative flex-shrink-0">
-              <Image src={WorkSpaceNotAvailable} className="h-[220px] object-contain object-center" alt="Plane logo" />
+              <img src={WorkSpaceNotAvailable} className="h-[220px] object-cover object-center" alt="Plane logo" />
             </div>
             <h3 className="text-center text-lg font-semibold">Workspace not found</h3>
             <p className="text-center text-sm text-custom-text-200">

@@ -1,9 +1,7 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 // editor
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 // ui
 import { TextArea } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
@@ -18,7 +16,7 @@ type Props = {
   updateTitle: (title: string) => void;
 };
 
-export const PageEditorTitle: React.FC<Props> = observer((props) => {
+export const PageEditorTitle = observer(function PageEditorTitle(props: Props) {
   const { editorRef, readOnly, title, updateTitle } = props;
   // states
   const [isLengthVisible, setIsLengthVisible] = useState(false);

@@ -1,16 +1,15 @@
-"use client";
-
 import { useMemo, useState } from "react";
-import sortBy from "lodash/sortBy";
+import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
 // plane ui
 import { Loader, Avatar } from "@plane/ui";
 // components
 import { getFileURL } from "@plane/utils";
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // helpers
 // hooks
-import { useMember, useUser } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useUser } from "@/hooks/store/user";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -19,7 +18,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterMentions: React.FC<Props> = observer((props: Props) => {
+export const FilterMentions = observer(function FilterMentions(props: Props) {
   const { appliedFilters, handleUpdate, memberIds, searchQuery } = props;
   // states
   const [itemsToRender, setItemsToRender] = useState(5);

@@ -1,12 +1,16 @@
-import { FC } from "react";
+import type { FC } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
+import { USER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
 import { ProductUpdatesFooter } from "@/components/global";
+// helpers
+import { captureView } from "@/helpers/event-tracker.helper";
 // hooks
-import { useInstance } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance";
 // plane web components
 import { ProductUpdatesHeader } from "@/plane-web/components/global";
 
@@ -15,10 +19,16 @@ export type ProductUpdatesModalProps = {
   handleClose: () => void;
 };
 
-export const ProductUpdatesModal: FC<ProductUpdatesModalProps> = observer((props) => {
+export const ProductUpdatesModal = observer(function ProductUpdatesModal(props: ProductUpdatesModalProps) {
   const { isOpen, handleClose } = props;
   const { t } = useTranslation();
   const { config } = useInstance();
+
+  useEffect(() => {
+    if (isOpen) {
+      captureView({ elementName: USER_TRACKER_ELEMENTS.PRODUCT_CHANGELOG_MODAL });
+    }
+  }, [isOpen]);
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXXXL}>
@@ -32,6 +42,7 @@ export const ProductUpdatesModal: FC<ProductUpdatesModalProps> = observer((props
             <div className="text-sm text-custom-text-200">
               {t("please_visit")}
               <a
+                data-ph-element={USER_TRACKER_ELEMENTS.CHANGELOG_REDIRECTED}
                 href="https://go.plane.so/p-changelog"
                 target="_blank"
                 className="text-sm text-custom-primary-100 font-medium hover:text-custom-primary-200 underline underline-offset-1 outline-none"

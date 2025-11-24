@@ -30,14 +30,10 @@ def recent_visited_task(entity_name, entity_identifier, user_id, project_id, slu
             except DatabaseError:
                 pass
         else:
-            recent_visited_count = UserRecentVisit.objects.filter(
-                user_id=user_id, workspace_id=workspace.id
-            ).count()
+            recent_visited_count = UserRecentVisit.objects.filter(user_id=user_id, workspace_id=workspace.id).count()
             if recent_visited_count == 20:
                 recent_visited = (
-                    UserRecentVisit.objects.filter(
-                        user_id=user_id, workspace_id=workspace.id
-                    )
+                    UserRecentVisit.objects.filter(user_id=user_id, workspace_id=workspace.id)
                     .order_by("created_at")
                     .first()
                 )

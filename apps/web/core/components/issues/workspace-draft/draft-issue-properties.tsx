@@ -1,29 +1,29 @@
-"use client";
-
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { CalendarCheck2, CalendarClock } from "lucide-react";
+import { DueDatePropertyIcon, StartDatePropertyIcon } from "@plane/propel/icons";
 // types
-import { TIssuePriorities, TWorkspaceDraftIssue } from "@plane/types";
+import type { TIssuePriorities, TWorkspaceDraftIssue } from "@plane/types";
 import { getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
-import {
-  DateDropdown,
-  EstimateDropdown,
-  PriorityDropdown,
-  MemberDropdown,
-  ModuleDropdown,
-  CycleDropdown,
-  StateDropdown,
-} from "@/components/dropdowns";
+import { CycleDropdown } from "@/components/dropdowns/cycle";
+import { DateDropdown } from "@/components/dropdowns/date";
+import { EstimateDropdown } from "@/components/dropdowns/estimate";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
+import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // helpers
 // hooks
-import { useLabel, useProjectState, useProject, useProjectEstimates, useWorkspaceDraftIssues } from "@/hooks/store";
+import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useLabel } from "@/hooks/store/use-label";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
+import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { IssuePropertyLabels } from "../issue-layouts/properties";
 // local components
-import { IssuePropertyLabels } from "../issue-layouts";
 
 export interface IIssueProperties {
   issue: TWorkspaceDraftIssue;
@@ -33,7 +33,7 @@ export interface IIssueProperties {
   className: string;
 }
 
-export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props) => {
+export const DraftIssueProperties = observer(function DraftIssueProperties(props: IIssueProperties) {
   const { issue, updateIssue, className } = props;
   // store hooks
   const { getProjectById } = useProject();
@@ -175,7 +175,7 @@ export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props)
           onChange={handleStartDate}
           maxDate={maxDate}
           placeholder="Start date"
-          icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
+          icon={<StartDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
           buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
           optionsClassName="z-10"
           renderByDefault={isMobile}
@@ -190,7 +190,7 @@ export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props)
           onChange={handleTargetDate}
           minDate={minDate}
           placeholder="Due date"
-          icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+          icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
           buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
           buttonClassName={
             shouldHighlightIssueDueDate(issue?.target_date || null, stateDetails?.group) ? "text-red-500" : ""

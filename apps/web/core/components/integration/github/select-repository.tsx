@@ -1,9 +1,7 @@
-"use client";
-
 import React from "react";
 import { useParams } from "next/navigation";
 import useSWRInfinite from "swr/infinite";
-import { IWorkspaceIntegration } from "@plane/types";
+import type { IWorkspaceIntegration } from "@plane/types";
 // services
 // ui
 import { CustomSearchSelect } from "@plane/ui";
@@ -15,14 +13,14 @@ import { ProjectService } from "@/services/project";
 type Props = {
   integration: IWorkspaceIntegration;
   value: any;
-  label: string | JSX.Element;
+  label: string | React.ReactNode;
   onChange: (repo: any) => void;
   characterLimit?: number;
 };
 
 const projectService = new ProjectService();
 
-export const SelectRepository: React.FC<Props> = (props) => {
+export function SelectRepository(props: Props) {
   const { integration, value, label, onChange, characterLimit = 25 } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -30,7 +28,7 @@ export const SelectRepository: React.FC<Props> = (props) => {
   const getKey = (pageIndex: number) => {
     if (!workspaceSlug || !integration) return;
 
-    return `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/workspaces/${workspaceSlug}/workspace-integrations/${
+    return `${process.env.VITE_API_BASE_URL}/api/workspaces/${workspaceSlug}/workspace-integrations/${
       integration.id
     }/github-repositories/?page=${++pageIndex}`;
   };
@@ -84,4 +82,4 @@ export const SelectRepository: React.FC<Props> = (props) => {
       optionsClassName="w-48"
     />
   );
-};
+}

@@ -5,10 +5,10 @@ import { observer } from "mobx-react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // components
-import { CalendarIssueBlock } from "@/components/issues";
-import { useIssueDetail } from "@/hooks/store";
-import { TRenderQuickActions } from "../list/list-view-types";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import type { TRenderQuickActions } from "../list/list-view-types";
 import { HIGHLIGHT_CLASS } from "../utils";
+import { CalendarIssueBlock } from "./issue-block";
 // types
 
 type Props = {
@@ -19,7 +19,7 @@ type Props = {
   canEditProperties: (projectId: string | undefined) => boolean;
 };
 
-export const CalendarIssueBlockRoot: React.FC<Props> = observer((props) => {
+export const CalendarIssueBlockRoot = observer(function CalendarIssueBlockRoot(props: Props) {
   const { issueId, quickActions, isDragDisabled, isEpic = false, canEditProperties } = props;
 
   const issueRef = useRef<HTMLAnchorElement | null>(null);

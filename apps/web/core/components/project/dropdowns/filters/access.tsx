@@ -4,8 +4,9 @@ import { observer } from "mobx-react";
 import { NETWORK_CHOICES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
-import { FilterHeader, FilterOption } from "@/components/issues";
-import { ProjectNetworkIcon } from "@/components/project";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
+// local imports
+import { ProjectNetworkIcon } from "../../project-network-icon";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -13,7 +14,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterAccess: React.FC<Props> = observer((props) => {
+export const FilterAccess = observer(function FilterAccess(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery } = props;
   // states
   const [previewEnabled, setPreviewEnabled] = useState(true);

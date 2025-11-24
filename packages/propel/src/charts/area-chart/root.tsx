@@ -1,16 +1,16 @@
-"use client";
-
 import React, { useMemo, useState } from "react";
 import { Area, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis, Line, ComposedChart, CartesianGrid } from "recharts";
 // plane imports
 import { AXIS_LABEL_CLASSNAME } from "@plane/constants";
-import { TAreaChartProps } from "@plane/types";
+import type { TAreaChartProps } from "@plane/types";
 // local components
 import { getLegendProps } from "../components/legend";
 import { CustomXAxisTick, CustomYAxisTick } from "../components/tick";
 import { CustomTooltip } from "../components/tooltip";
 
-export const AreaChart = React.memo(<K extends string, T extends string>(props: TAreaChartProps<K, T>) => {
+export const AreaChart = React.memo(function AreaChart<K extends string, T extends string>(
+  props: TAreaChartProps<K, T>
+) {
   const {
     data,
     areas,
@@ -23,6 +23,7 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
       x: undefined,
       y: 10,
     },
+    customTicks,
     showTooltip = true,
     comparisonLine,
   } = props;
@@ -98,7 +99,7 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
         comparisonLine: interpolatedValue,
       };
     });
-  }, [data, xAxis.key]);
+  }, [data, xAxis.key, yAxis.key]);
   return (
     <div className={className}>
       <ResponsiveContainer width="100%" height="100%">
@@ -114,7 +115,10 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
           <CartesianGrid stroke="rgba(var(--color-border-100), 0.8)" vertical={false} />
           <XAxis
             dataKey={xAxis.key}
-            tick={(props) => <CustomXAxisTick {...props} />}
+            tick={(props) => {
+              const TickComponent = customTicks?.x || CustomXAxisTick;
+              return <TickComponent {...props} />;
+            }}
             tickLine={false}
             axisLine={false}
             label={
@@ -140,7 +144,10 @@ export const AreaChart = React.memo(<K extends string, T extends string>(props: 
                 className: AXIS_LABEL_CLASSNAME,
               }
             }
-            tick={(props) => <CustomYAxisTick {...props} />}
+            tick={(props) => {
+              const TickComponent = customTicks?.y || CustomYAxisTick;
+              return <TickComponent {...props} />;
+            }}
             tickCount={tickCount.y}
             allowDecimals={!!yAxis.allowDecimals}
           />

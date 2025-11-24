@@ -1,11 +1,11 @@
-import { FC, MutableRefObject } from "react";
+import type { FC, MutableRefObject } from "react";
 // components
-import { TIssue, IIssueDisplayProperties, TIssueMap, TGroupedIssues } from "@plane/types";
-import { IssueBlockRoot } from "@/components/issues/issue-layouts/list";
+import type { TIssue, IIssueDisplayProperties, TIssueMap, TGroupedIssues } from "@plane/types";
 // hooks
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // types
-import { TRenderQuickActions } from "./list-view-types";
+import { IssueBlockRoot } from "./block-root";
+import type { TRenderQuickActions } from "./list-view-types";
 
 interface Props {
   issueIds: TGroupedIssues | any;
@@ -22,7 +22,7 @@ interface Props {
   isEpic?: boolean;
 }
 
-export const IssueBlocksList: FC<Props> = (props) => {
+export function IssueBlocksList(props: Props) {
   const {
     issueIds,
     issuesMap,
@@ -64,4 +64,4 @@ export const IssueBlocksList: FC<Props> = (props) => {
         ))}
     </div>
   );
-};
+}

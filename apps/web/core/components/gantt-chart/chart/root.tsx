@@ -1,5 +1,7 @@
-import { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
+import { createPortal } from "react-dom";
 // plane imports
 // components
 import type { ChartDataType, IBlockUpdateData, IBlockUpdateDependencyData, TGanttViews } from "@plane/types";
@@ -7,20 +9,13 @@ import { cn } from "@plane/utils";
 import { GanttChartHeader, GanttChartMainContent } from "@/components/gantt-chart";
 // helpers
 // hooks
-import { useUserProfile } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store/user";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 //
 import { SIDEBAR_WIDTH } from "../constants";
 import { currentViewDataWithView } from "../data";
-import {
-  getNumberOfDaysBetweenTwoDates,
-  IMonthBlock,
-  IMonthView,
-  IWeekBlock,
-  monthView,
-  quarterView,
-  weekView,
-} from "../views";
+import type { IMonthBlock, IMonthView, IWeekBlock } from "../views";
+import { getNumberOfDaysBetweenTwoDates, monthView, quarterView, weekView } from "../views";
 
 type ChartViewRootProps = {
   border: boolean;
@@ -42,7 +37,7 @@ type ChartViewRootProps = {
   loadMoreBlocks?: () => void;
   updateBlockDates?: (updates: IBlockUpdateDependencyData[]) => Promise<void>;
   canLoadMoreBlocks?: boolean;
-  quickAdd?: React.JSX.Element | undefined;
+  quickAdd?: React.ReactNode | undefined;
   showToday: boolean;
   isEpic?: boolean;
 };
@@ -53,7 +48,7 @@ const timelineViewHelpers = {
   quarter: quarterView,
 };
 
-export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
+export const ChartViewRoot = observer(function ChartViewRoot(props: ChartViewRootProps) {
   const {
     border,
     title,
@@ -176,10 +171,12 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
     scrollContainer.scrollLeft = scrollWidth;
   };
 
-  return (
+  const portalContainer = document.getElementById("full-screen-portal") as HTMLElement;
+
+  const content = (
     <div
       className={cn("relative flex flex-col h-full select-none rounded-sm bg-custom-background-100 shadow", {
-        "fixed inset-0 z-20 bg-custom-background-100": fullScreenMode,
+        "inset-0 z-[25] bg-custom-background-100": fullScreenMode,
         "border-[0.5px] border-custom-border-200": border,
       })}
     >
@@ -217,4 +214,6 @@ export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
       />
     </div>
   );
+
+  return fullScreenMode && portalContainer ? createPortal(content, portalContainer) : content;
 });

@@ -1,12 +1,16 @@
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { Disclosure } from "@headlessui/react";
 // components
 import { useTranslation } from "@plane/i18n";
 import { ContentWrapper, ERowVariant } from "@plane/ui";
 import { ListLayout } from "@/components/core/list";
-import { CycleListGroupHeader, CyclePeekOverview, CyclesListMap } from "@/components/cycles";
 import { ActiveCycleRoot } from "@/plane-web/components/cycles";
+// local imports
+import { CyclePeekOverview } from "../cycle-peek-overview";
+import { CycleListGroupHeader } from "./cycle-list-group-header";
+import { CyclesListMap } from "./cycles-list-map";
 
 export interface ICyclesList {
   completedCycleIds: string[];
@@ -17,7 +21,7 @@ export interface ICyclesList {
   isArchived?: boolean;
 }
 
-export const CyclesList: FC<ICyclesList> = observer((props) => {
+export const CyclesList = observer(function CyclesList(props: ICyclesList) {
   const { completedCycleIds, upcomingCycleIds, cycleIds, workspaceSlug, projectId, isArchived = false } = props;
   const { t } = useTranslation();
 

@@ -1,16 +1,14 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useDropzone } from "react-dropzone";
-import { UserCircle2 } from "lucide-react";
 import { Transition, Dialog } from "@headlessui/react";
 // plane imports
 import { ACCEPTED_AVATAR_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@plane/constants";
+import { Button } from "@plane/propel/button";
+import { UserCirclePropertyIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
 import { getAssetIdFromUrl, getFileURL, checkURLValidity } from "@plane/utils";
-// helpers
 // services
 import { FileService } from "@/services/file.service";
 const fileService = new FileService();
@@ -23,7 +21,7 @@ type Props = {
   value: string | null;
 };
 
-export const UserImageUploadModal: React.FC<Props> = observer((props) => {
+export const UserImageUploadModal = observer(function UserImageUploadModal(props: Props) {
   const { handleRemove, isOpen, onClose, onSuccess, value } = props;
   // states
   const [image, setImage] = useState<File | null>(null);
@@ -146,7 +144,7 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
                           </>
                         ) : (
                           <div>
-                            <UserCircle2 className="mx-auto h-16 w-16 text-custom-text-200" />
+                            <UserCirclePropertyIcon className="mx-auto h-16 w-16 text-custom-text-200" />
                             <span className="mt-2 block text-sm font-medium text-custom-text-200">
                               {isDragActive ? "Drop image here to upload" : "Drag & drop image here"}
                             </span>

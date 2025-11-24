@@ -1,7 +1,5 @@
-"use client";
-
 import Link from "next/link";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 
 type Props = {
   label?: string;
@@ -9,7 +7,7 @@ type Props = {
   icon?: React.ReactNode | undefined;
 };
 
-export const BreadcrumbLink: React.FC<Props> = (props) => {
+export function BreadcrumbLink(props: Props) {
   const { href, label, icon } = props;
   return (
     <Tooltip tooltipContent={label} position="bottom">
@@ -35,4 +33,4 @@ export const BreadcrumbLink: React.FC<Props> = (props) => {
       </li>
     </Tooltip>
   );
-};
+}

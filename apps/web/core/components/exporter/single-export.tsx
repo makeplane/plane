@@ -1,9 +1,8 @@
-"use client";
-
-import { useState, FC } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 // ui
-import { IExportData } from "@plane/types";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import type { IExportData } from "@plane/types";
 // helpers
 import { getDate, renderFormattedDate } from "@plane/utils";
 // types
@@ -13,7 +12,7 @@ type Props = {
   refreshing: boolean;
 };
 
-export const SingleExport: FC<Props> = ({ service, refreshing }) => {
+export function SingleExport({ service, refreshing }: Props) {
   const provider = service.provider;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLoading] = useState(false);
@@ -74,4 +73,4 @@ export const SingleExport: FC<Props> = ({ service, refreshing }) => {
       )}
     </div>
   );
-};
+}

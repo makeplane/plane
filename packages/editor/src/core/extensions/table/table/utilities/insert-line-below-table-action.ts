@@ -1,4 +1,4 @@
-import { KeyboardShortcutCommand } from "@tiptap/core";
+import type { KeyboardShortcutCommand } from "@tiptap/core";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
@@ -13,7 +13,7 @@ export const insertLineBelowTableAction: KeyboardShortcutCommand = ({ editor }) 
     const { selection } = editor.state;
 
     // Find the table node and its position
-    const tableNode = findParentNodeOfType(selection, CORE_EXTENSIONS.TABLE);
+    const tableNode = findParentNodeOfType(selection, [CORE_EXTENSIONS.TABLE]);
     if (!tableNode) return false;
 
     const tablePos = tableNode.pos;

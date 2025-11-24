@@ -1,14 +1,16 @@
 import { observer } from "mobx-react";
-import { IssueEmojiReactions, IssueVotes } from "@/components/issues/reactions";
+// components
+import { IssueEmojiReactions } from "@/components/issues/reactions/issue-emoji-reactions";
+import { IssueVotes } from "@/components/issues/reactions/issue-vote-reactions";
 // hooks
-import { usePublish } from "@/hooks/store";
+import { usePublish } from "@/hooks/store/publish";
 import useIsInIframe from "@/hooks/use-is-in-iframe";
 
 type Props = {
   anchor: string;
 };
 
-export const IssueReactions: React.FC<Props> = observer((props) => {
+export const IssueReactions = observer(function IssueReactions(props: Props) {
   const { anchor } = props;
   // store hooks
   const { canVote, canReact } = usePublish(anchor);

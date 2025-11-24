@@ -1,5 +1,5 @@
+# Python imports
 import uuid
-from urllib.parse import urlencode, urljoin
 
 # Django import
 from django.http import HttpResponseRedirect
@@ -16,7 +16,7 @@ from plane.authentication.adapter.error import (
     AuthenticationException,
     AUTHENTICATION_ERROR_CODES,
 )
-from plane.utils.path_validator import validate_next_path
+from plane.utils.path_validator import get_safe_redirect_url
 
 
 class GitHubOauthInitiateEndpoint(View):
@@ -35,10 +35,8 @@ class GitHubOauthInitiateEndpoint(View):
                 error_message="INSTANCE_NOT_CONFIGURED",
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = urljoin(
-                base_host(request=request, is_app=True), "?" + urlencode(params)
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
         try:
@@ -49,10 +47,8 @@ class GitHubOauthInitiateEndpoint(View):
             return HttpResponseRedirect(auth_url)
         except AuthenticationException as e:
             params = e.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = urljoin(
-                base_host(request=request, is_app=True), "?" + urlencode(params)
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True), next_path=next_path, params=params
             )
             return HttpResponseRedirect(url)
 
@@ -61,7 +57,6 @@ class GitHubCallbackEndpoint(View):
     def get(self, request):
         code = request.GET.get("code")
         state = request.GET.get("state")
-        base_host = request.session.get("host")
         next_path = request.session.get("next_path")
 
         if state != request.session.get("state", ""):
@@ -70,9 +65,9 @@ class GitHubCallbackEndpoint(View):
                 error_message="GITHUB_OAUTH_PROVIDER_ERROR",
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = urljoin(base_host, "?" + urlencode(params))
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True), next_path=next_path, params=params
+            )
             return HttpResponseRedirect(url)
 
         if not code:
@@ -81,29 +76,27 @@ class GitHubCallbackEndpoint(View):
                 error_message="GITHUB_OAUTH_PROVIDER_ERROR",
             )
             params = exc.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = urljoin(base_host, "?" + urlencode(params))
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True), next_path=next_path, params=params
+            )
             return HttpResponseRedirect(url)
 
         try:
-            provider = GitHubOAuthProvider(
-                request=request, code=code, callback=post_user_auth_workflow
-            )
+            provider = GitHubOAuthProvider(request=request, code=code, callback=post_user_auth_workflow)
             user = provider.authenticate()
             # Login the user and record his device info
             user_login(request=request, user=user, is_app=True)
-            # Get the redirection path
             if next_path:
-                path = str(validate_next_path(next_path))
+                path = next_path
             else:
                 path = get_redirection_path(user=user)
-            # redirect to referer path
-            url = urljoin(base_host, path)
+
+            # Get the safe redirect URL
+            url = get_safe_redirect_url(base_url=base_host(request=request, is_app=True), next_path=path, params={})
             return HttpResponseRedirect(url)
         except AuthenticationException as e:
             params = e.get_error_dict()
-            if next_path:
-                params["next_path"] = str(validate_next_path(next_path))
-            url = urljoin(base_host, "?" + urlencode(params))
+            url = get_safe_redirect_url(
+                base_url=base_host(request=request, is_app=True), next_path=next_path, params=params
+            )
             return HttpResponseRedirect(url)

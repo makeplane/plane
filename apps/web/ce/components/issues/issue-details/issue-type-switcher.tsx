@@ -1,15 +1,15 @@
 import { observer } from "mobx-react";
 // store hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 
 export type TIssueTypeSwitcherProps = {
   issueId: string;
   disabled: boolean;
 };
 
-export const IssueTypeSwitcher: React.FC<TIssueTypeSwitcherProps> = observer((props) => {
+export const IssueTypeSwitcher = observer(function IssueTypeSwitcher(props: TIssueTypeSwitcherProps) {
   const { issueId } = props;
   // store hooks
   const {

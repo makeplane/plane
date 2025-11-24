@@ -1,17 +1,19 @@
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // plane-i18n
 import { useTranslation } from "@plane/i18n";
 // types
-import { EIssueServiceType, TIssueServiceType } from "@plane/types";
+import type { TIssueServiceType } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
 // helper
 import { getFileName } from "@plane/utils";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // types
-import { TAttachmentOperations } from "../issue-detail-widgets/attachments/helper";
+import type { TAttachmentOperations } from "../issue-detail-widgets/attachments/helper";
 
 export type TAttachmentOperationsRemoveModal = Pick<TAttachmentOperations, "remove">;
 
@@ -23,7 +25,7 @@ type Props = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const IssueAttachmentDeleteModal: FC<Props> = observer((props) => {
+export const IssueAttachmentDeleteModal = observer(function IssueAttachmentDeleteModal(props: Props) {
   const { t } = useTranslation();
   const { isOpen, onClose, attachmentId, attachmentOperations, issueServiceType = EIssueServiceType.ISSUES } = props;
   // states

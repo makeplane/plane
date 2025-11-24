@@ -1,14 +1,11 @@
-"use client";
-
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // types
 // plane imports
-import { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
-import { getButtonStyling, Loader } from "@plane/ui";
+import { getButtonStyling } from "@plane/propel/button";
+import type { EProductSubscriptionEnum, IPaymentProduct, TSubscriptionPrice } from "@plane/types";
+import { getUpgradeButtonStyle, Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
-// plane web imports
-import { getUpgradeButtonStyle } from "@/components/workspace/billing/subscription";
 // local imports
 import { BasePaidPlanCard } from "./base-paid-plan-card";
 
@@ -27,7 +24,7 @@ export type TalkToSalesCardProps = {
   renderTrialButton?: (props: { productId: string | undefined; priceId: string | undefined }) => React.ReactNode;
 };
 
-export const TalkToSalesCard: FC<TalkToSalesCardProps> = observer((props) => {
+export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSalesCardProps) {
   const {
     planVariant,
     href,
@@ -109,7 +106,6 @@ export const TalkToSalesCard: FC<TalkToSalesCardProps> = observer((props) => {
       extraFeatures={extraFeatures}
       renderPriceContent={renderPriceContent}
       renderActionButton={renderActionButton}
-      isSelfHosted={isSelfHosted}
     />
   );
 });

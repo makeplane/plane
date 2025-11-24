@@ -1,7 +1,7 @@
-import * as React from "react";
 import { Switch } from "@headlessui/react";
+import * as React from "react";
 // helpers
-import { cn } from "../../helpers";
+import { cn } from "../utils";
 
 interface IToggleSwitchProps {
   value: boolean;
@@ -12,7 +12,7 @@ interface IToggleSwitchProps {
   className?: string;
 }
 
-const ToggleSwitch: React.FC<IToggleSwitchProps> = (props) => {
+function ToggleSwitch(props: IToggleSwitchProps) {
   const { value, onChange, label, size = "sm", disabled, className } = props;
 
   return (
@@ -49,7 +49,7 @@ const ToggleSwitch: React.FC<IToggleSwitchProps> = (props) => {
       />
     </Switch>
   );
-};
+}
 
 ToggleSwitch.displayName = "plane-ui-toggle-switch";
 

@@ -1,18 +1,21 @@
-"use client";
-
-import { FC } from "react";
 import { observer } from "mobx-react";
-import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+// plane imports
+import { PROJECT_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { IProject } from "@plane/types";
-import { ToggleSwitch, Tooltip, setPromiseToast } from "@plane/ui";
+import { setPromiseToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { IProject } from "@plane/types";
+// components
+import { SettingsHeading } from "@/components/settings/heading";
+// helpers
+import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
-import { SettingsHeading } from "@/components/settings";
-import { useProject, useUser } from "@/hooks/store";
-// plane web components
-import { UpgradeBadge } from "@/plane-web/components/workspace";
-// plane web constants
+import { useProject } from "@/hooks/store/use-project";
+import { useUser } from "@/hooks/store/user";
+// plane web imports
+import { UpgradeBadge } from "@/plane-web/components/workspace/upgrade-badge";
 import { PROJECT_FEATURES_LIST } from "@/plane-web/constants/project/settings";
+import { ProjectFeatureToggle } from "./helper";
 
 type Props = {
   workspaceSlug: string;
@@ -20,7 +23,7 @@ type Props = {
   isAdmin: boolean;
 };
 
-export const ProjectFeaturesList: FC<Props> = observer((props) => {
+export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: Props) {
   const { workspaceSlug, projectId, isAdmin } = props;
   // store hooks
   const { t } = useTranslation();
@@ -37,6 +40,7 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
       [featureProperty]: !currentProjectDetails?.[featureProperty as keyof IProject],
     };
     const updateProjectPromise = updateProject(workspaceSlug, projectId, settingsPayload);
+
     setPromiseToast(updateProjectPromise, {
       loading: "Updating project feature...",
       success: {
@@ -47,6 +51,14 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
         title: "Error!",
         message: () => "Something went wrong while updating project feature. Please try again.",
       },
+    });
+    updateProjectPromise.then(() => {
+      captureSuccess({
+        eventName: PROJECT_TRACKER_EVENTS.feature_toggled,
+        payload: {
+          feature_key: featureKey,
+        },
+      });
     });
   };
 
@@ -81,12 +93,13 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
                     </p>
                   </div>
                 </div>
-                <ToggleSwitch
+                <ProjectFeatureToggle
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  featureItem={featureItem}
                   value={Boolean(currentProjectDetails?.[featureItem.property as keyof IProject])}
-                  onChange={() => handleSubmit(featureItemKey, featureItem.property)}
-                  disabled={!featureItem.isEnabled || !isAdmin}
-                  size="sm"
-                  data-ph-element={PROJECT_TRACKER_ELEMENTS.TOGGLE_FEATURE}
+                  handleSubmit={handleSubmit}
+                  disabled={!isAdmin}
                 />
               </div>
               <div className="pl-14">

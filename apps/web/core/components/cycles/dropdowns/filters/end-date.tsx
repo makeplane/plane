@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-// constants
+// plane imports
 import { DATE_AFTER_FILTER_OPTIONS } from "@plane/constants";
-// components
 import { isInDateFormat } from "@plane/utils";
-import { DateFilterModal } from "@/components/core";
-import { FilterHeader, FilterOption } from "@/components/issues";
-
-// helpers
+// components
+import { DateFilterModal } from "@/components/core/filters/date-filter-modal";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 
 type Props = {
   appliedFilters: string[] | null;
@@ -15,7 +13,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterEndDate: React.FC<Props> = observer((props) => {
+export const FilterEndDate = observer(function FilterEndDate(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);

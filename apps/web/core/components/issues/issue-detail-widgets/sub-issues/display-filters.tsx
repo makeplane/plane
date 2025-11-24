@@ -1,12 +1,19 @@
-import { FC, useMemo } from "react";
-import isEmpty from "lodash/isEmpty";
+import type { FC } from "react";
+import { useMemo } from "react";
+import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { SlidersHorizontal } from "lucide-react";
-import { IIssueDisplayFilterOptions, ILayoutDisplayFiltersOptions, IIssueDisplayProperties } from "@plane/types";
+// plane imports
+import type { IIssueDisplayFilterOptions, ILayoutDisplayFiltersOptions, IIssueDisplayProperties } from "@plane/types";
 import { cn } from "@plane/utils";
-import { FilterDisplayProperties, FilterGroupBy, FilterOrderBy, FiltersDropdown } from "@/components/issues";
+// components
+import {
+  FilterDisplayProperties,
+  FilterGroupBy,
+  FilterOrderBy,
+  FiltersDropdown,
+} from "@/components/issues/issue-layouts/filters";
 import { isDisplayFiltersApplied } from "@/components/issues/issue-layouts/utils";
-
 type TSubIssueDisplayFiltersProps = {
   displayProperties: IIssueDisplayProperties;
   displayFilters: IIssueDisplayFilterOptions;
@@ -16,7 +23,7 @@ type TSubIssueDisplayFiltersProps = {
   isEpic?: boolean;
 };
 
-export const SubIssueDisplayFilters: FC<TSubIssueDisplayFiltersProps> = observer((props) => {
+export const SubIssueDisplayFilters = observer(function SubIssueDisplayFilters(props: TSubIssueDisplayFiltersProps) {
   const {
     isEpic = false,
     displayProperties,

@@ -1,9 +1,6 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
-import { IUserSettings } from "@plane/types";
-// hooks
-import { getValueFromLocalStorage, setValueIntoLocalStorage } from "@/hooks/use-local-storage";
-// local
-import { persistence } from "@/local-db/storage.sqlite";
+// plane imports
+import type { IUserSettings } from "@plane/types";
 // services
 import { UserService } from "@/services/user.service";
 
@@ -12,19 +9,15 @@ type TError = {
   message: string;
 };
 
-const LOCAL_DB_ENABLED = "LOCAL_DB_ENABLED";
-
 export interface IUserSettingsStore {
   // observables
   isLoading: boolean;
   error: TError | undefined;
   data: IUserSettings;
-  canUseLocalDB: boolean;
   sidebarCollapsed: boolean;
   isScrolled: boolean;
   // actions
-  fetchCurrentUserSettings: () => Promise<IUserSettings | undefined>;
-  toggleLocalDB: (workspaceSlug: string | undefined, projectId: string | undefined) => Promise<void>;
+  fetchCurrentUserSettings: (bustCache?: boolean) => Promise<IUserSettings | undefined>;
   toggleSidebar: (collapsed?: boolean) => void;
   toggleIsScrolled: (isScrolled?: boolean) => void;
 }
@@ -48,7 +41,6 @@ export class UserSettingsStore implements IUserSettingsStore {
       invites: undefined,
     },
   };
-  canUseLocalDB: boolean = getValueFromLocalStorage(LOCAL_DB_ENABLED, true);
   // services
   userService: UserService;
 
@@ -58,12 +50,10 @@ export class UserSettingsStore implements IUserSettingsStore {
       isLoading: observable.ref,
       error: observable,
       data: observable,
-      canUseLocalDB: observable.ref,
       sidebarCollapsed: observable.ref,
       isScrolled: observable.ref,
       // actions
       fetchCurrentUserSettings: action,
-      toggleLocalDB: action,
       toggleSidebar: action,
       toggleIsScrolled: action,
     });
@@ -80,46 +70,18 @@ export class UserSettingsStore implements IUserSettingsStore {
     this.isScrolled = isScrolled ?? !this.isScrolled;
   };
 
-  toggleLocalDB = async (workspaceSlug: string | undefined, projectId: string | undefined) => {
-    const currentLocalDBValue = this.canUseLocalDB;
-    try {
-      runInAction(() => {
-        this.canUseLocalDB = !currentLocalDBValue;
-      });
-
-      const transactionResult = setValueIntoLocalStorage(LOCAL_DB_ENABLED, !currentLocalDBValue);
-
-      if (!transactionResult) {
-        throw new Error("error while toggling local DB");
-      }
-
-      if (currentLocalDBValue) {
-        await persistence.clearStorage();
-      } else if (workspaceSlug) {
-        await persistence.initialize(workspaceSlug);
-        persistence.syncWorkspace();
-        projectId && persistence.syncIssues(projectId);
-      }
-    } catch (e) {
-      console.warn("error while toggling local DB");
-      runInAction(() => {
-        this.canUseLocalDB = currentLocalDBValue;
-      });
-    }
-  };
-
   // actions
   /**
    * @description fetches user profile information
    * @returns {Promise<IUserSettings | undefined>}
    */
-  fetchCurrentUserSettings = async () => {
+  fetchCurrentUserSettings = async (bustCache: boolean = false) => {
     try {
       runInAction(() => {
         this.isLoading = true;
         this.error = undefined;
       });
-      const userSettings = await this.userService.currentUserSettings();
+      const userSettings = await this.userService.currentUserSettings(bustCache);
       runInAction(() => {
         this.isLoading = false;
         this.data = userSettings;

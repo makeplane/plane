@@ -1,6 +1,9 @@
 import type { Editor } from "@tiptap/core";
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { addColumn, removeColumn, addRow, removeRow, TableMap } from "@tiptap/pm/tables";
+import type { TableRect } from "@tiptap/pm/tables";
+// local imports
+import { isCellEmpty } from "../../table/utilities/helpers";
 
 const addSvg = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path
@@ -15,6 +18,7 @@ export type TableInfo = {
   tablePos: number;
   columnButtonElement?: HTMLElement;
   rowButtonElement?: HTMLElement;
+  dragMarkerContainerElement?: HTMLElement;
 };
 
 export const createColumnInsertButton = (editor: Editor, tableInfo: TableInfo): HTMLElement => {
@@ -272,7 +276,7 @@ const insertColumnAfterLast = (editor: Editor, tableInfo: TableInfo) => {
   const lastColumnIndex = tableMapData.width;
 
   const tr = editor.state.tr;
-  const rect = {
+  const rect: TableRect = {
     map: tableMapData,
     tableStart: tablePos,
     table: tableNode,
@@ -319,27 +323,6 @@ const removeLastColumn = (editor: Editor, tableInfo: TableInfo): boolean => {
   return true;
 };
 
-// Helper function to check if a single cell is empty
-const isCellEmpty = (cell: ProseMirrorNode | null | undefined): boolean => {
-  if (!cell || cell.content.size === 0) {
-    return true;
-  }
-
-  // Check if cell has any non-empty content
-  let hasContent = false;
-  cell.content.forEach((node) => {
-    if (node.type.name === "paragraph") {
-      if (node.content.size > 0) {
-        hasContent = true;
-      }
-    } else if (node.content.size > 0 || node.isText) {
-      hasContent = true;
-    }
-  });
-
-  return !hasContent;
-};
-
 const isColumnEmpty = (tableInfo: TableInfo, columnIndex: number): boolean => {
   const { tableNode } = tableInfo;
   const tableMapData = TableMap.get(tableNode);
@@ -365,7 +348,7 @@ const insertRowAfterLast = (editor: Editor, tableInfo: TableInfo) => {
   const lastRowIndex = tableMapData.height;
 
   const tr = editor.state.tr;
-  const rect = {
+  const rect: TableRect = {
     map: tableMapData,
     tableStart: tablePos,
     table: tableNode,

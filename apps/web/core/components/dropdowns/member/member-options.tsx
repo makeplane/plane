@@ -1,49 +1,58 @@
-"use client";
-
 import { useEffect, useRef, useState } from "react";
-import { Placement } from "@popperjs/core";
+import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
-import { EUserPermissions } from "@plane/constants";
+// plane imports
 import { useTranslation } from "@plane/i18n";
-// plane ui
+import { SuspendedUserIcon } from "@plane/propel/icons";
+import { EPillSize, EPillVariant, Pill } from "@plane/propel/pill";
+import type { IUserLite } from "@plane/types";
 import { Avatar } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
-// helpers
 // hooks
-import { useUser, useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useUser } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 interface Props {
-  memberIds?: string[];
   className?: string;
-  optionsClassName?: string;
-  projectId?: string;
-  referenceElement: HTMLButtonElement | null;
-  placement: Placement | undefined;
+  getUserDetails: (userId: string) => IUserLite | undefined;
   isOpen: boolean;
+  memberIds?: string[];
+  onDropdownOpen?: () => void;
+  optionsClassName?: string;
+  placement: Placement | undefined;
+  referenceElement: HTMLButtonElement | null;
 }
 
-export const MemberOptions: React.FC<Props> = observer((props: Props) => {
-  const { memberIds: propsMemberIds, projectId, referenceElement, placement, isOpen, optionsClassName = "" } = props;
+export const MemberOptions = observer(function MemberOptions(props: Props) {
+  const {
+    getUserDetails,
+    isOpen,
+    memberIds,
+    onDropdownOpen,
+    optionsClassName = "",
+    placement,
+    referenceElement,
+  } = props;
+  // router
+  const { workspaceSlug } = useParams();
+  // refs
+  const inputRef = useRef<HTMLInputElement | null>(null);
   // states
   const [query, setQuery] = useState("");
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-  // refs
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  // store hooks
+  // plane hooks
   const { t } = useTranslation();
-  const { workspaceSlug } = useParams();
-  const {
-    getUserDetails,
-    project: { getProjectMemberIds, fetchProjectMembers, getProjectMemberDetails },
-    workspace: { workspaceMemberIds },
-  } = useMember();
+  // store hooks
   const { data: currentUser } = useUser();
+  const {
+    workspace: { isUserSuspended },
+  } = useMember();
   const { isMobile } = usePlatformOS();
   // popper-js init
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
@@ -60,21 +69,12 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
 
   useEffect(() => {
     if (isOpen) {
-      onOpen();
+      onDropdownOpen?.();
       if (!isMobile) {
         inputRef.current && inputRef.current.focus();
       }
     }
   }, [isOpen, isMobile]);
-
-  const memberIds = propsMemberIds
-    ? propsMemberIds
-    : projectId
-      ? getProjectMemberIds(projectId, true)
-      : workspaceMemberIds;
-  const onOpen = () => {
-    if (!memberIds && workspaceSlug && projectId) fetchProjectMembers(workspaceSlug.toString(), projectId);
-  };
 
   const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (query !== "" && e.key === "Escape") {
@@ -86,19 +86,24 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
   const options = memberIds
     ?.map((userId) => {
       const userDetails = getUserDetails(userId);
-      if (projectId) {
-        const role = getProjectMemberDetails(userId, projectId)?.role;
-        const isGuest = role === EUserPermissions.GUEST;
-        if (isGuest) return;
-      }
-
       return {
         value: userId,
         query: `${userDetails?.display_name} ${userDetails?.first_name} ${userDetails?.last_name}`,
         content: (
           <div className="flex items-center gap-2">
-            <Avatar name={userDetails?.display_name} src={getFileURL(userDetails?.avatar_url ?? "")} />
-            <span className="flex-grow truncate">
+            <div className="w-4">
+              {isUserSuspended(userId, workspaceSlug?.toString()) ? (
+                <SuspendedUserIcon className="h-3.5 w-3.5 text-custom-text-400" />
+              ) : (
+                <Avatar name={userDetails?.display_name} src={getFileURL(userDetails?.avatar_url ?? "")} />
+              )}
+            </div>
+            <span
+              className={cn(
+                "flex-grow truncate",
+                isUserSuspended(userId, workspaceSlug?.toString()) ? "text-custom-text-400" : ""
+              )}
+            >
               {currentUser?.id === userId ? t("you") : userDetails?.display_name}
             </span>
           </div>
@@ -114,7 +119,7 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
     <Combobox.Options data-prevent-outside-click static>
       <div
         className={cn(
-          "my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none z-20",
+          "my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none z-30",
           optionsClassName
         )}
         ref={setPopperElement}
@@ -146,15 +151,26 @@ export const MemberOptions: React.FC<Props> = observer((props: Props) => {
                       key={option.value}
                       value={option.value}
                       className={({ active, selected }) =>
-                        `flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${
-                          active ? "bg-custom-background-80" : ""
-                        } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                        cn(
+                          "flex w-full select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5",
+                          active && "bg-custom-background-80",
+                          selected ? "text-custom-text-100" : "text-custom-text-200",
+                          isUserSuspended(option.value, workspaceSlug?.toString())
+                            ? "cursor-not-allowed"
+                            : "cursor-pointer"
+                        )
                       }
+                      disabled={isUserSuspended(option.value, workspaceSlug?.toString())}
                     >
                       {({ selected }) => (
                         <>
                           <span className="flex-grow truncate">{option.content}</span>
                           {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                          {isUserSuspended(option.value, workspaceSlug?.toString()) && (
+                            <Pill variant={EPillVariant.DEFAULT} size={EPillSize.XS} className="border-none">
+                              Suspended
+                            </Pill>
+                          )}
                         </>
                       )}
                     </Combobox.Option>

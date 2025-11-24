@@ -6,11 +6,11 @@ type Props = {
   className?: string;
 };
 
-export const DocumentContentLoader = (props: Props) => {
+export function DocumentContentLoader(props: Props) {
   const { className } = props;
 
   return (
-    <div className={cn("size-full", className)}>
+    <div className={cn("document-editor-loader", className)}>
       <Loader className="relative space-y-4">
         <div className="space-y-2">
           <div className="py-2">
@@ -48,4 +48,4 @@ export const DocumentContentLoader = (props: Props) => {
       </Loader>
     </div>
   );
-};
+}

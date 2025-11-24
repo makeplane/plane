@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -7,11 +5,12 @@ import { AlertTriangle } from "lucide-react";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // types
-import { IUserLite } from "@plane/types";
+import { Button } from "@plane/propel/button";
+import type { IUserLite } from "@plane/types";
 // ui
-import { Button } from "@plane/ui";
 // hooks
-import { useProject, useUser } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
+import { useUser } from "@/hooks/store/user";
 
 type Props = {
   data: Partial<IUserLite>;
@@ -20,7 +19,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const ConfirmProjectMemberRemove: React.FC<Props> = observer((props) => {
+export const ConfirmProjectMemberRemove = observer(function ConfirmProjectMemberRemove(props: Props) {
   const { data, onSubmit, isOpen, onClose } = props;
   // router
   const { projectId } = useParams();

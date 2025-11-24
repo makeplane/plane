@@ -1,10 +1,11 @@
-import { Fragment, Slice, Node, Schema } from "@tiptap/pm/model";
+import type { Node, Schema } from "@tiptap/pm/model";
+import { Fragment, Slice } from "@tiptap/pm/model";
 import { NodeSelection } from "@tiptap/pm/state";
-import { EditorView } from "@tiptap/pm/view";
+import type { EditorView } from "@tiptap/pm/view";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
-import { SideMenuHandleOptions, SideMenuPluginProps } from "@/extensions";
+import type { SideMenuHandleOptions, SideMenuPluginProps } from "@/extensions";
 
 const verticalEllipsisIcon =
   '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-vertical"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>';
@@ -16,11 +17,13 @@ const generalSelectors = [
   "blockquote",
   "h1.editor-heading-block, h2.editor-heading-block, h3.editor-heading-block, h4.editor-heading-block, h5.editor-heading-block, h6.editor-heading-block",
   "[data-type=horizontalRule]",
-  "table",
+  "table:not(.table-drag-preview)",
   ".issue-embed",
   ".image-component",
   ".image-upload-component",
   ".editor-callout-component",
+  ".editor-embed-component",
+  ".editor-drawio-component",
 ].join(", ");
 
 const maxScrollSpeed = 20;
@@ -65,7 +68,7 @@ const isScrollable = (node: HTMLElement | SVGElement) => {
   });
 };
 
-const getScrollParent = (node: HTMLElement | SVGElement) => {
+export const getScrollParent = (node: HTMLElement | SVGElement) => {
   if (scrollParentCache.has(node)) {
     return scrollParentCache.get(node);
   }
@@ -90,7 +93,7 @@ export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
 
   for (const elem of elements) {
     // Check for table wrapper first
-    if (elem.matches("table")) {
+    if (elem.matches("table:not(.table-drag-preview)")) {
       return elem;
     }
 
@@ -100,6 +103,11 @@ export const nodeDOMAtCoords = (coords: { x: number; y: number }) => {
 
     // Skip table cells
     if (elem.closest("table")) {
+      continue;
+    }
+
+    // Skip elements inside .editor-embed-component
+    if (elem.closest(".editor-embed-component") && !elem.matches(".editor-embed-component")) {
       continue;
     }
 
@@ -137,32 +145,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
   let isDraggedOutsideWindow: "top" | "bottom" | boolean = false;
   let isMouseInsideWhileDragging = false;
   let currentScrollSpeed = 0;
-
-  const handleClick = (event: MouseEvent, view: EditorView) => {
-    handleNodeSelection(event, view, false, options);
-  };
-
-  const handleDragStart = (event: DragEvent, view: EditorView) => {
-    const { listType: listTypeFromDragStart } = handleNodeSelection(event, view, true, options) ?? {};
-    if (listTypeFromDragStart) {
-      listType = listTypeFromDragStart;
-    }
-    isDragging = true;
-    lastClientY = event.clientY;
-    scroll();
-  };
-
-  const handleDragEnd = <TEvent extends DragEvent | FocusEvent>(event: TEvent, view?: EditorView) => {
-    event.preventDefault();
-    isDragging = false;
-    isMouseInsideWhileDragging = false;
-    if (scrollAnimationFrame) {
-      cancelAnimationFrame(scrollAnimationFrame);
-      scrollAnimationFrame = null;
-    }
-
-    view?.dom.classList.remove("dragging");
-  };
+  let dragHandleElement: HTMLElement | null = null;
 
   function scroll() {
     if (!isDragging) {
@@ -196,10 +179,35 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
       scrollableParent.scrollBy({ top: currentScrollSpeed });
     }
 
-    scrollAnimationFrame = requestAnimationFrame(scroll);
+    scrollAnimationFrame = requestAnimationFrame(scroll) as unknown as null;
   }
 
-  let dragHandleElement: HTMLElement | null = null;
+  const handleClick = (event: MouseEvent, view: EditorView) => {
+    handleNodeSelection(event, view, false, options);
+  };
+
+  const handleDragStart = (event: DragEvent, view: EditorView) => {
+    const { listType: listTypeFromDragStart } = handleNodeSelection(event, view, true, options) ?? {};
+    if (listTypeFromDragStart) {
+      listType = listTypeFromDragStart;
+    }
+    isDragging = true;
+    lastClientY = event.clientY;
+    scroll();
+  };
+
+  const handleDragEnd = <TEvent extends DragEvent | FocusEvent>(event: TEvent, view?: EditorView) => {
+    event.preventDefault();
+    isDragging = false;
+    isMouseInsideWhileDragging = false;
+    if (scrollAnimationFrame) {
+      cancelAnimationFrame(scrollAnimationFrame);
+      scrollAnimationFrame = null;
+    }
+
+    view?.dom.classList.remove("dragging");
+  };
+
   // drag handle view actions
   const showDragHandle = () => dragHandleElement?.classList.remove("drag-handle-hidden");
   const hideDragHandle = () => {
@@ -379,8 +387,9 @@ const handleNodeSelection = (
   let draggedNodePos = nodePosAtDOM(node, view, options);
   if (draggedNodePos == null || draggedNodePos < 0) return;
 
-  // Handle blockquote separately
-  if (node.matches("blockquote")) {
+  if (node.matches("table")) {
+    draggedNodePos = draggedNodePos - 2;
+  } else if (node.matches("blockquote")) {
     draggedNodePos = nodePosAtDOMForBlockQuotes(node, view);
     if (draggedNodePos === null || draggedNodePos === undefined) return;
   } else {

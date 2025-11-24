@@ -1,21 +1,20 @@
 import React, { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane constants
-import { ALL_ISSUES, EIssueLayoutTypes, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+// plane imports
+import { ALL_ISSUES, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EIssuesStoreType, IBlockUpdateData, TIssue } from "@plane/types";
-import { setToast, TOAST_TYPE } from "@plane/ui";
-// hooks
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { EIssuesStoreType, IBlockUpdateData, TIssue } from "@plane/types";
+import { EIssueLayoutTypes, GANTT_TIMELINE_TYPE } from "@plane/types";
 import { renderFormattedPayloadDate } from "@plane/utils";
-import { ETimeLineTypeType, TimeLineTypeContext } from "@/components/gantt-chart/contexts";
+// components
+import { TimeLineTypeContext } from "@/components/gantt-chart/contexts";
 import { GanttChartRoot } from "@/components/gantt-chart/root";
 import { IssueGanttSidebar } from "@/components/gantt-chart/sidebar/issues/sidebar";
-import { QuickAddIssueRoot, IssueGanttBlock, GanttQuickAddIssueButton } from "@/components/issues";
-//constants
-// helpers
-//hooks
-import { useIssues, useUserPermissions } from "@/hooks/store";
+// hooks
+import { useIssues } from "@/hooks/store/use-issues";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { useTimeLineChart } from "@/hooks/use-timeline-chart";
@@ -23,6 +22,8 @@ import { useTimeLineChart } from "@/hooks/use-timeline-chart";
 import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
 
 import { IssueLayoutHOC } from "../issue-layout-HOC";
+import { GanttQuickAddIssueButton, QuickAddIssueRoot } from "../quick-add";
+import { IssueGanttBlock } from "./blocks";
 
 interface IBaseGanttRoot {
   viewId?: string | undefined;
@@ -37,7 +38,7 @@ export type GanttStoreType =
   | EIssuesStoreType.PROJECT_VIEW
   | EIssuesStoreType.EPIC;
 
-export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {
+export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRoot) {
   const { viewId, isCompletedCycle = false, isEpic = false } = props;
   const { t } = useTranslation();
   // router
@@ -46,7 +47,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
   const storeType = useIssueStoreType() as GanttStoreType;
   const { issues, issuesFilter } = useIssues(storeType);
   const { fetchIssues, fetchNextIssues, updateIssue, quickAddIssue } = useIssuesActions(storeType);
-  const { initGantt } = useTimeLineChart(ETimeLineTypeType.ISSUE);
+  const { initGantt } = useTimeLineChart(GANTT_TIMELINE_TYPE.ISSUE);
   // store hooks
   const { allowPermissions } = useUserPermissions();
 
@@ -119,7 +120,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
 
   return (
     <IssueLayoutHOC layout={EIssueLayoutTypes.GANTT}>
-      <TimeLineTypeContext.Provider value={ETimeLineTypeType.ISSUE}>
+      <TimeLineTypeContext.Provider value={GANTT_TIMELINE_TYPE.ISSUE}>
         <div className="h-full w-full">
           <GanttChartRoot
             border={false}

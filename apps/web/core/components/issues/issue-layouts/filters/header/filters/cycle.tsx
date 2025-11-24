@@ -1,14 +1,13 @@
-"use client";
-
 import React, { useMemo, useState } from "react";
-import sortBy from "lodash/sortBy";
+import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { TCycleGroups } from "@plane/types";
+import { CycleGroupIcon } from "@plane/propel/icons";
+import type { TCycleGroups } from "@plane/types";
 // components
-import { Loader, CycleGroupIcon } from "@plane/ui";
-import { FilterHeader, FilterOption } from "@/components/issues";
-import { useCycle } from "@/hooks/store";
+import { Loader } from "@plane/ui";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
+import { useCycle } from "@/hooks/store/use-cycle";
 // ui
 // types
 
@@ -18,7 +17,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterCycle: React.FC<Props> = observer((props) => {
+export const FilterCycle = observer(function FilterCycle(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery } = props;
 
   // hooks

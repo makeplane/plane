@@ -3,9 +3,9 @@ import { NodeSelection, TextSelection } from "@tiptap/pm/state";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 
-export interface HorizontalRuleOptions {
-  HTMLAttributes: Record<string, any>;
-}
+type HorizontalRuleOptions = {
+  HTMLAttributes: Record<string, unknown>;
+};
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -20,14 +20,15 @@ declare module "@tiptap/core" {
 
 export const CustomHorizontalRule = Node.create<HorizontalRuleOptions>({
   name: CORE_EXTENSIONS.HORIZONTAL_RULE,
+  group: "block",
 
   addOptions() {
     return {
-      HTMLAttributes: {},
+      HTMLAttributes: {
+        class: "py-4 border-custom-border-400",
+      },
     };
   },
-
-  group: "block",
 
   parseHTML() {
     return [

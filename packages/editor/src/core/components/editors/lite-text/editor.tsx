@@ -4,9 +4,9 @@ import { EditorWrapper } from "@/components/editors/editor-wrapper";
 // extensions
 import { EnterKeyExtension } from "@/extensions";
 // types
-import { EditorRefApi, ILiteTextEditorProps } from "@/types";
+import type { EditorRefApi, ILiteTextEditorProps } from "@/types";
 
-const LiteTextEditor: React.FC<ILiteTextEditorProps> = (props) => {
+function LiteTextEditor(props: ILiteTextEditorProps) {
   const { onEnterKeyPress, disabledExtensions, extensions: externalExtensions = [] } = props;
 
   const extensions = useMemo(() => {
@@ -19,12 +19,15 @@ const LiteTextEditor: React.FC<ILiteTextEditorProps> = (props) => {
     return resolvedExtensions;
   }, [externalExtensions, disabledExtensions, onEnterKeyPress]);
 
-  return <EditorWrapper {...props} editable extensions={extensions} />;
-};
+  return <EditorWrapper {...props} extensions={extensions} />;
+}
 
-const LiteTextEditorWithRef = forwardRef<EditorRefApi, ILiteTextEditorProps>((props, ref) => (
-  <LiteTextEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
-));
+const LiteTextEditorWithRef = forwardRef(function LiteTextEditorWithRef(
+  props: ILiteTextEditorProps,
+  ref: React.ForwardedRef<EditorRefApi>
+) {
+  return <LiteTextEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />;
+});
 
 LiteTextEditorWithRef.displayName = "LiteTextEditorWithRef";
 

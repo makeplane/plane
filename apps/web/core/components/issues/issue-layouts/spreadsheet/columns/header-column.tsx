@@ -1,4 +1,3 @@
-"use client";
 //ui
 import { ArrowDownWideNarrow, ArrowUpNarrowWide, CheckIcon, ChevronDownIcon, Eraser, MoveRight } from "lucide-react";
 // constants
@@ -6,7 +5,7 @@ import { SPREADSHEET_PROPERTY_DETAILS } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueOrderByOptions } from "@plane/types";
+import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssueOrderByOptions } from "@plane/types";
 import { CustomMenu, Row } from "@plane/ui";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { SpreadSheetPropertyIcon } from "../../utils";
@@ -19,7 +18,7 @@ interface Props {
   isEpic?: boolean;
 }
 
-export const HeaderColumn = (props: Props) => {
+export function HeaderColumn(props: Props) {
   const { displayFilters, handleDisplayFilterUpdate, property, onClose, isEpic = false } = props;
   // i18n
   const { t } = useTranslation();
@@ -126,4 +125,4 @@ export const HeaderColumn = (props: Props) => {
         )}
     </CustomMenu>
   );
-};
+}

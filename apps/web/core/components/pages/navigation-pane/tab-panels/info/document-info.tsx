@@ -5,7 +5,7 @@ import type { TDocumentInfo } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { getReadTimeFromWordsCount } from "@plane/utils";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 type Props = {
   page: TPageInstance;
@@ -17,7 +17,9 @@ const DEFAULT_DOCUMENT_INFO: TDocumentInfo = {
   paragraphs: 0,
 };
 
-export const PageNavigationPaneInfoTabDocumentInfo: React.FC<Props> = observer((props) => {
+export const PageNavigationPaneInfoTabDocumentInfo = observer(function PageNavigationPaneInfoTabDocumentInfo(
+  props: Props
+) {
   const { page } = props;
   // states
   const [documentInfo, setDocumentInfo] = useState<TDocumentInfo>(DEFAULT_DOCUMENT_INFO);

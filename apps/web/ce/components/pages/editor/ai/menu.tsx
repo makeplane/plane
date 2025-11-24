@@ -1,19 +1,19 @@
-"use client";
-
 import React, { useEffect, useRef, useState } from "react";
-import { ChevronRight, CornerDownRight, LucideIcon, RefreshCcw, Sparkles, TriangleAlert } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { CornerDownRight, RefreshCcw, Sparkles, TriangleAlert } from "lucide-react";
 // plane editor
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
+import { ChevronRightIcon } from "@plane/propel/icons";
 // plane ui
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
 // components
 import { cn } from "@plane/utils";
-import { RichTextEditor } from "@/components/editor";
-// helpers
+import { RichTextEditor } from "@/components/editor/rich-text";
 // plane web constants
 import { AI_EDITOR_TASKS, LOADING_TEXTS } from "@/plane-web/constants/ai";
 // plane web services
-import { AIService, TTaskPayload } from "@/services/ai.service";
+import type { TTaskPayload } from "@/services/ai.service";
+import { AIService } from "@/services/ai.service";
 import { AskPiMenu } from "./ask-pi-menu";
 const aiService = new AIService();
 
@@ -58,7 +58,7 @@ const TONES_LIST = [
   },
 ];
 
-export const EditorAIMenu: React.FC<Props> = (props) => {
+export function EditorAIMenu(props: Props) {
   const { editorRef, isOpen, onClose, workspaceId, workspaceSlug } = props;
   // states
   const [activeTask, setActiveTask] = useState<AI_EDITOR_TASKS | null>(null);
@@ -173,7 +173,7 @@ export const EditorAIMenu: React.FC<Props> = (props) => {
                   <item.icon className="flex-shrink-0 size-3" />
                   {item.label}
                 </span>
-                <ChevronRight
+                <ChevronRightIcon
                   className={cn("flex-shrink-0 size-3 opacity-0 pointer-events-none transition-opacity", {
                     "opacity-100 pointer-events-auto": isActiveTask,
                   })}
@@ -300,4 +300,4 @@ export const EditorAIMenu: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+}

@@ -10,21 +10,21 @@ import {
   PasteRule,
   removeDuplicates,
 } from "@tiptap/core";
+import type { EmojiStorage } from "@tiptap/extension-emoji";
 import { emojis, emojiToShortcode, shortcodeToEmoji } from "@tiptap/extension-emoji";
-import { Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
-import Suggestion, { SuggestionOptions } from "@tiptap/suggestion";
+import { Fragment } from "@tiptap/pm/model";
+import type { Transaction } from "@tiptap/pm/state";
+import { Plugin, PluginKey, TextSelection } from "@tiptap/pm/state";
+import type { SuggestionOptions } from "@tiptap/suggestion";
+import Suggestion from "@tiptap/suggestion";
 import emojiRegex from "emoji-regex";
 import { isEmojiSupported } from "is-emoji-supported";
+// helpers
+import { customFindSuggestionMatch } from "@/helpers/find-suggestion-match";
 
-declare module "@tiptap/core" {
-  interface Commands<ReturnType> {
-    emoji: {
-      /**
-       * Add an emoji
-       */
-      setEmoji: (shortcode: string) => ReturnType;
-    };
-  }
+// Extended storage type to include our custom forceOpen flag
+export interface ExtendedEmojiStorage extends EmojiStorage {
+  forceOpen: boolean;
 }
 
 export type EmojiItem = {
@@ -63,20 +63,15 @@ export type EmojiItem = {
   /**
    * Store some custom data
    */
-  [key: string]: any;
+  [key: string]: unknown;
 };
 
 export type EmojiOptions = {
-  HTMLAttributes: Record<string, any>;
+  HTMLAttributes: Record<string, unknown>;
   emojis: EmojiItem[];
   enableEmoticons: boolean;
   forceFallbackImages: boolean;
   suggestion: Omit<SuggestionOptions, "editor">;
-};
-
-export type EmojiStorage = {
-  emojis: EmojiItem[];
-  isSupported: (item: EmojiItem) => boolean;
 };
 
 export const EmojiSuggestionPluginKey = new PluginKey("emojiSuggestion");
@@ -117,18 +112,22 @@ export const Emoji = Node.create<EmojiOptions, EmojiStorage>({
           editor
             .chain()
             .focus()
-            .insertContentAt(range, [
-              {
-                type: this.name,
-                attrs: props,
-              },
-              {
-                type: "text",
-                text: " ",
-              },
-            ])
-            .command(({ tr, state }) => {
-              tr.setStoredMarks(state.doc.resolve(state.selection.to - 2).marks());
+            .command(({ tr, state, dispatch }) => {
+              if (!dispatch) return true;
+
+              const { schema } = state;
+              const emojiNode = schema.nodes[this.name].create(props);
+              const spaceNode = schema.text(" ");
+
+              const fragment = Fragment.from([emojiNode, spaceNode]);
+
+              tr.replaceWith(range.from, range.to, fragment);
+
+              const newPos = range.from + fragment.size;
+              tr.setSelection(TextSelection.near(tr.doc.resolve(newPos)));
+
+              tr.setStoredMarks(tr.doc.resolve(range.from).marks());
+
               return true;
             })
             .run();
@@ -160,6 +159,7 @@ export const Emoji = Node.create<EmojiOptions, EmojiStorage>({
     return {
       emojis: this.options.emojis,
       isSupported: (emojiItem) => (emojiItem.version ? supportMap[emojiItem.version] : false),
+      forceOpen: false,
     };
   },
 
@@ -340,9 +340,14 @@ export const Emoji = Node.create<EmojiOptions, EmojiStorage>({
   },
 
   addProseMirrorPlugins() {
+    const isTouchDevice = !!this.editor.storage.utility.isTouchDevice;
+    if (isTouchDevice) {
+      return [];
+    }
     return [
       Suggestion({
         editor: this.editor,
+        findSuggestionMatch: customFindSuggestionMatch,
         ...this.options.suggestion,
       }),
 

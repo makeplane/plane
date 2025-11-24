@@ -1,18 +1,17 @@
-"use client";
-
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
-// ui
+// plane imports
 import { EProjectFeatureKey } from "@plane/constants";
-import { BreadcrumbNavigationDropdown, Breadcrumbs, ISvgIcons } from "@plane/ui";
+import type { ISvgIcons } from "@plane/propel/icons";
+import { BreadcrumbNavigationDropdown, Breadcrumbs } from "@plane/ui";
 // components
-import { SwitcherLabel } from "@/components/common";
-import { TNavigationItem } from "@/components/workspace";
+import { SwitcherLabel } from "@/components/common/switcher-label";
+import type { TNavigationItem } from "@/components/workspace/sidebar/project-navigation";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
-// local components
-import { getProjectFeatureNavigation } from "../projects/navigation";
+// local imports
+import { getProjectFeatureNavigation } from "../projects/navigation/helper";
 
 type TProjectFeatureBreadcrumbProps = {
   workspaceSlug: string;
@@ -22,7 +21,9 @@ type TProjectFeatureBreadcrumbProps = {
   additionalNavigationItems?: TNavigationItem[];
 };
 
-export const ProjectFeatureBreadcrumb = observer((props: TProjectFeatureBreadcrumbProps) => {
+export const ProjectFeatureBreadcrumb = observer(function ProjectFeatureBreadcrumb(
+  props: TProjectFeatureBreadcrumbProps
+) {
   const { workspaceSlug, projectId, featureKey, isLast = false, additionalNavigationItems } = props;
   // router
   const router = useAppRouter();

@@ -1,21 +1,23 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
 import { PAST_DURATION_FILTER_OPTIONS } from "@plane/constants";
-import { TInboxIssueFilterDateKeys } from "@plane/types";
+import { CloseIcon } from "@plane/propel/icons";
+import type { TInboxIssueFilterDateKeys } from "@plane/types";
 // helpers
 import { Tag } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
 // constants
 // hooks
-import { useProjectInbox } from "@/hooks/store";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 
 type InboxIssueAppliedFiltersDate = {
   filterKey: TInboxIssueFilterDateKeys;
   label: string;
 };
 
-export const InboxIssueAppliedFiltersDate: FC<InboxIssueAppliedFiltersDate> = observer((props) => {
+export const InboxIssueAppliedFiltersDate = observer(function InboxIssueAppliedFiltersDate(
+  props: InboxIssueAppliedFiltersDate
+) {
   const { filterKey, label } = props;
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
@@ -50,7 +52,7 @@ export const InboxIssueAppliedFiltersDate: FC<InboxIssueAppliedFiltersDate> = ob
               className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
               onClick={() => handleInboxIssueFilters(filterKey, handleFilterValue(optionDetail?.value))}
             >
-              <X className={`w-3 h-3`} />
+              <CloseIcon className={`w-3 h-3`} />
             </div>
           </div>
         );
@@ -60,7 +62,7 @@ export const InboxIssueAppliedFiltersDate: FC<InboxIssueAppliedFiltersDate> = ob
         className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
         onClick={clearFilter}
       >
-        <X className={`w-3 h-3`} />
+        <CloseIcon className={`w-3 h-3`} />
       </div>
     </Tag>
   );

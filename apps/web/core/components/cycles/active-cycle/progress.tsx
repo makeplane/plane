@@ -1,31 +1,31 @@
-"use client";
-
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
-// plane package imports
+import { useTheme } from "next-themes";
+// plane imports
 import { PROGRESS_STATE_GROUPS_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ICycle, IIssueFilterOptions } from "@plane/types";
+import type { TWorkItemFilterCondition } from "@plane/shared-state";
+import type { ICycle } from "@plane/types";
 import { LinearProgressIndicator, Loader } from "@plane/ui";
+// assets
+import darkProgressAsset from "@/app/assets/empty-state/active-cycle/progress-dark.webp?url";
+import lightProgressAsset from "@/app/assets/empty-state/active-cycle/progress-light.webp?url";
 // components
-import { SimpleEmptyState } from "@/components/empty-state";
-// hooks
-import { useProjectState } from "@/hooks/store";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 
 export type ActiveCycleProgressProps = {
   cycle: ICycle | null;
   workspaceSlug: string;
   projectId: string;
-  handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string[], redirect?: boolean) => void;
+  handleFiltersUpdate: (conditions: TWorkItemFilterCondition[]) => void;
 };
 
-export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = observer((props) => {
+export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: ActiveCycleProgressProps) {
   const { handleFiltersUpdate, cycle } = props;
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // plane hooks
   const { t } = useTranslation();
-  // store hooks
-  const { groupedProjectStates } = useProjectState();
   // derived values
   const progressIndicatorData = PROGRESS_STATE_GROUPS_DETAILS.map((group, index) => ({
     id: index,
@@ -41,7 +41,7 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = observer((props
         backlog: cycle?.backlog_issues,
       }
     : {};
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/progress" });
+  const resolvedPath = resolvedTheme === "light" ? lightProgressAsset : darkProgressAsset;
 
   return cycle && cycle.hasOwnProperty("started_issues") ? (
     <div className="flex flex-col min-h-[17rem] gap-5 py-4 px-3.5 bg-custom-background-100 border border-custom-border-200 rounded-lg">
@@ -68,10 +68,7 @@ export const ActiveCycleProgress: FC<ActiveCycleProgressProps> = observer((props
                   <div
                     className="flex items-center justify-between gap-2 text-sm cursor-pointer"
                     onClick={() => {
-                      if (groupedProjectStates) {
-                        const states = groupedProjectStates[group].map((state) => state.id);
-                        handleFiltersUpdate("state", states, true);
-                      }
+                      handleFiltersUpdate([{ property: "state_group", operator: "in", value: [group] }]);
                     }}
                   >
                     <div className="flex items-center gap-1.5">

@@ -1,13 +1,10 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
-// hooks
-import { ArchivedIssueQuickActions } from "@/components/issues";
-// components
-// types
-// constants
+// local imports
+import { ArchivedIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseListRoot } from "../base-list-root";
 
-export const ArchivedIssueListLayout: FC = observer(() => {
+export const ArchivedIssueListLayout = observer(function ArchivedIssueListLayout() {
   const canEditPropertiesBasedOnProject = () => false;
 
   return (

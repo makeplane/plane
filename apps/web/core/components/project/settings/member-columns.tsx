@@ -5,11 +5,13 @@ import { CircleMinus } from "lucide-react";
 import { Disclosure } from "@headlessui/react";
 // plane imports
 import { ROLE, EUserPermissions, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
-import { EUserProjectRoles, IUser, IWorkspaceMember, TProjectMembership } from "@plane/types";
-import { CustomMenu, CustomSelect, TOAST_TYPE, setToast } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { EUserProjectRoles, IUser, IWorkspaceMember, TProjectMembership } from "@plane/types";
+import { CustomMenu, CustomSelect } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks
-import { useMember, useUser, useUserPermissions } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 
 export interface RowData extends Pick<TProjectMembership, "original_role"> {
   member: IWorkspaceMember;
@@ -30,7 +32,7 @@ type AccountTypeProps = {
   projectId: string;
 };
 
-export const NameColumn: React.FC<NameProps> = (props) => {
+export function NameColumn(props: NameProps) {
   const { rowData, workspaceSlug, isAdmin, currentUser, setRemoveMemberModal } = props;
   // derived values
   const { avatar_url, display_name, email, first_name, id, last_name } = rowData.member;
@@ -84,9 +86,9 @@ export const NameColumn: React.FC<NameProps> = (props) => {
       )}
     </Disclosure>
   );
-};
+}
 
-export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) => {
+export const AccountTypeColumn = observer(function AccountTypeColumn(props: AccountTypeProps) {
   const { rowData, projectId, workspaceSlug } = props;
   // store hooks
   const {
@@ -167,7 +169,6 @@ export const AccountTypeColumn: React.FC<AccountTypeProps> = observer((props) =>
               }
               buttonClassName={`!px-0 !justify-start hover:bg-custom-background-100 ${errors.role ? "border-red-500" : "border-none"}`}
               className="rounded-md p-0 w-32"
-              optionsClassName="w-full"
               input
             >
               {Object.entries(checkCurrentOptionWorkspaceRole(rowData.member.id)).map(([key, label]) => (

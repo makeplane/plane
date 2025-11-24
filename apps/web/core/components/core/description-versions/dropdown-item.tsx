@@ -1,18 +1,18 @@
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TDescriptionVersion } from "@plane/types";
+import type { TDescriptionVersion } from "@plane/types";
 import { Avatar, CustomMenu } from "@plane/ui";
 import { calculateTimeAgo, getFileURL } from "@plane/utils";
 // hooks
-import { useMember } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
 
 type Props = {
   onClick: (versionId: string) => void;
   version: TDescriptionVersion;
 };
 
-export const DescriptionVersionsDropdownItem: React.FC<Props> = observer((props) => {
+export const DescriptionVersionsDropdownItem = observer(function DescriptionVersionsDropdownItem(props: Props) {
   const { onClick, version } = props;
   // store hooks
   const { getUserDetails } = useMember();

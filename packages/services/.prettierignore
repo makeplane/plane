@@ -1,0 +1,6 @@
+.turbo
+.next
+.vercel
+out/
+dist/
+build/

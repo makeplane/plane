@@ -1,18 +1,18 @@
-"use client";
-
-import { useCallback, useMemo, SyntheticEvent } from "react";
-import xor from "lodash/xor";
+import type { SyntheticEvent } from "react";
+import { useCallback, useMemo } from "react";
+import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { CalendarCheck2, CalendarClock, Layers, Link, Paperclip } from "lucide-react";
+import { Link, Paperclip } from "lucide-react";
 // types
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 // i18n
 import { useTranslation } from "@plane/i18n";
-import { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
+import { StartDatePropertyIcon, ViewsIcon, DueDatePropertyIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TIssue, IIssueDisplayProperties, TIssuePriorities } from "@plane/types";
 // ui
-import { Tooltip } from "@plane/ui";
 import {
   cn,
   getDate,
@@ -21,21 +21,22 @@ import {
   shouldHighlightIssueDueDate,
 } from "@plane/utils";
 // components
-import {
-  EstimateDropdown,
-  PriorityDropdown,
-  MemberDropdown,
-  ModuleDropdown,
-  CycleDropdown,
-  StateDropdown,
-  DateRangeDropdown,
-  DateDropdown,
-} from "@/components/dropdowns";
-// constants
+import { CycleDropdown } from "@/components/dropdowns/cycle";
+import { DateDropdown } from "@/components/dropdowns/date";
+import { DateRangeDropdown } from "@/components/dropdowns/date-range";
+import { EstimateDropdown } from "@/components/dropdowns/estimate";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
+import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // helpers
-// hooks
 import { captureSuccess } from "@/helpers/event-tracker.helper";
-import { useLabel, useIssues, useProjectState, useProject, useProjectEstimates } from "@/hooks/store";
+// hooks
+import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useLabel } from "@/hooks/store/use-label";
+import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -55,7 +56,7 @@ export interface IIssueProperties {
   isEpic?: boolean;
 }
 
-export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
+export const IssueProperties = observer(function IssueProperties(props: IIssueProperties) {
   const { issue, updateIssue, displayProperties, isReadOnly, className, isEpic = false } = props;
   // i18n
   const { t } = useTranslation();
@@ -321,7 +322,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             onChange={handleStartDate}
             maxDate={maxDate}
             placeholder={t("common.order_by.start_date")}
-            icon={<CalendarClock className="h-3 w-3 flex-shrink-0" />}
+            icon={<StartDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
             optionsClassName="z-10"
             disabled={isReadOnly}
@@ -343,7 +344,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
             onChange={handleTargetDate}
             minDate={minDate}
             placeholder={t("common.order_by.due_date")}
-            icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
+            icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
             buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-red-500" : ""}
             clearIconClassName="!text-custom-text-100"
@@ -464,7 +465,7 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
                 }
               )}
             >
-              <Layers className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+              <ViewsIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
               <div className="text-xs">{subIssueCount}</div>
             </div>
           </Tooltip>

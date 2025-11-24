@@ -1,13 +1,12 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
 import { Settings2 } from "lucide-react";
 // plane internal packages
-import { TInstanceAuthenticationMethodKeys } from "@plane/types";
-import { ToggleSwitch, getButtonStyling } from "@plane/ui";
+import { getButtonStyling } from "@plane/propel/button";
+import type { TInstanceAuthenticationMethodKeys } from "@plane/types";
+import { ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useInstance } from "@/hooks/store";
@@ -17,7 +16,7 @@ type Props = {
   updateConfig: (key: TInstanceAuthenticationMethodKeys, value: string) => void;
 };
 
-export const GithubConfiguration: React.FC<Props> = observer((props) => {
+export const GithubConfiguration = observer(function GithubConfiguration(props: Props) {
   const { disabled, updateConfig } = props;
   // store
   const { formattedConfig } = useInstance();
@@ -35,9 +34,8 @@ export const GithubConfiguration: React.FC<Props> = observer((props) => {
           <ToggleSwitch
             value={Boolean(parseInt(enableGithubConfig))}
             onChange={() => {
-              Boolean(parseInt(enableGithubConfig)) === true
-                ? updateConfig("IS_GITHUB_ENABLED", "0")
-                : updateConfig("IS_GITHUB_ENABLED", "1");
+              const newEnableGithubConfig = Boolean(parseInt(enableGithubConfig)) === true ? "0" : "1";
+              updateConfig("IS_GITHUB_ENABLED", newEnableGithubConfig);
             }}
             size="sm"
             disabled={disabled}

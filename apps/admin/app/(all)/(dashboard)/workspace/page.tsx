@@ -1,20 +1,22 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
 import { Loader as LoaderIcon } from "lucide-react";
 // types
-import { TInstanceConfigurationKeys } from "@plane/types";
-import { Button, getButtonStyling, Loader, setPromiseToast, ToggleSwitch } from "@plane/ui";
+import { Button, getButtonStyling } from "@plane/propel/button";
+import { setPromiseToast } from "@plane/propel/toast";
+import type { TInstanceConfigurationKeys } from "@plane/types";
+import { Loader, ToggleSwitch } from "@plane/ui";
+
 import { cn } from "@plane/utils";
 // components
 import { WorkspaceListItem } from "@/components/workspace/list-item";
 // hooks
 import { useInstance, useWorkspace } from "@/hooks/store";
+import type { Route } from "./+types/page";
 
-const WorkspaceManagementPage = observer(() => {
+const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props: Route.ComponentProps) {
   // states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   // store
@@ -163,5 +165,7 @@ const WorkspaceManagementPage = observer(() => {
     </div>
   );
 });
+
+export const meta: Route.MetaFunction = () => [{ title: "Workspace Management - God Mode" }];
 
 export default WorkspaceManagementPage;

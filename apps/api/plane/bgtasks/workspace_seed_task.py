@@ -5,9 +5,11 @@ import time
 import uuid
 from typing import Dict
 import logging
+from datetime import timedelta
 
 # Django imports
 from django.conf import settings
+from django.utils import timezone
 
 # Third party imports
 from celery import shared_task
@@ -25,6 +27,13 @@ from plane.db.models import (
     IssueLabel,
     IssueSequence,
     IssueActivity,
+    Page,
+    ProjectPage,
+    Cycle,
+    Module,
+    CycleIssue,
+    ModuleIssue,
+    IssueView,
 )
 
 logger = logging.getLogger("plane.worker")
@@ -68,16 +77,12 @@ def create_project_and_member(workspace: Workspace) -> Dict[int, uuid.UUID]:
     project_identifier = "".join(ch for ch in workspace.name if ch.isalnum())[:5]
 
     # Create members
-    workspace_members = WorkspaceMember.objects.filter(workspace=workspace).values(
-        "member_id", "role"
-    )
+    workspace_members = WorkspaceMember.objects.filter(workspace=workspace).values("member_id", "role")
 
     projects_map: Dict[int, uuid.UUID] = {}
 
     if not project_seeds:
-        logger.warning(
-            "Task: workspace_seed_task -> No project seeds found. Skipping project creation."
-        )
+        logger.warning("Task: workspace_seed_task -> No project seeds found. Skipping project creation.")
         return projects_map
 
     for project_seed in project_seeds:
@@ -92,6 +97,10 @@ def create_project_and_member(workspace: Workspace) -> Dict[int, uuid.UUID]:
             name=workspace.name,  # Use workspace name
             identifier=project_identifier,
             created_by_id=workspace.created_by_id,
+            # Enable all views in seed data
+            cycle_view=True,
+            module_view=True,
+            issue_views_view=True,
         )
 
         # Create project members
@@ -116,13 +125,33 @@ def create_project_and_member(workspace: Workspace) -> Dict[int, uuid.UUID]:
                     user_id=workspace_member["member_id"],
                     workspace_id=workspace.id,
                     display_filters={
-                        "group_by": None,
-                        "order_by": "sort_order",
-                        "type": None,
-                        "sub_issue": True,
-                        "show_empty_groups": True,
                         "layout": "list",
-                        "calendar_date_range": "",
+                        "calendar": {"layout": "month", "show_weekends": False},
+                        "group_by": "state",
+                        "order_by": "sort_order",
+                        "sub_issue": True,
+                        "sub_group_by": None,
+                        "show_empty_groups": True,
+                    },
+                    display_properties={
+                        "key": True,
+                        "link": True,
+                        "cycle": False,
+                        "state": True,
+                        "labels": False,
+                        "modules": False,
+                        "assignee": True,
+                        "due_date": False,
+                        "estimate": True,
+                        "priority": True,
+                        "created_on": True,
+                        "issue_type": True,
+                        "start_date": False,
+                        "updated_on": True,
+                        "customer_count": True,
+                        "sub_issue_count": False,
+                        "attachment_count": False,
+                        "customer_request_count": True,
                     },
                     created_by_id=workspace.created_by_id,
                 )
@@ -136,9 +165,7 @@ def create_project_and_member(workspace: Workspace) -> Dict[int, uuid.UUID]:
     return projects_map
 
 
-def create_project_states(
-    workspace: Workspace, project_map: Dict[int, uuid.UUID]
-) -> Dict[int, uuid.UUID]:
+def create_project_states(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> Dict[int, uuid.UUID]:
     """Creates states for each project in the workspace.
 
     Args:
@@ -171,9 +198,7 @@ def create_project_states(
     return state_map
 
 
-def create_project_labels(
-    workspace: Workspace, project_map: Dict[int, uuid.UUID]
-) -> Dict[int, uuid.UUID]:
+def create_project_labels(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> Dict[int, uuid.UUID]:
     """Creates labels for each project in the workspace.
 
     Args:
@@ -209,6 +234,8 @@ def create_project_issues(
     project_map: Dict[int, uuid.UUID],
     states_map: Dict[int, uuid.UUID],
     labels_map: Dict[int, uuid.UUID],
+    cycles_map: Dict[int, uuid.UUID],
+    module_map: Dict[int, uuid.UUID],
 ) -> None:
     """Creates issues and their associated records for each project.
 
@@ -230,9 +257,7 @@ def create_project_issues(
         # get the values
         for field in required_fields:
             if field not in issue_seed:
-                logger.error(
-                    f"Task: workspace_seed_task -> Required field '{field}' missing in issue seed"
-                )
+                logger.error(f"Task: workspace_seed_task -> Required field '{field}' missing in issue seed")
                 continue
 
         # get the values
@@ -240,6 +265,8 @@ def create_project_issues(
         labels = issue_seed.pop("labels")
         project_id = issue_seed.pop("project_id")
         state_id = issue_seed.pop("state_id")
+        cycle_id = issue_seed.pop("cycle_id")
+        module_ids = issue_seed.pop("module_ids")
 
         issue = Issue.objects.create(
             **issue_seed,
@@ -265,6 +292,7 @@ def create_project_issues(
             epoch=time.time(),
         )
 
+        # Create issue labels
         for label_id in labels:
             IssueLabel.objects.create(
                 issue=issue,
@@ -274,8 +302,170 @@ def create_project_issues(
                 created_by_id=workspace.created_by_id,
             )
 
+        # Create cycle issues
+        if cycle_id:
+            CycleIssue.objects.create(
+                issue=issue,
+                cycle_id=cycles_map[cycle_id],
+                project_id=project_map[project_id],
+                workspace_id=workspace.id,
+                created_by_id=workspace.created_by_id,
+            )
+
+        # Create module issues
+        if module_ids:
+            for module_id in module_ids:
+                ModuleIssue.objects.create(
+                    issue=issue,
+                    module_id=module_map[module_id],
+                    project_id=project_map[project_id],
+                    workspace_id=workspace.id,
+                    created_by_id=workspace.created_by_id,
+                )
+
         logger.info(f"Task: workspace_seed_task -> Issue {issue_id} created")
     return
+
+
+def create_pages(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> None:
+    """Creates pages for each project in the workspace.
+
+    Args:
+        workspace: The workspace containing the projects
+        project_map: Mapping of seed project IDs to actual project IDs
+    """
+    page_seeds = read_seed_file("pages.json")
+
+    if not page_seeds:
+        return
+
+    for page_seed in page_seeds:
+        page_id = page_seed.pop("id")
+
+        page = Page.objects.create(
+            workspace_id=workspace.id,
+            is_global=False,
+            access=page_seed.get("access", Page.PUBLIC_ACCESS),
+            name=page_seed.get("name"),
+            description=page_seed.get("description", {}),
+            description_html=page_seed.get("description_html", "<p></p>"),
+            description_binary=page_seed.get("description_binary", None),
+            description_stripped=page_seed.get("description_stripped", None),
+            created_by_id=workspace.created_by_id,
+            updated_by_id=workspace.created_by_id,
+            owned_by_id=workspace.created_by_id,
+        )
+
+        logger.info(f"Task: workspace_seed_task -> Page {page_id} created")
+        if page_seed.get("project_id") and page_seed.get("type") == "PROJECT":
+            ProjectPage.objects.create(
+                workspace_id=workspace.id,
+                project_id=project_map[page_seed.get("project_id")],
+                page_id=page.id,
+                created_by_id=workspace.created_by_id,
+                updated_by_id=workspace.created_by_id,
+            )
+
+            logger.info(f"Task: workspace_seed_task -> Project Page {page_id} created")
+    return
+
+
+def create_cycles(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> Dict[int, uuid.UUID]:
+    # Create cycles
+    cycle_seeds = read_seed_file("cycles.json")
+    if not cycle_seeds:
+        return
+
+    cycle_map: Dict[int, uuid.UUID] = {}
+
+    for cycle_seed in cycle_seeds:
+        cycle_id = cycle_seed.pop("id")
+        project_id = cycle_seed.pop("project_id")
+        type = cycle_seed.pop("type")
+
+        if type == "CURRENT":
+            start_date = timezone.now()
+            end_date = start_date + timedelta(days=14)
+
+        if type == "UPCOMING":
+            # Get the last cycle
+            last_cycle = Cycle.objects.filter(project_id=project_map[project_id]).order_by("-end_date").first()
+            if last_cycle:
+                start_date = last_cycle.end_date + timedelta(days=1)
+                end_date = start_date + timedelta(days=14)
+            else:
+                start_date = timezone.now() + timedelta(days=14)
+                end_date = start_date + timedelta(days=14)
+
+        cycle = Cycle.objects.create(
+            **cycle_seed,
+            start_date=start_date,
+            end_date=end_date,
+            project_id=project_map[project_id],
+            workspace=workspace,
+            created_by_id=workspace.created_by_id,
+            owned_by_id=workspace.created_by_id,
+        )
+
+        cycle_map[cycle_id] = cycle.id
+        logger.info(f"Task: workspace_seed_task -> Cycle {cycle_id} created")
+    return cycle_map
+
+
+def create_modules(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> None:
+    """Creates modules for each project in the workspace.
+
+    Args:
+        workspace: The workspace containing the projects
+        project_map: Mapping of seed project IDs to actual project IDs
+    """
+    module_seeds = read_seed_file("modules.json")
+    if not module_seeds:
+        return
+
+    module_map: Dict[int, uuid.UUID] = {}
+
+    for index, module_seed in enumerate(module_seeds):
+        module_id = module_seed.pop("id")
+        project_id = module_seed.pop("project_id")
+
+        start_date = timezone.now() + timedelta(days=index * 2)
+        end_date = start_date + timedelta(days=14)
+
+        module = Module.objects.create(
+            **module_seed,
+            start_date=start_date,
+            target_date=end_date,
+            project_id=project_map[project_id],
+            workspace=workspace,
+            created_by_id=workspace.created_by_id,
+        )
+        module_map[module_id] = module.id
+        logger.info(f"Task: workspace_seed_task -> Module {module_id} created")
+    return module_map
+
+
+def create_views(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> None:
+    """Creates views for each project in the workspace.
+
+    Args:
+        workspace: The workspace containing the projects
+        project_map: Mapping of seed project IDs to actual project IDs
+    """
+
+    view_seeds = read_seed_file("views.json")
+    if not view_seeds:
+        return
+
+    for view_seed in view_seeds:
+        project_id = view_seed.pop("project_id")
+        IssueView.objects.create(
+            **view_seed,
+            project_id=project_map[project_id],
+            workspace=workspace,
+            created_by_id=workspace.created_by_id,
+            owned_by_id=workspace.created_by_id,
+        )
 
 
 @shared_task
@@ -305,15 +495,23 @@ def workspace_seed(workspace_id: uuid.UUID) -> None:
         # Create project labels
         label_map = create_project_labels(workspace, project_map)
 
-        # create project issues
-        create_project_issues(workspace, project_map, state_map, label_map)
+        # Create project cycles
+        cycle_map = create_cycles(workspace, project_map)
 
-        logger.info(
-            f"Task: workspace_seed_task -> Workspace {workspace_id} seeded successfully"
-        )
+        # Create project modules
+        module_map = create_modules(workspace, project_map)
+
+        # create project issues
+        create_project_issues(workspace, project_map, state_map, label_map, cycle_map, module_map)
+
+        # create project views
+        create_views(workspace, project_map)
+
+        # create project pages
+        create_pages(workspace, project_map)
+
+        logger.info(f"Task: workspace_seed_task -> Workspace {workspace_id} seeded successfully")
         return
     except Exception as e:
-        logger.error(
-            f"Task: workspace_seed_task -> Failed to seed workspace {workspace_id}: {str(e)}"
-        )
+        logger.error(f"Task: workspace_seed_task -> Failed to seed workspace {workspace_id}: {str(e)}")
         raise e

@@ -1,11 +1,9 @@
-"use client";
-
-import { FC, ReactNode } from "react";
+import type { FC, ReactNode } from "react";
 import { Network } from "lucide-react";
 // types
-import { TWorkspaceBaseActivity } from "@plane/types";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TWorkspaceBaseActivity } from "@plane/types";
 // ui
-import { Tooltip } from "@plane/ui";
 // helpers
 import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@plane/utils";
 // hooks
@@ -21,7 +19,7 @@ type TActivityBlockComponent = {
   customUserName?: string;
 };
 
-export const ActivityBlockComponent: FC<TActivityBlockComponent> = (props) => {
+export function ActivityBlockComponent(props: TActivityBlockComponent) {
   const { icon, activity, ends, children, customUserName } = props;
   // hooks
   const { isMobile } = usePlatformOS();
@@ -53,4 +51,4 @@ export const ActivityBlockComponent: FC<TActivityBlockComponent> = (props) => {
       </div>
     </div>
   );
-};
+}

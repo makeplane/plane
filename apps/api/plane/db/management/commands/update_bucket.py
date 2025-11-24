@@ -16,9 +16,7 @@ class Command(BaseCommand):
             "s3",
             endpoint_url=os.environ.get("AWS_S3_ENDPOINT_URL"),  # MinIO endpoint
             aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),  # MinIO access key
-            aws_secret_access_key=os.environ.get(
-                "AWS_SECRET_ACCESS_KEY"
-            ),  # MinIO secret key
+            aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),  # MinIO secret key
             region_name=os.environ.get("AWS_REGION"),  # MinIO region
             config=boto3.session.Config(signature_version="s3v4"),
         )
@@ -59,9 +57,7 @@ class Command(BaseCommand):
 
         # 3. Test s3:PutObject (attempt to upload an object)
         try:
-            s3_client.put_object(
-                Bucket=bucket_name, Key="test_permission_check.txt", Body=b"Test"
-            )
+            s3_client.put_object(Bucket=bucket_name, Key="test_permission_check.txt", Body=b"Test")
             permissions["s3:PutObject"] = True
             # Clean up
         except ClientError as e:
@@ -74,7 +70,7 @@ class Command(BaseCommand):
         try:
             s3_client.delete_object(Bucket=bucket_name, Key="test_permission_check.txt")
         except ClientError:
-            self.stdout.write("Coudn't delete test object")
+            self.stdout.write("Couldn't delete test object")
 
         # 4. Test s3:PutBucketPolicy (attempt to put a bucket policy)
         try:
@@ -106,9 +102,7 @@ class Command(BaseCommand):
         if "Contents" in response:
             for obj in response["Contents"]:
                 object_key = obj["Key"]
-                public_object_resource.append(
-                    f"arn:aws:s3:::{bucket_name}/{object_key}"
-                )
+                public_object_resource.append(f"arn:aws:s3:::{bucket_name}/{object_key}")
         bucket_policy = {
             "Version": "2012-10-17",
             "Statement": [
@@ -128,9 +122,7 @@ class Command(BaseCommand):
         # Get the bucket policy
         bucket_policy = self.generate_bucket_policy(bucket_name)
         # Apply the policy to the bucket
-        s3_client.put_bucket_policy(
-            Bucket=bucket_name, Policy=json.dumps(bucket_policy)
-        )
+        s3_client.put_bucket_policy(Bucket=bucket_name, Policy=json.dumps(bucket_policy))
         # Print a success message
         self.stdout.write("Bucket is private, but existing objects remain public.")
         return
@@ -144,11 +136,7 @@ class Command(BaseCommand):
         bucket_name = os.environ.get("AWS_S3_BUCKET_NAME")
 
         if not bucket_name:
-            self.stdout.write(
-                self.style.ERROR(
-                    "Please set the AWS_S3_BUCKET_NAME environment variable."
-                )
-            )
+            self.stdout.write(self.style.ERROR("Please set the AWS_S3_BUCKET_NAME environment variable."))
             return
 
         self.stdout.write(self.style.NOTICE("Checking bucket..."))
@@ -158,9 +146,7 @@ class Command(BaseCommand):
         except ClientError as e:
             error_code = e.response["Error"]["Code"]
             if error_code == "404":
-                self.stdout.write(
-                    self.style.ERROR(f"Bucket '{bucket_name}' does not exist.")
-                )
+                self.stdout.write(self.style.ERROR(f"Bucket '{bucket_name}' does not exist."))
                 return
             else:
                 self.stdout.write(f"Error: {e}")
@@ -177,9 +163,7 @@ class Command(BaseCommand):
         # If the access key has the required permissions
         try:
             if all(permissions.values()):
-                self.stdout.write(
-                    self.style.SUCCESS("Access key has the required permissions.")
-                )
+                self.stdout.write(self.style.SUCCESS("Access key has the required permissions."))
                 # Making the existing objects public
                 self.make_objects_public(bucket_name)
                 return
@@ -187,18 +171,12 @@ class Command(BaseCommand):
             self.stdout.write(f"Error: {e}")
 
         # write the bucket policy to a file
-        self.stdout.write(
-            self.style.WARNING(
-                "Generating permissions.json for manual bucket policy update."
-            )
-        )
+        self.stdout.write(self.style.WARNING("Generating permissions.json for manual bucket policy update."))
         try:
             # Writing to a file
             with open("permissions.json", "w") as f:
                 f.write(json.dumps(self.generate_bucket_policy(bucket_name)))
-            self.stdout.write(
-                self.style.WARNING("Permissions have been written to permissions.json.")
-            )
+            self.stdout.write(self.style.WARNING("Permissions have been written to permissions.json."))
             return
         except IOError as e:
             self.stdout.write(f"Error writing permissions.json: {e}")

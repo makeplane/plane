@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect } from "react";
 
 // next
@@ -8,7 +6,7 @@ import { useParams } from "next/navigation";
 // swr
 import { useFormContext, Controller } from "react-hook-form";
 import useSWR from "swr";
-import { IJiraImporterForm, IJiraMetadata } from "@plane/types";
+import type { IJiraImporterForm, IJiraMetadata } from "@plane/types";
 
 // react hook form
 
@@ -31,7 +29,7 @@ type Props = {
 // services
 const jiraImporterService = new JiraImporterService();
 
-export const JiraProjectDetail: React.FC<Props> = (props) => {
+export function JiraProjectDetail(props: Props) {
   const { setCurrentStep, setDisableTopBarAfter } = props;
 
   const {
@@ -166,4 +164,4 @@ export const JiraProjectDetail: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

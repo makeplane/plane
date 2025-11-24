@@ -1,22 +1,25 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { Control, Controller } from "react-hook-form";
+import type { Control } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { Sparkle } from "lucide-react";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import { EFileAssetType, TIssue } from "@plane/types";
-import { Loader, setToast, TOAST_TYPE } from "@plane/ui";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TIssue } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
+import { Loader } from "@plane/ui";
 import { getDescriptionPlaceholderI18n, getTabIndex } from "@plane/utils";
 // components
-import { GptAssistantPopover } from "@/components/core";
-import { RichTextEditor } from "@/components/editor";
+import { GptAssistantPopover } from "@/components/core/modals/gpt-assistant-popover";
+import { RichTextEditor } from "@/components/editor/rich-text";
 // helpers
 // hooks
-import { useEditorAsset, useInstance, useWorkspace } from "@/hooks/store";
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
+import { useInstance } from "@/hooks/store/use-instance";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import useKeypress from "@/hooks/use-keypress";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web services
@@ -45,7 +48,7 @@ type TIssueDescriptionEditorProps = {
   onClose: () => void;
 };
 
-export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = observer((props) => {
+export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(props: TIssueDescriptionEditorProps) {
   const {
     control,
     isDraft,
@@ -72,7 +75,7 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
   const { getWorkspaceBySlug } = useWorkspace();
   const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString())?.id ?? "";
   const { config } = useInstance();
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   // platform
   const { isMobile } = usePlatformOS();
 
@@ -214,6 +217,21 @@ export const IssueDescriptionEditor: React.FC<TIssueDescriptionEditorProps> = ob
                   } catch (error) {
                     console.log("Error in uploading issue asset:", error);
                     throw new Error("Asset upload failed. Please try again later.");
+                  }
+                }}
+                duplicateFile={async (assetId: string) => {
+                  try {
+                    const { asset_id } = await duplicateEditorAsset({
+                      assetId,
+                      entityId: issueId,
+                      entityType: isDraft ? EFileAssetType.DRAFT_ISSUE_DESCRIPTION : EFileAssetType.ISSUE_DESCRIPTION,
+                      projectId,
+                      workspaceSlug,
+                    });
+                    onAssetUpload(asset_id);
+                    return asset_id;
+                  } catch {
+                    throw new Error("Asset duplication failed. Please try again later.");
                   }
                 }}
               />

@@ -1,12 +1,18 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Search, X } from "lucide-react";
-import { TProjectDisplayFilters, TProjectFilters } from "@plane/types";
+import { Search } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
+// plane imports
+import type { TProjectDisplayFilters, TProjectFilters } from "@plane/types";
 // components
-import { FilterOption } from "@/components/issues";
-import { FilterAccess, FilterCreatedDate, FilterLead, FilterMembers } from "@/components/project";
+import { FilterOption } from "@/components/issues/issue-layouts/filters";
+// hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// types
+// local imports
+import { FilterAccess } from "./access";
+import { FilterCreatedDate } from "./created-at";
+import { FilterLead } from "./lead";
+import { FilterMembers } from "./members";
 
 type Props = {
   displayFilters: TProjectDisplayFilters;
@@ -16,7 +22,7 @@ type Props = {
   memberIds?: string[] | undefined;
 };
 
-export const ProjectFiltersSelection: React.FC<Props> = observer((props) => {
+export const ProjectFiltersSelection = observer(function ProjectFiltersSelection(props: Props) {
   const { displayFilters, filters, handleFiltersUpdate, handleDisplayFiltersUpdate, memberIds } = props;
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
@@ -38,7 +44,7 @@ export const ProjectFiltersSelection: React.FC<Props> = observer((props) => {
           />
           {filtersSearchQuery !== "" && (
             <button type="button" className="grid place-items-center" onClick={() => setFiltersSearchQuery("")}>
-              <X className="text-custom-text-300" size={12} strokeWidth={2} />
+              <CloseIcon className="text-custom-text-300" height={12} width={12} strokeWidth={2} />
             </button>
           )}
         </div>

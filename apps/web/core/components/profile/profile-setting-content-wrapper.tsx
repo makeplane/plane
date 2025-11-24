@@ -1,15 +1,12 @@
-"use client";
-import React, { FC } from "react";
-// helpers
 import { cn } from "@plane/utils";
-import { SidebarHamburgerToggle } from "../core";
+import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
 
 type Props = {
   children: React.ReactNode;
   className?: string;
 };
 
-export const ProfileSettingContentWrapper: FC<Props> = (props) => {
+export function ProfileSettingContentWrapper(props: Props) {
   const { children, className = "" } = props;
   return (
     <div className="flex h-full flex-col">
@@ -27,4 +24,4 @@ export const ProfileSettingContentWrapper: FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

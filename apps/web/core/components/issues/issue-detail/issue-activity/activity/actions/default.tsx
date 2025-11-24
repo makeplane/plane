@@ -1,19 +1,16 @@
-"use client";
-
-import { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { WorkItemsIcon } from "@plane/propel/icons";
 import { EInboxIssueSource } from "@plane/types";
-import { LayersIcon } from "@plane/ui";
 // hooks
 import { capitalizeFirstLetter } from "@plane/utils";
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
 import { IssueActivityBlockComponent } from "./";
 
 type TIssueDefaultActivity = { activityId: string; ends: "top" | "bottom" | undefined };
 
-export const IssueDefaultActivity: FC<TIssueDefaultActivity> = observer((props) => {
+export const IssueDefaultActivity = observer(function IssueDefaultActivity(props: TIssueDefaultActivity) {
   const { activityId, ends } = props;
   // hooks
   const {
@@ -28,7 +25,7 @@ export const IssueDefaultActivity: FC<TIssueDefaultActivity> = observer((props) 
   return (
     <IssueActivityBlockComponent
       activityId={activityId}
-      icon={<LayersIcon width={14} height={14} className="text-custom-text-200" aria-hidden="true" />}
+      icon={<WorkItemsIcon width={14} height={14} className="text-custom-text-200" aria-hidden="true" />}
       ends={ends}
     >
       <>

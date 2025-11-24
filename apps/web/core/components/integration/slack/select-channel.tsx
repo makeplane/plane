@@ -1,17 +1,15 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
 // types
-import { IWorkspaceIntegration, ISlackIntegration } from "@plane/types";
+import type { IWorkspaceIntegration, ISlackIntegration } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
 // fetch-keys
 import { SLACK_CHANNEL_INFO } from "@/constants/fetch-keys";
 // hooks
-import { useInstance } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance";
 import useIntegrationPopup from "@/hooks/use-integration-popup";
 // services
 import { AppInstallationService } from "@/services/app_installation.service";
@@ -22,7 +20,7 @@ type Props = {
 
 const appInstallationService = new AppInstallationService();
 
-export const SelectChannel: React.FC<Props> = observer(({ integration }) => {
+export const SelectChannel = observer(function SelectChannel({ integration }: Props) {
   // store hooks
   const { config } = useInstance();
   // states

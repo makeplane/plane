@@ -1,18 +1,19 @@
 import { observer } from "mobx-react";
-// plane constants
-import { EIssueLayoutTypes } from "@plane/constants";
-import {
-  CalendarLayoutLoader,
-  GanttLayoutLoader,
-  KanbanLayoutLoader,
-  ListLayoutLoader,
-  SpreadsheetLayoutLoader,
-} from "@/components/ui";
-import { useIssues } from "@/hooks/store";
+// plane imports
+import { EIssueLayoutTypes } from "@plane/types";
+// components
+import { CalendarLayoutLoader } from "@/components/ui/loader/layouts/calendar-layout-loader";
+import { GanttLayoutLoader } from "@/components/ui/loader/layouts/gantt-layout-loader";
+import { KanbanLayoutLoader } from "@/components/ui/loader/layouts/kanban-layout-loader";
+import { ListLayoutLoader } from "@/components/ui/loader/layouts/list-layout-loader";
+import { SpreadsheetLayoutLoader } from "@/components/ui/loader/layouts/spreadsheet-layout-loader";
+// hooks
+import { useIssues } from "@/hooks/store/use-issues";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
+// local imports
 import { IssueLayoutEmptyState } from "./empty-states";
 
-const ActiveLoader = (props: { layout: EIssueLayoutTypes }) => {
+function ActiveLoader(props: { layout: EIssueLayoutTypes }) {
   const { layout } = props;
   switch (layout) {
     case EIssueLayoutTypes.LIST:
@@ -28,14 +29,14 @@ const ActiveLoader = (props: { layout: EIssueLayoutTypes }) => {
     default:
       return null;
   }
-};
+}
 
 interface Props {
-  children: string | JSX.Element | JSX.Element[];
+  children: string | React.ReactNode | React.ReactNode[];
   layout: EIssueLayoutTypes;
 }
 
-export const IssueLayoutHOC = observer((props: Props) => {
+export const IssueLayoutHOC = observer(function IssueLayoutHOC(props: Props) {
   const { layout } = props;
 
   const storeType = useIssueStoreType();

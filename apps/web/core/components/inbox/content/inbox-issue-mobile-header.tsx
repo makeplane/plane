@@ -1,32 +1,19 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
-import {
-  CircleCheck,
-  CircleX,
-  ChevronDown,
-  ChevronUp,
-  Clock,
-  ExternalLink,
-  FileStack,
-  Link,
-  Trash2,
-  PanelLeft,
-  MoveRight,
-} from "lucide-react";
-import { TNameDescriptionLoader } from "@plane/types";
+import { CircleCheck, CircleX, Clock, ExternalLink, FileStack, Link, Trash2, PanelLeft, MoveRight } from "lucide-react";
+import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
+import type { TNameDescriptionLoader } from "@plane/types";
 import { Header, CustomMenu, EHeaderVariant } from "@plane/ui";
 import { cn, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
 // components
-import { InboxIssueStatus } from "@/components/inbox";
-import { NameDescriptionUpdateStatus } from "@/components/issues";
-// helpers
+import { NameDescriptionUpdateStatus } from "@/components/issues/issue-update-status";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 // store types
 import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
+// local imports
+import { InboxIssueStatus } from "../inbox-issue-status";
 
 type Props = {
   workspaceSlug: string;
@@ -52,7 +39,7 @@ type Props = {
   handleActionWithPermission: (isAdmin: boolean, action: () => void, errorMessage: string) => void;
 };
 
-export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) => {
+export const InboxIssueActionsMobileHeader = observer(function InboxIssueActionsMobileHeader(props: Props) {
   const {
     inboxIssue,
     isSubmitting,
@@ -117,14 +104,14 @@ export const InboxIssueActionsMobileHeader: React.FC<Props> = observer((props) =
             className="rounded border border-custom-border-200 p-1.5"
             onClick={() => handleInboxIssueNavigation("prev")}
           >
-            <ChevronUp size={14} strokeWidth={2} />
+            <ChevronUpIcon height={14} width={14} strokeWidth={2} />
           </button>
           <button
             type="button"
             className="rounded border border-custom-border-200 p-1.5"
             onClick={() => handleInboxIssueNavigation("next")}
           >
-            <ChevronDown size={14} strokeWidth={2} />
+            <ChevronDownIcon height={14} width={14} strokeWidth={2} />
           </button>
         </div>
         <div className="flex items-center gap-4">

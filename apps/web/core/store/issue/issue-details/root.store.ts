@@ -1,6 +1,6 @@
 import { action, computed, makeObservable, observable } from "mobx";
 // types
-import {
+import type {
   TIssue,
   TIssueAttachment,
   TIssueComment,
@@ -11,28 +11,33 @@ import {
   TWorkItemWidgets,
 } from "@plane/types";
 // plane web store
-import {
+import { IssueActivityStore } from "@/plane-web/store/issue/issue-details/activity.store";
+import type {
   IIssueActivityStore,
-  IssueActivityStore,
   IIssueActivityStoreActions,
   TActivityLoader,
 } from "@/plane-web/store/issue/issue-details/activity.store";
-import { RootStore } from "@/plane-web/store/root.store";
-import { TIssueRelationTypes } from "@/plane-web/types";
-import { IIssueRootStore } from "../root.store";
-import { IIssueAttachmentStore, IssueAttachmentStore, IIssueAttachmentStoreActions } from "./attachment.store";
-import { IIssueCommentStore, IssueCommentStore, IIssueCommentStoreActions, TCommentLoader } from "./comment.store";
-import {
-  IIssueCommentReactionStore,
-  IssueCommentReactionStore,
-  IIssueCommentReactionStoreActions,
-} from "./comment_reaction.store";
-import { IIssueStore, IssueStore, IIssueStoreActions } from "./issue.store";
-import { IIssueLinkStore, IssueLinkStore, IIssueLinkStoreActions } from "./link.store";
-import { IIssueReactionStore, IssueReactionStore, IIssueReactionStoreActions } from "./reaction.store";
-import { IIssueRelationStore, IssueRelationStore, IIssueRelationStoreActions } from "./relation.store";
-import { IIssueSubIssuesStore, IssueSubIssuesStore, IIssueSubIssuesStoreActions } from "./sub_issues.store";
-import { IIssueSubscriptionStore, IssueSubscriptionStore, IIssueSubscriptionStoreActions } from "./subscription.store";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { TIssueRelationTypes } from "@/plane-web/types";
+import type { IIssueRootStore } from "../root.store";
+import { IssueAttachmentStore } from "./attachment.store";
+import type { IIssueAttachmentStore, IIssueAttachmentStoreActions } from "./attachment.store";
+import { IssueCommentStore } from "./comment.store";
+import type { IIssueCommentStore, IIssueCommentStoreActions, TCommentLoader } from "./comment.store";
+import { IssueCommentReactionStore } from "./comment_reaction.store";
+import type { IIssueCommentReactionStore, IIssueCommentReactionStoreActions } from "./comment_reaction.store";
+import { IssueStore } from "./issue.store";
+import type { IIssueStore, IIssueStoreActions } from "./issue.store";
+import { IssueLinkStore } from "./link.store";
+import type { IIssueLinkStore, IIssueLinkStoreActions } from "./link.store";
+import { IssueReactionStore } from "./reaction.store";
+import type { IIssueReactionStore, IIssueReactionStoreActions } from "./reaction.store";
+import { IssueRelationStore } from "./relation.store";
+import type { IIssueRelationStore, IIssueRelationStoreActions } from "./relation.store";
+import { IssueSubIssuesStore } from "./sub_issues.store";
+import type { IIssueSubIssuesStore, IIssueSubIssuesStoreActions } from "./sub_issues.store";
+import { IssueSubscriptionStore } from "./subscription.store";
+import type { IIssueSubscriptionStore, IIssueSubscriptionStoreActions } from "./subscription.store";
 
 export type TPeekIssue = {
   workspaceSlug: string;
@@ -82,6 +87,7 @@ export interface IIssueDetail
   attachmentDeleteModalId: string | null;
   // computed
   isAnyModalOpen: boolean;
+  isPeekOpen: boolean;
   // helper actions
   getIsIssuePeeked: (issueId: string) => boolean;
   // actions
@@ -175,6 +181,7 @@ export abstract class IssueDetail implements IIssueDetail {
       lastWidgetAction: observable.ref,
       // computed
       isAnyModalOpen: computed,
+      isPeekOpen: computed,
       // action
       setPeekIssue: action,
       setIssueLinkData: action,
@@ -222,6 +229,10 @@ export abstract class IssueDetail implements IIssueDetail {
     );
   }
 
+  get isPeekOpen() {
+    return !!this.peekIssue;
+  }
+
   // helper actions
   getIsIssuePeeked = (issueId: string) => this.peekIssue?.issueId === issueId;
 
@@ -253,12 +264,8 @@ export abstract class IssueDetail implements IIssueDetail {
   setIssueLinkData = (issueLinkData: TIssueLink | null) => (this.issueLinkData = issueLinkData);
 
   // issue
-  fetchIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    issueStatus: "DEFAULT" | "DRAFT" = "DEFAULT"
-  ) => this.issue.fetchIssue(workspaceSlug, projectId, issueId, issueStatus);
+  fetchIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
+    this.issue.fetchIssue(workspaceSlug, projectId, issueId);
   fetchIssueWithIdentifier = async (workspaceSlug: string, projectIdentifier: string, sequenceId: string) =>
     this.issue.fetchIssueWithIdentifier(workspaceSlug, projectIdentifier, sequenceId);
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) =>

@@ -6,7 +6,7 @@ from django.utils import timezone
 from rest_framework import status
 from django.test import Client
 from django.core.exceptions import ValidationError
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from plane.db.models import User
 from plane.settings.redis import redis_instance
@@ -16,9 +16,7 @@ from plane.license.models import Instance
 @pytest.fixture
 def setup_instance(db):
     """Create and configure an instance for authentication tests"""
-    instance_id = (
-        uuid.uuid4() if not Instance.objects.exists() else Instance.objects.first().id
-    )
+    instance_id = uuid.uuid4() if not Instance.objects.exists() else Instance.objects.first().id
 
     # Create or update instance with all required fields
     instance, _ = Instance.objects.update_or_create(
@@ -38,9 +36,7 @@ def setup_instance(db):
 @pytest.fixture
 def django_client():
     """Return a Django test client with User-Agent header for handling redirects"""
-    client = Client(
-        HTTP_USER_AGENT="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1"
-    )
+    client = Client(HTTP_USER_AGENT="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1")
     return client
 
 
@@ -83,9 +79,7 @@ class TestMagicLinkGenerate:
 
     @pytest.mark.django_db
     @patch("plane.bgtasks.magic_link_code_task.magic_link.delay")
-    def test_magic_generate(
-        self, mock_magic_link, api_client, setup_user, setup_instance
-    ):
+    def test_magic_generate(self, mock_magic_link, api_client, setup_user, setup_instance):
         """Test successful magic link generation"""
         url = reverse("magic-generate")
 
@@ -103,9 +97,7 @@ class TestMagicLinkGenerate:
 
     @pytest.mark.django_db
     @patch("plane.bgtasks.magic_link_code_task.magic_link.delay")
-    def test_max_generate_attempt(
-        self, mock_magic_link, api_client, setup_user, setup_instance
-    ):
+    def test_max_generate_attempt(self, mock_magic_link, api_client, setup_user, setup_instance):
         """Test exceeding maximum magic link generation attempts"""
         url = reverse("magic-generate")
 
@@ -145,9 +137,7 @@ class TestSignInEndpoint:
     def test_email_validity(self, django_client, setup_user, setup_instance):
         """Test sign-in with invalid email format"""
         url = reverse("sign-in")
-        response = django_client.post(
-            url, {"email": "useremail.com", "password": "user@123"}, follow=True
-        )
+        response = django_client.post(url, {"email": "useremail.com", "password": "user@123"}, follow=True)
 
         # Check redirect contains error code
         assert "INVALID_EMAIL_SIGN_IN" in response.redirect_chain[-1][0]
@@ -156,9 +146,7 @@ class TestSignInEndpoint:
     def test_user_exists(self, django_client, setup_user, setup_instance):
         """Test sign-in with non-existent user"""
         url = reverse("sign-in")
-        response = django_client.post(
-            url, {"email": "user@email.so", "password": "user123"}, follow=True
-        )
+        response = django_client.post(url, {"email": "user@email.so", "password": "user123"}, follow=True)
 
         # Check redirect contains error code
         assert "USER_DOES_NOT_EXIST" in response.redirect_chain[-1][0]
@@ -167,9 +155,7 @@ class TestSignInEndpoint:
     def test_password_validity(self, django_client, setup_user, setup_instance):
         """Test sign-in with incorrect password"""
         url = reverse("sign-in")
-        response = django_client.post(
-            url, {"email": "user@plane.so", "password": "user123"}, follow=True
-        )
+        response = django_client.post(url, {"email": "user@plane.so", "password": "user123"}, follow=True)
 
         # Check for the specific authentication error in the URL
         redirect_urls = [url for url, _ in response.redirect_chain]
@@ -184,9 +170,7 @@ class TestSignInEndpoint:
         url = reverse("sign-in")
 
         # First make the request without following redirects
-        response = django_client.post(
-            url, {"email": "user@plane.so", "password": "user@123"}, follow=False
-        )
+        response = django_client.post(url, {"email": "user@plane.so", "password": "user@123"}, follow=False)
 
         # Check that the initial response is a redirect (302) without error code
         assert response.status_code == 302
@@ -243,27 +227,20 @@ class TestMagicSignIn:
         assert "MAGIC_SIGN_IN_EMAIL_CODE_REQUIRED" in response.redirect_chain[-1][0]
 
     @pytest.mark.django_db
-    def test_expired_invalid_magic_link(
-        self, django_client, setup_user, setup_instance
-    ):
+    def test_expired_invalid_magic_link(self, django_client, setup_user, setup_instance):
         """Test magic link sign-in with expired/invalid link"""
         ri = redis_instance()
         ri.delete("magic_user@plane.so")
 
         url = reverse("magic-sign-in")
-        response = django_client.post(
-            url, {"email": "user@plane.so", "code": "xxxx-xxxxx-xxxx"}, follow=False
-        )
+        response = django_client.post(url, {"email": "user@plane.so", "code": "xxxx-xxxxx-xxxx"}, follow=False)
 
         # Check that we get a redirect
         assert response.status_code == 302
 
         # The actual error code is EXPIRED_MAGIC_CODE_SIGN_IN (when key doesn't exist)
         # or INVALID_MAGIC_CODE_SIGN_IN (when key exists but code doesn't match)
-        assert (
-            "EXPIRED_MAGIC_CODE_SIGN_IN" in response.url
-            or "INVALID_MAGIC_CODE_SIGN_IN" in response.url
-        )
+        assert "EXPIRED_MAGIC_CODE_SIGN_IN" in response.url or "INVALID_MAGIC_CODE_SIGN_IN" in response.url
 
     @pytest.mark.django_db
     def test_user_does_not_exist(self, django_client, setup_instance):
@@ -280,9 +257,7 @@ class TestMagicSignIn:
 
     @pytest.mark.django_db
     @patch("plane.bgtasks.magic_link_code_task.magic_link.delay")
-    def test_magic_code_sign_in(
-        self, mock_magic_link, django_client, api_client, setup_user, setup_instance
-    ):
+    def test_magic_code_sign_in(self, mock_magic_link, django_client, api_client, setup_user, setup_instance):
         """Test successful magic link sign-in process"""
         # First generate a magic link token
         gen_url = reverse("magic-generate")
@@ -298,9 +273,7 @@ class TestMagicSignIn:
 
         # Use Django client to test the redirect flow without following redirects
         url = reverse("magic-sign-in")
-        response = django_client.post(
-            url, {"email": "user@plane.so", "code": token}, follow=False
-        )
+        response = django_client.post(url, {"email": "user@plane.so", "code": token}, follow=False)
 
         # Check that the initial response is a redirect without error code
         assert response.status_code == 302
@@ -311,9 +284,7 @@ class TestMagicSignIn:
 
     @pytest.mark.django_db
     @patch("plane.bgtasks.magic_link_code_task.magic_link.delay")
-    def test_magic_sign_in_with_next_path(
-        self, mock_magic_link, django_client, api_client, setup_user, setup_instance
-    ):
+    def test_magic_sign_in_with_next_path(self, mock_magic_link, django_client, api_client, setup_user, setup_instance):
         """Test magic sign-in with next_path parameter"""
         # First generate a magic link token
         gen_url = reverse("magic-generate")
@@ -367,9 +338,7 @@ class TestMagicSignUp:
         User.objects.create(email="existing@plane.so")
 
         url = reverse("magic-sign-up")
-        response = django_client.post(
-            url, {"email": "existing@plane.so", "code": "xxxx-xxxxx-xxxx"}, follow=True
-        )
+        response = django_client.post(url, {"email": "existing@plane.so", "code": "xxxx-xxxxx-xxxx"}, follow=True)
 
         # Check redirect contains error code
         assert "USER_ALREADY_EXIST" in response.redirect_chain[-1][0]
@@ -378,25 +347,18 @@ class TestMagicSignUp:
     def test_expired_invalid_magic_link(self, django_client, setup_instance):
         """Test magic link sign-up with expired/invalid link"""
         url = reverse("magic-sign-up")
-        response = django_client.post(
-            url, {"email": "new@plane.so", "code": "xxxx-xxxxx-xxxx"}, follow=False
-        )
+        response = django_client.post(url, {"email": "new@plane.so", "code": "xxxx-xxxxx-xxxx"}, follow=False)
 
         # Check that we get a redirect
         assert response.status_code == 302
 
         # The actual error code is EXPIRED_MAGIC_CODE_SIGN_UP (when key doesn't exist)
         # or INVALID_MAGIC_CODE_SIGN_UP (when key exists but code doesn't match)
-        assert (
-            "EXPIRED_MAGIC_CODE_SIGN_UP" in response.url
-            or "INVALID_MAGIC_CODE_SIGN_UP" in response.url
-        )
+        assert "EXPIRED_MAGIC_CODE_SIGN_UP" in response.url or "INVALID_MAGIC_CODE_SIGN_UP" in response.url
 
     @pytest.mark.django_db
     @patch("plane.bgtasks.magic_link_code_task.magic_link.delay")
-    def test_magic_code_sign_up(
-        self, mock_magic_link, django_client, api_client, setup_instance
-    ):
+    def test_magic_code_sign_up(self, mock_magic_link, django_client, api_client, setup_instance):
         """Test successful magic link sign-up process"""
         email = "newuser@plane.so"
 
@@ -414,9 +376,7 @@ class TestMagicSignUp:
 
         # Use Django client to test the redirect flow without following redirects
         url = reverse("magic-sign-up")
-        response = django_client.post(
-            url, {"email": email, "code": token}, follow=False
-        )
+        response = django_client.post(url, {"email": email, "code": token}, follow=False)
 
         # Check that the initial response is a redirect without error code
         assert response.status_code == 302
@@ -430,9 +390,7 @@ class TestMagicSignUp:
 
     @pytest.mark.django_db
     @patch("plane.bgtasks.magic_link_code_task.magic_link.delay")
-    def test_magic_sign_up_with_next_path(
-        self, mock_magic_link, django_client, api_client, setup_instance
-    ):
+    def test_magic_sign_up_with_next_path(self, mock_magic_link, django_client, api_client, setup_instance):
         """Test magic sign-up with next_path parameter"""
         email = "newuser2@plane.so"
 
@@ -451,9 +409,7 @@ class TestMagicSignUp:
         # Use Django client to test the redirect flow without following redirects
         url = reverse("magic-sign-up")
         next_path = "onboarding"
-        response = django_client.post(
-            url, {"email": email, "code": token, "next_path": next_path}, follow=False
-        )
+        response = django_client.post(url, {"email": email, "code": token, "next_path": next_path}, follow=False)
 
         # Check that the initial response is a redirect without error code
         assert response.status_code == 302

@@ -1,41 +1,42 @@
-"use client";
-
-import React, { FC, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
+import { useTheme } from "next-themes";
 // plane imports
+import { API_BASE_URL } from "@plane/constants";
 import { SitesAuthService } from "@plane/services";
-import { IEmailCheckData } from "@plane/types";
-// components
-import {
-  AuthHeader,
-  AuthBanner,
-  AuthEmailForm,
-  AuthUniqueCodeForm,
-  AuthPasswordForm,
-  OAuthOptions,
-  TermsAndConditions,
-} from "@/components/account";
+import type { IEmailCheckData } from "@plane/types";
+import { OAuthOptions } from "@plane/ui";
+// assets
+import GiteaLogo from "@/app/assets/logos/gitea-logo.svg?url";
+import GithubLightLogo from "@/app/assets/logos/github-black.png?url";
+import GithubDarkLogo from "@/app/assets/logos/github-dark.svg?url";
+import GitlabLogo from "@/app/assets/logos/gitlab-logo.svg?url";
+import GoogleLogo from "@/app/assets/logos/google-logo.svg?url";
 // helpers
-import {
-  EAuthenticationErrorCodes,
-  EErrorAlertType,
-  TAuthErrorInfo,
-  authErrorHandler,
-} from "@/helpers/authentication.helper";
+import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
+import { EErrorAlertType, authErrorHandler, EAuthenticationErrorCodes } from "@/helpers/authentication.helper";
 // hooks
-import { useInstance } from "@/hooks/store";
+import { useInstance } from "@/hooks/store/use-instance";
 // types
 import { EAuthModes, EAuthSteps } from "@/types/auth";
+// local imports
+import { TermsAndConditions } from "../terms-and-conditions";
+import { AuthBanner } from "./auth-banner";
+import { AuthHeader } from "./auth-header";
+import { AuthEmailForm } from "./email";
+import { AuthPasswordForm } from "./password";
+import { AuthUniqueCodeForm } from "./unique-code";
 
 const authService = new SitesAuthService();
 
-export const AuthRoot: FC = observer(() => {
+export const AuthRoot = observer(function AuthRoot() {
   // router params
   const searchParams = useSearchParams();
   const emailParam = searchParams.get("email") || undefined;
   const error_code = searchParams.get("error_code") || undefined;
   const nextPath = searchParams.get("next_path") || undefined;
+  const next_path = searchParams.get("next_path");
   // states
   const [authMode, setAuthMode] = useState<EAuthModes>(EAuthModes.SIGN_UP);
   const [authStep, setAuthStep] = useState<EAuthSteps>(EAuthSteps.EMAIL);
@@ -43,6 +44,7 @@ export const AuthRoot: FC = observer(() => {
   const [errorInfo, setErrorInfo] = useState<TAuthErrorInfo | undefined>(undefined);
   const [isPasswordAutoset, setIsPasswordAutoset] = useState(true);
   // hooks
+  const { resolvedTheme } = useTheme();
   const { config } = useInstance();
 
   useEffect(() => {
@@ -86,7 +88,12 @@ export const AuthRoot: FC = observer(() => {
   const isMagicLoginEnabled = config?.is_magic_login_enabled || false;
   const isEmailPasswordEnabled = config?.is_email_password_enabled || false;
   const isOAuthEnabled =
-    (config && (config?.is_google_enabled || config?.is_github_enabled || config?.is_gitlab_enabled)) || false;
+    (config &&
+      (config?.is_google_enabled ||
+        config?.is_github_enabled ||
+        config?.is_gitlab_enabled ||
+        config?.is_gitea_enabled)) ||
+    false;
 
   // submit handler- email verification
   const handleEmailVerification = async (data: IEmailCheckData) => {
@@ -146,12 +153,63 @@ export const AuthRoot: FC = observer(() => {
       });
   };
 
+  const content = authMode === EAuthModes.SIGN_UP ? "Sign up" : "Sign in";
+
+  const OAuthConfig = [
+    {
+      id: "google",
+      text: `${content} with Google`,
+      icon: <img src={GoogleLogo} height={18} width={18} alt="Google Logo" />,
+      onClick: () => {
+        window.location.assign(`${API_BASE_URL}/auth/google/${next_path ? `?next_path=${next_path}` : ``}`);
+      },
+      enabled: config?.is_google_enabled,
+    },
+    {
+      id: "github",
+      text: `${content} with GitHub`,
+      icon: (
+        <img
+          src={resolvedTheme === "dark" ? GithubLightLogo : GithubDarkLogo}
+          height={18}
+          width={18}
+          alt="GitHub Logo"
+        />
+      ),
+      onClick: () => {
+        window.location.assign(`${API_BASE_URL}/auth/github/${next_path ? `?next_path=${next_path}` : ``}`);
+      },
+      enabled: config?.is_github_enabled,
+    },
+    {
+      id: "gitlab",
+      text: `${content} with GitLab`,
+      icon: <img src={GitlabLogo} height={18} width={18} alt="GitLab Logo" />,
+      onClick: () => {
+        window.location.assign(`${API_BASE_URL}/auth/gitlab/${next_path ? `?next_path=${next_path}` : ``}`);
+      },
+      enabled: config?.is_gitlab_enabled,
+    },
+    {
+      id: "gitea",
+      text: `${content} with Gitea`,
+      icon: <img src={GiteaLogo} height={18} width={18} alt="Gitea Logo" />,
+      onClick: () => {
+        window.location.assign(`${API_BASE_URL}/auth/gitea/${next_path ? `?next_path=${next_path}` : ``}`);
+      },
+      enabled: config?.is_gitea_enabled,
+    },
+  ];
+
   return (
-    <div className="relative flex flex-col space-y-6">
-      <AuthHeader authMode={authMode}>
+    <div className="flex flex-col justify-center items-center flex-grow w-full py-6 mt-10">
+      <div className="relative flex flex-col gap-6 max-w-[22.5rem] w-full">
         {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
           <AuthBanner bannerData={errorInfo} handleBannerData={(value) => setErrorInfo(value)} />
         )}
+        <AuthHeader authMode={authMode} />
+        {isOAuthEnabled && <OAuthOptions options={OAuthConfig} compact={authStep === EAuthSteps.PASSWORD} />}
+
         {authStep === EAuthSteps.EMAIL && <AuthEmailForm defaultEmail={email} onSubmit={handleEmailVerification} />}
         {authStep === EAuthSteps.UNIQUE_CODE && (
           <AuthUniqueCodeForm
@@ -182,9 +240,8 @@ export const AuthRoot: FC = observer(() => {
             }}
           />
         )}
-        {isOAuthEnabled && <OAuthOptions />}
         <TermsAndConditions isSignUp={authMode === EAuthModes.SIGN_UP ? true : false} />
-      </AuthHeader>
+      </div>
     </div>
   );
 });

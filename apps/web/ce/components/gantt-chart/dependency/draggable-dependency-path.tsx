@@ -1,1 +1,3 @@
-export const TimelineDraggablePath = () => <></>;
+export function TimelineDraggablePath() {
+  return <></>;
+}

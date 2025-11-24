@@ -2,22 +2,23 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { Plus, StickyNote as StickyIcon, X } from "lucide-react";
+import { Plus, StickyNote as StickyIcon } from "lucide-react";
 // plane hooks
 import { useOutsideClickDetector } from "@plane/hooks";
 // plane ui
-import { RecentStickyIcon, StickyNoteIcon, Tooltip } from "@plane/ui";
+import { RecentStickyIcon, StickyNoteIcon, CloseIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 // plane utils
 import { cn } from "@plane/utils";
 // hooks
-import { useCommandPalette } from "@/hooks/store";
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useSticky } from "@/hooks/use-stickies";
 // components
 import { STICKY_COLORS_LIST } from "../editor/sticky-editor/color-palette";
 import { AllStickiesModal } from "./modal";
 import { StickyNote } from "./sticky";
 
-export const StickyActionBar = observer(() => {
+export const StickyActionBar = observer(function StickyActionBar() {
   // states
   const [isExpanded, setIsExpanded] = useState(false);
   const [newSticky, setNewSticky] = useState(false);
@@ -112,7 +113,7 @@ export const StickyActionBar = observer(() => {
         onClick={() => setIsExpanded(!isExpanded)}
       >
         {isExpanded ? (
-          <X className="size-5 text-custom-text-350" />
+          <CloseIcon className="size-5 text-custom-text-350" />
         ) : (
           <StickyIcon className="size-5 rotate-90 text-custom-text-350" />
         )}

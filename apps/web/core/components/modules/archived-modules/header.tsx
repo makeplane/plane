@@ -1,22 +1,25 @@
-import { FC, useCallback, useRef, useState } from "react";
+import type { FC } from "react";
+import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { ListFilter, Search, X } from "lucide-react";
-// plane helpers
+import { ListFilter, Search } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
+import { CloseIcon } from "@plane/propel/icons";
+// plane helpers
 // types
 import type { TModuleFilters } from "@plane/types";
 import { cn, calculateTotalFilters } from "@plane/utils";
 // components
 import { ArchiveTabsList } from "@/components/archives";
-import { FiltersDropdown } from "@/components/issues";
+import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { ModuleFiltersSelection, ModuleOrderByDropdown } from "@/components/modules";
 // helpers
 // hooks
-import { useMember, useModuleFilter } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useModuleFilter } from "@/hooks/store/use-module-filter";
 
-export const ArchivedModulesHeader: FC = observer(() => {
+export const ArchivedModulesHeader = observer(function ArchivedModulesHeader() {
   // router
   const { projectId } = useParams();
   // refs
@@ -117,7 +120,7 @@ export const ArchivedModulesHeader: FC = observer(() => {
                 setIsSearchOpen(false);
               }}
             >
-              <X className="h-3 w-3" />
+              <CloseIcon className="h-3 w-3" />
             </button>
           )}
         </div>

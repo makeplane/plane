@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import xor from "lodash/xor";
+import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // hooks
 // components
 import { cn } from "@plane/utils";
-import { ModuleDropdown } from "@/components/dropdowns";
+import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 // ui
 // helpers
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // types
 import type { TIssueOperations } from "./root";
 
@@ -21,7 +21,7 @@ type TIssueModuleSelect = {
   disabled?: boolean;
 };
 
-export const IssueModuleSelect: React.FC<TIssueModuleSelect> = observer((props) => {
+export const IssueModuleSelect = observer(function IssueModuleSelect(props: TIssueModuleSelect) {
   const { className = "", workspaceSlug, projectId, issueId, issueOperations, disabled = false } = props;
   const { t } = useTranslation();
   // states

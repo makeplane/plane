@@ -28,9 +28,7 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": True,
     "formatters": {
-        "verbose": {
-            "format": "%(asctime)s [%(process)d] %(levelname)s %(name)s: %(message)s"
-        },
+        "verbose": {"format": "%(asctime)s [%(process)d] %(levelname)s %(name)s: %(message)s"},
         "json": {
             "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
             "fmt": "%(levelname)s %(asctime)s %(module)s %(name)s %(message)s",
@@ -79,6 +77,11 @@ LOGGING = {
             "propagate": False,
         },
         "plane.external": {
+            "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+        "plane.mongo": {
             "level": "INFO",
             "handlers": ["console"],
             "propagate": False,

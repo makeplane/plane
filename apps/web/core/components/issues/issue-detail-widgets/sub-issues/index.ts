@@ -3,3 +3,4 @@ export * from "./title";
 export * from "./root";
 export * from "./quick-action-button";
 export * from "./display-filters";
+export * from "./content";

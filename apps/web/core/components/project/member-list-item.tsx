@@ -1,19 +1,20 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane imports
 import { MEMBER_TRACKER_EVENTS } from "@plane/constants";
-import { TOAST_TYPE, Table, setToast } from "@plane/ui";
-// components
-import { ConfirmProjectMemberRemove } from "@/components/project";
-// hooks
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Table } from "@plane/ui";
+// helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useMember, useUser, useUserPermissions } from "@/hooks/store";
+// hooks
+import { useMember } from "@/hooks/store/use-member";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { useProjectColumns } from "@/plane-web/components/projects/settings/useProjectColumns";
 // store
-import { IProjectMemberDetails } from "@/store/member/base-project-member.store";
+import type { IProjectMemberDetails } from "@/store/member/project/base-project-member.store";
+// local imports
+import { ConfirmProjectMemberRemove } from "./confirm-project-member-remove";
 
 type Props = {
   memberDetails: (IProjectMemberDetails | null)[];
@@ -21,7 +22,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
+export const ProjectMemberListItem = observer(function ProjectMemberListItem(props: Props) {
   const { memberDetails, projectId, workspaceSlug } = props;
   // router
   const router = useAppRouter();
@@ -69,7 +70,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
       await removeMemberFromProject(workspaceSlug.toString(), projectId.toString(), memberId).catch((err) =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "You can’t remove the member from this project yet.",
+          title: "You can't remove the member from this project yet.",
           message: err?.error || "Something went wrong. Please try again.",
         })
       );

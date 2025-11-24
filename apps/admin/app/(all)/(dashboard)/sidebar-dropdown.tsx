@@ -1,5 +1,3 @@
-"use client";
-
 import { Fragment, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme as useNextTheme } from "next-themes";
@@ -16,7 +14,7 @@ import { useTheme, useUser } from "@/hooks/store";
 // service initialization
 const authService = new AuthService();
 
-export const AdminSidebarDropdown = observer(() => {
+export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
   // store hooks
   const { isSidebarCollapsed } = useTheme();
   const { currentUser, signOut } = useUser();
@@ -42,7 +40,7 @@ export const AdminSidebarDropdown = observer(() => {
       )}
     >
       <div className="flex flex-col gap-2.5 pb-2">
-        <span className="px-2 text-custom-sidebar-text-200">{currentUser?.email}</span>
+        <span className="px-2 text-custom-sidebar-text-200 truncate">{currentUser?.email}</span>
       </div>
       <div className="py-2">
         <Menu.Item
@@ -77,7 +75,7 @@ export const AdminSidebarDropdown = observer(() => {
   }, [csrfToken]);
 
   return (
-    <div className="flex max-h-[3.75rem] items-center gap-x-5 gap-y-2 border-b border-custom-sidebar-border-200 px-4 py-3.5">
+    <div className="flex max-h-header items-center gap-x-5 gap-y-2 border-b border-custom-sidebar-border-200 px-4 py-3.5">
       <div className="h-full w-full truncate">
         <div
           className={`flex flex-grow items-center gap-x-2 truncate rounded py-1 ${

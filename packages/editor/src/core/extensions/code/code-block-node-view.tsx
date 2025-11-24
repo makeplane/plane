@@ -1,6 +1,4 @@
-"use client";
-
-import { Node as ProseMirrorNode } from "@tiptap/pm/model";
+import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { NodeViewWrapper, NodeViewContent } from "@tiptap/react";
 import ts from "highlight.js/lib/languages/typescript";
 import { common, createLowlight } from "lowlight";
@@ -15,11 +13,11 @@ import { cn } from "@plane/utils";
 const lowlight = createLowlight(common);
 lowlight.register("ts", ts);
 
-interface CodeBlockComponentProps {
+type Props = {
   node: ProseMirrorNode;
-}
+};
 
-export const CodeBlockComponent: React.FC<CodeBlockComponentProps> = ({ node }) => {
+export function CodeBlockComponent({ node }: Props) {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -60,4 +58,4 @@ export const CodeBlockComponent: React.FC<CodeBlockComponentProps> = ({ node }) 
       </pre>
     </NodeViewWrapper>
   );
-};
+}

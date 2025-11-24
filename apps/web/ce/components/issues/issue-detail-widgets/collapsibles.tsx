@@ -1,6 +1,6 @@
-import { FC } from "react";
+import type { FC } from "react";
 // plane types
-import { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
+import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 
 export type TWorkItemAdditionalWidgetCollapsiblesProps = {
   disabled: boolean;
@@ -11,4 +11,6 @@ export type TWorkItemAdditionalWidgetCollapsiblesProps = {
   workspaceSlug: string;
 };
 
-export const WorkItemAdditionalWidgetCollapsibles: FC<TWorkItemAdditionalWidgetCollapsiblesProps> = () => null;
+export function WorkItemAdditionalWidgetCollapsibles(_props: TWorkItemAdditionalWidgetCollapsiblesProps) {
+  return null;
+}

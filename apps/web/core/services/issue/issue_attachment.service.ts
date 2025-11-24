@@ -1,9 +1,9 @@
-import { AxiosRequestConfig } from "axios";
+import type { AxiosRequestConfig } from "axios";
 import { API_BASE_URL } from "@plane/constants";
 // plane types
-import { EIssueServiceType, TIssueAttachment, TIssueAttachmentUploadResponse, TIssueServiceType } from "@plane/types";
-// helpers
-import { generateFileUploadPayload, getFileMetaDataForUpload } from "@plane/utils";
+import { getFileMetaDataForUpload, generateFileUploadPayload } from "@plane/services";
+import type { TIssueAttachment, TIssueAttachmentUploadResponse, TIssueServiceType } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
 import { FileUploadService } from "@/services/file-upload.service";
@@ -41,7 +41,7 @@ export class IssueAttachmentService extends APIService {
     file: File,
     uploadProgressHandler?: AxiosRequestConfig["onUploadProgress"]
   ): Promise<TIssueAttachment> {
-    const fileMetaData = getFileMetaDataForUpload(file);
+    const fileMetaData = await getFileMetaDataForUpload(file);
     return this.post(
       `/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/${this.serviceType}/${issueId}/attachments/`,
       fileMetaData

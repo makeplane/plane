@@ -2,8 +2,10 @@ import { useMemo } from "react";
 import { Copy, ExternalLink, Link, Pencil, Trash2, XCircle, ArchiveRestoreIcon } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EIssuesStoreType, TIssue } from "@plane/types";
-import { ArchiveIcon, TContextMenuItem, TOAST_TYPE, setToast } from "@plane/ui";
+import { ArchiveIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { EIssuesStoreType, TIssue } from "@plane/types";
+import type { TContextMenuItem } from "@plane/ui";
 import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // types
 import { createCopyMenuWithDuplication } from "@/plane-web/components/issues/issue-layouts/quick-action-dropdowns";
@@ -54,7 +56,6 @@ export interface MenuItemFactoryProps {
   isRestoringAllowed?: boolean;
   isInArchivableGroup?: boolean;
   issueTypeDetail?: { is_active?: boolean };
-  isDraftIssue?: boolean;
   // Action handlers
   setIssueToEdit: (issue: TIssue | undefined) => void;
   setCreateUpdateIssueModal: (open: boolean) => void;
@@ -164,7 +165,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
     shouldRender: isEditingAllowed,
   });
 
-  const createCopyMenuItem = (): TContextMenuItem => {
+  const createCopyMenuItem = (workspaceSlug?: string): TContextMenuItem => {
     const baseItem = {
       key: "make-a-copy",
       title: t("common.actions.make_a_copy"),
@@ -180,6 +181,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
       activeLayout,
       setCreateUpdateIssueModal,
       setDuplicateWorkItemModal,
+      workspaceSlug,
     });
   };
 
@@ -274,6 +276,21 @@ export const useProjectIssueMenuItems = (props: MenuItemFactoryProps): TContextM
   );
 };
 
+export const useWorkItemDetailMenuItems = (props: MenuItemFactoryProps): TContextMenuItem[] => {
+  const factory = useMenuItemFactory(props);
+
+  return useMemo(
+    () => [
+      factory.createCopyMenuItem(props.workspaceSlug),
+      factory.createOpenInNewTabMenuItem(),
+      factory.createArchiveMenuItem(),
+      factory.createRestoreMenuItem(),
+      factory.createDeleteMenuItem(),
+    ],
+    [factory]
+  );
+};
+
 export const useAllIssueMenuItems = (props: MenuItemFactoryProps): TContextMenuItem[] => {
   const factory = useMenuItemFactory(props);
 
@@ -352,10 +369,4 @@ export const useArchivedIssueMenuItems = (props: MenuItemFactoryProps): TContext
     ],
     [factory]
   );
-};
-
-export const useDraftIssueMenuItems = (props: MenuItemFactoryProps): TContextMenuItem[] => {
-  const factory = useMenuItemFactory(props);
-
-  return useMemo(() => [factory.createEditMenuItem(), factory.createDeleteMenuItem()], [factory]);
 };

@@ -5,9 +5,9 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY . .
-RUN yarn global add turbo
-RUN yarn install
+RUN corepack enable pnpm && pnpm add -g turbo
+RUN pnpm install
 
 EXPOSE 3000
 VOLUME [ "/app/node_modules", "/app/web/node_modules" ]
-CMD ["yarn", "dev", "--filter=web"]
+CMD ["pnpm", "dev", "--filter=web"]

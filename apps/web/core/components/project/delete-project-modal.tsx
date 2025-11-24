@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
@@ -7,13 +5,15 @@ import { AlertTriangle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // types
 import { PROJECT_TRACKER_EVENTS } from "@plane/constants";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IProject } from "@plane/types";
 // ui
-import { Button, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { Input } from "@plane/ui";
 // constants
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type DeleteProjectModal = {
@@ -27,7 +27,7 @@ const defaultValues = {
   confirmDelete: "",
 };
 
-export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
+export function DeleteProjectModal(props: DeleteProjectModal) {
   const { isOpen, project, onClose } = props;
   // store hooks
   const { deleteProject } = useProject();
@@ -196,4 +196,4 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+}

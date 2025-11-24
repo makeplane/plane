@@ -15,15 +15,11 @@ class TestAuthSmoke:
         url = f"{plane_server.url}{relative_url}"
 
         # 1. Test bad login - test with wrong password
-        response = requests.post(
-            url, data={"email": user_data["email"], "password": "wrong-password"}
-        )
+        response = requests.post(url, data={"email": user_data["email"], "password": "wrong-password"})
 
         # For bad credentials, any of these status codes would be valid
         # The test shouldn't be brittle to minor implementation changes
-        assert response.status_code != 500, (
-            "Authentication should not cause server errors"
-        )
+        assert response.status_code != 500, "Authentication should not cause server errors"
         assert response.status_code != 404, "Authentication endpoint should exist"
 
         if response.status_code == 200:
@@ -33,10 +29,7 @@ class TestAuthSmoke:
                     data = response.json()
                     # JSON response might indicate error in its structure
                     assert (
-                        "error" in data
-                        or "error_code" in data
-                        or "detail" in data
-                        or response.url.endswith("sign-in")
+                        "error" in data or "error_code" in data or "detail" in data or response.url.endswith("sign-in")
                     ), "Error response should contain error details"
                 except ValueError:
                     # It's ok if response isn't JSON format
@@ -75,20 +68,17 @@ class TestAuthSmoke:
                     data = response.json()
                     # If it's a token response
                     if "access_token" in data:
-                        assert "refresh_token" in data, (
-                            "JWT auth should return both access and refresh tokens"
-                        )
+                        assert "refresh_token" in data, "JWT auth should return both access and refresh tokens"
                     # If it's a user session response
                     elif "user" in data:
-                        assert (
-                            "is_authenticated" in data and data["is_authenticated"]
-                        ), "User session response should indicate authentication"
+                        assert "is_authenticated" in data and data["is_authenticated"], (
+                            "User session response should indicate authentication"
+                        )
                     # Otherwise it should at least indicate success
                     else:
-                        assert not any(
-                            error_key in data
-                            for error_key in ["error", "error_code", "detail"]
-                        ), "Success response should not contain error keys"
+                        assert not any(error_key in data for error_key in ["error", "error_code", "detail"]), (
+                            "Success response should not contain error keys"
+                        )
                 except ValueError:
                     # Non-JSON is acceptable if it's a redirect or HTML response
                     pass

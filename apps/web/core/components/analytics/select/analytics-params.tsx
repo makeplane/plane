@@ -1,10 +1,12 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { Control, Controller, UseFormSetValue } from "react-hook-form";
+import type { Control, UseFormSetValue } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { Calendar, SlidersHorizontal } from "lucide-react";
 // plane package imports
 import { ANALYTICS_X_AXIS_VALUES, ANALYTICS_Y_AXIS_VALUES } from "@plane/constants";
-import { ChartYAxisMetric, IAnalyticsParams } from "@plane/types";
+import type { IAnalyticsParams } from "@plane/types";
+import { ChartYAxisMetric } from "@plane/types";
 import { cn } from "@plane/utils";
 // plane web components
 import { SelectXAxis } from "./select-x-axis";
@@ -16,10 +18,11 @@ type Props = {
   params: IAnalyticsParams;
   workspaceSlug: string;
   classNames?: string;
+  isEpic?: boolean;
 };
 
-export const AnalyticsSelectParams: React.FC<Props> = observer((props) => {
-  const { control, params, classNames } = props;
+export const AnalyticsSelectParams = observer(function AnalyticsSelectParams(props: Props) {
+  const { control, params, classNames, isEpic } = props;
   const xAxisOptions = useMemo(
     () => ANALYTICS_X_AXIS_VALUES.filter((option) => option.value !== params.group_by),
     [params.group_by]
@@ -42,7 +45,10 @@ export const AnalyticsSelectParams: React.FC<Props> = observer((props) => {
                 onChange(val);
               }}
               options={ANALYTICS_Y_AXIS_VALUES}
-              hiddenOptions={[ChartYAxisMetric.ESTIMATE_POINT_COUNT]}
+              hiddenOptions={[
+                ChartYAxisMetric.ESTIMATE_POINT_COUNT,
+                isEpic ? ChartYAxisMetric.WORK_ITEM_COUNT : ChartYAxisMetric.EPIC_WORK_ITEM_COUNT,
+              ]}
             />
           )}
         />

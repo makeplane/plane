@@ -1,6 +1,5 @@
-import { FC } from "react";
 // components
-import { TLabelOperations } from "../root";
+import type { TLabelOperations } from "../root";
 import { IssueLabelSelect } from "./label-select";
 // types
 
@@ -12,7 +11,7 @@ type TIssueLabelSelectRoot = {
   labelOperations: TLabelOperations;
 };
 
-export const IssueLabelSelectRoot: FC<TIssueLabelSelectRoot> = (props) => {
+export function IssueLabelSelectRoot(props: TIssueLabelSelectRoot) {
   const { workspaceSlug, projectId, issueId, values, labelOperations } = props;
 
   const handleLabel = async (_labelIds: string[]) => {
@@ -29,4 +28,4 @@ export const IssueLabelSelectRoot: FC<TIssueLabelSelectRoot> = (props) => {
       onAddLabel={labelOperations.createLabel}
     />
   );
-};
+}

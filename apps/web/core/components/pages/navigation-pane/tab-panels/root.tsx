@@ -1,12 +1,12 @@
 import React from "react";
 import { Tab } from "@headlessui/react";
 // components
-import { TPageRootHandlers } from "@/components/pages/editor";
+import type { TPageRootHandlers } from "@/components/pages/editor/page-root";
 // plane web imports
 import { ORDERED_PAGE_NAVIGATION_TABS_LIST } from "@/plane-web/components/pages/navigation-pane";
 import { PageNavigationPaneAdditionalTabPanelsRoot } from "@/plane-web/components/pages/navigation-pane/tab-panels/root";
 // store
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 // local imports
 import { PageNavigationPaneAssetsTabPanel } from "./assets";
 import { PageNavigationPaneInfoTabPanel } from "./info/root";
@@ -17,7 +17,7 @@ type Props = {
   versionHistory: Pick<TPageRootHandlers, "fetchAllVersions" | "fetchVersionDetails">;
 };
 
-export const PageNavigationPaneTabPanelsRoot: React.FC<Props> = (props) => {
+export function PageNavigationPaneTabPanelsRoot(props: Props) {
   const { page, versionHistory } = props;
 
   return (
@@ -36,4 +36,4 @@ export const PageNavigationPaneTabPanelsRoot: React.FC<Props> = (props) => {
       ))}
     </Tab.Panels>
   );
-};
+}

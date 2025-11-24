@@ -1,6 +1,5 @@
-"use client";
-
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
@@ -16,19 +15,23 @@ import {
 } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { IModule } from "@plane/types";
+import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { IModule } from "@plane/types";
 // ui
-import { FavoriteStar, TOAST_TYPE, Tooltip, setPromiseToast, setToast } from "@plane/ui";
+import { FavoriteStar } from "@plane/ui";
 // components
 import { renderFormattedPayloadDate, getDate } from "@plane/utils";
-import { DateRangeDropdown } from "@/components/dropdowns";
+import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { ModuleQuickActions } from "@/components/modules";
 import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdown";
 // constants
 // helpers
 import { captureElementAndEvent, captureError } from "@/helpers/event-tracker.helper";
 // hooks
-import { useMember, useModule, useUserPermissions } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useModule } from "@/hooks/store/use-module";
+import { useUserPermissions } from "@/hooks/store/user";
 import { ButtonAvatars } from "../dropdowns/member/avatar";
 
 type Props = {
@@ -37,7 +40,7 @@ type Props = {
   parentRef: React.RefObject<HTMLDivElement>;
 };
 
-export const ModuleListItemAction: FC<Props> = observer((props) => {
+export const ModuleListItemAction = observer(function ModuleListItemAction(props: Props) {
   const { moduleId, moduleDetails, parentRef } = props;
   // router
   const { workspaceSlug, projectId } = useParams();

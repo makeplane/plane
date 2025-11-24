@@ -1,20 +1,18 @@
-"use client";
-
-import { FormEvent, useState } from "react";
-// types
-import { FileText, Globe2, Lock, LucideIcon } from "lucide-react";
+import type { FormEvent } from "react";
+import { useState } from "react";
+import type { LucideIcon } from "lucide-react";
+import { Globe2, Lock } from "lucide-react";
 // plane imports
 import { ETabIndices, EPageAccess } from "@plane/constants";
-// i18n
 import { useTranslation } from "@plane/i18n";
-import { TPage } from "@plane/types";
-// ui
-import { Button, EmojiIconPicker, EmojiIconPickerTypes, Input } from "@plane/ui";
-import { convertHexEmojiToDecimal, getTabIndex } from "@plane/utils";
-import { Logo } from "@/components/common";
-// constants
+import { Button } from "@plane/propel/button";
+import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
+import { PageIcon } from "@plane/propel/icons";
+import type { TPage } from "@plane/types";
+import { Input } from "@plane/ui";
+import { getTabIndex } from "@plane/utils";
+// components
 import { AccessField } from "@/components/common/access-field";
-// helpers
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
@@ -34,7 +32,7 @@ const PAGE_ACCESS_SPECIFIERS: {
   { key: EPageAccess.PRIVATE, i18n_label: "common.access.private", icon: Lock },
 ];
 
-export const PageForm: React.FC<Props> = (props) => {
+export function PageForm(props: Props) {
   const { formData, handleFormData, handleModalClose, handleFormSubmit } = props;
   // hooks
   const { isMobile } = usePlatformOS();
@@ -65,7 +63,7 @@ export const PageForm: React.FC<Props> = (props) => {
       <div className="space-y-5 p-5">
         <h3 className="text-xl font-medium text-custom-text-200">Create page</h3>
         <div className="flex items-start gap-2 h-9 w-full">
-          <EmojiIconPicker
+          <EmojiPicker
             isOpen={isOpen}
             handleToggle={(val: boolean) => setIsOpen(val)}
             className="flex items-center justify-center flex-shrink0"
@@ -76,7 +74,7 @@ export const PageForm: React.FC<Props> = (props) => {
                   {formData?.logo_props?.in_use ? (
                     <Logo logo={formData?.logo_props} size={18} type="lucide" />
                   ) : (
-                    <FileText className="h-4 w-4 text-custom-text-300" />
+                    <PageIcon className="h-4 w-4 text-custom-text-300" />
                   )}
                 </>
               </span>
@@ -86,8 +84,8 @@ export const PageForm: React.FC<Props> = (props) => {
 
               if (val?.type === "emoji")
                 logoValue = {
-                  value: convertHexEmojiToDecimal(val.value.unified),
-                  url: val.value.imageUrl,
+                  value: val.value,
+                  url: undefined,
                 };
               else if (val?.type === "icon") logoValue = val.value;
 
@@ -154,4 +152,4 @@ export const PageForm: React.FC<Props> = (props) => {
       </div>
     </form>
   );
-};
+}

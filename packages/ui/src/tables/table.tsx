@@ -1,10 +1,10 @@
 import React from "react";
 // helpers
-import { cn } from "../../helpers";
+import { cn } from "../utils";
 // types
-import { TTableData } from "./types";
+import type { TTableData } from "./types";
 
-export const Table = <T,>(props: TTableData<T>) => {
+export function Table<T>(props: TTableData<T>) {
   const {
     data,
     columns,
@@ -45,4 +45,4 @@ export const Table = <T,>(props: TTableData<T>) => {
       </tbody>
     </table>
   );
-};
+}

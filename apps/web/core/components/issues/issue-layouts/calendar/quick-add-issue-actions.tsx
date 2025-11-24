@@ -1,25 +1,20 @@
-"use client";
-
-import { FC, useState } from "react";
+import { useState } from "react";
 import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { PlusIcon } from "lucide-react";
-// plane constants
-import { EIssueLayoutTypes } from "@plane/constants";
-// i18n
+// plane imports
 import { useTranslation } from "@plane/i18n";
-// types
-import { ISearchIssueResponse, TIssue } from "@plane/types";
-// ui
-import { CustomMenu, setPromiseToast } from "@plane/ui";
-// components
+import { setPromiseToast } from "@plane/propel/toast";
+import type { ISearchIssueResponse, TIssue } from "@plane/types";
+import { EIssueLayoutTypes } from "@plane/types";
+import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { ExistingIssuesListModal } from "@/components/core";
-import { QuickAddIssueRoot } from "@/components/issues";
-// helpers
+// components
+import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { QuickAddIssueRoot } from "../quick-add";
 
 type TCalendarQuickAddIssueActions = {
   prePopulatedData?: Partial<TIssue>;
@@ -29,7 +24,9 @@ type TCalendarQuickAddIssueActions = {
   isEpic?: boolean;
 };
 
-export const CalendarQuickAddIssueActions: FC<TCalendarQuickAddIssueActions> = observer((props) => {
+export const CalendarQuickAddIssueActions = observer(function CalendarQuickAddIssueActions(
+  props: TCalendarQuickAddIssueActions
+) {
   const { prePopulatedData, quickAddCallback, addIssuesToView, onOpen, isEpic = false } = props;
   const { t } = useTranslation();
   // router

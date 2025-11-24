@@ -1,9 +1,18 @@
-import { TIssuePriorities } from "../issues";
-import { TIssueAttachment } from "./issue_attachment";
-import { TIssueLink } from "./issue_link";
-import { TIssueReaction, IIssuePublicReaction, IPublicVote } from "./issue_reaction";
-import { TIssueRelationTypes } from "./issue_relation";
-import { TIssuePublicComment } from "./activity/issue_comment";
+import type { TIssuePriorities } from "../issues";
+import type { TStateGroups } from "../state";
+import type { TIssuePublicComment } from "./activity/issue_comment";
+import type { TIssueAttachment } from "./issue_attachment";
+import type { TIssueLink } from "./issue_link";
+import type { TIssueReaction, IIssuePublicReaction, IPublicVote } from "./issue_reaction";
+import type { TIssueRelationTypes } from "./issue_relation";
+
+export enum EIssueLayoutTypes {
+  LIST = "list",
+  KANBAN = "kanban",
+  CALENDAR = "calendar",
+  GANTT = "gantt_chart",
+  SPREADSHEET = "spreadsheet",
+}
 
 export enum EIssueServiceType {
   ISSUES = "issues",
@@ -21,10 +30,10 @@ export enum EIssuesStoreType {
   TEAM_VIEW = "TEAM_VIEW",
   PROJECT_VIEW = "PROJECT_VIEW",
   ARCHIVED = "ARCHIVED",
-  DRAFT = "DRAFT",
   DEFAULT = "DEFAULT",
   WORKSPACE_DRAFT = "WORKSPACE_DRAFT",
   EPIC = "EPIC",
+  TEAM_PROJECT_WORK_ITEMS = "TEAM_PROJECT_WORK_ITEMS",
 }
 
 export type TBaseIssue = {
@@ -61,6 +70,7 @@ export type TBaseIssue = {
 
   is_draft: boolean;
   is_epic?: boolean;
+  is_intake?: boolean;
 };
 
 export type IssueRelation = {
@@ -84,7 +94,7 @@ export type TIssue = TBaseIssue & {
   tempId?: string;
   // sourceIssueId is used to store the original issue id when creating a copy of an issue. Used in cloning property values. It is not a part of the API response.
   sourceIssueId?: string;
-  state__group?: string | null;
+  state__group?: TStateGroups | null;
 };
 
 export type TIssueMap = {

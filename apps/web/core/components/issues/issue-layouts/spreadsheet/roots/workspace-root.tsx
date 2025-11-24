@@ -1,27 +1,21 @@
 import React, { useCallback } from "react";
 import { observer } from "mobx-react";
 // plane constants
-import {
-  ALL_ISSUES,
-  EIssueLayoutTypes,
-  EIssueFilterType,
-  EUserPermissions,
-  EUserPermissionsLevel,
-} from "@plane/constants";
-import { IIssueDisplayFilterOptions, EIssuesStoreType } from "@plane/types";
+import { ALL_ISSUES, EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import type { IIssueDisplayFilterOptions } from "@plane/types";
+import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
-import { SpreadsheetView } from "@/components/issues/issue-layouts";
 import { AllIssueQuickActions } from "@/components/issues/issue-layouts/quick-action-dropdowns";
-import { SpreadsheetLayoutLoader } from "@/components/ui";
+import { SpreadsheetLayoutLoader } from "@/components/ui/loader/layouts/spreadsheet-layout-loader";
 // hooks
-import { useIssues, useUserPermissions } from "@/hooks/store";
-import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useUserPermissions } from "@/hooks/store/user";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 // store
-import { IssuePeekOverview } from "../../../peek-overview";
 import { IssueLayoutHOC } from "../../issue-layout-HOC";
-import { TRenderQuickActions } from "../../list/list-view-types";
+import type { TRenderQuickActions } from "../../list/list-view-types";
+import { SpreadsheetView } from "../spreadsheet-view";
 
 type Props = {
   isDefaultView: boolean;
@@ -37,7 +31,7 @@ type Props = {
   issuesLoading: boolean;
 };
 
-export const WorkspaceSpreadsheetRoot: React.FC<Props> = observer((props: Props) => {
+export const WorkspaceSpreadsheetRoot = observer(function WorkspaceSpreadsheetRoot(props: Props) {
   const { isLoading = false, workspaceSlug, globalViewId, fetchNextPages, issuesLoading } = props;
 
   // Custom hooks
@@ -113,23 +107,19 @@ export const WorkspaceSpreadsheetRoot: React.FC<Props> = observer((props: Props)
 
   // Render spreadsheet
   return (
-    <IssuesStoreContext.Provider value={EIssuesStoreType.GLOBAL}>
-      <IssueLayoutHOC layout={EIssueLayoutTypes.SPREADSHEET}>
-        <SpreadsheetView
-          displayProperties={issueFilters?.displayProperties ?? {}}
-          displayFilters={issueFilters?.displayFilters ?? {}}
-          handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
-          issueIds={Array.isArray(issueIds) ? issueIds : []}
-          quickActions={renderQuickActions}
-          updateIssue={updateIssue}
-          canEditProperties={canEditProperties}
-          canLoadMoreIssues={!!nextPageResults}
-          loadMoreIssues={fetchNextPages}
-          isWorkspaceLevel
-        />
-        {/* peek overview */}
-        <IssuePeekOverview />
-      </IssueLayoutHOC>
-    </IssuesStoreContext.Provider>
+    <IssueLayoutHOC layout={EIssueLayoutTypes.SPREADSHEET}>
+      <SpreadsheetView
+        displayProperties={issueFilters?.displayProperties ?? {}}
+        displayFilters={issueFilters?.displayFilters ?? {}}
+        handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
+        issueIds={Array.isArray(issueIds) ? issueIds : []}
+        quickActions={renderQuickActions}
+        updateIssue={updateIssue}
+        canEditProperties={canEditProperties}
+        canLoadMoreIssues={!!nextPageResults}
+        loadMoreIssues={fetchNextPages}
+        isWorkspaceLevel
+      />
+    </IssueLayoutHOC>
   );
 });

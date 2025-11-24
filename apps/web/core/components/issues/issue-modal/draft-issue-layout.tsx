@@ -1,32 +1,31 @@
-"use client";
-
 import React, { useState } from "react";
-import isEmpty from "lodash/isEmpty";
+import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue } from "@plane/types";
 // ui
-import { TOAST_TYPE, setToast } from "@plane/ui";
 // components
 import { isEmptyHtmlString } from "@plane/utils";
-import { ConfirmIssueDiscard } from "@/components/issues";
 // helpers
-// hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+// hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useWorkspaceDraftIssues } from "@/hooks/store";
-// local components
-import { IssueFormRoot, type IssueFormProps } from "./form";
+import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
+// local imports
+import { ConfirmIssueDiscard } from "../confirm-issue-discard";
+import { IssueFormRoot } from "./form";
+import type { IssueFormProps } from "./form";
 
 export interface DraftIssueProps extends IssueFormProps {
   changesMade: Partial<TIssue> | null;
   onChange: (formData: Partial<TIssue> | null) => void;
 }
 
-export const DraftIssueLayout: React.FC<DraftIssueProps> = observer((props) => {
+export const DraftIssueLayout = observer(function DraftIssueLayout(props: DraftIssueProps) {
   const { changesMade, data, onChange, onClose, projectId } = props;
   // states
   const [issueDiscardModal, setIssueDiscardModal] = useState(false);

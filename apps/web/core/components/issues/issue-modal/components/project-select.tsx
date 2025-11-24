@@ -1,15 +1,14 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
-import { Control, Controller } from "react-hook-form";
+import type { Control } from "react-hook-form";
+import { Controller } from "react-hook-form";
 // plane imports
 import { ETabIndices } from "@plane/constants";
 // types
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 import { getTabIndex } from "@plane/utils";
 // components
-import { ProjectDropdown } from "@/components/dropdowns";
+import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -20,7 +19,7 @@ type TIssueProjectSelectProps = {
   handleFormChange: () => void;
 };
 
-export const IssueProjectSelect: React.FC<TIssueProjectSelectProps> = observer((props) => {
+export const IssueProjectSelect = observer(function IssueProjectSelect(props: TIssueProjectSelectProps) {
   const { control, disabled = false, handleFormChange } = props;
   // store hooks
   const { isMobile } = usePlatformOS();
@@ -46,7 +45,7 @@ export const IssueProjectSelect: React.FC<TIssueProjectSelectProps> = observer((
             }}
             multiple={false}
             buttonVariant="border-with-text"
-            renderCondition={(project) => allowedProjectIds.includes(project.id)}
+            renderCondition={(projectId) => allowedProjectIds.includes(projectId)}
             tabIndex={getIndex("project_id")}
             disabled={disabled}
           />

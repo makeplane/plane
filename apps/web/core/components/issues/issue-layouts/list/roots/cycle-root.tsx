@@ -1,17 +1,18 @@
 import React, { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// components
+// plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
-import { CycleIssueQuickActions } from "@/components/issues";
-// constants
 // hooks
-import { useCycle, useIssues, useUserPermissions } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useUserPermissions } from "@/hooks/store/user";
 // types
+import { CycleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseListRoot } from "../base-list-root";
 
-export const CycleListLayout: React.FC = observer(() => {
+export const CycleListLayout = observer(function CycleListLayout() {
   const { workspaceSlug, projectId, cycleId } = useParams();
   // store
   const { issues } = useIssues(EIssuesStoreType.CYCLE);

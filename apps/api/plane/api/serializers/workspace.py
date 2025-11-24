@@ -4,7 +4,12 @@ from .base import BaseSerializer
 
 
 class WorkspaceLiteSerializer(BaseSerializer):
-    """Lite serializer with only required fields"""
+    """
+    Lightweight workspace serializer for minimal data transfer.
+
+    Provides essential workspace identifiers including name, slug, and ID
+    optimized for navigation, references, and performance-critical operations.
+    """
 
     class Meta:
         model = Workspace

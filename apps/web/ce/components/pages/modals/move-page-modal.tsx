@@ -1,5 +1,5 @@
 // store types
-import { TPageInstance } from "@/store/pages/base-page";
+import type { TPageInstance } from "@/store/pages/base-page";
 
 export type TMovePageModalProps = {
   isOpen: boolean;
@@ -7,4 +7,6 @@ export type TMovePageModalProps = {
   page: TPageInstance;
 };
 
-export const MovePageModal: React.FC<TMovePageModalProps> = () => null;
+export function MovePageModal(_props: TMovePageModalProps) {
+  return null;
+}

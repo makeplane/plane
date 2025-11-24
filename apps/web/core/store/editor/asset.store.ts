@@ -1,13 +1,12 @@
-import debounce from "lodash/debounce";
-import set from "lodash/set";
+import { debounce, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { v4 as uuidv4 } from "uuid";
 // plane types
-import { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
+import type { EFileAssetType, TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
 // services
 import { FileService } from "@/services/file.service";
-import { TAttachmentUploadStatus } from "../issue/issue-details/attachment.store";
+import type { TAttachmentUploadStatus } from "../issue/issue-details/attachment.store";
 
 export interface IEditorAssetStore {
   // computed
@@ -28,6 +27,19 @@ export interface IEditorAssetStore {
     projectId?: string;
     workspaceSlug: string;
   }) => Promise<TFileSignedURLResponse>;
+  duplicateEditorAsset: ({
+    assetId,
+    entityId,
+    entityType,
+    projectId,
+    workspaceSlug,
+  }: {
+    assetId: string;
+    entityId?: string;
+    entityType: EFileAssetType;
+    projectId?: string;
+    workspaceSlug: string;
+  }) => Promise<{ asset_id: string }>;
 }
 
 export class EditorAssetStore implements IEditorAssetStore {
@@ -117,5 +129,14 @@ export class EditorAssetStore implements IEditorAssetStore {
         delete this.assetsUploadStatus[blockId];
       });
     }
+  };
+  duplicateEditorAsset: IEditorAssetStore["duplicateEditorAsset"] = async (args) => {
+    const { assetId, entityId, entityType, projectId, workspaceSlug } = args;
+    const { asset_id } = await this.fileService.duplicateAsset(workspaceSlug, assetId, {
+      entity_id: entityId,
+      entity_type: entityType,
+      project_id: projectId,
+    });
+    return { asset_id };
   };
 }

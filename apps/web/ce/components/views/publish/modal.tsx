@@ -1,6 +1,4 @@
-"use client";
-
-import { IProjectView } from "@plane/types";
+import type { IProjectView } from "@plane/types";
 
 type Props = {
   isOpen: boolean;
@@ -9,4 +7,6 @@ type Props = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const PublishViewModal = (props: Props) => <></>;
+export function PublishViewModal(props: Props) {
+  return <></>;
+}

@@ -4,10 +4,10 @@ import { useTranslation } from "@plane/i18n";
 // hooks
 // components
 import { cn } from "@plane/utils";
-import { CycleDropdown } from "@/components/dropdowns";
+import { CycleDropdown } from "@/components/dropdowns/cycle";
 // ui
 // helpers
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // types
 import type { TIssueOperations } from "./root";
 
@@ -20,7 +20,7 @@ type TIssueCycleSelect = {
   disabled?: boolean;
 };
 
-export const IssueCycleSelect: React.FC<TIssueCycleSelect> = observer((props) => {
+export const IssueCycleSelect = observer(function IssueCycleSelect(props: TIssueCycleSelect) {
   const { className = "", workspaceSlug, projectId, issueId, issueOperations, disabled = false } = props;
   const { t } = useTranslation();
   // states

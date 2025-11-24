@@ -1,9 +1,11 @@
 import { observer } from "mobx-react";
-import { TLoader } from "@plane/types";
-import { LogoSpinner } from "@/components/common";
+// plane imports
+import type { TLoader } from "@plane/types";
+// components
+import { LogoSpinner } from "@/components/common/logo-spinner";
 
 interface Props {
-  children: string | JSX.Element | JSX.Element[];
+  children: string | React.ReactNode | React.ReactNode[];
   getGroupIssueCount: (
     groupId: string | undefined,
     subGroupId: string | undefined,
@@ -12,7 +14,7 @@ interface Props {
   getIssueLoader: (groupId?: string | undefined, subGroupId?: string | undefined) => TLoader;
 }
 
-export const IssueLayoutHOC = observer((props: Props) => {
+export const IssueLayoutHOC = observer(function IssueLayoutHOC(props: Props) {
   const { getIssueLoader, getGroupIssueCount } = props;
 
   const issueCount = getGroupIssueCount(undefined, undefined, false);

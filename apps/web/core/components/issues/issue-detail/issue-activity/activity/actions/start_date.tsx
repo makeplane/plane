@@ -1,16 +1,15 @@
-import { FC } from "react";
 import { observer } from "mobx-react";
 import { CalendarDays } from "lucide-react";
 // hooks
 import { renderFormattedDate } from "@plane/utils";
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
 import { IssueActivityBlockComponent, IssueLink } from "./";
 // helpers
 
 type TIssueStartDateActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
-export const IssueStartDateActivity: FC<TIssueStartDateActivity> = observer((props) => {
+export const IssueStartDateActivity = observer(function IssueStartDateActivity(props: TIssueStartDateActivity) {
   const { activityId, showIssue = true, ends } = props;
   // hooks
   const {

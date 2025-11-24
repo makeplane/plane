@@ -5,7 +5,7 @@ import type { TIssue } from "@plane/types";
 // ui
 import { AlertModalCore } from "@plane/ui";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 
 type Props = {
   data: Partial<TIssue>;
@@ -14,7 +14,7 @@ type Props = {
   onSubmit: () => Promise<void>;
 };
 
-export const DeclineIssueModal: React.FC<Props> = (props) => {
+export function DeclineIssueModal(props: Props) {
   const { isOpen, onClose, data, onSubmit } = props;
   // states
   const [isDeclining, setIsDeclining] = useState(false);
@@ -57,4 +57,4 @@ export const DeclineIssueModal: React.FC<Props> = (props) => {
       }}
     />
   );
-};
+}

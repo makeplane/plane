@@ -1,19 +1,17 @@
 import { observer } from "mobx-react";
-import { TGroupedIssues, TIssue, TIssueMap, TPaginationData, ICalendarDate, ICalendarWeek } from "@plane/types";
+// plane imports
+import type { TGroupedIssues, TIssue, TIssueMap, TPaginationData, ICalendarDate, ICalendarWeek } from "@plane/types";
 import { cn, getOrderedDays, renderFormattedPayloadDate } from "@plane/utils";
-// components
-import { CalendarDayTile } from "@/components/issues";
-// helpers
-//
 // hooks
-import { useUserProfile } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store/user";
 // types
-import { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
-import { ICycleIssuesFilter } from "@/store/issue/cycle";
-import { IModuleIssuesFilter } from "@/store/issue/module";
-import { IProjectIssuesFilter } from "@/store/issue/project";
-import { IProjectViewIssuesFilter } from "@/store/issue/project-views";
-import { TRenderQuickActions } from "../list/list-view-types";
+import type { IProjectEpicsFilter } from "@/plane-web/store/issue/epic";
+import type { ICycleIssuesFilter } from "@/store/issue/cycle";
+import type { IModuleIssuesFilter } from "@/store/issue/module";
+import type { IProjectIssuesFilter } from "@/store/issue/project";
+import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
+import type { TRenderQuickActions } from "../list/list-view-types";
+import { CalendarDayTile } from "./day-tile";
 
 type Props = {
   issuesFilterStore:
@@ -46,7 +44,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const CalendarWeekDays: React.FC<Props> = observer((props) => {
+export const CalendarWeekDays = observer(function CalendarWeekDays(props: Props) {
   const {
     issuesFilterStore,
     issues,

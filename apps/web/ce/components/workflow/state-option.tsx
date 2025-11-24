@@ -7,7 +7,7 @@ export type TStateOptionProps = {
   option: {
     value: string | undefined;
     query: string;
-    content: JSX.Element;
+    content: React.ReactNode;
   };
   selectedValue: string | null | undefined;
   className?: string;
@@ -16,7 +16,7 @@ export type TStateOptionProps = {
   alwaysAllowStateChange?: boolean;
 };
 
-export const StateOption = observer((props: TStateOptionProps) => {
+export const StateOption = observer(function StateOption(props: TStateOptionProps) {
   const { option, className = "" } = props;
 
   return (

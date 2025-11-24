@@ -1,11 +1,11 @@
-"use client";
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
 // plane imports
-import { TIssueServiceType } from "@plane/types";
+import type { TIssueServiceType } from "@plane/types";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
 type Props = {
   customButton?: React.ReactNode;
@@ -13,7 +13,7 @@ type Props = {
   issueServiceType: TIssueServiceType;
 };
 
-export const IssueLinksActionButton: FC<Props> = observer((props) => {
+export const IssueLinksActionButton = observer(function IssueLinksActionButton(props: Props) {
   const { customButton, disabled = false, issueServiceType } = props;
   // store hooks
   const { toggleIssueLinkModal } = useIssueDetail(issueServiceType);

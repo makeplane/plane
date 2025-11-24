@@ -16,9 +16,7 @@ def page_version(page_id, existing_instance, user_id):
         page = Page.objects.get(id=page_id)
 
         # Get the current instance
-        current_instance = (
-            json.loads(existing_instance) if existing_instance is not None else {}
-        )
+        current_instance = json.loads(existing_instance) if existing_instance is not None else {}
 
         # Create a version if description_html is updated
         if current_instance.get("description_html") != page.description_html:
@@ -30,14 +28,14 @@ def page_version(page_id, existing_instance, user_id):
                 description_binary=page.description_binary,
                 owned_by_id=user_id,
                 last_saved_at=page.updated_at,
+                description_json=page.description,
+                description_stripped=page.description_stripped,
             )
 
             # If page versions are greater than 20 delete the oldest one
             if PageVersion.objects.filter(page_id=page_id).count() > 20:
                 # Delete the old page version
-                PageVersion.objects.filter(page_id=page_id).order_by(
-                    "last_saved_at"
-                ).first().delete()
+                PageVersion.objects.filter(page_id=page_id).order_by("last_saved_at").first().delete()
 
         return
     except Page.DoesNotExist:

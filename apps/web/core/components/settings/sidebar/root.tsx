@@ -1,9 +1,9 @@
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { ScrollArea } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { SettingsSidebarHeader } from "./header";
-import SettingsSidebarNavItem, { TSettingItem } from "./nav-item";
+import type { TSettingItem } from "./nav-item";
+import SettingsSidebarNavItem from "./nav-item";
 
 interface SettingsSidebarProps {
   isMobile?: boolean;
@@ -20,7 +20,7 @@ interface SettingsSidebarProps {
   renderChildren?: (key: string) => React.ReactNode;
 }
 
-export const SettingsSidebar = observer((props: SettingsSidebarProps) => {
+export const SettingsSidebar = observer(function SettingsSidebar(props: SettingsSidebarProps) {
   const {
     isMobile = false,
     customHeader,
@@ -46,10 +46,7 @@ export const SettingsSidebar = observer((props: SettingsSidebarProps) => {
       {/* Header */}
       <SettingsSidebarHeader customHeader={customHeader} />
       {/* Navigation */}
-      <ScrollArea
-        className="divide-y divide-custom-border-100 overflow-x-hidden w-full h-full overflow-y-scroll"
-        type="hover"
-      >
+      <div className="divide-y divide-custom-border-100 overflow-x-hidden w-full h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
         {categories.map((category) => {
           if (groupedSettings[category].length === 0) return null;
           return (
@@ -74,7 +71,7 @@ export const SettingsSidebar = observer((props: SettingsSidebarProps) => {
             </div>
           );
         })}
-      </ScrollArea>
+      </div>
     </div>
   );
 });

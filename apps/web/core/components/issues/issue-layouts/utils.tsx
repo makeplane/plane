@@ -1,19 +1,13 @@
-"use client";
-
-import { CSSProperties, FC } from "react";
+import type { CSSProperties, FC } from "react";
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
-import clone from "lodash/clone";
-import concat from "lodash/concat";
-import isEqual from "lodash/isEqual";
-import isNil from "lodash/isNil";
-import pull from "lodash/pull";
-import uniq from "lodash/uniq";
+import { clone, isNil, pull, uniq, concat } from "lodash-es";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
-import { ContrastIcon } from "lucide-react";
 // plane types
 import { EIconSize, ISSUE_PRIORITIES, STATE_GROUPS } from "@plane/constants";
-import {
-  EIssuesStoreType,
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import type { ISvgIcons } from "@plane/propel/icons";
+import { CycleGroupIcon, CycleIcon, ModuleIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
+import type {
   GroupByColumnTypes,
   IGroupByColumn,
   TCycleGroups,
@@ -23,17 +17,14 @@ import {
   TIssueGroupByOptions,
   IIssueFilterOptions,
   IIssueFilters,
-  IProjectView,
   TGroupedIssues,
-  IWorkspaceView,
   IIssueDisplayFilterOptions,
   TGetColumns,
 } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 // plane ui
-import { Avatar, CycleGroupIcon, DiceIcon, ISvgIcons, PriorityIcon, StateGroupIcon } from "@plane/ui";
+import { Avatar } from "@plane/ui";
 import { renderFormattedDate, getFileURL } from "@plane/utils";
-// components
-import { Logo } from "@/components/common";
 // helpers
 // store
 import { store } from "@/lib/store-context";
@@ -71,7 +62,8 @@ export const isWorkspaceLevel = (type: EIssuesStoreType) =>
     EIssuesStoreType.GLOBAL,
     EIssuesStoreType.TEAM,
     EIssuesStoreType.TEAM_VIEW,
-    EIssuesStoreType.PROJECT_VIEW,
+    EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS,
+    EIssuesStoreType.WORKSPACE_DRAFT,
   ].includes(type)
     ? true
     : false;
@@ -177,7 +169,7 @@ const getCycleColumns = (): IGroupByColumn[] | undefined => {
   cycles.push({
     id: "None",
     name: "None",
-    icon: <ContrastIcon className="h-3.5 w-3.5" />,
+    icon: <CycleIcon className="h-3.5 w-3.5" />,
     payload: {},
   });
   return cycles;
@@ -197,14 +189,14 @@ const getModuleColumns = (): IGroupByColumn[] | undefined => {
     modules.push({
       id: module.id,
       name: module.name,
-      icon: <DiceIcon className="h-3.5 w-3.5" />,
+      icon: <ModuleIcon className="h-3.5 w-3.5" />,
       payload: { module_ids: [module.id] },
     });
   });
   modules.push({
     id: "None",
     name: "None",
-    icon: <DiceIcon className="h-3.5 w-3.5" />,
+    icon: <ModuleIcon className="h-3.5 w-3.5" />,
     payload: {},
   });
   return modules;
@@ -520,7 +512,7 @@ export const handleGroupDragDrop = async (
   subGroupBy: TIssueGroupByOptions | undefined,
   shouldAddIssueAtTop = false
 ) => {
-  if (!source.id || !groupBy || (subGroupBy && (!source.subGroupId || !destination.subGroupId))) return;
+  if (!source.id || (subGroupBy && (!source.subGroupId || !destination.subGroupId))) return;
 
   let updatedIssue: Partial<TIssue> = {};
   const issueUpdates: IssueUpdates = {};
@@ -548,7 +540,7 @@ export const handleGroupDragDrop = async (
   };
 
   // update updatedIssue values based on the source and destination groupIds
-  if (source.groupId && destination.groupId && source.groupId !== destination.groupId) {
+  if (source.groupId && destination.groupId && source.groupId !== destination.groupId && groupBy) {
     const groupKey = ISSUE_FILTER_DEFAULT_DATA[groupBy];
     let groupValue: any = clone(sourceIssue[groupKey]);
 
@@ -589,27 +581,6 @@ export const handleGroupDragDrop = async (
   if (updatedIssue && sourceIssue?.project_id) {
     return await updateIssueOnDrop(sourceIssue?.project_id, sourceIssue.id, updatedIssue, issueUpdates);
   }
-};
-
-/**
- * This Method compares filters and returns a boolean based on which and updateView button is shown
- * @param appliedFilters
- * @param issueFilters
- * @param viewDetails
- * @returns
- */
-export const getAreFiltersEqual = (
-  appliedFilters: IIssueFilterOptions | undefined,
-  issueFilters: IIssueFilters | undefined,
-  viewDetails: IProjectView | IWorkspaceView | null
-) => {
-  if (isNil(appliedFilters) || isNil(issueFilters) || isNil(viewDetails)) return true;
-
-  return (
-    isEqual(appliedFilters, viewDetails.filters) &&
-    isEqual(issueFilters.displayFilters, viewDetails.display_filters) &&
-    isEqual(removeNillKeys(issueFilters.displayProperties), removeNillKeys(viewDetails.display_properties))
-  );
 };
 
 /**
@@ -740,12 +711,12 @@ export const getBlockViewDetails = (
  * This method returns the icon for Spreadsheet column headers
  * @param iconKey
  */
-export const SpreadSheetPropertyIcon: FC<ISvgIcons & { iconKey: string }> = (props) => {
+export function SpreadSheetPropertyIcon(props: ISvgIcons & { iconKey: string }) {
   const { iconKey } = props;
   const Icon = SpreadSheetPropertyIconMap[iconKey];
   if (!Icon) return null;
   return <Icon {...props} />;
-};
+}
 
 /**
  * This method returns if the filters are applied

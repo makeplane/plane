@@ -1,8 +1,8 @@
 export type TTableColumn<T> = {
   key: string;
   content: string;
-  thRender?: () => JSX.Element;
-  tdRender: (rowData: T) => JSX.Element;
+  thRender?: () => React.ReactNode;
+  tdRender: (rowData: T) => React.ReactNode;
 };
 
 export type TTableData<T> = {

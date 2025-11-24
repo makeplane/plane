@@ -1,7 +1,9 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 type Props = {
   cycleId: string;
   projectId: string;
 };
-export const CycleAdditionalActions: FC<Props> = observer(() => <></>);
+export const CycleAdditionalActions = observer(function CycleAdditionalActions(_props: Props) {
+  return <></>;
+});

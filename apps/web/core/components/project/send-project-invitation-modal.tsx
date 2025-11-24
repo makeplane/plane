@@ -1,19 +1,21 @@
-"use client";
-
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
-import { ChevronDown, Plus, X } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
 import { ROLE, EUserPermissions, MEMBER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Avatar, Button, CustomSelect, CustomSearchSelect, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { CloseIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Avatar, CustomSelect, CustomSearchSelect } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useMember, useUserPermissions } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useUserPermissions } from "@/hooks/store/user";
 
 type Props = {
   isOpen: boolean;
@@ -41,7 +43,7 @@ const defaultValues: FormValues = {
   ],
 };
 
-export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
+export const SendProjectInvitationModal = observer(function SendProjectInvitationModal(props: Props) {
   const { isOpen, onClose, onSuccess, projectId, workspaceSlug } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -163,7 +165,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     | {
         value: string;
         query: string;
-        content: React.JSX.Element;
+        content: React.ReactNode;
       }[]
     | undefined;
 
@@ -247,7 +249,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                         ) : (
                                           <div className="flex items-center gap-2 py-0.5">Select co-worker</div>
                                         )}
-                                        <ChevronDown className="h-3 w-3" aria-hidden="true" />
+                                        <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
                                       </button>
                                     }
                                     onChange={(val: string) => {
@@ -288,11 +290,10 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                         <span className="capitalize">
                                           {field.value ? ROLE[field.value] : "Select role"}
                                         </span>
-                                        <ChevronDown className="h-3 w-3" aria-hidden="true" />
+                                        <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
                                       </div>
                                     }
                                     input
-                                    optionsClassName="w-full"
                                   >
                                     {Object.entries(
                                       checkCurrentOptionWorkspaceRole(watch(`members.${index}.member_id`))
@@ -322,7 +323,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                   className="place-items-center self-center rounded"
                                   onClick={() => remove(index)}
                                 >
-                                  <X className="h-4 w-4 text-custom-text-200" />
+                                  <CloseIcon className="h-4 w-4 text-custom-text-200" />
                                 </button>
                               </div>
                             )}

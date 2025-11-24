@@ -1,8 +1,6 @@
-"use client";
-
 import { useCallback, useEffect, useMemo } from "react";
 // hooks
-import { useMultipleSelectStore } from "@/hooks/store";
+import { useMultipleSelectStore } from "@/hooks/store/use-multiple-select-store";
 //
 import useReloadConfirmations from "./use-reload-confirmation";
 

@@ -1,8 +1,10 @@
-import { FC } from "react";
+import type { FC } from "react";
 
 export type TEstimateTimeInputProps = {
   value?: number;
   handleEstimateInputValue: (value: string) => void;
 };
 
-export const EstimateTimeInput: FC<TEstimateTimeInputProps> = () => <></>;
+export function EstimateTimeInput(_props: TEstimateTimeInputProps) {
+  return <></>;
+}

@@ -1,39 +1,41 @@
-import { Node } from "@tiptap/pm/model";
+import type { Node } from "@tiptap/pm/model";
 import { Link2Off } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 // components
-import { LinkViewProps, LinkViews } from "@/components/links";
+import type { LinkViewProps, LinkViews } from "@/components/links";
 // helpers
 import { isValidHttpUrl } from "@/helpers/common";
 
-interface InputViewProps {
+type InputViewProps = {
   label: string;
   value: string;
   placeholder: string;
   onChange: (value: string) => void;
   autoFocus?: boolean;
+};
+
+function InputView({ label, value, placeholder, onChange, autoFocus }: InputViewProps) {
+  return (
+    <div className="flex flex-col gap-1">
+      <label className="inline-block font-semibold text-xs text-custom-text-400">{label}</label>
+      <input
+        placeholder={placeholder}
+        onClick={(e) => e.stopPropagation()}
+        className="w-[280px] outline-none bg-custom-background-90 text-custom-text-900 text-sm border border-custom-border-300 rounded-md p-2"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        autoFocus={autoFocus}
+      />
+    </div>
+  );
 }
 
-const InputView = ({ label, value, placeholder, onChange, autoFocus }: InputViewProps) => (
-  <div className="flex flex-col gap-1">
-    <label className="inline-block font-semibold text-xs text-custom-text-400">{label}</label>
-    <input
-      placeholder={placeholder}
-      onClick={(e) => e.stopPropagation()}
-      className="w-[280px] outline-none bg-custom-background-90 text-custom-text-900 text-sm border border-custom-border-300 rounded-md p-2"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      autoFocus={autoFocus}
-    />
-  </div>
-);
-
-interface LinkEditViewProps {
+type LinkEditViewProps = {
   viewProps: LinkViewProps;
   switchView: (view: LinkViews) => void;
-}
+};
 
-export const LinkEditView = ({ viewProps }: LinkEditViewProps) => {
+export function LinkEditView({ viewProps }: LinkEditViewProps) {
   const { editor, from, to, url: initialUrl, text: initialText, closeLinkView } = viewProps;
 
   // State
@@ -42,6 +44,12 @@ export const LinkEditView = ({ viewProps }: LinkEditViewProps) => {
   const [localText, setLocalText] = useState(initialText ?? "");
   const [linkRemoved, setLinkRemoved] = useState(false);
   const hasSubmitted = useRef(false);
+
+  const removeLink = useCallback(() => {
+    editor.view.dispatch(editor.state.tr.removeMark(from, to, editor.schema.marks.link));
+    setLinkRemoved(true);
+    closeLinkView();
+  }, [editor, from, to, closeLinkView]);
 
   // Effects
   useEffect(
@@ -56,7 +64,7 @@ export const LinkEditView = ({ viewProps }: LinkEditViewProps) => {
           }
         }
       },
-    [linkRemoved, initialUrl]
+    [removeLink, linkRemoved, initialUrl]
   );
 
   // Sync state with props
@@ -105,13 +113,7 @@ export const LinkEditView = ({ viewProps }: LinkEditViewProps) => {
     }
 
     return true;
-  }, [editor, from, to, initialText, localText, localUrl]);
-
-  const removeLink = useCallback(() => {
-    editor.view.dispatch(editor.state.tr.removeMark(from, to, editor.schema.marks.link));
-    setLinkRemoved(true);
-    closeLinkView();
-  }, [editor, from, to, closeLinkView]);
+  }, [linkRemoved, positionRef, editor, from, to, initialText, localText, localUrl]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -147,4 +149,4 @@ export const LinkEditView = ({ viewProps }: LinkEditViewProps) => {
       </div>
     </div>
   );
-};
+}

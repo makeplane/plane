@@ -1,31 +1,32 @@
-"use client";
-
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { EIssueServiceType } from "@plane/types";
 import { Loader } from "@plane/ui";
-// components
-import { EmptyState } from "@/components/common";
-import { PageHead } from "@/components/core";
-import { IssueDetailRoot } from "@/components/issues";
-// hooks
-import { useAppTheme, useIssueDetail, useProject } from "@/hooks/store";
 // assets
+import emptyIssueDark from "@/app/assets/empty-state/search/issues-dark.webp?url";
+import emptyIssueLight from "@/app/assets/empty-state/search/issues-light.webp?url";
+// components
+import { EmptyState } from "@/components/common/empty-state";
+import { PageHead } from "@/components/core/page-title";
+import { IssueDetailRoot } from "@/components/issues/issue-detail";
+// hooks
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web imports
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
 import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
-import emptyIssueDark from "@/public/empty-state/search/issues-dark.webp";
-import emptyIssueLight from "@/public/empty-state/search/issues-light.webp";
+import type { Route } from "./+types/page";
 
-const IssueDetailsPage = observer(() => {
+function IssueDetailsPage({ params }: Route.ComponentProps) {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, workItem } = useParams();
+  const { workspaceSlug, workItem } = params;
   // hooks
   const { resolvedTheme } = useTheme();
   // store hooks
@@ -37,15 +38,11 @@ const IssueDetailsPage = observer(() => {
   const { getProjectById } = useProject();
   const { toggleIssueDetailSidebar, issueDetailSidebarCollapsed } = useAppTheme();
 
-  const projectIdentifier = workItem?.toString().split("-")[0];
-  const sequence_id = workItem?.toString().split("-")[1];
+  const [projectIdentifier, sequence_id] = workItem.split("-");
 
   // fetching issue details
-  const { data, isLoading, error } = useSWR(
-    workspaceSlug && workItem ? `ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}` : null,
-    workspaceSlug && workItem
-      ? () => fetchIssueWithIdentifier(workspaceSlug.toString(), projectIdentifier, sequence_id)
-      : null
+  const { data, isLoading, error } = useSWR(`ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}`, () =>
+    fetchIssueWithIdentifier(workspaceSlug.toString(), projectIdentifier, sequence_id)
   );
   const issueId = data?.id;
   const projectId = data?.project_id;
@@ -76,6 +73,12 @@ const IssueDetailsPage = observer(() => {
     return () => window.removeEventListener("resize", handleToggleIssueDetailSidebar);
   }, [issueDetailSidebarCollapsed, toggleIssueDetailSidebar]);
 
+  useEffect(() => {
+    if (data?.is_intake) {
+      router.push(`/${workspaceSlug}/projects/${data.project_id}/intake/?currentTab=open&inboxIssueId=${data?.id}`);
+    }
+  }, [workspaceSlug, data]);
+
   return (
     <>
       <PageHead title={pageTitle} />
@@ -105,14 +108,13 @@ const IssueDetailsPage = observer(() => {
           </div>
         </Loader>
       ) : (
-        workspaceSlug &&
         projectId &&
         issueId && (
-          <ProjectAuthWrapper workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()}>
+          <ProjectAuthWrapper workspaceSlug={workspaceSlug} projectId={projectId}>
             <IssueDetailRoot
-              workspaceSlug={workspaceSlug.toString()}
-              projectId={projectId.toString()}
-              issueId={issueId.toString()}
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              issueId={issueId}
               is_archived={!!issue?.archived_at}
             />
           </ProjectAuthWrapper>
@@ -120,6 +122,6 @@ const IssueDetailsPage = observer(() => {
       )}
     </>
   );
-});
+}
 
-export default IssueDetailsPage;
+export default observer(IssueDetailsPage);

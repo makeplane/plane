@@ -1,10 +1,8 @@
-"use client";
-
 // components
 // ui
 import { useTranslation } from "@plane/i18n";
-import { IWebhook } from "@plane/types";
-import { Button } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import type { IWebhook } from "@plane/types";
 // types
 import { WebhookSecretKey } from "./form";
 
@@ -13,7 +11,7 @@ type Props = {
   webhookDetails: IWebhook;
 };
 
-export const GeneratedHookDetails: React.FC<Props> = (props) => {
+export function GeneratedHookDetails(props: Props) {
   const { handleClose, webhookDetails } = props;
   const { t } = useTranslation();
 
@@ -21,12 +19,8 @@ export const GeneratedHookDetails: React.FC<Props> = (props) => {
     <>
       <div className="space-y-5 p-5">
         <div className="space-y-3">
-          <h3 className="text-xl font-medium text-custom-text-200">
-            {t("workspace_settings.settings.webhooks.modal.secret_key.created")}
-          </h3>
-          <p className="text-sm text-custom-text-400">
-            {t("workspace_settings.settings.webhooks.modal.secret_key.copy_message")}
-          </p>
+          <h3 className="text-xl font-medium text-custom-text-200">{t("workspace_settings.key_created")}</h3>
+          <p className="text-sm text-custom-text-400">{t("workspace_settings.copy_key")}</p>
         </div>
         <WebhookSecretKey data={webhookDetails} />
       </div>
@@ -37,4 +31,4 @@ export const GeneratedHookDetails: React.FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

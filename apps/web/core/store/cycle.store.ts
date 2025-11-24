@@ -1,11 +1,9 @@
 import { isPast, isToday } from "date-fns";
-import isEmpty from "lodash/isEmpty";
-import set from "lodash/set";
-import sortBy from "lodash/sortBy";
+import { sortBy, set, isEmpty } from "lodash-es";
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import {
+import type {
   ICycle,
   TCyclePlotType,
   TProgressSnapshot,
@@ -13,16 +11,16 @@ import {
   TCycleDistribution,
   TCycleEstimateType,
 } from "@plane/types";
-import { orderCycles, shouldFilterCycle, getDate, DistributionUpdates, updateDistribution } from "@plane/utils";
+import type { DistributionUpdates } from "@plane/utils";
+import { orderCycles, shouldFilterCycle, getDate, updateDistribution } from "@plane/utils";
 // helpers
 // services
-import { syncIssuesWithDeletedCycles } from "@/local-db/utils/load-workspace";
 import { CycleService } from "@/services/cycle.service";
 import { CycleArchiveService } from "@/services/cycle_archive.service";
 import { IssueService } from "@/services/issue";
 import { ProjectService } from "@/services/project";
 // store
-import { CoreRootStore } from "./root.store";
+import type { CoreRootStore } from "./root.store";
 
 export interface ICycleStore {
   // loaders
@@ -619,7 +617,6 @@ export class CycleStore implements ICycleStore {
         delete this.cycleMap[cycleId];
         delete this.activeCycleIdMap[cycleId];
         if (this.rootStore.favorite.entityMap[cycleId]) this.rootStore.favorite.removeFavoriteFromStore(cycleId);
-        syncIssuesWithDeletedCycles([cycleId]);
       });
     });
 

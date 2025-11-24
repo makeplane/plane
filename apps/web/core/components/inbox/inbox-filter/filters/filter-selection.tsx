@@ -1,20 +1,22 @@
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
-import { Search, X } from "lucide-react";
-// components
-import {
-  FilterStatus,
-  FilterPriority,
-  FilterMember,
-  FilterDate,
-  FilterLabels,
-  FilterState,
-} from "@/components/inbox/inbox-filter/filters";
+import { Search } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 // hooks
-import { useMember, useLabel, useProjectState } from "@/hooks/store";
+import { useLabel } from "@/hooks/store/use-label";
+import { useMember } from "@/hooks/store/use-member";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// local imports
+import { FilterDate } from "./date";
+import { FilterLabels } from "./labels";
+import { FilterMember } from "./members";
+import { FilterPriority } from "./priority";
+import { FilterState } from "./state";
+import { FilterStatus } from "./status";
 
-export const InboxIssueFilterSelection: FC = observer(() => {
+export const InboxIssueFilterSelection = observer(function InboxIssueFilterSelection() {
   // hooks
   const { isMobile } = usePlatformOS();
   const {
@@ -40,7 +42,7 @@ export const InboxIssueFilterSelection: FC = observer(() => {
           />
           {filtersSearchQuery !== "" && (
             <button type="button" className="grid place-items-center" onClick={() => setFiltersSearchQuery("")}>
-              <X className="text-custom-text-300" size={12} strokeWidth={2} />
+              <CloseIcon className="text-custom-text-300" height={12} width={12} strokeWidth={2} />
             </button>
           )}
         </div>

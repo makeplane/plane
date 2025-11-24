@@ -1,23 +1,24 @@
-import { FC, useEffect, useRef } from "react";
+import type { FC } from "react";
+import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
-import { UseFormRegister, UseFormSetFocus } from "react-hook-form";
+import type { UseFormRegister, UseFormSetFocus } from "react-hook-form";
 // plane constants
-import { EIssueLayoutTypes } from "@plane/constants";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
+import { EIssueLayoutTypes } from "@plane/types";
 // components
+import type { TQuickAddIssueForm } from "@/components/issues/issue-layouts/quick-add";
 import {
   CalendarQuickAddIssueForm,
   GanttQuickAddIssueForm,
   KanbanQuickAddIssueForm,
   ListQuickAddIssueForm,
   SpreadsheetQuickAddIssueForm,
-  TQuickAddIssueForm,
-} from "@/components/issues/issue-layouts";
+} from "@/components/issues/issue-layouts/quick-add";
 // hooks
-import { useProject } from "@/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 import useKeypress from "@/hooks/use-keypress";
 
 export type TQuickAddIssueFormRoot = {
@@ -33,7 +34,7 @@ export type TQuickAddIssueFormRoot = {
   isEpic: boolean;
 };
 
-export const QuickAddIssueFormRoot: FC<TQuickAddIssueFormRoot> = observer((props) => {
+export const QuickAddIssueFormRoot = observer(function QuickAddIssueFormRoot(props: TQuickAddIssueFormRoot) {
   const { isOpen, layout, projectId, hasError = false, setFocus, register, onSubmit, onClose, isEpic } = props;
   // store hooks
   const { getProjectById } = useProject();

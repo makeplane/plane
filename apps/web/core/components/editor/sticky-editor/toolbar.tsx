@@ -1,16 +1,15 @@
-"use client";
-
 import React, { useEffect, useState, useCallback } from "react";
 import { Palette, Trash2 } from "lucide-react";
 // editor
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 // ui
 import { useOutsideClickDetector } from "@plane/hooks";
-import { TSticky } from "@plane/types";
-import { Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TSticky } from "@plane/types";
 // constants
 import { cn } from "@plane/utils";
-import { TOOLBAR_ITEMS, ToolbarMenuItem } from "@/constants/editor";
+import type { ToolbarMenuItem } from "@/constants/editor";
+import { TOOLBAR_ITEMS } from "@/constants/editor";
 // helpers
 import { ColorPalette } from "./color-palette";
 
@@ -23,7 +22,7 @@ type Props = {
 
 const toolbarItems = TOOLBAR_ITEMS.sticky;
 
-export const StickyEditorToolbar: React.FC<Props> = (props) => {
+export function StickyEditorToolbar(props: Props) {
   const { executeCommand, editorRef, handleColorChange, handleDelete } = props;
 
   // State to manage active states of toolbar items
@@ -132,4 +131,4 @@ export const StickyEditorToolbar: React.FC<Props> = (props) => {
       </Tooltip>
     </div>
   );
-};
+}

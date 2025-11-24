@@ -1,13 +1,16 @@
-import { FC } from "react";
-import { ChevronDown, ListFilter } from "lucide-react";
-// plane ui
-import { getButtonStyling } from "@plane/ui";
-// plane utils
+import type { FC } from "react";
+import { ListFilter } from "lucide-react";
+import { getButtonStyling } from "@plane/propel/button";
+// plane imports
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 // components
-import { InboxIssueFilterSelection, InboxIssueOrderByDropdown } from "@/components/inbox/inbox-filter";
-import { FiltersDropdown } from "@/components/issues";
+import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
+// hooks
 import useSize from "@/hooks/use-window-size";
+// local imports
+import { InboxIssueFilterSelection } from "./filters/filter-selection";
+import { InboxIssueOrderByDropdown } from "./sorting/order-by";
 
 const smallButton = <ListFilter className="size-3 " />;
 
@@ -15,10 +18,10 @@ const largeButton = (
   <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-300")}>
     <ListFilter className="size-3 " />
     <span>Filters</span>
-    <ChevronDown className="size-3" strokeWidth={2} />
+    <ChevronDownIcon className="size-3" strokeWidth={2} />
   </div>
 );
-export const FiltersRoot: FC = () => {
+export function FiltersRoot() {
   const windowSize = useSize();
 
   return (
@@ -33,4 +36,4 @@ export const FiltersRoot: FC = () => {
       </div>
     </div>
   );
-};
+}

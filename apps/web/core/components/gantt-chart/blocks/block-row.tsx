@@ -5,8 +5,8 @@ import { ArrowRight } from "lucide-react";
 import type { IBlockUpdateData, IGanttBlock } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
-import { TSelectionHelper } from "@/hooks/use-multiple-select";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 //
 import { BLOCK_HEIGHT, SIDEBAR_WIDTH } from "../constants";
@@ -22,7 +22,7 @@ type Props = {
   ganttContainerRef: React.RefObject<HTMLDivElement>;
 };
 
-export const BlockRow: React.FC<Props> = observer((props) => {
+export const BlockRow = observer(function BlockRow(props: Props) {
   const { blockId, showAllBlocks, blockUpdateHandler, handleScrollToBlock, enableAddBlock, selectionHelpers } = props;
   // states
   const [isHidden, setIsHidden] = useState(false);

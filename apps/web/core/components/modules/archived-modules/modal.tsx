@@ -1,11 +1,10 @@
-"use client";
-
 import { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 // ui
-import { Button, TOAST_TYPE, setToast } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // hooks
-import { useModule } from "@/hooks/store";
+import { useModule } from "@/hooks/store/use-module";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
@@ -17,7 +16,7 @@ type Props = {
   onSubmit?: () => Promise<void>;
 };
 
-export const ArchiveModuleModal: React.FC<Props> = (props) => {
+export function ArchiveModuleModal(props: Props) {
   const { workspaceSlug, projectId, moduleId, isOpen, handleClose } = props;
   // router
   const router = useAppRouter();
@@ -103,4 +102,4 @@ export const ArchiveModuleModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+}

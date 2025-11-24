@@ -1,4 +1,4 @@
-import { RefObject } from "react";
+import type { RefObject } from "react";
 import { observer } from "mobx-react";
 // hooks
 import { useAutoScroller } from "@/hooks/use-auto-scroller";
@@ -9,7 +9,7 @@ import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "../constants";
 type Props = {
   ganttContainerRef: RefObject<HTMLDivElement>;
 };
-export const TimelineDragHelper = observer((props: Props) => {
+export const TimelineDragHelper = observer(function TimelineDragHelper(props: Props) {
   const { ganttContainerRef } = props;
   const { isDragging } = useTimeLineChartStore();
 

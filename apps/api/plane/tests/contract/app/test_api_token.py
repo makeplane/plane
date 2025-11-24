@@ -14,9 +14,7 @@ class TestApiTokenEndpoint:
 
     # POST /user/api-tokens/ tests
     @pytest.mark.django_db
-    def test_create_api_token_success(
-        self, session_client, create_user, api_token_data
-    ):
+    def test_create_api_token_success(self, session_client, create_user, api_token_data):
         """Test successful API token creation"""
         # Arrange
         session_client.force_authenticate(user=create_user)
@@ -38,9 +36,7 @@ class TestApiTokenEndpoint:
         assert token.label == api_token_data["label"]
 
     @pytest.mark.django_db
-    def test_create_api_token_for_bot_user(
-        self, session_client, create_bot_user, api_token_data
-    ):
+    def test_create_api_token_for_bot_user(self, session_client, create_bot_user, api_token_data):
         """Test API token creation for bot user"""
         # Arrange
         session_client.force_authenticate(user=create_bot_user)
@@ -111,9 +107,7 @@ class TestApiTokenEndpoint:
         APIToken.objects.create(label="Token 1", user=create_user, user_type=0)
         APIToken.objects.create(label="Token 2", user=create_user, user_type=0)
         # Create a service token (should be excluded)
-        APIToken.objects.create(
-            label="Service Token", user=create_user, user_type=0, is_service=True
-        )
+        APIToken.objects.create(label="Service Token", user=create_user, user_type=0, is_service=True)
         url = reverse("api-tokens")
 
         # Act
@@ -140,9 +134,7 @@ class TestApiTokenEndpoint:
 
     # GET /user/api-tokens/<pk>/ tests
     @pytest.mark.django_db
-    def test_get_specific_api_token(
-        self, session_client, create_user, create_api_token_for_user
-    ):
+    def test_get_specific_api_token(self, session_client, create_user, create_api_token_for_user):
         """Test retrieving a specific API token"""
         # Arrange
         session_client.force_authenticate(user=create_user)
@@ -155,9 +147,7 @@ class TestApiTokenEndpoint:
         assert response.status_code == status.HTTP_200_OK
         assert str(response.data["id"]) == str(create_api_token_for_user.pk)
         assert response.data["label"] == create_api_token_for_user.label
-        assert (
-            "token" not in response.data
-        )  # Token should not be visible in read serializer
+        assert "token" not in response.data  # Token should not be visible in read serializer
 
     @pytest.mark.django_db
     def test_get_nonexistent_api_token(self, session_client, create_user):
@@ -182,9 +172,7 @@ class TestApiTokenEndpoint:
         unique_email = f"other-{unique_id}@plane.so"
         unique_username = f"other_user_{unique_id}"
         other_user = User.objects.create(email=unique_email, username=unique_username)
-        other_token = APIToken.objects.create(
-            label="Other Token", user=other_user, user_type=0
-        )
+        other_token = APIToken.objects.create(label="Other Token", user=other_user, user_type=0)
         session_client.force_authenticate(user=create_user)
         url = reverse("api-tokens", kwargs={"pk": other_token.pk})
 
@@ -196,9 +184,7 @@ class TestApiTokenEndpoint:
 
     # DELETE /user/api-tokens/<pk>/ tests
     @pytest.mark.django_db
-    def test_delete_api_token_success(
-        self, session_client, create_user, create_api_token_for_user
-    ):
+    def test_delete_api_token_success(self, session_client, create_user, create_api_token_for_user):
         """Test successful API token deletion"""
         # Arrange
         session_client.force_authenticate(user=create_user)
@@ -234,9 +220,7 @@ class TestApiTokenEndpoint:
         unique_email = f"delete-other-{unique_id}@plane.so"
         unique_username = f"delete_other_user_{unique_id}"
         other_user = User.objects.create(email=unique_email, username=unique_username)
-        other_token = APIToken.objects.create(
-            label="Other Token", user=other_user, user_type=0
-        )
+        other_token = APIToken.objects.create(label="Other Token", user=other_user, user_type=0)
         session_client.force_authenticate(user=create_user)
         url = reverse("api-tokens", kwargs={"pk": other_token.pk})
 
@@ -252,9 +236,7 @@ class TestApiTokenEndpoint:
     def test_delete_service_api_token_forbidden(self, session_client, create_user):
         """Test deleting a service API token (should fail)"""
         # Arrange
-        service_token = APIToken.objects.create(
-            label="Service Token", user=create_user, user_type=0, is_service=True
-        )
+        service_token = APIToken.objects.create(label="Service Token", user=create_user, user_type=0, is_service=True)
         session_client.force_authenticate(user=create_user)
         url = reverse("api-tokens", kwargs={"pk": service_token.pk})
 
@@ -268,9 +250,7 @@ class TestApiTokenEndpoint:
 
     # PATCH /user/api-tokens/<pk>/ tests
     @pytest.mark.django_db
-    def test_patch_api_token_success(
-        self, session_client, create_user, create_api_token_for_user
-    ):
+    def test_patch_api_token_success(self, session_client, create_user, create_api_token_for_user):
         """Test successful API token update"""
         # Arrange
         session_client.force_authenticate(user=create_user)
@@ -294,9 +274,7 @@ class TestApiTokenEndpoint:
         assert create_api_token_for_user.description == update_data["description"]
 
     @pytest.mark.django_db
-    def test_patch_api_token_partial_update(
-        self, session_client, create_user, create_api_token_for_user
-    ):
+    def test_patch_api_token_partial_update(self, session_client, create_user, create_api_token_for_user):
         """Test partial API token update"""
         # Arrange
         session_client.force_authenticate(user=create_user)
@@ -336,9 +314,7 @@ class TestApiTokenEndpoint:
         unique_email = f"patch-other-{unique_id}@plane.so"
         unique_username = f"patch_other_user_{unique_id}"
         other_user = User.objects.create(email=unique_email, username=unique_username)
-        other_token = APIToken.objects.create(
-            label="Other Token", user=other_user, user_type=0
-        )
+        other_token = APIToken.objects.create(label="Other Token", user=other_user, user_type=0)
         session_client.force_authenticate(user=create_user)
         url = reverse("api-tokens", kwargs={"pk": other_token.pk})
         update_data = {"label": "Hacked Label"}

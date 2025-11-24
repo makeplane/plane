@@ -1,13 +1,11 @@
-"use client";
-
-import { MutableRefObject } from "react";
+import type { MutableRefObject } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 // plane types
-import { IIssueDisplayProperties } from "@plane/types";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { IIssueDisplayProperties } from "@plane/types";
 // plane ui
-import { Tooltip } from "@plane/ui";
 // plane utils
 import { cn } from "@plane/utils";
 // components
@@ -15,9 +13,10 @@ import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/with
 // helpers
 import { queryParamGenerator } from "@/helpers/query-param-generator";
 // hooks
-import { useIssueDetails, usePublish } from "@/hooks/store";
+import { usePublish } from "@/hooks/store/publish";
+import { useIssueDetails } from "@/hooks/store/use-issue-details";
 //
-import { IIssue } from "@/types/issue";
+import type { IIssue } from "@/types/issue";
 import { IssueProperties } from "../properties/all-properties";
 import { getIssueBlockId } from "../utils";
 import { BlockReactions } from "./block-reactions";
@@ -35,7 +34,7 @@ interface IssueDetailsBlockProps {
   displayProperties: IIssueDisplayProperties | undefined;
 }
 
-const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((props) => {
+const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props: IssueDetailsBlockProps) {
   const { issue, displayProperties } = props;
   const { anchor } = useParams();
   // hooks
@@ -66,7 +65,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
   );
 });
 
-export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
+export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueBlockProps) {
   const { issueId, groupId, subGroupId, displayProperties } = props;
   const searchParams = useSearchParams();
   // query params
@@ -105,5 +104,3 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = observer((props) => {
     </div>
   );
 });
-
-KanbanIssueBlock.displayName = "KanbanIssueBlock";

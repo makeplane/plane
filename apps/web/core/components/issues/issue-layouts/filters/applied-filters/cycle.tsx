@@ -1,11 +1,8 @@
-"use client";
-
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
-import { TCycleGroups } from "@plane/types";
+import { CloseIcon, CycleGroupIcon } from "@plane/propel/icons";
+import type { TCycleGroups } from "@plane/types";
 // hooks
-import { CycleGroupIcon } from "@plane/ui";
-import { useCycle } from "@/hooks/store";
+import { useCycle } from "@/hooks/store/use-cycle";
 // ui
 // types
 
@@ -15,7 +12,7 @@ type Props = {
   editable: boolean | undefined;
 };
 
-export const AppliedCycleFilters: React.FC<Props> = observer((props) => {
+export const AppliedCycleFilters = observer(function AppliedCycleFilters(props: Props) {
   const { handleRemove, values, editable } = props;
   // store hooks
   const { getCycleById } = useCycle();
@@ -39,7 +36,7 @@ export const AppliedCycleFilters: React.FC<Props> = observer((props) => {
                 className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
                 onClick={() => handleRemove(cycleId)}
               >
-                <X size={10} strokeWidth={2} />
+                <CloseIcon height={10} width={10} strokeWidth={2} />
               </button>
             )}
           </div>

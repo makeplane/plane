@@ -1,24 +1,23 @@
-"use client";
-
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
-import { IIssueLabel } from "@plane/types";
+import type { IIssueLabel } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
-import { FilterHeader, FilterOption } from "@/components/issues";
+import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // hooks
-import { useProjectInbox } from "@/hooks/store";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 
-const LabelIcons = ({ color }: { color: string }) => (
-  <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />
-);
+function LabelIcons({ color }: { color: string }) {
+  return <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />;
+}
 
 type Props = {
   labels: IIssueLabel[] | undefined;
   searchQuery: string;
 };
 
-export const FilterLabels: FC<Props> = observer((props) => {
+export const FilterLabels = observer(function FilterLabels(props: Props) {
   const { labels, searchQuery } = props;
 
   const [itemsToRender, setItemsToRender] = useState(5);

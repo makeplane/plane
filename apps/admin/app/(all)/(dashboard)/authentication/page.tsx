@@ -1,18 +1,18 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane internal packages
-import { TInstanceConfigurationKeys } from "@plane/types";
-import { Loader, ToggleSwitch, setPromiseToast } from "@plane/ui";
+import { setPromiseToast } from "@plane/propel/toast";
+import type { TInstanceConfigurationKeys } from "@plane/types";
+import { Loader, ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useInstance } from "@/hooks/store";
 // plane admin components
 import { AuthenticationModes } from "@/plane-admin/components/authentication";
+import type { Route } from "./+types/page";
 
-const InstanceAuthenticationPage = observer(() => {
+const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(_props: Route.ComponentProps) {
   // store
   const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
 
@@ -109,5 +109,7 @@ const InstanceAuthenticationPage = observer(() => {
     </>
   );
 });
+
+export const meta: Route.MetaFunction = () => [{ title: "Authentication Settings - Plane Web" }];
 
 export default InstanceAuthenticationPage;

@@ -1,21 +1,23 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
-import { Rocket, Search, X } from "lucide-react";
+import React, { useEffect, useState, useRef } from "react";
+import { Rocket, Search } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
-import { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
+import { Button } from "@plane/propel/button";
+import { CloseIcon } from "@plane/propel/icons";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
 // ui
-import { Button, Loader, ToggleSwitch, Tooltip, TOAST_TYPE, setToast } from "@plane/ui";
+import { Loader, ToggleSwitch } from "@plane/ui";
 import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // helpers
 // hooks
 import useDebounce from "@/hooks/use-debounce";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // services
 import { ProjectService } from "@/services/project";
 // components
@@ -30,13 +32,13 @@ type Props = {
   handleOnSubmit: (data: ISearchIssueResponse[]) => Promise<void>;
   workspaceLevelToggle?: boolean;
   shouldHideIssue?: (issue: ISearchIssueResponse) => boolean;
-  selectedWorkItems?: ISearchIssueResponse[];
+  selectedWorkItemIds?: string[];
   workItemSearchServiceCallback?: (params: TProjectIssuesSearchParams) => Promise<ISearchIssueResponse[]>;
 };
 
 const projectService = new ProjectService();
 
-export const ExistingIssuesListModal: React.FC<Props> = (props) => {
+export function ExistingIssuesListModal(props: Props) {
   const { t } = useTranslation();
 
   const {
@@ -48,7 +50,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
     handleOnSubmit,
     workspaceLevelToggle = false,
     shouldHideIssue,
-    selectedWorkItems,
+    selectedWorkItemIds,
     workItemSearchServiceCallback,
   } = props;
   // states
@@ -62,12 +64,14 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
   const { isMobile } = usePlatformOS();
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
   const { baseTabIndex } = getTabIndex(undefined, isMobile);
+  const hasInitializedSelection = useRef(false);
 
   const handleClose = () => {
     onClose();
     setSearchTerm("");
     setSelectedIssues([]);
     setIsWorkspaceLevel(false);
+    hasInitializedSelection.current = false;
   };
 
   const onSubmit = async () => {
@@ -114,10 +118,11 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    if (selectedWorkItems) {
-      setSelectedIssues(selectedWorkItems);
+    if (isOpen && !hasInitializedSelection.current && selectedWorkItemIds && issues.length > 0) {
+      setSelectedIssues(issues.filter((issue) => selectedWorkItemIds.includes(issue.id)));
+      hasInitializedSelection.current = true;
     }
-  }, [isOpen, selectedWorkItems]);
+  }, [isOpen, issues, selectedWorkItemIds]);
 
   useEffect(() => {
     handleSearch();
@@ -128,7 +133,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
   return (
     <>
       <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setSearchTerm("")} appear>
-        <Dialog as="div" className="relative z-20" onClose={handleClose}>
+        <Dialog as="div" className="relative z-30" onClose={handleClose}>
           <Transition.Child
             as={React.Fragment}
             enter="ease-out duration-300"
@@ -141,7 +146,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
             <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
           </Transition.Child>
 
-          <div className="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
+          <div className="fixed inset-0 z-30 overflow-y-auto p-4 sm:p-6 md:p-20">
             <Transition.Child
               as={React.Fragment}
               enter="ease-out duration-300"
@@ -194,7 +199,7 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                               className="group p-1"
                               onClick={() => setSelectedIssues((prevData) => prevData.filter((i) => i.id !== issue.id))}
                             >
-                              <X className="h-3 w-3 text-custom-text-200 group-hover:text-custom-text-100" />
+                              <CloseIcon className="h-3 w-3 text-custom-text-200 group-hover:text-custom-text-100" />
                             </button>
                           </div>
                         ))}
@@ -320,18 +325,19 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
                     )}
                   </Combobox.Options>
                 </Combobox>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center p-3">
                   <Button
                     variant="link-primary"
                     size="sm"
                     onClick={handleSelectIssues}
                     disabled={filteredIssues.length === 0}
+                    className={filteredIssues.length === 0 ? "p-0" : ""}
                   >
                     {selectedIssues.length === issues.length
                       ? t("issue.select.deselect_all")
                       : t("issue.select.select_all")}
                   </Button>
-                  <div className="flex items-center justify-end gap-2 p-3">
+                  <div className="flex items-center justify-end gap-2">
                     <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                       {t("common.cancel")}
                     </Button>
@@ -353,4 +359,4 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
       </Transition.Root>
     </>
   );
-};
+}

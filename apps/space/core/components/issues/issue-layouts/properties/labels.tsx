@@ -1,16 +1,16 @@
-"use client";
-
 import { observer } from "mobx-react";
-import { Tags } from "lucide-react";
-import { Tooltip } from "@plane/ui";
-import { useLabel } from "@/hooks/store";
+import { LabelPropertyIcon } from "@plane/propel/icons";
+// plane imports
+import { Tooltip } from "@plane/propel/tooltip";
+// hooks
+import { useLabel } from "@/hooks/store/use-label";
 
 type Props = {
   labelIds: string[];
   shouldShowLabel?: boolean;
 };
 
-export const IssueBlockLabels = observer(({ labelIds, shouldShowLabel = false }: Props) => {
+export const IssueBlockLabels = observer(function IssueBlockLabels({ labelIds, shouldShowLabel = false }: Props) {
   const { getLabelsByIds } = useLabel();
 
   const labels = getLabelsByIds(labelIds);
@@ -23,7 +23,7 @@ export const IssueBlockLabels = observer(({ labelIds, shouldShowLabel = false }:
         <div
           className={`flex h-full items-center justify-center gap-2 rounded px-2.5 py-1 text-xs border-[0.5px] border-custom-border-300`}
         >
-          <Tags className="h-3.5 w-3.5" strokeWidth={2} />
+          <LabelPropertyIcon className="h-3.5 w-3.5" strokeWidth={2} />
           {shouldShowLabel && <span>No Labels</span>}
         </div>
       </Tooltip>

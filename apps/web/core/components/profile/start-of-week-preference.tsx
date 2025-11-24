@@ -1,19 +1,25 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { START_OF_THE_WEEK_OPTIONS } from "@plane/constants";
-import { EStartOfTheWeek } from "@plane/types";
-import { CustomSelect, setToast, TOAST_TYPE } from "@plane/ui";
+import {
+  PROFILE_SETTINGS_TRACKER_ELEMENTS,
+  PROFILE_SETTINGS_TRACKER_EVENTS,
+  START_OF_THE_WEEK_OPTIONS,
+} from "@plane/constants";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { EStartOfTheWeek } from "@plane/types";
+import { CustomSelect } from "@plane/ui";
 // hooks
-import { useUserProfile } from "@/hooks/store";
+import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
+import { useUserProfile } from "@/hooks/store/user";
 import { PreferencesSection } from "../preferences/section";
 
 const getStartOfWeekLabel = (startOfWeek: EStartOfTheWeek) =>
   START_OF_THE_WEEK_OPTIONS.find((option) => option.value === startOfWeek)?.label;
 
-export const StartOfWeekPreference = observer((props: { option: { title: string; description: string } }) => {
+export const StartOfWeekPreference = observer(function StartOfWeekPreference(props: {
+  option: { title: string; description: string };
+}) {
   // hooks
   const { data: userProfile, updateUserProfile } = useUserProfile();
 
@@ -29,6 +35,18 @@ export const StartOfWeekPreference = observer((props: { option: { title: string;
             onChange={(val: number) => {
               updateUserProfile({ start_of_the_week: val })
                 .then(() => {
+                  captureElementAndEvent({
+                    element: {
+                      elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.FIRST_DAY_OF_WEEK_DROPDOWN,
+                    },
+                    event: {
+                      eventName: PROFILE_SETTINGS_TRACKER_EVENTS.first_day_updated,
+                      payload: {
+                        start_of_the_week: val,
+                      },
+                      state: "SUCCESS",
+                    },
+                  });
                   setToast({
                     type: TOAST_TYPE.SUCCESS,
                     title: "Success",
@@ -36,6 +54,15 @@ export const StartOfWeekPreference = observer((props: { option: { title: string;
                   });
                 })
                 .catch(() => {
+                  captureElementAndEvent({
+                    element: {
+                      elementName: PROFILE_SETTINGS_TRACKER_ELEMENTS.FIRST_DAY_OF_WEEK_DROPDOWN,
+                    },
+                    event: {
+                      eventName: PROFILE_SETTINGS_TRACKER_EVENTS.first_day_updated,
+                      state: "ERROR",
+                    },
+                  });
                   setToast({ type: TOAST_TYPE.ERROR, title: "Update failed", message: "Please try again later." });
                 });
             }}

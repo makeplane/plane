@@ -1,13 +1,19 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import type { Dispatch, SetStateAction } from "react";
+import React, { useState } from "react";
 import { useParams } from "next/navigation";
-import { X, Pencil } from "lucide-react";
+import { Pencil } from "lucide-react";
+import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
+import { CloseIcon } from "@plane/propel/icons";
 // types
-import { IIssueLabel } from "@plane/types";
+import type { IIssueLabel } from "@plane/types";
 // hooks
-import { useLabel } from "@/hooks/store";
+import { captureClick } from "@/helpers/event-tracker.helper";
+import { useLabel } from "@/hooks/store/use-label";
 // components
-import { CreateUpdateLabelInline, TLabelOperationsCallbacks } from "./create-update-label-inline";
-import { ICustomMenuItem, LabelItemBlock } from "./label-block/label-item-block";
+import type { TLabelOperationsCallbacks } from "./create-update-label-inline";
+import { CreateUpdateLabelInline } from "./create-update-label-inline";
+import type { ICustomMenuItem } from "./label-block/label-item-block";
+import { LabelItemBlock } from "./label-block/label-item-block";
 import { LabelDndHOC } from "./label-drag-n-drop-HOC";
 
 type Props = {
@@ -27,7 +33,7 @@ type Props = {
   isEditable?: boolean;
 };
 
-export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
+export function ProjectSettingLabelItem(props: Props) {
   const {
     label,
     setIsUpdating,
@@ -56,7 +62,7 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
 
   const customMenuItems: ICustomMenuItem[] = [
     {
-      CustomIcon: X,
+      CustomIcon: CloseIcon,
       onClick: removeFromGroup,
       isVisible: !!label.parent,
       text: "Remove from group",
@@ -67,6 +73,9 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
       onClick: () => {
         setEditLabelForm(true);
         setIsUpdating(true);
+        captureClick({
+          elementName: PROJECT_SETTINGS_TRACKER_ELEMENTS.LABELS_CONTEXT_MENU,
+        });
       },
       isVisible: true,
       text: "Edit label",
@@ -112,4 +121,4 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
       )}
     </LabelDndHOC>
   );
-};
+}

@@ -5,7 +5,7 @@ import { CircleUser, Activity, Bell, CircleUserRound, KeyRound, Settings2, Block
 import { GROUPED_PROFILE_SETTINGS, PROFILE_SETTINGS_CATEGORIES } from "@plane/constants";
 import { getFileURL } from "@plane/utils";
 // components
-import { SettingsSidebar } from "@/components/settings";
+import { SettingsSidebar } from "@/components/settings/sidebar";
 // hooks
 import { useUser } from "@/hooks/store/user";
 
@@ -19,18 +19,18 @@ const ICONS = {
   connections: Blocks,
 };
 
-export const ProjectActionIcons = ({ type, size, className }: { type: string; size?: number; className?: string }) => {
+export function ProjectActionIcons({ type, size, className }: { type: string; size?: number; className?: string }) {
   if (type === undefined) return null;
   const Icon = ICONS[type as keyof typeof ICONS];
   if (!Icon) return null;
   return <Icon size={size} className={className} strokeWidth={2} />;
-};
+}
 
 type TProfileSidebarProps = {
   isMobile?: boolean;
 };
 
-export const ProfileSidebar = observer((props: TProfileSidebarProps) => {
+export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSidebarProps) {
   const { isMobile = false } = props;
   // router
   const pathname = usePathname();

@@ -1,26 +1,29 @@
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { Matcher } from "react-day-picker";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
-import { CalendarDays, X } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // ui
-import { ComboDropDown, Calendar } from "@plane/ui";
+import type { Matcher } from "@plane/propel/calendar";
+import { Calendar } from "@plane/propel/calendar";
+import { CloseIcon } from "@plane/propel/icons";
+import { ComboDropDown } from "@plane/ui";
 import { cn, renderFormattedDate, getDate } from "@plane/utils";
 // helpers
 // hooks
-import { useUserProfile } from "@/hooks/store";
+import { useUserProfile } from "@/hooks/store/user";
 import { useDropdown } from "@/hooks/use-dropdown";
 // components
 import { DropdownButton } from "./buttons";
 // constants
 import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 // types
-import { TDropdownProps } from "./types";
+import type { TDropdownProps } from "./types";
 
 type Props = TDropdownProps & {
   clearIconClassName?: string;
+  defaultOpen?: boolean;
   optionsClassName?: string;
   icon?: React.ReactNode;
   isClearable?: boolean;
@@ -34,13 +37,14 @@ type Props = TDropdownProps & {
   renderByDefault?: boolean;
 };
 
-export const DateDropdown: React.FC<Props> = observer((props) => {
+export const DateDropdown = observer(function DateDropdown(props: Props) {
   const {
     buttonClassName = "",
     buttonContainerClassName,
     buttonVariant,
     className = "",
     clearIconClassName = "",
+    defaultOpen = false,
     optionsClassName = "",
     closeOnSelect = true,
     disabled = false,
@@ -60,7 +64,7 @@ export const DateDropdown: React.FC<Props> = observer((props) => {
     renderByDefault = true,
   } = props;
   // states
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   // hooks
@@ -137,7 +141,7 @@ export const DateDropdown: React.FC<Props> = observer((props) => {
           <span className="flex-grow truncate">{value ? renderFormattedDate(value, formatToken) : placeholder}</span>
         )}
         {isClearable && !disabled && isDateSelected && (
-          <X
+          <CloseIcon
             className={cn("h-2.5 w-2.5 flex-shrink-0", clearIconClassName)}
             onClick={(e) => {
               e.stopPropagation();
@@ -170,7 +174,7 @@ export const DateDropdown: React.FC<Props> = observer((props) => {
           <Combobox.Options data-prevent-outside-click static>
             <div
               className={cn(
-                "my-1 bg-custom-background-100 shadow-custom-shadow-rg border-[0.5px] border-custom-border-300 rounded-md overflow-hidden z-20",
+                "my-1 bg-custom-background-100 shadow-custom-shadow-rg border-[0.5px] border-custom-border-300 rounded-md overflow-hidden z-30",
                 optionsClassName
               )}
               ref={setPopperElement}
@@ -178,11 +182,11 @@ export const DateDropdown: React.FC<Props> = observer((props) => {
               {...attributes.popper}
             >
               <Calendar
+                className="rounded-md border border-custom-border-200 p-3"
                 captionLayout="dropdown"
-                classNames={{ root: `p-3 rounded-md` }}
                 selected={getDate(value)}
                 defaultMonth={getDate(value)}
-                onSelect={(date) => {
+                onSelect={(date: Date | undefined) => {
                   dropdownOnChange(date ?? null);
                 }}
                 showOutsideDays

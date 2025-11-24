@@ -1,20 +1,19 @@
-"use client";
-
 import { SignalHigh } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 // types
-import { TIssuePriorities } from "@plane/types";
-import { PriorityIcon, Tooltip } from "@plane/ui";
+import { PriorityIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TIssuePriorities } from "@plane/types";
 // constants
 import { cn, getIssuePriorityFilters } from "@plane/utils";
 
-export const IssueBlockPriority = ({
+export function IssueBlockPriority({
   priority,
   shouldShowName = false,
 }: {
   priority: TIssuePriorities | null;
   shouldShowName?: boolean;
-}) => {
+}) {
   // hooks
   const { t } = useTranslation();
   const priority_detail = priority != null ? getIssuePriorityFilters(priority) : null;
@@ -64,4 +63,4 @@ export const IssueBlockPriority = ({
       </div>
     </Tooltip>
   );
-};
+}

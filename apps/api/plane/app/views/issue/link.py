@@ -45,9 +45,7 @@ class IssueLinkViewSet(BaseViewSet):
         serializer = IssueLinkSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=issue_id)
-            crawl_work_item_link_title.delay(
-                serializer.data.get("id"), serializer.data.get("url")
-            )
+            crawl_work_item_link_title.delay(serializer.data.get("id"), serializer.data.get("url"))
             issue_activity.delay(
                 type="link.activity.created",
                 requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
@@ -67,20 +65,14 @@ class IssueLinkViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, slug, project_id, issue_id, pk):
-        issue_link = IssueLink.objects.get(
-            workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
-        )
+        issue_link = IssueLink.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
         requested_data = json.dumps(request.data, cls=DjangoJSONEncoder)
-        current_instance = json.dumps(
-            IssueLinkSerializer(issue_link).data, cls=DjangoJSONEncoder
-        )
+        current_instance = json.dumps(IssueLinkSerializer(issue_link).data, cls=DjangoJSONEncoder)
 
         serializer = IssueLinkSerializer(issue_link, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            crawl_work_item_link_title.delay(
-                serializer.data.get("id"), serializer.data.get("url")
-            )
+            crawl_work_item_link_title.delay(serializer.data.get("id"), serializer.data.get("url"))
 
             issue_activity.delay(
                 type="link.activity.updated",
@@ -100,12 +92,8 @@ class IssueLinkViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, slug, project_id, issue_id, pk):
-        issue_link = IssueLink.objects.get(
-            workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
-        )
-        current_instance = json.dumps(
-            IssueLinkSerializer(issue_link).data, cls=DjangoJSONEncoder
-        )
+        issue_link = IssueLink.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
+        current_instance = json.dumps(IssueLinkSerializer(issue_link).data, cls=DjangoJSONEncoder)
         issue_activity.delay(
             type="link.activity.deleted",
             requested_data=json.dumps({"link_id": str(pk)}),

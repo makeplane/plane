@@ -1,4 +1,10 @@
+# syntax=docker/dockerfile:1.7
 FROM node:22-alpine AS base
+
+# Setup pnpm package manager with corepack and configure global bin directory for caching
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
 # *****************************************************************************
 # STAGE 1: Build the project
@@ -8,7 +14,8 @@ RUN apk add --no-cache libc6-compat
 # Set working directory
 WORKDIR /app
 
-RUN yarn global add turbo
+ARG TURBO_VERSION=2.5.6
+RUN corepack enable pnpm && pnpm add -g turbo@${TURBO_VERSION}
 COPY . .
 
 RUN turbo prune --scope=web --docker
@@ -25,87 +32,55 @@ WORKDIR /app
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
-COPY --from=builder /app/out/yarn.lock ./yarn.lock
-RUN yarn install --network-timeout 500000
+COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+RUN corepack enable pnpm
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm fetch --store-dir=/pnpm/store
 
 # Build the project
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store CI=true pnpm install --offline --frozen-lockfile --store-dir=/pnpm/store
 
-ARG NEXT_PUBLIC_API_BASE_URL=""
-ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+ARG VITE_API_BASE_URL=""
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 
-ARG NEXT_PUBLIC_ADMIN_BASE_URL=""
-ENV NEXT_PUBLIC_ADMIN_BASE_URL=$NEXT_PUBLIC_ADMIN_BASE_URL
+ARG VITE_ADMIN_BASE_URL=""
+ENV VITE_ADMIN_BASE_URL=$VITE_ADMIN_BASE_URL
 
-ARG NEXT_PUBLIC_ADMIN_BASE_PATH="/god-mode"
-ENV NEXT_PUBLIC_ADMIN_BASE_PATH=$NEXT_PUBLIC_ADMIN_BASE_PATH
+ARG VITE_ADMIN_BASE_PATH="/god-mode"
+ENV VITE_ADMIN_BASE_PATH=$VITE_ADMIN_BASE_PATH
 
-ARG NEXT_PUBLIC_LIVE_BASE_URL=""
-ENV NEXT_PUBLIC_LIVE_BASE_URL=$NEXT_PUBLIC_LIVE_BASE_URL
+ARG VITE_LIVE_BASE_URL=""
+ENV VITE_LIVE_BASE_URL=$VITE_LIVE_BASE_URL
 
-ARG NEXT_PUBLIC_LIVE_BASE_PATH="/live"
-ENV NEXT_PUBLIC_LIVE_BASE_PATH=$NEXT_PUBLIC_LIVE_BASE_PATH
+ARG VITE_LIVE_BASE_PATH="/live"
+ENV VITE_LIVE_BASE_PATH=$VITE_LIVE_BASE_PATH
 
-ARG NEXT_PUBLIC_SPACE_BASE_URL=""
-ENV NEXT_PUBLIC_SPACE_BASE_URL=$NEXT_PUBLIC_SPACE_BASE_URL
+ARG VITE_SPACE_BASE_URL=""
+ENV VITE_SPACE_BASE_URL=$VITE_SPACE_BASE_URL
 
-ARG NEXT_PUBLIC_SPACE_BASE_PATH="/spaces"
-ENV NEXT_PUBLIC_SPACE_BASE_PATH=$NEXT_PUBLIC_SPACE_BASE_PATH
+ARG VITE_SPACE_BASE_PATH="/spaces"
+ENV VITE_SPACE_BASE_PATH=$VITE_SPACE_BASE_PATH
 
-ARG NEXT_PUBLIC_WEB_BASE_URL=""
-ENV NEXT_PUBLIC_WEB_BASE_URL=$NEXT_PUBLIC_WEB_BASE_URL
-
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV TURBO_TELEMETRY_DISABLED=1
-
-RUN yarn turbo run build --filter=web
-
-# *****************************************************************************
-# STAGE 3: Copy the project and start it
-# *****************************************************************************
-FROM base AS runner
-WORKDIR /app
-
-# Don't run production as root
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-USER nextjs
-
-
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=installer /app/apps/web/.next/standalone ./
-COPY --from=installer /app/apps/web/.next/static ./apps/web/.next/static
-COPY --from=installer /app/apps/web/public ./apps/web/public
-
-ARG NEXT_PUBLIC_API_BASE_URL=""
-ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
-
-ARG NEXT_PUBLIC_ADMIN_BASE_URL=""
-ENV NEXT_PUBLIC_ADMIN_BASE_URL=$NEXT_PUBLIC_ADMIN_BASE_URL
-
-ARG NEXT_PUBLIC_ADMIN_BASE_PATH="/god-mode"
-ENV NEXT_PUBLIC_ADMIN_BASE_PATH=$NEXT_PUBLIC_ADMIN_BASE_PATH
-
-ARG NEXT_PUBLIC_LIVE_BASE_URL=""
-ENV NEXT_PUBLIC_LIVE_BASE_URL=$NEXT_PUBLIC_LIVE_BASE_URL
-
-ARG NEXT_PUBLIC_LIVE_BASE_PATH="/live"
-ENV NEXT_PUBLIC_LIVE_BASE_PATH=$NEXT_PUBLIC_LIVE_BASE_PATH
-
-ARG NEXT_PUBLIC_SPACE_BASE_URL=""
-ENV NEXT_PUBLIC_SPACE_BASE_URL=$NEXT_PUBLIC_SPACE_BASE_URL
-
-ARG NEXT_PUBLIC_SPACE_BASE_PATH="/spaces"
-ENV NEXT_PUBLIC_SPACE_BASE_PATH=$NEXT_PUBLIC_SPACE_BASE_PATH
-
-ARG NEXT_PUBLIC_WEB_BASE_URL=""
-ENV NEXT_PUBLIC_WEB_BASE_URL=$NEXT_PUBLIC_WEB_BASE_URL
+ARG VITE_WEB_BASE_URL=""
+ENV VITE_WEB_BASE_URL=$VITE_WEB_BASE_URL
 
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV TURBO_TELEMETRY_DISABLED=1
+
+RUN pnpm turbo run build --filter=web
+
+# *****************************************************************************
+# STAGE 3: Serve with nginx
+# *****************************************************************************
+FROM nginx:1.27-alpine AS production
+
+COPY apps/web/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY --from=installer /app/apps/web/build/client /usr/share/nginx/html
 
 EXPOSE 3000
 
-CMD ["node", "apps/web/server.js"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -fsS http://127.0.0.1:3000/ >/dev/null || exit 1
+
+CMD ["nginx", "-g", "daemon off;"]

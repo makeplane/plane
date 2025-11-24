@@ -1,4 +1,5 @@
 # Python imports
+import copy
 import json
 
 # Django imports
@@ -28,11 +29,15 @@ from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.app.permissions import allow_permission, ROLE
 from plane.utils.host import base_host
+from plane.utils.filters import ComplexFilterBackend
+from plane.utils.filters import IssueFilterSet
 
 
 class CycleIssueViewSet(BaseViewSet):
     serializer_class = CycleIssueSerializer
     model = CycleIssue
+    filter_backends = (ComplexFilterBackend,)
+    filterset_class = IssueFilterSet
 
     webhook_event = "cycle_issue"
     bulk = True
@@ -65,28 +70,11 @@ class CycleIssueViewSet(BaseViewSet):
             .distinct()
         )
 
-    @method_decorator(gzip_page)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
-    def list(self, request, slug, project_id, cycle_id):
-        order_by_param = request.GET.get("order_by", "created_at")
-        filters = issue_filters(request.query_params, "GET")
-        issue_queryset = (
-            Issue.issue_objects.filter(
-                issue_cycle__cycle_id=cycle_id, issue_cycle__deleted_at__isnull=True
-            )
-            .filter(project_id=project_id)
-            .filter(workspace__slug=slug)
-            .filter(**filters)
-            .select_related("workspace", "project", "state", "parent")
-            .prefetch_related(
-                "assignees", "labels", "issue_module__module", "issue_cycle__cycle"
-            )
-            .filter(**filters)
-            .annotate(
+    def apply_annotations(self, issues):
+        return (
+            issues.annotate(
                 cycle_id=Subquery(
-                    CycleIssue.objects.filter(
-                        issue=OuterRef("id"), deleted_at__isnull=True
-                    ).values("cycle_id")[:1]
+                    CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
                 )
             )
             .annotate(
@@ -110,11 +98,32 @@ class CycleIssueViewSet(BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .prefetch_related("assignees", "labels", "issue_module__module", "issue_cycle__cycle")
         )
+
+    @method_decorator(gzip_page)
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def list(self, request, slug, project_id, cycle_id):
         filters = issue_filters(request.query_params, "GET")
+        issue_queryset = (
+            Issue.issue_objects.filter(issue_cycle__cycle_id=cycle_id, issue_cycle__deleted_at__isnull=True)
+            .filter(project_id=project_id)
+            .filter(workspace__slug=slug)
+        )
+
+        # Apply filtering from filterset
+        issue_queryset = self.filter_queryset(issue_queryset)
+
+        # Apply legacy filters
+        issue_queryset = issue_queryset.filter(**filters)
+
+        # Total count queryset
+        total_issue_queryset = copy.deepcopy(issue_queryset)
+
+        # Applying annotations to the issue queryset
+        issue_queryset = self.apply_annotations(issue_queryset)
 
         order_by_param = request.GET.get("order_by", "-created_at")
-        issue_queryset = issue_queryset.filter(**filters)
         # Issue queryset
         issue_queryset, order_by_param = order_issue_queryset(
             issue_queryset=issue_queryset, order_by_param=order_by_param
@@ -125,18 +134,14 @@ class CycleIssueViewSet(BaseViewSet):
         sub_group_by = request.GET.get("sub_group_by", False)
 
         # issue queryset
-        issue_queryset = issue_queryset_grouper(
-            queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by
-        )
+        issue_queryset = issue_queryset_grouper(queryset=issue_queryset, group_by=group_by, sub_group_by=sub_group_by)
 
         if group_by:
             # Check group and sub group value paginate
             if sub_group_by:
                 if group_by == sub_group_by:
                     return Response(
-                        {
-                            "error": "Group by and sub group by cannot have same parameters"
-                        },
+                        {"error": "Group by and sub group by cannot have same parameters"},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
                 else:
@@ -145,6 +150,7 @@ class CycleIssueViewSet(BaseViewSet):
                         request=request,
                         order_by=order_by_param,
                         queryset=issue_queryset,
+                        total_count_queryset=total_issue_queryset,
                         on_results=lambda issues: issue_on_results(
                             group_by=group_by, issues=issues, sub_group_by=sub_group_by
                         ),
@@ -179,6 +185,7 @@ class CycleIssueViewSet(BaseViewSet):
                     request=request,
                     order_by=order_by_param,
                     queryset=issue_queryset,
+                    total_count_queryset=total_issue_queryset,
                     on_results=lambda issues: issue_on_results(
                         group_by=group_by, issues=issues, sub_group_by=sub_group_by
                     ),
@@ -205,9 +212,8 @@ class CycleIssueViewSet(BaseViewSet):
                 order_by=order_by_param,
                 request=request,
                 queryset=issue_queryset,
-                on_results=lambda issues: issue_on_results(
-                    group_by=group_by, issues=issues, sub_group_by=sub_group_by
-                ),
+                total_count_queryset=total_issue_queryset,
+                on_results=lambda issues: issue_on_results(group_by=group_by, issues=issues, sub_group_by=sub_group_by),
             )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
@@ -215,26 +221,18 @@ class CycleIssueViewSet(BaseViewSet):
         issues = request.data.get("issues", [])
 
         if not issues:
-            return Response(
-                {"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST)
 
-        cycle = Cycle.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=cycle_id
-        )
+        cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, pk=cycle_id)
 
         if cycle.end_date is not None and cycle.end_date < timezone.now():
             return Response(
-                {
-                    "error": "The Cycle has already been completed so no new issues can be added"
-                },
+                {"error": "The Cycle has already been completed so no new issues can be added"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         # Get all CycleIssues already created
-        cycle_issues = list(
-            CycleIssue.objects.filter(~Q(cycle_id=cycle_id), issue_id__in=issues)
-        )
+        cycle_issues = list(CycleIssue.objects.filter(~Q(cycle_id=cycle_id), issue_id__in=issues))
         existing_issues = [str(cycle_issue.issue_id) for cycle_issue in cycle_issues]
         new_issues = list(set(issues) - set(existing_issues))
 
@@ -285,9 +283,7 @@ class CycleIssueViewSet(BaseViewSet):
             current_instance=json.dumps(
                 {
                     "updated_cycle_issues": update_cycle_issue_activity,
-                    "created_cycle_issues": serializers.serialize(
-                        "json", created_records
-                    ),
+                    "created_cycle_issues": serializers.serialize("json", created_records),
                 }
             ),
             epoch=int(timezone.now().timestamp()),

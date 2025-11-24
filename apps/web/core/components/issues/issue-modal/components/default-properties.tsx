@@ -1,35 +1,33 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { Control, Controller } from "react-hook-form";
-import { LayoutPanelTop } from "lucide-react";
-// plane imports
+import type { Control } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { ETabIndices, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { ParentPropertyIcon } from "@plane/propel/icons";
 // types
-import { ISearchIssueResponse, TIssue } from "@plane/types";
+import type { ISearchIssueResponse, TIssue } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 // components
-import {
-  CycleDropdown,
-  DateDropdown,
-  EstimateDropdown,
-  ModuleDropdown,
-  PriorityDropdown,
-  MemberDropdown,
-  StateDropdown,
-} from "@/components/dropdowns";
-import { ParentIssuesListModal } from "@/components/issues";
+import { CycleDropdown } from "@/components/dropdowns/cycle";
+import { DateDropdown } from "@/components/dropdowns/date";
+import { EstimateDropdown } from "@/components/dropdowns/estimate";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
+import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
+import { ParentIssuesListModal } from "@/components/issues/parent-issues-list-modal";
 import { IssueLabelSelect } from "@/components/issues/select";
 // helpers
 // hooks
-import { useProjectEstimates, useProject, useUserPermissions } from "@/hooks/store";
+import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 
 type TIssueDefaultPropertiesProps = {
   control: Control<TIssue>;
@@ -42,11 +40,10 @@ type TIssueDefaultPropertiesProps = {
   parentId: string | null;
   isDraft: boolean;
   handleFormChange: () => void;
-  setLabelModal: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedParentIssue: (issue: ISearchIssueResponse) => void;
 };
 
-export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = observer((props) => {
+export const IssueDefaultProperties = observer(function IssueDefaultProperties(props: TIssueDefaultPropertiesProps) {
   const {
     control,
     id,
@@ -58,7 +55,6 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
     parentId,
     isDraft,
     handleFormChange,
-    setLabelModal,
     setSelectedParentIssue,
   } = props;
   // states
@@ -74,7 +70,8 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
 
   const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
 
-  const canCreateLabel = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
+  const canCreateLabel =
+    projectId && allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
 
   const minDate = getDate(startDate);
   minDate?.setDate(minDate.getDate());
@@ -147,7 +144,6 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
         render={({ field: { value, onChange } }) => (
           <div className="h-7">
             <IssueLabelSelect
-              setIsOpen={setLabelModal}
               value={value}
               onChange={(labelIds) => {
                 onChange(labelIds);
@@ -155,7 +151,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
               }}
               projectId={projectId ?? undefined}
               tabIndex={getIndex("label_ids")}
-              createLabelEnabled={canCreateLabel}
+              createLabelEnabled={!!canCreateLabel}
             />
           </div>
         )}
@@ -314,7 +310,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
             className="flex cursor-pointer items-center justify-between gap-1 h-full rounded border-[0.5px] border-custom-border-300 px-2 py-0.5 text-xs hover:bg-custom-background-80"
             onClick={() => setParentIssueListModalOpen(true)}
           >
-            <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
+            <ParentPropertyIcon className="h-3 w-3 flex-shrink-0" />
             <span className="whitespace-nowrap">{t("add_parent")}</span>
           </button>
         )}

@@ -1,11 +1,16 @@
-"use client";
-
-import { FC, useState } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
-import { Button, EModalPosition, EModalWidth, ModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { PROJECT_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
-import { useEstimate, useProject, useProjectEstimates } from "@/hooks/store";
+import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
+import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useEstimate } from "@/hooks/store/estimates/use-estimate";
+import { useProject } from "@/hooks/store/use-project";
 
 type TDeleteEstimateModal = {
   workspaceSlug: string;
@@ -15,7 +20,7 @@ type TDeleteEstimateModal = {
   handleClose: () => void;
 };
 
-export const DeleteEstimateModal: FC<TDeleteEstimateModal> = observer((props) => {
+export const DeleteEstimateModal = observer(function DeleteEstimateModal(props: TDeleteEstimateModal) {
   // props
   const { workspaceSlug, projectId, estimateId, isOpen, handleClose } = props;
   // hooks
@@ -35,6 +40,12 @@ export const DeleteEstimateModal: FC<TDeleteEstimateModal> = observer((props) =>
         await updateProject(workspaceSlug, projectId, { estimate: null });
       }
       setButtonLoader(false);
+      captureSuccess({
+        eventName: PROJECT_SETTINGS_TRACKER_EVENTS.estimate_deleted,
+        payload: {
+          id: estimateId,
+        },
+      });
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Estimate deleted",
@@ -43,6 +54,12 @@ export const DeleteEstimateModal: FC<TDeleteEstimateModal> = observer((props) =>
       handleClose();
     } catch (error) {
       setButtonLoader(false);
+      captureError({
+        eventName: PROJECT_SETTINGS_TRACKER_EVENTS.estimate_deleted,
+        payload: {
+          id: estimateId,
+        },
+      });
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Estimate creation failed",

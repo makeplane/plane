@@ -1,18 +1,18 @@
-"use client";
-
-import { FC, RefObject } from "react";
+import type { FC, RefObject } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { ETabIndices } from "@plane/constants";
-import { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
-import { EFileAssetType, TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { getDescriptionPlaceholderI18n, getTabIndex } from "@plane/utils";
 // components
-import { RichTextEditor } from "@/components/editor/rich-text-editor/rich-text-editor";
+import { RichTextEditor } from "@/components/editor/rich-text/editor";
 // hooks
-import { useEditorAsset, useProjectInbox } from "@/hooks/store";
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { WorkspaceService } from "@/plane-web/services";
@@ -32,7 +32,7 @@ type TInboxIssueDescription = {
 };
 
 // TODO: have to implement GPT Assistance
-export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props) => {
+export const InboxIssueDescription = observer(function InboxIssueDescription(props: TInboxIssueDescription) {
   const {
     containerClassName,
     workspaceSlug,
@@ -47,7 +47,7 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
   // i18n
   const { t } = useTranslation();
   // store hooks
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   const { loader } = useProjectInbox();
   const { isMobile } = usePlatformOS();
 
@@ -98,6 +98,20 @@ export const InboxIssueDescription: FC<TInboxIssueDescription> = observer((props
         } catch (error) {
           console.log("Error in uploading work item asset:", error);
           throw new Error("Asset upload failed. Please try again later.");
+        }
+      }}
+      duplicateFile={async (assetId: string) => {
+        try {
+          const { asset_id } = await duplicateEditorAsset({
+            assetId,
+            entityType: EFileAssetType.ISSUE_DESCRIPTION,
+            projectId,
+            workspaceSlug,
+          });
+          onAssetUpload?.(asset_id);
+          return asset_id;
+        } catch {
+          throw new Error("Asset duplication failed. Please try again later.");
         }
       }}
     />

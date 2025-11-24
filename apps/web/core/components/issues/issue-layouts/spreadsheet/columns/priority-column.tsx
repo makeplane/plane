@@ -1,9 +1,9 @@
 import React from "react";
 import { observer } from "mobx-react";
 // types
-import { TIssue } from "@plane/types";
+import type { TIssue } from "@plane/types";
 // components
-import { PriorityDropdown } from "@/components/dropdowns";
+import { PriorityDropdown } from "@/components/dropdowns/priority";
 
 type Props = {
   issue: TIssue;
@@ -12,7 +12,7 @@ type Props = {
   disabled: boolean;
 };
 
-export const SpreadsheetPriorityColumn: React.FC<Props> = observer((props: Props) => {
+export const SpreadsheetPriorityColumn = observer(function SpreadsheetPriorityColumn(props: Props) {
   const { issue, onChange, disabled, onClose } = props;
 
   return (

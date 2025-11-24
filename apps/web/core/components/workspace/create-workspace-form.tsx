@@ -1,6 +1,5 @@
-"use client";
-
-import { Dispatch, SetStateAction, useEffect, useState, FC } from "react";
+import type { Dispatch, SetStateAction } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import {
@@ -10,14 +9,14 @@ import {
   WORKSPACE_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// constants
-// types
-import { IWorkspace } from "@plane/types";
+import { Button } from "@plane/propel/button";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { IWorkspace } from "@plane/types";
 // ui
-import { Button, CustomSelect, Input, TOAST_TYPE, setToast } from "@plane/ui";
+import { CustomSelect, Input } from "@plane/ui";
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
-import { useWorkspace } from "@/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 // services
 import { WorkspaceService } from "@/plane-web/services";
@@ -29,7 +28,7 @@ type Props = {
     slug: string;
     organization_size: string;
   };
-  setDefaultValues: Dispatch<SetStateAction<IWorkspace>>;
+  setDefaultValues: Dispatch<SetStateAction<Pick<IWorkspace, "name" | "slug" | "organization_size">>>;
   secondaryButton?: React.ReactNode;
   primaryButtonText?: {
     loading: string;
@@ -39,7 +38,7 @@ type Props = {
 
 const workspaceService = new WorkspaceService();
 
-export const CreateWorkspaceForm: FC<Props> = observer((props) => {
+export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: Props) {
   const { t } = useTranslation();
   const {
     onSubmit,
@@ -228,7 +227,6 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
                   }
                   buttonClassName="!border-[0.5px] !border-custom-border-200 !shadow-none"
                   input
-                  optionsClassName="w-full"
                 >
                   {ORGANIZATION_SIZE.map((item) => (
                     <CustomSelect.Option key={item} value={item}>
@@ -244,7 +242,6 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
           </div>
         </div>
       </div>
-
       <div className="flex items-center gap-4">
         {secondaryButton}
         <Button

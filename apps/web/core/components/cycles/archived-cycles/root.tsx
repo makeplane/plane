@@ -4,18 +4,19 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { TCycleFilters } from "@plane/types";
-// components
+import { EmptyStateDetailed } from "@plane/propel/empty-state";
+import type { TCycleFilters } from "@plane/types";
 import { calculateTotalFilters } from "@plane/utils";
-import { ArchivedCyclesView, CycleAppliedFiltersList } from "@/components/cycles";
-import { DetailedEmptyState } from "@/components/empty-state";
-import { CycleModuleListLayout } from "@/components/ui";
-// helpers
+// components
+import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module-list-loader";
 // hooks
-import { useCycle, useCycleFilter } from "@/hooks/store";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
+import { useCycle } from "@/hooks/store/use-cycle";
+import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
+// local imports
+import { CycleAppliedFiltersList } from "../applied-filters";
+import { ArchivedCyclesView } from "./view";
 
-export const ArchivedCycleLayoutRoot: React.FC = observer(() => {
+export const ArchivedCycleLayoutRoot = observer(function ArchivedCycleLayoutRoot() {
   // router
   const { workspaceSlug, projectId } = useParams();
   // plane hooks
@@ -26,7 +27,6 @@ export const ArchivedCycleLayoutRoot: React.FC = observer(() => {
   const { clearAllFilters, currentProjectArchivedFilters, updateFilters } = useCycleFilter();
   // derived values
   const totalArchivedCycles = currentProjectArchivedCycleIds?.length ?? 0;
-  const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/archived/empty-cycles" });
 
   useSWR(
     workspaceSlug && projectId ? `ARCHIVED_CYCLES_${workspaceSlug.toString()}_${projectId.toString()}` : null,
@@ -51,7 +51,7 @@ export const ArchivedCycleLayoutRoot: React.FC = observer(() => {
   if (!workspaceSlug || !projectId) return <></>;
 
   if (loader || !currentProjectArchivedCycleIds) {
-    return <CycleModuleListLayout />;
+    return <CycleModuleListLayoutLoader />;
   }
 
   return (
@@ -67,10 +67,10 @@ export const ArchivedCycleLayoutRoot: React.FC = observer(() => {
       )}
       {totalArchivedCycles === 0 ? (
         <div className="h-full place-items-center">
-          <DetailedEmptyState
-            title={t("project_cycles.empty_state.archived.title")}
-            description={t("project_cycles.empty_state.archived.description")}
-            assetPath={resolvedPath}
+          <EmptyStateDetailed
+            assetKey="archived-cycle"
+            title={t("workspace_empty_state.archive_cycles.title")}
+            description={t("workspace_empty_state.archive_cycles.description")}
           />
         </div>
       ) : (

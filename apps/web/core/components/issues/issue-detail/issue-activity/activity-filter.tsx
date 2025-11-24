@@ -1,9 +1,10 @@
-import React, { FC } from "react";
 import { observer } from "mobx-react";
 import { Check, ListFilter } from "lucide-react";
-import { TActivityFilters, TActivityFilterOption } from "@plane/constants";
+// plane imports
+import type { TActivityFilters, TActivityFilterOption } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button, PopoverMenu } from "@plane/ui";
+import { Button } from "@plane/propel/button";
+import { PopoverMenu } from "@plane/ui";
 // helper
 import { cn } from "@plane/utils";
 // constants
@@ -13,7 +14,7 @@ type TActivityFilter = {
   filterOptions: TActivityFilterOption[];
 };
 
-export const ActivityFilter: FC<TActivityFilter> = observer((props) => {
+export const ActivityFilter = observer(function ActivityFilter(props: TActivityFilter) {
   const { selectedFilters = [], filterOptions } = props;
 
   // hooks

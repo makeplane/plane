@@ -1,23 +1,25 @@
-"use client";
-
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
+
 // plane types
-import { TInboxIssueFilterMemberKeys } from "@plane/types";
+import { CloseIcon } from "@plane/propel/icons";
+import type { TInboxIssueFilterMemberKeys } from "@plane/types";
 // plane ui
 import { Avatar, Tag } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
-import { useMember, useProjectInbox } from "@/hooks/store";
+import { useMember } from "@/hooks/store/use-member";
+import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 
 type InboxIssueAppliedFiltersMember = {
   filterKey: TInboxIssueFilterMemberKeys;
   label: string;
 };
 
-export const InboxIssueAppliedFiltersMember: FC<InboxIssueAppliedFiltersMember> = observer((props) => {
+export const InboxIssueAppliedFiltersMember = observer(function InboxIssueAppliedFiltersMember(
+  props: InboxIssueAppliedFiltersMember
+) {
   const { filterKey, label } = props;
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
@@ -53,7 +55,7 @@ export const InboxIssueAppliedFiltersMember: FC<InboxIssueAppliedFiltersMember> 
               className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
               onClick={() => handleInboxIssueFilters(filterKey, handleFilterValue(value))}
             >
-              <X className={`w-3 h-3`} />
+              <CloseIcon className={`w-3 h-3`} />
             </div>
           </div>
         );
@@ -63,7 +65,7 @@ export const InboxIssueAppliedFiltersMember: FC<InboxIssueAppliedFiltersMember> 
         className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
         onClick={clearFilter}
       >
-        <X className={`w-3 h-3`} />
+        <CloseIcon className={`w-3 h-3`} />
       </div>
     </Tag>
   );

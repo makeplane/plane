@@ -1,15 +1,15 @@
-"use client";
-
 import { useEffect, useState } from "react";
 // types
 import { PROJECT_ERROR_MESSAGES, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TWorkspaceDraftIssue } from "@plane/types";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TWorkspaceDraftIssue } from "@plane/types";
 // ui
-import { AlertModalCore, TOAST_TYPE, setToast } from "@plane/ui";
+import { AlertModalCore } from "@plane/ui";
 // constants
 // hooks
-import { useIssues, useUser, useUserPermissions } from "@/hooks/store";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 
 type Props = {
   isOpen: boolean;
@@ -19,7 +19,7 @@ type Props = {
   onSubmit?: () => Promise<void>;
 };
 
-export const WorkspaceDraftIssueDeleteIssueModal: React.FC<Props> = (props) => {
+export function WorkspaceDraftIssueDeleteIssueModal(props: Props) {
   const { dataId, data, isOpen, handleClose, onSubmit } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);
@@ -100,4 +100,4 @@ export const WorkspaceDraftIssueDeleteIssueModal: React.FC<Props> = (props) => {
       secondaryButtonText={t("cancel")}
     />
   );
-};
+}

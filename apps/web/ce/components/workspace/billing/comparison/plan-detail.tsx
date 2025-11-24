@@ -1,21 +1,24 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import {
   SUBSCRIPTION_REDIRECTION_URLS,
   SUBSCRIPTION_WITH_BILLING_FREQUENCY,
   TALK_TO_SALES_URL,
+  WORKSPACE_SETTINGS_TRACKER_ELEMENTS,
+  WORKSPACE_SETTINGS_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EProductSubscriptionEnum, TBillingFrequency } from "@plane/types";
-import { getButtonStyling } from "@plane/ui";
+import { getButtonStyling } from "@plane/propel/button";
+import type { TBillingFrequency } from "@plane/types";
+import { EProductSubscriptionEnum } from "@plane/types";
+import { getUpgradeButtonStyle } from "@plane/ui";
 import { cn, getSubscriptionName } from "@plane/utils";
 // components
 import { DiscountInfo } from "@/components/license/modal/card/discount-info";
-// constants
-import { getUpgradeButtonStyle } from "@/components/workspace/billing/subscription";
-import { TPlanDetail } from "@/constants/plans";
+import type { TPlanDetail } from "@/constants/plans";
 // local imports
+import { captureSuccess } from "@/helpers/event-tracker.helper";
 import { PlanFrequencyToggle } from "./frequency-toggle";
 
 type TPlanDetailProps = {
@@ -28,7 +31,7 @@ type TPlanDetailProps = {
 const COMMON_BUTTON_STYLE =
   "relative inline-flex items-center justify-center w-full px-4 py-1.5 text-xs font-medium rounded-lg focus:outline-none transition-all duration-300 animate-slide-up";
 
-export const PlanDetail: FC<TPlanDetailProps> = observer((props) => {
+export const PlanDetail = observer(function PlanDetail(props: TPlanDetailProps) {
   const { subscriptionType, planDetail, billingFrequency, setBillingFrequency } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -49,6 +52,12 @@ export const PlanDetail: FC<TPlanDetailProps> = observer((props) => {
     const frequency = billingFrequency ?? "year";
     // Get the redirection URL based on the subscription type and billing frequency
     const redirectUrl = SUBSCRIPTION_REDIRECTION_URLS[subscriptionType][frequency] ?? TALK_TO_SALES_URL;
+    captureSuccess({
+      eventName: WORKSPACE_SETTINGS_TRACKER_EVENTS.upgrade_plan_redirected,
+      payload: {
+        subscriptionType,
+      },
+    });
     // Open the URL in a new tab
     window.open(redirectUrl, "_blank");
   };
@@ -101,7 +110,15 @@ export const PlanDetail: FC<TPlanDetailProps> = observer((props) => {
 
       {/* Subscription button */}
       <div className={cn("flex flex-col gap-1 py-3 items-start transition-all duration-300")}>
-        <button onClick={handleRedirection} className={cn(upgradeButtonStyle, COMMON_BUTTON_STYLE)}>
+        <button
+          onClick={handleRedirection}
+          className={cn(upgradeButtonStyle, COMMON_BUTTON_STYLE)}
+          data-ph-element={
+            isSubscriptionActive
+              ? WORKSPACE_SETTINGS_TRACKER_ELEMENTS.BILLING_UPGRADE_BUTTON(subscriptionType)
+              : WORKSPACE_SETTINGS_TRACKER_ELEMENTS.BILLING_TALK_TO_SALES_BUTTON
+          }
+        >
           {isSubscriptionActive ? `Upgrade to ${subscriptionName}` : t("common.upgrade_cta.talk_to_sales")}
         </button>
       </div>

@@ -1,6 +1,5 @@
-"use client";
-
-import React, { ReactNode, useMemo, FC } from "react";
+import type { ReactNode, FC } from "react";
+import React, { useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Breadcrumbs } from "@plane/ui";
@@ -14,19 +13,25 @@ type Props = {
   isLast?: boolean;
 };
 
-const IconWrapper = React.memo(({ icon }: { icon: React.ReactNode }) => (
-  <div className="flex size-4 items-center justify-center overflow-hidden !text-[1rem]">{icon}</div>
-));
+const IconWrapper = React.memo(function IconWrapper({ icon }: { icon: React.ReactNode }) {
+  return <div className="flex size-4 items-center justify-center overflow-hidden !text-[1rem]">{icon}</div>;
+});
 
 IconWrapper.displayName = "IconWrapper";
 
-const LabelWrapper = React.memo(({ label }: { label: ReactNode }) => (
-  <div className="relative line-clamp-1 block max-w-[150px] overflow-hidden truncate">{label}</div>
-));
+const LabelWrapper = React.memo(function LabelWrapper({ label }: { label: ReactNode }) {
+  return <div className="relative line-clamp-1 block max-w-[150px] overflow-hidden truncate">{label}</div>;
+});
 
 LabelWrapper.displayName = "LabelWrapper";
 
-const BreadcrumbContent = React.memo(({ icon, label }: { icon?: React.ReactNode; label?: ReactNode }) => {
+const BreadcrumbContent = React.memo(function BreadcrumbContent({
+  icon,
+  label,
+}: {
+  icon?: React.ReactNode;
+  label?: ReactNode;
+}) {
   if (!icon && !label) return null;
 
   return (
@@ -39,13 +44,16 @@ const BreadcrumbContent = React.memo(({ icon, label }: { icon?: React.ReactNode;
 
 BreadcrumbContent.displayName = "BreadcrumbContent";
 
-const ItemWrapper = React.memo(({ children, ...props }: React.ComponentProps<typeof Breadcrumbs.ItemWrapper>) => (
-  <Breadcrumbs.ItemWrapper {...props}>{children}</Breadcrumbs.ItemWrapper>
-));
+const ItemWrapper = React.memo(function ItemWrapper({
+  children,
+  ...props
+}: React.ComponentProps<typeof Breadcrumbs.ItemWrapper>) {
+  return <Breadcrumbs.ItemWrapper {...props}>{children}</Breadcrumbs.ItemWrapper>;
+});
 
 ItemWrapper.displayName = "ItemWrapper";
 
-export const BreadcrumbLink: FC<Props> = observer((props) => {
+export const BreadcrumbLink = observer(function BreadcrumbLink(props: Props) {
   const { href, label, icon, disableTooltip = false, isLast = false } = props;
   const { isMobile } = usePlatformOS();
 
@@ -71,5 +79,3 @@ export const BreadcrumbLink: FC<Props> = observer((props) => {
 
   return <ItemWrapper {...itemWrapperProps}>{content}</ItemWrapper>;
 });
-
-BreadcrumbLink.displayName = "BreadcrumbLink";

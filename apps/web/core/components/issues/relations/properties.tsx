@@ -1,13 +1,16 @@
-"use client";
-import React, { FC } from "react";
+import type { FC } from "react";
+import React from "react";
 import { observer } from "mobx-react";
 // components
-import { EIssueServiceType, TIssuePriorities, TIssueServiceType } from "@plane/types";
-import { PriorityDropdown, MemberDropdown, StateDropdown } from "@/components/dropdowns";
+import type { TIssuePriorities, TIssueServiceType } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // hooks
-import { useIssueDetail } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // types
-import { TRelationIssueOperations } from "../issue-detail-widgets/relations/helper";
+import type { TRelationIssueOperations } from "../issue-detail-widgets/relations/helper";
 
 type Props = {
   workspaceSlug: string;
@@ -17,7 +20,7 @@ type Props = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const RelationIssueProperty: FC<Props> = observer((props) => {
+export const RelationIssueProperty = observer(function RelationIssueProperty(props: Props) {
   const { workspaceSlug, issueId, disabled, issueOperations, issueServiceType = EIssueServiceType.ISSUES } = props;
   // hooks
   const {

@@ -1,5 +1,5 @@
 import { differenceInDays, format, formatDistanceToNow, isAfter, isEqual, isValid, parseISO } from "date-fns";
-import isNumber from "lodash/isNumber";
+import { isNumber } from "lodash-es";
 
 // Format Date Helpers
 /**
@@ -24,7 +24,7 @@ export const renderFormattedDate = (
   try {
     // Format the date in the format provided or default format (MMM dd, yyyy)
     formattedDate = format(parsedDate, formatToken);
-  } catch (e) {
+  } catch (_e) {
     // Format the date in format (MMM dd, yyyy) in case of any error
     formattedDate = format(parsedDate, "MMM dd, yyyy");
   }
@@ -287,7 +287,7 @@ export const getDate = (date: string | Date | undefined | null): Date | undefine
     if (!isNumber(year) || !isNumber(month) || !isNumber(day)) return;
 
     return new Date(year, month - 1, day);
-  } catch (e) {
+  } catch (_e) {
     return undefined;
   }
 };
@@ -531,3 +531,59 @@ export const formatDateRange = (
 
   return "";
 };
+
+// Duration Helpers
+/**
+ * @returns {string} formatted duration in human readable format
+ * @description Converts seconds to human readable duration format (e.g., "1 hr 20 min 5 sec" or "122.30 ms")
+ * @param {number} seconds - The duration in seconds
+ * @example formatDuration(3665) // "1 hr 1 min 5 sec"
+ * @example formatDuration(125) // "2 min 5 sec"
+ * @example formatDuration(45) // "45 sec"
+ * @example formatDuration(0.1223094) // "122.31 ms"
+ */
+export const formatDuration = (seconds: number | undefined | null): string => {
+  // Return "N/A" if seconds is not a valid number
+  if (seconds == null || typeof seconds !== "number" || !Number.isFinite(seconds) || seconds < 0) {
+    return "N/A";
+  }
+
+  // If less than 1 second, show in ms (2 decimal places)
+  if (seconds > 0 && seconds < 1) {
+    const ms = seconds * 1000;
+    return `${ms.toFixed(2)} ms`;
+  }
+
+  // Round to nearest second
+  const totalSeconds = Math.round(seconds);
+
+  // Calculate hours, minutes, and seconds
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const remainingSeconds = totalSeconds % 60;
+
+  // Build the formatted string
+  const parts: string[] = [];
+
+  if (hours > 0) {
+    parts.push(`${hours} hr`);
+  }
+
+  if (minutes > 0) {
+    parts.push(`${minutes} min`);
+  }
+
+  if (remainingSeconds > 0 || parts.length === 0) {
+    parts.push(`${remainingSeconds} sec`);
+  }
+
+  return parts.join(" ");
+};
+
+/**
+ * Checks if a date is valid
+ * @param date The date to check
+ * @returns Whether the date is valid or not
+ */
+export const isValidDate = (date: unknown): date is string | Date =>
+  (typeof date === "string" || typeof date === "object") && date !== null && !isNaN(Date.parse(date as string));

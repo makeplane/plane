@@ -1,6 +1,8 @@
 .next
+.react-router
+.vite
 .vercel
 .tubro
 out/
-dis/
+dist/
 build/

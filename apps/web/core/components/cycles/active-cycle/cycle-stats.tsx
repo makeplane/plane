@@ -1,42 +1,53 @@
-"use client";
-
-import { FC, Fragment, useCallback, useRef, useState } from "react";
-import isEmpty from "lodash/isEmpty";
+import type { FC } from "react";
+import { Fragment, useCallback, useRef, useState } from "react";
+import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 import { CalendarCheck } from "lucide-react";
 // headless ui
 import { Tab } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EIssuesStoreType, ICycle, IIssueFilterOptions } from "@plane/types";
+import { PriorityIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
+import type { TWorkItemFilterCondition } from "@plane/shared-state";
+import type { ICycle } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 // ui
-import { Tooltip, Loader, PriorityIcon, Avatar } from "@plane/ui";
+import { Loader, Avatar } from "@plane/ui";
 import { cn, renderFormattedDate, renderFormattedDateWithoutYear, getFileURL } from "@plane/utils";
+// assets
+import darkAssigneeAsset from "@/app/assets/empty-state/active-cycle/assignee-dark.webp?url";
+import lightAssigneeAsset from "@/app/assets/empty-state/active-cycle/assignee-light.webp?url";
+import darkLabelAsset from "@/app/assets/empty-state/active-cycle/label-dark.webp?url";
+import lightLabelAsset from "@/app/assets/empty-state/active-cycle/label-light.webp?url";
+import darkPriorityAsset from "@/app/assets/empty-state/active-cycle/priority-dark.webp?url";
+import lightPriorityAsset from "@/app/assets/empty-state/active-cycle/priority-light.webp?url";
+import userImage from "@/app/assets/user.png?url";
 // components
-import { SingleProgressStats } from "@/components/core";
-import { StateDropdown } from "@/components/dropdowns";
-import { SimpleEmptyState } from "@/components/empty-state";
-// helpers
+import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
+import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
-import { useIssueDetail, useIssues } from "@/hooks/store";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useIssues } from "@/hooks/store/use-issues";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import useLocalStorage from "@/hooks/use-local-storage";
 // plane web components
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
-import { IssueIdentifier } from "@/plane-web/components/issues";
+import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // store
-import { ActiveCycleIssueDetails } from "@/store/issue/cycle";
+import type { ActiveCycleIssueDetails } from "@/store/issue/cycle";
 
 export type ActiveCycleStatsProps = {
   workspaceSlug: string;
   projectId: string;
   cycle: ICycle | null;
   cycleId?: string | null;
-  handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string[], redirect?: boolean) => void;
-  cycleIssueDetails: ActiveCycleIssueDetails;
+  handleFiltersUpdate: (conditions: TWorkItemFilterCondition[]) => void;
+  cycleIssueDetails?: ActiveCycleIssueDetails | { nextPageResults: boolean };
 };
 
-export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
+export const ActiveCycleStats = observer(function ActiveCycleStats(props: ActiveCycleStatsProps) {
   const { workspaceSlug, projectId, cycle, cycleId, handleFiltersUpdate, cycleIssueDetails } = props;
   // local storage
   const { storedValue: tab, setValue: setTab } = useLocalStorage("activeCycleTab", "Assignees");
@@ -44,12 +55,14 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
   const issuesContainerRef = useRef<HTMLDivElement | null>(null);
   // states
   const [issuesLoaderElement, setIssueLoaderElement] = useState<HTMLDivElement | null>(null);
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // plane hooks
   const { t } = useTranslation();
   // derived values
-  const priorityResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/priority" });
-  const assigneesResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/assignee" });
-  const labelsResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/active-cycle/label" });
+  const priorityResolvedPath = resolvedTheme === "light" ? lightPriorityAsset : darkPriorityAsset;
+  const assigneesResolvedPath = resolvedTheme === "light" ? lightAssigneeAsset : darkAssigneeAsset;
+  const labelsResolvedPath = resolvedTheme === "light" ? lightLabelAsset : darkLabelAsset;
 
   const currentValue = (tab: string | null) => {
     switch (tab) {
@@ -182,7 +195,9 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                                 issueId: issue.id,
                                 isArchived: !!issue.archived_at,
                               });
-                              handleFiltersUpdate("priority", ["urgent", "high"], true);
+                              handleFiltersUpdate([
+                                { property: "priority", operator: "in", value: ["urgent", "high"] },
+                              ]);
                             }
                           }}
                         >
@@ -192,7 +207,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                               projectId={projectId}
                               textContainerClassName="text-xs text-custom-text-200"
                             />
-                            <Tooltip position="top-left" tooltipHeading="Title" tooltipContent={issue.name}>
+                            <Tooltip position="top-start" tooltipHeading="Title" tooltipContent={issue.name}>
                               <span className="text-[0.825rem] text-custom-text-100 truncate">{issue.name}</span>
                             </Tooltip>
                           </div>
@@ -272,7 +287,9 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                         total={assignee.total_issues}
                         onClick={() => {
                           if (assignee.assignee_id) {
-                            handleFiltersUpdate("assignees", [assignee.assignee_id], true);
+                            handleFiltersUpdate([
+                              { property: "assignee_id", operator: "in", value: [assignee.assignee_id] },
+                            ]);
                           }
                         }}
                       />
@@ -284,7 +301,7 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                         title={
                           <div className="flex items-center gap-2">
                             <div className="h-5 w-5 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
-                              <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
+                              <img src={userImage} height="100%" width="100%" className="rounded-full" alt="User" />
                             </div>
                             <span>{t("no_assignee")}</span>
                           </div>
@@ -329,11 +346,15 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                     }
                     completed={label.completed_issues}
                     total={label.total_issues}
-                    onClick={() => {
-                      if (label.label_id) {
-                        handleFiltersUpdate("labels", [label.label_id], true);
-                      }
-                    }}
+                    onClick={
+                      label.label_id
+                        ? () => {
+                            if (label.label_id) {
+                              handleFiltersUpdate([{ property: "label_id", operator: "in", value: [label.label_id] }]);
+                            }
+                          }
+                        : undefined
+                    }
                   />
                 ))
               ) : (

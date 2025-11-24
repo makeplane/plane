@@ -2,10 +2,10 @@ import { action, computed, makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 import { DRAG_ALLOWED_GROUPS } from "@plane/constants";
 // types
-import { TIssueGroupByOptions } from "@plane/types";
+import type { TIssueGroupByOptions } from "@plane/types";
 // constants
 // store
-import { IssueRootStore } from "./root.store";
+import type { IssueRootStore } from "./root.store";
 
 export interface IIssueKanBanViewStore {
   kanBanToggle: {
