@@ -4,6 +4,7 @@ import json
 import logging
 import random
 import string
+import secrets
 
 # Django imports
 from django.db.models import Case, Count, IntegerField, Q, When
@@ -147,14 +148,15 @@ class UserEndpoint(BaseViewSet):
         try:
             # Generate magic code for email verification
             # Use a special key prefix to distinguish from regular magic signin
-            cache_key = f"magic_email_update_{new_email}"
+            # Include user ID to bind the code to the specific user
+            cache_key = f"magic_email_update_{user.id}_{new_email}"
             ## Generate a random token
             token = (
-                "".join(random.choices(string.ascii_lowercase, k=4))
+                "".join(secrets.choice(string.ascii_lowercase) for _ in range(4))
                 + "-"
-                + "".join(random.choices(string.ascii_lowercase, k=4))
+                + "".join(secrets.choice(string.ascii_lowercase) for _ in range(4))
                 + "-"
-                + "".join(random.choices(string.ascii_lowercase, k=4))
+                + "".join(secrets.choice(string.ascii_lowercase) for _ in range(4))
             )
             # Store in cache with 10 minute expiration
             cache_data = json.dumps({"token": token})
@@ -197,7 +199,7 @@ class UserEndpoint(BaseViewSet):
 
         # Verify the magic code
         try:
-            cache_key = f"magic_email_update_{new_email}"
+            cache_key = f"magic_email_update_{user.id}_{new_email}"
             cached_data = cache.get(cache_key)
 
             if not cached_data:
@@ -216,11 +218,7 @@ class UserEndpoint(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            # Code is valid, delete it from cache
-            cache.delete(cache_key)
-
         except Exception as e:
-            logger.error(f"Exception during verification: {type(e).__name__}: {str(e)}", exc_info=True)
             return Response(
                 {"error": "Failed to verify code. Please try again."},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -238,6 +236,9 @@ class UserEndpoint(BaseViewSet):
         # Reset email verification status when email is changed
         user.is_email_verified = False
         user.save()
+
+        # delete the cache
+        cache.delete(cache_key)
 
         # Logout the user
         logout(request)
