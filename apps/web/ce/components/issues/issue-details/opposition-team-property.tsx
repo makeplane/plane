@@ -1,5 +1,5 @@
-import { Ban, CirclePlus, Search } from "lucide-react";
 import React, { useEffect, useState, useRef } from "react";
+import { Ban, CirclePlus, Search } from "lucide-react";
 
 interface Team {
   name: string;

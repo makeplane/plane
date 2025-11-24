@@ -55,7 +55,6 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
     workspaceSlug,
     selectedParentIssue,
     startDate,
-    
     targetDate,
     parentId,
     isDraft,
@@ -105,10 +104,6 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
           </div>
         )}
       />
-
-    
-
-      
       <Controller
         control={control}
         name="priority"
@@ -341,33 +336,26 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
           />
         )}
       />
-     
-<Controller
-  control={control}
-  name="opposition_team"
-  // It is safer to use undefined for "empty" in RHF if you want default logic to kick in
-  // defaultValue={undefined} 
-   defaultValue={null} 
-  render={({ field: { value, onChange } }) => (
-    <div
-      className="h-7 w-fit border rounded-md px-2 flex items-center"
-      style={{ borderColor: "rgba(var(--color-border-300))" }}
-    >
-      <OppositionTeamProperty
-        storageKey={`opp-team-${id}`}
-        value={value}
-        onChange={(team) => {
-          onChange(team);
-          handleFormChange();
-        }}
+      <Controller
+        control={control}
+        name="opposition_team"
+        defaultValue={null}
+        render={({ field: { value, onChange } }) => (
+          <div
+            className="h-7 w-fit border rounded-md px-2 flex items-center"
+            style={{ borderColor: "rgba(var(--color-border-300))" }}
+          >
+            <OppositionTeamProperty
+              storageKey={`opp-team-${id}`}
+              value={value}
+              onChange={(team) => {
+                onChange(team);
+                handleFormChange();
+              }}
+            />
+          </div>
+        )}
       />
-    </div>
-  )}
-/>
-
-
-
-
     </div>
   );
 });

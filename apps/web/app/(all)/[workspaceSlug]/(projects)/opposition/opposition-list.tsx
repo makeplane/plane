@@ -44,7 +44,7 @@ export default function OppositionTeamsList({ teams, workspaceSlug, searchQuery 
             {/* LEFT */}
             <div>
               <h3 className="text-base font-medium">{team.name}</h3>
-              <span className="text-sm text-gray-500 hover:underline">{team.address}</span>
+              <span className="text-sm text-gray-500">{team.address}</span>
             </div>
           </div>
 
