@@ -123,6 +123,8 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
 
   const isProjectLoading = (isParentLoading || isProjectDetailsLoading) && !projectDetailsError;
 
+  if (isProjectLoading) return null;
+
   if (!isProjectLoading && hasPermissionToCurrentProject === false) {
     return (
       <ProjectAccessRestriction
