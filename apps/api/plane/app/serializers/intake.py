@@ -36,6 +36,32 @@ class IntakeIssueSerializer(BaseSerializer):
         ]
         read_only_fields = ["project", "workspace"]
 
+    def validate(self, attrs):
+        """
+        Validate that if status is being changed to accepted (1),
+        the project has a default state to transition to.
+        """
+        from plane.db.models import State
+
+        # Check if status is being updated to accepted
+        if attrs.get("status") == 1:
+            intake_issue = self.instance
+            issue = intake_issue.issue
+
+            # Check if issue is in TRIAGE state
+            if issue.state and issue.state.group == State.TRIAGE:
+                # Verify default state exists before allowing the update
+                default_state = State.objects.filter(
+                    workspace=intake_issue.workspace, project=intake_issue.project, default=True
+                ).first()
+
+                if not default_state:
+                    raise serializers.ValidationError(
+                        {"status": "Cannot accept intake issue: No default state found for the project"}
+                    )
+
+        return attrs
+
     def update(self, instance, validated_data):
         from plane.db.models import State
 
