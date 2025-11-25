@@ -19,7 +19,7 @@ import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { ActivityFilterRoot } from "@/plane-web/components/issues/worklog/activity/filter-root";
 import { IssueActivityWorklogCreateButton } from "@/plane-web/components/issues/worklog/activity/worklog-create-button";
 import { IssueActivityCommentRoot } from "./activity-comment-root";
-import { useCommentOperations } from "./helper";
+import { useWorkItemCommentOperations } from "./helper";
 import { ActivitySortRoot } from "./sort-root";
 
 type TIssueActivity = {
@@ -77,11 +77,11 @@ export const IssueActivity = observer(function IssueActivity(props: TIssueActivi
   };
 
   const toggleSortOrder = () => {
-    setSortOrder(sortOrder === E_SORT_ORDER.ASC ? E_SORT_ORDER.DESC : E_SORT_ORDER.ASC);
+    setSortOrder(sortOrder || E_SORT_ORDER.ASC);
   };
 
   // helper hooks
-  const activityOperations = useCommentOperations(workspaceSlug, projectId, issueId);
+  const activityOperations = useWorkItemCommentOperations(workspaceSlug, projectId, issueId);
 
   const project = getProjectById(projectId);
   const renderCommentCreationBox = useMemo(
