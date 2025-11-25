@@ -2,7 +2,7 @@ import * as React from "react";
 
 import type { ISvgIcons } from "../type";
 
-export const TriageGroupIcon: React.FC<ISvgIcons> = ({ width = "20", height = "20", className, color = "#9AA4BC" }) => {
+export const TriageGroupIcon: React.FC<ISvgIcons> = ({ width = "20", height = "20", className, color = "#4E5355" }) => {
   // SVG parameters
   const viewBoxSize = 16;
   return (
