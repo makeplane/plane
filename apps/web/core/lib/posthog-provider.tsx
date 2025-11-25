@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useCallback, useRef } from "react";
 import { PostHogProvider as PHProvider } from "@posthog/react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -29,8 +29,8 @@ const PostHogProvider = observer(function PostHogProvider(props: IPosthogWrapper
   const { instance } = useInstance();
   const { workspaceSlug, projectId } = useParams();
   const { getWorkspaceRoleByWorkspaceSlug, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
-  // states
-  const [hydrated, setHydrated] = useState(false);
+  // refs
+  const isInitializedRef = useRef(false);
   // derived values
   const currentProjectRole = getProjectRoleByWorkspaceSlugAndProjectId(
     workspaceSlug?.toString(),
@@ -41,7 +41,7 @@ const PostHogProvider = observer(function PostHogProvider(props: IPosthogWrapper
   const is_posthog_enabled = process.env.VITE_POSTHOG_KEY && process.env.VITE_POSTHOG_HOST && is_telemetry_enabled;
 
   useEffect(() => {
-    if (user && hydrated) {
+    if (user && isInitializedRef.current) {
       // Identify sends an event, so you want may want to limit how often you call it
       posthog?.identify(user.email, {
         id: user.id,
@@ -58,13 +58,14 @@ const PostHogProvider = observer(function PostHogProvider(props: IPosthogWrapper
         });
       }
     }
-  }, [user, currentProjectRole, currentWorkspaceRole, currentWorkspace, hydrated]);
+  }, [user, currentProjectRole, currentWorkspaceRole, currentWorkspace]);
 
   useEffect(() => {
+    if (isInitializedRef.current) return; // prevent multiple initializations
     const posthogKey = process.env.VITE_POSTHOG_KEY;
     const posthogHost = process.env.VITE_POSTHOG_HOST;
     const isDebugMode = process.env.VITE_POSTHOG_DEBUG === "1";
-    if (posthogKey && posthogHost) {
+    if (posthogKey && posthogHost && !posthog.__loaded) {
       posthog.init(posthogKey, {
         api_host: posthogHost,
         ui_host: posthogHost,
@@ -74,33 +75,33 @@ const PostHogProvider = observer(function PostHogProvider(props: IPosthogWrapper
         capture_pageleave: true,
         disable_session_recording: true,
       });
-      setHydrated(true);
+      isInitializedRef.current = true;
+    }
+  }, []);
+
+  const clickHandler = useCallback((event: MouseEvent) => {
+    const target = event.target as HTMLElement;
+    // Use closest to find the nearest parent element with data-ph-element attribute
+    const elementWithAttribute = target.closest("[data-ph-element]") as HTMLElement;
+    if (elementWithAttribute) {
+      const element = elementWithAttribute.getAttribute("data-ph-element");
+      if (element) {
+        captureClick({ elementName: element });
+      }
     }
   }, []);
 
   useEffect(() => {
-    const clickHandler = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      // Use closest to find the nearest parent element with data-ph-element attribute
-      const elementWithAttribute = target.closest("[data-ph-element]") as HTMLElement;
-      if (elementWithAttribute) {
-        const element = elementWithAttribute.getAttribute("data-ph-element");
-        if (element) {
-          captureClick({ elementName: element });
-        }
-      }
-    };
+    if (!is_posthog_enabled || !isInitializedRef.current) return;
 
-    if (is_posthog_enabled && hydrated) {
-      document.addEventListener("click", clickHandler);
-    }
+    document.addEventListener("click", clickHandler);
 
     return () => {
       document.removeEventListener("click", clickHandler);
     };
-  }, [hydrated, is_posthog_enabled]);
+  }, [is_posthog_enabled, clickHandler]);
 
-  if (is_posthog_enabled && hydrated)
+  if (is_posthog_enabled && isInitializedRef.current)
     return (
       <PHProvider client={posthog}>
         <Suspense>
