@@ -56,6 +56,6 @@ function ActiveProjectItem(props: Props) {
       />
     </div>
   );
-};
+}
 
 export default ActiveProjectItem;
