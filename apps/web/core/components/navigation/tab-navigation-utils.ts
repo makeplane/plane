@@ -79,11 +79,7 @@ export const getTabUrl = (workspaceSlug: string, projectId: string, tabKey: stri
  * @param availableTabKeys - Optional array of available tab keys for validation
  * @returns Full URL path for the default tab (validated if availableTabKeys provided)
  */
-export const getDefaultTabUrl = (
-  workspaceSlug: string,
-  projectId: string,
-  availableTabKeys?: string[]
-): string => {
+export const getDefaultTabUrl = (workspaceSlug: string, projectId: string, availableTabKeys?: string[]): string => {
   const preferences = getTabPreferences(projectId);
   let tabKey = preferences.defaultTab;
 

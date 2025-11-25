@@ -51,12 +51,12 @@ const ContextMenuContent = React.forwardRef(function ContextMenuContent(
 ) {
   return (
     <ContextMenuPrimitive.Positioner
-    ref={ref}
-    side={side}
-    sideOffset={sideOffset}
-    {...props}
-    className={positionerClassName}
-  >
+      ref={ref}
+      side={side}
+      sideOffset={sideOffset}
+      {...props}
+      className={positionerClassName}
+    >
       <ContextMenuPrimitive.Popup
         className={cn(
           "z-50 min-w-32 overflow-hidden rounded-md border border-custom-border-200 bg-custom-background-100 p-1 shadow-md",

@@ -2,7 +2,6 @@ import { useCallback, useMemo } from "react";
 import type { TIssue } from "@plane/types";
 import type { TNavigationItem } from "@/components/navigation/tab-navigation-root";
 
-
 type UseActiveTabProps = {
   navigationItems: TNavigationItem[];
   pathname: string;
@@ -29,7 +28,6 @@ export const useActiveTab = ({ navigationItems, pathname, workItemId, workItem, 
     },
     [pathname, workItem, workItemId, projectId]
   );
-
 
   // Find active item
   const activeItem = useMemo(() => navigationItems.find((item) => isActive(item)), [navigationItems, isActive]);

@@ -140,4 +140,3 @@ export const useResponsiveTabLayout = ({
     itemRefs,
   };
 };
-

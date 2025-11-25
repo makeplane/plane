@@ -3,7 +3,6 @@ import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { copyUrlToClipboard } from "@plane/utils";
 import type { TNavigationItem } from "@/components/navigation/tab-navigation-root";
 
-
 type UseProjectActionsProps = {
   workspaceSlug: string;
   projectId: string;

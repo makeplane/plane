@@ -2696,17 +2696,17 @@ export default {
       help: "Help",
     },
   },
-   // Navigation customization
-   customize_navigation: "Customize navigation",
-   personal: "Personal",
-   accordion_navigation_control: "Accordion navigation control",
-   horizontal_navigation_bar: "Horizontal navigation bar",
-   show_limited_projects_on_sidebar: "Show limited projects on sidebar",
-   enter_number_of_projects: "Enter number of projects",
-   pin: "Pin",
-   unpin: "Unpin",
-   sidebar: {
-     stickies: "Stickies",
-     your_work: "Your work",
-   },
+  // Navigation customization
+  customize_navigation: "Customize navigation",
+  personal: "Personal",
+  accordion_navigation_control: "Accordion navigation control",
+  horizontal_navigation_bar: "Horizontal navigation bar",
+  show_limited_projects_on_sidebar: "Show limited projects on sidebar",
+  enter_number_of_projects: "Enter number of projects",
+  pin: "Pin",
+  unpin: "Unpin",
+  sidebar: {
+    stickies: "Stickies",
+    your_work: "Your work",
+  },
 } as const;

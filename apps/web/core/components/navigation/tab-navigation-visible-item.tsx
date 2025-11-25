@@ -69,4 +69,3 @@ export const TabNavigationVisibleItem: React.FC<TTabNavigationVisibleItemProps> 
     </div>
   );
 };
-
