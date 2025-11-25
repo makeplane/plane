@@ -5,5 +5,5 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 export const HomePeekOverviewsRoot = observer(function HomePeekOverviewsRoot() {
   const { peekIssue } = useIssueDetail();
 
-  return <>{peekIssue && <IssuePeekOverview />}</>;
+  return peekIssue ? <IssuePeekOverview /> : null;
 });
