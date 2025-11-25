@@ -3,7 +3,7 @@
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { PageHead } from "@/components/core/page-title";
-import { Table, Tag, Input, Button, Space, Modal, Dropdown } from "antd";
+import { Table, Tag, Input, Button, Space, Modal, Dropdown, message } from "antd";
 import { EllipsisOutlined, MoreOutlined, SearchOutlined } from "@ant-design/icons";
 import type { TableProps, InputRef, TableColumnType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
@@ -65,7 +65,9 @@ export default function TestCasesPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { updateQueryParams } = useQueryParams();
-  const repositoryId = typeof window !== "undefined" ? sessionStorage.getItem("selectedRepositoryId") : null;
+  const repositoryIdFromUrl = searchParams.get("repositoryId");
+  const repositoryId =
+    repositoryIdFromUrl || (typeof window !== "undefined" ? sessionStorage.getItem("selectedRepositoryId") : null);
   const repositoryName = typeof window !== "undefined" ? sessionStorage.getItem("selectedRepositoryName") : "";
 
   const [cases, setCases] = useState<TestCase[]>([]);
@@ -170,6 +172,9 @@ export default function TestCasesPage() {
 
   useEffect(() => {
     if (repositoryId) {
+      try {
+        if (repositoryIdFromUrl) sessionStorage.setItem("selectedRepositoryId", repositoryIdFromUrl);
+      } catch {}
       fetchModules();
       fetchCases(); // 初始加载所有用例
     } else {
@@ -177,6 +182,17 @@ export default function TestCasesPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [repositoryId]);
+
+  useEffect(() => {
+    if (!repositoryId && workspaceSlug) {
+      const ws = String(workspaceSlug || "");
+      const current = `/${ws}/test-management/cases${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
+      try {
+        message.warning("未检测到用例库，请选择一个用例库后自动跳回");
+      } catch {}
+      router.push(`/${ws}/test-management?redirect_to=${encodeURIComponent(current)}`);
+    }
+  }, [repositoryId, workspaceSlug, searchParams, router]);
 
   useEffect(() => {
     if (!workspaceSlug) return;

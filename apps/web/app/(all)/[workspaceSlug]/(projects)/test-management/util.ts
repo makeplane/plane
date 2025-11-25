@@ -37,6 +37,7 @@ export type TGlobalEnums = {
   case_state: Record<number | string, string>;
   case_type: Record<number | string, string>;
   case_priority: Record<number | string, string>;
+  plan_case_result: Record<number | string, string>;
 };
 
 export const globalEnums = {
@@ -44,7 +45,8 @@ export const globalEnums = {
     plan_state: {}, 
     case_state: {}, 
     case_type: {}, 
-    case_priority: {} 
+    case_priority: {},
+    plan_case_result: {}
   } as TGlobalEnums,
   setEnums: (value: TGlobalEnums) => {
     globalEnums.Enums = value;

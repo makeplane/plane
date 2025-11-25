@@ -7,8 +7,10 @@ from rest_framework.serializers import ModelSerializer
 
 from plane.app.serializers import UserLiteSerializer, BaseSerializer, IssueAssigneeSerializer, ProjectDetailSerializer
 from plane.db.models import TestPlan, TestCaseRepository, User, TestCase, CaseLabel, CaseModule, FileAsset, Issue, \
-    CaseReviewModule, CaseReview, CaseReviewThrough, TestCaseComment, CaseReviewRecord, PlanModule
+    CaseReviewModule, CaseReview, CaseReviewThrough, TestCaseComment, CaseReviewRecord, PlanModule, PlanCase
 from plane.utils.qa import re_approval_case
+
+from .plan import *
 
 
 class TestPlanCreateUpdateSerializer(ModelSerializer):
@@ -16,6 +18,21 @@ class TestPlanCreateUpdateSerializer(ModelSerializer):
     Serializer for creating a TestPlan.
     """
     cases = serializers.PrimaryKeyRelatedField(queryset=TestCase.objects.all(), many=True, required=False)
+
+    def update(self, instance, validated_data):
+        cases = validated_data.pop('cases', None)
+        instance = super().update(instance, validated_data)
+        if cases is not None:
+            current_ids = set(PlanCase.objects.filter(plan=instance).values_list('case_id', flat=True))
+            new_ids = set([c.id for c in cases])
+            add_ids = new_ids - current_ids
+            remove_ids = current_ids - new_ids
+            if add_ids:
+                for case in TestCase.objects.filter(id__in=add_ids):
+                    PlanCase.objects.get_or_create(plan=instance, case=case)
+            if remove_ids:
+                PlanCase.objects.filter(plan=instance, case_id__in=remove_ids).delete()
+        return instance
 
     class Meta:
         model = TestPlan
@@ -43,9 +60,38 @@ class TestPlanDetailSerializer(ModelSerializer):
     assignees = UserLiteSerializer(many=True, read_only=True)
     cases = CaseDetailSerializer(many=True, read_only=True)
 
+    case_count = serializers.SerializerMethodField()
+    pass_rate = serializers.SerializerMethodField()
+
+    def get_case_count(self, obj: TestPlan):
+        return obj.plan_cases.count()
+
+    def get_pass_rate(self, obj: TestPlan):
+        queryset = PlanCase.objects.filter(plan=obj).values('result').annotate(count=Count('result'))
+        statis = {label: 0 for label in PlanCase.Result.values}
+        for annotate_result in queryset:
+            statis[annotate_result['result']] = annotate_result['count']
+        return statis
+
+    def execute_result(self, obj: TestPlan):
+        success_count = PlanCase.objects.filter(plan=obj,result=PlanCase.Result.SUCCESS).count()
+        total_count = obj.plan_cases.count()
+        if not  total_count:
+            return '-'
+        return '通过' if ((success_count / total_count) * 100 >= obj.threshold) else '不通过'
+
+    def to_representation(self, instance):
+        result = self.execute_result(instance)
+        instance.result = result
+        instance.save()
+
+        data = super().to_representation(instance)
+        # 假设你想把所有的 result 改成 BLOCK
+        return data
+
     class Meta:
         model = TestPlan
-        fields = ['id', 'name', 'begin_time', 'end_time', 'repository', 'assignees', 'cases', 'state', 'state_display']
+        fields = '__all__'
 
 
 class TestCaseRepositorySerializer(ModelSerializer):

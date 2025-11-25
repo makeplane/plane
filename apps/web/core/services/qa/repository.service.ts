@@ -26,29 +26,23 @@ export class RepositoryService extends APIService {
       });
   }
 
-  async getRepository(workspaceSlug: string, repositoryId: string): Promise<any> {
-    return this.get(`/api/workspaces/${workspaceSlug}/test/repository/${repositoryId}/`)
+  async updateRepository(workspaceSlug: string, data: any): Promise<any> {
+    return this.put(`/api/workspaces/${workspaceSlug}/test/repository/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async updateRepository(workspaceSlug: string, repositoryId: string, data: any): Promise<any> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/test/repository/${repositoryId}/`, data)
+  async deleteRepository(workspaceSlug: string, data: { ids: string[] }): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/test/repository/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async deleteRepository(workspaceSlug: string, repositoryId: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/test/repository/${repositoryId}/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
+
 
   async enumsList(workspaceSlug: string): Promise<any> {
     return this.get(`/api/workspaces/${workspaceSlug}/test/enums/`)

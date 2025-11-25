@@ -1,13 +1,14 @@
 import React, { useMemo, useState } from "react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Button } from "@plane/propel/button";
-import { Input, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { Input, TextArea, EModalPosition, EModalWidth, ModalCore, CustomSearchSelect } from "@plane/ui";
 import { CalendarDays } from "lucide-react";
 import { DateDropdown } from "@/components/dropdowns/date";
-import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { renderFormattedPayloadDate } from "@plane/utils";
 // services
 import { PlanService } from "@/services/qa/plan.service";
+import { RepositoryService } from "@/services/qa/repository.service";
+import { CaseService } from "@/services/qa/case.service";
 
 type TMode = "create" | "edit";
 
@@ -24,8 +25,11 @@ type Props = {
   initialData?: {
     name?: string;
     assignees?: string[];
+    description?: string;
+    module?: string | null;
     begin_time?: string | Date | null;
     end_time?: string | Date | null;
+    threshold?: number | null;
   } | null;
   // 创建成功/编辑成功回调（用于刷新列表或其它联动）
   onSuccess?: () => void | Promise<void>;
@@ -48,33 +52,37 @@ export const CreateUpdatePlanModal: React.FC<Props> = (props) => {
 
   // 表单状态
   const [name, setName] = useState<string>(initialData?.name ?? "");
-  const [assignees, setAssignees] = useState<string[]>(initialData?.assignees ?? []);
+  const [description, setDescription] = useState<string>(initialData?.description ?? "");
+  const [moduleId, setModuleId] = useState<string | null>(initialData?.module ?? null);
+  console.log("🚀 ~ CreateUpdatePlanModal ~ initialData:", initialData);
+
   const [beginTime, setBeginTime] = useState<Date | null>(
-    mode === "create" ? new Date() : initialData?.begin_time ? new Date(initialData?.begin_time as any) : null
+    initialData?.begin_time ? new Date(initialData?.begin_time as any) : null
   );
   const [endTime, setEndTime] = useState<Date | null>(
-    mode === "create"
-      ? new Date(new Date().getTime() + 14 * 24 * 60 * 60 * 1000)
-      : initialData?.end_time
-        ? new Date(initialData?.end_time as any)
-        : null
+    initialData?.end_time ? new Date(initialData?.end_time as any) : null
+  );
+  const [threshold, setThreshold] = useState<number>(initialData?.threshold ?? 100);
+  const [moduleOptions, setModuleOptions] = useState<Array<{ value: string; query: string; content: React.ReactNode }>>(
+    []
   );
   const [stateValue] = useState<number>(0);
   const [submitting, setSubmitting] = useState<boolean>(false);
-  const [errors, setErrors] = useState<{ name?: string; time?: string }>({});
+  const [errors, setErrors] = useState<{ name?: string; time?: string; module?: string; threshold?: string }>({});
 
   // 新增：关闭时重置所有字段
   const resetForm = () => {
     setName(initialData?.name ?? "");
-    setAssignees(initialData?.assignees ?? []);
+    setDescription(initialData?.description ?? "");
+    setModuleId(initialData?.module ?? null);
     if (mode === "create") {
-      const today = new Date();
-      setBeginTime(today);
-      setEndTime(new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000));
+      setBeginTime(null);
+      setEndTime(null);
     } else {
       setBeginTime(initialData?.begin_time ? new Date(initialData?.begin_time as any) : null);
       setEndTime(initialData?.end_time ? new Date(initialData?.end_time as any) : null);
     }
+    setThreshold(initialData?.threshold ?? 100);
     setErrors({});
     setSubmitting(false);
   };
@@ -89,30 +97,62 @@ export const CreateUpdatePlanModal: React.FC<Props> = (props) => {
     if (!isOpen) return;
     if (mode === "edit") {
       setName(initialData?.name ?? "");
-      setAssignees(initialData?.assignees ?? []);
+      setDescription(initialData?.description ?? "");
+      setModuleId(initialData?.module ?? null);
       setBeginTime(initialData?.begin_time ? new Date(initialData?.begin_time as any) : null);
       setEndTime(initialData?.end_time ? new Date(initialData?.end_time as any) : null);
     } else {
-      const today = new Date();
       setName("");
-      setAssignees([]);
-      setBeginTime(today);
-      setEndTime(new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000));
+      setDescription("");
+      setModuleId(null);
+      setBeginTime(null);
+      setEndTime(null);
     }
     setErrors({});
     setSubmitting(false);
   }, [isOpen, mode, planId, initialData]);
 
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const repositoryService = new RepositoryService();
+    repositoryService
+      .enumsList(workspaceSlug)
+      .then(() => {})
+      .catch(() => {});
+    planService
+      .getPlanModules(String(workspaceSlug), { repository_id: repositoryId })
+      .then((data: any[]) => {
+        const list = Array.isArray(data) ? data : [];
+        const opts = list.map((m: any) => ({
+          value: String(m.id),
+          query: String(m.name),
+          content: <span className="flex-grow truncate">{String(m.name)}</span>,
+        }));
+        setModuleOptions(opts);
+        if (mode === "create" && !moduleId) {
+          const def = list.find((m: any) => m?.is_default);
+          if (def) setModuleId(String(def.id));
+        }
+      })
+      .catch(() => setModuleOptions([]));
+  }, [isOpen, workspaceSlug, repositoryId]);
+
   const title = useMemo(() => (mode === "edit" ? "编辑测试计划" : "新建测试计划"), [mode]);
 
   // 简单校验：名称必填、结束时间不早于开始时间
   const validate = (): boolean => {
-    const nextErrors: { name?: string; time?: string } = {};
+    const nextErrors: { name?: string; time?: string; module?: string; threshold?: string } = {};
     if (!name || !name.trim()) {
       nextErrors.name = "请输入计划名称";
     }
     if (beginTime && endTime && endTime.getTime() < beginTime.getTime()) {
       nextErrors.time = "结束时间不能早于开始时间";
+    }
+    if (!moduleId) {
+      nextErrors.module = "请选择所属模块";
+    }
+    if (!Number.isFinite(threshold) || threshold < 0 || threshold > 100) {
+      nextErrors.threshold = "阀值范围为 0 - 100";
     }
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
@@ -126,10 +166,11 @@ export const CreateUpdatePlanModal: React.FC<Props> = (props) => {
       const payload: any = {
         name: name.trim(),
         repository: repositoryId,
-        assignees: assignees,
+        description: description || "",
         begin_time: beginTime ? renderFormattedPayloadDate(beginTime) : null,
         end_time: endTime ? renderFormattedPayloadDate(endTime) : null,
-        state: stateValue,
+        threshold,
+        module: moduleId,
       };
 
       if (mode === "create") {
@@ -138,9 +179,11 @@ export const CreateUpdatePlanModal: React.FC<Props> = (props) => {
         await planService.updatePlan(workspaceSlug, {
           id: planId,
           name: payload.name,
-          assignees: payload.assignees,
+          description: payload.description,
+          threshold: payload.threshold,
           begin_time: payload.begin_time,
           end_time: payload.end_time,
+          module: payload.module,
         });
       }
 
@@ -158,7 +201,7 @@ export const CreateUpdatePlanModal: React.FC<Props> = (props) => {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "失败",
-        message: e?.message || "操作失败，请稍后重试",
+        message: e?.message || e?.detail || e?.error || "操作失败，请稍后重试",
       });
     } finally {
       setSubmitting(false);
@@ -169,8 +212,7 @@ export const CreateUpdatePlanModal: React.FC<Props> = (props) => {
     <ModalCore isOpen={isOpen} handleClose={onCloseWithReset} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
       <div className="px-6 py-5">
         <h3 className="text-lg font-semibold mb-3">{title}</h3>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div className="grid grid-cols-1 gap-4 mt-4">
           {/* 计划名称（必填，红色星号） */}
           <div className="col-span-1">
             <label className="text-sm text-custom-text-300 mb-1 block">
@@ -185,76 +227,113 @@ export const CreateUpdatePlanModal: React.FC<Props> = (props) => {
             {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name}</p>}
           </div>
 
-          {/* 所属示例库（只读，浅灰背景） */}
+          {/* 描述（可选） */}
           <div className="col-span-1">
-            <label className="text-sm text-custom-text-300 mb-1 block">所属示例库</label>
-            <Input value={repositoryName} disabled className="w-full bg-[#f5f5f5]" />
+            <label className="text-sm text-custom-text-300 mb-1 block">描述</label>
+            <TextArea
+              rows={3}
+              placeholder="请输入描述"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="min-h-24"
+            />
           </div>
 
-          {/* 状态（只读，浅灰背景，默认未开始） */}
+          {/* 所属模块（下拉选择，可搜索，必选） */}
           <div className="col-span-1">
-            <label className="text-sm text-custom-text-300 mb-1 block">状态</label>
-            <Input value="未开始" disabled className="w-full bg-[#f5f5f5]" />
+            <label className="text-sm text-custom-text-300 mb-1 block">
+              所属模块<span className="text-red-500">*</span>
+            </label>
+            <CustomSearchSelect
+              className="w-[320px]"
+              value={moduleId ?? undefined}
+              onChange={(val: string | null) => setModuleId(val ?? null)}
+              options={moduleOptions}
+              multiple={false}
+              customButtonClassName="w-full hover:bg-transparent focus:bg-transparent active:bg-transparent"
+              customButton={
+                <div className="flex w-full max-w-[320px] items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-3 py-2 text-sm">
+                  <span className="flex-grow truncate">
+                    {moduleOptions.find((o) => o.value === moduleId)?.content || (
+                      <span className="text-custom-text-400">请选择所属模块</span>
+                    )}
+                  </span>
+                </div>
+              }
+            />
+            {errors.module && <p className="text-xs text-red-500 mt-1">{errors.module}</p>}
           </div>
 
-          {/* 负责人（多选）——宽度与输入框一致，带边框 */}
+          {/* 计划起止时间样式参照 CreateReviewModal.tsx L177-200 */}
           <div className="col-span-1">
-            <label className="text-sm text-custom-text-300 mb-1 block">负责人</label>
-            <div className="h-9">
-              <MemberDropdown
-                multiple
-                value={assignees}
-                onChange={(val) => setAssignees(val)}
-                placeholder="选择负责人"
-                className="h-9"
-                buttonContainerClassName="w-full text-left"
-                buttonVariant="border-with-text"
-                buttonClassName="border-custom-border-300 px-3 py-2.5"
-                dropdownArrow
-                dropdownArrowClassName="h-3.5 w-3.5"
-                renderByDefault
-              />
-            </div>
-          </div>
-
-          {/* 开始时间与结束时间同一行显示，统一日期格式与边框样式 */}
-          <div className="col-span-1">
-            <label className="text-sm text-custom-text-300 mb-1 block">计划开始时间</label>
-            <div className="h-9">
-              <DateDropdown
-                value={beginTime}
-                onChange={(val) => setBeginTime(val)}
-                placeholder="开始日期"
-                icon={<CalendarDays className="h-3 w-3 flex-shrink-0" />}
-                buttonVariant="border-with-text"
-                buttonClassName="border-custom-border-300 px-3 py-2.5 text-left"
-                buttonContainerClassName="w-full text-left"
-                optionsClassName="z-[50]"
-                maxDate={endTime ?? undefined}
-                formatToken="yyyy-MM-dd"
-                renderByDefault
-              />
-            </div>
-          </div>
-
-          <div className="col-span-1">
-            <label className="text-sm text-custom-text-300 mb-1 block">计划结束时间</label>
-            <div className="h-9">
-              <DateDropdown
-                value={endTime}
-                onChange={(val) => setEndTime(val)}
-                placeholder="结束日期"
-                icon={<CalendarDays className="h-3 w-3 flex-shrink-0" />}
-                buttonVariant="border-with-text"
-                buttonClassName="border-custom-border-300 px-3 py-2.5 text-left"
-                buttonContainerClassName="w-full text-left"
-                optionsClassName="z-[50]"
-                minDate={beginTime ?? undefined}
-                formatToken="yyyy-MM-dd"
-                renderByDefault
-              />
+            <label className="text-sm text-custom-text-300 mb-1 block">计划周期</label>
+            <div className="flex items-center gap-2">
+              <div className="h-9 w-56">
+                <DateDropdown
+                  value={beginTime}
+                  onChange={(val) => setBeginTime(val)}
+                  placeholder="开始日期"
+                  icon={<CalendarDays className="h-3 w-3 flex-shrink-0" />}
+                  buttonVariant="border-with-text"
+                  buttonClassName="border-custom-border-300 px-3 py-2.5 text-left"
+                  buttonContainerClassName="w-full text-left"
+                  optionsClassName="z-[50]"
+                  maxDate={endTime ?? undefined}
+                  formatToken="yyyy-MM-dd"
+                  renderByDefault
+                />
+              </div>
+              <span>至</span>
+              <div className="h-9 w-56">
+                <DateDropdown
+                  value={endTime}
+                  onChange={(val) => setEndTime(val)}
+                  placeholder="结束日期"
+                  icon={<CalendarDays className="h-3 w-3 flex-shrink-0" />}
+                  buttonVariant="border-with-text"
+                  buttonClassName="border-custom-border-300 px-3 py-2.5 text-left"
+                  buttonContainerClassName="w-full text-left"
+                  optionsClassName="z-[50]"
+                  minDate={beginTime ?? undefined}
+                  formatToken="yyyy-MM-dd"
+                  renderByDefault
+                />
+              </div>
             </div>
             {errors.time && <p className="text-xs text-red-500 mt-1">{errors.time}</p>}
+          </div>
+
+          {/* 通过阀值（数字输入，带加减按钮，范围 0-100） */}
+          <div className="col-span-1">
+            <label className="text-sm text-custom-text-300 mb-1 block">通过阀值</label>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="neutral-primary"
+                size="sm"
+                onClick={() => setThreshold((prev) => Math.max(0, Math.min(100, (Number(prev) || 0) - 1)))}
+              >
+                -
+              </Button>
+              <Input
+                type="number"
+                value={String(threshold)}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  const num = v === "" ? 0 : Number(v);
+                  if (Number.isFinite(num)) setThreshold(Math.max(0, Math.min(100, num)));
+                }}
+                className="w-24"
+              />
+              <Button
+                variant="neutral-primary"
+                size="sm"
+                onClick={() => setThreshold((prev) => Math.max(0, Math.min(100, (Number(prev) || 0) + 1)))}
+              >
+                +
+              </Button>
+              <span className="text-sm text-custom-text-400">范围 0 - 100</span>
+            </div>
+            {errors.threshold && <p className="text-xs text-red-500 mt-1">{errors.threshold}</p>}
           </div>
         </div>
 

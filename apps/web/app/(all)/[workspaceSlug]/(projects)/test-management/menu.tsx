@@ -34,12 +34,6 @@ const MENU_ITEMS: TMenuItem[] = [
     isActive: (pathname, ws) => pathname.startsWith(`/${ws}/test-management/cases`),
   },
   {
-    key: "runs",
-    label: "执行",
-    href: (ws) => `/${ws}/test-management/runs`,
-    isActive: (pathname, ws) => pathname.startsWith(`/${ws}/test-management/runs`),
-  },
-  {
     key: "reviews",
     label: "评审",
     href: (ws) => `/${ws}/test-management/reviews`,
@@ -88,8 +82,8 @@ export const TestManagementMenuBar = () => {
         sessionStorage.setItem("selectedRepositoryId", repo.id);
         if (repo.name) sessionStorage.setItem("selectedRepositoryName", repo.name);
 
-        // 直接导航到该测试库的计划页，触发页面重新挂载与服务端请求
-        router.push(`/${ws}/test-management/plans/`);
+        // 直接导航到该测试库的计划页，并在URL中附带repositoryId，触发页面重新挂载与服务端请求
+        router.push(`/${ws}/test-management/plans?repositoryId=${encodeURIComponent(String(repo.id))}`);
       } else {
         // 选择“全部测试库”
         sessionStorage.removeItem("selectedRepositoryId");
@@ -117,10 +111,13 @@ export const TestManagementMenuBar = () => {
         {(isOverviewActive ? MENU_ITEMS.filter((i) => i.key === "overview") : MENU_ITEMS).map((item) => {
           const href = item.href(ws);
           const active = item.isActive(pathname, ws);
+          const finalHref = repositoryIdFromStorage && item.key !== "overview"
+            ? `${href}?repositoryId=${encodeURIComponent(String(repositoryIdFromStorage))}`
+            : href;
           return (
             <Link
               key={item.key}
-              href={href}
+              href={finalHref}
               className={cn(
                 "px-2.5 py-1.5 rounded text-xs font-medium",
                 active

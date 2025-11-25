@@ -1,18 +1,22 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 // plane imports
 // components
 import { PageHead } from "@/components/core/page-title";
 // services
 import { RepositoryService } from "@/services/qa/repository.service";
-import { Space, Table, Tag, Input, Button } from "antd";
+import { Space, Table, Tag, Input, Button, Modal, message } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import type { TableProps, InputRef, TableColumnType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import { Repository, RepositoryResponse } from "./data-model";
 import { formatDateTime, getEnums, globalEnums } from "./util";
+import RepositoryModal from "./repository-modal";
+import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { Logo } from "@/components/common/logo";
+import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 
 // 初始化服务
 const repositoryService = new RepositoryService();
@@ -20,6 +24,7 @@ const repositoryService = new RepositoryService();
 export default function TestManagementHomePage() {
   const { workspaceSlug } = useParams(); // ✅ 在组件内部调用
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -42,6 +47,21 @@ export default function TestManagementHomePage() {
     initializeEnums();
   }, [workspaceSlug]);
 
+  useEffect(() => {
+    const repositoryIdFromUrl = searchParams.get("repositoryId");
+    if (!workspaceSlug || !repositoryIdFromUrl) return;
+    try {
+      sessionStorage.setItem("selectedRepositoryId", repositoryIdFromUrl);
+    } catch {}
+    const redirectTo = searchParams.get("redirect_to");
+    const ws = String(workspaceSlug || "");
+    let target = redirectTo ? decodeURIComponent(redirectTo) : `/${ws}/test-management/plans`;
+    target = target.includes("?")
+      ? `${target}&repositoryId=${encodeURIComponent(String(repositoryIdFromUrl))}`
+      : `${target}?repositoryId=${encodeURIComponent(String(repositoryIdFromUrl))}`;
+    router.push(target);
+  }, [searchParams, workspaceSlug, router]);
+
   const searchInput = useRef<InputRef>(null);
 
   // 分页状态管理
@@ -54,6 +74,10 @@ export default function TestManagementHomePage() {
     name?: string;
     project?: string;
   }>({});
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editing, setEditing] = useState<Repository | null>(null);
+  const [apiLoading, setApiLoading] = useState(false);
 
   // 搜索筛选函数
   const getColumnSearchProps = (dataIndex: keyof Repository | string): TableColumnType<Repository> => ({
@@ -157,9 +181,14 @@ export default function TestManagementHomePage() {
           onClick={() => {
             // 将repositoryId存储到sessionStorage
             sessionStorage.setItem("selectedRepositoryId", record.id);
-            console.log("🚀 ~ TestManagementHomePage ~ record:", record);
             sessionStorage.setItem("selectedRepositoryName", record.name);
-            router.push(`/${workspaceSlug}/test-management/plans/`);
+            const redirectTo = searchParams.get("redirect_to");
+            const ws = String(workspaceSlug || "");
+            let target = redirectTo ? decodeURIComponent(redirectTo) : `/${ws}/test-management/plans`;
+            target = target.includes("?")
+              ? `${target}&repositoryId=${encodeURIComponent(String(record.id))}`
+              : `${target}?repositoryId=${encodeURIComponent(String(record.id))}`;
+            router.push(target);
           }}
           style={{ cursor: "pointer" }}
         >
@@ -177,14 +206,38 @@ export default function TestManagementHomePage() {
       title: "项目",
       dataIndex: "project",
       key: "project",
-      render: (_, record) => record.project?.name,
+      render: (_, record) => {
+        const p: any = record.project as any;
+        if (!p) return null;
+        if (typeof p === "string") return <span className="truncate">{p}</span>;
+        return (
+          <div className="flex items-center gap-2">
+            <Logo logo={p.logo_props} size={18} />
+            <span className="truncate">{p.name}</span>
+          </div>
+        );
+      },
       ...getColumnSearchProps("project"),
     },
     {
       title: "创建者",
       key: "created_by",
       dataIndex: "created_by",
-      render: (_, record) => record.created_by?.display_name,
+      render: (_, record) => (
+        <MemberDropdown
+          multiple={true}
+          value={[record.created_by.id]}
+          onChange={() => {}}
+          disabled={true}
+          placeholder={"未知用户"}
+          className="w-full text-sm"
+          buttonContainerClassName="w-full text-left p-0 cursor-default"
+          buttonVariant="transparent-with-text"
+          buttonClassName="text-sm p-0 hover:bg-transparent hover:bg-inherit"
+          showUserDetails={true}
+          optionsClassName="z-[60]"
+        />
+      ),
     },
     {
       title: "创建时间",
@@ -193,6 +246,25 @@ export default function TestManagementHomePage() {
       render: (dateString) => formatDateTime(dateString),
       defaultSortOrder: "descend",
       sorter: (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+    },
+    {
+      title: "操作",
+      key: "actions",
+      width: 120,
+      render: (_, record) => (
+        <Space>
+          <Button
+            type="text"
+            size="small"
+            icon={<EditOutlined />}
+            onClick={() => {
+              setEditing(record);
+              setModalOpen(true);
+            }}
+          />
+          <Button type="text" size="small" danger icon={<DeleteOutlined />} onClick={() => confirmDelete(record)} />
+        </Space>
+      ),
     },
   ];
 
@@ -239,6 +311,29 @@ export default function TestManagementHomePage() {
     }
   };
 
+  const confirmDelete = (repo: Repository) => {
+    Modal.confirm({
+      title: "确认删除",
+      content: `确定删除用例库“${repo.name}”吗？删除后不可恢复。`,
+      okText: "删除",
+      cancelText: "取消",
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        if (!workspaceSlug || !repo?.id) return;
+        try {
+          setApiLoading(true);
+          await repositoryService.deleteRepository(String(workspaceSlug), { ids: [repo.id] });
+          message.success("删除成功");
+          await fetchRepositories(1, pageSize, filters);
+        } catch (e: any) {
+          message.error(e?.message || e?.detail || e?.error || "删除失败，请稍后重试");
+        } finally {
+          setApiLoading(false);
+        }
+      },
+    });
+  };
+
   // 处理分页变化
   const handlePaginationChange = (page: number, size?: number) => {
     const newPageSize = size || pageSize;
@@ -275,6 +370,19 @@ export default function TestManagementHomePage() {
           {!loading && !error && (
             <>
               <div>
+                <div className="flex items-center justify-between gap-4 border-b border-custom-border-200 px-4 py-3 sm:px-5">
+                  <h3 className="text-lg font-medium">用例库</h3>
+                  <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    onClick={() => {
+                      setEditing(null);
+                      setModalOpen(true);
+                    }}
+                  >
+                    新增
+                  </Button>
+                </div>
                 <Table
                   dataSource={repositories}
                   columns={columns}
@@ -293,6 +401,14 @@ export default function TestManagementHomePage() {
                     onChange: handlePaginationChange,
                     onShowSizeChange: handlePageSizeChange,
                   }}
+                />
+                {apiLoading && <div className="sr-only">processing...</div>}
+                <RepositoryModal
+                  open={modalOpen}
+                  workspaceSlug={String(workspaceSlug || "")}
+                  initialValues={editing}
+                  onCancel={() => setModalOpen(false)}
+                  onSuccess={() => fetchRepositories(1, pageSize, filters)}
                 />
               </div>
             </>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { PageHead } from "@/components/core/page-title";
 import { Input, Table, Dropdown, Button, Modal, Tag, message, Tooltip, Space } from "antd";
 import type { TableProps, TableColumnType, InputRef } from "antd";
@@ -56,8 +56,10 @@ const initialReviews: ReviewItem[] = [];
 
 export default function ReviewsPage() {
   const { workspaceSlug } = useParams();
+  const searchParams = useSearchParams();
   const router = useAppRouter();
-  const repositoryId = typeof window !== "undefined" ? sessionStorage.getItem("selectedRepositoryId") : null;
+  const repositoryIdFromUrl = searchParams.get("repositoryId");
+  const repositoryId = repositoryIdFromUrl || (typeof window !== "undefined" ? sessionStorage.getItem("selectedRepositoryId") : null);
   const [leftWidth, setLeftWidth] = useState<number>(300);
   const isDraggingRef = useRef<boolean>(false);
   const startXRef = useRef<number>(0);
@@ -117,6 +119,9 @@ export default function ReviewsPage() {
 
   useEffect(() => {
     if (!workspaceSlug || !repositoryId) return;
+    try {
+      if (repositoryIdFromUrl) sessionStorage.setItem("selectedRepositoryId", repositoryIdFromUrl);
+    } catch {}
     fetchModules();
     fetchEnums();
     const storageKey = `reviews_name_filter_${workspaceSlug}_${repositoryId}`;
@@ -126,6 +131,14 @@ export default function ReviewsPage() {
     debouncedFetchReviews(1, pageSize, selectedModuleId, initFilters);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspaceSlug, repositoryId]);
+
+  useEffect(() => {
+    if (!repositoryId && workspaceSlug) {
+      const ws = String(workspaceSlug || "");
+      const current = `/${ws}/test-management/reviews${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
+      router.push(`/${ws}/test-management?redirect_to=${encodeURIComponent(current)}`);
+    }
+  }, [repositoryId, workspaceSlug, searchParams, router]);
 
   const fetchModules = async () => {
     if (!workspaceSlug) return;

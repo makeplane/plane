@@ -1,15 +1,19 @@
-# 顶部新增必要的导入，并在文件末尾新增 CaseAttachmentV2Endpoint
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.response import Response
+from yaml import serialize
 
 from plane.app.serializers.qa import TestPlanDetailSerializer, CaseModuleCreateUpdateSerializer, \
     CaseModuleListSerializer, CaseLabelListSerializer, CaseLabelCreateSerializer, CaseCreateUpdateSerializer, \
-    CaseListSerializer, CaseAttachmentSerializer
+    CaseListSerializer, CaseAttachmentSerializer, ReviewCaseRecordsSerializer
+from plane.app.serializers.qa.plan import PlanModuleCreateUpdateSerializer, PlanModuleListSerializer, \
+    PlanCaseListSerializer, PlanCaseCardSerializer, PlanCaseRecordSerializer
 from plane.app.views.qa.filters import TestPlanFilter
-from plane.db.models import TestPlan, TestCaseRepository, TestCase, CaseModule, CaseLabel, FileAsset, Workspace
+from plane.db.models import TestPlan, TestCaseRepository, TestCase, CaseModule, CaseLabel, FileAsset, Workspace, \
+    PlanModule, PlanCase, PlanCaseRecord, Issue
 from plane.utils.paginator import CustomPaginator
 from plane.utils.response import list_response
-from plane.app.views import BaseAPIView
+from plane.app.views import BaseAPIView, BaseViewSet
 from plane.app.serializers import TestPlanCreateUpdateSerializer, TestCaseRepositorySerializer, \
     TestCaseRepositoryDetailSerializer
 from plane.app.permissions import allow_permission, ROLE
@@ -43,12 +47,29 @@ class RepositoryAPIView(BaseAPIView):
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+
+    def put(self, request, slug):
+        repository_id = request.data.pop('id')
+        repository = self.queryset.get(id=repository_id)
+        update_serializer = self.serializer_class(instance=repository, data=request.data, partial=True)
+        update_serializer.is_valid(raise_exception=True)
+        updated_plan = update_serializer.save()
+        serializer = TestCaseRepositoryDetailSerializer(instance=repository)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     def get(self, request, slug):
         repositories = self.filter_queryset(self.queryset)
         paginator = self.pagination_class()
         paginated_queryset = paginator.paginate_queryset(repositories, request)
         serializer = TestCaseRepositoryDetailSerializer(instance=paginated_queryset, many=True)
         return list_response(data=serializer.data, count=repositories.count())
+
+
+    def delete(self, request, slug):
+        plan_ids = request.data.pop('ids')
+        self.queryset.filter(id__in=plan_ids).delete(soft=False)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 
 class PlanAPIView(BaseAPIView):
@@ -87,6 +108,156 @@ class PlanAPIView(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class PlanCaseAPIView(BaseAPIView):
+    queryset = PlanCase.objects.all()
+    pagination_class = CustomPaginator
+    filterset_fields = {
+        'plan_id': ['exact', 'in'],
+    }
+    serializer_class = PlanCaseListSerializer
+
+    def get(self, request, slug):
+        plans = self.filter_queryset(self.queryset).distinct()
+        paginator = self.pagination_class()
+        paginated_queryset = paginator.paginate_queryset(plans, request)
+        serializer = self.serializer_class(instance=paginated_queryset, many=True)
+        return list_response(data=serializer.data, count=plans.count())
+
+
+class PlanModuleAPIView(BaseAPIView):
+    model = PlanModule
+    queryset = PlanModule.objects.all()
+    serializer_class = PlanModuleListSerializer
+    filterset_fields = {
+        'name': ['exact', 'icontains', 'in'],
+        'repository_id': ['exact', 'in'],
+        'id': ['exact']
+    }
+
+    def post(self, request, slug):
+        serializer = PlanModuleCreateUpdateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        plan_module = serializer.save()
+        serializer = TestPlanDetailSerializer(instance=plan_module)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def get(self, request, slug):
+        query = self.filter_queryset(self.queryset).order_by('created_at')
+        serializer = self.serializer_class(instance=query, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, slug):
+        module_ids = request.data.pop('ids')
+        self.queryset.filter(id__in=module_ids).delete(soft=False)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class PlanView(BaseViewSet):
+    pagination_class = CustomPaginator
+
+    @action(detail=False, methods=['post'], url_path='cancel')
+    def cancel(self, request, slug):
+        PlanCase.objects.get(id=request.data['id']).delete(soft=False)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=False, methods=['get'], url_path='case-list')
+    def case_list(self, request, slug):
+        query = PlanCase.objects.filter(plan_id=request.query_params['plan_id'])
+        if name := request.query_params.get('name__icontains'):
+            query = query.filter(case__name__icontains=name)
+        module_ids = request.query_params.getlist('module_id') or request.query_params.getlist('module_ids')
+        if module_ids:
+            expanded = set(module_ids)
+            frontier = list(module_ids)
+            while frontier:
+                children = list(
+                    CaseModule.objects.filter(parent_id__in=frontier, deleted_at__isnull=True).values_list('id',
+                                                                                                           flat=True))
+                new_children = [c for c in children if c not in expanded]
+                if not new_children:
+                    break
+                expanded.update(new_children)
+                frontier = new_children
+            query = query.filter(case__module_id__in=list(expanded))
+        else:
+            module_id = request.query_params.get('module_id')
+            if module_id:
+                expanded = {module_id}
+                frontier = [module_id]
+                while frontier:
+                    children = list(
+                        CaseModule.objects.filter(parent_id__in=frontier, deleted_at__isnull=True).values_list('id',
+                                                                                                               flat=True))
+                    new_children = [c for c in children if c not in expanded]
+                    if not new_children:
+                        break
+                    expanded.update(new_children)
+                    frontier = new_children
+                query = query.filter(case__module_id__in=list(expanded))
+        paginator = self.pagination_class()
+        paginated_queryset = paginator.paginate_queryset(query, request)
+        serializer = PlanCaseCardSerializer(instance=paginated_queryset, many=True)
+        return list_response(data=serializer.data, count=query.count())
+
+    @action(detail=False, methods=['post'], url_path='execute')
+    def execute(self, request, slug):
+        plan_id = request.data['plan_id']
+        case_id = request.data['case_id']
+        result = request.data['result']
+        reason = request.data.get('reason')
+        steps = request.data['steps']
+        assignee = request.data['assignee']
+        issue_ids = request.data.get('issue_ids', [])
+
+        plan_case = PlanCase.objects.get(plan_id=plan_id, case_id=case_id)
+
+        # 创建执行记录
+        pcr = PlanCaseRecord.objects.create(result=result, reason=reason, steps=steps, assignee_id=assignee,
+                                            plan_case=plan_case)
+        plan_case.result = result
+        plan_case.save()
+
+        plan = TestPlan.objects.get(id=plan_id)
+        # 修改计划状态
+        if not PlanCase.objects.filter(plan_id=plan_id, result=PlanCase.Result.NOT_START).exists():
+            plan.state = TestPlan.State.COMPLETED
+        else:
+            plan.state = TestPlan.State.PROGRESS
+        plan.save()
+        return Response(status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=['get'], url_path='case-detail')
+    def case_detail(self, request, slug):
+        plan_id = request.query_params['plan_id']
+        case_id = request.query_params['case_id']
+
+        plan_case = PlanCase.objects.get(plan_id=plan_id, case_id=case_id)
+        case = TestCase.objects.get(pk=case_id)
+        case_data = CaseListSerializer(case).data
+
+        case_data[
+            'execute_steps'] = plan_case.plan_case_records.first().steps if plan_case.plan_case_records.first() else None
+        return Response(case_data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['post'], url_path='add-bug')
+    def add_bug(self, request, slug):
+        case_id = request.data['case_id']
+        issue_id = request.data['issue_id']
+        case = TestCase.objects.get(pk=case_id)
+        issue = Issue.objects.get(pk=issue_id)
+        case.issues.add(issue)
+        return Response(status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=['get'], url_path='records')
+    def get_records(self, request, slug):
+        plan_id = request.query_params['plan_id']
+        case_id = request.query_params['case_id']
+        plan_case = PlanCase.objects.get(plan_id=plan_id, case_id=case_id)
+        records = PlanCaseRecord.objects.filter(plan_case=plan_case)
+        serializer = PlanCaseRecordSerializer(instance=records, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class CaseAPIView(BaseAPIView):
     model = TestCase
     queryset = TestCase.objects.all()
@@ -99,6 +270,7 @@ class CaseAPIView(BaseAPIView):
         'priority': ['exact', 'in'],
         'module_id': ['exact', 'in'],
         'id': ['exact'],
+        'plan_cases__plan__id': ['exact', 'in'],
     }
 
     def get(self, request, slug):
@@ -199,9 +371,10 @@ class EnumDataAPIView(BaseAPIView):
         case_type = dict(TestCase.Type.choices)
         case_priority = dict(TestCase.Priority.choices)
         case_test_type = dict(TestCase.TestType.choices)
+        plan_case_result = dict(PlanCase.Result.choices)
         return Response(dict(
             plan_state=plan_state, case_state=case_state, case_type=case_type, case_priority=case_priority,
-            case_test_type=case_test_type
+            case_test_type=case_test_type, plan_case_result=plan_case_result
         ))
 
 

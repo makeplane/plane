@@ -117,29 +117,40 @@ class TestCase(BaseModel):
         return crr.result if crr else CaseReviewThrough.Result.NOT_START
 
 
-class Meta:
-    db_table = "test_case"
-    ordering = ("-created_at",)
+    class Meta:
+        db_table = "test_case"
+        ordering = ("-created_at",)
+
+
+class PlanModule(BaseModel):
+    name = models.CharField(max_length=255)
+    repository = models.ForeignKey(TestCaseRepository, on_delete=models.CASCADE, verbose_name="TestCaseRepository",
+                                   related_name="plan_modules")
+    is_default = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = "test_plan_modules"
+        ordering = ("created_at",)
 
 
 class TestPlan(BaseModel):
-    class State(models.IntegerChoices):
-        NOT_START = 0, '未开始'
-        PROGRESS = 1, '进行中'
-        COMPLETED = 2, '已完成'
+    class State(models.TextChoices):
+        NOT_START = '未开始', 'gray'
+        PROGRESS = '进行中', 'blue'
+        COMPLETED = '已完成', 'green'
 
     name = models.CharField(max_length=255, verbose_name="TestPlan Name")
-    begin_time = models.DateTimeField(null=True, blank=True, verbose_name="TestPlan Begin Time")
-    end_time = models.DateTimeField(null=True, blank=True, verbose_name="TestPlan End Time")
-    state = models.IntegerField(choices=State.choices, default=State.NOT_START, verbose_name="TestPlan State")
+    description = models.TextField(verbose_name="TestPlan Description", blank=True,null=True)
+    begin_time = models.DateField(null=True, blank=True, verbose_name="TestPlan Begin Time")
+    end_time = models.DateField(null=True, blank=True, verbose_name="TestPlan End Time")
+    state = models.CharField(choices=State.choices, default=State.NOT_START, verbose_name="TestPlan State")
+    result = models.CharField(max_length=30,default='-', verbose_name="TestPlan execute result")
+    threshold = models.IntegerField(null=True, blank=True, default=100, verbose_name="TestPlan Threshold")
 
+    module = models.ForeignKey(PlanModule, null=True, on_delete=models.CASCADE, verbose_name="PlanModule",
+                               related_name="plans")
     repository = models.ForeignKey(TestCaseRepository, on_delete=models.CASCADE, verbose_name="TestCaseRepository",
                                    related_name="plans")
-    assignees = models.ManyToManyField(
-        settings.AUTH_USER_MODEL,
-        blank=True,
-        related_name="plan_assignee",
-    )
     cases = models.ManyToManyField(TestCase, blank=True, related_name="plans", through="PlanCase",
                                    through_fields=("plan", "case"))
 
@@ -161,20 +172,43 @@ class TestPlan(BaseModel):
 
 
 class PlanCase(BaseModel):
-    class State(models.IntegerChoices):
-        NOT_START = 0, '未开始'
-        PROGRESS = 1, '进行中'
-        COMPLETED = 2, '已完成'
+    class Result(models.TextChoices):
+        SUCCESS = '成功', 'green'
+        FAIL = '失败', 'red'
+        BLOCK = '阻塞', 'gold'
+        NOT_START = '未执行', 'gray'
 
     case = models.ForeignKey(TestCase, on_delete=models.CASCADE, related_name="plan_cases")
     plan = models.ForeignKey(TestPlan, on_delete=models.CASCADE, related_name="plan_cases")
-    state = models.IntegerField(choices=State.choices, default=State.NOT_START,
-                                verbose_name="PlanCase State")
+    result = models.CharField(choices=Result.choices, default=Result.NOT_START,
+                              verbose_name="PlanCase Execute Result")
+    issue = models.ManyToManyField(Issue, related_name="plan_cases")
 
     class Meta:
         verbose_name = "PlanCase"
         verbose_name_plural = "PlanCases"
         db_table = "test_plan_cases"
+        ordering = ("-created_at",)
+
+
+class PlanCaseRecord(BaseModel):
+    class Result(models.TextChoices):
+        SUCCESS = '成功', 'green'
+        FAIL = '失败', 'red'
+        BLOCK = '阻塞', 'gold'
+
+    result = models.CharField(choices=Result.choices, default=Result.SUCCESS,
+                              verbose_name="PlanCaseRecord Result")
+    reason = models.TextField(verbose_name="PlanCaseRecord Reason", blank=True, null=True)
+    steps = models.JSONField(verbose_name="TestCase Steps", blank=True, default=dict)
+    assignee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True,
+                                 related_name="plan_case_records")
+
+    plan_case = models.ForeignKey(PlanCase, on_delete=models.SET_NULL, blank=True, null=True,
+                                  related_name="plan_case_records")
+
+    class Meta:
+        db_table = "test_plan_case_records"
         ordering = ("-created_at",)
 
 

@@ -1,27 +1,55 @@
 "use client";
 
-import { useParams } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { PageHead } from "@/components/core/page-title";
 // services
 import { PlanService } from "@/services/qa/plan.service";
-import { Space, Table, Tag, Input, Button, Dropdown, Modal } from "antd";
-import { SearchOutlined, PlusOutlined, MoreOutlined } from "@ant-design/icons";
+import { Space, Table, Tag, Input, Button, Dropdown, Modal, Tooltip, message } from "antd";
+import {
+  SearchOutlined,
+  PlusOutlined,
+  MoreOutlined,
+  FolderOutlined,
+  EllipsisOutlined,
+  DeleteOutlined,
+  PlayCircleOutlined,
+} from "@ant-design/icons";
+import { EditOutlined } from "@ant-design/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TableProps, InputRef, TableColumnType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 // plane ui
 import { Avatar, AvatarGroup } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
-import { TestPlan, TestPlanResponse } from "../data-model";
+type PlanModule = { id: string; name: string; is_default?: boolean; repository?: string; count?: number };
+type TestPlan = {
+  id: string;
+  name: string;
+  begin_time?: string | null;
+  end_time?: string | null;
+  assignees?: Array<{ id: string; display_name: string; avatar_url?: string | null }>;
+  cases?: any[];
+  state?: string | number;
+  module?: string | null;
+  module_id?: string | null;
+  pass_rate?: Record<string, number> | null;
+  result?: string | null;
+};
+type TestPlanResponse = { data: TestPlan[]; count: number };
 import { formatDate, formatDateTime, globalEnums } from "../util";
 import { CreateUpdatePlanModal } from "@/components/qa/plans/create-update-modal";
+import styles from "../reviews/reviews.module.css";
 
 export default function TestPlanDetailPage() {
   const { workspaceSlug } = useParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const Enums = globalEnums.Enums;
-  const repositoryName = sessionStorage.getItem("selectedRepositoryName");
-  const repositoryId = sessionStorage.getItem("selectedRepositoryId");
+  const repositoryIdFromUrl = searchParams.get("repositoryId");
+  const repositoryId =
+    repositoryIdFromUrl || (typeof window !== "undefined" ? sessionStorage.getItem("selectedRepositoryId") : null);
+  const repositoryName = typeof window !== "undefined" ? sessionStorage.getItem("selectedRepositoryName") : "";
   // 解码URL编码的repositoryName
   const decodedRepositoryName = repositoryName ? decodeURIComponent(repositoryName as string) : "";
 
@@ -35,6 +63,15 @@ export default function TestPlanDetailPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   // 新增：PlanService 实例
   const planService = new PlanService();
+  const [leftWidth, setLeftWidth] = useState<number>(300);
+  const isDraggingRef = useRef<boolean>(false);
+  const startXRef = useRef<number>(0);
+  const startWidthRef = useRef<number>(0);
+  const [searchModule, setSearchModule] = useState<string>("");
+  const [modules, setModules] = useState<PlanModule[]>([]);
+  const [creatingOpen, setCreatingOpen] = useState<boolean>(false);
+  const [creatingName, setCreatingName] = useState<string>("");
+  const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
 
   // 分页状态管理
   const [currentPage, setCurrentPage] = useState(1);
@@ -48,12 +85,72 @@ export default function TestPlanDetailPage() {
     states?: number[];
   }>({});
 
+  const totalPlans = useMemo(() => modules.reduce((sum, m) => sum + (m.count || 0), 0), [modules]);
+
+  const onMouseDownResize = (e: React.MouseEvent<HTMLDivElement>) => {
+    isDraggingRef.current = true;
+    startXRef.current = e.clientX;
+    startWidthRef.current = leftWidth;
+    window.addEventListener("mousemove", onMouseMoveResize as any);
+    window.addEventListener("mouseup", onMouseUpResize as any);
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+    e.preventDefault();
+  };
+
+  const onMouseMoveResize = (e: MouseEvent) => {
+    if (!isDraggingRef.current) return;
+    const next = Math.min(300, Math.max(200, startWidthRef.current + (e.clientX - startXRef.current)));
+    setLeftWidth(next);
+  };
+
+  const onMouseUpResize = () => {
+    isDraggingRef.current = false;
+    window.removeEventListener("mousemove", onMouseMoveResize as any);
+    window.removeEventListener("mouseup", onMouseUpResize as any);
+    document.body.style.cursor = "auto";
+    document.body.style.userSelect = "auto";
+  };
+
+  useEffect(() => {
+    return () => {
+      window.removeEventListener("mousemove", onMouseMoveResize as any);
+      window.removeEventListener("mouseup", onMouseUpResize as any);
+    };
+  }, []);
+
   // 当repositoryId获取到后，开始获取测试计划数据
   useEffect(() => {
-    if (repositoryId) {
-      fetchTestPlans();
+    if (repositoryId && workspaceSlug) {
+      try {
+        if (repositoryIdFromUrl) {
+          sessionStorage.setItem("selectedRepositoryId", repositoryIdFromUrl);
+        }
+      } catch {}
+      fetchModules();
+      fetchTestPlans(1, pageSize);
     }
-  }, [repositoryId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [repositoryId, workspaceSlug]);
+
+  useEffect(() => {
+    if (!repositoryId && workspaceSlug) {
+      const ws = String(workspaceSlug || "");
+      const current = `/${ws}/test-management/plans${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
+      try {
+        message.warning("未检测到用例库，请选择一个用例库后自动跳回");
+      } catch {}
+      router.push(`/${ws}/test-management?redirect_to=${encodeURIComponent(current)}`);
+    }
+  }, [repositoryId, workspaceSlug, searchParams, router]);
+
+  const fetchModules = async () => {
+    if (!workspaceSlug || !repositoryId) return;
+    try {
+      const data: any[] = await planService.getPlanModules(workspaceSlug as string, { repository_id: repositoryId });
+      setModules(Array.isArray(data) ? data : []);
+    } catch (e) {}
+  };
 
   // 搜索筛选函数（支持 name 与 assignees 两列）
   const getColumnSearchProps = (dataIndex: keyof TestPlan | string): TableColumnType<TestPlan> => ({
@@ -161,17 +258,76 @@ export default function TestPlanDetailPage() {
     );
   };
 
-  // 渲染状态标签
-  const renderState = (state: number) => {
-    const stateConfig = {
-      未开始: { color: "default", text: "未开始" },
-      进行中: { color: "processing", text: "进行中" },
-      已完成: { color: "success", text: "已完成" },
+  const renderState = (state: any) => {
+    const color = (Enums?.plan_state as any)?.[state] || "default";
+    const text = state ?? "-";
+    return <Tag color={color}>{text}</Tag>;
+  };
+
+  const renderPassRate = (passRate: any, record: TestPlan) => {
+    const orderKeys = ["成功", "失败", "阻塞", "未执行"];
+    const totalCount = orderKeys.reduce((s, k) => s + Number(passRate?.[k] || 0), 0);
+    const passed = Number(passRate?.["成功"] || 0);
+    const percent = totalCount > 0 ? Math.floor((passed / totalCount) * 100) : 0;
+
+    const colorHexMap: Record<string, string> = {
+      green: "#52c41a",
+      red: "#ff4d4f",
+      gold: "#faad14",
+      blue: "#1677ff",
+      gray: "#bfbfbf",
+      default: "#d9d9d9",
     };
 
-    const stateKey = (Enums.plan_state[state] ?? "未开始") as keyof typeof stateConfig;
-    const config = stateConfig[stateKey];
-    return <Tag color={config.color}>{config.text}</Tag>;
+    const categoryColor: Record<string, string> = {
+      成功: colorHexMap.green,
+      失败: colorHexMap.red,
+      阻塞: colorHexMap.gold,
+      未执行: colorHexMap.gray,
+    };
+
+    const segments = orderKeys.map((k) => {
+      const count = Number(passRate?.[k] || 0);
+      const color = categoryColor[k] || colorHexMap.default;
+      const widthPct = totalCount > 0 ? (count / totalCount) * 100 : 0;
+      return { key: k, count, color, widthPct };
+    });
+
+    const tooltipContent = (
+      <div className={styles.legend}>
+        {orderKeys.map((k) => (
+          <div key={k} className={styles.legendItem}>
+            <span className={styles.legendColor} style={{ backgroundColor: categoryColor[k] || colorHexMap.default }} />
+            <span className={styles.legendLabel}>{k}</span>
+            <span className={styles.legendCount}>{Number(passRate?.[k] || 0)}</span>
+          </div>
+        ))}
+      </div>
+    );
+
+    return (
+      <div className={styles.passRateCell}>
+        <Tooltip mouseEnterDelay={0.25} overlayClassName={styles.lightTooltip} title={tooltipContent}>
+          <div className={styles.progressWrap}>
+            <div className={styles.progressBar}>
+              {segments.map((seg, idx) => (
+                <div
+                  key={`${seg.key}-${idx}`}
+                  className={styles.progressSegment}
+                  style={{ width: `${seg.widthPct}%`, backgroundColor: seg.color }}
+                />
+              ))}
+            </div>
+          </div>
+        </Tooltip>
+        <span className={styles.progressPercent}>{percent}%</span>
+      </div>
+    );
+  };
+
+  const renderResult = (result: any) => {
+    const text = result ?? "-";
+    return <span className="text-sm text-custom-text-500">{text}</span>;
   };
 
   // 表格变更回调：统一处理分页与服务端过滤（状态/负责人）
@@ -183,11 +339,11 @@ export default function TestPlanDetailPage() {
     };
     const nextPage = pagination.current || 1;
     const nextPageSize = pagination.pageSize || pageSize;
-
+    const filtersChanged = JSON.stringify(filters) !== JSON.stringify(newFilters);
     setCurrentPage(nextPage);
     setPageSize(nextPageSize);
     setFilters(newFilters);
-    fetchTestPlans(nextPage, nextPageSize, newFilters);
+    fetchTestPlans(nextPage, nextPageSize, filtersChanged ? newFilters : filters);
   };
 
   // 新增：编辑模态框状态与当前编辑项
@@ -200,10 +356,30 @@ export default function TestPlanDetailPage() {
   };
 
   const handleEditSuccess = async () => {
-    setShowEditModal(false);
-    setEditingPlan(null);
-    await fetchTestPlans(currentPage, pageSize, filters);
+    return;
   };
+
+  const refreshAll = async () => {
+    await fetchTestPlans(currentPage, pageSize, filters, selectedModuleId ?? undefined);
+    await fetchModules();
+  };
+
+  const prevShowCreateRef = useRef<boolean>(false);
+  const prevShowEditRef = useRef<boolean>(false);
+
+  useEffect(() => {
+    if (prevShowCreateRef.current && !showCreateModal) {
+      refreshAll();
+    }
+    prevShowCreateRef.current = showCreateModal;
+  }, [showCreateModal]);
+
+  useEffect(() => {
+    if (prevShowEditRef.current && !showEditModal) {
+      refreshAll();
+    }
+    prevShowEditRef.current = showEditModal;
+  }, [showEditModal]);
 
   const confirmDelete = (plan: TestPlan) => {
     Modal.confirm({
@@ -217,7 +393,8 @@ export default function TestPlanDetailPage() {
           await planService.deletePlan(workspaceSlug as string, [plan.id]);
           // 如果已引入 @plane/propel/toast，则复用统一提示
           // setToast({ type: TOAST_TYPE.SUCCESS, title: "成功", message: "测试计划删除成功" });
-          await fetchTestPlans(currentPage, pageSize, filters);
+          await fetchTestPlans(currentPage, pageSize, filters, selectedModuleId ?? undefined);
+          await fetchModules();
         } catch (e: any) {
           // setToast({ type: TOAST_TYPE.ERROR, title: "失败", message: e?.message || "删除失败，请稍后重试" });
         }
@@ -238,7 +415,7 @@ export default function TestPlanDetailPage() {
           { key: "delete", label: "删除", danger: true },
         ];
         return (
-          <div className="flex items-center justify-between group">
+          <div className={`${styles.row} flex items-center justify-between`}>
             <span className="truncate">{record.name}</span>
             <Dropdown
               trigger={["hover"]}
@@ -251,44 +428,42 @@ export default function TestPlanDetailPage() {
                 },
               }}
             >
-              <Button
-                type="text"
-                size="small"
-                icon={<MoreOutlined />}
-                className="opacity-0 group-hover:opacity-100 transition-opacity ml-2"
-              />
+              <Button type="text" size="small" icon={<MoreOutlined />} className={styles.actionMenu} />
             </Dropdown>
           </div>
         );
       },
     },
+
     {
       title: "状态",
       dataIndex: "state",
       key: "state",
-      render: (state) => renderState(state),
-      width: 100,
-      // 服务端多选过滤：提供选项并受控显示选中值
-      filters: Object.entries(Enums?.plan_state || {}).map(([value, label]) => ({
-        text: String(label),
-        value: Number(value),
-      })),
-      filterMultiple: true,
-      filteredValue: filters.states ?? null,
+      width: 120,
+      render: (state: any) => renderState(state as any),
     },
+
     {
-      title: "负责人",
-      dataIndex: "assignees",
-      key: "assignees",
-      render: (assignees) => renderAssignees(assignees),
-      // 负责人名称搜索（服务端模糊匹配）
-      ...getColumnSearchProps("assignees"),
+      title: "通过率",
+      dataIndex: "pass_rate",
+      key: "pass_rate",
+      width: 180,
+      render: (passRate: any, record: TestPlan) => renderPassRate(passRate, record),
     },
+
     {
-      title: "测试用例数",
+      title: "执行结果",
+      dataIndex: "result",
+      key: "result",
+      width: 140,
+      render: (result: any) => renderResult(result),
+    },
+
+    {
+      title: "用例数",
       dataIndex: "cases",
       key: "cases",
-      render: (cases) => <Tag color="blue">{cases ? cases.length : 0} 个用例</Tag>,
+      render: (cases) => (cases ? cases.length : 0),
     },
     {
       title: "开始日期",
@@ -302,13 +477,50 @@ export default function TestPlanDetailPage() {
       key: "end_time",
       render: (dateString) => (dateString ? formatDate(dateString) : "-"),
     },
+    {
+      title: "操作",
+      key: "actions",
+      width: 120,
+      render: (_, record) => (
+        <Space size="small">
+          <Button
+            type="text"
+            size="small"
+            icon={<PlayCircleOutlined />}
+            aria-label="执行"
+            onClick={() => {
+              if (!record?.id) return;
+              const ws = (workspaceSlug as string) || "";
+              const repoQuery = repositoryId ? `&repositoryId=${encodeURIComponent(String(repositoryId))}` : "";
+              router.push(`/${ws}/test-management/plan-cases?planId=${record.id}${repoQuery}`);
+            }}
+          />
+          <Button
+            type="text"
+            size="small"
+            icon={<EditOutlined />}
+            aria-label="编辑"
+            onClick={() => openEditModal(record)}
+          />
+          <Button
+            type="text"
+            size="small"
+            danger
+            icon={<DeleteOutlined />}
+            aria-label="删除"
+            onClick={() => confirmDelete(record)}
+          />
+        </Space>
+      ),
+    },
   ];
 
   // 获取测试计划数据：严格使用 state__in 和 assignee_display_name
   const fetchTestPlans = async (
     page: number = currentPage,
     size: number = pageSize,
-    filterParams: typeof filters = filters
+    filterParams: typeof filters = filters,
+    moduleOverride?: string | null
   ) => {
     if (!workspaceSlug || !repositoryId) return;
 
@@ -321,6 +533,11 @@ export default function TestPlanDetailPage() {
         page: page,
         page_size: size,
       };
+
+      const moduleParam = typeof moduleOverride !== "undefined" ? moduleOverride : selectedModuleId;
+      if (moduleParam) {
+        queryParams.module_id = moduleParam;
+      }
 
       // 名称模糊
       if (filterParams.name) {
@@ -365,6 +582,58 @@ export default function TestPlanDetailPage() {
     await fetchTestPlans(currentPage, pageSize, filters);
   };
 
+  const filteredModules = useMemo(() => {
+    const q = searchModule.trim().toLowerCase();
+    return modules.filter((n) => (n?.name || "").toLowerCase().includes(q));
+  }, [searchModule, modules]);
+
+  const moduleCountsMap = useMemo(() => {
+    const map: Record<string, number> = {};
+    modules.forEach((m) => {
+      if (!m?.id) return;
+      map[m.id] = m.count || 0;
+    });
+    return map;
+  }, [modules]);
+
+  const confirmDeleteModule = (node: PlanModule) => {
+    Modal.confirm({
+      title: "删除模块",
+      content: `确定删除模块“${node.name}”吗？删除后不可恢复。`,
+      okText: "删除",
+      cancelText: "取消",
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        try {
+          await planService.deletePlanModule(workspaceSlug as string, [node.id]);
+          await fetchModules();
+          const shouldClear = selectedModuleId === node.id;
+          if (shouldClear) setSelectedModuleId(null);
+          await fetchTestPlans(1, pageSize, filters, shouldClear ? null : (selectedModuleId ?? undefined));
+        } catch (e) {}
+      },
+    });
+  };
+
+  const handleCreateModule = async () => {
+    const name = creatingName.trim();
+    if (!name || !workspaceSlug || !repositoryId) {
+      setCreatingOpen(false);
+      setCreatingName("");
+      return;
+    }
+    try {
+      await planService.createPlanModule(workspaceSlug as string, { name, repository: repositoryId });
+      setCreatingOpen(false);
+      setCreatingName("");
+      await fetchModules();
+      await fetchTestPlans(currentPage, pageSize, filters, selectedModuleId ?? undefined);
+    } catch (e) {
+      setCreatingOpen(false);
+      setCreatingName("");
+    }
+  };
+
   return (
     <>
       <PageHead title={`测试计划 - ${decodedRepositoryName}`} />
@@ -372,51 +641,169 @@ export default function TestPlanDetailPage() {
         <div className="flex h-full w-full flex-col">
           <div className="flex items-center justify-between gap-4 border-b border-custom-border-200 px-4 py-3 sm:px-5">
             <div></div>
-            <div>
-              <Button type="primary" icon={<PlusOutlined />} onClick={() => setShowCreateModal(true)}>
-                新建
-              </Button>
-            </div>
+            <div></div>
           </div>
 
-          <div className="flex-1 overflow-hidden p-4 sm:p-5">
-            {loading && (
-              <div className="flex items-center justify-center py-12">
-                <div className="text-custom-text-300">加载中...</div>
+          <div className="flex-1 overflow-hidden p-0">
+            <div className="flex h-[calc(100%-0px)] w-full">
+              <div
+                className="relative border-r border-custom-border-200 min-w-[200px] max-w-[300px]"
+                style={{ width: leftWidth }}
+              >
+                <div className="p-2">
+                  <Space>
+                    <Input
+                      allowClear
+                      placeholder="按模块名称搜索"
+                      value={searchModule}
+                      onChange={(e) => setSearchModule(e.target.value)}
+                    />
+                    <Button type="primary" onClick={() => setShowCreateModal(true)}>
+                      新建
+                    </Button>
+                  </Space>
+                </div>
+                <div className="overflow-auto">
+                  <div
+                    className={`${styles.row} flex items-center justify-between px-2 py-2 cursor-pointer ${selectedModuleId === null ? "bg-blue-50" : ""}`}
+                    onClick={() => {
+                      setSelectedModuleId(null);
+                      setCurrentPage(1);
+                      fetchTestPlans(1, pageSize, filters, null);
+                    }}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="text-custom-text-300">
+                        <FolderOutlined />
+                      </span>
+                      <span className="text-sm">全部计划</span>
+                    </div>
+                    <div className="flex items-center gap-2 w-[140px] justify-end">
+                      <span className="text-xs text-custom-text-300">{totalPlans}</span>
+                      <span className={styles.actionIcon} onClick={() => setCreatingOpen(true)}>
+                        <PlusOutlined />
+                      </span>
+                    </div>
+                  </div>
+                  {creatingOpen && (
+                    <div className="px-2 py-2">
+                      <Input
+                        size="small"
+                        autoFocus
+                        placeholder="请输入模块名称"
+                        value={creatingName}
+                        onChange={(e) => setCreatingName(e.target.value)}
+                        onBlur={handleCreateModule}
+                        onPressEnter={handleCreateModule}
+                      />
+                    </div>
+                  )}
+                  <div>
+                    {filteredModules.map((node) => (
+                      <div
+                        key={node.id}
+                        className={`${styles.row} flex items-center justify-between px-2 py-2 cursor-pointer ${selectedModuleId === node.id ? "bg-blue-50" : ""}`}
+                        style={{ paddingLeft: 20 }}
+                        onClick={() => {
+                          const nextId = node.id;
+                          setSelectedModuleId(nextId);
+                          setCurrentPage(1);
+                          fetchTestPlans(1, pageSize, filters, nextId);
+                        }}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-custom-text-300">
+                            <FolderOutlined />
+                          </span>
+                          <span className="text-sm">{node.name}</span>
+                        </div>
+                        <div className="flex items-center gap-2 w-[140px] justify-end">
+                          {typeof moduleCountsMap[node.id] === "number" && (
+                            <span className="text-xs text-custom-text-300">{moduleCountsMap[node.id]}</span>
+                          )}
+                          {!node.is_default ? (
+                            <Dropdown
+                              trigger={["hover"]}
+                              menu={{
+                                items: [
+                                  {
+                                    key: "delete",
+                                    label: (
+                                      <Button
+                                        type="text"
+                                        size="small"
+                                        danger
+                                        icon={<DeleteOutlined />}
+                                        onClick={() => confirmDeleteModule(node)}
+                                        className="!text-red-600 hover:!bg-red-50"
+                                      >
+                                        删除
+                                      </Button>
+                                    ),
+                                  },
+                                ],
+                              }}
+                            >
+                              <Button
+                                type="text"
+                                size="small"
+                                icon={<EllipsisOutlined />}
+                                className={styles.actionMenu}
+                              />
+                            </Dropdown>
+                          ) : (
+                            <span className="w-6 inline-flex items-center justify-center" />
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div
+                  className="absolute top-0 right-0 w-[6px] h-full cursor-col-resize"
+                  onMouseDown={onMouseDownResize}
+                />
               </div>
-            )}
+              <div className="flex-1 overflow-auto p-4">
+                {loading && (
+                  <div className="flex items-center justify-center py-12">
+                    <div className="text-custom-text-300">加载中...</div>
+                  </div>
+                )}
 
-            {error && (
-              <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-4">
-                <div className="text-red-800 text-sm">{error}</div>
+                {error && (
+                  <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-4">
+                    <div className="text-red-800 text-sm">{error}</div>
+                  </div>
+                )}
+
+                {!repositoryId && !loading && (
+                  <div className="flex items-center justify-center py-12">
+                    <div className="text-custom-text-300">未找到用例库ID，请重新选择用例库</div>
+                  </div>
+                )}
+
+                {repositoryId && !loading && !error && (
+                  <Table
+                    dataSource={testPlans}
+                    columns={columns}
+                    loading={loading}
+                    rowKey="id"
+                    bordered={true}
+                    onChange={handleTableChange}
+                    pagination={{
+                      current: currentPage,
+                      pageSize: pageSize,
+                      total: total,
+                      showSizeChanger: true,
+                      showQuickJumper: true,
+                      showTotal: (t, r) => `第 ${r[0]}-${r[1]} 条，共 ${t} 条`,
+                      pageSizeOptions: ["10", "20", "50", "100"],
+                    }}
+                  />
+                )}
               </div>
-            )}
-
-            {!repositoryId && !loading && (
-              <div className="flex items-center justify-center py-12">
-                <div className="text-custom-text-300">未找到用例库ID，请重新选择用例库</div>
-              </div>
-            )}
-
-            {repositoryId && !loading && !error && (
-              <Table
-                dataSource={testPlans}
-                columns={columns}
-                loading={loading}
-                rowKey="id"
-                bordered={true}
-                onChange={handleTableChange}
-                pagination={{
-                  current: currentPage,
-                  pageSize: pageSize,
-                  total: total,
-                  showSizeChanger: true,
-                  showQuickJumper: true,
-                  showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，共 ${total} 条`,
-                  pageSizeOptions: ["10", "20", "50", "100"],
-                }}
-              />
-            )}
+            </div>
           </div>
         </div>
       </div>
@@ -424,15 +811,15 @@ export default function TestPlanDetailPage() {
       {/* 新增：创建/编辑测试计划模态框（当前用创建模式） */}
       <CreateUpdatePlanModal
         isOpen={showCreateModal}
-        handleClose={() => setShowCreateModal(false)}
+        handleClose={() => {
+          setShowCreateModal(false);
+          refreshAll();
+        }}
         workspaceSlug={workspaceSlug as string}
         repositoryId={repositoryId as string}
         repositoryName={decodedRepositoryName}
         mode="create"
-        onSuccess={async () => {
-          await fetchTestPlans(currentPage, pageSize, filters);
-          setShowCreateModal(false);
-        }}
+        onSuccess={refreshAll}
       />
 
       {/* 新增：编辑测试计划模态框 */}
@@ -442,19 +829,26 @@ export default function TestPlanDetailPage() {
         handleClose={() => {
           setShowEditModal(false);
           setEditingPlan(null);
+          refreshAll();
         }}
         workspaceSlug={workspaceSlug as string}
         repositoryId={repositoryId as string}
         repositoryName={decodedRepositoryName}
         mode="edit"
         planId={editingPlan?.id}
-        initialData={{
-          name: editingPlan?.name ?? "",
-          assignees: editingPlan?.assignees ? editingPlan.assignees.map((a) => a.id) : [],
-          begin_time: editingPlan?.begin_time ?? null,
-          end_time: editingPlan?.end_time ?? null,
-        }}
-        onSuccess={handleEditSuccess}
+        initialData={
+          editingPlan
+            ? ({
+                ...editingPlan,
+                module:
+                  (editingPlan as any)?.module_id ??
+                  (editingPlan as any)?.module?.id ??
+                  (editingPlan as any)?.module ??
+                  null,
+              } as any)
+            : null
+        }
+        onSuccess={refreshAll}
       />
     </>
   );

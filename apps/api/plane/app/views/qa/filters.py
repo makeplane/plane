@@ -14,4 +14,5 @@ class TestPlanFilter(filters.FilterSet):
             'id': ['exact', 'in'],
             'state': ['in'],
             'repository_id': ['exact'],
+            'module_id': ['exact'],
         }

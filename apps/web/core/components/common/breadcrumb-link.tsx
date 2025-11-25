@@ -13,6 +13,7 @@ type Props = {
   icon?: React.ReactNode;
   disableTooltip?: boolean;
   isLast?: boolean;
+  onClick?: (e: React.MouseEvent) => void;
 };
 
 const IconWrapper = React.memo(({ icon }: { icon: React.ReactNode }) => (
@@ -47,7 +48,7 @@ const ItemWrapper = React.memo(({ children, ...props }: React.ComponentProps<typ
 ItemWrapper.displayName = "ItemWrapper";
 
 export const BreadcrumbLink: FC<Props> = observer((props) => {
-  const { href, label, icon, disableTooltip = false, isLast = false } = props;
+  const { href, label, icon, disableTooltip = false, isLast = false, onClick } = props;
   const { isMobile } = usePlatformOS();
 
   const itemWrapperProps = useMemo(
@@ -64,7 +65,8 @@ export const BreadcrumbLink: FC<Props> = observer((props) => {
 
   if (href) {
     return (
-      <Link href={href}>
+      <Link href={href} onClick={onClick}
+      >
         <ItemWrapper {...itemWrapperProps}>{content}</ItemWrapper>
       </Link>
     );

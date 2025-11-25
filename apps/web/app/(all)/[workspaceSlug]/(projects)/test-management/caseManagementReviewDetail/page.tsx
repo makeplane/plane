@@ -51,7 +51,9 @@ export default function CaseManagementReviewDetailPage() {
   const { workspaceSlug } = useParams();
   const searchParams = useSearchParams();
   const reviewId = searchParams.get("review_id") ?? "";
-  const repositoryId = typeof window !== "undefined" ? sessionStorage.getItem("selectedRepositoryId") : null;
+  const repositoryIdFromUrl = searchParams.get("repositoryId");
+  const repositoryId =
+    repositoryIdFromUrl || (typeof window !== "undefined" ? sessionStorage.getItem("selectedRepositoryId") : null);
   const router = useRouter();
 
   const caseService = useMemo(() => new CaseApiService(), []);
@@ -146,6 +148,9 @@ export default function CaseManagementReviewDetailPage() {
 
   useEffect(() => {
     if (repositoryId) {
+      try {
+        if (repositoryIdFromUrl) sessionStorage.setItem("selectedRepositoryId", repositoryIdFromUrl);
+      } catch {}
       fetchModules();
       fetchReviewEnums();
       fetchReviewCaseList(1, pageSize);
@@ -153,6 +158,14 @@ export default function CaseManagementReviewDetailPage() {
       setLoading(false);
     }
   }, [repositoryId]);
+
+  useEffect(() => {
+    if (!repositoryId && workspaceSlug) {
+      const ws = String(workspaceSlug || "");
+      const current = `/${ws}/test-management/caseManagementReviewDetail${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
+      router.push(`/${ws}/test-management?redirect_to=${encodeURIComponent(current)}`);
+    }
+  }, [repositoryId, workspaceSlug, searchParams, router]);
 
   const onMouseDownResize = (e: React.MouseEvent<HTMLDivElement>) => {
     isDraggingRef.current = true;

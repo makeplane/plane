@@ -48,9 +48,12 @@ export interface PlanAssignee {
 }
 
 interface CreatedBy {
+  id: string;
   display_name: string;
 }
 
 interface Project {
+  id: string;
   name: string;
+  logo_props: any;
 }

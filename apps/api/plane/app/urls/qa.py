@@ -2,16 +2,19 @@ from django.urls import path, include
 from rest_framework.routers import SimpleRouter
 
 from plane.app.views import PlanAPIView, RepositoryAPIView, CaseModuleAPIView, LabelAPIView, CaseAPIView, \
-    EnumDataAPIView, CaseAttachmentV2Endpoint, CaseDetailAPIView
+    EnumDataAPIView, CaseAttachmentV2Endpoint, CaseDetailAPIView, PlanView, PlanModuleAPIView, PlanCaseAPIView
 from plane.app.views.qa.case import CaseAssetAPIView, CaseIssueWithType, TestCaseCommentAPIView
 from plane.app.views.qa.module import CaseModuleCountAPIView
 from plane.app.views.qa.review import ReviewModuleAPIView, CaseReviewAPIView,CaseReviewView
 
 router = SimpleRouter()
-router.register('review', CaseReviewView, basename='case')
+router.register('review', CaseReviewView, basename='review')
+router.register('plan', PlanView, basename='plan')
 
 urlpatterns = [
     path('workspaces/<str:slug>/test/plane/', PlanAPIView.as_view(), name='test-plan'),
+    path('workspaces/<str:slug>/test/plane/case/', PlanCaseAPIView.as_view(), name='test-plan'),
+    path('workspaces/<str:slug>/test/plan/module/', PlanModuleAPIView.as_view(), name='test-plan'),
     path('workspaces/<str:slug>/test/plane-assignee/', PlanAPIView.as_view(), name='test-plan'),
     path('workspaces/<str:slug>/test/label/', LabelAPIView.as_view(), name='test-plan'),
     path('workspaces/<str:slug>/test/module/', CaseModuleAPIView.as_view(), name='test-case'),

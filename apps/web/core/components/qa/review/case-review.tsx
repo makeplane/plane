@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { Transition } from "@headlessui/react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { PageHead } from "@/components/core/page-title";
 import { Breadcrumbs } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
@@ -47,6 +47,7 @@ const getCaseStateTagColor = (text: string): "blue" | "green" | "red" | "default
 export default function CaseReview() {
   const { workspaceSlug } = useParams() as { workspaceSlug?: string };
   const searchParams = useSearchParams();
+  const router = useRouter();
   const reviewId = searchParams.get("review_id") ?? "";
   const initialCaseId = searchParams.get("case_id") ?? undefined;
 
@@ -373,13 +374,13 @@ export default function CaseReview() {
       <PageHead title="用例详情" />
       <Breadcrumbs>
         <Breadcrumbs.Item
-          component={<BreadcrumbLink href={`/${workspaceSlug}/test-management/reviews`} label="用例评审" />}
+          component={<BreadcrumbLink href={`/${workspaceSlug}/test-management/plans`} label="测试计划" />}
         />
         <Breadcrumbs.Item
           component={
             <BreadcrumbLink
               href={`/${workspaceSlug}/test-management/caseManagementReviewDetail?review_id=${encodeURIComponent(String(reviewId))}`}
-              label="评审详情"
+              label="测试计划详情"
             />
           }
         />
