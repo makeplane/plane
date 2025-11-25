@@ -1542,6 +1542,47 @@ export default {
         "Si vous confirmez, toutes les options de tri, de filtrage et d’affichage et la mise en page que vous avez choisie pour cette vue seront définitivement supprimées sans possibilité de les restaurer.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "Changer d’adresse e-mail",
+        description: "Saisissez une nouvelle adresse e-mail pour recevoir un lien de vérification.",
+        toasts: {
+          success_title: "Succès !",
+          success_message: "Adresse e-mail mise à jour. Veuillez vous reconnecter.",
+        },
+        form: {
+          email: {
+            label: "Nouvelle adresse e-mail",
+            placeholder: "Saisissez votre e-mail",
+            errors: {
+              required: "L’e-mail est requis",
+              invalid: "L’e-mail est invalide",
+              exists: "Cette adresse e-mail existe déjà. Utilisez-en une autre.",
+              validation_failed: "Échec de la validation de l’e-mail. Veuillez réessayer.",
+            },
+          },
+          code: {
+            label: "Code unique",
+            placeholder: "gets-sets-flys",
+            helper_text: "Code de vérification envoyé à votre nouvel e-mail.",
+            errors: {
+              required: "Le code unique est requis",
+              invalid: "Code de vérification invalide. Veuillez réessayer.",
+            },
+          },
+        },
+        actions: {
+          continue: "Continuer",
+          confirm: "Confirmer",
+          cancel: "Annuler",
+        },
+        states: {
+          sending: "Envoi…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "Paramètres de l’espace de travail",
     page_label: "{workspace} - Paramètres généraux",

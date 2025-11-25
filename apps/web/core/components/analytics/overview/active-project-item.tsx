@@ -1,6 +1,7 @@
 // plane package imports
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ProjectIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // plane web hooks
 import { useProject } from "@/hooks/store/use-project";
@@ -33,9 +34,9 @@ function ActiveProjectItem(props: Props) {
   if (!projectDetails) return null;
 
   return (
-    <div className="flex items-center justify-between gap-2  ">
-      <div className="flex items-center gap-2">
-        <div className="flex h-8  w-8 items-center justify-center rounded-xl bg-custom-background-80">
+    <div className="flex items-center justify-between gap-2 w-full">
+      <div className="flex items-center gap-2 flex-1 overflow-hidden">
+        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-custom-background-80 shrink-0">
           <span className="grid h-4 w-4 flex-shrink-0 place-items-center">
             {projectDetails?.logo_props ? (
               <Logo logo={projectDetails?.logo_props} size={16} />
@@ -46,13 +47,15 @@ function ActiveProjectItem(props: Props) {
             )}
           </span>
         </div>
-        <p className="text-sm font-medium">{projectDetails?.name}</p>
+        <Tooltip tooltipContent={projectDetails?.name} position="top-start">
+          <p className="text-sm font-medium truncate">{projectDetails?.name}</p>
+        </Tooltip>
       </div>
       <CompletionPercentage
         percentage={completed_issues && total_issues ? Math.round((completed_issues / total_issues) * 100) : 0}
       />
     </div>
   );
-}
+};
 
 export default ActiveProjectItem;

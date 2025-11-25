@@ -1,9 +1,9 @@
+import { observer } from "mobx-react";
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
-export function HomePeekOverviewsRoot() {
-  return (
-    <>
-      <IssuePeekOverview />
-    </>
-  );
-}
+export const HomePeekOverviewsRoot = observer(function HomePeekOverviewsRoot() {
+  const { peekIssue } = useIssueDetail();
+
+  return peekIssue ? <IssuePeekOverview /> : null;
+});
