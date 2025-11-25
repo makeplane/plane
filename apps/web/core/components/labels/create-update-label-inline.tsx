@@ -82,10 +82,10 @@ export const CreateUpdateLabelInline = observer(
 
       // Fallback to general error messages
       if (operation === "create") {
-        return error?.detail ?? error?.error ?? t("common.something_went_wrong");
+        return errorData?.detail ?? errorData?.error ?? t("common.something_went_wrong");
       }
 
-      return error?.error ?? t("project_settings.labels.toast.error");
+      return errorData?.error ?? t("project_settings.labels.toast.error");
     };
 
     const handleLabelCreate: SubmitHandler<IIssueLabel> = async (formData) => {
