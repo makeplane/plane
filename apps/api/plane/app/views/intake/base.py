@@ -433,7 +433,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 )
                 # updated issue description version
                 issue_description_version_task.delay(
-                    updated_issue=issue_requested_data,
+                    updated_issue=issue_current_instance,
                     issue_id=str(pk),
                     user_id=request.user.id,
                 )
@@ -451,7 +451,7 @@ class IntakeIssueViewSet(BaseViewSet):
                 epoch=int(timezone.now().timestamp()),
                 notification=False,
                 origin=base_host(request=request, is_app=True),
-                intake=(intake_issue.id),
+                intake=str(intake_issue.id),
             )
 
         # Fetch and return the updated intake issue

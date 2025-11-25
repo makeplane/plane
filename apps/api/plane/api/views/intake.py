@@ -399,7 +399,7 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
                     cls=DjangoJSONEncoder,
                 ),
                 epoch=int(timezone.now().timestamp()),
-                intake=(intake_issue.id),
+                intake=str(intake_issue.id),
             )
             issue_serializer.save()
 
