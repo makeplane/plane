@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { lazy, Suspense, useEffect, useCallback, useRef } from "react";
+import { lazy, Suspense, useEffect, useCallback, useRef, useState } from "react";
 import { PostHogProvider as PHProvider } from "@posthog/react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -31,6 +31,8 @@ const PostHogProvider = observer(function PostHogProvider(props: IPosthogWrapper
   const { getWorkspaceRoleByWorkspaceSlug, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   // refs
   const isInitializedRef = useRef(false);
+  // states
+  const [hydrated, setHydrated] = useState(false);
   // derived values
   const currentProjectRole = getProjectRoleByWorkspaceSlugAndProjectId(
     workspaceSlug?.toString(),
@@ -41,7 +43,7 @@ const PostHogProvider = observer(function PostHogProvider(props: IPosthogWrapper
   const is_posthog_enabled = process.env.VITE_POSTHOG_KEY && process.env.VITE_POSTHOG_HOST && is_telemetry_enabled;
 
   useEffect(() => {
-    if (user && isInitializedRef.current) {
+    if (user && hydrated) {
       // Identify sends an event, so you want may want to limit how often you call it
       posthog?.identify(user.email, {
         id: user.id,
@@ -58,7 +60,7 @@ const PostHogProvider = observer(function PostHogProvider(props: IPosthogWrapper
         });
       }
     }
-  }, [user, currentProjectRole, currentWorkspaceRole, currentWorkspace]);
+  }, [user, currentProjectRole, currentWorkspaceRole, currentWorkspace, hydrated]);
 
   useEffect(() => {
     if (isInitializedRef.current) return; // prevent multiple initializations
@@ -76,6 +78,7 @@ const PostHogProvider = observer(function PostHogProvider(props: IPosthogWrapper
         disable_session_recording: true,
       });
       isInitializedRef.current = true;
+      setHydrated(true);
     }
   }, []);
 
@@ -92,16 +95,16 @@ const PostHogProvider = observer(function PostHogProvider(props: IPosthogWrapper
   }, []);
 
   useEffect(() => {
-    if (!is_posthog_enabled || !isInitializedRef.current) return;
+    if (!is_posthog_enabled || !hydrated) return;
 
     document.addEventListener("click", clickHandler);
 
     return () => {
       document.removeEventListener("click", clickHandler);
     };
-  }, [is_posthog_enabled, clickHandler]);
+  }, [hydrated, is_posthog_enabled, clickHandler]);
 
-  if (is_posthog_enabled && isInitializedRef.current)
+  if (is_posthog_enabled && hydrated)
     return (
       <PHProvider client={posthog}>
         <Suspense>

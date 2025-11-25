@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Intercom, show, hide, onHide } from "@intercom/messenger-js-sdk";
 import { observer } from "mobx-react";
 // store hooks
@@ -18,21 +18,23 @@ const IntercomProvider = observer(function IntercomProvider(props: IntercomProvi
   const { isIntercomToggle, toggleIntercom } = useTransient();
   // refs
   const isInitializedRef = useRef(false);
+  // states
+  const [hydrated, setHydrated] = useState(false);
   // derived values
   const isIntercomEnabled = user && config && config.is_intercom_enabled && config.intercom_app_id;
 
   useEffect(() => {
-    if (!isInitializedRef.current) return;
+    if (!hydrated) return;
     if (isIntercomToggle) show();
     else hide();
-  }, [isIntercomToggle]);
+  }, [hydrated, isIntercomToggle]);
 
   useEffect(() => {
-    if (!isInitializedRef.current) return;
+    if (!hydrated) return;
     onHide(() => {
       toggleIntercom(false);
     });
-  }, [toggleIntercom]);
+  }, [hydrated, toggleIntercom]);
 
   useEffect(() => {
     if (!isIntercomEnabled || isInitializedRef.current) return; // prevent multiple initializations
@@ -44,6 +46,7 @@ const IntercomProvider = observer(function IntercomProvider(props: IntercomProvi
       hide_default_launcher: true,
     });
     isInitializedRef.current = true;
+    setHydrated(true);
   }, [isIntercomEnabled, config, user]);
 
   return <>{children}</>;
