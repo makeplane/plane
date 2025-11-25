@@ -13,6 +13,11 @@ import type { IIssueLabel } from "@plane/types";
 import { Input } from "@plane/ui";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 
+// error codes
+enum EErrorCodes {
+  LABEL_NAME_ALREADY_EXISTS = "LABEL_NAME_ALREADY_EXISTS",
+}
+
 export type TLabelOperationsCallbacks = {
   createLabel: (data: Partial<IIssueLabel>) => Promise<IIssueLabel>;
   updateLabel: (labelId: string, data: Partial<IIssueLabel>) => Promise<IIssueLabel>;
@@ -59,6 +64,30 @@ export const CreateUpdateLabelInline = observer(
       if (onClose) onClose();
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const getErrorMessage = (error: any, operation: "create" | "update"): string => {
+      const errorData = error?.data ?? error;
+
+      // Check field-level errors with array structure
+      if (errorData?.name && Array.isArray(errorData.name)) {
+        const errorCode = errorData.name[0];
+
+        switch (errorCode) {
+          case EErrorCodes.LABEL_NAME_ALREADY_EXISTS:
+            return t("label.create.already_exists");
+          default:
+            break;
+        }
+      }
+
+      // Fallback to general error messages
+      if (operation === "create") {
+        return error?.detail ?? error?.error ?? t("common.something_went_wrong");
+      }
+
+      return error?.error ?? t("project_settings.labels.toast.error");
+    };
+
     const handleLabelCreate: SubmitHandler<IIssueLabel> = async (formData) => {
       if (isSubmitting) return;
 
@@ -83,10 +112,12 @@ export const CreateUpdateLabelInline = observer(
             },
             error,
           });
+
+          const errorMessage = getErrorMessage(error, "create");
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,
-            message: error?.detail ?? error.error ?? t("common.something_went_wrong"),
+            message: errorMessage,
           });
           reset(formData);
         });
@@ -117,10 +148,11 @@ export const CreateUpdateLabelInline = observer(
             },
             error,
           });
+          const errorMessage = getErrorMessage(error, "update");
           setToast({
             title: "Oops!",
             type: TOAST_TYPE.ERROR,
-            message: error?.error ?? t("project_settings.labels.toast.error"),
+            message: errorMessage,
           });
           reset(formData);
         });
