@@ -3,6 +3,8 @@
 from django.db import migrations, transaction
 from django.db.models import OuterRef, Subquery
 
+import logging
+logger = logging.getLogger("plane.migrations")
 
 BATCH_SIZE = 4000
 
@@ -37,12 +39,12 @@ def create_triage_state(apps, _schema_editor):
             )
     )
 
-    print(f"Creating {len(states_to_create)} triage states...")
+    logger.info(f"Creating {len(states_to_create)} triage states...")
 
     # Bulk-create states
     State.objects.bulk_create(states_to_create, batch_size=BATCH_SIZE)
 
-    print("Updating issues...")
+    logger.info("Updating issues...")
     
     # Single query using Django ORM with Subquery
     with transaction.atomic():
@@ -58,9 +60,9 @@ def create_triage_state(apps, _schema_editor):
             issue_intake__status__in=[-2, 0]
         ).update(state_id=Subquery(triage_state_subquery))
         
-        print(f"Updated {updated_count} issues.")
+        logger.info(f"Updated {updated_count} issues.")
 
-    print("Done.")
+    logger.info("Done.")
 
 
 
