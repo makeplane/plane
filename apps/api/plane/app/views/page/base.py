@@ -426,10 +426,7 @@ class PageViewSet(BaseViewSet):
             .filter(Q(owned_by=request.user) | Q(access=0))
             .annotate(
                 project=Exists(
-                    ProjectPage.objects.filter(
-                        page_id=OuterRef("id"),
-                        project_id=self.kwargs.get("project_id"),
-                    )
+                    ProjectPage.objects.filter(page_id=OuterRef("id"), project_id=self.kwargs.get("project_id"))
                 )
             )
             .filter(project=True)
