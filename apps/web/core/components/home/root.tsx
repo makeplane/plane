@@ -4,7 +4,6 @@ import useSWR from "swr";
 // plane imports
 import { PRODUCT_TOUR_TRACKER_EVENTS } from "@plane/constants";
 import { ContentWrapper } from "@plane/ui";
-import { cn } from "@plane/utils";
 // components
 import { TourRoot } from "@/components/onboarding/tour";
 // helpers
@@ -60,7 +59,7 @@ export const WorkspaceHomeView = observer(function WorkspaceHomeView() {
       )}
       <>
         <HomePeekOverviewsRoot />
-        <ContentWrapper className={cn("gap-6 bg-custom-background-100 mx-auto scrollbar-hide px-page-x lg:px-0")}>
+        <ContentWrapper className="gap-6 bg-custom-background-100 mx-auto scrollbar-hide px-page-x">
           <div className="max-w-[800px] mx-auto w-full">
             {currentUser && <UserGreetingsView user={currentUser} />}
             <DashboardWidgets />
