@@ -79,7 +79,21 @@ export const useTabPreferences = (workspaceSlug: string, projectId: string): TTa
   const handleToggleDefaultTab = (tabKey: string) => {
     const newDefaultTab = tabKey === tabPreferences.defaultTab ? DEFAULT_TAB_KEY : tabKey;
     const newPreferences = { ...tabPreferences, defaultTab: newDefaultTab };
-    updatePreferences(newPreferences);
+    updatePreferences(newPreferences)
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Default tab updated successfully.",
+        });
+      })
+      .catch(() => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Failed to update default tab. Please try again later.",
+        });
+      });
   };
 
   /**
