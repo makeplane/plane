@@ -8,6 +8,7 @@ from plane.app.serializers import (
     ProjectMemberSerializer,
     ProjectMemberAdminSerializer,
     ProjectMemberRoleSerializer,
+    ProjectMemberPreferenceSerializer,
 )
 
 from plane.app.permissions import WorkspaceUserPermission
@@ -326,11 +327,6 @@ class ProjectMemberPreferenceEndpoint(BaseAPIView):
     def get(self, request, slug, project_id, member_id):
         project_member = self.get_project_member(slug, project_id, member_id)
 
-        response = {
-            "preferences": project_member.preferences,
-            "project_id": project_member.project_id,
-            "member_id": project_member.member_id,
-            "workspace_id": project_member.workspace_id,
-        }
+        serializer = ProjectMemberPreferenceSerializer(project_member)
 
-        return Response(response, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)

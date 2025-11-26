@@ -142,6 +142,12 @@ class ProjectMemberSerializer(BaseSerializer):
         fields = "__all__"
 
 
+class ProjectMemberPreferenceSerializer(BaseSerializer):
+    class Meta:
+        model = ProjectMember
+        fields = ["preferences", "project_id", "member_id", "workspace_id"]
+
+
 class ProjectMemberAdminSerializer(BaseSerializer):
     workspace = WorkspaceLiteSerializer(read_only=True)
     project = ProjectLiteSerializer(read_only=True)

@@ -251,23 +251,12 @@ class WorkspaceUserPropertiesEndpoint(BaseAPIView):
     def patch(self, request, slug):
         workspace_properties = WorkspaceUserProperties.objects.get(user=request.user, workspace__slug=slug)
 
-        workspace_properties.filters = request.data.get("filters", workspace_properties.filters)
-        workspace_properties.rich_filters = request.data.get("rich_filters", workspace_properties.rich_filters)
-        workspace_properties.display_filters = request.data.get("display_filters", workspace_properties.display_filters)
-        workspace_properties.display_properties = request.data.get(
-            "display_properties", workspace_properties.display_properties
-        )
-        workspace_properties.navigation_control_preference = request.data.get(
-            "navigation_control_preference", workspace_properties.navigation_control_preference
-        )
-        workspace_properties.navigation_project_limit = request.data.get(
-            "navigation_project_limit", workspace_properties.navigation_project_limit
-        )
+        serializer = WorkspaceUserPropertiesSerializer(workspace_properties, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        workspace_properties.save()
-
-        serializer = WorkspaceUserPropertiesSerializer(workspace_properties)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
