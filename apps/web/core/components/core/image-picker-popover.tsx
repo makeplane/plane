@@ -15,7 +15,7 @@ import { EFileAssetType } from "@plane/types";
 import { Input, Loader } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
-import { STATIC_COVER_IMAGES_ARRAY } from "@/helpers/cover-image.helper";
+import { STATIC_COVER_IMAGES } from "@/helpers/cover-image.helper";
 // hooks
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 // services
@@ -266,7 +266,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                 )}
                 <Tab.Panel className="mt-4 h-full w-full space-y-4">
                   <div className="grid grid-cols-4 gap-4">
-                    {STATIC_COVER_IMAGES_ARRAY.map((imageUrl, index) => (
+                    {STATIC_COVER_IMAGES.map((imageUrl, index) => (
                       <div
                         key={imageUrl}
                         className="relative col-span-2 aspect-video md:col-span-1"

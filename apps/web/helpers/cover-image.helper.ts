@@ -50,7 +50,7 @@ const STATIC_COVER_IMAGES_SET = new Set<string>(Object.values(STATIC_COVER_IMAGE
 /**
  * Array of static image URLs for iteration (e.g., in UI components)
  */
-export const STATIC_COVER_IMAGES_ARRAY = Object.values(STATIC_COVER_IMAGES);
+export const STATIC_COVER_IMAGES = Object.values(STATIC_COVER_IMAGES);
 
 export type TCoverImageType = "local_static" | "uploaded_asset" | "external_url" | "none";
 
