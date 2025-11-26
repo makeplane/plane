@@ -429,7 +429,6 @@ class PageViewSet(BaseViewSet):
                     ProjectPage.objects.filter(
                         page_id=OuterRef("id"),
                         project_id=self.kwargs.get("project_id"),
-                        deleted_at__isnull=True,
                     )
                 )
             )
@@ -600,9 +599,7 @@ class PageDuplicateEndpoint(BaseAPIView):
             return Response({"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN)
 
         # get all the project ids where page is present
-        project_ids = ProjectPage.objects.filter(page_id=page_id, deleted_at__isnull=True).values_list(
-            "project_id", flat=True
-        )
+        project_ids = ProjectPage.objects.filter(page_id=page_id).values_list("project_id", flat=True)
 
         page.pk = None
         page.name = f"{page.name} (Copy)"
