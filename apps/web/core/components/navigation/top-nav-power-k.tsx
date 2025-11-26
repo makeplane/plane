@@ -207,19 +207,21 @@ export const TopNavPowerK = observer(() => {
   );
 
   return (
-    <div ref={containerRef} className="relative flex justify-center">
+    <div ref={containerRef} className="relative">
       <div
-        className={cn(
-          "relative flex items-center transition-all duration-300 ease-in-out z-30",
-          isOpen ? "w-[554px]" : "w-[364px]"
-        )}
+        className={cn("relative w-[364px] flex items-center transition-all duration-300 ease-in-out z-30", {
+          "w-[554px]": isOpen,
+        })}
       >
         <div
           className={cn(
-            "flex items-center w-full h-7 px-2 py-2 rounded-md bg-custom-sidebar-background-80 hover:bg-custom-background-80 transition-colors duration-200",
-            isOpen && "border border-custom-border-200"
+            "flex items-center w-full h-7 p-2 rounded-md bg-custom-sidebar-background-80 hover:bg-custom-background-80 border border-transparent transition-colors duration-200",
+            {
+              "border-custom-border-200": isOpen,
+            }
           )}
           onClick={() => inputRef.current?.focus()}
+          role="button"
         >
           <SearchIcon className="shrink-0 size-3.5 text-custom-text-350 mr-2" />
           <input
@@ -239,7 +241,6 @@ export const TopNavPowerK = observer(() => {
           )}
         </div>
       </div>
-
       <div
         className={cn(
           "absolute -top-[6px] left-1/2 -translate-x-1/2  bg-custom-background-100 border border-custom-border-200 rounded-md shadow-lg overflow-hidden z-20  transition-all duration-300 ease-in-out flex flex-col px-0 pt-10",

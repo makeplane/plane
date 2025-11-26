@@ -1,14 +1,15 @@
 "use client";
 
 import type { FC } from "react";
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router";
 import { LinkIcon, LogOut, MoreHorizontal, Settings, Share2, ArchiveIcon } from "lucide-react";
+// plane imports
 import { MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CustomMenu } from "@plane/ui";
 
-type ProjectActionsMenuProps = {
+type Props = {
   workspaceSlug: string;
   project: {
     id: string;
@@ -20,7 +21,7 @@ type ProjectActionsMenuProps = {
   onPublishModal: () => void;
 };
 
-export const ProjectActionsMenu: FC<ProjectActionsMenuProps> = ({
+export const ProjectActionsMenu: FC<Props> = ({
   workspaceSlug,
   project,
   isAdmin,
@@ -29,10 +30,14 @@ export const ProjectActionsMenu: FC<ProjectActionsMenuProps> = ({
   onLeaveProject,
   onPublishModal,
 }) => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const actionSectionRef = useRef<HTMLDivElement | null>(null);
+  // states
   const [isMenuActive, setIsMenuActive] = useState(false);
+  // translation
+  const { t } = useTranslation();
+  // refs
+  const actionSectionRef = useRef<HTMLDivElement | null>(null);
+  // router
+  const navigate = useNavigate();
 
   return (
     <CustomMenu

@@ -65,14 +65,13 @@ export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: Work
 
   // Toggle sidebar dropdown state when either menu is open
   useEffect(() => {
-    if (isWorkspaceMenuOpen) toggleAnySidebarDropdown(true);
-    else toggleAnySidebarDropdown(false);
-  }, [isWorkspaceMenuOpen]);
+    toggleAnySidebarDropdown(isWorkspaceMenuOpen);
+  }, [isWorkspaceMenuOpen, toggleAnySidebarDropdown]);
 
   return (
     <Menu
       as="div"
-      className={cn("relative h-full flex max-w-48 truncate", {
+      className={cn("relative h-full flex max-w-48 w-fit whitespace-nowrap truncate", {
         "justify-center text-center": renderLogoOnly,
         "flex-grow justify-stretch text-left truncate": !renderLogoOnly,
       })}
