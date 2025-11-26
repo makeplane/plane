@@ -15,7 +15,6 @@ export const TopNavigationRoot = observer(() => {
   return (
     <div
       className={cn("flex items-center justify-evenly min-h-11 w-full px-3.5 z-[27] transition-all duration-300", {
-        "px-3.5": showLabel,
         "px-2": !showLabel,
       })}
     >
