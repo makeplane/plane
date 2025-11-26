@@ -11,6 +11,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
+import { EFileAssetType } from "@plane/types";
 import type { IUser, TUserProfile } from "@plane/types";
 import { Input } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
@@ -19,6 +20,7 @@ import { DeactivateAccountModal } from "@/components/account/deactivate-account-
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
 // helpers
+import { DEFAULT_COVER_IMAGE_URL, getCoverImageDisplayURL, handleCoverImageChange } from "@/helpers/cover-image.helper";
 import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
 import { useUser, useUserProfile } from "@/hooks/store/user";
@@ -112,11 +114,26 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
       avatar_url: formData.avatar_url,
       display_name: formData?.display_name,
     };
-    // if unsplash or a pre-defined image is uploaded, delete the old uploaded asset
-    if (formData.cover_image_url?.startsWith("http")) {
-      userPayload.cover_image_url = formData.cover_image_url;
-      userPayload.cover_image = formData.cover_image_url;
-      userPayload.cover_image_asset = null;
+
+    try {
+      const coverImagePayload = await handleCoverImageChange(user.cover_image_url, formData.cover_image_url, {
+        entityIdentifier: "",
+        entityType: EFileAssetType.USER_COVER,
+        isUserAsset: true,
+      });
+
+      if (coverImagePayload) {
+        Object.assign(userPayload, coverImagePayload);
+      }
+    } catch (error) {
+      console.error("Error handling cover image:", error);
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("toast.error"),
+        message: error instanceof Error ? error.message : "Failed to process cover image",
+      });
+      setIsLoading(false);
+      return;
     }
 
     const profilePayload: Partial<TUserProfile> = {
@@ -187,7 +204,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
         <div className="flex w-full flex-col gap-6">
           <div className="relative h-44 w-full">
             <img
-              src={userCover ? getFileURL(userCover) : "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
+              src={getCoverImageDisplayURL(userCover, DEFAULT_COVER_IMAGE_URL)}
               className="h-44 w-full rounded-lg object-cover"
               alt={currentUser?.first_name ?? "Cover image"}
             />
@@ -221,8 +238,8 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
                 render={({ field: { value, onChange } }) => (
                   <ImagePickerPopover
                     label={t("change_cover")}
-                    onChange={(imageUrl) => onChange(imageUrl)}
                     control={control}
+                    onChange={(imageUrl) => onChange(imageUrl)}
                     value={value ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
                     isProfileCover
                   />

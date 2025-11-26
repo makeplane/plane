@@ -15,6 +15,7 @@ import { EFileAssetType } from "@plane/types";
 import { Input, Loader } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
+import { STATIC_COVER_IMAGES_ARRAY } from "@/helpers/cover-image.helper";
 // hooks
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 // services
@@ -73,11 +74,6 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
     }
   );
 
-  const { data: projectCoverImages } = useSWR(`PROJECT_COVER_IMAGES`, () => fileService.getProjectCoverImages(), {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-  });
-
   const imagePickerRef = useRef<HTMLDivElement>(null);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -89,6 +85,11 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
     accept: ACCEPTED_COVER_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE,
     maxSize: MAX_FILE_SIZE,
   });
+
+  const handleStaticImageSelect = (imageUrl: string) => {
+    onChange(imageUrl);
+    setIsOpen(false);
+  };
 
   const handleSubmit = async () => {
     if (!image) return;
@@ -183,23 +184,18 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
           >
             <Tab.Group>
               <Tab.List as="span" className="inline-block rounded bg-custom-background-80 p-1">
-                {tabOptions.map((tab) => {
-                  if (!unsplashImages && unsplashError && tab.key === "unsplash") return null;
-                  if (projectCoverImages && projectCoverImages.length === 0 && tab.key === "images") return null;
-
-                  return (
-                    <Tab
-                      key={tab.key}
-                      className={({ selected }) =>
-                        `rounded px-4 py-1 text-center text-sm outline-none transition-colors ${
-                          selected ? "bg-custom-primary text-white" : "text-custom-text-100"
-                        }`
-                      }
-                    >
-                      {tab.title}
-                    </Tab>
-                  );
-                })}
+                {tabOptions.map((tab) => (
+                  <Tab
+                    key={tab.key}
+                    className={({ selected }) =>
+                      `rounded px-4 py-1 text-center text-sm outline-none transition-colors ${
+                        selected ? "bg-custom-primary text-white" : "text-custom-text-100"
+                      }`
+                    }
+                  >
+                    {tab.title}
+                  </Tab>
+                ))}
               </Tab.List>
               <Tab.Panels className="vertical-scrollbar scrollbar-md h-full w-full flex-1 overflow-y-auto overflow-x-hidden">
                 {(unsplashImages || !unsplashError) && (
@@ -268,45 +264,23 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                     )}
                   </Tab.Panel>
                 )}
-                {(!projectCoverImages || projectCoverImages.length !== 0) && (
-                  <Tab.Panel className="mt-4 h-full w-full space-y-4">
-                    {projectCoverImages ? (
-                      projectCoverImages.length > 0 ? (
-                        <div className="grid grid-cols-4 gap-4">
-                          {projectCoverImages.map((image, index) => (
-                            <div
-                              key={image}
-                              className="relative col-span-2 aspect-video md:col-span-1"
-                              onClick={() => {
-                                setIsOpen(false);
-                                onChange(image);
-                              }}
-                            >
-                              <img
-                                src={image}
-                                alt={`Default project cover image- ${index}`}
-                                className="absolute left-0 top-0 h-full w-full cursor-pointer rounded object-cover"
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="pt-7 text-center text-xs text-custom-text-300">No images found.</p>
-                      )
-                    ) : (
-                      <Loader className="grid grid-cols-4 gap-4 pt-4">
-                        <Loader.Item height="80px" width="100%" />
-                        <Loader.Item height="80px" width="100%" />
-                        <Loader.Item height="80px" width="100%" />
-                        <Loader.Item height="80px" width="100%" />
-                        <Loader.Item height="80px" width="100%" />
-                        <Loader.Item height="80px" width="100%" />
-                        <Loader.Item height="80px" width="100%" />
-                        <Loader.Item height="80px" width="100%" />
-                      </Loader>
-                    )}
-                  </Tab.Panel>
-                )}
+                <Tab.Panel className="mt-4 h-full w-full space-y-4">
+                  <div className="grid grid-cols-4 gap-4">
+                    {STATIC_COVER_IMAGES_ARRAY.map((imageUrl, index) => (
+                      <div
+                        key={imageUrl}
+                        className="relative col-span-2 aspect-video md:col-span-1"
+                        onClick={() => handleStaticImageSelect(imageUrl)}
+                      >
+                        <img
+                          src={imageUrl}
+                          alt={`Cover image ${index + 1}`}
+                          className="absolute left-0 top-0 h-full w-full cursor-pointer rounded object-cover hover:opacity-80 transition-opacity"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </Tab.Panel>
                 <Tab.Panel className="mt-4 h-full w-full">
                   <div className="flex h-full w-full flex-col gap-y-2">
                     <div className="flex w-full flex-1 items-center gap-3">

@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -6,11 +5,13 @@ import { DEFAULT_PROJECT_FORM_VALUES, PROJECT_TRACKER_EVENTS } from "@plane/cons
 import { useTranslation } from "@plane/i18n";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { EFileAssetType } from "@plane/types";
 // constants
 import ProjectCommonAttributes from "@/components/project/create/common-attributes";
 import ProjectCreateHeader from "@/components/project/create/header";
 import ProjectCreateButtons from "@/components/project/create/project-create-buttons";
 // hooks
+import { getCoverImageType, uploadCoverImage } from "@/helpers/cover-image.helper";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -58,15 +59,39 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
     // Upper case identifier
     formData.identifier = formData.identifier?.toUpperCase();
     const coverImage = formData.cover_image_url;
-    // if unsplash or a pre-defined image is uploaded, delete the old uploaded asset
-    if (coverImage?.startsWith("http")) {
-      formData.cover_image = coverImage;
-      formData.cover_image_asset = null;
+    let uploadedAssetUrl: string | null = null;
+
+    if (coverImage) {
+      const imageType = getCoverImageType(coverImage);
+
+      if (imageType === "local_static") {
+        try {
+          uploadedAssetUrl = await uploadCoverImage(coverImage, {
+            workspaceSlug: workspaceSlug.toString(),
+            entityIdentifier: "",
+            entityType: EFileAssetType.PROJECT_COVER,
+            isUserAsset: false,
+          });
+        } catch (error) {
+          console.error("Error uploading cover image:", error);
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("toast.error"),
+            message: error instanceof Error ? error.message : "Failed to upload cover image",
+          });
+          return Promise.reject(error);
+        }
+      } else {
+        formData.cover_image = coverImage;
+        formData.cover_image_asset = null;
+      }
     }
 
     return createProject(workspaceSlug.toString(), formData)
       .then(async (res) => {
-        if (coverImage) {
+        if (uploadedAssetUrl) {
+          await updateCoverImageStatus(res.id, uploadedAssetUrl);
+        } else if (coverImage && coverImage.startsWith("http")) {
           await updateCoverImageStatus(res.id, coverImage);
         }
         captureSuccess({
