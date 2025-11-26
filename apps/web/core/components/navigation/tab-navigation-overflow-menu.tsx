@@ -1,14 +1,17 @@
 import React from "react";
 import { Link } from "react-router";
-import { MoreHorizontal, Star, Pin } from "lucide-react";
+import { MoreHorizontal, Pin } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
+import { SetAsDefaultIcon } from "@plane/propel/icons";
 import { Menu } from "@plane/propel/menu";
-import { TabNavigationItem } from "@plane/propel/tab-navigation";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
+// local imports
 import type { TNavigationItem } from "./tab-navigation-root";
 import type { TTabPreferences } from "./tab-navigation-utils";
 
-export type TTabNavigationOverflowMenuProps = {
+type Props = {
   overflowItems: TNavigationItem[];
   isActive: (item: TNavigationItem) => boolean;
   tabPreferences: TTabPreferences;
@@ -19,9 +22,9 @@ export type TTabNavigationOverflowMenuProps = {
 /**
  * Overflow menu for tab navigation items
  * Displays items that don't fit in the visible area, with action icons
- * Shows "Eye" icon for user-hidden items, "Star" icon for all items
+ * Shows "Eye" icon for user-hidden items, "Set as default" icon for all items
  */
-export const TabNavigationOverflowMenu: React.FC<TTabNavigationOverflowMenuProps> = ({
+export const TabNavigationOverflowMenu: React.FC<Props> = ({
   overflowItems,
   isActive,
   tabPreferences,
@@ -48,23 +51,12 @@ export const TabNavigationOverflowMenu: React.FC<TTabNavigationOverflowMenuProps
         const isDefault = item.key === tabPreferences.defaultTab;
 
         return (
-          <Menu.MenuItem
-            key={`${item.key}-overflow-${itemIsActive ? "active" : "inactive"}`}
-            className={cn("p-0 w-full", {
-              "bg-custom-background-80": itemIsActive,
-            })}
-          >
-            <div className="flex items-center justify-between w-full group">
-              <Link to={item.href} className="flex-1 min-w-0 w-full">
-                <TabNavigationItem isActive={itemIsActive}>
-                  <span className="text-sm">{t(item.i18n_key)}</span>
-                </TabNavigationItem>
+          <Menu.MenuItem key={`${item.key}-overflow-${itemIsActive ? "active" : "inactive"}`} className="p-0 w-full">
+            <div className="flex items-center justify-between w-full group/menu-item">
+              <Link to={item.href} className="flex-1 min-w-0 w-full p-1">
+                <span className="text-xs">{t(item.i18n_key)}</span>
               </Link>
-              <div
-                className={cn("flex items-center gap-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity", {
-                  "opacity-100": itemIsActive,
-                })}
-              >
+              <div className="flex items-center">
                 {/* Show Eye icon ONLY for user-hidden items */}
                 {isHidden && (
                   <button
@@ -74,23 +66,30 @@ export const TabNavigationOverflowMenu: React.FC<TTabNavigationOverflowMenuProps
                       e.preventDefault();
                       onShow(item.key);
                     }}
-                    className="p-1 rounded hover:bg-custom-background-90"
+                    className="invisible group-hover/menu-item:visible p-1 rounded text-custom-text-300 hover:text-custom-text-100 transition-colors"
                     title="Show"
                   >
-                    <Pin className="h-3.5 w-3.5 text-custom-text-300 rotate-45" />
+                    <Pin className="size-3" />
                   </button>
                 )}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    onToggleDefault(item.key);
-                  }}
-                  className="p-1 rounded hover:bg-custom-background-90"
-                  title={isDefault ? "Clear default" : "Set as default"}
-                >
-                  <Star className={`h-3.5 w-3.5 text-custom-text-300 ${isDefault ? "fill-current" : ""}`} />
-                </button>
+                <Tooltip tooltipContent={isDefault ? "Clear default" : "Set as default"}>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      onToggleDefault(item.key);
+                    }}
+                    className={cn(
+                      "invisible group-hover/menu-item:visible p-1 rounded text-custom-text-300 hover:text-custom-text-100 transition-colors",
+                      {
+                        visible: isDefault,
+                      }
+                    )}
+                    title={isDefault ? "Clear default" : "Set as default"}
+                  >
+                    <SetAsDefaultIcon className="size-3" />
+                  </button>
+                </Tooltip>
               </div>
             </div>
           </Menu.MenuItem>

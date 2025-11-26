@@ -14,20 +14,20 @@ export const TopNavigationRoot = observer(() => {
 
   return (
     <div
-      className={cn("flex items-center justify-evenly min-h-11 w-full px-3.5 z-[27] transition-all duration-300", {
+      className={cn("flex items-center min-h-11 w-full px-3.5 z-[27] transition-all duration-300", {
         "px-2": !showLabel,
       })}
     >
       {/* Workspace Menu */}
-      <div className="flex items-center justify-start flex-shrink-0">
+      <div className="shrink-0 flex-1">
         <WorkspaceMenuRoot />
       </div>
       {/* Power K Search */}
-      <div className="flex items-center justify-center flex-grow px-4">
+      <div className="shrink-0">
         <TopNavPowerK />
       </div>
       {/* Additional Actions */}
-      <div className="flex gap-1 items-center justify-end flex-shrink-0 min-w-48">
+      <div className="shrink-0 flex-1 flex gap-1 items-center justify-end">
         <HelpMenuRoot />
         <div className="flex items-center justify-center size-8 hover:bg-custom-background-80 rounded-md">
           <UserMenuRoot size="xs" />

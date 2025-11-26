@@ -167,21 +167,23 @@ export const TabNavigationRoot: FC<TTabNavigationRootProps> = observer((props) =
       />
 
       {/* container for the tab navigation */}
-      <div className="flex items-center gap-3 overflow-hidden pl-1.5 w-full h-full">
-        <div className="flex items-center gap-2 flex-shrink-0 max-w-48 truncate">
+      <div className="flex items-center gap-3 overflow-hidden pl-1.5 size-full">
+        <div className="flex items-center gap-2 shrink-0">
           <ProjectHeader project={project} />
-          <ProjectActionsMenu
-            workspaceSlug={workspaceSlug}
-            project={project}
-            isAdmin={isAdmin}
-            isAuthorized={isAuthorized}
-            onCopyText={handleCopyText}
-            onLeaveProject={handleLeaveProject}
-            onPublishModal={() => handlePublishModal(true)}
-          />
+          <div className="shrink-0">
+            <ProjectActionsMenu
+              workspaceSlug={workspaceSlug}
+              project={project}
+              isAdmin={isAdmin}
+              isAuthorized={isAuthorized}
+              onCopyText={handleCopyText}
+              onLeaveProject={handleLeaveProject}
+              onPublishModal={() => handlePublishModal(true)}
+            />
+          </div>
         </div>
 
-        <div className="flex-shrink-0 h-5 w-1 border-l border-custom-border-200" />
+        <div className="shrink-0 h-5 w-1 border-l border-custom-border-200" />
 
         <div ref={containerRef} className="flex items-center h-full flex-1 min-w-0 overflow-hidden">
           <TabNavigationList className="h-full">

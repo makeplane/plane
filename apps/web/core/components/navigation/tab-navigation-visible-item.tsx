@@ -1,8 +1,12 @@
 import React from "react";
 import { Link } from "react-router";
+import { PinOff } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { ContextMenu } from "@plane/propel/context-menu";
+import { SetAsDefaultIcon } from "@plane/propel/icons";
 import { TabNavigationItem } from "@plane/propel/tab-navigation";
+// local imports
 import type { TNavigationItem } from "./tab-navigation-root";
 import type { TTabPreferences } from "./tab-navigation-utils";
 
@@ -51,7 +55,9 @@ export const TabNavigationVisibleItem: React.FC<TTabNavigationVisibleItemProps> 
                   e.stopPropagation();
                   onToggleDefault(item.key);
                 }}
+                className="flex items-center gap-2 text-custom-text-200 transition-colors cursor-pointer"
               >
+                <SetAsDefaultIcon className="shrink-0 size-3" />
                 <span className="text-xs">{isDefault ? "Clear default" : "Set as default"}</span>
               </ContextMenu.Item>
               <ContextMenu.Item
@@ -59,7 +65,9 @@ export const TabNavigationVisibleItem: React.FC<TTabNavigationVisibleItemProps> 
                   e.stopPropagation();
                   onHide(item.key);
                 }}
+                className="flex items-center gap-2 text-custom-text-200 transition-colors cursor-pointer"
               >
+                <PinOff className="shrink-0 size-3" />
                 <span className="text-xs">Hide in more menu</span>
               </ContextMenu.Item>
             </ContextMenu.Content>

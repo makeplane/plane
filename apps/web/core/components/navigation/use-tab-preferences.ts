@@ -57,19 +57,10 @@ export const useTabPreferences = (workspaceSlug: string, projectId: string): TTa
   const updatePreferences = async (newPreferences: TTabPreferences) => {
     if (!memberId) return;
 
-    try {
-      await updateProjectMemberPreferences(workspaceSlug, projectId, memberId, {
-        default_tab: newPreferences.defaultTab,
-        hide_in_more_menu: newPreferences.hiddenTabs,
-      });
-    } catch (error) {
-      console.error("Error updating tab preferences:", error);
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Something went wrong. Please try again later.",
-      });
-    }
+    await updateProjectMemberPreferences(workspaceSlug, projectId, memberId, {
+      default_tab: newPreferences.defaultTab,
+      hide_in_more_menu: newPreferences.hiddenTabs,
+    });
   };
 
   /**
@@ -79,7 +70,21 @@ export const useTabPreferences = (workspaceSlug: string, projectId: string): TTa
   const handleToggleDefaultTab = (tabKey: string) => {
     const newDefaultTab = tabKey === tabPreferences.defaultTab ? DEFAULT_TAB_KEY : tabKey;
     const newPreferences = { ...tabPreferences, defaultTab: newDefaultTab };
-    updatePreferences(newPreferences);
+    updatePreferences(newPreferences)
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: "Default tab updated successfully.",
+        });
+      })
+      .catch(() => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Failed to update default tab. Please try again later.",
+        });
+      });
   };
 
   /**
@@ -90,7 +95,16 @@ export const useTabPreferences = (workspaceSlug: string, projectId: string): TTa
       ...tabPreferences,
       hiddenTabs: [...tabPreferences.hiddenTabs, tabKey],
     };
-    updatePreferences(newPreferences);
+    try {
+      updatePreferences(newPreferences);
+    } catch (error) {
+      console.error("Error hiding tab:", error);
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Failed to hide tab. Please try again later.",
+      });
+    }
   };
 
   /**
@@ -101,7 +115,16 @@ export const useTabPreferences = (workspaceSlug: string, projectId: string): TTa
       ...tabPreferences,
       hiddenTabs: tabPreferences.hiddenTabs.filter((key) => key !== tabKey),
     };
-    updatePreferences(newPreferences);
+    try {
+      updatePreferences(newPreferences);
+    } catch (error) {
+      console.error("Error showing tab:", error);
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Something went wrong. Please try again later.",
+      });
+    }
   };
 
   return {

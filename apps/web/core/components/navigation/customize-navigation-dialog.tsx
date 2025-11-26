@@ -71,7 +71,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
   const filteredPersonalItems = PERSONAL_ITEMS;
 
   // Filter workspace items by permissions and feature flags, then get pinned/unpinned items
-  const { pinnedItems, unpinnedItems } = useMemo(() => {
+  const workspaceItems = useMemo(() => {
     const items = WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS.filter((item) => {
       // Permission check
       const hasPermission = allowPermissions(
@@ -94,11 +94,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
       };
     });
 
-    // Sort pinned items by sort_order
-    const pinned = items.filter((item) => item.isPinned).sort((a, b) => a.sortOrder - b.sortOrder);
-    const unpinned = items.filter((item) => !item.isPinned);
-
-    return { pinnedItems: pinned, unpinnedItems: unpinned };
+    return items.sort((a, b) => a.sortOrder - b.sortOrder);
   }, [workspaceSlug, allowPermissions, workspacePreferences]);
 
   // Handle checkbox toggle
@@ -134,7 +130,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
   );
 
   // Separate personal items into enabled/disabled
-  const { enabledPersonalItems, disabledPersonalItems } = useMemo(() => {
+  const personalItems = useMemo(() => {
     const items = filteredPersonalItems.map((item) => {
       const itemState = personalPreferences.items[item.key];
       const isEnabled = typeof itemState === "boolean" ? itemState : (itemState?.enabled ?? true);
@@ -147,10 +143,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
       };
     });
 
-    const enabled = items.filter((item) => item.isEnabled).sort((a, b) => a.sortOrder - b.sortOrder);
-    const disabled = items.filter((item) => !item.isEnabled);
-
-    return { enabledPersonalItems: enabled, disabledPersonalItems: disabled };
+    return items.sort((a, b) => a.sortOrder - b.sortOrder);
   }, [personalPreferences, filteredPersonalItems]);
 
   // Prevent typing invalid characters in number input
@@ -203,18 +196,19 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
           {/* Personal Section */}
           <div className="flex flex-col gap-2">
             <h3 className="text-sm font-semibold text-custom-text-400">{t("personal")}</h3>
-
-            {/* Enabled Items - Sortable */}
             <div className="border border-custom-border-200 rounded-md py-2 bg-custom-background-90">
               <Sortable
-                data={enabledPersonalItems}
+                data={personalItems}
                 onChange={handlePersonalReorder}
                 keyExtractor={(item) => item.key}
                 id="personal-enabled-items"
                 render={(item) => (
                   <div className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-custom-background-90 transition-all duration-200">
                     <GripVertical className="size-4 text-custom-text-400 cursor-grab active:cursor-grabbing transition-colors" />
-                    <Checkbox checked onChange={(e) => togglePersonalItem(item.key, e.target.checked)} />
+                    <Checkbox
+                      checked={!!personalPreferences.items[item.key]?.enabled}
+                      onChange={(e) => togglePersonalItem(item.key, e.target.checked)}
+                    />
                     <div className="flex items-center gap-2 flex-1">
                       {getSidebarNavigationItemIcon(item.key)}
                       <label className="text-sm text-custom-text-200 flex-1 cursor-pointer">
@@ -224,27 +218,6 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
                   </div>
                 )}
               />
-
-              {/* Disabled Items */}
-              {disabledPersonalItems.length > 0 && (
-                <div className={cn("space-y-1", enabledPersonalItems.length > 0 && "mt-1")}>
-                  {disabledPersonalItems.map((item) => (
-                    <div
-                      key={item.key}
-                      className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-custom-background-90 transition-all duration-200"
-                    >
-                      <GripVertical className="size-4 text-custom-text-400 opacity-40" />
-                      <Checkbox checked={false} onChange={(e) => togglePersonalItem(item.key, e.target.checked)} />
-                      <div className="flex items-center gap-2 flex-1">
-                        {getSidebarNavigationItemIcon(item.key)}
-                        <label className="text-sm text-custom-text-200 flex-1 cursor-pointer">
-                          {t(item.labelTranslationKey)}
-                        </label>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
           </div>
 
@@ -254,7 +227,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
             <div className="border border-custom-border-200 rounded-md py-2 bg-custom-background-90">
               {/* Pinned Items - Draggable */}
               <Sortable
-                data={pinnedItems}
+                data={workspaceItems}
                 onChange={handleReorder}
                 keyExtractor={(item) => item.key}
                 id="workspace-pinned-items"
@@ -263,7 +236,10 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
                   return (
                     <div className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-custom-background-90 group transition-all duration-200">
                       <GripVertical className="size-4 text-custom-text-400 cursor-grab active:cursor-grabbing transition-colors" />
-                      <Checkbox checked onChange={(e) => handleWorkspaceItemToggle(item.key, e.target.checked)} />
+                      <Checkbox
+                        checked={!!workspacePreferences.items[item.key]?.is_pinned}
+                        onChange={(e) => handleWorkspaceItemToggle(item.key, e.target.checked)}
+                      />
                       <div className="flex items-center gap-2 flex-1">
                         {icon}
                         <span className="text-sm text-custom-text-200">{t(item.labelTranslationKey)}</span>
@@ -272,31 +248,6 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
                   );
                 }}
               />
-
-              {/* Unpinned Items */}
-              {unpinnedItems.length > 0 && (
-                <div className="space-y-1 mt-1">
-                  {unpinnedItems.map((item) => {
-                    const icon = getSidebarNavigationItemIcon(item.key);
-                    return (
-                      <div
-                        key={item.key}
-                        className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-custom-background-90 transition-all duration-200"
-                      >
-                        <GripVertical className="size-4 text-custom-text-400 opacity-40" />
-                        <Checkbox
-                          checked={false}
-                          onChange={(e) => handleWorkspaceItemToggle(item.key, e.target.checked)}
-                        />
-                        <div className="flex items-center gap-2 flex-1">
-                          {icon}
-                          <span className="text-sm text-custom-text-200">{t(item.labelTranslationKey)}</span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
             </div>
           </div>
 
