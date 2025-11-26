@@ -22,7 +22,7 @@ type Props = {
 /**
  * Overflow menu for tab navigation items
  * Displays items that don't fit in the visible area, with action icons
- * Shows "Eye" icon for user-hidden items, "Star" icon for all items
+ * Shows "Eye" icon for user-hidden items, "Set as default" icon for all items
  */
 export const TabNavigationOverflowMenu: React.FC<Props> = ({
   overflowItems,
