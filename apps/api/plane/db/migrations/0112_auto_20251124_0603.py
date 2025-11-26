@@ -80,7 +80,6 @@ def create_triage_state(apps, _schema_editor):
         logger.info(f"Updated {updated_count} issues.")
 
 
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -88,5 +87,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(create_triage_state),
+        migrations.RunPython(create_triage_state, 
+        reverse_code=migrations.RunPython.noop),
     ]
