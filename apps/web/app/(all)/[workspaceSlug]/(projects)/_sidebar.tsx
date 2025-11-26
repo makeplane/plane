@@ -2,13 +2,13 @@ import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { useParams, usePathname } from "next/navigation";
 import { SIDEBAR_WIDTH } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 // components
 import { ResizableSidebar } from "@/components/sidebar/resizable-sidebar";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
-import { useAppRail } from "@/hooks/use-app-rail";
 // local imports
 import { ExtendedAppSidebar } from "./extended-sidebar";
 import { AppSidebar } from "./sidebar";
@@ -26,13 +26,18 @@ export const ProjectAppSidebar = observer(function ProjectAppSidebar() {
   const { storedValue, setValue } = useLocalStorage("sidebarWidth", SIDEBAR_WIDTH);
   // states
   const [sidebarWidth, setSidebarWidth] = useState<number>(storedValue ?? SIDEBAR_WIDTH);
-  // hooks
-  const { shouldRenderAppRail } = useAppRail();
+  // routes
+  const { workspaceSlug } = useParams();
+  const pathname = usePathname();
   // derived values
   const isAnyExtendedSidebarOpen = isExtendedSidebarOpened;
 
+  const isNotificationsPath = pathname.includes(`/${workspaceSlug}/notifications`);
+
   // handlers
   const handleWidthChange = (width: number) => setValue(width);
+
+  if (isNotificationsPath) return null;
 
   return (
     <>
@@ -55,7 +60,6 @@ export const ProjectAppSidebar = observer(function ProjectAppSidebar() {
         }
         isAnyExtendedSidebarExpanded={isAnyExtendedSidebarOpen}
         isAnySidebarDropdownOpen={isAnySidebarDropdownOpen}
-        disablePeekTrigger={shouldRenderAppRail}
       >
         <AppSidebar />
       </ResizableSidebar>

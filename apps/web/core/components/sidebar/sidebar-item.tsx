@@ -12,6 +12,7 @@ interface AppSidebarItemData {
   isActive?: boolean;
   onClick?: () => void;
   disabled?: boolean;
+  showLabel?: boolean;
 }
 
 interface AppSidebarItemProps {
@@ -51,7 +52,7 @@ const styles = {
   icon: "flex items-center justify-center gap-2 size-8 rounded-md text-custom-text-300",
   iconActive: "bg-custom-background-80 text-custom-text-200",
   iconInactive: "group-hover:text-custom-text-200 group-hover:bg-custom-background-80",
-  label: "text-xs font-semibold",
+  label: "text-xs font-medium",
   labelActive: "text-custom-text-200",
   labelInactive: "group-hover:text-custom-text-200 text-custom-text-300",
 } as const;
@@ -122,12 +123,12 @@ export type AppSidebarItemComponent = React.FC<AppSidebarItemProps> & {
 function AppSidebarItem({ variant = "link", item }: AppSidebarItemProps) {
   if (!item) return null;
 
-  const { icon, isActive, label, href, onClick, disabled } = item;
+  const { icon, isActive, label, href, onClick, disabled, showLabel = true } = item;
 
   const commonItems = (
     <>
       <AppSidebarItemIcon icon={icon} highlight={isActive} />
-      <AppSidebarItemLabel highlight={isActive} label={label} />
+      {showLabel && <AppSidebarItemLabel highlight={isActive} label={label} />}
     </>
   );
 

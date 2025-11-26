@@ -65,15 +65,23 @@ class WorkspaceUserPreferenceViewSet(BaseAPIView):
         )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
-    def patch(self, request, slug, key):
-        preference = WorkspaceUserPreference.objects.filter(key=key, workspace__slug=slug, user=request.user).first()
+    def patch(self, request, slug):
+        for data in request.data:
+            key = data.pop("key", None)
+            if not key:
+                continue
 
-        if preference:
-            serializer = WorkspaceUserPreferenceSerializer(preference, data=request.data, partial=True)
+            preference = WorkspaceUserPreference.objects.filter(key=key, workspace__slug=slug).first()
 
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            if not preference:
+                continue
 
-        return Response({"detail": "Preference not found"}, status=status.HTTP_404_NOT_FOUND)
+            if "is_pinned" in data:
+                preference.is_pinned = data["is_pinned"]
+
+            if "sort_order" in data:
+                preference.sort_order = data["sort_order"]
+
+            preference.save(update_fields=["is_pinned", "sort_order"])
+
+        return Response({"message": "Successfully updated"}, status=status.HTTP_200_OK)

@@ -300,3 +300,37 @@ class UserProjectRolesEndpoint(BaseAPIView):
 
         project_members = {str(member["project_id"]): member["role"] for member in project_members}
         return Response(project_members, status=status.HTTP_200_OK)
+
+
+class ProjectMemberPreferenceEndpoint(BaseAPIView):
+    def get_project_member(self, slug, project_id, member_id):
+        return ProjectMember.objects.get(
+            project_id=project_id,
+            member_id=member_id,
+            workspace__slug=slug,
+        )
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def patch(self, request, slug, project_id, member_id):
+        project_member = self.get_project_member(slug, project_id, member_id)
+
+        current_preferences = project_member.preferences or {}
+        current_preferences["navigation"] = request.data["navigation"]
+
+        project_member.preferences = current_preferences
+        project_member.save(update_fields=["preferences"])
+
+        return Response({"preferences": project_member.preferences}, status=status.HTTP_200_OK)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def get(self, request, slug, project_id, member_id):
+        project_member = self.get_project_member(slug, project_id, member_id)
+
+        response = {
+            "preferences": project_member.preferences,
+            "project_id": project_member.project_id,
+            "member_id": project_member.member_id,
+            "workspace_id": project_member.workspace_id,
+        }
+
+        return Response(response, status=status.HTTP_200_OK)

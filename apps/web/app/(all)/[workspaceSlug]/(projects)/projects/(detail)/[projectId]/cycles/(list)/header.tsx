@@ -2,20 +2,19 @@ import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
-import { EProjectFeatureKey, EUserPermissions, EUserPermissionsLevel, CYCLE_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, CYCLE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { CycleIcon } from "@plane/propel/icons";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { CyclesViewHeader } from "@/components/cycles/cycles-view-header";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-// plane web
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
-// constants
 
 export const CyclesListHeader = observer(function CyclesListHeader() {
   // router
@@ -37,10 +36,15 @@ export const CyclesListHeader = observer(function CyclesListHeader() {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-          <CommonProjectBreadcrumbs
-            workspaceSlug={workspaceSlug?.toString()}
-            projectId={currentProjectDetails?.id ?? ""}
-            featureKey={EProjectFeatureKey.CYCLES}
+          <Breadcrumbs.Item
+            component={
+              <BreadcrumbLink
+                label="Cycles"
+                href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/cycles/`}
+                icon={<CycleIcon className="h-4 w-4 text-custom-text-300" />}
+                isLast
+              />
+            }
             isLast
           />
         </Breadcrumbs>
