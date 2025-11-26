@@ -14,9 +14,9 @@ import { Input } from "@plane/ui";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 
 // error codes
-enum EErrorCodes {
-  LABEL_NAME_ALREADY_EXISTS = "LABEL_NAME_ALREADY_EXISTS",
-}
+const EErrorCodes = {
+  LABEL_NAME_ALREADY_EXISTS: "LABEL_NAME_ALREADY_EXISTS",
+};
 
 export type TLabelOperationsCallbacks = {
   createLabel: (data: Partial<IIssueLabel>) => Promise<IIssueLabel>;
