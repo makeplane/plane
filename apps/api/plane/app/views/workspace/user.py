@@ -257,15 +257,25 @@ class WorkspaceUserPropertiesEndpoint(BaseAPIView):
         workspace_properties.display_properties = request.data.get(
             "display_properties", workspace_properties.display_properties
         )
+        workspace_properties.navigation_control_preference = request.data.get(
+            "navigation_control_preference", workspace_properties.navigation_control_preference
+        )
+        workspace_properties.navigation_project_limit = request.data.get(
+            "navigation_project_limit", workspace_properties.navigation_project_limit
+        )
+
         workspace_properties.save()
 
         serializer = WorkspaceUserPropertiesSerializer(workspace_properties)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get(self, request, slug):
+        workspace = Workspace.objects.get(slug=slug)
+
         (workspace_properties, _) = WorkspaceUserProperties.objects.get_or_create(
-            user=request.user, workspace__slug=slug
+            user=request.user, workspace=workspace
         )
+
         serializer = WorkspaceUserPropertiesSerializer(workspace_properties)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
