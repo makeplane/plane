@@ -15,11 +15,11 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
-    "check:lint": "eslint . --max-warnings 20",
+    "check:lint": "pnpm exec oxlint . --config ../../.oxlintrc.json --type-aware --tsconfig ../../tsconfig.oxlint.json",
     "check:types": "tsc --noEmit",
-    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
-    "fix:lint": "eslint . --fix",
-    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "check:format": "pnpm exec oxfmt --check .",
+    "fix:lint": "pnpm exec oxlint . --config ../../.oxlintrc.json --type-aware --tsconfig ../../tsconfig.oxlint.json --fix",
+    "fix:format": "pnpm exec oxfmt .",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
@@ -43,9 +43,7 @@
     "uuid": "catalog:"
   },
   "devDependencies": {
-    "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@prettier/plugin-oxc": "0.0.4",
     "@types/hast": "^3.0.4",
     "@types/lodash-es": "catalog:",
     "@types/mdast": "^4.0.4",

@@ -11,11 +11,11 @@
     "preview": "react-router build && serve -s build/client -l 3001",
     "start": "serve -s build/client -l 3001",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist && rm -rf build",
-    "check:lint": "eslint . --max-warnings 19",
+    "check:lint": "pnpm exec oxlint . --config ../../.oxlintrc.json --type-aware --tsconfig ../../tsconfig.oxlint.json",
     "check:types": "react-router typegen && tsc --noEmit",
-    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
-    "fix:lint": "eslint . --fix",
-    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\""
+    "check:format": "pnpm exec oxfmt --check .",
+    "fix:lint": "pnpm exec oxlint . --config ../../.oxlintrc.json --type-aware --tsconfig ../../tsconfig.oxlint.json --fix",
+    "fix:format": "pnpm exec oxfmt ."
   },
   "dependencies": {
     "@bprogress/core": "catalog:",
@@ -48,10 +48,8 @@
     "uuid": "catalog:"
   },
   "devDependencies": {
-    "@plane/eslint-config": "workspace:*",
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@prettier/plugin-oxc": "0.0.4",
     "@react-router/dev": "catalog:",
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",

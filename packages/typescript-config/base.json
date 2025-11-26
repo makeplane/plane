@@ -2,11 +2,7 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "target": "esnext",
-    "lib": [
-      "es2023",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["es2023", "DOM", "DOM.Iterable"],
     "moduleDetection": "force",
     "module": "preserve",
     "moduleResolution": "bundler",
@@ -19,6 +15,9 @@
     "isolatedModules": true,
     "skipLibCheck": true,
     "strict": true,
-    "noEmit": true
+    "noEmit": true,
+    "incremental": true,
+    "composite": true,
+    "tsBuildInfoFile": ".turbo/tsconfig.tsbuildinfo"
   }
 }

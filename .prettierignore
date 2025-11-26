@@ -1,0 +1,2 @@
+# oxfmt uses .prettierignore for ignore patterns
+pnpm-lock.yaml

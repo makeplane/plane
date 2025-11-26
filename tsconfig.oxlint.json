@@ -1,0 +1,22 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./apps/admin/tsconfig.json" },
+    { "path": "./apps/live/tsconfig.json" },
+    { "path": "./apps/space/tsconfig.json" },
+    { "path": "./apps/web/tsconfig.json" },
+    { "path": "./packages/codemods/tsconfig.json" },
+    { "path": "./packages/constants/tsconfig.json" },
+    { "path": "./packages/decorators/tsconfig.json" },
+    { "path": "./packages/editor/tsconfig.json" },
+    { "path": "./packages/hooks/tsconfig.json" },
+    { "path": "./packages/i18n/tsconfig.json" },
+    { "path": "./packages/logger/tsconfig.json" },
+    { "path": "./packages/propel/tsconfig.json" },
+    { "path": "./packages/services/tsconfig.json" },
+    { "path": "./packages/shared-state/tsconfig.json" },
+    { "path": "./packages/types/tsconfig.json" },
+    { "path": "./packages/ui/tsconfig.json" },
+    { "path": "./packages/utils/tsconfig.json" }
+  ]
+}

@@ -26,34 +26,71 @@
     "VITE_SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE",
     "VITE_APP_VERSION"
   ],
-  "globalDependencies": ["pnpm-lock.yaml", "pnpm-workspace.yaml", ".npmrc"],
+  "globalDependencies": [
+    "pnpm-lock.yaml",
+    "pnpm-workspace.yaml",
+    ".npmrc"
+  ],
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**", "build/**"]
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist/**",
+        "build/**"
+      ]
     },
     "build-storybook": {
-      "dependsOn": ["^build"],
-      "outputs": ["storybook-static/**"]
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "storybook-static/**"
+      ]
     },
     "dev": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": false,
       "persistent": true
     },
     "check:types": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "cache": false
     },
-    "check:lint": {
+    "oxlint": {
       "cache": false,
-      "inputs": ["**/*", "!**/build/**", "!**/dist/**"]
+      "inputs": [
+        "**/*.{js,ts,tsx,mjs,jsx}",
+        "!**/node_modules/**",
+        "!**/build/**",
+        "!**/dist/**"
+      ]
+    },
+    "check:lint": {
+      "dependsOn": [
+        "oxlint"
+      ],
+      "cache": false,
+      "inputs": [
+        "**/*.{js,ts,tsx,mjs,jsx}",
+        "!**/build/**",
+        "!**/dist/**"
+      ]
     },
     "check:format": {
       "cache": false
     },
     "check": {
-      "dependsOn": ["check:format", "check:lint", "check:types"],
+      "dependsOn": [
+        "check:format",
+        "check:lint",
+        "check:types"
+      ],
       "cache": false
     },
     "fix:lint": {
@@ -63,11 +100,16 @@
       "cache": false
     },
     "fix": {
-      "dependsOn": ["fix:format", "fix:lint"],
+      "dependsOn": [
+        "fix:format",
+        "fix:lint"
+      ],
       "cache": false
     },
     "test": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "outputs": []
     },
     "start": {

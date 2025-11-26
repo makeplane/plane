@@ -5,10 +5,9 @@
     "emitDecoratorMetadata": true,
     "lib": ["ES2020"],
     "rootDir": ".",
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
-    }
+      "@/*": ["./src/*"],
+    },
   },
   "include": ["./src", "./*.ts"],
   "exclude": ["dist", "build", "node_modules"]

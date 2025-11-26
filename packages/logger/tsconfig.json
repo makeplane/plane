@@ -1,7 +1,6 @@
 {
   "extends": "@plane/typescript-config/node-library.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }

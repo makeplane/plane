@@ -7,7 +7,6 @@
     "target": "ES2015",
     "outDir": "./dist",
     "rootDir": ".",
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
       "@/plane-live/*": ["./src/ce/*"]

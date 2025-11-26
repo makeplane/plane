@@ -1,15 +1,14 @@
 {
   "extends": "@plane/typescript-config/react-router.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "rootDirs": [".", "./.react-router/types"],
     "types": ["node", "vite/client"],
     "paths": {
-      "@/app/*": ["app/*"],
-      "@/*": ["core/*"],
-      "@/helpers/*": ["helpers/*"],
-      "@/styles/*": ["styles/*"],
-      "@/plane-web/*": ["ce/*"]
+      "@/app/*": ["./app/*"],
+      "@/*": ["./core/*"],
+      "@/helpers/*": ["./helpers/*"],
+      "@/styles/*": ["./styles/*"],
+      "@/plane-web/*": ["./ce/*"]
     },
     "strictNullChecks": true
   },

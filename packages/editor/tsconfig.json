@@ -1,7 +1,6 @@
 {
   "extends": "@plane/typescript-config/react-library.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/core/*"],
       "@/styles/*": ["./src/styles/*"],

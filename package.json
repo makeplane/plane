@@ -12,15 +12,27 @@
     "clean": "turbo run clean && rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
     "fix": "turbo run fix",
     "fix:format": "turbo run fix:format",
+    "fix:lint": "turbo run fix:lint",
     "check": "turbo run check",
     "check:lint": "turbo run check:lint",
     "check:format": "turbo run check:format",
-    "check:types": "turbo run check:types"
+    "check:types": "turbo run check:types",
+    "lint": "pnpm exec oxlint apps/ packages/ --config .oxlintrc.json --type-aware --tsconfig tsconfig.oxlint.json",
+    "prepare": "husky"
   },
   "devDependencies": {
-    "@prettier/plugin-oxc": "0.0.4",
-    "prettier": "^3.6.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "oxfmt": "^0.14.0",
+    "oxlint": "^1.29.0",
+    "oxlint-tsgolint": "^0.8.1",
     "turbo": "2.6.1"
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx,mjs,jsx}": [
+      "pnpm exec oxfmt",
+      "pnpm exec oxlint --fix --config .oxlintrc.json --type-aware --tsconfig tsconfig.oxlint.json"
+    ]
   },
   "pnpm": {
     "overrides": {
