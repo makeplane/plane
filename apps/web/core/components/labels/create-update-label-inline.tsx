@@ -14,7 +14,7 @@ import { Input } from "@plane/ui";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 
 // error codes
-const EErrorCodes = {
+const errorCodes = {
   LABEL_NAME_ALREADY_EXISTS: "LABEL_NAME_ALREADY_EXISTS",
 };
 
@@ -73,7 +73,7 @@ export const CreateUpdateLabelInline = observer(
         const errorCode = errorData.name[0];
 
         switch (errorCode) {
-          case EErrorCodes.LABEL_NAME_ALREADY_EXISTS:
+          case errorCodes.LABEL_NAME_ALREADY_EXISTS:
             return t("label.create.already_exists");
           default:
             break;
