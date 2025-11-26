@@ -20,7 +20,7 @@ export const DashboardQuickLinks = observer(function DashboardQuickLinks(props: 
   const handleCreateLinkModal = useCallback(() => {
     toggleLinkModal(true);
     setLinkData(undefined);
-  }, []);
+  }, [toggleLinkModal, setLinkData]);
 
   useSWR(
     workspaceSlug ? `HOME_LINKS_${workspaceSlug}` : null,
