@@ -1,6 +1,5 @@
 import * as Sentry from "@sentry/react-router";
 import { Links, Meta, Outlet, Scripts } from "react-router";
-import type { HeadersFunction, LinksFunction } from "react-router";
 // assets
 import appleTouchIcon from "@/app/assets/favicon/apple-touch-icon.png?url";
 import favicon16 from "@/app/assets/favicon/favicon-16x16.png?url";
@@ -18,7 +17,7 @@ import { AppProviders } from "./providers";
 const APP_TITLE = "Plane Publish | Make your Plane boards public with one-click";
 const APP_DESCRIPTION = "Plane Publish is a customer feedback management tool built on top of plane.so";
 
-export const links: LinksFunction = () => [
+export const links: Route.LinksFunction = () => [
   { rel: "apple-touch-icon", sizes: "180x180", href: appleTouchIcon },
   { rel: "icon", type: "image/png", sizes: "32x32", href: favicon32 },
   { rel: "icon", type: "image/png", sizes: "16x16", href: favicon16 },
@@ -27,9 +26,8 @@ export const links: LinksFunction = () => [
   { rel: "stylesheet", href: globalStyles },
 ];
 
-export const headers: HeadersFunction = () => ({
+export const headers: Route.HeadersFunction = () => ({
   "Referrer-Policy": "origin-when-cross-origin",
-  "X-Frame-Options": "SAMEORIGIN",
   "X-Content-Type-Options": "nosniff",
   "X-DNS-Prefetch-Control": "on",
   "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
