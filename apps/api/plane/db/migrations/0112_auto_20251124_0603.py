@@ -14,55 +14,70 @@ def create_triage_state(apps, _schema_editor):
     State = apps.get_model("db", "State")
     Issue = apps.get_model("db", "Issue")
 
-    projects = list(Project.objects.all().values("id", "workspace_id"))
 
-    # check any state with name "Intake Triage" exists
-    for state in State.objects.filter(name="Intake Triage"):
-        project_id = str(state.project_id)[:5]
-        state.name = f"Intake-Triage-{project_id}"
-        state.save()
+    # 1) Bulk-update existing triage states
+    triage_qs = State.objects.filter(group="triage")
+    projects_with_triage_state = list(triage_qs.values_list("project_id", flat=True))
+    triage_qs.update(
+        name="Triage",
+        color="#4E5355",
+        sequence=65000,
+        default=False,
+    )
+    logger.info(f"Updated {triage_qs.count()} triage states.")
 
-    # delete the existing triage states groups
-    State.objects.filter(group="triage").delete()
+    # 2) Projects that already have a 'Triage' name but not in triage group
+    projects_to_update_qs = (
+        State.objects.exclude(group="triage")
+        .filter(name="Triage")
+        .values_list("project_id", flat=True)
+    )
+    projects_to_update = set(projects_to_update_qs)
+    logger.info(f"Projects to update: {len(projects_to_update)}")
 
+    # 3) Create missing triage states in chunks to avoid memory spike
     states_to_create = []
-    for proj in projects:
+    project_iter = Project.objects.all().values_list("id", "workspace_id").iterator()
+    for proj_id, workspace_id in project_iter:
+        if proj_id in projects_with_triage_state:
+            continue
+        if proj_id in projects_to_update:
+            name = f"Triage-{str(proj_id)[:5]}"
+        else:
+            name = "Triage"
         states_to_create.append(
             State(
-                name="Intake Triage",
+                name=name,
                 group="triage",
-                project_id=proj["id"],
-                workspace_id=proj["workspace_id"],
+                project_id=proj_id,
+                workspace_id=workspace_id,
                 color="#4E5355",
                 sequence=65000,
                 default=False,
             )
-    )
+        )
+        if len(states_to_create) >= BATCH_SIZE:
+            State.objects.bulk_create(states_to_create, batch_size=BATCH_SIZE)
+            states_to_create = []
 
-    logger.info(f"Creating {len(states_to_create)} triage states...")
+    if states_to_create:
+        State.objects.bulk_create(states_to_create, batch_size=BATCH_SIZE)
 
-    # Bulk-create states
-    State.objects.bulk_create(states_to_create, batch_size=BATCH_SIZE)
-
-    logger.info("Updating issues...")
-    
-    # Single query using Django ORM with Subquery
+    # 4) Update issues: use deterministic subquery and only update issues that will get a triage state.
     with transaction.atomic():
-        # Subquery to get the triage state_id for each issue's project
-        triage_state_subquery = State.objects.filter(
-            group="triage",
-            project_id=OuterRef('project_id'),
-            workspace_id=OuterRef('workspace_id'),
-        ).values('id')[:1]
-        
-        # Single UPDATE with subquery - Django generates optimized SQL
-        updated_count = Issue._default_manager.filter(
-            issue_intake__status__in=[-2, 0]
-        ).update(state_id=Subquery(triage_state_subquery))
-        
-        logger.info(f"Updated {updated_count} issues.")
+        triage_state_subquery = (
+            State.objects.filter(
+                group="triage",
+                project_id=OuterRef("project_id"),
+                workspace_id=OuterRef("workspace_id"),
+            )
+            .values("id")[:1]
+        )
 
-    logger.info("Done.")
+        updated_count = Issue._default_manager.filter(
+            issue_intake__status__in=[-2, 0],
+        ).update(state_id=Subquery(triage_state_subquery))
+        logger.info(f"Updated {updated_count} issues.")
 
 
 
