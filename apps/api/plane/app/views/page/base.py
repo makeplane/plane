@@ -240,24 +240,24 @@ class PageViewSet(BaseViewSet):
             return Response(data, status=status.HTTP_200_OK)
 
     def lock(self, request, slug, project_id, page_id):
-        page = Page.objects.filter(
+        page = Page.objects.get(
             pk=page_id,
             workspace__slug=slug,
             projects__id=project_id,
             project_pages__deleted_at__isnull=True,
-        ).first()
+        )
 
         page.is_locked = True
         page.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def unlock(self, request, slug, project_id, page_id):
-        page = Page.objects.filter(
+        page = Page.objects.get(
             pk=page_id,
             workspace__slug=slug,
             projects__id=project_id,
             project_pages__deleted_at__isnull=True,
-        ).first()
+        )
 
         page.is_locked = False
         page.save()
@@ -266,12 +266,12 @@ class PageViewSet(BaseViewSet):
 
     def access(self, request, slug, project_id, page_id):
         access = request.data.get("access", 0)
-        page = Page.objects.filter(
+        page = Page.objects.get(
             pk=page_id,
             workspace__slug=slug,
             projects__id=project_id,
             project_pages__deleted_at__isnull=True,
-        ).first()
+        )
 
         # Only update access if the page owner is the requesting user
         if page.access != request.data.get("access", page.access) and page.owned_by_id != request.user.id:
@@ -392,7 +392,7 @@ class PageViewSet(BaseViewSet):
         # remove parent from all the children
         _ = Page.objects.filter(
             parent_id=page_id,
-            project_pages__project_id=project_id,
+            projects__id=project_id,
             workspace__slug=slug,
             project_pages__deleted_at__isnull=True,
         ).update(parent=None)
@@ -584,12 +584,12 @@ class PageDuplicateEndpoint(BaseAPIView):
     permission_classes = [ProjectPagePermission]
 
     def post(self, request, slug, project_id, page_id):
-        page = Page.objects.filter(
+        page = Page.objects.get(
             pk=page_id,
             workspace__slug=slug,
             projects__id=project_id,
             project_pages__deleted_at__isnull=True,
-        ).first()
+        )
 
         # check for permission
         if page.access == Page.PRIVATE_ACCESS and page.owned_by_id != request.user.id:
