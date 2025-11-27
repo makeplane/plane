@@ -180,6 +180,7 @@ from .issue.subscriber import (
 
 from .issue.custom_property import (
     IssueCustomPropertyUpdateAPIView,
+    IssueCustomPropertyDropdownOptionsAPIView,
 )
 
 from .issue_type.issue_type_custom_property import (

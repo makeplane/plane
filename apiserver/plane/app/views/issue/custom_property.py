@@ -1,6 +1,5 @@
 # Python imports
 import json
-
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Django imports
@@ -8,6 +7,7 @@ from django.utils import timezone
 from django.shortcuts import get_object_or_404
 
 # Third party imports
+import requests
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -15,16 +15,19 @@ from rest_framework.response import Response
 from plane.api.serializers import (
     IssueCustomPropertySerializer
 )
+from plane.app.serializers import IssueSerializer
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
     Project,
     IssueCustomProperty,
     IssueTypeCustomProperty,
-    Workspace
+    Workspace,
+    User
 )
 from plane.utils.issue_filters import issue_filters
 from .base import BaseAPIView
+from django.conf import settings
 from datetime import datetime
 
 class IssueCustomPropertyUpdateAPIView(BaseAPIView):
@@ -210,3 +213,81 @@ class IssueCustomPropertyUpdateAPIView(BaseAPIView):
             epoch=epoch_timestamp,
         )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class IssueCustomPropertyDropdownOptionsAPIView(BaseAPIView):
+    """
+    This view handles fetching dropdown options for custom properties from the WB API.
+    """
+    
+    def get(self, request, slug, issue_id, issue_type_custom_property_id):
+        """
+        Fetch dropdown options from WB API for a custom property.
+        """
+        try:
+            # Get the issue and issue type custom property
+            issue = get_object_or_404(Issue, id=issue_id)
+          
+            # Get created_by_id from the issue and query the users table
+            # Django ForeignKey fields automatically have a _id attribute
+            created_by_id = issue.created_by_id
+            user = None
+            if created_by_id:
+                try:
+                    user = User.objects.get(id=created_by_id)
+                except User.DoesNotExist:
+                    user = None
+            
+            # Get issue_type_id from the issue
+            issue_type_id = issue.type_id
+            
+            if not issue_type_id:
+                return Response(
+                    {"error": "Issue type ID is required."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            issue_data = IssueSerializer(issue).data
+            # Convert to JSON-serializable structure (UUIDs, dates, etc.)
+            issue_data_safe = json.loads(json.dumps(issue_data, cls=DjangoJSONEncoder))
+            
+            # Prepare user data if user exists - only return display_name
+            user_data = None
+            if user:
+                user_data = {
+                    "display_name": user.display_name or "",
+                }
+            
+            # Prepare payload for WB API
+            wb_api_payload = {
+                "issue_type_id": str(issue_type_id),
+                "issue_type_custom_property_id": str(issue_type_custom_property_id),
+                 # Retain existing camelCase key for backward compatibility
+                "issueId": str(issue_id),
+                # Include the complete issue data (snake_case keys)
+                **issue_data_safe,
+                # Include user data (created_by user)
+                "created_by_user": user_data,
+            }
+            
+            # WB API endpoint URL configured in settings
+            WB_API_BASE_URL = settings.WB_BASE_URL
+            WB_API_URL = f"{WB_API_BASE_URL}/wb/sample-dropdowns"
+            
+            # Make request to WB API using POST
+            wb_response = requests.post(
+                WB_API_URL,
+                json=wb_api_payload,
+                timeout=30,
+            )
+            wb_response.raise_for_status()
+            
+            # Return the response from WB API
+            return Response(
+                wb_response.json(),
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            return Response(
+                {"error": f"An error occurred while fetching dropdown options: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

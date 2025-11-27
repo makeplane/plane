@@ -338,9 +338,10 @@ urlpatterns = [
         IssueCustomPropertyUpdateAPIView.as_view(),
         name="update-issue-custom-property",
     ),
-        path(
+    path(
         'workspaces/<str:slug>/issues/<uuid:issue_id>/custom-properties/',
         IssueCustomPropertyUpdateAPIView.as_view(),
         name="create-issue-custom-property",
     ),
+   
 ]

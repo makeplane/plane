@@ -2,6 +2,7 @@ from .analytic import urlpatterns as analytic_urls
 from .api import urlpatterns as api_urls
 from .asset import urlpatterns as asset_urls
 from .cycle import urlpatterns as cycle_urls
+from .custom_property_dropdown import urlpatterns as custom_property_dropdown_urls
 from .dashboard import urlpatterns as dashboard_urls
 from .estimate import urlpatterns as estimate_urls
 from .external import urlpatterns as external_urls
@@ -23,6 +24,7 @@ urlpatterns = [
     *analytic_urls,
     *asset_urls,
     *cycle_urls,
+    *custom_property_dropdown_urls,
     *dashboard_urls,
     *estimate_urls,
     *external_urls,

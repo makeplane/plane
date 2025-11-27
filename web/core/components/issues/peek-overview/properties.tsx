@@ -362,6 +362,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           issue_type_id={issue_type_id}
           workspaceSlug={workspaceSlug}
           updateCustomProperties={handleCustomPropertiesUpdate}
+          issueId={issueId}
           layout="quarter"
         />
       </div>
