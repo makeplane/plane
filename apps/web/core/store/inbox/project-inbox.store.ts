@@ -125,18 +125,16 @@ export class ProjectInboxStore implements IProjectInboxStore {
    * @description computed project inbox filters
    */
   get inboxFilters() {
-    const { projectId } = this.store.router;
-    if (!projectId) return {} as TInboxIssueFilter;
-    return this.filtersMap?.[projectId];
+    if (!this.currentInboxProjectId) return {} as TInboxIssueFilter;
+    return this.filtersMap?.[this.currentInboxProjectId];
   }
 
   /**
    * @description computed project inbox sorting
    */
   get inboxSorting() {
-    const { projectId } = this.store.router;
-    if (!projectId) return {} as TInboxIssueSorting;
-    return this.sortingMap?.[projectId];
+    if (!this.currentInboxProjectId) return {} as TInboxIssueSorting;
+    return this.sortingMap?.[this.currentInboxProjectId];
   }
 
   get getAppliedFiltersCount() {
@@ -274,7 +272,8 @@ export class ProjectInboxStore implements IProjectInboxStore {
   };
 
   handleInboxIssueFilters = <T extends keyof TInboxIssueFilter>(key: T, value: TInboxIssueFilter[T]) => {
-    const { workspaceSlug, projectId } = this.store.router;
+    const { workspaceSlug } = this.store.router;
+    const projectId = this.currentInboxProjectId;
     if (workspaceSlug && projectId) {
       runInAction(() => {
         set(this.filtersMap, [projectId, key], value);
@@ -285,7 +284,8 @@ export class ProjectInboxStore implements IProjectInboxStore {
   };
 
   handleInboxIssueSorting = <T extends keyof TInboxIssueSorting>(key: T, value: TInboxIssueSorting[T]) => {
-    const { workspaceSlug, projectId } = this.store.router;
+    const { workspaceSlug } = this.store.router;
+    const projectId = this.currentInboxProjectId;
     if (workspaceSlug && projectId) {
       runInAction(() => {
         set(this.sortingMap, [projectId, key], value);
