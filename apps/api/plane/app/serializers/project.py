@@ -148,13 +148,10 @@ class ProjectMemberPreferenceSerializer(BaseSerializer):
         fields = ["preferences", "project_id", "member_id", "workspace_id"]
 
     def validate_preferences(self, value):
-        if value.get("navigation") and not value.get("pages"):
-            value["pages"] = self.instance.preferences.get("pages")
+        preferences = self.instance.preferences
 
-        if value.get("pages") and not value.get("navigation"):
-            value["navigation"] = self.instance.preferences.get("navigation")
-
-        return value
+        preferences.update(value)
+        return preferences
 
 
 class ProjectMemberAdminSerializer(BaseSerializer):
