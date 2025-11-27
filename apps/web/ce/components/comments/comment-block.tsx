@@ -64,7 +64,7 @@ export const CommentBlock = observer(function CommentBlock(props: TCommentBlock)
                 position="bottom"
               >
                 <span className="text-custom-text-350">
-                  {calculateTimeAgo(comment.updated_at)}
+                  {calculateTimeAgo(comment.created_at)}
                   {comment.edited_at && ` (${t("edited")})`}
                 </span>
               </Tooltip>
