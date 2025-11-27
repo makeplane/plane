@@ -18,6 +18,7 @@ from .project.member import (
     ProjectMemberViewSet,
     ProjectMemberUserEndpoint,
     UserProjectRolesEndpoint,
+    ProjectMemberPreferenceEndpoint,
 )
 
 from .user.base import (

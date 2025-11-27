@@ -2,24 +2,19 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 // constants
-import {
-  EPageAccess,
-  EProjectFeatureKey,
-  PROJECT_PAGE_TRACKER_EVENTS,
-  PROJECT_TRACKER_ELEMENTS,
-} from "@plane/constants";
+import { EPageAccess, PROJECT_PAGE_TRACKER_EVENTS, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 // plane types
 import { Button } from "@plane/propel/button";
+import { PageIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TPage } from "@plane/types";
 // plane ui
 import { Breadcrumbs, Header } from "@plane/ui";
 // helpers
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-// plane web
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 // plane web hooks
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
@@ -74,10 +69,15 @@ export const PagesListHeader = observer(function PagesListHeader() {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs isLoading={loader === "init-loader"}>
-          <CommonProjectBreadcrumbs
-            workspaceSlug={workspaceSlug?.toString() ?? ""}
-            projectId={currentProjectDetails?.id?.toString() ?? ""}
-            featureKey={EProjectFeatureKey.PAGES}
+          <Breadcrumbs.Item
+            component={
+              <BreadcrumbLink
+                label="Pages"
+                href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/pages/`}
+                icon={<PageIcon className="h-4 w-4 text-custom-text-300" />}
+                isLast
+              />
+            }
             isLast
           />
         </Breadcrumbs>

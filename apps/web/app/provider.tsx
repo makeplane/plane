@@ -1,4 +1,3 @@
-import type { FC, ReactNode } from "react";
 import { lazy, Suspense } from "react";
 import { useTheme, ThemeProvider } from "next-themes";
 import { SWRConfig } from "swr";
@@ -31,7 +30,7 @@ const IntercomProvider = lazy(function IntercomProvider() {
 });
 
 export interface IAppProvider {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
 function ToastWithTheme() {

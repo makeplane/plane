@@ -1,18 +1,17 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
+import { PreferencesIcon } from "@plane/propel/icons";
 import { ScrollArea } from "@plane/propel/scrollarea";
 // components
-import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";
-import { SidebarDropdown } from "@/components/workspace/sidebar/dropdown";
-import { HelpMenu } from "@/components/workspace/sidebar/help-menu";
+import { CustomizeNavigationDialog } from "@/components/navigation/customize-navigation-dialog";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
-import { useAppRail } from "@/hooks/use-app-rail";
 import useSize from "@/hooks/use-window-size";
 // plane web components
 import { WorkspaceEditionBadge } from "@/plane-web/components/workspace/edition-badge";
+import { AppSidebarToggleButton } from "./sidebar-toggle-button";
 
 type TSidebarWrapperProps = {
   title: string;
@@ -21,10 +20,11 @@ type TSidebarWrapperProps = {
 };
 
 export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWrapperProps) {
-  const { children, title, quickActions } = props;
+  const { title, children, quickActions } = props;
+  // state
+  const [isCustomizeNavDialogOpen, setIsCustomizeNavDialogOpen] = useState(false);
   // store hooks
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
-  const { shouldRenderAppRail, isEnabled: isAppRailEnabled } = useAppRail();
   const windowSize = useSize();
   // refs
   const ref = useRef<HTMLDivElement>(null);
@@ -41,40 +41,48 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
   }, [windowSize]);
 
   return (
-    <div ref={ref} className="flex flex-col h-full w-full">
-      <div className="flex flex-col gap-3 px-3">
-        {/* Workspace switcher and settings */}
-        {!shouldRenderAppRail && <SidebarDropdown />}
+    <>
+      <CustomizeNavigationDialog isOpen={isCustomizeNavDialogOpen} onClose={() => setIsCustomizeNavDialogOpen(false)} />
+      <div ref={ref} className="flex flex-col h-full w-full">
+        <div className="flex flex-col gap-3 px-3">
+          {/* Workspace switcher and settings */}
 
-        {isAppRailEnabled && (
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center justify-between gap-2 px-2">
             <span className="text-md text-custom-text-200 font-medium pt-1">{title}</span>
             <div className="flex items-center gap-2">
+              <button
+                type="button"
+                className="flex items-center justify-center size-6 rounded-md text-custom-text-400 hover:text-custom-primary-100 hover:bg-custom-background-90"
+                onClick={() => setIsCustomizeNavDialogOpen(true)}
+              >
+                <PreferencesIcon className="size-4" />
+              </button>
               <AppSidebarToggleButton />
             </div>
           </div>
-        )}
-        {/* Quick actions */}
-        {quickActions}
-      </div>
+          {/* Quick actions */}
+          {quickActions}
+        </div>
 
-      <ScrollArea
-        orientation="vertical"
-        scrollType="hover"
-        size="sm"
-        rootClassName="size-full overflow-x-hidden overflow-y-auto"
-        viewportClassName="flex flex-col gap-3 overflow-x-hidden h-full w-full overflow-y-auto px-3 pt-3 pb-0.5"
-      >
-        {children}
-      </ScrollArea>
-      {/* Help Section */}
-      <div className="flex items-center justify-between p-3 border-t border-custom-border-200 bg-custom-sidebar-background-100 h-12">
-        <WorkspaceEditionBadge />
-        <div className="flex items-center gap-2">
+        <ScrollArea
+          orientation="vertical"
+          scrollType="hover"
+          size="sm"
+          rootClassName="size-full overflow-x-hidden overflow-y-auto"
+          viewportClassName="flex flex-col gap-3 overflow-x-hidden h-full w-full overflow-y-auto px-3 pt-3 pb-0.5"
+        >
+          {children}
+        </ScrollArea>
+        {/* Help Section */}
+        <div className="flex items-center justify-between p-3 border-t border-custom-border-200 bg-custom-sidebar-background-100 h-12">
+          <WorkspaceEditionBadge />
+          {/* TODO: To be checked if we need this */}
+          {/* <div className="flex items-center gap-2">
           {!shouldRenderAppRail && <HelpMenu />}
           {!isAppRailEnabled && <AppSidebarToggleButton />}
+        </div> */}
         </div>
       </div>
-    </div>
+    </>
   );
 });

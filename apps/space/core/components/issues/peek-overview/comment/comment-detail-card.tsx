@@ -42,7 +42,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
     control,
     formState: { isSubmitting },
     handleSubmit,
-  } = useForm<any>({
+  } = useForm<TIssuePublicComment>({
     defaultValues: { comment_html: comment.comment_html },
   });
 
@@ -119,6 +119,9 @@ export const CommentCard = observer(function CommentCard(props: Props) {
                     uploadFile={async (blockId, file) => {
                       const { asset_id } = await uploadCommentAsset(file, anchor, comment.id);
                       return asset_id;
+                    }}
+                    displayConfig={{
+                      fontSize: "small-font",
                     }}
                   />
                 )}
