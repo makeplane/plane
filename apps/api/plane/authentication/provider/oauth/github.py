@@ -2,7 +2,6 @@
 import os
 from datetime import datetime
 from urllib.parse import urlencode
-
 import pytz
 import requests
 
@@ -109,9 +108,26 @@ class GitHubOAuthProvider(OauthAdapter):
             # Github does not provide email in user response
             emails_url = "https://api.github.com/user/emails"
             emails_response = requests.get(emails_url, headers=headers).json()
+            # Ensure the response is a list before iterating
+            if not isinstance(emails_response, list):
+                self.logger.error(f"Unexpected response format from GitHub emails API: {emails_response}")
+                raise AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
+                    error_message="GITHUB_OAUTH_PROVIDER_ERROR",
+                )
             email = next((email["email"] for email in emails_response if email["primary"]), None)
+            if not email:
+                self.logger.error(f"No primary email found for user: {emails_response}")
+                raise AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
+                    error_message="GITHUB_OAUTH_PROVIDER_ERROR",
+                )
             return email
         except requests.RequestException:
+            self.logger.warning("Error getting email from GitHub", extra={
+                "headers": headers,
+                "emails_response": emails_response,
+            })
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["GITHUB_OAUTH_PROVIDER_ERROR"],
                 error_message="GITHUB_OAUTH_PROVIDER_ERROR",
@@ -134,12 +150,19 @@ class GitHubOAuthProvider(OauthAdapter):
 
         if self.organization_id:
             if not self.is_user_in_organization(user_info_response.get("login")):
+                self.logger.warning("User is not in organization", extra={
+                    "organization_id": self.organization_id,
+                    "user_login": user_info_response.get("login"),
+                })
                 raise AuthenticationException(
                     error_code=AUTHENTICATION_ERROR_CODES["GITHUB_USER_NOT_IN_ORG"],
                     error_message="GITHUB_USER_NOT_IN_ORG",
                 )
 
         email = self.__get_email(headers=headers)
+        self.logger.info("Email found", extra={
+            "email": email,
+        })
         super().set_user_data(
             {
                 "email": email,
