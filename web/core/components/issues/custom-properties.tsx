@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Pencil } from "lucide-react";
 import axios from "axios";
 import { Input } from "@plane/ui";
-
+import { useTranslation } from "@plane/i18n";
 export type CustomProperty = {
   key: string;
   value: string;
@@ -31,6 +31,7 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
   issueId,
   layout = "quarter",
 }) => {
+  const { t } = useTranslation();
   const [issueTypeCustomProperties, setissueTypeCustomProperties] = useState<CustomProperty[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [editingPropertyKey, setEditingPropertyKey] = useState<string | null>(null);
@@ -226,7 +227,7 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
           autoFocus
           className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100"
         >
-          <option value="">Select {property.key}</option>
+          <option value="">Select {t(property.key)}</option>
           <option value="true">True</option>
           <option value="false">False</option>
         </select>
@@ -238,7 +239,7 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
           onChange={handleChange}
           onBlur={handleBlur}
           autoFocus
-          placeholder={`Add ${property.key}`}
+          placeholder={`${t("add")} ${t(property.key)}`}
           className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100"
         />
       ),
@@ -249,7 +250,7 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
           onChange={handleChange}
           onBlur={handleBlur}
           autoFocus
-          placeholder={`Add ${property.key}`}
+          placeholder={`${t("add")} ${t(property.key)}`}
           className="text-sm w-full border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100"
         />
       ),
@@ -277,7 +278,7 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
           <div key={element.key} className="flex w-full items-center gap-3 min-h-8">
             <div className={`flex items-center gap-1 ${labelWidth} flex-shrink-0 text-sm text-custom-text-300 truncate`}>
               <span>
-                {element.key}
+                {t(element.key)}
                 {element.is_required && <span className="text-red-500 ml-1">*</span>}
               </span>
             </div>
@@ -295,7 +296,7 @@ export const CustomProperties: React.FC<CustomPropertiesProps> = ({
                       {element.value}
                     </span>
                   ) : (
-                    <span className="text-sm text-custom-text-400">Add {element.key}</span>
+                    <span className="text-sm text-custom-text-400">{t("add")} {t(element.key)}</span>
                   )}
                   <span className="p-1 flex-shrink-0 opacity-0 group-hover:opacity-100 text-custom-text-400">
                     <Pencil className="h-2.5 w-2.5 flex-shrink-0" />

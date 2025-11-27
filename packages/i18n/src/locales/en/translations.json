@@ -470,5 +470,18 @@
   "assigned_to": "Assigned to",
   "due_by": "Due by",
   "blocked_by": "Blocked by",
-  "sub_issues": "Sub-issues"
+  "sub_issues": "Sub-issues",
+  "Status": "Status",
+  "Return Type": "Return Type",
+  "Stays (in days)": "Stays (in days)",
+  "Stay Amount": "Stay Amount",
+  "Return Detail": "Return Detail",
+  "Return Freight Amount": "Return Freight Amount",
+  "Return Invoice Amount": "Return Invoice Amount",
+  "Empty Return Freight Amount": "Empty Return Freight Amount",
+  "Total Amount": "Total Amount",
+  "Ticket subtype": "Ticket subtype",
+  "Invoice": "Invoice",
+  "Approved Cost (in BRL)": "Approved Cost (in BRL)",
+  "Custom Properties": "Custom Properties"
 }

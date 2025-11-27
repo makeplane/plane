@@ -134,7 +134,7 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
   return (
     <>
       <FilterHeader
-        title={`Custom Properties${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${t("Custom Properties")}${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={mainPreviewEnabled}
         handleIsPreviewEnabled={() => setMainPreviewEnabled(!mainPreviewEnabled)}
       />
@@ -149,7 +149,7 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
                   <FilterDate
                     groupKey={groupKey}
                     onFilter={handleUpdate}
-                    title={groupKey}
+                    title={t(groupKey)}
                     isPreviewEnabled={groupPreviewEnabled[groupKey]}
                     handleIsPreviewEnabled={() => toggleGroupPreview(groupKey)}
                   />
@@ -164,7 +164,7 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
                   <FilterNumber
                     groupKey={groupKey}
                     onFilter={handleUpdate}
-                    title={groupKey}
+                    title={t(groupKey)}
                     isPreviewEnabled={groupPreviewEnabled[groupKey]}
                     handleIsPreviewEnabled={() => toggleGroupPreview(groupKey)}
                   />
@@ -176,7 +176,7 @@ export const FilterCustomProperty: React.FC<Props> = observer((props) => {
             return (
               <div key={groupKey}>
                 <FilterHeader
-                  title={groupKey}
+                  title={t(groupKey)}
                   isPreviewEnabled={groupPreviewEnabled[groupKey]}
                   handleIsPreviewEnabled={() => toggleGroupPreview(groupKey)}
                 />

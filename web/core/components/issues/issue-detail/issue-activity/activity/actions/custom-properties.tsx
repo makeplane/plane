@@ -26,6 +26,7 @@ export const IssueCustomPropertyActivity: FC<TIssueCustomPropertyActivity> = obs
 
   const isNewProperty = !activity.old_value;
   const customPropertyKey = activity?.field?.replace("Custom Property ", "");
+  if (!customPropertyKey) return <></>;
   const newValue = activity.new_value;
   const oldValue = activity.old_value;
 
@@ -37,9 +38,9 @@ export const IssueCustomPropertyActivity: FC<TIssueCustomPropertyActivity> = obs
     >
       <>
         {isNewProperty ? (
-          <>{t("added_custom_property")} <span className="font-medium text-custom-text-100">{customPropertyKey}</span> {t("with_value")} <span className="font-medium text-custom-text-100">{newValue}</span>.</>
+          <>{t("added_custom_property")} <span className="font-medium text-custom-text-100">{t(customPropertyKey)}</span> {t("with_value")} <span className="font-medium text-custom-text-100">{newValue}</span>.</>
         ) : (
-          <>{t("updated_custom_property_value")} <span className="font-medium text-custom-text-100">{customPropertyKey}</span> from <span className="font-medium text-custom-text-100">{oldValue}</span> to <span className="font-medium text-custom-text-100">{newValue}</span>.</>
+          <>{t("updated_custom_property_value")} <span className="font-medium text-custom-text-100">{t(customPropertyKey)}</span> from <span className="font-medium text-custom-text-100">{oldValue}</span> to <span className="font-medium text-custom-text-100">{newValue}</span>.</>
         )}
       </>
     </IssueActivityBlockComponent>

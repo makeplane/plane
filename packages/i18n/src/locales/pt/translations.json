@@ -554,5 +554,18 @@
   "Good morning": "Bom dia",
   "Good afternoon": "Boa tarde",
   "Good evening": "Boa noite",
-  "Workload": "Carga de trabalho"
+  "Workload": "Carga de trabalho",
+  "Status": "Status",
+  "Return Type": "Tipo de Retorno",
+  "Stays (in days)": "Estadias (em dias)",
+  "Stay Amount": "Valor da Estadia",
+  "Return Detail": "Detalhes do Retorno",
+  "Return Freight Amount": "Valor Frete Retorno",
+  "Return Invoice Amount": "Valor da Devolução",
+  "Empty Return Freight Amount": "Valor do Frete - Retorno Vazio",
+  "Total Amount": "Valor Total",
+  "Ticket subtype": "Subitipo do Ticket",
+  "Invoice": "Fatura",
+  "Approved Cost (in BRL)": "Custo Aprovado (em BRL)",
+  "Custom Properties": "Propriedades Personalizadas"
 }
