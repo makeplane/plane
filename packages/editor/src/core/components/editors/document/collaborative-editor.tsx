@@ -45,6 +45,8 @@ const CollaborativeDocumentEditorInner: React.FC<ICollaborativeDocumentEditorPro
     tabIndex,
     user,
     extendedDocumentEditorProps,
+    titleRef,
+    updatePageProperties,
     isFetchingFallbackBinary,
   } = props;
 
@@ -52,7 +54,7 @@ const CollaborativeDocumentEditorInner: React.FC<ICollaborativeDocumentEditorPro
   const { provider, state, actions } = useCollaboration();
 
   // Editor initialization with guaranteed non-null provider
-  const { editor } = useCollaborativeEditor({
+  const { editor, titleEditor } = useCollaborativeEditor({
     provider,
     disabledExtensions,
     editable,
@@ -75,6 +77,7 @@ const CollaborativeDocumentEditorInner: React.FC<ICollaborativeDocumentEditorPro
     onTransaction,
     placeholder,
     tabIndex,
+    titleRef,
     user,
     actions,
   });
@@ -93,7 +96,7 @@ const CollaborativeDocumentEditorInner: React.FC<ICollaborativeDocumentEditorPro
   // Gate content rendering on isDocReady to prevent empty editor flash
   const showContentSkeleton = !state.isDocReady;
 
-  if (!editor) return null;
+  if (!editor || !titleEditor) return null;
 
   return (
     <>
@@ -112,6 +115,7 @@ const CollaborativeDocumentEditorInner: React.FC<ICollaborativeDocumentEditorPro
           extendedDocumentEditorProps={extendedDocumentEditorProps}
           editor={editor}
           flaggedExtensions={flaggedExtensions}
+          titleEditor={titleEditor}
           editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
           extendedEditorProps={extendedEditorProps}
           id={id}

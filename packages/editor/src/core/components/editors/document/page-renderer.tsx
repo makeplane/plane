@@ -4,7 +4,7 @@ import type { Editor } from "@tiptap/react";
 import { cn } from "@plane/utils";
 // components
 import { DocumentContentLoader, EditorContainer, EditorContentWrapper } from "@/components/editors";
-import { AIFeaturesMenu, BlockMenu, EditorBubbleMenu } from "@/components/menus";
+import { BlockMenu, EditorBubbleMenu } from "@/components/menus";
 // types
 import type { TCollabValue } from "@/contexts";
 import type {
@@ -22,6 +22,7 @@ type Props = {
   displayConfig: TDisplayConfig;
   documentLoaderClassName?: string;
   editor: Editor;
+  titleEditor?: Editor;
   editorContainerClassName: string;
   extendedDocumentEditorProps?: ICollaborativeDocumentEditorPropsExtended;
   extendedEditorProps: IEditorPropsExtended;
@@ -51,6 +52,7 @@ export function PageRenderer(props: Props) {
     isLoading,
     isTouchDevice,
     tabIndex,
+    titleEditor,
     flaggedExtensions,
     disabledExtensions,
     provider,
@@ -66,6 +68,24 @@ export function PageRenderer(props: Props) {
         <DocumentContentLoader className={documentLoaderClassName} />
       ) : (
         <>
+          {titleEditor && (
+            <div className="relative w-full py-3">
+              <EditorContainer
+                editor={titleEditor}
+                id={id + "-title"}
+                isTouchDevice={isTouchDevice}
+                editorContainerClassName="page-title-editor bg-transparent py-3 border-none"
+                displayConfig={displayConfig}
+              >
+                <EditorContentWrapper
+                  editor={titleEditor}
+                  id={id + "-title"}
+                  tabIndex={tabIndex}
+                  className="no-scrollbar placeholder-custom-text-400 bg-transparent tracking-[-2%] font-bold text-[2rem] leading-[2.375rem] w-full outline-none p-0 border-none resize-none rounded-none"
+                />
+              </EditorContainer>
+            </div>
+          )}
           <EditorContainer
             displayConfig={displayConfig}
             editor={editor}

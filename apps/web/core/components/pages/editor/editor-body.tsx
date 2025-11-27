@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { LIVE_BASE_PATH, LIVE_BASE_URL } from "@plane/constants";
@@ -6,6 +6,7 @@ import { CollaborativeDocumentEditorWithRef } from "@plane/editor";
 import type {
   CollaborationState,
   EditorRefApi,
+  EditorTitleRefApi,
   TAIMenuProps,
   TDisplayConfig,
   TFileHandler,
@@ -84,6 +85,8 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
     isFetchingFallbackBinary,
     onCollaborationStateChange,
   } = props;
+  // refs
+  const titleEditorRef = useRef<EditorTitleRefApi>(null);
   // store hooks
   const { data: currentUser } = useUser();
   const { getWorkspaceBySlug } = useWorkspace();
@@ -247,12 +250,6 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
         <div className="page-header-container group/page-header">
           <div className={blockWidthClassName}>
             <PageEditorHeaderRoot page={page} projectId={projectId} />
-            <PageEditorTitle
-              editorRef={editorRef}
-              readOnly={!isContentEditable}
-              title={pageTitle}
-              updateTitle={updateTitle}
-            />
           </div>
         </div>
         <CollaborativeDocumentEditorWithRef
@@ -261,6 +258,7 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
           fileHandler={config.fileHandler}
           handleEditorReady={handleEditorReady}
           ref={editorForwardRef}
+          titleRef={titleEditorRef}
           containerClassName="h-full p-0 pb-64"
           displayConfig={displayConfig}
           getEditorMetaData={getEditorMetaData}
