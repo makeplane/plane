@@ -19,6 +19,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web types
 import type { TProject } from "@/plane-web/types/projects";
 import ProjectAttributes from "./attributes";
+import { getProjectFormValues } from "./utils";
 
 export type TCreateProjectFormProps = {
   setToFavorite?: boolean;
@@ -30,21 +31,6 @@ export type TCreateProjectFormProps = {
   updateCoverImageStatus: (projectId: string, coverImage: string) => Promise<void>;
 };
 
-const DEFAULT_PROJECT_FORM_VALUES: Partial<IProject> = {
-  cover_image_url: DEFAULT_COVER_IMAGE_URL,
-  description: "",
-  logo_props: {
-    in_use: "emoji",
-    emoji: {
-      value: RANDOM_EMOJI_CODES[Math.floor(Math.random() * RANDOM_EMOJI_CODES.length)],
-    },
-  },
-  identifier: "",
-  name: "",
-  network: 2,
-  project_lead: null,
-};
-
 export const CreateProjectForm = observer(function CreateProjectForm(props: TCreateProjectFormProps) {
   const { setToFavorite, workspaceSlug, data, onClose, handleNextStep, updateCoverImageStatus } = props;
   // store
@@ -54,7 +40,7 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
   // form info
   const methods = useForm<TProject>({
-    defaultValues: { ...DEFAULT_PROJECT_FORM_VALUES, ...data },
+    defaultValues: { ...getProjectFormValues(), ...data },
     reValidateMode: "onChange",
   });
   const { handleSubmit, reset, setValue } = methods;
