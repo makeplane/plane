@@ -34,11 +34,11 @@ export const InboxIssueRoot = observer(function InboxIssueRoot(props: TInboxIssu
   useEffect(() => {
     if (!inboxAccessible || !workspaceSlug || !projectId) return;
     // Check if project has changed
-    const projectChanged = currentInboxProjectId && currentInboxProjectId !== projectId;
+    const hasProjectChanged = currentInboxProjectId && currentInboxProjectId !== projectId;
 
     if (navigationTab && navigationTab !== currentTab) {
       handleCurrentTab(workspaceSlug, projectId, navigationTab);
-    } else if (projectChanged) {
+    } else if (hasProjectChanged) {
       handleCurrentTab(workspaceSlug, projectId, EInboxIssueCurrentTab.OPEN);
     } else {
       fetchInboxIssues(
