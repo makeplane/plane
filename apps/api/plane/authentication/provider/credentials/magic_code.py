@@ -1,7 +1,7 @@
 # Python imports
 import json
 import os
-import random
+import secrets
 
 
 # Module imports
@@ -49,7 +49,7 @@ class MagicCodeProvider(CredentialAdapter):
 
     def initiate(self):
         ## Generate a random token
-        token = str(random.randint(100000, 999999))
+        token = str(secrets.randbelow(900000) + 100000)
 
         ri = redis_instance()
 

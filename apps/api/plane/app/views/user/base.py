@@ -2,8 +2,6 @@
 import uuid
 import json
 import logging
-import random
-import string
 import secrets
 
 # Django imports
@@ -151,7 +149,7 @@ class UserEndpoint(BaseViewSet):
             # Include user ID to bind the code to the specific user
             cache_key = f"magic_email_update_{user.id}_{new_email}"
             ## Generate a random token
-            token = str(random.randint(100000, 999999))
+            token = str(secrets.randbelow(900000) + 100000)
             # Store in cache with 10 minute expiration
             cache_data = json.dumps({"token": token})
             cache.set(cache_key, cache_data, timeout=600)
