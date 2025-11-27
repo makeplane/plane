@@ -132,6 +132,7 @@ class ProjectPage(BaseModel):
     project = models.ForeignKey("db.Project", on_delete=models.CASCADE, related_name="project_pages")
     page = models.ForeignKey("db.Page", on_delete=models.CASCADE, related_name="project_pages")
     workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="project_pages")
+    sort_order = models.FloatField(default=65535)
 
     class Meta:
         unique_together = ["project", "page", "deleted_at"]
@@ -149,6 +150,22 @@ class ProjectPage(BaseModel):
 
     def __str__(self):
         return f"{self.project.name} {self.page.name}"
+    
+    def _set_sort_for_root_page(self):
+        """
+        Set sort_order for project pages when the associated page has no parent in the workspace.
+        """
+        largest_sort_order = ProjectPage.objects.filter(project=self.project).aggregate(
+            largest=models.Max("sort_order")
+        )["largest"]
+
+        if largest_sort_order is not None:
+            self.sort_order = largest_sort_order + 10000
+
+    def save(self, *args, **kwargs):
+        if self._state.adding:
+            self._set_sort_for_root_page()
+        super(ProjectPage, self).save(*args, **kwargs)
 
 
 class PageVersion(BaseModel):
