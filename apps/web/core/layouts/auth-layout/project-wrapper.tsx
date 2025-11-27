@@ -1,12 +1,12 @@
 import type { ReactNode } from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { GANTT_TIMELINE_TYPE } from "@plane/types";
 // components
-import { ProjectAccessRestriction } from "@/components/auth-screens/project/access-restriction";
+import { ProjectAccessRestriction } from "@/components/auth-screens/project/project-access-restriction";
 import {
   PROJECT_DETAILS,
   PROJECT_ME_INFORMATION,
@@ -19,10 +19,8 @@ import {
   PROJECT_MODULES,
   PROJECT_VIEWS,
 } from "@/constants/fetch-keys";
-import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
-import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
@@ -42,10 +40,12 @@ interface IProjectAuthWrapper {
 
 export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IProjectAuthWrapper) {
   const { workspaceSlug, projectId, children, isLoading: isParentLoading = false } = props;
+  // states
+  const [isJoiningProject, setIsJoiningProject] = useState(false);
   // store hooks
-  const { toggleCreateProjectModal } = useCommandPalette();
   const { fetchUserProjectInfo, allowPermissions } = useUserPermissions();
   const { fetchProjectDetails } = useProject();
+  const { joinProject } = useUserPermissions();
   const { fetchAllCycles } = useCycle();
   const { fetchModulesSlim, fetchModules } = useModule();
   const { initGantt } = useTimeLineChart(GANTT_TIMELINE_TYPE.MODULE);
@@ -63,10 +63,6 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
     EUserPermissionsLevel.PROJECT,
     workspaceSlug,
     projectId
-  );
-  const canAddProject = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
   );
   const isWorkspaceAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE, workspaceSlug);
 
@@ -128,6 +124,14 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
     revalidateOnFocus: false,
   });
 
+  // handle join project
+  const handleJoinProject = () => {
+    setIsJoiningProject(true);
+    joinProject(workspaceSlug, projectId)
+      .then(() => fetchProjectDetails(workspaceSlug, projectId))
+      .finally(() => setIsJoiningProject(false));
+  };
+
   const isProjectLoading = (isParentLoading || isProjectDetailsLoading) && !projectDetailsError;
 
   if (isProjectLoading) return null;
@@ -137,12 +141,8 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
       <ProjectAccessRestriction
         errorStatusCode={projectDetailsError?.status}
         isWorkspaceAdmin={isWorkspaceAdmin}
-        projectId={projectId}
-        handleCreateProject={() => {
-          toggleCreateProjectModal(true);
-          captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON });
-        }}
-        canAddProject={canAddProject}
+        handleJoinProject={handleJoinProject}
+        isJoinButtonDisabled={isJoiningProject}
       />
     );
   }
