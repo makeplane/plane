@@ -252,7 +252,8 @@ class WorkspaceUserPropertiesEndpoint(BaseAPIView):
         try:
             workspace_properties = WorkspaceUserProperties.objects.get(user=request.user, workspace__slug=slug)
         except WorkspaceUserProperties.DoesNotExist:
-            return Response({"error": "Workspace user properties not found"}, status=status.HTTP_404_NOT_FOUND)
+            workspace = Workspace.objects.get(slug=slug)
+            workspace_properties = WorkspaceUserProperties.objects.create(user=request.user, workspace_id=workspace.id)
 
         serializer = WorkspaceUserPropertiesSerializer(workspace_properties, data=request.data, partial=True)
         if serializer.is_valid():
