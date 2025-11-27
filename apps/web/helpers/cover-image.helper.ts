@@ -47,12 +47,7 @@ export const DEFAULT_COVER_IMAGE_URL = STATIC_COVER_IMAGES.IMAGE_1;
  */
 const STATIC_COVER_IMAGES_SET = new Set<string>(Object.values(STATIC_COVER_IMAGES));
 
-/**
- * Array of static image URLs for iteration (e.g., in UI components)
- */
-export const STATIC_COVER_IMAGES = Object.values(STATIC_COVER_IMAGES);
-
-export type TCoverImageType = "local_static" | "uploaded_asset" | "external_url" | "none";
+export type TCoverImageType = "local_static" | "uploaded_asset" | "uploaded_asset";
 
 export interface ICoverImageResult {
   needsUpload: boolean;
@@ -78,29 +73,27 @@ export const isStaticCoverImage = (imageUrl: string | null | undefined): boolean
  * Determines the type of cover image URL
  * Uses explicit validation against known static images for better accuracy
  */
-export const getCoverImageType = (imageUrl: string | null | undefined): TCoverImageType => {
-  if (!imageUrl) return "none";
-
+export const getCoverImageType = (imageUrl: string): TCoverImageType => {
   // Check against the explicit set of static images
   if (isStaticCoverImage(imageUrl)) return "local_static";
 
-  // Check for uploaded assets
-  if (imageUrl.startsWith("/api/assets/")) return "uploaded_asset";
+  if (imageUrl.startsWith("http")) return "uploaded_asset";
 
-  // Check for external URLs (Unsplash, etc.)
-  if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) return "external_url";
-
-  return "none";
+  return "uploaded_asset";
 };
 
 /**
  * Gets the correct display URL for a cover image
  * - Local static images: returned as-is (served from public folder)
  * - Uploaded assets: processed through getFileURL (adds backend URL)
- * - External URLs: returned as-is (Unsplash, etc.)
  * - None/null: returns fallback or null
  */
-export const getCoverImageDisplayURL = (imageUrl: string | null | undefined, fallbackUrl: string): string => {
+export function getCoverImageDisplayURL(imageUrl: string | null | undefined, fallbackUrl: string): string;
+export function getCoverImageDisplayURL(imageUrl: string | null | undefined, fallbackUrl: null): string | null;
+export function getCoverImageDisplayURL(
+  imageUrl: string | null | undefined,
+  fallbackUrl: string | null
+): string | null {
   if (!imageUrl) {
     return fallbackUrl;
   }
@@ -109,21 +102,16 @@ export const getCoverImageDisplayURL = (imageUrl: string | null | undefined, fal
 
   switch (imageType) {
     case "local_static":
-      // Local static images are served from public folder, don't process
       return imageUrl;
 
     case "uploaded_asset":
-      // Uploaded assets need backend URL prepended
       return getFileURL(imageUrl) || imageUrl;
-
-    case "external_url":
-      // External URLs (Unsplash, etc.) are used as-is
-      return imageUrl;
 
     default:
       return imageUrl;
   }
-};
+}
+
 
 /**
  * Analyzes cover image change and determines what action to take
@@ -142,7 +130,7 @@ export const analyzeCoverImageChange = (
     };
   }
 
-  const imageType = getCoverImageType(newImage);
+  const imageType = getCoverImageType(newImage ?? "");
 
   return {
     needsUpload: imageType === "local_static",
@@ -243,25 +231,21 @@ export const handleCoverImageChange = async (
   if (analysis.needsUpload) {
     const uploadedUrl = await uploadCoverImage(newImage, uploadConfig);
 
+    // For BOTH user assets AND project assets:
+    // The backend auto-links when entity_identifier is set correctly
+    // So we don't need to return anything - the link happens server-side!
+
     if (uploadConfig.isUserAsset) {
+      // User assets: return URL for display (optional, mostly for immediate feedback)
       return {
         cover_image_url: uploadedUrl,
       };
     } else {
-      // For project assets, the upload already links via entity_identifier
-      // No need to set anything in payload
+      // Project assets: Auto-linked server-side during upload!
+      // No need to return anything or call bulk API
       return null;
     }
   }
-
-  // External URL (Unsplash, etc.)
-  if (analysis.imageType === "external_url") {
-    return {
-      cover_image: newImage,
-      cover_image_asset: null,
-    };
-  }
-
   // Already uploaded asset - no action needed
   if (analysis.imageType === "uploaded_asset") {
     return null;

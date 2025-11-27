@@ -240,7 +240,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
                     label={t("change_cover")}
                     control={control}
                     onChange={(imageUrl) => onChange(imageUrl)}
-                    value={value ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
+                    value={value}
                     isProfileCover
                   />
                 )}

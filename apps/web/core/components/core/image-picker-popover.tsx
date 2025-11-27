@@ -198,75 +198,77 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                 ))}
               </Tab.List>
               <Tab.Panels className="vertical-scrollbar scrollbar-md h-full w-full flex-1 overflow-y-auto overflow-x-hidden">
-                {(unsplashImages || !unsplashError) && (
-                  <Tab.Panel className="mt-4 h-full w-full space-y-4">
-                    <div className="flex gap-x-2">
-                      <Controller
-                        control={control}
-                        name="search"
-                        render={({ field: { value, ref } }) => (
-                          <Input
-                            id="search"
-                            name="search"
-                            type="text"
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                e.preventDefault();
-                                setSearchParams(formData.search);
-                              }
-                            }}
-                            value={value}
-                            onChange={(e) => setFormData({ ...formData, search: e.target.value })}
-                            ref={ref}
-                            placeholder="Search for images"
-                            className="w-full text-sm"
-                          />
-                        )}
-                      />
-                      <Button variant="primary" onClick={() => setSearchParams(formData.search)} size="sm">
-                        Search
-                      </Button>
-                    </div>
-                    {unsplashImages ? (
-                      unsplashImages.length > 0 ? (
-                        <div className="grid grid-cols-4 gap-4">
-                          {unsplashImages.map((image) => (
-                            <div
-                              key={image.id}
-                              className="relative col-span-2 aspect-video md:col-span-1"
-                              onClick={() => {
-                                setIsOpen(false);
-                                onChange(image.urls.regular);
+                <Tab.Panel className="mt-4 h-full w-full space-y-4">
+                  {(unsplashImages || !unsplashError) && (
+                    <>
+                      <div className="flex gap-x-2">
+                        <Controller
+                          control={control}
+                          name="search"
+                          render={({ field: { value, ref } }) => (
+                            <Input
+                              id="search"
+                              name="search"
+                              type="text"
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                  setSearchParams(formData.search);
+                                }
                               }}
-                            >
-                              <img
-                                src={image.urls.small}
-                                alt={image.alt_description}
-                                className="absolute left-0 top-0 h-full w-full cursor-pointer rounded object-cover"
-                              />
-                            </div>
-                          ))}
-                        </div>
+                              value={value}
+                              onChange={(e) => setFormData({ ...formData, search: e.target.value })}
+                              ref={ref}
+                              placeholder="Search for images"
+                              className="w-full text-sm"
+                            />
+                          )}
+                        />
+                        <Button variant="primary" onClick={() => setSearchParams(formData.search)} size="sm">
+                          Search
+                        </Button>
+                      </div>
+                      {unsplashImages ? (
+                        unsplashImages.length > 0 ? (
+                          <div className="grid grid-cols-4 gap-4">
+                            {unsplashImages.map((image) => (
+                              <div
+                                key={image.id}
+                                className="relative col-span-2 aspect-video md:col-span-1"
+                                onClick={() => {
+                                  setIsOpen(false);
+                                  onChange(image.urls.regular);
+                                }}
+                              >
+                                <img
+                                  src={image.urls.small}
+                                  alt={image.alt_description}
+                                  className="absolute left-0 top-0 h-full w-full cursor-pointer rounded object-cover"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="pt-7 text-center text-xs text-custom-text-300">No images found.</p>
+                        )
                       ) : (
-                        <p className="pt-7 text-center text-xs text-custom-text-300">No images found.</p>
-                      )
-                    ) : (
-                      <Loader className="grid grid-cols-4 gap-4">
-                        <Loader.Item height="80px" width="100%" />
-                        <Loader.Item height="80px" width="100%" />
-                        <Loader.Item height="80px" width="100%" />
-                        <Loader.Item height="80px" width="100%" />
-                        <Loader.Item height="80px" width="100%" />
-                        <Loader.Item height="80px" width="100%" />
-                        <Loader.Item height="80px" width="100%" />
-                        <Loader.Item height="80px" width="100%" />
-                      </Loader>
-                    )}
-                  </Tab.Panel>
-                )}
+                        <Loader className="grid grid-cols-4 gap-4">
+                          <Loader.Item height="80px" width="100%" />
+                          <Loader.Item height="80px" width="100%" />
+                          <Loader.Item height="80px" width="100%" />
+                          <Loader.Item height="80px" width="100%" />
+                          <Loader.Item height="80px" width="100%" />
+                          <Loader.Item height="80px" width="100%" />
+                          <Loader.Item height="80px" width="100%" />
+                          <Loader.Item height="80px" width="100%" />
+                        </Loader>
+                      )}
+                    </>
+                  )}
+                </Tab.Panel>
                 <Tab.Panel className="mt-4 h-full w-full space-y-4">
                   <div className="grid grid-cols-4 gap-4">
-                    {STATIC_COVER_IMAGES.map((imageUrl, index) => (
+                    {Object.values(STATIC_COVER_IMAGES).map((imageUrl, index) => (
                       <div
                         key={imageUrl}
                         className="relative col-span-2 aspect-video md:col-span-1"

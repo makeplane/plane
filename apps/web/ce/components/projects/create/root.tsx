@@ -1,17 +1,18 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { FormProvider, useForm } from "react-hook-form";
-import { DEFAULT_PROJECT_FORM_VALUES, PROJECT_TRACKER_EVENTS } from "@plane/constants";
+import { PROJECT_TRACKER_EVENTS, RANDOM_EMOJI_CODES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
+import type { IProject } from "@plane/types";
 // constants
 import ProjectCommonAttributes from "@/components/project/create/common-attributes";
 import ProjectCreateHeader from "@/components/project/create/header";
 import ProjectCreateButtons from "@/components/project/create/project-create-buttons";
 // hooks
-import { getCoverImageType, uploadCoverImage } from "@/helpers/cover-image.helper";
+import { DEFAULT_COVER_IMAGE_URL, getCoverImageType, uploadCoverImage } from "@/helpers/cover-image.helper";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -27,6 +28,21 @@ export type TCreateProjectFormProps = {
   data?: Partial<TProject>;
   templateId?: string;
   updateCoverImageStatus: (projectId: string, coverImage: string) => Promise<void>;
+};
+
+const DEFAULT_PROJECT_FORM_VALUES: Partial<IProject> = {
+  cover_image_url: DEFAULT_COVER_IMAGE_URL,
+  description: "",
+  logo_props: {
+    in_use: "emoji",
+    emoji: {
+      value: RANDOM_EMOJI_CODES[Math.floor(Math.random() * RANDOM_EMOJI_CODES.length)],
+    },
+  },
+  identifier: "",
+  name: "",
+  network: 2,
+  project_lead: null,
 };
 
 export const CreateProjectForm = observer(function CreateProjectForm(props: TCreateProjectFormProps) {

@@ -169,7 +169,6 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
         isUserAsset: false,
       });
 
-      // Merge cover image payload if there are changes
       if (coverImagePayload) {
         Object.assign(payload, coverImagePayload);
       }
