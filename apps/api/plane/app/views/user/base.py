@@ -151,13 +151,7 @@ class UserEndpoint(BaseViewSet):
             # Include user ID to bind the code to the specific user
             cache_key = f"magic_email_update_{user.id}_{new_email}"
             ## Generate a random token
-            token = (
-                "".join(secrets.choice(string.ascii_lowercase) for _ in range(4))
-                + "-"
-                + "".join(secrets.choice(string.ascii_lowercase) for _ in range(4))
-                + "-"
-                + "".join(secrets.choice(string.ascii_lowercase) for _ in range(4))
-            )
+            token = str(random.randint(100000, 999999))
             # Store in cache with 10 minute expiration
             cache_data = json.dumps({"token": token})
             cache.set(cache_key, cache_data, timeout=600)
