@@ -14,8 +14,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
 import { Input, Loader } from "@plane/ui";
 // helpers
-import { getFileURL } from "@plane/utils";
-import { STATIC_COVER_IMAGES } from "@/helpers/cover-image.helper";
+import { STATIC_COVER_IMAGES, getCoverImageDisplayURL } from "@/helpers/cover-image.helper";
 // hooks
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 // services
@@ -303,7 +302,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                         {image !== null || (value && value !== "") ? (
                           <>
                             <img
-                              src={image ? URL.createObjectURL(image) : value ? (getFileURL(value) ?? "") : ""}
+                              src={image ? URL.createObjectURL(image) : getCoverImageDisplayURL(value, "")}
                               alt="image"
                               className="rounded-lg h-full w-full object-cover"
                             />
