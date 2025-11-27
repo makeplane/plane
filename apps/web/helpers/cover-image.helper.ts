@@ -49,17 +49,17 @@ const STATIC_COVER_IMAGES_SET = new Set<string>(Object.values(STATIC_COVER_IMAGE
 
 export type TCoverImageType = "local_static" | "uploaded_asset";
 
-export interface ICoverImageResult {
+export type TCoverImageResult = {
   needsUpload: boolean;
   imageType: TCoverImageType;
   shouldUpdate: boolean;
-}
+};
 
-export interface ICoverImagePayload {
+export type TCoverImagePayload = {
   cover_image?: string | null;
   cover_image_url?: string | null;
   cover_image_asset?: string | null;
-}
+};
 
 /**
  * Checks if a given URL is a valid static cover image
@@ -100,16 +100,15 @@ export function getCoverImageDisplayURL(
 
   const imageType = getCoverImageType(imageUrl);
 
-  switch (imageType) {
-    case "local_static":
-      return imageUrl;
-
-    case "uploaded_asset":
-      return getFileURL(imageUrl) || imageUrl;
-
-    default:
-      return imageUrl;
+  if (imageType === "local_static") {
+    return imageUrl;
   }
+
+  if (imageType === "uploaded_asset") {
+    return getFileURL(imageUrl) || imageUrl;
+  }
+
+  return imageUrl;
 }
 
 /**
@@ -118,7 +117,7 @@ export function getCoverImageDisplayURL(
 export const analyzeCoverImageChange = (
   currentImage: string | null | undefined,
   newImage: string | null | undefined
-): ICoverImageResult => {
+): TCoverImageResult => {
   const hasChanged = currentImage !== newImage;
 
   if (!hasChanged) {
@@ -209,7 +208,7 @@ export const handleCoverImageChange = async (
     entityType: EFileAssetType;
     isUserAsset?: boolean;
   }
-): Promise<ICoverImagePayload | null> => {
+): Promise<TCoverImagePayload | null> => {
   const analysis = analyzeCoverImageChange(currentImage, newImage);
 
   // No change detected
