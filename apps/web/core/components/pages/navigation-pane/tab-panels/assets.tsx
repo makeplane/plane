@@ -22,7 +22,7 @@ type AssetItemProps = {
   page: TPageInstance;
 };
 
-const AssetItem = observer((props: AssetItemProps) => {
+const AssetItem = observer(function AssetItem(props: AssetItemProps) {
   const { asset, page } = props;
   // navigation
   const { workspaceSlug } = useParams();
@@ -101,7 +101,7 @@ const AssetItem = observer((props: AssetItemProps) => {
   );
 });
 
-export const PageNavigationPaneAssetsTabPanel: React.FC<Props> = observer((props) => {
+export const PageNavigationPaneAssetsTabPanel = observer(function PageNavigationPaneAssetsTabPanel(props: Props) {
   const { page } = props;
   // derived values
   const {

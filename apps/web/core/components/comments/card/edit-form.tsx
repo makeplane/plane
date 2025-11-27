@@ -21,7 +21,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const CommentCardEditForm: React.FC<Props> = observer((props) => {
+export const CommentCardEditForm = observer(function CommentCardEditForm(props: Props) {
   const {
     activityOperations,
     comment,
@@ -92,6 +92,10 @@ export const CommentCardEditForm: React.FC<Props> = observer((props) => {
           showSubmitButton={false}
           uploadFile={async (blockId, file) => {
             const { asset_id } = await activityOperations.uploadCommentAsset(blockId, file, comment.id);
+            return asset_id;
+          }}
+          duplicateFile={async (assetId: string) => {
+            const { asset_id } = await activityOperations.duplicateCommentAsset(assetId, comment.id);
             return asset_id;
           }}
           projectId={projectId}

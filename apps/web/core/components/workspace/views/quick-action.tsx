@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -23,7 +21,7 @@ type Props = {
   view: IWorkspaceView;
 };
 
-export const WorkspaceViewQuickActions: React.FC<Props> = observer((props) => {
+export const WorkspaceViewQuickActions = observer(function WorkspaceViewQuickActions(props: Props) {
   const { workspaceSlug, view } = props;
   // states
   const [updateViewModal, setUpdateViewModal] = useState(false);

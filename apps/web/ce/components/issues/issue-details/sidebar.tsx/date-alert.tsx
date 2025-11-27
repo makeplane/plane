@@ -6,4 +6,6 @@ export type TDateAlertProps = {
   projectId: string;
 };
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const DateAlert = (props: TDateAlertProps) => <></>;
+export function DateAlert(props: TDateAlertProps) {
+  return <></>;
+}

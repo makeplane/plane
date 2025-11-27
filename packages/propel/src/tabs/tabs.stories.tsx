@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Settings, User, Bell } from "lucide-react";
-import { HomeIcon } from "../icons";
+import { HomeIcon } from "../icons/workspace/home-icon";
 import { Tabs } from "./tabs";
 
 type TabOption = {

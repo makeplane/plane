@@ -42,7 +42,7 @@ interface Props {
 }
 
 const analyticsService = new AnalyticsService();
-const PriorityChart = observer((props: Props) => {
+const PriorityChart = observer(function PriorityChart(props: Props) {
   const { x_axis, y_axis, group_by } = props;
   const { t } = useTranslation();
   // store hooks

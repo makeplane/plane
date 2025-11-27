@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -21,7 +19,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const DeleteGlobalViewModal: React.FC<Props> = observer((props) => {
+export const DeleteGlobalViewModal = observer(function DeleteGlobalViewModal(props: Props) {
   const { data, isOpen, onClose } = props;
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);

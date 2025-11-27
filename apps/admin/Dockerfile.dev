@@ -8,7 +8,7 @@ COPY . .
 RUN corepack enable pnpm && pnpm add -g turbo
 RUN pnpm install
 
-ENV NEXT_PUBLIC_ADMIN_BASE_PATH="/god-mode"
+ENV VITE_ADMIN_BASE_PATH="/god-mode"
 
 EXPOSE 3000
 

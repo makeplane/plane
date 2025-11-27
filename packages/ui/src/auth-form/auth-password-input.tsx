@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { E_PASSWORD_STRENGTH } from "@plane/constants";
+import type { E_PASSWORD_STRENGTH } from "@plane/constants";
 import { cn, getPasswordStrength } from "@plane/utils";
 import { PasswordStrengthIndicator } from "../form-fields/password/indicator";
 import { AuthInput } from "./auth-input";
@@ -16,7 +16,7 @@ export interface AuthPasswordInputProps extends Omit<React.InputHTMLAttributes<H
   onPasswordStrengthChange?: (strength: E_PASSWORD_STRENGTH) => void;
 }
 
-export const AuthPasswordInput: React.FC<AuthPasswordInputProps> = ({
+export function AuthPasswordInput({
   label = "Password",
   error,
   showPasswordStrength = true,
@@ -29,7 +29,7 @@ export const AuthPasswordInput: React.FC<AuthPasswordInputProps> = ({
   onPasswordChange,
   onPasswordStrengthChange,
   ...props
-}) => {
+}: AuthPasswordInputProps) {
   const [isFocused, setIsFocused] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,4 +74,4 @@ export const AuthPasswordInput: React.FC<AuthPasswordInputProps> = ({
       )}
     </div>
   );
-};
+}

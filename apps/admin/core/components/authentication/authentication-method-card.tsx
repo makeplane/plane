@@ -1,5 +1,3 @@
-"use client";
-
 // helpers
 import { cn } from "@plane/utils";
 
@@ -13,7 +11,7 @@ type Props = {
   unavailable?: boolean;
 };
 
-export const AuthenticationMethodCard: React.FC<Props> = (props) => {
+export function AuthenticationMethodCard(props: Props) {
   const { name, description, icon, config, disabled = false, withBorder = true, unavailable = false } = props;
 
   return (
@@ -52,4 +50,4 @@ export const AuthenticationMethodCard: React.FC<Props> = (props) => {
       <div className={`shrink-0 ${disabled && "opacity-70"}`}>{config}</div>
     </div>
   );
-};
+}

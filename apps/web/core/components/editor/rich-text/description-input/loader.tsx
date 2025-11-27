@@ -6,7 +6,7 @@ type Props = {
   className?: string;
 };
 
-export const DescriptionInputLoader: React.FC<Props> = (props) => {
+export function DescriptionInputLoader(props: Props) {
   const { className } = props;
 
   return (
@@ -30,4 +30,4 @@ export const DescriptionInputLoader: React.FC<Props> = (props) => {
       </div>
     </Loader>
   );
-};
+}

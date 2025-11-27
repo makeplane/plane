@@ -29,7 +29,7 @@ type Props = {
   enabledExtraOptions: TIssueExtraOptions[];
 };
 
-export const FilterExtraOptions: React.FC<Props> = observer((props) => {
+export const FilterExtraOptions = observer(function FilterExtraOptions(props: Props) {
   const { selectedExtraOptions, handleUpdate, enabledExtraOptions } = props;
   // hooks
   const { t } = useTranslation();

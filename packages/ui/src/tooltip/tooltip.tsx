@@ -33,7 +33,7 @@ interface ITooltipProps {
   renderByDefault?: boolean;
 }
 
-export const Tooltip: React.FC<ITooltipProps> = ({
+export function Tooltip({
   tooltipHeading,
   tooltipContent,
   position = "top",
@@ -43,8 +43,10 @@ export const Tooltip: React.FC<ITooltipProps> = ({
   openDelay = 200,
   closeDelay,
   isMobile = false,
-  renderByDefault = true, //FIXME: tooltip should always render on hover and not by default, this is a temporary fix
-}) => {
+
+  //FIXME: tooltip should always render on hover and not by default, this is a temporary fix
+  renderByDefault = true,
+}: ITooltipProps) {
   const toolTipRef = useRef<HTMLDivElement | null>(null);
 
   const [shouldRender, setShouldRender] = useState(renderByDefault);
@@ -107,4 +109,4 @@ export const Tooltip: React.FC<ITooltipProps> = ({
       }
     />
   );
-};
+}

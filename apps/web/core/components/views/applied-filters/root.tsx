@@ -21,7 +21,7 @@ const MEMBERS_FILTERS = ["owned_by"];
 const DATE_FILTERS = ["created_at"];
 const VIEW_ACCESS_FILTERS = ["view_type"];
 
-export const ViewAppliedFiltersList: React.FC<Props> = (props) => {
+export function ViewAppliedFiltersList(props: Props) {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, alwaysAllowEditing } = props;
   const { t } = useTranslation();
 
@@ -84,4 +84,4 @@ export const ViewAppliedFiltersList: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+}

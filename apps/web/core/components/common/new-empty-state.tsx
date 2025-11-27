@@ -1,7 +1,4 @@
-"use client";
 import React, { useState } from "react";
-
-import Image from "next/image";
 
 // ui
 import { Button } from "@plane/propel/button";
@@ -24,14 +21,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const NewEmptyState: React.FC<Props> = ({
-  title,
-  description,
-  image,
-  primaryButton,
-  disabled = false,
-  comicBox,
-}) => {
+export function NewEmptyState({ title, description, image, primaryButton, disabled = false, comicBox }: Props) {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseEnter = () => {
@@ -48,7 +38,7 @@ export const NewEmptyState: React.FC<Props> = ({
           <h3 className="text-2xl font-semibold">{title}</h3>
           {description && <p className=" text-lg">{description}</p>}
           <div className="relative w-full max-w-6xl">
-            <Image src={image} className="w-full" alt={primaryButton?.text || "button image"} />
+            <img src={image} className="w-full h-full object-contain" alt={primaryButton?.text || "button image"} />
           </div>
 
           <div className="relative flex items-start justify-center">
@@ -111,4 +101,4 @@ export const NewEmptyState: React.FC<Props> = ({
       </div>
     </div>
   );
-};
+}

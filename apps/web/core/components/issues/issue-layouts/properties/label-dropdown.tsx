@@ -39,7 +39,7 @@ export interface ILabelDropdownProps {
   label: React.ReactNode;
 }
 
-export const LabelDropdown = (props: ILabelDropdownProps) => {
+export function LabelDropdown(props: ILabelDropdownProps) {
   const {
     projectId,
     value,
@@ -307,4 +307,4 @@ export const LabelDropdown = (props: ILabelDropdownProps) => {
       </ComboDropDown>
     </div>
   );
-};
+}

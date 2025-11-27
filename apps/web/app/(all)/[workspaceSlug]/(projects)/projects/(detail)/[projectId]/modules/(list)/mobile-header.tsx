@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { MODULE_VIEW_LAYOUTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -9,7 +7,7 @@ import { ModuleLayoutIcon } from "@/components/modules";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { useProject } from "@/hooks/store/use-project";
 
-export const ModulesListMobileHeader = observer(() => {
+export const ModulesListMobileHeader = observer(function ModulesListMobileHeader() {
   const { currentProjectDetails } = useProject();
   const { updateDisplayFilters } = useModuleFilter();
   const { t } = useTranslation();

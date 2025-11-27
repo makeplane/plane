@@ -31,6 +31,7 @@ module.exports = {
         caughtErrorsIgnorePattern: "^_",
       },
     ],
+    "import/no-duplicates": ["error", { considerQueryString: true }],
     "import/order": [
       "warn",
       {
@@ -52,6 +53,16 @@ module.exports = {
           order: "asc",
           caseInsensitive: true,
         },
+      },
+    ],
+    "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
+    "@typescript-eslint/no-import-type-side-effects": "error",
+    "@typescript-eslint/consistent-type-imports": [
+      "error",
+      {
+        prefer: "type-imports",
+        fixStyle: "separate-type-imports",
+        disallowTypeAnnotations: false,
       },
     ],
   },

@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -29,7 +27,7 @@ type AuthHeaderProps = {
   type: EAuthModes;
 };
 
-export const AuthHeader = observer(({ type }: AuthHeaderProps) => {
+export const AuthHeader = observer(function AuthHeader({ type }: AuthHeaderProps) {
   const { t } = useTranslation();
   // store
   const { config } = useInstance();

@@ -1,8 +1,5 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane internal packages
@@ -20,7 +17,9 @@ import { useInstance } from "@/hooks/store";
 import type { Route } from "./+types/page";
 import { InstanceGithubConfigForm } from "./form";
 
-const InstanceGithubAuthenticationPage = observer<React.FC<Route.ComponentProps>>(() => {
+const InstanceGithubAuthenticationPage = observer(function InstanceGithubAuthenticationPage(
+  _props: Route.ComponentProps
+) {
   // store
   const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
   // state
@@ -73,7 +72,7 @@ const InstanceGithubAuthenticationPage = observer<React.FC<Route.ComponentProps>
             name="GitHub"
             description="Allow members to login or sign up to plane with their GitHub accounts."
             icon={
-              <Image
+              <img
                 src={resolveGeneralTheme(resolvedTheme) === "dark" ? githubDarkModeImage : githubLightModeImage}
                 height={24}
                 width={24}

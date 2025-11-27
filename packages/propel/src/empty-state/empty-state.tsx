@@ -1,5 +1,5 @@
 import React from "react";
-import { CompactAssetType, DetailedAssetType } from "./assets/asset-types";
+import type { CompactAssetType, DetailedAssetType } from "./assets/asset-types";
 import { EmptyStateCompact } from "./compact-empty-state";
 import { EmptyStateDetailed } from "./detailed-empty-state";
 import type { BaseEmptyStateCommonProps } from "./types";
@@ -29,7 +29,7 @@ export interface EmptyStateProps {
   assetKey?: CompactAssetType | DetailedAssetType;
 }
 
-export const EmptyState: React.FC<EmptyStateProps> = ({
+export function EmptyState({
   type = "detailed",
   asset,
   assetKey,
@@ -39,7 +39,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   className,
   rootClassName,
   assetClassName,
-}) => {
+}: EmptyStateProps) {
   if (type === "simple") {
     return (
       <EmptyStateCompact
@@ -66,6 +66,6 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       assetClassName={assetClassName}
     />
   );
-};
+}
 
 EmptyState.displayName = "EmptyState";

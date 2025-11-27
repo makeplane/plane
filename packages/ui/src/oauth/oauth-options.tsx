@@ -18,7 +18,7 @@ type OAuthOptionsProps = {
   containerClassName?: string;
 };
 
-export const OAuthOptions = (props: OAuthOptionsProps) => {
+export function OAuthOptions(props: OAuthOptionsProps) {
   const { options, compact = false, className = "", containerClassName = "" } = props;
 
   // Filter enabled options
@@ -54,4 +54,4 @@ export const OAuthOptions = (props: OAuthOptionsProps) => {
       </div>
     </div>
   );
-};
+}

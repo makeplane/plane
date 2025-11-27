@@ -5,4 +5,6 @@ type Props = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const ViewNavbarRoot = (props: Props) => <></>;
+export function ViewNavbarRoot(props: Props) {
+  return <></>;
+}

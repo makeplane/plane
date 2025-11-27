@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane types
 import type { ICycle, TIssue } from "@plane/types";
@@ -14,7 +12,7 @@ type Props = {
   workItemDetails: TIssue;
 };
 
-export const PowerKWorkItemCyclesMenu: React.FC<Props> = observer((props) => {
+export const PowerKWorkItemCyclesMenu = observer(function PowerKWorkItemCyclesMenu(props: Props) {
   const { handleSelect, workItemDetails } = props;
   // store hooks
   const { getProjectCycleIds, getCycleById } = useCycle();

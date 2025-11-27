@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { intersection } from "lodash-es";
 import { observer } from "mobx-react";
@@ -29,7 +27,7 @@ type Props = {
 
 const projectExportService = new ProjectExportService();
 
-export const Exporter: React.FC<Props> = observer((props) => {
+export const Exporter = observer(function Exporter(props: Props) {
   const { isOpen, handleClose, user, provider, mutateServices } = props;
   // states
   const [exportLoading, setExportLoading] = useState(false);
@@ -66,7 +64,8 @@ export const Exporter: React.FC<Props> = observer((props) => {
   const onChange = (val: any) => {
     setValue(val);
   };
-  const ExportCSVToMail = async () => {
+
+  async function ExportCSVToMail() {
     setExportLoading(true);
     if (workspaceSlug && user && typeof provider === "string") {
       const payload = {
@@ -97,7 +96,7 @@ export const Exporter: React.FC<Props> = observer((props) => {
           });
         });
     }
-  };
+  }
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>

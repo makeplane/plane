@@ -22,7 +22,7 @@ type Props = {
   ganttContainerRef: React.RefObject<HTMLDivElement>;
 };
 
-export const BlockRow: React.FC<Props> = observer((props) => {
+export const BlockRow = observer(function BlockRow(props: Props) {
   const { blockId, showAllBlocks, blockUpdateHandler, handleScrollToBlock, enableAddBlock, selectionHelpers } = props;
   // states
   const [isHidden, setIsHidden] = useState(false);

@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -19,7 +17,7 @@ type TIssueVotes = {
   size?: "md" | "sm";
 };
 
-export const IssueVotes: React.FC<TIssueVotes> = observer((props) => {
+export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
   const { anchor, issueIdFromProps, size = "md" } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);

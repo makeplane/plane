@@ -4,10 +4,11 @@ import { Popover } from "../popover";
 import { cn } from "../utils/classname";
 import { convertPlacementToSideAndAlign } from "../utils/placement";
 import { EmojiRoot } from "./emoji/emoji";
-import { emojiToString, TCustomEmojiPicker, EmojiIconPickerTypes } from "./helper";
+import type { TCustomEmojiPicker } from "./helper";
+import { emojiToString, EmojiIconPickerTypes } from "./helper";
 import { IconRoot } from "./icon/icon-root";
 
-export const EmojiPicker: React.FC<TCustomEmojiPicker> = (props) => {
+export function EmojiPicker(props: TCustomEmojiPicker) {
   const {
     isOpen,
     handleToggle,
@@ -134,4 +135,4 @@ export const EmojiPicker: React.FC<TCustomEmojiPicker> = (props) => {
       </Popover.Panel>
     </Popover>
   );
-};
+}

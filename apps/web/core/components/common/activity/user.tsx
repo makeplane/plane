@@ -12,7 +12,7 @@ type TUser = {
   customUserName?: string;
 };
 
-export const User: FC<TUser> = observer((props) => {
+export const User = observer(function User(props: TUser) {
   const { activity, customUserName } = props;
   // store hooks
   const { getUserDetails } = useMember();

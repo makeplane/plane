@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Loader } from "@plane/ui";
@@ -9,7 +7,7 @@ import { useInstance } from "@/hooks/store";
 import type { Route } from "./+types/page";
 import { InstanceAIForm } from "./form";
 
-const InstanceAIPage = observer<React.FC<Route.ComponentProps>>(() => {
+const InstanceAIPage = observer(function InstanceAIPage(_props: Route.ComponentProps) {
   // store
   const { fetchInstanceConfigurations, formattedConfig } = useInstance();
 

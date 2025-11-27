@@ -14,7 +14,7 @@ import { DocumentEditorSideEffects } from "@/plane-editor/components/document-ed
 // types
 import type { EditorRefApi, ICollaborativeDocumentEditorProps } from "@/types";
 
-const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> = (props) => {
+function CollaborativeDocumentEditor(props: ICollaborativeDocumentEditorProps) {
   const {
     aiHandler,
     bubbleMenuEnabled = true,
@@ -30,6 +30,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     fileHandler,
     flaggedExtensions,
     forwardedRef,
+    getEditorMetaData,
     handleEditorReady,
     id,
     dragDropEnabled = true,
@@ -57,6 +58,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
     extensions,
     fileHandler,
     flaggedExtensions,
+    getEditorMetaData,
     forwardedRef,
     handleEditorReady,
     id,
@@ -93,6 +95,7 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
         documentLoaderClassName={documentLoaderClassName}
         editor={editor}
         editorContainerClassName={cn(editorContainerClassNames, "document-editor")}
+        extendedEditorProps={extendedEditorProps}
         id={id}
         isTouchDevice={!!isTouchDevice}
         isLoading={!hasServerSynced && !hasServerConnectionFailed}
@@ -103,13 +106,14 @@ const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> =
       />
     </>
   );
-};
+}
 
-const CollaborativeDocumentEditorWithRef = React.forwardRef<EditorRefApi, ICollaborativeDocumentEditorProps>(
-  (props, ref) => (
-    <CollaborativeDocumentEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />
-  )
-);
+const CollaborativeDocumentEditorWithRef = React.forwardRef(function CollaborativeDocumentEditorWithRef(
+  props: ICollaborativeDocumentEditorProps,
+  ref: React.ForwardedRef<EditorRefApi>
+) {
+  return <CollaborativeDocumentEditor {...props} forwardedRef={ref as React.MutableRefObject<EditorRefApi | null>} />;
+});
 
 CollaborativeDocumentEditorWithRef.displayName = "CollaborativeDocumentEditorWithRef";
 

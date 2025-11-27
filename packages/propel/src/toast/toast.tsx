@@ -49,15 +49,17 @@ export type ToastProps = {
 
 const toastManager = BaseToast.createToastManager();
 
-export const Toast = (props: ToastProps) => (
-  <BaseToast.Provider toastManager={toastManager}>
-    <BaseToast.Portal>
-      <BaseToast.Viewport data-theme={props.theme}>
-        <ToastList />
-      </BaseToast.Viewport>
-    </BaseToast.Portal>
-  </BaseToast.Provider>
-);
+export function Toast(props: ToastProps) {
+  return (
+    <BaseToast.Provider toastManager={toastManager}>
+      <BaseToast.Portal>
+        <BaseToast.Viewport data-theme={props.theme}>
+          <ToastList />
+        </BaseToast.Viewport>
+      </BaseToast.Portal>
+    </BaseToast.Provider>
+  );
+}
 
 const TOAST_DATA = {
   [TOAST_TYPE.SUCCESS]: {
@@ -97,12 +99,13 @@ const TOAST_DATA = {
     borderColorClassName: "border-toast-border-loading",
   },
 };
-const ToastList = () => {
+
+function ToastList() {
   const { toasts } = BaseToast.useToastManager();
   return toasts.map((toast) => <ToastRender key={toast.id} id={toast.id} toast={toast} />);
-};
+}
 
-const ToastRender = ({ id, toast }: { id: React.Key; toast: BaseToast.Root.ToastObject }) => {
+function ToastRender({ id, toast }: { id: React.Key; toast: BaseToast.Root.ToastObject }) {
   const toastData = toast.data as SetToastProps;
   const type = toastData.type as TOAST_TYPE;
   const data = TOAST_DATA[type];
@@ -194,7 +197,7 @@ const ToastRender = ({ id, toast }: { id: React.Key; toast: BaseToast.Root.Toast
       )}
     </BaseToast.Root>
   );
-};
+}
 
 export const setToast = (props: SetToastProps) => {
   let toastId: string | undefined;

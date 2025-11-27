@@ -1,7 +1,7 @@
 import { set } from "lodash-es";
 // plane imports
 import { DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
-import { IPartialProject, ISearchIssueResponse, IState, TIssue } from "@plane/types";
+import type { IPartialProject, ISearchIssueResponse, IState, TIssue } from "@plane/types";
 
 export const getUpdateFormDataForReset = (projectId: string | null | undefined, formData: Partial<TIssue>) => ({
   ...DEFAULT_WORK_ITEM_FORM_VALUES,

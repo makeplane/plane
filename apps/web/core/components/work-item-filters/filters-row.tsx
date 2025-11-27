@@ -10,4 +10,6 @@ type TWorkItemFiltersRowProps = TFiltersRowProps<TWorkItemFilterProperty, TWorkI
   filter: IWorkItemFilterInstance;
 };
 
-export const WorkItemFiltersRow = observer((props: TWorkItemFiltersRowProps) => <FiltersRow {...props} />);
+export const WorkItemFiltersRow = observer(function WorkItemFiltersRow(props: TWorkItemFiltersRowProps) {
+  return <FiltersRow {...props} />;
+});

@@ -12,7 +12,7 @@ type Props = {
   userProfile: IUserProfileData | undefined;
 };
 
-export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, userProfile }) => {
+export function ProfileStateDistribution({ stateDistribution, userProfile }: Props) {
   const { t } = useTranslation();
   if (!userProfile) return null;
 
@@ -80,4 +80,4 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
       </Card>
     </div>
   );
-};
+}

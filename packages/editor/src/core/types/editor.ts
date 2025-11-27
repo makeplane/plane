@@ -3,6 +3,8 @@ import type { MarkType, NodeType } from "@tiptap/pm/model";
 import type { Selection } from "@tiptap/pm/state";
 import type { EditorProps, EditorView } from "@tiptap/pm/view";
 import type { NodeViewProps as TNodeViewProps } from "@tiptap/react";
+// plane imports
+import type { TCustomComponentsMetaData } from "@plane/utils";
 // extension types
 import type { TTextAlign } from "@/extensions";
 // plane editor imports
@@ -19,7 +21,6 @@ import type {
   TDocumentEventEmitter,
   TDocumentEventsServer,
   TEditorAsset,
-  TEmbedConfig,
   TExtensions,
   TFileHandler,
   TMentionHandler,
@@ -151,6 +152,7 @@ export type IEditorProps = {
   flaggedExtensions: TExtensions[];
   fileHandler: TFileHandler;
   forwardedRef?: React.MutableRefObject<EditorRefApi | null>;
+  getEditorMetaData: (htmlContent: string) => TCustomComponentsMetaData;
   handleEditorReady?: (value: boolean) => void;
   id: string;
   initialValue: string;
@@ -165,6 +167,7 @@ export type IEditorProps = {
   tabIndex?: number;
   value?: string | null;
   extendedEditorProps: IEditorPropsExtended;
+  workItemIdentifier?: string | null;
 };
 
 export type ILiteTextEditorProps = IEditorProps;

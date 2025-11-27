@@ -1,4 +1,4 @@
-import { type Editor } from "@tiptap/core";
+import type { Editor } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { TableMap } from "@tiptap/pm/tables";
 import { Decoration, DecorationSet } from "@tiptap/pm/view";
@@ -10,7 +10,8 @@ import {
   haveTableRelatedChanges,
 } from "@/extensions/table/table/utilities/helpers";
 // local imports
-import { RowDragHandle, RowDragHandleProps } from "./drag-handle";
+import type { RowDragHandleProps } from "./drag-handle";
+import { RowDragHandle } from "./drag-handle";
 
 type TableRowDragHandlePluginState = {
   decorations?: DecorationSet;

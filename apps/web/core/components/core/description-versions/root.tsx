@@ -27,7 +27,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const DescriptionVersionsRoot: React.FC<Props> = observer((props) => {
+export const DescriptionVersionsRoot = observer(function DescriptionVersionsRoot(props: Props) {
   const { className, entityInformation, fetchHandlers, handleRestore, projectId, workspaceSlug } = props;
   // states
   const [isModalOpen, setIsModalOpen] = useState(false);

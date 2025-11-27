@@ -9,7 +9,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
 
-export const ProjectSpreadsheetLayout: React.FC = observer(() => {
+export const ProjectSpreadsheetLayout = observer(function ProjectSpreadsheetLayout() {
   // router
   const { workspaceSlug } = useParams();
   // hooks

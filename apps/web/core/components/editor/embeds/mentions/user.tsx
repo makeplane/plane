@@ -1,15 +1,11 @@
-import { useState } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
-import { usePopper } from "react-popper";
+import { Link } from "react-router";
 // plane imports
 import { ROLE } from "@plane/constants";
-// plane ui
+import { Popover } from "@plane/propel/popover";
 import { Avatar } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
-// constants
-// helpers
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
@@ -18,13 +14,10 @@ type Props = {
   id: string;
 };
 
-export const EditorUserMention: React.FC<Props> = observer((props) => {
+export const EditorUserMention = observer(function EditorUserMention(props: Props) {
   const { id } = props;
   // router
   const { projectId } = useParams();
-  // states
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-  const [referenceElement, setReferenceElement] = useState<HTMLAnchorElement | null>(null);
   // params
   const { workspaceSlug } = useParams();
   // store hooks
@@ -33,18 +26,6 @@ export const EditorUserMention: React.FC<Props> = observer((props) => {
     getUserDetails,
     project: { getProjectMemberDetails },
   } = useMember();
-  // popper-js refs
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "bottom-start",
-    modifiers: [
-      {
-        name: "preventOverflow",
-        options: {
-          padding: 12,
-        },
-      },
-    ],
-  });
   // derived values
   const userDetails = getUserDetails(id);
   const roleDetails = projectId ? getProjectMemberDetails(id, projectId.toString())?.role : null;
@@ -53,7 +34,7 @@ export const EditorUserMention: React.FC<Props> = observer((props) => {
   if (!userDetails) {
     return (
       <div className="not-prose inline px-1 py-0.5 rounded bg-custom-background-80 text-custom-text-300 no-underline">
-        @deactivated user
+        @suspended user
       </div>
     );
   }
@@ -61,39 +42,38 @@ export const EditorUserMention: React.FC<Props> = observer((props) => {
   return (
     <div
       className={cn(
-        "not-prose group/user-mention inline px-1 py-0.5 rounded bg-custom-primary-100/20 text-custom-primary-100 no-underline",
+        "not-prose inline px-1 py-0.5 rounded bg-custom-primary-100/20 text-custom-primary-100 no-underline",
         {
           "bg-yellow-500/20 text-yellow-500": id === currentUser?.id,
         }
       )}
     >
-      <Link href={profileLink} ref={setReferenceElement}>
-        @{userDetails?.display_name}
-      </Link>
-      <div
-        className="top-full left-0 z-10 min-w-60 bg-custom-background-90 shadow-custom-shadow-rg rounded-lg p-4 opacity-0 pointer-events-none group-hover/user-mention:opacity-100 group-hover/user-mention:pointer-events-auto transition-opacity"
-        ref={setPopperElement}
-        style={styles.popper}
-        {...attributes.popper}
-      >
-        <div className="flex items-center gap-3">
-          <div className="flex-shrink-0 size-10 grid place-items-center">
-            <Avatar
-              src={getFileURL(userDetails?.avatar_url ?? "")}
-              name={userDetails?.display_name}
-              size={40}
-              className="text-xl"
-              showTooltip={false}
-            />
+      <Popover delay={100} openOnHover>
+        <Popover.Button>
+          <Link to={profileLink}>@{userDetails?.display_name}</Link>
+        </Popover.Button>
+        <Popover.Panel side="bottom" align="start">
+          <div className="w-60 bg-custom-background-100 shadow-custom-shadow-rg rounded-lg p-3 border-[0.5px] border-custom-border-300">
+            <div className="flex items-center gap-3">
+              <div className="flex-shrink-0 size-10 grid place-items-center">
+                <Avatar
+                  src={getFileURL(userDetails?.avatar_url ?? "")}
+                  name={userDetails?.display_name}
+                  size={40}
+                  className="text-xl"
+                  showTooltip={false}
+                />
+              </div>
+              <div>
+                <Link to={profileLink} className="not-prose font-medium text-custom-text-100 text-sm hover:underline">
+                  {userDetails?.first_name} {userDetails?.last_name}
+                </Link>
+                {roleDetails && <p className="text-custom-text-200 text-xs">{ROLE[roleDetails]}</p>}
+              </div>
+            </div>
           </div>
-          <div>
-            <Link href={profileLink} className="not-prose font-medium text-custom-text-100 text-sm hover:underline">
-              {userDetails?.first_name} {userDetails?.last_name}
-            </Link>
-            {roleDetails && <p className="text-custom-text-200 text-xs">{ROLE[roleDetails]}</p>}
-          </div>
-        </div>
-      </div>
+        </Popover.Panel>
+      </Popover>
     </div>
   );
 });

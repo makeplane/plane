@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
-
 import React, { useMemo, useState } from "react";
 import {
   CartesianGrid,
@@ -14,13 +12,15 @@ import {
 } from "recharts";
 // plane imports
 import { AXIS_LABEL_CLASSNAME } from "@plane/constants";
-import { TScatterChartProps } from "@plane/types";
+import type { TScatterChartProps } from "@plane/types";
 // local components
 import { getLegendProps } from "../components/legend";
 import { CustomXAxisTick, CustomYAxisTick } from "../components/tick";
 import { CustomTooltip } from "../components/tooltip";
 
-export const ScatterChart = React.memo(<K extends string, T extends string>(props: TScatterChartProps<K, T>) => {
+export const ScatterChart = React.memo(function ScatterChart<K extends string, T extends string>(
+  props: TScatterChartProps<K, T>
+) {
   const {
     data,
     scatterPoints,

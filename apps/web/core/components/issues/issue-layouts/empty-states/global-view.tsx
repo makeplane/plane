@@ -10,7 +10,7 @@ import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 
-export const GlobalViewEmptyState: React.FC = observer(() => {
+export const GlobalViewEmptyState = observer(function GlobalViewEmptyState() {
   // plane imports
   const { t } = useTranslation();
   // store hooks

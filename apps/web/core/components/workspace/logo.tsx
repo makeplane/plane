@@ -9,7 +9,7 @@ type Props = {
   classNames?: string;
 };
 
-export const WorkspaceLogo = observer((props: Props) => {
+export const WorkspaceLogo = observer(function WorkspaceLogo(props: Props) {
   // translation
   const { t } = useTranslation();
 

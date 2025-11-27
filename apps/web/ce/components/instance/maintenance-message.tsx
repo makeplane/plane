@@ -1,4 +1,4 @@
-export const MaintenanceMessage = () => {
+export function MaintenanceMessage() {
   const linkMap = [
     {
       key: "mail_to",
@@ -34,4 +34,4 @@ export const MaintenanceMessage = () => {
       </div>
     </>
   );
-};
+}

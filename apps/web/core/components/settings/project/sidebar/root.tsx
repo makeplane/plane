@@ -15,7 +15,7 @@ type TProjectSettingsSidebarProps = {
   isMobile?: boolean;
 };
 
-export const ProjectSettingsSidebar = observer((props: TProjectSettingsSidebarProps) => {
+export const ProjectSettingsSidebar = observer(function ProjectSettingsSidebar(props: TProjectSettingsSidebarProps) {
   const { isMobile = false } = props;
   const { workspaceSlug } = useParams();
   // store hooks

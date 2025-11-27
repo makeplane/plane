@@ -1,6 +1,8 @@
-import { type Editor, findParentNodeClosestToPos, type KeyboardShortcutCommand } from "@tiptap/core";
+import { findParentNodeClosestToPos } from "@tiptap/core";
+import type { Editor, KeyboardShortcutCommand } from "@tiptap/core";
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
-import { CellSelection, TableMap } from "@tiptap/pm/tables";
+import type { CellSelection } from "@tiptap/pm/tables";
+import { TableMap } from "@tiptap/pm/tables";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions

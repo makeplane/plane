@@ -1,7 +1,11 @@
 import { useRef } from "react";
 import { observer } from "mobx-react";
 
-export const SettingsContentLayout = observer(({ children }: { children: React.ReactNode }) => {
+export const SettingsContentLayout = observer(function SettingsContentLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   // refs
   const ref = useRef<HTMLDivElement>(null);
 

@@ -5,7 +5,7 @@ import { getCompactAsset } from "./assets/asset-registry";
 import type { CompactAssetType } from "./assets/asset-types";
 import type { BaseEmptyStateCommonProps } from "./types";
 
-export const EmptyStateCompact: React.FC<BaseEmptyStateCommonProps> = ({
+export function EmptyStateCompact({
   asset,
   assetKey,
   title,
@@ -16,7 +16,7 @@ export const EmptyStateCompact: React.FC<BaseEmptyStateCommonProps> = ({
   assetClassName,
   align = "center",
   customButton,
-}) => {
+}: BaseEmptyStateCommonProps) {
   // Determine which asset to use: assetKey takes precedence, fallback to custom asset
   const resolvedAsset = assetKey ? getCompactAsset(assetKey as CompactAssetType, assetClassName) : asset;
 
@@ -59,6 +59,6 @@ export const EmptyStateCompact: React.FC<BaseEmptyStateCommonProps> = ({
       </div>
     </div>
   );
-};
+}
 
 EmptyStateCompact.displayName = "EmptyStateCompact";

@@ -4,7 +4,7 @@ import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 import type { TQuickAddIssueForm } from "../root";
 
-export const GanttQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((props) => {
+export const GanttQuickAddIssueForm = observer(function GanttQuickAddIssueForm(props: TQuickAddIssueForm) {
   const { ref, projectDetail, hasError, register, onSubmit, isEpic } = props;
   const { t } = useTranslation();
   return (

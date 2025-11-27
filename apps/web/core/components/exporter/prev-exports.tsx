@@ -25,7 +25,7 @@ type Props = {
   setCursor: (cursor: string) => void;
 };
 type RowData = IExportData;
-export const PrevExports = observer((props: Props) => {
+export const PrevExports = observer(function PrevExports(props: Props) {
   // props
   const { workspaceSlug, cursor, per_page, setCursor } = props;
   // state

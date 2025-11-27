@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { ChartNoAxesColumn, SlidersHorizontal } from "lucide-react";
@@ -38,7 +36,7 @@ const LAYOUTS = [
   EIssueLayoutTypes.GANTT,
 ];
 
-export const HeaderFilters = observer((props: Props) => {
+export const HeaderFilters = observer(function HeaderFilters(props: Props) {
   const {
     currentProjectDetails,
     projectId,

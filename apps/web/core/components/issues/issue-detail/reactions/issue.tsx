@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { stringToEmoji } from "@plane/propel/emoji-icon-picker";
@@ -10,7 +7,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser } from "@plane/types";
 // hooks
 // ui
-import { cn, formatTextList } from "@plane/utils";
+import { cn } from "@plane/utils";
 // helpers
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
@@ -25,7 +22,7 @@ export type TIssueReaction = {
   className?: string;
 };
 
-export const IssueReaction: FC<TIssueReaction> = observer((props) => {
+export const IssueReaction = observer(function IssueReaction(props: TIssueReaction) {
   const { workspaceSlug, projectId, issueId, currentUser, disabled = false, className = "" } = props;
   // state
   const [isPickerOpen, setIsPickerOpen] = useState(false);
@@ -68,7 +65,7 @@ export const IssueReaction: FC<TIssueReaction> = observer((props) => {
             type: TOAST_TYPE.SUCCESS,
             message: "Reaction removed successfully",
           });
-        } catch (error) {
+        } catch (_error) {
           setToast({
             title: "Error!",
             type: TOAST_TYPE.ERROR,

@@ -7,7 +7,7 @@ import { TimezoneSelect } from "@/components/global";
 import { captureElementAndEvent } from "@/helpers/event-tracker.helper";
 import { useUser, useUserProfile } from "@/hooks/store/user";
 
-export const LanguageTimezone = observer(() => {
+export const LanguageTimezone = observer(function LanguageTimezone() {
   // store hooks
   const {
     data: user,

@@ -1,4 +1,4 @@
-import { TExternalFilter } from "@plane/types";
+import type { TExternalFilter } from "@plane/types";
 
 /**
  * Filter config options.

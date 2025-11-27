@@ -12,7 +12,7 @@ type Props = {
   version: TDescriptionVersion;
 };
 
-export const DescriptionVersionsDropdownItem: React.FC<Props> = observer((props) => {
+export const DescriptionVersionsDropdownItem = observer(function DescriptionVersionsDropdownItem(props: Props) {
   const { onClick, version } = props;
   // store hooks
   const { getUserDetails } = useMember();

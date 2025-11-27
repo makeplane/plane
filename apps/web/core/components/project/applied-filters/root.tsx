@@ -1,5 +1,3 @@
-"use client";
-
 import { useTranslation } from "@plane/i18n";
 import { CloseIcon } from "@plane/propel/icons";
 // plane imports
@@ -27,7 +25,7 @@ type Props = {
 const MEMBERS_FILTERS = ["lead", "members"];
 const DATE_FILTERS = ["created_at"];
 
-export const ProjectAppliedFiltersList: React.FC<Props> = (props) => {
+export function ProjectAppliedFiltersList(props: Props) {
   const { t } = useTranslation();
   const {
     appliedFilters,
@@ -127,4 +125,4 @@ export const ProjectAppliedFiltersList: React.FC<Props> = (props) => {
       </Header.RightItem>
     </Header>
   );
-};
+}

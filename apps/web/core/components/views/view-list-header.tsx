@@ -14,7 +14,7 @@ import { FiltersDropdown } from "../issues/issue-layouts/filters";
 import { ViewFiltersSelection } from "./filters/filter-selection";
 import { ViewOrderByDropdown } from "./filters/order-by";
 
-export const ViewListHeader = observer(() => {
+export const ViewListHeader = observer(function ViewListHeader() {
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   // refs

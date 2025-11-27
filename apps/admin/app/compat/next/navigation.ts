@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo } from "react";
 import { useLocation, useNavigate, useSearchParams as useSearchParamsRR } from "react-router";
 import { ensureTrailingSlash } from "./helper";

@@ -6,7 +6,7 @@ import { PlaneLogo } from "@plane/propel/icons";
 // helpers
 import { cn } from "@plane/utils";
 
-export const ProductUpdatesFooter = () => {
+export function ProductUpdatesFooter() {
   const { t } = useTranslation();
   return (
     <div className="flex items-center justify-between flex-shrink-0 gap-4 m-6 mb-4">
@@ -63,4 +63,4 @@ export const ProductUpdatesFooter = () => {
       </a>
     </div>
   );
-};
+}

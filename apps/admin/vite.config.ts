@@ -1,59 +1,41 @@
 import path from "node:path";
 import { reactRouter } from "@react-router/dev/vite";
+import dotenv from "dotenv";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { joinUrlPath } from "@plane/utils";
 
-const PUBLIC_ENV_KEYS = [
-  "NEXT_PUBLIC_API_BASE_URL",
-  "NEXT_PUBLIC_API_BASE_PATH",
-  "NEXT_PUBLIC_ADMIN_BASE_URL",
-  "NEXT_PUBLIC_ADMIN_BASE_PATH",
-  "NEXT_PUBLIC_SPACE_BASE_URL",
-  "NEXT_PUBLIC_SPACE_BASE_PATH",
-  "NEXT_PUBLIC_LIVE_BASE_URL",
-  "NEXT_PUBLIC_LIVE_BASE_PATH",
-  "NEXT_PUBLIC_WEB_BASE_URL",
-  "NEXT_PUBLIC_WEB_BASE_PATH",
-  "NEXT_PUBLIC_WEBSITE_URL",
-  "NEXT_PUBLIC_SUPPORT_EMAIL",
-];
+dotenv.config({ path: path.resolve(__dirname, ".env") });
 
-const publicEnv = PUBLIC_ENV_KEYS.reduce<Record<string, string>>((acc, key) => {
-  acc[key] = process.env[key] ?? "";
-  return acc;
-}, {});
+// Expose only vars starting with VITE_
+const viteEnv = Object.keys(process.env)
+  .filter((k) => k.startsWith("VITE_"))
+  .reduce<Record<string, string>>((a, k) => {
+    a[k] = process.env[k] ?? "";
+    return a;
+  }, {});
 
-export default defineConfig(({ isSsrBuild }) => {
-  // Only produce an SSR bundle when explicitly enabled.
-  // For static deployments (default), we skip the server build entirely.
-  const enableSsrBuild = process.env.ADMIN_ENABLE_SSR_BUILD === "true";
-  const basePath = joinUrlPath(process.env.NEXT_PUBLIC_ADMIN_BASE_PATH ?? "", "/") ?? "/";
+const basePath = joinUrlPath(process.env.VITE_ADMIN_BASE_PATH ?? "", "/") ?? "/";
 
-  return {
-    base: basePath,
-    define: {
-      "process.env": JSON.stringify(publicEnv),
+export default defineConfig(() => ({
+  base: basePath,
+  define: {
+    "process.env": JSON.stringify(viteEnv),
+  },
+  build: {
+    assetsInlineLimit: 0,
+  },
+  plugins: [reactRouter(), tsconfigPaths({ projects: [path.resolve(__dirname, "tsconfig.json")] })],
+  resolve: {
+    alias: {
+      // Next.js compatibility shims used within admin
+      "next/link": path.resolve(__dirname, "app/compat/next/link.tsx"),
+      "next/navigation": path.resolve(__dirname, "app/compat/next/navigation.ts"),
     },
-    build: {
-      assetsInlineLimit: 0,
-      rollupOptions:
-        isSsrBuild && enableSsrBuild
-          ? {
-              input: path.resolve(__dirname, "server/app.ts"),
-            }
-          : undefined,
-    },
-    plugins: [reactRouter(), tsconfigPaths({ projects: [path.resolve(__dirname, "tsconfig.json")] })],
-    resolve: {
-      alias: {
-        // Next.js compatibility shims used within admin
-        "next/image": path.resolve(__dirname, "app/compat/next/image.tsx"),
-        "next/link": path.resolve(__dirname, "app/compat/next/link.tsx"),
-        "next/navigation": path.resolve(__dirname, "app/compat/next/navigation.ts"),
-      },
-      dedupe: ["react", "react-dom"],
-    },
-    // No SSR-specific overrides needed; alias resolves to ESM build
-  };
-});
+    dedupe: ["react", "react-dom"],
+  },
+  server: {
+    host: "127.0.0.1",
+  },
+  // No SSR-specific overrides needed; alias resolves to ESM build
+}));

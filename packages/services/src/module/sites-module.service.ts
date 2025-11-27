@@ -1,7 +1,7 @@
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
 // api service
-import { TPublicModule } from "@plane/types";
+import type { TPublicModule } from "@plane/types";
 import { APIService } from "../api.service";
 
 /**

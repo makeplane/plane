@@ -19,7 +19,7 @@ export type ContextBasedActionsProps = {
   handleSelection: (data: unknown) => void;
 };
 
-export const PowerKContextBasedPagesList: React.FC<ContextBasedActionsProps> = (props) => {
+export function PowerKContextBasedPagesList(props: ContextBasedActionsProps) {
   const { activeContext, activePage, handleSelection } = props;
 
   return (
@@ -33,7 +33,7 @@ export const PowerKContextBasedPagesList: React.FC<ContextBasedActionsProps> = (
       <PowerKContextBasedActionsExtended {...props} />
     </>
   );
-};
+}
 
 export const usePowerKContextBasedActions = (): TPowerKCommandConfig[] => {
   const workItemCommands = usePowerKWorkItemContextBasedCommands();

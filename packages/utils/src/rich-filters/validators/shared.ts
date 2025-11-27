@@ -1,5 +1,5 @@
 // plane imports
-import { TFilterGroupNode, TFilterProperty } from "@plane/types";
+import type { TFilterGroupNode, TFilterProperty } from "@plane/types";
 // local imports
 import { getGroupChildren } from "../types/shared";
 

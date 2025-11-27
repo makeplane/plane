@@ -24,7 +24,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const CommentCardDisplay: React.FC<Props> = observer((props) => {
+export const CommentCardDisplay = observer(function CommentCardDisplay(props: Props) {
   const {
     activityOperations,
     comment,

@@ -50,7 +50,7 @@ export const meta = () => [
 ];
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const isSessionRecorderEnabled = parseInt(process.env.NEXT_PUBLIC_ENABLE_SESSION_RECORDER || "0");
+  const isSessionRecorderEnabled = parseInt(process.env.VITE_ENABLE_SESSION_RECORDER || "0");
 
   return (
     <html lang="en">
@@ -86,16 +86,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
         </AppProvider>
       </body>
-      {process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN && (
-        <Script defer data-domain={process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN} src="https://plausible.io/js/script.js" />
-      )}
-      {!!isSessionRecorderEnabled && process.env.NEXT_PUBLIC_SESSION_RECORDER_KEY && (
+      {!!isSessionRecorderEnabled && process.env.VITE_SESSION_RECORDER_KEY && (
         <Script id="clarity-tracking">
           {`(function(c,l,a,r,i,t,y){
               c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
               t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
               y=l.getElementsByTagName(r)[0];if(y){y.parentNode.insertBefore(t,y);}
-          })(window, document, "clarity", "script", "${process.env.NEXT_PUBLIC_SESSION_RECORDER_KEY}");`}
+          })(window, document, "clarity", "script", "${process.env.VITE_SESSION_RECORDER_KEY}");`}
         </Script>
       )}
     </html>

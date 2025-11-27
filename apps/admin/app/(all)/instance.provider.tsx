@@ -3,7 +3,7 @@ import useSWR from "swr";
 // hooks
 import { useInstance } from "@/hooks/store";
 
-export const InstanceProvider = observer<React.FC<React.PropsWithChildren>>((props) => {
+export const InstanceProvider = observer(function InstanceProvider(props: React.PropsWithChildren) {
   const { children } = props;
   // store hooks
   const { fetchInstanceInfo } = useInstance();

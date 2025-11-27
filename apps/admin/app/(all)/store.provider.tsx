@@ -1,5 +1,3 @@
-"use client";
-
 import { createContext } from "react";
 // plane admin store
 import { RootStore } from "@/plane-admin/store/root.store";
@@ -28,7 +26,7 @@ export type StoreProviderProps = {
   initialState?: any;
 };
 
-export const StoreProvider = ({ children, initialState = {} }: StoreProviderProps) => {
+export function StoreProvider({ children, initialState = {} }: StoreProviderProps) {
   const store = initializeStore(initialState);
   return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>;
-};
+}

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -20,7 +18,7 @@ interface IEmailNotificationFormProps {
 // services
 const userService = new UserService();
 
-export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) => {
+export function EmailNotificationForm(props: IEmailNotificationFormProps) {
   const { data } = props;
   const { t } = useTranslation();
   // form data
@@ -195,4 +193,4 @@ export const EmailNotificationForm: FC<IEmailNotificationFormProps> = (props) =>
       </div>
     </>
   );
-};
+}

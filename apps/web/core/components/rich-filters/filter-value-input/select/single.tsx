@@ -19,40 +19,40 @@ type TSingleSelectFilterValueInputProps<P extends TFilterProperty> = {
   onChange: (value: string | null) => void;
 };
 
-export const SingleSelectFilterValueInput = observer(
-  <P extends TFilterProperty>(props: TSingleSelectFilterValueInputProps<P>) => {
-    const { config, condition, onChange, isDisabled } = props;
-    // states
-    const [options, setOptions] = useState<IFilterOption<string>[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
-    // derived values
-    const formattedOptions = useMemo(() => getFormattedOptions<string>(options), [options]);
+export const SingleSelectFilterValueInput = observer(function SingleSelectFilterValueInput<P extends TFilterProperty>(
+  props: TSingleSelectFilterValueInputProps<P>
+) {
+  const { config, condition, onChange, isDisabled } = props;
+  // states
+  const [options, setOptions] = useState<IFilterOption<string>[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  // derived values
+  const formattedOptions = useMemo(() => getFormattedOptions<string>(options), [options]);
 
-    useEffect(() => {
-      loadOptions({ config, setOptions, setLoading });
-    }, [config]);
+  useEffect(() => {
+    loadOptions({ config, setOptions, setLoading });
+  }, [config]);
 
-    const handleSelectChange = (value: string) => {
-      if (value === condition.value) {
-        onChange(null);
-      } else {
-        onChange(value);
+  const handleSelectChange = (value: string) => {
+    if (value === condition.value) {
+      onChange(null);
+    } else {
+      onChange(value);
+    }
+  };
+
+  return (
+    <CustomSearchSelect
+      {...getCommonCustomSearchSelectProps(isDisabled)}
+      value={condition.value}
+      onChange={handleSelectChange}
+      options={formattedOptions}
+      multiple={false}
+      disabled={loading || isDisabled}
+      customButton={
+        <SelectedOptionsDisplay<string> selectedValue={condition.value} options={options} displayCount={1} />
       }
-    };
-
-    return (
-      <CustomSearchSelect
-        {...getCommonCustomSearchSelectProps(isDisabled)}
-        value={condition.value}
-        onChange={handleSelectChange}
-        options={formattedOptions}
-        multiple={false}
-        disabled={loading || isDisabled}
-        customButton={
-          <SelectedOptionsDisplay<string> selectedValue={condition.value} options={options} displayCount={1} />
-        }
-        defaultOpen={!condition.value}
-      />
-    );
-  }
-);
+      defaultOpen={!condition.value}
+    />
+  );
+});

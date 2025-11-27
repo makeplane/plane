@@ -1,7 +1,8 @@
 import * as React from "react";
 
 import { cn } from "../utils";
-import { getIconStyling, getButtonStyling, TButtonVariant, TButtonSizes } from "./helper";
+import type { TButtonVariant, TButtonSizes } from "./helper";
+import { getIconStyling, getButtonStyling } from "./helper";
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: TButtonVariant;
@@ -14,7 +15,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   children: React.ReactNode;
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
+const Button = React.forwardRef(function Button(props: ButtonProps, ref: React.ForwardedRef<HTMLButtonElement>) {
   const {
     variant = "primary",
     size = "md",

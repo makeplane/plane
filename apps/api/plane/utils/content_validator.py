@@ -99,6 +99,7 @@ ATTRIBUTES = {
         "data-background-color",
         "data-text-color",
         "data-name",
+        "data-id",
         # callout attributes
         "data-icon-name",
         "data-icon-color",
@@ -118,6 +119,7 @@ ATTRIBUTES = {
         "aspectratio",
         "src",
         "alignment",
+        "status",
     },
     "img": {
         "width",

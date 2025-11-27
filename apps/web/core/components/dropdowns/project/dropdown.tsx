@@ -27,7 +27,7 @@ type Props = TDropdownProps & {
       }
   );
 
-export const ProjectDropdown: React.FC<Props> = observer((props) => {
+export const ProjectDropdown = observer(function ProjectDropdown(props: Props) {
   // store hooks
   const { joinedProjectIds, getProjectById } = useProject();
 

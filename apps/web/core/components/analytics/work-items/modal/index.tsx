@@ -17,7 +17,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const WorkItemsModal: React.FC<Props> = observer((props) => {
+export const WorkItemsModal = observer(function WorkItemsModal(props: Props) {
   const { isOpen, onClose, projectDetails, moduleDetails, cycleDetails, isEpic } = props;
   const { updateIsEpic, isPeekView } = useAnalytics();
   const [fullScreen, setFullScreen] = useState(false);

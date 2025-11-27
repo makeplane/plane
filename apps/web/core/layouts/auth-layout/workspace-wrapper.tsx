@@ -1,12 +1,8 @@
-"use client";
-
-import type { FC, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import useSWRImmutable from "swr/immutable";
 // ui
 import { LogOut } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -14,13 +10,12 @@ import { Button, getButtonStyling } from "@plane/propel/button";
 import { PlaneLogo } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-// components
 import { cn } from "@plane/utils";
 // assets
 import WorkSpaceNotAvailable from "@/app/assets/workspace/workspace-not-available.png?url";
 // components
 import { LogoSpinner } from "@/components/common/logo-spinner";
-// hooks
+// constants
 import {
   WORKSPACE_MEMBERS,
   WORKSPACE_PARTIAL_PROJECTS,
@@ -29,8 +24,8 @@ import {
   WORKSPACE_FAVORITE,
   WORKSPACE_STATES,
   WORKSPACE_SIDEBAR_PREFERENCES,
-  WORKSPACE_DB,
 } from "@/constants/fetch-keys";
+// hooks
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
@@ -38,15 +33,13 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// local
-import { persistence } from "@/local-db/storage.sqlite";
 
 interface IWorkspaceAuthWrapper {
   children: ReactNode;
   isLoading?: boolean;
 }
 
-export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
+export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props: IWorkspaceAuthWrapper) {
   const { children, isLoading: isParentLoading = false } = props;
   // router params
   const { workspaceSlug } = useParams();
@@ -120,20 +113,6 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  // initialize the local database
-  const { isLoading: isDBInitializing } = useSWRImmutable(
-    workspaceSlug ? WORKSPACE_DB(workspaceSlug.toString()) : null,
-    workspaceSlug
-      ? async () => {
-          // persistence.reset();
-          await persistence.initialize(workspaceSlug.toString());
-          // Load common data
-          persistence.syncWorkspace();
-          return true;
-        }
-      : null
-  );
-
   const handleSignOut = async () => {
     await signOut().catch(() =>
       setToast({
@@ -145,7 +124,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   };
 
   // if list of workspaces are not there then we have to render the spinner
-  if (isParentLoading || allWorkspaces === undefined || loader || isDBInitializing) {
+  if (isParentLoading || allWorkspaces === undefined || loader) {
     return (
       <div className="grid h-full place-items-center bg-custom-background-100 p-4 rounded-lg border border-custom-border-200">
         <div className="flex flex-col items-center gap-3 text-center">
@@ -178,7 +157,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
           </div>
           <div className="relative flex h-full w-full flex-grow flex-col items-center justify-center space-y-3">
             <div className="relative flex-shrink-0">
-              <Image src={WorkSpaceNotAvailable} className="h-[220px] object-contain object-center" alt="Plane logo" />
+              <img src={WorkSpaceNotAvailable} className="h-[220px] object-cover object-center" alt="Plane logo" />
             </div>
             <h3 className="text-center text-lg font-semibold">Workspace not found</h3>
             <p className="text-center text-sm text-custom-text-200">

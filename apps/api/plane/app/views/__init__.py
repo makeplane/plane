@@ -18,6 +18,7 @@ from .project.member import (
     ProjectMemberViewSet,
     ProjectMemberUserEndpoint,
     UserProjectRolesEndpoint,
+    ProjectMemberPreferenceEndpoint,
 )
 
 from .user.base import (
@@ -107,6 +108,7 @@ from .asset.v2 import (
     ProjectAssetEndpoint,
     ProjectBulkAssetEndpoint,
     AssetCheckEndpoint,
+    DuplicateAssetEndpoint,
     WorkspaceAssetDownloadEndpoint,
     ProjectAssetDownloadEndpoint,
 )

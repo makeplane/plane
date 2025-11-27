@@ -1,19 +1,20 @@
-import { Editor } from "@tiptap/core";
-import { AlignCenter, AlignLeft, AlignRight, LucideIcon } from "lucide-react";
+import type { Editor } from "@tiptap/core";
+import type { LucideIcon } from "lucide-react";
+import { AlignCenter, AlignLeft, AlignRight } from "lucide-react";
 // plane utils
 import { cn } from "@plane/utils";
 // components
 import { TextAlignItem } from "@/components/menus";
 // types
-import { TEditorCommands } from "@/types";
-import { EditorStateType } from "./root";
+import type { TEditorCommands } from "@/types";
+import type { EditorStateType } from "./root";
 
 type Props = {
   editor: Editor;
   editorState: EditorStateType;
 };
 
-export const TextAlignmentSelector: React.FC<Props> = (props) => {
+export function TextAlignmentSelector(props: Props) {
   const { editor, editorState } = props;
   const menuItem = TextAlignItem(editor);
 
@@ -79,4 +80,4 @@ export const TextAlignmentSelector: React.FC<Props> = (props) => {
       ))}
     </div>
   );
-};
+}

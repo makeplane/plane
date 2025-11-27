@@ -13,7 +13,7 @@ export enum EWidgetKeys {
   QUICK_LINKS = "quick_links",
 }
 
-export const WidgetLoader: React.FC<Props> = (props) => {
+export function WidgetLoader(props: Props) {
   const { widgetKey } = props;
 
   const loaders = {
@@ -22,4 +22,4 @@ export const WidgetLoader: React.FC<Props> = (props) => {
   };
 
   return loaders[widgetKey];
-};
+}

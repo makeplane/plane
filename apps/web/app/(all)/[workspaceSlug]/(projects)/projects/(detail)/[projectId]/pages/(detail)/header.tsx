@@ -1,7 +1,5 @@
-"use client";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { EProjectFeatureKey } from "@plane/constants";
 import { PageIcon } from "@plane/propel/icons";
 // types
 import type { ICustomSearchSelectOption } from "@plane/types";
@@ -9,6 +7,7 @@ import type { ICustomSearchSelectOption } from "@plane/types";
 import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
 import { getPageName } from "@plane/utils";
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { PageAccessIcon } from "@/components/common/page-access-icon";
 import { SwitcherIcon, SwitcherLabel } from "@/components/common/switcher-label";
 import { PageHeaderActions } from "@/components/pages/header/actions";
@@ -17,7 +16,6 @@ import { PageHeaderActions } from "@/components/pages/header/actions";
 import { useProject } from "@/hooks/store/use-project";
 // plane web components
 import { useAppRouter } from "@/hooks/use-app-router";
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
 // plane web hooks
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
@@ -28,7 +26,7 @@ export interface IPagesHeaderProps {
 
 const storeType = EPageStoreType.PROJECT;
 
-export const PageDetailsHeader = observer(() => {
+export const PageDetailsHeader = observer(function PageDetailsHeader() {
   // router
   const router = useAppRouter();
   const { workspaceSlug, pageId, projectId } = useParams();
@@ -66,10 +64,14 @@ export const PageDetailsHeader = observer(() => {
       <Header.LeftItem>
         <div>
           <Breadcrumbs isLoading={loader === "init-loader"}>
-            <CommonProjectBreadcrumbs
-              workspaceSlug={workspaceSlug?.toString()}
-              projectId={projectId?.toString()}
-              featureKey={EProjectFeatureKey.PAGES}
+            <Breadcrumbs.Item
+              component={
+                <BreadcrumbLink
+                  label="Pages"
+                  href={`/${workspaceSlug}/projects/${projectId}/pages/`}
+                  icon={<PageIcon className="h-4 w-4 text-custom-text-300" />}
+                />
+              }
             />
 
             <Breadcrumbs.Item

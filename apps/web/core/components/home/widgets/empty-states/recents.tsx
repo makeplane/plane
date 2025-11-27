@@ -27,7 +27,7 @@ const getDisplayContent = (type: string): { assetKey: CompactAssetType; text: st
   }
 };
 
-export const RecentsEmptyState = ({ type }: { type: string }) => {
+export function RecentsEmptyState({ type }: { type: string }) {
   const { t } = useTranslation();
 
   const { assetKey, text } = getDisplayContent(type);
@@ -37,4 +37,4 @@ export const RecentsEmptyState = ({ type }: { type: string }) => {
       <EmptyStateCompact assetKey={assetKey} assetClassName="size-20" title={t(text)} />
     </div>
   );
-};
+}

@@ -3,7 +3,7 @@ import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-ico
 import type { TLogoProps } from "@plane/types";
 import { cn } from "@plane/utils";
 // types
-import { TCalloutBlockAttributes } from "./types";
+import type { TCalloutBlockAttributes } from "./types";
 // utils
 import { DEFAULT_CALLOUT_BLOCK_ATTRIBUTES, updateStoredLogo } from "./utils";
 
@@ -15,7 +15,7 @@ type Props = {
   updateAttributes: (attrs: Partial<TCalloutBlockAttributes>) => void;
 };
 
-export const CalloutBlockLogoSelector: React.FC<Props> = (props) => {
+export function CalloutBlockLogoSelector(props: Props) {
   const { blockAttributes, disabled, handleOpen, isOpen, updateAttributes } = props;
 
   const logoValue: TLogoProps = {
@@ -93,4 +93,4 @@ export const CalloutBlockLogoSelector: React.FC<Props> = (props) => {
       />
     </div>
   );
-};
+}

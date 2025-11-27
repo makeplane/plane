@@ -3,7 +3,8 @@ import { CircleDotDashed, Circle } from "lucide-react";
 
 import { CycleIcon } from "../project/cycle-icon";
 import { CircleDotFullIcon } from "./circle-dot-full-icon";
-import { CYCLE_GROUP_COLORS, ICycleGroupIcon } from "./helper";
+import type { ICycleGroupIcon } from "./helper";
+import { CYCLE_GROUP_COLORS } from "./helper";
 
 const iconComponents = {
   current: CycleIcon,
@@ -12,13 +13,13 @@ const iconComponents = {
   draft: Circle,
 };
 
-export const CycleGroupIcon: React.FC<ICycleGroupIcon> = ({
+export function CycleGroupIcon({
   className = "",
   color,
   cycleGroup,
   height = "12px",
   width = "12px",
-}) => {
+}: ICycleGroupIcon) {
   const CycleIconComponent = iconComponents[cycleGroup] || CycleIcon;
 
   return (
@@ -29,4 +30,4 @@ export const CycleGroupIcon: React.FC<ICycleGroupIcon> = ({
       className={`flex-shrink-0 ${className}`}
     />
   );
-};
+}

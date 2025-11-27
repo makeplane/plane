@@ -8,7 +8,7 @@ type Props = {
   issue: TIssue;
 };
 
-export const SpreadsheetAttachmentColumn: React.FC<Props> = observer((props) => {
+export const SpreadsheetAttachmentColumn = observer(function SpreadsheetAttachmentColumn(props: Props) {
   const { issue } = props;
 
   return (

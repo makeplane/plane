@@ -14,7 +14,7 @@ type Props = {
   toggleToolbarViewStatus: (val: boolean) => void;
 };
 
-export const ImageAlignmentAction: React.FC<Props> = (props) => {
+export function ImageAlignmentAction(props: Props) {
   const { activeAlignment, handleChange, isTouchDevice, toggleToolbarViewStatus } = props;
   // states
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -61,4 +61,4 @@ export const ImageAlignmentAction: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+}

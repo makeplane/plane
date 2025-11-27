@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -55,7 +53,7 @@ type Props = {
 };
 
 // TODO: refactor this component
-export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
+export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(props: Props) {
   const { moduleId, handleClose, isArchived } = props;
   // states
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
@@ -126,7 +124,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
   };
 
   const handleUpdateLink = async (formData: ModuleLink, linkId: string) => {
-    if (!workspaceSlug || !projectId || !module) return;
+    if (!workspaceSlug || !projectId) return;
 
     const payload = { metadata: {}, ...formData };
 
@@ -147,7 +145,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
   };
 
   const handleDeleteLink = async (linkId: string) => {
-    if (!workspaceSlug || !projectId || !module) return;
+    if (!workspaceSlug || !projectId) return;
 
     deleteModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId)
       .then(() => {

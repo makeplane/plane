@@ -1,3 +1,4 @@
+// @ts-expect-error Due to live server dependencies
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/dist/cjs/entry-point/element/adapter.js";
 import React, { Fragment, useEffect, useMemo } from "react";
 import { Draggable } from "./draggable";
@@ -31,19 +32,18 @@ const moveItem = <T,>(
 
   const symbolKey = Reflect.ownKeys(destination).find((key) => key.toString() === "Symbol(closestEdge)");
   const position = symbolKey ? destination[symbolKey as symbol] : "bottom"; // Add 'as symbol' to cast symbolKey to symbol
+
+  // Calculate final position before removing source item
+  const finalIndex = position === "bottom" ? destinationIndex + 1 : destinationIndex;
+
+  // Adjust for the fact that we're removing the source item first
+  // If source is before destination, removing it shifts everything back by 1
+  const adjustedDestinationIndex = finalIndex > sourceIndex ? finalIndex - 1 : finalIndex;
+
   const newData = [...data];
   const [movedItem] = newData.splice(sourceIndex, 1);
 
-  let adjustedDestinationIndex = destinationIndex;
-  if (position === "bottom") {
-    adjustedDestinationIndex++;
-  }
-
-  // Prevent moving item out of bounds
-  if (adjustedDestinationIndex > newData.length) {
-    adjustedDestinationIndex = newData.length;
-  }
-
+  // Insert at the calculated position (bounds check is implicit in splice)
   newData.splice(adjustedDestinationIndex, 0, movedItem);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -58,9 +58,10 @@ const moveItem = <T,>(
   };
 };
 
-export const Sortable = <T,>({ data, render, onChange, keyExtractor, containerClassName, id }: Props<T>) => {
+export function Sortable<T>({ data, render, onChange, keyExtractor, containerClassName, id }: Props<T>) {
   useEffect(() => {
     const unsubscribe = monitorForElements({
+      // @ts-expect-error Due to live server dependencies
       onDrop({ source, location }) {
         const destination = location?.current?.dropTargets[0];
         if (!destination) return;
@@ -98,6 +99,6 @@ export const Sortable = <T,>({ data, render, onChange, keyExtractor, containerCl
       ))}
     </>
   );
-};
+}
 
 export default Sortable;

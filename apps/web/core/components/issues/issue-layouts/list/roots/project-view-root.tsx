@@ -8,7 +8,7 @@ import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 // components
 import { BaseListRoot } from "../base-list-root";
 
-export const ProjectViewListLayout: React.FC = observer(() => {
+export const ProjectViewListLayout = observer(function ProjectViewListLayout() {
   const { viewId } = useParams();
 
   return <BaseListRoot QuickActions={ProjectIssueQuickActions} viewId={viewId.toString()} />;

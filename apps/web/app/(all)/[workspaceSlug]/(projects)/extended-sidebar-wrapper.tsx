@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
@@ -18,7 +16,7 @@ type Props = {
   excludedElementId: string;
 };
 
-export const ExtendedSidebarWrapper: FC<Props> = observer((props) => {
+export const ExtendedSidebarWrapper = observer(function ExtendedSidebarWrapper(props: Props) {
   const { children, extendedSidebarRef, isExtendedSidebarOpened, handleClose, excludedElementId } = props;
   // store hooks
   const { storedValue } = useLocalStorage("sidebarWidth", SIDEBAR_WIDTH);
@@ -30,7 +28,7 @@ export const ExtendedSidebarWrapper: FC<Props> = observer((props) => {
       id={excludedElementId}
       ref={extendedSidebarRef}
       className={cn(
-        `absolute h-full z-[19] flex flex-col py-2 transform transition-all duration-300 ease-in-out bg-custom-sidebar-background-100 border-r border-custom-sidebar-border-200 p-4 shadow-sm`,
+        `absolute h-full z-[21] flex flex-col py-2 transform transition-all duration-300 ease-in-out bg-custom-sidebar-background-100 border-r border-custom-sidebar-border-200 p-4 shadow-sm`,
         {
           "translate-x-0 opacity-100": isExtendedSidebarOpened,
           [`-translate-x-[${EXTENDED_SIDEBAR_WIDTH}px] opacity-0 hidden`]: !isExtendedSidebarOpened,

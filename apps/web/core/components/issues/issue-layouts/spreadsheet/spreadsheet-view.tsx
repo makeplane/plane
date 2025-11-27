@@ -37,7 +37,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const SpreadsheetView: React.FC<Props> = observer((props) => {
+export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
   const {
     displayProperties,
     displayFilters,

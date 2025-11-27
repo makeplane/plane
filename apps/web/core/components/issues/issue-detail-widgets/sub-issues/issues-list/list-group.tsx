@@ -29,7 +29,7 @@ interface TSubIssuesListGroupProps {
   spacingLeft?: number;
 }
 
-export const SubIssuesListGroup: FC<TSubIssuesListGroupProps> = observer((props) => {
+export const SubIssuesListGroup = observer(function SubIssuesListGroup(props: TSubIssuesListGroupProps) {
   const {
     group,
     serviceType,

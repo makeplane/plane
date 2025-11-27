@@ -18,7 +18,7 @@ import { STICKY_COLORS_LIST } from "../editor/sticky-editor/color-palette";
 import { AllStickiesModal } from "./modal";
 import { StickyNote } from "./sticky";
 
-export const StickyActionBar = observer(() => {
+export const StickyActionBar = observer(function StickyActionBar() {
   // states
   const [isExpanded, setIsExpanded] = useState(false);
   const [newSticky, setNewSticky] = useState(false);

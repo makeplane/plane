@@ -16,7 +16,7 @@ export type TStateOptionProps = {
   alwaysAllowStateChange?: boolean;
 };
 
-export const StateOption = observer((props: TStateOptionProps) => {
+export const StateOption = observer(function StateOption(props: TStateOptionProps) {
   const { option, className = "" } = props;
 
   return (

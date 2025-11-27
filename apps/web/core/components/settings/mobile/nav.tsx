@@ -11,7 +11,7 @@ type Props = {
   activePath: string;
 };
 
-export const SettingsMobileNav = observer((props: Props) => {
+export const SettingsMobileNav = observer(function SettingsMobileNav(props: Props) {
   const { hamburgerContent: HamburgerContent, activePath } = props;
   // refs
   const sidebarRef = useRef<HTMLDivElement>(null);

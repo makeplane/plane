@@ -1,5 +1,3 @@
-"use client";
-
 import { ArrowDownWideNarrow, Check } from "lucide-react";
 import { PROJECT_ORDER_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -21,7 +19,7 @@ type Props = {
 
 const DISABLED_ORDERING_OPTIONS = ["sort_order"];
 
-export const ProjectOrderByDropdown: React.FC<Props> = (props) => {
+export function ProjectOrderByDropdown(props: Props) {
   const { onChange, value, isMobile = false } = props;
   const { t } = useTranslation();
 
@@ -90,4 +88,4 @@ export const ProjectOrderByDropdown: React.FC<Props> = (props) => {
       </CustomMenu.MenuItem>
     </CustomMenu>
   );
-};
+}

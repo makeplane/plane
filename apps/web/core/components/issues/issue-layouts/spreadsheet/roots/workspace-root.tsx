@@ -31,7 +31,7 @@ type Props = {
   issuesLoading: boolean;
 };
 
-export const WorkspaceSpreadsheetRoot: React.FC<Props> = observer((props: Props) => {
+export const WorkspaceSpreadsheetRoot = observer(function WorkspaceSpreadsheetRoot(props: Props) {
   const { isLoading = false, workspaceSlug, globalViewId, fetchNextPages, issuesLoading } = props;
 
   // Custom hooks

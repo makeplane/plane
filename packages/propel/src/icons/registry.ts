@@ -1,4 +1,4 @@
-import { AddReactionIcon } from "./actions";
+import { AddReactionIcon, AddWorkItemIcon, PreferencesIcon, SearchIcon } from "./actions";
 import { AddIcon } from "./actions/add-icon";
 import { CloseIcon } from "./actions/close-icon";
 import { ChevronDownIcon } from "./arrows/chevron-down";
@@ -49,6 +49,7 @@ import { DashboardIcon } from "./workspace/dashboard-icon";
 import { DraftIcon } from "./workspace/draft-icon";
 import { HomeIcon } from "./workspace/home-icon";
 import { InboxIcon } from "./workspace/inbox-icon";
+import { MultipleStickyIcon } from "./workspace/multiple-sticky-icon";
 import { ProjectIcon } from "./workspace/project-icon";
 import { YourWorkIcon } from "./workspace/your-work-icon";
 
@@ -66,6 +67,7 @@ export const ICON_REGISTRY = {
   "workspace.draft": DraftIcon,
   "workspace.home": HomeIcon,
   "workspace.inbox": InboxIcon,
+  "workspace.multiple-sticky": MultipleStickyIcon,
   "workspace.page": PageIcon,
   "workspace.project": ProjectIcon,
   "workspace.views": ViewsIcon,
@@ -113,8 +115,11 @@ export const ICON_REGISTRY = {
 
   // Action icons
   "action.add": AddIcon,
+  "action.add-workitem": AddWorkItemIcon,
   "action.add-reaction": AddReactionIcon,
   "action.close": CloseIcon,
+  "action.search": SearchIcon,
+  "action.preferences": PreferencesIcon,
 
   // Arrow icons
   "arrow.chevron-down": ChevronDownIcon,
