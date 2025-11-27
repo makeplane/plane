@@ -304,7 +304,7 @@ class UserProjectRolesEndpoint(BaseAPIView):
 
 
 class ProjectMemberPreferenceEndpoint(BaseAPIView):
-    def get_project_member(self, slug, project_id, member_id):
+    def get_queryset(self, slug, project_id, member_id):
         return ProjectMember.objects.get(
             project_id=project_id,
             member_id=member_id,
@@ -313,19 +313,19 @@ class ProjectMemberPreferenceEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def patch(self, request, slug, project_id, member_id):
-        project_member = self.get_project_member(slug, project_id, member_id)
+        project_member = self.get_queryset(slug, project_id, member_id)
 
-        current_preferences = project_member.preferences or {}
-        current_preferences["navigation"] = request.data["navigation"]
+        serializer = ProjectMemberPreferenceSerializer(project_member, {"preferences": request.data}, partial=True)
 
-        project_member.preferences = current_preferences
-        project_member.save(update_fields=["preferences"])
+        if serializer.is_valid():
+            serializer.save()
 
-        return Response({"preferences": project_member.preferences}, status=status.HTTP_200_OK)
+            return Response({"preferences": serializer.data["preferences"]}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, member_id):
-        project_member = self.get_project_member(slug, project_id, member_id)
+        project_member = self.get_queryset(slug, project_id, member_id)
 
         serializer = ProjectMemberPreferenceSerializer(project_member)
 

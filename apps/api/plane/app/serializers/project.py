@@ -147,6 +147,16 @@ class ProjectMemberPreferenceSerializer(BaseSerializer):
         model = ProjectMember
         fields = ["preferences", "project_id", "member_id", "workspace_id"]
 
+    def validate_preferences(self, obj):
+        if obj.get("navigation"):
+            self.instance.preferences["navigation"] = obj.get("navigation")
+        if obj.get("pages"):
+            self.instance.preferences["pages"] = obj.get("pages")
+
+        self.instance.save(update_fields=["preferences"])
+
+        return self.instance.preferences
+
 
 class ProjectMemberAdminSerializer(BaseSerializer):
     workspace = WorkspaceLiteSerializer(read_only=True)
