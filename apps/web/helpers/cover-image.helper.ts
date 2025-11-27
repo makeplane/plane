@@ -47,7 +47,7 @@ export const DEFAULT_COVER_IMAGE_URL = STATIC_COVER_IMAGES.IMAGE_1;
  */
 const STATIC_COVER_IMAGES_SET = new Set<string>(Object.values(STATIC_COVER_IMAGES));
 
-export type TCoverImageType = "local_static" | "uploaded_asset" | "uploaded_asset";
+export type TCoverImageType = "local_static" | "uploaded_asset";
 
 export interface ICoverImageResult {
   needsUpload: boolean;
@@ -111,7 +111,6 @@ export function getCoverImageDisplayURL(
       return imageUrl;
   }
 }
-
 
 /**
  * Analyzes cover image change and determines what action to take
