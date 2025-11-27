@@ -167,7 +167,7 @@ export const TabNavigationRoot: FC<TTabNavigationRootProps> = observer((props) =
       />
 
       {/* container for the tab navigation */}
-      <div className="flex items-center gap-3 overflow-hidden pl-1.5 size-full">
+      <div className="flex items-center gap-3 overflow-hidden size-full">
         <div className="flex items-center gap-2 shrink-0">
           <ProjectHeader project={project} />
           <div className="shrink-0">
