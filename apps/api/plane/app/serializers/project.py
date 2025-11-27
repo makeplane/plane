@@ -148,8 +148,7 @@ class ProjectMemberPreferenceSerializer(BaseSerializer):
         fields = ["preferences", "project_id", "member_id", "workspace_id"]
 
     def validate_preferences(self, value):
-        preferences = self.instance.preferences
-
+        preferences = self.instance.preferences.copy()
         preferences.update(value)
         return preferences
 
