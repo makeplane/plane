@@ -1562,7 +1562,7 @@ export default {
           },
           code: {
             label: "Einmaliger Code",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "Verifizierungscode wurde an deine neue E-Mail gesendet.",
             errors: {
               required: "Einmaliger Code ist erforderlich",

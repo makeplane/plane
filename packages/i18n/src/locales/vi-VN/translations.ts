@@ -1553,7 +1553,7 @@ export default {
           },
           code: {
             label: "Mã duy nhất",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "Mã xác minh đã được gửi tới email mới của bạn.",
             errors: {
               required: "Mã duy nhất là bắt buộc",

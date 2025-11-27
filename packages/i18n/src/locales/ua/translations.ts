@@ -1551,7 +1551,7 @@ export default {
           },
           code: {
             label: "Унікальний код",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "Код підтвердження надіслано на ваш новий email.",
             errors: {
               required: "Унікальний код є обов’язковим",

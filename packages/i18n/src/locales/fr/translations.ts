@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "Code unique",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "Collez le code envoyé à votre e-mail",
         requesting_new_code: "Demande d’un nouveau code",
         sending_code: "Envoi du code",
@@ -1564,7 +1564,7 @@ export default {
           },
           code: {
             label: "Code unique",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "Code de vérification envoyé à votre nouvel e-mail.",
             errors: {
               required: "Le code unique est requis",

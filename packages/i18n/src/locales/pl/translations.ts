@@ -1547,7 +1547,7 @@ export default {
           },
           code: {
             label: "Unikalny kod",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "Kod weryfikacyjny wysłano na nowy e-mail.",
             errors: {
               required: "Unikalny kod jest wymagany",

@@ -1528,7 +1528,7 @@ export default {
           },
           code: {
             label: "驗證碼",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "驗證碼已傳送到你的新電子郵件。",
             errors: {
               required: "驗證碼為必填",

@@ -1552,7 +1552,7 @@ export default {
           },
           code: {
             label: "Kode unik",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "Kode verifikasi dikirim ke email baru Anda.",
             errors: {
               required: "Kode unik wajib diisi",

@@ -1527,7 +1527,7 @@ export default {
           },
           code: {
             label: "验证码",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "验证码已发送至你的新邮箱。",
             errors: {
               required: "验证码为必填项",

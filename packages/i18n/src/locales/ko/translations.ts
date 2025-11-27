@@ -1536,7 +1536,7 @@ export default {
           },
           code: {
             label: "고유 코드",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "인증 코드가 새 이메일로 전송되었습니다.",
             errors: {
               required: "고유 코드는 필수입니다",

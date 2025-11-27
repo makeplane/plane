@@ -1547,7 +1547,7 @@ export default {
           },
           code: {
             label: "Jedinečný kód",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "Overovací kód bol odoslaný na váš nový e-mail.",
             errors: {
               required: "Jedinečný kód je povinný",

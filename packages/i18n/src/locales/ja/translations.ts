@@ -1543,7 +1543,7 @@ export default {
           },
           code: {
             label: "認証コード",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "認証コードを新しいメールに送信しました。",
             errors: {
               required: "認証コードは必須です",

@@ -1556,7 +1556,7 @@ export default {
           },
           code: {
             label: "Codice univoco",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "Codice di verifica inviato alla tua nuova email.",
             errors: {
               required: "Il codice univoco è obbligatorio",
