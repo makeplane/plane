@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "唯一码",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "粘贴发送到您邮箱的验证码",
         requesting_new_code: "正在请求新验证码",
         sending_code: "正在发送验证码",

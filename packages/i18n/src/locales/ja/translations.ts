@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "ユニークコード",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "メールで送信されたコードを貼り付けてください",
         requesting_new_code: "新しいコードをリクエスト中",
         sending_code: "コードを送信中",

@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "Mã duy nhất",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "Dán mã xác minh đã gửi đến email của bạn",
         requesting_new_code: "Đang yêu cầu mã mới",
         sending_code: "Đang gửi mã",

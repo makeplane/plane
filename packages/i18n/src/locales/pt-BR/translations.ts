@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "Código único",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "Cole o código enviado para seu email",
         requesting_new_code: "Solicitando novo código",
         sending_code: "Enviando código",

@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "Унікальний код",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "Вставте код, надісланий на вашу електронну пошту",
         requesting_new_code: "Запитую новий код",
         sending_code: "Надсилаю код",

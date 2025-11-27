@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "Kode unik",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "Tempelkan kode yang dikirim ke email anda",
         requesting_new_code: "Meminta kode baru",
         sending_code: "Mengirim kode",
