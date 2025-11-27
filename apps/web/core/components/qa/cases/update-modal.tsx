@@ -3,8 +3,8 @@
 import React, { useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { CaseService } from "../../../services/qa/case.service";
-import { Tag, Spin, Tooltip, message, Input } from "antd";
-import { getEnums } from "app/(all)/[workspaceSlug]/(projects)/test-management/util";
+import { Tag, Spin, Tooltip, message, Input, Table } from "antd";
+import { getEnums } from "../../../../app/(all)/[workspaceSlug]/(projects)/test-management/util";
 import { useMember } from "@/hooks/store/use-member";
 import * as LucideIcons from "lucide-react";
 import { useUser } from "@/hooks/store/user";
@@ -116,6 +116,43 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
   const [currentCount, setCurrentCount] = React.useState<number>(0);
   const [currentLabel, setCurrentLabel] = React.useState<string>("");
   const [preselectedIssues, setPreselectedIssues] = React.useState<TIssue[]>([]);
+
+  // 执行记录：类型定义与本地状态
+  type TExecRecord = {
+    id?: string | number;
+    name?: string;
+    result?: string;
+    created_by?: string | null;
+    created_at?: string;
+  };
+  const [execLoading, setExecLoading] = React.useState<boolean>(false);
+  const [execError, setExecError] = React.useState<string | null>(null);
+  const [execList, setExecList] = React.useState<TExecRecord[]>([]);
+  const [execTotal, setExecTotal] = React.useState<number>(0);
+  const [execPage, setExecPage] = React.useState<number>(1);
+  const [execPageSize, setExecPageSize] = React.useState<number>(10);
+  const execPageSizeOptions = [10, 20, 50, 100];
+
+  // 执行记录：请求方法
+  const fetchExecRecords = async () => {
+    if (!workspaceSlug || !caseId) return;
+    setExecLoading(true);
+    setExecError(null);
+    try {
+      const res = await caseService.getCaseExecuteRecord(String(workspaceSlug), String(caseId));
+      const list = Array.isArray((res as any)?.data) ? (res as any).data : Array.isArray(res) ? (res as any) : [];
+      const count = (res as any)?.count ?? list.length;
+      setExecList(list);
+      setExecTotal(count);
+      setExecPage(1);
+    } catch (e: any) {
+      const msg = e?.message || e?.detail || e?.error || "获取执行记录失败";
+      setExecError(msg);
+      message.error(msg);
+    } finally {
+      setExecLoading(false);
+    }
+  };
 
   const handleOpenSelectModal = async (type: "Requirement" | "Task" | "Bug") => {
     setForceTypeName(type);
@@ -611,6 +648,7 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
     case_type?: Record<string, string>;
     case_priority?: Record<string, string>;
     case_state?: Record<string, string>;
+    plan_case_result?: Record<string, string>;
   }>({});
 
   React.useEffect(() => {
@@ -622,6 +660,7 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
           case_type: enums.case_type || {},
           case_priority: enums.case_priority || {},
           case_state: enums.case_state || {},
+          plan_case_result: enums.plan_case_result || {},
         });
       } catch {
         // 暂时静默处理错误
@@ -629,6 +668,13 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
     };
     fetchEnums();
   }, [open, workspaceSlug]);
+
+  // 切换到“执行”页时自动拉取执行记录
+  React.useEffect(() => {
+    if (activeTab === "execution") {
+      fetchExecRecords();
+    }
+  }, [activeTab, workspaceSlug, caseId]);
 
   // 生成选项（参考 create-modal）
   const caseTypeOptions = React.useMemo(
@@ -925,6 +971,8 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
               </div>
             </div>
 
+            {false}
+
             {activeTab === "basic" && (
               <BasicInfoPanel
                 preconditionValue={preconditionValue ?? ""}
@@ -957,6 +1005,79 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
                 onNewCommentChange={(v: string) => setNewComment(v)}
                 onCreateComment={() => handleCreateComment()}
               />
+            )}
+            {activeTab === "execution" && caseId && (
+              <div className="mt-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="text-sm text-gray-600">{execTotal}条执行记录</div>
+                </div>
+                <div className="rounded  border-gray-200 overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <Table
+                      size="middle"
+                      rowKey={(r: TExecRecord) => String(r.id ?? `${r.name}-${r.created_at}`)}
+                      dataSource={execList.slice((execPage - 1) * execPageSize, execPage * execPageSize)}
+                      loading={execLoading}
+                      pagination={{
+                        current: execPage,
+                        pageSize: execPageSize,
+                        total: execTotal,
+                        showSizeChanger: true,
+                        showQuickJumper: true,
+                        pageSizeOptions: execPageSizeOptions.map(String),
+                        showTotal: (t, range) => `第 ${range[0]}-${range[1]} 条，共 ${t} 条`,
+                        onChange: (p) => setExecPage(p),
+                        onShowSizeChange: (_c, s) => {
+                          setExecPageSize(s);
+                          setExecPage(1);
+                        },
+                      }}
+                      columns={[
+                        { title: "计划名称", dataIndex: "name", key: "name" },
+                        {
+                          title: "执行结果",
+                          dataIndex: "result",
+                          key: "result",
+                          render: (label: string) => {
+                            const color = (enumsData?.plan_case_result || {})[label];
+                            return <Tag color={color}>{label || "-"}</Tag>;
+                          },
+                        },
+                        {
+                          title: "执行人",
+                          dataIndex: "created_by",
+                          key: "created_by",
+                          render: (uid: string | null) => (
+                            <MemberDropdown
+                              multiple={false}
+                              value={uid ?? null}
+                              onChange={() => {}}
+                              disabled={true}
+                              placeholder={"未知用户"}
+                              className="w-full text-sm"
+                              buttonContainerClassName="w-full text-left p-0 cursor-default"
+                              buttonVariant="transparent-with-text"
+                              buttonClassName="text-sm p-0 hover:bg-transparent hover:bg-inherit"
+                              showUserDetails={true}
+                              optionsClassName="z-[60]"
+                            />
+                          ),
+                        },
+                        {
+                          title: "执行时间",
+                          dataIndex: "created_at",
+                          key: "created_at",
+                          render: (v: string) => formatCNDateTime(v),
+                        },
+                      ]}
+                    />
+                  </div>
+                  {!execLoading && execList.length === 0 && (
+                    <div className="py-20 text-center text-gray-400">暂无执行记录</div>
+                  )}
+                  {execError && <div className="px-3 py-2 text-sm text-red-600">{execError}</div>}
+                </div>
+              </div>
             )}
             {activeTab === "requirement" && caseId && (
               <div className="mt-4">

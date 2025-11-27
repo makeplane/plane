@@ -4,6 +4,16 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import UpdateModal from './update-modal'
 
 vi.mock('next/navigation', () => ({ useParams: () => ({ workspaceSlug: 'ws' }) }))
+vi.mock('@/hooks/store/use-member', async (importOriginal) => {
+  const mod = await importOriginal<typeof import('@/hooks/store/use-member')>()
+  return {
+    ...mod,
+    useMember: () => ({
+      getUserDetails: () => ({ display_name: 'User' }),
+      workspace: { workspaceMemberIds: [], isUserSuspended: () => false },
+    }),
+  }
+})
 vi.mock('app/(all)/[workspaceSlug]/(projects)/test-management/util', () => ({
   getEnums: vi.fn(async () => ({ case_type: {}, case_priority: {}, case_state: {} })),
 }))

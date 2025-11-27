@@ -82,7 +82,16 @@ export class CaseService extends APIService {
   }
 
   async deleteCase(workspaceSlug: string, caseId: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/test/case/${caseId}/`)
+    const query = {id:caseId}
+    return this.delete(`/api/workspaces/${workspaceSlug}/test/case/?${new URLSearchParams(query).toString()}`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+  async getCaseExecuteRecord(workspaceSlug: string, caseId: string): Promise<any> {
+    const query = {case_id:caseId}
+    return this.get(`/api/workspaces/${workspaceSlug}/test/case/execute-record/`,{params:query})
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

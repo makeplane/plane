@@ -1,10 +1,13 @@
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from django.db import transaction
 
-from plane.app.serializers.qa import CaseAttachmentSerializer, IssueListSerializer, CaseIssueSerializer, TestCaseCommentSerializer
-from plane.app.views import BaseAPIView
-from plane.db.models import TestCase, FileAsset, TestCaseComment
+from plane.app.serializers.qa import CaseAttachmentSerializer, IssueListSerializer, CaseIssueSerializer, \
+    TestCaseCommentSerializer, PlanCaseRecordSerializer
+from plane.app.serializers.qa.case import CaseExecuteRecordSerializer
+from plane.app.views import BaseAPIView, BaseViewSet
+from plane.db.models import TestCase, FileAsset, TestCaseComment, PlanCase
 from plane.utils.paginator import CustomPaginator
 from plane.utils.response import list_response
 
@@ -29,7 +32,6 @@ class CaseIssueWithType(BaseAPIView):
     }
     serializer_class = CaseIssueSerializer
 
-
     def get(self, request, slug):
         cases = self.filter_queryset(self.queryset).distinct()
         serializer = self.serializer_class(instance=cases, many=True)
@@ -53,7 +55,8 @@ class TestCaseCommentAPIView(BaseAPIView):
         roots = self.queryset.filter(case_id=case_id, parent__isnull=True).order_by('created_at')
         paginator = self.pagination_class()
         paginated_queryset = paginator.paginate_queryset(roots, request)
-        serializer = TestCaseCommentSerializer(paginated_queryset, many=True, context={"current_depth": 1, "max_depth": max_depth})
+        serializer = TestCaseCommentSerializer(paginated_queryset, many=True,
+                                               context={"current_depth": 1, "max_depth": max_depth})
         return list_response(data=serializer.data, count=roots.count())
 
     @transaction.atomic
@@ -92,11 +95,30 @@ class TestCaseCommentAPIView(BaseAPIView):
         comment = self.queryset.filter(id=id, creator=request.user).first()
         if not comment:
             return Response({"error": "Comment not found or no permission"}, status=status.HTTP_404_NOT_FOUND)
+
         def delete_subtree(node_id):
             children = TestCaseComment.objects.filter(parent_id=node_id)
             for c in children:
                 delete_subtree(c.id)
             TestCaseComment.objects.filter(id=node_id).delete(soft=False)
+
         delete_subtree(comment.id)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+class CaseAPI(BaseViewSet):
+    pagination_class = CustomPaginator
+
+    @action(detail=False, methods=['get'], url_path='execute-record')
+    def execute_record(self, request, slug):
+        case_id = request.query_params.get('case_id')
+        result = []
+
+        plan_cases = PlanCase.objects.filter(case_id=case_id)
+        for plan_case in plan_cases:
+            record = plan_case.plan_case_records.first()
+            if not record:
+                continue
+            serializer = CaseExecuteRecordSerializer(record)
+            result.append(serializer.data)
+        return list_response(data=result, count=len(result))

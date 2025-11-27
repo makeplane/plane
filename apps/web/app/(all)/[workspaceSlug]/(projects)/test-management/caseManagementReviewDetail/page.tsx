@@ -11,6 +11,7 @@ import { AppstoreOutlined, DeploymentUnitOutlined } from "@ant-design/icons";
 import { CaseService as CaseApiService } from "@/services/qa/case.service";
 import { CaseService as ReviewApiService } from "@/services/qa/review.service";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { FolderOpenDot } from "lucide-react";
 
 type TCreator = {
   display_name?: string;
@@ -220,7 +221,7 @@ export default function CaseManagementReviewDetailPage() {
       <div className="flex items-center justify-between gap-2 w-full">
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center justify-center w-5 h-5 text-custom-text-300">
-            <DeploymentUnitOutlined />
+            <FolderOpenDot size={14} />
           </span>
           <span className="text-sm text-custom-text-200">{title}</span>
         </div>

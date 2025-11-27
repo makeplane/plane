@@ -408,29 +408,20 @@ export default function TestPlanDetailPage() {
       dataIndex: "name",
       key: "name",
       ...getColumnSearchProps("name"),
-      // 新增：悬停显示操作按钮 + 悬停弹出二级菜单（编辑/删除）
       render: (_name: string, record: TestPlan) => {
-        const items = [
-          { key: "edit", label: "编辑" },
-          { key: "delete", label: "删除", danger: true },
-        ];
         return (
-          <div className={`${styles.row} flex items-center justify-between`}>
+          <Button
+            type="link"
+            className="!p-0"
+            onClick={() => {
+              if (!record?.id) return;
+              const ws = (workspaceSlug as string) || "";
+              const repoQuery = repositoryId ? `&repositoryId=${encodeURIComponent(String(repositoryId))}` : "";
+              router.push(`/${ws}/test-management/plan-cases?planId=${record.id}${repoQuery}`);
+            }}
+          >
             <span className="truncate">{record.name}</span>
-            <Dropdown
-              trigger={["hover"]}
-              placement="bottomRight"
-              menu={{
-                items,
-                onClick: ({ key }) => {
-                  if (key === "edit") openEditModal(record);
-                  if (key === "delete") confirmDelete(record);
-                },
-              }}
-            >
-              <Button type="text" size="small" icon={<MoreOutlined />} className={styles.actionMenu} />
-            </Dropdown>
-          </div>
+          </Button>
         );
       },
     },

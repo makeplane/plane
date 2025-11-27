@@ -3,13 +3,14 @@ from rest_framework.routers import SimpleRouter
 
 from plane.app.views import PlanAPIView, RepositoryAPIView, CaseModuleAPIView, LabelAPIView, CaseAPIView, \
     EnumDataAPIView, CaseAttachmentV2Endpoint, CaseDetailAPIView, PlanView, PlanModuleAPIView, PlanCaseAPIView
-from plane.app.views.qa.case import CaseAssetAPIView, CaseIssueWithType, TestCaseCommentAPIView
+from plane.app.views.qa.case import CaseAssetAPIView, CaseIssueWithType, TestCaseCommentAPIView, CaseAPI
 from plane.app.views.qa.module import CaseModuleCountAPIView
 from plane.app.views.qa.review import ReviewModuleAPIView, CaseReviewAPIView,CaseReviewView
 
 router = SimpleRouter()
 router.register('review', CaseReviewView, basename='review')
 router.register('plan', PlanView, basename='plan')
+router.register('case', CaseAPI, basename='case')
 
 urlpatterns = [
     path('workspaces/<str:slug>/test/plane/', PlanAPIView.as_view(), name='test-plan'),

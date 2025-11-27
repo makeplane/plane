@@ -113,6 +113,7 @@ class PlanCaseAPIView(BaseAPIView):
     pagination_class = CustomPaginator
     filterset_fields = {
         'plan_id': ['exact', 'in'],
+        'case__module_id': ['exact', 'in'],
     }
     serializer_class = PlanCaseListSerializer
 
@@ -295,6 +296,14 @@ class CaseAPIView(BaseAPIView):
         update_serializer.save()
         serializer = self.serializer_class(instance=case)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+    def delete(self, request, slug):
+        self.filter_queryset(self.queryset).all().delete(soft=False)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
 
 
 class CaseDetailAPIView(BaseAPIView):

@@ -373,27 +373,6 @@ export const WorkItemSelectModal: React.FC<Props> = ({
       .finally(() => setLoadingProjects(false));
   }, [isOpen, workspaceSlug, projectService]);
 
-  useEffect(() => {
-    if (!isOpen || !selectedProjectId) {
-      setIssues([]);
-      return;
-    }
-    setLoadingIssues(true);
-    // 兼容返回结构（数组或分组对象）
-    issueService
-      .getIssues(workspaceSlug, selectedProjectId, {})
-      .then((res: TIssuesResponse) => {
-        const flat: TIssue[] = normalizeIssues(res);
-        setIssues(flat);
-        // 去除“清空已选（切换项目时）”，保持跨项目选择持久化
-        // 原：setSelectedIssueIds(new Set());
-      })
-      .catch((err) => {
-        message.error(`获取工作项失败：${err?.message || "未知错误"}`);
-      })
-      .finally(() => setLoadingIssues(false));
-  }, [isOpen, workspaceSlug, selectedProjectId, issueService]);
-
   const normalizeIssues = (res: TIssuesResponse): TIssue[] => {
     const { results } = res || {};
     if (!results) return [];
@@ -451,7 +430,8 @@ export const WorkItemSelectModal: React.FC<Props> = ({
       // 重置当前页到 1（与 Table 显示一致）
       setCurrentPage(1);
     } catch (err: any) {
-      message.error(`获取工作项失败：${err?.message || "未知错误"}`);
+      const errorMessage = err?.error.includes("required permissions") ? "你没有权限访问该项目" : err?.error;
+      message.error(`获取工作项失败：${errorMessage || "未知错误"}`);
     } finally {
       setLoadingIssues(false);
     }

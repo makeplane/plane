@@ -5,11 +5,14 @@ import { FolderOutlined } from "@ant-design/icons";
 import { useParams } from "next/navigation";
 import { CaseService } from "../../../../services/qa/case.service";
 import { CaseService as ReviewApiService } from "../../../../services/qa/review.service";
-import { getEnums } from "app/(all)/[workspaceSlug]/(projects)/test-management/util";
 import { formatCNDateTime } from "../util";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { getEnums } from "app/(all)/[workspaceSlug]/(projects)/test-management/util";
 
-const enumsCache: Record<string, { case_test_type?: Record<string, string> }> = {};
+const enumsCache: Record<
+  string,
+  { case_test_type?: Record<string, string>; plan_case_result?: Record<string, string> }
+> = {};
 const enumsReqCache: Record<string, Promise<any>> = {};
 
 type SideInfoPanelProps = {
@@ -22,7 +25,10 @@ export function SideInfoPanel({ caseData, caseTestTypeMap }: SideInfoPanelProps)
   const caseService = React.useMemo(() => new CaseService(), []);
   const reviewService = React.useMemo(() => new ReviewApiService(), []);
 
-  const [enumsData, setEnumsData] = React.useState<{ case_test_type?: Record<string, string> }>({});
+  const [enumsData, setEnumsData] = React.useState<{
+    case_test_type?: Record<string, string>;
+    plan_case_result?: Record<string, string>;
+  }>({});
   const [loadingEnums, setLoadingEnums] = React.useState<boolean>(false);
   React.useEffect(() => {
     if (caseTestTypeMap && Object.keys(caseTestTypeMap).length > 0) {
@@ -40,7 +46,7 @@ export function SideInfoPanel({ caseData, caseTestTypeMap }: SideInfoPanelProps)
     enumsReqCache[key] = req;
     req
       .then((enums) => {
-        const data = { case_test_type: enums.case_test_type || {} };
+        const data = { case_test_type: enums.case_test_type || {}, plan_case_result: enums.plan_case_result || {} };
         enumsCache[key] = data;
         setEnumsData(data);
       })
@@ -115,6 +121,37 @@ export function SideInfoPanel({ caseData, caseTestTypeMap }: SideInfoPanelProps)
     } catch {}
   };
 
+  type TExecRecord = {
+    id?: string | number;
+    name?: string;
+    result?: string;
+    created_by?: string | null;
+    created_at?: string;
+  };
+  const [latestExec, setLatestExec] = React.useState<TExecRecord | null>(null);
+  React.useEffect(() => {
+    const id = String(caseData?.id || "");
+    if (!workspaceSlug || !id) return;
+    caseService
+      .getCaseExecuteRecord(String(workspaceSlug), id)
+      .then((res) => {
+        const list: TExecRecord[] = Array.isArray((res as any)?.data)
+          ? (res as any).data
+          : Array.isArray(res)
+            ? (res as any)
+            : [];
+        if (list.length === 0) {
+          setLatestExec(null);
+          return;
+        }
+        const sorted = [...list].sort(
+          (a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
+        );
+        setLatestExec(sorted[0]);
+      })
+      .catch(() => setLatestExec(null));
+  }, [workspaceSlug, caseData?.id]);
+
   return (
     <div className="w-1/3 border-l px-6 py-4 h-full overflow-y-auto bg-[#FAFAFA] divide-y divide-gray-100">
       <div className="py-5">
@@ -177,19 +214,45 @@ export function SideInfoPanel({ caseData, caseTestTypeMap }: SideInfoPanelProps)
         <div className="space-y-4">
           <div className="flex items-center gap-3 md:gap-4">
             <span className="text-sm text-gray-700 shrink-0 basis-28 md:basis-32">计划</span>
-            <span className="text-sm text-gray-900 flex-1 min-w-0 truncate">-</span>
+            <span className="text-sm text-gray-900 flex-1 min-w-0 truncate">{latestExec?.name ?? "-"}</span>
           </div>
           <div className="flex items-center gap-3 md:gap-4">
             <span className="text-sm text-gray-700 shrink-0 basis-28 md:basis-32">结果</span>
-            <span className="text-sm text-gray-900 flex-1 min-w-0 truncate">-</span>
+            <span className="text-sm text-gray-900 flex-1 min-w-0 truncate">
+              {(() => {
+                const label = latestExec?.result ?? "";
+                const color = (enumsData?.plan_case_result || {})[label];
+                return label ? <Tag color={color}>{label}</Tag> : "-";
+              })()}
+            </span>
           </div>
           <div className="flex items-center gap-3 md:gap-4">
             <span className="text-sm text-gray-700 shrink-0 basis-28 md:basis-32">执行人</span>
-            <span className="text-sm text-gray-900 flex-1 min-w-0 truncate">-</span>
+            <span className="text-sm text-gray-900 flex-1 min-w-0 truncate">
+              {latestExec?.created_by ? (
+                <MemberDropdown
+                  multiple={false}
+                  value={latestExec?.created_by ?? null}
+                  onChange={() => {}}
+                  disabled={true}
+                  placeholder="未知用户"
+                  className="w-full text-sm"
+                  buttonContainerClassName="w-full text-left p-0 cursor-default"
+                  buttonVariant="transparent-with-text"
+                  buttonClassName="text-sm p-0 hover:bg-transparent hover:bg-inherit"
+                  showUserDetails={true}
+                  optionsClassName="z-[60]"
+                />
+              ) : (
+                "-"
+              )}
+            </span>
           </div>
           <div className="flex items-center gap-3 md:gap-4">
             <span className="text-sm text-gray-700 shrink-0 basis-28 md:basis-32">时间</span>
-            <span className="text-sm text-gray-900 flex-1 min-w-0 truncate">-</span>
+            <span className="text-sm text-gray-900 flex-1 min-w-0 truncate">
+              {latestExec?.created_at ? formatCNDateTime(latestExec.created_at) : "-"}
+            </span>
           </div>
         </div>
       </div>

@@ -13,8 +13,9 @@ import type { TableProps } from "antd";
 import type { TreeProps } from "antd";
 import { CaseModuleService } from "@/services/qa";
 import { PlanService } from "@/services/qa/plan.service";
-import { AppstoreOutlined } from "@ant-design/icons";
+import { AppstoreOutlined, DeploymentUnitOutlined } from "@ant-design/icons";
 import { formatDateTime, globalEnums } from "../util";
+import { FolderOpenDot } from "lucide-react";
 
 type TLabel = { id?: string; name?: string } | string;
 type TestCase = {
@@ -51,7 +52,7 @@ export default function PlanCasesPage() {
   const moduleService = useRef(new CaseModuleService()).current;
 
   const [modules, setModules] = useState<any[]>([]);
-  const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
+  const [expandedKeys, setExpandedKeys] = useState<string[] | undefined>(undefined);
   const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
   const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
 
@@ -76,7 +77,8 @@ export default function PlanCasesPage() {
       .getCaseModules(workspaceSlug as string, { repository_id: repositoryId })
       .then((data) => {
         setModules(Array.isArray(data) ? data : []);
-        setExpandedKeys((Array.isArray(data) ? data : []).map((n: any) => n?.id).filter(Boolean));
+        setExpandedKeys(undefined);
+        setAutoExpandParent(true);
       })
       .catch(() => {})
       .finally(() => {});
@@ -132,13 +134,60 @@ export default function PlanCasesPage() {
     setAutoExpandParent(false);
   };
 
+  const getNodeCount = (m: any) => {
+    const c = m?.case_count ?? m?.count ?? m?.total ?? m?.cases_count;
+    return typeof c === "number" ? c : undefined;
+  };
+
+  const renderNodeTitle = (title: string, count?: number) => {
+    return (
+      <div className="group flex items-center justify-between gap-2 w-full">
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center justify-center w-5 h-5 text-custom-text-300">
+            <FolderOpenDot size={14} />
+          </span>
+          <span className="text-sm text-custom-text-200">{title}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          {typeof count === "number" && <span className="text-xs text-custom-text-300">{count}</span>}
+        </div>
+      </div>
+    );
+  };
+
+  const buildTreeNodes = (list: any[]): any[] => {
+    if (!Array.isArray(list)) return [];
+    return list.map((node: any) => {
+      const nodeId = String(node?.id);
+      const childrenNodes = buildTreeNodes(node?.children || []);
+      return {
+        title: renderNodeTitle(node?.name ?? "-", getNodeCount(node)),
+        key: nodeId,
+        icon: <AppstoreOutlined />,
+        children: childrenNodes,
+      };
+    });
+  };
+
   const treeData = useMemo(() => {
-    const children = (modules || []).map((m: any) => ({
-      title: m?.name ?? "-",
-      key: String(m?.id ?? ""),
-      icon: <AppstoreOutlined />,
-    }));
-    return [{ title: "全部模块", key: "all", icon: <AppstoreOutlined />, children }];
+    return [
+      {
+        title: (
+          <div className="group flex items-center justify-between gap-2 w-full">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center justify-center w-5 h-5 text-custom-text-300">
+                <AppstoreOutlined />
+              </span>
+              <span className="text-sm font-medium text-custom-text-200">全部模块</span>
+            </div>
+            <div className="flex items-center gap-2" />
+          </div>
+        ),
+        key: "all",
+        icon: <AppstoreOutlined />,
+        children: buildTreeNodes(modules),
+      },
+    ];
   }, [modules]);
 
   const onCancelRelation = async (record: PlanCaseItem) => {
@@ -160,7 +209,24 @@ export default function PlanCasesPage() {
       title: "名称",
       dataIndex: "name",
       key: "name",
-      render: (_: any, record: PlanCaseItem) => record?.case?.name ?? "-",
+      render: (_: any, record: PlanCaseItem) => {
+        const name = record?.case?.name ?? "-";
+        const cid = record?.case?.id;
+        if (!cid) return name;
+        const repoQuery = repositoryId ? `&repositoryId=${encodeURIComponent(String(repositoryId))}` : "";
+        return (
+          <Button
+            type="link"
+            onClick={() =>
+              router.push(
+                `/${workspaceSlug}/test-management/test-execution?case_id=${encodeURIComponent(String(cid))}&plan_id=${encodeURIComponent(String(planId || ""))}${repoQuery}`
+              )
+            }
+          >
+            {name}
+          </Button>
+        );
+      },
     },
     {
       title: "类型",

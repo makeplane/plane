@@ -461,7 +461,7 @@ export default function TestExecutionPage() {
         );
       })
       .join("");
-    return "<table><thead>" + header + "</thead><tbody>" + rows + "</tbody></p></p></table>";
+    return "<table><thead>" + header + "</thead><tbody>" + "<p></p>" + rows + "</tbody></table><p></p><p></p>";
   }, [displaySteps]);
 
   const StepsTableBase: React.FC<{

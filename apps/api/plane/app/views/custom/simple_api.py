@@ -31,8 +31,8 @@ def temporary_create_issue_type(project: Project = None, project_id: str = None)
     ProjectIssueType.objects.create(project=project, issue_type=bug_type, workspace=project.workspace)
 
     IssueTypeProperty.objects.create(issue_type=bug_type, project=project, workspace=project.workspace,
-                                     display_name='解决方案', is_multi=True, logo_props=property_logo_props,
-                                     settings={"display_format": "multi-line"})
+                                     display_name='修复版本', is_multi=False, logo_props=property_logo_props,
+                                     settings={"display_format": "single-line"})
 
 
 class SimpleTestAPIView(APIView):

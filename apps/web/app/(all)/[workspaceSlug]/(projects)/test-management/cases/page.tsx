@@ -4,7 +4,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { PageHead } from "@/components/core/page-title";
 import { Table, Tag, Input, Button, Space, Modal, Dropdown, message } from "antd";
-import { EllipsisOutlined, MoreOutlined, SearchOutlined } from "@ant-design/icons";
+import { EllipsisOutlined, MoreOutlined, SearchOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import type { TableProps, InputRef, TableColumnType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
 import { CaseService } from "@/services/qa/case.service";
@@ -25,6 +25,7 @@ import { CaseModuleService } from "@/services/qa";
 import UpdateModal from "@/components/qa/cases/update-modal";
 import { useQueryParams } from "@/hooks/use-query-params";
 import { CaseService as ReviewApiService } from "@/services/qa/review.service";
+import { FolderOpenDot } from "lucide-react";
 
 type TCreator = {
   display_name?: string;
@@ -394,7 +395,7 @@ export default function TestCasesPage() {
       <div className="group flex items-center justify-between gap-2 w-full">
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center justify-center w-5 h-5 text-custom-text-300">
-            <DeploymentUnitOutlined />
+            <FolderOpenDot size={14} />
           </span>
           <span className="text-sm text-custom-text-200">{title}</span>
         </div>
@@ -612,6 +613,40 @@ export default function TestCasesPage() {
     fetchCases(1, size, filters);
   };
 
+  const handleEditCase = (record: any) => {
+    if (!record || !record.id) return;
+    setActiveCase(record);
+    setIsUpdateModalOpen(true);
+    const updatedRoute = updateQueryParams({ paramsToAdd: { peekCase: String(record.id) } });
+    router.push(updatedRoute);
+  };
+
+  const handleDeleteCase = (record: any) => {
+    if (!record || !record.id || !workspaceSlug) return;
+    Modal.confirm({
+      title: "确认删除用例",
+      content: "删除后不可恢复，是否继续？",
+      okText: "删除",
+      cancelText: "取消",
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        try {
+          await caseService.deleteCase(String(workspaceSlug), String(record.id));
+          try {
+            message.success("删除成功");
+          } catch {}
+          await fetchModules();
+          await fetchCases(1, pageSize, filters);
+        } catch (e) {
+          console.error("删除用例失败:", e);
+          try {
+            message.error("删除失败，请稍后重试");
+          } catch {}
+        }
+      },
+    });
+  };
+
   const renderLabels = (labels?: TLabel[]) => {
     if (!labels || labels.length === 0) return <span className="text-custom-text-400">-</span>;
     return (
@@ -726,6 +761,17 @@ export default function TestCasesPage() {
     },
     { title: "创建时间", dataIndex: "created_at", key: "created_at", render: (d) => formatDateTime(d), width: 180 },
     { title: "更新时间", dataIndex: "updated_at", key: "updated_at", render: (d) => formatDateTime(d), width: 180 },
+    {
+      title: "操作",
+      key: "actions",
+      width: 120,
+      render: (_: any, record: any) => (
+        <Space size={8}>
+          <Button type="text" icon={<EditOutlined />} onClick={() => handleEditCase(record)} />
+          <Button type="text" danger icon={<DeleteOutlined />} onClick={() => handleDeleteCase(record)} />
+        </Space>
+      ),
+    },
   ];
 
   return (
