@@ -249,11 +249,11 @@ class WorkspaceUserPropertiesEndpoint(BaseAPIView):
     permission_classes = [WorkspaceViewerPermission]
 
     def patch(self, request, slug):
-        try:
-            workspace_properties = WorkspaceUserProperties.objects.get(user=request.user, workspace__slug=slug)
-        except WorkspaceUserProperties.DoesNotExist:
-            workspace = Workspace.objects.get(slug=slug)
-            workspace_properties = WorkspaceUserProperties.objects.create(user=request.user, workspace_id=workspace.id)
+        workspace = Workspace.objects.get(slug=slug)
+
+        (workspace_properties, _) = WorkspaceUserProperties.objects.get_or_create(
+            user=request.user, workspace_id=workspace.id
+        )
 
         serializer = WorkspaceUserPropertiesSerializer(workspace_properties, data=request.data, partial=True)
         if serializer.is_valid():
