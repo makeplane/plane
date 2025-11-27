@@ -3,7 +3,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { Plus } from "lucide-react";
+import { Plus, Ellipsis } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
@@ -15,10 +15,13 @@ import { Loader } from "@plane/ui";
 import { copyUrlToClipboard, cn, orderJoinedProjects } from "@plane/utils";
 // components
 import { CreateProjectModal } from "@/components/project/create-project-modal";
+import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // hooks
+import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
+import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
 // plane web imports
 import type { TProject } from "@/plane-web/types";
 // local imports
@@ -35,6 +38,8 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
   const { t } = useTranslation();
   const { toggleCreateProjectModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
+  const { preferences: projectPreferences } = useProjectNavigationPreferences();
+  const { isExtendedProjectSidebarOpened, toggleExtendedProjectSidebar } = useAppTheme();
 
   const { loader, getPartialProjectById, joinedProjectIds: joinedProjects, updateProjectView } = useProject();
   // router params
@@ -46,6 +51,15 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
+
+  // Compute limited projects for main sidebar
+  const displayedProjects = projectPreferences.showLimitedProjects
+    ? joinedProjects.slice(0, projectPreferences.limitedProjectsCount)
+    : joinedProjects;
+
+  // Check if there are more projects to show
+  const hasMoreProjects =
+    projectPreferences.showLimitedProjects && joinedProjects.length > projectPreferences.limitedProjectsCount;
 
   const handleCopyText = (projectId: string) => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`).then(() => {
@@ -218,7 +232,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
               {isAllProjectsListOpen && (
                 <Disclosure.Panel as="div" className="flex flex-col gap-0.5" static>
                   <>
-                    {joinedProjects.map((projectId, index) => (
+                    {displayedProjects.map((projectId, index) => (
                       <SidebarProjectsListItem
                         key={projectId}
                         projectId={projectId}
@@ -226,10 +240,28 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
                         projectListType={"JOINED"}
                         disableDrag={false}
                         disableDrop={false}
-                        isLastChild={index === joinedProjects.length - 1}
+                        isLastChild={index === displayedProjects.length - 1}
                         handleOnProjectDrop={handleOnProjectDrop}
                       />
                     ))}
+                    {hasMoreProjects && (
+                      <SidebarNavItem>
+                        <button
+                          type="button"
+                          onClick={() => toggleExtendedProjectSidebar()}
+                          className="flex items-center gap-1.5 text-sm font-medium flex-grow text-custom-text-350"
+                          id="extended-project-sidebar-toggle"
+                          aria-label={t(
+                            isExtendedProjectSidebarOpened
+                              ? "aria_labels.app_sidebar.close_extended_sidebar"
+                              : "aria_labels.app_sidebar.open_extended_sidebar"
+                          )}
+                        >
+                          <Ellipsis className="flex-shrink-0 size-4" />
+                          <span>{isExtendedProjectSidebarOpened ? "Hide" : "More"}</span>
+                        </button>
+                      </SidebarNavItem>
+                    )}
                   </>
                 </Disclosure.Panel>
               )}

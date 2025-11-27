@@ -1525,6 +1525,47 @@ export default {
         "Jeśli potwierdzisz, wszystkie opcje sortowania, filtrowania i wyświetlania + układ, który wybrałeś dla tego widoku, zostaną trwale usunięte bez możliwości przywrócenia.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "Zmień e-mail",
+        description: "Wpisz nowy adres e-mail, aby otrzymać link weryfikacyjny.",
+        toasts: {
+          success_title: "Sukces!",
+          success_message: "E-mail zaktualizowano. Zaloguj się ponownie.",
+        },
+        form: {
+          email: {
+            label: "Nowy e-mail",
+            placeholder: "Wpisz swój e-mail",
+            errors: {
+              required: "E-mail jest wymagany",
+              invalid: "E-mail jest nieprawidłowy",
+              exists: "E-mail już istnieje. Użyj innego.",
+              validation_failed: "Weryfikacja e-maila nie powiodła się. Spróbuj ponownie.",
+            },
+          },
+          code: {
+            label: "Unikalny kod",
+            placeholder: "gets-sets-flys",
+            helper_text: "Kod weryfikacyjny wysłano na nowy e-mail.",
+            errors: {
+              required: "Unikalny kod jest wymagany",
+              invalid: "Nieprawidłowy kod weryfikacyjny. Spróbuj ponownie.",
+            },
+          },
+        },
+        actions: {
+          continue: "Kontynuuj",
+          confirm: "Potwierdź",
+          cancel: "Anuluj",
+        },
+        states: {
+          sending: "Wysyłanie…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "Ustawienia przestrzeni roboczej",
     page_label: "{workspace} - Ustawienia ogólne",

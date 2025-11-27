@@ -12,6 +12,7 @@ import {
   PROJECT_ME_INFORMATION,
   PROJECT_LABELS,
   PROJECT_MEMBERS,
+  PROJECT_MEMBER_PREFERENCES,
   PROJECT_STATES,
   PROJECT_ESTIMATES,
   PROJECT_ALL_CYCLES,
@@ -29,7 +30,7 @@ import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useProjectView } from "@/hooks/store/use-project-view";
-import { useUserPermissions } from "@/hooks/store/user";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useTimeLineChart } from "@/hooks/use-timeline-chart";
 
 interface IProjectAuthWrapper {
@@ -50,8 +51,9 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
   const { initGantt } = useTimeLineChart(GANTT_TIMELINE_TYPE.MODULE);
   const { fetchViews } = useProjectView();
   const {
-    project: { fetchProjectMembers },
+    project: { fetchProjectMembers, fetchProjectMemberPreferences },
   } = useMember();
+  const { data: currentUserData } = useUser();
   const { fetchProjectStates } = useProjectState();
   const { fetchProjectLabels } = useLabel();
   const { getProjectEstimates } = useProjectEstimates();
@@ -79,9 +81,14 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
     PROJECT_DETAILS(workspaceSlug, projectId),
     () => fetchProjectDetails(workspaceSlug, projectId)
   );
-
   // fetching user project member information
   useSWR(PROJECT_ME_INFORMATION(workspaceSlug, projectId), () => fetchUserProjectInfo(workspaceSlug, projectId));
+  // fetching project member preferences
+  useSWR(
+    currentUserData?.id ? PROJECT_MEMBER_PREFERENCES(workspaceSlug, projectId) : null,
+    currentUserData?.id ? () => fetchProjectMemberPreferences(workspaceSlug, projectId, currentUserData.id) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
   // fetching project labels
   useSWR(PROJECT_LABELS(workspaceSlug, projectId), () => fetchProjectLabels(workspaceSlug, projectId), {
     revalidateIfStale: false,

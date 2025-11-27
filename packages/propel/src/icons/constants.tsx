@@ -1,8 +1,11 @@
 import { Icon } from "./icon";
 export const ActionsIconsMap = [
   { icon: <Icon name="action.add" />, title: "AddIcon" },
+  { icon: <Icon name="action.add-workitem" />, title: "AddWorkItemIcon" },
   { icon: <Icon name="action.add-reaction" />, title: "AddReactionIcon" },
   { icon: <Icon name="action.close" />, title: "CloseIcon" },
+  { icon: <Icon name="action.search" />, title: "SearchIcon" },
+  { icon: <Icon name="action.preferences" />, title: "PreferencesIcon" },
 ];
 
 export const ArrowsIconsMap = [
@@ -19,6 +22,7 @@ export const WorkspaceIconsMap = [
   { icon: <Icon name="workspace.draft" />, title: "DraftIcon" },
   { icon: <Icon name="workspace.home" />, title: "HomeIcon" },
   { icon: <Icon name="workspace.inbox" />, title: "InboxIcon" },
+  { icon: <Icon name="workspace.multiple-sticky" />, title: "MultipleStickyIcon" },
   { icon: <Icon name="workspace.project" />, title: "ProjectIcon" },
   { icon: <Icon name="workspace.your-work" />, title: "YourWorkIcon" },
 ];

@@ -5,9 +5,6 @@ import { InboxIcon } from "@plane/propel/icons";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
-import { SidebarHamburgerToggle } from "@/components/core/sidebar/sidebar-menu-hamburger-toggle";
-// hooks
-import { useAppTheme } from "@/hooks/store/use-app-theme";
 // local imports
 import { NotificationSidebarHeaderOptions } from "./options";
 
@@ -20,14 +17,11 @@ export const NotificationSidebarHeader = observer(function NotificationSidebarHe
 ) {
   const { workspaceSlug } = props;
   const { t } = useTranslation();
-  const { sidebarCollapsed } = useAppTheme();
 
   if (!workspaceSlug) return <></>;
   return (
     <Header className="my-auto bg-custom-background-100">
       <Header.LeftItem>
-        {sidebarCollapsed && <SidebarHamburgerToggle />}
-
         <Breadcrumbs>
           <Breadcrumbs.Item
             component={

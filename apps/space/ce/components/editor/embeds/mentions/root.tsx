@@ -1,6 +1,8 @@
 // plane editor
 import type { TCallbackMentionComponentProps } from "@plane/editor";
 
-export function EditorAdditionalMentionsRoot(_props: TCallbackMentionComponentProps) {
+export type TEditorMentionComponentProps = TCallbackMentionComponentProps;
+
+export function EditorAdditionalMentionsRoot(_props: TEditorMentionComponentProps) {
   return null;
 }

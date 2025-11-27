@@ -12,7 +12,7 @@ import { CountChip } from "@/components/common/count-chip";
 // hooks
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-
+// plane web components
 import { NotificationListRoot } from "@/plane-web/components/workspace-notifications/list-root";
 // local imports
 import { NotificationEmptyState } from "./empty-state";
@@ -53,7 +53,7 @@ export const NotificationsSidebarRoot = observer(function NotificationsSidebarRo
     <div
       className={cn(
         "relative border-0 md:border-r border-custom-border-200 z-[10] flex-shrink-0 bg-custom-background-100 h-full transition-all max-md:overflow-hidden",
-        currentSelectedNotificationId ? "w-0 md:w-2/6" : "w-full md:w-2/6"
+        currentSelectedNotificationId ? "w-0 md:w-3/12" : "w-full md:w-3/12"
       )}
     >
       <div className="relative w-full h-full flex flex-col">

@@ -91,7 +91,7 @@ export const AuthFormRoot = observer(function AuthFormRoot(props: TAuthFormRoot)
       .generateUniqueCode(payload)
       .then(() => ({ code: "" }))
       .catch((error) => {
-        const errorhandler = authErrorHandler(error?.error_code.toString());
+        const errorhandler = authErrorHandler(error?.error_code?.toString());
         if (errorhandler?.type) setErrorInfo(errorhandler);
         throw error;
       });
