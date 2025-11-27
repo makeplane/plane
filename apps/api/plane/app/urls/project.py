@@ -106,11 +106,6 @@ urlpatterns = [
         name="project-favorite",
     ),
     path(
-        "project-covers/",
-        ProjectPublicCoverImagesEndpoint.as_view(),
-        name="project-covers",
-    ),
-    path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/project-deploy-boards/",
         DeployBoardViewSet.as_view({"get": "list", "post": "create"}),
         name="project-deploy-board",

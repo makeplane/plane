@@ -1,43 +1,74 @@
 import type { EFileAssetType } from "@plane/types";
 import { getFileURL } from "@plane/utils";
+
+import CoverImage1 from "@/assets/images/cover-image-1.jpg";
+import CoverImage10 from "@/assets/images/cover-image-10.jpg";
+import CoverImage11 from "@/assets/images/cover-image-11.jpg";
+import CoverImage12 from "@/assets/images/cover-image-12.jpg";
+import CoverImage13 from "@/assets/images/cover-image-13.jpg";
+import CoverImage14 from "@/assets/images/cover-image-14.jpg";
+import CoverImage15 from "@/assets/images/cover-image-15.jpg";
+import CoverImage16 from "@/assets/images/cover-image-16.jpg";
+import CoverImage17 from "@/assets/images/cover-image-17.jpg";
+import CoverImage18 from "@/assets/images/cover-image-18.jpg";
+import CoverImage19 from "@/assets/images/cover-image-19.jpg";
+import CoverImage2 from "@/assets/images/cover-image-2.jpg";
+import CoverImage20 from "@/assets/images/cover-image-20.jpg";
+import CoverImage21 from "@/assets/images/cover-image-21.jpg";
+import CoverImage22 from "@/assets/images/cover-image-22.jpg";
+import CoverImage23 from "@/assets/images/cover-image-23.jpg";
+import CoverImage24 from "@/assets/images/cover-image-24.jpg";
+import CoverImage25 from "@/assets/images/cover-image-25.jpg";
+import CoverImage26 from "@/assets/images/cover-image-26.jpg";
+import CoverImage27 from "@/assets/images/cover-image-27.jpg";
+import CoverImage28 from "@/assets/images/cover-image-28.jpg";
+import CoverImage29 from "@/assets/images/cover-image-29.jpg";
+import CoverImage3 from "@/assets/images/cover-image-3.jpg";
+import CoverImage4 from "@/assets/images/cover-image-4.jpg";
+import CoverImage5 from "@/assets/images/cover-image-5.jpg";
+import CoverImage6 from "@/assets/images/cover-image-6.jpg";
+import CoverImage7 from "@/assets/images/cover-image-7.jpg";
+import CoverImage8 from "@/assets/images/cover-image-8.jpg";
+import CoverImage9 from "@/assets/images/cover-image-9.jpg";
+
 import { FileService } from "@/services/file.service";
 
 const fileService = new FileService();
 
 /**
  * Map of all available static cover images
- * These are pre-loaded images available in the public/images folder
+ * These are pre-loaded images available in the assets/cover-images folder
  */
 export const STATIC_COVER_IMAGES = {
-  IMAGE_1: "/images/image_1.jpg",
-  IMAGE_2: "/images/image_2.jpg",
-  IMAGE_3: "/images/image_3.jpg",
-  IMAGE_4: "/images/image_4.jpg",
-  IMAGE_5: "/images/image_5.jpg",
-  IMAGE_6: "/images/image_6.jpg",
-  IMAGE_7: "/images/image_7.jpg",
-  IMAGE_8: "/images/image_8.jpg",
-  IMAGE_9: "/images/image_9.jpg",
-  IMAGE_10: "/images/image_10.jpg",
-  IMAGE_11: "/images/image_11.jpg",
-  IMAGE_12: "/images/image_12.jpg",
-  IMAGE_13: "/images/image_13.jpg",
-  IMAGE_14: "/images/image_14.jpg",
-  IMAGE_15: "/images/image_15.jpg",
-  IMAGE_16: "/images/image_16.jpg",
-  IMAGE_17: "/images/image_17.jpg",
-  IMAGE_18: "/images/image_18.jpg",
-  IMAGE_19: "/images/image_19.jpg",
-  IMAGE_20: "/images/image_20.jpg",
-  IMAGE_21: "/images/image_21.jpg",
-  IMAGE_22: "/images/image_22.jpg",
-  IMAGE_23: "/images/image_23.jpg",
-  IMAGE_24: "/images/image_24.jpg",
-  IMAGE_25: "/images/image_25.jpg",
-  IMAGE_26: "/images/image_26.jpg",
-  IMAGE_27: "/images/image_27.jpg",
-  IMAGE_28: "/images/image_28.jpg",
-  IMAGE_29: "/images/image_29.jpg",
+  IMAGE_1: CoverImage1,
+  IMAGE_2: CoverImage2,
+  IMAGE_3: CoverImage3,
+  IMAGE_4: CoverImage4,
+  IMAGE_5: CoverImage5,
+  IMAGE_6: CoverImage6,
+  IMAGE_7: CoverImage7,
+  IMAGE_8: CoverImage8,
+  IMAGE_9: CoverImage9,
+  IMAGE_10: CoverImage10,
+  IMAGE_11: CoverImage11,
+  IMAGE_12: CoverImage12,
+  IMAGE_13: CoverImage13,
+  IMAGE_14: CoverImage14,
+  IMAGE_15: CoverImage15,
+  IMAGE_16: CoverImage16,
+  IMAGE_17: CoverImage17,
+  IMAGE_18: CoverImage18,
+  IMAGE_19: CoverImage19,
+  IMAGE_20: CoverImage20,
+  IMAGE_21: CoverImage21,
+  IMAGE_22: CoverImage22,
+  IMAGE_23: CoverImage23,
+  IMAGE_24: CoverImage24,
+  IMAGE_25: CoverImage25,
+  IMAGE_26: CoverImage26,
+  IMAGE_27: CoverImage27,
+  IMAGE_28: CoverImage28,
+  IMAGE_29: CoverImage29,
 } as const;
 
 export const DEFAULT_COVER_IMAGE_URL = STATIC_COVER_IMAGES.IMAGE_1;

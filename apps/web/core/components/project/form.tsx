@@ -201,7 +201,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
       <div className="relative h-44 w-full">
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
         <img
-          src={getCoverImageDisplayURL(coverImage, DEFAULT_COVER_IMAGE_URL) || ""}
+          src={getCoverImageDisplayURL(coverImage, DEFAULT_COVER_IMAGE_URL)}
           alt="Project cover image"
           className="h-44 w-full rounded-md object-cover"
         />
