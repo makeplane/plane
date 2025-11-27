@@ -3,7 +3,6 @@ from .project.base import (
     ProjectIdentifierEndpoint,
     ProjectUserViewsEndpoint,
     ProjectFavoritesViewSet,
-    ProjectPublicCoverImagesEndpoint,
     DeployBoardViewSet,
     ProjectArchiveUnarchiveEndpoint,
 )

@@ -11,7 +11,6 @@ from plane.app.views import (
     ProjectIdentifierEndpoint,
     ProjectFavoritesViewSet,
     UserProjectInvitationsViewset,
-    ProjectPublicCoverImagesEndpoint,
     UserProjectRolesEndpoint,
     ProjectArchiveUnarchiveEndpoint,
 )
