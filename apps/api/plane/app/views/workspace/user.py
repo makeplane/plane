@@ -249,12 +249,15 @@ class WorkspaceUserPropertiesEndpoint(BaseAPIView):
     permission_classes = [WorkspaceViewerPermission]
 
     def patch(self, request, slug):
-        workspace_properties = WorkspaceUserProperties.objects.get(user=request.user, workspace__slug=slug)
+        try:
+            workspace_properties = WorkspaceUserProperties.objects.get(user=request.user, workspace__slug=slug)
+        except WorkspaceUserProperties.DoesNotExist:
+            return Response({"error": "Workspace user properties not found"}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = WorkspaceUserPropertiesSerializer(workspace_properties, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
