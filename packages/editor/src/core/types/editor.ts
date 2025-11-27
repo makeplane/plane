@@ -27,6 +27,8 @@ import type {
   TRealtimeConfig,
   TServerHandler,
   TUserDetails,
+  TExtendedEditorRefApi,
+  EventToPayloadMap,
 } from "@/types";
 
 export type TEditorCommands =
@@ -97,7 +99,7 @@ export type TDocumentInfo = {
   words: number;
 };
 
-export type EditorRefApi = {
+export type CoreEditorRefApi = {
   blur: () => void;
   clearEditor: (emitUpdate?: boolean) => void;
   createSelectionAtCursorPosition: () => void;
@@ -137,6 +139,10 @@ export type EditorRefApi = {
   setProviderDocument: (value: Uint8Array) => void;
   undo: () => void;
 };
+
+export type EditorRefApi = CoreEditorRefApi & TExtendedEditorRefApi;
+
+export type EditorTitleRefApi = EditorRefApi;
 
 // editor props
 export type IEditorProps = {
@@ -185,6 +191,14 @@ export type ICollaborativeDocumentEditorProps = Omit<IEditorProps, "initialValue
   serverHandler?: TServerHandler;
   user: TUserDetails;
   extendedDocumentEditorProps?: ICollaborativeDocumentEditorPropsExtended;
+  updatePageProperties?: <T extends keyof EventToPayloadMap>(
+    pageIds: string | string[],
+    actionType: T,
+    data: EventToPayloadMap[T],
+    performAction?: boolean
+  ) => void;
+  pageRestorationInProgress?: boolean;
+  titleRef?: React.MutableRefObject<EditorTitleRefApi | null>;
   isFetchingFallbackBinary?: boolean;
 };
 

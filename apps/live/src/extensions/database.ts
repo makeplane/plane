@@ -27,6 +27,17 @@ const fetchDocument = async ({ context, documentName: pageId, instance }: FetchP
       const pageDetails = await service.fetchDetails(pageId);
       const convertedBinaryData = getBinaryDataFromDocumentEditorHTMLString(pageDetails.description_html ?? "<p></p>");
       if (convertedBinaryData) {
+        // save the converted binary data back to the database
+        const { contentBinaryEncoded, contentHTML, contentJSON } = getAllDocumentFormatsFromDocumentEditorBinaryData(
+          convertedBinaryData,
+          true
+        );
+        const payload = {
+          description_binary: contentBinaryEncoded,
+          description_html: contentHTML,
+          description: contentJSON,
+        };
+        await service.updateDescriptionBinary(pageId, payload);
         return convertedBinaryData;
       }
     }
@@ -52,8 +63,10 @@ const storeDocument = async ({
   try {
     const service = getPageService(context.documentType, context);
     // convert binary data to all formats
-    const { contentBinaryEncoded, contentHTML, contentJSON } =
-      getAllDocumentFormatsFromDocumentEditorBinaryData(pageBinaryData);
+    const { contentBinaryEncoded, contentHTML, contentJSON } = getAllDocumentFormatsFromDocumentEditorBinaryData(
+      pageBinaryData,
+      true
+    );
     // create payload
     const payload = {
       description_binary: contentBinaryEncoded,
