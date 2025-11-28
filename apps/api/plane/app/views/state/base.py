@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Module imports
-from .. import BaseViewSet
+from .. import BaseViewSet, BaseAPIView
 from plane.app.serializers import StateSerializer
 from plane.app.permissions import ROLE, allow_permission
 from plane.db.models import State, Issue
@@ -127,3 +127,16 @@ class StateViewSet(BaseViewSet):
 
         state.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class IntakeStateEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def get(self, request, slug, project_id):
+        state = State.triage_objects.filter(workspace__slug=slug, project_id=project_id).first()
+        if not state:
+            return Response(
+                {"error": "Intake triage state not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        return Response(StateSerializer(state).data, status=status.HTTP_200_OK)

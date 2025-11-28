@@ -103,6 +103,54 @@ class IntakeIssueUpdateSerializer(BaseSerializer):
             "updated_at",
         ]
 
+    def validate(self, attrs):
+        """
+        Validate that if status is being changed to accepted (1),
+        the project has a default state to transition to.
+        """
+        from plane.db.models import State
+
+        # Check if status is being updated to accepted
+        if attrs.get("status") == 1:
+            intake_issue = self.instance
+            issue = intake_issue.issue
+
+            # Check if issue is in TRIAGE state
+            if issue.state and issue.state.group == State.TRIAGE:
+                # Verify default state exists before allowing the update
+                default_state = State.objects.filter(
+                    workspace=intake_issue.workspace, project=intake_issue.project, default=True
+                ).first()
+
+                if not default_state:
+                    raise serializers.ValidationError(
+                        {"status": "Cannot accept intake issue: No default state found for the project"}
+                    )
+
+        return attrs
+
+    def update(self, instance, validated_data):
+        """
+        Update intake issue and transition associated issue state if accepted.
+        """
+        from plane.db.models import State
+
+        # Update the intake issue with validated data
+        instance = super().update(instance, validated_data)
+
+        # If status is accepted (1), update the associated issue state from TRIAGE to default
+        if validated_data.get("status") == 1:
+            issue = instance.issue
+            if issue.state and issue.state.group == State.TRIAGE:
+                # Get the default project state
+                default_state = State.objects.filter(
+                    workspace=instance.workspace, project=instance.project, default=True
+                ).first()
+                if default_state:
+                    issue.state = default_state
+                    issue.save()
+        return instance
+
 
 class IssueDataSerializer(serializers.Serializer):
     """
