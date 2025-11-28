@@ -138,6 +138,7 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
                     title={t("common_empty_state.search.title")}
                     description={t("common_empty_state.search.description")}
                     assetClassName="size-20"
+                    rootClassName="px-page-x"
                   />
                 ) : currentTab === EInboxIssueCurrentTab.OPEN ? (
                   <EmptyStateDetailed
@@ -152,6 +153,7 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
                         variant: "primary",
                       },
                     ]}
+                    rootClassName="px-page-x"
                   />
                 ) : (
                   // TODO: Add translation
