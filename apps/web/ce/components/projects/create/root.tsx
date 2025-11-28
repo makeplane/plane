@@ -35,7 +35,7 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
   const { setToFavorite, workspaceSlug, data, onClose, handleNextStep, updateCoverImageStatus } = props;
   // store
   const { t } = useTranslation();
-  const { addProjectToFavorites, createProject } = useProject();
+  const { addProjectToFavorites, createProject, updateProject } = useProject();
   // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
   // form info
@@ -93,8 +93,10 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
       .then(async (res) => {
         if (uploadedAssetUrl) {
           await updateCoverImageStatus(res.id, uploadedAssetUrl);
+          await updateProject(workspaceSlug.toString(), res.id, { cover_image_url: uploadedAssetUrl });
         } else if (coverImage && coverImage.startsWith("http")) {
           await updateCoverImageStatus(res.id, coverImage);
+          await updateProject(workspaceSlug.toString(), res.id, { cover_image_url: coverImage });
         }
         captureSuccess({
           eventName: PROJECT_TRACKER_EVENTS.create,
