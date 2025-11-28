@@ -111,7 +111,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
                 <button
                   type="button"
                   data-ph-element={PROJECT_TRACKER_ELEMENTS.EXTENDED_SIDEBAR_ADD_BUTTON}
-                  className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
+                  className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0 text-custom-text-300 hover:text-custom-text-200 transition-colors"
                   onClick={() => {
                     setIsProjectModalOpen(true);
                   }}
