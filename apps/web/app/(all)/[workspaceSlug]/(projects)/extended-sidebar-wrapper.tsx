@@ -10,6 +10,7 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 import useExtendedSidebarOutsideClickDetector from "@/hooks/use-extended-sidebar-overview-outside-click";
 
 type Props = {
+  className?: string;
   children: React.ReactNode;
   extendedSidebarRef: React.RefObject<HTMLDivElement>;
   isExtendedSidebarOpened: boolean;
@@ -18,7 +19,7 @@ type Props = {
 };
 
 export const ExtendedSidebarWrapper = observer(function ExtendedSidebarWrapper(props: Props) {
-  const { children, extendedSidebarRef, isExtendedSidebarOpened, handleClose, excludedElementId } = props;
+  const { className, children, extendedSidebarRef, isExtendedSidebarOpened, handleClose, excludedElementId } = props;
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
   // local storage
@@ -37,11 +38,12 @@ export const ExtendedSidebarWrapper = observer(function ExtendedSidebarWrapper(p
       id={excludedElementId}
       ref={extendedSidebarRef}
       className={cn(
-        `absolute h-full z-[21] flex flex-col py-2 transform transition-all duration-300 ease-in-out bg-custom-sidebar-background-100 border-r border-custom-sidebar-border-200 p-4 shadow-sm`,
+        "absolute h-full z-[21] flex flex-col py-2 transform transition-all duration-300 ease-in-out bg-custom-sidebar-background-100 border-r border-custom-sidebar-border-200 p-4 shadow-sm",
         {
           "opacity-100": isExtendedSidebarOpened,
           "opacity-0 hidden": !isExtendedSidebarOpened,
-        }
+        },
+        className
       )}
       style={{
         left: `${storedValue ?? SIDEBAR_WIDTH}px`,

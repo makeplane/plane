@@ -102,8 +102,9 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
         extendedSidebarRef={extendedProjectSidebarRef}
         handleClose={handleClose}
         excludedElementId="extended-project-sidebar-toggle"
+        className="px-0"
       >
-        <div className="flex flex-col gap-1 w-full sticky top-4 pt-0">
+        <div className="flex flex-col gap-1 w-full sticky top-4 px-6">
           <div className="flex items-center justify-between">
             <span className="text-sm font-semibold text-custom-text-300 py-1.5">Projects</span>
             {isAuthorizedUser && (
@@ -143,7 +144,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
             />
           </div>
         ) : (
-          <div className="flex flex-col gap-0.5 overflow-x-hidden overflow-y-auto vertical-scrollbar scrollbar-sm flex-grow mt-4 pl-4">
+          <div className="flex flex-col gap-0.5 overflow-x-hidden overflow-y-auto vertical-scrollbar scrollbar-sm flex-grow mt-4 pl-9 pr-2">
             {filteredProjects.map((projectId, index) => (
               <SidebarProjectsListItem
                 key={projectId}
