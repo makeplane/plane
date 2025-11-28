@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -20,6 +19,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // local components
 import { IssuePeekOverview } from "../peek-overview";
+import { WorkItemFloaterRoot } from "./floater";
 import { IssueMainContent } from "./main-content";
 import { IssueDetailsSidebar } from "./sidebar";
 
@@ -301,7 +301,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
         />
       ) : (
         <div className="flex h-full w-full overflow-hidden">
-          <div className="max-w-2/3 h-full w-full space-y-8 overflow-y-auto px-9 py-5">
+          <div className="max-w-2/3 size-full space-y-8 overflow-y-auto px-9 pt-5">
             <IssueMainContent
               workspaceSlug={workspaceSlug}
               projectId={projectId}
@@ -310,6 +310,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
               isEditable={isEditable}
               isArchived={is_archived}
             />
+            <WorkItemFloaterRoot />
           </div>
           <div
             className="fixed right-0 z-[5] h-full w-full min-w-[300px] border-l border-custom-border-200 bg-custom-sidebar-background-100 py-5 sm:w-1/2 md:relative md:w-1/3 lg:min-w-80 xl:min-w-96"
