@@ -253,9 +253,4 @@ urlpatterns = [
         WorkspaceUserPreferenceViewSet.as_view(),
         name="workspace-user-preference",
     ),
-    path(
-        "workspaces/<str:slug>/sidebar-preferences/<str:key>/",
-        WorkspaceUserPreferenceViewSet.as_view(),
-        name="workspace-user-preference",
-    ),
 ]

@@ -1357,7 +1357,45 @@ export default {
     },
   },
   account_settings: {
-    profile: {},
+    profile: {
+      change_email_modal: {
+        title: "Change email",
+        description: "Enter a new email address to receive a verification link.",
+        toasts: {
+          success_title: "Success!",
+          success_message: "Email updated successfully. Please sign in again.",
+        },
+        form: {
+          email: {
+            label: "New email",
+            placeholder: "Enter your email",
+            errors: {
+              required: "Email is required",
+              invalid: "Email is invalid",
+              exists: "Email already exists. Please use a different one.",
+              validation_failed: "Email validation failed. Please try again.",
+            },
+          },
+          code: {
+            label: "Unique code",
+            placeholder: "gets-sets-flys",
+            helper_text: "Verification code sent to your new email.",
+            errors: {
+              required: "Unique code is required",
+              invalid: "Invalid verification code. Please try again.",
+            },
+          },
+        },
+        actions: {
+          continue: "Continue",
+          confirm: "Confirm",
+          cancel: "Cancel",
+        },
+        states: {
+          sending: "Sending",
+        },
+      },
+    },
     preferences: {
       heading: "Preferences",
       description: "Customize your app experience the way you work",
@@ -2657,5 +2695,18 @@ export default {
       preferences: "Preferences",
       help: "Help",
     },
+  },
+  // Navigation customization
+  customize_navigation: "Customize navigation",
+  personal: "Personal",
+  accordion_navigation_control: "Accordion navigation control",
+  horizontal_navigation_bar: "Horizontal navigation bar",
+  show_limited_projects_on_sidebar: "Show limited projects on sidebar",
+  enter_number_of_projects: "Enter number of projects",
+  pin: "Pin",
+  unpin: "Unpin",
+  sidebar: {
+    stickies: "Stickies",
+    your_work: "Your work",
   },
 } as const;

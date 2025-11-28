@@ -14,9 +14,9 @@ import { ControlLink } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, generateWorkItemLink } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
+import { IntakeStateDropdown } from "@/components/dropdowns/intake-state/dropdown";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
-import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import type { TIssueOperations } from "@/components/issues/issue-detail";
 import { IssueLabel } from "@/components/issues/issue-detail/label";
 // hooks
@@ -57,18 +57,16 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
         <h5 className="text-sm font-medium my-4">Properties</h5>
         <div className={`divide-y-2 divide-custom-border-200 ${!isEditable ? "opacity-60" : ""}`}>
           <div className="flex flex-col gap-3">
-            {/* State */}
+            {/* Intake State */}
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <StatePropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>State</span>
               </div>
               {issue?.state_id && (
-                <StateDropdown
+                <IntakeStateDropdown
                   value={issue?.state_id}
-                  onChange={(val) =>
-                    issue?.id && issueOperations.update(workspaceSlug, projectId, issue?.id, { state_id: val })
-                  }
+                  onChange={() => {}}
                   projectId={projectId?.toString() ?? ""}
                   disabled={!isEditable}
                   buttonVariant="transparent-with-text"

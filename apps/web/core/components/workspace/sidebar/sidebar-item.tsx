@@ -9,11 +9,10 @@ import { useTranslation } from "@plane/i18n";
 import { joinUrlPath } from "@plane/utils";
 // components
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
-import { NotificationAppSidebarOption } from "@/components/workspace-notifications/notification-app-sidebar-option";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
-import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { useWorkspaceNavigationPreferences } from "@/hooks/use-navigation-preferences";
 // plane web imports
 import { getSidebarNavigationItemIcon } from "@/plane-web/components/workspace/sidebar/helper";
 
@@ -32,7 +31,7 @@ export const SidebarItemBase = observer(function SidebarItemBase({
   const pathname = usePathname();
   const { workspaceSlug } = useParams();
   const { allowPermissions } = useUserPermissions();
-  const { getNavigationPreferences } = useWorkspace();
+  const { isWorkspaceItemPinned } = useWorkspaceNavigationPreferences();
   const { data } = useUser();
 
   const { toggleSidebar, isExtendedSidebarOpened, toggleExtendedSidebar } = useAppTheme();
@@ -42,13 +41,20 @@ export const SidebarItemBase = observer(function SidebarItemBase({
     if (isExtendedSidebarOpened) toggleExtendedSidebar(false);
   };
 
-  const staticItems = ["home", "inbox", "pi_chat", "projects", "your_work", ...(additionalStaticItems || [])];
+  const staticItems = [
+    "home",
+    "pi_chat",
+    "projects",
+    "your_work",
+    "stickies",
+    "drafts",
+    ...(additionalStaticItems || []),
+  ];
   const slug = workspaceSlug?.toString() || "";
 
   if (!allowPermissions(item.access, EUserPermissionsLevel.WORKSPACE, slug)) return null;
 
-  const sidebarPreference = getNavigationPreferences(slug);
-  const isPinned = sidebarPreference?.[item.key]?.is_pinned;
+  const isPinned = isWorkspaceItemPinned(item.key);
   if (!isPinned && !staticItems.includes(item.key)) return null;
 
   const itemHref =
@@ -62,7 +68,6 @@ export const SidebarItemBase = observer(function SidebarItemBase({
           {icon}
           <p className="text-sm leading-5 font-medium">{t(item.labelTranslationKey)}</p>
         </div>
-        {item.key === "inbox" && <NotificationAppSidebarOption workspaceSlug={slug} />}
         {additionalRender?.(item.key, slug)}
       </SidebarNavItem>
     </Link>

@@ -112,11 +112,10 @@ export class IssueActivityStore implements IIssueActivityStore {
     comments.forEach((commentId) => {
       const comment = currentStore.comment.getCommentById(commentId);
       if (!comment) return;
-      const commentTimestamp = comment.edited_at ?? comment.updated_at ?? comment.created_at;
       activityComments.push({
         id: comment.id,
         activity_type: EActivityFilterType.COMMENT,
-        created_at: commentTimestamp,
+        created_at: comment.created_at,
       });
     });
 

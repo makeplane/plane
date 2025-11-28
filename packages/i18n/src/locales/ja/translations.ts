@@ -1521,6 +1521,47 @@ export default {
         "確認すると、このビューに選択したすべてのソート、フィルター、表示オプション + レイアウトが復元不可能な形で完全に削除されます。",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "メールアドレスを変更",
+        description: "確認リンクを受け取るには、新しいメールアドレスを入力してください。",
+        toasts: {
+          success_title: "成功",
+          success_message: "メールアドレスを更新しました。再度サインインしてください。",
+        },
+        form: {
+          email: {
+            label: "新しいメールアドレス",
+            placeholder: "メールアドレスを入力",
+            errors: {
+              required: "メールアドレスは必須です",
+              invalid: "メールアドレスが無効です",
+              exists: "メールアドレスは既に存在します。別のものを使用してください。",
+              validation_failed: "メールアドレスの確認に失敗しました。もう一度お試しください。",
+            },
+          },
+          code: {
+            label: "認証コード",
+            placeholder: "gets-sets-flys",
+            helper_text: "認証コードを新しいメールに送信しました。",
+            errors: {
+              required: "認証コードは必須です",
+              invalid: "認証コードが無効です。もう一度お試しください。",
+            },
+          },
+        },
+        actions: {
+          continue: "続行",
+          confirm: "確認",
+          cancel: "キャンセル",
+        },
+        states: {
+          sending: "送信中…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "ワークスペース設定",
     page_label: "{workspace} - 一般設定",

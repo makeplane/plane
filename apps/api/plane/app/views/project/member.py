@@ -8,6 +8,7 @@ from plane.app.serializers import (
     ProjectMemberSerializer,
     ProjectMemberAdminSerializer,
     ProjectMemberRoleSerializer,
+    ProjectMemberPreferenceSerializer,
 )
 
 from plane.app.permissions import WorkspaceUserPermission
@@ -300,3 +301,32 @@ class UserProjectRolesEndpoint(BaseAPIView):
 
         project_members = {str(member["project_id"]): member["role"] for member in project_members}
         return Response(project_members, status=status.HTTP_200_OK)
+
+
+class ProjectMemberPreferenceEndpoint(BaseAPIView):
+    def get_queryset(self, slug, project_id, member_id):
+        return ProjectMember.objects.get(
+            project_id=project_id,
+            member_id=member_id,
+            workspace__slug=slug,
+        )
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def patch(self, request, slug, project_id, member_id):
+        project_member = self.get_queryset(slug, project_id, member_id)
+
+        serializer = ProjectMemberPreferenceSerializer(project_member, {"preferences": request.data}, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+
+            return Response({"preferences": serializer.data["preferences"]}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def get(self, request, slug, project_id, member_id):
+        project_member = self.get_queryset(slug, project_id, member_id)
+
+        serializer = ProjectMemberPreferenceSerializer(project_member)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
