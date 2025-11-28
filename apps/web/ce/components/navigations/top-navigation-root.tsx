@@ -20,7 +20,7 @@ export const TopNavigationRoot = observer(() => {
     >
       {/* Workspace Menu */}
       <div className="shrink-0 flex-1">
-        <WorkspaceMenuRoot />
+        <WorkspaceMenuRoot variant="top-navigation" />
       </div>
       {/* Power K Search */}
       <div className="shrink-0">
