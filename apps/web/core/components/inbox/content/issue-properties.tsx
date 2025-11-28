@@ -17,6 +17,7 @@ import { DateDropdown } from "@/components/dropdowns/date";
 import { IntakeStateDropdown } from "@/components/dropdowns/intake-state/dropdown";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import type { TIssueOperations } from "@/components/issues/issue-detail";
 import { IssueLabel } from "@/components/issues/issue-detail/label";
 // hooks
@@ -30,10 +31,12 @@ type Props = {
   issueOperations: TIssueOperations;
   isEditable: boolean;
   duplicateIssueDetails: TInboxDuplicateIssueDetails | undefined;
+  isIntakeAccepted: boolean;
 };
 
 export const InboxIssueContentProperties = observer(function InboxIssueContentProperties(props: Props) {
-  const { workspaceSlug, projectId, issue, issueOperations, isEditable, duplicateIssueDetails } = props;
+  const { workspaceSlug, projectId, issue, issueOperations, isEditable, duplicateIssueDetails, isIntakeAccepted } =
+    props;
 
   const router = useAppRouter();
   // store hooks
@@ -50,6 +53,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
     projectIdentifier: currentProjectDetails?.identifier,
     sequenceId: duplicateIssueDetails?.sequence_id,
   });
+  const DropdownComponent = isIntakeAccepted ? StateDropdown : IntakeStateDropdown;
 
   return (
     <div className="flex w-full flex-col divide-y-2 divide-custom-border-200">
@@ -64,11 +68,11 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
                 <span>State</span>
               </div>
               {issue?.state_id && (
-                <IntakeStateDropdown
+                <DropdownComponent
                   value={issue?.state_id}
                   onChange={() => {}}
                   projectId={projectId?.toString() ?? ""}
-                  disabled={!isEditable}
+                  disabled
                   buttonVariant="transparent-with-text"
                   className="w-3/5 flex-grow group"
                   buttonContainerClassName="w-full text-left"

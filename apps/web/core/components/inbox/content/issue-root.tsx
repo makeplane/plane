@@ -6,7 +6,7 @@ import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue, TNameDescriptionLoader } from "@plane/types";
-import { EFileAssetType, EInboxIssueSource } from "@plane/types";
+import { EFileAssetType, EInboxIssueSource, EInboxIssueStatus } from "@plane/types";
 import { getTextContent } from "@plane/utils";
 // components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
@@ -74,6 +74,7 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
   // derived values
   const issue = inboxIssue.issue;
   const projectDetails = issue?.project_id ? getProjectById(issue?.project_id) : undefined;
+  const isIntakeAccepted = inboxIssue.status === EInboxIssueStatus.ACCEPTED;
 
   // debounced duplicate issues swr
   const { duplicateIssues } = useDebouncedDuplicateIssues(
@@ -262,6 +263,7 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
         issueOperations={issueOperations}
         isEditable={isEditable}
         duplicateIssueDetails={inboxIssue?.duplicate_issue_detail}
+        isIntakeAccepted={isIntakeAccepted}
       />
 
       <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issue.id} isIntakeIssue />
