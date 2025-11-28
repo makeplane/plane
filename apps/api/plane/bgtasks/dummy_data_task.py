@@ -264,7 +264,7 @@ def create_issues(workspace, project, user_id, issue_count):
     Faker.seed(0)
 
     states = (
-        State.objects.filter(workspace=workspace, project=project).exclude(group="Triage").values_list("id", flat=True)
+        State.objects.filter(workspace=workspace, project=project).exclude(group=State.TRIAGE).values_list("id", flat=True)
     )
     creators = ProjectMember.objects.filter(workspace=workspace, project=project).values_list("member_id", flat=True)
 

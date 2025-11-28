@@ -18,6 +18,7 @@ import {
   PROJECT_ALL_CYCLES,
   PROJECT_MODULES,
   PROJECT_VIEWS,
+  PROJECT_INTAKE_STATE,
 } from "@/constants/fetch-keys";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
@@ -53,8 +54,8 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
   const {
     project: { fetchProjectMembers, fetchProjectMemberPreferences },
   } = useMember();
+  const { fetchProjectStates, fetchProjectIntakeState } = useProjectState();
   const { data: currentUserData } = useUser();
-  const { fetchProjectStates } = useProjectState();
   const { fetchProjectLabels } = useLabel();
   const { getProjectEstimates } = useProjectEstimates();
   // derived values
@@ -97,6 +98,11 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
   });
   // fetching project states
   useSWR(PROJECT_STATES(workspaceSlug, projectId), () => fetchProjectStates(workspaceSlug, projectId), {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+  });
+  // fetching project intake state
+  useSWR(PROJECT_INTAKE_STATE(workspaceSlug, projectId), () => fetchProjectIntakeState(workspaceSlug, projectId), {
     revalidateIfStale: false,
     revalidateOnFocus: false,
   });
