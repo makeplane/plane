@@ -14,6 +14,8 @@ import { InboxIssueCreateModalRoot } from "@/components/inbox/modals/create-moda
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useUserPermissions } from "@/hooks/store/user";
+// plane web imports
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
   // states
@@ -38,6 +40,7 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
       <Header.LeftItem>
         <div className="flex items-center gap-4 flex-grow">
           <Breadcrumbs isLoading={currentProjectDetailsLoader === "init-loader"}>
+            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink

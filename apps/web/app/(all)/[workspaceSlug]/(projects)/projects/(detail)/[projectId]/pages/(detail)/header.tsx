@@ -1,23 +1,21 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+// plane imports
 import { PageIcon } from "@plane/propel/icons";
-// types
 import type { ICustomSearchSelectOption } from "@plane/types";
-// ui
 import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
-// components
 import { getPageName } from "@plane/utils";
+// components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { PageAccessIcon } from "@/components/common/page-access-icon";
 import { SwitcherIcon, SwitcherLabel } from "@/components/common/switcher-label";
 import { PageHeaderActions } from "@/components/pages/header/actions";
-// helpers
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-// plane web components
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web imports
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { PageDetailsHeaderExtraActions } from "@/plane-web/components/pages";
-// plane web hooks
 import { EPageStoreType, usePage, usePageStore } from "@/plane-web/hooks/store";
 
 export interface IPagesHeaderProps {
@@ -64,6 +62,7 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
       <Header.LeftItem>
         <div>
           <Breadcrumbs isLoading={loader === "init-loader"}>
+            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
