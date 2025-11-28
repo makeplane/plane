@@ -132,7 +132,16 @@ export const useEditor = (props: TEditorHookProps) => {
     onAssetChange(assets);
   }, [assetsList?.assets, onAssetChange]);
 
-  useImperativeHandle(forwardedRef, () => getEditorRefHelpers({ editor, provider }), [editor, provider]);
+  useImperativeHandle(
+    forwardedRef,
+    () =>
+      getEditorRefHelpers({
+        editor,
+        getEditorMetaData,
+        provider,
+      }),
+    [editor, getEditorMetaData, provider]
+  );
 
   if (!editor) {
     return null;
