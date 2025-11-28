@@ -104,7 +104,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
         excludedElementId="extended-project-sidebar-toggle"
         className="px-0"
       >
-        <div className="flex flex-col gap-1 w-full sticky top-4 px-6">
+        <div className="flex flex-col gap-1 w-full sticky top-4 px-4">
           <div className="flex items-center justify-between">
             <span className="text-sm font-semibold text-custom-text-300 py-1.5">Projects</span>
             {isAuthorizedUser && (
@@ -134,7 +134,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
           </div>
         </div>
         {filteredProjects.length === 0 ? (
-          <div className="flex flex-col items-center mt-4 px-6 pt-10">
+          <div className="flex flex-col items-center mt-4 p-10">
             <EmptyStateCompact
               title={t("common_empty_state.search.title")}
               description={t("common_empty_state.search.description")}
