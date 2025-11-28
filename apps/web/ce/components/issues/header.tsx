@@ -29,7 +29,8 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { CommonProjectBreadcrumbs } from "../breadcrumbs/common";
+// plane web imports
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const IssuesHeader = observer(function IssuesHeader() {
   // router
