@@ -235,7 +235,7 @@ class IntakeIssueViewSet(BaseViewSet):
         triage_state = State.triage_objects.filter(project_id=project_id, workspace__slug=slug).first()
         if not triage_state:
             triage_state = State.objects.create(
-                name="Intake Triage",
+                name="Triage",
                 group=StateGroup.TRIAGE.value,
                 project_id=project_id,
                 workspace_id=project.workspace_id,
