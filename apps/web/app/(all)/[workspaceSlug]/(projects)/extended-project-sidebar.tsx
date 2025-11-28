@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -76,7 +76,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
     EUserPermissionsLevel.WORKSPACE
   );
 
-  const handleClose = () => toggleExtendedProjectSidebar(false);
+  const handleClose = useCallback(() => toggleExtendedProjectSidebar(false), [toggleExtendedProjectSidebar]);
 
   const handleCopyText = (projectId: string) => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`).then(() => {
