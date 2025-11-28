@@ -1,24 +1,23 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 // components
 import { useTranslation } from "@plane/i18n";
+// assets
+import AllFiltersImage from "@/app/assets/empty-state/cycle/all-filters.svg?url";
+import NameFilterImage from "@/app/assets/empty-state/cycle/name-filter.svg?url";
+// components
 import { CyclesList } from "@/components/cycles/list";
-// ui
 import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module-list-loader";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
-// assets
-import AllFiltersImage from "@/public/empty-state/cycle/all-filters.svg";
-import NameFilterImage from "@/public/empty-state/cycle/name-filter.svg";
 
 export interface ICyclesView {
   workspaceSlug: string;
   projectId: string;
 }
 
-export const CyclesView: FC<ICyclesView> = observer((props) => {
+export const CyclesView = observer(function CyclesView(props: ICyclesView) {
   const { workspaceSlug, projectId } = props;
   // store hooks
   const { getFilteredCycleIds, getFilteredCompletedCycleIds, loader, currentProjectActiveCycleId } = useCycle();
@@ -37,9 +36,9 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
     return (
       <div className="grid h-full w-full place-items-center">
         <div className="text-center">
-          <Image
+          <img
             src={searchQuery.trim() === "" ? AllFiltersImage : NameFilterImage}
-            className="mx-auto h-36 w-36 sm:h-48 sm:w-48"
+            className="mx-auto h-36 w-36 sm:h-48 sm:w-48 object-contain"
             alt="No matching cycles"
           />
           <h5 className="mb-1 mt-7 text-xl font-medium">{t("project_cycles.no_matching_cycles")}</h5>

@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 // ui
 import { useParams } from "next/navigation";
@@ -24,13 +22,13 @@ type TConfirmPageDeletionProps = {
   storeType: EPageStoreType;
 };
 
-export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((props) => {
+export const DeletePageModal = observer(function DeletePageModal(props: TConfirmPageDeletionProps) {
   const { isOpen, onClose, page, storeType } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);
   // store hooks
   const { removePage } = usePageStore(storeType);
-  if (!page || !page.id) return null;
+
   // derived values
   const { id: pageId, name } = page;
 
@@ -43,8 +41,9 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
   const { pageId: routePageId } = useParams();
 
   const handleDelete = async () => {
+    if (!pageId) return;
     setIsDeleting(true);
-    await removePage(pageId)
+    await removePage({ pageId })
       .then(() => {
         captureSuccess({
           eventName: PROJECT_PAGE_TRACKER_EVENTS.delete,
@@ -79,6 +78,8 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((pr
 
     setIsDeleting(false);
   };
+
+  if (!page || !page.id) return null;
 
   return (
     <AlertModalCore

@@ -94,11 +94,8 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
         ?.chain()
         .setMeta(CORE_EDITOR_META.SKIP_FILE_DELETION, true)
         .setMeta(CORE_EDITOR_META.INTENTIONAL_DELETION, true)
-        .setContent(content, {
-          emitUpdate,
-          parseOptions: {
-            preserveWhitespace: true,
-          },
+        .setContent(content, emitUpdate, {
+          preserveWhitespace: true,
         })
         .run();
     },

@@ -13,7 +13,7 @@ import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // local imports
 import { IssueLayoutEmptyState } from "./empty-states";
 
-const ActiveLoader = (props: { layout: EIssueLayoutTypes }) => {
+function ActiveLoader(props: { layout: EIssueLayoutTypes }) {
   const { layout } = props;
   switch (layout) {
     case EIssueLayoutTypes.LIST:
@@ -29,14 +29,14 @@ const ActiveLoader = (props: { layout: EIssueLayoutTypes }) => {
     default:
       return null;
   }
-};
+}
 
 interface Props {
   children: string | React.ReactNode | React.ReactNode[];
   layout: EIssueLayoutTypes;
 }
 
-export const IssueLayoutHOC = observer((props: Props) => {
+export const IssueLayoutHOC = observer(function IssueLayoutHOC(props: Props) {
   const { layout } = props;
 
   const storeType = useIssueStoreType();

@@ -1,4 +1,4 @@
-import { EFileAssetType } from "./enums";
+import type { EFileAssetType } from "./enums";
 
 export type TFileMetaDataLite = {
   name: string;

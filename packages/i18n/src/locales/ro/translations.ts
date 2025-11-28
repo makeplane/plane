@@ -646,6 +646,8 @@ export default {
   },
   common: {
     all: "Toate",
+    no_items_in_this_group: "Nu există elemente în acest grup",
+    drop_here_to_move: "Eliberează aici pentru a muta",
     states: "Stări",
     state: "Stare",
     state_groups: "Grupuri de stări",
@@ -1532,6 +1534,47 @@ export default {
         "Dacă confirmați, toate opțiunile de sortare, filtrare și afișare + aspectul pe care l-ați ales pentru această vizualizare vor fi șterse permanent fără nicio modalitate de a le restaura.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "Schimbă e-mailul",
+        description: "Introduceți o nouă adresă de e-mail pentru a primi un link de verificare.",
+        toasts: {
+          success_title: "Succes!",
+          success_message: "E-mail actualizat cu succes. Conectați-vă din nou.",
+        },
+        form: {
+          email: {
+            label: "E-mail nou",
+            placeholder: "Introduceți e-mailul",
+            errors: {
+              required: "E-mailul este obligatoriu",
+              invalid: "E-mailul este invalid",
+              exists: "E-mailul există deja. Folosiți altul.",
+              validation_failed: "Validarea e-mailului a eșuat. Încercați din nou.",
+            },
+          },
+          code: {
+            label: "Cod unic",
+            placeholder: "gets-sets-flys",
+            helper_text: "Codul de verificare a fost trimis la noul e-mail.",
+            errors: {
+              required: "Codul unic este obligatoriu",
+              invalid: "Cod de verificare invalid. Încercați din nou.",
+            },
+          },
+        },
+        actions: {
+          continue: "Continuă",
+          confirm: "Confirmă",
+          cancel: "Anulează",
+        },
+        states: {
+          sending: "Se trimite…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "Setări spațiu de lucru",
     page_label: "{workspace} - Setări generale",
@@ -1612,6 +1655,7 @@ export default {
         exporting: "Se exportă",
         previous_exports: "Exporturi anterioare",
         export_separate_files: "Exportă datele în fișiere separate",
+        filters_info: "Aplică filtre pentru a exporta elemente de lucru specifice în funcție de criteriile tale.",
         modal: {
           title: "Exportă în",
           toasts: {

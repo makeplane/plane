@@ -1,6 +1,7 @@
-import axios, { AxiosInstance } from "axios";
-import { logger } from "@plane/logger";
+import type { AxiosInstance } from "axios";
+import axios from "axios";
 import { env } from "@/env";
+import { AppError } from "@/lib/errors";
 
 export abstract class APIService {
   protected baseURL: string;
@@ -21,8 +22,7 @@ export abstract class APIService {
     this.axiosInstance.interceptors.response.use(
       (response) => response,
       (error) => {
-        logger.error("AXIOS_ERROR:", error);
-        return Promise.reject(error);
+        return Promise.reject(new AppError(error));
       }
     );
   }

@@ -1,14 +1,15 @@
 import type { Editor } from "@tiptap/core";
-import { type EditorState, Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
+import { Plugin, PluginKey } from "@tiptap/pm/state";
+import type { EditorState, Transaction } from "@tiptap/pm/state";
 // constants
 import { CORE_EDITOR_META } from "@/constants/meta";
 // plane editor imports
 import { NODE_FILE_MAP } from "@/plane-editor/constants/utility";
 // types
-import { TFileHandler } from "@/types";
+import type { TFileHandler } from "@/types";
 // local imports
 import type { NodeFileMapType } from "../../../ce/constants/utility";
-import { TFileNode } from "./types";
+import type { TFileNode } from "./types";
 
 const DELETE_PLUGIN_KEY = new PluginKey("delete-utility");
 
@@ -57,7 +58,6 @@ export const TrackFileDeletionPlugin = (editor: Editor, deleteHandler: TFileHand
           const nodeFileSetDetails = NODE_FILE_MAP[nodeType];
           if (!nodeFileSetDetails || !src) return;
           try {
-            // @ts-expect-error add proper types for storage
             editor.storage[nodeType]?.[nodeFileSetDetails.fileSetName]?.set(src, true);
             // update assets list storage value
             editor.commands.updateAssetsList?.({

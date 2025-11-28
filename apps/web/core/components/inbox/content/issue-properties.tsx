@@ -1,18 +1,22 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
-import { CalendarCheck2, CopyPlus, Signal, Tag, Users } from "lucide-react";
-import { DoubleCircleIcon } from "@plane/propel/icons";
+import {
+  StatePropertyIcon,
+  MembersPropertyIcon,
+  PriorityPropertyIcon,
+  DueDatePropertyIcon,
+  LabelPropertyIcon,
+  DuplicatePropertyIcon,
+} from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TInboxDuplicateIssueDetails, TIssue } from "@plane/types";
 import { ControlLink } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, generateWorkItemLink } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
+import { IntakeStateDropdown } from "@/components/dropdowns/intake-state/dropdown";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
-import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import type { TIssueOperations } from "@/components/issues/issue-detail";
 import { IssueLabel } from "@/components/issues/issue-detail/label";
 // hooks
@@ -28,7 +32,7 @@ type Props = {
   duplicateIssueDetails: TInboxDuplicateIssueDetails | undefined;
 };
 
-export const InboxIssueContentProperties: React.FC<Props> = observer((props) => {
+export const InboxIssueContentProperties = observer(function InboxIssueContentProperties(props: Props) {
   const { workspaceSlug, projectId, issue, issueOperations, isEditable, duplicateIssueDetails } = props;
 
   const router = useAppRouter();
@@ -53,18 +57,16 @@ export const InboxIssueContentProperties: React.FC<Props> = observer((props) => 
         <h5 className="text-sm font-medium my-4">Properties</h5>
         <div className={`divide-y-2 divide-custom-border-200 ${!isEditable ? "opacity-60" : ""}`}>
           <div className="flex flex-col gap-3">
-            {/* State */}
+            {/* Intake State */}
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-                <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
+                <StatePropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>State</span>
               </div>
               {issue?.state_id && (
-                <StateDropdown
+                <IntakeStateDropdown
                   value={issue?.state_id}
-                  onChange={(val) =>
-                    issue?.id && issueOperations.update(workspaceSlug, projectId, issue?.id, { state_id: val })
-                  }
+                  onChange={() => {}}
                   projectId={projectId?.toString() ?? ""}
                   disabled={!isEditable}
                   buttonVariant="transparent-with-text"
@@ -79,7 +81,7 @@ export const InboxIssueContentProperties: React.FC<Props> = observer((props) => 
             {/* Assignee */}
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-                <Users className="h-4 w-4 flex-shrink-0" />
+                <MembersPropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>Assignees</span>
               </div>
               <MemberDropdown
@@ -107,7 +109,7 @@ export const InboxIssueContentProperties: React.FC<Props> = observer((props) => 
             {/* Priority */}
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-                <Signal className="h-4 w-4 flex-shrink-0" />
+                <PriorityPropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>Priority</span>
               </div>
               <PriorityDropdown
@@ -129,7 +131,7 @@ export const InboxIssueContentProperties: React.FC<Props> = observer((props) => 
             {/* Due Date */}
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-                <CalendarCheck2 className="h-4 w-4 flex-shrink-0" />
+                <DueDatePropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>Due date</span>
               </div>
               <DateDropdown
@@ -154,7 +156,7 @@ export const InboxIssueContentProperties: React.FC<Props> = observer((props) => 
             {/* Labels */}
             <div className="flex min-h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
-                <Tag className="h-4 w-4 flex-shrink-0" />
+                <LabelPropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>Labels</span>
               </div>
               <div className="w-3/5 flex-grow min-h-8 h-full pt-1">
@@ -177,7 +179,7 @@ export const InboxIssueContentProperties: React.FC<Props> = observer((props) => 
             {duplicateIssueDetails && (
               <div className="flex min-h-8 gap-2">
                 <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
-                  <CopyPlus className="h-4 w-4 flex-shrink-0" />
+                  <DuplicatePropertyIcon className="h-4 w-4 flex-shrink-0" />
                   <span>Duplicate of</span>
                 </div>
 

@@ -1,5 +1,3 @@
-"use client";
-import type { FC } from "react";
 import { useForm } from "react-hook-form";
 import { Lightbulb } from "lucide-react";
 import { Button } from "@plane/propel/button";
@@ -17,7 +15,7 @@ type IInstanceAIForm = {
 
 type AIFormValues = Record<TInstanceAIConfigurationKeys, string>;
 
-export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
+export function InstanceAIForm(props: IInstanceAIForm) {
   const { config } = props;
   // store
   const { updateInstanceConfigurations } = useInstance();
@@ -133,4 +131,4 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
       </div>
     </div>
   );
-};
+}

@@ -10,7 +10,7 @@ import packageJson from "package.json";
 // local components
 import { PaidPlanUpgradeModal } from "../license";
 
-export const WorkspaceEditionBadge = observer(() => {
+export const WorkspaceEditionBadge = observer(function WorkspaceEditionBadge() {
   // states
   const [isPaidPlanPurchaseModalOpen, setIsPaidPlanPurchaseModalOpen] = useState(false);
   // translation

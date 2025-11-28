@@ -1,4 +1,6 @@
 .next
+.react-router
+.vite
 .vercel
 .tubro
 out/

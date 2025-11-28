@@ -1,7 +1,6 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { useTheme } from "next-themes";
 import { Search } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // plane imports
@@ -9,12 +8,16 @@ import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ISearchIssueResponse } from "@plane/types";
 import { Loader } from "@plane/ui";
+// assets
+import darkIssuesAsset from "@/app/assets/empty-state/search/issues-dark.webp?url";
+import lightIssuesAsset from "@/app/assets/empty-state/search/issues-light.webp?url";
+import darkSearchAsset from "@/app/assets/empty-state/search/search-dark.webp?url";
+import lightSearchAsset from "@/app/assets/empty-state/search/search-light.webp?url";
 // components
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import useDebounce from "@/hooks/use-debounce";
-import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 // services
 import { ProjectService } from "@/services/project";
 
@@ -27,7 +30,7 @@ type Props = {
 
 const projectService = new ProjectService();
 
-export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
+export function SelectDuplicateInboxIssueModal(props: Props) {
   const { isOpen, onClose, onSubmit, value } = props;
   // router
   const { workspaceSlug, projectId, issueId } = useParams();
@@ -35,13 +38,15 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
   const [query, setQuery] = useState("");
   const [issues, setIssues] = useState<ISearchIssueResponse[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  // theme hook
+  const { resolvedTheme } = useTheme();
   // hooks
   const { getProjectById } = useProject();
   const { t } = useTranslation();
   // derived values
   const debouncedSearchTerm: string = useDebounce(query, 500);
-  const searchResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/search" });
-  const issuesResolvedPath = useResolvedAssetPath({ basePath: "/empty-state/search/issues" });
+  const searchResolvedPath = resolvedTheme === "light" ? lightSearchAsset : darkSearchAsset;
+  const issuesResolvedPath = resolvedTheme === "light" ? lightIssuesAsset : darkIssuesAsset;
 
   useEffect(() => {
     if (!isOpen || !workspaceSlug || !projectId) return;
@@ -186,4 +191,4 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
       </div>
     </Transition.Root>
   );
-};
+}

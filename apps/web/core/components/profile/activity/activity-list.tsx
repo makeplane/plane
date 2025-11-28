@@ -17,7 +17,7 @@ type Props = {
   activity: IUserActivityResponse | undefined;
 };
 
-export const ActivityList: React.FC<Props> = observer((props) => {
+export const ActivityList = observer(function ActivityList(props: Props) {
   const { activity } = props;
   // params
   const { workspaceSlug } = useParams();

@@ -1,4 +1,4 @@
-import { EditorProps } from "@tiptap/pm/view";
+import type { EditorProps } from "@tiptap/pm/view";
 // plane utils
 import { cn } from "@plane/utils";
 
@@ -26,9 +26,6 @@ export const CoreEditorProps = (props: TArgs): EditorProps => {
           }
         }
       },
-    },
-    transformPastedHTML(html) {
-      return html.replace(/<img.*?>/g, "");
     },
   };
 };

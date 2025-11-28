@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // types
@@ -26,7 +24,7 @@ export type TalkToSalesCardProps = {
   renderTrialButton?: (props: { productId: string | undefined; priceId: string | undefined }) => React.ReactNode;
 };
 
-export const TalkToSalesCard: FC<TalkToSalesCardProps> = observer((props) => {
+export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSalesCardProps) {
   const {
     planVariant,
     href,

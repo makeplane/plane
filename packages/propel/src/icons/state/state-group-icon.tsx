@@ -4,7 +4,8 @@ import { EIconSize } from "@plane/constants";
 import { BacklogGroupIcon } from "./backlog-group-icon";
 import { CancelledGroupIcon } from "./cancelled-group-icon";
 import { CompletedGroupIcon } from "./completed-group-icon";
-import { IStateGroupIcon, STATE_GROUP_COLORS, STATE_GROUP_SIZES } from "./helper";
+import type { IStateGroupIcon } from "./helper";
+import { STATE_GROUP_COLORS, STATE_GROUP_SIZES } from "./helper";
 import { StartedGroupIcon } from "./started-group-icon";
 import { UnstartedGroupIcon } from "./unstarted-group-icon";
 
@@ -16,13 +17,13 @@ const iconComponents = {
   unstarted: UnstartedGroupIcon,
 };
 
-export const StateGroupIcon: React.FC<IStateGroupIcon> = ({
+export function StateGroupIcon({
   className = "",
   color,
   stateGroup,
   size = EIconSize.SM,
   percentage,
-}) => {
+}: IStateGroupIcon) {
   const StateIconComponent = iconComponents[stateGroup] || UnstartedGroupIcon;
 
   return (
@@ -34,4 +35,4 @@ export const StateGroupIcon: React.FC<IStateGroupIcon> = ({
       percentage={percentage}
     />
   );
-};
+}

@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { AlertTriangle } from "lucide-react";
@@ -8,7 +6,7 @@ import { Button } from "@plane/propel/button";
 import { useUser } from "@/hooks/store/user";
 import type { Props } from "./confirm-workspace-member-remove";
 
-export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) => {
+export const ConfirmWorkspaceMemberRemove = observer(function ConfirmWorkspaceMemberRemove(props: Props) {
   const { isOpen, onClose, onSubmit, userDetails } = props;
   // states
   const [isRemoving, setIsRemoving] = useState(false);

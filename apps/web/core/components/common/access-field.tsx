@@ -18,7 +18,7 @@ type Props = {
 };
 
 // TODO: Remove label once i18n is done
-export const AccessField = (props: Props) => {
+export function AccessField(props: Props) {
   const { onChange, value, accessSpecifiers, isMobile = false } = props;
   const { t } = useTranslation();
 
@@ -50,4 +50,4 @@ export const AccessField = (props: Props) => {
       })}
     </div>
   );
-};
+}

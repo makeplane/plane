@@ -30,7 +30,7 @@ export const ICON_PROPERTIES = {
     bgColor: (snoozeDatePassed: boolean = false) => (snoozeDatePassed ? "" : "bg-gray-500/10"),
   },
 };
-export const InboxStatusIcon = ({
+export function InboxStatusIcon({
   type,
   size,
   className,
@@ -40,9 +40,9 @@ export const InboxStatusIcon = ({
   size?: number;
   className?: string;
   renderColor?: boolean;
-}) => {
+}) {
   if (type === undefined) return null;
   const Icon = ICON_PROPERTIES[type];
   if (!Icon) return null;
   return <Icon.icon size={size} className={cn(`w-3 h-3 ${renderColor && Icon?.textColor(false)}`, className)} />;
-};
+}

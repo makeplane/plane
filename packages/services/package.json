@@ -1,12 +1,13 @@
 {
   "name": "@plane/services",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "AGPL-3.0",
   "private": true,
+  "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "types": "./dist/index-BliaS-AT.d.ts",
+      "import": "./dist/index.js"
     },
     "./package.json": "./package.json"
   },
@@ -29,10 +30,11 @@
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
+    "@prettier/plugin-oxc": "0.0.4",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },
   "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts"
 }

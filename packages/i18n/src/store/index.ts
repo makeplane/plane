@@ -6,7 +6,7 @@ import { FALLBACK_LANGUAGE, SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY, ETranslat
 // core translations imports
 import { enCore, locales } from "../locales";
 // types
-import { TLanguage, ILanguageOption, ITranslations } from "../types";
+import type { TLanguage, ILanguageOption, ITranslations } from "../types";
 
 /**
  * Mobx store class for handling translations and language changes in the application

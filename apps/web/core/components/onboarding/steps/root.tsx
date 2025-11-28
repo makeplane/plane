@@ -1,7 +1,4 @@
-"use client";
-
-import type { FC } from "react";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 // plane imports
 import type { IWorkspaceMemberInvitation } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
@@ -18,8 +15,25 @@ type Props = {
   handleStepChange: (step: EOnboardingSteps, skipInvites?: boolean) => void;
 };
 
-export const OnboardingStepRoot: FC<Props> = (props) => {
-  const { currentStep, invitations, handleStepChange } = props;
+function OnboardingStepContent({ currentStep, invitations, handleStepChange }: Props) {
+  switch (currentStep) {
+    case EOnboardingSteps.PROFILE_SETUP:
+      return <ProfileSetupStep handleStepChange={handleStepChange} />;
+    case EOnboardingSteps.ROLE_SETUP:
+      return <RoleSetupStep handleStepChange={handleStepChange} />;
+    case EOnboardingSteps.USE_CASE_SETUP:
+      return <UseCaseSetupStep handleStepChange={handleStepChange} />;
+    case EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN:
+      return <WorkspaceSetupStep invitations={invitations ?? []} handleStepChange={handleStepChange} />;
+    case EOnboardingSteps.INVITE_MEMBERS:
+      return <InviteTeamStep handleStepChange={handleStepChange} />;
+    default:
+      return null;
+  }
+}
+
+export function OnboardingStepRoot(props: Props) {
+  const { currentStep } = props;
   // ref for the scrollable container
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -33,25 +47,13 @@ export const OnboardingStepRoot: FC<Props> = (props) => {
     }
   }, [currentStep]);
 
-  // memoized step component mapping
-  const stepComponents = useMemo(
-    () => ({
-      [EOnboardingSteps.PROFILE_SETUP]: <ProfileSetupStep handleStepChange={handleStepChange} />,
-      [EOnboardingSteps.ROLE_SETUP]: <RoleSetupStep handleStepChange={handleStepChange} />,
-      [EOnboardingSteps.USE_CASE_SETUP]: <UseCaseSetupStep handleStepChange={handleStepChange} />,
-      [EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN]: (
-        <WorkspaceSetupStep invitations={invitations ?? []} handleStepChange={handleStepChange} />
-      ),
-      [EOnboardingSteps.INVITE_MEMBERS]: <InviteTeamStep handleStepChange={handleStepChange} />,
-    }),
-    [handleStepChange, invitations]
-  );
-
   return (
     <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
       <div className="flex items-center justify-center min-h-full p-8">
-        <div className="w-full max-w-[24rem]">{stepComponents[currentStep]} </div>
+        <div className="w-full max-w-[24rem]">
+          <OnboardingStepContent {...props} />
+        </div>
       </div>
     </div>
   );
-};
+}

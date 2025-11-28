@@ -169,7 +169,7 @@ export class ProjectViewStore implements IProjectViewStore {
         });
         return response;
       });
-    } catch (error) {
+    } catch (_error) {
       this.loader = false;
       return undefined;
     }

@@ -1,10 +1,8 @@
-"use client";
-
 import React from "react";
-import { ChevronRight, ChevronUp } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // types
 import { Button } from "@plane/propel/button";
+import { ChevronRightIcon, ChevronUpIcon } from "@plane/propel/icons";
 import type { IProject } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
@@ -14,7 +12,7 @@ export interface IArchiveProject {
   handleArchive: () => void;
 }
 
-export const ArchiveProjectSelection: React.FC<IArchiveProject> = (props) => {
+export function ArchiveProjectSelection(props: IArchiveProject) {
   const { projectDetails, handleArchive } = props;
 
   return (
@@ -23,7 +21,7 @@ export const ArchiveProjectSelection: React.FC<IArchiveProject> = (props) => {
         <div className="w-full">
           <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between">
             <span className="text-xl tracking-tight">Archive project</span>
-            {open ? <ChevronUp className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+            {open ? <ChevronUpIcon className="h-5 w-5" /> : <ChevronRightIcon className="h-5 w-5" />}
           </Disclosure.Button>
           <Transition
             show={open}
@@ -60,4 +58,4 @@ export const ArchiveProjectSelection: React.FC<IArchiveProject> = (props) => {
       )}
     </Disclosure>
   );
-};
+}

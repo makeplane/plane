@@ -1,6 +1,7 @@
 import { Combobox } from "@headlessui/react";
 import { sortBy } from "lodash-es";
-import React, { FC, useMemo, useRef, useState } from "react";
+import type { FC } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { usePopper } from "react-popper";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -9,9 +10,9 @@ import { useDropdownKeyPressed } from "../hooks/use-dropdown-key-pressed";
 import { cn } from "../utils";
 import { DropdownButton } from "./common";
 import { DropdownOptions } from "./common/options";
-import { ISingleSelectDropdown } from "./dropdown";
+import type { ISingleSelectDropdown } from "./dropdown";
 
-export const Dropdown: FC<ISingleSelectDropdown> = (props) => {
+export function Dropdown(props: ISingleSelectDropdown) {
   const {
     value,
     onChange,
@@ -164,4 +165,4 @@ export const Dropdown: FC<ISingleSelectDropdown> = (props) => {
       )}
     </Combobox>
   );
-};
+}

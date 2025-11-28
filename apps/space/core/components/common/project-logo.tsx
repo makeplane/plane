@@ -8,7 +8,7 @@ type Props = {
   logo: TLogoProps;
 };
 
-export const ProjectLogo: React.FC<Props> = (props) => {
+export function ProjectLogo(props: Props) {
   const { className, logo } = props;
 
   if (logo.in_use === "icon" && logo.icon)
@@ -31,4 +31,4 @@ export const ProjectLogo: React.FC<Props> = (props) => {
     );
 
   return <span />;
-};
+}

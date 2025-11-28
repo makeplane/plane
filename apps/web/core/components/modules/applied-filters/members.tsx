@@ -1,7 +1,5 @@
-"use client";
-
 import { observer } from "mobx-react";
-import { X } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 // plane ui
 import { Avatar } from "@plane/ui";
 // helpers
@@ -15,7 +13,7 @@ type Props = {
   editable: boolean | undefined;
 };
 
-export const AppliedMembersFilters: React.FC<Props> = observer((props) => {
+export const AppliedMembersFilters = observer(function AppliedMembersFilters(props: Props) {
   const { handleRemove, values, editable } = props;
   // store hooks
   const {
@@ -44,7 +42,7 @@ export const AppliedMembersFilters: React.FC<Props> = observer((props) => {
                 className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
                 onClick={() => handleRemove(memberId)}
               >
-                <X size={10} strokeWidth={2} />
+                <CloseIcon height={10} width={10} strokeWidth={2} />
               </button>
             )}
           </div>

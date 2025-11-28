@@ -1,7 +1,10 @@
 import type { Editor } from "@tiptap/core";
 import { TableMap } from "@tiptap/pm/tables";
-import { ArrowLeft, ArrowRight, Copy, ToggleRight, Trash2, X, type LucideIcon } from "lucide-react";
+import { ArrowLeft, ArrowRight, Copy, ToggleRight, Trash2 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 // extensions
+import type { ISvgIcons } from "@plane/propel/icons";
+import { CloseIcon } from "@plane/propel/icons";
 import { findTable, getSelectedColumns } from "@/extensions/table/table/utilities/helpers";
 // local imports
 import { duplicateColumns } from "../actions";
@@ -10,7 +13,7 @@ import { TableDragHandleDropdownColorSelector } from "../color-selector";
 const DROPDOWN_ITEMS: {
   key: string;
   label: string;
-  icon: LucideIcon;
+  icon: LucideIcon | React.FC<ISvgIcons>;
   action: (editor: Editor) => void;
 }[] = [
   {
@@ -43,7 +46,7 @@ const DROPDOWN_ITEMS: {
   {
     key: "clear-contents",
     label: "Clear contents",
-    icon: X,
+    icon: CloseIcon,
     action: (editor) => editor.chain().focus().clearSelectedCells().run(),
   },
   {
@@ -59,7 +62,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const ColumnOptionsDropdown: React.FC<Props> = (props) => {
+export function ColumnOptionsDropdown(props: Props) {
   const { editor, onClose } = props;
 
   return (
@@ -97,4 +100,4 @@ export const ColumnOptionsDropdown: React.FC<Props> = (props) => {
       ))}
     </>
   );
-};
+}

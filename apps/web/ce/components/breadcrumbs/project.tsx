@@ -1,12 +1,9 @@
-"use client";
-
 import { observer } from "mobx-react";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ProjectIcon } from "@plane/propel/icons";
 // plane imports
 import type { ICustomSearchSelectOption } from "@plane/types";
 import { BreadcrumbNavigationSearchDropdown, Breadcrumbs } from "@plane/ui";
-// components
-import { Logo } from "@/components/common/logo";
 import { SwitcherLabel } from "@/components/common/switcher-label";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
@@ -19,7 +16,7 @@ type TProjectBreadcrumbProps = {
   handleOnClick?: () => void;
 };
 
-export const ProjectBreadcrumb = observer((props: TProjectBreadcrumbProps) => {
+export const ProjectBreadcrumb = observer(function ProjectBreadcrumb(props: TProjectBreadcrumbProps) {
   const { workspaceSlug, projectId, handleOnClick } = props;
   // router
   const router = useAppRouter();
@@ -52,7 +49,7 @@ export const ProjectBreadcrumb = observer((props: TProjectBreadcrumbProps) => {
 
   // helpers
   const renderIcon = (projectDetails: TProject) => (
-    <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+    <span className="grid place-items-center flex-shrink-0 size-4">
       <Logo logo={projectDetails.logo_props} size={14} />
     </span>
   );

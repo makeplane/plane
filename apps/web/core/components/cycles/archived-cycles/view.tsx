@@ -1,6 +1,8 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
+// assets
+import AllFiltersImage from "@/app/assets/empty-state/cycle/all-filters.svg?url";
+import NameFilterImage from "@/app/assets/empty-state/cycle/name-filter.svg?url";
 // components
 import { CyclesList } from "@/components/cycles/list";
 // ui
@@ -8,16 +10,13 @@ import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
-// assets
-import AllFiltersImage from "@/public/empty-state/cycle/all-filters.svg";
-import NameFilterImage from "@/public/empty-state/cycle/name-filter.svg";
 
 export interface IArchivedCyclesView {
   workspaceSlug: string;
   projectId: string;
 }
 
-export const ArchivedCyclesView: FC<IArchivedCyclesView> = observer((props) => {
+export const ArchivedCyclesView = observer(function ArchivedCyclesView(props: IArchivedCyclesView) {
   const { workspaceSlug, projectId } = props;
   // store hooks
   const { getFilteredArchivedCycleIds, loader } = useCycle();
@@ -31,7 +30,7 @@ export const ArchivedCyclesView: FC<IArchivedCyclesView> = observer((props) => {
     return (
       <div className="h-full w-full grid place-items-center">
         <div className="text-center">
-          <Image
+          <img
             src={archivedCyclesSearchQuery.trim() === "" ? AllFiltersImage : NameFilterImage}
             className="h-36 sm:h-48 w-36 sm:w-48 mx-auto"
             alt="No matching cycles"

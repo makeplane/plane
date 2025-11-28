@@ -1,5 +1,3 @@
-"use client";
-import type { FC } from "react";
 import React from "react";
 // helpers
 import { cn } from "@plane/utils";
@@ -10,7 +8,7 @@ type Props = {
   isMenuActive?: boolean;
 };
 
-export const FavoriteItemWrapper: FC<Props> = (props) => {
+export function FavoriteItemWrapper(props: Props) {
   const { children, elementRef, isMenuActive = false } = props;
   return (
     <>
@@ -27,4 +25,4 @@ export const FavoriteItemWrapper: FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

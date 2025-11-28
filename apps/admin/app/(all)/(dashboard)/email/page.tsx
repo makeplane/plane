@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -8,9 +6,10 @@ import { Loader, ToggleSwitch } from "@plane/ui";
 // hooks
 import { useInstance } from "@/hooks/store";
 // components
+import type { Route } from "./+types/page";
 import { InstanceEmailForm } from "./email-config-form";
 
-const InstanceEmailPage: React.FC = observer(() => {
+const InstanceEmailPage = observer(function InstanceEmailPage(_props: Route.ComponentProps) {
   // store
   const { fetchInstanceConfigurations, formattedConfig, disableEmail } = useInstance();
 
@@ -90,5 +89,7 @@ const InstanceEmailPage: React.FC = observer(() => {
     </>
   );
 });
+
+export const meta: Route.MetaFunction = () => [{ title: "Email Settings - God Mode" }];
 
 export default InstanceEmailPage;

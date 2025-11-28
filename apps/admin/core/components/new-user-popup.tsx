@@ -1,24 +1,20 @@
-"use client";
-
-import React from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import Link from "next/link";
-import { useTheme as nextUseTheme } from "next-themes";
+import { useTheme as useNextTheme } from "next-themes";
 // ui
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { resolveGeneralTheme } from "@plane/utils";
 // hooks
+import TakeoffIconDark from "@/app/assets/logos/takeoff-icon-dark.svg?url";
+import TakeoffIconLight from "@/app/assets/logos/takeoff-icon-light.svg?url";
 import { useTheme } from "@/hooks/store";
 // icons
-import TakeoffIconLight from "/public/logos/takeoff-icon-light.svg";
-import TakeoffIconDark from "/public/logos/takeoff-icon-dark.svg";
 
-export const NewUserPopup: React.FC = observer(() => {
+export const NewUserPopup = observer(function NewUserPopup() {
   // hooks
   const { isNewUserPopup, toggleNewUserPopup } = useTheme();
   // theme
-  const { resolvedTheme } = nextUseTheme();
+  const { resolvedTheme } = useNextTheme();
 
   if (!isNewUserPopup) return <></>;
   return (
@@ -40,7 +36,7 @@ export const NewUserPopup: React.FC = observer(() => {
           </div>
         </div>
         <div className="shrink-0 flex items-center justify-center">
-          <Image
+          <img
             src={resolveGeneralTheme(resolvedTheme) === "dark" ? TakeoffIconDark : TakeoffIconLight}
             height={80}
             width={80}

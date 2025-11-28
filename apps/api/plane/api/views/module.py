@@ -871,6 +871,8 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
             module_id=module_id,
             issue_id=issue_id,
         )
+
+        module_name = module_issue.module.name if module_issue.module is not None else ""
         module_issue.delete()
         issue_activity.delay(
             type="module.activity.deleted",
@@ -878,7 +880,7 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
             actor_id=str(request.user.id),
             issue_id=str(issue_id),
             project_id=str(project_id),
-            current_instance=None,
+            current_instance=json.dumps({"module_name": module_name}),
             epoch=int(timezone.now().timestamp()),
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -1022,7 +1024,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         ],
         request={},
         responses={
-            204: ARCHIVED_RESPONSE,
+            204: None,
             400: CANNOT_ARCHIVE_RESPONSE,
             404: MODULE_NOT_FOUND_RESPONSE,
         },
@@ -1057,7 +1059,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             MODULE_PK_PARAMETER,
         ],
         responses={
-            204: UNARCHIVED_RESPONSE,
+            204: None,
             404: MODULE_NOT_FOUND_RESPONSE,
         },
     )

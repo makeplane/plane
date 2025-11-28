@@ -14,7 +14,7 @@ type Props = {
   page: TPageInstance;
 };
 
-export const PageFavoriteControl = observer(({ page }: Props) => {
+export const PageFavoriteControl = observer(function PageFavoriteControl({ page }: Props) {
   // derived values
   const { is_favorite, canCurrentUserFavoritePage } = page;
   // page operations

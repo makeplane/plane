@@ -1,20 +1,17 @@
-"use client";
-
 import React from "react";
-import Image from "next/image";
 import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspaceIntegration } from "@plane/types";
+// assets
+import GithubLogo from "@/app/assets/logos/github-square.png?url";
+import SlackLogo from "@/app/assets/services/slack.png?url";
 // components
 import { SelectRepository, SelectChannel } from "@/components/integration";
 // constants
 import { PROJECT_GITHUB_REPOSITORY } from "@/constants/fetch-keys";
-// icons
-import GithubLogo from "@/public/logos/github-square.png";
-import SlackLogo from "@/public/services/slack.png";
+// services
 import { ProjectService } from "@/services/project";
-// types
 
 type Props = {
   integration: IWorkspaceIntegration;
@@ -34,7 +31,7 @@ const integrationDetails: { [key: string]: any } = {
 // services
 const projectService = new ProjectService();
 
-export const IntegrationCard: React.FC<Props> = ({ integration }) => {
+export function IntegrationCard({ integration }: Props) {
   const { workspaceSlug, projectId } = useParams();
 
   const { data: syncedGithubRepository } = useSWR(
@@ -87,8 +84,9 @@ export const IntegrationCard: React.FC<Props> = ({ integration }) => {
         <div className="flex items-center justify-between gap-2 border-b border-custom-border-100 bg-custom-background-100 px-4 py-6">
           <div className="flex items-start gap-4">
             <div className="h-10 w-10 flex-shrink-0">
-              <Image
+              <img
                 src={integrationDetails[integration.integration_detail.provider].logo}
+                className="w-full h-full object-cover"
                 alt={`${integration.integration_detail.title} Logo`}
               />
             </div>
@@ -120,4 +118,4 @@ export const IntegrationCard: React.FC<Props> = ({ integration }) => {
       )}
     </>
   );
-};
+}

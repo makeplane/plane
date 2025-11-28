@@ -26,48 +26,48 @@ export type TAddFilterButtonProps<P extends TFilterProperty, E extends TExternal
   onFilterSelect?: (id: string) => void;
 };
 
-export const AddFilterButton = observer(
-  <P extends TFilterProperty, E extends TExternalFilter>(props: TAddFilterButtonProps<P, E>) => {
-    const { filter, buttonConfig, onFilterSelect } = props;
-    const {
-      variant = "link-neutral",
-      className,
-      label,
-      iconConfig = { shouldShowIcon: true },
-      isDisabled = false,
-    } = buttonConfig || {};
-    // derived values
-    const FilterIcon = iconConfig.iconComponent || ListFilter;
+export const AddFilterButton = observer(function AddFilterButton<P extends TFilterProperty, E extends TExternalFilter>(
+  props: TAddFilterButtonProps<P, E>
+) {
+  const { filter, buttonConfig, onFilterSelect } = props;
+  const {
+    variant = "link-neutral",
+    className,
+    label,
+    iconConfig = { shouldShowIcon: true },
+    isDisabled = false,
+  } = buttonConfig || {};
+  // derived values
+  const FilterIcon = iconConfig.iconComponent || ListFilter;
 
-    const handleFilterSelect = (property: P, operator: TSupportedOperators, isNegation: boolean) => {
-      filter.addCondition(
-        LOGICAL_OPERATOR.AND,
-        {
-          property,
-          operator,
-          value: undefined,
-        },
-        isNegation
-      );
-      onFilterSelect?.(property);
-    };
-
-    if (isDisabled) return null;
-    return (
-      <AddFilterDropdown
-        {...props}
-        buttonConfig={{
-          ...buttonConfig,
-          className: cn(getButtonStyling(variant, "sm"), "py-[5px]", className),
-        }}
-        handleFilterSelect={handleFilterSelect}
-        customButton={
-          <div className="flex items-center gap-1">
-            {iconConfig.shouldShowIcon && <FilterIcon className="size-4 text-custom-text-200" />}
-            {label}
-          </div>
-        }
-      />
+  const handleFilterSelect = (property: P, operator: TSupportedOperators, isNegation: boolean) => {
+    filter.addCondition(
+      LOGICAL_OPERATOR.AND,
+      {
+        property,
+        operator,
+        value: undefined,
+      },
+      isNegation
     );
-  }
-);
+    onFilterSelect?.(property);
+  };
+
+  if (isDisabled) return null;
+  return (
+    <AddFilterDropdown
+      {...props}
+      buttonConfig={{
+        ...buttonConfig,
+        className: cn(getButtonStyling(variant, "sm"), "py-[5px]", className),
+      }}
+      handleFilterSelect={handleFilterSelect}
+      customButton={
+        <div className="flex items-center gap-1">
+          {iconConfig.shouldShowIcon && <FilterIcon className="size-4 text-custom-text-200" />}
+          {label}
+        </div>
+      }
+    />
+  );
+});

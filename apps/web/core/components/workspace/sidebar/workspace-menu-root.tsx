@@ -1,14 +1,13 @@
-"use client";
-
 import React, { Fragment, useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // icons
-import { ChevronDown, CirclePlus, LogOut, Mails } from "lucide-react";
+import { CirclePlus, LogOut, Mails } from "lucide-react";
 // ui
 import { Menu, Transition } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspace } from "@plane/types";
 import { Loader } from "@plane/ui";
@@ -29,7 +28,7 @@ type WorkspaceMenuRootProps = {
   renderLogoOnly?: boolean;
 };
 
-export const WorkspaceMenuRoot = observer((props: WorkspaceMenuRootProps) => {
+export const WorkspaceMenuRoot = observer(function WorkspaceMenuRoot(props: WorkspaceMenuRootProps) {
   const { renderLogoOnly } = props;
   // store hooks
   const { toggleSidebar, toggleAnySidebarDropdown } = useAppTheme();
@@ -66,14 +65,13 @@ export const WorkspaceMenuRoot = observer((props: WorkspaceMenuRootProps) => {
 
   // Toggle sidebar dropdown state when either menu is open
   useEffect(() => {
-    if (isWorkspaceMenuOpen) toggleAnySidebarDropdown(true);
-    else toggleAnySidebarDropdown(false);
-  }, [isWorkspaceMenuOpen]);
+    toggleAnySidebarDropdown(isWorkspaceMenuOpen);
+  }, [isWorkspaceMenuOpen, toggleAnySidebarDropdown]);
 
   return (
     <Menu
       as="div"
-      className={cn("relative h-full flex ", {
+      className={cn("relative h-full flex max-w-48 w-fit whitespace-nowrap truncate", {
         "justify-center text-center": renderLogoOnly,
         "flex-grow justify-stretch text-left truncate": !renderLogoOnly,
       })}
@@ -87,7 +85,11 @@ export const WorkspaceMenuRoot = observer((props: WorkspaceMenuRootProps) => {
         return (
           <>
             {renderLogoOnly ? (
-              <Menu.Button className="flex items-center justify-center size-8">
+              <Menu.Button
+                className={cn("flex items-center justify-center size-8 rounded", {
+                  "bg-custom-sidebar-background-80": open,
+                })}
+              >
                 <AppSidebarItem
                   variant="button"
                   item={{
@@ -108,6 +110,7 @@ export const WorkspaceMenuRoot = observer((props: WorkspaceMenuRootProps) => {
                   {
                     "justify-center text-center": renderLogoOnly,
                     "justify-between flex-grow": !renderLogoOnly,
+                    "bg-custom-sidebar-background-80": open,
                   }
                 )}
                 aria-label={t("aria_labels.projects_sidebar.open_workspace_switcher")}
@@ -118,11 +121,10 @@ export const WorkspaceMenuRoot = observer((props: WorkspaceMenuRootProps) => {
                     {activeWorkspace?.name ?? t("loading")}
                   </h4>
                 </div>
-                <ChevronDown
-                  className={cn(
-                    "flex-shrink-0 mx-1 hidden size-4 group-hover/menu-button:block text-custom-sidebar-text-400 duration-300",
-                    { "rotate-180": open }
-                  )}
+                <ChevronDownIcon
+                  className={cn("flex-shrink-0 size-4 text-custom-sidebar-text-400 duration-300", {
+                    "rotate-180": open,
+                  })}
                 />
               </Menu.Button>
             )}
@@ -137,7 +139,7 @@ export const WorkspaceMenuRoot = observer((props: WorkspaceMenuRootProps) => {
               leaveTo="transform opacity-0 scale-95"
             >
               <Menu.Items as={Fragment}>
-                <div className="fixed top-12 left-4 z-[21] mt-1 flex w-[19rem] origin-top-left flex-col divide-y divide-custom-border-100 rounded-md border-[0.5px] border-custom-sidebar-border-300 bg-custom-sidebar-background-100 shadow-custom-shadow-rg outline-none">
+                <div className="fixed top-10 left-4 z-[21] mt-1 flex w-[19rem] origin-top-left flex-col divide-y divide-custom-border-100 rounded-md border-[0.5px] border-custom-sidebar-border-300 bg-custom-sidebar-background-100 shadow-custom-shadow-rg outline-none">
                   <div className="overflow-x-hidden vertical-scrollbar scrollbar-sm flex max-h-96 flex-col items-start justify-start overflow-y-scroll">
                     <span className="rounded-md text-left px-4 sticky top-0 z-[21] h-full w-full bg-custom-sidebar-background-100 pb-1 pt-3 text-sm font-medium text-custom-text-400 truncate flex-shrink-0">
                       {currentUser?.email}

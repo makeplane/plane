@@ -1,8 +1,5 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
@@ -14,7 +11,9 @@ import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@plane/propel/button";
 import type { IImporterService } from "@plane/types";
-// ui
+// assets
+import GithubLogo from "@/app/assets/services/github.png?url";
+import JiraLogo from "@/app/assets/services/jira.svg?url";
 // components
 import { DeleteImportModal, GithubImporterRoot, JiraImporterRoot, SingleImport } from "@/components/integration";
 import { ImportExportSettingsLoader } from "@/components/ui/loader/settings/import-and-export";
@@ -22,9 +21,6 @@ import { ImportExportSettingsLoader } from "@/components/ui/loader/settings/impo
 import { IMPORTER_SERVICES_LIST } from "@/constants/fetch-keys";
 // hooks
 import { useUser } from "@/hooks/store/user";
-// assets
-import GithubLogo from "@/public/services/github.png";
-import JiraLogo from "@/public/services/jira.svg";
 // services
 import { IntegrationService } from "@/services/integrations";
 
@@ -43,7 +39,7 @@ const getImporterLogo = (provider: string) => {
 };
 
 // FIXME: [Deprecated] Remove this component
-const IntegrationGuide = observer(() => {
+const IntegrationGuide = observer(function IntegrationGuide() {
   // states
   const [refreshing, setRefreshing] = useState(false);
   const [deleteImportModal, setDeleteImportModal] = useState(false);
@@ -104,10 +100,9 @@ const IntegrationGuide = observer(() => {
               >
                 <div className="flex items-start gap-4">
                   <div className="relative h-10 w-10 flex-shrink-0">
-                    <Image
+                    <img
                       src={getImporterLogo(service?.provider)}
-                      layout="fill"
-                      objectFit="cover"
+                      className="h-full w-full object-cover"
                       alt={`${t(service.i18n_title)} Logo`}
                     />
                   </div>

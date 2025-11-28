@@ -628,6 +628,8 @@ export default {
   },
   common: {
     all: "全部",
+    no_items_in_this_group: "此群組中沒有項目",
+    drop_here_to_move: "拖放到此處以移動",
     states: "狀態",
     state: "狀態",
     state_groups: "狀態群組",
@@ -1504,6 +1506,47 @@ export default {
       content: "如果您確認，您為此視圖選擇的所有排序、篩選和顯示選項 + 布局將被永久刪除，無法恢復。",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "變更電子郵件",
+        description: "請輸入新的電子郵件地址以接收驗證連結。",
+        toasts: {
+          success_title: "成功！",
+          success_message: "電子郵件已更新，請重新登入。",
+        },
+        form: {
+          email: {
+            label: "新電子郵件",
+            placeholder: "請輸入電子郵件",
+            errors: {
+              required: "電子郵件為必填",
+              invalid: "電子郵件格式無效",
+              exists: "電子郵件已存在，請使用其他信箱。",
+              validation_failed: "電子郵件驗證失敗，請再試一次。",
+            },
+          },
+          code: {
+            label: "驗證碼",
+            placeholder: "gets-sets-flys",
+            helper_text: "驗證碼已傳送到你的新電子郵件。",
+            errors: {
+              required: "驗證碼為必填",
+              invalid: "驗證碼無效，請再試一次。",
+            },
+          },
+        },
+        actions: {
+          continue: "繼續",
+          confirm: "確認",
+          cancel: "取消",
+        },
+        states: {
+          sending: "傳送中…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "工作區設定",
     page_label: "{workspace} - 一般設定",
@@ -1580,6 +1623,7 @@ export default {
         exporting: "匯出中",
         previous_exports: "先前的匯出",
         export_separate_files: "將資料匯出為個別檔案",
+        filters_info: "應用篩選器以根據您的條件匯出特定工作項。",
         modal: {
           title: "匯出至",
           toasts: {

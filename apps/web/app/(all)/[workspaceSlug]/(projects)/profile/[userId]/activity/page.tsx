@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -15,7 +13,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 
 const PER_PAGE = 100;
 
-const ProfileActivityPage = observer(() => {
+function ProfileActivityPage() {
   // states
   const [pageCount, setPageCount] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -69,6 +67,6 @@ const ProfileActivityPage = observer(() => {
       </div>
     </>
   );
-});
+}
 
-export default ProfileActivityPage;
+export default observer(ProfileActivityPage);

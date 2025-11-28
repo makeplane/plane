@@ -1,5 +1,3 @@
-"use client";
-
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { NodeViewWrapper, NodeViewContent } from "@tiptap/react";
 import ts from "highlight.js/lib/languages/typescript";
@@ -19,7 +17,7 @@ type Props = {
   node: ProseMirrorNode;
 };
 
-export const CodeBlockComponent: React.FC<Props> = ({ node }) => {
+export function CodeBlockComponent({ node }: Props) {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -56,8 +54,8 @@ export const CodeBlockComponent: React.FC<Props> = ({ node }) => {
       </Tooltip>
 
       <pre className="bg-custom-background-90 text-custom-text-100 rounded-lg p-4 my-2">
-        <NodeViewContent<"code"> as="code" className="whitespace-pre-wrap" />
+        <NodeViewContent as="code" className="whitespace-pre-wrap" />
       </pre>
     </NodeViewWrapper>
   );
-};
+}

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { range } from "lodash-es";
 // components
@@ -9,7 +7,7 @@ type TWorkspaceDraftIssuesLoader = {
   items?: number;
 };
 
-export const WorkspaceDraftIssuesLoader: FC<TWorkspaceDraftIssuesLoader> = (props) => {
+export function WorkspaceDraftIssuesLoader(props: TWorkspaceDraftIssuesLoader) {
   const { items = 14 } = props;
   return (
     <div className="relative h-full w-full">
@@ -18,4 +16,4 @@ export const WorkspaceDraftIssuesLoader: FC<TWorkspaceDraftIssuesLoader> = (prop
       ))}
     </div>
   );
-};
+}

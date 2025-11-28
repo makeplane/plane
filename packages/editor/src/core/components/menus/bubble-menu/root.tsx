@@ -1,17 +1,19 @@
-import { type Editor, isNodeSelection } from "@tiptap/core";
-import { useEditorState } from "@tiptap/react";
-import { BubbleMenu, type BubbleMenuProps } from "@tiptap/react/menus";
-import { FC, useEffect, useState, useRef } from "react";
+import { isNodeSelection } from "@tiptap/core";
+import type { Editor } from "@tiptap/core";
+import { BubbleMenu, useEditorState } from "@tiptap/react";
+import type { BubbleMenuProps } from "@tiptap/react";
+import type { FC } from "react";
+import { useEffect, useState, useRef } from "react";
 // plane utils
 import { cn } from "@plane/utils";
 // components
+import type { EditorMenuItem } from "@/components/menus";
 import {
   BackgroundColorItem,
   BoldItem,
   BubbleMenuColorSelector,
   BubbleMenuNodeSelector,
   CodeItem,
-  EditorMenuItem,
   ItalicItem,
   StrikeThroughItem,
   TextAlignItem,
@@ -24,7 +26,7 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
 import { isCellSelection } from "@/extensions/table/table/utilities/helpers";
 // types
-import type { TEditorCommands } from "@/types";
+import type { IEditorPropsExtended, TEditorCommands, TExtensions } from "@/types";
 // local imports
 import { TextAlignmentSelector } from "./alignment-selector";
 import { BubbleMenuLinkSelector } from "./link-selector";
@@ -59,10 +61,13 @@ export type EditorStateType = {
 };
 
 type Props = {
+  disabledExtensions: TExtensions[];
   editor: Editor;
+  extendedEditorProps: IEditorPropsExtended;
+  flaggedExtensions: TExtensions[];
 };
 
-export const EditorBubbleMenu: FC<Props> = (props) => {
+export function EditorBubbleMenu(props: Props) {
   const { editor } = props;
   // states
   const [isSelecting, setIsSelecting] = useState(false);
@@ -119,7 +124,10 @@ export const EditorBubbleMenu: FC<Props> = (props) => {
       }
       return true;
     },
-    options: {
+    tippyOptions: {
+      moveTransition: "transform 0.15s ease-out",
+      duration: [300, 0],
+      zIndex: 9,
       onShow: () => {
         if (editor.storage.link) {
           editor.storage.link.isBubbleMenuOpen = true;
@@ -134,13 +142,15 @@ export const EditorBubbleMenu: FC<Props> = (props) => {
           editor.commands.removeActiveDropbarExtension("bubble-menu");
         }, 0);
       },
+      onHidden: () => {
+        if (editor.storage.link) {
+          editor.storage.link.isBubbleMenuOpen = false;
+        }
+        setTimeout(() => {
+          editor.commands.removeActiveDropbarExtension("bubble-menu");
+        }, 0);
+      },
     },
-    // TODO: Migrate these to floating UI options
-    // tippyOptions: {
-    //   moveTransition: "transform 0.15s ease-out",
-    //   duration: [300, 0],
-    //   zIndex: 9,
-    // },
   };
 
   useEffect(() => {
@@ -216,4 +226,4 @@ export const EditorBubbleMenu: FC<Props> = (props) => {
       )}
     </BubbleMenu>
   );
-};
+}

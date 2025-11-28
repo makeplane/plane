@@ -1,10 +1,8 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { CalendarClock, ChevronDown, ChevronRight, Info, Plus, SquareUser, Users } from "lucide-react";
+import { Info, Plus, SquareUser } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 import {
   MODULE_STATUS,
@@ -16,7 +14,14 @@ import {
 } from "@plane/constants";
 // plane types
 import { useTranslation } from "@plane/i18n";
-import { ModuleStatusIcon, WorkItemsIcon } from "@plane/propel/icons";
+import {
+  MembersPropertyIcon,
+  ModuleStatusIcon,
+  WorkItemsIcon,
+  StartDatePropertyIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+} from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ILinkDetails, IModule, ModuleLink } from "@plane/types";
 // plane ui
@@ -48,7 +53,7 @@ type Props = {
 };
 
 // TODO: refactor this component
-export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
+export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(props: Props) {
   const { moduleId, handleClose, isArchived } = props;
   // states
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
@@ -119,7 +124,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
   };
 
   const handleUpdateLink = async (formData: ModuleLink, linkId: string) => {
-    if (!workspaceSlug || !projectId || !module) return;
+    if (!workspaceSlug || !projectId) return;
 
     const payload = { metadata: {}, ...formData };
 
@@ -140,7 +145,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
   };
 
   const handleDeleteLink = async (linkId: string) => {
-    if (!workspaceSlug || !projectId || !module) return;
+    if (!workspaceSlug || !projectId) return;
 
     deleteModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId)
       .then(() => {
@@ -246,7 +251,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
               className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-border-300"
               onClick={() => handleClose()}
             >
-              <ChevronRight className="h-3 w-3 stroke-2 text-white" />
+              <ChevronRightIcon className="h-3 w-3 stroke-2 text-white" />
             </button>
           </div>
         </div>
@@ -303,7 +308,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
         <div className="flex flex-col gap-5 pb-6 pt-2.5">
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
-              <CalendarClock className="h-4 w-4" />
+              <StartDatePropertyIcon className="h-4 w-4" />
               <span className="text-base">{t("date_range")}</span>
             </div>
             <div className="h-7">
@@ -371,7 +376,7 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
           </div>
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
-              <Users className="h-4 w-4" />
+              <MembersPropertyIcon className="h-4 w-4" />
               <span className="text-base">{t("members")}</span>
             </div>
             <Controller
@@ -440,7 +445,10 @@ export const ModuleAnalyticsSidebar: React.FC<Props> = observer((props) => {
                     </div>
 
                     <div className="flex items-center gap-2.5">
-                      <ChevronDown className={`h-3.5 w-3.5 ${open ? "rotate-180 transform" : ""}`} aria-hidden="true" />
+                      <ChevronDownIcon
+                        className={`h-3.5 w-3.5 ${open ? "rotate-180 transform" : ""}`}
+                        aria-hidden="true"
+                      />
                     </div>
                   </Disclosure.Button>
                   <Transition show={open}>

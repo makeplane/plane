@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -15,7 +13,7 @@ import {
   PROJECT_SETTINGS_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { StateGroupIcon, DoubleCircleIcon } from "@plane/propel/icons";
+import { StateGroupIcon, StatePropertyIcon } from "@plane/propel/icons";
 import type { IProject } from "@plane/types";
 // ui
 import { CustomSelect, CustomSearchSelect, ToggleSwitch, Loader } from "@plane/ui";
@@ -32,7 +30,7 @@ type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;
 };
 
-export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
+export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: Props) {
   const { handleChange } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -188,7 +186,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
                               size={EIconSize.LG}
                             />
                           ) : (
-                            <DoubleCircleIcon className="h-3.5 w-3.5 text-custom-text-200" />
+                            <StatePropertyIcon className="h-3.5 w-3.5 text-custom-text-200" />
                           )}
                           {selectedOption?.name
                             ? selectedOption.name

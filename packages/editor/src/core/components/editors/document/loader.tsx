@@ -6,7 +6,7 @@ type Props = {
   className?: string;
 };
 
-export const DocumentContentLoader = (props: Props) => {
+export function DocumentContentLoader(props: Props) {
   const { className } = props;
 
   return (
@@ -48,4 +48,4 @@ export const DocumentContentLoader = (props: Props) => {
       </Loader>
     </div>
   );
-};
+}

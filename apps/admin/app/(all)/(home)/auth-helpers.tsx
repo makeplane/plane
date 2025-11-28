@@ -1,5 +1,3 @@
-import type { ReactNode } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { KeyRound, Mails } from "lucide-react";
 // plane packages
@@ -8,16 +6,16 @@ import { SUPPORT_EMAIL, EAdminAuthErrorCodes } from "@plane/constants";
 import type { TGetBaseAuthenticationModeProps, TInstanceAuthenticationModes } from "@plane/types";
 import { resolveGeneralTheme } from "@plane/utils";
 // components
+import githubLightModeImage from "@/app/assets/logos/github-black.png?url";
+import githubDarkModeImage from "@/app/assets/logos/github-white.png?url";
+import GitlabLogo from "@/app/assets/logos/gitlab-logo.svg?url";
+import GoogleLogo from "@/app/assets/logos/google-logo.svg?url";
 import { EmailCodesConfiguration } from "@/components/authentication/email-config-switch";
 import { GithubConfiguration } from "@/components/authentication/github-config";
 import { GitlabConfiguration } from "@/components/authentication/gitlab-config";
 import { GoogleConfiguration } from "@/components/authentication/google-config";
 import { PasswordLoginConfiguration } from "@/components/authentication/password-config-switch";
 // images
-import githubLightModeImage from "@/public/logos/github-black.png";
-import githubDarkModeImage from "@/public/logos/github-white.png";
-import GitlabLogo from "@/public/logos/gitlab-logo.svg";
-import GoogleLogo from "@/public/logos/google-logo.svg";
 
 export enum EErrorAlertType {
   BANNER_ALERT = "BANNER_ALERT",
@@ -28,7 +26,7 @@ export enum EErrorAlertType {
 }
 
 const errorCodeMessages: {
-  [key in EAdminAuthErrorCodes]: { title: string; message: (email?: string | undefined) => ReactNode };
+  [key in EAdminAuthErrorCodes]: { title: string; message: (email?: string | undefined) => React.ReactNode };
 } = {
   // admin
   [EAdminAuthErrorCodes.ADMIN_ALREADY_EXIST]: {
@@ -136,7 +134,7 @@ export const getBaseAuthenticationModes: (props: TGetBaseAuthenticationModeProps
     key: "google",
     name: "Google",
     description: "Allow members to log in or sign up for Plane with their Google accounts.",
-    icon: <Image src={GoogleLogo} height={20} width={20} alt="Google Logo" />,
+    icon: <img src={GoogleLogo} height={20} width={20} alt="Google Logo" />,
     config: <GoogleConfiguration disabled={disabled} updateConfig={updateConfig} />,
   },
   {
@@ -144,7 +142,7 @@ export const getBaseAuthenticationModes: (props: TGetBaseAuthenticationModeProps
     name: "GitHub",
     description: "Allow members to log in or sign up for Plane with their GitHub accounts.",
     icon: (
-      <Image
+      <img
         src={resolveGeneralTheme(resolvedTheme) === "dark" ? githubDarkModeImage : githubLightModeImage}
         height={20}
         width={20}
@@ -157,7 +155,7 @@ export const getBaseAuthenticationModes: (props: TGetBaseAuthenticationModeProps
     key: "gitlab",
     name: "GitLab",
     description: "Allow members to log in or sign up to plane with their GitLab accounts.",
-    icon: <Image src={GitlabLogo} height={20} width={20} alt="GitLab Logo" />,
+    icon: <img src={GitlabLogo} height={20} width={20} alt="GitLab Logo" />,
     config: <GitlabConfiguration disabled={disabled} updateConfig={updateConfig} />,
   },
 ];

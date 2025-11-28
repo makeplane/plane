@@ -1,6 +1,6 @@
-import { X } from "lucide-react";
-// plane imports
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon } from "@plane/propel/icons";
+// plane imports
 import type { TPageFilterProps } from "@plane/types";
 import { Tag } from "@plane/ui";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
@@ -18,7 +18,7 @@ type Props = {
 const MEMBERS_FILTERS = ["created_by"];
 const DATE_FILTERS = ["created_at"];
 
-export const PageAppliedFiltersList: React.FC<Props> = (props) => {
+export function PageAppliedFiltersList(props: Props) {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, alwaysAllowEditing } = props;
   const { t } = useTranslation();
 
@@ -59,7 +59,7 @@ export const PageAppliedFiltersList: React.FC<Props> = (props) => {
                   className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
                   onClick={() => handleRemoveFilter(filterKey, null)}
                 >
-                  <X size={12} strokeWidth={2} />
+                  <CloseIcon height={12} width={12} strokeWidth={2} />
                 </button>
               )}
             </div>
@@ -70,10 +70,10 @@ export const PageAppliedFiltersList: React.FC<Props> = (props) => {
         <button type="button" onClick={handleClearAllFilters}>
           <Tag>
             {t("common.clear_all")}
-            <X size={12} strokeWidth={2} />
+            <CloseIcon height={12} strokeWidth={2} />
           </Tag>
         </button>
       )}
     </div>
   );
-};
+}

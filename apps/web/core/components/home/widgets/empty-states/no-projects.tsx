@@ -3,12 +3,12 @@ import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Check, Hotel, Users, X } from "lucide-react";
+import { Check, Hotel, Users } from "lucide-react";
 // plane ui
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { ProjectIcon } from "@plane/propel/icons";
+import { ProjectIcon, CloseIcon } from "@plane/propel/icons";
 import { cn, getFileURL } from "@plane/utils";
 // helpers
 // hooks
@@ -19,7 +19,7 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web constants
 
-export const NoProjectsEmptyState = observer(() => {
+export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
   // navigation
   const { workspaceSlug } = useParams();
   // store hooks
@@ -142,7 +142,7 @@ export const NoProjectsEmptyState = observer(() => {
             setValue({ ...storedValue, hide: true });
           }}
         >
-          <X className="size-4" />
+          <CloseIcon className="size-4" />
           {t("home.empty.not_right_now")}
         </button>
       </div>

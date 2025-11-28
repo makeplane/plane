@@ -16,7 +16,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterStatus: FC<Props> = observer((props) => {
+export const FilterStatus = observer(function FilterStatus(props: Props) {
   const { searchQuery } = props;
   // hooks
   const { currentTab, inboxFilters, handleInboxIssueFilters } = useProjectInbox();

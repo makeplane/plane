@@ -386,4 +386,15 @@ export class WorkspaceService extends APIService {
         throw error?.response;
       });
   }
+
+  async updateBulkSidebarPreferences(
+    workspaceSlug: string,
+    data: Array<{ key: string; is_pinned: boolean; sort_order: number }>
+  ): Promise<IWorkspaceSidebarNavigation> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/sidebar-preferences/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
 }

@@ -1,13 +1,12 @@
-"use client";
-
 import type { Dispatch, MouseEvent, MutableRefObject, SetStateAction } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronRight, MoreHorizontal } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import { SPREADSHEET_SELECT_GROUP } from "@plane/constants";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
+import { ChevronRightIcon } from "@plane/propel/icons";
 // types
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IIssueDisplayProperties, TIssue } from "@plane/types";
@@ -51,7 +50,7 @@ interface Props {
   isEpic?: boolean;
 }
 
-export const SpreadsheetIssueRow = observer((props: Props) => {
+export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: Props) {
   const {
     displayProperties,
     issueId,
@@ -163,7 +162,7 @@ interface IssueRowDetailsProps {
   isEpic?: boolean;
 }
 
-const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
+const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetailsProps) {
   const {
     displayProperties,
     issueId,
@@ -335,7 +334,7 @@ const IssueRowDetails = observer((props: IssueRowDetailsProps) => {
                     className="grid place-items-center size-4 rounded-sm text-custom-text-400 hover:text-custom-text-300"
                     onClick={handleToggleExpand}
                   >
-                    <ChevronRight
+                    <ChevronRightIcon
                       className={cn("size-4", {
                         "rotate-90": isExpanded,
                       })}

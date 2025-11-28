@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // component
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -12,7 +10,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { BillingRoot } from "@/plane-web/components/workspace/billing";
 
-const BillingSettingsPage = observer(() => {
+function BillingSettingsPage() {
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
@@ -30,6 +28,6 @@ const BillingSettingsPage = observer(() => {
       <BillingRoot />
     </SettingsContentWrapper>
   );
-});
+}
 
-export default BillingSettingsPage;
+export default observer(BillingSettingsPage);

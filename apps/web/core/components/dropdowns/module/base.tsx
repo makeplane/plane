@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -43,7 +41,7 @@ type TModuleDropdownBaseProps = TDropdownProps & {
       }
   );
 
-export const ModuleDropdownBase: React.FC<TModuleDropdownBaseProps> = observer((props) => {
+export const ModuleDropdownBase = observer(function ModuleDropdownBase(props: TModuleDropdownBaseProps) {
   const {
     button,
     buttonClassName,

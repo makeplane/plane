@@ -1,8 +1,5 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane internal packages
@@ -10,16 +7,19 @@ import { setPromiseToast } from "@plane/propel/toast";
 import { Loader, ToggleSwitch } from "@plane/ui";
 import { resolveGeneralTheme } from "@plane/utils";
 // components
+import githubLightModeImage from "@/app/assets/logos/github-black.png?url";
+import githubDarkModeImage from "@/app/assets/logos/github-white.png?url";
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
 // hooks
 import { useInstance } from "@/hooks/store";
 // icons
-import githubLightModeImage from "@/public/logos/github-black.png";
-import githubDarkModeImage from "@/public/logos/github-white.png";
 // local components
+import type { Route } from "./+types/page";
 import { InstanceGithubConfigForm } from "./form";
 
-const InstanceGithubAuthenticationPage = observer(() => {
+const InstanceGithubAuthenticationPage = observer(function InstanceGithubAuthenticationPage(
+  _props: Route.ComponentProps
+) {
   // store
   const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
   // state
@@ -44,7 +44,7 @@ const InstanceGithubAuthenticationPage = observer(() => {
       loading: "Saving Configuration...",
       success: {
         title: "Configuration saved",
-        message: () => `GitHub authentication is now ${value ? "active" : "disabled"}.`,
+        message: () => `GitHub authentication is now ${value === "1" ? "active" : "disabled"}.`,
       },
       error: {
         title: "Error",
@@ -72,7 +72,7 @@ const InstanceGithubAuthenticationPage = observer(() => {
             name="GitHub"
             description="Allow members to login or sign up to plane with their GitHub accounts."
             icon={
-              <Image
+              <img
                 src={resolveGeneralTheme(resolvedTheme) === "dark" ? githubDarkModeImage : githubLightModeImage}
                 height={24}
                 width={24}
@@ -110,5 +110,7 @@ const InstanceGithubAuthenticationPage = observer(() => {
     </>
   );
 });
+
+export const meta: Route.MetaFunction = () => [{ title: "GitHub Authentication - God Mode" }];
 
 export default InstanceGithubAuthenticationPage;

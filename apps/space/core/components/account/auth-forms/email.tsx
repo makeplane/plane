@@ -1,6 +1,4 @@
-"use client";
-
-import type { FC, FormEvent } from "react";
+import type { FormEvent } from "react";
 import { useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // icons
@@ -19,7 +17,7 @@ type TAuthEmailForm = {
   onSubmit: (data: IEmailCheckData) => Promise<void>;
 };
 
-export const AuthEmailForm: FC<TAuthEmailForm> = observer((props) => {
+export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailForm) {
   const { onSubmit, defaultEmail } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);

@@ -33,31 +33,35 @@ interface Props {
   options?: any;
 }
 
-const HeadingPrimary: CustomComponent = ({ children }) => (
-  <h1 className="text-lg font-semibold text-custom-text-100">{children}</h1>
-);
+function HeadingPrimary({ children }: { children: React.ReactNode }) {
+  return <h1 className="text-lg font-semibold text-custom-text-100">{children}</h1>;
+}
 
-const HeadingSecondary: CustomComponent = ({ children }) => (
-  <h3 className="text-base font-semibold text-custom-text-100">{children}</h3>
-);
+function HeadingSecondary({ children }: { children: React.ReactNode }) {
+  return <h3 className="text-base font-semibold text-custom-text-100">{children}</h3>;
+}
 
-const Paragraph: CustomComponent = ({ children }) => <p className="text-sm text-custom-text-200">{children}</p>;
+function Paragraph({ children }: { children: React.ReactNode }) {
+  return <p className="text-sm text-custom-text-200">{children}</p>;
+}
 
-const OrderedList: CustomComponent = ({ children }) => (
-  <ol className="mb-4 ml-8 list-decimal text-sm text-custom-text-200">{children}</ol>
-);
+function OrderedList({ children }: { children: React.ReactNode }) {
+  return <ol className="mb-4 ml-8 list-decimal text-sm text-custom-text-200">{children}</ol>;
+}
 
-const UnorderedList: CustomComponent = ({ children }) => (
-  <ul className="mb-4 ml-8 list-disc text-sm text-custom-text-200">{children}</ul>
-);
+function UnorderedList({ children }: { children: React.ReactNode }) {
+  return <ul className="mb-4 ml-8 list-disc text-sm text-custom-text-200">{children}</ul>;
+}
 
-const Link: CustomComponent = ({ href, children }) => (
-  <a href={href} className="underline hover:no-underline" target="_blank" rel="noopener noreferrer">
-    {children}
-  </a>
-);
+function Link({ href, children }: CustomComponentProps) {
+  return (
+    <a href={href} className="underline hover:no-underline" target="_blank" rel="noopener noreferrer">
+      {children}
+    </a>
+  );
+}
 
-export const MarkdownRenderer: React.FC<Props> = ({ markdown, options = {} }) => {
+export function MarkdownRenderer({ markdown, options = {} }: Props) {
   const customComponents = {
     h1: HeadingPrimary,
     h3: HeadingSecondary,
@@ -72,4 +76,4 @@ export const MarkdownRenderer: React.FC<Props> = ({ markdown, options = {} }) =>
       {markdown}
     </ReactMarkdown>
   );
-};
+}

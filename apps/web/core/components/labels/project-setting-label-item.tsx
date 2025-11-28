@@ -1,9 +1,10 @@
 import type { Dispatch, SetStateAction } from "react";
 import React, { useState } from "react";
 import { useParams } from "next/navigation";
-import { X, Pencil } from "lucide-react";
-// types
+import { Pencil } from "lucide-react";
 import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
+import { CloseIcon } from "@plane/propel/icons";
+// types
 import type { IIssueLabel } from "@plane/types";
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
@@ -32,7 +33,7 @@ type Props = {
   isEditable?: boolean;
 };
 
-export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
+export function ProjectSettingLabelItem(props: Props) {
   const {
     label,
     setIsUpdating,
@@ -61,7 +62,7 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
 
   const customMenuItems: ICustomMenuItem[] = [
     {
-      CustomIcon: X,
+      CustomIcon: CloseIcon,
       onClick: removeFromGroup,
       isVisible: !!label.parent,
       text: "Remove from group",
@@ -120,4 +121,4 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
       )}
     </LabelDndHOC>
   );
-};
+}

@@ -1,8 +1,6 @@
-"use client";
-
-import type { FC, ReactNode } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
+import { Outlet } from "react-router";
 // constants
 import { WORKSPACE_SETTINGS_ACCESS } from "@plane/constants";
 import type { EUserWorkspaceRoles } from "@plane/types";
@@ -15,12 +13,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // local components
 import { WorkspaceSettingsSidebar } from "./sidebar";
 
-export interface IWorkspaceSettingLayout {
-  children: ReactNode;
-}
-
-const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => {
-  const { children } = props;
+function WorkspaceSettingLayout() {
   // store hooks
   const { workspaceUserInfo, getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   // next hooks
@@ -46,12 +39,14 @@ const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = observer((props) => 
         ) : (
           <div className="relative flex h-full w-full">
             <div className="hidden md:block">{<WorkspaceSettingsSidebar />}</div>
-            <div className="w-full h-full overflow-y-scroll md:pt-page-y">{children}</div>
+            <div className="w-full h-full overflow-y-scroll md:pt-page-y">
+              <Outlet />
+            </div>
           </div>
         )}
       </div>
     </>
   );
-});
+}
 
-export default WorkspaceSettingLayout;
+export default observer(WorkspaceSettingLayout);

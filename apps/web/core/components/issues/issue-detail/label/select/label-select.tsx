@@ -1,11 +1,12 @@
 import { Fragment, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Check, Loader, Search, Tag } from "lucide-react";
+import { Check, Loader, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { LabelPropertyIcon } from "@plane/propel/icons";
 import type { IIssueLabel } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // helpers
@@ -24,7 +25,7 @@ export interface IIssueLabelSelect {
   onAddLabel: (workspaceSlug: string, projectId: string, data: Partial<IIssueLabel>) => Promise<any>;
 }
 
-export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) => {
+export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssueLabelSelect) {
   const { workspaceSlug, projectId, issueId, values, onSelect, onAddLabel } = props;
   const { t } = useTranslation();
   // store hooks
@@ -89,7 +90,7 @@ export const IssueLabelSelect: React.FC<IIssueLabelSelect> = observer((props) =>
       className={`relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded-full border border-custom-border-100 p-0.5 px-2 py-0.5 text-xs text-custom-text-300 transition-all hover:bg-custom-background-90 hover:text-custom-text-200`}
     >
       <div className="flex-shrink-0">
-        <Tag className="h-2.5 w-2.5" />
+        <LabelPropertyIcon className="h-2.5 w-2.5" />
       </div>
       <div className="flex-shrink-0">{t("label.select")}</div>
     </div>

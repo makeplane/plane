@@ -1,6 +1,3 @@
-"use client";
-
-import type { ReactNode } from "react";
 import { createContext } from "react";
 // plane web store
 import { RootStore } from "@/plane-web/store/root.store";
@@ -19,12 +16,12 @@ function initializeStore() {
 }
 
 export type StoreProviderProps = {
-  children: ReactNode;
+  children: React.ReactNode;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   initialState?: any;
 };
 
-export const StoreProvider = ({ children, initialState = undefined }: StoreProviderProps) => {
+export function StoreProvider({ children, initialState = undefined }: StoreProviderProps) {
   const store = initializeStore();
   // If your page has Next.js data fetching methods that use a Mobx store, it will
   // get hydrated here, check `pages/ssg.js` and `pages/ssr.js` for more details
@@ -33,4 +30,4 @@ export const StoreProvider = ({ children, initialState = undefined }: StoreProvi
   }
 
   return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>;
-};
+}

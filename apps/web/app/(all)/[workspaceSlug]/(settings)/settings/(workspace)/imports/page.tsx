@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // components
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -12,7 +10,7 @@ import { SettingsHeading } from "@/components/settings/heading";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 
-const ImportsPage = observer(() => {
+function ImportsPage() {
   // router
   // store hooks
   const { currentWorkspace } = useWorkspace();
@@ -32,6 +30,6 @@ const ImportsPage = observer(() => {
       </section>
     </SettingsContentWrapper>
   );
-});
+}
 
-export default ImportsPage;
+export default observer(ImportsPage);

@@ -17,33 +17,34 @@ interface IFilterItemPropertyProps<P extends TFilterProperty, E extends TExterna
   tooltipContent?: React.ReactNode | undefined;
 }
 
-export const FilterItemProperty = observer(
-  <P extends TFilterProperty, E extends TExternalFilter>(props: IFilterItemPropertyProps<P, E>) => {
-    const { conditionId, filter, isDisabled } = props;
+export const FilterItemProperty = observer(function FilterItemProperty<
+  P extends TFilterProperty,
+  E extends TExternalFilter,
+>(props: IFilterItemPropertyProps<P, E>) {
+  const { conditionId, filter, isDisabled } = props;
 
-    if (isDisabled) {
-      return <PropertyButton {...props} />;
-    }
-
-    const handleFilterSelect = (property: P, operator: TSupportedOperators, isNegation: boolean) => {
-      filter.updateConditionProperty(conditionId, property, operator, isNegation);
-    };
-
-    return (
-      <AddFilterDropdown
-        {...props}
-        handleFilterSelect={handleFilterSelect}
-        customButton={<PropertyButton {...props} />}
-      />
-    );
+  if (isDisabled) {
+    return <PropertyButton {...props} />;
   }
-);
+
+  const handleFilterSelect = (property: P, operator: TSupportedOperators, isNegation: boolean) => {
+    filter.updateConditionProperty(conditionId, property, operator, isNegation);
+  };
+
+  return (
+    <AddFilterDropdown
+      {...props}
+      handleFilterSelect={handleFilterSelect}
+      customButton={<PropertyButton {...props} />}
+    />
+  );
+});
 
 type TPropertyButtonProps<P extends TFilterProperty, E extends TExternalFilter> = IFilterItemPropertyProps<P, E> & {
   className?: string;
 };
 
-const PropertyButton = <P extends TFilterProperty, E extends TExternalFilter>(props: TPropertyButtonProps<P, E>) => {
+function PropertyButton<P extends TFilterProperty, E extends TExternalFilter>(props: TPropertyButtonProps<P, E>) {
   const { icon: Icon, label, tooltipContent, className } = props;
 
   return (
@@ -64,4 +65,4 @@ const PropertyButton = <P extends TFilterProperty, E extends TExternalFilter>(pr
       </div>
     </Tooltip>
   );
-};
+}

@@ -5,7 +5,7 @@ import { Controller, Post } from "@plane/decorators";
 import { convertHTMLDocumentToAllFormats } from "@plane/editor";
 // logger
 import { logger } from "@plane/logger";
-import { type TConvertDocumentRequestBody } from "@/types";
+import type { TConvertDocumentRequestBody } from "@/types";
 
 // Define the schema with more robust validation
 const convertDocumentSchema = z.object({

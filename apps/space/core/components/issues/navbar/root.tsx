@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { ProjectIcon } from "@plane/propel/icons";
 // components
@@ -14,7 +11,7 @@ type Props = {
   publishSettings: PublishStore;
 };
 
-export const IssuesNavbarRoot: FC<Props> = observer((props) => {
+export const IssuesNavbarRoot = observer(function IssuesNavbarRoot(props: Props) {
   const { publishSettings } = props;
   // hooks
   const { project_details } = publishSettings;

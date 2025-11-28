@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ArchiveIcon, CycleIcon, ModuleIcon, WorkItemsIcon } from "@plane/propel/icons";
@@ -15,8 +12,8 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-// plane web
-import { ProjectBreadcrumb } from "@/plane-web/components/breadcrumbs/project";
+// plane web imports
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 type TProps = {
   activeTab: "issues" | "cycles" | "modules";
@@ -46,7 +43,7 @@ const PROJECT_ARCHIVES_BREADCRUMB_LIST: {
   },
 };
 
-export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
+export const ProjectArchivesHeader = observer(function ProjectArchivesHeader(props: TProps) {
   const { activeTab } = props;
   // router
   const router = useAppRouter();
@@ -69,7 +66,7 @@ export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
       <Header.LeftItem>
         <div className="flex items-center gap-2.5">
           <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-            <ProjectBreadcrumb workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink

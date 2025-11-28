@@ -5,7 +5,7 @@ import { useTranslation } from "@plane/i18n";
 import { Row } from "@plane/ui";
 import type { TQuickAddIssueButton } from "../root";
 
-export const GanttQuickAddIssueButton: FC<TQuickAddIssueButton> = observer((props) => {
+export const GanttQuickAddIssueButton = observer(function GanttQuickAddIssueButton(props: TQuickAddIssueButton) {
   const { onClick, isEpic = false } = props;
   const { t } = useTranslation();
   return (

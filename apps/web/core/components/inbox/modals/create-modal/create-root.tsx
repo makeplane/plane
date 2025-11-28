@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, FormEvent } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -54,7 +52,7 @@ export const defaultIssueData: Partial<TIssue> = {
   target_date: "",
 };
 
-export const InboxIssueCreateRoot: FC<TInboxIssueCreateRoot> = observer((props) => {
+export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props: TInboxIssueCreateRoot) {
   const { workspaceSlug, projectId, handleModalClose, isDuplicateModalOpen, handleDuplicateIssueModal } = props;
   // states
   const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);

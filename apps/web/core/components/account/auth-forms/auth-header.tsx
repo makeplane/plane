@@ -52,7 +52,7 @@ const Titles = {
 
 const workSpaceService = new WorkspaceService();
 
-export const AuthHeader: FC<TAuthHeader> = observer((props) => {
+export const AuthHeader = observer(function AuthHeader(props: TAuthHeader) {
   const { workspaceSlug, invitationId, invitationEmail, authMode, currentAuthStep } = props;
   // plane imports
   const { t } = useTranslation();

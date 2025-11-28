@@ -12,7 +12,7 @@ export type InboxIssueListProps = {
   setIsMobileSidebar: (value: boolean) => void;
 };
 
-export const InboxIssueList: FC<InboxIssueListProps> = observer((props) => {
+export const InboxIssueList = observer(function InboxIssueList(props: InboxIssueListProps) {
   const { workspaceSlug, projectId, projectIdentifier, inboxIssueIds, setIsMobileSidebar } = props;
 
   return (

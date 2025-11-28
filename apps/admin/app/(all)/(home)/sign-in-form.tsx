@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
@@ -46,7 +43,7 @@ const defaultFromData: TFormData = {
   password: "",
 };
 
-export const InstanceSignInForm: FC = () => {
+export function InstanceSignInForm() {
   // search params
   const searchParams = useSearchParams();
   const emailParam = searchParams.get("email") || undefined;
@@ -193,4 +190,4 @@ export const InstanceSignInForm: FC = () => {
       </div>
     </>
   );
-};
+}

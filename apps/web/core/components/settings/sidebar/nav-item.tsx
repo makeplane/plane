@@ -26,7 +26,7 @@ export type TSettingsSidebarNavItemProps = {
   renderChildren?: (key: string) => React.ReactNode;
 };
 
-const SettingsSidebarNavItem = observer((props: TSettingsSidebarNavItemProps) => {
+const SettingsSidebarNavItem = observer(function SettingsSidebarNavItem(props: TSettingsSidebarNavItemProps) {
   const { workspaceSlug, setting, isActive, actionIcons, appendItemsToTitle, renderChildren } = props;
   // router
   const { projectId } = useParams();

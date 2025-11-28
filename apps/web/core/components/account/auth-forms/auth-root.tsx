@@ -1,17 +1,16 @@
 import type { FC } from "react";
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
 import { OAuthOptions } from "@plane/ui";
 // assets
-import GithubLightLogo from "/public/logos/github-black.png";
-import GithubDarkLogo from "/public/logos/github-dark.svg";
-import GitlabLogo from "/public/logos/gitlab-logo.svg";
-import GoogleLogo from "/public/logos/google-logo.svg";
+import GithubLightLogo from "@/app/assets/logos/github-black.png?url";
+import GithubDarkLogo from "@/app/assets/logos/github-dark.svg?url";
+import GitlabLogo from "@/app/assets/logos/gitlab-logo.svg?url";
+import GoogleLogo from "@/app/assets/logos/google-logo.svg?url";
 // helpers
 import type { TAuthErrorInfo } from "@/helpers/authentication.helper";
 import {
@@ -33,7 +32,7 @@ type TAuthRoot = {
   authMode: EAuthModes;
 };
 
-export const AuthRoot: FC<TAuthRoot> = observer((props) => {
+export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   //router
   const searchParams = useSearchParams();
   // query params
@@ -112,7 +111,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
     {
       id: "google",
       text: `${OauthButtonContent} with Google`,
-      icon: <Image src={GoogleLogo} height={18} width={18} alt="Google Logo" />,
+      icon: <img src={GoogleLogo} className="h-4 w-4 object-contain" alt="Google Logo" />,
       onClick: () => {
         window.location.assign(`${API_BASE_URL}/auth/google/${next_path ? `?next_path=${next_path}` : ``}`);
       },
@@ -122,10 +121,9 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
       id: "github",
       text: `${OauthButtonContent} with GitHub`,
       icon: (
-        <Image
+        <img
           src={resolvedTheme === "dark" ? GithubDarkLogo : GithubLightLogo}
-          height={18}
-          width={18}
+          className="h-4 w-4 object-contain"
           alt="GitHub Logo"
         />
       ),
@@ -137,7 +135,7 @@ export const AuthRoot: FC<TAuthRoot> = observer((props) => {
     {
       id: "gitlab",
       text: `${OauthButtonContent} with GitLab`,
-      icon: <Image src={GitlabLogo} height={18} width={18} alt="GitLab Logo" />,
+      icon: <img src={GitlabLogo} className="h-4 w-4 object-contain" alt="GitLab Logo" />,
       onClick: () => {
         window.location.assign(`${API_BASE_URL}/auth/gitlab/${next_path ? `?next_path=${next_path}` : ``}`);
       },

@@ -1,10 +1,9 @@
-"use client";
-
 import React, { useEffect, useRef, useState } from "react";
 import type { LucideIcon } from "lucide-react";
-import { ChevronRight, CornerDownRight, RefreshCcw, Sparkles, TriangleAlert } from "lucide-react";
+import { CornerDownRight, RefreshCcw, Sparkles, TriangleAlert } from "lucide-react";
 // plane editor
 import type { EditorRefApi } from "@plane/editor";
+import { ChevronRightIcon } from "@plane/propel/icons";
 // plane ui
 import { Tooltip } from "@plane/propel/tooltip";
 // components
@@ -59,7 +58,7 @@ const TONES_LIST = [
   },
 ];
 
-export const EditorAIMenu: React.FC<Props> = (props) => {
+export function EditorAIMenu(props: Props) {
   const { editorRef, isOpen, onClose, workspaceId, workspaceSlug } = props;
   // states
   const [activeTask, setActiveTask] = useState<AI_EDITOR_TASKS | null>(null);
@@ -174,7 +173,7 @@ export const EditorAIMenu: React.FC<Props> = (props) => {
                   <item.icon className="flex-shrink-0 size-3" />
                   {item.label}
                 </span>
-                <ChevronRight
+                <ChevronRightIcon
                   className={cn("flex-shrink-0 size-3 opacity-0 pointer-events-none transition-opacity", {
                     "opacity-100 pointer-events-auto": isActiveTask,
                   })}
@@ -301,4 +300,4 @@ export const EditorAIMenu: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+}

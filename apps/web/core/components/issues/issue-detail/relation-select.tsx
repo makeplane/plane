@@ -1,9 +1,8 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { Pencil, X } from "lucide-react";
+import { Pencil } from "lucide-react";
+import { CloseIcon } from "@plane/propel/icons";
 // Plane
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -30,7 +29,7 @@ type TIssueRelationSelect = {
   disabled?: boolean;
 };
 
-export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((props) => {
+export const IssueRelationSelect = observer(function IssueRelationSelect(props: TIssueRelationSelect) {
   const { className = "", workspaceSlug, projectId, issueId, relationKey, disabled = false } = props;
   // hooks
   const { getProjectById } = useProject();
@@ -140,7 +139,7 @@ export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((pro
                             removeRelation(workspaceSlug, projectId, issueId, relationKey, relationIssueId);
                           }}
                         >
-                          <X className="h-2.5 w-2.5 text-custom-text-300 hover:text-red-500" />
+                          <CloseIcon className="h-2.5 w-2.5 text-custom-text-300 hover:text-red-500" />
                         </span>
                       </Tooltip>
                     )}

@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
@@ -29,7 +27,7 @@ const defaultValues = {
   confirmDelete: "",
 };
 
-export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
+export function DeleteProjectModal(props: DeleteProjectModal) {
   const { isOpen, project, onClose } = props;
   // store hooks
   const { deleteProject } = useProject();
@@ -198,4 +196,4 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+}

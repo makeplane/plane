@@ -3,12 +3,13 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { ChevronDown, CircleUserRound, InfoIcon } from "lucide-react";
+import { CircleUserRound, InfoIcon } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { PROFILE_SETTINGS_TRACKER_ELEMENTS, PROFILE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button, getButtonStyling } from "@plane/propel/button";
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import type { IUser, TUserProfile } from "@plane/types";
 import { Input } from "@plane/ui";
@@ -16,10 +17,12 @@ import { cn, getFileURL } from "@plane/utils";
 // components
 import { DeactivateAccountModal } from "@/components/account/deactivate-account-modal";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
+import { ChangeEmailModal } from "@/components/core/modals/change-email-modal";
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
 // helpers
 import { captureSuccess, captureError } from "@/helpers/event-tracker.helper";
 // hooks
+import { useInstance } from "@/hooks/store/use-instance";
 import { useUser, useUserProfile } from "@/hooks/store/user";
 
 type TUserProfileForm = {
@@ -41,13 +44,14 @@ export type TProfileFormProps = {
   profile: TUserProfile;
 };
 
-export const ProfileForm = observer((props: TProfileFormProps) => {
+export const ProfileForm = observer(function ProfileForm(props: TProfileFormProps) {
   const { user, profile } = props;
   const { workspaceSlug } = useParams();
   // states
   const [isLoading, setIsLoading] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   const [deactivateAccountModal, setDeactivateAccountModal] = useState(false);
+  const [isChangeEmailModalOpen, setIsChangeEmailModalOpen] = useState(false);
   // language support
   const { t } = useTranslation();
   // form info
@@ -77,6 +81,9 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
   // store hooks
   const { data: currentUser, updateCurrentUser } = useUser();
   const { updateUserProfile } = useUserProfile();
+  const { config } = useInstance();
+
+  const isSMTPConfigured = config?.is_smtp_configured || false;
 
   const handleProfilePictureDelete = async (url: string | null | undefined) => {
     if (!url) return;
@@ -155,6 +162,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
   return (
     <>
       <DeactivateAccountModal isOpen={deactivateAccountModal} onClose={() => setDeactivateAccountModal(false)} />
+      <ChangeEmailModal isOpen={isChangeEmailModalOpen} onClose={() => setIsChangeEmailModalOpen(false)} />
       <Controller
         control={control}
         name="avatar_url"
@@ -354,6 +362,15 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
                     />
                   )}
                 />
+                {isSMTPConfigured && (
+                  <button
+                    type="button"
+                    className="text-xs underline btn w-fit text-custom-text-200"
+                    onClick={() => setIsChangeEmailModalOpen(true)}
+                  >
+                    {t("account_settings.profile.change_email_modal.title")}
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -376,7 +393,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
           <>
             <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">
               <span className="text-lg font-medium tracking-tight">{t("deactivate_account")}</span>
-              <ChevronDown className={`h-5 w-5 transition-all ${open ? "rotate-180" : ""}`} />
+              <ChevronDownIcon className={`h-5 w-5 transition-all ${open ? "rotate-180" : ""}`} />
             </Disclosure.Button>
             <Transition
               show={open}

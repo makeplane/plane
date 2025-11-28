@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
@@ -51,7 +49,7 @@ const defaultValues: Partial<TProfileSetupFormValues> = {
   has_marketing_email_consent: true,
 };
 
-export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
+export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepChange }: Props) {
   // states
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   // store hooks

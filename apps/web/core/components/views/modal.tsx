@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // types
@@ -28,7 +26,7 @@ type Props = {
   projectId: string;
 };
 
-export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
+export const CreateUpdateProjectViewModal = observer(function CreateUpdateProjectViewModal(props: Props) {
   const { data, isOpen, onClose, preLoadedData, workspaceSlug, projectId } = props;
   // router
   const router = useAppRouter();

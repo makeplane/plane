@@ -1,9 +1,10 @@
+import { Buffer } from "buffer";
 import { getSchema } from "@tiptap/core";
 import { generateHTML, generateJSON } from "@tiptap/html";
 import { prosemirrorJSONToYDoc, yXmlFragmentToProseMirrorRootNode } from "y-prosemirror";
 import * as Y from "yjs";
 // extensions
-import { TDocumentPayload } from "@plane/types";
+import type { TDocumentPayload } from "@plane/types";
 import {
   CoreEditorExtensionsWithoutProps,
   DocumentEditorExtensionsWithoutProps,

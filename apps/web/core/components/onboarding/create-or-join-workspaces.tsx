@@ -26,7 +26,7 @@ type Props = {
   finishOnboarding: () => Promise<void>;
 };
 
-export const CreateOrJoinWorkspaces: React.FC<Props> = observer((props) => {
+export const CreateOrJoinWorkspaces = observer(function CreateOrJoinWorkspaces(props: Props) {
   const { invitations, totalSteps, stepChange, finishOnboarding } = props;
   // states
   const [currentView, setCurrentView] = useState<ECreateOrJoinWorkspaceViews | null>(null);

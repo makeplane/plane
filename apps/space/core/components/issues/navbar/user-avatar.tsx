@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { Fragment, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -21,7 +18,7 @@ import { useUser } from "@/hooks/store/use-user";
 
 const authService = new AuthService();
 
-export const UserAvatar: FC = observer(() => {
+export const UserAvatar = observer(function UserAvatar() {
   const pathName = usePathname();
   const searchParams = useSearchParams();
   // query params

@@ -1,5 +1,3 @@
-"use client";
-
 import { isNil } from "lodash-es";
 // types
 import { EIconSize, ISSUE_PRIORITIES } from "@plane/constants";

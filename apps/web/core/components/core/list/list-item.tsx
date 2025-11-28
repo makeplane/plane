@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import React from "react";
 // ui
@@ -30,7 +29,7 @@ interface IListItemProps {
   rightElementClassName?: string;
 }
 
-export const ListItem: FC<IListItemProps> = (props) => {
+export function ListItem(props: IListItemProps) {
   const {
     id,
     title,
@@ -109,4 +108,4 @@ export const ListItem: FC<IListItemProps> = (props) => {
       </Row>
     </div>
   );
-};
+}

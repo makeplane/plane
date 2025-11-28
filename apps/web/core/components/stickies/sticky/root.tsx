@@ -22,7 +22,7 @@ type TProps = {
   showToolbar?: boolean;
   handleLayout?: () => void;
 };
-export const StickyNote = observer((props: TProps) => {
+export const StickyNote = observer(function StickyNote(props: TProps) {
   const { onClose, workspaceSlug, className = "", stickyId, showToolbar, handleLayout } = props;
   // navigation
   // const pathName = usePathname();

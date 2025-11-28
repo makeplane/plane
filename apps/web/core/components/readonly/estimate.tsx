@@ -1,10 +1,7 @@
-"use client";
-
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { Triangle } from "lucide-react";
-// plane imports
 import { useTranslation } from "@plane/i18n";
+import { EstimatePropertyIcon } from "@plane/propel/icons";
 import { EEstimateSystem } from "@plane/types";
 import { cn, convertMinutesToHoursMinutesString } from "@plane/utils";
 // hooks
@@ -20,7 +17,7 @@ export type TReadonlyEstimateProps = {
   workspaceSlug: string;
 };
 
-export const ReadonlyEstimate: React.FC<TReadonlyEstimateProps> = observer((props) => {
+export const ReadonlyEstimate = observer(function ReadonlyEstimate(props: TReadonlyEstimateProps) {
   const { className, hideIcon = false, value, placeholder, projectId, workspaceSlug } = props;
 
   const { t } = useTranslation();
@@ -46,7 +43,7 @@ export const ReadonlyEstimate: React.FC<TReadonlyEstimateProps> = observer((prop
 
   return (
     <div className={cn("flex items-center gap-1 text-sm", className)}>
-      {!hideIcon && <Triangle className="size-4 flex-shrink-0" />}
+      {!hideIcon && <EstimatePropertyIcon className="size-4 flex-shrink-0" />}
       <span className="flex-grow truncate">{displayValue ?? placeholder ?? t("common.none")}</span>
     </div>
   );

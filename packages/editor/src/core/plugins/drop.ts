@@ -1,9 +1,9 @@
-import { Editor } from "@tiptap/core";
+import type { Editor } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 // constants
 import { ACCEPTED_ATTACHMENT_MIME_TYPES, ACCEPTED_IMAGE_MIME_TYPES } from "@/constants/config";
 // types
-import { TEditorCommands, TExtensions } from "@/types";
+import type { TEditorCommands, TExtensions } from "@/types";
 
 type Props = {
   disabledExtensions?: TExtensions[];

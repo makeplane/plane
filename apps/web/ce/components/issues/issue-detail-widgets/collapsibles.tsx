@@ -11,4 +11,6 @@ export type TWorkItemAdditionalWidgetCollapsiblesProps = {
   workspaceSlug: string;
 };
 
-export const WorkItemAdditionalWidgetCollapsibles: FC<TWorkItemAdditionalWidgetCollapsiblesProps> = () => null;
+export function WorkItemAdditionalWidgetCollapsibles(_props: TWorkItemAdditionalWidgetCollapsiblesProps) {
+  return null;
+}

@@ -12,7 +12,7 @@ interface IPriorityIcon {
   withContainer?: boolean;
 }
 
-export const PriorityIcon: React.FC<IPriorityIcon> = (props) => {
+export function PriorityIcon(props: IPriorityIcon) {
   const { priority, className = "", containerClassName = "", size = 14, withContainer = false } = props;
 
   const priorityClasses = {
@@ -75,4 +75,4 @@ export const PriorityIcon: React.FC<IPriorityIcon> = (props) => {
       )}
     </>
   );
-};
+}

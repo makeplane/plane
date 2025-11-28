@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -13,7 +10,7 @@ type TStateMarksAsDefault = {
   markStateAsDefaultCallback: TStateOperationsCallbacks["markStateAsDefault"];
 };
 
-export const StateMarksAsDefault: FC<TStateMarksAsDefault> = observer((props) => {
+export const StateMarksAsDefault = observer(function StateMarksAsDefault(props: TStateMarksAsDefault) {
   const { stateId, isDefault, markStateAsDefaultCallback } = props;
   // states
   const [isLoading, setIsLoading] = useState(false);

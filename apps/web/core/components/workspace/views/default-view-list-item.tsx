@@ -7,7 +7,7 @@ import { truncateText } from "@plane/utils";
 
 type Props = { view: { key: string; i18n_label: string } };
 
-export const GlobalDefaultViewListItem: React.FC<Props> = observer((props) => {
+export const GlobalDefaultViewListItem = observer(function GlobalDefaultViewListItem(props: Props) {
   const { view } = props;
   // router
   const { workspaceSlug } = useParams();

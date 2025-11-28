@@ -1,8 +1,6 @@
-"use client";
-
-import { X } from "lucide-react";
-// plane imports
 import { useTranslation } from "@plane/i18n";
+import { CloseIcon } from "@plane/propel/icons";
+// plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types";
 import { EHeaderVariant, Header, Tag } from "@plane/ui";
@@ -27,7 +25,7 @@ type Props = {
 const MEMBERS_FILTERS = ["lead", "members"];
 const DATE_FILTERS = ["created_at"];
 
-export const ProjectAppliedFiltersList: React.FC<Props> = (props) => {
+export function ProjectAppliedFiltersList(props: Props) {
   const { t } = useTranslation();
   const {
     appliedFilters,
@@ -85,7 +83,7 @@ export const ProjectAppliedFiltersList: React.FC<Props> = (props) => {
                   className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
                   onClick={() => handleRemoveFilter(filterKey, null)}
                 >
-                  <X size={12} strokeWidth={2} />
+                  <CloseIcon height={12} width={12} strokeWidth={2} />
                 </button>
               )}
             </Tag>
@@ -106,7 +104,7 @@ export const ProjectAppliedFiltersList: React.FC<Props> = (props) => {
           <button type="button" onClick={handleClearAllFilters}>
             <Tag>
               {t("common.clear_all")}
-              <X size={12} strokeWidth={2} />
+              <CloseIcon height={12} width={12} strokeWidth={2} />
             </Tag>
           </button>
         )}
@@ -127,4 +125,4 @@ export const ProjectAppliedFiltersList: React.FC<Props> = (props) => {
       </Header.RightItem>
     </Header>
   );
-};
+}

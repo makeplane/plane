@@ -1,6 +1,7 @@
-import { Download, ExternalLink, Minus, Plus, X } from "lucide-react";
+import { Download, ExternalLink, Minus, Plus } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactDOM from "react-dom";
+import { CloseIcon } from "@plane/propel/icons";
 // plane imports
 import { cn } from "@plane/utils";
 
@@ -19,7 +20,7 @@ type Props = {
   width: string;
 };
 
-const ImageFullScreenModalWithoutPortal = (props: Props) => {
+function ImageFullScreenModalWithoutPortal(props: Props) {
   const { aspectRatio, isFullScreenEnabled, isTouchDevice, downloadSrc, src, toggleFullScreenMode, width } = props;
   // refs
   const dragStart = useRef({ x: 0, y: 0 });
@@ -212,7 +213,7 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
           className="absolute top-10 right-10 size-8 grid place-items-center"
           aria-label="Close image viewer"
         >
-          <X className="size-8 text-white/60 hover:text-white transition-colors" />
+          <CloseIcon className="size-8 text-white/60 hover:text-white transition-colors" />
         </button>
         <img
           ref={setImageRef}
@@ -288,9 +289,9 @@ const ImageFullScreenModalWithoutPortal = (props: Props) => {
       </div>
     </div>
   );
-};
+}
 
-export const ImageFullScreenModal: React.FC<Props> = (props) => {
+export function ImageFullScreenModal(props: Props) {
   let modal = <ImageFullScreenModalWithoutPortal {...props} />;
   const portal = document.querySelector("#editor-portal");
   if (portal) {
@@ -302,4 +303,4 @@ export const ImageFullScreenModal: React.FC<Props> = (props) => {
     }
   }
   return modal;
-};
+}

@@ -24,7 +24,7 @@ type Props = {
   hideWidgets?: TWorkItemWidgets[];
 };
 
-export const IssueDetailWidgetModals: FC<Props> = observer((props) => {
+export const IssueDetailWidgetModals = observer(function IssueDetailWidgetModals(props: Props) {
   const { workspaceSlug, projectId, issueId, issueServiceType, hideWidgets } = props;
   // store hooks
   const {
