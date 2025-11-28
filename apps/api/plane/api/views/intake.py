@@ -23,7 +23,7 @@ from plane.api.serializers import (
 )
 from plane.app.permissions import ProjectLitePermission
 from plane.bgtasks.issue_activities_task import issue_activity
-from plane.db.models import Intake, IntakeIssue, Issue, Project, ProjectMember, State
+from plane.db.models import Intake, IntakeIssue, Issue, Project, ProjectMember, State, StateGroup
 from plane.utils.host import base_host
 from .base import BaseAPIView
 from plane.db.models.intake import SourceType
@@ -171,7 +171,7 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
         if not triage_state:
             triage_state = State.objects.create(
                 name="Intake Triage",
-                group=State.TRIAGE,
+                group=StateGroup.TRIAGE.value,
                 project_id=project_id,
                 workspace_id=project.workspace_id,
                 color="#4E5355",

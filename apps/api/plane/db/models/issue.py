@@ -19,7 +19,7 @@ from .project import ProjectBaseModel
 from plane.utils.uuid import convert_uuid_to_integer
 from .description import Description
 from plane.db.mixins import ChangeTrackerMixin
-from .state import State
+from .state import StateGroup
 
 
 def get_default_properties():
@@ -98,7 +98,7 @@ class IssueManager(SoftDeletionManager):
             )
             .filter(deleted_at__isnull=True)
             .filter(state__is_triage=False)
-            .exclude(state__group=State.TRIAGE)
+            .exclude(state__group=StateGroup.TRIAGE.value)
             .exclude(archived_at__isnull=False)
             .exclude(project__archived_at__isnull=False)
             .exclude(is_draft=True)
