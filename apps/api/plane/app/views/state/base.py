@@ -135,7 +135,7 @@ class IntakeStateEndpoint(BaseAPIView):
         state = State.triage_objects.filter(workspace__slug=slug, project_id=project_id).first()
         if not state:
             return Response(
-                {"error": "Intake triage state not found"},
+                {"error": "Triage state not found"},
                 status=status.HTTP_404_NOT_FOUND,
             )
 

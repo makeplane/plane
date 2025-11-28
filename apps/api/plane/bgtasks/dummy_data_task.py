@@ -17,6 +17,7 @@ from plane.db.models import (
     Project,
     ProjectMember,
     State,
+    StateGroup,
     Label,
     Cycle,
     Module,
@@ -264,7 +265,9 @@ def create_issues(workspace, project, user_id, issue_count):
     Faker.seed(0)
 
     states = (
-        State.objects.filter(workspace=workspace, project=project).exclude(group=State.TRIAGE).values_list("id", flat=True)
+        State.objects.filter(workspace=workspace, project=project)
+        .exclude(group=StateGroup.TRIAGE.value)
+        .values_list("id", flat=True)
     )
     creators = ProjectMember.objects.filter(workspace=workspace, project=project).values_list("member_id", flat=True)
 

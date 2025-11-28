@@ -1,7 +1,7 @@
 # Module imports
 from .base import BaseSerializer
 from .issue import IssueExpandSerializer
-from plane.db.models import IntakeIssue, Issue
+from plane.db.models import IntakeIssue, Issue, State, StateGroup
 from rest_framework import serializers
 
 
@@ -108,7 +108,6 @@ class IntakeIssueUpdateSerializer(BaseSerializer):
         Validate that if status is being changed to accepted (1),
         the project has a default state to transition to.
         """
-        from plane.db.models import State
 
         # Check if status is being updated to accepted
         if attrs.get("status") == 1:
@@ -116,7 +115,7 @@ class IntakeIssueUpdateSerializer(BaseSerializer):
             issue = intake_issue.issue
 
             # Check if issue is in TRIAGE state
-            if issue.state and issue.state.group == State.TRIAGE:
+            if issue.state and issue.state.group == StateGroup.TRIAGE.value:
                 # Verify default state exists before allowing the update
                 default_state = State.objects.filter(
                     workspace=intake_issue.workspace, project=intake_issue.project, default=True
@@ -133,7 +132,6 @@ class IntakeIssueUpdateSerializer(BaseSerializer):
         """
         Update intake issue and transition associated issue state if accepted.
         """
-        from plane.db.models import State
 
         # Update the intake issue with validated data
         instance = super().update(instance, validated_data)
@@ -141,7 +139,7 @@ class IntakeIssueUpdateSerializer(BaseSerializer):
         # If status is accepted (1), update the associated issue state from TRIAGE to default
         if validated_data.get("status") == 1:
             issue = instance.issue
-            if issue.state and issue.state.group == State.TRIAGE:
+            if issue.state and issue.state.group == StateGroup.TRIAGE.value:
                 # Get the default project state
                 default_state = State.objects.filter(
                     workspace=instance.workspace, project=instance.project, default=True

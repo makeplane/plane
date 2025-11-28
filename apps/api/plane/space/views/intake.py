@@ -12,7 +12,7 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseViewSet
-from plane.db.models import IntakeIssue, Issue, IssueLink, FileAsset, DeployBoard, State
+from plane.db.models import IntakeIssue, Issue, IssueLink, FileAsset, DeployBoard, State, StateGroup
 from plane.app.serializers import (
     IssueSerializer,
     IntakeIssueSerializer,
@@ -128,8 +128,8 @@ class IntakeIssuePublicViewSet(BaseViewSet):
 
         if not triage_state:
             triage_state = State.objects.create(
-                name="Intake Triage",
-                group=State.TRIAGE,
+                name="Triage",
+                group=StateGroup.TRIAGE.value,
                 project_id=project_deploy_board.project_id,
                 workspace_id=project_deploy_board.workspace_id,
                 color="#4E5355",
