@@ -2,7 +2,7 @@ import { useCallback, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Lock } from "lucide-react";
-// plane constants
+// plane imports
 import {
   EIssueFilterType,
   ISSUE_DISPLAY_FILTERS_BY_PAGE,
@@ -10,19 +10,16 @@ import {
   EUserPermissionsLevel,
   WORK_ITEM_TRACKER_ELEMENTS,
 } from "@plane/constants";
-// types
 import { Button } from "@plane/propel/button";
 import { ViewsIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { ICustomSearchSelectOption, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssuesStoreType, EViewAccess, EIssueLayoutTypes } from "@plane/types";
-// ui
 import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SwitcherIcon, SwitcherLabel } from "@/components/common/switcher-label";
 import { DisplayFiltersSelection, FiltersDropdown, LayoutSelection } from "@/components/issues/issue-layouts/filters";
-// constants
 import { ViewQuickActions } from "@/components/views/quick-actions";
 import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-toggle";
 // hooks
@@ -31,8 +28,9 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectView } from "@/hooks/store/use-project-view";
 import { useUserPermissions } from "@/hooks/store/user";
-// plane web
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web imports
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader() {
   // refs
@@ -120,6 +118,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
     <Header>
       <Header.LeftItem>
         <Breadcrumbs isLoading={loader === "init-loader"}>
+          <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink

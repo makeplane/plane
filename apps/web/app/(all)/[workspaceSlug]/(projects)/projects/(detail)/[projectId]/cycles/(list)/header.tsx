@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
@@ -15,11 +14,13 @@ import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web imports
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const CyclesListHeader = observer(function CyclesListHeader() {
   // router
   const router = useAppRouter();
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug, projectId } = useParams();
 
   // store hooks
   const { toggleCreateCycleModal } = useCommandPalette();
@@ -36,6 +37,7 @@ export const CyclesListHeader = observer(function CyclesListHeader() {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
+          <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink

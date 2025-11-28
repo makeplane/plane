@@ -15,7 +15,8 @@ import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-// plane web hooks
+// plane web imports
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 export const PagesListHeader = observer(function PagesListHeader() {
@@ -23,7 +24,7 @@ export const PagesListHeader = observer(function PagesListHeader() {
   const [isCreatingPage, setIsCreatingPage] = useState(false);
   // router
   const router = useRouter();
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug, projectId } = useParams();
   const searchParams = useSearchParams();
   const pageType = searchParams.get("type");
   // store hooks
@@ -69,6 +70,7 @@ export const PagesListHeader = observer(function PagesListHeader() {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs isLoading={loader === "init-loader"}>
+          <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink

@@ -13,6 +13,8 @@ import { IssueDetailQuickActions } from "@/components/issues/issue-detail/issue-
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
+// plane web imports
+import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const WorkItemDetailsHeader = observer(() => {
   // router
@@ -34,6 +36,7 @@ export const WorkItemDetailsHeader = observer(() => {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
+          <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink

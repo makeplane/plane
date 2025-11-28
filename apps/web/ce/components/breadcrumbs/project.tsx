@@ -49,7 +49,7 @@ export const ProjectBreadcrumb = observer(function ProjectBreadcrumb(props: TPro
 
   // helpers
   const renderIcon = (projectDetails: TProject) => (
-    <span className="grid place-items-center flex-shrink-0 h-4 w-4">
+    <span className="grid place-items-center flex-shrink-0 size-4">
       <Logo logo={projectDetails.logo_props} size={14} />
     </span>
   );
