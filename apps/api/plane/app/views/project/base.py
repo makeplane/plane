@@ -298,7 +298,7 @@ class ProjectViewSet(BaseViewSet):
                     "group": "cancelled",
                 },
                 {
-                    "name": "Intake Triage",
+                    "name": "Triage",
                     "color": "#4E5355",
                     "sequence": 65000,
                     "group": State.TRIAGE,
