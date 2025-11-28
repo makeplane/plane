@@ -102,6 +102,13 @@ class IssueManager(SoftDeletionManager):
 
 
 class Issue(ProjectBaseModel):
+    class IssueTypeEnum(models.TextChoices):
+        TASK = '任务'
+        BUG = '缺陷'
+        EPIC = '史诗'
+        FEATURE = '特性'
+        STORY = '用户故事'
+
     PRIORITY_CHOICES = (
         ("urgent", "Urgent"),
         ("high", "High"),
@@ -244,6 +251,9 @@ class Issue(ProjectBaseModel):
                 else strip_tags(self.description_html)
             )
             super(Issue, self).save(*args, **kwargs)
+
+
+
 
     def __str__(self):
         """Return name of the issue"""

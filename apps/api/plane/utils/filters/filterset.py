@@ -154,6 +154,9 @@ class IssueFilterSet(BaseFilterSet):
     type_id = filters.UUIDFilter(field_name="type_id")
     type_id__in = UUIDInFilter(field_name="type_id", lookup_expr="in")
 
+    type__name = filters.CharFilter(field_name="type__name")
+    type__name__in = CharInFilter(field_name="type__name", lookup_expr="in")
+
     subscriber_id = filters.UUIDFilter(method="filter_subscriber_id")
     subscriber_id__in = UUIDInFilter(method="filter_subscriber_id_in", lookup_expr="in")
 

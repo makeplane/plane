@@ -37,12 +37,13 @@ from plane.db.models import (
     IssueVersion,
     IssueDescriptionVersion,
     ProjectMember,
-    EstimatePoint, IssueTypeProperty, IssuePropertyValue, ProjectIssueType,
+    EstimatePoint, IssueTypeProperty, IssuePropertyValue, ProjectIssueType, IssueType,
 )
 from plane.utils.content_validator import (
     validate_html_content,
     validate_binary_data,
 )
+from ..views.issue.utils import is_allowed_to_add_parent
 
 
 class IssueFlatSerializer(BaseSerializer):
@@ -83,6 +84,9 @@ class IssueCreateSerializer(BaseSerializer):
     parent_id = serializers.PrimaryKeyRelatedField(
         source="parent", queryset=Issue.objects.all(), required=False, allow_null=True
     )
+    type_id = serializers.PrimaryKeyRelatedField(
+        source="type", queryset=IssueType.objects.all(), required=False, allow_null=True
+    )
     label_ids = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=Label.objects.all()),
         write_only=True,
@@ -94,7 +98,6 @@ class IssueCreateSerializer(BaseSerializer):
         required=False,
     )
     project_id = serializers.UUIDField(source="project.id", read_only=True)
-    type_id = serializers.UUIDField(source="type.id", read_only=True)
     workspace_id = serializers.UUIDField(source="workspace.id", read_only=True)
 
     class Meta:
@@ -187,6 +190,14 @@ class IssueCreateSerializer(BaseSerializer):
         ):
             raise serializers.ValidationError("Estimate point is not valid please pass a valid estimate_point_id")
 
+
+
+        if parent := attrs.get('parent'):
+            sub_issue = self.instance.type.name if self.instance else attrs.get('type').name
+            if not is_allowed_to_add_parent(parent_issue=parent, sub_issue=sub_issue):
+                raise serializers.ValidationError(f"{parent.type.name}不能作为{sub_issue}的父工作项")
+
+
         return attrs
 
     def create(self, validated_data):
@@ -195,16 +206,13 @@ class IssueCreateSerializer(BaseSerializer):
 
         project_id = self.context["project_id"]
         type_id = self.context["type_id"]
-        if not type_id:
-            issue_type = ProjectIssueType.objects.get(project_id=project_id,issue_type__is_default=True).issue_type
-            type_id = issue_type.id
         workspace_id = self.context["workspace_id"]
         default_assignee_id = self.context["default_assignee_id"]
         # 动态字段
         dynamic_properties = self.context["dynamic_properties"]
 
         # Create Issue
-        issue = Issue.objects.create(**validated_data, project_id=project_id, type_id=type_id)
+        issue = Issue.objects.create(**validated_data, project_id=project_id)
 
         # 添加动态字段
         for property_id, issue_value in dynamic_properties.items():
@@ -284,6 +292,7 @@ class IssueCreateSerializer(BaseSerializer):
     def update(self, instance, validated_data):
         assignees = validated_data.pop("assignee_ids", None)
         labels = validated_data.pop("label_ids", None)
+
 
         # Related models
         project_id = instance.project_id

@@ -11,6 +11,7 @@ export default {
     analytics: "分析",
     test_management: "测试",
     work_items: "工作项",
+    requirements: "需求",
     cycles: "周期",
     modules: "模块",
     intake: "收集",

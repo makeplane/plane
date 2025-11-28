@@ -84,16 +84,19 @@ export const useSubIssueOperations = (issueServiceType: TIssueServiceType): TSub
                   : t("issue.label", { count: issueIds.length }),
             }),
           });
-        } catch {
+        } catch (error) {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("toast.error"),
-            message: t("entity.add.failed", {
-              entity:
-                issueServiceType === EIssueServiceType.ISSUES
-                  ? t("common.sub_work_items")
-                  : t("issue.label", { count: issueIds.length }),
-            }),
+            message:
+              (error as any)?.error ||
+              (error as any)?.detail ||
+              t("entity.add.failed", {
+                entity:
+                  issueServiceType === EIssueServiceType.ISSUES
+                    ? t("common.sub_work_items")
+                    : t("issue.label", { count: issueIds.length }),
+              }),
           });
         }
       },

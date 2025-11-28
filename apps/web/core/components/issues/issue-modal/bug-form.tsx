@@ -311,7 +311,7 @@ export const BugIssueFormRoot: FC<BugIssueFormProps> = observer((props) => {
       });
       editorRef?.current?.clearEditor();
     } catch (error: any) {
-      const msg = error?.error || error?.message || "创建失败";
+      const msg = error?.error || error?.detail || error?.message || "创建失败";
       setToast({ type: TOAST_TYPE.ERROR, title: t("error"), message: msg });
     } finally {
       setCreating(false);

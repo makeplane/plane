@@ -10,6 +10,7 @@ export default {
     views: "Views",
     analytics: "Analytics",
     work_items: "Work items",
+    requirements: "Requirements",
     cycles: "Cycles",
     modules: "Modules",
     intake: "Intake",

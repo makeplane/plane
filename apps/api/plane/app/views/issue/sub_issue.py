@@ -14,6 +14,7 @@ from django.db.models.functions import Coalesce
 from rest_framework.response import Response
 from rest_framework import status
 
+from .utils import is_allowed_to_add_parent
 # Module imports
 from .. import BaseAPIView
 from plane.app.serializers import IssueSerializer
@@ -179,6 +180,11 @@ class SubIssuesEndpoint(BaseAPIView):
         sub_issues = Issue.issue_objects.filter(id__in=sub_issue_ids)
 
         for sub_issue in sub_issues:
+            if not is_allowed_to_add_parent(parent_issue=parent_issue, sub_issue=sub_issue):
+                return Response(
+                    {"error": f"{parent_issue.type.name}不能作为{sub_issue.type.name}的父工作项"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             sub_issue.parent = parent_issue
 
         _ = Issue.objects.bulk_update(sub_issues, ["parent"], batch_size=10)

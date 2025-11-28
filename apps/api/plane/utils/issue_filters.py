@@ -474,6 +474,7 @@ def issue_filters(query_params, method, prefix=""):
         "type": filter_issue_state_type,
         # 新增：按 Issue.type 外键过滤
         "type_id": filter_type_id,
+        "type__name": filter_type_id,
         "project": filter_project,
         "cycle": filter_cycle,
         "module": filter_module,

@@ -37,6 +37,8 @@ from .user import UserLiteSerializer
 from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 
+from ...app.views.issue.utils import is_allowed_to_add_parent
+
 
 class IssueSerializer(BaseSerializer):
     """
@@ -235,6 +237,11 @@ class IssueSerializer(BaseSerializer):
         workspace_id = instance.workspace_id
         created_by_id = instance.created_by_id
         updated_by_id = instance.updated_by_id
+
+        if parent_id := validated_data.get('parent_id'):
+            parent_issue = Issue.objects.get(pk=parent_id)
+            if not is_allowed_to_add_parent(parent_issue=parent_issue, sub_issue=instance):
+                raise serializers.ValidationError(f"{parent_issue.type.name}不能作为{instance.type.name}的父工作项")
 
         if assignees is not None:
             IssueAssignee.objects.filter(issue=instance).delete()

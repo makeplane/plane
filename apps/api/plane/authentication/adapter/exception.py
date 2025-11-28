@@ -1,6 +1,6 @@
 # Third party imports
 from rest_framework.views import exception_handler
-from rest_framework.exceptions import NotAuthenticated
+from rest_framework.exceptions import NotAuthenticated, ValidationError
 from rest_framework.exceptions import Throttled
 
 # Module imports

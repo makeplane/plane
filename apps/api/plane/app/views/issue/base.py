@@ -735,7 +735,7 @@ class IssueViewSet(BaseViewSet):
             redis_client.delete(lock_id)
             return Response(status=status.HTTP_204_NO_CONTENT)
         redis_client.delete(lock_id)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     def _record_dynamic_properties_activity(self, current_dynamic_properties, new_dynamic_properties, issue_id,
                                             project_id, actor_id, request):

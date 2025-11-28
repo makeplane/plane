@@ -125,7 +125,7 @@ export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
         },
         error: {
           title: t("common.error.label"),
-          message: (err) => err?.message || t("common.error.message"),
+          message: (err) => err?.error || err?.detail || err?.message || t("common.error.message"),
         },
       });
 
