@@ -6,8 +6,6 @@ import useSWR from "swr";
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE, PROJECT_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { Row, ERowVariant } from "@plane/ui";
-// components
-import { LogoSpinner } from "@/components/common/logo-spinner";
 // hooks
 import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
 import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
@@ -50,7 +48,7 @@ export const ModuleLayoutRoot = observer(function ModuleLayoutRoot() {
   const workItemFilters = moduleId ? issuesFilter?.getIssueFilters(moduleId) : undefined;
   const activeLayout = workItemFilters?.displayFilters?.layout || undefined;
 
-  const { isLoading } = useSWR(
+  useSWR(
     workspaceSlug && projectId && moduleId
       ? `MODULE_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}_${moduleId.toString()}`
       : null,
@@ -62,15 +60,7 @@ export const ModuleLayoutRoot = observer(function ModuleLayoutRoot() {
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  if (!workspaceSlug || !projectId || !moduleId) return <></>;
-
-  if (isLoading && !workItemFilters)
-    return (
-      <div className="h-full w-full flex items-center justify-center">
-        <LogoSpinner />
-      </div>
-    );
-
+  if (!workspaceSlug || !projectId || !moduleId || !workItemFilters) return <></>;
   return (
     <IssuesStoreContext.Provider value={EIssuesStoreType.MODULE}>
       <ProjectLevelWorkItemFiltersHOC

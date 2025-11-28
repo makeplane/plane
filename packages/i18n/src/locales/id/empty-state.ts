@@ -25,6 +25,17 @@ export default {
     },
   },
   project_empty_state: {
+    no_access: {
+      title: "Sepertinya Anda tidak memiliki akses ke Proyek ini",
+      restricted_description: "Hubungi admin untuk meminta akses agar Anda dapat melanjutkan di sini.",
+      join_description: "Klik tombol di bawah ini untuk bergabung.",
+      cta_primary: "Bergabung dengan proyek",
+      cta_loading: "Sedang bergabung dengan proyek",
+    },
+    invalid_project: {
+      title: "Proyek tidak ditemukan",
+      description: "Proyek yang Anda cari tidak ada.",
+    },
     work_items: {
       title: "Mulai dengan item kerja pertama Anda.",
       description:

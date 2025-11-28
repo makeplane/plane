@@ -11,6 +11,7 @@ import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-butt
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
+import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
 // local imports
 import type { Route } from "./+types/layout";
 
@@ -44,7 +45,9 @@ function ProjectLayout({ params }: Route.ComponentProps) {
           </Row>
         </div>
       )}
-      <Outlet />
+      <ProjectAuthWrapper workspaceSlug={workspaceSlug} projectId={projectId}>
+        <Outlet />
+      </ProjectAuthWrapper>
     </>
   );
 }
