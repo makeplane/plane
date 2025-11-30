@@ -112,15 +112,38 @@ export class CalendarStore implements ICalendarStore {
     return getWeekNumberOfDate(this.calendarFilters.activeWeekDate);
   }
 
-  get allDaysOfActiveWeek() {
-    if (!this.calendarPayload) return undefined;
+get allDaysOfActiveWeek() {
+  if (!this.calendarPayload) return undefined;
 
-    const { activeWeekDate } = this.calendarFilters;
+  const activeDate = this.calendarFilters.activeWeekDate;
+  const yearKey = `y-${activeDate.getFullYear()}`;
+  const isoString = activeDate.toISOString().split("T")[0];
 
-    return this.calendarPayload[`y-${activeWeekDate.getFullYear()}`][`m-${activeWeekDate.getMonth()}`][
-      `w-${this.activeWeekNumber - 1}`
-    ];
+  const yearData = this.calendarPayload[yearKey];
+  if (!yearData) return undefined;
+
+  const monthsToCheck = [
+    `m-${activeDate.getMonth()}`,
+    `m-${activeDate.getMonth() + 1}`,
+    `m-${activeDate.getMonth() - 1}`,
+  ];
+
+  for (const monthKey of monthsToCheck) {
+    const monthData = yearData[monthKey];
+    if (!monthData) continue;
+
+    for (const [weekKey, weekData] of Object.entries(monthData)) {
+      const dates = Object.keys(weekData);
+
+      if (dates.includes(isoString)) {
+        return weekData;
+      }
+    }
   }
+
+  return undefined;
+}
+
 
   getStartAndEndDate = computedFn((layout: "week" | "month") => {
     switch (layout) {
