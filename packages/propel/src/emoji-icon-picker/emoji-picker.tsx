@@ -108,6 +108,10 @@ export function EmojiPicker(props: TCustomEmojiPicker) {
         align={finalAlign}
         sideOffset={8}
         data-prevent-outside-click="true"
+        onMouseDown={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
+        onFocus={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
       >
         <Tabs.Root defaultValue={defaultOpen}>
           <Tabs.List className="grid grid-cols-2 gap-1 px-3.5 pt-3">
