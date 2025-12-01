@@ -27,12 +27,15 @@ export const useExpandableSearch = (options?: UseExpandableSearchOptions) => {
     onClose?.();
   }, [onClose]);
 
-  // Outside click detection
-  useOutsideClickDetector(containerRef, () => {
+  // Outside click handler - memoized to prevent unnecessary re-registrations
+  const handleOutsideClick = useCallback(() => {
     if (isOpen) {
       handleClose();
     }
-  });
+  }, [isOpen, handleClose]);
+
+  // Outside click detection
+  useOutsideClickDetector(containerRef, handleOutsideClick);
 
   // Track explicit clicks
   const handleMouseDown = useCallback(() => {
