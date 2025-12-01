@@ -226,11 +226,13 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
   useOutsideClickDetector(projectRef, () => projectRef?.current?.classList?.remove(HIGHLIGHT_CLASS));
 
   useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
     if (URLProjectId === project?.id) {
       setIsProjectListOpen(true);
       // Scroll to active project
       if (projectRef.current) {
-        setTimeout(() => {
+        timeoutId = setTimeout(() => {
           if (projectRef.current) {
             scrollIntoView(projectRef.current, {
               behavior: "smooth",
@@ -238,9 +240,15 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
               scrollMode: "if-needed",
             });
           }
-        }, 100);
+        }, 200);
       }
     }
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, [URLProjectId, project?.id, setIsProjectListOpen]);
 
   if (!project) return null;
