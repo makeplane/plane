@@ -672,6 +672,15 @@ CYCLE_ISSUE_EXAMPLE = OpenApiExample(
     },
 )
 
+STICKY_EXAMPLE = OpenApiExample(
+    name="Sticky",
+    value={
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "name": "Sticky 1",
+        "description_html": "<p>Sticky 1 description</p>",
+        "created_at": "2024-01-01T10:30:00Z",
+    },
+)
 
 # Sample data for different entity types
 SAMPLE_ISSUE = {
@@ -781,6 +790,13 @@ SAMPLE_CYCLE_ISSUE = {
     "created_at": "2024-01-01T10:30:00Z",
 }
 
+SAMPLE_STICKY = {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "Sticky 1",
+    "description_html": "<p>Sticky 1 description</p>",
+    "created_at": "2024-01-01T10:30:00Z",
+}
+
 # Mapping of schema types to sample data
 SCHEMA_EXAMPLES = {
     "Issue": SAMPLE_ISSUE,
@@ -795,6 +811,7 @@ SCHEMA_EXAMPLES = {
     "Activity": SAMPLE_ACTIVITY,
     "Intake": SAMPLE_INTAKE,
     "CycleIssue": SAMPLE_CYCLE_ISSUE,
+    "Sticky": SAMPLE_STICKY,
 }
 
 

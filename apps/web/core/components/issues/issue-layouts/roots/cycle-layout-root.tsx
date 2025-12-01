@@ -7,7 +7,6 @@ import useSWR from "swr";
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE, PROJECT_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
-import { LogoSpinner } from "@/components/common/logo-spinner";
 import { TransferIssues } from "@/components/cycles/transfer-issues";
 import { TransferIssuesModal } from "@/components/cycles/transfer-issues-modal";
 // hooks
@@ -59,7 +58,7 @@ export const CycleLayoutRoot = observer(function CycleLayoutRoot() {
   const workItemFilters = cycleId ? issuesFilter?.getIssueFilters(cycleId) : undefined;
   const activeLayout = workItemFilters?.displayFilters?.layout;
 
-  const { isLoading } = useSWR(
+  useSWR(
     workspaceSlug && projectId && cycleId ? `CYCLE_ISSUES_${workspaceSlug}_${projectId}_${cycleId}` : null,
     async () => {
       if (workspaceSlug && projectId && cycleId) {
@@ -78,15 +77,7 @@ export const CycleLayoutRoot = observer(function CycleLayoutRoot() {
     : 0;
   const canTransferIssues = isProgressSnapshotEmpty && transferableIssuesCount > 0;
 
-  if (!workspaceSlug || !projectId || !cycleId) return <></>;
-
-  if (isLoading && !workItemFilters)
-    return (
-      <div className="h-full w-full flex items-center justify-center">
-        <LogoSpinner />
-      </div>
-    );
-
+  if (!workspaceSlug || !projectId || !cycleId || !workItemFilters) return <></>;
   return (
     <IssuesStoreContext.Provider value={EIssuesStoreType.CYCLE}>
       <ProjectLevelWorkItemFiltersHOC

@@ -55,3 +55,5 @@ from .asset import UserAssetEndpoint, UserServerAssetEndpoint, GenericAssetEndpo
 from .user import UserEndpoint
 
 from .invite import WorkspaceInvitationsViewset
+
+from .sticky import StickyViewSet

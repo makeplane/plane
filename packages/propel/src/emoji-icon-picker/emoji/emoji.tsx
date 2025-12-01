@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { EmojiPicker } from "frimousse";
 import { cn } from "../../utils";
 
@@ -9,6 +10,21 @@ type EmojiRootProps = {
 
 export function EmojiRoot(props: EmojiRootProps) {
   const { onChange, searchPlaceholder = "Search", searchDisabled = false } = props;
+  const searchWrapperRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const focusInput = () => {
+      const searchWrapper = searchWrapperRef.current;
+      if (searchWrapper) {
+        const inputElement = searchWrapper.querySelector("input");
+        if (inputElement) {
+          inputElement.removeAttribute("disabled");
+          inputElement.focus();
+        }
+      }
+    };
+    focusInput();
+  }, []);
+
   return (
     <EmojiPicker.Root
       data-slot="emoji-picker"
@@ -16,7 +32,7 @@ export function EmojiRoot(props: EmojiRootProps) {
       onEmojiSelect={(val) => onChange(val.emoji)}
     >
       <div className="flex items-center gap-2 justify-between [&>[data-slot='emoji-picker-search-wrapper']]:flex-grow [&>[data-slot='emoji-picker-search-wrapper']]:p-0 px-1.5 py-2 sticky top-0 z-10 bg-custom-background-100">
-        <div data-slot="emoji-picker-search-wrapper" className="p-2">
+        <div ref={searchWrapperRef} data-slot="emoji-picker-search-wrapper" className="p-2">
           <EmojiPicker.Search
             placeholder={searchPlaceholder}
             disabled={searchDisabled}

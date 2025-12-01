@@ -51,6 +51,7 @@ from .project import (
     ProjectIdentifier,
     ProjectMember,
     ProjectMemberInvite,
+    ProjectNetwork,
     ProjectPublicMember,
     ProjectUserProperty,
 )
