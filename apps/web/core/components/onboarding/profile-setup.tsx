@@ -16,7 +16,7 @@ import type { IUser, TUserProfile, TOnboardingSteps } from "@plane/types";
 // ui
 import { Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
 // components
-import { getFileURL, getPasswordStrength } from "@plane/utils";
+import { cn, getFileURL, getPasswordStrength } from "@plane/utils";
 import { UserImageUploadModal } from "@/components/core/modals/user-image-upload-modal";
 // constants
 // helpers
@@ -519,9 +519,13 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                       {USER_ROLE.map((userRole) => (
                         <div
                           key={userRole}
-                          className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-custom-background-90 ${
-                            value === userRole ? "border-custom-primary-100" : "border-custom-border-300"
-                          } rounded px-3 py-1.5 text-sm font-medium`}
+                          className={cn(
+                            "flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-custom-background-90 rounded px-3 py-1.5 text-sm font-medium",
+                            {
+                              "border-custom-primary-100": value === userRole,
+                              "border-custom-border-300": value !== userRole,
+                            }
+                          )}
                           onClick={() => onChange(userRole)}
                         >
                           {userRole}
