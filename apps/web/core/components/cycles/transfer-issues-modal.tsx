@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -19,7 +17,7 @@ type Props = {
   cycleId: string;
 };
 
-export const TransferIssuesModal: React.FC<Props> = observer((props) => {
+export const TransferIssuesModal = observer(function TransferIssuesModal(props: Props) {
   const { isOpen, handleClose, cycleId } = props;
   // states
   const [query, setQuery] = useState("");

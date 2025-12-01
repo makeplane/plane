@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import {
@@ -16,6 +14,7 @@ import { ControlLink } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, generateWorkItemLink } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
+import { IntakeStateDropdown } from "@/components/dropdowns/intake-state/dropdown";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
@@ -32,10 +31,12 @@ type Props = {
   issueOperations: TIssueOperations;
   isEditable: boolean;
   duplicateIssueDetails: TInboxDuplicateIssueDetails | undefined;
+  isIntakeAccepted: boolean;
 };
 
-export const InboxIssueContentProperties: React.FC<Props> = observer((props) => {
-  const { workspaceSlug, projectId, issue, issueOperations, isEditable, duplicateIssueDetails } = props;
+export const InboxIssueContentProperties = observer(function InboxIssueContentProperties(props: Props) {
+  const { workspaceSlug, projectId, issue, issueOperations, isEditable, duplicateIssueDetails, isIntakeAccepted } =
+    props;
 
   const router = useAppRouter();
   // store hooks
@@ -52,6 +53,7 @@ export const InboxIssueContentProperties: React.FC<Props> = observer((props) => 
     projectIdentifier: currentProjectDetails?.identifier,
     sequenceId: duplicateIssueDetails?.sequence_id,
   });
+  const DropdownComponent = isIntakeAccepted ? StateDropdown : IntakeStateDropdown;
 
   return (
     <div className="flex w-full flex-col divide-y-2 divide-custom-border-200">
@@ -59,20 +61,18 @@ export const InboxIssueContentProperties: React.FC<Props> = observer((props) => 
         <h5 className="text-sm font-medium my-4">Properties</h5>
         <div className={`divide-y-2 divide-custom-border-200 ${!isEditable ? "opacity-60" : ""}`}>
           <div className="flex flex-col gap-3">
-            {/* State */}
+            {/* Intake State */}
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <StatePropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>State</span>
               </div>
               {issue?.state_id && (
-                <StateDropdown
+                <DropdownComponent
                   value={issue?.state_id}
-                  onChange={(val) =>
-                    issue?.id && issueOperations.update(workspaceSlug, projectId, issue?.id, { state_id: val })
-                  }
+                  onChange={() => {}}
                   projectId={projectId?.toString() ?? ""}
-                  disabled={!isEditable}
+                  disabled
                   buttonVariant="transparent-with-text"
                   className="w-3/5 flex-grow group"
                   buttonContainerClassName="w-full text-left"

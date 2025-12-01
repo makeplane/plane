@@ -23,4 +23,6 @@ export type TIssueTypeSelectProps<T extends Partial<TIssueFields>> = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const IssueTypeSelect = <T extends Partial<TIssueFields>>(props: TIssueTypeSelectProps<T>) => <></>;
+export function IssueTypeSelect<T extends Partial<TIssueFields>>(props: TIssueTypeSelectProps<T>) {
+  return <></>;
+}

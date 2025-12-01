@@ -1,6 +1,5 @@
 import React from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 // assets
 import ProjectNotAuthorizedImg from "@/app/assets/auth/project-not-authorized.svg?url";
 import Unauthorized from "@/app/assets/auth/unauthorized.svg?url";
@@ -15,7 +14,7 @@ type Props = {
   className?: string;
 };
 
-export const NotAuthorizedView: React.FC<Props> = observer((props) => {
+export const NotAuthorizedView = observer(function NotAuthorizedView(props: Props) {
   const { actionButton, section = "general", isProjectView = false, className } = props;
 
   // assets
@@ -26,7 +25,7 @@ export const NotAuthorizedView: React.FC<Props> = observer((props) => {
     <DefaultLayout className={className}>
       <div className="flex h-full w-full flex-col items-center justify-center gap-y-5 bg-custom-background-100 text-center">
         <div className="h-44 w-72">
-          <Image src={asset} height="176" width="288" alt="ProjectSettingImg" />
+          <img src={asset} className="h-[176px] w-[288px] object-contain" alt="ProjectSettingImg" />
         </div>
         <h1 className="text-xl font-medium text-custom-text-100">Oops! You are not authorized to view this page</h1>
         {actionButton}

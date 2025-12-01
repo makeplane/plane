@@ -1,5 +1,5 @@
 // plane imports
-import { IProject, TProjectAppliedDisplayFilterKeys, TProjectOrderByOptions } from "@plane/types";
+import type { IProject, TProjectAppliedDisplayFilterKeys, TProjectOrderByOptions } from "@plane/types";
 // local imports
 import { RANDOM_EMOJI_CODES } from "./emoji";
 

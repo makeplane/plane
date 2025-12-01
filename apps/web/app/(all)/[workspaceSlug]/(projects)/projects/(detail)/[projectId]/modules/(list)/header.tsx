@@ -1,25 +1,24 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EProjectFeatureKey, EUserPermissions, EUserPermissionsLevel, MODULE_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, MODULE_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Button } from "@plane/propel/button";
+import { ModuleIcon } from "@plane/propel/icons";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { ModuleViewHeader } from "@/components/modules";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-// plane web
+// plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
-// constants
 
-export const ModulesListHeader: React.FC = observer(() => {
+export const ModulesListHeader = observer(function ModulesListHeader() {
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
@@ -42,10 +41,16 @@ export const ModulesListHeader: React.FC = observer(() => {
       <Header.LeftItem>
         <div>
           <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-            <CommonProjectBreadcrumbs
-              workspaceSlug={workspaceSlug?.toString() ?? ""}
-              projectId={projectId?.toString() ?? ""}
-              featureKey={EProjectFeatureKey.MODULES}
+            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <Breadcrumbs.Item
+              component={
+                <BreadcrumbLink
+                  label="Modules"
+                  href={`/${workspaceSlug}/projects/${projectId}/modules/`}
+                  icon={<ModuleIcon className="h-4 w-4 text-custom-text-300" />}
+                  isLast
+                />
+              }
               isLast
             />
           </Breadcrumbs>

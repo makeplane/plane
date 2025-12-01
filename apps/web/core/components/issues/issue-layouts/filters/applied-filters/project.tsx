@@ -1,7 +1,6 @@
 import { observer } from "mobx-react";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { CloseIcon } from "@plane/propel/icons";
-// components
-import { Logo } from "@/components/common/logo";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 
@@ -11,7 +10,7 @@ type Props = {
   editable: boolean | undefined;
 };
 
-export const AppliedProjectFilters: React.FC<Props> = observer((props) => {
+export const AppliedProjectFilters = observer(function AppliedProjectFilters(props: Props) {
   const { handleRemove, values, editable } = props;
   // store hooks
   const { projectMap } = useProject();

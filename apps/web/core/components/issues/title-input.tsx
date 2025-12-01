@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { observer } from "mobx-react";
@@ -26,7 +24,7 @@ export type IssueTitleInputProps = {
   containerClassName?: string;
 };
 
-export const IssueTitleInput: FC<IssueTitleInputProps> = observer((props) => {
+export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTitleInputProps) {
   const {
     disabled,
     value,

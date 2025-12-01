@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -18,7 +16,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
+export const CycleDetailsSidebar = observer(function CycleDetailsSidebar(props: Props) {
   const { handleClose, isArchived, projectId, workspaceSlug, cycleId } = props;
 
   // store hooks

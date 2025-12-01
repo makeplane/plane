@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // i18n
@@ -34,6 +32,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web components
 import { WorkItemAdditionalSidebarProperties } from "@/plane-web/components/issues/issue-details/additional-properties";
 import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
+import { TransferHopInfo } from "@/plane-web/components/issues/issue-details/sidebar/transfer-hop-info";
 import { DateAlert } from "@/plane-web/components/issues/issue-details/sidebar.tsx/date-alert";
 import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
 import type { TIssueOperations } from "../issue-detail";
@@ -49,7 +48,7 @@ interface IPeekOverviewProperties {
   issueOperations: TIssueOperations;
 }
 
-export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((props) => {
+export const PeekOverviewProperties = observer(function PeekOverviewProperties(props: IPeekOverviewProperties) {
   const { workspaceSlug, projectId, issueId, issueOperations, disabled } = props;
   const { t } = useTranslation();
   // store hooks
@@ -263,6 +262,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
               <CycleIcon className="h-4 w-4 flex-shrink-0" />
               <span>{t("common.cycle")}</span>
+              <TransferHopInfo workItem={issue} />
             </div>
             <IssueCycleSelect
               className="w-3/4 flex-grow"

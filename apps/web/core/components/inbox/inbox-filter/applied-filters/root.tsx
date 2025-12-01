@@ -12,7 +12,7 @@ import { InboxIssueAppliedFiltersPriority } from "./priority";
 import { InboxIssueAppliedFiltersState } from "./state";
 import { InboxIssueAppliedFiltersStatus } from "./status";
 
-export const InboxIssueAppliedFilters: FC = observer(() => {
+export const InboxIssueAppliedFilters = observer(function InboxIssueAppliedFilters() {
   const { getAppliedFiltersCount } = useProjectInbox();
 
   if (getAppliedFiltersCount === 0) return <></>;

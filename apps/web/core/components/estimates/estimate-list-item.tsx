@@ -18,7 +18,7 @@ type TEstimateListItem = {
   onDeleteClick?: (estimateId: string) => void;
 };
 
-export const EstimateListItem: FC<TEstimateListItem> = observer((props) => {
+export const EstimateListItem = observer(function EstimateListItem(props: TEstimateListItem) {
   const { estimateId, isAdmin, isEstimateEnabled, isEditable } = props;
   // hooks
   const { estimateById } = useProjectEstimates();

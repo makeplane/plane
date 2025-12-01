@@ -13,7 +13,7 @@ type Props = {
   orderByOptions: TIssueOrderByOptions[];
 };
 
-export const FilterOrderBy: React.FC<Props> = observer((props) => {
+export const FilterOrderBy = observer(function FilterOrderBy(props: Props) {
   const { selectedOrderBy, handleUpdate, orderByOptions } = props;
   // hooks
   const { t } = useTranslation();

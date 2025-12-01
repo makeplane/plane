@@ -12,7 +12,7 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseViewSet
-from plane.db.models import IntakeIssue, Issue, IssueLink, FileAsset, DeployBoard
+from plane.db.models import IntakeIssue, Issue, IssueLink, FileAsset, DeployBoard, State, StateGroup
 from plane.app.serializers import (
     IssueSerializer,
     IntakeIssueSerializer,
@@ -121,6 +121,22 @@ class IntakeIssuePublicViewSet(BaseViewSet):
         ]:
             return Response({"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST)
 
+        # get the triage state
+        triage_state = State.triage_objects.filter(
+            project_id=project_deploy_board.project_id, workspace_id=project_deploy_board.workspace_id
+        ).first()
+
+        if not triage_state:
+            triage_state = State.objects.create(
+                name="Triage",
+                group=StateGroup.TRIAGE.value,
+                project_id=project_deploy_board.project_id,
+                workspace_id=project_deploy_board.workspace_id,
+                color="#4E5355",
+                sequence=65000,
+                default=False,
+            )
+
         # create an issue
         issue = Issue.objects.create(
             name=request.data.get("issue", {}).get("name"),
@@ -128,6 +144,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
             description_html=request.data.get("issue", {}).get("description_html", "<p></p>"),
             priority=request.data.get("issue", {}).get("priority", "low"),
             project_id=project_deploy_board.project_id,
+            state_id=triage_state.id,
         )
 
         # Create an Issue Activity
@@ -191,7 +208,7 @@ class IntakeIssuePublicViewSet(BaseViewSet):
             issue,
             data=issue_data,
             partial=True,
-            context={"project_id": project_deploy_board.project_id},
+            context={"project_id": project_deploy_board.project_id, "allow_triage_state": True},
         )
 
         if issue_serializer.is_valid():

@@ -33,13 +33,14 @@ import {
   insertImage,
   insertCallout,
   setText,
+  openEmojiPicker,
 } from "@/helpers/editor-commands";
 // plane editor extensions
 import { coreEditorAdditionalSlashCommandOptions } from "@/plane-editor/extensions";
 // types
-import { CommandProps, ISlashCommandItem, TSlashCommandSectionKeys } from "@/types";
+import type { CommandProps, ISlashCommandItem, TSlashCommandSectionKeys } from "@/types";
 // local types
-import { TExtensionProps, TSlashCommandAdditionalOption } from "./root";
+import type { TExtensionProps, TSlashCommandAdditionalOption } from "./root";
 
 export type TSlashCommandSection = {
   key: TSlashCommandSectionKeys;
@@ -118,32 +119,33 @@ export const getSlashCommandFilteredSections =
             icon: <Heading6 className="size-3.5" />,
             command: ({ editor, range }) => toggleHeading(editor, 6, range),
           },
+
           {
-            commandKey: "to-do-list",
-            key: "to-do-list",
-            title: "To do",
-            description: "Track tasks with a to-do list.",
-            searchTerms: ["todo", "task", "list", "check", "checkbox"],
-            icon: <ListTodo className="size-3.5" />,
-            command: ({ editor, range }) => toggleTaskList(editor, range),
+            commandKey: "numbered-list",
+            key: "numbered-list",
+            title: "Numbered list",
+            description: "Create a numbered list.",
+            searchTerms: ["ordered"],
+            icon: <ListOrdered className="size-3.5" />,
+            command: ({ editor, range }) => toggleOrderedList(editor, range),
           },
           {
             commandKey: "bulleted-list",
             key: "bulleted-list",
-            title: "Bullet list",
-            description: "Create a simple bullet list.",
+            title: "Bulleted list",
+            description: "Create a bulleted list.",
             searchTerms: ["unordered", "point"],
             icon: <List className="size-3.5" />,
             command: ({ editor, range }) => toggleBulletList(editor, range),
           },
           {
-            commandKey: "numbered-list",
-            key: "numbered-list",
-            title: "Numbered list",
-            description: "Create a list with numbering.",
-            searchTerms: ["ordered"],
-            icon: <ListOrdered className="size-3.5" />,
-            command: ({ editor, range }) => toggleOrderedList(editor, range),
+            commandKey: "to-do-list",
+            key: "to-do-list",
+            title: "To-do list",
+            description: "Create a to-do list.",
+            searchTerms: ["todo", "task", "list", "check", "checkbox"],
+            icon: <ListTodo className="size-3.5" />,
+            command: ({ editor, range }) => toggleTaskList(editor, range),
           },
           {
             commandKey: "table",
@@ -198,7 +200,7 @@ export const getSlashCommandFilteredSections =
             searchTerms: ["emoji", "icons", "reaction", "emoticon", "emotags"],
             icon: <Smile className="size-3.5" />,
             command: ({ editor, range }) => {
-              editor.chain().focus().insertContentAt(range, "<p>:</p>").run();
+              openEmojiPicker(editor, range);
             },
           },
         ],
@@ -231,6 +233,7 @@ export const getSlashCommandFilteredSections =
                 title: color.label,
                 description: "Change text color",
                 searchTerms: ["color", "text", color.label],
+
                 icon: (
                   <ALargeSmall
                     className="size-3.5"
@@ -239,6 +242,7 @@ export const getSlashCommandFilteredSections =
                     }}
                   />
                 ),
+
                 command: ({ editor, range }) => toggleTextColor(color.key, editor, range),
               }) as ISlashCommandItem
           ),
@@ -271,10 +275,12 @@ export const getSlashCommandFilteredSections =
                 description: "Change background color",
                 searchTerms: ["color", "bg", "background", color.label],
                 icon: <ALargeSmall className="size-3.5" />,
+
                 iconContainerStyle: {
                   borderRadius: "4px",
                   backgroundColor: color.backgroundColor,
                 },
+
                 command: ({ editor, range }) => toggleBackgroundColor(color.key, editor, range),
               }) as ISlashCommandItem
           ),

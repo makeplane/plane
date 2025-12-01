@@ -4,7 +4,8 @@ import { Tooltip } from "@plane/propel/tooltip";
 // helpers
 import { cn } from "../utils";
 // types
-import { TAvatarSize, getSizeInfo, isAValidNumber } from "./avatar";
+import type { TAvatarSize } from "./avatar";
+import { getSizeInfo, isAValidNumber } from "./avatar";
 
 type Props = {
   /**
@@ -31,7 +32,7 @@ type Props = {
   size?: TAvatarSize;
 };
 
-export const AvatarGroup: React.FC<Props> = (props) => {
+export function AvatarGroup(props: Props) {
   const { children, max = 2, showTooltip = true, size = "md" } = props;
 
   // calculate total length of avatars inside the group
@@ -87,4 +88,4 @@ export const AvatarGroup: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+}

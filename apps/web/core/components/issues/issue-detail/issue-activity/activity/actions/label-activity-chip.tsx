@@ -1,9 +1,8 @@
-import type { FC } from "react";
 import { Tooltip } from "@plane/propel/tooltip";
 
 type TIssueLabelPill = { name?: string; color?: string };
 
-export const LabelActivityChip: FC<TIssueLabelPill> = (props) => {
+export function LabelActivityChip(props: TIssueLabelPill) {
   const { name, color } = props;
   return (
     <Tooltip tooltipContent={name}>
@@ -19,4 +18,4 @@ export const LabelActivityChip: FC<TIssueLabelPill> = (props) => {
       </span>
     </Tooltip>
   );
-};
+}

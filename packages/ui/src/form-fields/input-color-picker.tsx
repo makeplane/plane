@@ -19,7 +19,7 @@ export interface InputColorPickerProps {
   placeholder: string;
 }
 
-export const InputColorPicker: React.FC<InputColorPickerProps> = (props) => {
+export function InputColorPicker(props: InputColorPickerProps) {
   const { value, hasError, onChange, name, className, style, placeholder } = props;
 
   const [referenceElement, setReferenceElement] = React.useState<HTMLButtonElement | null>(null);
@@ -111,4 +111,4 @@ export const InputColorPicker: React.FC<InputColorPickerProps> = (props) => {
       </Popover>
     </div>
   );
-};
+}

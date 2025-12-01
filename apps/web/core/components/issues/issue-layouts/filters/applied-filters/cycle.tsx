@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { CloseIcon, CycleGroupIcon } from "@plane/propel/icons";
 import type { TCycleGroups } from "@plane/types";
@@ -14,7 +12,7 @@ type Props = {
   editable: boolean | undefined;
 };
 
-export const AppliedCycleFilters: React.FC<Props> = observer((props) => {
+export const AppliedCycleFilters = observer(function AppliedCycleFilters(props: Props) {
   const { handleRemove, values, editable } = props;
   // store hooks
   const { getCycleById } = useCycle();

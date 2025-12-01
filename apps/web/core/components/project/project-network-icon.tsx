@@ -8,7 +8,7 @@ type Props = {
   className?: string;
 };
 
-export const ProjectNetworkIcon = (props: Props) => {
+export function ProjectNetworkIcon(props: Props) {
   const { iconKey, className } = props;
   // Get the icon key
   const getProjectNetworkIcon = () => {
@@ -27,4 +27,4 @@ export const ProjectNetworkIcon = (props: Props) => {
   if (!Icon) return null;
 
   return <Icon className={cn("h-3 w-3", className)} />;
-};
+}

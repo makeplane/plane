@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import { MinusCircle } from "lucide-react";
@@ -31,7 +28,7 @@ export type TIssueParentDetail = {
   issueOperations: TIssueOperations;
 };
 
-export const IssueParentDetail: FC<TIssueParentDetail> = observer((props) => {
+export const IssueParentDetail = observer(function IssueParentDetail(props: TIssueParentDetail) {
   const { workspaceSlug, projectId, issueId, issue, issueOperations } = props;
   // router
   const router = useRouter();

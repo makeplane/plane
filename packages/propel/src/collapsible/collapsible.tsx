@@ -40,7 +40,7 @@ const useCollapsible = () => {
 };
 
 // Components
-const Root: React.FC<RootProps> = ({ children, className, isOpen: controlledIsOpen, onToggle, defaultOpen }) => {
+function Root({ children, className, isOpen: controlledIsOpen, onToggle, defaultOpen }: RootProps) {
   const [localIsOpen, setLocalIsOpen] = useState<boolean>(controlledIsOpen || defaultOpen || false);
 
   useEffect(() => {
@@ -69,9 +69,9 @@ const Root: React.FC<RootProps> = ({ children, className, isOpen: controlledIsOp
       </BaseCollapsible.Root>
     </CollapsibleContext.Provider>
   );
-};
+}
 
-const Trigger: React.FC<TriggerProps> = ({ children, className, buttonRef }) => {
+function Trigger({ children, className, buttonRef }: TriggerProps) {
   const { isOpen } = useCollapsible();
 
   return (
@@ -79,18 +79,20 @@ const Trigger: React.FC<TriggerProps> = ({ children, className, buttonRef }) => 
       {children}
     </BaseCollapsible.Trigger>
   );
-};
+}
 
-const Content: React.FC<ContentProps> = ({ children, className }) => (
-  <BaseCollapsible.Panel
-    className={clsx(
-      "flex h-[var(--collapsible-panel-height)] flex-col overflow-hidden text-sm transition-all ease-out data-[ending-style]:h-0 data-[starting-style]:h-0",
-      className
-    )}
-  >
-    {children}
-  </BaseCollapsible.Panel>
-);
+function Content({ children, className }: ContentProps) {
+  return (
+    <BaseCollapsible.Panel
+      className={clsx(
+        "flex h-[var(--collapsible-panel-height)] flex-col overflow-hidden text-sm transition-all ease-out data-[ending-style]:h-0 data-[starting-style]:h-0",
+        className
+      )}
+    >
+      {children}
+    </BaseCollapsible.Panel>
+  );
+}
 
 // Compound Component
 export const Collapsible = {

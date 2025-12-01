@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState, useCallback } from "react";
 import { Check } from "lucide-react";
 // plane imports
@@ -24,7 +22,7 @@ type ToolbarButtonProps = {
   executeCommand: EditorRefApi["executeMenuItemCommand"];
 };
 
-const ToolbarButton: React.FC<ToolbarButtonProps> = React.memo((props) => {
+const ToolbarButton = React.memo(function ToolbarButton(props: ToolbarButtonProps) {
   const { item, isActive, executeCommand } = props;
 
   return (
@@ -46,9 +44,12 @@ const ToolbarButton: React.FC<ToolbarButtonProps> = React.memo((props) => {
             ...item.extraProps,
           })
         }
-        className={cn("grid size-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80", {
-          "bg-custom-background-80 text-custom-text-100": isActive,
-        })}
+        className={cn(
+          "shrink-0 grid size-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80",
+          {
+            "bg-custom-background-80 text-custom-text-100": isActive,
+          }
+        )}
       >
         <item.icon
           className={cn("size-4", {
@@ -64,7 +65,7 @@ ToolbarButton.displayName = "ToolbarButton";
 
 const toolbarItems = TOOLBAR_ITEMS.document;
 
-export const PageToolbar: React.FC<Props> = (props) => {
+export function PageToolbar(props: Props) {
   const { editorRef } = props;
   // states
   const [activeStates, setActiveStates] = useState<Record<string, boolean>>({});
@@ -162,4 +163,4 @@ export const PageToolbar: React.FC<Props> = (props) => {
       ))}
     </div>
   );
-};
+}

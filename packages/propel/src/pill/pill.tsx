@@ -49,8 +49,11 @@ const pillSizes = {
   [EPillSize.LG]: "px-3 py-1.5 text-base",
 };
 
-const Pill = React.forwardRef<HTMLSpanElement, PillProps>(
-  ({ variant = EPillVariant.DEFAULT, size = EPillSize.MD, className, children, ...props }, ref) => (
+const Pill = React.forwardRef(function Pill(
+  { variant = EPillVariant.DEFAULT, size = EPillSize.MD, className, children, ...props }: PillProps,
+  ref: React.ForwardedRef<HTMLSpanElement>
+) {
+  return (
     <span
       ref={ref}
       className={cn(
@@ -66,8 +69,8 @@ const Pill = React.forwardRef<HTMLSpanElement, PillProps>(
     >
       {children}
     </span>
-  )
-);
+  );
+});
 
 Pill.displayName = "Pill";
 

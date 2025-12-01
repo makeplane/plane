@@ -1,14 +1,12 @@
-"use client";
-
 import type { FC } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ViewsIcon } from "@plane/propel/icons";
 // types
 import type { IProjectView } from "@plane/types";
 // components
-import { Logo } from "@/components/common/logo";
 import { ListItem } from "@/components/core/list";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -20,7 +18,7 @@ type Props = {
   view: IProjectView;
 };
 
-export const ProjectViewListItem: FC<Props> = observer((props) => {
+export const ProjectViewListItem = observer(function ProjectViewListItem(props: Props) {
   const { view } = props;
   // refs
   const parentRef = useRef(null);

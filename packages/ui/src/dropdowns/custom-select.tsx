@@ -11,9 +11,9 @@ import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 // helpers
 import { cn } from "../utils";
 // types
-import { ICustomSelectItemProps, ICustomSelectProps } from "./helper";
+import type { ICustomSelectItemProps, ICustomSelectProps } from "./helper";
 
-const CustomSelect = (props: ICustomSelectProps) => {
+function CustomSelect(props: ICustomSelectProps) {
   const {
     customButtonClassName = "",
     buttonClassName = "",
@@ -131,9 +131,9 @@ const CustomSelect = (props: ICustomSelectProps) => {
         )}
     </Combobox>
   );
-};
+}
 
-const Option = (props: ICustomSelectItemProps) => {
+function Option(props: ICustomSelectItemProps) {
   const { children, value, className } = props;
   return (
     <Combobox.Option
@@ -156,7 +156,7 @@ const Option = (props: ICustomSelectItemProps) => {
       )}
     </Combobox.Option>
   );
-};
+}
 
 CustomSelect.Option = Option;
 

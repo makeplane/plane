@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 
@@ -33,7 +31,7 @@ type Props = {
   customClassName?: string;
 };
 
-export const ModuleQuickActions: React.FC<Props> = observer((props) => {
+export const ModuleQuickActions = observer(function ModuleQuickActions(props: Props) {
   const { parentRef, moduleId, projectId, workspaceSlug, customClassName } = props;
   // router
   const router = useAppRouter();

@@ -6,11 +6,11 @@ import { Check, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ProjectIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { ComboDropDown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
-import { Logo } from "@/components/common/logo";
 // hooks
 import { useDropdown } from "@/hooks/use-dropdown";
 // plane web imports
@@ -43,7 +43,7 @@ type Props = TDropdownProps & {
       }
   );
 
-export const ProjectDropdownBase: React.FC<Props> = observer((props) => {
+export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: Props) {
   const {
     button,
     buttonClassName,

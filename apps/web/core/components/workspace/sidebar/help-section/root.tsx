@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { HelpCircle, MessagesSquare, User } from "lucide-react";
@@ -17,7 +15,7 @@ import { useTransient } from "@/hooks/store/use-transient";
 // plane web components
 import { PlaneVersionNumber } from "@/plane-web/components/global";
 
-export const HelpMenuRoot = observer(() => {
+export const HelpMenuRoot = observer(function HelpMenuRoot() {
   // store hooks
   const { t } = useTranslation();
   const { toggleShortcutsListModal } = usePowerK();
@@ -40,7 +38,7 @@ export const HelpMenuRoot = observer(() => {
           <AppSidebarItem
             variant="button"
             item={{
-              icon: <HelpCircle className="size-5" />,
+              icon: <HelpCircle className="size-4" />,
               isActive: isNeedHelpOpen,
             }}
           />
@@ -48,7 +46,7 @@ export const HelpMenuRoot = observer(() => {
         // customButtonClassName="relative grid place-items-center rounded-md p-1.5 outline-none"
         menuButtonOnClick={() => !isNeedHelpOpen && setIsNeedHelpOpen(true)}
         onMenuClose={() => setIsNeedHelpOpen(false)}
-        placement="top-end"
+        placement="bottom-end"
         maxHeight="lg"
         closeOnSelect
       >

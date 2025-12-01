@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane imports
 import { cn } from "@plane/utils";

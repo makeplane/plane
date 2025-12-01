@@ -1,7 +1,8 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { EmojiPicker } from "./emoji-picker";
-import { EmojiIconPickerTypes, TChangeHandlerProps } from "./helper";
+import type { TChangeHandlerProps } from "./helper";
+import { EmojiIconPickerTypes } from "./helper";
 
 const meta = {
   title: "Components/Emoji/EmojiPicker",
@@ -16,6 +17,12 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "Default",
+  },
   render() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedValue, setSelectedValue] = useState<TChangeHandlerProps | null>(null);
@@ -42,6 +49,12 @@ export const Default: Story = {
 };
 
 export const OpenToEmojiTab: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "Emoji Tab",
+  },
   render() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedValue, setSelectedValue] = useState<TChangeHandlerProps | null>(null);
@@ -65,6 +78,12 @@ export const OpenToEmojiTab: Story = {
 };
 
 export const OpenToIconTab: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "Icon Tab",
+  },
   render() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedValue, setSelectedValue] = useState<TChangeHandlerProps | null>(null);
@@ -93,6 +112,12 @@ export const OpenToIconTab: Story = {
 };
 
 export const LucideIcons: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "Lucide Icons",
+  },
   render() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedValue, setSelectedValue] = useState<TChangeHandlerProps | null>(null);
@@ -120,6 +145,12 @@ export const LucideIcons: Story = {
 };
 
 export const MaterialIcons: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "Material Icons",
+  },
   render() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedValue, setSelectedValue] = useState<TChangeHandlerProps | null>(null);
@@ -147,6 +178,12 @@ export const MaterialIcons: Story = {
 };
 
 export const CloseOnSelectDisabled: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "Close On Select Disabled",
+  },
   render() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedValues, setSelectedValues] = useState<TChangeHandlerProps[]>([]);
@@ -191,6 +228,12 @@ export const CloseOnSelectDisabled: Story = {
 };
 
 export const CustomSearchPlaceholder: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "Custom Search",
+  },
   render() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedValue, setSelectedValue] = useState<TChangeHandlerProps | null>(null);
@@ -213,6 +256,12 @@ export const CustomSearchPlaceholder: Story = {
 };
 
 export const SearchDisabled: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "Search Disabled",
+  },
   render() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedValue, setSelectedValue] = useState<TChangeHandlerProps | null>(null);
@@ -235,6 +284,12 @@ export const SearchDisabled: Story = {
 };
 
 export const CustomIconColor: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "Custom Icon Color",
+  },
   render() {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedValue, setSelectedValue] = useState<TChangeHandlerProps | null>(null);
@@ -261,6 +316,12 @@ export const CustomIconColor: Story = {
 };
 
 export const DifferentPlacements: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "Different Placements",
+  },
   render() {
     const [isOpen1, setIsOpen1] = useState(false);
     const [isOpen2, setIsOpen2] = useState(false);
@@ -315,6 +376,12 @@ export const DifferentPlacements: Story = {
 };
 
 export const InFormContext: Story = {
+  args: {
+    isOpen: false,
+    handleToggle: () => {},
+    onChange: () => {},
+    label: "In Form Context",
+  },
   render() {
     const [isOpen, setIsOpen] = useState(false);
     const [formData, setFormData] = useState({

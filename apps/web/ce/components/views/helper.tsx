@@ -7,9 +7,15 @@ export type TLayoutSelectionProps = {
   workspaceSlug: string;
 };
 
-export const GlobalViewLayoutSelection = (props: TLayoutSelectionProps) => <></>;
+export function GlobalViewLayoutSelection(props: TLayoutSelectionProps) {
+  return <></>;
+}
 
-export const WorkspaceAdditionalLayouts = (props: TWorkspaceLayoutProps) => <></>;
+export function WorkspaceAdditionalLayouts(props: TWorkspaceLayoutProps) {
+  return <></>;
+}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const AdditionalHeaderItems = (view: IProjectView) => <></>;
+export function AdditionalHeaderItems(view: IProjectView) {
+  return <></>;
+}

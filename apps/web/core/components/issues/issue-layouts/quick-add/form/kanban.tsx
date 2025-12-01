@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import type { TQuickAddIssueForm } from "../root";
 
-export const KanbanQuickAddIssueForm: FC<TQuickAddIssueForm> = observer((props) => {
+export const KanbanQuickAddIssueForm = observer(function KanbanQuickAddIssueForm(props: TQuickAddIssueForm) {
   const { ref, projectDetail, register, onSubmit, isEpic } = props;
   const { t } = useTranslation();
   return (

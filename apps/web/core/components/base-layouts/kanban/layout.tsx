@@ -1,12 +1,12 @@
-"use client";
-
 import { observer } from "mobx-react";
 import type { IBaseLayoutsKanbanItem, IBaseLayoutsKanbanProps } from "@plane/types";
 import { cn } from "@plane/utils";
 import { useLayoutState } from "../hooks/use-layout-state";
 import { BaseKanbanGroup } from "./group";
 
-export const BaseKanbanLayout = observer(<T extends IBaseLayoutsKanbanItem>(props: IBaseLayoutsKanbanProps<T>) => {
+export const BaseKanbanLayout = observer(function BaseKanbanLayout<T extends IBaseLayoutsKanbanItem>(
+  props: IBaseLayoutsKanbanProps<T>
+) {
   const {
     items,
     groups,
@@ -20,15 +20,22 @@ export const BaseKanbanLayout = observer(<T extends IBaseLayoutsKanbanItem>(prop
     showEmptyGroups = true,
     enableDragDrop = false,
     loadMoreItems,
-    collapsedGroups: externalCollapsedGroups = [],
-    onToggleGroup: externalOnToggleGroup = () => {},
+    collapsedGroups: externalCollapsedGroups,
+    onToggleGroup: externalOnToggleGroup,
   } = props;
 
-  const { containerRef, collapsedGroups, onToggleGroup } = useLayoutState({
-    mode: "external",
-    externalCollapsedGroups,
-    externalOnToggleGroup,
-  });
+  const useExternalMode = externalCollapsedGroups !== undefined && externalOnToggleGroup !== undefined;
+  const { containerRef, collapsedGroups, onToggleGroup } = useLayoutState(
+    useExternalMode
+      ? {
+          mode: "external",
+          externalCollapsedGroups,
+          externalOnToggleGroup,
+        }
+      : {
+          mode: "internal",
+        }
+  );
 
   return (
     <div ref={containerRef} className={cn("relative w-full flex gap-2 p-3 h-full overflow-x-auto", className)}>

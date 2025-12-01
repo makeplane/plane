@@ -1,8 +1,7 @@
-"use client";
-
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 // plane imports
-import { E_PASSWORD_STRENGTH, EErrorAlertType, EAuthErrorCodes, TAuthErrorInfo } from "@plane/constants";
+import type { TAuthErrorInfo } from "@plane/constants";
+import { E_PASSWORD_STRENGTH, EErrorAlertType, EAuthErrorCodes } from "@plane/constants";
 
 /**
  * @description Password strength levels

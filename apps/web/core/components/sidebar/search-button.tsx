@@ -1,5 +1,3 @@
-import type { FC } from "react";
-import React from "react";
 import { Search } from "lucide-react";
 import { cn } from "@plane/utils";
 
@@ -7,7 +5,7 @@ type Props = {
   isActive?: boolean;
 };
 
-export const SidebarSearchButton: FC<Props> = (props) => {
+export function SidebarSearchButton(props: Props) {
   const { isActive } = props;
   return (
     <div
@@ -25,4 +23,4 @@ export const SidebarSearchButton: FC<Props> = (props) => {
       />
     </div>
   );
-};
+}

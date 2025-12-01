@@ -29,6 +29,7 @@ export const useEditor = (props: TEditorHookProps) => {
     fileHandler,
     flaggedExtensions,
     forwardedRef,
+    getEditorMetaData,
     handleEditorReady,
     id = "",
     initialValue,
@@ -39,8 +40,8 @@ export const useEditor = (props: TEditorHookProps) => {
     onEditorFocus,
     onTransaction,
     placeholder,
-    provider,
     tabIndex,
+    provider,
     value,
   } = props;
 
@@ -65,10 +66,12 @@ export const useEditor = (props: TEditorHookProps) => {
           extendedEditorProps,
           fileHandler,
           flaggedExtensions,
+          getEditorMetaData,
           isTouchDevice,
           mentionHandler,
           placeholder,
           tabIndex,
+          provider,
         }),
         ...extensions,
       ],
@@ -129,7 +132,16 @@ export const useEditor = (props: TEditorHookProps) => {
     onAssetChange(assets);
   }, [assetsList?.assets, onAssetChange]);
 
-  useImperativeHandle(forwardedRef, () => getEditorRefHelpers({ editor, provider }), [editor, provider]);
+  useImperativeHandle(
+    forwardedRef,
+    () =>
+      getEditorRefHelpers({
+        editor,
+        getEditorMetaData,
+        provider,
+      }),
+    [editor, getEditorMetaData, provider]
+  );
 
   if (!editor) {
     return null;

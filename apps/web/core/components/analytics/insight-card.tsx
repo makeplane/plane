@@ -9,7 +9,7 @@ export type InsightCardProps = {
   isLoading?: boolean;
 };
 
-const InsightCard = (props: InsightCardProps) => {
+function InsightCard(props: InsightCardProps) {
   const { data, label, isLoading = false } = props;
   const count = data?.count ?? 0;
 
@@ -25,6 +25,6 @@ const InsightCard = (props: InsightCardProps) => {
       )}
     </div>
   );
-};
+}
 
 export default InsightCard;

@@ -26,7 +26,7 @@ type TSubIssueFiltersProps = {
   availableFilters: (keyof IIssueFilterOptions)[];
 };
 
-export const SubIssueFilters: FC<TSubIssueFiltersProps> = observer((props) => {
+export const SubIssueFilters = observer(function SubIssueFilters(props: TSubIssueFiltersProps) {
   const { handleFiltersUpdate, filters, memberIds, states, availableFilters } = props;
   // plane hooks
   const { t } = useTranslation();

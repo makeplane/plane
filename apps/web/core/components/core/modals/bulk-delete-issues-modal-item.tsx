@@ -10,7 +10,7 @@ interface Props {
   canDeleteIssueIds: boolean;
 }
 
-export const BulkDeleteIssuesModalItem: React.FC<Props> = observer((props: Props) => {
+export const BulkDeleteIssuesModalItem = observer(function BulkDeleteIssuesModalItem(props: Props) {
   const { issue, canDeleteIssueIds } = props;
 
   const color = issue.state__color;

@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useCallback, useMemo } from "react";
 import { Lock } from "lucide-react";
 import { ChevronDownIcon } from "@plane/propel/icons";
@@ -17,11 +15,7 @@ interface SetPasswordRootProps {
   disabled?: boolean;
 }
 
-export const SetPasswordRoot: React.FC<SetPasswordRootProps> = ({
-  onPasswordChange,
-  onConfirmPasswordChange,
-  disabled = false,
-}) => {
+export function SetPasswordRoot({ onPasswordChange, onConfirmPasswordChange, disabled = false }: SetPasswordRootProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [passwordState, setPasswordState] = useState<PasswordState>({
     password: "",
@@ -133,4 +127,4 @@ export const SetPasswordRoot: React.FC<SetPasswordRootProps> = ({
       </div>
     </div>
   );
-};
+}

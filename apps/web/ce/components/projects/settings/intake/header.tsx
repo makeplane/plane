@@ -1,25 +1,23 @@
-"use client";
-
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { RefreshCcw } from "lucide-react";
+import { InboxIcon, RefreshCcw } from "lucide-react";
 // ui
-import { EProjectFeatureKey, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
+import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { InboxIssueCreateModalRoot } from "@/components/inbox/modals/create-modal";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useUserPermissions } from "@/hooks/store/user";
-// plane web
+// plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
-export const ProjectInboxHeader: FC = observer(() => {
+export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
   // states
   const [createIssueModal, setCreateIssueModal] = useState(false);
   // router
@@ -42,10 +40,16 @@ export const ProjectInboxHeader: FC = observer(() => {
       <Header.LeftItem>
         <div className="flex items-center gap-4 flex-grow">
           <Breadcrumbs isLoading={currentProjectDetailsLoader === "init-loader"}>
-            <CommonProjectBreadcrumbs
-              workspaceSlug={workspaceSlug?.toString() ?? ""}
-              projectId={projectId?.toString() ?? ""}
-              featureKey={EProjectFeatureKey.INTAKE}
+            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <Breadcrumbs.Item
+              component={
+                <BreadcrumbLink
+                  label="Intake"
+                  href={`/${workspaceSlug}/projects/${projectId}/intake/`}
+                  icon={<InboxIcon className="h-4 w-4 text-custom-text-300" />}
+                  isLast
+                />
+              }
               isLast
             />
           </Breadcrumbs>

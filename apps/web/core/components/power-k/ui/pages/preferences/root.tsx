@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 // components
@@ -15,7 +13,7 @@ type Props = {
   handleSelection: (data: unknown) => void;
 };
 
-export const PowerKAccountPreferencesPages: React.FC<Props> = observer((props) => {
+export const PowerKAccountPreferencesPages = observer(function PowerKAccountPreferencesPages(props: Props) {
   const { activePage, handleSelection } = props;
 
   return (

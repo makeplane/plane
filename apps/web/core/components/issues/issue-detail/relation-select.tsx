@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -31,7 +29,7 @@ type TIssueRelationSelect = {
   disabled?: boolean;
 };
 
-export const IssueRelationSelect: React.FC<TIssueRelationSelect> = observer((props) => {
+export const IssueRelationSelect = observer(function IssueRelationSelect(props: TIssueRelationSelect) {
   const { className = "", workspaceSlug, projectId, issueId, relationKey, disabled = false } = props;
   // hooks
   const { getProjectById } = useProject();

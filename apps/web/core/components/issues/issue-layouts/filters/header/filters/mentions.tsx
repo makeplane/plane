@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo, useState } from "react";
 import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
@@ -20,7 +18,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterMentions: React.FC<Props> = observer((props: Props) => {
+export const FilterMentions = observer(function FilterMentions(props: Props) {
   const { appliedFilters, handleUpdate, memberIds, searchQuery } = props;
   // states
   const [itemsToRender, setItemsToRender] = useState(5);

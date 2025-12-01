@@ -15,7 +15,6 @@ import type {
 import { getDistributionPathsPostUpdate } from "@plane/utils";
 //local
 import { storage } from "@/lib/local-storage";
-import { persistence } from "@/local-db/storage.sqlite";
 import type { IBaseIssuesStore } from "../helpers/base-issues.store";
 import { BaseIssuesStore } from "../helpers/base-issues.store";
 //
@@ -164,7 +163,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
       if (cycleId) {
         this.rootIssueStore.rootStore.cycle.updateCycleDistribution(distributionUpdates, cycleId);
       }
-    } catch (e) {
+    } catch (_e) {
       console.warn("could not update cycle statistics");
     }
   };
@@ -190,8 +189,7 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
       // set loader and clear store
       runInAction(() => {
         this.setLoader(loadType);
-        this.clear(!isExistingPaginationOptions, false); // clear while fetching from server.
-        if (!this.groupBy) this.clear(!isExistingPaginationOptions, true); // clear while using local to have the no load effect.
+        this.clear(!isExistingPaginationOptions); // clear while fetching from server.
       });
 
       // get params from pagination options
@@ -315,7 +313,6 @@ export class CycleIssues extends BaseIssuesStore implements ICycleIssues {
     );
     // call fetch issues
     if (this.paginationOptions) {
-      await persistence.syncIssues(projectId.toString());
       await this.fetchIssues(workspaceSlug, projectId, "mutation", this.paginationOptions, cycleId);
     }
 

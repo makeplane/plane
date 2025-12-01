@@ -11,7 +11,7 @@ type Props = {
   values: string[];
 };
 
-export const AppliedDateFilters: React.FC<Props> = observer((props) => {
+export const AppliedDateFilters = observer(function AppliedDateFilters(props: Props) {
   const { handleRemove, values } = props;
 
   const getDateLabel = (value: string): string => {

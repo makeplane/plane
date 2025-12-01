@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { Command } from "cmdk";
 // plane imports
@@ -16,7 +14,7 @@ type Props = {
   onCommandSelect: (command: TPowerKCommandConfig) => void;
 };
 
-export const CommandRenderer: React.FC<Props> = (props) => {
+export function CommandRenderer(props: Props) {
   const { commands, context, onCommandSelect } = props;
   // derived values
   const { activeContext } = context;
@@ -68,4 +66,4 @@ export const CommandRenderer: React.FC<Props> = (props) => {
       })}
     </>
   );
-};
+}

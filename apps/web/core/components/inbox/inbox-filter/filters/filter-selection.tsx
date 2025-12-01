@@ -16,7 +16,7 @@ import { FilterPriority } from "./priority";
 import { FilterState } from "./state";
 import { FilterStatus } from "./status";
 
-export const InboxIssueFilterSelection: FC = observer(() => {
+export const InboxIssueFilterSelection = observer(function InboxIssueFilterSelection() {
   // hooks
   const { isMobile } = usePlatformOS();
   const {
@@ -52,10 +52,6 @@ export const InboxIssueFilterSelection: FC = observer(() => {
         {/* status */}
         <div className="py-2">
           <FilterStatus searchQuery={filtersSearchQuery} />
-        </div>
-        {/* state */}
-        <div className="py-2">
-          <FilterState states={projectStates} searchQuery={filtersSearchQuery} />
         </div>
         {/* Priority */}
         <div className="py-2">

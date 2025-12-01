@@ -1,8 +1,5 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 // plane imports
 import { PRODUCT_TOUR_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
@@ -78,7 +75,7 @@ const TOUR_STEPS: {
   },
 ];
 
-export const TourRoot: React.FC<Props> = observer((props) => {
+export const TourRoot = observer(function TourRoot(props: Props) {
   const { onComplete } = props;
   // states
   const [step, setStep] = useState<TTourSteps>("welcome");
@@ -151,7 +148,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
                 currentStepIndex % 2 === 0 ? "justify-end" : "justify-start"
               }`}
             >
-              <Image src={currentStep?.image} alt={currentStep?.title} />
+              <img src={currentStep?.image} className="w-full h-full object-cover" alt={currentStep?.title} />
             </div>
             <div className="flex h-1/2 flex-col overflow-y-auto p-4 sm:h-2/5">
               <h3 className="font-semibold sm:text-xl">{currentStep?.title}</h3>

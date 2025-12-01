@@ -15,7 +15,9 @@ type InboxIssueAppliedFiltersDate = {
   label: string;
 };
 
-export const InboxIssueAppliedFiltersDate: FC<InboxIssueAppliedFiltersDate> = observer((props) => {
+export const InboxIssueAppliedFiltersDate = observer(function InboxIssueAppliedFiltersDate(
+  props: InboxIssueAppliedFiltersDate
+) {
   const { filterKey, label } = props;
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();

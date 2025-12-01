@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import useFontFaceObserver from "use-font-face-observer";
 import { MATERIAL_ICONS_LIST } from "../material-icons";
@@ -10,7 +8,7 @@ type MaterialIconListProps = {
   query: string;
 };
 
-export const MaterialIconList: React.FC<MaterialIconListProps> = (props) => {
+export function MaterialIconList(props: MaterialIconListProps) {
   const { query, onChange, activeColor } = props;
 
   const filteredArray = MATERIAL_ICONS_LIST.filter((icon) => icon.name.toLowerCase().includes(query.toLowerCase()));
@@ -52,4 +50,4 @@ export const MaterialIconList: React.FC<MaterialIconListProps> = (props) => {
       ))}
     </>
   );
-};
+}

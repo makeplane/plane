@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { HelpCircle, MessagesSquare, User } from "lucide-react";
@@ -24,7 +22,7 @@ export interface WorkspaceHelpSectionProps {
   setSidebarActive?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const HelpMenu: React.FC<WorkspaceHelpSectionProps> = observer(() => {
+export const HelpMenu = observer(function HelpMenu(_props: WorkspaceHelpSectionProps) {
   // store hooks
   const { t } = useTranslation();
   const { toggleShortcutsListModal } = usePowerK();

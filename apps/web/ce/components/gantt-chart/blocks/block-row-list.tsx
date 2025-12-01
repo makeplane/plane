@@ -18,7 +18,7 @@ export type GanttChartBlocksProps = {
   ganttContainerRef: React.RefObject<HTMLDivElement>;
 };
 
-export const GanttChartRowList: FC<GanttChartBlocksProps> = (props) => {
+export function GanttChartRowList(props: GanttChartBlocksProps) {
   const {
     blockIds,
     blockUpdateHandler,
@@ -56,4 +56,4 @@ export const GanttChartRowList: FC<GanttChartBlocksProps> = (props) => {
       ))}
     </div>
   );
-};
+}

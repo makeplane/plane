@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { LabelPropertyIcon } from "@plane/propel/icons";
 // plane imports
@@ -12,7 +10,7 @@ type Props = {
   shouldShowLabel?: boolean;
 };
 
-export const IssueBlockLabels = observer(({ labelIds, shouldShowLabel = false }: Props) => {
+export const IssueBlockLabels = observer(function IssueBlockLabels({ labelIds, shouldShowLabel = false }: Props) {
   const { getLabelsByIds } = useLabel();
 
   const labels = getLabelsByIds(labelIds);

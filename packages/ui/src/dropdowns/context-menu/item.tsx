@@ -4,7 +4,8 @@ import { ChevronRightIcon } from "@plane/propel/icons";
 // helpers
 import { cn } from "../../utils";
 // types
-import { TContextMenuItem, ContextMenuContext, Portal } from "./root";
+import type { TContextMenuItem } from "./root";
+import { ContextMenuContext, Portal } from "./root";
 
 type ContextMenuItemProps = {
   handleActiveItem: () => void;
@@ -13,7 +14,7 @@ type ContextMenuItemProps = {
   item: TContextMenuItem;
 };
 
-export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
+export function ContextMenuItem(props: ContextMenuItemProps) {
   const { handleActiveItem, handleClose, isActive, item } = props;
 
   // Nested menu state
@@ -242,4 +243,4 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
       )}
     </>
   );
-};
+}

@@ -12,7 +12,7 @@ import { useProject } from "@/hooks/store/use-project";
 import AnalyticsSectionWrapper from "../analytics-section-wrapper";
 import ActiveProjectItem from "./active-project-item";
 
-const ActiveProjects = observer(() => {
+const ActiveProjects = observer(function ActiveProjects() {
   const { t } = useTranslation();
   const { fetchProjectAnalyticsCount } = useProject();
   const { workspaceSlug } = useParams();

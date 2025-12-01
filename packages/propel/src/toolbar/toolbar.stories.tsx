@@ -6,7 +6,6 @@ import {
   Strikethrough,
   Code,
   Link,
-  List,
   ListOrdered,
   Quote,
   AlignLeft,
@@ -17,6 +16,7 @@ import {
   Globe2,
   Lock,
 } from "lucide-react";
+import { ListLayoutIcon } from "../icons/layouts/list-icon";
 import { Toolbar } from "./toolbar";
 
 const meta = {
@@ -51,8 +51,8 @@ export const Default: Story = {
               <Toolbar.Item icon={Strikethrough} tooltip="Strikethrough" />
             </Toolbar.Group>
             <Toolbar.Group>
-              <Toolbar.Item icon={List} tooltip="Bullet List" />
-              <Toolbar.Item icon={ListOrdered} tooltip="Numbered List" />
+              <Toolbar.Item icon={ListLayoutIcon} tooltip="Bullet ListLayoutIcon" />
+              <Toolbar.Item icon={ListOrdered} tooltip="Numbered ListLayoutIcon" />
               <Toolbar.Item icon={Quote} tooltip="Quote" />
             </Toolbar.Group>
             <Toolbar.Group>
@@ -82,8 +82,8 @@ export const WithActiveStates: Story = {
             <Toolbar.Item icon={Underline} tooltip="Underline" shortcut={["Cmd", "U"]} isActive />
           </Toolbar.Group>
           <Toolbar.Group>
-            <Toolbar.Item icon={List} tooltip="Bullet List" />
-            <Toolbar.Item icon={ListOrdered} tooltip="Numbered List" isActive />
+            <Toolbar.Item icon={ListLayoutIcon} tooltip="Bullet ListLayoutIcon" />
+            <Toolbar.Item icon={ListOrdered} tooltip="Numbered ListLayoutIcon" isActive />
             <Toolbar.Item icon={Quote} tooltip="Quote" />
           </Toolbar.Group>
           <Toolbar.Group>
@@ -118,8 +118,8 @@ export const CommentToolbar: Story = {
                   <Toolbar.Item icon={Code} tooltip="Code" shortcut={["Cmd", "`"]} />
                 </Toolbar.Group>
                 <Toolbar.Group>
-                  <Toolbar.Item icon={List} tooltip="Bullet List" />
-                  <Toolbar.Item icon={ListOrdered} tooltip="Numbered List" />
+                  <Toolbar.Item icon={ListLayoutIcon} tooltip="Bullet ListLayoutIcon" />
+                  <Toolbar.Item icon={ListOrdered} tooltip="Numbered ListLayoutIcon" />
                 </Toolbar.Group>
               </div>
               <Toolbar.SubmitButton>Comment</Toolbar.SubmitButton>

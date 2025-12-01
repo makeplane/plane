@@ -1527,6 +1527,47 @@ export default {
         "При подтверждении все параметры сортировки, фильтрации и отображения + макет, выбранный для этого представления, будут безвозвратно удалены без возможности восстановления.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "Изменить email",
+        description: "Введите новый адрес электронной почты, чтобы получить ссылку для подтверждения.",
+        toasts: {
+          success_title: "Успех!",
+          success_message: "Email успешно обновлён. Пожалуйста, войдите снова.",
+        },
+        form: {
+          email: {
+            label: "Новый email",
+            placeholder: "Введите свой email",
+            errors: {
+              required: "Email обязателен",
+              invalid: "Email недействителен",
+              exists: "Email уже существует. Используйте другой.",
+              validation_failed: "Не удалось подтвердить email. Попробуйте ещё раз.",
+            },
+          },
+          code: {
+            label: "Уникальный код",
+            placeholder: "gets-sets-flys",
+            helper_text: "Код подтверждения отправлен на ваш новый email.",
+            errors: {
+              required: "Уникальный код обязателен",
+              invalid: "Неверный код подтверждения. Попробуйте ещё раз.",
+            },
+          },
+        },
+        actions: {
+          continue: "Продолжить",
+          confirm: "Подтвердить",
+          cancel: "Отмена",
+        },
+        states: {
+          sending: "Отправка…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "Настройки пространства",
     page_label: "{workspace} - Основные настройки",
@@ -1604,6 +1645,7 @@ export default {
         exporting: "Экспортируется",
         previous_exports: "Предыдущие экспорты",
         export_separate_files: "Экспорт в отдельные файлы",
+        filters_info: "Примените фильтры для экспорта конкретных рабочих элементов по вашим критериям.",
         modal: {
           title: "Экспорт в",
           toasts: {

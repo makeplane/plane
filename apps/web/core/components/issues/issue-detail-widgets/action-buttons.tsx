@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 import { Link, Paperclip } from "lucide-react";
@@ -25,7 +23,7 @@ type Props = {
   hideWidgets?: TWorkItemWidgets[];
 };
 
-export const IssueDetailWidgetActionButtons: FC<Props> = (props) => {
+export function IssueDetailWidgetActionButtons(props: Props) {
   const { workspaceSlug, projectId, issueId, disabled, issueServiceType, hideWidgets } = props;
   // translation
   const { t } = useTranslation();
@@ -99,4 +97,4 @@ export const IssueDetailWidgetActionButtons: FC<Props> = (props) => {
       />
     </div>
   );
-};
+}

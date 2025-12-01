@@ -1,5 +1,3 @@
-"use client";
-
 import React, { Fragment, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { usePopper } from "react-popper";
@@ -13,7 +11,7 @@ type Props = {
   placement?: Placement;
 };
 
-export const FiltersDropdown: React.FC<Props> = (props) => {
+export function FiltersDropdown(props: Props) {
   const { children, title = "Dropdown", placement } = props;
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
@@ -62,4 +60,4 @@ export const FiltersDropdown: React.FC<Props> = (props) => {
       }}
     </Popover>
   );
-};
+}

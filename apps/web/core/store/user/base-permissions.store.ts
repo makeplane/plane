@@ -112,7 +112,7 @@ export abstract class BaseUserPermissionStore implements IBaseUserPermissionStor
    * @param { string } projectId
    * @returns { EUserPermissions | undefined }
    */
-  protected getProjectRole = computedFn((workspaceSlug: string, projectId: string): EUserPermissions | undefined => {
+  protected getProjectRole = computedFn((workspaceSlug: string, projectId?: string): EUserPermissions | undefined => {
     if (!workspaceSlug || !projectId) return undefined;
     const projectRole = this.workspaceProjectsPermissions?.[workspaceSlug]?.[projectId];
     if (!projectRole) return undefined;

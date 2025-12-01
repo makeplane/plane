@@ -1,5 +1,3 @@
-import type { FC } from "react";
-import React from "react";
 import { cn } from "@plane/utils";
 
 type Props = React.ComponentProps<"button"> & {
@@ -7,7 +5,7 @@ type Props = React.ComponentProps<"button"> & {
   onClick: () => void;
 };
 
-export const SidebarAddButton: FC<Props> = (props) => {
+export function SidebarAddButton(props: Props) {
   const { label, onClick, disabled, ...rest } = props;
   return (
     <button
@@ -23,4 +21,4 @@ export const SidebarAddButton: FC<Props> = (props) => {
       {label}
     </button>
   );
-};
+}

@@ -1,8 +1,5 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
 import { CheckCircle } from "lucide-react";
@@ -46,7 +43,7 @@ const integrationDetails: { [key: string]: any } = {
 // services
 const integrationService = new IntegrationService();
 
-export const SingleIntegrationCard: React.FC<Props> = observer(({ integration }) => {
+export const SingleIntegrationCard = observer(function SingleIntegrationCard({ integration }: Props) {
   // states
   const [deletingIntegration, setDeletingIntegration] = useState(false);
   // router
@@ -108,7 +105,11 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
     <div className="flex items-center justify-between gap-2 border-b border-custom-border-100 bg-custom-background-100 px-4 py-6">
       <div className="flex items-start gap-4">
         <div className="h-10 w-10 flex-shrink-0">
-          <Image src={integrationDetails[integration.provider].logo} alt={`${integration.title} Logo`} />
+          <img
+            src={integrationDetails[integration.provider].logo}
+            className="w-full h-full object-cover"
+            alt={`${integration.title} Logo`}
+          />
         </div>
         <div>
           <h3 className="flex items-center gap-2 text-sm font-medium">

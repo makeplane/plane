@@ -23,7 +23,7 @@ type TProps = {
   handleDelete: () => void;
 };
 
-export const StickyInput = (props: TProps) => {
+export function StickyInput(props: TProps) {
   const { stickyData, workspaceSlug, handleUpdate, stickyId, handleDelete, handleChange, showToolbar } = props;
   // refs
   const editorRef = useRef<EditorRefApi>(null);
@@ -86,6 +86,7 @@ export const StickyInput = (props: TProps) => {
               }
             )}
             uploadFile={async () => ""}
+            duplicateFile={async () => ""}
             showToolbar={showToolbar}
             parentClassName="border-none p-0"
             handleDelete={handleDelete}
@@ -96,4 +97,4 @@ export const StickyInput = (props: TProps) => {
       />
     </div>
   );
-};
+}

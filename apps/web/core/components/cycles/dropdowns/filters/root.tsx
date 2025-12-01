@@ -17,7 +17,7 @@ type Props = {
   isArchived?: boolean;
 };
 
-export const CycleFiltersSelection: React.FC<Props> = observer((props) => {
+export const CycleFiltersSelection = observer(function CycleFiltersSelection(props: Props) {
   const { filters, handleFiltersUpdate, isArchived = false } = props;
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");

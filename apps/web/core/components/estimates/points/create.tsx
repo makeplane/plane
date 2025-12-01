@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, FormEvent } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -31,7 +29,7 @@ type TEstimatePointCreate = {
   handleEstimatePointError?: (newValue: string, message: string | undefined, mode?: "add" | "delete") => void;
 };
 
-export const EstimatePointCreate: FC<TEstimatePointCreate> = observer((props) => {
+export const EstimatePointCreate = observer(function EstimatePointCreate(props: TEstimatePointCreate) {
   const {
     workspaceSlug,
     projectId,

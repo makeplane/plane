@@ -8,7 +8,7 @@ type Props = {
   isSubmitting: TNameDescriptionLoader;
 };
 
-export const NameDescriptionUpdateStatus: React.FC<Props> = observer((props) => {
+export const NameDescriptionUpdateStatus = observer(function NameDescriptionUpdateStatus(props: Props) {
   const { isSubmitting } = props;
 
   return (

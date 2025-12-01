@@ -1,7 +1,7 @@
 import { range } from "lodash-es";
 import { getRandomInt } from "../utils";
 
-const CalendarDay = () => {
+function CalendarDay() {
   const dataCount = getRandomInt(0, 1);
   const dataBlocks = range(dataCount).map((index) => (
     <span key={index} className="h-8 w-full bg-custom-background-80 rounded mb-2" />
@@ -15,25 +15,27 @@ const CalendarDay = () => {
       <div className="flex flex-col gap-2.5 p-2">{dataBlocks}</div>
     </div>
   );
-};
+}
 
-export const CalendarLayoutLoader = () => (
-  <div className="h-full w-full overflow-y-auto bg-custom-background-100 animate-pulse">
-    <span className="relative grid divide-x-[0.5px] divide-custom-border-200 text-sm font-medium grid-cols-5">
-      {range(5).map((index) => (
-        <span key={index} className="h-11 w-full bg-custom-background-80" />
-      ))}
-    </span>
-    <div className="h-full w-full overflow-y-auto">
-      <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-custom-border-200 overflow-y-auto">
-        {range(6).map((index) => (
-          <div key={index} className="grid divide-x-[0.5px] divide-custom-border-200 grid-cols-5">
-            {range(5).map((index) => (
-              <CalendarDay key={index} />
-            ))}
-          </div>
+export function CalendarLayoutLoader() {
+  return (
+    <div className="h-full w-full overflow-y-auto bg-custom-background-100 animate-pulse">
+      <span className="relative grid divide-x-[0.5px] divide-custom-border-200 text-sm font-medium grid-cols-5">
+        {range(5).map((index) => (
+          <span key={index} className="h-11 w-full bg-custom-background-80" />
         ))}
+      </span>
+      <div className="h-full w-full overflow-y-auto">
+        <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-custom-border-200 overflow-y-auto">
+          {range(6).map((index) => (
+            <div key={index} className="grid divide-x-[0.5px] divide-custom-border-200 grid-cols-5">
+              {range(5).map((index) => (
+                <CalendarDay key={index} />
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+}

@@ -16,7 +16,7 @@ type TLayoutDropDown = {
   disabledLayouts?: EIssueLayoutTypes[];
 };
 
-export const LayoutDropDown = observer((props: TLayoutDropDown) => {
+export const LayoutDropDown = observer(function LayoutDropDown(props: TLayoutDropDown) {
   const { onChange, value = EIssueLayoutTypes.LIST, disabledLayouts = [] } = props;
   // plane i18n
   const { t } = useTranslation();

@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { PanelLeft } from "lucide-react";
@@ -23,19 +22,24 @@ type TInboxIssueRoot = {
   navigationTab?: EInboxIssueCurrentTab | undefined;
 };
 
-export const InboxIssueRoot: FC<TInboxIssueRoot> = observer((props) => {
+export const InboxIssueRoot = observer(function InboxIssueRoot(props: TInboxIssueRoot) {
   const { workspaceSlug, projectId, inboxIssueId, inboxAccessible, navigationTab } = props;
   // states
   const [isMobileSidebar, setIsMobileSidebar] = useState(true);
   // plane hooks
   const { t } = useTranslation();
   // hooks
-  const { loader, error, currentTab, handleCurrentTab, fetchInboxIssues } = useProjectInbox();
+  const { loader, error, currentTab, currentInboxProjectId, handleCurrentTab, fetchInboxIssues } = useProjectInbox();
 
   useEffect(() => {
     if (!inboxAccessible || !workspaceSlug || !projectId) return;
+    // Check if project has changed
+    const hasProjectChanged = currentInboxProjectId && currentInboxProjectId !== projectId;
+
     if (navigationTab && navigationTab !== currentTab) {
       handleCurrentTab(workspaceSlug, projectId, navigationTab);
+    } else if (hasProjectChanged) {
+      handleCurrentTab(workspaceSlug, projectId, EInboxIssueCurrentTab.OPEN);
     } else {
       fetchInboxIssues(
         workspaceSlug.toString(),

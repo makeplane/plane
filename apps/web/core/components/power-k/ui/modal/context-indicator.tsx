@@ -11,7 +11,7 @@ type Props = {
   handleClearContext: () => void;
 };
 
-export const PowerKModalContextIndicator: React.FC<Props> = (props) => {
+export function PowerKModalContextIndicator(props: Props) {
   const { activeContext, handleClearContext } = props;
   // context indicator
   const contextIndicator = useContextIndicator({ activeContext });
@@ -43,4 +43,4 @@ export const PowerKModalContextIndicator: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

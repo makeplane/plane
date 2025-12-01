@@ -11,6 +11,7 @@ type TCoreHookProps = Pick<
   | "extendedEditorProps"
   | "extensions"
   | "flaggedExtensions"
+  | "getEditorMetaData"
   | "handleEditorReady"
   | "isTouchDevice"
   | "onEditorFocus"

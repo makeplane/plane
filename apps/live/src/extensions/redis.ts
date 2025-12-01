@@ -1,5 +1,6 @@
 import { Redis as HocuspocusRedis } from "@hocuspocus/extension-redis";
-import { OutgoingMessage, type onConfigurePayload } from "@hocuspocus/server";
+import { OutgoingMessage } from "@hocuspocus/server";
+import type { onConfigurePayload } from "@hocuspocus/server";
 import { logger } from "@plane/logger";
 import { AppError } from "@/lib/errors";
 import { redisManager } from "@/redis";

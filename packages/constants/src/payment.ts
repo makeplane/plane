@@ -1,4 +1,5 @@
-import { EProductSubscriptionEnum, IPaymentProduct, TBillingFrequency, TProductBillingFrequency } from "@plane/types";
+import type { IPaymentProduct, TBillingFrequency, TProductBillingFrequency } from "@plane/types";
+import { EProductSubscriptionEnum } from "@plane/types";
 
 /**
  * Default billing frequency for each product subscription type

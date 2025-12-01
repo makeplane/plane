@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -18,7 +16,7 @@ type Props = {
   updateConfig: (key: TInstanceAuthenticationMethodKeys, value: string) => void;
 };
 
-export const GithubConfiguration: React.FC<Props> = observer((props) => {
+export const GithubConfiguration = observer(function GithubConfiguration(props: Props) {
   const { disabled, updateConfig } = props;
   // store
   const { formattedConfig } = useInstance();

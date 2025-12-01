@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Layers } from "lucide-react";
@@ -20,7 +18,7 @@ export type TReadonlyModuleProps = {
   workspaceSlug: string;
 };
 
-export const ReadonlyModule: React.FC<TReadonlyModuleProps> = observer((props) => {
+export const ReadonlyModule = observer(function ReadonlyModule(props: TReadonlyModuleProps) {
   const {
     className,
     hideIcon = false,

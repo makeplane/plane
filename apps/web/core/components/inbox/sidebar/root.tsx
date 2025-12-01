@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
@@ -40,7 +37,7 @@ const tabNavigationOptions: { key: TInboxIssueCurrentTab; i18n_label: string }[]
   },
 ];
 
-export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
+export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarProps) {
   const { workspaceSlug, projectId, inboxIssueId, setIsMobileSidebar } = props;
   // router
   const router = useAppRouter();
@@ -140,6 +137,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                     title={t("common_empty_state.search.title")}
                     description={t("common_empty_state.search.description")}
                     assetClassName="size-20"
+                    rootClassName="px-page-x"
                   />
                 ) : currentTab === EInboxIssueCurrentTab.OPEN ? (
                   <EmptyStateDetailed
@@ -154,6 +152,7 @@ export const InboxSidebar: FC<IInboxSidebarProps> = observer((props) => {
                         variant: "primary",
                       },
                     ]}
+                    rootClassName="px-page-x"
                   />
                 ) : (
                   // TODO: Add translation

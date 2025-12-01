@@ -1,5 +1,6 @@
-import { type Editor, EditorContent } from "@tiptap/react";
-import { FC, ReactNode } from "react";
+import { EditorContent } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
+import type { FC, ReactNode } from "react";
 
 type Props = {
   children?: ReactNode;
@@ -8,7 +9,7 @@ type Props = {
   tabIndex?: number;
 };
 
-export const EditorContentWrapper: FC<Props> = (props) => {
+export function EditorContentWrapper(props: Props) {
   const { editor, children, tabIndex, id } = props;
 
   return (
@@ -17,4 +18,4 @@ export const EditorContentWrapper: FC<Props> = (props) => {
       {children}
     </div>
   );
-};
+}

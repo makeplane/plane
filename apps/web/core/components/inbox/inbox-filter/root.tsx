@@ -21,7 +21,7 @@ const largeButton = (
     <ChevronDownIcon className="size-3" strokeWidth={2} />
   </div>
 );
-export const FiltersRoot: FC = () => {
+export function FiltersRoot() {
   const windowSize = useSize();
 
   return (
@@ -36,4 +36,4 @@ export const FiltersRoot: FC = () => {
       </div>
     </div>
   );
-};
+}

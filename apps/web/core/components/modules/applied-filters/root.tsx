@@ -21,7 +21,7 @@ type Props = {
 const MEMBERS_FILTERS = ["lead", "members"];
 const DATE_FILTERS = ["start_date", "target_date"];
 
-export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
+export function ModuleAppliedFiltersList(props: Props) {
   const {
     appliedFilters,
     isFavoriteFilterApplied,
@@ -123,4 +123,4 @@ export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
       </div>
     </Header>
   );
-};
+}

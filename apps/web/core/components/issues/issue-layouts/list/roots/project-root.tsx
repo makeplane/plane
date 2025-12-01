@@ -9,7 +9,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseListRoot } from "../base-list-root";
 
-export const ListLayout: FC = observer(() => {
+export const ListLayout = observer(function ListLayout() {
   // router
   const { workspaceSlug } = useParams();
   // hooks

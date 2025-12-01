@@ -14,7 +14,7 @@ interface IContentOverflowWrapper {
   customButton?: ReactNode;
 }
 
-export const ContentOverflowWrapper = observer((props: IContentOverflowWrapper) => {
+export const ContentOverflowWrapper = observer(function ContentOverflowWrapper(props: IContentOverflowWrapper) {
   const {
     children,
     maxHeight = 625,
@@ -77,19 +77,20 @@ export const ContentOverflowWrapper = observer((props: IContentOverflowWrapper) 
       resizeObserver.disconnect();
       mutationObserver.disconnect();
     };
-  }, [contentRef?.current]);
+  }, []);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    const container = containerRef.current;
+    if (!container) return;
 
     const handleTransitionEnd = () => {
       setIsTransitioning(false);
     };
 
-    containerRef.current.addEventListener("transitionend", handleTransitionEnd);
+    container.addEventListener("transitionend", handleTransitionEnd);
 
     return () => {
-      containerRef.current?.removeEventListener("transitionend", handleTransitionEnd);
+      container.removeEventListener("transitionend", handleTransitionEnd);
     };
   }, []);
 

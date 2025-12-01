@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Tab } from "@headlessui/react";
@@ -35,7 +33,7 @@ type TCycleProgressStats = {
   totalIssuesCount: number;
 };
 
-export const CycleProgressStats: FC<TCycleProgressStats> = observer((props) => {
+export const CycleProgressStats = observer(function CycleProgressStats(props: TCycleProgressStats) {
   const {
     cycleId,
     distribution,

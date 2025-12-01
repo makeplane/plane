@@ -14,7 +14,7 @@ type Props = {
   commands: TPowerKCommandConfig[];
 };
 
-export const ShortcutRenderer: React.FC<Props> = (props) => {
+export function ShortcutRenderer(props: Props) {
   const { searchQuery, commands } = props;
   // translation
   const { t } = useTranslation();
@@ -106,4 +106,4 @@ export const ShortcutRenderer: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+}

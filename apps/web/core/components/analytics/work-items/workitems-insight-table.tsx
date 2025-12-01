@@ -5,13 +5,13 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { UserRound } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ProjectIcon } from "@plane/propel/icons";
 // plane package imports
 import type { AnalyticsTableDataMap, WorkItemInsightColumns } from "@plane/types";
 // plane web components
 import { Avatar } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
-import { Logo } from "@/components/common/logo";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
 import { useProject } from "@/hooks/store/use-project";
@@ -32,7 +32,7 @@ declare module "@tanstack/react-table" {
   }
 }
 
-const WorkItemsInsightTable = observer(() => {
+const WorkItemsInsightTable = observer(function WorkItemsInsightTable() {
   // router
   const params = useParams();
   const workspaceSlug = params.workspaceSlug.toString();

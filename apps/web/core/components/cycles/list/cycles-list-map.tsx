@@ -7,7 +7,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const CyclesListMap: React.FC<Props> = (props) => {
+export function CyclesListMap(props: Props) {
   const { cycleIds, projectId, workspaceSlug } = props;
 
   return (
@@ -17,4 +17,4 @@ export const CyclesListMap: React.FC<Props> = (props) => {
       ))}
     </>
   );
-};
+}

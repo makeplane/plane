@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -46,7 +44,7 @@ function PageDetailsPage({ params }: Route.ComponentProps) {
     storeType,
   });
   const { getWorkspaceBySlug } = useWorkspace();
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   // derived values
   const workspaceId = workspaceSlug ? (getWorkspaceBySlug(workspaceSlug)?.id ?? "") : "";
   const { canCurrentUserAccessPage, id, name, updateDescription } = page ?? {};
@@ -115,11 +113,21 @@ function PageDetailsPage({ params }: Route.ComponentProps) {
           });
           return asset_id;
         },
+        duplicateFile: async (assetId: string) => {
+          const { asset_id } = await duplicateEditorAsset({
+            assetId,
+            entityId: id,
+            entityType: EFileAssetType.PAGE_DESCRIPTION,
+            projectId,
+            workspaceSlug,
+          });
+          return asset_id;
+        },
         workspaceId,
         workspaceSlug,
       }),
     }),
-    [getEditorFileHandlers, id, uploadEditorAsset, projectId, workspaceId, workspaceSlug]
+    [getEditorFileHandlers, projectId, workspaceId, workspaceSlug, uploadEditorAsset, id, duplicateEditorAsset]
   );
 
   const webhookConnectionParams: TWebhookConnectionQueryParams = useMemo(

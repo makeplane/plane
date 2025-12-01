@@ -1,11 +1,10 @@
-"use client";
-
 import type { CSSProperties, FC } from "react";
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { clone, isNil, pull, uniq, concat } from "lodash-es";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
 // plane types
 import { EIconSize, ISSUE_PRIORITIES, STATE_GROUPS } from "@plane/constants";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import type { ISvgIcons } from "@plane/propel/icons";
 import { CycleGroupIcon, CycleIcon, ModuleIcon, PriorityIcon, StateGroupIcon } from "@plane/propel/icons";
 import type {
@@ -26,8 +25,6 @@ import { EIssuesStoreType } from "@plane/types";
 // plane ui
 import { Avatar } from "@plane/ui";
 import { renderFormattedDate, getFileURL } from "@plane/utils";
-// components
-import { Logo } from "@/components/common/logo";
 // helpers
 // store
 import { store } from "@/lib/store-context";
@@ -714,12 +711,12 @@ export const getBlockViewDetails = (
  * This method returns the icon for Spreadsheet column headers
  * @param iconKey
  */
-export const SpreadSheetPropertyIcon: FC<ISvgIcons & { iconKey: string }> = (props) => {
+export function SpreadSheetPropertyIcon(props: ISvgIcons & { iconKey: string }) {
   const { iconKey } = props;
   const Icon = SpreadSheetPropertyIconMap[iconKey];
   if (!Icon) return null;
   return <Icon {...props} />;
-};
+}
 
 /**
  * This method returns if the filters are applied

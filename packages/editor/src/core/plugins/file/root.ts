@@ -1,7 +1,7 @@
-import { Editor } from "@tiptap/core";
-import { Plugin } from "@tiptap/pm/state";
+import type { Editor } from "@tiptap/core";
+import type { Plugin } from "@tiptap/pm/state";
 // types
-import { TFileHandler } from "@/types";
+import type { TFileHandler } from "@/types";
 // local imports
 import { TrackFileDeletionPlugin } from "./delete";
 import { TrackFileRestorationPlugin } from "./restore";

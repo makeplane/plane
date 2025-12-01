@@ -1,7 +1,4 @@
-"use client";
-
 import { observer } from "mobx-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useTheme as useNextTheme } from "next-themes";
 // ui
@@ -13,7 +10,7 @@ import TakeoffIconLight from "@/app/assets/logos/takeoff-icon-light.svg?url";
 import { useTheme } from "@/hooks/store";
 // icons
 
-export const NewUserPopup = observer(() => {
+export const NewUserPopup = observer(function NewUserPopup() {
   // hooks
   const { isNewUserPopup, toggleNewUserPopup } = useTheme();
   // theme
@@ -39,7 +36,7 @@ export const NewUserPopup = observer(() => {
           </div>
         </div>
         <div className="shrink-0 flex items-center justify-center">
-          <Image
+          <img
             src={resolveGeneralTheme(resolvedTheme) === "dark" ? TakeoffIconDark : TakeoffIconLight}
             height={80}
             width={80}

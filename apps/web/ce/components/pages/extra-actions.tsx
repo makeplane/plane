@@ -7,4 +7,6 @@ export type TPageHeaderExtraActionsProps = {
   storeType: EPageStoreType;
 };
 
-export const PageDetailsHeaderExtraActions: React.FC<TPageHeaderExtraActionsProps> = () => null;
+export function PageDetailsHeaderExtraActions(_props: TPageHeaderExtraActionsProps) {
+  return null;
+}

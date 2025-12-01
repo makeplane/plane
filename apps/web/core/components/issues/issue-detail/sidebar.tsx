@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 // i18n
@@ -36,6 +34,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 // components
 import { WorkItemAdditionalSidebarProperties } from "@/plane-web/components/issues/issue-details/additional-properties";
 import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
+import { TransferHopInfo } from "@/plane-web/components/issues/issue-details/sidebar/transfer-hop-info";
 import { DateAlert } from "@/plane-web/components/issues/issue-details/sidebar.tsx/date-alert";
 import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
 import { IssueCycleSelect } from "./cycle-select";
@@ -51,7 +50,7 @@ type Props = {
   isEditable: boolean;
 };
 
-export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
+export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: Props) {
   const { t } = useTranslation();
   const { workspaceSlug, projectId, issueId, issueOperations, isEditable } = props;
   // store hooks
@@ -261,6 +260,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                   <CycleIcon className="h-4 w-4 flex-shrink-0" />
                   <span>{t("common.cycle")}</span>
+                  <TransferHopInfo workItem={issue} />
                 </div>
                 <IssueCycleSelect
                   className="w-3/5 flex-grow"

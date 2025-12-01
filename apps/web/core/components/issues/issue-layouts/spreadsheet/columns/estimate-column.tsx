@@ -11,7 +11,7 @@ type Props = {
   disabled: boolean;
 };
 
-export const SpreadsheetEstimateColumn: React.FC<Props> = observer((props: Props) => {
+export const SpreadsheetEstimateColumn = observer(function SpreadsheetEstimateColumn(props: Props) {
   const { issue, onChange, disabled, onClose } = props;
 
   return (
