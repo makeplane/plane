@@ -18,7 +18,7 @@ import { useUser } from "@/hooks/store/user";
 // local imports
 import { TourSidebar } from "./sidebar";
 
-type Props = {
+export type TOnboardingTourProps = {
   onComplete: () => void;
 };
 
@@ -28,7 +28,7 @@ const TOUR_STEPS: {
   key: TTourSteps;
   title: string;
   description: string;
-  image: any;
+  image: string;
   prevStep?: TTourSteps;
   nextStep?: TTourSteps;
 }[] = [
@@ -75,7 +75,7 @@ const TOUR_STEPS: {
   },
 ];
 
-export const TourRoot = observer(function TourRoot(props: Props) {
+export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) {
   const { onComplete } = props;
   // states
   const [step, setStep] = useState<TTourSteps>("welcome");
@@ -89,12 +89,12 @@ export const TourRoot = observer(function TourRoot(props: Props) {
   return (
     <>
       {step === "welcome" ? (
-        <div className="h-3/4 w-4/5 overflow-hidden rounded-[10px] bg-custom-background-100 md:w-1/2 lg:w-2/5">
+        <div className="w-4/5 overflow-hidden rounded-[10px] bg-custom-background-100 md:w-1/2 lg:w-2/5">
           <div className="h-full overflow-hidden">
-            <div className="grid h-3/5 place-items-center bg-custom-primary-100">
-              <PlaneLockup className="h-10 w-auto text-custom-text-100" />
+            <div className="grid h-64 place-items-center bg-custom-primary-100">
+              <PlaneLockup className="h-10 w-auto text-white" />
             </div>
-            <div className="flex h-2/5 flex-col overflow-y-auto p-6">
+            <div className="flex flex-col overflow-y-auto p-6">
               <h3 className="font-semibold sm:text-xl">
                 Welcome to Plane, {currentUser?.first_name} {currentUser?.last_name}
               </h3>
@@ -103,7 +103,7 @@ export const TourRoot = observer(function TourRoot(props: Props) {
                 started by creating a project.
               </p>
               <div className="flex h-full items-end">
-                <div className="mt-8 flex items-center gap-6">
+                <div className="mt-12 flex items-center gap-6">
                   <Button
                     variant="primary"
                     onClick={() => {
