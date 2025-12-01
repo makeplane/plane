@@ -31,6 +31,12 @@ export const TopNavPowerK = observer(() => {
   const { activeContext, setActivePage, activePage, setTopNavInputRef } = usePowerK();
   const { data: currentUser } = useUser();
 
+  const handleOnClose = useCallback(() => {
+    setSearchTerm("");
+    setActivePage(null);
+    setActiveCommand(null);
+  }, [setSearchTerm, setActivePage, setActiveCommand]);
+
   // expandable search hook
   const {
     isOpen,
@@ -41,11 +47,7 @@ export const TopNavPowerK = observer(() => {
     handleFocus,
     openPanel,
   } = useExpandableSearch({
-    onClose: () => {
-      setSearchTerm("");
-      setActivePage(null);
-      setActiveCommand(null);
-    },
+    onClose: handleOnClose,
   });
 
   // derived values
