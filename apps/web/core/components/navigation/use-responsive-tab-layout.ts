@@ -42,9 +42,10 @@ export const useResponsiveTabLayout = ({
   const gap = 4; // gap-1 = 4px
   const overflowButtonWidth = 40;
 
+  const container = containerRef?.current;
+
   // ResizeObserver to measure container width
   useEffect(() => {
-    const container = containerRef.current;
     if (!container) return;
 
     const resizeObserver = new ResizeObserver((entries) => {
@@ -58,7 +59,7 @@ export const useResponsiveTabLayout = ({
     return () => {
       resizeObserver.disconnect();
     };
-  }, []);
+  }, [container]);
 
   // Calculate how many items can fit
   useEffect(() => {
