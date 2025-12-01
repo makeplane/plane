@@ -2,8 +2,8 @@
 
 from django.db import migrations, models
 import plane.db.models.project
-
-
+import django.db.models.deletion
+from django.conf import settings
 
 class Migration(migrations.Migration):
 
@@ -34,5 +34,21 @@ class Migration(migrations.Migration):
             model_name='projectuserproperty',
             name='sort_order',
             field=models.FloatField(default=65535),
+        ),        migrations.AlterModelOptions(
+            name='projectuserproperty',
+            options={'ordering': ('-created_at',), 'verbose_name': 'Project User Property', 'verbose_name_plural': 'Project User Properties'},
+        ),
+        migrations.RemoveConstraint(
+            model_name='projectuserproperty',
+            name='issue_user_property_unique_user_project_when_deleted_at_null',
+        ),
+        migrations.AlterField(
+            model_name='projectuserproperty',
+            name='user',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_property_user', to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddConstraint(
+            model_name='projectuserproperty',
+            constraint=models.UniqueConstraint(condition=models.Q(('deleted_at__isnull', True)), fields=('user', 'project'), name='project_user_property_unique_user_project_when_deleted_at_null'),
         ),
     ]

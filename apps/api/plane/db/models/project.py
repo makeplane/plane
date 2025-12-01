@@ -320,7 +320,7 @@ class ProjectUserProperty(ProjectBaseModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="issue_property_user",
+        related_name="project_property_user",
     )
     filters = models.JSONField(default=get_default_filters)
     display_filters = models.JSONField(default=get_default_display_filters)
@@ -330,8 +330,8 @@ class ProjectUserProperty(ProjectBaseModel):
     sort_order = models.FloatField(default=65535)
 
     class Meta:
-        verbose_name = "Issue User Property"
-        verbose_name_plural = "Issue User Properties"
+        verbose_name = "Project User Property"
+        verbose_name_plural = "Project User Properties"
         db_table = "project_user_properties"
         ordering = ("-created_at",)
         unique_together = ["user", "project", "deleted_at"]
@@ -339,10 +339,10 @@ class ProjectUserProperty(ProjectBaseModel):
             models.UniqueConstraint(
                 fields=["user", "project"],
                 condition=Q(deleted_at__isnull=True),
-                name="issue_user_property_unique_user_project_when_deleted_at_null",
+                name="project_user_property_unique_user_project_when_deleted_at_null",
             )
         ]
 
     def __str__(self):
-        """Return properties status of the issue"""
+        """Return properties status of the project"""
         return str(self.user)
