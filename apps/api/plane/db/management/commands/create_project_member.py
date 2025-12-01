@@ -8,7 +8,7 @@ from plane.db.models import (
     WorkspaceMember,
     ProjectMember,
     Project,
-    IssueUserProperty,
+    ProjectUserProperty,
 )
 
 
@@ -67,7 +67,7 @@ class Command(BaseCommand):
                 ProjectMember.objects.create(project=project, member=user, role=role, sort_order=sort_order)
 
             # Issue Property
-            IssueUserProperty.objects.get_or_create(user=user, project=project)
+            ProjectUserProperty.objects.get_or_create(user=user, project=project)
 
             # Success message
             self.stdout.write(self.style.SUCCESS(f"User {user_email} added to project {project_id}"))

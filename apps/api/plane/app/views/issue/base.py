@@ -51,7 +51,7 @@ from plane.db.models import (
     IssueReaction,
     IssueRelation,
     IssueSubscriber,
-    IssueUserProperty,
+    ProjectUserProperty,
     ModuleIssue,
     Project,
     ProjectMember,
@@ -718,7 +718,7 @@ class IssueViewSet(BaseViewSet):
 class IssueUserDisplayPropertyEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def patch(self, request, slug, project_id):
-        issue_property = IssueUserProperty.objects.get(user=request.user, project_id=project_id)
+        issue_property = ProjectUserProperty.objects.get(user=request.user, project_id=project_id)
 
         issue_property.rich_filters = request.data.get("rich_filters", issue_property.rich_filters)
         issue_property.filters = request.data.get("filters", issue_property.filters)
@@ -730,7 +730,7 @@ class IssueUserDisplayPropertyEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
-        issue_property, _ = IssueUserProperty.objects.get_or_create(user=request.user, project_id=project_id)
+        issue_property, _ = ProjectUserProperty.objects.get_or_create(user=request.user, project_id=project_id)
         serializer = IssueUserPropertySerializer(issue_property)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

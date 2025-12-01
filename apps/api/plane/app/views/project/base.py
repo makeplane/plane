@@ -26,7 +26,7 @@ from plane.db.models import (
     UserFavorite,
     Intake,
     DeployBoard,
-    IssueUserProperty,
+    ProjectUserProperty,
     Project,
     ProjectIdentifier,
     ProjectMember,
@@ -249,7 +249,7 @@ class ProjectViewSet(BaseViewSet):
                 role=ROLE.ADMIN.value,
             )
             # Also create the issue property for the user
-            _ = IssueUserProperty.objects.create(project_id=serializer.data["id"], user=request.user)
+            _ = ProjectUserProperty.objects.create(project_id=serializer.data["id"], user=request.user)
 
             if serializer.data["project_lead"] is not None and str(serializer.data["project_lead"]) != str(
                 request.user.id
@@ -260,7 +260,7 @@ class ProjectViewSet(BaseViewSet):
                     role=ROLE.ADMIN.value,
                 )
                 # Also create the issue property for the user
-                IssueUserProperty.objects.create(
+                ProjectUserProperty.objects.create(
                     project_id=serializer.data["id"],
                     user_id=serializer.data["project_lead"],
                 )

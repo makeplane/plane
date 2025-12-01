@@ -13,7 +13,7 @@ from plane.app.serializers import (
 
 from plane.app.permissions import WorkspaceUserPermission
 
-from plane.db.models import Project, ProjectMember, IssueUserProperty, WorkspaceMember
+from plane.db.models import Project, ProjectMember, ProjectUserProperty, WorkspaceMember
 from plane.bgtasks.project_add_user_email_task import project_add_user_email
 from plane.utils.host import base_host
 from plane.app.permissions.base import allow_permission, ROLE
@@ -119,7 +119,7 @@ class ProjectMemberViewSet(BaseViewSet):
             )
             # Create a new issue property
             bulk_issue_props.append(
-                IssueUserProperty(
+                ProjectUserProperty(
                     user_id=member.get("member_id"),
                     project_id=project_id,
                     workspace_id=project.workspace_id,
@@ -129,7 +129,7 @@ class ProjectMemberViewSet(BaseViewSet):
         # Bulk create the project members and issue properties
         project_members = ProjectMember.objects.bulk_create(bulk_project_members, batch_size=10, ignore_conflicts=True)
 
-        _ = IssueUserProperty.objects.bulk_create(bulk_issue_props, batch_size=10, ignore_conflicts=True)
+        _ = ProjectUserProperty.objects.bulk_create(bulk_issue_props, batch_size=10, ignore_conflicts=True)
 
         project_members = ProjectMember.objects.filter(
             project_id=project_id,
