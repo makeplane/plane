@@ -718,15 +718,25 @@ class IssueViewSet(BaseViewSet):
 class ProjectUserDisplayPropertyEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def patch(self, request, slug, project_id):
-        issue_property = ProjectUserProperty.objects.get(user=request.user, project_id=project_id)
+        try:
+            issue_property = ProjectUserProperty.objects.get(
+                user=request.user, 
+                project_id=project_id
+            )
+        except ProjectUserProperty.DoesNotExist:
+            issue_property = ProjectUserProperty.objects.create(
+                user=request.user, 
+                project_id=project_id
+            )
 
-        issue_property.rich_filters = request.data.get("rich_filters", issue_property.rich_filters)
-        issue_property.filters = request.data.get("filters", issue_property.filters)
-        issue_property.display_filters = request.data.get("display_filters", issue_property.display_filters)
-        issue_property.display_properties = request.data.get("display_properties", issue_property.display_properties)
-        issue_property.save()
-        serializer = ProjectUserPropertySerializer(issue_property)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        serializer = ProjectUserPropertySerializer(
+            issue_property, 
+            data=request.data,
+            partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
