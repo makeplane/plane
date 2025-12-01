@@ -82,7 +82,7 @@ function IssueDetailsPage({ params }: Route.ComponentProps) {
   return (
     <>
       <PageHead title={pageTitle} />
-      {error ? (
+      {error && !issueLoader ? (
         <EmptyState
           image={resolvedTheme === "dark" ? emptyIssueDark : emptyIssueLight}
           title={t("issue.empty_state.issue_detail.title")}

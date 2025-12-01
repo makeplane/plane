@@ -7,6 +7,7 @@ import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import { createRoot } from "react-dom/client";
+import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import { LinkIcon, Settings, Share2, LogOut, MoreHorizontal } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
@@ -225,7 +226,29 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
   useOutsideClickDetector(projectRef, () => projectRef?.current?.classList?.remove(HIGHLIGHT_CLASS));
 
   useEffect(() => {
-    if (URLProjectId === project?.id) setIsProjectListOpen(true);
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+    if (URLProjectId === project?.id) {
+      setIsProjectListOpen(true);
+      // Scroll to active project
+      if (projectRef.current) {
+        timeoutId = setTimeout(() => {
+          if (projectRef.current) {
+            scrollIntoView(projectRef.current, {
+              behavior: "smooth",
+              block: "center",
+              scrollMode: "if-needed",
+            });
+          }
+        }, 200);
+      }
+    }
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, [URLProjectId, project?.id, setIsProjectListOpen]);
 
   if (!project) return null;

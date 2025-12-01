@@ -24,6 +24,17 @@ export default {
     },
   },
   project_empty_state: {
+    no_access: {
+      title: "Seems like you don’t have access to this Project",
+      restricted_description: "Contact admin to request for access and you can continue here.",
+      join_description: "Click the button below to join it.",
+      cta_primary: "Join project",
+      cta_loading: "Joining project",
+    },
+    invalid_project: {
+      title: "Project not found",
+      description: "The project you are looking for does not exist.",
+    },
     work_items: {
       title: "Start with your first work item.",
       description:

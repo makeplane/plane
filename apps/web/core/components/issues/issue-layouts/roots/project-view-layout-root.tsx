@@ -5,8 +5,6 @@ import useSWR from "swr";
 // plane constants
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE, PROJECT_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
-// components
-import { LogoSpinner } from "@/components/common/logo-spinner";
 // hooks
 import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
 import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
@@ -60,7 +58,7 @@ export const ProjectViewLayoutRoot = observer(function ProjectViewLayoutRoot() {
       }
     : undefined;
 
-  const { isLoading } = useSWR(
+  useSWR(
     workspaceSlug && projectId && viewId ? `PROJECT_VIEW_ISSUES_${workspaceSlug}_${projectId}_${viewId}` : null,
     async () => {
       if (workspaceSlug && projectId && viewId) {
@@ -78,16 +76,7 @@ export const ProjectViewLayoutRoot = observer(function ProjectViewLayoutRoot() {
     [issuesFilter, workspaceSlug, viewId]
   );
 
-  if (!workspaceSlug || !projectId || !viewId) return <></>;
-
-  if (isLoading && !workItemFilters) {
-    return (
-      <div className="relative flex h-screen w-full items-center justify-center">
-        <LogoSpinner />
-      </div>
-    );
-  }
-
+  if (!workspaceSlug || !projectId || !viewId || !workItemFilters) return <></>;
   return (
     <IssuesStoreContext.Provider value={EIssuesStoreType.PROJECT_VIEW}>
       <ProjectLevelWorkItemFiltersHOC
