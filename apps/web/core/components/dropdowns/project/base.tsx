@@ -2,12 +2,12 @@ import type { ReactNode } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Check, Search } from "lucide-react";
+import { Check } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { ProjectIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownIcon, ProjectIcon, SearchIcon } from "@plane/propel/icons";
 import { ComboDropDown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
@@ -19,7 +19,6 @@ import type { TProject } from "@/plane-web/types";
 import { DropdownButton } from "../buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "../constants";
 import type { TDropdownProps } from "../types";
-
 type Props = TDropdownProps & {
   button?: ReactNode;
   currentProjectId?: string;
@@ -42,7 +41,6 @@ type Props = TDropdownProps & {
         value: string[];
       }
   );
-
 export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: Props) {
   const {
     button,
@@ -102,7 +100,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
         <div className="flex items-center gap-2">
           {projectDetails?.logo_props && (
             <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-              <Logo logo={projectDetails?.logo_props} size={12} />
+              <Logo logo={projectDetails?.logo_props} width="12" height="12" />
             </span>
           )}
           <span className="flex-grow truncate">{projectDetails?.name}</span>
@@ -110,12 +108,10 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
       ),
     };
   });
-
   const filteredOptions =
     query === ""
       ? options?.filter((o) => o?.value !== currentProjectId)
       : options?.filter((o) => o?.value !== currentProjectId && o?.query.toLowerCase().includes(query.toLowerCase()));
-
   const { handleClose, handleKeyDown, handleOnClick, searchInputKeyDown } = useDropdown({
     dropdownRef,
     inputRef,
@@ -125,12 +121,10 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
     setIsOpen,
     setQuery,
   });
-
   const dropdownOnChange = (val: string & string[]) => {
     onChange(val);
     if (!multiple) handleClose();
   };
-
   const getDisplayName = (value: string | string[] | null, placeholder: string = "") => {
     if (Array.isArray(value)) {
       const firstProject = getProjectById(value[0]);
@@ -139,14 +133,12 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
       return value ? (getProjectById(value)?.name ?? placeholder) : placeholder;
     }
   };
-
   const getProjectIcon = (value: string | string[] | null) => {
     const renderIcon = (logoProps: TProject["logo_props"]) => (
       <span className="grid place-items-center flex-shrink-0 h-4 w-4">
-        <Logo logo={logoProps} size={14} />
+        <Logo logo={logoProps} width="14" height="14" />
       </span>
     );
-
     if (Array.isArray(value)) {
       return (
         <div className="flex items-center gap-0.5">
@@ -165,7 +157,6 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
       return projectDetails?.logo_props ? renderIcon(projectDetails.logo_props) : null;
     }
   };
-
   const comboButton = (
     <>
       {button ? (
@@ -214,7 +205,6 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
       )}
     </>
   );
-
   return (
     <ComboDropDown
       as="div"
@@ -238,7 +228,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
             {...attributes.popper}
           >
             <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
-              <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+              <SearchIcon className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
               <Combobox.Input
                 as="input"
                 ref={inputRef}
@@ -260,9 +250,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
                         key={option.value}
                         value={option.value}
                         className={({ active, selected }) =>
-                          `w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none ${
-                            active ? "bg-custom-background-80" : ""
-                          } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                          `w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none ${active ? "bg-custom-background-80" : ""} ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                         }
                       >
                         {({ selected }) => (

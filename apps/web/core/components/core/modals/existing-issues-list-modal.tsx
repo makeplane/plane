@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Rocket, Search } from "lucide-react";
+import { Rocket } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@plane/propel/button";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseIcon, SearchIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
@@ -22,7 +22,6 @@ import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/iss
 import { ProjectService } from "@/services/project";
 // components
 import { IssueSearchModalEmptyState } from "./issue-search-modal-empty-state";
-
 type Props = {
   workspaceSlug: string | undefined;
   projectId?: string;
@@ -35,12 +34,9 @@ type Props = {
   selectedWorkItemIds?: string[];
   workItemSearchServiceCallback?: (params: TProjectIssuesSearchParams) => Promise<ISearchIssueResponse[]>;
 };
-
 const projectService = new ProjectService();
-
 export function ExistingIssuesListModal(props: Props) {
   const { t } = useTranslation();
-
   const {
     workspaceSlug,
     projectId,
@@ -65,7 +61,6 @@ export function ExistingIssuesListModal(props: Props) {
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
   const { baseTabIndex } = getTabIndex(undefined, isMobile);
   const hasInitializedSelection = useRef(false);
-
   const handleClose = () => {
     onClose();
     setSearchTerm("");
@@ -73,7 +68,6 @@ export function ExistingIssuesListModal(props: Props) {
     setIsWorkspaceLevel(false);
     hasInitializedSelection.current = false;
   };
-
   const onSubmit = async () => {
     if (selectedIssues.length === 0) {
       setToast({
@@ -81,17 +75,12 @@ export function ExistingIssuesListModal(props: Props) {
         title: t("toast.error"),
         message: t("issue.select.error"),
       });
-
       return;
     }
-
     setIsSubmitting(true);
-
     await handleOnSubmit(selectedIssues).finally(() => setIsSubmitting(false));
-
     handleClose();
   };
-
   const handleSearch = () => {
     if (!isOpen || !workspaceSlug) return;
     setIsLoading(true);
@@ -112,24 +101,19 @@ export function ExistingIssuesListModal(props: Props) {
         setIsLoading(false);
       });
   };
-
   const handleSelectIssues = () => {
     setSelectedIssues((prevData) => (prevData.length === filteredIssues.length ? [] : [...filteredIssues]));
   };
-
   useEffect(() => {
     if (isOpen && !hasInitializedSelection.current && selectedWorkItemIds && issues.length > 0) {
       setSelectedIssues(issues.filter((issue) => selectedWorkItemIds.includes(issue.id)));
       hasInitializedSelection.current = true;
     }
   }, [isOpen, issues, selectedWorkItemIds]);
-
   useEffect(() => {
     handleSearch();
   }, [debouncedSearchTerm, isOpen, isWorkspaceLevel, projectId, workspaceSlug]);
-
   const filteredIssues = issues.filter((issue) => !shouldHideIssue?.(issue));
-
   return (
     <>
       <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setSearchTerm("")} appear>
@@ -166,7 +150,7 @@ export function ExistingIssuesListModal(props: Props) {
                   }}
                 >
                   <div className="relative m-1">
-                    <Search
+                    <SearchIcon
                       className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
                       aria-hidden="true"
                     />
@@ -212,9 +196,7 @@ export function ExistingIssuesListModal(props: Props) {
                     {workspaceLevelToggle && (
                       <Tooltip tooltipContent="Toggle workspace level search" isMobile={isMobile}>
                         <div
-                          className={`flex flex-shrink-0 cursor-pointer items-center gap-1 text-xs ${
-                            isWorkspaceLevel ? "text-custom-text-100" : "text-custom-text-200"
-                          }`}
+                          className={`flex flex-shrink-0 cursor-pointer items-center gap-1 text-xs ${isWorkspaceLevel ? "text-custom-text-100" : "text-custom-text-200"}`}
                         >
                           <ToggleSwitch
                             value={isWorkspaceLevel}
@@ -269,7 +251,6 @@ export function ExistingIssuesListModal(props: Props) {
                           <ul className={`text-sm text-custom-text-100 ${filteredIssues.length > 0 ? "p-2" : ""}`}>
                             {filteredIssues.map((issue) => {
                               const selected = selectedIssues.some((i) => i.id === issue.id);
-
                               return (
                                 <Combobox.Option
                                   key={issue.id}
@@ -277,9 +258,7 @@ export function ExistingIssuesListModal(props: Props) {
                                   htmlFor={`issue-${issue.id}`}
                                   value={issue}
                                   className={({ active }) =>
-                                    `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-custom-text-200 ${
-                                      active ? "bg-custom-background-80 text-custom-text-100" : ""
-                                    } ${selected ? "text-custom-text-100" : ""}`
+                                    `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-custom-text-200 ${active ? "bg-custom-background-80 text-custom-text-100" : ""} ${selected ? "text-custom-text-100" : ""}`
                                   }
                                 >
                                   <div className="flex items-center gap-2 truncate">
@@ -328,7 +307,8 @@ export function ExistingIssuesListModal(props: Props) {
                 <div className="flex justify-between items-center p-3">
                   <Button
                     variant="link-primary"
-                    size="sm"
+                    width="sm"
+                    height="sm"
                     onClick={handleSelectIssues}
                     disabled={filteredIssues.length === 0}
                     className={filteredIssues.length === 0 ? "p-0" : ""}
@@ -338,12 +318,13 @@ export function ExistingIssuesListModal(props: Props) {
                       : t("issue.select.select_all")}
                   </Button>
                   <div className="flex items-center justify-end gap-2">
-                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                    <Button variant="neutral-primary" width="sm" height="sm" onClick={handleClose}>
                       {t("common.cancel")}
                     </Button>
                     <Button
                       variant="primary"
-                      size="sm"
+                      width="sm"
+                      height="sm"
                       onClick={onSubmit}
                       loading={isSubmitting}
                       disabled={isSubmitting || selectedIssues.length === 0}

@@ -2,16 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Check, Search } from "lucide-react";
+import { Check } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { ModuleIcon } from "@plane/propel/icons";
+import { ModuleIcon, SearchIcon } from "@plane/propel/icons";
 import type { IModule } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
-
 type DropdownOptions =
   | {
       value: string | null;
@@ -19,7 +18,6 @@ type DropdownOptions =
       content: React.ReactNode;
     }[]
   | undefined;
-
 interface Props {
   getModuleById: (moduleId: string) => IModule | null;
   isOpen: boolean;
@@ -29,7 +27,6 @@ interface Props {
   placement: Placement | undefined;
   referenceElement: HTMLButtonElement | null;
 }
-
 export const ModuleOptions = observer(function ModuleOptions(props: Props) {
   const { getModuleById, isOpen, moduleIds, multiple, onDropdownOpen, placement, referenceElement } = props;
   // refs
@@ -41,7 +38,6 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
   const { t } = useTranslation();
   // store hooks
   const { isMobile } = usePlatformOS();
-
   useEffect(() => {
     if (isOpen) {
       onOpen();
@@ -51,7 +47,6 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, isMobile]);
-
   // popper-js init
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
@@ -64,18 +59,15 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
       },
     ],
   });
-
   const onOpen = () => {
     onDropdownOpen?.();
   };
-
   const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (query !== "" && e.key === "Escape") {
       e.stopPropagation();
       setQuery("");
     }
   };
-
   const options: DropdownOptions = moduleIds?.map((moduleId) => {
     const moduleDetails = getModuleById(moduleId);
     return {
@@ -100,10 +92,8 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
         </div>
       ),
     });
-
   const filteredOptions =
     query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
-
   return (
     <Combobox.Options className="fixed z-10" static>
       <div
@@ -113,7 +103,7 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
         {...attributes.popper}
       >
         <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
-          <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+          <SearchIcon className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
           <Combobox.Input
             as="input"
             ref={inputRef}

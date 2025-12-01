@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Search } from "lucide-react";
 // types
 import {
   EUserPermissions,
@@ -10,6 +9,7 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { SearchIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspaceBulkInviteFormData } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -30,7 +30,6 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { BillingActionsButton } from "@/plane-web/components/workspace/billing/billing-actions-button";
 import { SendWorkspaceInvitationModal } from "@/plane-web/components/workspace/members/invite-modal";
 import type { Route } from "./+types/page";
-
 function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
   // states
   const [inviteModal, setInviteModal] = useState(false);
@@ -44,27 +43,22 @@ function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
   } = useMember();
   const { currentWorkspace } = useWorkspace();
   const { t } = useTranslation();
-
   // derived values
   const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const canPerformWorkspaceMemberActions = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-
   const handleWorkspaceInvite = async (data: IWorkspaceBulkInviteFormData) => {
     try {
       await inviteMembersToWorkspace(workspaceSlug, data);
-
       setInviteModal(false);
-
       captureSuccess({
         eventName: MEMBER_TRACKER_EVENTS.invite,
         payload: {
           emails: data.emails.map((email) => email.email),
         },
       });
-
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
@@ -79,39 +73,32 @@ function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
         },
         error: err,
       });
-
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
         message: `${err.error ?? t("something_went_wrong_please_try_again")}`,
       });
-
       throw err;
     }
   };
-
   // Handler for role filter updates
   const handleRoleFilterUpdate = (role: string) => {
     const currentFilters = filtersStore.filters;
     const currentRoles = currentFilters?.roles || [];
     const updatedRoles = currentRoles.includes(role) ? currentRoles.filter((r) => r !== role) : [...currentRoles, role];
-
     filtersStore.updateFilters({
       roles: updatedRoles.length > 0 ? updatedRoles : undefined,
     });
   };
-
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Members` : undefined;
   const appliedRoleFilters = filtersStore.filters?.roles || [];
-
   // if user is not authorized to view this page
   if (workspaceUserInfo && !canPerformWorkspaceMemberActions) {
     return <NotAuthorizedView section="settings" className="h-auto" />;
   }
-
   return (
-    <SettingsContentWrapper size="lg">
+    <SettingsContentWrapper width="lg" height="lg">
       <PageHead title={pageTitle} />
       <SendWorkspaceInvitationModal
         isOpen={inviteModal}
@@ -132,7 +119,7 @@ function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
           </h4>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5">
-              <Search className="h-3.5 w-3.5 text-custom-text-400" />
+              <SearchIcon className="h-3.5 w-3.5 text-custom-text-400" />
               <input
                 className="w-full max-w-[234px] border-none bg-transparent text-sm outline-none placeholder:text-custom-text-400"
                 placeholder={`${t("search")}...`}
@@ -149,7 +136,8 @@ function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
             {canPerformWorkspaceAdminActions && (
               <Button
                 variant="primary"
-                size="sm"
+                width="sm"
+                height="sm"
                 onClick={() => setInviteModal(true)}
                 data-ph-element={MEMBER_TRACKER_ELEMENTS.HEADER_ADD_BUTTON}
               >
@@ -164,5 +152,4 @@ function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
     </SettingsContentWrapper>
   );
 }
-
 export default observer(WorkspaceMembersSettingsPage);

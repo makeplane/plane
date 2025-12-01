@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-// icons
-import { ListFilter, Search } from "lucide-react";
+import { ListFilter } from "lucide-react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseIcon, SearchIcon } from "@plane/propel/icons";
 import type { TCycleFilters } from "@plane/types";
 import { cn, calculateTotalFilters } from "@plane/utils";
 // components
@@ -15,11 +14,9 @@ import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
 // local imports
 import { CycleFiltersSelection } from "./dropdowns";
-
 type Props = {
   projectId: string;
 };
-
 export const CyclesViewHeader = observer(function CyclesViewHeader(props: Props) {
   const { projectId } = props;
   // refs
@@ -33,12 +30,10 @@ export const CyclesViewHeader = observer(function CyclesViewHeader(props: Props)
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
   });
-
   const handleFilters = useCallback(
     (key: keyof TCycleFilters, value: string | string[]) => {
       if (!projectId) return;
       const newValues = currentProjectFilters?.[key] ?? [];
-
       if (Array.isArray(value))
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
@@ -48,12 +43,10 @@ export const CyclesViewHeader = observer(function CyclesViewHeader(props: Props)
         if (currentProjectFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
-
       updateFilters(projectId, { [key]: newValues });
     },
     [currentProjectFilters, projectId, updateFilters]
   );
-
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
       if (searchQuery && searchQuery.trim() !== "") updateSearchQuery("");
@@ -63,13 +56,10 @@ export const CyclesViewHeader = observer(function CyclesViewHeader(props: Props)
       }
     }
   };
-
   const isFiltersApplied = calculateTotalFilters(currentProjectFilters ?? {}) !== 0;
-
   useEffect(() => {
     if (searchQuery.trim() !== "") setIsSearchOpen(true);
   }, [searchQuery]);
-
   return (
     <div className="flex items-center gap-3">
       {!isSearchOpen && (
@@ -81,7 +71,7 @@ export const CyclesViewHeader = observer(function CyclesViewHeader(props: Props)
             inputRef.current?.focus();
           }}
         >
-          <Search className="h-3.5 w-3.5" />
+          <SearchIcon className="h-3.5 w-3.5" />
         </button>
       )}
       <div
@@ -92,7 +82,7 @@ export const CyclesViewHeader = observer(function CyclesViewHeader(props: Props)
           }
         )}
       >
-        <Search className="h-3.5 w-3.5" />
+        <SearchIcon className="h-3.5 w-3.5" />
         <input
           ref={inputRef}
           className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"

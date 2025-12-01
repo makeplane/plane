@@ -1,14 +1,12 @@
 "use client";
-
 import type { ReactNode } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { IntakeStateGroupIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownIcon, IntakeStateGroupIcon, SearchIcon } from "@plane/propel/icons";
 import type { IIntakeState } from "@plane/types";
 import { ComboDropDown, Spinner } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -20,7 +18,6 @@ import type { TDropdownProps } from "@/components/dropdowns/types";
 import { useDropdown } from "@/hooks/use-dropdown";
 // plane web imports
 import { StateOption } from "@/plane-web/components/workflow";
-
 export type TWorkItemStateDropdownBaseProps = TDropdownProps & {
   alwaysAllowStateChange?: boolean;
   button?: ReactNode;
@@ -40,7 +37,6 @@ export type TWorkItemStateDropdownBaseProps = TDropdownProps & {
   stateIds: string[];
   value: string | undefined | null;
 };
-
 export const WorkItemStateDropdownBase: React.FC<TWorkItemStateDropdownBaseProps> = observer((props) => {
   const {
     button,
@@ -103,7 +99,6 @@ export const WorkItemStateDropdownBase: React.FC<TWorkItemStateDropdownBaseProps
     setIsOpen,
     setQuery,
   });
-
   // derived values
   const options = statesList?.map((state) => ({
     value: state?.id,
@@ -119,17 +114,13 @@ export const WorkItemStateDropdownBase: React.FC<TWorkItemStateDropdownBaseProps
       </div>
     ),
   }));
-
   const filteredOptions =
     query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
-
   const selectedState = stateValue ? getStateById(stateValue) : undefined;
-
   const dropdownOnChange = (val: string) => {
     onChange(val);
     handleClose();
   };
-
   const comboButton = (
     <>
       {button ? (
@@ -195,7 +186,6 @@ export const WorkItemStateDropdownBase: React.FC<TWorkItemStateDropdownBaseProps
       )}
     </>
   );
-
   return (
     <ComboDropDown
       as="div"
@@ -217,7 +207,7 @@ export const WorkItemStateDropdownBase: React.FC<TWorkItemStateDropdownBaseProps
             {...attributes.popper}
           >
             <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
-              <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+              <SearchIcon className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
               <Combobox.Input
                 as="input"
                 ref={inputRef}

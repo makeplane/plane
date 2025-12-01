@@ -1,10 +1,8 @@
-import { Search } from "lucide-react";
+import { SearchIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
-
 type Props = {
   isActive?: boolean;
 };
-
 export function SidebarSearchButton(props: Props) {
   const { isActive } = props;
   return (
@@ -16,7 +14,7 @@ export function SidebarSearchButton(props: Props) {
         }
       )}
     >
-      <Search
+      <SearchIcon
         className={cn("size-4 text-custom-sidebar-text-300", {
           "text-custom-primary-200": isActive,
         })}

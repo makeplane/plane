@@ -15,22 +15,19 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Search } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseIcon, SearchIcon } from "@plane/propel/icons";
 // plane package imports
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@plane/propel/table";
 import { cn } from "@plane/utils";
 // plane web components
-
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   searchPlaceholder: string;
   actions?: (table: TanstackTable<TData>) => React.ReactNode;
 }
-
 export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, actions }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
@@ -39,7 +36,6 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
   const { t } = useTranslation();
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [isSearchOpen, setIsSearchOpen] = React.useState(false);
-
   const table = useReactTable({
     data,
     columns,
@@ -57,7 +53,6 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
-
   return (
     <div className="space-y-4">
       <div className="flex w-full items-center justify-between">
@@ -76,7 +71,7 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
                 inputRef.current?.focus();
               }}
             >
-              <Search className="h-3.5 w-3.5" />
+              <SearchIcon className="h-3.5 w-3.5" />
             </button>
           )}
           <div
@@ -87,7 +82,7 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
               }
             )}
           >
-            <Search className="h-3.5 w-3.5" />
+            <SearchIcon className="h-3.5 w-3.5" />
             <input
               ref={inputRef}
               className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"

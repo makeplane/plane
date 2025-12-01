@@ -4,11 +4,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
-import { Check, Search } from "lucide-react";
+import { Check } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { SuspendedUserIcon } from "@plane/propel/icons";
+import { SearchIcon, SuspendedUserIcon } from "@plane/propel/icons";
 import { EPillSize, EPillVariant, Pill } from "@plane/propel/pill";
 import type { IUserLite } from "@plane/types";
 import { Avatar } from "@plane/ui";
@@ -17,7 +17,6 @@ import { cn, getFileURL } from "@plane/utils";
 import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-
 interface Props {
   className?: string;
   getUserDetails: (userId: string) => IUserLite | undefined;
@@ -28,7 +27,6 @@ interface Props {
   placement: Placement | undefined;
   referenceElement: HTMLButtonElement | null;
 }
-
 export const MemberOptions = observer(function MemberOptions(props: Props) {
   const {
     getUserDetails,
@@ -66,7 +64,6 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
       },
     ],
   });
-
   useEffect(() => {
     if (isOpen) {
       onDropdownOpen?.();
@@ -75,14 +72,12 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
       }
     }
   }, [isOpen, isMobile]);
-
   const searchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (query !== "" && e.key === "Escape") {
       e.stopPropagation();
       setQuery("");
     }
   };
-
   const options = memberIds
     ?.map((userId) => {
       const userDetails = getUserDetails(userId);
@@ -111,10 +106,8 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
       };
     })
     .filter((o) => !!o);
-
   const filteredOptions =
     query === "" ? options : options?.filter((o) => o?.query.toLowerCase().includes(query.toLowerCase()));
-
   return createPortal(
     <Combobox.Options data-prevent-outside-click static>
       <div
@@ -129,7 +122,7 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
         {...attributes.popper}
       >
         <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
-          <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+          <SearchIcon className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
           <Combobox.Input
             as="input"
             ref={inputRef}
@@ -167,7 +160,7 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
                           <span className="flex-grow truncate">{option.content}</span>
                           {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
                           {isUserSuspended(option.value, workspaceSlug?.toString()) && (
-                            <Pill variant={EPillVariant.DEFAULT} size={EPillSize.XS} className="border-none">
+                            <Pill variant={EPillVariant.DEFAULT} className="border-none">
                               Suspended
                             </Pill>
                           )}

@@ -1,38 +1,32 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { AlertCircle, Search } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-import { CycleIcon, TransferIcon, CloseIcon } from "@plane/propel/icons";
+import { CloseIcon, CycleIcon, SearchIcon, TransferIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssuesStoreType } from "@plane/types";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssues } from "@/hooks/store/use-issues";
 //icons
 // constants
-
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
   cycleId: string;
 };
-
 export const TransferIssuesModal = observer(function TransferIssuesModal(props: Props) {
   const { isOpen, handleClose, cycleId } = props;
   // states
   const [query, setQuery] = useState("");
-
   // store hooks
   const { currentProjectIncompleteCycleIds, getCycleById, fetchActiveCycleProgress } = useCycle();
   const {
     issues: { transferIssuesFromCycle },
   } = useIssues(EIssuesStoreType.CYCLE);
-
   const { workspaceSlug, projectId } = useParams();
-
   const transferIssue = async (payload: { new_cycle_id: string }) => {
     if (!workspaceSlug || !projectId || !cycleId) return;
-
     await transferIssuesFromCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), payload)
       .then(async () => {
         setToast({
@@ -50,7 +44,6 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
         });
       });
   };
-
   /**To update issue counts in target cycle and current cycle */
   const getCycleDetails = async (newCycleId: string) => {
     const cyclesFetch = [
@@ -65,13 +58,10 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
       });
     });
   };
-
   const filteredOptions = currentProjectIncompleteCycleIds?.filter((optionId) => {
     const cycleDetails = getCycleById(optionId);
-
     return cycleDetails?.name?.toLowerCase().includes(query?.toLowerCase());
   });
-
   // useEffect(() => {
   //   const handleKeyDown = (e: KeyboardEvent) => {
   //     if (e.key === "Escape") {
@@ -79,7 +69,6 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
   //     }
   //   };
   // }, [handleClose]);
-
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
@@ -118,7 +107,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
                     </button>
                   </div>
                   <div className="flex items-center gap-2 border-b border-custom-border-200 px-5 pb-3">
-                    <Search className="h-4 w-4 text-custom-text-200" />
+                    <SearchIcon className="h-4 w-4 text-custom-text-200" />
                     <input
                       className="outline-none text-sm"
                       placeholder="Search for a cycle..."
@@ -131,9 +120,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
                       filteredOptions.length > 0 ? (
                         filteredOptions.map((optionId) => {
                           const cycleDetails = getCycleById(optionId);
-
                           if (!cycleDetails) return;
-
                           return (
                             <button
                               key={optionId}

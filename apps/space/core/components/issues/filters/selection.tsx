@@ -1,31 +1,25 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { Search } from "lucide-react";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseIcon, SearchIcon } from "@plane/propel/icons";
 // types
 import type { IIssueFilterOptions, TIssueFilterKeys } from "@/types/issue";
 // local imports
 import { FilterPriority } from "./priority";
 import { FilterState } from "./state";
-
 type Props = {
   filters: IIssueFilterOptions;
   handleFilters: (key: keyof IIssueFilterOptions, value: string | string[]) => void;
   layoutDisplayFiltersOptions: TIssueFilterKeys[];
 };
-
 export const FilterSelection = observer(function FilterSelection(props: Props) {
   const { filters, handleFilters, layoutDisplayFiltersOptions } = props;
-
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
-
   const isFilterEnabled = (filter: keyof IIssueFilterOptions) => layoutDisplayFiltersOptions.includes(filter);
-
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
       <div className="bg-custom-background-100 p-2.5 pb-0">
         <div className="flex items-center gap-1.5 rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 px-1.5 py-1 text-xs">
-          <Search className="text-custom-text-400" size={12} strokeWidth={2} />
+          <SearchIcon className="text-custom-text-400" width="12" height="12" strokeWidth={2} />
           <input
             type="text"
             className="w-full bg-custom-background-90 outline-none placeholder:text-custom-text-400"

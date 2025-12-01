@@ -1,16 +1,14 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { Search } from "lucide-react";
 // plane hooks
 import { useOutsideClickDetector } from "@plane/hooks";
 // i18n
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseIcon, SearchIcon } from "@plane/propel/icons";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
 import { useProjectFilter } from "@/hooks/store/use-project-filter";
-
 export const ProjectSearch = observer(function ProjectSearch() {
   // i18n
   const { t } = useTranslation();
@@ -24,14 +22,12 @@ export const ProjectSearch = observer(function ProjectSearch() {
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
   });
-
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
       if (searchQuery && searchQuery.trim() !== "") updateSearchQuery("");
       else setIsSearchOpen(false);
     }
   };
-
   return (
     <div className="flex items-center">
       {!isSearchOpen && (
@@ -43,7 +39,7 @@ export const ProjectSearch = observer(function ProjectSearch() {
             inputRef.current?.focus();
           }}
         >
-          <Search className="h-3.5 w-3.5" />
+          <SearchIcon className="h-3.5 w-3.5" />
         </button>
       )}
       <div
@@ -54,7 +50,7 @@ export const ProjectSearch = observer(function ProjectSearch() {
           }
         )}
       >
-        <Search className="h-3.5 w-3.5" />
+        <SearchIcon className="h-3.5 w-3.5" />
         <input
           ref={inputRef}
           className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"

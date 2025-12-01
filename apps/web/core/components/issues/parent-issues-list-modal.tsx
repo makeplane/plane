@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-// icons
-import { Rocket, Search } from "lucide-react";
+import { Rocket } from "lucide-react";
 // headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
+import { SearchIcon } from "@plane/propel/icons";
 import type { ISearchIssueResponse } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
@@ -21,7 +21,6 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 // services
 import { ProjectService } from "@/services/project";
-
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
@@ -31,10 +30,8 @@ type Props = {
   issueId?: string;
   searchEpic?: boolean;
 };
-
 // services
 const projectService = new ProjectService();
-
 export function ParentIssuesListModal({
   isOpen,
   handleClose: onClose,
@@ -46,29 +43,22 @@ export function ParentIssuesListModal({
 }: Props) {
   // i18n
   const { t } = useTranslation();
-
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [issues, setIssues] = useState<ISearchIssueResponse[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const { isMobile } = usePlatformOS();
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
-
   const { workspaceSlug } = useParams();
-
   const { baseTabIndex } = getTabIndex(undefined, isMobile);
-
   const handleClose = () => {
     onClose();
     setSearchTerm("");
   };
-
   useEffect(() => {
     if (!isOpen || !workspaceSlug || !projectId) return;
-
     setIsSearching(true);
     setIsLoading(true);
-
     projectService
       .projectIssuesSearch(workspaceSlug as string, projectId as string, {
         search: debouncedSearchTerm,
@@ -83,7 +73,6 @@ export function ParentIssuesListModal({
         setIsLoading(false);
       });
   }, [debouncedSearchTerm, isOpen, issueId, projectId, workspaceSlug]);
-
   return (
     <>
       <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setSearchTerm("")} appear>
@@ -119,7 +108,7 @@ export function ParentIssuesListModal({
                   }}
                 >
                   <div className="relative m-1">
-                    <Search
+                    <SearchIcon
                       className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
                       aria-hidden="true"
                     />
@@ -171,9 +160,7 @@ export function ParentIssuesListModal({
                                 key={issue.id}
                                 value={issue}
                                 className={({ active, selected }) =>
-                                  `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-custom-text-200 ${
-                                    active ? "bg-custom-background-80 text-custom-text-100" : ""
-                                  } ${selected ? "text-custom-text-100" : ""}`
+                                  `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-custom-text-200 ${active ? "bg-custom-background-80 text-custom-text-100" : ""} ${selected ? "text-custom-text-100" : ""}`
                                 }
                               >
                                 <div className="flex flex-grow items-center gap-2 truncate">

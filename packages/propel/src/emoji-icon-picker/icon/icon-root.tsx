@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { InfoIcon, Search } from "lucide-react";
+import { InfoIcon } from "lucide-react";
+import { SearchIcon } from "@plane/propel/icons";
 import { cn } from "../../utils/classname";
 import { adjustColorForContrast, DEFAULT_COLORS } from "../helper";
 import { LucideIconsList } from "./lucide-root";
 import { MaterialIconList } from "./material-root";
-
 type IconRootProps = {
   onChange: (value: { name: string; color: string }) => void;
   defaultColor: string;
   searchDisabled?: boolean;
   iconType: "material" | "lucide";
 };
-
 export function IconRoot(props: IconRootProps) {
   const { defaultColor, onChange, searchDisabled = false, iconType } = props;
   // states
@@ -20,7 +19,6 @@ export function IconRoot(props: IconRootProps) {
   const [hexValue, setHexValue] = useState("");
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [query, setQuery] = useState("");
-
   useEffect(() => {
     if (DEFAULT_COLORS.includes(defaultColor.toLowerCase() ?? "")) setShowHexInput(false);
     else {
@@ -28,7 +26,6 @@ export function IconRoot(props: IconRootProps) {
       setShowHexInput(true);
     }
   }, [defaultColor]);
-
   return (
     <>
       <div className="flex flex-col sticky top-0 bg-custom-background-100">
@@ -45,7 +42,7 @@ export function IconRoot(props: IconRootProps) {
               onFocus={() => setIsInputFocused(true)}
               onBlur={() => setIsInputFocused(false)}
             >
-              <Search className="absolute left-2.5 bottom-3 h-3.5 w-3.5 text-custom-text-400" />
+              <SearchIcon className="absolute left-2.5 bottom-3 h-3.5 w-3.5 text-custom-text-400" />
 
               <input
                 placeholder="Search"

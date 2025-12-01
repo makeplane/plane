@@ -1,7 +1,8 @@
 import { useCallback } from "react";
-import { Link, PanelLeft, Search } from "lucide-react";
+import { Link, PanelLeft } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { SearchIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { copyTextToClipboard } from "@plane/utils";
 // components
@@ -9,14 +10,12 @@ import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { usePowerK } from "@/hooks/store/use-power-k";
-
 export const usePowerKMiscellaneousCommands = (): TPowerKCommandConfig[] => {
   // store hooks
   const { toggleSidebar } = useAppTheme();
   const { topNavInputRef, topNavSearchInputRef } = usePowerK();
   // translation
   const { t } = useTranslation();
-
   const copyCurrentPageUrlToClipboard = useCallback(() => {
     const url = new URL(window.location.href);
     copyTextToClipboard(url.href)
@@ -34,7 +33,6 @@ export const usePowerKMiscellaneousCommands = (): TPowerKCommandConfig[] => {
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   const focusTopNavSearch = useCallback(() => {
     // Focus PowerK input if available, otherwise focus regular search input
     if (topNavSearchInputRef?.current) {
@@ -43,7 +41,6 @@ export const usePowerKMiscellaneousCommands = (): TPowerKCommandConfig[] => {
       topNavInputRef.current.focus();
     }
   }, [topNavInputRef, topNavSearchInputRef]);
-
   return [
     {
       id: "toggle_app_sidebar",
@@ -74,7 +71,7 @@ export const usePowerKMiscellaneousCommands = (): TPowerKCommandConfig[] => {
       group: "miscellaneous",
       type: "action",
       i18n_title: "power_k.miscellaneous_actions.focus_top_nav_search",
-      icon: Search,
+      icon: SearchIcon,
       action: focusTopNavSearch,
       modifierShortcut: "cmd+f",
       isEnabled: () => true,

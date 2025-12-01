@@ -4,11 +4,11 @@ import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
-import { Search } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { SearchIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ISearchIssueResponse, IUser } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
@@ -27,19 +27,15 @@ import useDebounce from "@/hooks/use-debounce";
 import { ProjectService } from "@/services/project";
 // local components
 import { BulkDeleteIssuesModalItem } from "./bulk-delete-issues-modal-item";
-
 type FormInput = {
   delete_issue_ids: string[];
 };
-
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   user: IUser | undefined;
 };
-
 const projectService = new ProjectService();
-
 export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(props: Props) {
   const { isOpen, onClose } = props;
   // router params
@@ -59,10 +55,8 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
   const debouncedSearchTerm: string = useDebounce(query, 500);
   const searchResolvedPath = resolvedTheme === "light" ? lightSearchAsset : darkSearchAsset;
   const issuesResolvedPath = resolvedTheme === "light" ? lightIssuesAsset : darkIssuesAsset;
-
   useEffect(() => {
     if (!isOpen || !workspaceSlug || !projectId) return;
-
     setIsSearching(true);
     projectService
       .projectIssuesSearch(workspaceSlug.toString(), projectId.toString(), {
@@ -72,7 +66,6 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
       .then((res: ISearchIssueResponse[]) => setIssues(res))
       .finally(() => setIsSearching(false));
   }, [debouncedSearchTerm, isOpen, projectId, workspaceSlug]);
-
   const {
     handleSubmit,
     watch,
@@ -84,16 +77,13 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
       delete_issue_ids: [],
     },
   });
-
   const handleClose = () => {
     setQuery("");
     reset();
     onClose();
   };
-
   const handleDelete: SubmitHandler<FormInput> = async (data) => {
     if (!workspaceSlug || !projectId) return;
-
     if (!data.delete_issue_ids || data.delete_issue_ids.length === 0) {
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -102,9 +92,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
       });
       return;
     }
-
     if (!Array.isArray(data.delete_issue_ids)) data.delete_issue_ids = [data.delete_issue_ids];
-
     await removeBulkIssues(workspaceSlug as string, projectId as string, data.delete_issue_ids)
       .then(() => {
         setToast({
@@ -122,7 +110,6 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
         })
       );
   };
-
   const issueList =
     issues.length > 0 ? (
       <li className="p-2">
@@ -148,7 +135,6 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
         )}
       </div>
     );
-
   return (
     <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setQuery("")} appear>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
@@ -177,7 +163,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
                     }}
                   >
                     <div className="relative m-1">
-                      <Search
+                      <SearchIcon
                         className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
                         aria-hidden="true"
                       />
@@ -208,10 +194,16 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
 
                   {issues.length > 0 && (
                     <div className="flex items-center justify-end gap-2 p-3">
-                      <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                      <Button variant="neutral-primary" width="sm" height="sm" onClick={handleClose}>
                         Cancel
                       </Button>
-                      <Button variant="danger" size="sm" onClick={handleSubmit(handleDelete)} loading={isSubmitting}>
+                      <Button
+                        variant="danger"
+                        width="sm"
+                        height="sm"
+                        onClick={handleSubmit(handleDelete)}
+                        loading={isSubmitting}
+                      >
                         {isSubmitting ? "Deleting..." : "Delete selected work items"}
                       </Button>
                     </div>

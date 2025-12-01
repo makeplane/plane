@@ -1,11 +1,11 @@
 import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane imports
-import { Plus, Search } from "lucide-react";
+import { Plus } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
+import { SearchIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { copyUrlToClipboard, orderJoinedProjects } from "@plane/utils";
@@ -18,7 +18,6 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import type { TProject } from "@/plane-web/types";
 import { ExtendedSidebarWrapper } from "./extended-sidebar-wrapper";
-
 export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar() {
   // refs
   const extendedProjectSidebarRef = useRef<HTMLDivElement | null>(null);
@@ -32,7 +31,6 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
   const { isExtendedProjectSidebarOpened, toggleExtendedProjectSidebar } = useAppTheme();
   const { getPartialProjectById, joinedProjectIds: joinedProjects, updateProjectView } = useProject();
   const { allowPermissions } = useUserPermissions();
-
   const handleOnProjectDrop = (
     sourceId: string | undefined,
     destinationId: string | undefined,
@@ -40,18 +38,14 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
   ) => {
     if (!sourceId || !destinationId || !workspaceSlug) return;
     if (sourceId === destinationId) return;
-
     const joinedProjectsList: TProject[] = [];
     joinedProjects.map((projectId) => {
       const projectDetails = getPartialProjectById(projectId);
       if (projectDetails) joinedProjectsList.push(projectDetails);
     });
-
     const sourceIndex = joinedProjects.indexOf(sourceId);
     const destinationIndex = shouldDropAtEnd ? joinedProjects.length : joinedProjects.indexOf(destinationId);
-
     if (joinedProjectsList.length <= 0) return;
-
     const updatedSortOrder = orderJoinedProjects(sourceIndex, destinationIndex, sourceId, joinedProjectsList);
     if (updatedSortOrder != undefined)
       updateProjectView(workspaceSlug.toString(), sourceId, { sort_order: updatedSortOrder }).catch(() => {
@@ -62,22 +56,18 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
         });
       });
   };
-
   // filter projects based on search query
   const filteredProjects = joinedProjects.filter((projectId) => {
     const project = getPartialProjectById(projectId);
     if (!project) return false;
     return project.name.toLowerCase().includes(searchQuery.toLowerCase()) || project.identifier.includes(searchQuery);
   });
-
   // auth
   const isAuthorizedUser = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
     EUserPermissionsLevel.WORKSPACE
   );
-
   const handleClose = useCallback(() => toggleExtendedProjectSidebar(false), [toggleExtendedProjectSidebar]);
-
   const handleCopyText = (projectId: string) => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`).then(() => {
       setToast({
@@ -123,7 +113,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
             )}
           </div>
           <div className="ml-auto flex items-center gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1 w-full">
-            <Search className="h-3.5 w-3.5 text-custom-text-400" />
+            <SearchIcon className="h-3.5 w-3.5 text-custom-text-400" />
             <input
               className="w-full max-w-[234px] border-none bg-transparent text-sm outline-none placeholder:text-custom-text-400"
               placeholder={t("search")}

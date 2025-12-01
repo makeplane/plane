@@ -1,12 +1,12 @@
 import { Fragment, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Check, Loader, Search } from "lucide-react";
+import { Check, Loader } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { LabelPropertyIcon } from "@plane/propel/icons";
+import { LabelPropertyIcon, SearchIcon } from "@plane/propel/icons";
 import type { IIssueLabel } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // helpers
@@ -24,7 +24,6 @@ export interface IIssueLabelSelect {
   onSelect: (_labelIds: string[]) => void;
   onAddLabel: (workspaceSlug: string, projectId: string, data: Partial<IIssueLabel>) => Promise<any>;
 }
-
 export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssueLabelSelect) {
   const { workspaceSlug, projectId, issueId, values, onSelect, onAddLabel } = props;
   const { t } = useTranslation();
@@ -38,20 +37,15 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [query, setQuery] = useState("");
   const [submitting, setSubmitting] = useState<boolean>(false);
-
   const canCreateLabel =
     projectId && allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
-
   const projectLabels = getProjectLabels(projectId);
-
   const { baseTabIndex } = getTabIndex(undefined, isMobile);
-
   const fetchLabels = () => {
     setIsLoading(true);
     if (!projectLabels && workspaceSlug && projectId)
       fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
   };
-
   const options = (projectLabels ?? []).map((label) => ({
     value: label.id,
     query: label.name,
@@ -67,10 +61,8 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
       </div>
     ),
   }));
-
   const filteredOptions =
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
-
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: "bottom-end",
     modifiers: [
@@ -82,9 +74,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
       },
     ],
   });
-
   const issueLabels = values ?? [];
-
   const label = (
     <div
       className={`relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded-full border border-custom-border-100 p-0.5 px-2 py-0.5 text-xs text-custom-text-300 transition-all hover:bg-custom-background-90 hover:text-custom-text-200`}
@@ -95,20 +85,17 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
       <div className="flex-shrink-0">{t("label.select")}</div>
     </div>
   );
-
   const searchInputKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (query !== "" && e.key === "Escape") {
       e.stopPropagation();
       setQuery("");
     }
-
     if (query !== "" && e.key === "Enter" && !e.nativeEvent.isComposing && canCreateLabel) {
       e.stopPropagation();
       e.preventDefault();
       await handleAddLabel(query);
     }
   };
-
   const handleAddLabel = async (labelName: string) => {
     setSubmitting(true);
     const label = await onAddLabel(workspaceSlug, projectId, { name: labelName, color: getRandomLabelColor() });
@@ -116,9 +103,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
     setQuery("");
     setSubmitting(false);
   };
-
   if (!issueId || !values) return <></>;
-
   return (
     <>
       <Combobox
@@ -148,7 +133,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
           >
             <div className="px-2">
               <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
-                <Search className="h-3.5 w-3.5 text-custom-text-300" />
+                <SearchIcon className="h-3.5 w-3.5 text-custom-text-300" />
                 <Combobox.Input
                   className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                   value={query}
@@ -169,9 +154,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
                     key={option.value}
                     value={option.value}
                     className={({ selected }) =>
-                      `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 hover:bg-custom-background-80 ${
-                        selected ? "text-custom-text-100" : "text-custom-text-200"
-                      }`
+                      `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 hover:bg-custom-background-80 ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                     }
                   >
                     {({ selected }) => (

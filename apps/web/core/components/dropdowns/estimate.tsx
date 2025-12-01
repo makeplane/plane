@@ -3,11 +3,11 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
-import { Check, Search } from "lucide-react";
+import { Check } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EstimatePropertyIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownIcon, EstimatePropertyIcon, SearchIcon } from "@plane/propel/icons";
 import { EEstimateSystem } from "@plane/types";
 import { ComboDropDown } from "@plane/ui";
 import { convertMinutesToHoursMinutesString, cn } from "@plane/utils";
@@ -20,7 +20,6 @@ import { DropdownButton } from "./buttons";
 import { BUTTON_VARIANTS_WITH_TEXT } from "./constants";
 // types
 import type { TDropdownProps } from "./types";
-
 type Props = TDropdownProps & {
   button?: ReactNode;
   dropdownArrow?: boolean;
@@ -31,7 +30,6 @@ type Props = TDropdownProps & {
   value: string | undefined | null;
   renderByDefault?: boolean;
 };
-
 type DropdownOptions =
   | {
       value: string | null;
@@ -39,7 +37,6 @@ type DropdownOptions =
       content: React.ReactNode;
     }[]
   | undefined;
-
 export const EstimateDropdown = observer(function EstimateDropdown(props: Props) {
   const {
     button,
@@ -91,11 +88,8 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
   const { estimatePointIds, estimatePointById } = useEstimate(
     projectId ? currentActiveEstimateIdByProjectId(projectId) : undefined
   );
-
   const currentActiveEstimateId = projectId ? currentActiveEstimateIdByProjectId(projectId) : undefined;
-
   const currentActiveEstimate = currentActiveEstimateId ? getEstimateById(currentActiveEstimateId) : undefined;
-
   const options: DropdownOptions = (estimatePointIds ?? [])
     ?.map((estimatePoint) => {
       const currentEstimatePoint = estimatePointById(estimatePoint);
@@ -127,17 +121,13 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
       </div>
     ),
   });
-
   const filteredOptions =
     query === "" ? options : options?.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
-
   const selectedEstimate = value && estimatePointById ? estimatePointById(value) : undefined;
-
   const onOpen = async () => {
     if (!currentActiveEstimateId && workspaceSlug && projectId)
       await getProjectEstimates(workspaceSlug.toString(), projectId);
   };
-
   const { handleClose, handleKeyDown, handleOnClick, searchInputKeyDown } = useDropdown({
     dropdownRef,
     inputRef,
@@ -148,12 +138,10 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
     setIsOpen,
     setQuery,
   });
-
   const dropdownOnChange = (val: string | undefined) => {
     onChange(val);
     handleClose();
   };
-
   const comboButton = (
     <>
       {button ? (
@@ -208,7 +196,6 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
       )}
     </>
   );
-
   return (
     <ComboDropDown
       as="div"
@@ -231,7 +218,7 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
             {...attributes.popper}
           >
             <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
-              <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+              <SearchIcon className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
               <Combobox.Input
                 as="input"
                 ref={inputRef}

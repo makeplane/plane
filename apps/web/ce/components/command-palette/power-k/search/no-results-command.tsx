@@ -1,27 +1,24 @@
 import { Command } from "cmdk";
-import { Search } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // components
+import { SearchIcon } from "@plane/propel/icons";
 import type { TPowerKContext } from "@/components/power-k/core/types";
 // plane web imports
 import { PowerKModalCommandItem } from "@/components/power-k/ui/modal/command-item";
-
 export type TPowerKModalNoSearchResultsCommandProps = {
   context: TPowerKContext;
   searchTerm: string;
   updateSearchTerm: (value: string) => void;
 };
-
 export function PowerKModalNoSearchResultsCommand(props: TPowerKModalNoSearchResultsCommandProps) {
   const { updateSearchTerm } = props;
   // translation
   const { t } = useTranslation();
-
   return (
     <Command.Group>
       <PowerKModalCommandItem
-        icon={Search}
+        icon={SearchIcon}
         value="no-results"
         label={
           <p className="flex items-center gap-2">

@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-// icons
-import { ListFilter, Search } from "lucide-react";
+import { ListFilter } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseIcon, SearchIcon } from "@plane/propel/icons";
 // plane helpers
 // helpers
 import { cn } from "@plane/utils";
@@ -13,7 +12,6 @@ import { useProjectView } from "@/hooks/store/use-project-view";
 import { FiltersDropdown } from "../issues/issue-layouts/filters";
 import { ViewFiltersSelection } from "./filters/filter-selection";
 import { ViewOrderByDropdown } from "./filters/order-by";
-
 export const ViewListHeader = observer(function ViewListHeader() {
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -24,7 +22,6 @@ export const ViewListHeader = observer(function ViewListHeader() {
   const {
     project: { projectMemberIds },
   } = useMember();
-
   // handlers
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
@@ -36,16 +33,13 @@ export const ViewListHeader = observer(function ViewListHeader() {
       }
     }
   };
-
   // outside click detector hook
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && filters?.searchQuery.trim() === "") setIsSearchOpen(false);
   });
-
   useEffect(() => {
     if (filters?.searchQuery.trim() !== "") setIsSearchOpen(true);
   }, [filters?.searchQuery]);
-
   return (
     <div className="h-full flex items-center gap-2">
       <div className="flex items-center">
@@ -58,7 +52,7 @@ export const ViewListHeader = observer(function ViewListHeader() {
               inputRef.current?.focus();
             }}
           >
-            <Search className="h-3.5 w-3.5" />
+            <SearchIcon className="h-3.5 w-3.5" />
           </button>
         )}
         <div
@@ -69,7 +63,7 @@ export const ViewListHeader = observer(function ViewListHeader() {
             }
           )}
         >
-          <Search className="h-3.5 w-3.5" />
+          <SearchIcon className="h-3.5 w-3.5" />
           <input
             ref={inputRef}
             className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"

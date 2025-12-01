@@ -2,13 +2,13 @@ import type { FC } from "react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ListFilter, Search } from "lucide-react";
+import { ListFilter } from "lucide-react";
 // plane helpers
 import { MODULE_VIEW_LAYOUTS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseIcon, SearchIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TModuleFilters } from "@plane/types";
 // ui
@@ -25,7 +25,6 @@ import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { ModuleLayoutIcon } from "./module-layout-icon";
 // i18n
-
 export const ModuleViewHeader = observer(function ModuleViewHeader() {
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
@@ -46,16 +45,13 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
     updateSearchQuery,
   } = useModuleFilter();
   const { t } = useTranslation();
-
   // states
   const [isSearchOpen, setIsSearchOpen] = useState(searchQuery !== "" ? true : false);
-
   // handlers
   const handleFilters = useCallback(
     (key: keyof TModuleFilters, value: string | string[]) => {
       if (!projectId) return;
       const newValues = filters?.[key] ?? [];
-
       if (Array.isArray(value))
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
@@ -65,12 +61,10 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
         if (filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
-
       updateFilters(projectId.toString(), { [key]: newValues });
     },
     [filters, projectId, updateFilters]
   );
-
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
       if (searchQuery && searchQuery.trim() !== "") updateSearchQuery("");
@@ -80,18 +74,14 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
       }
     }
   };
-
   // outside click detector hook
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
   });
-
   useEffect(() => {
     if (searchQuery.trim() !== "") setIsSearchOpen(true);
   }, [searchQuery]);
-
   const isFiltersApplied = calculateTotalFilters(filters ?? {}) !== 0 || displayFilters?.favorites;
-
   return (
     <div className="hidden h-full sm:flex items-center gap-3 self-end">
       <div className="flex items-center">
@@ -104,7 +94,7 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
               inputRef.current?.focus();
             }}
           >
-            <Search className="h-3.5 w-3.5" />
+            <SearchIcon className="h-3.5 w-3.5" />
           </button>
         )}
         <div
@@ -115,7 +105,7 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
             }
           )}
         >
-          <Search className="h-3.5 w-3.5" />
+          <SearchIcon className="h-3.5 w-3.5" />
           <input
             ref={inputRef}
             className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"

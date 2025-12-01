@@ -1,16 +1,13 @@
 import { useState, useRef, useEffect } from "react";
-import { Search } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseIcon, SearchIcon } from "@plane/propel/icons";
 // plane helpers
 // helpers
 import { cn } from "@plane/utils";
-
 type Props = {
   searchQuery: string;
   updateSearchQuery: (val: string) => void;
 };
-
 export function PageSearchInput(props: Props) {
   const { searchQuery, updateSearchQuery } = props;
   // states
@@ -21,7 +18,6 @@ export function PageSearchInput(props: Props) {
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
   });
-
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
       if (searchQuery && searchQuery.trim() !== "") updateSearchQuery("");
@@ -31,11 +27,9 @@ export function PageSearchInput(props: Props) {
       }
     }
   };
-
   useEffect(() => {
     if (searchQuery.trim() !== "") setIsSearchOpen(true);
   }, [searchQuery]);
-
   return (
     <div className="flex">
       {!isSearchOpen && (
@@ -47,7 +41,7 @@ export function PageSearchInput(props: Props) {
             inputRef.current?.focus();
           }}
         >
-          <Search className="h-3.5 w-3.5" />
+          <SearchIcon className="h-3.5 w-3.5" />
         </button>
       )}
       <div
@@ -58,7 +52,7 @@ export function PageSearchInput(props: Props) {
           }
         )}
       >
-        <Search className="h-3.5 w-3.5" />
+        <SearchIcon className="h-3.5 w-3.5" />
         <input
           ref={inputRef}
           className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"

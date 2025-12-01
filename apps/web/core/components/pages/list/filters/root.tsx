@@ -1,32 +1,26 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Search } from "lucide-react";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseIcon, SearchIcon } from "@plane/propel/icons";
 import type { TPageFilterProps, TPageFilters } from "@plane/types";
 // components
 import { FilterCreatedDate } from "@/components/common/filters/created-at";
 import { FilterCreatedBy } from "@/components/common/filters/created-by";
 import { FilterOption } from "@/components/issues/issue-layouts/filters";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-
 type Props = {
   filters: TPageFilters;
   handleFiltersUpdate: <T extends keyof TPageFilters>(filterKey: T, filterValue: TPageFilters[T]) => void;
   memberIds?: string[] | undefined;
 };
-
 export const PageFiltersSelection = observer(function PageFiltersSelection(props: Props) {
   const { filters, handleFiltersUpdate, memberIds } = props;
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
   // store
   const { isMobile } = usePlatformOS();
-
   const handleFilters = (key: keyof TPageFilterProps, value: boolean | string | string[]) => {
     const newValues = filters.filters?.[key] ?? [];
-
     if (typeof newValues === "boolean" && typeof value === "boolean") return;
-
     if (Array.isArray(newValues)) {
       if (Array.isArray(value))
         value.forEach((val) => {
@@ -38,18 +32,16 @@ export const PageFiltersSelection = observer(function PageFiltersSelection(props
         else newValues.push(value);
       }
     }
-
     handleFiltersUpdate("filters", {
       ...filters.filters,
       [key]: newValues,
     });
   };
-
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
       <div className="bg-custom-background-100 p-2.5 pb-0">
         <div className="flex items-center gap-1.5 rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 px-1.5 py-1 text-xs">
-          <Search className="text-custom-text-400" size={12} strokeWidth={2} />
+          <SearchIcon className="text-custom-text-400" width="12" height="12" strokeWidth={2} />
           <input
             type="text"
             className="w-full bg-custom-background-90 outline-none placeholder:text-custom-text-400"

@@ -2,12 +2,11 @@ import type { ReactNode } from "react";
 import { Fragment, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { usePopper } from "react-popper";
-import { Check, Search, SignalHigh } from "lucide-react";
+import { Check, SignalHigh } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-// types
-import { PriorityIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownIcon, PriorityIcon, SearchIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssuePriorities } from "@plane/types";
 // ui
@@ -21,7 +20,6 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { BACKGROUND_BUTTON_VARIANTS, BORDER_BUTTON_VARIANTS, BUTTON_VARIANTS_WITHOUT_TEXT } from "./constants";
 // types
 import type { TDropdownProps } from "./types";
-
 type Props = TDropdownProps & {
   button?: ReactNode;
   dropdownArrow?: boolean;
@@ -32,7 +30,6 @@ type Props = TDropdownProps & {
   value: TIssuePriorities | undefined | null;
   renderByDefault?: boolean;
 };
-
 type ButtonProps = {
   className?: string;
   dropdownArrow: boolean;
@@ -46,7 +43,6 @@ type ButtonProps = {
   showTooltip: boolean;
   renderToolTipByDefault?: boolean;
 };
-
 function BorderButton(props: ButtonProps) {
   const {
     className,
@@ -60,9 +56,7 @@ function BorderButton(props: ButtonProps) {
     showTooltip,
     renderToolTipByDefault = true,
   } = props;
-
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
-
   const priorityClasses = {
     urgent: "bg-red-600/10 text-red-600 border-red-600 px-1",
     high: "bg-orange-500/20 text-orange-950 border-orange-500",
@@ -70,10 +64,8 @@ function BorderButton(props: ButtonProps) {
     low: "bg-custom-primary-100/20 text-custom-primary-950 border-custom-primary-100",
     none: "hover:bg-custom-background-80 border-custom-border-300",
   };
-
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
-
   return (
     <Tooltip
       tooltipHeading={t("priority")}
@@ -106,7 +98,8 @@ function BorderButton(props: ButtonProps) {
             >
               <PriorityIcon
                 priority={priority}
-                size={12}
+                width="12"
+                height="12"
                 className={cn("flex-shrink-0", {
                   // increase the icon size if text is hidden
                   "h-3.5 w-3.5": hideText,
@@ -129,7 +122,6 @@ function BorderButton(props: ButtonProps) {
     </Tooltip>
   );
 }
-
 function BackgroundButton(props: ButtonProps) {
   const {
     className,
@@ -143,9 +135,7 @@ function BackgroundButton(props: ButtonProps) {
     showTooltip,
     renderToolTipByDefault = true,
   } = props;
-
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
-
   const priorityClasses = {
     urgent: "bg-red-600/20 text-red-600",
     high: "bg-orange-500/20 text-orange-950",
@@ -153,10 +143,8 @@ function BackgroundButton(props: ButtonProps) {
     low: "bg-blue-500/20 text-blue-950",
     none: "bg-custom-background-80",
   };
-
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
-
   return (
     <Tooltip
       tooltipHeading={t("priority")}
@@ -189,7 +177,8 @@ function BackgroundButton(props: ButtonProps) {
             >
               <PriorityIcon
                 priority={priority}
-                size={12}
+                width="12"
+                height="12"
                 className={cn("flex-shrink-0", {
                   // increase the icon size if text is hidden
                   "h-3.5 w-3.5": hideText,
@@ -214,7 +203,6 @@ function BackgroundButton(props: ButtonProps) {
     </Tooltip>
   );
 }
-
 function TransparentButton(props: ButtonProps) {
   const {
     className,
@@ -229,9 +217,7 @@ function TransparentButton(props: ButtonProps) {
     showTooltip,
     renderToolTipByDefault = true,
   } = props;
-
   const priorityDetails = ISSUE_PRIORITIES.find((p) => p.key === priority);
-
   const priorityClasses = {
     urgent: "text-red-950",
     high: "text-orange-950",
@@ -239,10 +225,8 @@ function TransparentButton(props: ButtonProps) {
     low: "text-blue-950",
     none: "hover:text-custom-text-300",
   };
-
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
-
   return (
     <Tooltip
       tooltipHeading={t("priority")}
@@ -276,7 +260,8 @@ function TransparentButton(props: ButtonProps) {
             >
               <PriorityIcon
                 priority={priority}
-                size={12}
+                width="12"
+                height="12"
                 className={cn("flex-shrink-0", {
                   // increase the icon size if text is hidden
                   "h-3.5 w-3.5": hideText,
@@ -301,7 +286,6 @@ function TransparentButton(props: ButtonProps) {
     </Tooltip>
   );
 }
-
 export function PriorityDropdown(props: Props) {
   //hooks
   const { t } = useTranslation();
@@ -346,30 +330,25 @@ export function PriorityDropdown(props: Props) {
       },
     ],
   });
-
   // next-themes
   // TODO: remove this after new theming implementation
   const { resolvedTheme } = useTheme();
-
   const options = ISSUE_PRIORITIES.map((priority) => ({
     value: priority.key,
     query: priority.key,
     content: (
       <div className="flex items-center gap-2">
-        <PriorityIcon priority={priority.key} size={14} withContainer />
+        <PriorityIcon priority={priority.key} width="14" height="14" withContainer />
         <span className="flex-grow truncate">{priority.title}</span>
       </div>
     ),
   }));
-
   const filteredOptions =
     query === "" ? options : options.filter((o) => o.query.toLowerCase().includes(query.toLowerCase()));
-
   const dropdownOnChange = (val: TIssuePriorities) => {
     onChange(val);
     handleClose();
   };
-
   const { handleClose, handleKeyDown, handleOnClick, searchInputKeyDown } = useDropdown({
     dropdownRef,
     inputRef,
@@ -379,13 +358,11 @@ export function PriorityDropdown(props: Props) {
     setIsOpen,
     setQuery,
   });
-
   const ButtonToRender = BORDER_BUTTON_VARIANTS.includes(buttonVariant)
     ? BorderButton
     : BACKGROUND_BUTTON_VARIANTS.includes(buttonVariant)
       ? BackgroundButton
       : TransparentButton;
-
   const comboButton = (
     <>
       {button ? (
@@ -433,7 +410,6 @@ export function PriorityDropdown(props: Props) {
       )}
     </>
   );
-
   return (
     <ComboDropDown
       as="div"
@@ -461,7 +437,7 @@ export function PriorityDropdown(props: Props) {
             {...attributes.popper}
           >
             <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
-              <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+              <SearchIcon className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
               <Combobox.Input
                 as="input"
                 ref={inputRef}
@@ -480,9 +456,7 @@ export function PriorityDropdown(props: Props) {
                     key={option.value}
                     value={option.value}
                     className={({ active, selected }) =>
-                      `w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none ${
-                        active ? "bg-custom-background-80" : ""
-                      } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                      `w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none ${active ? "bg-custom-background-80" : ""} ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                     }
                   >
                     {({ selected }) => (

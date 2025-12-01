@@ -1,17 +1,16 @@
 import { Combobox } from "@headlessui/react";
-import { Check, Info, Search } from "lucide-react";
+import { Check, Info } from "lucide-react";
 import React, { useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownIcon, SearchIcon } from "@plane/propel/icons";
 // plane imports
 // local imports
 import { Tooltip } from "@plane/propel/tooltip";
 import { useDropdownKeyDown } from "../hooks/use-dropdown-key-down";
 import { cn } from "../utils";
 import type { ICustomSearchSelectProps } from "./helper";
-
 export function CustomSearchSelect(props: ICustomSearchSelectProps) {
   const {
     customButtonClassName = "",
@@ -38,47 +37,37 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
     defaultOpen = false,
   } = props;
   const [query, setQuery] = useState("");
-
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isOpen, setIsOpen] = useState(defaultOpen);
   // refs
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
   });
-
   const filteredOptions =
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
-
   const comboboxProps: any = {
     value,
     onChange,
     disabled,
   };
-
   if (multiple) comboboxProps.multiple = true;
-
   const openDropdown = () => {
     setIsOpen(true);
     if (referenceElement) referenceElement.focus();
     if (onOpen) onOpen();
   };
-
   const closeDropdown = () => {
     setIsOpen(false);
     onClose && onClose();
   };
-
   const handleKeyDown = useDropdownKeyDown(openDropdown, closeDropdown, isOpen);
   useOutsideClickDetector(dropdownRef, closeDropdown);
-
   const toggleDropdown = () => {
     if (isOpen) closeDropdown();
     else openDropdown();
   };
-
   return (
     <Combobox
       as="div"
@@ -90,7 +79,6 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
     >
       {({ open }: { open: boolean }) => {
         if (open && onOpen) onOpen();
-
         return (
           <>
             {customButton ? (
@@ -148,7 +136,7 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                     {...attributes.popper}
                   >
                     <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2 mx-2">
-                      <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+                      <SearchIcon className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
                       <Combobox.Input
                         className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                         value={query}

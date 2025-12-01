@@ -2,13 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Check, Component, Loader, Search } from "lucide-react";
+import { Check, Component, Loader } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 import { getRandomLabelColor } from "@plane/constants";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { LabelPropertyIcon } from "@plane/propel/icons";
+import { LabelPropertyIcon, SearchIcon } from "@plane/propel/icons";
 import type { IIssueLabel } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
@@ -16,7 +16,6 @@ import { IssueLabelsList } from "@/components/ui/labels-list";
 // hooks
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-
 export type TWorkItemLabelSelectBaseProps = {
   buttonClassName?: string;
   buttonContainerClassName?: string;
@@ -32,7 +31,6 @@ export type TWorkItemLabelSelectBaseProps = {
   tabIndex?: number;
   value: string[];
 };
-
 export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase(props: TWorkItemLabelSelectBaseProps) {
   const {
     buttonClassName,
@@ -70,27 +68,22 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
   const labelsList = labelIds.map((labelId) => getLabelById(labelId)).filter((label) => !!label);
   const filteredOptions =
     query === "" ? labelsList : labelsList?.filter((l) => l.name.toLowerCase().includes(query.toLowerCase()));
-
   const onOpen = () => {
     if (referenceElement) referenceElement.focus();
     onDropdownOpen?.();
   };
-
   const handleClose = () => {
     if (isDropdownOpen) setIsDropdownOpen(false);
     if (referenceElement) referenceElement.blur();
     setQuery("");
   };
-
   const toggleDropdown = () => {
     if (!isDropdownOpen) onOpen();
     setIsDropdownOpen((prevIsOpen) => !prevIsOpen);
   };
-
   const dropdownOnChange = (val: string[]) => {
     onChange(val);
   };
-
   const searchInputKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     const q = query.trim();
     if (q !== "" && e.key === "Escape") {
@@ -112,21 +105,17 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
     }
   };
   const handleKeyDown = useDropdownKeyDown(toggleDropdown, handleClose);
-
   const handleOnClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
     e.preventDefault();
     toggleDropdown();
   };
-
   useOutsideClickDetector(dropdownRef, handleClose);
-
   useEffect(() => {
     if (isDropdownOpen && inputRef.current && !isMobile) {
       inputRef.current.focus();
     }
   }, [isDropdownOpen, isMobile]);
-
   const handleAddLabel = async (labelName: string) => {
     if (!createLabel || submitting) return;
     const name = labelName.trim();
@@ -143,7 +132,6 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
       setSubmitting(false);
     }
   };
-
   return (
     <Combobox
       as="div"
@@ -197,7 +185,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
             {...attributes.popper}
           >
             <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
-              <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+              <SearchIcon className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
               <Combobox.Input
                 as="input"
                 ref={inputRef}
@@ -213,16 +201,13 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
                 filteredOptions.length > 0 ? (
                   filteredOptions.map((label) => {
                     const children = labelsList?.filter((l) => l.parent === label.id);
-
                     if (children.length === 0) {
                       if (!label.parent)
                         return (
                           <Combobox.Option
                             key={label.id}
                             className={({ active }) =>
-                              `${
-                                active ? "bg-custom-background-80" : ""
-                              } group flex w-full cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-custom-text-200`
+                              `${active ? "bg-custom-background-80" : ""} group flex w-full cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-custom-text-200`
                             }
                             value={label.id}
                           >
@@ -255,9 +240,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
                               <Combobox.Option
                                 key={child.id}
                                 className={({ active }) =>
-                                  `${
-                                    active ? "bg-custom-background-80" : ""
-                                  } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-custom-text-200`
+                                  `${active ? "bg-custom-background-80" : ""} group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-custom-text-200`
                                 }
                                 value={child.id}
                               >

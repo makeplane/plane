@@ -1,11 +1,9 @@
 import * as React from "react";
 import { Combobox as BaseCombobox } from "@base-ui-components/react/combobox";
-import { Search } from "lucide-react";
+import { SearchIcon } from "@plane/propel/icons";
 import { cn } from "../utils/classname";
-
 // Type definitions
 type TMaxHeight = "lg" | "md" | "rg" | "sm";
-
 export interface ComboboxProps {
   value?: string | string[];
   defaultValue?: string | string[];
@@ -17,14 +15,12 @@ export interface ComboboxProps {
   onOpenChange?: (open: boolean) => void;
   children: React.ReactNode;
 }
-
 export interface ComboboxButtonProps {
   disabled?: boolean;
   children?: React.ReactNode;
   className?: string;
   ref?: React.Ref<HTMLButtonElement>;
 }
-
 export interface ComboboxOptionsProps {
   searchPlaceholder?: string;
   emptyMessage?: string;
@@ -40,14 +36,12 @@ export interface ComboboxOptionsProps {
   onSearchQueryKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   dataPreventOutsideClick?: boolean;
 }
-
 export interface ComboboxOptionProps {
   value: string;
   disabled?: boolean;
   children?: React.ReactNode;
   className?: string;
 }
-
 // Constants
 const MAX_HEIGHT_CLASSES: Record<TMaxHeight, string> = {
   lg: "max-h-60",
@@ -55,7 +49,6 @@ const MAX_HEIGHT_CLASSES: Record<TMaxHeight, string> = {
   rg: "max-h-36",
   sm: "max-h-28",
 } as const;
-
 // Root component
 function ComboboxRoot({
   value,
@@ -73,7 +66,6 @@ function ComboboxRoot({
     },
     [onValueChange]
   );
-
   return (
     <BaseCombobox.Root
       value={value}
@@ -88,7 +80,6 @@ function ComboboxRoot({
     </BaseCombobox.Root>
   );
 }
-
 // Trigger button component
 const ComboboxButton = React.forwardRef(function ComboboxButton(
   { className, children, disabled = false }: ComboboxButtonProps,
@@ -100,7 +91,6 @@ const ComboboxButton = React.forwardRef(function ComboboxButton(
     </BaseCombobox.Trigger>
   );
 });
-
 // Options popup component
 function ComboboxOptions({
   children,
@@ -119,9 +109,7 @@ function ComboboxOptions({
 }: ComboboxOptionsProps) {
   // const [searchQuery, setSearchQuery] = React.useState("");
   const [internalSearchQuery, setInternalSearchQuery] = React.useState("");
-
   const searchQuery = controlledSearchQuery !== undefined ? controlledSearchQuery : internalSearchQuery;
-
   const setSearchQuery = React.useCallback(
     (query: string) => {
       if (onSearchQueryChange) {
@@ -132,17 +120,13 @@ function ComboboxOptions({
     },
     [onSearchQueryChange]
   );
-
   // Filter children based on search query
   const filteredChildren = React.useMemo(() => {
     if (!showSearch || !searchQuery) return children;
-
     return React.Children.toArray(children).filter((child) => {
       if (!React.isValidElement(child)) return true;
-
       // Only filter ComboboxOption components, leave other elements (like additional content) unfiltered
       if (child.type !== ComboboxOption) return true;
-
       // Extract text content from child to search against
       const getTextContent = (node: React.ReactNode): string => {
         if (typeof node === "string") return node;
@@ -155,15 +139,12 @@ function ComboboxOptions({
         }
         return "";
       };
-
       const textContent = getTextContent(child.props.children);
       const value = child.props.value || "";
-
       const searchLower = searchQuery.toLowerCase();
       return textContent.toLowerCase().includes(searchLower) || String(value).toLowerCase().includes(searchLower);
     });
   }, [children, searchQuery, showSearch]);
-
   return (
     <BaseCombobox.Portal>
       <BaseCombobox.Positioner sideOffset={8} className={positionerClassName}>
@@ -174,7 +155,7 @@ function ComboboxOptions({
           <div className="flex flex-col gap-1">
             {showSearch && (
               <div className="relative">
-                <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-custom-text-400" />
+                <SearchIcon className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-custom-text-400" />
                 <input
                   type="text"
                   placeholder={searchPlaceholder}
@@ -206,7 +187,6 @@ function ComboboxOptions({
     </BaseCombobox.Portal>
   );
 }
-
 // Individual option component
 function ComboboxOption({ value, children, disabled, className }: ComboboxOptionProps) {
   return (
@@ -219,12 +199,10 @@ function ComboboxOption({ value, children, disabled, className }: ComboboxOption
     </BaseCombobox.Item>
   );
 }
-
 // Compound component export
 const Combobox = Object.assign(ComboboxRoot, {
   Button: ComboboxButton,
   Options: ComboboxOptions,
   Option: ComboboxOption,
 });
-
 export { Combobox };

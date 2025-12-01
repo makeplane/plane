@@ -2,10 +2,9 @@ import type { FC } from "react";
 import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// icons
-import { ListFilter, Search } from "lucide-react";
+import { ListFilter } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseIcon, SearchIcon } from "@plane/propel/icons";
 // plane helpers
 // types
 import type { TCycleFilters } from "@plane/types";
@@ -17,7 +16,6 @@ import { FiltersDropdown } from "@/components/issues/issue-layouts/filters";
 import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
 // local imports
 import { CycleFiltersSelection } from "../dropdowns";
-
 export const ArchivedCyclesHeader = observer(function ArchivedCyclesHeader() {
   // router
   const { projectId } = useParams();
@@ -32,12 +30,10 @@ export const ArchivedCyclesHeader = observer(function ArchivedCyclesHeader() {
   useOutsideClickDetector(inputRef, () => {
     if (isSearchOpen && archivedCyclesSearchQuery.trim() === "") setIsSearchOpen(false);
   });
-
   const handleFilters = useCallback(
     (key: keyof TCycleFilters, value: string | string[]) => {
       if (!projectId) return;
       const newValues = currentProjectArchivedFilters?.[key] ?? [];
-
       if (Array.isArray(value))
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
@@ -47,12 +43,10 @@ export const ArchivedCyclesHeader = observer(function ArchivedCyclesHeader() {
         if (currentProjectArchivedFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
-
       updateFilters(projectId.toString(), { [key]: newValues }, "archived");
     },
     [currentProjectArchivedFilters, projectId, updateFilters]
   );
-
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
       if (archivedCyclesSearchQuery && archivedCyclesSearchQuery.trim() !== "") updateArchivedCyclesSearchQuery("");
@@ -62,9 +56,7 @@ export const ArchivedCyclesHeader = observer(function ArchivedCyclesHeader() {
       }
     }
   };
-
   const isFiltersApplied = calculateTotalFilters(currentProjectArchivedFilters ?? {}) !== 0;
-
   return (
     <div className="group relative flex border-b border-custom-border-200">
       <div className="flex w-full items-center overflow-x-auto px-4 gap-2 horizontal-scrollbar scrollbar-sm">
@@ -81,7 +73,7 @@ export const ArchivedCyclesHeader = observer(function ArchivedCyclesHeader() {
               inputRef.current?.focus();
             }}
           >
-            <Search className="h-3.5 w-3.5" />
+            <SearchIcon className="h-3.5 w-3.5" />
           </button>
         )}
         <div
@@ -92,7 +84,7 @@ export const ArchivedCyclesHeader = observer(function ArchivedCyclesHeader() {
             }
           )}
         >
-          <Search className="h-3.5 w-3.5" />
+          <SearchIcon className="h-3.5 w-3.5" />
           <input
             ref={inputRef}
             className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
