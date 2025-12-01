@@ -75,68 +75,68 @@ function CustomSelect(props: ICustomSelectProps) {
         disabled={disabled}
       >
         <>
-        {customButton ? (
-          <Combobox.Button as={React.Fragment}>
-            <button
-              ref={setReferenceElement}
-              type="button"
-              className={`flex items-center justify-between gap-1 text-xs rounded ${
-                disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
-              } ${customButtonClassName}`}
-              onClick={toggleDropdown}
-            >
-              {customButton}
-            </button>
-          </Combobox.Button>
-        ) : (
-          <Combobox.Button as={React.Fragment}>
-            <button
-              ref={setReferenceElement}
-              type="button"
-              className={cn(
-                "flex w-full items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300",
-                {
-                  "px-3 py-2 text-sm": input,
-                  "px-2 py-1 text-xs": !input,
-                  "cursor-not-allowed text-custom-text-200": disabled,
-                  "cursor-pointer hover:bg-custom-background-80": !disabled,
-                },
-                buttonClassName
-              )}
-              onClick={toggleDropdown}
-            >
-              {label}
-              {!noChevron && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
-            </button>
-          </Combobox.Button>
-        )}
-      </>
-      {isOpen &&
-        createPortal(
-          <Combobox.Options data-prevent-outside-click>
-            <div
-              className={cn(
-                "my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-48 whitespace-nowrap z-30",
-                optionsClassName
-              )}
-              ref={setPopperElement}
-              style={styles.popper}
-              {...attributes.popper}
-            >
-              <div
-                className={cn("space-y-1 overflow-y-scroll", {
-                  "max-h-60": maxHeight === "lg",
-                  "max-h-48": maxHeight === "md",
-                  "max-h-36": maxHeight === "rg",
-                  "max-h-28": maxHeight === "sm",
-                })}
+          {customButton ? (
+            <Combobox.Button as={React.Fragment}>
+              <button
+                ref={setReferenceElement}
+                type="button"
+                className={`flex items-center justify-between gap-1 text-xs rounded ${
+                  disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
+                } ${customButtonClassName}`}
+                onClick={toggleDropdown}
               >
-                {children}
+                {customButton}
+              </button>
+            </Combobox.Button>
+          ) : (
+            <Combobox.Button as={React.Fragment}>
+              <button
+                ref={setReferenceElement}
+                type="button"
+                className={cn(
+                  "flex w-full items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300",
+                  {
+                    "px-3 py-2 text-sm": input,
+                    "px-2 py-1 text-xs": !input,
+                    "cursor-not-allowed text-custom-text-200": disabled,
+                    "cursor-pointer hover:bg-custom-background-80": !disabled,
+                  },
+                  buttonClassName
+                )}
+                onClick={toggleDropdown}
+              >
+                {label}
+                {!noChevron && !disabled && <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />}
+              </button>
+            </Combobox.Button>
+          )}
+        </>
+        {isOpen &&
+          createPortal(
+            <Combobox.Options data-prevent-outside-click>
+              <div
+                className={cn(
+                  "my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-48 whitespace-nowrap z-30",
+                  optionsClassName
+                )}
+                ref={setPopperElement}
+                style={styles.popper}
+                {...attributes.popper}
+              >
+                <div
+                  className={cn("space-y-1 overflow-y-scroll", {
+                    "max-h-60": maxHeight === "lg",
+                    "max-h-48": maxHeight === "md",
+                    "max-h-36": maxHeight === "rg",
+                    "max-h-28": maxHeight === "sm",
+                  })}
+                >
+                  {children}
+                </div>
               </div>
-            </div>
-          </Combobox.Options>,
-          document.body
-        )}
+            </Combobox.Options>,
+            document.body
+          )}
       </Combobox>
     </DropdownContext.Provider>
   );
@@ -165,10 +165,7 @@ function Option(props: ICustomSelectItemProps) {
       }
     >
       {({ selected }) => (
-        <div
-          onMouseDown={handleMouseDown}
-          className="flex items-center justify-between gap-2 w-full"
-        >
+        <div onMouseDown={handleMouseDown} className="flex items-center justify-between gap-2 w-full">
           {children}
           {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
         </div>
