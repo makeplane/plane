@@ -230,9 +230,9 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
       setIsProjectListOpen(true);
       // Scroll to active project
       if (projectRef.current) {
-        setTimeout(async () => {
+        setTimeout(() => {
           if (projectRef.current) {
-            await scrollIntoView(projectRef.current, {
+            scrollIntoView(projectRef.current, {
               behavior: "smooth",
               block: "center",
               scrollMode: "if-needed",
