@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -20,7 +18,9 @@ export type TSendWorkspaceInvitationModalProps = {
   onSubmit: (data: IWorkspaceBulkInviteFormData) => Promise<void> | undefined;
 };
 
-export const SendWorkspaceInvitationModal: React.FC<TSendWorkspaceInvitationModalProps> = observer((props) => {
+export const SendWorkspaceInvitationModal = observer(function SendWorkspaceInvitationModal(
+  props: TSendWorkspaceInvitationModalProps
+) {
   const { isOpen, onClose, onSubmit } = props;
   // store hooks
   const { t } = useTranslation();

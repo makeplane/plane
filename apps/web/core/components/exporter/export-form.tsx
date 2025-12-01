@@ -49,7 +49,7 @@ const initialWorkItemFilters = {
 
 const projectExportService = new ProjectExportService();
 
-export const ExportForm = observer((props: Props) => {
+export const ExportForm = observer(function ExportForm(props: Props) {
   // props
   const { workspaceSlug, mutateServices } = props;
   // states
@@ -92,7 +92,7 @@ export const ExportForm = observer((props: Props) => {
   });
 
   // handlers
-  const ExportCSVToMail = async (formData: FormData) => {
+  async function ExportCSVToMail(formData: FormData) {
     setExportLoading(true);
     if (workspaceSlug && user) {
       const payload = {
@@ -143,7 +143,8 @@ export const ExportForm = observer((props: Props) => {
           });
         });
     }
-  };
+  }
+
   return (
     <form onSubmit={handleSubmit(ExportCSVToMail)} className="flex flex-col gap-4 mt-4">
       <div className="flex gap-4">

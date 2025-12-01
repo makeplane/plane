@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -29,7 +28,7 @@ type Props = {
   isTrialAllowed: boolean;
 };
 
-export const PlanCheckoutButton: FC<Props> = observer((props) => {
+export const PlanCheckoutButton = observer(function PlanCheckoutButton(props: Props) {
   const {
     planeName,
     planVariant,

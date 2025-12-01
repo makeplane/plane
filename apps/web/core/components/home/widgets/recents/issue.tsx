@@ -22,7 +22,7 @@ type BlockProps = {
   ref: React.RefObject<HTMLDivElement>;
   workspaceSlug: string;
 };
-export const RecentIssue = observer((props: BlockProps) => {
+export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
   const { activity, ref, workspaceSlug } = props;
   // hooks
   const { getStateById } = useProjectState();

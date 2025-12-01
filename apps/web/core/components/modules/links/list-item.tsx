@@ -20,7 +20,7 @@ type Props = {
   link: ILinkDetails;
 };
 
-export const ModulesLinksListItem: React.FC<Props> = observer((props) => {
+export const ModulesLinksListItem = observer(function ModulesLinksListItem(props: Props) {
   const { handleDeleteLink, handleEditLink, isEditingAllowed, link } = props;
   // store hooks
   const { getUserDetails } = useMember();

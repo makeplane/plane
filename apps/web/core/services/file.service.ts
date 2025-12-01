@@ -2,7 +2,7 @@ import type { AxiosRequestConfig } from "axios";
 // plane types
 import { API_BASE_URL } from "@plane/constants";
 import { getFileMetaDataForUpload, generateFileUploadPayload } from "@plane/services";
-import type { TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
+import type { EFileAssetType, TFileEntityInfo, TFileSignedURLResponse } from "@plane/types";
 import { getAssetIdFromUrl } from "@plane/utils";
 // helpers
 // services
@@ -279,6 +279,22 @@ export class FileService extends APIService {
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;
+      });
+  }
+
+  async duplicateAsset(
+    workspaceSlug: string,
+    assetId: string,
+    data: {
+      entity_id?: string;
+      entity_type: EFileAssetType;
+      project_id?: string;
+    }
+  ): Promise<{ asset_id: string }> {
+    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/duplicate-assets/${assetId}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
       });
   }
 }

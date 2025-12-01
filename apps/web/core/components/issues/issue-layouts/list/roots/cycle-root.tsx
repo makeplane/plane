@@ -12,7 +12,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { CycleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseListRoot } from "../base-list-root";
 
-export const CycleListLayout: React.FC = observer(() => {
+export const CycleListLayout = observer(function CycleListLayout() {
   const { workspaceSlug, projectId, cycleId } = useParams();
   // store
   const { issues } = useIssues(EIssuesStoreType.CYCLE);

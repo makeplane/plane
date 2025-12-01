@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { LockKeyhole, LockKeyholeOpen } from "lucide-react";
@@ -20,7 +18,7 @@ type Props = {
   page: TPageInstance;
 };
 
-export const PageLockControl = observer(({ page }: Props) => {
+export const PageLockControl = observer(function PageLockControl({ page }: Props) {
   // Initial state: if locked, then "locked", otherwise default to "neutral"
   const [displayState, setDisplayState] = useState<LockDisplayState>(page.is_locked ? "locked" : "neutral");
   // derived values

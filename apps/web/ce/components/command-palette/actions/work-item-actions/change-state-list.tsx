@@ -14,7 +14,7 @@ export type TChangeWorkItemStateListProps = {
   handleStateChange: (stateId: string) => void;
 };
 
-export const ChangeWorkItemStateList = observer((props: TChangeWorkItemStateListProps) => {
+export const ChangeWorkItemStateList = observer(function ChangeWorkItemStateList(props: TChangeWorkItemStateListProps) {
   const { projectId, currentStateId, handleStateChange } = props;
   // store hooks
   const { getProjectStates } = useProjectState();

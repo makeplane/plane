@@ -1,12 +1,11 @@
-"use client";
-
-import React, { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
 import { Plus, Search } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { copyUrlToClipboard, orderJoinedProjects } from "@plane/utils";
@@ -20,7 +19,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import type { TProject } from "@/plane-web/types";
 import { ExtendedSidebarWrapper } from "./extended-sidebar-wrapper";
 
-export const ExtendedProjectSidebar = observer(() => {
+export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar() {
   // refs
   const extendedProjectSidebarRef = useRef<HTMLDivElement | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -77,7 +76,7 @@ export const ExtendedProjectSidebar = observer(() => {
     EUserPermissionsLevel.WORKSPACE
   );
 
-  const handleClose = () => toggleExtendedProjectSidebar(false);
+  const handleClose = useCallback(() => toggleExtendedProjectSidebar(false), [toggleExtendedProjectSidebar]);
 
   const handleCopyText = (projectId: string) => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`).then(() => {
@@ -103,8 +102,9 @@ export const ExtendedProjectSidebar = observer(() => {
         extendedSidebarRef={extendedProjectSidebarRef}
         handleClose={handleClose}
         excludedElementId="extended-project-sidebar-toggle"
+        className="px-0"
       >
-        <div className="flex flex-col gap-1 w-full sticky top-4 pt-0 px-4">
+        <div className="flex flex-col gap-1 w-full sticky top-4 px-4">
           <div className="flex items-center justify-between">
             <span className="text-sm font-semibold text-custom-text-300 py-1.5">Projects</span>
             {isAuthorizedUser && (
@@ -112,7 +112,7 @@ export const ExtendedProjectSidebar = observer(() => {
                 <button
                   type="button"
                   data-ph-element={PROJECT_TRACKER_ELEMENTS.EXTENDED_SIDEBAR_ADD_BUTTON}
-                  className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
+                  className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0 text-custom-text-300 hover:text-custom-text-200 transition-colors"
                   onClick={() => {
                     setIsProjectModalOpen(true);
                   }}
@@ -133,21 +133,33 @@ export const ExtendedProjectSidebar = observer(() => {
             />
           </div>
         </div>
-        <div className="flex flex-col gap-0.5 overflow-x-hidden overflow-y-auto vertical-scrollbar scrollbar-sm flex-grow mt-4 px-4">
-          {filteredProjects.map((projectId, index) => (
-            <SidebarProjectsListItem
-              key={projectId}
-              projectId={projectId}
-              handleCopyText={() => handleCopyText(projectId)}
-              projectListType={"JOINED"}
-              disableDrag={false}
-              disableDrop={false}
-              isLastChild={index === joinedProjects.length - 1}
-              handleOnProjectDrop={handleOnProjectDrop}
-              renderInExtendedSidebar
+        {filteredProjects.length === 0 ? (
+          <div className="flex flex-col items-center mt-4 p-10">
+            <EmptyStateCompact
+              title={t("common_empty_state.search.title")}
+              description={t("common_empty_state.search.description")}
+              assetKey="search"
+              assetClassName="size-20"
+              align="center"
             />
-          ))}
-        </div>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-0.5 overflow-x-hidden overflow-y-auto vertical-scrollbar scrollbar-sm flex-grow mt-4 pl-9 pr-2">
+            {filteredProjects.map((projectId, index) => (
+              <SidebarProjectsListItem
+                key={projectId}
+                projectId={projectId}
+                handleCopyText={() => handleCopyText(projectId)}
+                projectListType={"JOINED"}
+                disableDrag={false}
+                disableDrop={false}
+                isLastChild={index === filteredProjects.length - 1}
+                handleOnProjectDrop={handleOnProjectDrop}
+                renderInExtendedSidebar
+              />
+            ))}
+          </div>
+        )}
       </ExtendedSidebarWrapper>
     </>
   );

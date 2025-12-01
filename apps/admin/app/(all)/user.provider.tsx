@@ -1,12 +1,10 @@
-"use client";
-
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // hooks
 import { useInstance, useTheme, useUser } from "@/hooks/store";
 
-export const UserProvider = observer<React.FC<React.PropsWithChildren>>(({ children }) => {
+export const UserProvider = observer(function UserProvider({ children }: React.PropsWithChildren) {
   // hooks
   const { isSidebarCollapsed, toggleSidebar } = useTheme();
   const { currentUser, fetchCurrentUser } = useUser();

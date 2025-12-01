@@ -19,7 +19,7 @@ type Props = {
   page: TPageInstance;
 };
 
-export const PageEditorToolbarRoot: React.FC<Props> = observer((props) => {
+export const PageEditorToolbarRoot = observer(function PageEditorToolbarRoot(props: Props) {
   const { handleOpenNavigationPane, isNavigationPaneOpen, page } = props;
   // translation
   const { t } = useTranslation();

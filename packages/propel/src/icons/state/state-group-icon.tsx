@@ -17,13 +17,13 @@ const iconComponents = {
   unstarted: UnstartedGroupIcon,
 };
 
-export const StateGroupIcon: React.FC<IStateGroupIcon> = ({
+export function StateGroupIcon({
   className = "",
   color,
   stateGroup,
   size = EIconSize.SM,
   percentage,
-}) => {
+}: IStateGroupIcon) {
   const StateIconComponent = iconComponents[stateGroup] || UnstartedGroupIcon;
 
   return (
@@ -35,4 +35,4 @@ export const StateGroupIcon: React.FC<IStateGroupIcon> = ({
       percentage={percentage}
     />
   );
-};
+}

@@ -19,7 +19,7 @@ export type ProductUpdatesModalProps = {
   handleClose: () => void;
 };
 
-export const ProductUpdatesModal: FC<ProductUpdatesModalProps> = observer((props) => {
+export const ProductUpdatesModal = observer(function ProductUpdatesModal(props: ProductUpdatesModalProps) {
   const { isOpen, handleClose } = props;
   const { t } = useTranslation();
   const { config } = useInstance();

@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import React from "react";
 import { isEmpty } from "lodash-es";
@@ -23,7 +22,7 @@ type Props = {
   cycleDetails: ICycle;
 };
 
-export const CycleSidebarDetails: FC<Props> = observer((props) => {
+export const CycleSidebarDetails = observer(function CycleSidebarDetails(props: Props) {
   const { projectId, cycleDetails } = props;
   // hooks
   const { getUserDetails } = useMember();

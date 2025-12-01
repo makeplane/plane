@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // components
 import { LabelListItem } from "./label-list-item";
@@ -14,7 +13,7 @@ type TLabelList = {
   disabled: boolean;
 };
 
-export const LabelList: FC<TLabelList> = observer((props) => {
+export const LabelList = observer(function LabelList(props: TLabelList) {
   const { workspaceSlug, projectId, issueId, values, labelOperations, disabled } = props;
   const issueLabels = values || undefined;
 

@@ -13,7 +13,7 @@ interface FilterItemContainerProps {
   tooltipContent?: React.ReactNode;
 }
 
-export const FilterItemContainer: React.FC<FilterItemContainerProps> = (props) => {
+export function FilterItemContainer(props: FilterItemContainerProps) {
   const { children, conditionValue, showTransition, variant = "default", tooltipContent } = props;
   // refs
   const itemRef = useRef<HTMLDivElement>(null);
@@ -61,4 +61,4 @@ export const FilterItemContainer: React.FC<FilterItemContainerProps> = (props) =
       </div>
     </Tooltip>
   );
-};
+}

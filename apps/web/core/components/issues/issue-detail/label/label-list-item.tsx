@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { CloseIcon } from "@plane/propel/icons";
 // types
@@ -15,7 +14,7 @@ type TLabelListItem = {
   disabled: boolean;
 };
 
-export const LabelListItem: FC<TLabelListItem> = observer((props) => {
+export const LabelListItem = observer(function LabelListItem(props: TLabelListItem) {
   const { workspaceSlug, projectId, issueId, labelId, values, labelOperations, disabled } = props;
   // hooks
   const { getLabelById } = useLabel();

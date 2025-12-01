@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane package imports
 import { Logo } from "@plane/propel/emoji-icon-picker";
@@ -14,7 +12,7 @@ type Props = {
   projectIds: string[] | undefined;
 };
 
-export const ProjectSelect: React.FC<Props> = observer((props) => {
+export const ProjectSelect = observer(function ProjectSelect(props: Props) {
   const { value, onChange, projectIds } = props;
   const { getProjectById } = useProject();
 

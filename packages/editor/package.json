@@ -5,18 +5,12 @@
   "license": "AGPL-3.0",
   "private": true,
   "type": "module",
-  "main": "./dist/index.cjs",
+  "main": "./dist/index.js",
   "module": "./dist/index.js",
-  "types": "./dist/index.d.cts",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    },
-    "./lib": {
-      "import": "./dist/lib.js",
-      "require": "./dist/lib.cjs"
-    },
+    ".": "./dist/index.js",
+    "./lib": "./dist/lib.js",
     "./package.json": "./package.json",
     "./styles.css": "./dist/styles/index.css",
     "./styles": "./dist/styles/index.css"
@@ -89,6 +83,7 @@
     "@plane/eslint-config": "workspace:*",
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
+    "@prettier/plugin-oxc": "0.0.4",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",

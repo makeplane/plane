@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, ReactNode } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
@@ -17,11 +15,13 @@ import {
   PROJECT_ME_INFORMATION,
   PROJECT_LABELS,
   PROJECT_MEMBERS,
+  PROJECT_MEMBER_PREFERENCES,
   PROJECT_STATES,
   PROJECT_ESTIMATES,
   PROJECT_ALL_CYCLES,
   PROJECT_MODULES,
   PROJECT_VIEWS,
+  PROJECT_INTAKE_STATE,
 } from "@/constants/fetch-keys";
 import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
@@ -34,7 +34,7 @@ import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useProjectView } from "@/hooks/store/use-project-view";
-import { useUserPermissions } from "@/hooks/store/user";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useTimeLineChart } from "@/hooks/use-timeline-chart";
 
 interface IProjectAuthWrapper {
@@ -44,7 +44,7 @@ interface IProjectAuthWrapper {
   isLoading?: boolean;
 }
 
-export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
+export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IProjectAuthWrapper) {
   const { workspaceSlug, projectId, children, isLoading: isParentLoading = false } = props;
   // plane hooks
   const { t } = useTranslation();
@@ -57,9 +57,10 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const { initGantt } = useTimeLineChart(GANTT_TIMELINE_TYPE.MODULE);
   const { fetchViews } = useProjectView();
   const {
-    project: { fetchProjectMembers },
+    project: { fetchProjectMembers, fetchProjectMemberPreferences },
   } = useMember();
-  const { fetchProjectStates } = useProjectState();
+  const { fetchProjectStates, fetchProjectIntakeState } = useProjectState();
+  const { data: currentUserData } = useUser();
   const { fetchProjectLabels } = useLabel();
   const { getProjectEstimates } = useProjectEstimates();
 
@@ -86,10 +87,13 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     workspaceSlug && projectId ? () => fetchProjectDetails(workspaceSlug, projectId) : null
   );
 
-  // fetching user project member information
+  // fetching project member preferences
   useSWR(
-    workspaceSlug && projectId ? PROJECT_ME_INFORMATION(workspaceSlug, projectId) : null,
-    workspaceSlug && projectId ? () => fetchUserProjectInfo(workspaceSlug, projectId) : null
+    workspaceSlug && projectId && currentUserData?.id ? PROJECT_MEMBER_PREFERENCES(workspaceSlug, projectId) : null,
+    workspaceSlug && projectId && currentUserData?.id
+      ? () => fetchProjectMemberPreferences(workspaceSlug, projectId, currentUserData.id)
+      : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project labels
   useSWR(
@@ -107,6 +111,12 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   useSWR(
     workspaceSlug && projectId ? PROJECT_STATES(workspaceSlug, projectId) : null,
     workspaceSlug && projectId ? () => fetchProjectStates(workspaceSlug, projectId) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+  // fetching project intake state
+  useSWR(
+    workspaceSlug && projectId ? PROJECT_INTAKE_STATE(workspaceSlug, projectId) : null,
+    workspaceSlug && projectId ? () => fetchProjectIntakeState(workspaceSlug, projectId) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project estimates

@@ -48,7 +48,7 @@ const timelineViewHelpers = {
   quarter: quarterView,
 };
 
-export const ChartViewRoot: FC<ChartViewRootProps> = observer((props) => {
+export const ChartViewRoot = observer(function ChartViewRoot(props: ChartViewRootProps) {
   const {
     border,
     title,

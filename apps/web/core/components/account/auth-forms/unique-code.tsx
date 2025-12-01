@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { CircleCheck, XCircle } from "lucide-react";
 import { API_BASE_URL, AUTH_TRACKER_ELEMENTS, AUTH_TRACKER_EVENTS } from "@plane/constants";
@@ -37,7 +35,7 @@ const defaultValues: TUniqueCodeFormValues = {
   code: "",
 };
 
-export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
+export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
   const { mode, email, handleEmailClear, generateEmailUniqueCode, isExistingEmail, nextPath } = props;
   // derived values
   const defaultResetTimerValue = 5;
@@ -205,4 +203,4 @@ export const AuthUniqueCodeForm: React.FC<TAuthUniqueCodeForm> = (props) => {
       </div>
     </form>
   );
-};
+}

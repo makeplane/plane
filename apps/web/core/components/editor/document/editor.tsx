@@ -29,10 +29,14 @@ type DocumentEditorWrapperProps = MakeOptional<
         editable: true;
         searchMentionCallback: (payload: TSearchEntityRequestPayload) => Promise<TSearchResponse>;
         uploadFile: TFileHandler["upload"];
+        duplicateFile: TFileHandler["duplicate"];
       }
   );
 
-export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProps>((props, ref) => {
+export const DocumentEditor = forwardRef(function DocumentEditor(
+  props: DocumentEditorWrapperProps,
+  ref: React.ForwardedRef<EditorRefApi>
+) {
   const {
     containerClassName,
     editable,
@@ -52,7 +56,8 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
   });
   // editor flaggings
   const { document: documentEditorExtensions } = useEditorFlagging({
-    workspaceSlug: workspaceSlug?.toString() ?? "",
+    workspaceSlug,
+    projectId,
   });
   // use editor mention
   const { fetchMentions } = useEditorMention({
@@ -71,6 +76,7 @@ export const DocumentEditor = forwardRef<EditorRefApi, DocumentEditorWrapperProp
       fileHandler={getEditorFileHandlers({
         projectId,
         uploadFile: editable ? props.uploadFile : async () => "",
+        duplicateFile: editable ? props.duplicateFile : async () => "",
         workspaceId,
         workspaceSlug,
       })}

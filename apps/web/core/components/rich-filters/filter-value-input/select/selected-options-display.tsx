@@ -13,7 +13,7 @@ type TSelectedOptionsDisplayProps<V extends TFilterValue> = {
   fallbackText?: string;
 };
 
-export const SelectedOptionsDisplay = <V extends TFilterValue>(props: TSelectedOptionsDisplayProps<V>) => {
+export function SelectedOptionsDisplay<V extends TFilterValue>(props: TSelectedOptionsDisplayProps<V>) {
   const { selectedValue, options, displayCount = 2, emptyValue = EMPTY_FILTER_PLACEHOLDER_TEXT, fallbackText } = props;
   // derived values
   const selectedArray = toFilterArray(selectedValue);
@@ -59,4 +59,4 @@ export const SelectedOptionsDisplay = <V extends TFilterValue>(props: TSelectedO
       )}
     </div>
   );
-};
+}

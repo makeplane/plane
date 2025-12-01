@@ -1,5 +1,3 @@
-"use client";
-
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -24,7 +22,7 @@ interface IssueBlockProps {
   displayProperties: IIssueDisplayProperties | undefined;
 }
 
-export const IssueBlock = observer((props: IssueBlockProps) => {
+export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
   const { anchor } = useParams();
   const { issueId, displayProperties } = props;
   const searchParams = useSearchParams();

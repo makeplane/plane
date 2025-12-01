@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // hooks
 import { CloseIcon, ModuleIcon } from "@plane/propel/icons";
@@ -12,7 +10,7 @@ type Props = {
   editable: boolean | undefined;
 };
 
-export const AppliedModuleFilters: React.FC<Props> = observer((props) => {
+export const AppliedModuleFilters = observer(function AppliedModuleFilters(props: Props) {
   const { handleRemove, values, editable } = props;
   // store hooks
   const { getModuleById } = useModule();

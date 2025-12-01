@@ -7,7 +7,7 @@ type LucideIconsListProps = {
   query: string;
 };
 
-export const LucideIconsList: React.FC<LucideIconsListProps> = (props) => {
+export function LucideIconsList(props: LucideIconsListProps) {
   const { query, onChange, activeColor } = props;
 
   const filteredArray = LUCIDE_ICONS_LIST.filter((icon) => icon.name.toLowerCase().includes(query.toLowerCase()));
@@ -31,4 +31,4 @@ export const LucideIconsList: React.FC<LucideIconsListProps> = (props) => {
       ))}
     </>
   );
-};
+}

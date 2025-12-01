@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { PlaneLockup } from "@plane/propel/icons";
 // assets
@@ -10,7 +8,7 @@ import { UserAvatar } from "@/components/issues/navbar/user-avatar";
 // hooks
 import { useUser } from "@/hooks/store/use-user";
 
-export const UserLoggedIn = observer(() => {
+export const UserLoggedIn = observer(function UserLoggedIn() {
   // store hooks
   const { data: user } = useUser();
 

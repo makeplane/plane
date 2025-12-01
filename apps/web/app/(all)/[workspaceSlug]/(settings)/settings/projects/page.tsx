@@ -1,4 +1,3 @@
-"use client";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
@@ -6,7 +5,7 @@ import { Button, getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 
-const ProjectSettingsPage = () => {
+function ProjectSettingsPage() {
   // store hooks
   const { resolvedTheme } = useTheme();
   const { toggleCreateProjectModal } = useCommandPalette();
@@ -37,6 +36,6 @@ const ProjectSettingsPage = () => {
       </div>
     </div>
   );
-};
+}
 
 export default ProjectSettingsPage;

@@ -9,7 +9,7 @@ type Props = {
   payload: Payload<ValueType, NameType>[];
 };
 
-export const CustomPieChartTooltip = React.memo((props: Props) => {
+export const CustomPieChartTooltip = React.memo(function CustomPieChartTooltip(props: Props) {
   const { dotColor, label, payload } = props;
 
   return (

@@ -8,11 +8,11 @@ import {
 import type { ISvgIcons } from "@plane/propel/icons";
 import { EIssueLayoutTypes } from "@plane/types";
 
-export const IssueLayoutIcon = ({
+export function IssueLayoutIcon({
   layout,
   size,
   ...props
-}: { layout: EIssueLayoutTypes; size?: number } & Omit<ISvgIcons, "width" | "height">) => {
+}: { layout: EIssueLayoutTypes; size?: number } & Omit<ISvgIcons, "width" | "height">) {
   const iconProps = {
     ...props,
     ...(size && { width: size, height: size }),
@@ -32,4 +32,4 @@ export const IssueLayoutIcon = ({
     default:
       return null;
   }
-};
+}

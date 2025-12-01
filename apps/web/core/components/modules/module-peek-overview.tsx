@@ -14,7 +14,11 @@ type Props = {
   isArchived?: boolean;
 };
 
-export const ModulePeekOverview: React.FC<Props> = observer(({ projectId, workspaceSlug, isArchived = false }) => {
+export const ModulePeekOverview = observer(function ModulePeekOverview({
+  projectId,
+  workspaceSlug,
+  isArchived = false,
+}: Props) {
   // router
   const router = useAppRouter();
   const pathname = usePathname();

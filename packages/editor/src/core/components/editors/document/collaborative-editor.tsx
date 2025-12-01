@@ -13,9 +13,9 @@ import { getEditorClassNames } from "@/helpers/common";
 import { useCollaborativeEditor } from "@/hooks/use-collaborative-editor";
 // types
 import type { EditorRefApi, ICollaborativeDocumentEditorProps } from "@/types";
+import { DocumentEditorSideEffects } from "@/plane-editor/components/document-editor-side-effects";
 
-// Inner component that has access to collaboration context
-const CollaborativeDocumentEditorInner: React.FC<ICollaborativeDocumentEditorProps> = (props) => {
+function CollaborativeDocumentEditorInner(props: ICollaborativeDocumentEditorProps) {
   const {
     aiHandler,
     bubbleMenuEnabled = true,
@@ -106,6 +106,7 @@ const CollaborativeDocumentEditorInner: React.FC<ICollaborativeDocumentEditorPro
           showContentSkeleton && !isLoading && "opacity-0 pointer-events-none"
         )}
       >
+        <DocumentEditorSideEffects editor={editor} id={id} extendedEditorProps={extendedEditorProps} />
         <PageRenderer
           aiHandler={aiHandler}
           bubbleMenuEnabled={bubbleMenuEnabled}
@@ -128,7 +129,7 @@ const CollaborativeDocumentEditorInner: React.FC<ICollaborativeDocumentEditorPro
       </div>
     </>
   );
-};
+}
 
 // Outer component that provides collaboration context
 const CollaborativeDocumentEditor: React.FC<ICollaborativeDocumentEditorProps> = (props) => {

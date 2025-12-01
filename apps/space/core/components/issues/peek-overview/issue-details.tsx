@@ -12,7 +12,7 @@ type Props = {
   issueDetails: IIssue;
 };
 
-export const PeekOverviewIssueDetails: React.FC<Props> = observer((props) => {
+export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetails(props: Props) {
   const { anchor, issueDetails } = props;
   // store hooks
   const { project_details, workspace: workspaceID } = usePublish(anchor);

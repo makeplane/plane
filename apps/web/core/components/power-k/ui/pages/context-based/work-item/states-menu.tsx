@@ -1,5 +1,3 @@
-"use client";
-
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 // plane types
@@ -16,7 +14,7 @@ type Props = {
   workItemDetails: TIssue;
 };
 
-export const PowerKProjectStatesMenu: React.FC<Props> = observer((props) => {
+export const PowerKProjectStatesMenu = observer(function PowerKProjectStatesMenu(props: Props) {
   const { workItemDetails } = props;
   // router
   const { workspaceSlug } = useParams();

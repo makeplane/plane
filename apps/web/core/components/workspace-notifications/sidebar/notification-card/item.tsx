@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Clock } from "lucide-react";
@@ -21,7 +18,7 @@ type TNotificationItem = {
   notificationId: string;
 };
 
-export const NotificationItem: FC<TNotificationItem> = observer((props) => {
+export const NotificationItem = observer(function NotificationItem(props: TNotificationItem) {
   const { workspaceSlug, notificationId } = props;
   // hooks
   const { currentSelectedNotificationId, setCurrentSelectedNotificationId } = useWorkspaceNotifications();
@@ -55,7 +52,9 @@ export const NotificationItem: FC<TNotificationItem> = observer((props) => {
       }
 
       if (notification?.is_inbox_issue === false) {
-        !getIsIssuePeeked(issueId) && setPeekIssue({ workspaceSlug, projectId, issueId });
+        if (!getIsIssuePeeked(issueId)) {
+          setPeekIssue({ workspaceSlug, projectId, issueId });
+        }
       }
     }
   };

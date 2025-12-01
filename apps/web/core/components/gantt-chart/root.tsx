@@ -32,7 +32,7 @@ type GanttChartRootProps = {
   isEpic?: boolean;
 };
 
-export const GanttChartRoot: FC<GanttChartRootProps> = observer((props) => {
+export const GanttChartRoot = observer(function GanttChartRoot(props: GanttChartRootProps) {
   const {
     border = true,
     title,

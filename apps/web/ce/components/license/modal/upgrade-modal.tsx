@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -28,7 +26,7 @@ export type PaidPlanUpgradeModalProps = {
   handleClose: () => void;
 };
 
-export const PaidPlanUpgradeModal: FC<PaidPlanUpgradeModalProps> = observer((props) => {
+export const PaidPlanUpgradeModal = observer(function PaidPlanUpgradeModal(props: PaidPlanUpgradeModalProps) {
   const { isOpen, handleClose } = props;
   // derived values
   const isSelfHosted = true;

@@ -45,10 +45,14 @@ type LiteTextEditorWrapperProps = MakeOptional<
     | {
         editable: true;
         uploadFile: TFileHandler["upload"];
+        duplicateFile: TFileHandler["duplicate"];
       }
   );
 
-export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapperProps>((props, ref) => {
+export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
+  props: LiteTextEditorWrapperProps,
+  ref: React.ForwardedRef<EditorRefApi>
+) {
   const { t } = useTranslation();
   const {
     containerClassName,
@@ -77,7 +81,8 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
   const [editorRef, setEditorRef] = useState<EditorRefApi | null>(null);
   // editor flaggings
   const { liteText: liteTextEditorExtensions } = useEditorFlagging({
-    workspaceSlug: workspaceSlug?.toString() ?? "",
+    workspaceSlug,
+    projectId,
   });
   // store hooks
   const { getUserDetails } = useMember();
@@ -127,6 +132,7 @@ export const LiteTextEditor = React.forwardRef<EditorRefApi, LiteTextEditorWrapp
             fileHandler={getEditorFileHandlers({
               projectId,
               uploadFile: editable ? props.uploadFile : async () => "",
+              duplicateFile: editable ? props.duplicateFile : async () => "",
               workspaceId,
               workspaceSlug,
             })}

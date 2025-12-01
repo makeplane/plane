@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -34,7 +32,7 @@ type TIssueParentSelect = {
   workItemLink: string;
 };
 
-export const IssueParentSelect: React.FC<TIssueParentSelect> = observer((props) => {
+export const IssueParentSelect = observer(function IssueParentSelect(props: TIssueParentSelect) {
   const {
     className = "",
     disabled = false,

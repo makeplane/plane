@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import type { IState, TStateGroups, TStateOperationsCallbacks } from "@plane/types";
 // components
@@ -16,7 +13,7 @@ type TStateList = {
   stateItemClassName?: string;
 };
 
-export const StateList: FC<TStateList> = observer((props) => {
+export const StateList = observer(function StateList(props: TStateList) {
   const {
     groupKey,
     groupedStates,

@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Info, Lock } from "lucide-react";
@@ -33,7 +30,7 @@ export interface IProjectDetailsForm {
   isAdmin: boolean;
 }
 const projectService = new ProjectService();
-export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
+export function ProjectDetailsForm(props: IProjectDetailsForm) {
   const { project, workspaceSlug, projectId, isAdmin } = props;
   const { t } = useTranslation();
   // states
@@ -414,6 +411,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                     }}
                     error={Boolean(errors.timezone)}
                     buttonClassName="border-none"
+                    disabled={!isAdmin}
                   />
                 </>
               )}
@@ -440,4 +438,4 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       </div>
     </form>
   );
-};
+}

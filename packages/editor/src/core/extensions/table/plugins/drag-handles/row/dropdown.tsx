@@ -62,7 +62,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const RowOptionsDropdown: React.FC<Props> = (props) => {
+export function RowOptionsDropdown(props: Props) {
   const { editor, onClose } = props;
 
   return (
@@ -100,4 +100,4 @@ export const RowOptionsDropdown: React.FC<Props> = (props) => {
       ))}
     </>
   );
-};
+}

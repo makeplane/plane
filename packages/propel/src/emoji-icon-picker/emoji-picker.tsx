@@ -8,7 +8,7 @@ import type { TCustomEmojiPicker } from "./helper";
 import { emojiToString, EmojiIconPickerTypes } from "./helper";
 import { IconRoot } from "./icon/icon-root";
 
-export const EmojiPicker: React.FC<TCustomEmojiPicker> = (props) => {
+export function EmojiPicker(props: TCustomEmojiPicker) {
   const {
     isOpen,
     handleToggle,
@@ -135,4 +135,4 @@ export const EmojiPicker: React.FC<TCustomEmojiPicker> = (props) => {
       </Popover.Panel>
     </Popover>
   );
-};
+}

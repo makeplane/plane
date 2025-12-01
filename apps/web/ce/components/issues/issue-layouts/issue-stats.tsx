@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React from "react";
 
@@ -11,4 +9,6 @@ type Props = {
   showLabel?: boolean;
 };
 
-export const IssueStats: FC<Props> = (props) => <></>;
+export function IssueStats(props: Props) {
+  return <></>;
+}

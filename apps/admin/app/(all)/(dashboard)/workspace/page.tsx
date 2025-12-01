@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -18,7 +16,7 @@ import { WorkspaceListItem } from "@/components/workspace/list-item";
 import { useInstance, useWorkspace } from "@/hooks/store";
 import type { Route } from "./+types/page";
 
-const WorkspaceManagementPage = observer<React.FC<Route.ComponentProps>>(() => {
+const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props: Route.ComponentProps) {
   // states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   // store

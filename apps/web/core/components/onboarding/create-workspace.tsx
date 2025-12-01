@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -34,7 +32,7 @@ type Props = {
 // services
 const workspaceService = new WorkspaceService();
 
-export const CreateWorkspace: React.FC<Props> = observer((props) => {
+export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
   const { stepChange, user, invitedWorkspaces, handleCurrentViewChange } = props;
   // states
   const [slugError, setSlugError] = useState(false);

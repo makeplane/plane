@@ -1,5 +1,3 @@
-"use client";
-
 import type { FormEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
@@ -39,7 +37,7 @@ const defaultValues: TResetPasswordFormValues = {
 // services
 const authService = new AuthService();
 
-export const SetPasswordForm = observer(() => {
+export const SetPasswordForm = observer(function SetPasswordForm() {
   // router
   const router = useAppRouter();
   // search params

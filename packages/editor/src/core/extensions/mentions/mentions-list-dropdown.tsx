@@ -1,5 +1,3 @@
-"use client";
-
 import { FloatingOverlay } from "@floating-ui/react";
 import type { SuggestionProps } from "@tiptap/suggestion";
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
@@ -17,7 +15,7 @@ export type MentionsListDropdownProps = SuggestionProps<TMentionSection, TMentio
     onClose: () => void;
   };
 
-export const MentionsListDropdown = forwardRef((props: MentionsListDropdownProps, ref) => {
+export const MentionsListDropdown = forwardRef(function MentionsListDropdown(props: MentionsListDropdownProps, ref) {
   const { command, query, searchCallback, onClose } = props;
   // states
   const [sections, setSections] = useState<TMentionSection[]>([]);

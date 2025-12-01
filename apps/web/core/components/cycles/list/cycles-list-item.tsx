@@ -1,4 +1,3 @@
-"use client";
 import type { FC, MouseEvent } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
@@ -29,7 +28,7 @@ type TCyclesListItem = {
   className?: string;
 };
 
-export const CyclesListItem: FC<TCyclesListItem> = observer((props) => {
+export const CyclesListItem = observer(function CyclesListItem(props: TCyclesListItem) {
   const { cycleId, workspaceSlug, projectId, className = "" } = props;
   // refs
   const parentRef = useRef(null);

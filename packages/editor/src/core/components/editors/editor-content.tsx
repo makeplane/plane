@@ -23,4 +23,4 @@ export const EditorContentWrapper: FC<Props> = (props) => {
       {children}
     </div>
   );
-};
+}

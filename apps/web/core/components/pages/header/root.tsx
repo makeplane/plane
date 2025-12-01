@@ -27,7 +27,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const PagesListHeaderRoot: React.FC<Props> = observer((props) => {
+export const PagesListHeaderRoot = observer(function PagesListHeaderRoot(props: Props) {
   const { pageType, projectId, storeType, workspaceSlug } = props;
   const { t } = useTranslation();
   // store hooks

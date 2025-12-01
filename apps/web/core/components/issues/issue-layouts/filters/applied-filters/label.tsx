@@ -12,7 +12,7 @@ type Props = {
   editable: boolean | undefined;
 };
 
-export const AppliedLabelsFilters: React.FC<Props> = observer((props) => {
+export const AppliedLabelsFilters = observer(function AppliedLabelsFilters(props: Props) {
   const { handleRemove, labels, values, editable } = props;
 
   return (

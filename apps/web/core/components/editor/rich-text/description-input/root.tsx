@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useEffect, useState, useRef } from "react";
 import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
@@ -89,7 +87,7 @@ type Props = {
  * @description DescriptionInput component for rich text editor with autosave functionality using debounce
  * The component also makes an API call to save the description on unmount
  */
-export const DescriptionInput: React.FC<Props> = observer((props) => {
+export const DescriptionInput = observer(function DescriptionInput(props: Props) {
   const {
     containerClassName,
     disabled,
@@ -115,7 +113,7 @@ export const DescriptionInput: React.FC<Props> = observer((props) => {
   const hasUnsavedChanges = useRef(false);
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
-  const { uploadEditorAsset } = useEditorAsset();
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   // derived values
   const workspaceDetails = getWorkspaceBySlug(workspaceSlug);
   // translation
@@ -238,6 +236,19 @@ export const DescriptionInput: React.FC<Props> = observer((props) => {
                 } catch (error) {
                   console.log("Error in uploading asset:", error);
                   throw new Error("Asset upload failed. Please try again later.");
+                }
+              }}
+              duplicateFile={async (assetId: string) => {
+                try {
+                  const { asset_id } = await duplicateEditorAsset({
+                    assetId,
+                    entityType: fileAssetType,
+                    projectId,
+                    workspaceSlug,
+                  });
+                  return asset_id;
+                } catch {
+                  throw new Error("Asset duplication failed. Please try again later.");
                 }
               }}
             />

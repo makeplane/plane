@@ -9,7 +9,7 @@ type Props = {
   headerClassName?: string;
 };
 
-const AnalyticsSectionWrapper: React.FC<Props> = (props) => {
+function AnalyticsSectionWrapper(props: Props) {
   const { title, children, className, subtitle, actions, headerClassName } = props;
   return (
     <div className={className}>
@@ -25,6 +25,6 @@ const AnalyticsSectionWrapper: React.FC<Props> = (props) => {
       {children}
     </div>
   );
-};
+}
 
 export default AnalyticsSectionWrapper;

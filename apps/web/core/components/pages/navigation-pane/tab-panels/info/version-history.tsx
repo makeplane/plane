@@ -29,7 +29,7 @@ type VersionHistoryItemProps = {
   version: TPageVersion;
 };
 
-const VersionHistoryItem = observer((props: VersionHistoryItemProps) => {
+const VersionHistoryItem = observer(function VersionHistoryItem(props: VersionHistoryItemProps) {
   const { getVersionLink, isVersionActive, version } = props;
   // store hooks
   const { getUserDetails } = useMember();
@@ -68,7 +68,9 @@ const VersionHistoryItem = observer((props: VersionHistoryItemProps) => {
   );
 });
 
-export const PageNavigationPaneInfoTabVersionHistory: React.FC<Props> = observer((props) => {
+export const PageNavigationPaneInfoTabVersionHistory = observer(function PageNavigationPaneInfoTabVersionHistory(
+  props: Props
+) {
   const { page, versionHistory } = props;
   // navigation
   const searchParams = useSearchParams();

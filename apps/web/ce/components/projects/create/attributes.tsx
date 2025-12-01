@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
@@ -15,7 +14,7 @@ type Props = {
   isMobile?: boolean;
 };
 
-const ProjectAttributes: FC<Props> = (props) => {
+function ProjectAttributes(props: Props) {
   const { isMobile = false } = props;
   const { t } = useTranslation();
   const { control } = useFormContext<IProject>();
@@ -89,6 +88,6 @@ const ProjectAttributes: FC<Props> = (props) => {
       />
     </div>
   );
-};
+}
 
 export default ProjectAttributes;

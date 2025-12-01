@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 // Due to some weird issue with the import order, the import of useFontFaceObserver
 // should be after the imported here rather than some below helper functions as it is in the original file
@@ -17,7 +15,7 @@ type Props = {
   type?: "lucide" | "material";
 };
 
-export const Logo: FC<Props> = (props) => {
+export function Logo(props: Props) {
   const { logo, size = 16, type = "material" } = props;
 
   // destructuring the logo object
@@ -102,4 +100,4 @@ export const Logo: FC<Props> = (props) => {
 
   // if no value, return empty fragment
   return <></>;
-};
+}

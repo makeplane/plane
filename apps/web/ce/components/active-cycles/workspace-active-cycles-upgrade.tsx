@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { AlertOctagon, BarChart4, CircleDashed, Folder, Microscope, Search } from "lucide-react";
 // plane imports
@@ -63,7 +61,7 @@ export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
   },
 ];
 
-export const WorkspaceActiveCyclesUpgrade = observer(() => {
+export const WorkspaceActiveCyclesUpgrade = observer(function WorkspaceActiveCyclesUpgrade() {
   const { t } = useTranslation();
   // store hooks
   const {

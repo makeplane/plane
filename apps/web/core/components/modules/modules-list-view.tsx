@@ -18,7 +18,7 @@ import { useModule } from "@/hooks/store/use-module";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { useUserPermissions } from "@/hooks/store/user";
 
-export const ModulesListView: React.FC = observer(() => {
+export const ModulesListView = observer(function ModulesListView() {
   // router
   const { workspaceSlug, projectId } = useParams();
   const searchParams = useSearchParams();

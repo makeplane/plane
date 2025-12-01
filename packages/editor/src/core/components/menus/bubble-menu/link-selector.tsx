@@ -16,7 +16,7 @@ type Props = {
   editor: Editor;
 };
 
-export const BubbleMenuLinkSelector: FC<Props> = (props) => {
+export function BubbleMenuLinkSelector(props: Props) {
   const { editor } = props;
   // states
   const [error, setError] = useState(false);
@@ -119,4 +119,4 @@ export const BubbleMenuLinkSelector: FC<Props> = (props) => {
       </div>
     </FloatingMenuRoot>
   );
-};
+}

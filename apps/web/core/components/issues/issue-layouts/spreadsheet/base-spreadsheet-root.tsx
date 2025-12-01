@@ -33,7 +33,7 @@ interface IBaseSpreadsheetRoot {
   isEpic?: boolean;
 }
 
-export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
+export const BaseSpreadsheetRoot = observer(function BaseSpreadsheetRoot(props: IBaseSpreadsheetRoot) {
   const { QuickActions, canEditPropertiesBasedOnProject, isCompletedCycle = false, viewId, isEpic = false } = props;
   // router
   const { projectId } = useParams();

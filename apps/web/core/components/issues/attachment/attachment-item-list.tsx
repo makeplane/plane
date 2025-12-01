@@ -29,7 +29,7 @@ type TIssueAttachmentItemList = {
   issueServiceType?: TIssueServiceType;
 };
 
-export const IssueAttachmentItemList: FC<TIssueAttachmentItemList> = observer((props) => {
+export const IssueAttachmentItemList = observer(function IssueAttachmentItemList(props: TIssueAttachmentItemList) {
   const {
     workspaceSlug,
     projectId,

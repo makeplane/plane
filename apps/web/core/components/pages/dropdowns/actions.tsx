@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -61,7 +59,7 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const PageActions: React.FC<Props> = observer((props) => {
+export const PageActions = observer(function PageActions(props: Props) {
   const { extraOptions, optionsOrder, page, parentRef, storeType } = props;
   // states
   const [deletePageModal, setDeletePageModal] = useState(false);
@@ -89,7 +87,7 @@ export const PageActions: React.FC<Props> = observer((props) => {
     canCurrentUserMovePage,
   } = page;
   // menu items
-  const MENU_ITEMS: (TContextMenuItem & { key: TPageActions })[] = useMemo(() => {
+  const MENU_ITEMS = useMemo(() => {
     const menuItems: (TContextMenuItem & { key: TPageActions })[] = [
       {
         key: "toggle-lock",
@@ -178,25 +176,25 @@ export const PageActions: React.FC<Props> = observer((props) => {
     }
     return menuItems;
   }, [
-    access,
-    archived_at,
     extraOptions,
     is_locked,
-    isMovePageEnabled,
-    canCurrentUserArchivePage,
-    canCurrentUserChangeAccess,
-    canCurrentUserDeletePage,
-    canCurrentUserDuplicatePage,
     canCurrentUserLockPage,
+    access,
+    canCurrentUserChangeAccess,
+    archived_at,
+    canCurrentUserDuplicatePage,
+    canCurrentUserArchivePage,
+    canCurrentUserDeletePage,
     canCurrentUserMovePage,
+    isMovePageEnabled,
     pageOperations,
   ]);
   // arrange options
-  const arrangedOptions = useMemo(
+  const arrangedOptions = useMemo<(TContextMenuItem & { key: TPageActions })[]>(
     () =>
       optionsOrder
         .map((key) => MENU_ITEMS.find((item) => item.key === key))
-        .filter((item) => !!item) as (TContextMenuItem & { key: TPageActions })[],
+        .filter((item): item is TContextMenuItem & { key: TPageActions } => !!item),
     [optionsOrder, MENU_ITEMS]
   );
 

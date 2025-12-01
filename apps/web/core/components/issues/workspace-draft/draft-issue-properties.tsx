@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -35,7 +33,7 @@ export interface IIssueProperties {
   className: string;
 }
 
-export const DraftIssueProperties: React.FC<IIssueProperties> = observer((props) => {
+export const DraftIssueProperties = observer(function DraftIssueProperties(props: IIssueProperties) {
   const { issue, updateIssue, className } = props;
   // store hooks
   const { getProjectById } = useProject();

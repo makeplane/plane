@@ -41,7 +41,7 @@ interface IBaseListRoot {
   isCompletedCycle?: boolean;
   isEpic?: boolean;
 }
-export const BaseListRoot = observer((props: IBaseListRoot) => {
+export const BaseListRoot = observer(function BaseListRoot(props: IBaseListRoot) {
   const {
     QuickActions,
     viewId,

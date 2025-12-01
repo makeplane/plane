@@ -19,7 +19,7 @@ enum ESendEmailSteps {
 
 const instanceService = new InstanceService();
 
-export const SendTestEmailModal: React.FC<Props> = (props) => {
+export function SendTestEmailModal(props: Props) {
   const { isOpen, handleClose } = props;
 
   // state
@@ -133,4 +133,4 @@ export const SendTestEmailModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+}

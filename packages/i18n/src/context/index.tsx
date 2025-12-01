@@ -12,7 +12,7 @@ interface TranslationProviderProps {
 /**
  * Provides the translation store to the application
  */
-export const TranslationProvider: React.FC<TranslationProviderProps> = observer(({ children }) => {
+export const TranslationProvider = observer(function TranslationProvider({ children }: TranslationProviderProps) {
   const [store] = React.useState(() => new TranslationStore());
 
   return <TranslationContext.Provider value={store}>{children}</TranslationContext.Provider>;

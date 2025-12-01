@@ -20,7 +20,7 @@ interface SettingsSidebarProps {
   renderChildren?: (key: string) => React.ReactNode;
 }
 
-export const SettingsSidebar = observer((props: SettingsSidebarProps) => {
+export const SettingsSidebar = observer(function SettingsSidebar(props: SettingsSidebarProps) {
   const {
     isMobile = false,
     customHeader,

@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane types
 import type { IWorkspace } from "@plane/types";
@@ -13,7 +11,7 @@ type Props = {
   handleSelect: (workspace: IWorkspace) => void;
 };
 
-export const PowerKOpenWorkspaceMenu: React.FC<Props> = observer((props) => {
+export const PowerKOpenWorkspaceMenu = observer(function PowerKOpenWorkspaceMenu(props: Props) {
   const { handleSelect } = props;
   // store hooks
   const { loader, workspaces } = useWorkspace();

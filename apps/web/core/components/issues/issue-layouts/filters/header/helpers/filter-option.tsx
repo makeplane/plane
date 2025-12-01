@@ -11,7 +11,7 @@ type Props = {
   activePulse?: boolean;
 };
 
-export const FilterOption: React.FC<Props> = (props) => {
+export function FilterOption(props: Props) {
   const { icon, isChecked, multiple = true, onClick, title, activePulse = false } = props;
 
   return (
@@ -36,4 +36,4 @@ export const FilterOption: React.FC<Props> = (props) => {
       )}
     </button>
   );
-};
+}

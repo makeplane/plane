@@ -17,7 +17,7 @@ type RadioInputProps = {
   className?: string;
 };
 
-export const RadioInput = ({
+export function RadioInput({
   name = "radio-input",
   label: inputLabel,
   labelClassName: inputLabelClassName = "",
@@ -30,7 +30,7 @@ export const RadioInput = ({
   ariaLabel,
   onChange,
   className,
-}: RadioInputProps) => {
+}: RadioInputProps) {
   const wrapperClass = vertical ? "flex flex-col gap-1" : "flex gap-2";
 
   const setSelected = (value: string) => {
@@ -80,4 +80,4 @@ export const RadioInput = ({
       </div>
     </div>
   );
-};
+}

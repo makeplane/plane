@@ -1,4 +1,3 @@
-import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Toast, setToast, updateToast, setPromiseToast, TOAST_TYPE } from "./toast";
 

@@ -1,4 +1,3 @@
-"use client";
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -28,13 +27,13 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const PagesListMainContent: React.FC<Props> = observer((props) => {
+export const PagesListMainContent = observer(function PagesListMainContent(props: Props) {
   const { children, pageType, storeType } = props;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
   const { currentProjectDetails } = useProject();
-  const { isAnyPageAvailable, getCurrentProjectFilteredPageIdsByTab, getCurrentProjectPageIdsByTab, filters, loader } =
+  const { isAnyPageAvailable, getCurrentProjectFilteredPageIdsByTab, getCurrentProjectPageIdsByTab, loader } =
     usePageStore(storeType);
   const { allowPermissions } = useUserPermissions();
   const { createPage } = usePageStore(EPageStoreType.PROJECT);

@@ -31,12 +31,16 @@ interface StickyEditorWrapperProps
   showToolbarInitially?: boolean;
   showToolbar?: boolean;
   uploadFile: TFileHandler["upload"];
+  duplicateFile: TFileHandler["duplicate"];
   parentClassName?: string;
   handleColorChange: (data: Partial<TSticky>) => Promise<void>;
   handleDelete: () => void;
 }
 
-export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperProps>((props, ref) => {
+export const StickyEditor = React.forwardRef(function StickyEditor(
+  props: StickyEditorWrapperProps,
+  ref: React.ForwardedRef<EditorRefApi>
+) {
   const {
     containerClassName,
     workspaceSlug,
@@ -48,13 +52,15 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
     showToolbar = true,
     parentClassName = "",
     uploadFile,
+    duplicateFile,
     ...rest
   } = props;
   // states
   const [isFocused, setIsFocused] = useState(showToolbarInitially);
   // editor flaggings
   const { liteText: liteTextEditorExtensions } = useEditorFlagging({
-    workspaceSlug: workspaceSlug?.toString() ?? "",
+    workspaceSlug,
+    projectId,
   });
   // parse content
   const { getEditorMetaData } = useParseEditorContent({
@@ -83,6 +89,7 @@ export const StickyEditor = React.forwardRef<EditorRefApi, StickyEditorWrapperPr
         fileHandler={getEditorFileHandlers({
           projectId,
           uploadFile,
+          duplicateFile,
           workspaceId,
           workspaceSlug,
         })}

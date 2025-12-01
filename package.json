@@ -14,15 +14,17 @@
     "fix:format": "turbo run fix:format",
     "check": "turbo run check",
     "check:lint": "turbo run check:lint",
-    "check:format": "turbo run check:format"
+    "check:format": "turbo run check:format",
+    "check:types": "turbo run check:types"
   },
   "devDependencies": {
-    "prettier": "latest",
-    "prettier-plugin-tailwindcss": "^0.6.14",
+    "@prettier/plugin-oxc": "0.0.4",
+    "prettier": "^3.6.2",
     "turbo": "2.6.1"
   },
   "pnpm": {
     "overrides": {
+      "valibot": "1.2.0",
       "glob": "11.1.0",
       "js-yaml": "4.1.1",
       "brace-expansion": "2.0.2",

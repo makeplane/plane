@@ -5,6 +5,6 @@ type Props = {
   className?: string;
 };
 
-export const Icon: React.FC<Props> = ({ iconName, className = "" }) => (
-  <span className={`material-symbols-rounded text-sm font-light leading-5 ${className}`}>{iconName}</span>
-);
+export function Icon({ iconName, className = "" }: Props) {
+  return <span className={`material-symbols-rounded text-sm font-light leading-5 ${className}`}>{iconName}</span>;
+}

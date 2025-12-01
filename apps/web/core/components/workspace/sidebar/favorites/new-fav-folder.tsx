@@ -26,7 +26,7 @@ type TProps = {
   defaultName?: string;
   favoriteId?: string;
 };
-export const NewFavoriteFolder = observer((props: TProps) => {
+export const NewFavoriteFolder = observer(function NewFavoriteFolder(props: TProps) {
   const { setCreateNewFolder, actionType, defaultName, favoriteId } = props;
   const { t } = useTranslation();
   const { workspaceSlug } = useParams();

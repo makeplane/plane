@@ -60,49 +60,51 @@ export const useRealtimePageEvents = ({
     [getUserDetails]
   );
 
-  const ACTION_HANDLERS = useMemo<
-    Partial<{
-      [K in keyof EventToPayloadMap]: PageUpdateHandler<K>;
-    }>
-  >(
+  const ACTION_HANDLERS = useMemo(
     () => ({
-      archived: ({ pageIds, data }) => {
+      archived: ({ pageIds, data }: { pageIds: string[]; data: EventToPayloadMap["archived"] }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getPageById(pageId);
           if (pageItem) pageItem.archive({ archived_at: data.archived_at, shouldSync: false });
         });
       },
-      unarchived: ({ pageIds }) => {
+
+      unarchived: ({ pageIds }: { pageIds: string[] }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getPageById(pageId);
           if (pageItem) pageItem.restore({ shouldSync: false });
         });
       },
-      locked: ({ pageIds }) => {
+
+      locked: ({ pageIds }: { pageIds: string[] }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getPageById(pageId);
           if (pageItem) pageItem.lock({ shouldSync: false, recursive: false });
         });
       },
-      unlocked: ({ pageIds }) => {
+
+      unlocked: ({ pageIds }: { pageIds: string[] }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getPageById(pageId);
           if (pageItem) pageItem.unlock({ shouldSync: false, recursive: false });
         });
       },
-      "made-public": ({ pageIds }) => {
+
+      "made-public": ({ pageIds }: { pageIds: string[] }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getPageById(pageId);
           if (pageItem) pageItem.makePublic({ shouldSync: false });
         });
       },
-      "made-private": ({ pageIds }) => {
+
+      "made-private": ({ pageIds }: { pageIds: string[] }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getPageById(pageId);
           if (pageItem) pageItem.makePrivate({ shouldSync: false });
         });
       },
-      deleted: ({ pageIds, data }) => {
+
+      deleted: ({ pageIds, data }: { pageIds: string[]; data: EventToPayloadMap["deleted"] }) => {
         pageIds.forEach((pageId) => {
           const pageItem = getPageById(pageId);
           if (pageItem) {
@@ -120,7 +122,8 @@ export const useRealtimePageEvents = ({
           }
         });
       },
-      property_updated: ({ pageIds, data }) => {
+
+      property_updated: ({ pageIds, data }: { pageIds: string[]; data: EventToPayloadMap["property_updated"] }) => {
         pageIds.forEach((pageId) => {
           const pageInstance = getPageById(pageId);
           const { name: updatedName, ...rest } = data;
@@ -128,7 +131,8 @@ export const useRealtimePageEvents = ({
           pageInstance?.mutateProperties(rest);
         });
       },
-      error: ({ pageIds, data }) => {
+
+      error: ({ pageIds, data }: { pageIds: string[]; data: EventToPayloadMap["error"] }) => {
         const errorType = data.error_type;
         const errorMessage = data.error_message || "An error occurred";
         const errorCode = data.error_code;
@@ -158,9 +162,10 @@ export const useRealtimePageEvents = ({
           }
         }
       },
+
       ...customRealtimeEventHandlers,
     }),
-    [getPageById, page, router, getUserDisplayText, removePage, currentUser, customRealtimeEventHandlers, handlers]
+    [getPageById, removePage, page, currentUser, getUserDisplayText, router, handlers, customRealtimeEventHandlers]
   );
 
   // The main function that will be returned from this hook
@@ -177,7 +182,7 @@ export const useRealtimePageEvents = ({
       if (normalizedPageIds.length === 0) return;
 
       // Get the handler for this message type
-      const handler = ACTION_HANDLERS[actionType];
+      const handler = ACTION_HANDLERS[actionType] as PageUpdateHandler<T> | undefined;
 
       if (handler) {
         // Now TypeScript knows that handler and data match in type

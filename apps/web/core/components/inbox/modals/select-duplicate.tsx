@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -32,7 +30,7 @@ type Props = {
 
 const projectService = new ProjectService();
 
-export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
+export function SelectDuplicateInboxIssueModal(props: Props) {
   const { isOpen, onClose, onSubmit, value } = props;
   // router
   const { workspaceSlug, projectId, issueId } = useParams();
@@ -193,4 +191,4 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
       </div>
     </Transition.Root>
   );
-};
+}

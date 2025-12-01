@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // icons
 import { ListFilter } from "lucide-react";
@@ -13,7 +11,7 @@ import { ViewOrderByDropdown } from "@/components/views/filters/order-by";
 import { useMember } from "@/hooks/store/use-member";
 import { useProjectView } from "@/hooks/store/use-project-view";
 
-export const ViewMobileHeader = observer(() => {
+export const ViewMobileHeader = observer(function ViewMobileHeader() {
   // store hooks
   const { filters, updateFilters } = useProjectView();
   const {

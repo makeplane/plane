@@ -10,7 +10,7 @@ interface Props {
   containerRef: MutableRefObject<HTMLDivElement | null>;
 }
 
-export const IssueBlocksList: React.FC<Props> = (props) => {
+export function IssueBlocksList(props: Props) {
   const { issueIds = [], groupId, displayProperties } = props;
 
   return (
@@ -22,4 +22,4 @@ export const IssueBlocksList: React.FC<Props> = (props) => {
         ))}
     </div>
   );
-};
+}

@@ -14,7 +14,7 @@ type Props = {
   projectId?: string;
 };
 
-export const PageEditorHeaderRoot: React.FC<Props> = observer((props) => {
+export const PageEditorHeaderRoot = observer(function PageEditorHeaderRoot(props: Props) {
   const { page } = props;
   // states
   const [isLogoPickerOpen, setIsLogoPickerOpen] = useState(false);

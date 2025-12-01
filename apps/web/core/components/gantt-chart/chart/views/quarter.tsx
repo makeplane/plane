@@ -9,7 +9,7 @@ import { HEADER_HEIGHT, SIDEBAR_WIDTH } from "../../constants";
 import type { IMonthBlock, IQuarterMonthBlock } from "../../views";
 import { groupMonthsToQuarters } from "../../views";
 
-export const QuarterChartView: FC<any> = observer(() => {
+export const QuarterChartView = observer(function QuarterChartView(_props: any) {
   const { currentViewData, renderView } = useTimeLineChartStore();
   const monthBlocks: IMonthBlock[] = renderView;
 

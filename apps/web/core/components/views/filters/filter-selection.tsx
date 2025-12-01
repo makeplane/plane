@@ -20,7 +20,7 @@ type Props = {
   memberIds?: string[] | undefined;
 };
 
-export const ViewFiltersSelection: React.FC<Props> = observer((props) => {
+export const ViewFiltersSelection = observer(function ViewFiltersSelection(props: Props) {
   const { filters, handleFiltersUpdate, memberIds } = props;
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");

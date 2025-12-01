@@ -15,7 +15,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const ProjectFeatureToggle = (props: Props) => {
+export function ProjectFeatureToggle(props: Props) {
   const { workspaceSlug, projectId, featureItem, value, handleSubmit, disabled } = props;
   return featureItem.href ? (
     <Link href={joinUrlPath(workspaceSlug, "settings", "projects", projectId, "features", featureItem.href)}>
@@ -39,4 +39,4 @@ export const ProjectFeatureToggle = (props: Props) => {
       data-ph-element={PROJECT_TRACKER_ELEMENTS.TOGGLE_FEATURE}
     />
   );
-};
+}

@@ -12,7 +12,7 @@ type Props = {
   className?: string;
 };
 
-const AnalyticsEmptyState = ({ title, description, assetPath, className }: Props) => {
+function AnalyticsEmptyState({ title, description, assetPath, className }: Props) {
   // theme hook
   const { resolvedTheme } = useTheme();
   const backgroundReolvedPath = resolvedTheme === "light" ? lightBackgroundAsset : darkBackgroundAsset;
@@ -40,5 +40,6 @@ const AnalyticsEmptyState = ({ title, description, assetPath, className }: Props
       </div>
     </div>
   );
-};
+}
+
 export default AnalyticsEmptyState;

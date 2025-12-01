@@ -59,11 +59,6 @@ const useTimezone = () => {
       query: "utc, coordinated universal time",
       content: "UTC",
     },
-    {
-      value: "Universal",
-      query: "universal, coordinated universal time",
-      content: "Universal",
-    },
   ];
 
   const selectedTimezone = (value: string | undefined) => options.find((option) => option.value === value)?.content;

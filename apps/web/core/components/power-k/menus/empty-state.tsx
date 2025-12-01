@@ -4,6 +4,6 @@ type Props = {
   emptyText?: string;
 };
 
-export const PowerKMenuEmptyState: React.FC<Props> = ({ emptyText = "No results found" }) => (
-  <div className="px-3 py-8 text-center text-sm text-custom-text-300">{emptyText}</div>
-);
+export function PowerKMenuEmptyState({ emptyText = "No results found" }: Props) {
+  return <div className="px-3 py-8 text-center text-sm text-custom-text-300">{emptyText}</div>;
+}

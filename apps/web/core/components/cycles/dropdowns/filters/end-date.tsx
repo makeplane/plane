@@ -13,7 +13,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterEndDate: React.FC<Props> = observer((props) => {
+export const FilterEndDate = observer(function FilterEndDate(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);

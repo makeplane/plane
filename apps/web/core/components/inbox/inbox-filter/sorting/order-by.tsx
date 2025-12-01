@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check } from "lucide-react";
@@ -16,7 +14,7 @@ import { cn } from "@plane/utils";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import useSize from "@/hooks/use-window-size";
 
-export const InboxIssueOrderByDropdown: FC = observer(() => {
+export const InboxIssueOrderByDropdown = observer(function InboxIssueOrderByDropdown() {
   // hooks
   const { t } = useTranslation();
   const windowSize = useSize();

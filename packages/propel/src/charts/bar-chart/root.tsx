@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
-
 import React, { useCallback, useMemo, useState } from "react";
 import {
   BarChart as CoreBarChart,
@@ -23,7 +21,7 @@ import { barShapeVariants } from "./bar";
 
 const DEFAULT_BAR_FILL_COLOR = "#000000";
 
-export const BarChart = React.memo(<K extends string, T extends string>(props: TBarChartProps<K, T>) => {
+export const BarChart = React.memo(function BarChart<K extends string, T extends string>(props: TBarChartProps<K, T>) {
   const {
     data,
     bars,

@@ -14,7 +14,7 @@ type Props = {
   attachmentOperations: TAttachmentOperationsModal;
 };
 
-export const IssueAttachmentUpload: React.FC<Props> = observer((props) => {
+export const IssueAttachmentUpload = observer(function IssueAttachmentUpload(props: Props) {
   const { workspaceSlug, disabled = false, attachmentOperations } = props;
   // states
   const [isLoading, setIsLoading] = useState(false);

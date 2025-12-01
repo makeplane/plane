@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { range } from "lodash-es";
@@ -27,7 +25,7 @@ type Props = {
   data: Partial<IWebhook>;
 };
 
-export const WebhookSecretKey: FC<Props> = observer((props) => {
+export const WebhookSecretKey = observer(function WebhookSecretKey(props: Props) {
   const { data } = props;
   // states
   const [isRegenerating, setIsRegenerating] = useState(false);

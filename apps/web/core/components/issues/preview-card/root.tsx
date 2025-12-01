@@ -20,7 +20,7 @@ type Props = {
   workItem: Pick<TIssue, "id" | "name" | "sequence_id" | "priority" | "start_date" | "target_date" | "type_id">;
 };
 
-export const WorkItemPreviewCard: React.FC<Props> = observer((props) => {
+export const WorkItemPreviewCard = observer(function WorkItemPreviewCard(props: Props) {
   const { projectId, stateDetails, workItem } = props;
   // store hooks
   const { getProjectIdentifierById } = useProject();

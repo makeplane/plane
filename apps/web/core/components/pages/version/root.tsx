@@ -22,7 +22,7 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const PageVersionsOverlay: React.FC<Props> = observer((props) => {
+export const PageVersionsOverlay = observer(function PageVersionsOverlay(props: Props) {
   const { editorComponent, fetchVersionDetails, handleRestore, pageId, restoreEnabled, storeType } = props;
   // navigation
   const router = useRouter();

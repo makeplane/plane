@@ -18,39 +18,40 @@ import type {
 type Props = {
   aiHandler?: TAIHandler;
   bubbleMenuEnabled: boolean;
+  disabledExtensions: IEditorProps["disabledExtensions"];
   displayConfig: TDisplayConfig;
   documentLoaderClassName?: string;
   editor: Editor;
   titleEditor?: Editor;
   editorContainerClassName: string;
   extendedDocumentEditorProps?: ICollaborativeDocumentEditorPropsExtended;
+  extendedEditorProps: IEditorPropsExtended;
+  flaggedExtensions: IEditorProps["flaggedExtensions"];
   id: string;
   isLoading?: boolean;
   isTouchDevice: boolean;
-  tabIndex?: number;
-  extendedEditorProps?: IEditorPropsExtended;
-  flaggedExtensions: IEditorProps["flaggedExtensions"];
-  disabledExtensions: IEditorProps["disabledExtensions"];
   provider?: HocuspocusProvider;
   state?: TCollabValue["state"];
+  tabIndex?: number;
 };
 
-export const PageRenderer = (props: Props) => {
+export function PageRenderer(props: Props) {
   const {
     bubbleMenuEnabled,
+    disabledExtensions,
     displayConfig,
     documentLoaderClassName,
     editor,
     editorContainerClassName,
+    extendedEditorProps,
+    flaggedExtensions,
     id,
     isLoading,
     isTouchDevice,
     tabIndex,
-    titleEditor,
-    flaggedExtensions,
-    disabledExtensions,
     provider,
     state,
+    titleEditor
   } = props;
   return (
     <div
@@ -92,7 +93,7 @@ export const PageRenderer = (props: Props) => {
             <EditorContentWrapper editor={editor} id={id} tabIndex={tabIndex} />
             {editor.isEditable && !isTouchDevice && (
               <div>
-                {bubbleMenuEnabled && <EditorBubbleMenu editor={editor} />}
+                {bubbleMenuEnabled && <EditorBubbleMenu editor={editor} disabledExtensions={disabledExtensions} extendedEditorProps={extendedEditorProps} flaggedExtensions={flaggedExtensions}/>}
                 <BlockMenu
                   editor={editor}
                   flaggedExtensions={flaggedExtensions}
@@ -105,4 +106,4 @@ export const PageRenderer = (props: Props) => {
       )}
     </div>
   );
-};
+}

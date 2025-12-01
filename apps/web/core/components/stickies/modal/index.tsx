@@ -5,11 +5,11 @@ type TProps = {
   isOpen: boolean;
   handleClose: () => void;
 };
-export const AllStickiesModal = (props: TProps) => {
+export function AllStickiesModal(props: TProps) {
   const { isOpen, handleClose } = props;
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.VXL}>
       <Stickies handleClose={handleClose} />
     </ModalCore>
   );
-};
+}

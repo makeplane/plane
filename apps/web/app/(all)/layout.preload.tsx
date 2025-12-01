@@ -1,5 +1,3 @@
-"use client";
-
 // TODO: Check if we need this
 // https://nextjs.org/docs/app/api-reference/functions/generate-metadata#link-relpreload
 // export const usePreloadResources = () => {
@@ -20,6 +18,9 @@
 //   }, []);
 // };
 
-export const PreloadResources = () =>
-  // usePreloadResources();
-  null;
+export function PreloadResources() {
+  return (
+    // usePreloadResources();
+    null
+  );
+}

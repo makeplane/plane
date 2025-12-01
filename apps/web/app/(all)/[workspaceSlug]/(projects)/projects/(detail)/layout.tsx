@@ -1,5 +1,3 @@
-"use client";
-
 import { Outlet } from "react-router";
 // plane web layouts
 import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";

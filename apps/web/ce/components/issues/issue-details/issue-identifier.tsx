@@ -36,7 +36,9 @@ type TIssueTypeIdentifier = {
   size?: "xs" | "sm" | "md" | "lg";
 };
 
-export const IssueTypeIdentifier: FC<TIssueTypeIdentifier> = observer((_props) => <></>);
+export const IssueTypeIdentifier = observer(function IssueTypeIdentifier(_props: TIssueTypeIdentifier) {
+  return <></>;
+});
 
 type TIdentifierTextProps = {
   identifier: string;
@@ -44,7 +46,7 @@ type TIdentifierTextProps = {
   textContainerClassName?: string;
 };
 
-export const IdentifierText: React.FC<TIdentifierTextProps> = (props) => {
+export function IdentifierText(props: TIdentifierTextProps) {
   const { identifier, enableClickToCopyIdentifier = false, textContainerClassName } = props;
   // handlers
   const handleCopyIssueIdentifier = () => {
@@ -74,9 +76,9 @@ export const IdentifierText: React.FC<TIdentifierTextProps> = (props) => {
       </span>
     </Tooltip>
   );
-};
+}
 
-export const IssueIdentifier: React.FC<TIssueIdentifierProps> = observer((props) => {
+export const IssueIdentifier = observer(function IssueIdentifier(props: TIssueIdentifierProps) {
   const { projectId, textContainerClassName, displayProperties, enableClickToCopyIdentifier = false } = props;
   // store hooks
   const { getProjectIdentifierById } = useProject();
