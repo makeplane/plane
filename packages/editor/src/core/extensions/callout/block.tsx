@@ -1,6 +1,6 @@
 import type { NodeViewProps } from "@tiptap/react";
 import { NodeViewContent, NodeViewWrapper } from "@tiptap/react";
-import React, { useState } from "react";
+import { useState } from "react";
 // constants
 import { COLORS_LIST } from "@/constants/common";
 // local components
@@ -33,6 +33,7 @@ export function CustomCalloutBlock(props: CustomCalloutNodeViewProps) {
       style={{
         backgroundColor: activeBackgroundColor,
       }}
+      key={`callout-block-${node.attrs.id}`}
     >
       <CalloutBlockLogoSelector
         blockAttributes={node.attrs}

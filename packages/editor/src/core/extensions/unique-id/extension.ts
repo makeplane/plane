@@ -4,13 +4,12 @@ import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import type { Transaction } from "@tiptap/pm/state";
 import { v4 as uuidv4 } from "uuid";
 // constants
-import { CORE_EXTENSIONS, BLOCK_NODE_TYPES } from "@/constants/extension";
+import { CORE_EXTENSIONS, BLOCK_NODE_TYPES, INLINE_NODE_TYPES } from "@/constants/extension";
 import { ADDITIONAL_BLOCK_NODE_TYPES } from "@/plane-editor/constants/extensions";
 import { createUniqueIDPlugin } from "./plugin";
 import { createIdsForView } from "./utils";
-// plane imports
 
-const COMBINED_BLOCK_NODE_TYPES = [...BLOCK_NODE_TYPES, ...ADDITIONAL_BLOCK_NODE_TYPES];
+const COMBINED_BLOCK_NODE_TYPES = [...INLINE_NODE_TYPES, ...BLOCK_NODE_TYPES, ...ADDITIONAL_BLOCK_NODE_TYPES];
 export type UniqueIDGenerationContext = {
   node: ProseMirrorNode;
   pos: number;

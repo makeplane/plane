@@ -122,7 +122,7 @@ export function CustomImageNodeView(props: CustomImageNodeViewProps) {
   const shouldShowBlock = (isUploaded || imageFromFileSystem) && !failedToLoadImage;
 
   return (
-    <NodeViewWrapper>
+    <NodeViewWrapper key={`image-block-${node.attrs.id}`}>
       <div className="p-0 mx-0 my-2" data-drag-handle ref={imageComponentRef}>
         {shouldShowBlock && !hasDuplicationFailed ? (
           <CustomImageBlock

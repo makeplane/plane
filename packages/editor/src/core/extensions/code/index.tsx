@@ -5,13 +5,16 @@ import { common, createLowlight } from "lowlight";
 // components
 import { CodeBlockLowlight } from "./code-block-lowlight";
 import { CodeBlockComponent } from "./code-block-node-view";
+import type { CodeBlockNodeViewProps } from "./code-block-node-view";
 
 const lowlight = createLowlight(common);
 lowlight.register("ts", ts);
 
 export const CustomCodeBlockExtension = CodeBlockLowlight.extend({
   addNodeView() {
-    return ReactNodeViewRenderer(CodeBlockComponent);
+    return ReactNodeViewRenderer((props) => (
+      <CodeBlockComponent {...props} node={props.node as CodeBlockNodeViewProps["node"]} />
+    ));
   },
 
   addKeyboardShortcuts() {

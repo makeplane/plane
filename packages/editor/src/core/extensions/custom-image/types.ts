@@ -1,6 +1,7 @@
 import type { Node } from "@tiptap/core";
 // types
 import type { TFileHandler } from "@/types";
+import type { TBlockNodeBaseAttributes } from "../unique-id/types";
 
 export enum ECustomImageAttributeNames {
   ID = "id",
@@ -32,8 +33,7 @@ export enum ECustomImageStatus {
   DUPLICATION_FAILED = "duplication-failed",
 }
 
-export type TCustomImageAttributes = {
-  [ECustomImageAttributeNames.ID]: string | null;
+export type TCustomImageAttributes = TBlockNodeBaseAttributes & {
   [ECustomImageAttributeNames.WIDTH]: PixelAttribute<"35%" | number> | null;
   [ECustomImageAttributeNames.HEIGHT]: PixelAttribute<"auto" | number> | null;
   [ECustomImageAttributeNames.ASPECT_RATIO]: number | null;

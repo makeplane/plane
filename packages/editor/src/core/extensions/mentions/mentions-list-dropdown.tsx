@@ -31,11 +31,9 @@ export const MentionsListDropdown = forwardRef(function MentionsListDropdown(pro
     (sectionIndex: number, itemIndex: number) => {
       try {
         const item = sections?.[sectionIndex]?.items?.[itemIndex];
-        const transactionId = uuidv4();
         if (item) {
           command({
             ...item,
-            id: transactionId,
           });
         }
       } catch (error) {
