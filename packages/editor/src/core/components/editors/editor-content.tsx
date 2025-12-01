@@ -9,7 +9,7 @@ type Props = {
   tabIndex?: number;
 };
 
-export const EditorContentWrapper: FC<Props> = (props) => {
+export function EditorContentWrapper(props: Props) {
   const { editor, children, tabIndex, id } = props;
 
   return (
@@ -18,4 +18,4 @@ export const EditorContentWrapper: FC<Props> = (props) => {
       {children}
     </div>
   );
-};
+}

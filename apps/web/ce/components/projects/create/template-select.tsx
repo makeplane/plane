@@ -9,4 +9,6 @@ export type TProjectTemplateSelect = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const ProjectTemplateSelect = (props: TProjectTemplateSelect) => <></>;
+export function ProjectTemplateSelect(props: TProjectTemplateSelect) {
+  return <></>;
+}

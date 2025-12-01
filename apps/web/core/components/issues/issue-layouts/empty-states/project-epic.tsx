@@ -1,1 +1,3 @@
-export const ProjectEpicsEmptyState: React.FC = () => <></>;
+export function ProjectEpicsEmptyState() {
+  return <></>;
+}

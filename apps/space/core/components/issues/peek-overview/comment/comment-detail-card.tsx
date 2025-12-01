@@ -24,7 +24,7 @@ type Props = {
   comment: TIssuePublicComment;
 };
 
-export const CommentCard: React.FC<Props> = observer((props) => {
+export const CommentCard = observer(function CommentCard(props: Props) {
   const { anchor, comment } = props;
   // store hooks
   const { peekId, deleteIssueComment, updateIssueComment, uploadCommentAsset } = useIssueDetails();
@@ -42,7 +42,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
     control,
     formState: { isSubmitting },
     handleSubmit,
-  } = useForm<any>({
+  } = useForm<TIssuePublicComment>({
     defaultValues: { comment_html: comment.comment_html },
   });
 
@@ -120,6 +120,9 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                       const { asset_id } = await uploadCommentAsset(file, anchor, comment.id);
                       return asset_id;
                     }}
+                    displayConfig={{
+                      fontSize: "small-font",
+                    }}
                   />
                 )}
               />
@@ -157,7 +160,6 @@ export const CommentCard: React.FC<Props> = observer((props) => {
           </div>
         </div>
       </div>
-
       {!isInIframe && currentUser?.id === comment?.actor_detail?.id && (
         <Menu as="div" className="relative w-min text-left">
           <Menu.Button

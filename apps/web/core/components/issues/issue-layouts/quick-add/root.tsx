@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
@@ -51,7 +49,7 @@ const defaultValues: Partial<TIssue> = {
   name: "",
 };
 
-export const QuickAddIssueRoot: FC<TQuickAddIssueRoot> = observer((props) => {
+export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQuickAddIssueRoot) {
   const {
     isQuickAddOpen,
     layout,

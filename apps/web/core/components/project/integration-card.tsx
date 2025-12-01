@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { useParams } from "next/navigation";
 import useSWR, { mutate } from "swr";
@@ -33,7 +31,7 @@ const integrationDetails: { [key: string]: any } = {
 // services
 const projectService = new ProjectService();
 
-export const IntegrationCard: React.FC<Props> = ({ integration }) => {
+export function IntegrationCard({ integration }: Props) {
   const { workspaceSlug, projectId } = useParams();
 
   const { data: syncedGithubRepository } = useSWR(
@@ -120,4 +118,4 @@ export const IntegrationCard: React.FC<Props> = ({ integration }) => {
       )}
     </>
   );
-};
+}

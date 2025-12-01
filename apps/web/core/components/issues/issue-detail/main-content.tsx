@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -44,7 +42,7 @@ type Props = {
   isArchived: boolean;
 };
 
-export const IssueMainContent: React.FC<Props> = observer((props) => {
+export const IssueMainContent = observer(function IssueMainContent(props: Props) {
   const { workspaceSlug, projectId, issueId, issueOperations, isEditable, isArchived } = props;
   // refs
   const editorRef = useRef<EditorRefApi>(null);
@@ -129,6 +127,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         />
 
         <DescriptionInput
+          issueSequenceId={issue.sequence_id}
           containerClassName="-ml-3 border-none"
           disabled={isArchived || !isEditable}
           editorRef={editorRef}

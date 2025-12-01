@@ -37,11 +37,11 @@ type TPageRootProps = {
   page: TPageInstance;
   storeType: EPageStoreType;
   webhookConnectionParams: TWebhookConnectionQueryParams;
-  projectId: string;
+  projectId?: string;
   workspaceSlug: string;
 };
 
-export const PageRoot = observer((props: TPageRootProps) => {
+export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
   const { config, handlers, page, projectId, storeType, webhookConnectionParams, workspaceSlug } = props;
   // states
   const [editorReady, setEditorReady] = useState(false);

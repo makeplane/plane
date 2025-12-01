@@ -7,7 +7,7 @@ import { cn } from "../../utils/classname";
 import { CustomTreeMapContent } from "./map-content";
 import { TreeMapTooltip } from "./tooltip";
 
-export const TreeMapChart = React.memo((props: TreeMapChartProps) => {
+export const TreeMapChart = React.memo(function TreeMapChart(props: TreeMapChartProps) {
   const { data, className = "w-full h-96", isAnimationActive = false, showTooltip = true } = props;
   return (
     <div className={cn(className)}>

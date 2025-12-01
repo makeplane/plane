@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -24,7 +22,10 @@ type Props = {
   mode?: IPeekMode;
 };
 
-export const PeekOverviewIssueProperties: React.FC<Props> = observer(({ issueDetails, mode }) => {
+export const PeekOverviewIssueProperties = observer(function PeekOverviewIssueProperties({
+  issueDetails,
+  mode,
+}: Props) {
   // hooks
   const { t } = useTranslation();
   const { getStateById } = useStates();

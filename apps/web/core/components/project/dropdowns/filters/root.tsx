@@ -22,7 +22,7 @@ type Props = {
   memberIds?: string[] | undefined;
 };
 
-export const ProjectFiltersSelection: React.FC<Props> = observer((props) => {
+export const ProjectFiltersSelection = observer(function ProjectFiltersSelection(props: Props) {
   const { displayFilters, filters, handleFiltersUpdate, handleDisplayFiltersUpdate, memberIds } = props;
   // states
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");

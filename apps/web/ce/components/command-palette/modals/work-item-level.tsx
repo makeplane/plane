@@ -19,7 +19,7 @@ export type TWorkItemLevelModalsProps = {
   workItemIdentifier: string | undefined;
 };
 
-export const WorkItemLevelModals: FC<TWorkItemLevelModalsProps> = observer((props) => {
+export const WorkItemLevelModals = observer(function WorkItemLevelModals(props: TWorkItemLevelModalsProps) {
   const { workItemIdentifier } = props;
   // router
   const { workspaceSlug, cycleId, moduleId } = useParams();

@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
@@ -74,7 +72,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const CalendarChart: React.FC<Props> = observer((props) => {
+export const CalendarChart = observer(function CalendarChart(props: Props) {
   const {
     issuesFilterStore,
     issues,

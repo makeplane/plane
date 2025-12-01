@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -36,7 +33,7 @@ const initialWebhookPayload: Partial<IWebhook> = {
   url: "",
 };
 
-export const WebhookForm: FC<Props> = observer((props) => {
+export const WebhookForm = observer(function WebhookForm(props: Props) {
   const { data, onSubmit, handleClose } = props;
   // states
   const [webhookEventType, setWebhookEventType] = useState<TWebhookEventTypes>("all");

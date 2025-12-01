@@ -33,7 +33,7 @@ type Props = {
   issue: TIssue;
 };
 
-export const SubIssuesListItemProperties: React.FC<Props> = observer((props) => {
+export const SubIssuesListItemProperties = observer(function SubIssuesListItemProperties(props: Props) {
   const { workspaceSlug, parentIssueId, issueId, canEdit, updateSubIssue, displayProperties, issue } = props;
   const { t } = useTranslation();
   const { getStateById } = useProjectState();

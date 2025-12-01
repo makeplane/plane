@@ -23,7 +23,7 @@ const getActualPrice = (frequency: TBillingFrequency, subscriptionType: EProduct
   }
 };
 
-export const DiscountInfo = ({ className, currency, frequency, price, subscriptionType }: TDiscountInfoProps) => {
+export function DiscountInfo({ className, currency, frequency, price, subscriptionType }: TDiscountInfoProps) {
   const { resolvedTheme } = useTheme();
   // derived values
   const actualPrice = getActualPrice(frequency, subscriptionType);
@@ -58,4 +58,4 @@ export const DiscountInfo = ({ className, currency, frequency, price, subscripti
       {price}
     </>
   );
-};
+}

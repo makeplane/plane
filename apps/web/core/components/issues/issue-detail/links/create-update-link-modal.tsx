@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
@@ -33,7 +31,9 @@ const defaultValues: TIssueLinkCreateFormFieldOptions = {
   url: "",
 };
 
-export const IssueLinkCreateUpdateModal: FC<TIssueLinkCreateEditModal> = observer((props) => {
+export const IssueLinkCreateUpdateModal = observer(function IssueLinkCreateUpdateModal(
+  props: TIssueLinkCreateEditModal
+) {
   const { isModalOpen, handleOnClose, linkOperations, issueServiceType } = props;
   // i18n
   const { t } = useTranslation();

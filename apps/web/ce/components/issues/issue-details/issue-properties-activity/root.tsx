@@ -5,4 +5,6 @@ type TIssueAdditionalPropertiesActivity = {
   ends: "top" | "bottom" | undefined;
 };
 
-export const IssueAdditionalPropertiesActivity: FC<TIssueAdditionalPropertiesActivity> = () => <></>;
+export function IssueAdditionalPropertiesActivity(_props: TIssueAdditionalPropertiesActivity) {
+  return <></>;
+}

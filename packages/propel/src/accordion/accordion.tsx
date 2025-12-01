@@ -30,55 +30,54 @@ export interface AccordionContentProps {
   children: React.ReactNode;
 }
 
-const AccordionRoot: React.FC<AccordionRootProps> = ({
-  defaultValue = [],
-  allowMultiple = false,
-  className = "",
-  children,
-}) => (
-  <BaseAccordion.Root defaultValue={defaultValue} openMultiple={allowMultiple} className={`text-base ${className}`}>
-    {children}
-  </BaseAccordion.Root>
-);
+function AccordionRoot({ defaultValue = [], allowMultiple = false, className = "", children }: AccordionRootProps) {
+  return (
+    <BaseAccordion.Root defaultValue={defaultValue} openMultiple={allowMultiple} className={`text-base ${className}`}>
+      {children}
+    </BaseAccordion.Root>
+  );
+}
 
-const AccordionItem: React.FC<AccordionItemProps> = ({ value, disabled, className = "", children }) => (
-  <BaseAccordion.Item value={value} disabled={disabled} className={`relative ${className}`}>
-    {children}
-  </BaseAccordion.Item>
-);
+function AccordionItem({ value, disabled, className = "", children }: AccordionItemProps) {
+  return (
+    <BaseAccordion.Item value={value} disabled={disabled} className={`relative ${className}`}>
+      {children}
+    </BaseAccordion.Item>
+  );
+}
 
-const AccordionTrigger: React.FC<AccordionTriggerProps> = ({
+function AccordionTrigger({
   className = "",
   icon = <PlusIcon aria-hidden="true" className="transition-all ease-out  group-data-[panel-open]:rotate-45" />,
   iconClassName = "",
   children,
   asChild = false,
-}) => (
-  <BaseAccordion.Header>
-    {asChild ? (
-      <BaseAccordion.Trigger className={`w-full py-2 ${className}`}>{children}</BaseAccordion.Trigger>
-    ) : (
-      <BaseAccordion.Trigger className={`flex w-full items-center justify-between gap-2 py-2 ${className}`}>
-        {children}
-        <span aria-hidden="true" className={`flex-shrink-0 ${iconClassName}`}>
-          {icon}
-        </span>
-      </BaseAccordion.Trigger>
-    )}
-  </BaseAccordion.Header>
-);
+}: AccordionTriggerProps) {
+  return (
+    <BaseAccordion.Header>
+      {asChild ? (
+        <BaseAccordion.Trigger className={`w-full py-2 ${className}`}>{children}</BaseAccordion.Trigger>
+      ) : (
+        <BaseAccordion.Trigger className={`flex w-full items-center justify-between gap-2 py-2 ${className}`}>
+          {children}
+          <span aria-hidden="true" className={`flex-shrink-0 ${iconClassName}`}>
+            {icon}
+          </span>
+        </BaseAccordion.Trigger>
+      )}
+    </BaseAccordion.Header>
+  );
+}
 
-const AccordionContent: React.FC<AccordionContentProps> = ({
-  className = "",
-  contentWrapperClassName = "",
-  children,
-}) => (
-  <BaseAccordion.Panel
-    className={`h-[var(--accordion-panel-height)] overflow-hidden transition-[height] ease-out data-[ending-style]:h-0 data-[starting-style]:h-0 ${className}`}
-  >
-    <div className={`py-2 ${contentWrapperClassName}`}>{children}</div>
-  </BaseAccordion.Panel>
-);
+function AccordionContent({ className = "", contentWrapperClassName = "", children }: AccordionContentProps) {
+  return (
+    <BaseAccordion.Panel
+      className={`h-[var(--accordion-panel-height)] overflow-hidden transition-[height] ease-out data-[ending-style]:h-0 data-[starting-style]:h-0 ${className}`}
+    >
+      <div className={`py-2 ${contentWrapperClassName}`}>{children}</div>
+    </BaseAccordion.Panel>
+  );
+}
 
 export const Accordion = {
   Root: AccordionRoot,

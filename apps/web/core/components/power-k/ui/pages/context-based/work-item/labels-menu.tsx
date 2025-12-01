@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane types
 import type { IIssueLabel, TIssue } from "@plane/types";
@@ -14,7 +12,7 @@ type Props = {
   workItemDetails: TIssue;
 };
 
-export const PowerKWorkItemLabelsMenu: React.FC<Props> = observer((props) => {
+export const PowerKWorkItemLabelsMenu = observer(function PowerKWorkItemLabelsMenu(props: Props) {
   const { handleSelect, workItemDetails } = props;
   // store hooks
   const { getProjectLabelIds, getLabelById } = useLabel();

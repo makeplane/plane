@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { Menu, Settings } from "lucide-react";
@@ -10,7 +8,7 @@ import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
 import { useTheme } from "@/hooks/store";
 
-export const HamburgerToggle = observer(() => {
+export const HamburgerToggle = observer(function HamburgerToggle() {
   const { isSidebarCollapsed, toggleSidebar } = useTheme();
   return (
     <div
@@ -22,7 +20,7 @@ export const HamburgerToggle = observer(() => {
   );
 });
 
-export const AdminHeader = observer(() => {
+export const AdminHeader = observer(function AdminHeader() {
   const pathName = usePathname();
 
   const getHeaderTitle = (pathName: string) => {

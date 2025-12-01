@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { ModuleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
 
-export const ModuleSpreadsheetLayout: React.FC = observer(() => {
+export const ModuleSpreadsheetLayout = observer(function ModuleSpreadsheetLayout() {
   const { moduleId } = useParams();
 
   return <BaseSpreadsheetRoot QuickActions={ModuleIssueQuickActions} viewId={moduleId?.toString()} />;

@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useTheme as useNextTheme } from "next-themes";
@@ -12,7 +10,7 @@ import TakeoffIconLight from "@/app/assets/logos/takeoff-icon-light.svg?url";
 import { useTheme } from "@/hooks/store";
 // icons
 
-export const NewUserPopup = observer(() => {
+export const NewUserPopup = observer(function NewUserPopup() {
   // hooks
   const { isNewUserPopup, toggleNewUserPopup } = useTheme();
   // theme

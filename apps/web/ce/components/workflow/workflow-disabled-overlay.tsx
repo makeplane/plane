@@ -7,4 +7,6 @@ export type TWorkflowDisabledOverlayProps = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const WorkFlowDisabledOverlay = observer((props: TWorkflowDisabledOverlayProps) => <></>);
+export const WorkFlowDisabledOverlay = observer(function WorkFlowDisabledOverlay(props: TWorkflowDisabledOverlayProps) {
+  return <></>;
+});

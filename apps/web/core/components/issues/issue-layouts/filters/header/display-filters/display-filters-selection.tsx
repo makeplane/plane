@@ -28,7 +28,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
+export const DisplayFiltersSelection = observer(function DisplayFiltersSelection(props: Props) {
   const {
     displayFilters,
     displayProperties,

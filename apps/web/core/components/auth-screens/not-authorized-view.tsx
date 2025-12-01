@@ -14,7 +14,7 @@ type Props = {
   className?: string;
 };
 
-export const NotAuthorizedView: React.FC<Props> = observer((props) => {
+export const NotAuthorizedView = observer(function NotAuthorizedView(props: Props) {
   const { actionButton, section = "general", isProjectView = false, className } = props;
 
   // assets

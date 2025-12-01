@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -32,7 +30,7 @@ type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;
 };
 
-export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
+export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: Props) {
   const { handleChange } = props;
   // router
   const { workspaceSlug } = useParams();

@@ -22,7 +22,7 @@ import { DefaultWorkspaceViewQuickActions } from "./default-view-quick-action";
 import { CreateUpdateWorkspaceViewModal } from "./modal";
 import { WorkspaceViewQuickActions } from "./quick-action";
 
-const ViewTab = observer((props: { viewId: string }) => {
+const ViewTab = observer(function ViewTab(props: { viewId: string }) {
   const { viewId } = props;
   // refs
   const parentRef = useRef<HTMLDivElement>(null);
@@ -42,12 +42,12 @@ const ViewTab = observer((props: { viewId: string }) => {
   );
 });
 
-const DefaultViewTab = (props: {
+function DefaultViewTab(props: {
   tab: {
     key: TStaticViewTypes;
     i18n_label: string;
   };
-}) => {
+}) {
   const { tab } = props;
   // refs
   const parentRef = useRef<HTMLDivElement>(null);
@@ -60,9 +60,9 @@ const DefaultViewTab = (props: {
       <DefaultWorkspaceViewQuickActions workspaceSlug={workspaceSlug?.toString()} view={tab} />
     </div>
   );
-};
+}
 
-export const GlobalViewsHeader: React.FC = observer(() => {
+export const GlobalViewsHeader = observer(function GlobalViewsHeader() {
   // states
   const [createViewModal, setCreateViewModal] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);

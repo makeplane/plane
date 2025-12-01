@@ -1,5 +1,3 @@
-"use client";
-
 import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check } from "lucide-react";
 // types
 import { VIEW_SORT_BY_OPTIONS, VIEW_SORTING_KEY_OPTIONS } from "@plane/constants";
@@ -18,7 +16,7 @@ type Props = {
   isMobile?: boolean;
 };
 
-export const ViewOrderByDropdown: React.FC<Props> = (props) => {
+export function ViewOrderByDropdown(props: Props) {
   const { onChange, sortBy, sortKey, isMobile = false } = props;
   const { t } = useTranslation();
 
@@ -82,4 +80,4 @@ export const ViewOrderByDropdown: React.FC<Props> = (props) => {
       })}
     </CustomMenu>
   );
-};
+}

@@ -40,7 +40,7 @@ const highlightMatch = (text: string, query: string): React.ReactNode => {
   return text;
 };
 
-export const CommandMenuItem: React.FC<Props> = (props) => {
+export function CommandMenuItem(props: Props) {
   const { isSelected, item, itemIndex, onClick, onMouseEnter, sectionIndex, query } = props;
 
   return (
@@ -63,4 +63,4 @@ export const CommandMenuItem: React.FC<Props> = (props) => {
       {item.badge}
     </button>
   );
-};
+}

@@ -4,4 +4,6 @@ type TProps = {
   workspace?: IWorkspace;
 };
 
-export const SubscriptionPill = (props: TProps) => <></>;
+export function SubscriptionPill(props: TProps) {
+  return <></>;
+}

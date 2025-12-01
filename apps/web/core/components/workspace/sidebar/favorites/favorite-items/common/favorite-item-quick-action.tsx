@@ -1,5 +1,3 @@
-"use client";
-import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
 import { MoreHorizontal, Star } from "lucide-react";
@@ -18,7 +16,7 @@ type Props = {
   handleRemoveFromFavorites: (favorite: IFavorite) => void;
 };
 
-export const FavoriteItemQuickAction: FC<Props> = observer((props) => {
+export const FavoriteItemQuickAction = observer(function FavoriteItemQuickAction(props: Props) {
   const { ref, isMenuActive, onChange, handleRemoveFromFavorites, favorite } = props;
   // translation
   const { t } = useTranslation();

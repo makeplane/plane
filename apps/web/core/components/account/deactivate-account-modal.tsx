@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { Trash2 } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
@@ -18,7 +16,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const DeactivateAccountModal: React.FC<Props> = (props) => {
+export function DeactivateAccountModal(props: Props) {
   const router = useAppRouter();
   const { isOpen, onClose } = props;
   // hooks
@@ -125,4 +123,4 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+}

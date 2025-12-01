@@ -14,7 +14,7 @@ type Props = {
   page: TPageInstance;
 };
 
-export const PageNavigationPaneInfoTabActorsInfo: React.FC<Props> = observer((props) => {
+export const PageNavigationPaneInfoTabActorsInfo = observer(function PageNavigationPaneInfoTabActorsInfo(props: Props) {
   const { page } = props;
   // navigation
   const { workspaceSlug } = useParams();

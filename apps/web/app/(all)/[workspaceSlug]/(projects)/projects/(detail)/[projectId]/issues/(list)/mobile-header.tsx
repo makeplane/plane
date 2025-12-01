@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -20,7 +18,7 @@ import {
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 
-export const ProjectIssuesMobileHeader = observer(() => {
+export const ProjectIssuesMobileHeader = observer(function ProjectIssuesMobileHeader() {
   // i18n
   const { t } = useTranslation();
   const [analyticsModal, setAnalyticsModal] = useState(false);

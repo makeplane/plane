@@ -17,7 +17,7 @@ import AnalyticsSectionWrapper from "../analytics-section-wrapper";
 import { ChartLoader } from "../loaders";
 
 const analyticsService = new AnalyticsService();
-const CreatedVsResolved = observer(() => {
+const CreatedVsResolved = observer(function CreatedVsResolved() {
   const {
     selectedDuration,
     selectedDurationLabel,

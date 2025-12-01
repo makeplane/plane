@@ -5,7 +5,7 @@ type TEstimateNumberInputProps = {
   handleEstimateInputValue: (value: string) => void;
 };
 
-export const EstimateNumberInput: FC<TEstimateNumberInputProps> = (props) => {
+export function EstimateNumberInput(props: TEstimateNumberInputProps) {
   const { value, handleEstimateInputValue } = props;
 
   // i18n
@@ -21,4 +21,4 @@ export const EstimateNumberInput: FC<TEstimateNumberInputProps> = (props) => {
       type="number"
     />
   );
-};
+}

@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { isNil } from "lodash-es";
@@ -24,7 +22,7 @@ export type TIssueSubscription = {
   serviceType?: EIssueServiceType;
 };
 
-export const IssueSubscription: FC<TIssueSubscription> = observer((props) => {
+export const IssueSubscription = observer(function IssueSubscription(props: TIssueSubscription) {
   const { workspaceSlug, projectId, issueId, serviceType = EIssueServiceType.ISSUES } = props;
   const { t } = useTranslation();
   // hooks

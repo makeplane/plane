@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TBaseLayoutType } from "@plane/types";
@@ -12,7 +10,7 @@ type Props = {
   selectedLayout: TBaseLayoutType;
 };
 
-export const LayoutSwitcher: React.FC<Props> = (props) => {
+export function LayoutSwitcher(props: Props) {
   const { layouts, onChange, selectedLayout } = props;
   const { isMobile } = usePlatformOS();
 
@@ -47,4 +45,4 @@ export const LayoutSwitcher: React.FC<Props> = (props) => {
       })}
     </div>
   );
-};
+}

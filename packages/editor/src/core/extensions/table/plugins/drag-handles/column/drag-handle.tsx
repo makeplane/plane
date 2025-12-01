@@ -45,7 +45,7 @@ export type ColumnDragHandleProps = {
   editor: Editor;
 };
 
-export const ColumnDragHandle: React.FC<ColumnDragHandleProps> = (props) => {
+export function ColumnDragHandle(props: ColumnDragHandleProps) {
   const { col, editor } = props;
   // states
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -222,4 +222,4 @@ export const ColumnDragHandle: React.FC<ColumnDragHandleProps> = (props) => {
       )}
     </>
   );
-};
+}

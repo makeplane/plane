@@ -14,7 +14,7 @@ type TProps = {
   handleClose?: () => void;
 };
 
-export const Stickies = observer((props: TProps) => {
+export const Stickies = observer(function Stickies(props: TProps) {
   const { handleClose } = props;
   // navigation
   const { workspaceSlug } = useParams();

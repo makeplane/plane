@@ -3,4 +3,6 @@ export type TProjectTeamspaceList = {
   projectId: string;
 };
 
-export const ProjectTeamspaceList: React.FC<TProjectTeamspaceList> = () => null;
+export function ProjectTeamspaceList(_props: TProjectTeamspaceList) {
+  return null;
+}

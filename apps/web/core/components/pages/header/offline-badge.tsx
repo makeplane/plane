@@ -10,7 +10,7 @@ type Props = {
   page: TPageInstance;
 };
 
-export const PageOfflineBadge = observer(({ page }: Props) => {
+export const PageOfflineBadge = observer(function PageOfflineBadge({ page }: Props) {
   // use online status
   const { isOnline } = useOnlineStatus();
 

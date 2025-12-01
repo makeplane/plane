@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import type { Control } from "react-hook-form";
@@ -45,7 +43,7 @@ type TIssueDefaultPropertiesProps = {
   setSelectedParentIssue: (issue: ISearchIssueResponse) => void;
 };
 
-export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = observer((props) => {
+export const IssueDefaultProperties = observer(function IssueDefaultProperties(props: TIssueDefaultPropertiesProps) {
   const {
     control,
     id,

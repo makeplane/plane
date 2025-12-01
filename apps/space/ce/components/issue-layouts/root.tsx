@@ -6,4 +6,6 @@ type Props = {
   publishSettings: PublishStore;
 };
 
-export const ViewLayoutsRoot = (_props: Props) => <PageNotFound />;
+export function ViewLayoutsRoot(_props: Props) {
+  return <PageNotFound />;
+}

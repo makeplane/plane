@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
@@ -25,7 +24,9 @@ export type SidebarWorkspaceMenuItemProps = {
   };
 };
 
-export const SidebarWorkspaceMenuItem: FC<SidebarWorkspaceMenuItemProps> = observer((props) => {
+export const SidebarWorkspaceMenuItem = observer(function SidebarWorkspaceMenuItem(
+  props: SidebarWorkspaceMenuItemProps
+) {
   const { item } = props;
 
   const { t } = useTranslation();

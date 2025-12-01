@@ -16,7 +16,7 @@ type TProps = {
   cycleId: string;
 };
 
-export const EstimateTypeDropdown = observer((props: TProps) => {
+export const EstimateTypeDropdown = observer(function EstimateTypeDropdown(props: TProps) {
   const { value, onChange, projectId, cycleId, showDefault = false } = props;
   const { getIsPointsDataAvailable } = useCycle();
   const { areEstimateEnabledByProjectId, currentProjectEstimateType } = useProjectEstimates();

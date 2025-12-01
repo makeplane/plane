@@ -5,7 +5,7 @@ import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 
 // TODO: If projectViewId changes, everything breaks. Figure out a better way to handle this.
-export const ProfileViewEmptyState: React.FC = observer(() => {
+export const ProfileViewEmptyState = observer(function ProfileViewEmptyState() {
   // plane hooks
   const { t } = useTranslation();
   // store hooks

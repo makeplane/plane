@@ -1,5 +1,3 @@
-"use client";
-
 import type React from "react";
 import { observer } from "mobx-react";
 // ui
@@ -34,7 +32,7 @@ const CYCLE_VIEW_LAYOUTS: {
   },
 ];
 
-export const CyclesListMobileHeader = observer(() => {
+export const CyclesListMobileHeader = observer(function CyclesListMobileHeader() {
   const { currentProjectDetails } = useProject();
   // hooks
   const { updateDisplayFilters } = useCycleFilter();

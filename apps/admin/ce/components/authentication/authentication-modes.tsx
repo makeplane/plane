@@ -106,7 +106,7 @@ export const getAuthenticationModes: (props: TGetBaseAuthenticationModeProps) =>
   },
 ];
 
-export const AuthenticationModes = observer<React.FC<TAuthenticationModeProps>>((props) => {
+export const AuthenticationModes = observer(function AuthenticationModes(props: TAuthenticationModeProps) {
   const { disabled, updateConfig } = props;
   // next-themes
   const { resolvedTheme } = useTheme();

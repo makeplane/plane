@@ -24,7 +24,7 @@ interface Props {
     | IProjectViewIssuesFilter
     | IProjectEpicsFilter;
 }
-export const CalendarMonthsDropdown: React.FC<Props> = observer((props: Props) => {
+export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(props: Props) {
   const { issuesFilterStore } = props;
 
   const issueCalendarView = useCalendarView();

@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
@@ -31,7 +29,7 @@ interface Props {
   referenceElement: HTMLButtonElement | null;
 }
 
-export const MemberOptions: React.FC<Props> = observer((props: Props) => {
+export const MemberOptions = observer(function MemberOptions(props: Props) {
   const {
     getUserDetails,
     isOpen,

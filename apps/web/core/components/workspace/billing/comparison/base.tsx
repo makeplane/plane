@@ -24,7 +24,7 @@ export const shouldRenderPlanDetail = (planKey: TPlanePlans) => {
   return true;
 };
 
-export const PlansComparisonBase = observer((props: TPlansComparisonBaseProps) => {
+export const PlansComparisonBase = observer(function PlansComparisonBase(props: TPlansComparisonBaseProps) {
   const { planeDetails, isSelfManaged, isCompareAllFeaturesSectionOpen, setIsCompareAllFeaturesSectionOpen } = props;
   // plan details
   const { planDetails, planHighlights, planComparison } = PLANE_PLANS;

@@ -18,7 +18,7 @@ type Props = {
   updateTotalPages: (count: number) => void;
 };
 
-export const WorkspaceActivityListPage: React.FC<Props> = (props) => {
+export function WorkspaceActivityListPage(props: Props) {
   const { cursor, perPage, updateResultsCount, updateTotalPages } = props;
   // router
   const { workspaceSlug, userId } = useParams();
@@ -46,4 +46,4 @@ export const WorkspaceActivityListPage: React.FC<Props> = (props) => {
   }, [updateResultsCount, updateTotalPages, userProfileActivity]);
 
   return <ActivityList activity={userProfileActivity} />;
-};
+}

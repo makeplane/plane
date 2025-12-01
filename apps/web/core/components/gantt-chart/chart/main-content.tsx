@@ -56,7 +56,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const GanttChartMainContent: React.FC<Props> = observer((props) => {
+export const GanttChartMainContent = observer(function GanttChartMainContent(props: Props) {
   const {
     blockIds,
     loadMoreBlocks,

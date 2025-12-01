@@ -6,6 +6,8 @@ import type { TPowerKContextTypeExtended } from "../../types";
 
 export const CONTEXT_ENTITY_MAP_EXTENDED: Record<TPowerKContextTypeExtended, TContextEntityMap> = {};
 
-export const PowerKContextBasedActionsExtended: React.FC<ContextBasedActionsProps> = () => null;
+export function PowerKContextBasedActionsExtended(_props: ContextBasedActionsProps) {
+  return null;
+}
 
 export const usePowerKContextBasedExtendedActions = (): TPowerKCommandConfig[] => [];

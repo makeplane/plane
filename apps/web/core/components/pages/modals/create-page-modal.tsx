@@ -25,7 +25,7 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const CreatePageModal: FC<Props> = (props) => {
+export function CreatePageModal(props: Props) {
   const {
     workspaceSlug,
     projectId,
@@ -96,4 +96,4 @@ export const CreatePageModal: FC<Props> = (props) => {
       />
     </ModalCore>
   );
-};
+}

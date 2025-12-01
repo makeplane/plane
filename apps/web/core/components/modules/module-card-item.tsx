@@ -1,5 +1,3 @@
-"use client";
-
 import type { SyntheticEvent } from "react";
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
@@ -41,7 +39,7 @@ type Props = {
   moduleId: string;
 };
 
-export const ModuleCardItem: React.FC<Props> = observer((props) => {
+export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
   const { moduleId } = props;
   // refs
   const parentRef = useRef(null);

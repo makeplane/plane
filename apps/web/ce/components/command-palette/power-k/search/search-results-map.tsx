@@ -1,5 +1,3 @@
-"use client";
-
 // components
 import type { TPowerKSearchResultGroupDetails } from "@/components/power-k/ui/modal/search-results-map";
 // local imports

@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // ui
 import { MODULE_STATUS } from "@plane/constants";
@@ -13,7 +11,7 @@ type Props = {
   editable: boolean | undefined;
 };
 
-export const AppliedStatusFilters: React.FC<Props> = observer((props) => {
+export const AppliedStatusFilters = observer(function AppliedStatusFilters(props: Props) {
   const { handleRemove, values, editable } = props;
   const { t } = useTranslation();
 

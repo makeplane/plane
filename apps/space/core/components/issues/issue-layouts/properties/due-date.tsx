@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { DueDatePropertyIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -17,7 +15,7 @@ type Props = {
   shouldShowBorder?: boolean;
 };
 
-export const IssueBlockDate = observer((props: Props) => {
+export const IssueBlockDate = observer(function IssueBlockDate(props: Props) {
   const { due_date, stateId, shouldHighLight = true, shouldShowBorder = true } = props;
   const { getStateById } = useStates();
 

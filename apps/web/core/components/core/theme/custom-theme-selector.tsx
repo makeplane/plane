@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -19,7 +17,7 @@ type TCustomThemeSelector = {
   applyThemeChange: (theme: Partial<IUserTheme>) => void;
 };
 
-export const CustomThemeSelector: React.FC<TCustomThemeSelector> = observer((props) => {
+export const CustomThemeSelector = observer(function CustomThemeSelector(props: TCustomThemeSelector) {
   const { applyThemeChange } = props;
   // hooks
   const { data: userProfile, updateUserTheme } = useUserProfile();

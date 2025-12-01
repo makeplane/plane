@@ -1,5 +1,3 @@
-"use client";
-
 import { CloseIcon } from "@plane/propel/icons";
 // types
 import type { IIssueLabel } from "@/types/issue";
@@ -10,7 +8,7 @@ type Props = {
   values: string[];
 };
 
-export const AppliedLabelsFilters: React.FC<Props> = (props) => {
+export function AppliedLabelsFilters(props: Props) {
   const { handleRemove, labels, values } = props;
 
   return (
@@ -41,4 +39,4 @@ export const AppliedLabelsFilters: React.FC<Props> = (props) => {
       })}
     </>
   );
-};
+}

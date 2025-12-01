@@ -25,7 +25,9 @@ type TWorkspaceLevelWorkItemFiltersHOCProps = TSharedWorkItemFiltersHOCProps & {
 } & TEnableSaveViewProps &
   TEnableUpdateViewProps;
 
-export const WorkspaceLevelWorkItemFiltersHOC = observer((props: TWorkspaceLevelWorkItemFiltersHOCProps) => {
+export const WorkspaceLevelWorkItemFiltersHOC = observer(function WorkspaceLevelWorkItemFiltersHOC(
+  props: TWorkspaceLevelWorkItemFiltersHOCProps
+) {
   const { children, enableSaveView, enableUpdateView, entityId, initialWorkItemFilters, workspaceSlug } = props;
   // states
   const [isCreateViewModalOpen, setIsCreateViewModalOpen] = useState(false);

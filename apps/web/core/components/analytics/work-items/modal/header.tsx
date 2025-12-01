@@ -14,7 +14,7 @@ type Props = {
   module?: IModule;
 };
 
-export const WorkItemsModalHeader: React.FC<Props> = observer((props) => {
+export const WorkItemsModalHeader = observer(function WorkItemsModalHeader(props: Props) {
   const { fullScreen, handleClose, setFullScreen, title, cycle, module } = props;
 
   return (

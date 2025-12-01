@@ -53,42 +53,48 @@ const visibilitySubGroupByGroupCount = (subGroupIssueCount: number, showEmptyGro
   return subGroupHeaderVisibility;
 };
 
-const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = observer(
-  ({ getGroupIssueCount, sub_group_by, group_by, list, collapsedGroups, handleCollapsedGroups, showEmptyGroup }) => {
-    const { getIsWorkflowWorkItemCreationDisabled } = useWorkFlowFDragNDrop(group_by, sub_group_by);
+const SubGroupSwimlaneHeader = observer(function SubGroupSwimlaneHeader({
+  getGroupIssueCount,
+  sub_group_by,
+  group_by,
+  list,
+  collapsedGroups,
+  handleCollapsedGroups,
+  showEmptyGroup,
+}: ISubGroupSwimlaneHeader) {
+  const { getIsWorkflowWorkItemCreationDisabled } = useWorkFlowFDragNDrop(group_by, sub_group_by);
 
-    return (
-      <div className="relative flex h-max min-h-full w-full items-center gap-4">
-        {list &&
-          list.length > 0 &&
-          list.map((_list: IGroupByColumn) => {
-            const groupCount = getGroupIssueCount(_list?.id, undefined, false) ?? 0;
+  return (
+    <div className="relative flex h-max min-h-full w-full items-center gap-4">
+      {list &&
+        list.length > 0 &&
+        list.map((_list: IGroupByColumn) => {
+          const groupCount = getGroupIssueCount(_list?.id, undefined, false) ?? 0;
 
-            const subGroupByVisibilityToggle = visibilitySubGroupByGroupCount(groupCount, showEmptyGroup);
+          const subGroupByVisibilityToggle = visibilitySubGroupByGroupCount(groupCount, showEmptyGroup);
 
-            if (subGroupByVisibilityToggle === false) return <></>;
+          if (subGroupByVisibilityToggle === false) return <></>;
 
-            return (
-              <div key={`${sub_group_by}_${_list.id}`} className="flex w-[350px] flex-shrink-0 flex-col">
-                <HeaderGroupByCard
-                  sub_group_by={sub_group_by}
-                  group_by={group_by}
-                  column_id={_list.id}
-                  icon={_list.icon}
-                  title={_list.name}
-                  count={groupCount}
-                  collapsedGroups={collapsedGroups}
-                  handleCollapsedGroups={handleCollapsedGroups}
-                  issuePayload={_list.payload}
-                  disableIssueCreation={getIsWorkflowWorkItemCreationDisabled(_list.id)}
-                />
-              </div>
-            );
-          })}
-      </div>
-    );
-  }
-);
+          return (
+            <div key={`${sub_group_by}_${_list.id}`} className="flex w-[350px] flex-shrink-0 flex-col">
+              <HeaderGroupByCard
+                sub_group_by={sub_group_by}
+                group_by={group_by}
+                column_id={_list.id}
+                icon={_list.icon}
+                title={_list.name}
+                count={groupCount}
+                collapsedGroups={collapsedGroups}
+                handleCollapsedGroups={handleCollapsedGroups}
+                issuePayload={_list.payload}
+                disableIssueCreation={getIsWorkflowWorkItemCreationDisabled(_list.id)}
+              />
+            </div>
+          );
+        })}
+    </div>
+  );
+});
 
 interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   issuesMap: IIssueMap;
@@ -115,7 +121,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
 }
 
-const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
+const SubGroupSwimlane = observer(function SubGroupSwimlane(props: ISubGroupSwimlane) {
   const {
     issuesMap,
     groupedIssueIds,
@@ -245,7 +251,7 @@ export interface IKanBanSwimLanes {
   orderBy: TIssueOrderByOptions | undefined;
 }
 
-export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
+export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanSwimLanes) {
   const {
     issuesMap,
     groupedIssueIds,

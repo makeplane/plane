@@ -13,7 +13,7 @@ type BlockProps = {
   ref: React.RefObject<HTMLDivElement>;
   workspaceSlug: string;
 };
-export const RecentProject = (props: BlockProps) => {
+export function RecentProject(props: BlockProps) {
   const { activity, ref, workspaceSlug } = props;
   // router
   const router = useRouter();
@@ -76,4 +76,4 @@ export const RecentProject = (props: BlockProps) => {
       }}
     />
   );
-};
+}

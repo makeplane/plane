@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 
 // react-hook-form
@@ -17,7 +15,7 @@ type Props = {
   watch: UseFormWatch<TFormValues>;
 };
 
-export const GithubImportUsers: FC<Props> = ({ handleStepChange, users, setUsers, watch }) => {
+export function GithubImportUsers({ handleStepChange, users, setUsers, watch }: Props) {
   const isInvalid = users.filter((u) => u.import !== false && u.email === "").length > 0;
 
   return (
@@ -50,4 +48,4 @@ export const GithubImportUsers: FC<Props> = ({ handleStepChange, users, setUsers
       </div>
     </div>
   );
-};
+}

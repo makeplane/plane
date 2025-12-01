@@ -21,7 +21,7 @@ interface IssueBlocksListProps {
   isEpic?: boolean;
 }
 
-export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = observer((props) => {
+export const KanbanIssueBlocksList = observer(function KanbanIssueBlocksList(props: IssueBlocksListProps) {
   const {
     sub_group_id,
     groupId,

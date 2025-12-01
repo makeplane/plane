@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -23,7 +21,7 @@ type Props = {
   issueDetails: IIssue;
 };
 
-export const PeekOverviewIssueActivity: React.FC<Props> = observer((props) => {
+export const PeekOverviewIssueActivity = observer(function PeekOverviewIssueActivity(props: Props) {
   const { anchor } = props;
   // router
   const pathname = usePathname();

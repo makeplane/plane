@@ -1,5 +1,3 @@
-"use client";
-
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { BarChart } from "@plane/propel/charts/bar-chart";
@@ -20,7 +18,7 @@ const priorityColors = {
   none: "#e5e5e5",
 };
 
-export const ProfilePriorityDistribution: React.FC<Props> = ({ userProfile }) => {
+export function ProfilePriorityDistribution({ userProfile }: Props) {
   const { t } = useTranslation();
   return (
     <div className="flex flex-col space-y-2">
@@ -79,4 +77,4 @@ export const ProfilePriorityDistribution: React.FC<Props> = ({ userProfile }) =>
       )}
     </div>
   );
-};
+}

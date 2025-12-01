@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -20,7 +18,7 @@ export type TReadonlyStateProps = {
   workspaceSlug: string;
 };
 
-export const ReadonlyState: React.FC<TReadonlyStateProps> = observer((props) => {
+export const ReadonlyState = observer(function ReadonlyState(props: TReadonlyStateProps) {
   const { className, iconSize = "size-4", hideIcon = false, value, placeholder, projectId, workspaceSlug } = props;
   // states
   const [stateLoader, setStateLoader] = useState(false);

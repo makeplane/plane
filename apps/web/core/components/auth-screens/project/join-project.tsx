@@ -1,4 +1,3 @@
-"use client";
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { ClipboardList } from "lucide-react";
@@ -15,7 +14,7 @@ type Props = {
   isPrivateProject?: boolean;
 };
 
-export const JoinProject: React.FC<Props> = (props) => {
+export function JoinProject(props: Props) {
   const { projectId, isPrivateProject = false } = props;
   // states
   const [isJoiningProject, setIsJoiningProject] = useState(false);
@@ -65,4 +64,4 @@ export const JoinProject: React.FC<Props> = (props) => {
       )}
     </div>
   );
-};
+}

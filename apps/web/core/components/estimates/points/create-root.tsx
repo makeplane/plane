@@ -1,5 +1,3 @@
-"use client";
-
 import type { Dispatch, FC, SetStateAction } from "react";
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
@@ -30,7 +28,7 @@ type TEstimatePointCreateRoot = {
   ) => void;
 };
 
-export const EstimatePointCreateRoot: FC<TEstimatePointCreateRoot> = observer((props) => {
+export const EstimatePointCreateRoot = observer(function EstimatePointCreateRoot(props: TEstimatePointCreateRoot) {
   // props
   const {
     workspaceSlug,

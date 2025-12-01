@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 // ui
 import { Button } from "@plane/propel/button";
@@ -10,7 +8,7 @@ type Props = {
   onClick: () => void;
 };
 
-export const WebhooksEmptyState: React.FC<Props> = (props) => {
+export function WebhooksEmptyState(props: Props) {
   const { onClick } = props;
   return (
     <div
@@ -28,4 +26,4 @@ export const WebhooksEmptyState: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

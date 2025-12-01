@@ -6,7 +6,7 @@ import { cn } from "@plane/utils";
 // package.json
 import packageJson from "package.json";
 
-export const ProductUpdatesHeader = observer(() => {
+export const ProductUpdatesHeader = observer(function ProductUpdatesHeader() {
   const { t } = useTranslation();
   return (
     <div className="flex gap-2 mx-6 my-4 items-center justify-between flex-shrink-0">

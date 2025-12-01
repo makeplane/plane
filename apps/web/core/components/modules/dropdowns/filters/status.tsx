@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { MODULE_STATUS } from "@plane/constants";
@@ -15,7 +13,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterStatus: React.FC<Props> = observer((props) => {
+export const FilterStatus = observer(function FilterStatus(props: Props) {
   const { appliedFilters, handleUpdate, searchQuery } = props;
   // states
   const [previewEnabled, setPreviewEnabled] = useState(true);

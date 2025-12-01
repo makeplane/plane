@@ -11,7 +11,7 @@ interface IHeaderSubGroupByCard {
   toggleExpanded: () => void;
 }
 
-export const HeaderSubGroupByCard: React.FC<IHeaderSubGroupByCard> = observer((props) => {
+export const HeaderSubGroupByCard = observer(function HeaderSubGroupByCard(props: IHeaderSubGroupByCard) {
   const { icon, title, count, isExpanded, toggleExpanded } = props;
   return (
     <div

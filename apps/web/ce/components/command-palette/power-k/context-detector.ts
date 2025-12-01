@@ -1,4 +1,4 @@
-import type { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+import type { Params } from "react-router";
 // local imports
 import type { TPowerKContextTypeExtended } from "./types";
 

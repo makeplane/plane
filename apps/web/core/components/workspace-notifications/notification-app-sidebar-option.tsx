@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -14,7 +12,9 @@ type TNotificationAppSidebarOption = {
   workspaceSlug: string;
 };
 
-export const NotificationAppSidebarOption: FC<TNotificationAppSidebarOption> = observer((props) => {
+export const NotificationAppSidebarOption = observer(function NotificationAppSidebarOption(
+  props: TNotificationAppSidebarOption
+) {
   const { workspaceSlug } = props;
   // hooks
   const { unreadNotificationsCount, getUnreadNotificationsCount } = useWorkspaceNotifications();

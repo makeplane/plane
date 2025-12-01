@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -19,7 +17,9 @@ import { PreferencesSection } from "../preferences/section";
 const getStartOfWeekLabel = (startOfWeek: EStartOfTheWeek) =>
   START_OF_THE_WEEK_OPTIONS.find((option) => option.value === startOfWeek)?.label;
 
-export const StartOfWeekPreference = observer((props: { option: { title: string; description: string } }) => {
+export const StartOfWeekPreference = observer(function StartOfWeekPreference(props: {
+  option: { title: string; description: string };
+}) {
   // hooks
   const { data: userProfile, updateUserProfile } = useUserProfile();
 

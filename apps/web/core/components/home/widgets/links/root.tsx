@@ -9,7 +9,7 @@ import { LinkCreateUpdateModal } from "./create-update-link-modal";
 import { ProjectLinkList } from "./links";
 import { useLinks } from "./use-links";
 
-export const DashboardQuickLinks = observer((props: THomeWidgetProps) => {
+export const DashboardQuickLinks = observer(function DashboardQuickLinks(props: THomeWidgetProps) {
   const { workspaceSlug } = props;
   const { linkOperations } = useLinks(workspaceSlug);
   const {
@@ -20,7 +20,7 @@ export const DashboardQuickLinks = observer((props: THomeWidgetProps) => {
   const handleCreateLinkModal = useCallback(() => {
     toggleLinkModal(true);
     setLinkData(undefined);
-  }, []);
+  }, [toggleLinkModal, setLinkData]);
 
   useSWR(
     workspaceSlug ? `HOME_LINKS_${workspaceSlug}` : null,

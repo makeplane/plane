@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -28,7 +26,7 @@ export type PlanUpgradeCardProps = {
   isTrialAllowed: boolean;
 };
 
-export const PlanUpgradeCard: FC<PlanUpgradeCardProps> = observer((props) => {
+export const PlanUpgradeCard = observer(function PlanUpgradeCard(props: PlanUpgradeCardProps) {
   const {
     planVariant,
     features,

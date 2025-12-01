@@ -65,7 +65,7 @@ export interface IKanBan {
   isEpic?: boolean;
 }
 
-export const KanBan: React.FC<IKanBan> = observer((props) => {
+export const KanBan = observer(function KanBan(props: IKanBan) {
   const {
     issuesMap,
     groupedIssueIds,

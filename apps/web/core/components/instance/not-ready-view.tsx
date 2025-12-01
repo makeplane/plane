@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
@@ -11,7 +9,7 @@ import PlaneBackgroundPatternDark from "@/app/assets/auth/background-pattern-dar
 import PlaneBackgroundPattern from "@/app/assets/auth/background-pattern.svg?url";
 import PlaneTakeOffImage from "@/app/assets/plane-takeoff.png?url";
 
-export const InstanceNotReady: FC = () => {
+export function InstanceNotReady() {
   const { resolvedTheme } = useTheme();
   const patternBackground = resolvedTheme === "dark" ? PlaneBackgroundPatternDark : PlaneBackgroundPattern;
 
@@ -53,4 +51,4 @@ export const InstanceNotReady: FC = () => {
       </div>
     </div>
   );
-};
+}

@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane imports
 import { Loader } from "@plane/ui";
@@ -17,7 +15,7 @@ type Props = {
   issueDetails: IIssue | undefined;
 };
 
-export const FullScreenPeekView: React.FC<Props> = observer((props) => {
+export const FullScreenPeekView = observer(function FullScreenPeekView(props: Props) {
   const { anchor, handleClose, issueDetails } = props;
 
   return (

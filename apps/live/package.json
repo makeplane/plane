@@ -3,13 +3,18 @@
   "version": "1.1.0",
   "license": "AGPL-3.0",
   "description": "A realtime collaborative server powers Plane's rich text editor",
-  "main": "./dist/start.js",
+  "main": "./dist/start.mjs",
+  "module": "./dist/start.mjs",
+  "exports": {
+    ".": "./dist/start.mjs",
+    "./package.json": "./package.json"
+  },
   "private": true,
   "type": "module",
   "scripts": {
     "build": "tsc --noEmit && tsdown",
-    "dev": "tsdown --watch --onSuccess \"node --env-file=.env dist/start.js\"",
-    "start": "node --env-file=.env dist/start.js",
+    "dev": "tsdown --watch --onSuccess \"node --env-file=.env .\"",
+    "start": "node --env-file=.env .",
     "check:lint": "eslint . --max-warnings 10",
     "check:types": "tsc --noEmit",
     "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
@@ -51,6 +56,7 @@
   "devDependencies": {
     "@plane/eslint-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
+    "@prettier/plugin-oxc": "0.0.4",
     "@types/compression": "1.8.1",
     "@types/cors": "^2.8.17",
     "@types/express": "4.17.23",

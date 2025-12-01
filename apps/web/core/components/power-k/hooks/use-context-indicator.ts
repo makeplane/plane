@@ -6,7 +6,6 @@ import { useCycle } from "@/hooks/store/use-cycle";
 import { useModule } from "@/hooks/store/use-module";
 // plane web imports
 import { useExtendedContextIndicator } from "@/plane-web/components/command-palette/power-k/hooks/use-extended-context-indicator";
-import type { TPowerKContextTypeExtended } from "@/plane-web/components/command-palette/power-k/types";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 // local imports
 import type { TPowerKContextType } from "../core/types";
@@ -25,13 +24,13 @@ export const useContextIndicator = (args: TArgs): string | null => {
   const { getPageById } = usePageStore(EPageStoreType.PROJECT);
   // extended context indicator
   const extendedIndicator = useExtendedContextIndicator({
-    activeContext: activeContext as TPowerKContextTypeExtended,
+    activeContext,
   });
   let indicator: string | undefined | null = null;
 
   switch (activeContext) {
     case "work-item": {
-      indicator = workItemIdentifier.toString();
+      indicator = workItemIdentifier ? workItemIdentifier.toString() : null;
       break;
     }
     case "cycle": {

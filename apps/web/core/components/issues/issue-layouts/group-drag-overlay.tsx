@@ -20,7 +20,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const GroupDragOverlay = (props: Props) => {
+export function GroupDragOverlay(props: Props) {
   const {
     dragColumnOrientation,
     canOverlayBeVisible,
@@ -85,4 +85,4 @@ export const GroupDragOverlay = (props: Props) => {
       )}
     </div>
   );
-};
+}

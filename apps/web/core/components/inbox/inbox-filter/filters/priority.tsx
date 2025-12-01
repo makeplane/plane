@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -17,7 +15,7 @@ type Props = {
   searchQuery: string;
 };
 
-export const FilterPriority: FC<Props> = observer((props) => {
+export const FilterPriority = observer(function FilterPriority(props: Props) {
   const { searchQuery } = props;
   // hooks
   const { t } = useTranslation();

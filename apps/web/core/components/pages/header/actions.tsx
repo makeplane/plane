@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane web components
 import { PageLockControl } from "@/plane-web/components/pages/header/lock-control";
@@ -21,7 +19,7 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const PageHeaderActions: React.FC<Props> = observer((props) => {
+export const PageHeaderActions = observer(function PageHeaderActions(props: Props) {
   const { page, storeType } = props;
 
   return (

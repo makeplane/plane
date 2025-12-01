@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { E_SORT_ORDER, TActivityFilters } from "@plane/constants";
@@ -27,7 +26,7 @@ type TIssueActivityCommentRoot = {
   sortOrder: E_SORT_ORDER;
 };
 
-export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer((props) => {
+export const IssueActivityCommentRoot = observer(function IssueActivityCommentRoot(props: TIssueActivityCommentRoot) {
   const {
     workspaceSlug,
     isIntakeIssue,
@@ -78,16 +77,19 @@ export const IssueActivityCommentRoot: FC<TIssueActivityCommentRoot> = observer(
           />
         ) : BASE_ACTIVITY_FILTER_TYPES.includes(activityComment.activity_type as EActivityFilterType) ? (
           <IssueActivityItem
+            key={activityComment.id}
             activityId={activityComment.id}
             ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
           />
         ) : activityComment.activity_type === "ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY" ? (
           <IssueAdditionalPropertiesActivity
+            key={activityComment.id}
             activityId={activityComment.id}
             ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
           />
         ) : activityComment.activity_type === "WORKLOG" ? (
           <IssueActivityWorklog
+            key={activityComment.id}
             workspaceSlug={workspaceSlug}
             projectId={projectId}
             issueId={issueId}

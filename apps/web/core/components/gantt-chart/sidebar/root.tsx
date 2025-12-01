@@ -28,7 +28,7 @@ type Props = {
   isEpic?: boolean;
 };
 
-export const GanttChartSidebar: React.FC<Props> = observer((props) => {
+export const GanttChartSidebar = observer(function GanttChartSidebar(props: Props) {
   const { t } = useTranslation();
   const {
     blockIds,

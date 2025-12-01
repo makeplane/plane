@@ -15,7 +15,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { ProjectViewListItem } from "./view-list-item";
 
-export const ProjectViewsList = observer(() => {
+export const ProjectViewsList = observer(function ProjectViewsList() {
   const { projectId } = useParams();
   // plane hooks
   const { t } = useTranslation();

@@ -14,7 +14,7 @@ type ContextMenuItemProps = {
   item: TContextMenuItem;
 };
 
-export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
+export function ContextMenuItem(props: ContextMenuItemProps) {
   const { handleActiveItem, handleClose, isActive, item } = props;
 
   // Nested menu state
@@ -243,4 +243,4 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
       )}
     </>
   );
-};
+}

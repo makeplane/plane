@@ -45,7 +45,7 @@ const VARIANT_CLASSES: Record<TModalVariant, string> = {
   primary: "bg-custom-primary-100/20 text-custom-primary-100",
 };
 
-export const AlertModalCore: React.FC<Props> = (props) => {
+export function AlertModalCore(props: Props) {
   const {
     content,
     handleClose,
@@ -94,4 +94,4 @@ export const AlertModalCore: React.FC<Props> = (props) => {
       </div>
     </ModalCore>
   );
-};
+}

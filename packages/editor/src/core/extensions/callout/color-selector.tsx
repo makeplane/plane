@@ -12,7 +12,7 @@ type Props = {
   toggleDropdown: () => void;
 };
 
-export const CalloutBlockColorSelector: React.FC<Props> = (props) => {
+export function CalloutBlockColorSelector(props: Props) {
   const { disabled, isOpen, onSelect, toggleDropdown } = props;
 
   const handleColorSelect = (val: string | null) => {
@@ -73,4 +73,4 @@ export const CalloutBlockColorSelector: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}

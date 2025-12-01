@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
@@ -19,7 +17,9 @@ import { useInstance } from "@/hooks/store";
 import type { Route } from "./+types/page";
 import { InstanceGithubConfigForm } from "./form";
 
-const InstanceGithubAuthenticationPage = observer<React.FC<Route.ComponentProps>>(() => {
+const InstanceGithubAuthenticationPage = observer(function InstanceGithubAuthenticationPage(
+  _props: Route.ComponentProps
+) {
   // store
   const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
   // state
