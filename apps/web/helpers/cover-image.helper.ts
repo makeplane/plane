@@ -115,9 +115,8 @@ export const getCoverImageType = (imageUrl: string): TCoverImageType => {
 
 /**
  * Gets the correct display URL for a cover image
- * - Local static images: returned as-is (served from public folder)
+ * - Local static images: returned as-is (served from assets folder)
  * - Uploaded assets: processed through getFileURL (adds backend URL)
- * - None/null: returns fallback or null
  */
 export function getCoverImageDisplayURL(imageUrl: string | null | undefined, fallbackUrl: string): string;
 export function getCoverImageDisplayURL(imageUrl: string | null | undefined, fallbackUrl: null): string | null;
