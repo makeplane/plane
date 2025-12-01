@@ -139,7 +139,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
       avatar_url: formData.avatar_url ?? undefined,
     };
     const profileUpdatePayload: Partial<TUserProfile> = {
-      use_case: formData.use_case,
+      use_case: formData.use_case && formData.use_case.length > 0 ? formData.use_case.join(". ") : undefined,
       role: formData.role,
     };
     try {
@@ -151,7 +151,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
       captureSuccess({
         eventName: USER_TRACKER_EVENTS.add_details,
         payload: {
-          use_case: formData.use_case,
+          use_case: profileUpdatePayload.use_case,
           role: formData.role,
         },
       });
@@ -212,7 +212,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
 
   const handleSubmitUserPersonalization = async (formData: TProfileSetupFormValues) => {
     const profileUpdatePayload: Partial<TUserProfile> = {
-      use_case: formData.use_case,
+      use_case: formData.use_case && formData.use_case.length > 0 ? formData.use_case.join(". ") : undefined,
       role: formData.role,
     };
     try {
@@ -223,7 +223,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
       captureSuccess({
         eventName: USER_TRACKER_EVENTS.add_details,
         payload: {
-          use_case: formData.use_case,
+          use_case: profileUpdatePayload.use_case,
           role: formData.role,
         },
       });

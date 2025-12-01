@@ -36,7 +36,7 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
   } = useForm<TProfileSetupFormValues>({
     defaultValues: {
       ...defaultValues,
-      use_case: profile?.use_case,
+      use_case: profile?.use_case ? profile.use_case.split(". ") : [],
     },
     mode: "onChange",
   });
@@ -44,7 +44,7 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
   // handle submit
   const handleSubmitUserPersonalization = async (formData: TProfileSetupFormValues) => {
     const profileUpdatePayload: Partial<TUserProfile> = {
-      use_case: formData.use_case,
+      use_case: formData.use_case && formData.use_case.length > 0 ? formData.use_case.join(". ") : undefined,
     };
     try {
       await Promise.all([
@@ -54,7 +54,7 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
       captureSuccess({
         eventName: USER_TRACKER_EVENTS.add_details,
         payload: {
-          use_case: formData.use_case,
+          use_case: profileUpdatePayload.use_case,
         },
       });
       setToast({
