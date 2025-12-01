@@ -110,6 +110,27 @@ export interface IProjectBulkAddFormData {
   members: { role: TUserPermissions | EUserProjectRoles; member_id: string }[];
 }
 
+export type IProjectMemberNavigationPreferences = {
+  default_tab: string;
+  hide_in_more_menu: string[];
+};
+
+export type IProjectMemberPreferencesUpdate = {
+  navigation: IProjectMemberNavigationPreferences;
+};
+
+export type IProjectMemberPreferencesResponse = {
+  preferences: {
+    navigation: IProjectMemberNavigationPreferences;
+  };
+};
+
+export type IProjectMemberPreferencesFullResponse = IProjectMemberPreferencesResponse & {
+  project_id: string;
+  member_id: string;
+  workspace_id: string;
+};
+
 export interface IGithubRepository {
   id: string;
   full_name: string;

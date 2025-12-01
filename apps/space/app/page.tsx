@@ -9,6 +9,11 @@ import { LogoSpinner } from "@/components/common/logo-spinner";
 import { AuthView } from "@/components/views";
 // hooks
 import { useUser } from "@/hooks/store/use-user";
+import type { Route } from "./+types/page";
+
+export const headers: Route.HeadersFunction = () => ({
+  "X-Frame-Options": "SAMEORIGIN",
+});
 
 const HomePage = observer(function HomePage() {
   const { data: currentUser, isAuthenticated, isInitializing } = useUser();

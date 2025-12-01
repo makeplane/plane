@@ -40,6 +40,10 @@ export interface IWorkspaceRootStore {
     key: string,
     data: Partial<IWorkspaceSidebarNavigationItem>
   ) => Promise<IWorkspaceSidebarNavigationItem | undefined>;
+  updateBulkSidebarPreferences: (
+    workspaceSlug: string,
+    data: Array<{ key: string; is_pinned: boolean; sort_order: number }>
+  ) => Promise<void>;
   getNavigationPreferences: (workspaceSlug: string) => IWorkspaceSidebarNavigation | undefined;
   // sub-stores
   webhook: IWebhookStore;
@@ -82,6 +86,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
       deleteWorkspace: action,
       fetchSidebarNavigationPreferences: action,
       updateSidebarPreference: action,
+      updateBulkSidebarPreferences: action,
     });
 
     // services
@@ -272,4 +277,36 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
   getNavigationPreferences = computedFn(
     (workspaceSlug: string): IWorkspaceSidebarNavigation | undefined => this.navigationPreferencesMap[workspaceSlug]
   );
+
+  updateBulkSidebarPreferences = async (
+    workspaceSlug: string,
+    data: Array<{ key: string; is_pinned: boolean; sort_order: number }>
+  ) => {
+    const beforeUpdateData = clone(this.navigationPreferencesMap[workspaceSlug]);
+
+    try {
+      // Optimistically update store
+      const updatedPreferences: IWorkspaceSidebarNavigation = {};
+      data.forEach((item) => {
+        updatedPreferences[item.key] = item;
+      });
+
+      runInAction(() => {
+        this.navigationPreferencesMap[workspaceSlug] = {
+          ...this.navigationPreferencesMap[workspaceSlug],
+          ...updatedPreferences,
+        };
+      });
+
+      // Call API to persist changes
+      await this.workspaceService.updateBulkSidebarPreferences(workspaceSlug, data);
+    } catch (error) {
+      // Rollback on failure
+      runInAction(() => {
+        this.navigationPreferencesMap[workspaceSlug] = beforeUpdateData;
+      });
+      console.error("Failed to update bulk sidebar preferences:", error);
+      throw error;
+    }
+  };
 }

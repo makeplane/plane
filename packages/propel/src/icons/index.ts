@@ -54,6 +54,7 @@ export * from "./properties";
 export * from "./related-icon";
 export * from "./sans-serif-icon";
 export * from "./serif-icon";
+export * from "./set-as-default-icon";
 export * from "./side-panel-icon";
 export * from "./state";
 export * from "./sticky-note-icon";

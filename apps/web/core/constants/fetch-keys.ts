@@ -62,6 +62,9 @@ export const WORKSPACE_LABELS = (workspaceSlug: string) => `WORKSPACE_LABELS_${w
 
 export const WORKSPACE_ESTIMATES = (workspaceSlug: string) => `WORKSPACE_ESTIMATES_${workspaceSlug.toUpperCase()}`;
 
+export const WORKSPACE_WORKFLOW_STATES = (workspaceSlug: string) =>
+  `WORKSPACE_WORKFLOW_STATES_${workspaceSlug.toUpperCase()}`;
+
 export const WORKSPACE_INVITATION = (invitationId: string) => `WORKSPACE_INVITATION_${invitationId}`;
 
 export const WORKSPACE_MEMBER_ME_INFORMATION = (workspaceSlug: string) =>
@@ -80,6 +83,8 @@ export const WORKSPACE_SIDEBAR_PREFERENCES = (workspaceSlug: string) =>
 export const PROJECT_GITHUB_REPOSITORY = (projectId: string) => `PROJECT_GITHUB_REPOSITORY_${projectId.toUpperCase()}`;
 
 // cycles
+export const WORKSPACE_ACTIVE_CYCLES_LIST = (workspaceSlug: string, cursor: string, per_page: string) =>
+  `WORKSPACE_ACTIVE_CYCLES_LIST_${workspaceSlug.toUpperCase()}_${cursor.toUpperCase()}_${per_page.toUpperCase()}`;
 export const CYCLE_ISSUES_WITH_PARAMS = (cycleId: string, params?: any) => {
   if (!params) return `CYCLE_ISSUES_WITH_PARAMS_${cycleId.toUpperCase()}`;
 
@@ -136,6 +141,12 @@ export const USER_PROFILE_PROJECT_SEGREGATION = (workspaceSlug: string, userId: 
 // api-tokens
 export const API_TOKENS_LIST = `API_TOKENS_LIST`;
 
+// marketplace
+export const APPLICATIONS_LIST = (workspaceSlug: string) => `APPLICATIONS_LIST_${workspaceSlug.toUpperCase()}`;
+export const APPLICATION_DETAILS = (applicationId: string) => `APPLICATION_DETAILS_${applicationId.toUpperCase()}`;
+export const APPLICATION_BY_CLIENT_ID = (clientId: string) => `APPLICATION_BY_CLIENT_ID_${clientId.toUpperCase()}`;
+export const APPLICATION_CATEGORIES_LIST = () => `APPLICATION_CATEGORIES_LIST`;
+
 // project level keys
 export const PROJECT_DETAILS = (workspaceSlug: string, projectId: string) =>
   `PROJECT_DETAILS_${projectId.toString().toUpperCase()}`;
@@ -152,6 +163,9 @@ export const PROJECT_MEMBERS = (workspaceSlug: string, projectId: string) =>
 export const PROJECT_STATES = (workspaceSlug: string, projectId: string) =>
   `PROJECT_STATES_${projectId.toString().toUpperCase()}`;
 
+export const PROJECT_INTAKE_STATE = (workspaceSlug: string, projectId: string) =>
+  `PROJECT_INTAKE_STATE_${projectId.toString().toUpperCase()}`;
+
 export const PROJECT_ESTIMATES = (workspaceSlug: string, projectId: string) =>
   `PROJECT_ESTIMATES_${projectId.toString().toUpperCase()}`;
 
@@ -163,3 +177,6 @@ export const PROJECT_MODULES = (workspaceSlug: string, projectId: string) =>
 
 export const PROJECT_VIEWS = (workspaceSlug: string, projectId: string) =>
   `PROJECT_VIEWS_${projectId.toString().toUpperCase()}`;
+
+export const PROJECT_MEMBER_PREFERENCES = (workspaceSlug: string, projectId: string) =>
+  `PROJECT_MEMBER_PREFERENCES_${projectId.toString().toUpperCase()}`;
