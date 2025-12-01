@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import useSWR from "swr";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 // components
@@ -24,12 +23,8 @@ function ProjectSettingsPage({ params }: Route.ComponentProps) {
   // router
   const { workspaceSlug, projectId } = params;
   // store hooks
-  const { currentProjectDetails, fetchProjectDetails } = useProject();
+  const { currentProjectDetails } = useProject();
   const { allowPermissions } = useUserPermissions();
-
-  // api call to fetch project details
-  // TODO: removed this API if not necessary
-  const { isLoading } = useSWR(`PROJECT_DETAILS_${projectId}`, () => fetchProjectDetails(workspaceSlug, projectId));
   // derived values
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
 
@@ -56,7 +51,7 @@ function ProjectSettingsPage({ params }: Route.ComponentProps) {
       )}
 
       <div className={`w-full ${isAdmin ? "" : "opacity-60"}`}>
-        {currentProjectDetails && !isLoading ? (
+        {currentProjectDetails ? (
           <ProjectDetailsForm
             project={currentProjectDetails}
             workspaceSlug={workspaceSlug}

@@ -1,21 +1,17 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { usePathname } from "next/navigation";
 import { Outlet } from "react-router";
-// components
-import { getProjectActivePath } from "@/components/settings/helper";
-import { SettingsMobileNav } from "@/components/settings/mobile";
-import { ProjectSettingsSidebar } from "@/components/settings/project/sidebar";
+// hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { ProjectAuthWrapper } from "@/plane-web/layouts/project-wrapper";
+// types
 import type { Route } from "./+types/layout";
 
 function ProjectSettingsLayout({ params }: Route.ComponentProps) {
+  const { workspaceSlug, projectId } = params;
   // router
   const router = useAppRouter();
-  const pathname = usePathname();
-  const { workspaceSlug, projectId } = params;
+  // store hooks
   const { joinedProjectIds } = useProject();
 
   useEffect(() => {
@@ -25,19 +21,7 @@ function ProjectSettingsLayout({ params }: Route.ComponentProps) {
     }
   }, [joinedProjectIds, router, workspaceSlug, projectId]);
 
-  return (
-    <>
-      <SettingsMobileNav hamburgerContent={ProjectSettingsSidebar} activePath={getProjectActivePath(pathname) || ""} />
-      <ProjectAuthWrapper workspaceSlug={workspaceSlug} projectId={projectId}>
-        <div className="relative flex h-full w-full">
-          <div className="hidden md:block">{projectId && <ProjectSettingsSidebar />}</div>
-          <div className="w-full h-full overflow-y-scroll md:pt-page-y">
-            <Outlet />
-          </div>
-        </div>
-      </ProjectAuthWrapper>
-    </>
-  );
+  return <Outlet />;
 }
 
 export default observer(ProjectSettingsLayout);

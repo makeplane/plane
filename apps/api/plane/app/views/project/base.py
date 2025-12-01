@@ -1,43 +1,43 @@
 # Python imports
-import boto3
-from django.conf import settings
-from django.utils import timezone
 import json
 
+import boto3
+
 # Django imports
-from django.db.models import Exists, F, OuterRef, Prefetch, Q, Subquery
+from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import Exists, F, OuterRef, Prefetch, Q, Subquery
+from django.utils import timezone
 
 # Third Party imports
-from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 
 # Module imports
-from plane.app.views.base import BaseViewSet, BaseAPIView
+from plane.app.permissions import ROLE, ProjectMemberPermission, allow_permission
 from plane.app.serializers import (
-    ProjectSerializer,
-    ProjectListSerializer,
     DeployBoardSerializer,
+    ProjectListSerializer,
+    ProjectSerializer,
 )
-
-from plane.app.permissions import ProjectMemberPermission, allow_permission, ROLE
+from plane.app.views.base import BaseAPIView, BaseViewSet
+from plane.bgtasks.recent_visited_task import recent_visited_task
+from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.db.models import (
-    UserFavorite,
-    Intake,
     DeployBoard,
+    Intake,
     IssueUserProperty,
     Project,
     ProjectIdentifier,
     ProjectMember,
+    ProjectNetwork,
     State,
     DEFAULT_STATES,
     Workspace,
     WorkspaceMember,
 )
 from plane.utils.cache import cache_response
-from plane.bgtasks.webhook_task import model_activity, webhook_activity
-from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.exception_logger import log_exception
 from plane.utils.host import base_host
 
@@ -210,18 +210,24 @@ class ProjectViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def retrieve(self, request, slug, pk):
-        project = (
-            self.get_queryset()
-            .filter(
-                project_projectmember__member=self.request.user,
-                project_projectmember__is_active=True,
-            )
-            .filter(archived_at__isnull=True)
-            .filter(pk=pk)
-        ).first()
+        project = self.get_queryset().filter(archived_at__isnull=True).filter(pk=pk).first()
 
         if project is None:
             return Response({"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+        member_ids = [str(project_member.member_id) for project_member in project.members_list]
+
+        if str(request.user.id) not in member_ids:
+            if project.network == ProjectNetwork.SECRET.value:
+                return Response(
+                    {"error": "You do not have permission"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+            else:
+                return Response(
+                    {"error": "You are not a member of this project"},
+                    status=status.HTTP_409_CONFLICT,
+                )
 
         recent_visited_task.delay(
             slug=slug,

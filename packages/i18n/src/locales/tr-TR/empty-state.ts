@@ -24,6 +24,17 @@ export default {
     },
   },
   project_empty_state: {
+    no_access: {
+      title: "Görünüşe göre bu projeye erişiminiz yok",
+      restricted_description: "Erişim talep etmek için yöneticiyle iletişime geçin, sonra burada devam edebilirsiniz.",
+      join_description: "Katılmak için aşağıdaki butona tıklayın.",
+      cta_primary: "Projeye katıl",
+      cta_loading: "Projeye katılınıyor",
+    },
+    invalid_project: {
+      title: "Proje bulunamadı",
+      description: "Aradığınız proje mevcut değil.",
+    },
     work_items: {
       title: "İlk iş öğenizle başlayın.",
       description:
