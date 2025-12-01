@@ -70,4 +70,3 @@ export const useExpandableSearch = (options?: UseExpandableSearchOptions) => {
     openPanel,
   };
 };
-
