@@ -14,7 +14,7 @@ from plane.app.views import (
     IssueReactionViewSet,
     IssueRelationViewSet,
     IssueSubscriberViewSet,
-    IssueUserDisplayPropertyEndpoint,
+    ProjectUserDisplayPropertyEndpoint,
     IssueViewSet,
     LabelViewSet,
     BulkArchiveIssuesEndpoint,
@@ -211,7 +211,7 @@ urlpatterns = [
     ## ProjectUserProperty
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/user-properties/",
-        IssueUserDisplayPropertyEndpoint.as_view(),
+        ProjectUserDisplayPropertyEndpoint.as_view(),
         name="project-issue-display-properties",
     ),
     ## ProjectUserProperty End

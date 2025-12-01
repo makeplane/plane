@@ -34,7 +34,7 @@ from plane.app.serializers import (
     IssueDetailSerializer,
     IssueListDetailSerializer,
     IssueSerializer,
-    IssueUserPropertySerializer,
+    ProjectUserPropertySerializer,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.bgtasks.issue_description_version_task import issue_description_version_task
@@ -715,7 +715,7 @@ class IssueViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class IssueUserDisplayPropertyEndpoint(BaseAPIView):
+class ProjectUserDisplayPropertyEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def patch(self, request, slug, project_id):
         issue_property = ProjectUserProperty.objects.get(user=request.user, project_id=project_id)
@@ -725,13 +725,13 @@ class IssueUserDisplayPropertyEndpoint(BaseAPIView):
         issue_property.display_filters = request.data.get("display_filters", issue_property.display_filters)
         issue_property.display_properties = request.data.get("display_properties", issue_property.display_properties)
         issue_property.save()
-        serializer = IssueUserPropertySerializer(issue_property)
+        serializer = ProjectUserPropertySerializer(issue_property)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
         issue_property, _ = ProjectUserProperty.objects.get_or_create(user=request.user, project_id=project_id)
-        serializer = IssueUserPropertySerializer(issue_property)
+        serializer = ProjectUserPropertySerializer(issue_property)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

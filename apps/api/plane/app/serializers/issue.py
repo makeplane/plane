@@ -346,7 +346,7 @@ class IssueActivitySerializer(BaseSerializer):
         fields = "__all__"
 
 
-class IssueUserPropertySerializer(BaseSerializer):
+class ProjectUserPropertySerializer(BaseSerializer):
     class Meta:
         model = ProjectUserProperty
         fields = "__all__"
