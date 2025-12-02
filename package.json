@@ -12,15 +12,43 @@
     "clean": "turbo run clean && rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
     "fix": "turbo run fix",
     "fix:format": "turbo run fix:format",
+    "fix:lint": "turbo run fix:lint",
     "check": "turbo run check",
     "check:lint": "turbo run check:lint",
     "check:format": "turbo run check:format",
-    "check:types": "turbo run check:types"
+    "check:types": "turbo run check:types",
+    "prepare": "husky"
   },
   "devDependencies": {
-    "@prettier/plugin-oxc": "0.0.4",
-    "prettier": "^3.6.2",
-    "turbo": "2.6.1"
+    "@eslint/js": "9.39.1",
+    "@prettier/plugin-oxc": "0.0.5",
+    "@vitest/eslint-plugin": "1.5.0",
+    "eslint": "9.39.1",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-import-resolver-node": "0.3.9",
+    "eslint-import-resolver-typescript": "4.4.4",
+    "eslint-plugin-import": "2.32.0",
+    "eslint-plugin-jsx-a11y": "6.10.2",
+    "eslint-plugin-n": "17.23.1",
+    "eslint-plugin-promise": "7.2.1",
+    "eslint-plugin-react": "7.37.5",
+    "eslint-plugin-react-hooks": "7.0.1",
+    "eslint-plugin-react-refresh": "0.4.24",
+    "eslint-plugin-storybook": "10.0.8",
+    "globals": "16.5.0",
+    "husky": "9.1.7",
+    "lint-staged": "16.2.7",
+    "prettier": "3.6.2",
+    "turbo": "2.6.1",
+    "typescript-eslint": "8.48.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,cjs,mjs,cts,mts,json,css,md}": [
+      "pnpm exec prettier --write --ignore-unknown"
+    ],
+    "*.{js,jsx,ts,tsx,cjs,mjs,cts,mts}": [
+      "pnpm exec eslint --fix --max-warnings=0 --no-warn-ignored"
+    ]
   },
   "pnpm": {
     "overrides": {

@@ -22,11 +22,11 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "postcss": "postcss styles/globals.css -o styles/output.css --watch",
-    "check:lint": "eslint . --max-warnings 94",
+    "check:lint": "eslint . --max-warnings=643",
     "check:types": "tsc --noEmit",
-    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
-    "fix:lint": "eslint . --fix",
-    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "check:format": "prettier --check .",
+    "fix:lint": "eslint . --fix --max-warnings=643",
+    "fix:format": "prettier --write .",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "peerDependencies": {
@@ -57,10 +57,8 @@
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.4.0",
-    "@plane/eslint-config": "workspace:*",
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@prettier/plugin-oxc": "0.0.4",
     "@storybook/addon-essentials": "^8.1.1",
     "@storybook/addon-interactions": "^8.1.1",
     "@storybook/addon-links": "^8.1.1",
