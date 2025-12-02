@@ -6,7 +6,7 @@ import { mutate } from "swr";
 // icons
 import { ArrowLeft, List, Settings } from "lucide-react";
 import { Button } from "@plane/propel/button";
-import { CheckIcon , MembersPropertyIcon } from "@plane/propel/icons";
+import { CheckIcon, MembersPropertyIcon } from "@plane/propel/icons";
 // types
 import type { IJiraImporterForm } from "@plane/types";
 // assets

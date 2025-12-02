@@ -3,8 +3,9 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // lucide icons
-import { Minimize2, Maximize2, Circle, Plus } from "lucide-react";
+import { Minimize2, Maximize2, Circle } from "lucide-react";
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
+import { PlusIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue, ISearchIssueResponse, TIssueKanbanFilters, TIssueGroupByOptions } from "@plane/types";
 // ui
@@ -155,7 +156,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
             <CustomMenu
               customButton={
                 <span className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80">
-                  <Plus height={14} width={14} strokeWidth={2} />
+                  <PlusIcon height={14} width={14} strokeWidth={2} />
                 </span>
               }
               placement="bottom-end"
@@ -185,7 +186,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
                 setIsOpen(true);
               }}
             >
-              <Plus width={14} strokeWidth={2} />
+              <PlusIcon width={14} strokeWidth={2} />
             </div>
           ))}
       </div>

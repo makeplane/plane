@@ -2,11 +2,10 @@ import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { Plus } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
-import { SearchIcon } from "@plane/propel/icons";
+import { PlusIcon, SearchIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { copyUrlToClipboard, orderJoinedProjects } from "@plane/utils";
@@ -118,7 +117,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
                     setIsProjectModalOpen(true);
                   }}
                 >
-                  <Plus className="size-3" />
+                  <PlusIcon className="size-3" />
                 </button>
               </Tooltip>
             )}

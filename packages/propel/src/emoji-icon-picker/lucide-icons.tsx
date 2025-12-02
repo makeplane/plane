@@ -149,7 +149,7 @@ import {
   ToggleLeft,
   User,
 } from "lucide-react";
-import { CheckIcon , SearchIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon } from "../icons";
+import { CheckIcon, SearchIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon } from "../icons";
 
 export const LUCIDE_ICONS_LIST = [
   { name: "Activity", element: Activity },

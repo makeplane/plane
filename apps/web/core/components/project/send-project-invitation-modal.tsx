@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
-import { Plus } from "lucide-react";
+
 import { Dialog, Transition } from "@headlessui/react";
 // plane imports
 import { ROLE, EUserPermissions, MEMBER_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { CloseIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { PlusIcon , CloseIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Avatar, CustomSelect, CustomSearchSelect } from "@plane/ui";
 // helpers
@@ -339,7 +339,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                       className="flex items-center gap-2 bg-transparent py-2 pr-3 text-sm font-medium text-custom-primary outline-custom-primary"
                       onClick={appendField}
                     >
-                      <Plus className="h-4 w-4" />
+                      <PlusIcon className="h-4 w-4" />
                       {t("common.add_more")}
                     </button>
                     <div className="flex items-center gap-2">

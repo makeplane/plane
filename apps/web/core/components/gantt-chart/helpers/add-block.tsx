@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { addDays } from "date-fns";
 import { observer } from "mobx-react";
-import { Plus } from "lucide-react";
+import { PlusIcon } from "@plane/propel/icons";
 // ui
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IBlockUpdateData, IGanttBlock } from "@plane/types";
@@ -91,7 +91,7 @@ export const ChartAddBlock = observer(function ChartAddBlock(props: Props) {
             }}
             onClick={handleButtonClick}
           >
-            <Plus className="h-3.5 w-3.5" />
+            <PlusIcon className="h-3.5 w-3.5" />
           </button>
         </Tooltip>
       )}

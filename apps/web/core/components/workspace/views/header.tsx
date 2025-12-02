@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Plus } from "lucide-react";
+
 // plane imports
 import {
   DEFAULT_GLOBAL_VIEWS_LIST,
@@ -10,6 +10,7 @@ import {
   GLOBAL_VIEW_TRACKER_ELEMENTS,
   GLOBAL_VIEW_TRACKER_EVENTS,
 } from "@plane/constants";
+import { PlusIcon } from "@plane/propel/icons";
 import type { TStaticViewTypes } from "@plane/types";
 import { Header, EHeaderVariant } from "@plane/ui";
 // helpers
@@ -122,7 +123,7 @@ export const GlobalViewsHeader = observer(function GlobalViewsHeader() {
           className="sticky -right-4 flex flex-shrink-0 items-center justify-center border-transparent bg-custom-background-100 py-3 hover:border-custom-border-200 hover:text-custom-text-400"
           onClick={() => setCreateViewModal(true)}
         >
-          <Plus className="h-4 w-4 text-custom-primary-200" />
+          <PlusIcon className="h-4 w-4 text-custom-primary-200" />
         </button>
       ) : (
         <></>

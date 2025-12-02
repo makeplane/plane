@@ -11,14 +11,14 @@ import type {
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 // icons
 import { usePopper } from "react-popper";
-import { Plus, XCircle } from "lucide-react";
+import { XCircle } from "lucide-react";
 import { Listbox } from "@headlessui/react";
 // plane imports
 import type { EUserPermissions } from "@plane/constants";
 import { ROLE, ROLE_DETAILS, MEMBER_TRACKER_EVENTS, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { CheckIcon , ChevronDownIcon } from "@plane/propel/icons";
+import { PlusIcon , CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // types
 import { EOnboardingSteps } from "@plane/types";
@@ -390,7 +390,7 @@ export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
           className="flex items-center mx-8 gap-1.5 bg-transparent text-sm font-medium text-custom-primary-100 outline-custom-primary-100"
           onClick={appendField}
         >
-          <Plus className="h-4 w-4" strokeWidth={2} />
+          <PlusIcon className="h-4 w-4" strokeWidth={2} />
           Add another
         </button>
       </div>

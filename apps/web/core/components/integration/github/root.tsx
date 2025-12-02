@@ -4,7 +4,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import useSWR, { mutate } from "swr";
 import { ArrowLeft, List, Settings, UploadCloud } from "lucide-react";
-import { CheckIcon , MembersPropertyIcon } from "@plane/propel/icons";
+import { CheckIcon, MembersPropertyIcon } from "@plane/propel/icons";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IGithubRepoCollaborator, IGithubServiceImportFormData } from "@plane/types";

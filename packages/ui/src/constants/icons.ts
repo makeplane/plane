@@ -149,7 +149,14 @@ import {
   ToggleLeft,
   User,
 } from "lucide-react";
-import { CheckIcon , SearchIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon } from "@plane/propel/icons";
+import {
+  CheckIcon,
+  SearchIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+} from "@plane/propel/icons";
 
 export const MATERIAL_ICONS_LIST = [
   {

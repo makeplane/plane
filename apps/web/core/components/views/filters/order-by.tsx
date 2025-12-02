@@ -3,7 +3,7 @@ import { ArrowDownWideNarrow, ArrowUpWideNarrow } from "lucide-react";
 import { VIEW_SORT_BY_OPTIONS, VIEW_SORTING_KEY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
-import { CheckIcon , ChevronDownIcon } from "@plane/propel/icons";
+import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { TViewFiltersSortBy, TViewFiltersSortKey } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
