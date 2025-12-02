@@ -43,7 +43,7 @@ export const AppRailRoot = observer(() => {
             >
               <DesktopSidebarWorkspaceMenu />
               <AppSidebarItemsRoot showLabel={showLabel} />
-              <div className="border-t border-custom-sidebar-border-300 mx-2" />
+              <div className="border-t border-strong mx-2" />
               <AppSidebarItem
                 item={{
                   label: "Settings",

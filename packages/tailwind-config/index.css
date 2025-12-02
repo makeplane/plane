@@ -4,6 +4,7 @@
 @import "./spacing.css";
 @import "./typography.css";
 @import "./animations.css";
+@source "../**/*.{ts,tsx}";
 
 html {
   font-family: "Inter", sans-serif;

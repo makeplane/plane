@@ -33,7 +33,7 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
   const getSidebarMenuItems = () => (
     <Menu.Items
       className={cn(
-        "absolute left-0 z-20 mt-1.5 flex w-52 flex-col divide-y divide-custom-sidebar-border-100 rounded-md border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-1 py-2 text-xs shadow-lg outline-none",
+        "absolute left-0 z-20 mt-1.5 flex w-52 flex-col divide-y divide-custom-sidebar-border-100 rounded-md border border-subtle-1 bg-custom-sidebar-background-100 px-1 py-2 text-xs shadow-lg outline-none",
         {
           "left-4": isSidebarCollapsed,
         }
@@ -75,7 +75,7 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
   }, [csrfToken]);
 
   return (
-    <div className="flex max-h-header items-center gap-x-5 gap-y-2 border-b border-custom-sidebar-border-200 px-4 py-3.5">
+    <div className="flex max-h-header items-center gap-x-5 gap-y-2 border-b border-subtle-1 px-4 py-3.5">
       <div className="h-full w-full truncate">
         <div
           className={`flex flex-grow items-center gap-x-2 truncate rounded py-1 ${

@@ -159,7 +159,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
       <div
         ref={containerRef}
         className={cn({
-          "border-t border-custom-sidebar-border-300": isScrolled,
+          "border-t border-strong": isScrolled,
         })}
       >
         <>
