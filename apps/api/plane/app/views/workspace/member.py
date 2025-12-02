@@ -50,6 +50,19 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             serializer = WorkSpaceMemberSerializer(workspace_members, fields=("id", "member", "role"), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    def retrieve(self, request, slug, pk):
+        workspace_member = WorkspaceMember.objects.get(member=request.user, workspace__slug=slug, is_active=True)
+
+        # Get the specific workspace member by pk
+        member = self.get_queryset().get(pk=pk)
+
+        if workspace_member.role > 5:
+            serializer = WorkspaceMemberAdminSerializer(member, fields=("id", "member", "role"))
+        else:
+            serializer = WorkSpaceMemberSerializer(member, fields=("id", "member", "role"))
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
     def partial_update(self, request, slug, pk):
         workspace_member = WorkspaceMember.objects.get(
