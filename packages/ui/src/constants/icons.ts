@@ -148,10 +148,9 @@ import {
   CircleChevronDown,
   UsersRound,
   ToggleLeft,
-  Search,
   User,
 } from "lucide-react";
-import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon } from "@plane/propel/icons";
+import { SearchIcon , ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon } from "@plane/propel/icons";
 
 export const MATERIAL_ICONS_LIST = [
   {
@@ -911,7 +910,7 @@ export const LUCIDE_ICONS_LIST = [
   { name: "Minus", element: Minus },
   { name: "MinusCircle", element: MinusCircle },
   { name: "MinusSquare", element: MinusSquare },
-  { name: "Search", element: Search },
+  { name: "Search", element: SearchIcon },
   { name: "ToggleLeft", element: ToggleLeft },
   { name: "User", element: User },
   { name: "UsersRound", element: UsersRound },

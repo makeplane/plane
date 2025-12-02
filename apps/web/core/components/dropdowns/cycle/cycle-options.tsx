@@ -1,16 +1,15 @@
-import type { FC } from "react";
 import { useEffect, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 // components
-import { Check, Search } from "lucide-react";
+import { Check } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // icon
-import { CycleGroupIcon, CycleIcon } from "@plane/propel/icons";
+import { CycleGroupIcon, CycleIcon, SearchIcon } from "@plane/propel/icons";
 import type { TCycleGroups } from "@plane/types";
 // ui
 // store hooks
@@ -128,7 +127,7 @@ export const CycleOptions = observer(function CycleOptions(props: CycleOptionsPr
         {...attributes.popper}
       >
         <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
-          <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+          <SearchIcon className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
           <Combobox.Input
             as="input"
             ref={inputRef}

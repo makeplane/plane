@@ -1,9 +1,10 @@
 import { observer } from "mobx-react";
-import { AlertOctagon, BarChart4, CircleDashed, Folder, Microscope, Search } from "lucide-react";
+import { AlertOctagon, BarChart4, CircleDashed, Folder, Microscope } from "lucide-react";
 // plane imports
 import { MARKETING_PRICING_PAGE_LINK } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { getButtonStyling } from "@plane/propel/button";
+import { SearchIcon } from "@plane/propel/icons";
 import { ContentWrapper } from "@plane/ui";
 import { cn } from "@plane/utils";
 // assets
@@ -50,7 +51,7 @@ export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
     key: "zoom_into_cycles_that_need_attention",
     title: "Zoom into cycles that need attention. ",
     description: "Investigate the state of any cycle that doesn’t conform to expectations in one click.",
-    icon: Search,
+    icon: SearchIcon,
   },
   {
     key: "stay_ahead_of_blockers",

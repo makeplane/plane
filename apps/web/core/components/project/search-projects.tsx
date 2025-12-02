@@ -1,11 +1,10 @@
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { Search } from "lucide-react";
 // plane hooks
 import { useOutsideClickDetector } from "@plane/hooks";
 // i18n
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
+import { SearchIcon , CloseIcon } from "@plane/propel/icons";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
@@ -43,7 +42,7 @@ export const ProjectSearch = observer(function ProjectSearch() {
             inputRef.current?.focus();
           }}
         >
-          <Search className="h-3.5 w-3.5" />
+          <SearchIcon className="h-3.5 w-3.5" />
         </button>
       )}
       <div
@@ -54,7 +53,7 @@ export const ProjectSearch = observer(function ProjectSearch() {
           }
         )}
       >
-        <Search className="h-3.5 w-3.5" />
+        <SearchIcon className="h-3.5 w-3.5" />
         <input
           ref={inputRef}
           className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { Search } from "lucide-react";
 // types
 import {
   EUserPermissions,
@@ -10,6 +9,7 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { SearchIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspaceBulkInviteFormData } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -132,7 +132,7 @@ function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
           </h4>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5">
-              <Search className="h-3.5 w-3.5 text-custom-text-400" />
+              <SearchIcon className="h-3.5 w-3.5 text-custom-text-400" />
               <input
                 className="w-full max-w-[234px] border-none bg-transparent text-sm outline-none placeholder:text-custom-text-400"
                 placeholder={`${t("search")}...`}

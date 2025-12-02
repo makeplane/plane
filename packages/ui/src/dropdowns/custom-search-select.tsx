@@ -1,10 +1,10 @@
 import { Combobox } from "@headlessui/react";
-import { Check, Info, Search } from "lucide-react";
+import { Check, Info } from "lucide-react";
 import React, { useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { SearchIcon , ChevronDownIcon } from "@plane/propel/icons";
 // plane imports
 // local imports
 import { Tooltip } from "@plane/propel/tooltip";
@@ -148,7 +148,7 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                     {...attributes.popper}
                   >
                     <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2 mx-2">
-                      <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+                      <SearchIcon className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
                       <Combobox.Input
                         className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                         value={query}

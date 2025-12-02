@@ -3,12 +3,11 @@ import { useCallback, useRef, useState } from "react";
 import { debounce } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { Search } from "lucide-react";
 // plane hooks
 import { useOutsideClickDetector } from "@plane/hooks";
 // helpers
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
+import { SearchIcon , CloseIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import { useSticky } from "@/hooks/use-stickies";
 
@@ -58,7 +57,7 @@ export const StickySearch = observer(function StickySearch() {
             inputRef.current?.focus();
           }}
         >
-          <Search className=" size-4 " />
+          <SearchIcon className=" size-4 " />
         </button>
       )}
       <div
@@ -69,7 +68,7 @@ export const StickySearch = observer(function StickySearch() {
           }
         )}
       >
-        <Search className="h-3.5 w-3.5" />
+        <SearchIcon className="h-3.5 w-3.5" />
         <input
           ref={inputRef}
           className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"

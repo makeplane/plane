@@ -2,13 +2,12 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
-import { Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane ui
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { CloseIcon } from "@plane/propel/icons";
+import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 import { Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
 // assets
@@ -85,7 +84,7 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
     <ModalCore isOpen={isOpen} width={EModalWidth.LG} position={EModalPosition.TOP} handleClose={handleClose}>
       <Combobox as="div" multiple value={selectedProjectIds} onChange={handleSelectedProjectChange}>
         <div className="flex items-center gap-2 px-4 border-b border-custom-border-100">
-          <Search className="flex-shrink-0 size-4 text-custom-text-400" aria-hidden="true" />
+          <SearchIcon className="flex-shrink-0 size-4 text-custom-text-400" aria-hidden="true" />
           <Combobox.Input
             className="h-12 w-full border-0 bg-transparent text-sm text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0"
             placeholder="Search for projects"

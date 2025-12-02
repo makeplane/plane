@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { InfoIcon, Search } from "lucide-react";
+import { InfoIcon } from "lucide-react";
+import { SearchIcon } from "../../icons";
 import { cn } from "../../utils/classname";
 import { adjustColorForContrast, DEFAULT_COLORS } from "../helper";
 import { LucideIconsList } from "./lucide-root";
@@ -45,7 +46,7 @@ export function IconRoot(props: IconRootProps) {
               onFocus={() => setIsInputFocused(true)}
               onBlur={() => setIsInputFocused(false)}
             >
-              <Search className="absolute left-2.5 bottom-3 h-3.5 w-3.5 text-custom-text-400" />
+              <SearchIcon className="absolute left-2.5 bottom-3 h-3.5 w-3.5 text-custom-text-400" />
 
               <input
                 placeholder="Search"

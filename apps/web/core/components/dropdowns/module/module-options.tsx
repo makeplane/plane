@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Check, Search } from "lucide-react";
+import { Check } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { ModuleIcon } from "@plane/propel/icons";
+import { SearchIcon, ModuleIcon } from "@plane/propel/icons";
 import type { IModule } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
@@ -113,7 +113,7 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
         {...attributes.popper}
       >
         <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
-          <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+          <SearchIcon className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
           <Combobox.Input
             as="input"
             ref={inputRef}

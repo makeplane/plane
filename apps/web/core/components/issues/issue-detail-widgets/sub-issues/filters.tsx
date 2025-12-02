@@ -1,9 +1,9 @@
 import type { FC } from "react";
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { ListFilter, Search } from "lucide-react";
+import { ListFilter } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
+import { SearchIcon , CloseIcon } from "@plane/propel/icons";
 import type { IIssueFilterOptions, IState } from "@plane/types";
 import { cn } from "@plane/utils";
 import {
@@ -56,7 +56,7 @@ export const SubIssueFilters = observer(function SubIssueFilters(props: TSubIssu
         <div className="flex max-h-[350px] flex-col overflow-hidden">
           <div className="bg-custom-background-100 p-2.5 pb-0">
             <div className="flex items-center gap-1.5 rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 px-1.5 py-1 text-xs">
-              <Search className="text-custom-text-400" size={12} strokeWidth={2} />
+              <SearchIcon className="text-custom-text-400" width={12} height={12} strokeWidth={2} />
               <input
                 type="text"
                 className="w-full bg-custom-background-90 outline-none placeholder:text-custom-text-400"

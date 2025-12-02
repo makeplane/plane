@@ -2,13 +2,13 @@ import type { FC } from "react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ListFilter, Search } from "lucide-react";
+import { ListFilter } from "lucide-react";
 // plane helpers
 import { MODULE_VIEW_LAYOUTS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { useTranslation } from "@plane/i18n";
-import { CloseIcon } from "@plane/propel/icons";
+import { SearchIcon , CloseIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TModuleFilters } from "@plane/types";
 // ui
@@ -104,7 +104,7 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
               inputRef.current?.focus();
             }}
           >
-            <Search className="h-3.5 w-3.5" />
+            <SearchIcon className="h-3.5 w-3.5" />
           </button>
         )}
         <div
@@ -115,7 +115,7 @@ export const ModuleViewHeader = observer(function ModuleViewHeader() {
             }
           )}
         >
-          <Search className="h-3.5 w-3.5" />
+          <SearchIcon className="h-3.5 w-3.5" />
           <input
             ref={inputRef}
             className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
