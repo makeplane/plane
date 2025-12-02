@@ -18,6 +18,9 @@ catalogs:
     '@bprogress/core':
       specifier: ^1.3.4
       version: 1.3.4
+    '@dotenvx/dotenvx':
+      specifier: 1.51.1
+      version: 1.51.1
     '@react-router/dev':
       specifier: 7.9.5
       version: 7.9.5
@@ -214,6 +217,9 @@ importers:
         specifier: 'catalog:'
         version: 13.0.0
     devDependencies:
+      '@dotenvx/dotenvx':
+        specifier: 'catalog:'
+        version: 1.51.1
       '@plane/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
@@ -241,9 +247,6 @@ importers:
       '@types/react-dom':
         specifier: 'catalog:'
         version: 18.3.1
-      dotenv:
-        specifier: ^16.4.5
-        version: 16.6.1
       typescript:
         specifier: 5.8.3
         version: 5.8.3
@@ -257,8 +260,8 @@ importers:
   apps/live:
     dependencies:
       '@dotenvx/dotenvx':
-        specifier: ^1.49.0
-        version: 1.49.0
+        specifier: 'catalog:'
+        version: 1.51.1
       '@hocuspocus/extension-database':
         specifier: 2.15.2
         version: 2.15.2(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27)
@@ -307,9 +310,6 @@ importers:
       cors:
         specifier: ^2.8.5
         version: 2.8.5
-      dotenv:
-        specifier: ^16.4.5
-        version: 16.6.1
       express:
         specifier: 4.22.0
         version: 4.22.0
@@ -477,6 +477,9 @@ importers:
         specifier: 'catalog:'
         version: 13.0.0
     devDependencies:
+      '@dotenvx/dotenvx':
+        specifier: 'catalog:'
+        version: 1.51.1
       '@plane/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
@@ -504,9 +507,6 @@ importers:
       '@types/react-dom':
         specifier: 'catalog:'
         version: 18.3.1
-      dotenv:
-        specifier: ^16.4.5
-        version: 16.6.1
       typescript:
         specifier: 5.8.3
         version: 5.8.3
@@ -691,6 +691,9 @@ importers:
         specifier: 'catalog:'
         version: 13.0.0
     devDependencies:
+      '@dotenvx/dotenvx':
+        specifier: 'catalog:'
+        version: 1.51.1
       '@plane/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
@@ -721,9 +724,6 @@ importers:
       '@types/react-dom':
         specifier: 'catalog:'
         version: 18.3.1
-      dotenv:
-        specifier: ^16.4.5
-        version: 16.6.1
       prettier:
         specifier: ^3.2.5
         version: 3.6.2
@@ -1863,8 +1863,8 @@ packages:
   '@date-fns/tz@1.4.1':
     resolution: {integrity: sha512-P5LUNhtbj6YfI3iJjw5EL9eUAG6OitD0W3fWQcpQjDRc/QIsL0tRNuO1PcDvPccWL1fSTXXdE1ds+l95DV/OFA==}
 
-  '@dotenvx/dotenvx@1.49.0':
-    resolution: {integrity: sha512-M1cyP6YstFQCjih54SAxCqHLMMi8QqV8tenpgGE48RTXWD7vfMYJiw/6xcCDpS2h28AcLpTsFCZA863Ge9yxzA==}
+  '@dotenvx/dotenvx@1.51.1':
+    resolution: {integrity: sha512-fqcQxcxC4LOaUlW8IkyWw8x0yirlLUkbxohz9OnWvVWjf73J5yyw7jxWnkOJaUKXZotcGEScDox9MU6rSkcDgg==}
     hasBin: true
 
   '@ecies/ciphers@0.2.4':
@@ -9565,7 +9565,7 @@ snapshots:
 
   '@date-fns/tz@1.4.1': {}
 
-  '@dotenvx/dotenvx@1.49.0':
+  '@dotenvx/dotenvx@1.51.1':
     dependencies:
       commander: 11.1.0
       dotenv: 17.2.1

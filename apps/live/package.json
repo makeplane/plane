@@ -24,7 +24,7 @@
   },
   "author": "Plane Software Inc.",
   "dependencies": {
-    "@dotenvx/dotenvx": "^1.49.0",
+    "@dotenvx/dotenvx": "catalog:",
     "@hocuspocus/extension-database": "2.15.2",
     "@hocuspocus/extension-logger": "2.15.2",
     "@hocuspocus/extension-redis": "2.15.2",
@@ -41,7 +41,6 @@
     "axios": "catalog:",
     "compression": "1.8.1",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
     "express": "catalog:",
     "express-ws": "^5.0.2",
     "helmet": "^7.1.0",
