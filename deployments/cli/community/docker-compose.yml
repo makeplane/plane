@@ -187,6 +187,8 @@ services:
       replicas: 1
       restart_policy:
         condition: any
+    ports:
+      - "5432:5432"
     environment:
       <<: *db-env
     volumes:
