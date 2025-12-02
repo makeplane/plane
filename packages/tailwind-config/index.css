@@ -1,7 +1,5 @@
 @import "tailwindcss";
-@import "./colors.css";
-@import "./spacing.css";
-@import "./typography.css";
+@import "./variables.css";
 @import "./animations.css";
 @source "../**/*.{ts,tsx}";
 
