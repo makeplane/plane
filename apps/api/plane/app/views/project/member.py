@@ -165,6 +165,29 @@ class ProjectMemberViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    def retrieve(self, request, slug, project_id, pk):
+        project_member = (
+            ProjectMember.objects.filter(
+                pk=pk,
+                project_id=project_id,
+                workspace__slug=slug,
+                member__is_bot=False,
+                is_active=True,
+            )
+            .select_related("project", "member", "workspace")
+            .first()
+        )
+
+        if not project_member:
+            return Response(
+                {"error": "Project member not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        serializer = ProjectMemberAdminSerializer(project_member)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def partial_update(self, request, slug, project_id, pk):
         project_member = ProjectMember.objects.get(pk=pk, workspace__slug=slug, project_id=project_id, is_active=True)
 
