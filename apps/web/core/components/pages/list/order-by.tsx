@@ -1,7 +1,7 @@
-import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check } from "lucide-react";
-// types
+import { ArrowDownWideNarrow, ArrowUpWideNarrow } from "lucide-react";
 import { getButtonStyling } from "@plane/propel/button";
-import { ChevronDownIcon } from "@plane/propel/icons";
+// types
+import { CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { TPageFiltersSortBy, TPageFiltersSortKey } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
@@ -53,7 +53,7 @@ export function PageOrderByDropdown(props: Props) {
           }
         >
           {option.label}
-          {sortKey === option.key && <Check className="h-3 w-3" />}
+          {sortKey === option.key && <CheckIcon className="h-3 w-3" />}
         </CustomMenu.MenuItem>
       ))}
       <hr className="my-2 border-custom-border-200" />
@@ -67,7 +67,7 @@ export function PageOrderByDropdown(props: Props) {
         }}
       >
         Ascending
-        {!isDescending && <Check className="h-3 w-3" />}
+        {!isDescending && <CheckIcon className="h-3 w-3" />}
       </CustomMenu.MenuItem>
       <CustomMenu.MenuItem
         className="flex items-center justify-between gap-2"
@@ -79,7 +79,7 @@ export function PageOrderByDropdown(props: Props) {
         }}
       >
         Descending
-        {isDescending && <Check className="h-3 w-3" />}
+        {isDescending && <CheckIcon className="h-3 w-3" />}
       </CustomMenu.MenuItem>
     </CustomMenu>
   );

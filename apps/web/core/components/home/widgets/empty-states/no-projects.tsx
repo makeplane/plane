@@ -3,12 +3,12 @@ import React from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Check, Hotel, Users } from "lucide-react";
+import { Hotel, Users } from "lucide-react";
 // plane ui
 import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { ProjectIcon, CloseIcon } from "@plane/propel/icons";
+import { CheckIcon , ProjectIcon, CloseIcon } from "@plane/propel/icons";
 import { cn, getFileURL } from "@plane/utils";
 // helpers
 // hooks
@@ -168,7 +168,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
               <p className="text-[11px] text-custom-text-300 mb-2">{t(item.description)}</p>
               {isStateComplete ? (
                 <div className="flex items-center gap-2 bg-[#17a34a] rounded-full p-1 w-fit">
-                  <Check className="size-3 text-custom-primary-100 text-white" />
+                  <CheckIcon className="size-3 text-custom-primary-100 text-white" />
                 </div>
               ) : (
                 !item.cta.disabled &&

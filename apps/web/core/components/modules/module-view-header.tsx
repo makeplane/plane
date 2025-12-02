@@ -8,7 +8,7 @@ import { MODULE_VIEW_LAYOUTS } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { useTranslation } from "@plane/i18n";
-import { SearchIcon , CloseIcon } from "@plane/propel/icons";
+import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TModuleFilters } from "@plane/types";
 // ui

@@ -32,7 +32,6 @@ import {
   Camera,
   CameraOff,
   Cast,
-  Check,
   CheckCircle,
   CheckSquare,
   Clipboard,
@@ -150,7 +149,7 @@ import {
   ToggleLeft,
   User,
 } from "lucide-react";
-import { SearchIcon , ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon } from "@plane/propel/icons";
+import { CheckIcon , SearchIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon } from "@plane/propel/icons";
 
 export const MATERIAL_ICONS_LIST = [
   {
@@ -793,7 +792,7 @@ export const LUCIDE_ICONS_LIST = [
   { name: "CameraOff", element: CameraOff },
   { name: "Cast", element: Cast },
   { name: "CircleChevronDown", element: CircleChevronDown },
-  { name: "Check", element: Check },
+  { name: "Check", element: CheckIcon },
   { name: "CheckCircle", element: CheckCircle },
   { name: "CheckSquare", element: CheckSquare },
   { name: "ChevronDown", element: ChevronDownIcon },

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { SearchIcon , CloseIcon } from "@plane/propel/icons";
+import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 // plane helpers
 // helpers
 import { cn } from "@plane/utils";

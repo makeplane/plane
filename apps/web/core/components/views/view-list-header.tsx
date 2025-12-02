@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 // icons
 import { ListFilter } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { SearchIcon , CloseIcon } from "@plane/propel/icons";
+import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 // plane helpers
 // helpers
 import { cn } from "@plane/utils";

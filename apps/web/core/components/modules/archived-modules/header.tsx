@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 // icons
 import { ListFilter } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { SearchIcon , CloseIcon } from "@plane/propel/icons";
+import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 // plane helpers
 // types
 import type { TModuleFilters } from "@plane/types";

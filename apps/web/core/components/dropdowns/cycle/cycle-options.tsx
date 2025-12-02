@@ -4,12 +4,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 // components
-import { Check } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // icon
-import { CycleGroupIcon, CycleIcon, SearchIcon } from "@plane/propel/icons";
+import { CheckIcon, CycleGroupIcon, CycleIcon, SearchIcon } from "@plane/propel/icons";
 import type { TCycleGroups } from "@plane/types";
 // ui
 // store hooks
@@ -155,7 +154,7 @@ export const CycleOptions = observer(function CycleOptions(props: CycleOptionsPr
                   {({ selected }) => (
                     <>
                       <span className="flex-grow truncate">{option.content}</span>
-                      {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                      {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
                     </>
                   )}
                 </Combobox.Option>

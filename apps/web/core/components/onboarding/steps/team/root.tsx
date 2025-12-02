@@ -11,14 +11,14 @@ import type {
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 // icons
 import { usePopper } from "react-popper";
-import { Check, Plus, XCircle } from "lucide-react";
+import { Plus, XCircle } from "lucide-react";
 import { Listbox } from "@headlessui/react";
 // plane imports
 import type { EUserPermissions } from "@plane/constants";
 import { ROLE, ROLE_DETAILS, MEMBER_TRACKER_EVENTS, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { CheckIcon , ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // types
 import { EOnboardingSteps } from "@plane/types";
@@ -229,7 +229,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                               <div className="text-sm font-medium">{t(value.i18n_title)}</div>
                               <div className="flex text-xs text-custom-text-300">{t(value.i18n_description)}</div>
                             </div>
-                            {selected && <Check className="h-4 w-4 shrink-0" />}
+                            {selected && <CheckIcon className="h-4 w-4 shrink-0" />}
                           </div>
                         )}
                       </Listbox.Option>

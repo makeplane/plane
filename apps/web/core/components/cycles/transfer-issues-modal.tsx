@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { AlertCircle } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-import { SearchIcon , CycleIcon, TransferIcon, CloseIcon } from "@plane/propel/icons";
+import { SearchIcon, CycleIcon, TransferIcon, CloseIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EIssuesStoreType } from "@plane/types";
 import { useCycle } from "@/hooks/store/use-cycle";

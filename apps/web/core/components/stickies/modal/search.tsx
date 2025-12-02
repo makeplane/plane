@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import { useOutsideClickDetector } from "@plane/hooks";
 // helpers
 import { useTranslation } from "@plane/i18n";
-import { SearchIcon , CloseIcon } from "@plane/propel/icons";
+import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import { useSticky } from "@/hooks/use-stickies";
 

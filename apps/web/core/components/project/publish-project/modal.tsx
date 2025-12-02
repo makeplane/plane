@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { Check, ExternalLink, Globe2 } from "lucide-react";
+import { ExternalLink, Globe2 } from "lucide-react";
 // types
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { Button } from "@plane/propel/button";
+import { CheckIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TProjectPublishLayouts, TProjectPublishSettings } from "@plane/types";
 // ui
@@ -258,7 +259,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                           className="flex items-center justify-between gap-2"
                         >
                           {option.label}
-                          {selectedLayouts.includes(option.key) && <Check className="size-3.5 flex-shrink-0" />}
+                          {selectedLayouts.includes(option.key) && <CheckIcon className="size-3.5 flex-shrink-0" />}
                         </CustomSelect.Option>
                       ))}
                     </CustomSelect>

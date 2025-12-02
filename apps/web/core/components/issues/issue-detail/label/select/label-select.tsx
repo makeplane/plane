@@ -1,12 +1,12 @@
 import { Fragment, useState } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Check, Loader } from "lucide-react";
+import { Loader } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { SearchIcon , LabelPropertyIcon } from "@plane/propel/icons";
+import { CheckIcon , SearchIcon, LabelPropertyIcon } from "@plane/propel/icons";
 import type { IIssueLabel } from "@plane/types";
 import { EUserProjectRoles } from "@plane/types";
 // helpers
@@ -179,7 +179,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
                         {option.content}
                         {selected && (
                           <div className="flex-shrink-0">
-                            <Check className={`h-3.5 w-3.5`} />
+                            <CheckIcon className={`h-3.5 w-3.5`} />
                           </div>
                         )}
                       </>

@@ -1,5 +1,6 @@
 import type { FC } from "react";
-import { Check } from "lucide-react";
+
+import { CheckIcon } from "@plane/propel/icons";
 
 type Props = {
   isChecked: boolean;
@@ -16,7 +17,7 @@ export function MarketingConsent({ isChecked, handleChange }: Props) {
           isChecked ? "bg-custom-primary-100 border-custom-primary-100" : "border-custom-border-300"
         }`}
       >
-        {isChecked && <Check className="w-3 h-3 text-white" />}
+        {isChecked && <CheckIcon className="w-3 h-3 text-white" />}
       </button>
       <span className="text-sm text-custom-text-300">I agree to Plane marketing communications</span>
     </div>

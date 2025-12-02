@@ -1,11 +1,11 @@
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { Check, MessageSquare, MoreVertical } from "lucide-react";
+import { MessageSquare, MoreVertical } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import { CloseIcon } from "@plane/propel/icons";
+import { CheckIcon , CloseIcon } from "@plane/propel/icons";
 import type { TIssuePublicComment } from "@plane/types";
 import { getFileURL } from "@plane/utils";
 // components
@@ -133,7 +133,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
                 disabled={isSubmitting}
                 className="group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300 hover:bg-green-500"
               >
-                <Check className="h-3 w-3 text-green-500 duration-300 group-hover:text-white" strokeWidth={2} />
+                <CheckIcon className="h-3 w-3 text-green-500 duration-300 group-hover:text-white" strokeWidth={2} />
               </button>
               <button
                 type="button"

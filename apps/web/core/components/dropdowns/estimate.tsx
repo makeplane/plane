@@ -3,11 +3,10 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
-import { Check } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { SearchIcon, EstimatePropertyIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { CheckIcon , SearchIcon, EstimatePropertyIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { EEstimateSystem } from "@plane/types";
 import { ComboDropDown } from "@plane/ui";
 import { convertMinutesToHoursMinutesString, cn } from "@plane/utils";
@@ -272,7 +271,7 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
                               )}
                             >
                               <span className="flex-grow truncate">{option.content}</span>
-                              {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                              {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
                             </div>
                           )}
                         </Combobox.Option>

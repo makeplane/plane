@@ -2,12 +2,13 @@ import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArchiveRestoreIcon, Check, ExternalLink, LinkIcon, Lock, Settings, Trash2, UserPlus } from "lucide-react";
+import { ArchiveRestoreIcon, ExternalLink, LinkIcon, Lock, Settings, Trash2, UserPlus } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
+import { CheckIcon } from "@plane/propel/icons";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IProject } from "@plane/types";
@@ -340,7 +341,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                     </Link>
                   ) : (
                     <span className="flex items-center gap-1 text-custom-text-400 text-sm">
-                      <Check className="h-3.5 w-3.5" />
+                      <CheckIcon className="h-3.5 w-3.5" />
                       Joined
                     </span>
                   ))}

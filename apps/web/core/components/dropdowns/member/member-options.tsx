@@ -4,11 +4,10 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
-import { Check } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { SearchIcon , SuspendedUserIcon } from "@plane/propel/icons";
+import { CheckIcon , SearchIcon, SuspendedUserIcon } from "@plane/propel/icons";
 import { EPillSize, EPillVariant, Pill } from "@plane/propel/pill";
 import type { IUserLite } from "@plane/types";
 import { Avatar } from "@plane/ui";
@@ -165,7 +164,7 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
                       {({ selected }) => (
                         <>
                           <span className="flex-grow truncate">{option.content}</span>
-                          {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                          {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
                           {isUserSuspended(option.value, workspaceSlug?.toString()) && (
                             <Pill variant={EPillVariant.DEFAULT} size={EPillSize.XS} className="border-none">
                               Suspended

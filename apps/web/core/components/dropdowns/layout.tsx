@@ -1,9 +1,9 @@
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-import { Check } from "lucide-react";
 // plane imports
 import { ISSUE_LAYOUT_MAP } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { CheckIcon } from "@plane/propel/icons";
 import { EIssueLayoutTypes } from "@plane/types";
 import { Dropdown } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -54,7 +54,7 @@ export const LayoutDropDown = observer(function LayoutDropDown(props: TLayoutDro
           <IssueLayoutIcon layout={dropdownValue.key} strokeWidth={2} className={`size-3 text-custom-text-200`} />
           <span className="font-medium text-xs">{t(dropdownValue.i18n_label)}</span>
         </div>
-        {props.selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+        {props.selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
       </div>
     );
   }, []);

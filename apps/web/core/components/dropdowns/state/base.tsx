@@ -5,7 +5,7 @@ import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { SearchIcon , StateGroupIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { SearchIcon, StateGroupIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { IState } from "@plane/types";
 import { ComboDropDown, Spinner } from "@plane/ui";
 import { cn } from "@plane/utils";

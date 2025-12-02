@@ -1,10 +1,10 @@
 import { Combobox } from "@headlessui/react";
-import { Check, Info } from "lucide-react";
+import { Info } from "lucide-react";
 import React, { useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
 import { useOutsideClickDetector } from "@plane/hooks";
-import { SearchIcon , ChevronDownIcon } from "@plane/propel/icons";
+import { CheckIcon , SearchIcon, ChevronDownIcon } from "@plane/propel/icons";
 // plane imports
 // local imports
 import { Tooltip } from "@plane/propel/tooltip";
@@ -190,7 +190,7 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                               {({ selected }) => (
                                 <>
                                   <span className="flex-grow truncate">{option.content}</span>
-                                  {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                                  {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
                                   {option.tooltip && (
                                     <>
                                       {typeof option.tooltip === "string" ? (

@@ -2,11 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import type { Placement } from "@popperjs/core";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
-import { Check } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { SearchIcon, ModuleIcon } from "@plane/propel/icons";
+import { CheckIcon , SearchIcon, ModuleIcon } from "@plane/propel/icons";
 import type { IModule } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
@@ -146,7 +145,7 @@ export const ModuleOptions = observer(function ModuleOptions(props: Props) {
                   {({ selected }) => (
                     <>
                       <span className="flex-grow truncate">{option.content}</span>
-                      {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                      {selected && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0" />}
                     </>
                   )}
                 </Combobox.Option>

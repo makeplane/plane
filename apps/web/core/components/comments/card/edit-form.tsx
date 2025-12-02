@@ -1,9 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { useForm } from "react-hook-form";
-import { Check } from "lucide-react";
 import type { EditorRefApi } from "@plane/editor";
-import { CloseIcon } from "@plane/propel/icons";
+import { CheckIcon , CloseIcon } from "@plane/propel/icons";
 // plane imports
 import type { TCommentsOperations, TIssueComment } from "@plane/types";
 import { isCommentEmpty } from "@plane/utils";
@@ -115,7 +114,7 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
               isEmpty ? "cursor-not-allowed bg-gray-200" : "hover:bg-green-500"
             }`}
           >
-            <Check
+            <CheckIcon
               className={`h-3 w-3 text-green-500 duration-300 ${isEmpty ? "text-black" : "group-hover:text-white"}`}
             />
           </button>

@@ -2,7 +2,8 @@ import React, { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
 // icons
-import { Check, Info } from "lucide-react";
+import { Info } from "lucide-react";
+import { CheckIcon } from "@plane/propel/icons";
 // ui
 import { CircularProgressIndicator } from "@plane/ui";
 // components
@@ -72,12 +73,12 @@ export const ModuleListItem = observer(function ModuleListItem(props: Props) {
         <CircularProgressIndicator size={30} percentage={progress} strokeWidth={3}>
           {completedModuleCheck ? (
             progress === 100 ? (
-              <Check className="h-3 w-3 stroke-[2] text-custom-primary-100" />
+              <CheckIcon className="h-3 w-3 stroke-[2] text-custom-primary-100" />
             ) : (
               <span className="text-sm text-custom-primary-100">{`!`}</span>
             )
           ) : progress === 100 ? (
-            <Check className="h-3 w-3 stroke-[2] text-custom-primary-100" />
+            <CheckIcon className="h-3 w-3 stroke-[2] text-custom-primary-100" />
           ) : (
             <span className="text-[9px] text-custom-text-300">{`${progress}%`}</span>
           )}
