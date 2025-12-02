@@ -5,4 +5,5 @@ export * from "./add-reaction-icon";
 export * from "./check-icon";
 export * from "./close-icon";
 export * from "./search-icon";
+export * from "./plus-icon";
 export * from "./preferences-icon";
