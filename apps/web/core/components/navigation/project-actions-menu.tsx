@@ -44,7 +44,7 @@ export const ProjectActionsMenu: FC<Props> = ({
       customButton={
         <span
           ref={actionSectionRef}
-          className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded"
+          className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90 rounded"
           onClick={() => setIsMenuActive(!isMenuActive)}
         >
           <MoreHorizontal className="size-4" />
