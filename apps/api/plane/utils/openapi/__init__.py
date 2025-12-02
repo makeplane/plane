@@ -140,6 +140,7 @@ from .examples import (
     WORKSPACE_MEMBER_EXAMPLE,
     PROJECT_MEMBER_EXAMPLE,
     CYCLE_ISSUE_EXAMPLE,
+    STICKY_EXAMPLE,
 )
 
 # Helper decorators
@@ -292,6 +293,7 @@ __all__ = [
     "WORKSPACE_MEMBER_EXAMPLE",
     "PROJECT_MEMBER_EXAMPLE",
     "CYCLE_ISSUE_EXAMPLE",
+    "STICKY_EXAMPLE",
     # Decorators
     "workspace_docs",
     "project_docs",

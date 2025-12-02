@@ -411,6 +411,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                     }}
                     error={Boolean(errors.timezone)}
                     buttonClassName="border-none"
+                    disabled={!isAdmin}
                   />
                 </>
               )}

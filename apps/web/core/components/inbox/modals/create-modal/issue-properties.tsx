@@ -10,10 +10,10 @@ import { renderFormattedPayloadDate, getDate, getTabIndex } from "@plane/utils";
 import { CycleDropdown } from "@/components/dropdowns/cycle";
 import { DateDropdown } from "@/components/dropdowns/date";
 import { EstimateDropdown } from "@/components/dropdowns/estimate";
+import { IntakeStateDropdown } from "@/components/dropdowns/intake-state/dropdown";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
-import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { ParentIssuesListModal } from "@/components/issues/parent-issues-list-modal";
 import { IssueLabelSelect } from "@/components/issues/select";
 // helpers
@@ -50,9 +50,9 @@ export const InboxIssueProperties = observer(function InboxIssueProperties(props
 
   return (
     <div className="relative flex flex-wrap gap-2 items-center">
-      {/* state */}
+      {/* intake state */}
       <div className="h-7">
-        <StateDropdown
+        <IntakeStateDropdown
           value={data?.state_id}
           onChange={(stateId) => handleData("state_id", stateId)}
           projectId={projectId}

@@ -24,6 +24,17 @@ export default {
     },
   },
   project_empty_state: {
+    no_access: {
+      title: "이 프로젝트에 접근할 수 없는 것 같습니다",
+      restricted_description: "관리자에게 접근 권한을 요청하시면 여기서 계속 진행하실 수 있습니다.",
+      join_description: "아래 버튼을 클릭하여 프로젝트에 참여하세요.",
+      cta_primary: "프로젝트 참여",
+      cta_loading: "프로젝트 참여 중",
+    },
+    invalid_project: {
+      title: "프로젝트를 찾을 수 없습니다",
+      description: "찾으시는 프로젝트가 존재하지 않습니다.",
+    },
     work_items: {
       title: "첫 번째 작업 항목으로 시작하세요.",
       description:

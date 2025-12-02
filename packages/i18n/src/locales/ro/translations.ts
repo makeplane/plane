@@ -1556,7 +1556,7 @@ export default {
           },
           code: {
             label: "Cod unic",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "Codul de verificare a fost trimis la noul e-mail.",
             errors: {
               required: "Codul unic este obligatoriu",

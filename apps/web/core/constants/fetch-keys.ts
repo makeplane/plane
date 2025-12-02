@@ -163,6 +163,9 @@ export const PROJECT_MEMBERS = (workspaceSlug: string, projectId: string) =>
 export const PROJECT_STATES = (workspaceSlug: string, projectId: string) =>
   `PROJECT_STATES_${projectId.toString().toUpperCase()}`;
 
+export const PROJECT_INTAKE_STATE = (workspaceSlug: string, projectId: string) =>
+  `PROJECT_INTAKE_STATE_${projectId.toString().toUpperCase()}`;
+
 export const PROJECT_ESTIMATES = (workspaceSlug: string, projectId: string) =>
   `PROJECT_ESTIMATES_${projectId.toString().toUpperCase()}`;
 

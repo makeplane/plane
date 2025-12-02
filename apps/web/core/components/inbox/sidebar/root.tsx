@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
@@ -138,6 +137,7 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
                     title={t("common_empty_state.search.title")}
                     description={t("common_empty_state.search.description")}
                     assetClassName="size-20"
+                    rootClassName="px-page-x"
                   />
                 ) : currentTab === EInboxIssueCurrentTab.OPEN ? (
                   <EmptyStateDetailed
@@ -152,6 +152,7 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
                         variant: "primary",
                       },
                     ]}
+                    rootClassName="px-page-x"
                   />
                 ) : (
                   // TODO: Add translation

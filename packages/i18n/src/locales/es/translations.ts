@@ -1566,7 +1566,7 @@ export default {
           },
           code: {
             label: "Código único",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "Código de verificación enviado a tu nuevo correo electrónico.",
             errors: {
               required: "El código único es obligatorio",
