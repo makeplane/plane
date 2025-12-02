@@ -37,14 +37,14 @@ export const ProjectHeader = observer((props: TProjectHeaderProps) => {
 
   // Get available navigation items for this project
   const navigationItems = useNavigationItems({
-    workspaceSlug: workspaceSlug.toString(),
+    workspaceSlug: workspaceSlug,
     projectId,
     project: currentProjectDetails,
     allowPermissions,
   });
 
   // Get preferences from hook
-  const { tabPreferences } = useTabPreferences(workspaceSlug.toString(), projectId);
+  const { tabPreferences } = useTabPreferences(workspaceSlug, projectId);
 
   // Memoize available tab keys
   const availableTabKeys = useMemo(() => navigationItems.map((item) => item.key), [navigationItems]);
@@ -87,7 +87,7 @@ export const ProjectHeader = observer((props: TProjectHeaderProps) => {
   const handleProjectChange = useCallback(
     (value: string) => {
       if (value !== currentProjectDetails?.id) {
-        router.push(getTabUrl(workspaceSlug.toString(), value, validatedDefaultTabKey));
+        router.push(getTabUrl(workspaceSlug, value, validatedDefaultTabKey));
       }
     },
     [currentProjectDetails?.id, router, workspaceSlug, validatedDefaultTabKey]
