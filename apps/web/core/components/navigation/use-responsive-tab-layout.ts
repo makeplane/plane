@@ -1,12 +1,12 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { TNavigationItem } from "./tab-navigation-root";
 
 export type TResponsiveTabLayout = {
   visibleItems: TNavigationItem[];
   overflowItems: TNavigationItem[];
   hasOverflow: boolean;
-  containerRef: React.RefObject<HTMLDivElement>;
   itemRefs: React.MutableRefObject<(HTMLDivElement | null)[]>;
+  containerRef: (node: HTMLDivElement | null) => void;
 };
 
 type UseResponsiveTabLayoutProps = {
@@ -30,9 +30,9 @@ export const useResponsiveTabLayout = ({
   hiddenNavigationItems,
   isActive,
 }: UseResponsiveTabLayoutProps): TResponsiveTabLayout => {
-  // Refs for measuring space and items
-  const containerRef = useRef<HTMLDivElement>(null);
+  // Refs for measuring items
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
   // State for responsive behavior
   const [containerWidth, setContainerWidth] = useState<number>(0);
@@ -42,24 +42,33 @@ export const useResponsiveTabLayout = ({
   const gap = 4; // gap-1 = 4px
   const overflowButtonWidth = 40;
 
-  const container = containerRef?.current;
+  // Callback ref that sets up ResizeObserver when element is attached
+  const containerRef = useCallback((node: HTMLDivElement | null) => {
+    // Clean up previous observer if it exists
+    if (resizeObserverRef.current) {
+      resizeObserverRef.current.disconnect();
+      resizeObserverRef.current = null;
+    }
 
-  // ResizeObserver to measure container width
-  useEffect(() => {
-    if (!container) return;
+    // If node is null (unmounting), just clean up
+    if (!node) {
+      setContainerWidth(0);
+      return;
+    }
 
+    // Set initial width immediately
+    setContainerWidth(node.offsetWidth);
+
+    // Create and set up new ResizeObserver
     const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
         setContainerWidth(entry.contentRect.width);
       }
     });
 
-    resizeObserver.observe(container);
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [container]);
+    resizeObserverRef.current = resizeObserver;
+    resizeObserver.observe(node);
+  }, []); // Empty deps - callback function remains stable
 
   // Calculate how many items can fit
   useEffect(() => {
@@ -137,7 +146,7 @@ export const useResponsiveTabLayout = ({
     visibleItems,
     overflowItems,
     hasOverflow,
-    containerRef,
     itemRefs,
+    containerRef,
   };
 };

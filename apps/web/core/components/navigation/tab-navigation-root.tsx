@@ -115,7 +115,7 @@ export const TabNavigationRoot: FC<TTabNavigationRootProps> = observer((props) =
   const hiddenNavigationItems = allNavigationItems.filter((item) => tabPreferences.hiddenTabs.includes(item.key));
 
   // Responsive tab layout hook
-  const { visibleItems, overflowItems, hasOverflow, containerRef, itemRefs } = useResponsiveTabLayout({
+  const { visibleItems, overflowItems, hasOverflow, itemRefs, containerRef } = useResponsiveTabLayout({
     visibleNavigationItems,
     hiddenNavigationItems,
     isActive,
