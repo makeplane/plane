@@ -1,8 +1,9 @@
 import { observer } from "mobx-react";
-import { Trash2 } from "lucide-react";
+
 // plane imports
 import { IMPORTERS_LIST } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { TrashIcon } from "@plane/propel/icons";
 import type { IImporterService } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 // icons
@@ -54,7 +55,7 @@ export const SingleImport = observer(function SingleImport({ service, refreshing
       <CustomMenu ellipsis>
         <CustomMenu.MenuItem onClick={handleDelete}>
           <span className="flex items-center justify-start gap-2">
-            <Trash2 className="h-3.5 w-3.5" />
+            <TrashIcon className="h-3.5 w-3.5" />
             Delete import
           </span>
         </CustomMenu.MenuItem>

@@ -1,10 +1,11 @@
 import type { FC } from "react";
 import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { Globe2, Link, Lock, Pencil, Trash2 } from "lucide-react";
+import { Globe2, Link, Lock, Pencil } from "lucide-react";
 // plane imports
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { TrashIcon } from "@plane/propel/icons";
 import type { TIssueComment, TCommentsOperations } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
@@ -67,7 +68,7 @@ export const CommentQuickActions = observer(function CommentQuickActions(props: 
         key: "delete",
         action: () => activityOperations.removeComment(comment.id),
         title: t("common.actions.delete"),
-        icon: Trash2,
+        icon: TrashIcon,
         shouldRender: canDelete,
       },
     ],

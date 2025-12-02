@@ -1,7 +1,8 @@
 import { observer } from "mobx-react";
-import { Copy, Pencil, Trash2 } from "lucide-react";
-// plane types
+import { Copy, Pencil } from "lucide-react";
 import { MODULE_TRACKER_ELEMENTS } from "@plane/constants";
+import { TrashIcon } from "@plane/propel/icons";
+// plane types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { ILinkDetails } from "@plane/types";
@@ -87,7 +88,7 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
                 handleDeleteLink();
               }}
             >
-              <Trash2 className="size-3 stroke-[1.5] text-custom-text-200" />
+              <TrashIcon className="size-3 stroke-[1.5] text-custom-text-200" />
             </button>
           )}
         </div>

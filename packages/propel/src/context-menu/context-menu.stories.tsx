@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { Copy, Download, Edit, Share, Trash, Star, Archive } from "lucide-react";
+import { Copy, Download, Edit, Share, Star, Archive } from "lucide-react";
+import { TrashIcon } from "../icons";
 import { ChevronRightIcon } from "../icons/arrows/chevron-right";
 import { ContextMenu } from "./context-menu";
 
@@ -80,7 +81,7 @@ export const WithIcons: Story = {
               Share
             </ContextMenu.Item>
             <ContextMenu.Item>
-              <Trash className="mr-2 h-4 w-4 text-red-500" />
+              <TrashIcon className="mr-2 h-4 w-4 text-red-500" />
               <span className="text-red-500">Delete</span>
             </ContextMenu.Item>
           </ContextMenu.Content>
@@ -126,7 +127,7 @@ export const WithSubmenus: Story = {
             </ContextMenu.Submenu>
             <ContextMenu.Separator />
             <ContextMenu.Item>
-              <Trash className="mr-2 h-4 w-4 text-red-500" />
+              <TrashIcon className="mr-2 h-4 w-4 text-red-500" />
               <span className="text-red-500">Delete</span>
             </ContextMenu.Item>
           </ContextMenu.Content>
@@ -165,7 +166,7 @@ export const DisabledItems: Story = {
               Share (Disabled)
             </ContextMenu.Item>
             <ContextMenu.Item>
-              <Trash className="mr-2 h-4 w-4 text-red-500" />
+              <TrashIcon className="mr-2 h-4 w-4 text-red-500" />
               <span className="text-red-500">Delete</span>
             </ContextMenu.Item>
           </ContextMenu.Content>
@@ -212,7 +213,7 @@ export const OnFileCard: Story = {
               Archive
             </ContextMenu.Item>
             <ContextMenu.Item>
-              <Trash className="mr-2 h-4 w-4 text-red-500" />
+              <TrashIcon className="mr-2 h-4 w-4 text-red-500" />
               <span className="text-red-500">Delete</span>
             </ContextMenu.Item>
           </ContextMenu.Content>
@@ -329,7 +330,7 @@ export const NestedSubmenus: Story = {
             </ContextMenu.Submenu>
             <ContextMenu.Separator />
             <ContextMenu.Item>
-              <Trash className="mr-2 h-4 w-4 text-red-500" />
+              <TrashIcon className="mr-2 h-4 w-4 text-red-500" />
               <span className="text-red-500">Delete</span>
             </ContextMenu.Item>
           </ContextMenu.Content>
@@ -367,7 +368,7 @@ export const WithKeyboardShortcuts: Story = {
             </ContextMenu.Item>
             <ContextMenu.Separator />
             <ContextMenu.Item>
-              <Trash className="mr-2 h-4 w-4 text-red-500" />
+              <TrashIcon className="mr-2 h-4 w-4 text-red-500" />
               <span className="text-red-500">Delete</span>
               <span className="ml-auto text-xs text-custom-text-400">⌘⌫</span>
             </ContextMenu.Item>

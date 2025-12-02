@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
-import { Pencil, Trash2, Copy, Link } from "lucide-react";
+import { Pencil, Copy, Link } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssueServiceType } from "@plane/types";
@@ -107,7 +108,7 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
                 linkOperations.remove(linkDetail.id);
               }}
             >
-              <Trash2 className="h-3 w-3" />
+              <TrashIcon className="h-3 w-3" />
               {t("common.actions.delete")}
             </CustomMenu.MenuItem>
           </CustomMenu>

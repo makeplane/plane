@@ -1,5 +1,6 @@
-import { ExternalLink, Link, Pencil, Trash2 } from "lucide-react";
+import { ExternalLink, Link, Pencil } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { TrashIcon } from "@plane/propel/icons";
 import type { EIssueLayoutTypes, IProjectView } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import type { TWorkspaceLayoutProps } from "@/components/views/helper";
@@ -62,7 +63,7 @@ export const useMenuItemsFactory = (props: TMenuItemsFactoryProps) => {
     key: "delete",
     action: () => setDeleteViewModal(true),
     title: t("delete"),
-    icon: Trash2,
+    icon: TrashIcon,
     shouldRender: isOwner || isAdmin,
   });
 

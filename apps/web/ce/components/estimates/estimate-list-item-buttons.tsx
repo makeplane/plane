@@ -1,7 +1,8 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { Pen, Trash } from "lucide-react";
+import { Pen } from "lucide-react";
 import { PROJECT_SETTINGS_TRACKER_ELEMENTS } from "@plane/constants";
+import { TrashIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 // components
 import { ProIcon } from "@/components/common/pro-icon";
@@ -42,7 +43,7 @@ export const EstimateListItemButtons = observer(function EstimateListItemButtons
         onClick={() => onDeleteClick && onDeleteClick(estimateId)}
         data-ph-element={PROJECT_SETTINGS_TRACKER_ELEMENTS.ESTIMATES_LIST_ITEM}
       >
-        <Trash size={12} />
+        <TrashIcon width={12} height={12} />
       </button>
     </div>
   );

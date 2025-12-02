@@ -11,14 +11,13 @@ import {
   Lock,
   LockKeyhole,
   LockKeyholeOpen,
-  Trash2,
 } from "lucide-react";
 // constants
 import { EPageAccess, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 // plane editor
 import type { EditorRefApi } from "@plane/editor";
+import { ArchiveIcon, TrashIcon } from "@plane/propel/icons";
 // plane ui
-import { ArchiveIcon } from "@plane/propel/icons";
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 // components
@@ -160,7 +159,7 @@ export const PageActions = observer(function PageActions(props: Props) {
           setDeletePageModal(true);
         },
         title: "Delete",
-        icon: Trash2,
+        icon: TrashIcon,
         shouldRender: canCurrentUserDeletePage && !!archived_at,
       },
       {

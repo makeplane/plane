@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 
 // icons
-import { ArchiveRestoreIcon, ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
+import { ArchiveRestoreIcon, ExternalLink, LinkIcon, Pencil } from "lucide-react";
 // ui
 import {
   CYCLE_TRACKER_EVENTS,
@@ -11,7 +11,7 @@ import {
   CYCLE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ArchiveIcon } from "@plane/propel/icons";
+import { TrashIcon , ArchiveIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
@@ -161,7 +161,7 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
       key: "delete",
       action: handleDeleteCycle,
       title: t("delete"),
-      icon: Trash2,
+      icon: TrashIcon,
       shouldRender: isEditingAllowed && !isCompleted && !isArchived,
     },
   ];

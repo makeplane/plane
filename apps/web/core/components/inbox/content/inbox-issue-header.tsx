@@ -1,12 +1,12 @@
 import type { FC } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { CircleCheck, CircleX, Clock, ExternalLink, FileStack, Link, Trash2, MoveRight, Copy } from "lucide-react";
+import { CircleCheck, CircleX, Clock, ExternalLink, FileStack, Link, MoveRight, Copy } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
+import { TrashIcon , ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { EInboxIssueStatus } from "@plane/types";
@@ -411,7 +411,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
                     {canDelete && (
                       <CustomMenu.MenuItem onClick={() => setDeleteIssueModal(true)}>
                         <div className="flex items-center gap-2">
-                          <Trash2 size={14} strokeWidth={2} />
+                          <TrashIcon width={14} height={14} strokeWidth={2} />
                           {t("inbox_issue.actions.delete")}
                         </div>
                       </CustomMenu.MenuItem>

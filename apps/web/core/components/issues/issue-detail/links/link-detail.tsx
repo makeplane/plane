@@ -1,4 +1,5 @@
-import { Pencil, Trash2, ExternalLink } from "lucide-react";
+import { Pencil, ExternalLink } from "lucide-react";
+import { TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@plane/utils";
@@ -96,7 +97,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
                   linkOperations.remove(linkDetail.id);
                 }}
               >
-                <Trash2 className="h-3 w-3" />
+                <TrashIcon className="h-3 w-3" />
               </button>
             </div>
           )}

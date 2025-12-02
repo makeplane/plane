@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Palette, Trash2 } from "lucide-react";
+import { Palette } from "lucide-react";
 // editor
 import type { EditorRefApi } from "@plane/editor";
 // ui
 import { useOutsideClickDetector } from "@plane/hooks";
+import { TrashIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TSticky } from "@plane/types";
 // constants
@@ -126,7 +127,7 @@ export function StickyEditorToolbar(props: Props) {
         }
       >
         <button type="button" onClick={handleDelete} className="my-auto text-custom-text-100/50">
-          <Trash2 className="size-4" />
+          <TrashIcon className="size-4" />
         </button>
       </Tooltip>
     </div>

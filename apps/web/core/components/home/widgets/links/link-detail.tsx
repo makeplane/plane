@@ -1,7 +1,8 @@
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-import { Pencil, ExternalLink, Link, Trash2 } from "lucide-react";
+import { Pencil, ExternalLink, Link } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { LinkItemBlock } from "@plane/ui";
@@ -82,7 +83,7 @@ export const ProjectLinkDetail = observer(function ProjectLinkDetail(props: TPro
         key: "delete",
         action: handleDelete,
         title: t("delete"),
-        icon: Trash2,
+        icon: TrashIcon,
       },
     ],
     [handleEdit, handleOpenInNewTab, handleCopyText, handleDelete, t]

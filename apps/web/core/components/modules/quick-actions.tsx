@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 
 // icons
-import { ArchiveRestoreIcon, ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
+import { ArchiveRestoreIcon, ExternalLink, LinkIcon, Pencil } from "lucide-react";
 // plane imports
 import {
   EUserPermissions,
@@ -11,8 +11,8 @@ import {
   MODULE_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { ArchiveIcon, TrashIcon } from "@plane/propel/icons";
 // ui
-import { ArchiveIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
@@ -154,7 +154,7 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
       key: "delete",
       action: handleDeleteModule,
       title: t("delete"),
-      icon: Trash2,
+      icon: TrashIcon,
       shouldRender: isEditingAllowed,
     },
   ];
