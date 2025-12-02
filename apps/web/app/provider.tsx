@@ -9,6 +9,8 @@ import { Toast } from "@plane/propel/toast";
 import { resolveGeneralTheme } from "@plane/utils";
 // polyfills
 import "@/lib/polyfills";
+// chat support
+import ChatSupportModal from "@/components/global/chat-support-modal";
 // progress bar
 import { AppProgressBar } from "@/lib/b-progress";
 // mobx store provider
@@ -23,10 +25,6 @@ const StoreWrapper = lazy(function StoreWrapper() {
 
 const PostHogProvider = lazy(function PostHogProvider() {
   return import("@/lib/posthog-provider");
-});
-
-const IntercomProvider = lazy(function IntercomProvider() {
-  return import("@/lib/intercom-provider");
 });
 
 export interface IAppProvider {
@@ -50,11 +48,10 @@ export function AppProvider(props: IAppProvider) {
           <StoreWrapper>
             <InstanceWrapper>
               <Suspense>
-                <IntercomProvider>
-                  <PostHogProvider>
-                    <SWRConfig value={WEB_SWR_CONFIG}>{children}</SWRConfig>
-                  </PostHogProvider>
-                </IntercomProvider>
+                <ChatSupportModal />
+                <PostHogProvider>
+                  <SWRConfig value={WEB_SWR_CONFIG}>{children}</SWRConfig>
+                </PostHogProvider>
               </Suspense>
             </InstanceWrapper>
           </StoreWrapper>
