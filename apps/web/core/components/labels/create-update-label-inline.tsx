@@ -66,18 +66,11 @@ export const CreateUpdateLabelInline = observer(
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const getErrorMessage = (error: any, operation: "create" | "update"): string => {
-      const errorData = error?.data ?? error;
+      const errorData = error ?? {};
 
-      // Check field-level errors with array structure
-      if (errorData?.name && Array.isArray(errorData.name)) {
-        const errorCode = errorData.name[0];
-
-        switch (errorCode) {
-          case errorCodes.LABEL_NAME_ALREADY_EXISTS:
-            return t("label.create.already_exists");
-          default:
-            break;
-        }
+      const labelError = errorData.name?.includes(errorCodes.LABEL_NAME_ALREADY_EXISTS);
+      if (labelError) {
+        return t("label.create.already_exists");
       }
 
       // Fallback to general error messages
