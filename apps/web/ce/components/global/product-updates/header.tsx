@@ -1,10 +1,8 @@
 import { observer } from "mobx-react";
+import packageJson from "package.json";
 import { useTranslation } from "@plane/i18n";
-import { PlaneLogo } from "@plane/propel/icons";
 // helpers
 import { cn } from "@plane/utils";
-// package.json
-import packageJson from "package.json";
 
 export const ProductUpdatesHeader = observer(function ProductUpdatesHeader() {
   const { t } = useTranslation();
@@ -19,9 +17,6 @@ export const ProductUpdatesHeader = observer(function ProductUpdatesHeader() {
         >
           {t("version")}: v{packageJson.version}
         </div>
-      </div>
-      <div className="flex flex-shrink-0 items-center gap-8">
-        <PlaneLogo className="h-6 w-auto text-custom-text-100" />
       </div>
     </div>
   );
