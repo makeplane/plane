@@ -6,9 +6,7 @@ import { observer } from "mobx-react";
 import type { ICustomSearchSelectOption } from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
 // plane propel imports
-import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ProjectIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useProject } from "@/hooks/store/use-project";
@@ -16,6 +14,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { useNavigationItems } from "@/plane-web/components/navigations";
 // local components
 import { SwitcherLabel } from "../common/switcher-label";
+import { ProjectHeaderButton } from "./project-header-button";
 // utils
 import { getTabUrl } from "./tab-navigation-utils";
 import { useTabPreferences } from "./use-tab-preferences";
@@ -84,24 +83,6 @@ export const ProjectHeader = observer((props: TProjectHeaderProps) => {
     [joinedProjectIds, getPartialProjectById]
   );
 
-  // Memoize the custom button to prevent re-renders
-  const customButton = useMemo(
-    () =>
-      currentProjectDetails ? (
-        <Tooltip tooltipContent={currentProjectDetails.name} position="bottom">
-          <div className="flex items-center gap-1.5 text-left select-none w-full">
-            <div className="size-7 rounded-md bg-custom-background-90 flex items-center justify-center flex-shrink-0">
-              <Logo logo={currentProjectDetails.logo_props} size={16} />
-            </div>
-            <p className="truncate text-base font-medium text-custom-sidebar-text-200 flex-shrink-0 pr-2.5 max-w-48">
-              {currentProjectDetails.name}
-            </p>
-          </div>
-        </Tooltip>
-      ) : null,
-    [currentProjectDetails]
-  );
-
   // Memoize onChange handler
   const handleProjectChange = useCallback(
     (value: string) => {
@@ -120,7 +101,7 @@ export const ProjectHeader = observer((props: TProjectHeaderProps) => {
       options={switcherOptions}
       value={currentProjectDetails.id}
       onChange={handleProjectChange}
-      customButton={customButton}
+      customButton={currentProjectDetails ? <ProjectHeaderButton project={currentProjectDetails} /> : null}
       className="h-full rounded"
       customButtonClassName="group flex items-center gap-0.5 rounded hover:bg-custom-background-90 outline-none cursor-pointer h-full rounded p-1"
     />
