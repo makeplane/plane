@@ -1,0 +1,400 @@
+@theme {
+  /* Font family */
+  --font-family-*: initial;
+  --font-family-heading: Inter;
+  --font-family-body: Inter;
+  --font-family-code: IBM Mono;
+
+  /* Font weight */
+  --font-weight-*: initial;
+  --font-weight-light: Light;
+  --font-weight-regular: 400;
+  --font-weight-medium: medium;
+  --font-weight-semi-bold: semi bold;
+  --font-weight-bold: bold;
+  --font-weight-heavy: heavy;
+
+  /* Font size */
+  --text-*: initial;
+  --text-9: 0.5625rem;
+  --text-10: 0.625rem;
+  --text-11: 0.6875rem;
+  --text-12: 0.75rem;
+  --text-13: 0.8125rem;
+  --text-14: 0.875rem;
+  --text-16: 1rem;
+  --text-18: 1.125rem;
+  --text-20: 1.25rem;
+  --text-24: 1.5rem;
+  --text-28: 1.75rem;
+  --text-32: 2rem;
+  --text-40: 2.5rem;
+
+  /* Letter spacing */
+  --tracking-*: initial;
+  --tracking-extra-tight: -0.025rem;
+  --tracking-tight: -0.05rem;
+  --tracking-default: 0;
+  --tracking-wide: 0.05rem;
+}
+
+/* Text Styles  */
+.font-h1-regular {
+  font-family: Inter;
+  font-size: 32px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  font-weight: 400;
+}
+
+.font-h1-medium {
+  font-family: Inter;
+  font-size: 32px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  font-weight: 500;
+}
+
+.font-h1-semibold {
+  font-family: Inter;
+  font-size: 32px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  font-weight: 600;
+}
+
+.font-h1-bold {
+  font-family: Inter;
+  font-size: 32px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  font-weight: 700;
+}
+
+.font-h2-regular {
+  font-family: Inter;
+  font-size: 28px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  font-weight: 400;
+}
+
+.font-h2-medium {
+  font-family: Inter;
+  font-size: 28px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  font-weight: 500;
+}
+
+.font-h2-semibold {
+  font-family: Inter;
+  font-size: 28px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  font-weight: 600;
+}
+
+.font-h2-bold {
+  font-family: Inter;
+  font-size: 28px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  font-weight: 700;
+}
+
+.font-h3-regular {
+  font-family: Inter;
+  font-size: 24px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  font-weight: 400;
+}
+
+.font-h3-medium {
+  font-family: Inter;
+  font-size: 24px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  font-weight: 500;
+}
+
+.font-h3-semibold {
+  font-family: Inter;
+  font-size: 24px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  font-weight: 600;
+}
+
+.font-h3-bold {
+  font-family: Inter;
+  font-size: 24px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  font-weight: 700;
+}
+
+.font-h4-regular {
+  font-family: Inter;
+  font-size: 20px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  font-weight: 400;
+}
+
+.font-h4-medium {
+  font-family: Inter;
+  font-size: 20px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  font-weight: 500;
+}
+
+.font-h4-semibold {
+  font-family: Inter;
+  font-size: 20px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  font-weight: 600;
+}
+
+.font-h4-bold {
+  font-family: Inter;
+  font-size: 20px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  font-weight: 700;
+}
+
+.font-h5-regular {
+  font-family: Inter;
+  font-size: 16px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  font-weight: 400;
+}
+
+.font-h5-medium {
+  font-family: Inter;
+  font-size: 16px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  font-weight: 500;
+}
+
+.font-h5-semibold {
+  font-family: Inter;
+  font-size: 16px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  font-weight: 600;
+}
+
+.font-h5-bold {
+  font-family: Inter;
+  font-size: 16px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  font-weight: 700;
+}
+
+.font-h6-regular {
+  font-family: Inter;
+  font-size: 14px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  font-weight: 400;
+}
+
+.font-h6-medium {
+  font-family: Inter;
+  font-size: 14px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  font-weight: 500;
+}
+
+.font-h6-semibold {
+  font-family: Inter;
+  font-size: 14px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  font-weight: 600;
+}
+
+.font-h6-bold {
+  font-family: Inter;
+  font-size: 14px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  font-weight: 700;
+}
+
+.font-body-md-light {
+  font-family: Inter;
+  font-size: 16px;
+  line-height: 140%;
+  letter-spacing: 1%;
+  font-weight: 300;
+}
+
+.font-body-md-regular {
+  font-family: Inter;
+  font-size: 16px;
+  line-height: 140%;
+  letter-spacing: 1%;
+  font-weight: 400;
+}
+
+.font-body-md-medium {
+  font-family: Inter;
+  font-size: 16px;
+  line-height: 140%;
+  letter-spacing: 1%;
+  font-weight: 500;
+}
+
+.font-body-md-semibold {
+  font-family: Inter;
+  font-size: 16px;
+  line-height: 140%;
+  letter-spacing: 1%;
+  font-weight: 600;
+}
+
+.font-body-sm-light {
+  font-family: Inter;
+  font-size: 14px;
+  line-height: 140%;
+  letter-spacing: 1%;
+  font-weight: 300;
+}
+
+.font-body-sm-regular {
+  font-family: Inter;
+  font-size: 14px;
+  line-height: 140%;
+  letter-spacing: 1%;
+  font-weight: 400;
+}
+
+.font-body-sm-medium {
+  font-family: Inter;
+  font-size: 14px;
+  line-height: 140%;
+  letter-spacing: 1%;
+  font-weight: 500;
+}
+
+.font-body-sm-semibold {
+  font-family: Inter;
+  font-size: 14px;
+  line-height: 140%;
+  letter-spacing: 1%;
+  font-weight: 600;
+}
+
+.font-body-xs-light {
+  font-family: Inter;
+  font-size: 13px;
+  line-height: 140%;
+  letter-spacing: 1%;
+  font-weight: 300;
+}
+
+.font-body-xs-regular {
+  font-family: Inter;
+  font-size: 13px;
+  line-height: 140%;
+  letter-spacing: 1%;
+  font-weight: 400;
+}
+
+.font-body-xs-medium {
+  font-family: Inter;
+  font-size: 13px;
+  line-height: 140%;
+  letter-spacing: 1%;
+  font-weight: 500;
+}
+
+.font-body-xs-semibold {
+  font-family: Inter;
+  font-size: 13px;
+  line-height: 140%;
+  letter-spacing: 1%;
+  font-weight: 600;
+}
+
+.font-caption-md-regular {
+  font-family: Inter;
+  font-size: 12px;
+  line-height: 110%;
+  letter-spacing: 0%;
+  font-weight: 400;
+}
+
+.font-caption-md-medium {
+  font-family: Inter;
+  font-size: 12px;
+  line-height: 110%;
+  letter-spacing: 0%;
+  font-weight: 500;
+}
+
+.font-caption-md-semibold {
+  font-family: Inter;
+  font-size: 12px;
+  line-height: 110%;
+  letter-spacing: 0%;
+  font-weight: 600;
+}
+
+.font-caption-sm-regular {
+  font-family: Inter;
+  font-size: 11px;
+  line-height: 110%;
+  letter-spacing: 0%;
+  font-weight: 400;
+}
+
+.font-caption-sm-medium {
+  font-family: Inter;
+  font-size: 11px;
+  line-height: 110%;
+  letter-spacing: 0%;
+  font-weight: 500;
+}
+
+.font-caption-sm-semibold {
+  font-family: Inter;
+  font-size: 11px;
+  line-height: 110%;
+  letter-spacing: 0%;
+  font-weight: 600;
+}
+
+.font-caption-xs-regular {
+  font-family: Inter;
+  font-size: 10px;
+  line-height: 100%;
+  letter-spacing: 1%;
+  font-weight: 400;
+}
+
+.font-caption-xs-medium {
+  font-family: Inter;
+  font-size: 10px;
+  line-height: 100%;
+  letter-spacing: 1%;
+  font-weight: 500;
+}
+
+.font-caption-xs-semibold {
+  font-family: Inter;
+  font-size: 10px;
+  line-height: 100%;
+  letter-spacing: 1%;
+  font-weight: 600;
+}

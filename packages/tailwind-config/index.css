@@ -1,115 +1,13 @@
-@import "@plane/tailwind-config/index.css";
-@import "@plane/propel/styles/fonts";
-@import "@plane/editor/styles";
+@import "tailwindcss";
 
-@plugin "@tailwindcss/typography";
+@import "./colors.css";
+@import "./spacing.css";
+@import "./typography.css";
+@import "./animations.css";
 
 html {
   font-family: "Inter", sans-serif;
 }
-
-:root {
-  /* Plane subscriptions */
-  --color-subscription-free-200: 69, 80, 104;
-  --color-subscription-free-400: 51, 59, 77;
-
-  --color-subscription-one-200: 101, 42, 14;
-  --color-subscription-one-400: 90, 37, 12;
-
-  --color-subscription-pro-200: 32, 128, 138;
-  --color-subscription-pro-400: 24, 96, 104;
-
-  --color-subscription-business-200: 142, 33, 87;
-  --color-subscription-business-400: 103, 24, 63;
-
-  --color-subscription-enterprise-200: 86, 5, 145;
-  --color-subscription-enterprise-400: 73, 4, 123;
-}
-
-[data-theme="light"],
-[data-theme="light-contrast"] {
-  /* Plane subscriptions */
-  --color-subscription-free-200: 69, 80, 104;
-  --color-subscription-free-400: 51, 59, 77;
-
-  --color-subscription-one-200: 101, 42, 14;
-  --color-subscription-one-400: 90, 37, 12;
-
-  --color-subscription-pro-200: 32, 128, 138;
-  --color-subscription-pro-400: 24, 96, 104;
-
-  --color-subscription-business-200: 142, 33, 87;
-  --color-subscription-business-400: 103, 24, 63;
-
-  --color-subscription-enterprise-200: 86, 5, 145;
-  --color-subscription-enterprise-400: 73, 4, 123;
-}
-
-[data-theme="dark"],
-[data-theme="dark-contrast"] {
-  /* Plane subscriptions */
-  --color-subscription-free-200: 206, 213, 232;
-  --color-subscription-free-400: 152, 166, 206;
-
-  --color-subscription-one-200: 255, 148, 153;
-  --color-subscription-one-400: 200, 118, 121;
-
-  --color-subscription-pro-200: 12, 170, 192;
-  --color-subscription-pro-400: 9, 130, 154;
-
-  --color-subscription-business-200: 206, 34, 119;
-  --color-subscription-business-400: 140, 23, 81;
-
-  --color-subscription-enterprise-200: 182, 71, 255;
-  --color-subscription-enterprise-400: 134, 11, 203;
-}
-
-/* stickies and editor colors */
-:root {
-  /* text colors */
-  --editor-colors-gray-text: #5c5e63;
-  --editor-colors-peach-text: #ff5b59;
-  --editor-colors-pink-text: #f65385;
-  --editor-colors-orange-text: #fd9038;
-  --editor-colors-green-text: #0fc27b;
-  --editor-colors-light-blue-text: #17bee9;
-  --editor-colors-dark-blue-text: #266df0;
-  --editor-colors-purple-text: #9162f9;
-  /* end text colors */
-
-  /* background colors */
-  --editor-colors-gray-background: #d6d6d8;
-  --editor-colors-peach-background: #ffd5d7;
-  --editor-colors-pink-background: #fdd4e3;
-  --editor-colors-orange-background: #ffe3cd;
-  --editor-colors-green-background: #c3f0de;
-  --editor-colors-light-blue-background: #c5eff9;
-  --editor-colors-dark-blue-background: #c9dafb;
-  --editor-colors-purple-background: #e3d8fd;
-  /* end background colors */
-}
-/* background colors */
-[data-theme*="light"] {
-  --editor-colors-gray-background: #d6d6d8;
-  --editor-colors-peach-background: #ffd5d7;
-  --editor-colors-pink-background: #fdd4e3;
-  --editor-colors-orange-background: #ffe3cd;
-  --editor-colors-green-background: #c3f0de;
-  --editor-colors-light-blue-background: #c5eff9;
-  --editor-colors-dark-blue-background: #c9dafb;
-  --editor-colors-purple-background: #e3d8fd;
-}
-[data-theme*="dark"] {
-  --editor-colors-gray-background: #404144;
-  --editor-colors-peach-background: #593032;
-  --editor-colors-pink-background: #562e3d;
-  --editor-colors-orange-background: #583e2a;
-  --editor-colors-green-background: #1d4a3b;
-  --editor-colors-light-blue-background: #1f495c;
-  --editor-colors-dark-blue-background: #223558;
-  --editor-colors-purple-background: #3d325a;
-}
-/* end background colors */
 
 * {
   margin: 0;
@@ -198,7 +96,6 @@ body {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
-  line-clamp: 1;
 }
 
 /* popover2 styling */
@@ -406,23 +303,6 @@ div.web-view-spinner div.bar12 {
   margin-top: 44px;
 }
 
-/* scrollbar xs size */
-.scrollbar-xs::-webkit-scrollbar {
-  height: 10px;
-  width: 10px;
-}
-.scrollbar-xs::-webkit-scrollbar-thumb {
-  border: 3px solid rgba(0, 0, 0, 0);
-}
-
-.shadow-custom {
-  box-shadow: 2px 2px 8px 2px rgba(234, 231, 250, 0.3); /* Convert #EAE7FA4D to rgba */
-}
-/* backdrop filter */
-.backdrop-blur-custom {
-  @apply backdrop-filter blur-[9px];
-}
-
 /* scrollbar sm size */
 .scrollbar-sm::-webkit-scrollbar {
   height: 12px;
@@ -459,6 +339,7 @@ div.web-view-spinner div.bar12 {
 }
 
 /* By applying below class, the autofilled text in form fields will not have the default autofill background color and styles applied by WebKit browsers  */
+
 .disable-autofill-style:-webkit-autofill,
 .disable-autofill-style:-webkit-autofill:hover,
 .disable-autofill-style:-webkit-autofill:focus,
@@ -466,76 +347,47 @@ div.web-view-spinner div.bar12 {
   -webkit-background-clip: text;
 }
 
-.epr-search-container > input {
-  background-color: rgb(var(--color-background-90)) !important;
-  color: rgb(var(--color-text-100)) !important;
-  border: none !important;
-}
-
-.epr-search-container > input::placeholder {
-  color: rgb(var(--color-text-400)) !important;
-}
-
-.epr-search-container > .epr-icn-search {
-  color: rgb(var(--color-text-400)) !important;
-}
-
-/* Lock icon animations */
-@keyframes textSlideIn {
+@keyframes slideInFromBottom {
   0% {
+    transform: translateY(100%);
     opacity: 0;
-    transform: translateX(-8px);
-    max-width: 0px;
-  }
-  40% {
-    opacity: 0.7;
-    max-width: 60px;
   }
   100% {
+    transform: translateY(0);
     opacity: 1;
-    transform: translateX(0);
-    max-width: 60px;
   }
 }
 
-@keyframes textFadeOut {
+@keyframes slideInFromTop {
   0% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  100% {
+    transform: translateY(-100%);
     opacity: 0;
-    transform: translateX(8px);
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 
-@keyframes lockIconAnimation {
+@keyframes slideOut {
   0% {
-    transform: rotate(-5deg) scale(1);
-  }
-  25% {
-    transform: rotate(0deg) scale(1.15);
-  }
-  50% {
-    transform: rotate(5deg) scale(1.08);
+    transform: translateY(0);
+    opacity: 1;
   }
   100% {
-    transform: rotate(0deg) scale(1);
+    transform: translateY(-100%);
+    opacity: 0;
   }
 }
 
-@keyframes unlockIconAnimation {
+@keyframes slideOutDown {
   0% {
-    transform: rotate(0deg) scale(1);
-  }
-  40% {
-    transform: rotate(-8deg) scale(1.15);
-  }
-  80% {
-    transform: rotate(3deg) scale(1.05);
+    transform: translateY(0);
+    opacity: 1;
   }
   100% {
-    transform: rotate(0deg) scale(1);
+    transform: translateY(100%);
+    opacity: 0;
   }
 }
 
@@ -546,62 +398,4 @@ div.web-view-spinner div.bar12 {
   100% {
     opacity: 0;
   }
-}
-
-.animate-text-slide-in {
-  animation: textSlideIn 400ms ease-out forwards;
-}
-
-.animate-text-fade-out {
-  animation: textFadeOut 600ms ease-in 300ms forwards;
-}
-
-.animate-lock-icon {
-  animation: lockIconAnimation 600ms ease-out forwards;
-}
-
-.animate-unlock-icon {
-  animation: unlockIconAnimation 600ms ease-out forwards;
-}
-
-.animate-fade-out {
-  animation: fadeOut 500ms ease-in 100ms forwards;
-}
-
-@keyframes highlight {
-  0% {
-    background-color: rgba(var(--color-background-90), 1);
-    border-radius: 4px;
-  }
-  100% {
-    background-color: transparent;
-    border-radius: 4px;
-  }
-}
-
-/* Progress Bar Styles */
-:root {
-  --bprogress-color: rgb(var(--color-primary-100)) !important;
-  --bprogress-height: 2.5px !important;
-}
-
-.bprogress {
-  pointer-events: none;
-}
-
-.bprogress .bar {
-  background: linear-gradient(
-    90deg,
-    rgba(var(--color-primary-100), 0.8) 0%,
-    rgba(var(--color-primary-100), 1) 100%
-  ) !important;
-  will-change: width, opacity;
-}
-
-.bprogress .peg {
-  display: block;
-  box-shadow:
-    0 0 8px rgba(var(--color-primary-100), 0.6),
-    0 0 4px rgba(var(--color-primary-100), 0.4) !important;
-  will-change: transform, opacity;
 }

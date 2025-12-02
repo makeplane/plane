@@ -81,6 +81,7 @@
     "@plane/typescript-config": "workspace:*",
     "@prettier/plugin-oxc": "0.0.4",
     "@react-router/dev": "catalog:",
+    "@tailwindcss/typography": "0.5.19",
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
