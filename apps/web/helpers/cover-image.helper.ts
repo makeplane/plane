@@ -261,23 +261,24 @@ export const handleCoverImageChange = async (
 
     // For BOTH user assets AND project assets:
     // The backend auto-links when entity_identifier is set correctly
-    // So we don't need to return anything - the link happens server-side!
+    // For project assets: auto-linked server-side, no payload needed
+    // For user assets: return URL for immediate UI feedback
 
     if (uploadConfig.isUserAsset) {
-      // User assets: return URL for display (optional, mostly for immediate feedback)
       return {
         cover_image_url: uploadedUrl,
       };
     } else {
-      // Project assets: Auto-linked server-side during upload!
-      // No need to return anything or call bulk API
       return null;
     }
-  }
-  // Already uploaded asset - no action needed
-  if (analysis.imageType === "uploaded_asset") {
-    return null;
   }
 
   return null;
 };
+
+/**
+ * Returns a random cover image from the STATIC_COVER_IMAGES object
+ * @returns {string} A random cover image URL
+ */
+export const getRandomCoverImage = (): string =>
+  Object.values(STATIC_COVER_IMAGES)[Math.floor(Math.random() * Object.keys(STATIC_COVER_IMAGES).length)];
