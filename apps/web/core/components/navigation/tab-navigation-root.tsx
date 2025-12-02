@@ -169,7 +169,7 @@ export const TabNavigationRoot: FC<TTabNavigationRootProps> = observer((props) =
       {/* container for the tab navigation */}
       <div className="flex items-center gap-3 overflow-hidden size-full">
         <div className="flex items-center gap-2 shrink-0">
-          <ProjectHeader project={project} />
+          <ProjectHeader workspaceSlug={workspaceSlug} projectId={projectId} />
           <div className="shrink-0">
             <ProjectActionsMenu
               workspaceSlug={workspaceSlug}
