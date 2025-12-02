@@ -81,7 +81,7 @@ export type TIssueParams =
   | "expand"
   | "filters";
 
-export type TCalendarLayouts = "month" | "week";
+export type TCalendarLayouts = "month" | "week" | "day";
 
 /**
  * Keys for the work item filter properties

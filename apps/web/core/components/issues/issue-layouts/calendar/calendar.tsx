@@ -48,7 +48,7 @@ type Props = {
     | IProjectEpicsFilter;
   issues: TIssueMap | undefined;
   groupedIssueIds: TGroupedIssues;
-  layout: "month" | "week" | undefined;
+  layout: "month" | "week" | "day" | undefined;
   showWeekends: boolean;
   issueCalendarView: ICalendarStore;
   loadMoreIssues: (dateString: string) => void;
@@ -214,6 +214,11 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                     canEditProperties={canEditProperties}
                     isEpic={isEpic}
                   />
+                </>
+              )}
+            {/* TODO : add a day layout */}
+              {layout === "day" && (
+                <>
                 </>
               )}
             </div>

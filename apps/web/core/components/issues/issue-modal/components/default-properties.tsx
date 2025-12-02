@@ -21,6 +21,7 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
+import { TimeDropdown } from "@/components/dropdowns/time-picker";
 import { ParentIssuesListModal } from "@/components/issues/parent-issues-list-modal";
 import { IssueLabelSelect } from "@/components/issues/select";
 // helpers
@@ -33,6 +34,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import OppositionTeamProperty from "@/plane-web/components/issues/issue-details/opposition-team-property";
 
+
 type TIssueDefaultPropertiesProps = {
   control: Control<TIssue>;
   id: string | undefined;
@@ -40,6 +42,7 @@ type TIssueDefaultPropertiesProps = {
   workspaceSlug: string;
   selectedParentIssue: ISearchIssueResponse | null;
   startDate: string | null;
+  startTime: string | null;
   targetDate: string | null;
   parentId: string | null;
   isDraft: boolean;
@@ -55,6 +58,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
     workspaceSlug,
     selectedParentIssue,
     startDate,
+    startTime,
     targetDate,
     parentId,
     isDraft,
@@ -198,6 +202,25 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
           </div>
         )}
       />
+      <Controller
+        control={control}
+        name="start_time"
+        render={({ field: { value, onChange } }) => (
+          <div className="h-7">
+            <TimeDropdown
+              value={value}
+              onChange={(time) => {
+                onChange(time);
+                handleFormChange();
+              }}
+              placeholder={t("start_time")}
+              buttonVariant="border-with-text"
+              tabIndex={getIndex("start_time")}
+            />
+          </div>
+        )}
+      />
+
       {projectDetails?.cycle_view && (
         <Controller
           control={control}

@@ -499,6 +499,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   workspaceSlug={workspaceSlug?.toString()}
                   selectedParentIssue={selectedParentIssue}
                   startDate={watch("start_date")}
+                  startTime={watch("start_time")}
                   targetDate={watch("target_date")}
                   parentId={watch("parent_id")}
                   isDraft={isDraft}

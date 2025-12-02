@@ -61,6 +61,7 @@ export type TBaseIssue = {
   created_at: string;
   updated_at: string;
   start_date: string | null;
+  start_time: string | null;
   target_date: string | null;
   completed_at: string | null;
   archived_at: string | null;
@@ -168,6 +169,7 @@ export interface IPublicIssue
     | "sequence_id"
     | "sort_order"
     | "start_date"
+    | "start_time"
     | "target_date"
     | "cycle_id"
     | "module_ids"
