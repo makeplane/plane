@@ -1,4 +1,12 @@
-import { AddReactionIcon, AddWorkItemIcon, CheckIcon, PreferencesIcon, PlusIcon, SearchIcon } from "./actions";
+import {
+  AddReactionIcon,
+  AddWorkItemIcon,
+  CheckIcon,
+  PreferencesIcon,
+  PlusIcon,
+  SearchIcon,
+  TrashIcon,
+} from "./actions";
 import { AddIcon } from "./actions/add-icon";
 import { CloseIcon } from "./actions/close-icon";
 import { ChevronDownIcon } from "./arrows/chevron-down";
@@ -122,6 +130,7 @@ export const ICON_REGISTRY = {
   "action.search": SearchIcon,
   "action.plus": PlusIcon,
   "action.preferences": PreferencesIcon,
+  "action.trash": TrashIcon,
 
   // Arrow icons
   "arrow.chevron-down": ChevronDownIcon,

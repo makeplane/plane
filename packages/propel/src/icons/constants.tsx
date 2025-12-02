@@ -8,6 +8,7 @@ export const ActionsIconsMap = [
   { icon: <Icon name="action.search" />, title: "SearchIcon" },
   { icon: <Icon name="action.plus" />, title: "PlusIcon" },
   { icon: <Icon name="action.preferences" />, title: "PreferencesIcon" },
+  { icon: <Icon name="action.trash" />, title: "TrashIcon" },
 ];
 
 export const ArrowsIconsMap = [

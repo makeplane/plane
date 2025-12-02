@@ -7,3 +7,4 @@ export * from "./close-icon";
 export * from "./search-icon";
 export * from "./plus-icon";
 export * from "./preferences-icon";
+export * from "./trash-icon";
