@@ -69,9 +69,8 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
   const { isMobile } = usePlatformOS();
   const { allowPermissions } = useUserPermissions();
   const { getIsProjectListOpen, toggleProjectListOpen } = useCommandPalette();
-  const { toggleAnySidebarDropdown } = useAppTheme();
   const { preferences: projectPreferences } = useProjectNavigationPreferences();
-  const { isExtendedProjectSidebarOpened, toggleExtendedProjectSidebar } = useAppTheme();
+  const { isExtendedProjectSidebarOpened, toggleExtendedProjectSidebar, toggleAnySidebarDropdown } = useAppTheme();
 
   // states
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);

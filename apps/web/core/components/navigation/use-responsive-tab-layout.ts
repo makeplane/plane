@@ -70,6 +70,17 @@ export const useResponsiveTabLayout = ({
     resizeObserver.observe(node);
   }, []); // Empty deps - callback function remains stable
 
+  // Cleanup effect to disconnect observer on component unmount
+  useEffect(
+    () => () => {
+      if (resizeObserverRef.current) {
+        resizeObserverRef.current.disconnect();
+        resizeObserverRef.current = null;
+      }
+    },
+    []
+  );
+
   // Calculate how many items can fit
   useEffect(() => {
     if (!containerWidth || itemRefs.current.length === 0) return;
