@@ -54,8 +54,14 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     def retrieve(self, request, slug, pk):
         workspace_member = WorkspaceMember.objects.get(member=request.user, workspace__slug=slug, is_active=True)
 
-        # Get the specific workspace member by pk
-        member = self.get_queryset().get(pk=pk)
+        try:
+            # Get the specific workspace member by pk
+            member = self.get_queryset().get(pk=pk)
+        except WorkspaceMember.DoesNotExist:
+            return Response(
+                {"error": "Workspace member not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
         if workspace_member.role > 5:
             serializer = WorkspaceMemberAdminSerializer(member, fields=("id", "member", "role"))
