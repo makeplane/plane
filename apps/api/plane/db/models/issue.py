@@ -105,7 +105,7 @@ class IssueManager(SoftDeletionManager):
         )
 
 
-class Issue(ProjectBaseModel):
+class Issue(ChangeTrackerMixin, ProjectBaseModel):
     PRIORITY_CHOICES = (
         ("urgent", "Urgent"),
         ("high", "High"),
@@ -140,6 +140,9 @@ class Issue(ProjectBaseModel):
     description_html = models.TextField(blank=True, default="<p></p>")
     description_stripped = models.TextField(blank=True, null=True)
     description_binary = models.BinaryField(null=True)
+    description_obj = models.OneToOneField(
+        "db.Description", on_delete=models.CASCADE, related_name="issue_description", null=True
+    )
     priority = models.CharField(
         max_length=30,
         choices=PRIORITY_CHOICES,
@@ -173,6 +176,8 @@ class Issue(ProjectBaseModel):
 
     issue_objects = IssueManager()
 
+    TRACKED_FIELDS = ["description_stripped", "description", "description_html"]
+
     class Meta:
         verbose_name = "Issue"
         verbose_name_plural = "Issues"
@@ -180,6 +185,12 @@ class Issue(ProjectBaseModel):
         ordering = ("-created_at",)
 
     def save(self, *args, **kwargs):
+        """
+        Custom save method for Issue that manages the associated Description model.
+
+        This method handles creation and updates of both the issue and its description in a
+        single atomic transaction to ensure data consistency.
+        """
         if self.state is None:
             try:
                 from plane.db.models import State
@@ -205,7 +216,16 @@ class Issue(ProjectBaseModel):
             except ImportError:
                 pass
 
-        if self._state.adding:
+        # Strip the html tags using html parser
+        self.description_stripped = (
+            None
+            if (self.description_html == "" or self.description_html is None)
+            else strip_tags(self.description_html)
+        )
+
+        is_creating = self._state.adding
+
+        if is_creating:
             with transaction.atomic():
                 # Create a lock for this specific project using an advisory lock
                 # This ensures only one transaction per project can execute this code at a time
@@ -221,12 +241,7 @@ class Issue(ProjectBaseModel):
                         largest=models.Max("sequence")
                     )["largest"]
                     self.sequence_id = last_sequence + 1 if last_sequence else 1
-                    # Strip the html tags using html parser
-                    self.description_stripped = (
-                        None
-                        if (self.description_html == "" or self.description_html is None)
-                        else strip_tags(self.description_html)
-                    )
+
                     largest_sort_order = Issue.objects.filter(project=self.project, state=self.state).aggregate(
                         largest=models.Max("sort_order")
                     )["largest"]
@@ -236,18 +251,60 @@ class Issue(ProjectBaseModel):
                     super(Issue, self).save(*args, **kwargs)
 
                     IssueSequence.objects.create(issue=self, sequence=self.sequence_id, project=self.project)
+
+                    # Create new description for new issue
+                    description_defaults = {
+                        "workspace_id": self.workspace_id,
+                        "project_id": self.project_id,
+                        "created_by_id": self.created_by_id,
+                        "updated_by_id": self.updated_by_id,
+                        "description_stripped": self.description_stripped,
+                        "description_json": self.description,
+                        "description_html": self.description_html,
+                    }
+                    description = Description.objects.create(**description_defaults)
+                    self.description_obj_id = description.id
+                    super(Issue, self).save(update_fields=["description_obj_id"])
                 finally:
                     # Release the lock
                     with connection.cursor() as cursor:
                         cursor.execute("SELECT pg_advisory_unlock(%s)", [lock_key])
         else:
-            # Strip the html tags using html parser
-            self.description_stripped = (
-                None
-                if (self.description_html == "" or self.description_html is None)
-                else strip_tags(self.description_html)
-            )
-            super(Issue, self).save(*args, **kwargs)
+            with transaction.atomic():
+                super(Issue, self).save(*args, **kwargs)
+
+                if not self.description_obj_id:
+                    # Create description if it doesn't exist (for existing issues)
+                    description_defaults = {
+                        "workspace_id": self.workspace_id,
+                        "project_id": self.project_id,
+                        "created_by_id": self.created_by_id,
+                        "updated_by_id": self.updated_by_id,
+                        "description_stripped": self.description_stripped,
+                        "description_json": self.description,
+                        "description_html": self.description_html,
+                    }
+                    description = Description.objects.create(**description_defaults)
+                    self.description_obj_id = description.id
+                    super(Issue, self).save(update_fields=["description_obj_id"])
+                else:
+                    # Update description only if fields changed
+                    field_mapping = {
+                        "description_html": "description_html",
+                        "description_stripped": "description_stripped",
+                        "description": "description_json",
+                    }
+
+                    changed_fields = {
+                        desc_field: getattr(self, issue_field)
+                        for issue_field, desc_field in field_mapping.items()
+                        if self.has_changed(issue_field)
+                    }
+
+                    if changed_fields and self.description_obj_id:
+                        Description.objects.filter(pk=self.description_obj_id).update(
+                            **changed_fields, updated_by_id=self.updated_by_id, updated_at=self.updated_at
+                        )
 
     def __str__(self):
         """Return name of the issue"""
