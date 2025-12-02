@@ -166,6 +166,13 @@ class ProjectMemberViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def retrieve(self, request, slug, project_id, pk):
+        requesting_project_member = ProjectMember.objects.get(
+            project_id=project_id,
+            workspace__slug=slug,
+            member=request.user,
+            is_active=True,
+        )
+
         project_member = (
             ProjectMember.objects.filter(
                 pk=pk,
@@ -184,7 +191,11 @@ class ProjectMemberViewSet(BaseViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        serializer = ProjectMemberAdminSerializer(project_member)
+        if requesting_project_member.role > 5:
+            serializer = ProjectMemberAdminSerializer(project_member)
+        else:
+            serializer = ProjectMemberRoleSerializer(project_member, fields=("id", "member", "role"))
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
