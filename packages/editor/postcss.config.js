@@ -1,9 +1,3 @@
-// If you want to use other PostCSS plugins, see the following:
-// https://tailwindcss.com/docs/using-with-preprocessors
+import postcssConfig from "@plane/tailwind-config/postcss.config.js";
 
-module.exports = {
-  plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
-  },
-};
+export default postcssConfig;
