@@ -8,21 +8,23 @@ type TProjectHeaderButtonProps = {
   project: TPartialProject;
 };
 
-export const ProjectHeaderButton = ({ project }: TProjectHeaderButtonProps) => (
-  <Tooltip tooltipContent={project.name} position="bottom">
-    <div className="relative flex items-center text-left select-none w-full max-w-48">
-      <div className="size-7 rounded-md bg-custom-background-90 flex items-center justify-center flex-shrink-0">
-        <Logo logo={project.logo_props} size={16} />
-      </div>
-      <div className="relative flex-1 min-w-0">
-        <p className="truncate text-base font-medium text-custom-sidebar-text-200 px-2">{project.name}</p>
-        <div className="absolute right-0 top-0 bottom-0 flex items-center justify-end pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          <div className="relative  h-full w-8 flex items-center justify-end">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-custom-background-90 to-custom-background-90 rounded-r" />
-            <ChevronDownIcon className="relative z-10 size-4 text-custom-text-400" />
+export function ProjectHeaderButton({ project }: TProjectHeaderButtonProps) {
+  return (
+    <Tooltip tooltipContent={project.name} position="bottom">
+      <div className="relative flex items-center text-left select-none w-full max-w-48">
+        <div className="size-7 rounded-md bg-custom-background-90 flex items-center justify-center flex-shrink-0">
+          <Logo logo={project.logo_props} size={16} />
+        </div>
+        <div className="relative flex-1 min-w-0">
+          <p className="truncate text-base font-medium text-custom-sidebar-text-200 px-2">{project.name}</p>
+          <div className="absolute right-0 top-0 bottom-0 flex items-center justify-end pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <div className="relative h-full w-8 flex items-center justify-end">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-custom-background-90 to-custom-background-90 rounded-r" />
+              <ChevronDownIcon className="relative z-10 size-4 text-custom-text-400" />
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </Tooltip>
-);
+    </Tooltip>
+  );
+}
