@@ -214,6 +214,9 @@ class Profile(TimeAuditModel):
     goals = models.JSONField(default=dict)
     background_color = models.CharField(max_length=255, default=get_random_color)
 
+    # navigation tour
+    is_navigation_tour_completed = models.BooleanField(default=False)
+
     # marketing
     has_marketing_email_consent = models.BooleanField(default=False)
 
