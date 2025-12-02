@@ -191,7 +191,7 @@ class ProjectMemberViewSet(BaseViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        if requesting_project_member.role > 5:
+        if requesting_project_member.role > ROLE.GUEST.value:
             serializer = ProjectMemberAdminSerializer(project_member)
         else:
             serializer = ProjectMemberRoleSerializer(project_member, fields=("id", "member", "role"))

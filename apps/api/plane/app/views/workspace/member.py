@@ -63,7 +63,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        if workspace_member.role > 5:
+        if workspace_member.role > ROLE.GUEST.value:
             serializer = WorkspaceMemberAdminSerializer(member, fields=("id", "member", "role"))
         else:
             serializer = WorkSpaceMemberSerializer(member, fields=("id", "member", "role"))
