@@ -29,6 +29,17 @@ export const useMemberColumns = () => {
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   const isSuspended = (rowData: RowData) => rowData.is_active === false;
+
+  const formatAuthMethod = (method: string | undefined): string => {
+    if (!method) return "";
+    const normalized = method.toLowerCase().replace("-", " ");
+    if (normalized === "github") return "GitHub";
+    if (normalized === "gitlab") return "GitLab";
+    // can add more special cases like these
+
+    return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+  };
+
   // handlers
   const handleDisplayFilterUpdate = (filterUpdates: Partial<IMemberFilters>) => {
     updateFilters(filterUpdates);
@@ -109,7 +120,7 @@ export const useMemberColumns = () => {
       content: t("workspace_settings.settings.members.details.authentication"),
       tdRender: (rowData: RowData) =>
         isSuspended(rowData) ? null : (
-          <div className="capitalize">{rowData.member.last_login_medium?.replace("-", " ")}</div>
+          <div>{formatAuthMethod(rowData.member.last_login_medium)}</div>
         ),
     },
 
