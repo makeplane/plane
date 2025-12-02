@@ -310,11 +310,11 @@ importers:
         specifier: ^16.4.5
         version: 16.6.1
       express:
-        specifier: ^4.21.2
-        version: 4.21.2
+        specifier: ^4.22.0
+        version: 4.22.1
       express-ws:
         specifier: ^5.0.2
-        version: 5.0.2(express@4.21.2)
+        version: 5.0.2(express@4.22.1)
       helmet:
         specifier: ^7.1.0
         version: 7.2.0
@@ -927,7 +927,7 @@ importers:
         version: 0.469.0(react@18.3.1)
       prosemirror-codemark:
         specifier: ^0.4.2
-        version: 0.4.2(prosemirror-inputrules@1.5.0)(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.40.0)
+        version: 0.4.2(prosemirror-inputrules@1.5.1)(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.40.0)
       react:
         specifier: 'catalog:'
         version: 18.3.1
@@ -4699,8 +4699,8 @@ packages:
   bluebird@3.7.2:
     resolution: {integrity: sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg==}
 
-  body-parser@1.20.3:
-    resolution: {integrity: sha512-7rAxByjUMqQ3/bHJy7D6OGXvx/MMc4IqBn/X0fcM1QUcAItpZrBEYhWGem+tzXH90c+G01ypMcYJBO9Y30203g==}
+  body-parser@1.20.4:
+    resolution: {integrity: sha512-ZTgYYLMOXY9qKU/57FAo8F+HA2dGX7bqGc71txDRC1rS4frdFI5R7NhluHxH6M0YItAP0sHB4uqAOcYKxO6uGA==}
     engines: {node: '>= 0.8', npm: 1.2.8000 || >= 1.4.16}
 
   boolbase@1.0.0:
@@ -4782,6 +4782,9 @@ packages:
 
   caniuse-lite@1.0.30001743:
     resolution: {integrity: sha512-e6Ojr7RV14Un7dz6ASD0aZDmQPT/A+eZU+nuTNfjqmRrmkmQlnTNWH0SKmqagx9PeW87UVqapSurtAXifmtdmw==}
+
+  caniuse-lite@1.0.30001757:
+    resolution: {integrity: sha512-r0nnL/I28Zi/yjk1el6ilj27tKcdjLsNqAOZr0yVjWPrSQyHgKI2INaEWw21bAQSv2LXRt1XuCS/GomNpWOxsQ==}
 
   capital-case@1.0.4:
     resolution: {integrity: sha512-ds37W8CytHgwnhGGTi88pcPyR15qoNkOpYwmMMfnWqqWgESapLqvDx6huFjQ5vqWSn2Z06173XNA7LtMOeUh1A==}
@@ -4992,11 +4995,11 @@ packages:
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
 
-  cookie-signature@1.0.6:
-    resolution: {integrity: sha512-QADzlaHc8icV8I7vbaJXJwod9HWYp8uCqf1xa4OfNu1T7JVxQIrUgOWtHdNDtPiywmFbiS12VjotIXLrKM3orQ==}
+  cookie-signature@1.0.7:
+    resolution: {integrity: sha512-NXdYc3dLr47pBkpUCHtKSwIOQXLVn8dZEuywboCOJY/osA0wFSLlSawr3KN8qXJEyX66FcONTH8EIlVuK0yyFA==}
 
-  cookie@0.7.1:
-    resolution: {integrity: sha512-6DnInpx7SJ2AK3+CTUE/ZM0vWTUboZCegxhC2xiIydHR9jNuTAASBrfEpHhiGOZw/nX51bHt6YQl8jsGo4y/0w==}
+  cookie@0.7.2:
+    resolution: {integrity: sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w==}
     engines: {node: '>= 0.6'}
 
   cookie@1.0.2:
@@ -5697,8 +5700,8 @@ packages:
     peerDependencies:
       express: ^4.0.0 || ^5.0.0-alpha.1
 
-  express@4.21.2:
-    resolution: {integrity: sha512-28HqgMZAmih1Czt9ny7qr6ek2qddF4FclbMzwhCREB6OFfH+rXAnuNCwo1/wFvrtbgsQDb4kSbX9de9lFbrXnA==}
+  express@4.22.1:
+    resolution: {integrity: sha512-F2X8g9P1X7uCPZMA3MVf9wcTqlyNp7IhH5qPCI0izhaOIYXaW9L535tGA3qmjRzpH+bZczqq7hVKxTR4NWnu+g==}
     engines: {node: '>= 0.10.0'}
 
   extend@3.0.2:
@@ -5768,8 +5771,8 @@ packages:
     resolution: {integrity: sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==}
     engines: {node: '>=8'}
 
-  finalhandler@1.3.1:
-    resolution: {integrity: sha512-6BN9trH7bp3qvnrRyzsBz+g3lZxTNZTbVO2EV1CS0WIcDbawYVdYvGflME/9QP0h0pYlCDBCTjYa9nZzMDpyxQ==}
+  finalhandler@1.3.2:
+    resolution: {integrity: sha512-aA4RyPcd3badbdABGDuTXCMTtOneUCAYH/gxoYRTZlIJdF0YPWuGqiAsIrhNnnqdXGswYk6dGujem4w80UJFhg==}
     engines: {node: '>= 0.8'}
 
   find-cache-dir@2.1.0:
@@ -6130,6 +6133,10 @@ packages:
 
   http-errors@2.0.0:
     resolution: {integrity: sha512-FtwrG/euBzaEjYeRqOgly7G0qviiXoJWnvEH2Z1plBdXgbyjv34pHTSb9zoeHMyDy33+DWy5Wt9Wo+TURtOYSQ==}
+    engines: {node: '>= 0.8'}
+
+  http-errors@2.0.1:
+    resolution: {integrity: sha512-4FbRdAX+bSdmo4AUFuS0WNiPz8NgFt+r8ThgNWmlrjQjt1Q7ZR9+zTlce2859x4KSXrwIsaeTqDoKQmtP8pLmQ==}
     engines: {node: '>= 0.8'}
 
   https-proxy-agent@5.0.1:
@@ -7605,11 +7612,20 @@ packages:
   prosemirror-gapcursor@1.3.2:
     resolution: {integrity: sha512-wtjswVBd2vaQRrnYZaBCbyDqr232Ed4p2QPtRIUK5FuqHYKGWkEwl08oQM4Tw7DOR0FsasARV5uJFvMZWxdNxQ==}
 
+  prosemirror-gapcursor@1.4.0:
+    resolution: {integrity: sha512-z00qvurSdCEWUIulij/isHaqu4uLS8r/Fi61IbjdIPJEonQgggbJsLnstW7Lgdk4zQ68/yr6B6bf7sJXowIgdQ==}
+
   prosemirror-history@1.4.1:
     resolution: {integrity: sha512-2JZD8z2JviJrboD9cPuX/Sv/1ChFng+xh2tChQ2X4bB2HeK+rra/bmJ3xGntCcjhOqIzSDG6Id7e8RJ9QPXLEQ==}
 
+  prosemirror-history@1.5.0:
+    resolution: {integrity: sha512-zlzTiH01eKA55UAf1MEjtssJeHnGxO0j4K4Dpx+gnmX9n+SHNlDqI2oO1Kv1iPN5B1dm5fsljCfqKF9nFL6HRg==}
+
   prosemirror-inputrules@1.5.0:
     resolution: {integrity: sha512-K0xJRCmt+uSw7xesnHmcn72yBGTbY45vm8gXI4LZXbx2Z0jwh5aF9xrGQgrVPu0WbyFVFF3E/o9VhJYz6SQWnA==}
+
+  prosemirror-inputrules@1.5.1:
+    resolution: {integrity: sha512-7wj4uMjKaXWAQ1CDgxNzNtR9AlsuwzHfdFH1ygEHA2KHF2DOEaXl1CJfNPAKCg9qNEh4rum975QLaCiQPyY6Fw==}
 
   prosemirror-keymap@1.2.3:
     resolution: {integrity: sha512-4HucRlpiLd1IPQQXNqeo81BGtkY8Ai5smHhKW9jjPKRc2wQIxksg7Hl1tTI2IfT2B/LgX6bfYvXxEpJl7aKYKw==}
@@ -7635,6 +7651,9 @@ packages:
   prosemirror-tables@1.7.1:
     resolution: {integrity: sha512-eRQ97Bf+i9Eby99QbyAiyov43iOKgWa7QCGly+lrDt7efZ1v8NWolhXiB43hSDGIXT1UXgbs4KJN3a06FGpr1Q==}
 
+  prosemirror-tables@1.8.1:
+    resolution: {integrity: sha512-DAgDoUYHCcc6tOGpLVPSU1k84kCUWTWnfWX3UDy2Delv4ryH0KqTD6RBI6k4yi9j9I8gl3j8MkPpRD/vWPZbug==}
+
   prosemirror-trailing-node@3.0.0:
     resolution: {integrity: sha512-xiun5/3q0w5eRnGYfNlW1uU9W6x5MoFKWwq/0TIRgt09lv7Hcser2QYV8t4muXbEr+Fwo0geYn79Xs4GKywrRQ==}
     peerDependencies:
@@ -7644,6 +7663,9 @@ packages:
 
   prosemirror-transform@1.10.4:
     resolution: {integrity: sha512-pwDy22nAnGqNR1feOQKHxoFkkUtepoFAd3r2hbEDsnf4wp57kKA36hXsB3njA9FtONBEwSDnDeCiJe+ItD+ykw==}
+
+  prosemirror-transform@1.10.5:
+    resolution: {integrity: sha512-RPDQCxIDhIBb1o36xxwsaeAvivO8VLJcgBtzmOwQ64bMtsVFh5SSuJ6dWSxO1UsHTiTXPCgQm3PDJt7p6IOLbw==}
 
   prosemirror-view@1.40.0:
     resolution: {integrity: sha512-2G3svX0Cr1sJjkD/DYWSe3cfV5VPVTBOxI9XQEGWJDFEpsZb/gh4MV29ctv+OJx2RFX4BLt09i+6zaGM/ldkCw==}
@@ -7665,10 +7687,6 @@ packages:
   punycode@2.3.1:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
-
-  qs@6.13.0:
-    resolution: {integrity: sha512-+38qI9SOr8tfZ4QmJNplMUxqjbe7LKvvZgWdExBOmd+egZTtjLB67Gu0HRX3u/XOq7UU2Nx6nsjvS16Z9uwfpg==}
-    engines: {node: '>=0.6'}
 
   qs@6.14.0:
     resolution: {integrity: sha512-YWWTjgABSKcvs/nWBi9PycY/JiPJqOD4JA6o9Sej2AtvSGarXxKC3OQSk4pAarbdQlKAh5D4FCQkJNkW+GAn3w==}
@@ -7697,8 +7715,8 @@ packages:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
     engines: {node: '>= 0.6'}
 
-  raw-body@2.5.2:
-    resolution: {integrity: sha512-8zGqypfENjCIqGhgXToC8aB2r7YrBX+AQAfIPs/Mlk+BtPTztOvTS01NRW/3Eh60J+a48lt8qsCzirQ6loCVfA==}
+  raw-body@2.5.3:
+    resolution: {integrity: sha512-s4VSOf6yN0rvbRZGxs8Om5CWj6seneMwK3oDb4lWDH0UPhWcxwOWw5+qk24bxq87szX1ydrwylIOp2uG1ojUpA==}
     engines: {node: '>= 0.8'}
 
   rc@1.2.8:
@@ -7986,6 +8004,11 @@ packages:
     engines: {node: '>= 0.4'}
     hasBin: true
 
+  resolve@1.22.11:
+    resolution: {integrity: sha512-RfqAvLnMl313r7c9oclB1HhUEAezcpLjz95wFH4LVuhk9JF/r22qmVP9AMmOU4vMX7Q8pN8jwNg/CSpdFnMjTQ==}
+    engines: {node: '>= 0.4'}
+    hasBin: true
+
   resolve@2.0.0-next.5:
     resolution: {integrity: sha512-U7WjGVG9sH8tvjW5SmGbQuui75FiyjAX72HX15DwBBwF9dNiQZRQAg9nnPhYy+TUnE0+VcrttuvNI8oSxZcocA==}
     hasBin: true
@@ -8102,6 +8125,10 @@ packages:
 
   send@0.19.0:
     resolution: {integrity: sha512-dW41u5VfLXu8SJh5bwRmyYUbAoSB3c9uQh6L8h/KtsFREPWpbX1lrljJo186Jc4nmci/sGUZ9a0a0J2zgfq2hw==}
+    engines: {node: '>= 0.8.0'}
+
+  send@0.19.1:
+    resolution: {integrity: sha512-p4rRk4f23ynFEfcD9LA0xRYngj+IyGiEYyqqOak8kaN0TvNmuxC2dcVeBn62GpCeR2CpWqyHCNScTP91QbAVFg==}
     engines: {node: '>= 0.8.0'}
 
   sentence-case@3.0.4:
@@ -8231,6 +8258,10 @@ packages:
 
   statuses@2.0.1:
     resolution: {integrity: sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ==}
+    engines: {node: '>= 0.8'}
+
+  statuses@2.0.2:
+    resolution: {integrity: sha512-DvEy55V3DB7uknRo+4iOGT5fP1slR8wQohVdknigZPMpMstaKJQWhwiYBACJE3Ul2pTnATihhBYnRhZQHGBiRw==}
     engines: {node: '>= 0.8'}
 
   std-env@3.10.0:
@@ -10704,10 +10735,10 @@ snapshots:
       - tsx
       - yaml
 
-  '@react-router/express@7.9.5(express@4.21.2)(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)':
+  '@react-router/express@7.9.5(express@4.22.1)(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)':
     dependencies:
       '@react-router/node': 7.9.5(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
-      express: 4.21.2
+      express: 4.22.1
       react-router: 7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     optionalDependencies:
       typescript: 5.8.3
@@ -10722,10 +10753,10 @@ snapshots:
   '@react-router/serve@7.9.5(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)':
     dependencies:
       '@mjackson/node-fetch-server': 0.2.0
-      '@react-router/express': 7.9.5(express@4.21.2)(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
+      '@react-router/express': 7.9.5(express@4.22.1)(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
       '@react-router/node': 7.9.5(react-router@7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
       compression: 1.8.1
-      express: 4.21.2
+      express: 4.22.1
       get-port: 5.1.1
       morgan: 1.10.1
       react-router: 7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -11771,9 +11802,9 @@ snapshots:
       prosemirror-collab: 1.3.1
       prosemirror-commands: 1.7.1
       prosemirror-dropcursor: 1.8.2
-      prosemirror-gapcursor: 1.3.2
-      prosemirror-history: 1.4.1
-      prosemirror-inputrules: 1.5.0
+      prosemirror-gapcursor: 1.4.0
+      prosemirror-history: 1.5.0
+      prosemirror-inputrules: 1.5.1
       prosemirror-keymap: 1.2.3
       prosemirror-markdown: 1.13.2
       prosemirror-menu: 1.2.5
@@ -11781,9 +11812,9 @@ snapshots:
       prosemirror-schema-basic: 1.2.4
       prosemirror-schema-list: 1.5.1
       prosemirror-state: 1.4.3
-      prosemirror-tables: 1.7.1
+      prosemirror-tables: 1.8.1
       prosemirror-trailing-node: 3.0.0(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.40.0)
-      prosemirror-transform: 1.10.4
+      prosemirror-transform: 1.10.5
       prosemirror-view: 1.40.0
 
   '@tiptap/react@2.26.2(@tiptap/core@2.26.3(@tiptap/pm@2.26.3))(@tiptap/pm@2.26.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
@@ -12678,7 +12709,7 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.26.10
       cosmiconfig: 7.1.0
-      resolve: 1.22.10
+      resolve: 1.22.11
     optional: true
 
   bail@2.0.2: {}
@@ -12713,18 +12744,18 @@ snapshots:
 
   bluebird@3.7.2: {}
 
-  body-parser@1.20.3:
+  body-parser@1.20.4:
     dependencies:
       bytes: 3.1.2
       content-type: 1.0.5
       debug: 2.6.9
       depd: 2.0.0
       destroy: 1.2.0
-      http-errors: 2.0.0
+      http-errors: 2.0.1
       iconv-lite: 0.4.24
       on-finished: 2.4.1
-      qs: 6.13.0
-      raw-body: 2.5.2
+      qs: 6.14.0
+      raw-body: 2.5.3
       type-is: 1.6.18
       unpipe: 1.0.0
     transitivePeerDependencies:
@@ -12815,6 +12846,8 @@ snapshots:
   camelcase@7.0.1: {}
 
   caniuse-lite@1.0.30001743: {}
+
+  caniuse-lite@1.0.30001757: {}
 
   capital-case@1.0.4:
     dependencies:
@@ -13032,9 +13065,9 @@ snapshots:
 
   convert-source-map@2.0.0: {}
 
-  cookie-signature@1.0.6: {}
+  cookie-signature@1.0.7: {}
 
-  cookie@0.7.1: {}
+  cookie@0.7.2: {}
 
   cookie@1.0.2: {}
 
@@ -13846,44 +13879,44 @@ snapshots:
       lodash: 4.17.21
       winston: 3.17.0
 
-  express-ws@5.0.2(express@4.21.2):
+  express-ws@5.0.2(express@4.22.1):
     dependencies:
-      express: 4.21.2
+      express: 4.22.1
       ws: 7.5.10
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
 
-  express@4.21.2:
+  express@4.22.1:
     dependencies:
       accepts: 1.3.8
       array-flatten: 1.1.1
-      body-parser: 1.20.3
+      body-parser: 1.20.4
       content-disposition: 0.5.4
       content-type: 1.0.5
-      cookie: 0.7.1
-      cookie-signature: 1.0.6
+      cookie: 0.7.2
+      cookie-signature: 1.0.7
       debug: 2.6.9
       depd: 2.0.0
       encodeurl: 2.0.0
       escape-html: 1.0.3
       etag: 1.8.1
-      finalhandler: 1.3.1
+      finalhandler: 1.3.2
       fresh: 0.5.2
-      http-errors: 2.0.0
+      http-errors: 2.0.1
       merge-descriptors: 1.0.3
       methods: 1.1.2
       on-finished: 2.4.1
       parseurl: 1.3.3
       path-to-regexp: 0.1.12
       proxy-addr: 2.0.7
-      qs: 6.13.0
+      qs: 6.14.0
       range-parser: 1.2.1
       safe-buffer: 5.2.1
-      send: 0.19.0
+      send: 0.19.1
       serve-static: 1.16.2
       setprototypeof: 1.2.0
-      statuses: 2.0.1
+      statuses: 2.0.2
       type-is: 1.6.18
       utils-merge: 1.0.1
       vary: 1.1.2
@@ -13949,14 +13982,14 @@ snapshots:
     dependencies:
       to-regex-range: 5.0.1
 
-  finalhandler@1.3.1:
+  finalhandler@1.3.2:
     dependencies:
       debug: 2.6.9
       encodeurl: 2.0.0
       escape-html: 1.0.3
       on-finished: 2.4.1
       parseurl: 1.3.3
-      statuses: 2.0.1
+      statuses: 2.0.2
       unpipe: 1.0.0
     transitivePeerDependencies:
       - supports-color
@@ -14391,6 +14424,14 @@ snapshots:
       inherits: 2.0.4
       setprototypeof: 1.2.0
       statuses: 2.0.1
+      toidentifier: 1.0.1
+
+  http-errors@2.0.1:
+    dependencies:
+      depd: 2.0.0
+      inherits: 2.0.4
+      setprototypeof: 1.2.0
+      statuses: 2.0.2
       toidentifier: 1.0.1
 
   https-proxy-agent@5.0.1:
@@ -15526,7 +15567,7 @@ snapshots:
       '@next/env': 14.2.32
       '@swc/helpers': 0.5.5
       busboy: 1.6.0
-      caniuse-lite: 1.0.30001743
+      caniuse-lite: 1.0.30001757
       graceful-fs: 4.2.11
       postcss: 8.4.31
       react: 18.3.1
@@ -16050,9 +16091,9 @@ snapshots:
     dependencies:
       prosemirror-transform: 1.10.4
 
-  prosemirror-codemark@0.4.2(prosemirror-inputrules@1.5.0)(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.40.0):
+  prosemirror-codemark@0.4.2(prosemirror-inputrules@1.5.1)(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.40.0):
     dependencies:
-      prosemirror-inputrules: 1.5.0
+      prosemirror-inputrules: 1.5.1
       prosemirror-model: 1.25.3
       prosemirror-state: 1.4.3
       prosemirror-view: 1.40.0
@@ -16080,6 +16121,13 @@ snapshots:
       prosemirror-state: 1.4.3
       prosemirror-view: 1.40.0
 
+  prosemirror-gapcursor@1.4.0:
+    dependencies:
+      prosemirror-keymap: 1.2.3
+      prosemirror-model: 1.25.3
+      prosemirror-state: 1.4.3
+      prosemirror-view: 1.40.0
+
   prosemirror-history@1.4.1:
     dependencies:
       prosemirror-state: 1.4.3
@@ -16087,10 +16135,22 @@ snapshots:
       prosemirror-view: 1.40.0
       rope-sequence: 1.3.4
 
+  prosemirror-history@1.5.0:
+    dependencies:
+      prosemirror-state: 1.4.3
+      prosemirror-transform: 1.10.5
+      prosemirror-view: 1.40.0
+      rope-sequence: 1.3.4
+
   prosemirror-inputrules@1.5.0:
     dependencies:
       prosemirror-state: 1.4.3
       prosemirror-transform: 1.10.4
+
+  prosemirror-inputrules@1.5.1:
+    dependencies:
+      prosemirror-state: 1.4.3
+      prosemirror-transform: 1.10.5
 
   prosemirror-keymap@1.2.3:
     dependencies:
@@ -16138,6 +16198,14 @@ snapshots:
       prosemirror-transform: 1.10.4
       prosemirror-view: 1.40.0
 
+  prosemirror-tables@1.8.1:
+    dependencies:
+      prosemirror-keymap: 1.2.3
+      prosemirror-model: 1.25.3
+      prosemirror-state: 1.4.3
+      prosemirror-transform: 1.10.5
+      prosemirror-view: 1.40.0
+
   prosemirror-trailing-node@3.0.0(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.40.0):
     dependencies:
       '@remirror/core-constants': 3.0.0
@@ -16147,6 +16215,10 @@ snapshots:
       prosemirror-view: 1.40.0
 
   prosemirror-transform@1.10.4:
+    dependencies:
+      prosemirror-model: 1.25.3
+
+  prosemirror-transform@1.10.5:
     dependencies:
       prosemirror-model: 1.25.3
 
@@ -16168,10 +16240,6 @@ snapshots:
   punycode@1.4.1: {}
 
   punycode@2.3.1: {}
-
-  qs@6.13.0:
-    dependencies:
-      side-channel: 1.1.0
 
   qs@6.14.0:
     dependencies:
@@ -16195,10 +16263,10 @@ snapshots:
 
   range-parser@1.2.1: {}
 
-  raw-body@2.5.2:
+  raw-body@2.5.3:
     dependencies:
       bytes: 3.1.2
-      http-errors: 2.0.0
+      http-errors: 2.0.1
       iconv-lite: 0.4.24
       unpipe: 1.0.0
 
@@ -16598,6 +16666,13 @@ snapshots:
       path-parse: 1.0.7
       supports-preserve-symlinks-flag: 1.0.0
 
+  resolve@1.22.11:
+    dependencies:
+      is-core-module: 2.16.1
+      path-parse: 1.0.7
+      supports-preserve-symlinks-flag: 1.0.0
+    optional: true
+
   resolve@2.0.0-next.5:
     dependencies:
       is-core-module: 2.16.1
@@ -16754,6 +16829,24 @@ snapshots:
       depd: 2.0.0
       destroy: 1.2.0
       encodeurl: 1.0.2
+      escape-html: 1.0.3
+      etag: 1.8.1
+      fresh: 0.5.2
+      http-errors: 2.0.0
+      mime: 1.6.0
+      ms: 2.1.3
+      on-finished: 2.4.1
+      range-parser: 1.2.1
+      statuses: 2.0.1
+    transitivePeerDependencies:
+      - supports-color
+
+  send@0.19.1:
+    dependencies:
+      debug: 2.6.9
+      depd: 2.0.0
+      destroy: 1.2.0
+      encodeurl: 2.0.0
       escape-html: 1.0.3
       etag: 1.8.1
       fresh: 0.5.2
@@ -16930,6 +17023,8 @@ snapshots:
   standard-as-callback@2.1.0: {}
 
   statuses@2.0.1: {}
+
+  statuses@2.0.2: {}
 
   std-env@3.10.0: {}
 
