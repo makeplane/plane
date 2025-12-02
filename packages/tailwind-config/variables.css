@@ -1,8 +1,10 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
+/* ---------- Static tokens ---------- */
 @theme {
   --color-*: initial;
 
+  /* ---------- Common colors ---------- */
   /* White with opacity */
   --color-alpha-white-0: oklch(1 0 0 / 0%);
   --color-alpha-white-100: oklch(1 0 0 / 5%);
@@ -32,6 +34,82 @@
   --color-alpha-black-1000: oklch(0.1482 0.0034 196.79 / 80%);
   --color-alpha-black-1100: oklch(0.1482 0.0034 196.79 / 90%);
   --color-alpha-black-1200: oklch(0.1482 0.0034 196.79 / 95%);
+
+  /* ---------- Spacing ---------- */
+  --spacing-*: initial;
+  --spacing-0: 0;
+  --spacing-25: 0.0625rem;
+  --spacing-50: 0.125rem;
+  --spacing-100: 0.25rem;
+  --spacing-150: 0.375rem;
+  --spacing-200: 0.5rem;
+  --spacing-300: 0.75rem;
+  --spacing-400: 1rem;
+  --spacing-500: 1.25rem;
+  --spacing-600: 1.5rem;
+  --spacing-700: 1.75rem;
+  --spacing-800: 2rem;
+  --spacing-900: 2.25rem;
+  --spacing-1000: 2.5rem;
+  --spacing-1100: 2.75rem;
+  --spacing-1200: 3rem;
+
+  /* ---------- Borders radius ---------- */
+  --radius-*: initial;
+  --radius-none: 0;
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-xxl: 1rem;
+  --radius-rounded: 9999px;
+
+  /* ---------- Border width ---------- */
+  --border-width-*: initial;
+  --border-width-sm: 1px;
+  --border-width-md: 1.5px;
+  --border-width-lg: 2px;
+  --border-width-xl: 2.5px;
+  --default-border-width: 1px;
+
+  /* ---------- Font family ---------- */
+  --font-family-*: initial;
+  --font-family-heading: Inter;
+  --font-family-body: Inter;
+  --font-family-code: IBM Mono;
+
+  /* ---------- Font weight ---------- */
+  --font-weight-*: initial;
+  --font-weight-light: Light;
+  --font-weight-regular: 400;
+  --font-weight-medium: medium;
+  --font-weight-semi-bold: semi bold;
+  --font-weight-bold: bold;
+  --font-weight-heavy: heavy;
+
+  /* ---------- Font size ---------- */
+  --text-*: initial;
+  --text-9: 0.5625rem;
+  --text-10: 0.625rem;
+  --text-11: 0.6875rem;
+  --text-12: 0.75rem;
+  --text-13: 0.8125rem;
+  --text-14: 0.875rem;
+  --text-16: 1rem;
+  --text-18: 1.125rem;
+  --text-20: 1.25rem;
+  --text-24: 1.5rem;
+  --text-28: 1.75rem;
+  --text-32: 2rem;
+  --text-40: 2.5rem;
+
+  /* ---------- Letter spacing ---------- */
+  --tracking-*: initial;
+  --tracking-extra-tight: -0.025rem;
+  --tracking-tight: -0.05rem;
+  --tracking-default: 0;
+  --tracking-wide: 0.05rem;
 }
 
 /* ---------- Light mode color tokens ---------- */
