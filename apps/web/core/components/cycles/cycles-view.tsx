@@ -27,8 +27,12 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
   // derived values
   const filteredCycleIds = getFilteredCycleIds(projectId, false);
   const filteredCompletedCycleIds = getFilteredCompletedCycleIds(projectId);
+  const { getCycleById } = useCycle();
   const filteredUpcomingCycleIds = (filteredCycleIds ?? []).filter(
-    (cycleId) => cycleId !== currentProjectActiveCycleId
+    (cycleId) => {
+      const cycle = getCycleById(cycleId);
+      return cycle?.status?.toLowerCase() !== "current";
+    }
   );
 
   if (loader || !filteredCycleIds) return <CycleModuleListLayoutLoader />;

@@ -75,6 +75,8 @@ class Cycle(ProjectBaseModel):
     timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)
     version = models.IntegerField(default=1)
 
+    module = models.ForeignKey("Module", on_delete=models.DO_NOTHING, related_name="cycles", null=True, blank=True)
+
     class Meta:
         verbose_name = "Cycle"
         verbose_name_plural = "Cycles"

@@ -73,11 +73,14 @@ export type TBarItem<T extends string> = {
   showTopBorderRadius?: (barKey: string, payload: any) => boolean;
   showBottomBorderRadius?: (barKey: string, payload: any) => boolean;
   shapeVariant?: TBarChartShapeVariant;
+  strokeColor?: string;
+  strokeWidth?: number;
 };
 
 export type TBarChartProps<K extends string, T extends string> = TAxisChartProps<K, T> & {
   bars: TBarItem<T>[];
   barSize?: number;
+  onBarClick?: (params: { barKey: T; payload: any; label: string }) => void;
 };
 
 // ============================================================

@@ -215,4 +215,66 @@ export class ModuleService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async getCycleList(workspaceSlug: string, projectId: string, moduleId: string): Promise<any> {
+    const queryParams = {
+      module_id: moduleId,
+    };
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/module/cycles/`, {
+      params: queryParams,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+ 
+  async selectCycleList(
+    workspaceSlug: string,
+    projectId: string,
+    queries?: { page?: number; page_size?: number }
+  ): Promise<any> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/module/select-cycle-list/`,
+      {
+        params: queries,
+      }
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async associateCycle(workspaceSlug: string, projectId: string, data: { module_id: string; cycle_id: string }): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/module/associate-cycle/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async cancelCycleAssociation(workspaceSlug: string, projectId: string, data: { module_id: string; cycle_id: string }): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/module/cancel-cycle/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  
+  async getModuleStatistics(workspaceSlug: string, projectId: string, moduleId: string): Promise<any> {
+    const queryParams = {
+      module_id: moduleId,
+    };
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/module/statistics/`, {
+      params: queryParams,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+ 
+
 }

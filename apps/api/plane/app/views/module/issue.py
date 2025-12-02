@@ -11,6 +11,7 @@ from django.views.decorators.gzip import gzip_page
 
 # Third party imports
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from plane.app.permissions import allow_permission, ROLE
@@ -31,7 +32,7 @@ from plane.utils.grouper import (
 )
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
-from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
+from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator, CustomPaginator
 from plane.utils.filters import ComplexFilterBackend
 from plane.utils.filters import IssueFilterSet
 from .. import BaseViewSet
@@ -330,4 +331,16 @@ class ModuleIssueViewSet(BaseViewSet):
             origin=base_host(request=request, is_app=True),
         )
         module_issue.delete()
+        CycleIssue.objects.filter(issue_id=issue_id,workspace__slug=slug,project_id=project_id).delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+
+
+class ModuleIssueAPISet(BaseViewSet):
+    pagination_class = CustomPaginator
+
+    @action(detail=False, methods=['get'], url_path='issue-list')
+    def issue_list(self, request, slug):
+        module_id = request.query_params.get("module_id")

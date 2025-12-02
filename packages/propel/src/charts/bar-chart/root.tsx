@@ -40,6 +40,7 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
     customTicks,
     showTooltip = true,
     customTooltipContent,
+    onBarClick,
   } = props;
   // states
   const [activeBar, setActiveBar] = useState<string | null>(null);
@@ -111,6 +112,11 @@ export const BarChart = React.memo(<K extends string, T extends string>(props: T
           className="[&_path]:transition-opacity [&_path]:duration-200"
           onMouseEnter={() => setActiveBar(bar.key)}
           onMouseLeave={() => setActiveBar(null)}
+          onClick={(payload: any, index: number) => {
+            if (!onBarClick) return;
+            const label = (payload && payload?.payload && payload.payload[xAxis.key as string]) as string;
+            onBarClick({ barKey: bar.key as T, payload: payload?.payload, label });
+          }}
           fill={getBarColor(data, bar.key)}
         />
       )),

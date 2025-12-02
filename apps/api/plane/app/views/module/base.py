@@ -21,13 +21,14 @@ from django.db.models import (
     Case,
     When,
 )
-from django.db import models
+from django.db import models, transaction
 from django.db.models.functions import Coalesce, Cast, Concat
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 # Module imports
@@ -43,7 +44,7 @@ from plane.app.serializers import (
     ModuleLinkSerializer,
     ModuleSerializer,
     ModuleUserPropertiesSerializer,
-    ModuleWriteSerializer,
+    ModuleWriteSerializer, CycleSerializer,
 )
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
@@ -54,9 +55,11 @@ from plane.db.models import (
     ModuleLink,
     ModuleUserProperties,
     Project,
-    UserRecentVisit,
+    UserRecentVisit, Cycle, CycleIssue,
 )
 from plane.utils.analytics_plot import burndown_plot
+from plane.utils.paginator import CustomPaginator
+from plane.utils.response import list_response
 from plane.utils.timezone_converter import user_timezone_converter
 from plane.bgtasks.webhook_task import model_activity
 from .. import BaseAPIView, BaseViewSet
@@ -849,3 +852,145 @@ class ModuleUserPropertiesEndpoint(BaseAPIView):
         )
         serializer = ModuleUserPropertiesSerializer(module_properties)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ModuleAPI(BaseViewSet):
+    pagination_class = CustomPaginator
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @action(detail=False, methods=["post"], url_path="associate-cycle")
+    def associate_cycle(self, request, slug, project_id):
+        module_id = request.data.get("module_id")
+        cycle_id = request.data.get("cycle_id")
+
+        if not module_id or not cycle_id:
+            return Response({"error": "module_id and cycle_id are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            cycle_info = Cycle.objects.values("project_id", "workspace_id").get(id=cycle_id)
+        except Cycle.DoesNotExist:
+            return Response({"error": "Cycle not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        if not Module.objects.filter(id=module_id, project_id=cycle_info["project_id"]).exists():
+            return Response({"error": "Module not found in cycle's project"}, status=status.HTTP_404_NOT_FOUND)
+
+        with transaction.atomic():
+            Cycle.objects.filter(id=cycle_id).update(module_id=module_id)
+
+            issue_rows = list(
+                CycleIssue.objects.filter(cycle_id=cycle_id).values("issue_id", "project_id", "workspace_id")
+            )
+
+            if not issue_rows:
+                return Response(
+                    {"module_id": module_id, "cycle_id": cycle_id, "created": 0},
+                    status=status.HTTP_201_CREATED,
+                )
+
+            existing_issue_ids = set(
+                ModuleIssue.objects.filter(module_id=module_id, project_id=cycle_info["project_id"]).values_list(
+                    "issue_id", flat=True
+                )
+            )
+
+            to_create = [
+                ModuleIssue(
+                    project_id=row["project_id"],
+                    workspace_id=row["workspace_id"],
+                    issue_id=row["issue_id"],
+                    module_id=module_id,
+                )
+                for row in issue_rows
+                if row["issue_id"] not in existing_issue_ids
+            ]
+
+            if to_create:
+                ModuleIssue.objects.bulk_create(to_create, batch_size=1000)
+
+        return Response(
+            {"module_id": module_id, "cycle_id": cycle_id, "created": len(to_create)},
+            status=status.HTTP_201_CREATED,
+        )
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @action(detail=False, methods=["get"], url_path="select-cycle-list")
+    def select_cycle_list(self, request, slug, project_id):
+        query = Cycle.objects.filter(workspace__slug=slug, project=project_id, module__isnull=True)
+        paginator = self.pagination_class()
+        paginated_queryset = paginator.paginate_queryset(query, request)
+        serializer = CycleSerializer(paginated_queryset, many=True)
+        return list_response(data=serializer.data, count=query.count())
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @action(detail=False, methods=["get"], url_path="cycles")
+    def cycle_list(self, request, slug, project_id):
+        module_id = request.query_params.get("module_id")
+        query = Cycle.objects.filter(workspace__slug=slug, project=project_id, module_id=module_id)
+        serializer = CycleSerializer(query, many=True)
+        return Response(data=serializer.data)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @action(detail=False, methods=["post"], url_path="cancel-cycle")
+    def cancel_cycle(self, request, slug, project_id):
+        module_id = request.data.get("module_id")
+        cycle_id = request.data.get("cycle_id")
+
+        # 取消发布和迭代的关联关系
+        Cycle.objects.filter(id=cycle_id).update(module_id=None)
+
+        # 将绑定的迭代的工作项同步删除
+        cycle_issue_query = CycleIssue.objects.filter(cycle_id=cycle_id).values_list('issue_id', flat=True)
+        ModuleIssue.objects.filter(module_id=module_id, issue_id__in=cycle_issue_query).delete(soft=False)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @action(detail=False, methods=["get"], url_path="statistics")
+    def statistics(self, request, slug, project_id):
+        module_id = request.GET.get("module_id")
+        if not module_id:
+            return Response(
+                {"error": "Module ID is required"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # 基础查询：获取该模块下所有未归档、未删除且非草稿的 issues
+        issues = Issue.objects.filter(
+            issue_module__module_id=module_id,
+            issue_module__deleted_at__isnull=True,
+            project_id=project_id,
+            workspace__slug=slug,
+            archived_at__isnull=True,
+            is_draft=False,
+            deleted_at__isnull=True
+        ).select_related('state', 'type').distinct()
+
+        # 1. 统计总数及各状态组的数量
+        total_count = issues.count()
+        state_distribution = issues.aggregate(
+            backlog=Count('id', filter=Q(state__group='backlog'), distinct=True),
+            unstarted=Count('id', filter=Q(state__group='unstarted'), distinct=True),
+            started=Count('id', filter=Q(state__group='started'), distinct=True),
+            completed=Count('id', filter=Q(state__group='completed'), distinct=True),
+            cancelled=Count('id', filter=Q(state__group='cancelled'), distinct=True)
+        )
+
+        # 2. 统计各 Issue Type 的数量及对应各状态组的数量
+        # 使用 values() 分组统计
+        type_stats = issues.values(
+            'type__id', 'type__name'
+        ).annotate(
+            total=Count('id', distinct=True),
+            backlog=Count('id', filter=Q(state__group='backlog'), distinct=True),
+            unstarted=Count('id', filter=Q(state__group='unstarted'), distinct=True),
+            started=Count('id', filter=Q(state__group='started'), distinct=True),
+            completed=Count('id', filter=Q(state__group='completed'), distinct=True),
+            cancelled=Count('id', filter=Q(state__group='cancelled'), distinct=True)
+        ).order_by('type__name')
+
+        response_data = {
+            "total_issues": total_count,
+            "state_distribution": state_distribution,
+            "type_distribution": list(type_stats)
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)

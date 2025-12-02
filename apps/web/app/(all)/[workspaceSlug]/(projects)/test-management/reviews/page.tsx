@@ -59,7 +59,8 @@ export default function ReviewsPage() {
   const searchParams = useSearchParams();
   const router = useAppRouter();
   const repositoryIdFromUrl = searchParams.get("repositoryId");
-  const repositoryId = repositoryIdFromUrl || (typeof window !== "undefined" ? sessionStorage.getItem("selectedRepositoryId") : null);
+  const repositoryId =
+    repositoryIdFromUrl || (typeof window !== "undefined" ? sessionStorage.getItem("selectedRepositoryId") : null);
   const [leftWidth, setLeftWidth] = useState<number>(300);
   const isDraggingRef = useRef<boolean>(false);
   const startXRef = useRef<number>(0);

@@ -548,7 +548,7 @@ class CycleViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class CycleDateCheckEndpoint(BaseAPIView):
+class  CycleDateCheckEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
         start_date = request.data.get("start_date", False)
@@ -579,12 +579,15 @@ class CycleDateCheckEndpoint(BaseAPIView):
             )
         ).exclude(pk=cycle_id)
         if cycles.exists():
-            return Response(
-                {
-                    "error": "You have a cycle already on the given dates, if you want to create a draft cycle you can do that by removing dates",  # noqa: E501
-                    "status": False,
-                }
-            )
+            # 自定义更改：可以运行多个迭代同时进行
+            return Response({"status": True}, status=status.HTTP_200_OK)
+            # return Response(
+            #     {
+            #         "error": "You have a cycle already on the given dates, if you want to create a draft cycle you can do that by removing dates",  # noqa: E501
+            #         "status": False,
+            #     }
+            # )
+
         else:
             return Response({"status": True}, status=status.HTTP_200_OK)
 

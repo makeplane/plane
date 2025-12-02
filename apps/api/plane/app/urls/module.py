@@ -1,5 +1,5 @@
-from django.urls import path
-
+from django.urls import path, include
+from rest_framework.routers import SimpleRouter
 
 from plane.app.views import (
     ModuleViewSet,
@@ -9,7 +9,10 @@ from plane.app.views import (
     ModuleUserPropertiesEndpoint,
     ModuleArchiveUnarchiveEndpoint,
 )
+from plane.app.views.module.base import ModuleAPI
 
+router = SimpleRouter()
+router.register('module', ModuleAPI, basename='module')
 
 urlpatterns = [
     path(
@@ -98,4 +101,5 @@ urlpatterns = [
         ModuleArchiveUnarchiveEndpoint.as_view(),
         name="module-archive-unarchive",
     ),
+    path('workspaces/<str:slug>/projects/<uuid:project_id>/', include(router.urls)),
 ]

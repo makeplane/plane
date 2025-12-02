@@ -10,12 +10,14 @@ import { CircularProgressIndicator } from "@plane/ui";
 // components
 import { generateQueryParams } from "@plane/utils";
 import { ListItem } from "@/components/core/list";
+import { ModuleDetailDrawer } from "@/components/modules/module-detail-drawer";
 import { ModuleListItemAction, ModuleQuickActions } from "@/components/modules";
 // helpers
 // hooks
 import { useModule } from "@/hooks/store/use-module";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useState } from "react";
 
 type Props = {
   moduleId: string;
@@ -33,6 +35,8 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
   // store hooks
   const { getModuleById } = useModule();
   const { isMobile } = usePlatformOS();
+  // states
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   // derived values
   const moduleDetails = getModuleById(moduleId);
@@ -51,12 +55,18 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
     e.stopPropagation();
     e.preventDefault();
 
+    // Trigger Drawer display
+    setIsDrawerOpen(true);
+
+    // Original logic commented out as requested
+    /*
     const query = generateQueryParams(searchParams, ["peekModule"]);
     if (searchParams.has("peekModule") && searchParams.get("peekModule") === moduleId) {
       router.push(`${pathname}?${query}`);
     } else {
       router.push(`${pathname}?${query && `${query}&`}peekModule=${moduleId}`);
     }
+    */
   };
 
   const handleArchivedModuleClick = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
@@ -66,46 +76,57 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
   const handleItemClick = moduleDetails.archived_at ? handleArchivedModuleClick : undefined;
 
   return (
-    <ListItem
-      title={moduleDetails?.name ?? ""}
-      itemLink={`/${workspaceSlug?.toString()}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}
-      onItemClick={handleItemClick}
-      prependTitleElement={
-        <CircularProgressIndicator size={30} percentage={progress} strokeWidth={3}>
-          {completedModuleCheck ? (
-            progress === 100 ? (
+    <>
+      <ListItem
+        title={moduleDetails?.name ?? ""}
+        itemLink={`/${workspaceSlug?.toString()}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}
+        onItemClick={handleItemClick}
+        prependTitleElement={
+          <CircularProgressIndicator size={30} percentage={progress} strokeWidth={3}>
+            {completedModuleCheck ? (
+              progress === 100 ? (
+                <Check className="h-3 w-3 stroke-[2] text-custom-primary-100" />
+              ) : (
+                <span className="text-sm text-custom-primary-100">{`!`}</span>
+              )
+            ) : progress === 100 ? (
               <Check className="h-3 w-3 stroke-[2] text-custom-primary-100" />
             ) : (
-              <span className="text-sm text-custom-primary-100">{`!`}</span>
-            )
-          ) : progress === 100 ? (
-            <Check className="h-3 w-3 stroke-[2] text-custom-primary-100" />
-          ) : (
-            <span className="text-[9px] text-custom-text-300">{`${progress}%`}</span>
-          )}
-        </CircularProgressIndicator>
-      }
-      appendTitleElement={
-        <button
-          onClick={openModuleOverview}
-          className={`z-[5] flex-shrink-0 ${isMobile ? "flex" : "hidden group-hover:flex"}`}
-        >
-          <Info className="h-4 w-4 text-custom-text-400" />
-        </button>
-      }
-      actionableItems={<ModuleListItemAction moduleId={moduleId} moduleDetails={moduleDetails} parentRef={parentRef} />}
-      quickActionElement={
-        <div className="block md:hidden">
-          <ModuleQuickActions
-            parentRef={parentRef}
-            moduleId={moduleId}
-            projectId={projectId.toString()}
-            workspaceSlug={workspaceSlug.toString()}
-          />
-        </div>
-      }
-      isMobile={isMobile}
-      parentRef={parentRef}
-    />
+              <span className="text-[9px] text-custom-text-300">{`${progress}%`}</span>
+            )}
+          </CircularProgressIndicator>
+        }
+        appendTitleElement={
+          <button
+            onClick={openModuleOverview}
+            data-prevent-progress
+            className={`z-[5] flex-shrink-0 ${isMobile ? "flex" : "hidden group-hover:flex"}`}
+          >
+            <Info className="h-4 w-4 text-custom-text-400" />
+          </button>
+        }
+        actionableItems={
+          <ModuleListItemAction moduleId={moduleId} moduleDetails={moduleDetails} parentRef={parentRef} />
+        }
+        quickActionElement={
+          <div className="block md:hidden">
+            <ModuleQuickActions
+              parentRef={parentRef}
+              moduleId={moduleId}
+              projectId={projectId.toString()}
+              workspaceSlug={workspaceSlug.toString()}
+            />
+          </div>
+        }
+        isMobile={isMobile}
+        parentRef={parentRef}
+      />
+      <ModuleDetailDrawer
+        moduleId={moduleId}
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        isArchived={!!moduleDetails.archived_at}
+      />
+    </>
   );
 });

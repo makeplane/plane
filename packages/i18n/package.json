@@ -31,7 +31,15 @@
     "@types/node": "^22.5.4",
     "@types/lodash-es": "catalog:",
     "@types/react": "catalog:",
+    "rolldown": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
   }
 }
