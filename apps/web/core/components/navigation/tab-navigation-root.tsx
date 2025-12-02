@@ -183,7 +183,7 @@ export const TabNavigationRoot: FC<TTabNavigationRootProps> = observer((props) =
           </div>
         </div>
 
-        <div className="shrink-0 h-5 w-1 border-l border-custom-border-200" />
+        <div className="shrink-0 h-5 w-1 border-l border-subtle-1" />
 
         <div ref={containerRef} className="flex items-center h-full flex-1 min-w-0 overflow-hidden">
           <TabNavigationList className="h-full">

@@ -99,7 +99,7 @@ export function JiraImporterRoot() {
         </span>
       </Link>
 
-      <div className="flex h-full flex-col space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4">
+      <div className="flex h-full flex-col space-y-4 rounded-[10px] border border-subtle-1 bg-custom-background-100 p-4">
         <div className="flex items-center gap-2">
           <div className="h-10 w-10 flex-shrink-0">
             <img src={JiraLogo} className="w-full h-full object-cover" alt="jira logo" />
@@ -116,14 +116,14 @@ export function JiraImporterRoot() {
                     index > activeIntegrationState() + 1 ||
                     Boolean(index === activeIntegrationState() + 1 && disableTopBarAfter)
                   }
-                  className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border border-custom-border-200 ${
+                  className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border border-subtle-1 ${
                     index <= activeIntegrationState()
                       ? `border-custom-primary bg-custom-primary ${
                           index === activeIntegrationState()
                             ? "border-opacity-100 bg-opacity-100"
                             : "border-opacity-80 bg-opacity-80"
                         }`
-                      : "border-custom-border-200"
+                      : "border-subtle-1"
                   }`}
                 >
                   <integration.icon
@@ -134,7 +134,7 @@ export function JiraImporterRoot() {
                   <div
                     key={index}
                     className={`border-b px-7 ${
-                      index <= activeIntegrationState() - 1 ? `border-custom-primary` : `border-custom-border-200`
+                      index <= activeIntegrationState() - 1 ? `border-custom-primary` : `border-subtle-1`
                     }`}
                   >
                     {" "}
@@ -157,7 +157,7 @@ export function JiraImporterRoot() {
                 {currentStep?.state === "import-confirmation" && <JiraConfirmImport />}
               </div>
 
-              <div className="-mx-4 mt-4 flex justify-end gap-4 border-t border-custom-border-200 p-4 pb-0">
+              <div className="-mx-4 mt-4 flex justify-end gap-4 border-t border-subtle-1 p-4 pb-0">
                 {currentStep?.state !== "import-configure" && (
                   <Button
                     variant="neutral-primary"

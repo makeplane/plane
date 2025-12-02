@@ -65,7 +65,7 @@ export function BubbleMenuLinkSelector(props: Props) {
     >
       <div className="w-60 mt-1 rounded-md bg-custom-background-100 shadow-custom-shadow-rg">
         <div
-          className={cn("flex rounded  border-[0.5px] border-custom-border-300 transition-colors", {
+          className={cn("flex rounded  border-[0.5px] border-strong transition-colors", {
             "border-red-500": error,
           })}
         >
@@ -74,7 +74,7 @@ export function BubbleMenuLinkSelector(props: Props) {
             type="url"
             placeholder="Enter or paste a link"
             onClick={(e) => e.stopPropagation()}
-            className="flex-1 border-r-[0.5px] border-custom-border-300 bg-custom-background-100 py-2 px-1.5 text-xs outline-none placeholder:text-custom-text-400 rounded"
+            className="flex-1 border-r-[0.5px] border-strong bg-custom-background-100 py-2 px-1.5 text-xs outline-none placeholder:text-custom-text-400 rounded"
             defaultValue={editor.getAttributes("link").href || ""}
             onKeyDown={(e) => {
               setError(false);

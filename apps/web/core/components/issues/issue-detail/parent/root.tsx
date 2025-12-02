@@ -68,7 +68,7 @@ export const IssueParentDetail = observer(function IssueParentDetail(props: TIss
 
   return (
     <>
-      <div className="mb-5 flex w-min items-center gap-3 whitespace-nowrap rounded-md border border-custom-border-300 bg-custom-background-80 px-2.5 py-1 text-xs">
+      <div className="mb-5 flex w-min items-center gap-3 whitespace-nowrap rounded-md border border-strong bg-custom-background-80 px-2.5 py-1 text-xs">
         <ControlLink href={workItemLink} onClick={handleParentIssueClick}>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2.5">
@@ -86,7 +86,7 @@ export const IssueParentDetail = observer(function IssueParentDetail(props: TIss
         </ControlLink>
 
         <CustomMenu ellipsis optionsClassName="p-1.5">
-          <div className="border-b border-custom-border-300 text-xs font-medium text-custom-text-200">
+          <div className="border-b border-strong text-xs font-medium text-custom-text-200">
             {t("issue.sibling.label")}
           </div>
 

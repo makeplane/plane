@@ -51,7 +51,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
   return (
     <div
       className={cn(
-        "space-y-1 border border-custom-border-200 rounded bg-custom-background-90 transition-all p-2",
+        "space-y-1 border border-subtle-1 rounded bg-custom-background-90 transition-all p-2",
         groupItemClassName
       )}
       ref={dropElementRef}

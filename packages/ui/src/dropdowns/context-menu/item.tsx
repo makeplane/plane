@@ -191,7 +191,7 @@ export function ContextMenuItem(props: ContextMenuItemProps) {
             style={styles.popper}
             {...attributes.popper}
             className={cn(
-              "fixed z-[35] min-w-[12rem] overflow-hidden rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-lg",
+              "fixed z-[35] min-w-[12rem] overflow-hidden rounded-md border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-lg",
               "ring-1 ring-black ring-opacity-5"
             )}
             data-context-submenu="true"

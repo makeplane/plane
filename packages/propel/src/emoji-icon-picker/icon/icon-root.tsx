@@ -51,7 +51,7 @@ export function IconRoot(props: IconRootProps) {
                 placeholder="Search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="block rounded-md bg-transparent placeholder-custom-text-400 focus:outline-none px-3 py-2 border-[0.5px] border-custom-border-200 text-[1rem] border-none p-0 h-full w-full"
+                className="block rounded-md bg-transparent placeholder-custom-text-400 focus:outline-none px-3 py-2 border-[0.5px] border-subtle-1 text-[1rem] border-none p-0 h-full w-full"
               />
             </div>
           </div>
@@ -75,7 +75,7 @@ export function IconRoot(props: IconRootProps) {
                   setHexValue(value);
                   if (/^[0-9A-Fa-f]{6}$/.test(value)) setActiveColor(adjustColorForContrast(`#${value}`));
                 }}
-                className="block placeholder-custom-text-400 focus:outline-none px-3 py-2 border-[0.5px] border-custom-border-200 flex-grow pl-0 text-xs text-custom-text-200 rounded border-none bg-transparent ring-0"
+                className="block placeholder-custom-text-400 focus:outline-none px-3 py-2 border-[0.5px] border-subtle-1 flex-grow pl-0 text-xs text-custom-text-200 rounded border-none bg-transparent ring-0"
                 autoFocus
               />
             </div>
@@ -97,7 +97,7 @@ export function IconRoot(props: IconRootProps) {
           <button
             type="button"
             className={cn("grid place-items-center h-4 w-4 rounded-full border border-transparent", {
-              "border-custom-border-400": !showHexInput,
+              "border-strong-1": !showHexInput,
             })}
             onClick={() => {
               setShowHexInput((prevData) => !prevData);

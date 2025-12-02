@@ -42,7 +42,7 @@ export const SidebarHelpSection = observer(function SidebarHelpSection(_props: W
   return (
     <>
       <ProductUpdatesModal isOpen={isProductUpdatesModalOpen} handleClose={() => setProductUpdatesModalOpen(false)} />
-      <div className="flex w-full items-center justify-between px-2 self-baseline border-t border-custom-border-200 bg-custom-sidebar-background-100 h-12 flex-shrink-0">
+      <div className="flex w-full items-center justify-between px-2 self-baseline border-t border-subtle-1 bg-custom-sidebar-background-100 h-12 flex-shrink-0">
         <div className="relative flex flex-shrink-0 items-center gap-1 justify-evenly">
           <CustomMenu
             customButton={
@@ -90,7 +90,7 @@ export const SidebarHelpSection = observer(function SidebarHelpSection(_props: W
                 <span className="text-xs">{t("contact_sales")}</span>
               </div>
             </CustomMenu.MenuItem>
-            <div className="my-1 border-t border-custom-border-200" />
+            <div className="my-1 border-t border-subtle-1" />
             <CustomMenu.MenuItem>
               <button
                 type="button"
@@ -114,7 +114,7 @@ export const SidebarHelpSection = observer(function SidebarHelpSection(_props: W
                 <span className="text-xs">Discord</span>
               </div>
             </CustomMenu.MenuItem>
-            <div className="px-1 pt-2 mt-1 text-xs text-custom-text-200 border-t border-custom-border-200">
+            <div className="px-1 pt-2 mt-1 text-xs text-custom-text-200 border-t border-subtle-1">
               <PlaneVersionNumber />
             </div>
           </CustomMenu>

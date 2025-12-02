@@ -94,7 +94,7 @@ export function ColorPickerInput(props: Props) {
               >
                 {watch(name) && watch(name) !== "" ? (
                   <span
-                    className="h-4 w-4 rounded border border-custom-border-200"
+                    className="h-4 w-4 rounded border border-subtle-1"
                     style={{
                       backgroundColor: `${watch(name)}`,
                     }}

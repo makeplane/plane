@@ -138,7 +138,7 @@ export function EditorAIMenu(props: Props) {
   return (
     <div
       className={cn(
-        "w-[210px] flex flex-col rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 shadow-custom-shadow-rg transition-all",
+        "w-[210px] flex flex-col rounded-md border-[0.5px] border-strong bg-custom-background-100 shadow-custom-shadow-rg transition-all",
         {
           "w-[700px]": activeTask,
         }
@@ -203,7 +203,7 @@ export function EditorAIMenu(props: Props) {
                   "items-start": response,
                 })}
               >
-                <span className="flex-shrink-0 size-7 grid place-items-center text-custom-text-200 rounded-full border border-custom-border-200">
+                <span className="flex-shrink-0 size-7 grid place-items-center text-custom-text-200 rounded-full border border-subtle-1">
                   <Sparkles className="size-3" />
                 </span>
                 {response ? (
@@ -289,7 +289,7 @@ export function EditorAIMenu(props: Props) {
         </div>
       </div>
       {activeTask && (
-        <div className="bg-custom-background-90 rounded-b-md py-2 px-4 text-custom-text-300 flex items-center gap-2 border-t border-custom-border-200">
+        <div className="bg-custom-background-90 rounded-b-md py-2 px-4 text-custom-text-300 flex items-center gap-2 border-t border-subtle-1">
           <span className="flex-shrink-0 size-4 grid place-items-center">
             <TriangleAlert className="size-3" />
           </span>

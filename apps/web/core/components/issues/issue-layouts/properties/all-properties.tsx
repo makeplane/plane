@@ -459,7 +459,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
                 if (subIssueCount) redirectToIssueDetail();
               }}
               className={cn(
-                "flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1",
+                "flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-strong px-2.5 py-1",
                 {
                   "hover:bg-custom-background-80 cursor-pointer": subIssueCount,
                 }
@@ -485,7 +485,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
           renderByDefault={false}
         >
           <div
-            className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1"
+            className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-strong px-2.5 py-1"
             onFocus={handleEventPropagation}
             onClick={handleEventPropagation}
           >
@@ -508,7 +508,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
           renderByDefault={false}
         >
           <div
-            className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-custom-border-300 px-2.5 py-1"
+            className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded border-[0.5px] border-strong px-2.5 py-1"
             onFocus={handleEventPropagation}
             onClick={handleEventPropagation}
           >

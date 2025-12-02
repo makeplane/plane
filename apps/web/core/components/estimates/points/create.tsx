@@ -171,7 +171,7 @@ export const EstimatePointCreate = observer(function EstimatePointCreate(props: 
       <div
         className={cn(
           "relative w-full border rounded flex items-center my-1",
-          estimatePointError?.message ? `border-red-500` : `border-custom-border-200`
+          estimatePointError?.message ? `border-red-500` : `border-subtle-1`
         )}
       >
         <EstimateInputRoot

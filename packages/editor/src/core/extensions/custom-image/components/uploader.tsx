@@ -196,7 +196,7 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
   return (
     <div
       className={cn(
-        "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-custom-text-300 bg-custom-background-90 border border-dashed border-custom-border-300 transition-all duration-200 ease-in-out cursor-default",
+        "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-custom-text-300 bg-custom-background-90 border border-dashed border-strong transition-all duration-200 ease-in-out cursor-default",
         {
           "hover:text-custom-text-200 hover:bg-custom-background-80 cursor-pointer": editor.isEditable,
           "bg-custom-background-80 text-custom-text-200": draggedInside && editor.isEditable,

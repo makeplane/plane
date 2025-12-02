@@ -149,7 +149,7 @@ export const getUpgradeButtonStyle = (
 };
 
 export const getUpgradeCardVariantStyle = (planVariant: EProductSubscriptionEnum): string | undefined => {
-  const COMMON_CLASSNAME = cn("bg-gradient-to-b from-0% to-40% border border-custom-border-200 rounded-xl");
+  const COMMON_CLASSNAME = cn("bg-gradient-to-b from-0% to-40% border border-subtle-1 rounded-xl");
 
   switch (planVariant) {
     case EProductSubscriptionEnum.ENTERPRISE:

@@ -47,7 +47,7 @@ export function GroupDragOverlay(props: Props) {
       className={cn(
         `absolute top-0 left-0 h-full w-full items-center text-sm font-medium text-custom-text-300 rounded bg-custom-background-80/85 ${dragColumnOrientation}`,
         {
-          "flex flex-col border-[1px] border-custom-border-300 z-[2]": shouldOverlayBeVisible,
+          "flex flex-col border-[1px] border-strong z-[2]": shouldOverlayBeVisible,
           "bg-red-200/60": workflowDisabledSource && isDropDisabled,
         },
         { hidden: !shouldOverlayBeVisible }

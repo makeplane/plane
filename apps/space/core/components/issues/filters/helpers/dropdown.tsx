@@ -46,7 +46,7 @@ export function FiltersDropdown(props: Props) {
             >
               <Popover.Panel>
                 <div
-                  className="z-10 overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-rg"
+                  className="z-10 overflow-hidden rounded border border-subtle-1 bg-custom-background-100 shadow-custom-shadow-rg"
                   ref={setPopperElement}
                   style={styles.popper}
                   {...attributes.popper}

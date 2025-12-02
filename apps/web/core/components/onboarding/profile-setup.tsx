@@ -364,7 +364,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                         ref={ref}
                         hasError={Boolean(errors.first_name)}
                         placeholder="Wilbur"
-                        className="w-full border-custom-border-300"
+                        className="w-full border-strong"
                         autoComplete="on"
                       />
                     )}
@@ -398,7 +398,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                         ref={ref}
                         hasError={Boolean(errors.last_name)}
                         placeholder="Wright"
-                        className="w-full border-custom-border-300"
+                        className="w-full border-strong"
                         autoComplete="on"
                       />
                     )}
@@ -430,7 +430,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                             ref={ref}
                             hasError={Boolean(errors.password)}
                             placeholder="New password..."
-                            className="w-full border-[0.5px] border-custom-border-300 pr-12 placeholder:text-custom-text-400"
+                            className="w-full border-[0.5px] border-strong pr-12 placeholder:text-custom-text-400"
                             onFocus={() => setIsPasswordInputFocused(true)}
                             onBlur={() => setIsPasswordInputFocused(false)}
                             autoComplete="on"
@@ -473,7 +473,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                             ref={ref}
                             hasError={Boolean(errors.confirm_password)}
                             placeholder={t("auth.common.password.confirm_password.placeholder")}
-                            className="w-full border-custom-border-300 pr-12 placeholder:text-custom-text-400"
+                            className="w-full border-strong pr-12 placeholder:text-custom-text-400"
                           />
                           {showPassword.retypePassword ? (
                             <EyeOff
@@ -520,7 +520,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                         <div
                           key={userRole}
                           className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-custom-background-90 ${
-                            value === userRole ? "border-custom-primary-100" : "border-custom-border-300"
+                            value === userRole ? "border-custom-primary-100" : "border-strong"
                           } rounded px-3 py-1.5 text-sm font-medium`}
                           onClick={() => onChange(userRole)}
                         >
@@ -551,7 +551,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                         <div
                           key={userDomain}
                           className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-custom-background-90 ${
-                            value === userDomain ? "border-custom-primary-100" : "border-custom-border-300"
+                            value === userDomain ? "border-custom-primary-100" : "border-strong"
                           } rounded px-3 py-1.5 text-sm font-medium`}
                           onClick={() => onChange(userDomain)}
                         >

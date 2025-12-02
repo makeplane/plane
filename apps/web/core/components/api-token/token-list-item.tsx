@@ -24,7 +24,7 @@ export function ApiTokenListItem(props: Props) {
   return (
     <>
       <DeleteApiTokenModal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} tokenId={token.id} />
-      <div className="group relative flex flex-col justify-center border-b border-custom-border-200 py-3">
+      <div className="group relative flex flex-col justify-center border-b border-subtle-1 py-3">
         <Tooltip tooltipContent="Delete token" isMobile={isMobile}>
           <button
             onClick={() => setDeleteModalOpen(true)}

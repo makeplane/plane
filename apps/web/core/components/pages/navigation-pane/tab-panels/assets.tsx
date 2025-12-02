@@ -65,7 +65,7 @@ const AssetItem = observer(function AssetItem(props: AssetItemProps) {
     return (
       <a
         href={asset.href}
-        className="relative group/asset-item h-12 flex items-center gap-2 pr-2 rounded border border-custom-border-200 hover:bg-custom-background-80 transition-colors"
+        className="relative group/asset-item h-12 flex items-center gap-2 pr-2 rounded border border-subtle-1 hover:bg-custom-background-80 transition-colors"
       >
         <div
           className="flex-shrink-0 w-11 h-12 rounded-l bg-cover bg-no-repeat bg-center"

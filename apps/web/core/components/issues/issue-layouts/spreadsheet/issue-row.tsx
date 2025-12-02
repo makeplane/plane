@@ -94,7 +94,7 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
         }
         classNames={cn("bg-custom-background-100 transition-[background-color]", {
           "group selected-issue-row": isIssueSelected,
-          "border-[0.5px] border-custom-border-400": isIssueActive,
+          "border-[0.5px] border-strong-1": isIssueActive,
         })}
         verticalOffset={100}
         shouldRecordHeights={false}
@@ -269,7 +269,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
         >
           <Row
             className={cn(
-              "group clickable cursor-pointer h-11 w-full flex items-center text-sm after:absolute border-r-[0.5px] z-10 border-custom-border-200 bg-transparent group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10",
+              "group clickable cursor-pointer h-11 w-full flex items-center text-sm after:absolute border-r-[0.5px] z-10 border-subtle-1 bg-transparent group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10",
               {
                 "border-b-[0.5px]": !getIsIssuePeeked(issueDetail.id),
                 "border border-custom-primary-70 hover:border-custom-primary-70":

@@ -114,7 +114,7 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
 
   const peekOverviewIssueClassName = cn(
     !embedIssue
-      ? "absolute z-[25] flex flex-col overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 transition-all duration-300"
+      ? "absolute z-[25] flex flex-col overflow-hidden rounded border border-subtle-1 bg-custom-background-100 transition-all duration-300"
       : `w-full h-full`,
     !embedIssue && {
       "top-0 bottom-0 right-0 w-full md:w-[50%] border-0 border-l": peekMode === "side-peek",
@@ -241,7 +241,7 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
                       </div>
                     </div>
                     <div
-                      className={`h-full !w-[400px] flex-shrink-0 border-l border-custom-border-200 p-4 py-5 overflow-hidden vertical-scrollbar scrollbar-sm ${
+                      className={`h-full !w-[400px] flex-shrink-0 border-l border-subtle-1 p-4 py-5 overflow-hidden vertical-scrollbar scrollbar-sm ${
                         is_archived ? "pointer-events-none" : ""
                       }`}
                     >

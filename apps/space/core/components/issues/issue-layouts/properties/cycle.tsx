@@ -22,7 +22,7 @@ export const IssueBlockCycle = observer(function IssueBlockCycle({ cycleId, shou
       <div
         className={cn(
           "flex h-full w-full items-center justify-between gap-1 rounded px-2.5 py-1 text-xs  duration-300 focus:outline-none",
-          { "border-[0.5px] border-custom-border-300": shouldShowBorder }
+          { "border-[0.5px] border-strong": shouldShowBorder }
         )}
       >
         <div className="flex w-full items-center text-xs gap-1.5">

@@ -60,10 +60,7 @@ export const UserAvatar = observer(function UserAvatar() {
         <div>
           <Popover as="div">
             <Popover.Button as={Fragment}>
-              <button
-                ref={setReferenceElement}
-                className="flex items-center gap-2 rounded border border-custom-border-200 p-2"
-              >
+              <button ref={setReferenceElement} className="flex items-center gap-2 rounded border border-subtle-1 p-2">
                 <Avatar
                   name={currentUser?.display_name}
                   src={getFileURL(currentUser?.avatar_url)}
@@ -90,7 +87,7 @@ export const UserAvatar = observer(function UserAvatar() {
             >
               <Popover.Panel>
                 <div
-                  className="z-10 overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 shadow-custom-shadow-rg p-1"
+                  className="z-10 overflow-hidden rounded border border-subtle-1 bg-custom-background-100 shadow-custom-shadow-rg p-1"
                   ref={setPopperElement}
                   style={styles.popper}
                   {...attributes.popper}

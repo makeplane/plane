@@ -74,7 +74,7 @@ function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
                 Go to archives
               </Button>
             }
-            className="border-b border-custom-border-200"
+            className="border-b border-subtle-1"
           />
           <div className="flex h-full overflow-hidden">
             <div className="h-full w-full space-y-3 divide-y-2 divide-custom-border-200 overflow-y-auto">

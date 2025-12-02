@@ -256,7 +256,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
       })}
     >
       <Row
-        className={cn("w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 pr-3 py-1", {
+        className={cn("w-full flex-shrink-0 border-b border-subtle-1 bg-custom-background-90 pr-3 py-1", {
           "sticky top-0 z-[2]": isExpanded && groupIssueCount > 0,
         })}
       >
@@ -318,7 +318,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
                   layout={EIssueLayoutTypes.LIST}
                   QuickAddButton={ListQuickAddIssueButton}
                   prePopulatedData={prePopulateQuickAddData(group_by, group.id)}
-                  containerClassName="border-b border-t border-custom-border-200 bg-custom-background-100 "
+                  containerClassName="border-b border-t border-subtle-1 bg-custom-background-100 "
                   quickAddCallback={quickAddCallback}
                   isEpic={isEpic}
                 />

@@ -52,12 +52,12 @@ export const NotificationsSidebarRoot = observer(function NotificationsSidebarRo
   return (
     <div
       className={cn(
-        "relative border-0 md:border-r border-custom-border-200 z-[10] flex-shrink-0 bg-custom-background-100 h-full transition-all max-md:overflow-hidden",
+        "relative border-0 md:border-r border-subtle-1 z-[10] flex-shrink-0 bg-custom-background-100 h-full transition-all max-md:overflow-hidden",
         currentSelectedNotificationId ? "w-0 md:w-3/12" : "w-full md:w-3/12"
       )}
     >
       <div className="relative w-full h-full flex flex-col">
-        <Row className="h-header border-b border-custom-border-200 flex flex-shrink-0">
+        <Row className="h-header border-b border-subtle-1 flex flex-shrink-0">
           <NotificationSidebarHeader workspaceSlug={workspaceSlug.toString()} />
         </Row>
 

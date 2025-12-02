@@ -26,7 +26,7 @@ export const AppRailRoot = observer(() => {
 
   return (
     <div
-      className="h-full flex-shrink-0 transition-all ease-in-out duration-300 z-[26]"
+      className="h-full flex-shrink-0 bg-canvas transition-all ease-in-out duration-300 z-[26]"
       style={{
         width: railWidth,
         display: "block",

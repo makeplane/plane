@@ -160,7 +160,7 @@ export function InstanceSetupForm() {
                   First name <span className="text-red-500">*</span>
                 </label>
                 <Input
-                  className="w-full border border-custom-border-100 !bg-custom-background-100 placeholder:text-custom-text-400"
+                  className="w-full border border-subtle !bg-custom-background-100 placeholder:text-custom-text-400"
                   id="first_name"
                   name="first_name"
                   type="text"
@@ -177,7 +177,7 @@ export function InstanceSetupForm() {
                   Last name <span className="text-red-500">*</span>
                 </label>
                 <Input
-                  className="w-full border border-custom-border-100 !bg-custom-background-100 placeholder:text-custom-text-400"
+                  className="w-full border border-subtle !bg-custom-background-100 placeholder:text-custom-text-400"
                   id="last_name"
                   name="last_name"
                   type="text"
@@ -195,7 +195,7 @@ export function InstanceSetupForm() {
                 Email <span className="text-red-500">*</span>
               </label>
               <Input
-                className="w-full border border-custom-border-100 !bg-custom-background-100 placeholder:text-custom-text-400"
+                className="w-full border border-subtle !bg-custom-background-100 placeholder:text-custom-text-400"
                 id="email"
                 name="email"
                 type="email"
@@ -216,7 +216,7 @@ export function InstanceSetupForm() {
                 Company name <span className="text-red-500">*</span>
               </label>
               <Input
-                className="w-full border border-custom-border-100 !bg-custom-background-100 placeholder:text-custom-text-400"
+                className="w-full border border-subtle !bg-custom-background-100 placeholder:text-custom-text-400"
                 id="company_name"
                 name="company_name"
                 type="text"
@@ -233,7 +233,7 @@ export function InstanceSetupForm() {
               </label>
               <div className="relative">
                 <Input
-                  className="w-full border border-custom-border-100 !bg-custom-background-100 placeholder:text-custom-text-400"
+                  className="w-full border border-subtle !bg-custom-background-100 placeholder:text-custom-text-400"
                   id="password"
                   name="password"
                   type={showPassword.password ? "text" : "password"}
@@ -285,7 +285,7 @@ export function InstanceSetupForm() {
                   value={formData.confirm_password}
                   onChange={(e) => handleFormChange("confirm_password", e.target.value)}
                   placeholder="Confirm password"
-                  className="w-full border border-custom-border-100 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
+                  className="w-full border border-subtle !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
                   onFocus={() => setIsRetryPasswordInputFocused(true)}
                   onBlur={() => setIsRetryPasswordInputFocused(false)}
                 />

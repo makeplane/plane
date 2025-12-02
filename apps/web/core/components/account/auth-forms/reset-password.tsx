@@ -116,7 +116,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
               value={resetFormData.email}
               //hasError={Boolean(errors.email)}
               placeholder={t("auth.common.email.placeholder")}
-              className="h-10 w-full border border-custom-border-300 !bg-custom-background-100 pr-12 text-custom-text-400 cursor-not-allowed"
+              className="h-10 w-full border border-strong !bg-custom-background-100 pr-12 text-custom-text-400 cursor-not-allowed"
               autoComplete="on"
               disabled
             />
@@ -134,7 +134,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
               onChange={(e) => handleFormChange("password", e.target.value)}
               //hasError={Boolean(errors.password)}
               placeholder={t("auth.common.password.placeholder")}
-              className="h-10 w-full border border-custom-border-300 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
+              className="h-10 w-full border border-strong !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
               minLength={8}
               onFocus={() => setIsPasswordInputFocused(true)}
               onBlur={() => setIsPasswordInputFocused(false)}
@@ -166,7 +166,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
               value={resetFormData.confirm_password}
               onChange={(e) => handleFormChange("confirm_password", e.target.value)}
               placeholder={t("auth.common.password.confirm_password.placeholder")}
-              className="h-10 w-full border border-custom-border-300 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
+              className="h-10 w-full border border-strong !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
               onFocus={() => setIsRetryPasswordInputFocused(true)}
               onBlur={() => setIsRetryPasswordInputFocused(false)}
             />

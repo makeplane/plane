@@ -24,7 +24,7 @@ export const FilterSelection = observer(function FilterSelection(props: Props) {
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
       <div className="bg-custom-background-100 p-2.5 pb-0">
-        <div className="flex items-center gap-1.5 rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 px-1.5 py-1 text-xs">
+        <div className="flex items-center gap-1.5 rounded border-[0.5px] border-subtle-1 bg-custom-background-90 px-1.5 py-1 text-xs">
           <Search className="text-custom-text-400" size={12} strokeWidth={2} />
           <input
             type="text"

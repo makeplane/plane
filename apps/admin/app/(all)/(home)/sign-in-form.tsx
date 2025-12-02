@@ -132,7 +132,7 @@ export function InstanceSignInForm() {
                 Email <span className="text-red-500">*</span>
               </label>
               <Input
-                className="w-full border border-custom-border-100 !bg-custom-background-100 placeholder:text-custom-text-400"
+                className="w-full border border-subtle !bg-custom-background-100 placeholder:text-custom-text-400"
                 id="email"
                 name="email"
                 type="email"
@@ -151,7 +151,7 @@ export function InstanceSignInForm() {
               </label>
               <div className="relative">
                 <Input
-                  className="w-full border border-custom-border-100 !bg-custom-background-100 placeholder:text-custom-text-400"
+                  className="w-full border border-subtle !bg-custom-background-100 placeholder:text-custom-text-400"
                   id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}

@@ -54,7 +54,7 @@ export function ModuleOrderByDropdown(props: Props) {
       ))}
       {!isManual && (
         <>
-          <hr className="my-2 border-custom-border-200" />
+          <hr className="my-2 border-subtle-1" />
           <CustomMenu.MenuItem
             className="flex items-center justify-between gap-2"
             onClick={() => {

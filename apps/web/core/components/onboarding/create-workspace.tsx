@@ -136,9 +136,9 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
             </span>
           </Button>
           <div className="mx-auto mt-4 flex items-center sm:w-96">
-            <hr className="w-full border-custom-border-300" />
+            <hr className="w-full border-strong" />
             <p className="mx-3 flex-shrink-0 text-center text-sm text-custom-text-400">or</p>
-            <hr className="w-full border-custom-border-300" />
+            <hr className="w-full border-strong" />
           </div>
         </>
       )}
@@ -183,7 +183,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
                   placeholder={t("workspace_creation.form.name.placeholder")}
                   ref={ref}
                   hasError={Boolean(errors.name)}
-                  className="w-full border-custom-border-300 placeholder:text-custom-text-400"
+                  className="w-full border-strong placeholder:text-custom-text-400"
                   autoFocus
                 />
               </div>
@@ -211,7 +211,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
             render={({ field: { value, ref, onChange } }) => (
               <div
                 className={`relative flex items-center rounded-md border-[0.5px] px-3 ${
-                  invalidSlug ? "border-red-500" : "border-custom-border-300"
+                  invalidSlug ? "border-red-500" : "border-strong"
                 }`}
               >
                 <span className="whitespace-nowrap text-sm">{window && window.location.host}/</span>
@@ -242,7 +242,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
           )}
           {errors.slug && <span className="text-sm text-red-500">{errors.slug.message}</span>}
         </div>
-        <hr className="w-full border-custom-border-300" />
+        <hr className="w-full border-strong" />
         <div className="space-y-1">
           <label
             className="text-sm text-custom-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
@@ -266,7 +266,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
                       </span>
                     )
                   }
-                  buttonClassName="!border-[0.5px] !border-custom-border-300 !shadow-none !rounded-md"
+                  buttonClassName="!border-[0.5px] !border-strong !shadow-none !rounded-md"
                   input
                 >
                   {ORGANIZATION_SIZE.map((item) => (

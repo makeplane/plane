@@ -87,7 +87,7 @@ export const BaseKanbanGroup = observer(function BaseKanbanGroup<T extends IBase
       )}
 
       {isDraggingOver && enableDragDrop && (
-        <div className="absolute top-0 left-0 h-full w-full flex items-center justify-center text-sm font-medium text-custom-text-300 rounded bg-custom-background-80/85 border-[1px] border-custom-border-300 z-[2]">
+        <div className="absolute top-0 left-0 h-full w-full flex items-center justify-center text-sm font-medium text-custom-text-300 rounded bg-custom-background-80/85 border-[1px] border-strong z-[2]">
           <div className="p-3 my-8 flex flex-col rounded items-center text-custom-text-200">
             {t("common.drop_here_to_move")}
           </div>

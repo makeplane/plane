@@ -100,7 +100,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
   );
 
   return cycleId ? (
-    <div className="flex flex-col gap-4 p-4 min-h-[17rem] overflow-hidden bg-custom-background-100 col-span-1 lg:col-span-2 xl:col-span-1 border border-custom-border-200 rounded-lg">
+    <div className="flex flex-col gap-4 p-4 min-h-[17rem] overflow-hidden bg-custom-background-100 col-span-1 lg:col-span-2 xl:col-span-1 border border-subtle-1 rounded-lg">
       <Tab.Group
         as={Fragment}
         defaultIndex={currentValue(tab)}
@@ -120,7 +120,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
       >
         <Tab.List
           as="div"
-          className="relative border-[0.5px] border-custom-border-200 rounded bg-custom-background-80 p-[1px] grid"
+          className="relative border-[0.5px] border-subtle-1 rounded bg-custom-background-80 p-[1px] grid"
           style={{
             gridTemplateColumns: `repeat(3, 1fr)`,
           }}
@@ -300,7 +300,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                         key={`unassigned-${index}`}
                         title={
                           <div className="flex items-center gap-2">
-                            <div className="h-5 w-5 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
+                            <div className="h-5 w-5 rounded-full border-2 border-subtle-1 bg-custom-background-80">
                               <img src={userImage} height="100%" width="100%" className="rounded-full" alt="User" />
                             </div>
                             <span>{t("no_assignee")}</span>

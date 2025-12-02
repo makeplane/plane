@@ -178,7 +178,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
         ) : (
           <div
             className={cn(
-              "h-full flex items-center justify-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs hover:bg-custom-background-80",
+              "h-full flex items-center justify-center gap-1 rounded border-[0.5px] border-strong px-2 py-1 text-xs hover:bg-custom-background-80",
               buttonClassName
             )}
           >
@@ -191,12 +191,12 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
       {isDropdownOpen && (
         <Combobox.Options className="fixed z-10" static>
           <div
-            className="my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
+            className="my-1 w-48 rounded border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
           >
-            <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
+            <div className="flex items-center gap-1.5 rounded border border-subtle bg-custom-background-90 px-2">
               <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
               <Combobox.Input
                 as="input"
@@ -246,7 +246,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
                         );
                     } else
                       return (
-                        <div key={label.id} className="border-y border-custom-border-200">
+                        <div key={label.id} className="border-y border-subtle-1">
                           <div className="flex select-none items-center gap-2 truncate p-2 text-custom-text-100">
                             <Component className="h-3 w-3" /> {label.name}
                           </div>

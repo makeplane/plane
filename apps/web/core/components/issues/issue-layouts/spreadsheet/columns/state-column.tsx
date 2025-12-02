@@ -16,7 +16,7 @@ export const SpreadsheetStateColumn = observer(function SpreadsheetStateColumn(p
   const { issue, onChange, disabled, onClose } = props;
 
   return (
-    <div className="h-11 border-b-[0.5px] border-custom-border-200">
+    <div className="h-11 border-b-[0.5px] border-subtle-1">
       <StateDropdown
         projectId={issue.project_id ?? undefined}
         value={issue.state_id}

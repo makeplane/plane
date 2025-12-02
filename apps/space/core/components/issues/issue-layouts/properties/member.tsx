@@ -63,7 +63,7 @@ export const IssueBlockMembers = observer(function IssueBlockMembers({ memberIds
     <div className="relative h-full flex flex-wrap items-center gap-1">
       <div
         className={cn("flex flex-shrink-0 cursor-default items-center rounded-md text-xs", {
-          "border-[0.5px] border-custom-border-300 px-2.5 py-1": shouldShowBorder && !members?.length,
+          "border-[0.5px] border-strong px-2.5 py-1": shouldShowBorder && !members?.length,
         })}
       >
         <div className="flex items-center gap-1.5 text-custom-text-200">

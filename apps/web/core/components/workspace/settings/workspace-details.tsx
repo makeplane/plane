@@ -155,7 +155,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
         )}
       />
       <div className={`w-full md:pr-9 pr-4 ${isAdmin ? "" : "opacity-60"}`}>
-        <div className="flex gap-5 border-b border-custom-border-100 pb-7 items-start">
+        <div className="flex gap-5 border-b border-subtle pb-7 items-start">
           <div className="flex flex-col gap-1">
             <button type="button" onClick={() => setIsImageUploadModalOpen(true)} disabled={!isAdmin}>
               {workspaceLogo && workspaceLogo !== "" ? (
@@ -240,7 +240,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                       ORGANIZATION_SIZE.find((c) => c === value) ??
                       t("workspace_settings.settings.general.errors.company_size.select_a_range")
                     }
-                    buttonClassName="!border-[0.5px] !border-custom-border-200 !shadow-none"
+                    buttonClassName="!border-[0.5px] !border-subtle-1 !shadow-none"
                     input
                     disabled={!isAdmin}
                   >

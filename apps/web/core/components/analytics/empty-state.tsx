@@ -20,7 +20,7 @@ function AnalyticsEmptyState({ title, description, assetPath, className }: Props
   return (
     <div
       className={cn(
-        "flex h-full w-full items-center justify-center overflow-y-auto rounded-lg border border-custom-border-100 px-5 py-10 md:px-20",
+        "flex h-full w-full items-center justify-center overflow-y-auto rounded-lg border border-subtle px-5 py-10 md:px-20",
         className
       )}
     >

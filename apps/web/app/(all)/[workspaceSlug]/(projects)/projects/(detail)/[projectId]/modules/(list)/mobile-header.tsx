@@ -16,7 +16,7 @@ export const ModulesListMobileHeader = observer(function ModulesListMobileHeader
     <div className="flex justify-start md:hidden">
       <CustomMenu
         maxHeight={"md"}
-        className="flex flex-grow justify-start text-custom-text-200 text-sm py-2 border-b border-custom-border-200 bg-custom-sidebar-background-100"
+        className="flex flex-grow justify-start text-custom-text-200 text-sm py-2 border-b border-subtle-1 bg-custom-sidebar-background-100"
         // placement="bottom-start"
         customButton={
           <Row className="flex flex-grow justify-center text-custom-text-200 text-sm gap-2">

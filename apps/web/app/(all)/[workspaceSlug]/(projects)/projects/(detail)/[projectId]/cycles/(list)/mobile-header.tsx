@@ -40,7 +40,7 @@ export const CyclesListMobileHeader = observer(function CyclesListMobileHeader()
     <div className="flex justify-center sm:hidden">
       <CustomMenu
         maxHeight={"md"}
-        className="flex flex-grow justify-center text-custom-text-200 text-sm py-2 border-b border-custom-border-200 bg-custom-sidebar-background-100"
+        className="flex flex-grow justify-center text-custom-text-200 text-sm py-2 border-b border-subtle-1 bg-custom-sidebar-background-100"
         // placement="bottom-start"
         customButton={
           <span className="flex items-center gap-2">

@@ -123,7 +123,7 @@ export function WorkspaceCreateForm() {
         </div>
         <div className="flex flex-col gap-1">
           <h4 className="text-sm text-custom-text-300">Set your workspace&apos;s URL</h4>
-          <div className="flex gap-0.5 w-full items-center rounded-md border-[0.5px] border-custom-border-200 px-3">
+          <div className="flex gap-0.5 w-full items-center rounded-md border-[0.5px] border-subtle-1 px-3">
             <span className="whitespace-nowrap text-sm text-custom-text-200">{workspaceBaseURL}</span>
             <Controller
               control={control}
@@ -175,7 +175,7 @@ export function WorkspaceCreateForm() {
                       <span className="text-custom-text-400">Select a range</span>
                     )
                   }
-                  buttonClassName="!border-[0.5px] !border-custom-border-200 !shadow-none"
+                  buttonClassName="!border-[0.5px] !border-subtle-1 !shadow-none"
                   input
                   optionsClassName="w-full"
                 >

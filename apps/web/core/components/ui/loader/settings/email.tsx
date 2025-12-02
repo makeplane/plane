@@ -3,7 +3,7 @@ import { range } from "lodash-es";
 export function EmailSettingsLoader() {
   return (
     <div className="mx-auto mt-8 h-full w-full overflow-y-auto px-6 lg:px-20 pb- animate-pulse">
-      <div className="flex flex-col gap-2 pt-6 mb-2 pb-6 border-b border-custom-border-100">
+      <div className="flex flex-col gap-2 pt-6 mb-2 pb-6 border-b border-subtle">
         <span className="h-7 w-40 bg-custom-background-80 rounded" />
         <span className="h-5 w-96 bg-custom-background-80 rounded" />
       </div>

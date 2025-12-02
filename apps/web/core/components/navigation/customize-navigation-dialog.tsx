@@ -196,7 +196,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
           {/* Personal Section */}
           <div className="flex flex-col gap-2">
             <h3 className="text-sm font-semibold text-custom-text-400">{t("personal")}</h3>
-            <div className="border border-custom-border-200 rounded-md py-2 bg-custom-background-90">
+            <div className="border border-subtle-1 rounded-md py-2 bg-custom-background-90">
               <Sortable
                 data={personalItems}
                 onChange={handlePersonalReorder}
@@ -224,7 +224,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
           {/* Workspace Section */}
           <div className="flex flex-col gap-2">
             <h3 className="text-sm font-semibold text-custom-text-400">{t("workspace")}</h3>
-            <div className="border border-custom-border-200 rounded-md py-2 bg-custom-background-90">
+            <div className="border border-subtle-1 rounded-md py-2 bg-custom-background-90">
               {/* Pinned Items - Draggable */}
               <Sortable
                 data={workspaceItems}
@@ -255,7 +255,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
           <div className="flex flex-col gap-2">
             <h3 className="text-sm font-semibold text-custom-text-400">{t("projects")}</h3>
 
-            <div className="border border-custom-border-200 rounded-md px-2 py-2 bg-custom-background-90">
+            <div className="border border-subtle-1 rounded-md px-2 py-2 bg-custom-background-90">
               <div className="space-y-3">
                 {/* Navigation Mode Radio Buttons */}
                 <div className="space-y-2">
@@ -321,7 +321,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
                               "bg-custom-background-90 border",
                               "text-custom-text-200",
                               parseInt(projectCountInput) >= 1
-                                ? "border-custom-border-300 focus:border-custom-primary-100 focus:ring-1 focus:ring-custom-primary-100"
+                                ? "border-strong focus:border-custom-primary-100 focus:ring-1 focus:ring-custom-primary-100"
                                 : "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500"
                             )}
                           />

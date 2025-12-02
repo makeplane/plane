@@ -162,7 +162,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
               value={emailSecurityKey}
               label={EMAIL_SECURITY_OPTIONS[emailSecurityKey]}
               onChange={handleEmailSecurityChange}
-              buttonClassName="rounded-md border-custom-border-200"
+              buttonClassName="rounded-md border-subtle-1"
               optionsClassName="w-full"
               input
             >
@@ -174,7 +174,7 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
             </CustomSelect>
           </div>
         </div>
-        <div className="flex flex-col gap-6 my-6 pt-4 border-t border-custom-border-100">
+        <div className="flex flex-col gap-6 my-6 pt-4 border-t border-subtle">
           <div className="flex w-full max-w-xl flex-col gap-y-10 px-1">
             <div className="mr-8 flex items-center gap-10 pt-4">
               <div className="grow">

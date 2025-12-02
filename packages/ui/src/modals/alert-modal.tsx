@@ -84,7 +84,7 @@ export function AlertModalCore(props: Props) {
           <p className="mt-1 text-sm text-custom-text-200">{content}</p>
         </div>
       </div>
-      <div className="px-5 py-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t-[0.5px] border-custom-border-200">
+      <div className="px-5 py-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t-[0.5px] border-subtle-1">
         <Button variant="neutral-primary" size="sm" onClick={handleClose}>
           {secondaryButtonText}
         </Button>

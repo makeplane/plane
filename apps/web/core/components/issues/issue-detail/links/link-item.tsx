@@ -47,7 +47,7 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
     <>
       <div
         key={linkId}
-        className="group col-span-12 lg:col-span-6 xl:col-span-4 2xl:col-span-3 3xl:col-span-2 flex items-center justify-between gap-3 h-10 flex-shrink-0 px-3 bg-custom-background-90 hover:bg-custom-background-80 border-[0.5px] border-custom-border-200 rounded"
+        className="group col-span-12 lg:col-span-6 xl:col-span-4 2xl:col-span-3 3xl:col-span-2 flex items-center justify-between gap-3 h-10 flex-shrink-0 px-3 bg-custom-background-90 hover:bg-custom-background-80 border-[0.5px] border-subtle-1 rounded"
       >
         <div className="flex items-center gap-2.5 truncate flex-grow">
           {faviconUrl ? (

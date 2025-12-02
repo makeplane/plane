@@ -86,7 +86,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
                 <div className="text-xs text-custom-text-200">{renderFormattedDate(issue.created_at ?? "")}</div>
               </Tooltip>
 
-              <div className="border-2 rounded-full border-custom-border-400" />
+              <div className="border-2 rounded-full border-strong-1" />
 
               {issue.priority && (
                 <Tooltip tooltipHeading="Priority" tooltipContent={`${issue.priority ?? "None"}`}>
@@ -95,7 +95,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
               )}
 
               {issue.label_ids && issue.label_ids.length > 3 ? (
-                <div className="relative !h-[17.5px] flex items-center gap-1 rounded border border-custom-border-300 px-1 text-xs">
+                <div className="relative !h-[17.5px] flex items-center gap-1 rounded border border-strong px-1 text-xs">
                   <span className="h-2 w-2 rounded-full bg-orange-400" />
                   <span className="normal-case max-w-28 truncate">{`${issue.label_ids.length} labels`}</span>
                 </div>
@@ -107,7 +107,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
                     return (
                       <div
                         key={labelId}
-                        className="relative !h-[17.5px] flex items-center gap-1 rounded border border-custom-border-300 px-1 text-xs"
+                        className="relative !h-[17.5px] flex items-center gap-1 rounded border border-strong px-1 text-xs"
                       >
                         <span
                           className="h-2 w-2 rounded-full"

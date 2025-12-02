@@ -12,7 +12,7 @@ export const GanttQuickAddIssueForm = observer(function GanttQuickAddIssueForm(p
       <form
         ref={ref}
         onSubmit={onSubmit}
-        className="flex w-full items-center gap-x-3 border-[0.5px] border-custom-border-100 bg-custom-background-100 px-3"
+        className="flex w-full items-center gap-x-3 border-[0.5px] border-subtle bg-custom-background-100 px-3"
       >
         <div className="flex w-full items-center gap-3">
           <div className="text-xs font-medium text-custom-text-400">{projectDetail?.identifier ?? "..."}</div>

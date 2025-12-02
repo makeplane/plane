@@ -282,7 +282,7 @@ export const DataTable: Story = {
           </thead>
           <tbody>
             {[...Array(50)].map((_, i) => (
-              <tr key={i} className="border-t border-custom-border-200 hover:bg-custom-background-80">
+              <tr key={i} className="border-t border-subtle-1 hover:bg-custom-background-80">
                 <td className="px-4 py-2">#{i + 1}</td>
                 <td className="px-4 py-2">User {i + 1}</td>
                 <td className="px-4 py-2">user{i + 1}@example.com</td>

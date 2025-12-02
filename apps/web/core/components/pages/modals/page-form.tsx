@@ -124,7 +124,7 @@ export function PageForm(props: Props) {
           </div>
         </div>
       </div>
-      <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-custom-border-200">
+      <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-subtle-1">
         <div className="flex items-center gap-2">
           <AccessField
             onChange={(access) => handleFormData("access", access)}

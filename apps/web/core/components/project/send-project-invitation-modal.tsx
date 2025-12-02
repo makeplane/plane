@@ -237,7 +237,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                                   <CustomSearchSelect
                                     value={value}
                                     customButton={
-                                      <button className="flex w-full items-center justify-between gap-1 rounded-md border border-custom-border-200 px-3 py-2 text-left text-sm text-custom-text-200 shadow-sm duration-300 hover:bg-custom-background-80 hover:text-custom-text-100 focus:outline-none">
+                                      <button className="flex w-full items-center justify-between gap-1 rounded-md border border-subtle-1 px-3 py-2 text-left text-sm text-custom-text-200 shadow-sm duration-300 hover:bg-custom-background-80 hover:text-custom-text-100 focus:outline-none">
                                         {value && value !== "" ? (
                                           <div className="flex items-center gap-2">
                                             <Avatar
@@ -286,7 +286,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                                   <CustomSelect
                                     {...field}
                                     customButton={
-                                      <div className="flex w-24 items-center justify-between gap-1 rounded-md border border-custom-border-200 px-3 py-2.5 text-left text-sm text-custom-text-200 shadow-sm duration-300 hover:bg-custom-background-80 hover:text-custom-text-100 focus:outline-none">
+                                      <div className="flex w-24 items-center justify-between gap-1 rounded-md border border-subtle-1 px-3 py-2.5 text-left text-sm text-custom-text-200 shadow-sm duration-300 hover:bg-custom-background-80 hover:text-custom-text-100 focus:outline-none">
                                         <span className="capitalize">
                                           {field.value ? ROLE[field.value] : "Select role"}
                                         </span>

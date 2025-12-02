@@ -46,7 +46,7 @@ export const BillingRoot = observer(function BillingRoot() {
       />
       <div className={cn("transition-all duration-500 ease-in-out will-change-[height,opacity]")}>
         <div className="py-6">
-          <div className={cn("px-6 py-4 border border-custom-border-200 rounded-lg")}>
+          <div className={cn("px-6 py-4 border border-subtle-1 rounded-lg")}>
             <div className="flex gap-2 font-medium items-center justify-between">
               <div className="flex flex-col gap-1">
                 <h4

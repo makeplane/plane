@@ -88,7 +88,7 @@ export function ModuleAppliedFiltersList(props: Props) {
         {!isArchived && isFavoriteFilterApplied && (
           <div
             key="module_display_filters"
-            className="flex flex-wrap items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 capitalize"
+            className="flex flex-wrap items-center gap-2 rounded-md border border-subtle-1 px-2 py-1 capitalize"
           >
             <div className="flex flex-wrap items-center gap-1.5">
               <span className="text-xs text-custom-text-300">Modules</span>

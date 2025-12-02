@@ -129,7 +129,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
         {currentProjectDetails ? (
           autoCloseStatus && (
             <div className="mx-6">
-              <div className="flex flex-col rounded border border-custom-border-200 bg-custom-background-90">
+              <div className="flex flex-col rounded border border-subtle-1 bg-custom-background-90">
                 <div className="flex w-full items-center justify-between gap-2 px-5 py-4">
                   <div className="w-1/2 text-sm font-medium">
                     {t("project_settings.automations.auto-close.duration")}

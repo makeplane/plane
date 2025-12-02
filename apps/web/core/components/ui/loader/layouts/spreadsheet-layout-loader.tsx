@@ -4,8 +4,8 @@ import { getRandomLength } from "../utils";
 
 export function SpreadsheetIssueRowLoader(props: { columnCount: number }) {
   return (
-    <tr className="border-b border-custom-border-200 bg-custom-background-100">
-      <td className="h-11 min-w-[28rem] z-[10] sticky left-0 flex items-center border-r-[0.5px] border-custom-border-200 bg-custom-background-100">
+    <tr className="border-b border-subtle-1 bg-custom-background-100">
+      <td className="h-11 min-w-[28rem] z-[10] sticky left-0 flex items-center border-r-[0.5px] border-subtle-1 bg-custom-background-100">
         <Row className="flex items-center gap-3">
           <span className="h-5 w-10 bg-custom-background-80 rounded animate-pulse" />
           <span
@@ -14,7 +14,7 @@ export function SpreadsheetIssueRowLoader(props: { columnCount: number }) {
         </Row>
       </td>
       {range(props.columnCount).map((colIndex) => (
-        <td key={colIndex} className="h-11 w-full min-w-[8rem] border-r border-custom-border-200 ">
+        <td key={colIndex} className="h-11 w-full min-w-[8rem] border-r border-subtle-1 ">
           <div className="flex items-center justify-center gap-3 px-3">
             <span className="h-5 w-20 bg-custom-background-80 rounded animate-pulse" />
           </div>
@@ -30,11 +30,11 @@ export function SpreadsheetLayoutLoader() {
       <table>
         <thead>
           <tr>
-            <th className="h-11 min-w-[28rem] bg-custom-background-90 border-r border-custom-border-200 animate-pulse" />
+            <th className="h-11 min-w-[28rem] bg-custom-background-90 border-r border-subtle-1 animate-pulse" />
             {range(10).map((index) => (
               <th
                 key={index}
-                className="h-11 w-full min-w-[8rem] bg-custom-background-90 border-r border-custom-border-200 animate-pulse"
+                className="h-11 w-full min-w-[8rem] bg-custom-background-90 border-r border-subtle-1 animate-pulse"
               />
             ))}
           </tr>

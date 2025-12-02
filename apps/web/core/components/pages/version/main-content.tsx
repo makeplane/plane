@@ -94,7 +94,7 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
         </div>
       ) : (
         <>
-          <div className="min-h-14 py-3 px-5 border-b border-custom-border-200 flex items-center justify-between gap-2">
+          <div className="min-h-14 py-3 px-5 border-b border-subtle-1 flex items-center justify-between gap-2">
             <div className="flex items-center gap-4">
               <h6 className="text-base font-medium">
                 {versionDetails

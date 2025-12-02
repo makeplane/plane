@@ -103,7 +103,7 @@ export const WebhookSecretKey = observer(function WebhookSecretKey(props: Props)
             {t("workspace_settings.settings.webhooks.secret_key.message")}
           </div>
           <div className="flex flex-col md:flex-row md:items-center gap-4">
-            <div className="flex flex-grow max-w-lg items-center justify-between self-stretch rounded border border-custom-border-200 px-2 h-8">
+            <div className="flex flex-grow max-w-lg items-center justify-between self-stretch rounded border border-subtle-1 px-2 h-8">
               <div className="select-none overflow-hidden font-medium">
                 {shouldShowKey ? (
                   <p className="text-xs">{webhookSecretKey}</p>

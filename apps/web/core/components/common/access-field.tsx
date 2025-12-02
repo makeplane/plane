@@ -23,7 +23,7 @@ export function AccessField(props: Props) {
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-shrink-0 items-stretch gap-0.5 rounded border-[1px] border-custom-border-200 p-1">
+    <div className="flex flex-shrink-0 items-stretch gap-0.5 rounded border-[1px] border-subtle-1 p-1">
       {accessSpecifiers.map((access, index) => {
         const label = access.i18n_label ? t(access.i18n_label) : access.label;
         return (

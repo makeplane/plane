@@ -94,7 +94,7 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
               {error.stack && (
                 <div className="space-y-2">
                   <h3 className="text-sm font-medium text-custom-text-300 uppercase tracking-wide">Stack Trace</h3>
-                  <div className="bg-custom-background-80 rounded-md border border-custom-border-200 max-h-96 overflow-auto">
+                  <div className="bg-custom-background-80 rounded-md border border-subtle-1 max-h-96 overflow-auto">
                     <pre className="p-4 text-xs text-custom-text-200 font-mono whitespace-pre-wrap break-words">
                       {error.stack}
                     </pre>

@@ -26,7 +26,7 @@ export function SettingsHeading({
   return (
     <div
       className={cn(
-        "flex flex-col md:flex-row gap-2 items-start md:items-center justify-between border-b border-custom-border-100 pb-3.5",
+        "flex flex-col md:flex-row gap-2 items-start md:items-center justify-between border-b border-subtle pb-3.5",
         className
       )}
     >

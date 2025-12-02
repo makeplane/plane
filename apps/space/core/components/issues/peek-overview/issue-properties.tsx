@@ -91,7 +91,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
                       ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
                       : priority?.key === "low"
                         ? "border-green-500/20 bg-green-500/20 text-green-500"
-                        : "border-custom-border-200 bg-custom-background-80"
+                        : "border-subtle-1 bg-custom-background-80"
               }`}
             >
               {priority && (

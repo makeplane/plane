@@ -75,7 +75,7 @@ export function BubbleMenuNodeSelector(props: Props) {
       getFloatingProps={getFloatingProps}
       getReferenceProps={getReferenceProps}
     >
-      <section className="w-48 max-h-[90vh] mt-1 flex flex-col overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg">
+      <section className="w-48 max-h-[90vh] mt-1 flex flex-col overflow-y-scroll rounded-md border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg">
         {items.map((item) => (
           <button
             key={item.name}

@@ -41,7 +41,7 @@ const ListLoaderItemRow = forwardRef(function ListLoaderItemRow(
   ref: React.ForwardedRef<HTMLDivElement>
 ) {
   return (
-    <div ref={ref} className="flex items-center justify-between h-11 p-3 border-b border-custom-border-200">
+    <div ref={ref} className="flex items-center justify-between h-11 p-3 border-b border-subtle-1">
       <div className="flex items-center gap-3">
         <span className="h-5 w-10 bg-custom-background-80 rounded animate-pulse" />
         <span className={`h-5 w-52 bg-custom-background-80 rounded animate-pulse`} />
@@ -115,7 +115,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
 
   return validateEmptyIssueGroups(groupIssueCount) ? (
     <div ref={groupRef} className={cn(`relative flex flex-shrink-0 flex-col border-[1px] border-transparent`)}>
-      <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 pl-2 pr-3 py-1">
+      <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-subtle-1 bg-custom-background-90 pl-2 pr-3 py-1">
         <HeaderGroupByCard
           groupID={group.id}
           icon={group.icon}

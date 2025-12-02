@@ -23,7 +23,7 @@ export const WorkspaceListItem = observer(function WorkspaceListItem({ workspace
       key={workspaceId}
       href={`${WEB_BASE_URL}/${encodeURIComponent(workspace.slug)}`}
       target="_blank"
-      className="group flex items-center justify-between p-4 gap-2.5 truncate border border-custom-border-200/70 hover:border-custom-border-200 hover:bg-custom-background-90 rounded-md"
+      className="group flex items-center justify-between p-4 gap-2.5 truncate border border-subtle-1/70 hover:border-subtle-1 hover:bg-custom-background-90 rounded-md"
     >
       <div className="flex items-start gap-4">
         <span

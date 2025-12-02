@@ -188,7 +188,7 @@ export function ColumnDragHandle(props: ColumnDragHandleProps) {
           type="button"
           onMouseDown={handleMouseDown}
           className={cn(
-            "px-1 bg-custom-background-90 border border-custom-border-400 rounded outline-none transition-all duration-200",
+            "px-1 bg-custom-background-90 border border-strong-1 rounded outline-none transition-all duration-200",
             {
               "!opacity-100 bg-custom-primary-100 border-custom-primary-100": isDropdownOpen,
               "hover:bg-custom-background-80": !isDropdownOpen,
@@ -208,7 +208,7 @@ export function ColumnDragHandle(props: ColumnDragHandleProps) {
             lockScroll
           />
           <div
-            className="max-h-[90vh] w-[12rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg"
+            className="max-h-[90vh] w-[12rem] overflow-y-auto rounded-md border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg"
             ref={refs.setFloating}
             {...getFloatingProps()}
             style={{

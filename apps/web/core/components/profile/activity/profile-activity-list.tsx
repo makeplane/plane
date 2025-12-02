@@ -147,7 +147,7 @@ export const ProfileActivityListPage = observer(function ProfileActivityListPage
                             </div>
                           </div>
                         </div>
-                        <div className="min-w-0 flex-1 border-b border-custom-border-100 py-4">
+                        <div className="min-w-0 flex-1 border-b border-subtle py-4">
                           <div className="break-words text-sm text-custom-text-200">
                             {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (
                               <span className="text-gray font-medium">Plane</span>

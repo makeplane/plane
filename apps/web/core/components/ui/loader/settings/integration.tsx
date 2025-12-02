@@ -6,7 +6,7 @@ export function IntegrationsSettingsLoader() {
       {range(2).map((i) => (
         <div
           key={i}
-          className="flex items-center justify-between gap-2 border-b border-custom-border-100 bg-custom-background-100 px-4 py-6"
+          className="flex items-center justify-between gap-2 border-b border-subtle bg-custom-background-100 px-4 py-6"
         >
           <div className="flex items-start gap-4">
             <span className="h-10 w-10 bg-custom-background-80 rounded-full" />

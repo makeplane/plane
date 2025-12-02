@@ -46,12 +46,9 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
           >
             Color
             <span
-              className={cn(
-                "flex-shrink-0 size-6 grid place-items-center rounded border-[0.5px] border-custom-border-300",
-                {
-                  "bg-custom-background-100": !activeBackgroundColor,
-                }
-              )}
+              className={cn("flex-shrink-0 size-6 grid place-items-center rounded border-[0.5px] border-strong", {
+                "bg-custom-background-100": !activeBackgroundColor,
+              })}
               style={{
                 backgroundColor: activeBackgroundColor ? activeBackgroundColor.backgroundColor : "transparent",
               }}
@@ -70,7 +67,7 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
       </Popover.Button>
       <Popover.Panel
         as="div"
-        className="fixed z-20 mt-1 rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 shadow-custom-shadow-rg p-2 space-y-2"
+        className="fixed z-20 mt-1 rounded-md border-[0.5px] border-strong bg-custom-background-100 shadow-custom-shadow-rg p-2 space-y-2"
       >
         <div className="space-y-1.5">
           <p className="text-xs text-custom-text-300 font-semibold">Text colors</p>
@@ -79,7 +76,7 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
               <button
                 key={color.key}
                 type="button"
-                className="flex-shrink-0 size-6 rounded border-[0.5px] border-custom-border-400 hover:opacity-60 transition-opacity"
+                className="flex-shrink-0 size-6 rounded border-[0.5px] border-strong-1 hover:opacity-60 transition-opacity"
                 style={{
                   backgroundColor: color.textColor,
                 }}
@@ -88,7 +85,7 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
             ))}
             <button
               type="button"
-              className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-300 border-[0.5px] border-custom-border-400 hover:bg-custom-background-80 transition-colors"
+              className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-300 border-[0.5px] border-strong-1 hover:bg-custom-background-80 transition-colors"
               onClick={() => handleColorSelect("text-color", undefined)}
             >
               <Ban className="size-4" />
@@ -102,7 +99,7 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
               <button
                 key={color.key}
                 type="button"
-                className="flex-shrink-0 size-6 rounded border-[0.5px] border-custom-border-400 hover:opacity-60 transition-opacity"
+                className="flex-shrink-0 size-6 rounded border-[0.5px] border-strong-1 hover:opacity-60 transition-opacity"
                 style={{
                   backgroundColor: color.backgroundColor,
                 }}
@@ -111,7 +108,7 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
             ))}
             <button
               type="button"
-              className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-300 border-[0.5px] border-custom-border-400 hover:bg-custom-background-80 transition-colors"
+              className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-300 border-[0.5px] border-strong-1 hover:bg-custom-background-80 transition-colors"
               onClick={() => handleColorSelect("background-color", undefined)}
             >
               <Ban className="size-4" />

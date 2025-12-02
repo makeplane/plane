@@ -26,7 +26,7 @@ export const IssueBlockModules = observer(function IssueBlockModules({ moduleIds
           <div
             key={modules?.[0]?.id}
             className={cn("flex h-full flex-shrink-0 cursor-default items-center rounded-md px-2.5 py-1 text-xs", {
-              "border-[0.5px] border-custom-border-300": shouldShowBorder,
+              "border-[0.5px] border-strong": shouldShowBorder,
             })}
           >
             <div className="flex items-center gap-1.5 text-custom-text-200">
@@ -35,7 +35,7 @@ export const IssueBlockModules = observer(function IssueBlockModules({ moduleIds
             </div>
           </div>
         ) : (
-          <div className="flex h-full flex-shrink-0 cursor-default items-center rounded-md border border-custom-border-300 px-2.5 py-1 text-xs">
+          <div className="flex h-full flex-shrink-0 cursor-default items-center rounded-md border border-strong px-2.5 py-1 text-xs">
             <div className="flex items-center gap-1.5 text-custom-text-200">
               <div className="text-xs">{modules.length} Modules</div>
             </div>

@@ -85,7 +85,7 @@ export const DeleteEstimateModal = observer(function DeleteEstimateModal(props: 
           </div>
         </div>
 
-        <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-custom-border-200">
+        <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-subtle-1">
           <Button variant="neutral-primary" size="sm" onClick={handleClose} disabled={buttonLoader}>
             Cancel
           </Button>

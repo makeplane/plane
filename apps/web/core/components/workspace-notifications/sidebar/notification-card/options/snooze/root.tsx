@@ -116,7 +116,7 @@ export const NotificationItemSnoozeOption = observer(function NotificationItemSn
                 leaveTo="opacity-0 translate-y-1"
               >
                 <Popover.Panel className="absolute mt-2 right-0 z-10 min-w-44 select-none">
-                  <div className="p-2 rounded-md border border-custom-border-200 bg-custom-background-100 space-y-1">
+                  <div className="p-2 rounded-md border border-subtle-1 bg-custom-background-100 space-y-1">
                     {data.snoozed_till && (
                       <button
                         className="w-full text-left cursor-pointer px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm text-custom-text-200 text-sm"

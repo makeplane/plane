@@ -23,7 +23,7 @@ export function IssueBlockPriority({
     high: "bg-orange-500/20 text-orange-950 border-orange-500",
     medium: "bg-yellow-500/20 text-yellow-950 border-yellow-500",
     low: "bg-custom-primary-100/20 text-custom-primary-950 border-custom-primary-100",
-    none: "hover:bg-custom-background-80 border-custom-border-300",
+    none: "hover:bg-custom-background-80 border-strong",
   };
 
   if (priority_detail === null) return <></>;

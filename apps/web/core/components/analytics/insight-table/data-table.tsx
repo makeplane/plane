@@ -83,7 +83,7 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
             className={cn(
               "mr-auto flex w-0 items-center justify-start gap-1 overflow-hidden rounded-md border border-transparent bg-custom-background-100 text-custom-text-400 opacity-0 transition-[width] ease-linear",
               {
-                "w-64 border-custom-border-200 px-2.5 py-1.5 opacity-100": isSearchOpen,
+                "w-64 border-subtle-1 px-2.5 py-1.5 opacity-100": isSearchOpen,
               }
             )}
           >
@@ -155,7 +155,7 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
                   <EmptyStateCompact
                     assetKey="unknown"
                     assetClassName="size-20"
-                    rootClassName="border border-custom-border-100 px-5 py-10 md:py-20 md:px-20"
+                    rootClassName="border border-subtle px-5 py-10 md:py-20 md:px-20"
                     title={t("workspace_empty_state.analytics_work_items.title")}
                   />
                 </TableCell>

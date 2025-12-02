@@ -225,9 +225,9 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
                 onChange={(e) => onChange(e.target.value)}
                 autoFocus
                 className={cn(
-                  "w-full px-3 py-2 text-custom-text-200 border border-custom-border-300 rounded-md bg-custom-background-100 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 placeholder:text-custom-text-400 focus:border-transparent transition-all duration-200",
+                  "w-full px-3 py-2 text-custom-text-200 border border-strong rounded-md bg-custom-background-100 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 placeholder:text-custom-text-400 focus:border-transparent transition-all duration-200",
                   {
-                    "border-custom-border-300": !errors.first_name,
+                    "border-strong": !errors.first_name,
                     "border-red-500": errors.first_name,
                   }
                 )}

@@ -67,7 +67,7 @@ export function TableDragHandleDropdownColorSelector(props: Props) {
               <button
                 key={color.key}
                 type="button"
-                className="flex-shrink-0 size-6 rounded border-[0.5px] border-custom-border-400 hover:opacity-60 transition-opacity"
+                className="flex-shrink-0 size-6 rounded border-[0.5px] border-strong-1 hover:opacity-60 transition-opacity"
                 style={{
                   backgroundColor: color.textColor,
                 }}
@@ -76,7 +76,7 @@ export function TableDragHandleDropdownColorSelector(props: Props) {
             ))}
             <button
               type="button"
-              className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-300 border-[0.5px] border-custom-border-400 hover:bg-custom-background-80 transition-colors"
+              className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-300 border-[0.5px] border-strong-1 hover:bg-custom-background-80 transition-colors"
               onClick={() => handleTextColorChange(editor, null)}
             >
               <Ban className="size-4" />
@@ -90,7 +90,7 @@ export function TableDragHandleDropdownColorSelector(props: Props) {
               <button
                 key={color.key}
                 type="button"
-                className="flex-shrink-0 size-6 rounded border-[0.5px] border-custom-border-400 hover:opacity-60 transition-opacity"
+                className="flex-shrink-0 size-6 rounded border-[0.5px] border-strong-1 hover:opacity-60 transition-opacity"
                 style={{
                   backgroundColor: color.backgroundColor,
                 }}
@@ -102,7 +102,7 @@ export function TableDragHandleDropdownColorSelector(props: Props) {
             ))}
             <button
               type="button"
-              className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-300 border-[0.5px] border-custom-border-400 hover:bg-custom-background-80 transition-colors"
+              className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-300 border-[0.5px] border-strong-1 hover:bg-custom-background-80 transition-colors"
               onClick={() => {
                 handleBackgroundColorChange(editor, null);
                 onSelect(null);

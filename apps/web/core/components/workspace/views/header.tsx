@@ -119,7 +119,7 @@ export const GlobalViewsHeader = observer(function GlobalViewsHeader() {
         <button
           type="button"
           data-ph-element={GLOBAL_VIEW_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
-          className="sticky -right-4 flex flex-shrink-0 items-center justify-center border-transparent bg-custom-background-100 py-3 hover:border-custom-border-200 hover:text-custom-text-400"
+          className="sticky -right-4 flex flex-shrink-0 items-center justify-center border-transparent bg-custom-background-100 py-3 hover:border-subtle-1 hover:text-custom-text-400"
           onClick={() => setCreateViewModal(true)}
         >
           <Plus className="h-4 w-4 text-custom-primary-200" />

@@ -21,7 +21,7 @@ export const SettingsSidebarHeader = observer(function SettingsSidebarHeader(pro
             <WorkspaceLogo
               logo={currentWorkspace.logo_url ?? ""}
               name={currentWorkspace.name ?? ""}
-              classNames="size-8 border border-custom-border-200"
+              classNames="size-8 border border-subtle-1"
             />
             <div className="w-full overflow-hidden">
               <div className="text-base font-medium text-custom-text-200 truncate text-ellipsis ">

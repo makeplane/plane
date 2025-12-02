@@ -185,9 +185,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
           <label htmlFor="email" className="text-sm font-medium text-custom-text-300">
             {t("auth.common.email.label")}
           </label>
-          <div
-            className={`relative flex items-center rounded-md bg-custom-background-100 border border-custom-border-300`}
-          >
+          <div className={`relative flex items-center rounded-md bg-custom-background-100 border border-strong`}>
             <Input
               id="email"
               name="email"
@@ -223,7 +221,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               value={passwordFormData.password}
               onChange={(e) => handleFormChange("password", e.target.value)}
               placeholder={t("auth.common.password.placeholder")}
-              className="disable-autofill-style h-10 w-full border border-custom-border-300 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
+              className="disable-autofill-style h-10 w-full border border-strong !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
               onFocus={() => setIsPasswordInputFocused(true)}
               onBlur={() => setIsPasswordInputFocused(false)}
               autoComplete="on"
@@ -260,7 +258,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
                 value={passwordFormData.confirm_password}
                 onChange={(e) => handleFormChange("confirm_password", e.target.value)}
                 placeholder={t("auth.common.password.confirm_password.placeholder")}
-                className="disable-autofill-style h-10 w-full border border-custom-border-300 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
+                className="disable-autofill-style h-10 w-full border border-strong !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
                 onFocus={() => setIsRetryPasswordInputFocused(true)}
                 onBlur={() => setIsRetryPasswordInputFocused(false)}
               />

@@ -320,7 +320,7 @@ const activityDetails: {
         return (
           <span className="overflow-hidden">
             added a new label{" "}
-            <span className="inline-flex items-center gap-2 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
+            <span className="inline-flex items-center gap-2 rounded-full border border-strong px-2 py-0.5 text-xs">
               <LabelPill labelId={activity.new_identifier ?? ""} workspaceSlug={workspaceSlug} />
               <span className="flex-shrink font-medium text-custom-text-100 break-all line-clamp-1">
                 {activity.new_value}
@@ -338,7 +338,7 @@ const activityDetails: {
         return (
           <>
             removed the label{" "}
-            <span className="inline-flex items-center gap-2 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
+            <span className="inline-flex items-center gap-2 rounded-full border border-strong px-2 py-0.5 text-xs">
               <LabelPill labelId={activity.old_identifier ?? ""} workspaceSlug={workspaceSlug} />
               <span className="flex-shrink font-medium text-custom-text-100 break-all line-clamp-1">
                 {activity.old_value}

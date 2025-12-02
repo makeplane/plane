@@ -11,7 +11,7 @@ export function WebhookDeleteSection(props: Props) {
   const { openDeleteModal } = props;
 
   return (
-    <Disclosure as="div" className="border-t border-custom-border-200">
+    <Disclosure as="div" className="border-t border-subtle-1">
       {({ open }) => (
         <div className="w-full">
           <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">

@@ -156,7 +156,7 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
         </div>
         {/* End version description */}
         {/* Footer */}
-        <div className="flex items-center justify-between gap-2 pt-4 border-t-[0.5px] border-custom-border-200">
+        <div className="flex items-center justify-between gap-2 pt-4 border-t-[0.5px] border-subtle-1">
           <Tooltip tooltipContent={t("common.actions.copy_markdown")}>
             <button
               type="button"

@@ -194,7 +194,7 @@ function CustomMenu(props: ICustomMenuDropdownProps) {
     >
       <div
         className={cn(
-          "my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap",
+          "my-1 overflow-y-scroll rounded-md border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap",
           {
             "max-h-60": maxHeight === "lg",
             "max-h-48": maxHeight === "md",
@@ -273,7 +273,7 @@ function CustomMenu(props: ICustomMenuDropdownProps) {
                     type="button"
                     className={`flex items-center justify-between gap-1 whitespace-nowrap rounded-md px-2.5 py-1 text-xs duration-300 ${
                       open ? "bg-custom-background-90 text-custom-text-100" : "text-custom-text-200"
-                    } ${noBorder ? "" : "border border-custom-border-300 shadow-sm focus:outline-none"} ${
+                    } ${noBorder ? "" : "border border-strong shadow-sm focus:outline-none"} ${
                       disabled
                         ? "cursor-not-allowed text-custom-text-200"
                         : "cursor-pointer hover:bg-custom-background-80"
@@ -419,7 +419,7 @@ function SubMenu(props: ICustomSubMenuProps) {
             style={styles.popper}
             {...attributes.popper}
             className={cn(
-              "fixed z-30 min-w-[12rem] overflow-hidden rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 p-1 text-xs shadow-custom-shadow-lg",
+              "fixed z-30 min-w-[12rem] overflow-hidden rounded-md border-[0.5px] border-strong bg-custom-background-100 p-1 text-xs shadow-custom-shadow-lg",
               "ring-1 ring-black ring-opacity-5", // Additional styling to make it stand out
               contentClassName
             )}
@@ -513,7 +513,7 @@ function SubMenuContent(props: ICustomSubMenuContentProps) {
   return (
     <div
       className={cn(
-        "z-[15] min-w-[12rem] overflow-hidden rounded-md border border-custom-border-300 bg-custom-background-100 p-1 text-xs shadow-custom-shadow-rg",
+        "z-[15] min-w-[12rem] overflow-hidden rounded-md border border-strong bg-custom-background-100 p-1 text-xs shadow-custom-shadow-rg",
         className
       )}
     >

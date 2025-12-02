@@ -102,15 +102,15 @@ export const CommentToolbar: Story = {
     return (
       <div className="p-4 space-y-4">
         <h3 className="text-sm font-medium">Comment Toolbar with Access Control</h3>
-        <div className="rounded border-[0.5px] border-custom-border-200 p-1">
+        <div className="rounded border-[0.5px] border-subtle-1 p-1">
           <Toolbar>
             {/* Access Specifier */}
-            <div className="flex flex-shrink-0 items-stretch gap-0.5 rounded border-[0.5px] border-custom-border-200 p-1">
+            <div className="flex flex-shrink-0 items-stretch gap-0.5 rounded border-[0.5px] border-subtle-1 p-1">
               <Toolbar.Item icon={Lock} tooltip="Private" isActive />
               <Toolbar.Item icon={Globe2} tooltip="Public" />
             </div>
 
-            <div className="flex w-full items-stretch justify-between gap-2 rounded border-[0.5px] border-custom-border-200 p-1">
+            <div className="flex w-full items-stretch justify-between gap-2 rounded border-[0.5px] border-subtle-1 p-1">
               <div className="flex items-stretch">
                 <Toolbar.Group isFirst>
                   <Toolbar.Item icon={Bold} tooltip="Bold" shortcut={["Cmd", "B"]} />

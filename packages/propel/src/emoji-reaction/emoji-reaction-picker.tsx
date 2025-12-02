@@ -65,7 +65,7 @@ export function EmojiReactionPicker(props: EmojiReactionPickerProps) {
       <Popover.Panel
         positionerClassName="z-50"
         className={cn(
-          "w-80 bg-custom-background-100 rounded-md border-[0.5px] border-custom-border-300 overflow-hidden",
+          "w-80 bg-custom-background-100 rounded-md border-[0.5px] border-strong overflow-hidden",
           dropdownClassName
         )}
         side={finalSide}

@@ -69,7 +69,7 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
 
   return (
     <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
-      <div className="flex items-center justify-between gap-4 border-b border-custom-border-100 mx-4 py-4 space-y-1 flex-shrink-0">
+      <div className="flex items-center justify-between gap-4 border-b border-subtle mx-4 py-4 space-y-1 flex-shrink-0">
         <div className="flex flex-col gap-1">
           <div className="text-xl font-medium text-custom-text-100">Workspaces on this instance</div>
           <div className="text-sm font-normal text-custom-text-300">

@@ -73,7 +73,7 @@ function BorderButton(props: ButtonProps) {
     >
       <div
         className={cn(
-          "h-full w-full flex items-center gap-1.5 border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
+          "h-full w-full flex items-center gap-1.5 border-[0.5px] border-strong hover:bg-custom-background-80 rounded text-xs px-2 py-0.5",
           { "bg-custom-background-80": isActive },
           className
         )}

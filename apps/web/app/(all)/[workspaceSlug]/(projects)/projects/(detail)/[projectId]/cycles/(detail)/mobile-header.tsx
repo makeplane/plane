@@ -90,7 +90,7 @@ export const CycleIssuesMobileHeader = observer(function CycleIssuesMobileHeader
         onClose={() => setAnalyticsModal(false)}
         cycleDetails={cycleDetails ?? undefined}
       />
-      <div className="flex justify-evenly py-2 border-b border-custom-border-200 md:hidden bg-custom-background-100">
+      <div className="flex justify-evenly py-2 border-b border-subtle-1 md:hidden bg-custom-background-100">
         <CustomMenu
           maxHeight={"md"}
           className="flex flex-grow justify-center text-custom-text-200 text-sm"
@@ -114,7 +114,7 @@ export const CycleIssuesMobileHeader = observer(function CycleIssuesMobileHeader
             </CustomMenu.MenuItem>
           ))}
         </CustomMenu>
-        <div className="flex flex-grow justify-center border-l border-custom-border-200 items-center text-custom-text-200 text-sm">
+        <div className="flex flex-grow justify-center border-l border-subtle-1 items-center text-custom-text-200 text-sm">
           <FiltersDropdown
             title={t("common.display")}
             placement="bottom-end"
@@ -142,7 +142,7 @@ export const CycleIssuesMobileHeader = observer(function CycleIssuesMobileHeader
 
         <span
           onClick={() => setAnalyticsModal(true)}
-          className="flex flex-grow justify-center text-custom-text-200 text-sm border-l border-custom-border-200"
+          className="flex flex-grow justify-center text-custom-text-200 text-sm border-l border-subtle-1"
         >
           {t("common.analytics")}
         </span>

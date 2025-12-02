@@ -35,9 +35,7 @@ export function AuthInput({
           {label}
         </label>
       )}
-      <div
-        className={cn("relative flex items-center rounded-md border border-custom-border-300 py-2 px-3 transition-all")}
-      >
+      <div className={cn("relative flex items-center rounded-md border border-strong py-2 px-3 transition-all")}>
         <Input
           {...props}
           type={inputType}

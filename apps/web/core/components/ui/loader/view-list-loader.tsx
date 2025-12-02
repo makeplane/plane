@@ -4,7 +4,7 @@ export function ViewListLoader() {
   return (
     <div className="flex h-full w-full flex-col animate-pulse">
       {range(8).map((i) => (
-        <div key={i} className="group border-b border-custom-border-200">
+        <div key={i} className="group border-b border-subtle-1">
           <div className="relative flex w-full items-center justify-between rounded p-4">
             <div className="flex items-center gap-4">
               <span className="min-h-10 min-w-10 bg-custom-background-80 rounded" />

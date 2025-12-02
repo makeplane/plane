@@ -23,7 +23,7 @@ function ProjectCreateButtons(props: Props) {
   const { getIndex } = getTabIndex(ETabIndices.PROJECT_CREATE, isMobile);
 
   return (
-    <div className="flex justify-end gap-2 py-4 border-t border-custom-border-100">
+    <div className="flex justify-end gap-2 py-4 border-t border-subtle">
       <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={getIndex("cancel")}>
         {t("common.cancel")}
       </Button>

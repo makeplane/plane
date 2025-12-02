@@ -70,10 +70,7 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
         <div key={featureSectionKey} className="">
           <SettingsHeading title={t(feature.key)} description={t(`${feature.key}_description`)} />
           {Object.entries(feature.featureList).map(([featureItemKey, featureItem]) => (
-            <div
-              key={featureItemKey}
-              className="gap-x-8 gap-y-2 border-b border-custom-border-100 bg-custom-background-100 py-4"
-            >
+            <div key={featureItemKey} className="gap-x-8 gap-y-2 border-b border-subtle bg-custom-background-100 py-4">
               <div key={featureItemKey} className="flex items-center justify-between">
                 <div className="flex items-start gap-3">
                   <div className="flex items-center justify-center rounded bg-custom-background-90 p-3">

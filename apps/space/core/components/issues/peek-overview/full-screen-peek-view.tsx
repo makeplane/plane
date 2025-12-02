@@ -31,7 +31,7 @@ export const FullScreenPeekView = observer(function FullScreenPeekView(props: Pr
               <PeekOverviewIssueDetails anchor={anchor} issueDetails={issueDetails} />
             </div>
             {/* divider */}
-            <div className="my-5 h-[1] w-full border-t border-custom-border-200" />
+            <div className="my-5 h-[1] w-full border-t border-subtle-1" />
             {/* issue activity/comments */}
             <div className="w-full pb-5">
               <PeekOverviewIssueActivity anchor={anchor} issueDetails={issueDetails} />

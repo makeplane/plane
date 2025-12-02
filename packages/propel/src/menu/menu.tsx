@@ -155,7 +155,7 @@ function Menu(props: TMenuProps) {
               type="button"
               className={`flex items-center justify-between gap-1 whitespace-nowrap rounded-md px-2.5 py-1 text-xs duration-300 outline-none ${
                 isOpen ? "bg-custom-background-90 text-custom-text-100" : "text-custom-text-200"
-              } ${noBorder ? "" : "border border-custom-border-300 shadow-sm focus:outline-none"} ${
+              } ${noBorder ? "" : "border border-strong shadow-sm focus:outline-none"} ${
                 disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
               } ${buttonClassName}`}
               onClick={handleMenuButtonClick}
@@ -180,7 +180,7 @@ function Menu(props: TMenuProps) {
           <BaseMenu.Popup
             tabIndex={tabIndex}
             className={cn(
-              "my-1 overflow-y-scroll rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap",
+              "my-1 overflow-y-scroll rounded-md border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-[12rem] whitespace-nowrap",
               {
                 "max-h-60": maxHeight === "lg",
                 "max-h-48": maxHeight === "md",

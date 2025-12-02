@@ -83,7 +83,7 @@ export const CalendarIssueBlocks = observer(function CalendarIssueBlocks(props: 
       )}
 
       {enableQuickIssueCreate && !disableIssueCreation && !readOnly && (
-        <div className="border-b border-custom-border-200 px-1 py-1 md:border-none md:px-2">
+        <div className="border-b border-subtle-1 px-1 py-1 md:border-none md:px-2">
           <CalendarQuickAddIssueActions
             prePopulatedData={{
               target_date: formattedDatePayload,

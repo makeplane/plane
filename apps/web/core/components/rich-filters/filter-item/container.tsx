@@ -53,7 +53,7 @@ export function FilterItemContainer(props: FilterItemContainerProps) {
       <div
         ref={itemRef}
         className={cn("flex h-7 items-stretch rounded overflow-hidden border transition-all duration-200", {
-          "border-custom-border-200 bg-custom-background-100": variant === "default",
+          "border-subtle-1 bg-custom-background-100": variant === "default",
           "border-red-500 bg-custom-background-90": variant === "error",
         })}
       >

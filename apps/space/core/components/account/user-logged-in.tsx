@@ -16,7 +16,7 @@ export const UserLoggedIn = observer(function UserLoggedIn() {
 
   return (
     <div className="flex flex-col h-screen w-screen">
-      <div className="relative flex w-full items-center justify-between gap-4 border-b border-custom-border-200 px-6 py-5">
+      <div className="relative flex w-full items-center justify-between gap-4 border-b border-subtle-1 px-6 py-5">
         <PlaneLockup className="h-6 w-auto text-custom-text-100" />
         <UserAvatar />
       </div>

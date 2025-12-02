@@ -176,7 +176,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
           "group/list-block min-h-11 relative flex flex-col gap-3 bg-custom-background-100 hover:bg-custom-background-90 py-3 text-sm transition-colors border border-transparent",
           {
             "border-custom-primary-70": getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
-            "border-custom-border-400": isIssueActive,
+            "border-strong-1": isIssueActive,
             "last:border-b-transparent": !getIsIssuePeeked(issue.id) && !isIssueActive,
             "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isIssueSelected,
             "bg-custom-background-80": isCurrentBlockDragging,
@@ -284,7 +284,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
           </div>
           {!issue?.tempId && (
             <div
-              className={cn("block border border-custom-border-300 rounded", {
+              className={cn("block border border-strong rounded", {
                 "md:hidden": isSidebarCollapsed,
                 "lg:hidden": !isSidebarCollapsed,
               })}

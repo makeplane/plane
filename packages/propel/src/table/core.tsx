@@ -19,11 +19,7 @@ const TableHeader = React.forwardRef(function TableHeader(
   ref: React.ForwardedRef<React.ComponentRef<"thead">>
 ) {
   return (
-    <thead
-      ref={ref}
-      className={cn("bg-custom-background-80 py-4 border-y border-custom-border-200", className)}
-      {...props}
-    />
+    <thead ref={ref} className={cn("bg-custom-background-80 py-4 border-y border-subtle-1", className)} {...props} />
   );
 });
 TableHeader.displayName = "TableHeader";

@@ -87,7 +87,7 @@ export function Invitations(props: Props) {
             return (
               <div
                 key={invitation.id}
-                className={`flex cursor-pointer items-center gap-2 rounded border p-3.5 border-custom-border-200 hover:bg-custom-background-90`}
+                className={`flex cursor-pointer items-center gap-2 rounded border p-3.5 border-subtle-1 hover:bg-custom-background-90`}
                 onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
               >
                 <div className="flex-shrink-0">
@@ -119,9 +119,9 @@ export function Invitations(props: Props) {
         {isJoiningWorkspaces ? <Spinner height="20px" width="20px" /> : "Continue to workspace"}
       </Button>
       <div className="mx-auto mt-4 flex items-center sm:w-96">
-        <hr className="w-full border-custom-border-300" />
+        <hr className="w-full border-strong" />
         <p className="mx-3 flex-shrink-0 text-center text-sm text-custom-text-400">or</p>
-        <hr className="w-full border-custom-border-300" />
+        <hr className="w-full border-strong" />
       </div>
       <Button
         variant="link-neutral"

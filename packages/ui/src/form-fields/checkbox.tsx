@@ -32,8 +32,8 @@ const Checkbox = React.forwardRef(function Checkbox(props: CheckboxProps, ref: R
         className={cn(
           "appearance-none shrink-0 size-4 border rounded-[3px] focus:outline-1 focus:outline-offset-4 focus:outline-custom-primary-50 cursor-pointer",
           {
-            "border-custom-border-200 bg-custom-background-80 cursor-not-allowed": disabled,
-            "border-custom-border-300 hover:border-custom-border-400 bg-transparent": !disabled,
+            "border-subtle-1 bg-custom-background-80 cursor-not-allowed": disabled,
+            "border-strong hover:border-strong-1 bg-transparent": !disabled,
             "border-custom-primary-40 hover:border-custom-primary-40 bg-custom-primary-100 hover:bg-custom-primary-200":
               !disabled && (checked || indeterminate),
           },

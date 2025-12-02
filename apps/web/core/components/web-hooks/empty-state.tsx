@@ -12,7 +12,7 @@ export function WebhooksEmptyState(props: Props) {
   const { onClick } = props;
   return (
     <div
-      className={`mx-auto flex w-full items-center justify-center rounded-sm border border-custom-border-200 bg-custom-background-90 px-16 py-10 lg:w-3/4`}
+      className={`mx-auto flex w-full items-center justify-center rounded-sm border border-subtle-1 bg-custom-background-90 px-16 py-10 lg:w-3/4`}
     >
       <div className="flex w-full flex-col items-center text-center">
         <img src={EmptyWebhook} className="w-52 sm:w-60 object-cover" alt="empty" />

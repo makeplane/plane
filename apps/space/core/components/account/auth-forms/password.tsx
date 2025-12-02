@@ -119,9 +119,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
         <label className="text-sm font-medium text-custom-text-300" htmlFor="email">
           Email
         </label>
-        <div
-          className={`relative flex items-center rounded-md bg-custom-background-100 border border-custom-border-100`}
-        >
+        <div className={`relative flex items-center rounded-md bg-custom-background-100 border border-subtle`}>
           <Input
             id="email"
             name="email"
@@ -152,7 +150,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
             value={passwordFormData.password}
             onChange={(e) => handleFormChange("password", e.target.value)}
             placeholder="Enter password"
-            className="disable-autofill-style h-10 w-full border border-custom-border-100 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
+            className="disable-autofill-style h-10 w-full border border-subtle !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
             onFocus={() => setIsPasswordInputFocused(true)}
             onBlur={() => setIsPasswordInputFocused(false)}
             autoComplete="on"
@@ -185,7 +183,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               value={passwordFormData.confirm_password}
               onChange={(e) => handleFormChange("confirm_password", e.target.value)}
               placeholder="Confirm password"
-              className="disable-autofill-style h-10 w-full border border-custom-border-100 !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
+              className="disable-autofill-style h-10 w-full border border-subtle !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
               onFocus={() => setIsRetryPasswordInputFocused(true)}
               onBlur={() => setIsRetryPasswordInputFocused(false)}
             />

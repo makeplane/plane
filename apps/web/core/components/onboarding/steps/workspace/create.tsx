@@ -175,9 +175,9 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                   placeholder="Enter workspace name"
                   ref={ref}
                   className={cn(
-                    "w-full px-3 py-2 text-custom-text-200 border border-custom-border-300 rounded-md bg-custom-background-100 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 placeholder:text-custom-text-400 focus:border-transparent transition-all duration-200",
+                    "w-full px-3 py-2 text-custom-text-200 border border-strong rounded-md bg-custom-background-100 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 placeholder:text-custom-text-400 focus:border-transparent transition-all duration-200",
                     {
-                      "border-custom-border-300": !errors.name,
+                      "border-strong": !errors.name,
                       "border-red-500": errors.name,
                     }
                   )}
@@ -208,9 +208,9 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
             render={({ field: { value, ref, onChange } }) => (
               <div
                 className={cn(
-                  "flex items-center w-full px-3 py-2 text-custom-text-200 border border-custom-border-300 rounded-md bg-custom-background-100 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 focus:border-transparent transition-all duration-200",
+                  "flex items-center w-full px-3 py-2 text-custom-text-200 border border-strong rounded-md bg-custom-background-100 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 focus:border-transparent transition-all duration-200",
                   {
-                    "border-custom-border-300": !errors.name,
+                    "border-strong": !errors.name,
                     "border-red-500": errors.name,
                   }
                 )}
@@ -272,8 +272,8 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                         }}
                         className={`text-sm px-3 py-2 rounded-lg border transition-all duration-200 flex gap-1 items-center justify-between ${
                           isSelected
-                            ? "border-custom-border-200 bg-custom-background-80 text-custom-text-200"
-                            : "border-custom-border-200 hover:border-custom-border-300 text-custom-text-300"
+                            ? "border-subtle-1 bg-custom-background-80 text-custom-text-200"
+                            : "border-subtle-1 hover:border-strong text-custom-text-300"
                         }`}
                       >
                         <CircleCheck

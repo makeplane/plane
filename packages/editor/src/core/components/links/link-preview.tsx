@@ -28,7 +28,7 @@ export function LinkPreview({
         transition: "all 0.2s cubic-bezier(.55, .085, .68, .53)",
       }}
     >
-      <div className="shadow-md items-center rounded p-2 flex gap-3 bg-custom-background-90 border-custom-border-100 border-2 text-custom-text-300 text-xs">
+      <div className="shadow-md items-center rounded p-2 flex gap-3 bg-custom-background-90 border-subtle border-2 text-custom-text-300 text-xs">
         <GlobeIcon size={14} className="inline-block" />
         <p>{url?.length > 40 ? url.slice(0, 40) + "..." : url}</p>
         <div className="flex gap-2">

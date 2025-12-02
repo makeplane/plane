@@ -197,7 +197,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
           }
         }}
         data-prevent-progress={!isMemberOfProject || isArchived}
-        className="flex flex-col rounded border border-custom-border-200 bg-custom-background-100"
+        className="flex flex-col rounded border border-subtle-1 bg-custom-background-100"
       >
         <ContextMenu parentRef={projectCardRef} items={MENU_ITEMS} />
         <div className="relative h-[118px] w-full rounded-t ">

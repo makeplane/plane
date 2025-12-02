@@ -484,7 +484,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
             </div>
             <div
               className={cn(
-                "px-4 py-3 border-t-[0.5px] border-custom-border-200 rounded-b-lg bg-custom-background-100",
+                "px-4 py-3 border-t-[0.5px] border-subtle-1 rounded-b-lg bg-custom-background-100",
                 activeAdditionalPropertiesLength > 0 && "shadow-custom-shadow-xs"
               )}
             >
@@ -505,7 +505,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
               </div>
               {showActionButtons && (
                 <div
-                  className="flex items-center justify-end gap-4 pb-3 pt-6 border-t-[0.5px] border-custom-border-200"
+                  className="flex items-center justify-end gap-4 pb-3 pt-6 border-t-[0.5px] border-subtle-1"
                   tabIndex={getIndex("create_more")}
                 >
                   {!data?.id && (

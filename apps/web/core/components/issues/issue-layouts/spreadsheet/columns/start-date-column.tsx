@@ -19,7 +19,7 @@ export const SpreadsheetStartDateColumn = observer(function SpreadsheetStartDate
   const { issue, onChange, disabled, onClose } = props;
 
   return (
-    <div className="h-11 border-b-[0.5px] border-custom-border-200">
+    <div className="h-11 border-b-[0.5px] border-subtle-1">
       <DateDropdown
         value={issue.start_date}
         maxDate={getDate(issue.target_date)}

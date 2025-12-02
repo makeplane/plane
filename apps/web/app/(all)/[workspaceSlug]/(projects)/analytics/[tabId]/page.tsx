@@ -74,7 +74,7 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
                 <div className={"flex flex-col w-full h-full"}>
                   <div
                     className={cn(
-                      "px-6 py-2 border-b border-custom-border-200 flex items-center gap-4 overflow-hidden w-full justify-between"
+                      "px-6 py-2 border-b border-subtle-1 flex items-center gap-4 overflow-hidden w-full justify-between"
                     )}
                   >
                     <Tabs.List className={"my-2 overflow-x-auto flex w-fit"}>

@@ -119,7 +119,7 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
     <Combobox.Options data-prevent-outside-click static>
       <div
         className={cn(
-          "my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none z-30",
+          "my-1 w-48 rounded border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none z-30",
           optionsClassName
         )}
         ref={setPopperElement}
@@ -128,7 +128,7 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
         }}
         {...attributes.popper}
       >
-        <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
+        <div className="flex items-center gap-1.5 rounded border border-subtle bg-custom-background-90 px-2">
           <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
           <Combobox.Input
             as="input"

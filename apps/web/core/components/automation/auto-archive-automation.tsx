@@ -61,7 +61,7 @@ export const AutoArchiveAutomation = observer(function AutoArchiveAutomation(pro
         handleClose={() => setmonthModal(false)}
         handleChange={handleChange}
       />
-      <div className="flex flex-col gap-4 border-b border-custom-border-100 py-6">
+      <div className="flex flex-col gap-4 border-b border-subtle py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-start gap-3">
             <div className="flex items-center justify-center rounded bg-custom-background-90 p-3">
@@ -100,7 +100,7 @@ export const AutoArchiveAutomation = observer(function AutoArchiveAutomation(pro
         {currentProjectDetails ? (
           autoArchiveStatus && (
             <div className="mx-6">
-              <div className="flex w-full items-center justify-between gap-2 rounded border border-custom-border-200 bg-custom-background-90 px-5 py-4">
+              <div className="flex w-full items-center justify-between gap-2 rounded border border-subtle-1 bg-custom-background-90 px-5 py-4">
                 <div className="w-1/2 text-sm font-medium">
                   {t("project_settings.automations.auto-archive.duration")}
                 </div>

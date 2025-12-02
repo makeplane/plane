@@ -20,7 +20,7 @@ export const AppHeader = observer(function AppHeader(props: AppHeaderProps) {
     <div className={cn("z-[18]", className)}>
       <Row
         className={cn(
-          "h-11 flex gap-2 w-full items-center border-b border-custom-border-200 bg-custom-sidebar-background-100",
+          "h-11 flex gap-2 w-full items-center border-b border-subtle-1 bg-custom-sidebar-background-100",
           rowClassName
         )}
       >

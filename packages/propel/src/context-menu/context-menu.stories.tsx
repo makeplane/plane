@@ -33,7 +33,7 @@ export const Default: Story = {
     return (
       <ContextMenu>
         <ContextMenu.Trigger>
-          <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-custom-border-300 text-sm">
+          <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-strong text-sm">
             Right click here
           </div>
         </ContextMenu.Trigger>
@@ -56,7 +56,7 @@ export const WithIcons: Story = {
     return (
       <ContextMenu>
         <ContextMenu.Trigger>
-          <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-custom-border-300 text-sm">
+          <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-strong text-sm">
             Right click here
           </div>
         </ContextMenu.Trigger>
@@ -95,7 +95,7 @@ export const WithSubmenus: Story = {
     return (
       <ContextMenu>
         <ContextMenu.Trigger>
-          <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-custom-border-300 text-sm">
+          <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-strong text-sm">
             Right click here
           </div>
         </ContextMenu.Trigger>
@@ -141,7 +141,7 @@ export const DisabledItems: Story = {
     return (
       <ContextMenu>
         <ContextMenu.Trigger>
-          <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-custom-border-300 text-sm">
+          <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-strong text-sm">
             Right click here
           </div>
         </ContextMenu.Trigger>
@@ -180,7 +180,7 @@ export const OnFileCard: Story = {
     return (
       <ContextMenu>
         <ContextMenu.Trigger>
-          <div className="w-64 p-4 border border-custom-border-200 rounded-lg hover:bg-custom-background-80 cursor-pointer">
+          <div className="w-64 p-4 border border-subtle-1 rounded-lg hover:bg-custom-background-80 cursor-pointer">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-custom-primary-100 rounded flex items-center justify-center text-white text-lg">
                 📄
@@ -261,7 +261,7 @@ export const OnText: Story = {
     return (
       <ContextMenu>
         <ContextMenu.Trigger>
-          <div className="w-96 p-6 border border-custom-border-200 rounded-lg">
+          <div className="w-96 p-6 border border-subtle-1 rounded-lg">
             <h3 className="text-lg font-semibold mb-2">Context Menu on Text</h3>
             <p className="text-custom-text-300">
               Right click anywhere on this text area to see the context menu. This demonstrates how context menus can be
@@ -293,7 +293,7 @@ export const NestedSubmenus: Story = {
     return (
       <ContextMenu>
         <ContextMenu.Trigger>
-          <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-custom-border-300 text-sm">
+          <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-strong text-sm">
             Right click here
           </div>
         </ContextMenu.Trigger>
@@ -344,7 +344,7 @@ export const WithKeyboardShortcuts: Story = {
     return (
       <ContextMenu>
         <ContextMenu.Trigger>
-          <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-custom-border-300 text-sm">
+          <div className="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed border-strong text-sm">
             Right click here
           </div>
         </ContextMenu.Trigger>

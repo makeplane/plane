@@ -93,7 +93,7 @@ export const CalendarIssueBlock = observer(
               id={`issue-${issue.id}`}
               href={workItemLink}
               onClick={() => handleIssuePeekOverview(issue)}
-              className="block w-full text-sm text-custom-text-100 rounded border-b md:border-[1px] border-custom-border-200 hover:border-custom-border-400"
+              className="block w-full text-sm text-custom-text-100 rounded border-b md:border-[1px] border-subtle-1 hover:border-strong-1"
               disabled={!!issue?.tempId || isMobile}
               ref={ref}
             >

@@ -38,7 +38,7 @@ export const BaseListGroup = observer(function BaseListGroup<T extends IBaseLayo
       })}
     >
       {/* Group Header */}
-      <Row className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 py-1">
+      <Row className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-subtle-1 bg-custom-background-90 py-1">
         {renderGroupHeader ? (
           renderGroupHeader({ group, itemCount: itemIds.length, isCollapsed, onToggleGroup })
         ) : (
@@ -76,7 +76,7 @@ export const BaseListGroup = observer(function BaseListGroup<T extends IBaseLayo
       )}
 
       {isDraggingOver && enableDragDrop && (
-        <div className="absolute top-0 left-0 h-full w-full flex items-center justify-center text-sm font-medium text-custom-text-300 rounded bg-custom-background-80/85 border-[1px] border-custom-border-300 z-[2]">
+        <div className="absolute top-0 left-0 h-full w-full flex items-center justify-center text-sm font-medium text-custom-text-300 rounded bg-custom-background-80/85 border-[1px] border-strong z-[2]">
           <div className="p-3 my-8 flex flex-col rounded items-center text-custom-text-200">
             {t("common.drop_here_to_move")}
           </div>

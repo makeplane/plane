@@ -244,7 +244,7 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
             <LinearProgressIndicator size="lg" data={progressIndicatorData} />
             <div className="flex items-center justify-between py-0.5" onClick={handleEventPropagation}>
               <DateRangeDropdown
-                buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 border-[0.5px] border-custom-border-300 rounded text-xs`}
+                buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 border-[0.5px] border-strong rounded text-xs`}
                 buttonVariant="transparent-with-text"
                 className="h-7"
                 value={{

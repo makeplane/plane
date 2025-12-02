@@ -11,7 +11,7 @@ export const SpreadsheetQuickAddIssueForm = observer(function SpreadsheetQuickAd
       <form
         ref={ref}
         onSubmit={onSubmit}
-        className="z-10 flex items-center gap-x-5 border-[0.5px] border-t-0 border-custom-border-100 bg-custom-background-100 px-4 shadow-custom-shadow-sm"
+        className="z-10 flex items-center gap-x-5 border-[0.5px] border-t-0 border-subtle bg-custom-background-100 px-4 shadow-custom-shadow-sm"
       >
         <h4 className="w-20 text-xs leading-5 text-custom-text-400">{projectDetail?.identifier ?? "..."}</h4>
         <input

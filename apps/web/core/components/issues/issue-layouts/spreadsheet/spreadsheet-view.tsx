@@ -110,7 +110,7 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
                 isEpic={isEpic}
               />
             </div>
-            <div className="border-t border-custom-border-100">
+            <div className="border-t border-subtle">
               <div className="z-5 sticky bottom-0 left-0 mb-3">
                 {enableQuickCreateIssue && !disableIssueCreation && (
                   <QuickAddIssueRoot

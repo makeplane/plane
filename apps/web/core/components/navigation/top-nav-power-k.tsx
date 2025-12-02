@@ -217,7 +217,7 @@ export const TopNavPowerK = observer(() => {
           className={cn(
             "flex items-center w-full h-7 p-2 rounded-md bg-custom-sidebar-background-80 hover:bg-custom-background-80 border border-transparent transition-colors duration-200",
             {
-              "border-custom-border-200": isOpen,
+              "border-subtle-1": isOpen,
             }
           )}
           onClick={() => inputRef.current?.focus()}
@@ -243,7 +243,7 @@ export const TopNavPowerK = observer(() => {
       </div>
       <div
         className={cn(
-          "absolute -top-[6px] left-1/2 -translate-x-1/2  bg-custom-background-100 border border-custom-border-200 rounded-md shadow-lg overflow-hidden z-20  transition-all duration-300 ease-in-out flex flex-col px-0 pt-10",
+          "absolute -top-[6px] left-1/2 -translate-x-1/2  bg-custom-background-100 border border-subtle-1 rounded-md shadow-lg overflow-hidden z-20  transition-all duration-300 ease-in-out flex flex-col px-0 pt-10",
           {
             "opacity-100 w-[574px] max-h-[80vh]": isOpen,
             "opacity-0 w-0 h-0": !isOpen,

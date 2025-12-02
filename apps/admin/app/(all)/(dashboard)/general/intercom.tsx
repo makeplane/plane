@@ -49,7 +49,7 @@ export const IntercomConfig = observer(function IntercomConfig(props: TIntercomC
 
   return (
     <>
-      <div className="flex items-center gap-14 px-4 py-3 border border-custom-border-200 rounded">
+      <div className="flex items-center gap-14 px-4 py-3 border border-subtle-1 rounded">
         <div className="grow flex items-center gap-4">
           <div className="shrink-0">
             <div className="flex items-center justify-center w-10 h-10 bg-custom-background-80 rounded-full">

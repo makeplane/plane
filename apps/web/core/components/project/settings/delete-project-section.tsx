@@ -17,7 +17,7 @@ export function DeleteProjectSection(props: IDeleteProjectSection) {
   const { projectDetails, handleDelete } = props;
 
   return (
-    <Disclosure as="div" className="border-t border-custom-border-100 py-4">
+    <Disclosure as="div" className="border-t border-subtle py-4">
       {({ open }) => (
         <div className="w-full">
           <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between">

@@ -60,7 +60,7 @@ export const PrevExports = observer(function PrevExports(props: Props) {
 
   return (
     <div>
-      <div className="flex items-center justify-between border-b border-custom-border-100 pb-3.5 pt-7">
+      <div className="flex items-center justify-between border-b border-subtle pb-3.5 pt-7">
         <div className="flex items-center gap-2">
           <h3 className="flex gap-2 text-xl font-medium">
             {t("workspace_settings.settings.exports.previous_exports")}
@@ -112,7 +112,7 @@ export const PrevExports = observer(function PrevExports(props: Props) {
                   columns={columns}
                   data={exporterServices?.results ?? []}
                   keyExtractor={(rowData: RowData) => rowData?.id ?? ""}
-                  tHeadClassName="border-b border-custom-border-100"
+                  tHeadClassName="border-b border-subtle"
                   thClassName="text-left font-medium divide-x-0 text-custom-text-400"
                   tBodyClassName="divide-y-0"
                   tBodyTrClassName="divide-x-0 p-4 h-[40px] text-custom-text-200"

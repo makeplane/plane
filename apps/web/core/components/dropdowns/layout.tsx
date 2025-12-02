@@ -67,7 +67,7 @@ export const LayoutDropDown = observer(function LayoutDropDown(props: TLayoutDro
       value={value?.toString()}
       keyExtractor={keyExtractor}
       options={options}
-      buttonContainerClassName="bg-custom-background-100 border border-custom-border-200 hover:bg-custom-background-90 focus:text-custom-text-300 focus:bg-custom-background-90 px-2 py-1.5  rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center relative"
+      buttonContainerClassName="bg-custom-background-100 border border-subtle-1 hover:bg-custom-background-90 focus:text-custom-text-300 focus:bg-custom-background-90 px-2 py-1.5  rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center relative"
       buttonContent={buttonContent}
       renderItem={itemContent}
       disableSearch

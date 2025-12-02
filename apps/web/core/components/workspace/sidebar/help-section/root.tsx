@@ -74,7 +74,7 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
             <span className="text-xs">{t("contact_sales")}</span>
           </div>
         </CustomMenu.MenuItem>
-        <div className="my-1 border-t border-custom-border-200" />
+        <div className="my-1 border-t border-subtle-1" />
         <CustomMenu.MenuItem>
           <button
             type="button"
@@ -100,7 +100,7 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
             <span className="text-xs">Discord</span>
           </div>
         </CustomMenu.MenuItem>
-        <div className="px-1 pt-2 mt-1 text-xs text-custom-text-200 border-t border-custom-border-200">
+        <div className="px-1 pt-2 mt-1 text-xs text-custom-text-200 border-t border-subtle-1">
           <PlaneVersionNumber />
         </div>
       </CustomMenu>

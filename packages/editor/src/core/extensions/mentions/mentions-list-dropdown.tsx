@@ -124,7 +124,7 @@ export const MentionsListDropdown = forwardRef(function MentionsListDropdown(pro
       />
       <div
         ref={dropdownContainer}
-        className="relative max-h-80 w-[14rem] overflow-y-auto rounded-md border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg space-y-2"
+        className="relative max-h-80 w-[14rem] overflow-y-auto rounded-md border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg space-y-2"
         style={{
           zIndex: 100,
         }}

@@ -41,7 +41,7 @@ export const IssuesSidebarBlock = observer(function IssuesSidebarBlock(props: Pr
       className={cn("group/list-block", {
         "rounded bg-custom-background-80": isDragging,
         "rounded-l border border-r-0 border-custom-primary-70": getIsIssuePeeked(block.data.id),
-        "border border-r-0 border-custom-border-400": isIssueFocused,
+        "border border-r-0 border-strong-1": isIssueFocused,
       })}
       onMouseEnter={() => updateActiveBlockId(block.id)}
       onMouseLeave={() => updateActiveBlockId(null)}

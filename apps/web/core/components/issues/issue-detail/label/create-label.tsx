@@ -76,7 +76,7 @@ export function LabelCreate(props: ILabelCreate) {
   return (
     <>
       <div
-        className="relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded-full border border-custom-border-100 p-0.5 px-2 text-xs text-custom-text-300 transition-all hover:bg-custom-background-90 hover:text-custom-text-200"
+        className="relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded-full border border-subtle p-0.5 px-2 text-xs text-custom-text-300 transition-all hover:bg-custom-background-90 hover:text-custom-text-200"
         onClick={handleIsCreateToggle}
       >
         <div className="flex-shrink-0">

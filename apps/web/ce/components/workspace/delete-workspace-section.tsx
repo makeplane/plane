@@ -30,7 +30,7 @@ export const DeleteWorkspaceSection = observer(function DeleteWorkspaceSection(p
         isOpen={deleteWorkspaceModal}
         onClose={() => setDeleteWorkspaceModal(false)}
       />
-      <div className="border-t border-custom-border-100">
+      <div className="border-t border-subtle">
         <div className="w-full">
           <Collapsible
             isOpen={isOpen}

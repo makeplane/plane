@@ -66,7 +66,7 @@ export const ArchivedCyclesHeader = observer(function ArchivedCyclesHeader() {
   const isFiltersApplied = calculateTotalFilters(currentProjectArchivedFilters ?? {}) !== 0;
 
   return (
-    <div className="group relative flex border-b border-custom-border-200">
+    <div className="group relative flex border-b border-subtle-1">
       <div className="flex w-full items-center overflow-x-auto px-4 gap-2 horizontal-scrollbar scrollbar-sm">
         <ArchiveTabsList />
       </div>
@@ -88,7 +88,7 @@ export const ArchivedCyclesHeader = observer(function ArchivedCyclesHeader() {
           className={cn(
             "ml-auto flex items-center justify-start gap-1 rounded-md border border-transparent bg-custom-background-100 text-custom-text-400 w-0 transition-[width] ease-linear overflow-hidden opacity-0",
             {
-              "w-64 px-2.5 py-1.5 border-custom-border-200 opacity-100": isSearchOpen,
+              "w-64 px-2.5 py-1.5 border-subtle-1 opacity-100": isSearchOpen,
             }
           )}
         >

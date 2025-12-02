@@ -152,7 +152,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
           return (
             <div
               key={item.id}
-              className="flex flex-col p-4 bg-custom-background-100 rounded-xl border border-custom-border-200/40"
+              className="flex flex-col p-4 bg-custom-background-100 rounded-xl border border-subtle-1/40"
             >
               <div
                 className={cn(

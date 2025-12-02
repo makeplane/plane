@@ -51,7 +51,7 @@ const InstanceEmailPage = observer(function InstanceEmailPage(_props: Route.Comp
   return (
     <>
       <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
-        <div className="flex items-center justify-between gap-4 border-b border-custom-border-100 mx-4 py-4 space-y-1 flex-shrink-0">
+        <div className="flex items-center justify-between gap-4 border-b border-subtle mx-4 py-4 space-y-1 flex-shrink-0">
           <div className="py-4 space-y-1 flex-shrink-0">
             <div className="text-xl font-medium text-custom-text-100">Secure emails from your own instance</div>
             <div className="text-sm font-normal text-custom-text-300">

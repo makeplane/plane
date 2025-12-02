@@ -131,7 +131,7 @@ export function CreateUpdateModuleLinkModal(props: Props) {
             </div>
           </div>
         </div>
-        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-200">
+        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle-1">
           <Button variant="neutral-primary" size="sm" onClick={onClose}>
             Cancel
           </Button>

@@ -68,7 +68,7 @@ function BorderButton(props: ButtonProps) {
     high: "bg-orange-500/20 text-orange-950 border-orange-500",
     medium: "bg-yellow-500/20 text-yellow-950 border-yellow-500",
     low: "bg-custom-primary-100/20 text-custom-primary-950 border-custom-primary-100",
-    none: "hover:bg-custom-background-80 border-custom-border-300",
+    none: "hover:bg-custom-background-80 border-strong",
   };
 
   const { isMobile } = usePlatformOS();
@@ -455,12 +455,12 @@ export function PriorityDropdown(props: Props) {
       {isOpen && (
         <Combobox.Options className="fixed z-10" static>
           <div
-            className="my-1 w-48 rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
+            className="my-1 w-48 rounded border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
           >
-            <div className="flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2">
+            <div className="flex items-center gap-1.5 rounded border border-subtle bg-custom-background-90 px-2">
               <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
               <Combobox.Input
                 as="input"

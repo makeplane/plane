@@ -21,5 +21,5 @@ export const NotificationMenuOptionItem = observer(function NotificationMenuOpti
       </div>
     );
 
-  return <div className="border-b border-custom-border-200" />;
+  return <div className="border-b border-subtle-1" />;
 });

@@ -193,7 +193,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
           <div className="px-5 space-y-4">
             {isProjectPublished && projectPublishSettings && (
               <>
-                <div className="bg-custom-background-80 border border-custom-border-300 rounded-md py-1.5 pl-4 pr-1 flex items-center justify-between gap-2">
+                <div className="bg-custom-background-80 border border-strong rounded-md py-1.5 pl-4 pr-1 flex items-center justify-between gap-2">
                   <a
                     href={publishLink}
                     className="text-sm text-custom-text-200 truncate"
@@ -300,7 +300,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
         )}
 
         {/* modal handlers */}
-        <div className="relative flex items-center justify-between border-t border-custom-border-200 px-5 py-4 mt-4">
+        <div className="relative flex items-center justify-between border-t border-subtle-1 px-5 py-4 mt-4">
           <div className="flex items-center gap-1 text-sm text-custom-text-400">
             <Globe2 className="size-3.5" />
             <div className="text-sm">Anyone with the link can access</div>

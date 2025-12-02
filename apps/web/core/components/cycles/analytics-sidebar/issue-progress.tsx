@@ -98,7 +98,7 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
 
   if (!cycleDetails) return <></>;
   return (
-    <div className="border-t border-custom-border-200 space-y-4 py-5">
+    <div className="border-t border-subtle-1 space-y-4 py-5">
       <Disclosure defaultOpen>
         {({ open }) => (
           <div className="flex flex-col">

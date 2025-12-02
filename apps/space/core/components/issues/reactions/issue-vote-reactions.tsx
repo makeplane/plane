@@ -103,7 +103,7 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
             votingDimensions,
             {
               "border-custom-primary-200 text-custom-primary-200": isUpVotedByUser,
-              "border-custom-border-300": !isUpVotedByUser,
+              "border-strong": !isUpVotedByUser,
               "cursor-default": isInIframe,
             }
           )}
@@ -144,7 +144,7 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
             votingDimensions,
             {
               "border-red-600 text-red-600": isDownVotedByUser,
-              "border-custom-border-300": !isDownVotedByUser,
+              "border-strong": !isDownVotedByUser,
               "cursor-default": isInIframe,
             }
           )}

@@ -162,7 +162,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                 ref={ref}
                 hasError={Boolean(errors.emails?.[index]?.email)}
                 placeholder={placeholderEmails[index % placeholderEmails.length]}
-                className="w-full border-custom-border-300 text-xs placeholder:text-custom-text-400 sm:text-sm"
+                className="w-full border-strong text-xs placeholder:text-custom-text-400 sm:text-sm"
                 autoComplete="off"
               />
             )}
@@ -186,7 +186,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                 <Listbox.Button
                   type="button"
                   ref={setReferenceElement}
-                  className="flex w-full items-center justify-between gap-1 rounded-md px-2.5 py-2 text-sm border-[0.5px] border-custom-border-300"
+                  className="flex w-full items-center justify-between gap-1 rounded-md px-2.5 py-2 text-sm border-[0.5px] border-strong"
                 >
                   <span
                     className={`text-sm ${
@@ -207,7 +207,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
 
                 <Listbox.Options as="div">
                   <div
-                    className="p-2 absolute space-y-1 z-10 mt-1 h-fit w-48 sm:w-60 rounded-md border border-custom-border-300 bg-custom-background-100 shadow-sm focus:outline-none"
+                    className="p-2 absolute space-y-1 z-10 mt-1 h-fit w-48 sm:w-60 rounded-md border border-strong bg-custom-background-100 shadow-sm focus:outline-none"
                     ref={setPopperElement}
                     style={styles.popper}
                     {...attributes.popper}

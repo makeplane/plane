@@ -84,7 +84,7 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
   return (
     <ModalCore isOpen={isOpen} width={EModalWidth.LG} position={EModalPosition.TOP} handleClose={handleClose}>
       <Combobox as="div" multiple value={selectedProjectIds} onChange={handleSelectedProjectChange}>
-        <div className="flex items-center gap-2 px-4 border-b border-custom-border-100">
+        <div className="flex items-center gap-2 px-4 border-b border-subtle">
           <Search className="flex-shrink-0 size-4 text-custom-text-400" aria-hidden="true" />
           <Combobox.Input
             className="h-12 w-full border-0 bg-transparent text-sm text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0"
@@ -168,7 +168,7 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
           )}
         </Combobox.Options>
       </Combobox>
-      <div className="flex items-center justify-end gap-2 p-3 border-t border-custom-border-100">
+      <div className="flex items-center justify-end gap-2 p-3 border-t border-subtle">
         <Button variant="neutral-primary" size="sm" onClick={handleClose}>
           {t("cancel")}
         </Button>

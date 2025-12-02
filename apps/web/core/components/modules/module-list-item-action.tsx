@@ -173,7 +173,7 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
   return (
     <>
       <DateRangeDropdown
-        buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 border-[0.5px] border-custom-border-300 rounded text-xs`}
+        buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 border-[0.5px] border-strong rounded text-xs`}
         buttonVariant="transparent-with-text"
         className="h-7"
         value={{

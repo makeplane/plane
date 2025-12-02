@@ -39,7 +39,7 @@ export function InputSearch(props: IInputSearch) {
   return (
     <div
       className={cn(
-        "flex items-center gap-1.5 rounded border border-custom-border-100 bg-custom-background-90 px-2",
+        "flex items-center gap-1.5 rounded border border-subtle bg-custom-background-90 px-2",
         inputContainerClassName
       )}
     >

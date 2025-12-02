@@ -158,7 +158,7 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
   // check if the project member apis is loading
   if (isParentLoading || (!projectMemberInfo && projectId && hasPermissionToCurrentProject === null))
     return (
-      <div className="grid h-full place-items-center bg-custom-background-100 p-4 rounded-lg border border-custom-border-200">
+      <div className="grid h-full place-items-center bg-custom-background-100 p-4 rounded-lg border border-subtle-1">
         <div className="flex flex-col items-center gap-3 text-center">
           <LogoSpinner />
         </div>

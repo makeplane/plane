@@ -80,7 +80,7 @@ export function ColumnOptionsDropdown(props: Props) {
         <div className="flex-grow truncate">Header column</div>
         <ToggleRight className="shrink-0 size-3" />
       </button>
-      <hr className="my-2 border-custom-border-200" />
+      <hr className="my-2 border-subtle-1" />
       <TableDragHandleDropdownColorSelector editor={editor} onSelect={onClose} />
       {DROPDOWN_ITEMS.map((item) => (
         <button

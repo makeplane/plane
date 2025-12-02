@@ -102,7 +102,7 @@ export function PageToolbar(props: Props) {
     <div className="flex items-center divide-x divide-custom-border-200 overflow-x-scroll">
       <CustomMenu
         customButton={
-          <span className="text-custom-text-300 text-sm border-[0.5px] border-custom-border-300 hover:bg-custom-background-80 h-7 w-24 rounded px-2 flex items-center justify-between gap-2 whitespace-nowrap text-left">
+          <span className="text-custom-text-300 text-sm border-[0.5px] border-strong hover:bg-custom-background-80 h-7 w-24 rounded px-2 flex items-center justify-between gap-2 whitespace-nowrap text-left">
             {activeTypography?.name || "Text"}
             <ChevronDownIcon className="flex-shrink-0 size-3" />
           </span>

@@ -167,7 +167,7 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
                             minDate={new Date()}
                             buttonVariant="border-with-text"
                             buttonContainerClassName="w-full text-left"
-                            buttonClassName="border-custom-border-300 px-3 py-2.5"
+                            buttonClassName="border-strong px-3 py-2.5"
                             hideIcon
                           />
                         )}

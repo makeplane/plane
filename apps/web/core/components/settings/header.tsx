@@ -34,7 +34,7 @@ export const SettingsHeader = observer(function SettingsHeader() {
         className={cn(
           getButtonStyling("neutral-primary", "sm"),
           "md:absolute left-2 top-9 group flex  gap-2 text-custom-text-300 mb-4 border border-transparent w-fit rounded-lg ",
-          "h-6 w-6 rounded-lg p-1 bg-custom-background-100 border-custom-border-200 ",
+          "h-6 w-6 rounded-lg p-1 bg-custom-background-100 border-subtle-1 ",
           isScrolled ? "-mt-2 " : "hidden p-0 overflow-hidden items-center pr-2 border-none"
         )}
       >
@@ -45,13 +45,13 @@ export const SettingsHeader = observer(function SettingsHeader() {
         href={`/${currentWorkspace?.slug}`}
         className={cn(
           "group flex  gap-2 text-custom-text-300 mb-3 border border-transparent w-fit rounded-lg",
-          !isScrolled ? "hover:bg-custom-background-100 hover:border-custom-border-200 items-center pr-2 " : " h-0 m-0"
+          !isScrolled ? "hover:bg-custom-background-100 hover:border-subtle-1 items-center pr-2 " : " h-0 m-0"
         )}
       >
         <button
           className={cn(
             getButtonStyling("neutral-primary", "sm"),
-            "h-6 w-6 rounded-lg p-1 hover:bg-custom-background-100 hover:border-custom-border-200",
+            "h-6 w-6 rounded-lg p-1 hover:bg-custom-background-100 hover:border-subtle-1",
             "group-hover:bg-custom-background-100 group-hover:border-transparent",
             { "h-0 hidden": isScrolled }
           )}

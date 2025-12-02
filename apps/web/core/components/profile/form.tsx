@@ -388,7 +388,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
           </div>
         </div>
       </form>
-      <Disclosure as="div" className="border-t border-custom-border-100 w-full">
+      <Disclosure as="div" className="border-t border-subtle w-full">
         {({ open }) => (
           <>
             <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">

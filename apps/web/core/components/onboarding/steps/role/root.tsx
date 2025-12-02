@@ -131,7 +131,7 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
                     className={`w-full px-3 py-2 rounded-lg border transition-all duration-200 flex items-center justify-between ${
                       isSelected
                         ? "border-custom-primary-100 bg-custom-primary-10 text-custom-primary-100"
-                        : "border-custom-border-200 hover:border-custom-border-300 text-custom-text-300"
+                        : "border-subtle-1 hover:border-strong text-custom-text-300"
                     }`}
                   >
                     <div className="flex items-center space-x-3">

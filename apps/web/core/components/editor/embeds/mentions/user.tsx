@@ -53,7 +53,7 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
           <Link to={profileLink}>@{userDetails?.display_name}</Link>
         </Popover.Button>
         <Popover.Panel side="bottom" align="start">
-          <div className="w-60 bg-custom-background-100 shadow-custom-shadow-rg rounded-lg p-3 border-[0.5px] border-custom-border-300">
+          <div className="w-60 bg-custom-background-100 shadow-custom-shadow-rg rounded-lg p-3 border-[0.5px] border-strong">
             <div className="flex items-center gap-3">
               <div className="flex-shrink-0 size-10 grid place-items-center">
                 <Avatar

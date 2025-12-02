@@ -48,7 +48,7 @@ export function InboxIssueSnoozeModal(props: InboxIssueSnoozeModalProps) {
               <Dialog.Panel className="relative flex transform rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <div className="flex h-full w-full flex-col gap-y-1">
                   <Calendar
-                    className="rounded-md border border-custom-border-200 p-3"
+                    className="rounded-md border border-subtle-1 p-3"
                     captionLayout="dropdown"
                     selected={date ? new Date(date) : undefined}
                     defaultMonth={date ? new Date(date) : undefined}

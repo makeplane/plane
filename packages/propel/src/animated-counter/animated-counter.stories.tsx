@@ -69,19 +69,19 @@ export const Sizes: Story = {
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-4">
             <span className="text-sm text-custom-text-400 w-20">Small:</span>
-            <div className="flex items-center justify-center min-w-[40px] h-8 bg-custom-background-80 border border-custom-border-200 rounded">
+            <div className="flex items-center justify-center min-w-[40px] h-8 bg-custom-background-80 border border-subtle-1 rounded">
               <AnimatedCounter count={count} size="sm" />
             </div>
           </div>
           <div className="flex items-center gap-4">
             <span className="text-sm text-custom-text-400 w-20">Medium:</span>
-            <div className="flex items-center justify-center min-w-[50px] h-10 bg-custom-background-80 border border-custom-border-200 rounded">
+            <div className="flex items-center justify-center min-w-[50px] h-10 bg-custom-background-80 border border-subtle-1 rounded">
               <AnimatedCounter count={count} size="md" />
             </div>
           </div>
           <div className="flex items-center gap-4">
             <span className="text-sm text-custom-text-400 w-20">Large:</span>
-            <div className="flex items-center justify-center min-w-[60px] h-12 bg-custom-background-80 border border-custom-border-200 rounded">
+            <div className="flex items-center justify-center min-w-[60px] h-12 bg-custom-background-80 border border-subtle-1 rounded">
               <AnimatedCounter count={count} size="lg" />
             </div>
           </div>
@@ -111,7 +111,7 @@ export const LargeNumbers: Story = {
             +1000
           </button>
         </div>
-        <div className="flex items-center justify-center min-w-[100px] h-12 bg-custom-background-80 border border-custom-border-200 rounded-lg">
+        <div className="flex items-center justify-center min-w-[100px] h-12 bg-custom-background-80 border border-subtle-1 rounded-lg">
           <AnimatedCounter count={count} size="lg" />
         </div>
       </div>
@@ -142,7 +142,7 @@ export const Countdown: Story = {
     return (
       <div className="space-y-6 p-4">
         <div className="flex flex-col items-center gap-4">
-          <div className="flex items-center justify-center min-w-[60px] h-16 bg-custom-background-80 border-2 border-custom-border-200 rounded-lg">
+          <div className="flex items-center justify-center min-w-[60px] h-16 bg-custom-background-80 border-2 border-subtle-1 rounded-lg">
             <AnimatedCounter count={count} size="lg" className="text-2xl" />
           </div>
           <button
@@ -173,7 +173,7 @@ export const LiveCounter: Story = {
     return (
       <div className="space-y-6 p-4">
         <div className="flex flex-col items-center gap-4">
-          <div className="flex items-center justify-center min-w-[80px] h-16 bg-custom-background-80 border-2 border-custom-border-200 rounded-lg">
+          <div className="flex items-center justify-center min-w-[80px] h-16 bg-custom-background-80 border-2 border-subtle-1 rounded-lg">
             <AnimatedCounter count={count} size="lg" className="text-2xl" />
           </div>
           <div className="flex gap-2">
@@ -215,7 +215,7 @@ export const MultipleCounters: Story = {
 
     return (
       <div className="space-y-6 p-4">
-        <div className="max-w-md border border-custom-border-200 rounded-lg p-4">
+        <div className="max-w-md border border-subtle-1 rounded-lg p-4">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-medium">Engagement Stats</h3>
           </div>
@@ -229,7 +229,7 @@ export const MultipleCounters: Story = {
                 >
                   +
                 </button>
-                <div className="flex items-center justify-center min-w-[40px] h-10 bg-custom-background-80 border border-custom-border-200 rounded">
+                <div className="flex items-center justify-center min-w-[40px] h-10 bg-custom-background-80 border border-subtle-1 rounded">
                   <AnimatedCounter count={likes} size="md" />
                 </div>
               </div>
@@ -243,7 +243,7 @@ export const MultipleCounters: Story = {
                 >
                   +
                 </button>
-                <div className="flex items-center justify-center min-w-[40px] h-10 bg-custom-background-80 border border-custom-border-200 rounded">
+                <div className="flex items-center justify-center min-w-[40px] h-10 bg-custom-background-80 border border-subtle-1 rounded">
                   <AnimatedCounter count={comments} size="md" />
                 </div>
               </div>
@@ -257,7 +257,7 @@ export const MultipleCounters: Story = {
                 >
                   +
                 </button>
-                <div className="flex items-center justify-center min-w-[40px] h-10 bg-custom-background-80 border border-custom-border-200 rounded">
+                <div className="flex items-center justify-center min-w-[40px] h-10 bg-custom-background-80 border border-subtle-1 rounded">
                   <AnimatedCounter count={shares} size="md" />
                 </div>
               </div>
@@ -277,7 +277,7 @@ export const InBadge: Story = {
       <div className="space-y-6 p-4">
         <div className="flex flex-col items-center gap-4">
           <div className="relative">
-            <button className="px-4 py-2 bg-custom-background-80 border border-custom-border-200 rounded-lg">
+            <button className="px-4 py-2 bg-custom-background-80 border border-subtle-1 rounded-lg">
               Notifications
             </button>
             <div className="absolute -top-2 -right-2 min-w-[24px] h-6 flex items-center justify-center bg-red-500 text-white rounded-full px-1.5">
@@ -309,7 +309,7 @@ export const FastAnimation: Story = {
     return (
       <div className="space-y-6 p-4">
         <div className="flex flex-col items-center gap-4">
-          <div className="flex items-center justify-center min-w-[60px] h-12 bg-custom-background-80 border border-custom-border-200 rounded-lg">
+          <div className="flex items-center justify-center min-w-[60px] h-12 bg-custom-background-80 border border-subtle-1 rounded-lg">
             <AnimatedCounter count={count} size="lg" />
           </div>
           <div className="flex gap-2">

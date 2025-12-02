@@ -85,7 +85,7 @@ export const UserMenuRoot = observer(function UserMenuRoot(props: Props) {
           </CustomMenu.MenuItem>
         </Link>
       </div>
-      <div className="my-1 border-t border-custom-border-200" />
+      <div className="my-1 border-t border-subtle-1" />
       <div className={`${isUserInstanceAdmin ? "pb-2" : ""}`}>
         <CustomMenu.MenuItem>
           <button
@@ -100,7 +100,7 @@ export const UserMenuRoot = observer(function UserMenuRoot(props: Props) {
       </div>
       {isUserInstanceAdmin && (
         <>
-          <div className="my-1 border-t border-custom-border-200" />
+          <div className="my-1 border-t border-subtle-1" />
           <div className="px-1">
             <Link href={GOD_MODE_URL}>
               <CustomMenu.MenuItem>

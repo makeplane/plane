@@ -269,7 +269,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
         />
       </>
 
-      <Row className="hidden relative lg:flex h-full w-full items-center justify-between gap-2 bg-custom-background-100 z-[15] border-b border-custom-border-200">
+      <Row className="hidden relative lg:flex h-full w-full items-center justify-between gap-2 bg-custom-background-100 z-[15] border-b border-subtle-1">
         <div className="flex items-center gap-4">
           {isNotificationEmbed && (
             <button onClick={embedRemoveCurrentNotification}>
@@ -292,14 +292,14 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
             <div className="flex items-center gap-x-2">
               <button
                 type="button"
-                className="rounded border border-custom-border-200 p-1.5"
+                className="rounded border border-subtle-1 p-1.5"
                 onClick={() => handleInboxIssueNavigation("prev")}
               >
                 <ChevronUpIcon height={14} width={14} strokeWidth={2} />
               </button>
               <button
                 type="button"
-                className="rounded border border-custom-border-200 p-1.5"
+                className="rounded border border-subtle-1 p-1.5"
                 onClick={() => handleInboxIssueNavigation("next")}
               >
                 <ChevronDownIcon height={14} width={14} strokeWidth={2} />

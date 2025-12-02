@@ -75,7 +75,7 @@ export const FilterDisplayProperties = observer(function FilterDisplayProperties
                 className={`rounded border px-2 py-0.5 text-xs transition-all ${
                   displayProperties?.[displayProperty.key]
                     ? "border-custom-primary-100 bg-custom-primary-100 text-white"
-                    : "border-custom-border-200 hover:bg-custom-background-80"
+                    : "border-subtle-1 hover:bg-custom-background-80"
                 }`}
                 onClick={() =>
                   handleUpdate({
