@@ -73,7 +73,12 @@ export const PlanUpgradeCard = observer(function PlanUpgradeCard(props: PlanUpgr
         <>
           Yearly
           {yearlyDiscount > 0 && (
-            <span className={cn(getDiscountPillStyle(planVariant), "rounded-full px-1.5 py-0.5 ml-1 text-xs")}>
+            <span
+              className={cn(
+                getDiscountPillStyle(planVariant),
+                "rounded-full px-1.5 ml-1 text-xs h-5 leading-tight flex items-center justify-center"
+              )}
+            >
               -{yearlyDiscount}%
             </span>
           )}

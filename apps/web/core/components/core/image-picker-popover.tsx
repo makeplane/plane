@@ -5,11 +5,12 @@ import { useDropzone } from "react-dropzone";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import useSWR from "swr";
-import { Tab, Popover } from "@headlessui/react";
+import { Popover } from "@headlessui/react";
 // plane imports
 import { ACCEPTED_COVER_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { Button } from "@plane/propel/button";
+import { Tabs } from "@plane/propel/tabs";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
 import { Input, Loader } from "@plane/ui";
@@ -197,91 +198,88 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
             ref={imagePickerRef}
             className="flex h-96 w-80 flex-col overflow-auto rounded border border-custom-border-300 bg-custom-background-100 p-3 shadow-2xl md:h-[28rem] md:w-[36rem]"
           >
-            <Tab.Group>
-              <Tab.List as="span" className="inline-block rounded bg-custom-background-80 p-1">
+            <Tabs defaultValue={tabOptions[0].key} className={"h-full overflow-hidden"}>
+              <Tabs.List className="p-1 w-fit">
                 {tabOptions.map((tab) => (
-                  <Tab
+                  <Tabs.Trigger
                     key={tab.key}
-                    className={({ selected }) =>
-                      `rounded px-4 py-1 text-center text-sm outline-none transition-colors ${
-                        selected ? "bg-custom-primary text-white" : "text-custom-text-100"
-                      }`
-                    }
+                    value={tab.key}
+                    className="rounded px-4 py-1 text-center text-sm outline-none transition-colors data-[selected]:bg-custom-primary data-[selected]:text-white text-custom-text-100"
                   >
                     {tab.title}
-                  </Tab>
+                  </Tabs.Trigger>
                 ))}
-              </Tab.List>
-              <Tab.Panels className="vertical-scrollbar scrollbar-md h-full w-full flex-1 overflow-y-auto overflow-x-hidden">
-                <Tab.Panel className="mt-4 h-full w-full space-y-4">
-                  {(unsplashImages || !unsplashError) && (
-                    <>
-                      <div className="flex gap-x-2">
-                        <Controller
-                          control={control}
-                          name="search"
-                          render={({ field: { value, ref } }) => (
-                            <Input
-                              id="search"
-                              name="search"
-                              type="text"
-                              onKeyDown={(e) => {
-                                if (e.key === "Enter") {
-                                  e.preventDefault();
-                                  setSearchParams(formData.search);
-                                }
+              </Tabs.List>
+
+              <div className="mt-4 flex-1 overflow-auto">
+                {(unsplashImages || !unsplashError) && (
+                  <Tabs.Content className="h-full w-full space-y-4" value="unsplash">
+                    <div className="flex gap-x-2">
+                      <Controller
+                        control={control}
+                        name="search"
+                        render={({ field: { value, ref } }) => (
+                          <Input
+                            id="search"
+                            name="search"
+                            type="text"
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                                setSearchParams(formData.search);
+                              }
+                            }}
+                            value={value}
+                            onChange={(e) => setFormData({ ...formData, search: e.target.value })}
+                            ref={ref}
+                            placeholder="Search for images"
+                            className="w-full text-sm"
+                          />
+                        )}
+                      />
+                      <Button variant="primary" onClick={() => setSearchParams(formData.search)} size="sm">
+                        Search
+                      </Button>
+                    </div>
+                    {unsplashImages ? (
+                      unsplashImages.length > 0 ? (
+                        <div className="grid grid-cols-4 gap-4">
+                          {unsplashImages.map((image) => (
+                            <div
+                              key={image.id}
+                              className="relative col-span-2 aspect-video md:col-span-1"
+                              onClick={() => {
+                                setIsOpen(false);
+                                onChange(image.urls.regular);
                               }}
-                              value={value}
-                              onChange={(e) => setFormData({ ...formData, search: e.target.value })}
-                              ref={ref}
-                              placeholder="Search for images"
-                              className="w-full text-sm"
-                            />
-                          )}
-                        />
-                        <Button variant="primary" onClick={() => setSearchParams(formData.search)} size="sm">
-                          Search
-                        </Button>
-                      </div>
-                      {unsplashImages ? (
-                        unsplashImages.length > 0 ? (
-                          <div className="grid grid-cols-4 gap-4">
-                            {unsplashImages.map((image) => (
-                              <div
-                                key={image.id}
-                                className="relative col-span-2 aspect-video md:col-span-1"
-                                onClick={() => {
-                                  setIsOpen(false);
-                                  onChange(image.urls.regular);
-                                }}
-                              >
-                                <img
-                                  src={image.urls.small}
-                                  alt={image.alt_description}
-                                  className="absolute left-0 top-0 h-full w-full cursor-pointer rounded object-cover"
-                                />
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <p className="pt-7 text-center text-xs text-custom-text-300">No images found.</p>
-                        )
+                            >
+                              <img
+                                src={image.urls.small}
+                                alt={image.alt_description}
+                                className="absolute left-0 top-0 h-full w-full cursor-pointer rounded object-cover"
+                              />
+                            </div>
+                          ))}
+                        </div>
                       ) : (
-                        <Loader className="grid grid-cols-4 gap-4">
-                          <Loader.Item height="80px" width="100%" />
-                          <Loader.Item height="80px" width="100%" />
-                          <Loader.Item height="80px" width="100%" />
-                          <Loader.Item height="80px" width="100%" />
-                          <Loader.Item height="80px" width="100%" />
-                          <Loader.Item height="80px" width="100%" />
-                          <Loader.Item height="80px" width="100%" />
-                          <Loader.Item height="80px" width="100%" />
-                        </Loader>
-                      )}
-                    </>
-                  )}
-                </Tab.Panel>
-                <Tab.Panel className="mt-4 h-full w-full space-y-4">
+                        <p className="pt-7 text-center text-xs text-custom-text-300">No images found.</p>
+                      )
+                    ) : (
+                      <Loader className="grid grid-cols-4 gap-4">
+                        <Loader.Item height="80px" width="100%" />
+                        <Loader.Item height="80px" width="100%" />
+                        <Loader.Item height="80px" width="100%" />
+                        <Loader.Item height="80px" width="100%" />
+                        <Loader.Item height="80px" width="100%" />
+                        <Loader.Item height="80px" width="100%" />
+                        <Loader.Item height="80px" width="100%" />
+                        <Loader.Item height="80px" width="100%" />
+                      </Loader>
+                    )}
+                  </Tabs.Content>
+                )}
+
+                <Tabs.Content className="h-full w-full space-y-4" value="images">
                   <div className="grid grid-cols-4 gap-4">
                     {Object.values(STATIC_COVER_IMAGES).map((imageUrl, index) => (
                       <div
@@ -297,8 +295,9 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                       </div>
                     ))}
                   </div>
-                </Tab.Panel>
-                <Tab.Panel className="mt-4 h-full w-full">
+                </Tabs.Content>
+
+                <Tabs.Content className="h-full w-full" value="upload">
                   <div className="flex h-full w-full flex-col gap-y-2">
                     <div className="flex w-full flex-1 items-center gap-3">
                       <div
@@ -365,9 +364,9 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                       </Button>
                     </div>
                   </div>
-                </Tab.Panel>
-              </Tab.Panels>
-            </Tab.Group>
+                </Tabs.Content>
+              </div>
+            </Tabs>
           </div>
         </Popover.Panel>
       )}
