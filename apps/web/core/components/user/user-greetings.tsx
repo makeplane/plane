@@ -44,7 +44,7 @@ export function UserGreetingsView(props: IUserGreetingsView) {
       <h2 className="text-2xl font-semibold text-center">
         {t("good")} {t(greeting)}, {user?.first_name} {user?.last_name}
       </h2>
-      <h5 className="flex items-center gap-2 font-medium text-custom-text-400">
+      <h5 className="flex items-center gap-2 font-medium text-placeholder">
         <div>{greeting === "morning" ? "🌤️" : greeting === "afternoon" ? "🌥️" : "🌙️"}</div>
         <div>
           {weekDay}, {date} {timeString}

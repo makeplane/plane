@@ -29,7 +29,7 @@ export const AppliedModuleFilters = observer(function AppliedModuleFilters(props
             {editable && (
               <button
                 type="button"
-                className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                className="grid place-items-center text-tertiary hover:text-secondary"
                 onClick={() => handleRemove(moduleId)}
               >
                 <CloseIcon height={10} width={10} strokeWidth={2} />

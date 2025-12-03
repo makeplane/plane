@@ -156,7 +156,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
               return projectDetails?.logo_props ? renderIcon(projectDetails.logo_props) : null;
             })
           ) : (
-            <ProjectIcon className="size-3 text-custom-text-300" />
+            <ProjectIcon className="size-3 text-tertiary" />
           )}
         </div>
       );
@@ -185,7 +185,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
           className={cn(
             "clickable block h-full max-w-full outline-none",
             {
-              "cursor-not-allowed text-custom-text-200": disabled,
+              "cursor-not-allowed text-secondary": disabled,
               "cursor-pointer": !disabled,
             },
             buttonContainerClassName
@@ -238,11 +238,11 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
             {...attributes.popper}
           >
             <div className="flex items-center gap-1.5 rounded border border-subtle bg-custom-background-90 px-2">
-              <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+              <Search className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
               <Combobox.Input
                 as="input"
                 ref={inputRef}
-                className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                className="w-full bg-transparent py-1 text-xs text-secondary placeholder:text-placeholder focus:outline-none"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={t("search")}
@@ -262,7 +262,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
                         className={({ active, selected }) =>
                           `w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none ${
                             active ? "bg-custom-background-80" : ""
-                          } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                          } ${selected ? "text-primary" : "text-secondary"}`
                         }
                       >
                         {({ selected }) => (
@@ -275,10 +275,10 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
                     );
                   })
                 ) : (
-                  <p className="text-custom-text-400 italic py-1 px-1.5">{t("no_matching_results")}</p>
+                  <p className="text-placeholder italic py-1 px-1.5">{t("no_matching_results")}</p>
                 )
               ) : (
-                <p className="text-custom-text-400 italic py-1 px-1.5">{t("loading")}</p>
+                <p className="text-placeholder italic py-1 px-1.5">{t("loading")}</p>
               )}
             </div>
           </div>

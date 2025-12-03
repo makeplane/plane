@@ -38,9 +38,9 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
         {({ open }) => (
           <span
             className={cn(
-              "h-full px-2 text-custom-text-300 text-sm flex items-center gap-1.5 rounded hover:bg-custom-background-80",
+              "h-full px-2 text-tertiary text-sm flex items-center gap-1.5 rounded hover:bg-custom-background-80",
               {
-                "text-custom-text-100 bg-custom-background-80": open,
+                "text-primary bg-custom-background-80": open,
               }
             )}
           >
@@ -55,7 +55,7 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
             >
               <ALargeSmall
                 className={cn("size-3.5", {
-                  "text-custom-text-100": !activeTextColor,
+                  "text-primary": !activeTextColor,
                 })}
                 style={{
                   color: activeTextColor ? activeTextColor.textColor : "inherit",
@@ -70,7 +70,7 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
         className="fixed z-20 mt-1 rounded-md border-[0.5px] border-strong bg-custom-background-100 shadow-custom-shadow-rg p-2 space-y-2"
       >
         <div className="space-y-1.5">
-          <p className="text-xs text-custom-text-300 font-semibold">Text colors</p>
+          <p className="text-xs text-tertiary font-semibold">Text colors</p>
           <div className="flex items-center gap-2">
             {COLORS_LIST.map((color) => (
               <button
@@ -85,7 +85,7 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
             ))}
             <button
               type="button"
-              className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-300 border-[0.5px] border-strong-1 hover:bg-custom-background-80 transition-colors"
+              className="flex-shrink-0 size-6 grid place-items-center rounded text-tertiary border-[0.5px] border-strong-1 hover:bg-custom-background-80 transition-colors"
               onClick={() => handleColorSelect("text-color", undefined)}
             >
               <Ban className="size-4" />
@@ -93,7 +93,7 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
           </div>
         </div>
         <div className="space-y-1.5">
-          <p className="text-xs text-custom-text-300 font-semibold">Background colors</p>
+          <p className="text-xs text-tertiary font-semibold">Background colors</p>
           <div className="flex items-center gap-2">
             {COLORS_LIST.map((color) => (
               <button
@@ -108,7 +108,7 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
             ))}
             <button
               type="button"
-              className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-300 border-[0.5px] border-strong-1 hover:bg-custom-background-80 transition-colors"
+              className="flex-shrink-0 size-6 grid place-items-center rounded text-tertiary border-[0.5px] border-strong-1 hover:bg-custom-background-80 transition-colors"
               onClick={() => handleColorSelect("background-color", undefined)}
             >
               <Ban className="size-4" />

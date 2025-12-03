@@ -33,7 +33,7 @@ export const QuarterChartView = observer(function QuarterChartView(_props: any) 
               {/** Main Quarter Title */}
               <div className="w-full inline-flex h-7 justify-between">
                 <div
-                  className="sticky flex items-center font-normal z-[1] my-1 whitespace-nowrap px-3 py-1 text-base capitalize bg-custom-background-100 text-custom-text-200"
+                  className="sticky flex items-center font-normal z-[1] my-1 whitespace-nowrap px-3 py-1 text-base capitalize bg-custom-background-100 text-secondary"
                   style={{
                     left: `${SIDEBAR_WIDTH}px`,
                   }}
@@ -45,7 +45,7 @@ export const QuarterChartView = observer(function QuarterChartView(_props: any) 
                     </span>
                   )}
                 </div>
-                <div className="sticky whitespace-nowrap px-3 py-2 text-xs capitalize text-custom-text-400">
+                <div className="sticky whitespace-nowrap px-3 py-2 text-xs capitalize text-placeholder">
                   {quarterBlock.shortTitle}
                 </div>
               </div>

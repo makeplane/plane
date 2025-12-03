@@ -294,12 +294,12 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
               )}
             />
           </div>
-          <h4 className="w-full break-words text-xl font-semibold text-custom-text-100">{moduleDetails.name}</h4>
+          <h4 className="w-full break-words text-xl font-semibold text-primary">{moduleDetails.name}</h4>
         </div>
 
         {moduleDetails.description && (
           <TextArea
-            className="outline-none ring-none w-full max-h-max bg-transparent !p-0 !m-0 !border-0 resize-none text-sm leading-5 text-custom-text-200"
+            className="outline-none ring-none w-full max-h-max bg-transparent !p-0 !m-0 !border-0 resize-none text-sm leading-5 text-secondary"
             value={moduleDetails.description}
             disabled
           />
@@ -307,7 +307,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
 
         <div className="flex flex-col gap-5 pb-6 pt-2.5">
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
               <StartDatePropertyIcon className="h-4 w-4" />
               <span className="text-base">{t("date_range")}</span>
             </div>
@@ -349,7 +349,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
             </div>
           </div>
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
               <SquareUser className="h-4 w-4" />
               <span className="text-base">{t("lead")}</span>
             </div>
@@ -375,7 +375,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
             />
           </div>
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
               <MembersPropertyIcon className="h-4 w-4" />
               <span className="text-base">{t("members")}</span>
             </div>
@@ -400,12 +400,12 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
             />
           </div>
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
               <WorkItemsIcon className="h-4 w-4" />
               <span className="text-base">{t("issues")}</span>
             </div>
             <div className="flex h-7 w-3/5 items-center">
-              <span className="px-1.5 text-sm text-custom-text-300">{issueCount}</span>
+              <span className="px-1.5 text-sm text-tertiary">{issueCount}</span>
             </div>
           </div>
 
@@ -414,12 +414,12 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
            */}
           {isEstimatePointValid && (
             <div className="flex items-center justify-start gap-1">
-              <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
+              <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
                 <WorkItemsIcon className="h-4 w-4" />
                 <span className="text-base">{t("points")}</span>
               </div>
               <div className="flex h-7 w-3/5 items-center">
-                <span className="px-1.5 text-sm text-custom-text-300">{issueEstimatePointCount}</span>
+                <span className="px-1.5 text-sm text-tertiary">{issueEstimatePointCount}</span>
               </div>
             </div>
           )}
@@ -441,7 +441,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                 <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
                   <Disclosure.Button className="flex w-full items-center justify-between gap-2 p-1.5">
                     <div className="flex items-center justify-start gap-2 text-sm">
-                      <span className="font-medium text-custom-text-200">{t("common.links")}</span>
+                      <span className="font-medium text-secondary">{t("common.links")}</span>
                     </div>
 
                     <div className="flex items-center gap-2.5">
@@ -480,10 +480,8 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                         ) : (
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-2">
-                              <Info className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
-                              <span className="p-0.5 text-xs text-custom-text-300">
-                                {t("common.no_links_added_yet")}
-                              </span>
+                              <Info className="h-3.5 w-3.5 stroke-[1.5] text-tertiary" />
+                              <span className="p-0.5 text-xs text-tertiary">{t("common.no_links_added_yet")}</span>
                             </div>
                             {isEditingAllowed && !isArchived && (
                               <button

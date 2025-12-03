@@ -124,7 +124,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
               <BreadcrumbLink
                 label="Views"
                 href={`/${workspaceSlug}/projects/${projectId}/views/`}
-                icon={<ViewsIcon className="h-4 w-4 text-custom-text-300" />}
+                icon={<ViewsIcon className="h-4 w-4 text-tertiary" />}
               />
             }
           />
@@ -149,7 +149,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
         </Breadcrumbs>
 
         {viewDetails?.access === EViewAccess.PRIVATE ? (
-          <div className="cursor-default text-custom-text-300">
+          <div className="cursor-default text-tertiary">
             <Tooltip tooltipContent={"Private"}>
               <Lock className="h-4 w-4" />
             </Tooltip>

@@ -134,13 +134,13 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
                     issueTypeId={issue.type_id}
                     projectIdentifier={projectDetail.identifier}
                     issueSequenceId={issue.sequence_id}
-                    textContainerClassName="text-xs text-custom-text-200"
+                    textContainerClassName="text-xs text-secondary"
                   />
                 )}
               </div>
 
               <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-                <span className="w-full truncate text-sm text-custom-text-100">{issue.name}</span>
+                <span className="w-full truncate text-sm text-primary">{issue.name}</span>
               </Tooltip>
             </div>
             <div

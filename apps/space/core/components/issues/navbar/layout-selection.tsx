@@ -57,7 +57,7 @@ export const IssuesLayoutSelection = observer(function IssuesLayoutSelection(pro
             >
               <IssueLayoutIcon
                 layout={layout.key}
-                className={`size-3.5 ${activeLayout == layout.key ? "text-custom-text-100" : "text-custom-text-200"}`}
+                className={`size-3.5 ${activeLayout == layout.key ? "text-primary" : "text-secondary"}`}
               />
             </button>
           </Tooltip>

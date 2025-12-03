@@ -61,7 +61,7 @@ export function PageForm(props: Props) {
   return (
     <form onSubmit={handlePageFormSubmit}>
       <div className="space-y-5 p-5">
-        <h3 className="text-xl font-medium text-custom-text-200">Create page</h3>
+        <h3 className="text-xl font-medium text-secondary">Create page</h3>
         <div className="flex items-start gap-2 h-9 w-full">
           <EmojiPicker
             isOpen={isOpen}
@@ -74,7 +74,7 @@ export function PageForm(props: Props) {
                   {formData?.logo_props?.in_use ? (
                     <Logo logo={formData?.logo_props} size={18} type="lucide" />
                   ) : (
-                    <PageIcon className="h-4 w-4 text-custom-text-300" />
+                    <PageIcon className="h-4 w-4 text-tertiary" />
                   )}
                 </>
               </span>

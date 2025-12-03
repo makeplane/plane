@@ -227,7 +227,7 @@ export function InstanceGithubConfigForm(props: Props) {
 
               {/* web service details */}
               <div className="flex flex-col rounded-lg overflow-hidden">
-                <div className="px-6 py-3 bg-custom-background-80/60 font-medium text-xs uppercase flex items-center gap-x-3 text-custom-text-200">
+                <div className="px-6 py-3 bg-custom-background-80/60 font-medium text-xs uppercase flex items-center gap-x-3 text-secondary">
                   <Monitor className="w-3 h-3" />
                   Web
                 </div>

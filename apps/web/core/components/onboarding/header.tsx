@@ -72,10 +72,10 @@ export const OnboardingHeader = observer(function OnboardingHeader(props: Onboar
         <div className="flex items-center gap-2.5">
           {canGoBack && (
             <button onClick={handleStepBack} className="cursor-pointer" type="button" disabled={!canGoBack}>
-              <ChevronLeftIcon className="size-6 text-custom-text-400" />
+              <ChevronLeftIcon className="size-6 text-placeholder" />
             </button>
           )}
-          <PlaneLockup height={20} width={95} className="text-custom-text-100" />
+          <PlaneLockup height={20} width={95} className="text-primary" />
         </div>
         <SwitchAccountDropdown fullName={userName} />
       </div>

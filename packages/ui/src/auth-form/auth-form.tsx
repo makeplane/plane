@@ -190,7 +190,7 @@ export function AuthForm({
         {/* Alternate Mode Button */}
         {onModeChange && (
           <div className="text-center">
-            <span className="text-sm text-custom-text-300">{getAlternateModeText()}</span>
+            <span className="text-sm text-tertiary">{getAlternateModeText()}</span>
             <button
               type="button"
               onClick={handleModeChange}

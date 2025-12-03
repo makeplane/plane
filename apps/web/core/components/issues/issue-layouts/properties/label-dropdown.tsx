@@ -192,7 +192,7 @@ export function LabelDropdown(props: ILabelDropdownProps) {
         type="button"
         className={`clickable flex w-full h-full items-center justify-center gap-1 text-xs ${fullWidth && "hover:bg-custom-background-80"} ${
           disabled
-            ? "cursor-not-allowed text-custom-text-200"
+            ? "cursor-not-allowed text-secondary"
             : value.length <= maxRender
               ? "cursor-pointer"
               : "cursor-pointer hover:bg-custom-background-80"
@@ -235,10 +235,10 @@ export function LabelDropdown(props: ILabelDropdownProps) {
               {...attributes.popper}
             >
               <div className="flex w-full items-center justify-start rounded border border-subtle-1 bg-custom-background-90 px-2">
-                <Search className="h-3.5 w-3.5 text-custom-text-300" />
+                <Search className="h-3.5 w-3.5 text-tertiary" />
                 <Combobox.Input
                   ref={inputRef}
-                  className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                  className="w-full bg-transparent px-2 py-1 text-xs text-secondary placeholder:text-placeholder focus:outline-none"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder={t("common.search.label")}
@@ -248,7 +248,7 @@ export function LabelDropdown(props: ILabelDropdownProps) {
               </div>
               <div className={`mt-2 max-h-48 space-y-1 overflow-y-scroll`}>
                 {isLoading ? (
-                  <p className="text-center text-custom-text-200">{t("common.loading")}</p>
+                  <p className="text-center text-secondary">{t("common.loading")}</p>
                 ) : filteredOptions.length > 0 ? (
                   filteredOptions.map((option) => (
                     <Combobox.Option
@@ -263,7 +263,7 @@ export function LabelDropdown(props: ILabelDropdownProps) {
                       className={({ active, selected }) =>
                         `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 hover:bg-custom-background-80 ${
                           active ? "bg-custom-background-80" : ""
-                        } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                        } ${selected ? "text-primary" : "text-secondary"}`
                       }
                     >
                       {({ selected }) => (
@@ -286,19 +286,19 @@ export function LabelDropdown(props: ILabelDropdownProps) {
                       if (!query.length) return;
                       handleAddLabel(query);
                     }}
-                    className={`text-left text-custom-text-200 ${query.length ? "cursor-pointer" : "cursor-default"}`}
+                    className={`text-left text-secondary ${query.length ? "cursor-pointer" : "cursor-default"}`}
                   >
                     {/* TODO: translate here */}
                     {query.length ? (
                       <>
-                        + Add <span className="text-custom-text-100">&quot;{query}&quot;</span> to labels
+                        + Add <span className="text-primary">&quot;{query}&quot;</span> to labels
                       </>
                     ) : (
                       t("label.create.type")
                     )}
                   </p>
                 ) : (
-                  <p className="text-left text-custom-text-200 ">{t("common.search.no_matching_results")}</p>
+                  <p className="text-left text-secondary ">{t("common.search.no_matching_results")}</p>
                 )}
               </div>
             </div>

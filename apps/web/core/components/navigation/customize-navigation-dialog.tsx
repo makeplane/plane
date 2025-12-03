@@ -176,15 +176,15 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
         {/* Header */}
         <div className="flex justify-between px-6 py-4">
           <div>
-            <h2 className="text-xl font-semibold text-custom-text-100">{t("customize_navigation")}</h2>
-            <p className="mt-1 text-sm text-custom-text-300">
+            <h2 className="text-xl font-semibold text-primary">{t("customize_navigation")}</h2>
+            <p className="mt-1 text-sm text-tertiary">
               Selected items will always stay visible in your sidebar. You can still find the others anytime from the
               More menu. These changes are personal to you and won&apos;t affect anyone else on your workspace.
             </p>
           </div>
           <button
             onClick={onClose}
-            className="flex-shrink-0 size-5 flex items-center justify-center rounded hover:bg-custom-background-80 text-custom-text-400"
+            className="flex-shrink-0 size-5 flex items-center justify-center rounded hover:bg-custom-background-80 text-placeholder"
             aria-label={t("close")}
           >
             <X className="size-4" />
@@ -195,7 +195,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
           {/* Personal Section */}
           <div className="flex flex-col gap-2">
-            <h3 className="text-sm font-semibold text-custom-text-400">{t("personal")}</h3>
+            <h3 className="text-sm font-semibold text-placeholder">{t("personal")}</h3>
             <div className="border border-subtle-1 rounded-md py-2 bg-custom-background-90">
               <Sortable
                 data={personalItems}
@@ -204,14 +204,14 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
                 id="personal-enabled-items"
                 render={(item) => (
                   <div className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-custom-background-90 transition-all duration-200">
-                    <GripVertical className="size-4 text-custom-text-400 cursor-grab active:cursor-grabbing transition-colors" />
+                    <GripVertical className="size-4 text-placeholder cursor-grab active:cursor-grabbing transition-colors" />
                     <Checkbox
                       checked={!!personalPreferences.items[item.key]?.enabled}
                       onChange={(e) => togglePersonalItem(item.key, e.target.checked)}
                     />
                     <div className="flex items-center gap-2 flex-1">
                       {getSidebarNavigationItemIcon(item.key)}
-                      <label className="text-sm text-custom-text-200 flex-1 cursor-pointer">
+                      <label className="text-sm text-secondary flex-1 cursor-pointer">
                         {t(item.labelTranslationKey)}
                       </label>
                     </div>
@@ -223,7 +223,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
 
           {/* Workspace Section */}
           <div className="flex flex-col gap-2">
-            <h3 className="text-sm font-semibold text-custom-text-400">{t("workspace")}</h3>
+            <h3 className="text-sm font-semibold text-placeholder">{t("workspace")}</h3>
             <div className="border border-subtle-1 rounded-md py-2 bg-custom-background-90">
               {/* Pinned Items - Draggable */}
               <Sortable
@@ -235,14 +235,14 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
                   const icon = getSidebarNavigationItemIcon(item.key);
                   return (
                     <div className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-custom-background-90 group transition-all duration-200">
-                      <GripVertical className="size-4 text-custom-text-400 cursor-grab active:cursor-grabbing transition-colors" />
+                      <GripVertical className="size-4 text-placeholder cursor-grab active:cursor-grabbing transition-colors" />
                       <Checkbox
                         checked={!!workspacePreferences.items[item.key]?.is_pinned}
                         onChange={(e) => handleWorkspaceItemToggle(item.key, e.target.checked)}
                       />
                       <div className="flex items-center gap-2 flex-1">
                         {icon}
-                        <span className="text-sm text-custom-text-200">{t(item.labelTranslationKey)}</span>
+                        <span className="text-sm text-secondary">{t(item.labelTranslationKey)}</span>
                       </div>
                     </div>
                   );
@@ -253,7 +253,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
 
           {/* Projects Section */}
           <div className="flex flex-col gap-2">
-            <h3 className="text-sm font-semibold text-custom-text-400">{t("projects")}</h3>
+            <h3 className="text-sm font-semibold text-placeholder">{t("projects")}</h3>
 
             <div className="border border-subtle-1 rounded-md px-2 py-2 bg-custom-background-90">
               <div className="space-y-3">
@@ -269,8 +269,8 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
                       className="size-4 text-custom-primary-100 focus:ring-custom-primary-100"
                     />
                     <div className="flex-1">
-                      <div className="text-sm text-custom-text-200">{t("accordion_navigation_control")}</div>
-                      <div className="text-xs text-custom-text-300">
+                      <div className="text-sm text-secondary">{t("accordion_navigation_control")}</div>
+                      <div className="text-xs text-tertiary">
                         Feature tabs will appear as nested items under project and acts as accordion.
                       </div>
                     </div>
@@ -286,8 +286,8 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
                       className="size-4 text-custom-primary-100 focus:ring-custom-primary-100"
                     />
                     <div className="flex-1">
-                      <div className="text-sm text-custom-text-200">{t("horizontal_navigation_bar")}</div>
-                      <div className="text-xs text-custom-text-300">
+                      <div className="text-sm text-secondary">{t("horizontal_navigation_bar")}</div>
+                      <div className="text-xs text-tertiary">
                         Feature tabs will appear as horizontal tabs inside a project.
                       </div>
                     </div>
@@ -301,14 +301,14 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
                       checked={projectPreferences.showLimitedProjects}
                       onChange={(e) => updateShowLimitedProjects(e.target.checked)}
                     />
-                    <span className="text-sm text-custom-text-200">{t("show_limited_projects_on_sidebar")}</span>
+                    <span className="text-sm text-secondary">{t("show_limited_projects_on_sidebar")}</span>
                   </label>
 
                   {projectPreferences.showLimitedProjects && (
                     <div className="pl-8">
                       <div className="flex flex-col gap-1 w-full">
                         <div className="flex flex-col gap-2 w-full">
-                          <label className="text-xs text-custom-text-300 w-full">{t("enter_number_of_projects")}</label>
+                          <label className="text-xs text-tertiary w-full">{t("enter_number_of_projects")}</label>
                           <input
                             type="number"
                             min="1"
@@ -319,7 +319,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
                             className={cn(
                               "w-full px-2 py-1 text-sm rounded-md",
                               "bg-custom-background-90 border",
-                              "text-custom-text-200",
+                              "text-secondary",
                               parseInt(projectCountInput) >= 1
                                 ? "border-strong focus:border-custom-primary-100 focus:ring-1 focus:ring-custom-primary-100"
                                 : "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500"

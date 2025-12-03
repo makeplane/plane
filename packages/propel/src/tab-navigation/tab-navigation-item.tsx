@@ -7,7 +7,7 @@ export const TabNavigationItem: FC<TTabNavigationItemProps> = ({ children, isAct
   <div
     className={cn(
       "relative flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors z-10",
-      isActive ? "text-custom-text-100" : "text-custom-text-200 hover:text-custom-text-100",
+      isActive ? "text-primary" : "text-secondary hover:text-primary",
       className
     )}
   >

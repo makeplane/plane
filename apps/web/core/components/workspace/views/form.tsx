@@ -71,9 +71,7 @@ export const WorkspaceViewForm = observer(function WorkspaceViewForm(props: Prop
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateView)}>
       <div className="space-y-5 p-5">
-        <h3 className="text-xl font-medium text-custom-text-200">
-          {data ? t("view.update.label") : t("view.create.label")}
-        </h3>
+        <h3 className="text-xl font-medium text-secondary">{data ? t("view.update.label") : t("view.create.label")}</h3>
         <div className="space-y-3">
           <div className="space-y-1">
             <Controller

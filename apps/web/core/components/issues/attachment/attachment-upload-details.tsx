@@ -36,7 +36,7 @@ export const IssueAttachmentsUploadDetails = observer(function IssueAttachmentsU
             </Tooltip>
           </div>
 
-          <div className="flex items-center gap-3 text-xs text-custom-text-200">
+          <div className="flex items-center gap-3 text-xs text-secondary">
             <span>{fileExtension.toUpperCase()}</span>
           </div>
         </div>

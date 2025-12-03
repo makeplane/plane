@@ -152,10 +152,10 @@ export function ContextMenuItem(props: ContextMenuItemProps) {
         ref={setReferenceElement}
         type="button"
         className={cn(
-          "w-full flex items-center gap-2 px-1 py-1.5 text-left text-custom-text-200 rounded text-xs select-none",
+          "w-full flex items-center gap-2 px-1 py-1.5 text-left text-secondary rounded text-xs select-none",
           {
             "bg-custom-background-90": isActive,
-            "text-custom-text-400": item.disabled,
+            "text-placeholder": item.disabled,
           },
           item.className
         )}
@@ -170,8 +170,8 @@ export function ContextMenuItem(props: ContextMenuItemProps) {
               <h5>{item.title}</h5>
               {item.description && (
                 <p
-                  className={cn("text-custom-text-300 whitespace-pre-line", {
-                    "text-custom-text-400": item.disabled,
+                  className={cn("text-tertiary whitespace-pre-line", {
+                    "text-placeholder": item.disabled,
                   })}
                 >
                   {item.description}
@@ -202,10 +202,10 @@ export function ContextMenuItem(props: ContextMenuItemProps) {
                   key={nestedItem.key}
                   type="button"
                   className={cn(
-                    "w-full flex items-center gap-2 px-1 py-1.5 text-left text-custom-text-200 rounded text-xs select-none",
+                    "w-full flex items-center gap-2 px-1 py-1.5 text-left text-secondary rounded text-xs select-none",
                     {
                       "bg-custom-background-90": index === activeNestedIndex,
-                      "text-custom-text-400": nestedItem.disabled,
+                      "text-placeholder": nestedItem.disabled,
                     },
                     nestedItem.className
                   )}
@@ -225,8 +225,8 @@ export function ContextMenuItem(props: ContextMenuItemProps) {
                         <h5>{nestedItem.title}</h5>
                         {nestedItem.description && (
                           <p
-                            className={cn("text-custom-text-300 whitespace-pre-line", {
-                              "text-custom-text-400": nestedItem.disabled,
+                            className={cn("text-tertiary whitespace-pre-line", {
+                              "text-placeholder": nestedItem.disabled,
                             })}
                           >
                             {nestedItem.description}

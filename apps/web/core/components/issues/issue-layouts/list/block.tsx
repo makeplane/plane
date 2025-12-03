@@ -233,7 +233,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
                     <IssueIdentifier
                       issueId={issueId}
                       projectId={issue.project_id}
-                      textContainerClassName="text-xs font-medium text-custom-text-300"
+                      textContainerClassName="text-xs font-medium text-tertiary"
                       displayProperties={displayProperties}
                     />
                   )}
@@ -245,7 +245,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
                 {subIssuesCount > 0 && !isEpic && (
                   <button
                     type="button"
-                    className="size-4 grid place-items-center rounded-sm text-custom-text-400 hover:text-custom-text-300"
+                    className="size-4 grid place-items-center rounded-sm text-placeholder hover:text-tertiary"
                     onClick={handleToggleExpand}
                   >
                     <ChevronRightIcon
@@ -270,7 +270,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
               disabled={isCurrentBlockDragging}
               renderByDefault={false}
             >
-              <p className="truncate cursor-pointer text-sm text-custom-text-100">{issue.name}</p>
+              <p className="truncate cursor-pointer text-sm text-primary">{issue.name}</p>
             </Tooltip>
             {isEpic && displayProperties && (
               <WithDisplayPropertiesHOC

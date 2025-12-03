@@ -106,13 +106,13 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
       >
         <div className="flex flex-col gap-1 w-full sticky top-4 px-4">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-semibold text-custom-text-300 py-1.5">Projects</span>
+            <span className="text-sm font-semibold text-tertiary py-1.5">Projects</span>
             {isAuthorizedUser && (
               <Tooltip tooltipHeading={t("create_project")} tooltipContent="">
                 <button
                   type="button"
                   data-ph-element={PROJECT_TRACKER_ELEMENTS.EXTENDED_SIDEBAR_ADD_BUTTON}
-                  className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0 text-custom-text-300 hover:text-custom-text-200 transition-colors"
+                  className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0 text-tertiary hover:text-secondary transition-colors"
                   onClick={() => {
                     setIsProjectModalOpen(true);
                   }}
@@ -123,9 +123,9 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
             )}
           </div>
           <div className="ml-auto flex items-center gap-1.5 rounded-md border border-subtle-1 bg-custom-background-100 px-2.5 py-1 w-full">
-            <Search className="h-3.5 w-3.5 text-custom-text-400" />
+            <Search className="h-3.5 w-3.5 text-placeholder" />
             <input
-              className="w-full max-w-[234px] border-none bg-transparent text-sm outline-none placeholder:text-custom-text-400"
+              className="w-full max-w-[234px] border-none bg-transparent text-sm outline-none placeholder:text-placeholder"
               placeholder={t("search")}
               value={searchQuery}
               autoFocus

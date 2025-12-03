@@ -100,7 +100,7 @@ export const CycleDropdown = observer(function CycleDropdown(props: Props) {
           className={cn(
             "clickable block h-full max-w-full outline-none hover:bg-custom-background-80",
             {
-              "cursor-not-allowed text-custom-text-200": disabled,
+              "cursor-not-allowed text-secondary": disabled,
               "cursor-pointer": !disabled,
             },
             buttonContainerClassName

@@ -25,14 +25,14 @@ export const WorkItemsModalHeader = observer(function WorkItemsModalHeader(props
       <div className="flex items-center gap-2">
         <button
           type="button"
-          className="hidden place-items-center p-1 text-custom-text-200 hover:text-custom-text-100 md:grid"
+          className="hidden place-items-center p-1 text-secondary hover:text-primary md:grid"
           onClick={() => setFullScreen((prevData) => !prevData)}
         >
           {fullScreen ? <Shrink size={14} strokeWidth={2} /> : <Expand size={14} strokeWidth={2} />}
         </button>
         <button
           type="button"
-          className="grid place-items-center p-1 text-custom-text-200 hover:text-custom-text-100"
+          className="grid place-items-center p-1 text-secondary hover:text-primary"
           onClick={handleClose}
         >
           <CloseIcon height={14} width={14} strokeWidth={2} />

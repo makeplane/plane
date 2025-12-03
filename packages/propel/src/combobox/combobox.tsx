@@ -174,7 +174,7 @@ function ComboboxOptions({
           <div className="flex flex-col gap-1">
             {showSearch && (
               <div className="relative">
-                <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-custom-text-400" />
+                <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-placeholder" />
                 <input
                   type="text"
                   placeholder={searchPlaceholder}
@@ -182,7 +182,7 @@ function ComboboxOptions({
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={onSearchQueryKeyDown}
                   className={cn(
-                    "w-full rounded border border-subtle bg-custom-background-90 py-1.5 pl-8 pr-2 text-sm outline-none placeholder:text-custom-text-400",
+                    "w-full rounded border border-subtle bg-custom-background-90 py-1.5 pl-8 pr-2 text-sm outline-none placeholder:text-placeholder",
                     inputClassName
                   )}
                 />
@@ -198,7 +198,7 @@ function ComboboxOptions({
                   React.Children.toArray(filteredChildren).filter(
                     (child) => React.isValidElement(child) && child.type === ComboboxOption
                   )
-                ) === 0 && <div className="px-2 py-1.5 text-sm text-custom-text-400">{emptyMessage}</div>}
+                ) === 0 && <div className="px-2 py-1.5 text-sm text-placeholder">{emptyMessage}</div>}
             </BaseCombobox.List>
           </div>
         </BaseCombobox.Popup>

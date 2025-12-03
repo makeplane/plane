@@ -27,7 +27,7 @@ export const WorkspaceStickyHeader = observer(function WorkspaceStickyHeader() {
                 component={
                   <BreadcrumbLink
                     label={`Stickies`}
-                    icon={<RecentStickyIcon className="size-5 rotate-90 text-custom-text-200" />}
+                    icon={<RecentStickyIcon className="size-5 rotate-90 text-secondary" />}
                   />
                 }
               />

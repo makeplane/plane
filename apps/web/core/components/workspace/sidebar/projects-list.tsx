@@ -164,11 +164,11 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
       >
         <>
           <Disclosure as="div" className="flex flex-col" defaultOpen={isAllProjectsListOpen}>
-            <div className="group w-full flex items-center justify-between px-2 py-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90">
+            <div className="group w-full flex items-center justify-between px-2 py-1.5 rounded text-placeholder hover:bg-custom-sidebar-background-90">
               <Disclosure.Button
                 as="button"
                 type="button"
-                className="w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-custom-sidebar-text-400"
+                className="w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-placeholder"
                 onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
                 aria-label={t(
                   isAllProjectsListOpen
@@ -273,7 +273,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
           <button
             type="button"
             data-ph-element={PROJECT_TRACKER_ELEMENTS.SIDEBAR_CREATE_PROJECT_BUTTON}
-            className="w-full flex items-center gap-1.5 px-2 py-1.5 text-sm leading-5 font-medium text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 rounded-md"
+            className="w-full flex items-center gap-1.5 px-2 py-1.5 text-sm leading-5 font-medium text-secondary hover:bg-custom-sidebar-background-90 rounded-md"
             onClick={() => {
               toggleCreateProjectModal(true);
             }}

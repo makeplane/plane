@@ -203,7 +203,7 @@ export const EstimatePointCreate = observer(function EstimatePointCreate(props: 
         onClick={handleClose}
         disabled={loader}
       >
-        <CloseIcon height={14} width={14} className="text-custom-text-200" />
+        <CloseIcon height={14} width={14} className="text-secondary" />
       </button>
     </form>
   );

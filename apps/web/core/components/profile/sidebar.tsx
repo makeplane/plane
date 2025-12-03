@@ -127,12 +127,12 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
               <h4 className="text-lg font-semibold">
                 {userData?.first_name} {userData?.last_name}
               </h4>
-              <h6 className="text-sm text-custom-text-200">({userData?.display_name})</h6>
+              <h6 className="text-sm text-secondary">({userData?.display_name})</h6>
             </div>
             <div className="mt-6 space-y-5">
               {userDetails.map((detail) => (
                 <div key={detail.i18n_label} className="flex items-center gap-4 text-sm">
-                  <div className="w-2/5 flex-shrink-0 text-custom-text-200">{t(detail.i18n_label)}</div>
+                  <div className="w-2/5 flex-shrink-0 text-secondary">{t(detail.i18n_label)}</div>
                   <div className="w-3/5 break-words font-medium">{detail.value}</div>
                 </div>
               ))}
@@ -223,7 +223,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                                 />
                               </div>
                             )}
-                            <div className="mt-7 space-y-5 text-sm text-custom-text-200">
+                            <div className="mt-7 space-y-5 text-sm text-secondary">
                               <div className="flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
                                   <div className="h-2.5 w-2.5 rounded-sm bg-[#203b80]" />

@@ -120,11 +120,11 @@ export function ParentIssuesListModal({
                 >
                   <div className="relative m-1">
                     <Search
-                      className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
+                      className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-primary text-opacity-40"
                       aria-hidden="true"
                     />
                     <Combobox.Input
-                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0 sm:text-sm"
+                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-primary outline-none placeholder:text-placeholder focus:ring-0 sm:text-sm"
                       placeholder={t("common.search.placeholder")}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -137,9 +137,9 @@ export function ParentIssuesListModal({
                     className="max-h-80 scroll-py-2 overflow-y-auto vertical-scrollbar scrollbar-md"
                   >
                     {searchTerm !== "" && (
-                      <h5 className="mx-2 text-[0.825rem] text-custom-text-200">
+                      <h5 className="mx-2 text-[0.825rem] text-secondary">
                         Search results for{" "}
-                        <span className="text-custom-text-100">
+                        <span className="text-primary">
                           {'"'}
                           {searchTerm}
                           {'"'}
@@ -171,9 +171,9 @@ export function ParentIssuesListModal({
                                 key={issue.id}
                                 value={issue}
                                 className={({ active, selected }) =>
-                                  `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-custom-text-200 ${
-                                    active ? "bg-custom-background-80 text-custom-text-100" : ""
-                                  } ${selected ? "text-custom-text-100" : ""}`
+                                  `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-secondary ${
+                                    active ? "bg-custom-background-80 text-primary" : ""
+                                  } ${selected ? "text-primary" : ""}`
                                 }
                               >
                                 <div className="flex flex-grow items-center gap-2 truncate">
@@ -189,7 +189,7 @@ export function ParentIssuesListModal({
                                       issueTypeId={issue.type_id}
                                       projectIdentifier={issue.project__identifier}
                                       issueSequenceId={issue.sequence_id}
-                                      textContainerClassName="text-xs text-custom-text-200"
+                                      textContainerClassName="text-xs text-secondary"
                                     />
                                   </span>{" "}
                                   <span className="truncate">{issue.name}</span>
@@ -203,7 +203,7 @@ export function ParentIssuesListModal({
                                     sequenceId: issue?.sequence_id,
                                   })}
                                   target="_blank"
-                                  className="z-1 relative hidden flex-shrink-0 text-custom-text-200 hover:text-custom-text-100 group-hover:block"
+                                  className="z-1 relative hidden flex-shrink-0 text-secondary hover:text-primary group-hover:block"
                                   rel="noopener noreferrer"
                                   onClick={(e) => e.stopPropagation()}
                                 >

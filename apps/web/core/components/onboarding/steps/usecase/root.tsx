@@ -100,7 +100,7 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
 
       {/* Use Case Selection */}
       <div className="flex flex-col gap-3">
-        <p className="text-sm font-medium text-custom-text-400">Select any</p>
+        <p className="text-sm font-medium text-placeholder">Select any</p>
 
         <Controller
           control={control}
@@ -123,7 +123,7 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
                     className={`w-full px-3 py-2 rounded-lg border transition-all duration-200 flex items-center gap-2 ${
                       isSelected
                         ? "border-custom-primary-100 bg-custom-primary-10 text-custom-primary-100"
-                        : "border-subtle-1 hover:border-strong text-custom-text-300"
+                        : "border-subtle-1 hover:border-strong text-tertiary"
                     }`}
                   >
                     <span

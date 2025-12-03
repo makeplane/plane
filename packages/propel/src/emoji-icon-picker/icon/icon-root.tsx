@@ -45,7 +45,7 @@ export function IconRoot(props: IconRootProps) {
               onFocus={() => setIsInputFocused(true)}
               onBlur={() => setIsInputFocused(false)}
             >
-              <Search className="absolute left-2.5 bottom-3 h-3.5 w-3.5 text-custom-text-400" />
+              <Search className="absolute left-2.5 bottom-3 h-3.5 w-3.5 text-placeholder" />
 
               <input
                 placeholder="Search"
@@ -65,8 +65,8 @@ export function IconRoot(props: IconRootProps) {
                   backgroundColor: `#${hexValue}`,
                 }}
               />
-              <span className="text-xs text-custom-text-300 flex-shrink-0">HEX</span>
-              <span className="text-xs text-custom-text-200 flex-shrink-0 -mr-1">#</span>
+              <span className="text-xs text-tertiary flex-shrink-0">HEX</span>
+              <span className="text-xs text-secondary flex-shrink-0 -mr-1">#</span>
               <input
                 type="text"
                 value={hexValue}
@@ -75,7 +75,7 @@ export function IconRoot(props: IconRootProps) {
                   setHexValue(value);
                   if (/^[0-9A-Fa-f]{6}$/.test(value)) setActiveColor(adjustColorForContrast(`#${value}`));
                 }}
-                className="block placeholder-custom-text-400 focus:outline-none px-3 py-2 border-[0.5px] border-subtle-1 flex-grow pl-0 text-xs text-custom-text-200 rounded border-none bg-transparent ring-0"
+                className="block placeholder-custom-text-400 focus:outline-none px-3 py-2 border-[0.5px] border-subtle-1 flex-grow pl-0 text-xs text-secondary rounded border-none bg-transparent ring-0"
                 autoFocus
               />
             </div>
@@ -107,7 +107,7 @@ export function IconRoot(props: IconRootProps) {
             {showHexInput ? (
               <span className="conical-gradient h-4 w-4 rounded-full" />
             ) : (
-              <span className="text-custom-text-300 text-[0.6rem] grid place-items-center">#</span>
+              <span className="text-tertiary text-[0.6rem] grid place-items-center">#</span>
             )}
           </button>
         </div>

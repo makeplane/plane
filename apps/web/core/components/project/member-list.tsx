@@ -81,7 +81,7 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
           <div className="flex items-center justify-start gap-1.5 rounded-md border border-subtle-1 bg-custom-background-100 px-2 py-1">
             <Search className="h-3.5 w-3.5" />
             <input
-              className="w-full max-w-[234px] border-none bg-transparent text-sm focus:outline-none placeholder:text-custom-text-400"
+              className="w-full max-w-[234px] border-none bg-transparent text-sm focus:outline-none placeholder:text-placeholder"
               placeholder="Search"
               value={searchQuery}
               autoFocus
@@ -119,7 +119,7 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
             />
           )}
           {searchedProjectMembers.length === 0 && (
-            <h4 className="text-sm mt-16 text-center text-custom-text-400">{t("no_matching_members")}</h4>
+            <h4 className="text-sm mt-16 text-center text-placeholder">{t("no_matching_members")}</h4>
           )}
         </div>
       )}

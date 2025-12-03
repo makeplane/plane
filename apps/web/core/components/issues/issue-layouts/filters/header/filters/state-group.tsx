@@ -60,7 +60,7 @@ export const FilterStateGroup = observer(function FilterStateGroup(props: Props)
               )}
             </>
           ) : (
-            <p className="text-xs italic text-custom-text-400">No matches found</p>
+            <p className="text-xs italic text-placeholder">No matches found</p>
           )}
         </div>
       )}

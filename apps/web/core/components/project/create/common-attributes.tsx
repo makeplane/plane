@@ -120,7 +120,7 @@ function ProjectCommonAttributes(props: Props) {
           className="text-sm"
           position="right-start"
         >
-          <Info className="absolute right-2 top-2.5 h-3 w-3 text-custom-text-400" />
+          <Info className="absolute right-2 top-2.5 h-3 w-3 text-placeholder" />
         </Tooltip>
         <span className="text-xs text-red-500">{errors?.identifier?.message}</span>
       </div>

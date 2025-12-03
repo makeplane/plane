@@ -58,10 +58,10 @@ export const IssueAttachmentsListItem = observer(function IssueAttachmentsListIt
           <div className="flex items-center gap-3 text-sm truncate">
             <div className="flex items-center gap-3">{fileIcon}</div>
             <Tooltip tooltipContent={`${fileName}.${fileExtension}`} isMobile={isMobile}>
-              <p className="text-custom-text-200 font-medium truncate">{`${fileName}.${fileExtension}`}</p>
+              <p className="text-secondary font-medium truncate">{`${fileName}.${fileExtension}`}</p>
             </Tooltip>
             <span className="flex size-1.5 bg-custom-background-80 rounded-full" />
-            <span className="flex-shrink-0 text-custom-text-400">{convertBytesToSize(attachment.attributes.size)}</span>
+            <span className="flex-shrink-0 text-placeholder">{convertBytesToSize(attachment.attributes.size)}</span>
           </div>
 
           <div className="flex items-center gap-3">

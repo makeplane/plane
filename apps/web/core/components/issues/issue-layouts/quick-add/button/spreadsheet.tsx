@@ -11,7 +11,7 @@ export const SpreadsheetAddIssueButton = observer(function SpreadsheetAddIssueBu
     <div className="flex items-center">
       <button
         type="button"
-        className="flex items-center gap-x-[6px] rounded-md px-2 pt-3 text-custom-text-350 hover:text-custom-text-300"
+        className="flex items-center gap-x-[6px] rounded-md px-2 pt-3 text-custom-text-350 hover:text-tertiary"
         onClick={onClick}
       >
         <PlusIcon className="h-3.5 w-3.5 stroke-2" />

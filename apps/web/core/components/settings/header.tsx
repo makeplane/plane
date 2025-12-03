@@ -33,7 +33,7 @@ export const SettingsHeader = observer(function SettingsHeader() {
         href={`/${currentWorkspace?.slug}`}
         className={cn(
           getButtonStyling("neutral-primary", "sm"),
-          "md:absolute left-2 top-9 group flex  gap-2 text-custom-text-300 mb-4 border border-transparent w-fit rounded-lg ",
+          "md:absolute left-2 top-9 group flex  gap-2 text-tertiary mb-4 border border-transparent w-fit rounded-lg ",
           "h-6 w-6 rounded-lg p-1 bg-custom-background-100 border-subtle-1 ",
           isScrolled ? "-mt-2 " : "hidden p-0 overflow-hidden items-center pr-2 border-none"
         )}
@@ -44,7 +44,7 @@ export const SettingsHeader = observer(function SettingsHeader() {
       <Link
         href={`/${currentWorkspace?.slug}`}
         className={cn(
-          "group flex  gap-2 text-custom-text-300 mb-3 border border-transparent w-fit rounded-lg",
+          "group flex  gap-2 text-tertiary mb-3 border border-transparent w-fit rounded-lg",
           !isScrolled ? "hover:bg-custom-background-100 hover:border-subtle-1 items-center pr-2 " : " h-0 m-0"
         )}
       >
@@ -63,7 +63,7 @@ export const SettingsHeader = observer(function SettingsHeader() {
             "h-0 w-0 overflow-hidden": isScrolled,
           })}
         >
-          <div className="text-sm my-auto font-semibold text-custom-text-200">{t("back_to_workspace")}</div>
+          <div className="text-sm my-auto font-semibold text-secondary">{t("back_to_workspace")}</div>
           {/* Last workspace */}
           <div className="flex items-center gap-1">
             <WorkspaceLogo
@@ -71,13 +71,13 @@ export const SettingsHeader = observer(function SettingsHeader() {
               logo={currentWorkspace?.logo_url || ""}
               classNames="my-auto size-4 text-xs"
             />
-            <div className="text-xs my-auto text-custom-text-100 font-semibold">{currentWorkspace?.name}</div>
+            <div className="text-xs my-auto text-primary font-semibold">{currentWorkspace?.name}</div>
           </div>
         </div>
       </Link>
       <div className="flex flex-col gap-1.5">
         {/* Description */}
-        <div className="text-custom-text-100 font-semibold text-2xl">{t("settings")}</div>
+        <div className="text-primary font-semibold text-2xl">{t("settings")}</div>
         {/* Actions */}
         <SettingsTabs />
       </div>

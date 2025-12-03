@@ -87,14 +87,14 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
     <Header variant={EHeaderVariant.SECONDARY} className="justify-start">
       {isNotificationEmbed && (
         <button onClick={embedRemoveCurrentNotification}>
-          <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200 mr-2" />
+          <MoveRight className="h-4 w-4 text-tertiary hover:text-secondary mr-2" />
         </button>
       )}
       <PanelLeft
         onClick={() => setIsMobileSidebar(!isMobileSidebar)}
         className={cn(
           "w-4 h-4 flex-shrink-0 mr-2 my-auto",
-          isMobileSidebar ? "text-custom-primary-100" : "text-custom-text-200"
+          isMobileSidebar ? "text-custom-primary-100" : "text-secondary"
         )}
       />
       <div className="flex items-center gap-2 w-full bg-custom-background-100 z-[15]">

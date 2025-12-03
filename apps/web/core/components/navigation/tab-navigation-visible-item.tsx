@@ -55,7 +55,7 @@ export const TabNavigationVisibleItem: React.FC<TTabNavigationVisibleItemProps> 
                   e.stopPropagation();
                   onToggleDefault(item.key);
                 }}
-                className="flex items-center gap-2 text-custom-text-200 transition-colors cursor-pointer"
+                className="flex items-center gap-2 text-secondary transition-colors cursor-pointer"
               >
                 <SetAsDefaultIcon className="shrink-0 size-3" />
                 <span className="text-xs">{isDefault ? "Clear default" : "Set as default"}</span>
@@ -65,7 +65,7 @@ export const TabNavigationVisibleItem: React.FC<TTabNavigationVisibleItemProps> 
                   e.stopPropagation();
                   onHide(item.key);
                 }}
-                className="flex items-center gap-2 text-custom-text-200 transition-colors cursor-pointer"
+                className="flex items-center gap-2 text-secondary transition-colors cursor-pointer"
               >
                 <PinOff className="shrink-0 size-3" />
                 <span className="text-xs">Hide in more menu</span>

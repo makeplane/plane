@@ -77,7 +77,7 @@ export const LabelStatComponent = observer(function LabelStatComponent(props: TL
           <div className="flex h-20 w-20 items-center justify-center rounded-full bg-custom-background-80">
             <img src={emptyLabel} className="h-12 w-12 object-contain" alt="empty label" />
           </div>
-          <h6 className="text-base text-custom-text-300">{t("no_labels_yet")}</h6>
+          <h6 className="text-base text-tertiary">{t("no_labels_yet")}</h6>
         </div>
       )}
     </div>

@@ -127,7 +127,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
   if (!isWorkspaceCreationEnabled) {
     return (
       <div className="flex flex-col gap-10">
-        <span className="text-center text-base text-custom-text-300">
+        <span className="text-center text-base text-tertiary">
           You don&apos;t seem to have any invites to a workspace and your instance admin has restricted creation of new
           workspaces. Please ask a workspace owner or admin to invite you to a workspace first and come back to this
           screen to join.
@@ -141,7 +141,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-2">
           <label
-            className="text-sm text-custom-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="text-sm text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="name"
           >
             {t("workspace_creation.form.name.label")}
@@ -175,7 +175,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                   placeholder="Enter workspace name"
                   ref={ref}
                   className={cn(
-                    "w-full px-3 py-2 text-custom-text-200 border border-strong rounded-md bg-custom-background-100 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 placeholder:text-custom-text-400 focus:border-transparent transition-all duration-200",
+                    "w-full px-3 py-2 text-secondary border border-strong rounded-md bg-custom-background-100 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 placeholder:text-placeholder focus:border-transparent transition-all duration-200",
                     {
                       "border-strong": !errors.name,
                       "border-red-500": errors.name,
@@ -190,7 +190,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
         </div>
         <div className="flex flex-col gap-2">
           <label
-            className="text-sm text-custom-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="text-sm text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="slug"
           >
             {t("workspace_creation.form.url.label")}
@@ -208,14 +208,14 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
             render={({ field: { value, ref, onChange } }) => (
               <div
                 className={cn(
-                  "flex items-center w-full px-3 py-2 text-custom-text-200 border border-strong rounded-md bg-custom-background-100 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 focus:border-transparent transition-all duration-200",
+                  "flex items-center w-full px-3 py-2 text-secondary border border-strong rounded-md bg-custom-background-100 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 focus:border-transparent transition-all duration-200",
                   {
                     "border-strong": !errors.name,
                     "border-red-500": errors.name,
                   }
                 )}
               >
-                <span className={cn("pr-0 text-custom-text-200 rounded-md whitespace-nowrap")}>
+                <span className={cn("pr-0 text-secondary rounded-md whitespace-nowrap")}>
                   {window && window.location.host}/
                 </span>
                 <input
@@ -231,13 +231,13 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                   ref={ref}
                   placeholder={t("workspace_creation.form.url.placeholder")}
                   className={cn(
-                    "w-full px-3 py-0 pl-0 text-custom-text-200 border-none ring-none outline-none rounded-md bg-custom-background-100 placeholder:text-custom-text-400"
+                    "w-full px-3 py-0 pl-0 text-secondary border-none ring-none outline-none rounded-md bg-custom-background-100 placeholder:text-placeholder"
                   )}
                 />
               </div>
             )}
           />
-          <p className="text-sm text-custom-text-300">{t("workspace_creation.form.url.edit_slug")}</p>
+          <p className="text-sm text-tertiary">{t("workspace_creation.form.url.edit_slug")}</p>
           {slugError && (
             <p className="-mt-3 text-sm text-red-500">{t("workspace_creation.errors.validation.url_already_taken")}</p>
           )}
@@ -248,7 +248,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
         </div>
         <div className="flex flex-col gap-2">
           <label
-            className="text-sm text-custom-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="text-sm text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="organization_size"
           >
             {t("workspace_creation.form.organization_size.label")}
@@ -272,13 +272,11 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                         }}
                         className={`text-sm px-3 py-2 rounded-lg border transition-all duration-200 flex gap-1 items-center justify-between ${
                           isSelected
-                            ? "border-subtle-1 bg-custom-background-80 text-custom-text-200"
-                            : "border-subtle-1 hover:border-strong text-custom-text-300"
+                            ? "border-subtle-1 bg-custom-background-80 text-secondary"
+                            : "border-subtle-1 hover:border-strong text-tertiary"
                         }`}
                       >
-                        <CircleCheck
-                          className={cn("size-4 text-custom-text-400", isSelected && "text-custom-text-200")}
-                        />
+                        <CircleCheck className={cn("size-4 text-placeholder", isSelected && "text-secondary")} />
 
                         <span className="font-medium">{size}</span>
                       </button>

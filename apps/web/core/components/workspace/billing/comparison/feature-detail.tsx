@@ -15,13 +15,13 @@ export function PlanFeatureDetail(props: TPlanFeatureDetailProps) {
   const { subscriptionType, data } = props;
 
   if (data === null || data === undefined) {
-    return <Minus className="size-4 text-custom-text-400" />;
+    return <Minus className="size-4 text-placeholder" />;
   }
   if (data === true) {
     return <CheckCircle2 className={cn(getSubscriptionTextColor(subscriptionType), "size-4")} />;
   }
   if (data === false) {
-    return <MinusCircle className="size-4 text-custom-text-400" />;
+    return <MinusCircle className="size-4 text-placeholder" />;
   }
   return <>{data}</>;
 }

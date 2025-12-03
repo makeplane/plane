@@ -50,7 +50,7 @@ export function ProfileStats({ userProfile }: Props) {
                   <card.icon className="h-5 w-5" />
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm text-custom-text-400">{t(card.i18n_title)}</p>
+                  <p className="text-sm text-placeholder">{t(card.i18n_title)}</p>
                   <p className="text-xl font-semibold">{card.value}</p>
                 </div>
               </Card>

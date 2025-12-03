@@ -20,7 +20,7 @@ export const IssueEstimateActivity = observer(function IssueEstimateActivity(pro
 
   return (
     <IssueActivityBlockComponent
-      icon={<EstimatePropertyIcon className="h-3.5 w-3.5 text-custom-text-200" aria-hidden="true" />}
+      icon={<EstimatePropertyIcon className="h-3.5 w-3.5 text-secondary" aria-hidden="true" />}
       activityId={activityId}
       ends={ends}
     >

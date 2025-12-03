@@ -45,7 +45,7 @@ export const SwitchAccountDropdown = observer(function SwitchAccountDropdown(pro
               <>{fullName?.[0] ?? "R"}</>
             )}
           </div>
-          <span className="text-sm font-medium text-custom-text-200">{displayName}</span>
+          <span className="text-sm font-medium text-secondary">{displayName}</span>
         </Menu.Button>
         <Transition
           enter="transition duration-100 ease-out"

@@ -128,11 +128,11 @@ export const CycleOptions = observer(function CycleOptions(props: CycleOptionsPr
         {...attributes.popper}
       >
         <div className="flex items-center gap-1.5 rounded border border-subtle bg-custom-background-90 px-2">
-          <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+          <Search className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
           <Combobox.Input
             as="input"
             ref={inputRef}
-            className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+            className="w-full bg-transparent py-1 text-xs text-secondary placeholder:text-placeholder focus:outline-none"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t("common.search.label")}
@@ -150,7 +150,7 @@ export const CycleOptions = observer(function CycleOptions(props: CycleOptionsPr
                   className={({ active, selected }) =>
                     `flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${
                       active ? "bg-custom-background-80" : ""
-                    } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                    } ${selected ? "text-primary" : "text-secondary"}`
                   }
                 >
                   {({ selected }) => (
@@ -162,10 +162,10 @@ export const CycleOptions = observer(function CycleOptions(props: CycleOptionsPr
                 </Combobox.Option>
               ))
             ) : (
-              <p className="px-1.5 py-1 italic text-custom-text-400">{t("common.search.no_matches_found")}</p>
+              <p className="px-1.5 py-1 italic text-placeholder">{t("common.search.no_matches_found")}</p>
             )
           ) : (
-            <p className="px-1.5 py-1 italic text-custom-text-400">{t("common.loading")}</p>
+            <p className="px-1.5 py-1 italic text-placeholder">{t("common.loading")}</p>
           )}
         </div>
       </div>

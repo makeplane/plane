@@ -73,7 +73,7 @@ function CustomSelect(props: ICustomSelectProps) {
               ref={setReferenceElement}
               type="button"
               className={`flex items-center justify-between gap-1 text-xs ${
-                disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
+                disabled ? "cursor-not-allowed text-secondary" : "cursor-pointer hover:bg-custom-background-80"
               } ${customButtonClassName}`}
               onClick={toggleDropdown}
             >
@@ -90,7 +90,7 @@ function CustomSelect(props: ICustomSelectProps) {
                 {
                   "px-3 py-2 text-sm": input,
                   "px-2 py-1 text-xs": !input,
-                  "cursor-not-allowed text-custom-text-200": disabled,
+                  "cursor-not-allowed text-secondary": disabled,
                   "cursor-pointer hover:bg-custom-background-80": !disabled,
                 },
                 buttonClassName
@@ -140,7 +140,7 @@ function Option(props: ICustomSelectItemProps) {
       value={value}
       className={({ active }) =>
         cn(
-          "cursor-pointer select-none truncate rounded px-1 py-1.5 text-custom-text-200 flex items-center justify-between gap-2",
+          "cursor-pointer select-none truncate rounded px-1 py-1.5 text-secondary flex items-center justify-between gap-2",
           {
             "bg-custom-background-80": active,
           },

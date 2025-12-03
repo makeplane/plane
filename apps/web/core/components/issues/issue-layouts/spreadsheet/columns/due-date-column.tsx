@@ -52,7 +52,7 @@ export const SpreadsheetDueDateColumn = observer(function SpreadsheetDueDateColu
           }
         )}
         optionsClassName="z-[9]"
-        clearIconClassName="!text-custom-text-100"
+        clearIconClassName="!text-primary"
         onClose={onClose}
       />
     </div>

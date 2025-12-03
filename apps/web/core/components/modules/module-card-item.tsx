@@ -220,16 +220,16 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
                   />
                 )}
                 <button onClick={openModuleOverview}>
-                  <Info className="h-4 w-4 text-custom-text-400" />
+                  <Info className="h-4 w-4 text-placeholder" />
                 </button>
               </div>
             </div>
           </div>
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 text-custom-text-200">
-                <WorkItemsIcon className="h-4 w-4 text-custom-text-300" />
-                <span className="text-xs text-custom-text-300">{issueCount ?? "0 Work item"}</span>
+              <div className="flex items-center gap-1.5 text-secondary">
+                <WorkItemsIcon className="h-4 w-4 text-tertiary" />
+                <span className="text-xs text-tertiary">{issueCount ?? "0 Work item"}</span>
               </div>
               {moduleLeadDetails ? (
                 <span className="cursor-default">
@@ -237,14 +237,14 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
                 </span>
               ) : (
                 <Tooltip tooltipContent="No lead">
-                  <SquareUser className="h-4 w-4 mx-1 text-custom-text-300 " />
+                  <SquareUser className="h-4 w-4 mx-1 text-tertiary " />
                 </Tooltip>
               )}
             </div>
             <LinearProgressIndicator size="lg" data={progressIndicatorData} />
             <div className="flex items-center justify-between py-0.5" onClick={handleEventPropagation}>
               <DateRangeDropdown
-                buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-custom-text-300 border-[0.5px] border-strong rounded text-xs`}
+                buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-tertiary border-[0.5px] border-strong rounded text-xs`}
                 buttonVariant="transparent-with-text"
                 className="h-7"
                 value={{

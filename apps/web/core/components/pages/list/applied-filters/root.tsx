@@ -38,7 +38,7 @@ export function PageAppliedFiltersList(props: Props) {
         return (
           <Tag key={filterKey}>
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
+              <span className="text-xs text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
               {DATE_FILTERS.includes(filterKey) && (
                 <AppliedDateFilters
                   editable={isEditingAllowed}
@@ -56,7 +56,7 @@ export function PageAppliedFiltersList(props: Props) {
               {isEditingAllowed && (
                 <button
                   type="button"
-                  className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                  className="grid place-items-center text-tertiary hover:text-secondary"
                   onClick={() => handleRemoveFilter(filterKey, null)}
                 >
                   <CloseIcon height={12} width={12} strokeWidth={2} />

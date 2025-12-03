@@ -338,7 +338,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label
-                    className="text-sm text-custom-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+                    className="text-sm text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
                     htmlFor="first_name"
                   >
                     First name
@@ -373,7 +373,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                 </div>
                 <div className="space-y-1">
                   <label
-                    className="text-sm text-custom-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+                    className="text-sm text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
                     htmlFor="last_name"
                   >
                     Last name
@@ -411,7 +411,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
               {!isPasswordAlreadySetup && (
                 <>
                   <div className="space-y-1">
-                    <label className="text-sm text-custom-text-300 font-medium" htmlFor="password">
+                    <label className="text-sm text-tertiary font-medium" htmlFor="password">
                       Set a password ({t("common.optional")})
                     </label>
                     <Controller
@@ -430,7 +430,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                             ref={ref}
                             hasError={Boolean(errors.password)}
                             placeholder="New password..."
-                            className="w-full border-[0.5px] border-strong pr-12 placeholder:text-custom-text-400"
+                            className="w-full border-[0.5px] border-strong pr-12 placeholder:text-placeholder"
                             onFocus={() => setIsPasswordInputFocused(true)}
                             onBlur={() => setIsPasswordInputFocused(false)}
                             autoComplete="on"
@@ -452,7 +452,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     <PasswordStrengthIndicator password={watch("password") ?? ""} isFocused={isPasswordInputFocused} />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-sm text-custom-text-300 font-medium" htmlFor="confirm_password">
+                    <label className="text-sm text-tertiary font-medium" htmlFor="confirm_password">
                       {t("auth.common.password.confirm_password.label")} ({t("common.optional")})
                     </label>
                     <Controller
@@ -473,7 +473,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                             ref={ref}
                             hasError={Boolean(errors.confirm_password)}
                             placeholder={t("auth.common.password.confirm_password.placeholder")}
-                            className="w-full border-strong pr-12 placeholder:text-custom-text-400"
+                            className="w-full border-strong pr-12 placeholder:text-placeholder"
                           />
                           {showPassword.retypePassword ? (
                             <EyeOff
@@ -503,7 +503,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
             <>
               <div className="space-y-1">
                 <label
-                  className="text-sm text-custom-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+                  className="text-sm text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
                   htmlFor="role"
                 >
                   What role are you working on? Choose one.
@@ -534,7 +534,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
               </div>
               <div className="space-y-1">
                 <label
-                  className="text-sm text-custom-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+                  className="text-sm text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
                   htmlFor="use_case"
                 >
                   What is your domain expertise? Choose one.

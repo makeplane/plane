@@ -21,7 +21,7 @@ export const ProductUpdatesHeader = observer(function ProductUpdatesHeader() {
         </div>
       </div>
       <div className="flex flex-shrink-0 items-center gap-8">
-        <PlaneLogo className="h-6 w-auto text-custom-text-100" />
+        <PlaneLogo className="h-6 w-auto text-primary" />
       </div>
     </div>
   );

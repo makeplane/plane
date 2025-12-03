@@ -141,7 +141,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
         <div className="container relative mx-auto flex h-full w-full flex-col overflow-hidden overflow-y-auto px-5 py-14 md:px-0">
           <div className="relative flex flex-shrink-0 items-center justify-between gap-4">
             <div className="z-10 flex-shrink-0 bg-custom-background-90 py-4">
-              <PlaneLogo className="h-9 w-auto text-custom-text-100" />
+              <PlaneLogo className="h-9 w-auto text-primary" />
             </div>
             <div className="relative flex items-center gap-2">
               <div className="text-sm font-medium">{currentUser?.email}</div>
@@ -160,7 +160,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
               <img src={WorkSpaceNotAvailable} className="h-[220px] object-cover object-center" alt="Plane logo" />
             </div>
             <h3 className="text-center text-lg font-semibold">Workspace not found</h3>
-            <p className="text-center text-sm text-custom-text-200">
+            <p className="text-center text-sm text-secondary">
               No workspace found with the URL. It may not exist or you lack authorization to view it.
             </p>
             <div className="flex items-center justify-center gap-2 pt-4">
@@ -199,7 +199,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
           <div className="space-y-8 text-center">
             <div className="space-y-2">
               <h3 className="text-lg font-semibold">Not Authorized!</h3>
-              <p className="mx-auto w-1/2 text-sm text-custom-text-200">
+              <p className="mx-auto w-1/2 text-sm text-secondary">
                 You{"'"}re not a member of this workspace. Please contact the workspace admin to get an invitation or
                 check your pending invitations.
               </p>

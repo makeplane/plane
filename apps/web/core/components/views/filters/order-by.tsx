@@ -24,10 +24,10 @@ export function ViewOrderByDropdown(props: Props) {
   const isDescending = sortBy === "desc";
 
   const buttonClassName = isMobile
-    ? "flex items-center text-sm text-custom-text-200 gap-2 w-full"
-    : `${getButtonStyling("neutral-primary", "sm")} px-2 text-custom-text-300`;
+    ? "flex items-center text-sm text-secondary gap-2 w-full"
+    : `${getButtonStyling("neutral-primary", "sm")} px-2 text-tertiary`;
 
-  const chevronClassName = isMobile ? "h-4 w-4 text-custom-text-200" : "h-3 w-3";
+  const chevronClassName = isMobile ? "h-4 w-4 text-secondary" : "h-3 w-3";
   const icon = (
     <>{!isDescending ? <ArrowUpWideNarrow className="size-3 " /> : <ArrowDownWideNarrow className="size-3 " />}</>
   );

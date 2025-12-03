@@ -211,11 +211,11 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
               <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="space-y-5">
-                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
+                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-primary">
                       {t("project_settings.members.invite_members.title")}
                     </Dialog.Title>
                     <div className="mt-2">
-                      <p className="text-sm text-custom-text-200">
+                      <p className="text-sm text-secondary">
                         {t("project_settings.members.invite_members.sub_heading")}
                       </p>
                     </div>
@@ -237,7 +237,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                                   <CustomSearchSelect
                                     value={value}
                                     customButton={
-                                      <button className="flex w-full items-center justify-between gap-1 rounded-md border border-subtle-1 px-3 py-2 text-left text-sm text-custom-text-200 shadow-sm duration-300 hover:bg-custom-background-80 hover:text-custom-text-100 focus:outline-none">
+                                      <button className="flex w-full items-center justify-between gap-1 rounded-md border border-subtle-1 px-3 py-2 text-left text-sm text-secondary shadow-sm duration-300 hover:bg-custom-background-80 hover:text-primary focus:outline-none">
                                         {value && value !== "" ? (
                                           <div className="flex items-center gap-2">
                                             <Avatar
@@ -286,7 +286,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                                   <CustomSelect
                                     {...field}
                                     customButton={
-                                      <div className="flex w-24 items-center justify-between gap-1 rounded-md border border-subtle-1 px-3 py-2.5 text-left text-sm text-custom-text-200 shadow-sm duration-300 hover:bg-custom-background-80 hover:text-custom-text-100 focus:outline-none">
+                                      <div className="flex w-24 items-center justify-between gap-1 rounded-md border border-subtle-1 px-3 py-2.5 text-left text-sm text-secondary shadow-sm duration-300 hover:bg-custom-background-80 hover:text-primary focus:outline-none">
                                         <span className="capitalize">
                                           {field.value ? ROLE[field.value] : "Select role"}
                                         </span>
@@ -323,7 +323,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                                   className="place-items-center self-center rounded"
                                   onClick={() => remove(index)}
                                 >
-                                  <CloseIcon className="h-4 w-4 text-custom-text-200" />
+                                  <CloseIcon className="h-4 w-4 text-secondary" />
                                 </button>
                               </div>
                             )}

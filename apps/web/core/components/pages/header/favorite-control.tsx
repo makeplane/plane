@@ -34,7 +34,7 @@ export const PageFavoriteControl = observer(function PageFavoriteControl({ page 
         pageOperations.toggleFavorite();
       }}
       buttonClassName="flex-shrink-0 size-6 group rounded hover:bg-custom-background-80 transition-colors"
-      iconClassName="size-3.5 text-custom-text-200 group-hover:text-custom-text-10"
+      iconClassName="size-3.5 text-secondary group-hover:text-custom-text-10"
     />
   );
 });

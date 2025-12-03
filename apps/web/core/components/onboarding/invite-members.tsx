@@ -161,7 +161,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                 ref={ref}
                 hasError={Boolean(errors.emails?.[index]?.email)}
                 placeholder={placeholderEmails[index % placeholderEmails.length]}
-                className="w-full border-strong text-xs placeholder:text-custom-text-400 sm:text-sm"
+                className="w-full border-strong text-xs placeholder:text-placeholder sm:text-sm"
                 autoComplete="off"
               />
             )}
@@ -189,7 +189,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                 >
                   <span
                     className={`text-sm ${
-                      !getValues(`emails.${index}.role_active`) ? "text-custom-text-400" : "text-custom-text-100"
+                      !getValues(`emails.${index}.role_active`) ? "text-placeholder" : "text-primary"
                     } sm:text-sm`}
                   >
                     {ROLE[value]}
@@ -219,14 +219,14 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                         className={({ active, selected }) =>
                           `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
                             active || selected ? "bg-onboarding-background-400/40" : ""
-                          } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                          } ${selected ? "text-primary" : "text-secondary"}`
                         }
                       >
                         {({ selected }) => (
                           <div className="flex items-center text-wrap gap-2 p-1">
                             <div className="flex flex-col">
                               <div className="text-sm font-medium">{t(value.i18n_title)}</div>
-                              <div className="flex text-xs text-custom-text-300">{t(value.i18n_description)}</div>
+                              <div className="flex text-xs text-tertiary">{t(value.i18n_description)}</div>
                             </div>
                             {selected && <Check className="h-4 w-4 shrink-0" />}
                           </div>
@@ -245,7 +245,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
             className="absolute right-0 hidden place-items-center self-center rounded group-hover:grid"
             onClick={() => remove(index)}
           >
-            <XCircle className="h-5 w-5 pl-0.5 text-custom-text-400" />
+            <XCircle className="h-5 w-5 pl-0.5 text-placeholder" />
           </button>
         )}
       </div>
@@ -350,8 +350,8 @@ export function InviteMembers(props: Props) {
       <div className="w-full h-full overflow-auto px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
         <div className="flex flex-col w-full items-center justify-center p-8 mt-6 md:w-4/5 mx-auto">
           <div className="text-center space-y-1 py-4 mx-auto w-4/5">
-            <h3 className="text-3xl font-bold text-custom-text-100">Invite your teammates</h3>
-            <p className="font-medium text-custom-text-400">
+            <h3 className="text-3xl font-bold text-primary">Invite your teammates</h3>
+            <p className="font-medium text-placeholder">
               Work in plane happens best with your team. Invite them now to use Plane to its potential.
             </p>
           </div>
@@ -364,8 +364,8 @@ export function InviteMembers(props: Props) {
           >
             <div className="w-full text-sm py-4">
               <div className="group relative grid grid-cols-10 gap-4 mx-8 py-2">
-                <div className="col-span-6 px-1 text-sm text-custom-text-200 font-medium">Email</div>
-                <div className="col-span-4 px-1 text-sm text-custom-text-200 font-medium">Role</div>
+                <div className="col-span-6 px-1 text-sm text-secondary font-medium">Email</div>
+                <div className="col-span-4 px-1 text-sm text-secondary font-medium">Role</div>
               </div>
               <div className="mb-3 space-y-3 sm:space-y-4">
                 {fields.map((field, index) => (

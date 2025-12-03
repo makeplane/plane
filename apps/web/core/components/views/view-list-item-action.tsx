@@ -87,7 +87,7 @@ export const ViewListItemAction = observer(function ViewListItemAction(props: Pr
         />
       )}
       <DeleteProjectViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
-      <div className="cursor-default text-custom-text-300">
+      <div className="cursor-default text-tertiary">
         <Tooltip tooltipContent={access === EViewAccess.PUBLIC ? "Public" : "Private"}>
           {access === EViewAccess.PUBLIC ? <Earth className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
         </Tooltip>

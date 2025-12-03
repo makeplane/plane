@@ -52,7 +52,7 @@ export const Exporter = observer(function Exporter(props: Props) {
       query: `${projectDetails?.name} ${projectDetails?.identifier}`,
       content: (
         <div className="flex items-center gap-2">
-          <span className="text-[0.65rem] text-custom-text-200 flex-shrink-0">{projectDetails?.identifier}</span>
+          <span className="text-[0.65rem] text-secondary flex-shrink-0">{projectDetails?.identifier}</span>
           <span className="truncate">{projectDetails?.name}</span>
         </div>
       ),

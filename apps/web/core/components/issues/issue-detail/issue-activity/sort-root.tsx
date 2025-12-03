@@ -14,11 +14,7 @@ export type TActivitySortRoot = {
 export const ActivitySortRoot = memo(function ActivitySortRoot(props: TActivitySortRoot) {
   return (
     <div
-      className={cn(
-        getButtonStyling("neutral-primary", "sm"),
-        "px-2 text-custom-text-300 cursor-pointer",
-        props.className
-      )}
+      className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-tertiary cursor-pointer", props.className)}
       onClick={() => {
         props.toggleSort();
       }}

@@ -105,7 +105,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
       >
         <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
         <div className="space-y-1">
-          <label className="text-sm text-custom-text-300 font-medium" htmlFor="email">
+          <label className="text-sm text-tertiary font-medium" htmlFor="email">
             {t("auth.common.email.label")}
           </label>
           <div className="relative flex items-center rounded-md bg-custom-background-100">
@@ -116,14 +116,14 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
               value={resetFormData.email}
               //hasError={Boolean(errors.email)}
               placeholder={t("auth.common.email.placeholder")}
-              className="h-10 w-full border border-strong !bg-custom-background-100 pr-12 text-custom-text-400 cursor-not-allowed"
+              className="h-10 w-full border border-strong !bg-custom-background-100 pr-12 text-placeholder cursor-not-allowed"
               autoComplete="on"
               disabled
             />
           </div>
         </div>
         <div className="space-y-1">
-          <label className="text-sm text-custom-text-300 font-medium" htmlFor="password">
+          <label className="text-sm text-tertiary font-medium" htmlFor="password">
             {t("auth.common.password.label")}
           </label>
           <div className="relative flex items-center rounded-md bg-custom-background-100">
@@ -134,7 +134,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
               onChange={(e) => handleFormChange("password", e.target.value)}
               //hasError={Boolean(errors.password)}
               placeholder={t("auth.common.password.placeholder")}
-              className="h-10 w-full border border-strong !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
+              className="h-10 w-full border border-strong !bg-custom-background-100 pr-12 placeholder:text-placeholder"
               minLength={8}
               onFocus={() => setIsPasswordInputFocused(true)}
               onBlur={() => setIsPasswordInputFocused(false)}
@@ -156,7 +156,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
           <PasswordStrengthIndicator password={resetFormData.password} isFocused={isPasswordInputFocused} />
         </div>
         <div className="space-y-1">
-          <label className="text-sm text-custom-text-300 font-medium" htmlFor="confirm_password">
+          <label className="text-sm text-tertiary font-medium" htmlFor="confirm_password">
             {t("auth.common.password.confirm_password.label")}
           </label>
           <div className="relative flex items-center rounded-md bg-custom-background-100">
@@ -166,7 +166,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
               value={resetFormData.confirm_password}
               onChange={(e) => handleFormChange("confirm_password", e.target.value)}
               placeholder={t("auth.common.password.confirm_password.placeholder")}
-              className="h-10 w-full border border-strong !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
+              className="h-10 w-full border border-strong !bg-custom-background-100 pr-12 placeholder:text-placeholder"
               onFocus={() => setIsRetryPasswordInputFocused(true)}
               onBlur={() => setIsRetryPasswordInputFocused(false)}
             />

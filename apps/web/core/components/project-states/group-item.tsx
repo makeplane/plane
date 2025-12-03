@@ -75,14 +75,14 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
           <div className="flex-shrink-0 w-6 h-6 rounded flex justify-center items-center overflow-hidden">
             <StateGroupIcon stateGroup={groupKey} size={EIconSize.XL} />
           </div>
-          <div className="text-base font-medium text-custom-text-200 capitalize px-1">{groupKey}</div>
+          <div className="text-base font-medium text-secondary capitalize px-1">{groupKey}</div>
         </div>
         <button
           type="button"
           data-ph-element={STATE_TRACKER_ELEMENTS.STATE_GROUP_ADD_BUTTON}
           className={cn(
             "flex-shrink-0 w-6 h-6 rounded flex justify-center items-center overflow-hidden transition-colors hover:bg-custom-background-80 cursor-pointer text-custom-primary-100/80 hover:text-custom-primary-100",
-            (!isEditable || createState) && "cursor-not-allowed text-custom-text-400 hover:text-custom-text-400"
+            (!isEditable || createState) && "cursor-not-allowed text-placeholder hover:text-placeholder"
           )}
           onClick={() => {
             if (!createState) {
@@ -97,7 +97,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
       </div>
 
       {shouldShowEmptyState && (
-        <div className="flex flex-col justify-center items-center h-full py-4 text-sm text-custom-text-300">
+        <div className="flex flex-col justify-center items-center h-full py-4 text-sm text-tertiary">
           <div>{t("project_settings.states.empty_state.title", { groupKey })}</div>
           {isEditable && <div>{t("project_settings.states.empty_state.description")}</div>}
         </div>

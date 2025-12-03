@@ -64,7 +64,7 @@ export const CycleSidebarDetails = observer(function CycleSidebarDetails(props: 
     <div className="flex flex-col gap-5 w-full">
       {cycleDetails?.description && (
         <TextArea
-          className="outline-none ring-none w-full max-h-max bg-transparent !p-0 !m-0 !border-0 resize-none text-sm leading-5 text-custom-text-200"
+          className="outline-none ring-none w-full max-h-max bg-transparent !p-0 !m-0 !border-0 resize-none text-sm leading-5 text-secondary"
           value={cycleDetails.description}
           disabled
         />
@@ -72,20 +72,20 @@ export const CycleSidebarDetails = observer(function CycleSidebarDetails(props: 
 
       <div className="flex flex-col gap-5 pb-6 pt-2.5">
         <div className="flex items-center justify-start gap-1">
-          <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
+          <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
             <SquareUser className="h-4 w-4" />
             <span className="text-base">{t("lead")}</span>
           </div>
           <div className="flex w-3/5 items-center rounded-sm">
             <div className="flex items-center gap-2.5">
               <Avatar name={cycleOwnerDetails?.display_name} src={getFileURL(cycleOwnerDetails?.avatar_url ?? "")} />
-              <span className="text-sm text-custom-text-200">{cycleOwnerDetails?.display_name}</span>
+              <span className="text-sm text-secondary">{cycleOwnerDetails?.display_name}</span>
             </div>
           </div>
         </div>
 
         <div className="flex items-center justify-start gap-1">
-          <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
+          <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
             <MembersPropertyIcon className="h-4 w-4" />
             <span className="text-base">{t("members")}</span>
           </div>
@@ -108,19 +108,19 @@ export const CycleSidebarDetails = observer(function CycleSidebarDetails(props: 
                   </AvatarGroup>
                 </>
               ) : (
-                <span className="px-1.5 text-sm text-custom-text-300">{t("no_assignee")}</span>
+                <span className="px-1.5 text-sm text-tertiary">{t("no_assignee")}</span>
               )}
             </div>
           </div>
         </div>
 
         <div className="flex items-center justify-start gap-1">
-          <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
+          <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
             <WorkItemsIcon className="h-4 w-4" />
             <span className="text-base">{t("work_items")}</span>
           </div>
           <div className="flex w-3/5 items-center">
-            <span className="px-1.5 text-sm text-custom-text-300">{issueCount}</span>
+            <span className="px-1.5 text-sm text-tertiary">{issueCount}</span>
           </div>
         </div>
 
@@ -129,12 +129,12 @@ export const CycleSidebarDetails = observer(function CycleSidebarDetails(props: 
          */}
         {isEstimatePointValid && !isCompleted && (
           <div className="flex items-center justify-start gap-1">
-            <div className="flex w-2/5 items-center justify-start gap-2 text-custom-text-300">
+            <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
               <WorkItemsIcon className="h-4 w-4" />
               <span className="text-base">{t("points")}</span>
             </div>
             <div className="flex w-3/5 items-center">
-              <span className="px-1.5 text-sm text-custom-text-300">{issueEstimatePointCount}</span>
+              <span className="px-1.5 text-sm text-tertiary">{issueEstimatePointCount}</span>
             </div>
           </div>
         )}

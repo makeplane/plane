@@ -101,7 +101,7 @@ export function ModuleForm(props: Props) {
               )}
             />
           )}
-          <h3 className="text-xl font-medium text-custom-text-200">
+          <h3 className="text-xl font-medium text-secondary">
             {status ? t("common.update") : t("common.create")} {t("common.module").toLowerCase()}
           </h3>
         </div>

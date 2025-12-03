@@ -42,7 +42,7 @@ export const AppliedDateFilters = observer(function AppliedDateFilters(props: Pr
           {editable && (
             <button
               type="button"
-              className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+              className="grid place-items-center text-tertiary hover:text-secondary"
               onClick={() => handleRemove(date)}
             >
               <CloseIcon height={10} width={10} strokeWidth={2} />

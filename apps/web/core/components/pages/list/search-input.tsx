@@ -41,7 +41,7 @@ export function PageSearchInput(props: Props) {
       {!isSearchOpen && (
         <button
           type="button"
-          className="flex-shrink-0 hover:bg-custom-background-80 rounded text-custom-text-400 relative flex justify-center items-center w-6 h-6 my-auto"
+          className="flex-shrink-0 hover:bg-custom-background-80 rounded text-placeholder relative flex justify-center items-center w-6 h-6 my-auto"
           onClick={() => {
             setIsSearchOpen(true);
             inputRef.current?.focus();
@@ -52,7 +52,7 @@ export function PageSearchInput(props: Props) {
       )}
       <div
         className={cn(
-          "flex items-center justify-start rounded-md border border-transparent bg-custom-background-100 text-custom-text-400 w-0 transition-[width] ease-linear overflow-hidden opacity-0",
+          "flex items-center justify-start rounded-md border border-transparent bg-custom-background-100 text-placeholder w-0 transition-[width] ease-linear overflow-hidden opacity-0",
           {
             "w-64 px-2.5 py-1.5 border-subtle-1 opacity-100": isSearchOpen,
           }
@@ -61,7 +61,7 @@ export function PageSearchInput(props: Props) {
         <Search className="h-3.5 w-3.5" />
         <input
           ref={inputRef}
-          className="w-full max-w-[234px] border-none bg-transparent text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:outline-none"
+          className="w-full max-w-[234px] border-none bg-transparent text-sm text-primary placeholder:text-placeholder focus:outline-none"
           placeholder="Search pages"
           value={searchQuery}
           onChange={(e) => updateSearchQuery(e.target.value)}

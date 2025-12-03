@@ -65,7 +65,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
       )}
       <div className={`space-y-2 ${mode === "full" ? "pt-3" : ""}`}>
         <div className="flex items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-tertiary">
             <StatePropertyIcon className="size-4 flex-shrink-0" />
             <span>State</span>
           </div>
@@ -76,7 +76,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
         </div>
 
         <div className="flex items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-tertiary">
             <PriorityPropertyIcon className="size-4 flex-shrink-0" />
             <span>Priority</span>
           </div>
@@ -105,14 +105,14 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
         </div>
 
         <div className="flex items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-tertiary">
             <DueDatePropertyIcon className="size-4 flex-shrink-0" />
             <span>Due date</span>
           </div>
           <div>
             {issueDetails.target_date ? (
               <div
-                className={cn("flex items-center gap-1.5 rounded py-0.5 text-xs text-custom-text-100", {
+                className={cn("flex items-center gap-1.5 rounded py-0.5 text-xs text-primary", {
                   "text-red-500": shouldHighlightIssueDueDate(issueDetails.target_date, state?.group),
                 })}
               >
@@ -120,7 +120,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
                 {renderFormattedDate(issueDetails.target_date)}
               </div>
             ) : (
-              <span className="text-custom-text-200">Empty</span>
+              <span className="text-secondary">Empty</span>
             )}
           </div>
         </div>

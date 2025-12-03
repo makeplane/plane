@@ -81,10 +81,10 @@ export function CreateUpdateModuleLinkModal(props: Props) {
     <ModalCore isOpen={isOpen} handleClose={onClose}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="space-y-5 p-5">
-          <h3 className="text-xl font-medium text-custom-text-200">{data ? "Update" : "Add"} link</h3>
+          <h3 className="text-xl font-medium text-secondary">{data ? "Update" : "Add"} link</h3>
           <div className="mt-2 space-y-3">
             <div>
-              <label htmlFor="url" className="mb-2 text-custom-text-200">
+              <label htmlFor="url" className="mb-2 text-secondary">
                 URL
               </label>
               <Controller
@@ -108,7 +108,7 @@ export function CreateUpdateModuleLinkModal(props: Props) {
               />
             </div>
             <div>
-              <label htmlFor="title" className="mb-2 text-custom-text-200">
+              <label htmlFor="title" className="mb-2 text-secondary">
                 Display title
                 <span className="text-[10px] block">Optional</span>
               </label>

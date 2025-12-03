@@ -14,7 +14,7 @@ export function ProductUpdatesFooter() {
         <a
           href="https://go.plane.so/p-docs"
           target="_blank"
-          className="text-sm text-custom-text-200 hover:text-custom-text-100 hover:underline underline-offset-1 outline-none"
+          className="text-sm text-secondary hover:text-primary hover:underline underline-offset-1 outline-none"
         >
           {t("docs")}
         </a>
@@ -25,7 +25,7 @@ export function ProductUpdatesFooter() {
           data-ph-element={USER_TRACKER_ELEMENTS.CHANGELOG_REDIRECTED}
           href="https://go.plane.so/p-changelog"
           target="_blank"
-          className="text-sm text-custom-text-200 hover:text-custom-text-100 hover:underline underline-offset-1 outline-none"
+          className="text-sm text-secondary hover:text-primary hover:underline underline-offset-1 outline-none"
         >
           {t("full_changelog")}
         </a>
@@ -35,7 +35,7 @@ export function ProductUpdatesFooter() {
         <a
           href="mailto:support@plane.so"
           target="_blank"
-          className="text-sm text-custom-text-200 hover:text-custom-text-100 hover:underline underline-offset-1 outline-none"
+          className="text-sm text-secondary hover:text-primary hover:underline underline-offset-1 outline-none"
         >
           {t("support")}
         </a>
@@ -45,7 +45,7 @@ export function ProductUpdatesFooter() {
         <a
           href="https://go.plane.so/p-discord"
           target="_blank"
-          className="text-sm text-custom-text-200 hover:text-custom-text-100 hover:underline underline-offset-1 outline-none"
+          className="text-sm text-secondary hover:text-primary hover:underline underline-offset-1 outline-none"
         >
           Discord
         </a>
@@ -58,7 +58,7 @@ export function ProductUpdatesFooter() {
           "flex gap-1.5 items-center text-center font-medium hover:underline underline-offset-2 outline-none"
         )}
       >
-        <PlaneLogo className="h-4 w-auto text-custom-text-100" />
+        <PlaneLogo className="h-4 w-auto text-primary" />
         {t("powered_by_plane_pages")}
       </a>
     </div>

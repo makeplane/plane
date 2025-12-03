@@ -99,9 +99,7 @@ export const WebhookSecretKey = observer(function WebhookSecretKey(props: Props)
           {webhookId && (
             <div className="text-sm font-medium">{t("workspace_settings.settings.webhooks.secret_key.title")}</div>
           )}
-          <div className="text-xs text-custom-text-400">
-            {t("workspace_settings.settings.webhooks.secret_key.message")}
-          </div>
+          <div className="text-xs text-placeholder">{t("workspace_settings.settings.webhooks.secret_key.message")}</div>
           <div className="flex flex-col md:flex-row md:items-center gap-4">
             <div className="flex flex-grow max-w-lg items-center justify-between self-stretch rounded border border-subtle-1 px-2 h-8">
               <div className="select-none overflow-hidden font-medium">
@@ -120,7 +118,7 @@ export const WebhookSecretKey = observer(function WebhookSecretKey(props: Props)
                   {SECRET_KEY_OPTIONS.map((option) => (
                     <Tooltip key={option.key} tooltipContent={option.label} isMobile={isMobile}>
                       <button type="button" className="grid flex-shrink-0 place-items-center" onClick={option.onClick}>
-                        <option.Icon className="h-3 w-3 text-custom-text-400" />
+                        <option.Icon className="h-3 w-3 text-placeholder" />
                       </button>
                     </Tooltip>
                   ))}

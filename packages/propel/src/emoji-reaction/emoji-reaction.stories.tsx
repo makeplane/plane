@@ -56,7 +56,7 @@ export const Interactive: Story = {
           users={["Alice", "Bob", "Charlie"]}
           onReactionClick={handleClick}
         />
-        <p className="text-sm text-custom-text-400">Click to toggle reaction</p>
+        <p className="text-sm text-placeholder">Click to toggle reaction</p>
       </div>
     );
   },
@@ -214,7 +214,7 @@ export const InMessageContext: Story = {
           </div>
           <div className="flex-1">
             <div className="font-medium text-sm">Alice Brown</div>
-            <div className="text-sm text-custom-text-300 mt-1">
+            <div className="text-sm text-tertiary mt-1">
               Hey everyone! Just wanted to share some exciting news about our project launch next week!
             </div>
           </div>

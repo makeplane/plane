@@ -79,7 +79,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
       <div className={`w-full space-y-2 mt-3 ${disabled ? "opacity-60" : ""}`}>
         {/* state */}
         <div className="flex w-full items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-tertiary">
             <StatePropertyIcon className="h-4 w-4 flex-shrink-0" />
             <span>{t("common.state")}</span>
           </div>
@@ -99,7 +99,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
 
         {/* assignee */}
         <div className="flex w-full items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-tertiary">
             <MembersPropertyIcon className="h-4 w-4 flex-shrink-0" />
             <span>{t("common.assignees")}</span>
           </div>
@@ -113,7 +113,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             buttonVariant={issue?.assignee_ids?.length > 1 ? "transparent-without-text" : "transparent-with-text"}
             className="w-3/4 flex-grow group"
             buttonContainerClassName="w-full text-left"
-            buttonClassName={`text-sm justify-between ${issue?.assignee_ids?.length > 0 ? "" : "text-custom-text-400"}`}
+            buttonClassName={`text-sm justify-between ${issue?.assignee_ids?.length > 0 ? "" : "text-placeholder"}`}
             hideIcon={issue.assignee_ids?.length === 0}
             dropdownArrow
             dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
@@ -122,7 +122,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
 
         {/* priority */}
         <div className="flex w-full items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-tertiary">
             <PriorityPropertyIcon className="h-4 w-4 flex-shrink-0" />
             <span>{t("common.priority")}</span>
           </div>
@@ -140,7 +140,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
         {/* created by */}
         {createdByDetails && (
           <div className="flex w-full items-center gap-3 h-8">
-            <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+            <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-tertiary">
               <UserCirclePropertyIcon className="h-4 w-4 flex-shrink-0" />
               <span>{t("common.created_by")}</span>
             </div>
@@ -158,7 +158,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
 
         {/* start date */}
         <div className="flex w-full items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-tertiary">
             <StartDatePropertyIcon className="h-4 w-4 flex-shrink-0" />
             <span>{t("common.order_by.start_date")}</span>
           </div>
@@ -175,7 +175,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             disabled={disabled}
             className="w-3/4 flex-grow group"
             buttonContainerClassName="w-full text-left"
-            buttonClassName={`text-sm ${issue?.start_date ? "" : "text-custom-text-400"}`}
+            buttonClassName={`text-sm ${issue?.start_date ? "" : "text-placeholder"}`}
             hideIcon
             clearIconClassName="h-3 w-3 hidden group-hover:inline"
             // TODO: add this logic
@@ -185,7 +185,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
 
         {/* due date */}
         <div className="flex w-full items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-tertiary">
             <DueDatePropertyIcon className="h-4 w-4 flex-shrink-0" />
             <span>{t("common.order_by.due_date")}</span>
           </div>
@@ -204,11 +204,11 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
               className="w-3/4 flex-grow group"
               buttonContainerClassName="w-full text-left"
               buttonClassName={cn("text-sm", {
-                "text-custom-text-400": !issue.target_date,
+                "text-placeholder": !issue.target_date,
                 "text-red-500": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
               })}
               hideIcon
-              clearIconClassName="h-3 w-3 hidden group-hover:inline !text-custom-text-100"
+              clearIconClassName="h-3 w-3 hidden group-hover:inline !text-primary"
               // TODO: add this logic
               // showPlaceholderIcon
             />
@@ -219,7 +219,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
         {/* estimate */}
         {isEstimateEnabled && (
           <div className="flex w-full items-center gap-3 h-8">
-            <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+            <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-tertiary">
               <EstimatePropertyIcon className="h-4 w-4 flex-shrink-0" />
               <span>{t("common.estimate")}</span>
             </div>
@@ -231,7 +231,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
               buttonVariant="transparent-with-text"
               className="w-3/4 flex-grow group"
               buttonContainerClassName="w-full text-left"
-              buttonClassName={`text-sm ${issue?.estimate_point !== undefined ? "" : "text-custom-text-400"}`}
+              buttonClassName={`text-sm ${issue?.estimate_point !== undefined ? "" : "text-placeholder"}`}
               placeholder="None"
               hideIcon
               dropdownArrow
@@ -242,7 +242,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
 
         {projectDetails?.module_view && (
           <div className="flex w-full items-center gap-3 min-h-8 h-full">
-            <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+            <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-tertiary">
               <ModuleIcon className="h-4 w-4 flex-shrink-0" />
               <span>{t("common.modules")}</span>
             </div>
@@ -259,7 +259,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
 
         {projectDetails?.cycle_view && (
           <div className="flex w-full items-center gap-3 h-8">
-            <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+            <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-tertiary">
               <CycleIcon className="h-4 w-4 flex-shrink-0" />
               <span>{t("common.cycle")}</span>
               <TransferHopInfo workItem={issue} />
@@ -277,7 +277,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
 
         {/* parent */}
         <div className="flex w-full items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-tertiary">
             <ParentPropertyIcon className="h-4 w-4 flex-shrink-0" />
             <p>{t("common.parent")}</p>
           </div>
@@ -293,7 +293,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
 
         {/* label */}
         <div className="flex w-full items-center gap-3 min-h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-tertiary">
             <LabelPropertyIcon className="h-4 w-4 flex-shrink-0" />
             <span>{t("common.labels")}</span>
           </div>

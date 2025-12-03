@@ -54,7 +54,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
         >
           <div className="flex items-start gap-2 truncate">
             <span className="py-1">
-              <Icon className="size-3 stroke-2 text-custom-text-350 group-hover:text-custom-text-100 flex-shrink-0" />
+              <Icon className="size-3 stroke-2 text-custom-text-350 group-hover:text-primary flex-shrink-0" />
             </span>
             <Tooltip
               tooltipContent={linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
@@ -77,7 +77,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
                   toggleIssueLinkModal(true);
                 }}
               >
-                <Pencil className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
+                <Pencil className="h-3 w-3 stroke-[1.5] text-secondary" />
               </button>
               <a
                 href={linkDetail.url}
@@ -85,7 +85,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
                 rel="noopener noreferrer"
                 className="flex items-center justify-center p-1 hover:bg-custom-background-80"
               >
-                <ExternalLink className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
+                <ExternalLink className="h-3 w-3 stroke-[1.5] text-secondary" />
               </a>
               <button
                 type="button"
@@ -103,7 +103,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
         </div>
 
         <div className="px-5">
-          <p className="mt-0.5 stroke-[1.5] text-xs text-custom-text-300">
+          <p className="mt-0.5 stroke-[1.5] text-xs text-tertiary">
             Added {calculateTimeAgo(linkDetail.created_at)}
             <br />
             {createdByDetails && (

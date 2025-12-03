@@ -108,18 +108,18 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
                     handleRemoveSubIssue(workspaceSlug, projectId, parentIssue.id, issueId);
                   }}
                 >
-                  <CloseIcon className="h-2.5 w-2.5 text-custom-text-300 hover:text-red-500" />
+                  <CloseIcon className="h-2.5 w-2.5 text-tertiary hover:text-red-500" />
                 </span>
               </Tooltip>
             )}
           </div>
         ) : (
-          <span className="text-sm text-custom-text-400">{t("issue.add.parent")}</span>
+          <span className="text-sm text-placeholder">{t("issue.add.parent")}</span>
         )}
         {!disabled && (
           <span
             className={cn("p-1 flex-shrink-0 opacity-0 group-hover:opacity-100", {
-              "text-custom-text-400": !issue.parent_id && !parentIssue,
+              "text-placeholder": !issue.parent_id && !parentIssue,
             })}
           >
             <Pencil className="h-2.5 w-2.5 flex-shrink-0" />

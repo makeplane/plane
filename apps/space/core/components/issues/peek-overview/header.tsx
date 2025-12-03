@@ -61,7 +61,7 @@ export const PeekOverviewHeader = observer(function PeekOverviewHeader(props: Pr
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           {peekMode === "side" && (
-            <button type="button" onClick={handleClose} className="text-custom-text-300 hover:text-custom-text-200">
+            <button type="button" onClick={handleClose} className="text-tertiary hover:text-secondary">
               <MoveRight className="size-4" />
             </button>
           )}
@@ -72,9 +72,9 @@ export const PeekOverviewHeader = observer(function PeekOverviewHeader(props: Pr
             className="relative flex-shrink-0 text-left"
           >
             <Listbox.Button
-              className={`grid place-items-center text-custom-text-300 hover:text-custom-text-200 ${peekMode === "full" ? "rotate-45" : ""}`}
+              className={`grid place-items-center text-tertiary hover:text-secondary ${peekMode === "full" ? "rotate-45" : ""}`}
             >
-              <Icon className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+              <Icon className="h-4 w-4 text-tertiary hover:text-secondary" />
             </Listbox.Button>
 
             <Transition
@@ -95,7 +95,7 @@ export const PeekOverviewHeader = observer(function PeekOverviewHeader(props: Pr
                       className={({ active, selected }) =>
                         `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
                           active ? "bg-custom-background-80" : ""
-                        } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                        } ${selected ? "text-primary" : "text-secondary"}`
                       }
                     >
                       <div className="flex items-center gap-1.5">
@@ -114,7 +114,7 @@ export const PeekOverviewHeader = observer(function PeekOverviewHeader(props: Pr
             <button
               type="button"
               onClick={handleCopyLink}
-              className="focus:outline-none text-custom-text-300 hover:text-custom-text-200"
+              className="focus:outline-none text-tertiary hover:text-secondary"
               tabIndex={1}
             >
               <Link2 className="h-4 w-4 -rotate-45" />

@@ -33,8 +33,8 @@ export function GeneratedTokenDetails(props: Props) {
   return (
     <div className="w-full p-5">
       <div className="w-full space-y-3 text-wrap">
-        <h3 className="text-lg font-medium leading-6 text-custom-text-100">{t("workspace_settings.key_created")}</h3>
-        <p className="text-sm text-custom-text-400">{t("workspace_settings.copy_key")}</p>
+        <h3 className="text-lg font-medium leading-6 text-primary">{t("workspace_settings.key_created")}</h3>
+        <p className="text-sm text-placeholder">{t("workspace_settings.copy_key")}</p>
       </div>
       <button
         type="button"
@@ -43,11 +43,11 @@ export function GeneratedTokenDetails(props: Props) {
       >
         <span className="truncate pr-2">{tokenDetails.token}</span>
         <Tooltip tooltipContent="Copy secret key" isMobile={isMobile}>
-          <Copy className="h-4 w-4 text-custom-text-400 flex-shrink-0" />
+          <Copy className="h-4 w-4 text-placeholder flex-shrink-0" />
         </Tooltip>
       </button>
       <div className="mt-6 flex items-center justify-between">
-        <p className="text-xs text-custom-text-400">
+        <p className="text-xs text-placeholder">
           {tokenDetails.expired_at
             ? `Expires ${renderFormattedDate(tokenDetails.expired_at!)} at ${renderFormattedTime(tokenDetails.expired_at!)}`
             : "Never expires"}

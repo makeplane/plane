@@ -41,7 +41,7 @@ export const IssueParentTag = observer(function IssueParentTag(props: TIssuePare
                 backgroundColor: selectedParentIssue.state__color,
               }}
             />
-            <span className="flex-shrink-0 text-custom-text-200">
+            <span className="flex-shrink-0 text-secondary">
               {selectedParentIssue?.project_id && (
                 <IssueIdentifier
                   projectId={selectedParentIssue.project_id}

@@ -33,7 +33,7 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
 
   if (!userDetails) {
     return (
-      <div className="not-prose inline px-1 py-0.5 rounded bg-custom-background-80 text-custom-text-300 no-underline">
+      <div className="not-prose inline px-1 py-0.5 rounded bg-custom-background-80 text-tertiary no-underline">
         @suspended user
       </div>
     );
@@ -65,10 +65,10 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
                 />
               </div>
               <div>
-                <Link to={profileLink} className="not-prose font-medium text-custom-text-100 text-sm hover:underline">
+                <Link to={profileLink} className="not-prose font-medium text-primary text-sm hover:underline">
                   {userDetails?.first_name} {userDetails?.last_name}
                 </Link>
-                {roleDetails && <p className="text-custom-text-200 text-xs">{ROLE[roleDetails]}</p>}
+                {roleDetails && <p className="text-secondary text-xs">{ROLE[roleDetails]}</p>}
               </div>
             </div>
           </div>

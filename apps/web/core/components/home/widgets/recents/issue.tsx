@@ -73,14 +73,14 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
               projectId={issueDetails?.project_id || ""}
               projectIdentifier={issueDetails?.project_identifier || ""}
               issueSequenceId={issueDetails?.sequence_id || ""}
-              textContainerClassName="text-custom-sidebar-text-400 text-sm whitespace-nowrap"
+              textContainerClassName="text-placeholder text-sm whitespace-nowrap"
             />
           ) : (
             <div className="flex gap-2 items-center justify-center">
               <div className="flex-shrink-0 grid place-items-center rounded bg-custom-background-80 size-8">
                 <WorkItemsIcon className="size-4 text-custom-text-350" />
               </div>
-              <div className="font-medium text-custom-text-400 text-sm whitespace-nowrap">
+              <div className="font-medium text-placeholder text-sm whitespace-nowrap">
                 {issueDetails?.project_identifier}-{issueDetails?.sequence_id}
               </div>
             </div>
@@ -88,7 +88,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
         </div>
       }
       appendTitleElement={
-        <div className="flex-shrink-0 font-medium text-xs text-custom-text-400">
+        <div className="flex-shrink-0 font-medium text-xs text-placeholder">
           {calculateTimeAgo(activity.visited_at)}
         </div>
       }

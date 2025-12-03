@@ -66,12 +66,12 @@ export const LinkCreateUpdateModal = observer(function LinkCreateUpdateModal(pro
     <ModalCore isOpen={isModalOpen} handleClose={onClose}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="space-y-5 p-5">
-          <h3 className="text-xl font-medium text-custom-text-200">
+          <h3 className="text-xl font-medium text-secondary">
             {preloadedData?.id ? t("update") : t("add")} {t("home.quick_links.title")}
           </h3>
           <div className="mt-2 space-y-3">
             <div>
-              <label htmlFor="url" className="mb-2 text-custom-text-200 text-base font-medium">
+              <label htmlFor="url" className="mb-2 text-secondary text-base font-medium">
                 {t("link.modal.url.text")}
                 <span className="text-[10px] block">{t("required")}</span>
               </label>
@@ -97,7 +97,7 @@ export const LinkCreateUpdateModal = observer(function LinkCreateUpdateModal(pro
               {errors.url && <span className="text-xs text-red-500">{t("link.modal.url.required")}</span>}
             </div>
             <div>
-              <label htmlFor="title" className="mb-2 text-custom-text-200 text-base font-medium">
+              <label htmlFor="title" className="mb-2 text-secondary text-base font-medium">
                 {t("link.modal.title.text")}
                 <span className="text-[10px] block">{t("optional")}</span>
               </label>

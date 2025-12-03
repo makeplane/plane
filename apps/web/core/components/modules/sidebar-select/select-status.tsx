@@ -34,7 +34,7 @@ export function SidebarStatusSelect({ control, submitChanges, watch }: Props) {
           render={({ field: { value } }) => (
             <CustomSelect
               label={
-                <span className={`flex items-center gap-2 text-left capitalize ${value ? "" : "text-custom-text-100"}`}>
+                <span className={`flex items-center gap-2 text-left capitalize ${value ? "" : "text-primary"}`}>
                   <span
                     className="h-2 w-2 flex-shrink-0 rounded-full"
                     style={{

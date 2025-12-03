@@ -53,7 +53,7 @@ export const Basic: Story = {
             <Tabs.Content key={option.value} value={option.value} className="p-4">
               <div className="text-sm">
                 <h3 className="font-medium mb-2">{option.label}</h3>
-                <p className="text-custom-text-300">Content for the {option.label.toLowerCase()} tab.</p>
+                <p className="text-tertiary">Content for the {option.label.toLowerCase()} tab.</p>
               </div>
             </Tabs.Content>
           ))}

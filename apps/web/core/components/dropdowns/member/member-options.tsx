@@ -93,7 +93,7 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
           <div className="flex items-center gap-2">
             <div className="w-4">
               {isUserSuspended(userId, workspaceSlug?.toString()) ? (
-                <SuspendedUserIcon className="h-3.5 w-3.5 text-custom-text-400" />
+                <SuspendedUserIcon className="h-3.5 w-3.5 text-placeholder" />
               ) : (
                 <Avatar name={userDetails?.display_name} src={getFileURL(userDetails?.avatar_url ?? "")} />
               )}
@@ -101,7 +101,7 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
             <span
               className={cn(
                 "flex-grow truncate",
-                isUserSuspended(userId, workspaceSlug?.toString()) ? "text-custom-text-400" : ""
+                isUserSuspended(userId, workspaceSlug?.toString()) ? "text-placeholder" : ""
               )}
             >
               {currentUser?.id === userId ? t("you") : userDetails?.display_name}
@@ -129,11 +129,11 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
         {...attributes.popper}
       >
         <div className="flex items-center gap-1.5 rounded border border-subtle bg-custom-background-90 px-2">
-          <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+          <Search className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
           <Combobox.Input
             as="input"
             ref={inputRef}
-            className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+            className="w-full bg-transparent py-1 text-xs text-secondary placeholder:text-placeholder focus:outline-none"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t("search")}
@@ -154,7 +154,7 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
                         cn(
                           "flex w-full select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5",
                           active && "bg-custom-background-80",
-                          selected ? "text-custom-text-100" : "text-custom-text-200",
+                          selected ? "text-primary" : "text-secondary",
                           isUserSuspended(option.value, workspaceSlug?.toString())
                             ? "cursor-not-allowed"
                             : "cursor-pointer"
@@ -177,10 +177,10 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
                   )
               )
             ) : (
-              <p className="px-1.5 py-1 italic text-custom-text-400">{t("no_matching_results")}</p>
+              <p className="px-1.5 py-1 italic text-placeholder">{t("no_matching_results")}</p>
             )
           ) : (
-            <p className="px-1.5 py-1 italic text-custom-text-400">{t("loading")}</p>
+            <p className="px-1.5 py-1 italic text-placeholder">{t("loading")}</p>
           )}
         </div>
       </div>

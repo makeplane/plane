@@ -91,7 +91,7 @@ export function ArchiveIssueModal(props: Props) {
                   <h3 className="text-xl font-medium 2xl:text-2xl">
                     {t("issue.archive.label")} {projectDetails?.identifier} {issue.sequence_id}
                   </h3>
-                  <p className="mt-3 text-sm text-custom-text-200">{t("issue.archive.confirm_message")}</p>
+                  <p className="mt-3 text-sm text-secondary">{t("issue.archive.confirm_message")}</p>
                   <div className="mt-3 flex justify-end gap-2">
                     <Button variant="neutral-primary" size="sm" onClick={onClose}>
                       {t("common.cancel")}

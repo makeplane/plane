@@ -200,10 +200,10 @@ export function ExportPageModal(props: Props) {
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.SM}>
       <div>
         <div className="p-5 space-y-5">
-          <h3 className="text-xl font-medium text-custom-text-200">Export page</h3>
+          <h3 className="text-xl font-medium text-secondary">Export page</h3>
           <div className="space-y-3">
             <div className="flex items-center justify-between gap-2">
-              <h6 className="flex-shrink-0 text-sm text-custom-text-200">Export format</h6>
+              <h6 className="flex-shrink-0 text-sm text-secondary">Export format</h6>
               <Controller
                 control={control}
                 name="export_format"
@@ -226,7 +226,7 @@ export function ExportPageModal(props: Props) {
               />
             </div>
             <div className="flex items-center justify-between gap-2">
-              <h6 className="flex-shrink-0 text-sm text-custom-text-200">Include content</h6>
+              <h6 className="flex-shrink-0 text-sm text-secondary">Include content</h6>
               <Controller
                 control={control}
                 name="content_variety"
@@ -250,7 +250,7 @@ export function ExportPageModal(props: Props) {
             </div>
             {isPDFSelected && (
               <div className="flex items-center justify-between gap-2">
-                <h6 className="flex-shrink-0 text-sm text-custom-text-200">Page format</h6>
+                <h6 className="flex-shrink-0 text-sm text-secondary">Page format</h6>
                 <Controller
                   control={control}
                   name="page_format"

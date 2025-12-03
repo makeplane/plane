@@ -156,11 +156,11 @@ export function InstanceSetupForm() {
 
             <div className="flex flex-col sm:flex-row items-center gap-4">
               <div className="w-full space-y-1">
-                <label className="text-sm text-custom-text-300 font-medium" htmlFor="first_name">
+                <label className="text-sm text-tertiary font-medium" htmlFor="first_name">
                   First name <span className="text-red-500">*</span>
                 </label>
                 <Input
-                  className="w-full border border-subtle !bg-custom-background-100 placeholder:text-custom-text-400"
+                  className="w-full border border-subtle !bg-custom-background-100 placeholder:text-placeholder"
                   id="first_name"
                   name="first_name"
                   type="text"
@@ -173,11 +173,11 @@ export function InstanceSetupForm() {
                 />
               </div>
               <div className="w-full space-y-1">
-                <label className="text-sm text-custom-text-300 font-medium" htmlFor="last_name">
+                <label className="text-sm text-tertiary font-medium" htmlFor="last_name">
                   Last name <span className="text-red-500">*</span>
                 </label>
                 <Input
-                  className="w-full border border-subtle !bg-custom-background-100 placeholder:text-custom-text-400"
+                  className="w-full border border-subtle !bg-custom-background-100 placeholder:text-placeholder"
                   id="last_name"
                   name="last_name"
                   type="text"
@@ -191,11 +191,11 @@ export function InstanceSetupForm() {
             </div>
 
             <div className="w-full space-y-1">
-              <label className="text-sm text-custom-text-300 font-medium" htmlFor="email">
+              <label className="text-sm text-tertiary font-medium" htmlFor="email">
                 Email <span className="text-red-500">*</span>
               </label>
               <Input
-                className="w-full border border-subtle !bg-custom-background-100 placeholder:text-custom-text-400"
+                className="w-full border border-subtle !bg-custom-background-100 placeholder:text-placeholder"
                 id="email"
                 name="email"
                 type="email"
@@ -212,11 +212,11 @@ export function InstanceSetupForm() {
             </div>
 
             <div className="w-full space-y-1">
-              <label className="text-sm text-custom-text-300 font-medium" htmlFor="company_name">
+              <label className="text-sm text-tertiary font-medium" htmlFor="company_name">
                 Company name <span className="text-red-500">*</span>
               </label>
               <Input
-                className="w-full border border-subtle !bg-custom-background-100 placeholder:text-custom-text-400"
+                className="w-full border border-subtle !bg-custom-background-100 placeholder:text-placeholder"
                 id="company_name"
                 name="company_name"
                 type="text"
@@ -228,12 +228,12 @@ export function InstanceSetupForm() {
             </div>
 
             <div className="w-full space-y-1">
-              <label className="text-sm text-custom-text-300 font-medium" htmlFor="password">
+              <label className="text-sm text-tertiary font-medium" htmlFor="password">
                 Set a password <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <Input
-                  className="w-full border border-subtle !bg-custom-background-100 placeholder:text-custom-text-400"
+                  className="w-full border border-subtle !bg-custom-background-100 placeholder:text-placeholder"
                   id="password"
                   name="password"
                   type={showPassword.password ? "text" : "password"}
@@ -250,7 +250,7 @@ export function InstanceSetupForm() {
                   <button
                     type="button"
                     tabIndex={-1}
-                    className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
+                    className="absolute right-3 top-3.5 flex items-center justify-center text-placeholder"
                     onClick={() => handleShowPassword("password")}
                   >
                     <EyeOff className="h-4 w-4" />
@@ -259,7 +259,7 @@ export function InstanceSetupForm() {
                   <button
                     type="button"
                     tabIndex={-1}
-                    className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
+                    className="absolute right-3 top-3.5 flex items-center justify-center text-placeholder"
                     onClick={() => handleShowPassword("password")}
                   >
                     <Eye className="h-4 w-4" />
@@ -273,7 +273,7 @@ export function InstanceSetupForm() {
             </div>
 
             <div className="w-full space-y-1">
-              <label className="text-sm text-custom-text-300 font-medium" htmlFor="confirm_password">
+              <label className="text-sm text-tertiary font-medium" htmlFor="confirm_password">
                 Confirm password <span className="text-red-500">*</span>
               </label>
               <div className="relative">
@@ -285,7 +285,7 @@ export function InstanceSetupForm() {
                   value={formData.confirm_password}
                   onChange={(e) => handleFormChange("confirm_password", e.target.value)}
                   placeholder="Confirm password"
-                  className="w-full border border-subtle !bg-custom-background-100 pr-12 placeholder:text-custom-text-400"
+                  className="w-full border border-subtle !bg-custom-background-100 pr-12 placeholder:text-placeholder"
                   onFocus={() => setIsRetryPasswordInputFocused(true)}
                   onBlur={() => setIsRetryPasswordInputFocused(false)}
                 />
@@ -293,7 +293,7 @@ export function InstanceSetupForm() {
                   <button
                     type="button"
                     tabIndex={-1}
-                    className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
+                    className="absolute right-3 top-3.5 flex items-center justify-center text-placeholder"
                     onClick={() => handleShowPassword("retypePassword")}
                   >
                     <EyeOff className="h-4 w-4" />
@@ -302,7 +302,7 @@ export function InstanceSetupForm() {
                   <button
                     type="button"
                     tabIndex={-1}
-                    className="absolute right-3 top-3.5 flex items-center justify-center text-custom-text-400"
+                    className="absolute right-3 top-3.5 flex items-center justify-center text-placeholder"
                     onClick={() => handleShowPassword("retypePassword")}
                   >
                     <Eye className="h-4 w-4" />
@@ -324,7 +324,7 @@ export function InstanceSetupForm() {
                   checked={formData.is_telemetry_enabled}
                 />
               </div>
-              <label className="text-sm text-custom-text-300 font-medium cursor-pointer" htmlFor="is_telemetry_enabled">
+              <label className="text-sm text-tertiary font-medium cursor-pointer" htmlFor="is_telemetry_enabled">
                 Allow Plane to anonymously collect usage events.{" "}
                 <a
                   tabIndex={-1}

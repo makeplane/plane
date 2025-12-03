@@ -178,14 +178,14 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
         <div
           ref={elementRef}
           className={cn(
-            "group/favorites-button w-full flex items-center justify-between px-2 py-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90"
+            "group/favorites-button w-full flex items-center justify-between px-2 py-1.5 rounded text-placeholder hover:bg-custom-sidebar-background-90"
           )}
         >
           <Disclosure.Button
             as="button"
             type="button"
             className={cn(
-              "w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-custom-sidebar-text-400",
+              "w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-placeholder",
               {
                 "bg-custom-sidebar-background-80 opacity-60": isDragging,
               }
@@ -246,7 +246,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
               {createNewFolder && <NewFavoriteFolder setCreateNewFolder={setCreateNewFolder} actionType="create" />}
               {Object.keys(groupedFavorites).length === 0 ? (
                 <>
-                  <span className="text-custom-text-400 text-xs font-medium px-8 py-1.5">{t("no_favorites_yet")}</span>
+                  <span className="text-placeholder text-xs font-medium px-8 py-1.5">{t("no_favorites_yet")}</span>
                 </>
               ) : (
                 orderBy(Object.values(groupedFavorites), "sequence", "desc")

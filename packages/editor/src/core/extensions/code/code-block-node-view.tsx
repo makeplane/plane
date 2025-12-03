@@ -48,12 +48,12 @@ export function CodeBlockComponent({ node }: Props) {
           {copied ? (
             <CheckIcon className="h-3 w-3 text-green-500" strokeWidth={3} />
           ) : (
-            <CopyIcon className="h-3 w-3 text-custom-text-300 group-hover/button:text-custom-text-100" />
+            <CopyIcon className="h-3 w-3 text-tertiary group-hover/button:text-primary" />
           )}
         </button>
       </Tooltip>
 
-      <pre className="bg-custom-background-90 text-custom-text-100 rounded-lg p-4 my-2">
+      <pre className="bg-custom-background-90 text-primary rounded-lg p-4 my-2">
         <NodeViewContent as="code" className="whitespace-pre-wrap" />
       </pre>
     </NodeViewWrapper>

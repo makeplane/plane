@@ -139,7 +139,7 @@ export const IssueRelationSelect = observer(function IssueRelationSelect(props: 
                             removeRelation(workspaceSlug, projectId, issueId, relationKey, relationIssueId);
                           }}
                         >
-                          <CloseIcon className="h-2.5 w-2.5 text-custom-text-300 hover:text-red-500" />
+                          <CloseIcon className="h-2.5 w-2.5 text-tertiary hover:text-red-500" />
                         </span>
                       </Tooltip>
                     )}
@@ -148,12 +148,12 @@ export const IssueRelationSelect = observer(function IssueRelationSelect(props: 
               })}
             </div>
           ) : (
-            <span className="text-sm text-custom-text-400">{currRelationOption?.placeholder}</span>
+            <span className="text-sm text-placeholder">{currRelationOption?.placeholder}</span>
           )}
           {!disabled && (
             <span
               className={cn("flex-shrink-0 p-1 opacity-0 group-hover:opacity-100", {
-                "text-custom-text-400": relationIssueIds.length === 0,
+                "text-placeholder": relationIssueIds.length === 0,
               })}
             >
               <Pencil className="h-2.5 w-2.5 flex-shrink-0" />

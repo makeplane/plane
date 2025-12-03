@@ -195,7 +195,7 @@ export function ColumnDragHandle(props: ColumnDragHandleProps) {
             }
           )}
         >
-          <Ellipsis className="size-4 text-custom-text-100" />
+          <Ellipsis className="size-4 text-primary" />
         </button>
       </div>
       {isDropdownOpen && (

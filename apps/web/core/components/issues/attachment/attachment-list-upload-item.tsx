@@ -30,7 +30,7 @@ export const IssueAttachmentsUploadItem = observer(function IssueAttachmentsUplo
       <div className="flex items-center gap-3 text-sm truncate">
         <div className="flex-shrink-0">{fileIcon}</div>
         <Tooltip tooltipContent={fileName} isMobile={isMobile}>
-          <p className="text-custom-text-200 font-medium truncate">{fileName}</p>
+          <p className="text-secondary font-medium truncate">{fileName}</p>
         </Tooltip>
       </div>
       <div className="flex-shrink-0 flex items-center gap-2">

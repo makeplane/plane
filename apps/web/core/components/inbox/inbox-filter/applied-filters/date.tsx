@@ -41,7 +41,7 @@ export const InboxIssueAppliedFiltersDate = observer(function InboxIssueAppliedF
   if (filteredValues.length === 0) return <></>;
   return (
     <Tag>
-      <div className="text-xs text-custom-text-200">{label}</div>
+      <div className="text-xs text-secondary">{label}</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
         if (!optionDetail) return <></>;
@@ -49,7 +49,7 @@ export const InboxIssueAppliedFiltersDate = observer(function InboxIssueAppliedF
           <div key={value} className="relative flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
             <div className="text-xs truncate">{optionDetail?.name}</div>
             <div
-              className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
+              className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-tertiary hover:text-secondary transition-all"
               onClick={() => handleInboxIssueFilters(filterKey, handleFilterValue(optionDetail?.value))}
             >
               <CloseIcon className={`w-3 h-3`} />
@@ -59,7 +59,7 @@ export const InboxIssueAppliedFiltersDate = observer(function InboxIssueAppliedF
       })}
 
       <div
-        className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
+        className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-tertiary hover:text-secondary transition-all"
         onClick={clearFilter}
       >
         <CloseIcon className={`w-3 h-3`} />

@@ -63,7 +63,7 @@ export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSa
               <>Quote on request</>
             )}
           </div>
-          <div className="text-sm font-medium text-custom-text-300">per user per month</div>
+          <div className="text-sm font-medium text-tertiary">per user per month</div>
         </div>
         {isLoading ? (
           <Loader className="flex flex-col items-center justify-center">

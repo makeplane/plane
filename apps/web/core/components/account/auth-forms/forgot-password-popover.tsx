@@ -51,7 +51,7 @@ export function ForgotPasswordPopover() {
               onClick={() => close()}
               aria-label={t("aria_labels.auth_forms.close_popover")}
             >
-              <CloseIcon className="size-3 text-custom-text-200" />
+              <CloseIcon className="size-3 text-secondary" />
             </button>
           </div>
         )}

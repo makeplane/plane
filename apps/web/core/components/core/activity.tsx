@@ -59,13 +59,13 @@ export function IssueLink({ activity }: { activity: IIssueActivity }) {
           href={workItemLink}
           target={activity.issue === null ? "_self" : "_blank"}
           rel={activity.issue === null ? "" : "noopener noreferrer"}
-          className="inline items-center gap-1 font-medium text-custom-text-100 hover:underline"
+          className="inline items-center gap-1 font-medium text-primary hover:underline"
         >
           <span className="whitespace-nowrap">{`${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}`}</span>{" "}
           <span className="font-normal break-all">{activity.issue_detail?.name}</span>
         </a>
       ) : (
-        <span className="inline-flex items-center gap-1 font-medium text-custom-text-100 whitespace-nowrap">
+        <span className="inline-flex items-center gap-1 font-medium text-primary whitespace-nowrap">
           {" a work item"}{" "}
         </span>
       )}
@@ -84,7 +84,7 @@ function UserLink({ activity }: { activity: IIssueActivity }) {
       }`}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center font-medium text-custom-text-100 hover:underline"
+      className="inline-flex items-center font-medium text-primary hover:underline"
     >
       {activity.new_value && activity.new_value !== "" ? activity.new_value : activity.old_value}
     </a>
@@ -177,7 +177,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Users2Icon size={12} className="text-custom-text-200" aria-hidden="true" />,
+    icon: <Users2Icon size={12} className="text-secondary" aria-hidden="true" />,
   },
   archived_at: {
     message: (activity) => {
@@ -194,7 +194,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <ArchiveIcon size={12} className="text-custom-text-200" aria-hidden="true" />,
+    icon: <ArchiveIcon size={12} className="text-secondary" aria-hidden="true" />,
   },
   attachment: {
     message: (activity, showIssue) => {
@@ -223,7 +223,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <PaperclipIcon size={12} className="text-custom-text-200" aria-hidden="true" />,
+    icon: <PaperclipIcon size={12} className="text-secondary" aria-hidden="true" />,
   },
   description: {
     message: (activity, showIssue) => (
@@ -237,7 +237,7 @@ const activityDetails: {
         )}
       </>
     ),
-    icon: <MessageSquareIcon size={12} className="text-custom-text-200" aria-hidden="true" />,
+    icon: <MessageSquareIcon size={12} className="text-secondary" aria-hidden="true" />,
   },
   estimate_point: {
     message: (activity, showIssue) => {
@@ -266,7 +266,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <TriangleIcon size={12} className="text-custom-text-200" aria-hidden="true" />,
+    icon: <TriangleIcon size={12} className="text-secondary" aria-hidden="true" />,
   },
   issue: {
     message: (activity) => {
@@ -289,7 +289,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <WorkItemsIcon width={12} height={12} className="text-custom-text-200" aria-hidden="true" />,
+    icon: <WorkItemsIcon width={12} height={12} className="text-secondary" aria-hidden="true" />,
   },
   epic: {
     message: (activity) => {
@@ -312,7 +312,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <EpicIcon width={12} height={12} className="text-custom-text-200" aria-hidden="true" />,
+    icon: <EpicIcon width={12} height={12} className="text-secondary" aria-hidden="true" />,
   },
   labels: {
     message: (activity, showIssue, workspaceSlug) => {
@@ -322,9 +322,7 @@ const activityDetails: {
             added a new label{" "}
             <span className="inline-flex items-center gap-2 rounded-full border border-strong px-2 py-0.5 text-xs">
               <LabelPill labelId={activity.new_identifier ?? ""} workspaceSlug={workspaceSlug} />
-              <span className="flex-shrink font-medium text-custom-text-100 break-all line-clamp-1">
-                {activity.new_value}
-              </span>
+              <span className="flex-shrink font-medium text-primary break-all line-clamp-1">{activity.new_value}</span>
             </span>
             {showIssue && (
               <span className="">
@@ -340,9 +338,7 @@ const activityDetails: {
             removed the label{" "}
             <span className="inline-flex items-center gap-2 rounded-full border border-strong px-2 py-0.5 text-xs">
               <LabelPill labelId={activity.old_identifier ?? ""} workspaceSlug={workspaceSlug} />
-              <span className="flex-shrink font-medium text-custom-text-100 break-all line-clamp-1">
-                {activity.old_value}
-              </span>
+              <span className="flex-shrink font-medium text-primary break-all line-clamp-1">{activity.old_value}</span>
             </span>
             {showIssue && (
               <span>
@@ -353,7 +349,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <TagIcon size={12} className="text-custom-text-200" aria-hidden="true" />,
+    icon: <TagIcon size={12} className="text-secondary" aria-hidden="true" />,
   },
   link: {
     message: (activity, showIssue) => {
@@ -365,7 +361,7 @@ const activityDetails: {
               href={`${activity.new_value}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
             >
               link
             </a>
@@ -385,7 +381,7 @@ const activityDetails: {
               href={`${activity.old_value}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
             >
               link
             </a>
@@ -405,7 +401,7 @@ const activityDetails: {
               href={`${activity.old_value}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+              className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
             >
               link
             </a>
@@ -418,7 +414,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Link2Icon size={12} className="text-custom-text-200" aria-hidden="true" />,
+    icon: <Link2Icon size={12} className="text-secondary" aria-hidden="true" />,
   },
   cycles: {
     message: (activity, showIssue, workspaceSlug) => {
@@ -433,7 +429,7 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline items-center gap-1 font-medium text-custom-text-100 hover:underline"
+              className="inline items-center gap-1 font-medium text-primary hover:underline"
             >
               <span className="break-all">{activity.new_value}</span>
             </a>
@@ -447,7 +443,7 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline items-center gap-1 font-medium text-custom-text-100 hover:underline"
+              className="inline items-center gap-1 font-medium text-primary hover:underline"
             >
               <span className="break-all">{activity.new_value}</span>
             </a>
@@ -461,14 +457,14 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.old_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline items-center gap-1 font-medium text-custom-text-100 hover:underline"
+              className="inline items-center gap-1 font-medium text-primary hover:underline"
             >
               <span className="break-all">{activity.old_value}</span>
             </a>
           </>
         );
     },
-    icon: <CycleIcon height={12} width={12} className="text-custom-text-200" aria-hidden="true" />,
+    icon: <CycleIcon height={12} width={12} className="text-secondary" aria-hidden="true" />,
   },
   modules: {
     message: (activity, showIssue, workspaceSlug) => {
@@ -480,7 +476,7 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline items-center gap-1 font-medium text-custom-text-100 hover:underline"
+              className="inline items-center gap-1 font-medium text-primary hover:underline"
             >
               <span className="break-all">{activity.new_value}</span>
             </a>
@@ -494,7 +490,7 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline items-center gap-1 font-medium text-custom-text-100 hover:underline"
+              className="inline items-center gap-1 font-medium text-primary hover:underline"
             >
               <span className="break-all">{activity.new_value}</span>
             </a>
@@ -508,14 +504,14 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.old_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline items-center gap-1 font-medium text-custom-text-100 hover:underline"
+              className="inline items-center gap-1 font-medium text-primary hover:underline"
             >
               <span className="break-all">{activity.old_value}</span>
             </a>
           </>
         );
     },
-    icon: <ModuleIcon className="h-3 w-3 !text-custom-text-200" aria-hidden="true" />,
+    icon: <ModuleIcon className="h-3 w-3 !text-secondary" aria-hidden="true" />,
   },
   name: {
     message: (activity, showIssue) => (
@@ -529,15 +525,14 @@ const activityDetails: {
         )}
       </>
     ),
-    icon: <MessageSquareIcon size={12} className="text-custom-text-200" aria-hidden="true" />,
+    icon: <MessageSquareIcon size={12} className="text-secondary" aria-hidden="true" />,
   },
   parent: {
     message: (activity, showIssue) => {
       if (!activity.new_value)
         return (
           <>
-            removed the parent{" "}
-            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.old_value}</span>
+            removed the parent <span className="font-medium text-primary whitespace-nowrap">{activity.old_value}</span>
             {showIssue && (
               <>
                 {" "}
@@ -549,8 +544,7 @@ const activityDetails: {
       else
         return (
           <>
-            set the parent to{" "}
-            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.new_value}</span>
+            set the parent to <span className="font-medium text-primary whitespace-nowrap">{activity.new_value}</span>
             {showIssue && (
               <>
                 {" "}
@@ -560,13 +554,13 @@ const activityDetails: {
           </>
         );
     },
-    icon: <UsersIcon className="h-3 w-3 !text-custom-text-200" aria-hidden="true" />,
+    icon: <UsersIcon className="h-3 w-3 !text-secondary" aria-hidden="true" />,
   },
   priority: {
     message: (activity, showIssue) => (
       <>
         set the priority to{" "}
-        <span className="font-medium text-custom-text-100">
+        <span className="font-medium text-primary">
           {activity.new_value ? capitalizeFirstLetter(activity.new_value) : "None"}
         </span>
         {showIssue && (
@@ -577,7 +571,7 @@ const activityDetails: {
         )}
       </>
     ),
-    icon: <SignalMediumIcon size={12} className="text-custom-text-200" aria-hidden="true" />,
+    icon: <SignalMediumIcon size={12} className="text-secondary" aria-hidden="true" />,
   },
   relates_to: {
     message: (activity, showIssue) => {
@@ -585,18 +579,18 @@ const activityDetails: {
         return (
           <>
             marked that {showIssue ? <IssueLink activity={activity} /> : "this work item"} relates to{" "}
-            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.new_value}</span>.
+            <span className="font-medium text-primary whitespace-nowrap">{activity.new_value}</span>.
           </>
         );
       else
         return (
           <>
             removed the relation from{" "}
-            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.old_value}</span>.
+            <span className="font-medium text-primary whitespace-nowrap">{activity.old_value}</span>.
           </>
         );
     },
-    icon: <RelatedIcon height="12" width="12" className="text-custom-text-200" />,
+    icon: <RelatedIcon height="12" width="12" className="text-secondary" />,
   },
   blocking: {
     message: (activity, showIssue) => {
@@ -604,18 +598,18 @@ const activityDetails: {
         return (
           <>
             marked {showIssue ? <IssueLink activity={activity} /> : "this work item"} is blocking work item{" "}
-            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.new_value}</span>.
+            <span className="font-medium text-primary whitespace-nowrap">{activity.new_value}</span>.
           </>
         );
       else
         return (
           <>
             removed the blocking work item{" "}
-            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.old_value}</span>.
+            <span className="font-medium text-primary whitespace-nowrap">{activity.old_value}</span>.
           </>
         );
     },
-    icon: <BlockerIcon height="12" width="12" className="text-custom-text-200" />,
+    icon: <BlockerIcon height="12" width="12" className="text-secondary" />,
   },
   blocked_by: {
     message: (activity, showIssue) => {
@@ -623,18 +617,18 @@ const activityDetails: {
         return (
           <>
             marked {showIssue ? <IssueLink activity={activity} /> : "this work item"} is being blocked by{" "}
-            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.new_value}</span>.
+            <span className="font-medium text-primary whitespace-nowrap">{activity.new_value}</span>.
           </>
         );
       else
         return (
           <>
             removed {showIssue ? <IssueLink activity={activity} /> : "this work item"} being blocked by work item{" "}
-            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.old_value}</span>.
+            <span className="font-medium text-primary whitespace-nowrap">{activity.old_value}</span>.
           </>
         );
     },
-    icon: <BlockedIcon height="12" width="12" className="text-custom-text-200" />,
+    icon: <BlockedIcon height="12" width="12" className="text-secondary" />,
   },
   duplicate: {
     message: (activity, showIssue) => {
@@ -642,23 +636,23 @@ const activityDetails: {
         return (
           <>
             marked {showIssue ? <IssueLink activity={activity} /> : "this work item"} as duplicate of{" "}
-            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.new_value}</span>.
+            <span className="font-medium text-primary whitespace-nowrap">{activity.new_value}</span>.
           </>
         );
       else
         return (
           <>
             removed {showIssue ? <IssueLink activity={activity} /> : "this work item"} as a duplicate of{" "}
-            <span className="font-medium text-custom-text-100 whitespace-nowrap">{activity.old_value}</span>.
+            <span className="font-medium text-primary whitespace-nowrap">{activity.old_value}</span>.
           </>
         );
     },
-    icon: <CopyPlus size={12} className="text-custom-text-200" />,
+    icon: <CopyPlus size={12} className="text-secondary" />,
   },
   state: {
     message: (activity, showIssue) => (
       <>
-        set the state to <span className="font-medium text-custom-text-100 break-all">{activity.new_value}</span>
+        set the state to <span className="font-medium text-primary break-all">{activity.new_value}</span>
         {showIssue && (
           <>
             {" "}
@@ -667,7 +661,7 @@ const activityDetails: {
         )}
       </>
     ),
-    icon: <LayoutGridIcon size={12} className="text-custom-text-200" aria-hidden="true" />,
+    icon: <LayoutGridIcon size={12} className="text-secondary" aria-hidden="true" />,
   },
   start_date: {
     message: (activity, showIssue) => {
@@ -687,7 +681,7 @@ const activityDetails: {
         return (
           <>
             set the start date to{" "}
-            <span className="font-medium text-custom-text-100 whitespace-nowrap">
+            <span className="font-medium text-primary whitespace-nowrap">
               {renderFormattedDate(activity.new_value)}
             </span>
             {showIssue && (
@@ -699,7 +693,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Calendar size={12} className="text-custom-text-200" aria-hidden="true" />,
+    icon: <Calendar size={12} className="text-secondary" aria-hidden="true" />,
   },
   target_date: {
     message: (activity, showIssue) => {
@@ -719,7 +713,7 @@ const activityDetails: {
         return (
           <>
             set the due date to{" "}
-            <span className="font-medium text-custom-text-100 whitespace-nowrap">
+            <span className="font-medium text-primary whitespace-nowrap">
               {renderFormattedDate(activity.new_value)}
             </span>
             {showIssue && (
@@ -730,7 +724,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Calendar size={12} className="text-custom-text-200" aria-hidden="true" />,
+    icon: <Calendar size={12} className="text-secondary" aria-hidden="true" />,
   },
   inbox: {
     message: (activity, showIssue) => (
@@ -745,7 +739,7 @@ const activityDetails: {
         {activity.verb === "2" && ` from intake by marking a duplicate work item.`}
       </>
     ),
-    icon: <IntakeIcon className="size-3 text-custom-text-200" aria-hidden="true" />,
+    icon: <IntakeIcon className="size-3 text-secondary" aria-hidden="true" />,
   },
 };
 

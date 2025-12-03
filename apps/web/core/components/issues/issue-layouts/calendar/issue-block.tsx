@@ -60,8 +60,8 @@ export const CalendarIssueBlock = observer(
     const customActionButton = (
       <div
         ref={menuActionRef}
-        className={`w-full cursor-pointer rounded p-1 text-custom-sidebar-text-400 hover:bg-custom-background-80 ${
-          isMenuActive ? "bg-custom-background-80 text-custom-text-100" : "text-custom-text-200"
+        className={`w-full cursor-pointer rounded p-1 text-placeholder hover:bg-custom-background-80 ${
+          isMenuActive ? "bg-custom-background-80 text-primary" : "text-secondary"
         }`}
         onClick={() => setIsMenuActive(!isMenuActive)}
       >
@@ -93,7 +93,7 @@ export const CalendarIssueBlock = observer(
               id={`issue-${issue.id}`}
               href={workItemLink}
               onClick={() => handleIssuePeekOverview(issue)}
-              className="block w-full text-sm text-custom-text-100 rounded border-b md:border-[1px] border-subtle-1 hover:border-strong-1"
+              className="block w-full text-sm text-primary rounded border-b md:border-[1px] border-subtle-1 hover:border-strong-1"
               disabled={!!issue?.tempId || isMobile}
               ref={ref}
             >
@@ -124,7 +124,7 @@ export const CalendarIssueBlock = observer(
                       <IssueIdentifier
                         issueId={issue.id}
                         projectId={issue.project_id}
-                        textContainerClassName="text-sm md:text-xs text-custom-text-300"
+                        textContainerClassName="text-sm md:text-xs text-tertiary"
                         displayProperties={issuesFilter?.issueFilters?.displayProperties}
                       />
                     )}

@@ -46,10 +46,10 @@ export function BubbleMenuLinkSelector(props: Props) {
       classNames={{
         buttonContainer: "h-full",
         button: cn(
-          "h-full flex items-center gap-1 px-3 text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 active:bg-custom-background-80 rounded whitespace-nowrap transition-colors",
+          "h-full flex items-center gap-1 px-3 text-sm font-medium text-tertiary hover:bg-custom-background-80 active:bg-custom-background-80 rounded whitespace-nowrap transition-colors",
           {
             "bg-custom-background-80": context.open,
-            "text-custom-text-100": editor.isActive(CORE_EXTENSIONS.CUSTOM_LINK),
+            "text-primary": editor.isActive(CORE_EXTENSIONS.CUSTOM_LINK),
           }
         ),
       }}
@@ -74,7 +74,7 @@ export function BubbleMenuLinkSelector(props: Props) {
             type="url"
             placeholder="Enter or paste a link"
             onClick={(e) => e.stopPropagation()}
-            className="flex-1 border-r-[0.5px] border-strong bg-custom-background-100 py-2 px-1.5 text-xs outline-none placeholder:text-custom-text-400 rounded"
+            className="flex-1 border-r-[0.5px] border-strong bg-custom-background-100 py-2 px-1.5 text-xs outline-none placeholder:text-placeholder rounded"
             defaultValue={editor.getAttributes("link").href || ""}
             onKeyDown={(e) => {
               setError(false);
@@ -101,7 +101,7 @@ export function BubbleMenuLinkSelector(props: Props) {
           ) : (
             <button
               type="button"
-              className="h-full aspect-square grid place-items-center p-1 rounded-sm text-custom-text-300 hover:bg-custom-background-80 transition-all"
+              className="h-full aspect-square grid place-items-center p-1 rounded-sm text-tertiary hover:bg-custom-background-80 transition-all"
               onClick={(e) => {
                 e.stopPropagation();
                 handleLinkSubmit();

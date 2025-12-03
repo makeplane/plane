@@ -156,7 +156,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                   <div className="size-4 grid place-items-center flex-shrink-0">
                     {project && <Logo logo={project?.logo_props} />}
                   </div>
-                  <p className="truncate text-custom-sidebar-text-200">{project?.name}</p>
+                  <p className="truncate text-secondary">{project?.name}</p>
                 </div>
               );
               return () => root.unmount();
@@ -255,7 +255,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
           <DropIndicator classNames="absolute top-0" isVisible={instruction === "DRAG_OVER"} />
           <div
             className={cn(
-              "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-90",
+              "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-primary hover:bg-custom-sidebar-background-90",
               {
                 "bg-custom-sidebar-background-90": isMenuActive,
               }
@@ -274,7 +274,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                 <button
                   type="button"
                   className={cn(
-                    "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded text-custom-sidebar-text-400 cursor-grab",
+                    "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded text-placeholder cursor-grab",
                     {
                       "cursor-not-allowed opacity-60": project.sort_order === null,
                       "cursor-grabbing": isDragging,
@@ -303,14 +303,14 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                     <div className="size-4 grid place-items-center flex-shrink-0">
                       <Logo logo={project.logo_props} size={16} />
                     </div>
-                    <p className="truncate text-sm font-medium text-custom-sidebar-text-200">{project.name}</p>
+                    <p className="truncate text-sm font-medium text-secondary">{project.name}</p>
                   </Disclosure.Button>
                 ) : (
                   <div className="flex-grow flex items-center gap-1.5 text-left select-none w-full">
                     <div className="size-4 grid place-items-center flex-shrink-0">
                       <Logo logo={project.logo_props} size={16} />
                     </div>
-                    <p className="truncate text-sm font-medium text-custom-sidebar-text-200">{project.name}</p>
+                    <p className="truncate text-sm font-medium text-secondary">{project.name}</p>
                   </div>
                 )}
               </ControlLink>
@@ -318,7 +318,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                 customButton={
                   <span
                     ref={actionSectionRef}
-                    className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded"
+                    className="grid place-items-center p-0.5 text-placeholder hover:bg-custom-sidebar-background-80 rounded"
                     onClick={() => setIsMenuActive(!isMenuActive)}
                   >
                     <MoreHorizontal className="size-4" />
@@ -357,7 +357,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                 {isAdmin && (
                   <CustomMenu.MenuItem onClick={() => setPublishModal(true)}>
                     <div className="relative flex flex-shrink-0 items-center justify-start gap-2">
-                      <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded text-custom-sidebar-text-200 transition-all duration-300 hover:bg-custom-sidebar-background-80">
+                      <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded text-secondary transition-all duration-300 hover:bg-custom-sidebar-background-80">
                         <Share2 className="h-3.5 w-3.5 stroke-[1.5]" />
                       </div>
                       <div>{t("publish_project")}</div>
@@ -423,7 +423,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                   )}
                 >
                   <ChevronRightIcon
-                    className={cn("size-4 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
+                    className={cn("size-4 flex-shrink-0 text-placeholder transition-transform", {
                       "rotate-90": isProjectListOpen,
                     })}
                   />

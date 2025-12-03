@@ -90,19 +90,19 @@ const ProjectInsights = observer(function ProjectInsights() {
             </Suspense>
           )}
           <div className="w-full lg:w-2/5">
-            <div className="text-sm text-custom-text-300">{t("workspace_analytics.summary_of_projects")}</div>
+            <div className="text-sm text-tertiary">{t("workspace_analytics.summary_of_projects")}</div>
             <div className=" mb-3 border-b border-subtle py-2">{t("workspace_analytics.all_projects")}</div>
             <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between text-sm text-custom-text-300">
+              <div className="flex items-center justify-between text-sm text-tertiary">
                 <div>{t("workspace_analytics.trend_on_charts")}</div>
                 <div>{t("common.work_items")}</div>
               </div>
               {projectInsightsData?.map((item) => (
-                <div key={item.key} className="flex items-center justify-between text-sm text-custom-text-100">
+                <div key={item.key} className="flex items-center justify-between text-sm text-primary">
                   <div>{item.name}</div>
                   <div className="flex items-center gap-1">
                     {/* <TrendPiece key={item.key} size='xs' /> */}
-                    <div className="text-custom-text-200">{item.count}</div>
+                    <div className="text-secondary">{item.count}</div>
                   </div>
                 </div>
               ))}

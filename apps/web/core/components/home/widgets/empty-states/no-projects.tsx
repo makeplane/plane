@@ -136,7 +136,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
       <div className="flex items-center justify-between mb-4">
         <div className="text-base font-semibold text-custom-text-350">{t("home.empty.quickstart_guide")}</div>
         <button
-          className="text-custom-text-300 font-medium text-sm flex items-center gap-1"
+          className="text-tertiary font-medium text-sm flex items-center gap-1"
           onClick={() => {
             if (!storedValue) return;
             setValue({ ...storedValue, hide: true });
@@ -156,7 +156,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
             >
               <div
                 className={cn(
-                  "grid place-items-center bg-custom-background-90 rounded-full size-9 mb-3 text-custom-text-400",
+                  "grid place-items-center bg-custom-background-90 rounded-full size-9 mb-3 text-placeholder",
                   {
                     "text-custom-primary-100 bg-custom-primary-100/10": !isStateComplete,
                   }
@@ -164,8 +164,8 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
               >
                 <span className="text-3xl my-auto">{item.icon}</span>
               </div>
-              <h3 className="text-sm font-medium text-custom-text-100 mb-2">{t(item.title)}</h3>
-              <p className="text-[11px] text-custom-text-300 mb-2">{t(item.description)}</p>
+              <h3 className="text-sm font-medium text-primary mb-2">{t(item.title)}</h3>
+              <p className="text-[11px] text-tertiary mb-2">{t(item.description)}</p>
               {isStateComplete ? (
                 <div className="flex items-center gap-2 bg-[#17a34a] rounded-full p-1 w-fit">
                   <Check className="size-3 text-custom-primary-100 text-white" />

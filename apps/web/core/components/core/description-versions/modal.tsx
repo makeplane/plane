@@ -86,7 +86,7 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
                 />
               </span>
             </p>
-            <p className="flex-shrink-0 text-custom-text-200">
+            <p className="flex-shrink-0 text-secondary">
               {calculateTimeAgo(activeVersionDetails?.last_saved_at ?? "")}
             </p>
           </div>
@@ -94,13 +94,10 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
             <button
               type="button"
               onClick={() => handleNavigation("prev")}
-              className={cn(
-                "size-6 text-custom-text-200 grid place-items-center rounded outline-none transition-colors",
-                {
-                  "hover:bg-custom-background-80": !isPrevDisabled,
-                  "opacity-50": isPrevDisabled,
-                }
-              )}
+              className={cn("size-6 text-secondary grid place-items-center rounded outline-none transition-colors", {
+                "hover:bg-custom-background-80": !isPrevDisabled,
+                "opacity-50": isPrevDisabled,
+              })}
               disabled={isPrevDisabled}
             >
               <ChevronLeftIcon className="size-4" />
@@ -108,13 +105,10 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
             <button
               type="button"
               onClick={() => handleNavigation("next")}
-              className={cn(
-                "size-6 text-custom-text-200 grid place-items-center rounded outline-none transition-colors",
-                {
-                  "hover:bg-custom-background-80": !isNextDisabled,
-                  "opacity-50": isNextDisabled,
-                }
-              )}
+              className={cn("size-6 text-secondary grid place-items-center rounded outline-none transition-colors", {
+                "hover:bg-custom-background-80": !isNextDisabled,
+                "opacity-50": isNextDisabled,
+              })}
               disabled={isNextDisabled}
             >
               <ChevronRightIcon className="size-4" />

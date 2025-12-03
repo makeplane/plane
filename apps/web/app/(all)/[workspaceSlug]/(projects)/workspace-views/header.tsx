@@ -120,9 +120,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
         <Header.LeftItem>
           <Breadcrumbs>
             <Breadcrumbs.Item
-              component={
-                <BreadcrumbLink label={t("views")} icon={<ViewsIcon className="h-4 w-4 text-custom-text-300" />} />
-              }
+              component={<BreadcrumbLink label={t("views")} icon={<ViewsIcon className="h-4 w-4 text-tertiary" />} />}
             />
             <Breadcrumbs.Item
               component={
@@ -135,7 +133,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
                   title={viewDetails?.name ?? t(defaultViewDetails?.i18n_label ?? "")}
                   icon={
                     <Breadcrumbs.Icon>
-                      <ViewsIcon className="size-4 flex-shrink-0 text-custom-text-300" />
+                      <ViewsIcon className="size-4 flex-shrink-0 text-tertiary" />
                     </Breadcrumbs.Icon>
                   }
                   isLast

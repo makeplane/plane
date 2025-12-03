@@ -66,7 +66,7 @@ export const IssueGanttBlock = observer(function IssueGanttBlock(props: Props) {
           >
             <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50 " />
             <div
-              className="sticky w-auto overflow-hidden truncate px-2.5 py-1 text-sm text-custom-text-100 flex-1"
+              className="sticky w-auto overflow-hidden truncate px-2.5 py-1 text-sm text-primary flex-1"
               style={{ left: `${SIDEBAR_WIDTH}px` }}
             >
               {issueDetails?.name}
@@ -74,7 +74,7 @@ export const IssueGanttBlock = observer(function IssueGanttBlock(props: Props) {
             {isEpic && (
               <IssueStats
                 issueId={issueId}
-                className="sticky mx-2 font-medium text-custom-text-100 overflow-hidden truncate w-auto justify-end flex-shrink-0"
+                className="sticky mx-2 font-medium text-primary overflow-hidden truncate w-auto justify-end flex-shrink-0"
                 showProgressText={duration >= 2}
               />
             )}
@@ -140,7 +140,7 @@ export const IssueGanttSidebarBlock = observer(function IssueGanttSidebarBlock(p
       id={`issue-${issueId}`}
       href={workItemLink}
       onClick={handleIssuePeekOverview}
-      className="line-clamp-1 w-full cursor-pointer text-sm text-custom-text-100"
+      className="line-clamp-1 w-full cursor-pointer text-sm text-primary"
       disabled={!!issueDetails?.tempId}
     >
       <div className="relative flex h-full w-full cursor-pointer items-center gap-2">
@@ -148,7 +148,7 @@ export const IssueGanttSidebarBlock = observer(function IssueGanttSidebarBlock(p
           <IssueIdentifier
             issueId={issueDetails.id}
             projectId={issueDetails.project_id}
-            textContainerClassName="text-xs text-custom-text-300"
+            textContainerClassName="text-xs text-tertiary"
             displayProperties={issuesFilter?.issueFilters?.displayProperties}
           />
         )}

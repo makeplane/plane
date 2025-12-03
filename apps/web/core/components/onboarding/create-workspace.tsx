@@ -137,19 +137,19 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
           </Button>
           <div className="mx-auto mt-4 flex items-center sm:w-96">
             <hr className="w-full border-strong" />
-            <p className="mx-3 flex-shrink-0 text-center text-sm text-custom-text-400">or</p>
+            <p className="mx-3 flex-shrink-0 text-center text-sm text-placeholder">or</p>
             <hr className="w-full border-strong" />
           </div>
         </>
       )}
       <div className="text-center space-y-1 py-4 mx-auto">
-        <h3 className="text-3xl font-bold text-custom-text-100">{t("workspace_creation.heading")}</h3>
-        <p className="font-medium text-custom-text-400">{t("workspace_creation.subheading")}</p>
+        <h3 className="text-3xl font-bold text-primary">{t("workspace_creation.heading")}</h3>
+        <p className="font-medium text-placeholder">{t("workspace_creation.subheading")}</p>
       </div>
       <form className="w-full mx-auto mt-2 space-y-4" onSubmit={handleSubmit(handleCreateWorkspace)}>
         <div className="space-y-1">
           <label
-            className="text-sm text-custom-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="text-sm text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="name"
           >
             {t("workspace_creation.form.name.label")}
@@ -183,7 +183,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
                   placeholder={t("workspace_creation.form.name.placeholder")}
                   ref={ref}
                   hasError={Boolean(errors.name)}
-                  className="w-full border-strong placeholder:text-custom-text-400"
+                  className="w-full border-strong placeholder:text-placeholder"
                   autoFocus
                 />
               </div>
@@ -193,7 +193,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
         </div>
         <div className="space-y-1">
           <label
-            className="text-sm text-custom-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="text-sm text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="slug"
           >
             {t("workspace_creation.form.url.label")}
@@ -233,7 +233,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
               </div>
             )}
           />
-          <p className="text-sm text-custom-text-300">{t("workspace_creation.form.url.edit_slug")}</p>
+          <p className="text-sm text-tertiary">{t("workspace_creation.form.url.edit_slug")}</p>
           {slugError && (
             <p className="-mt-3 text-sm text-red-500">{t("workspace_creation.errors.validation.url_already_taken")}</p>
           )}
@@ -245,7 +245,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
         <hr className="w-full border-strong" />
         <div className="space-y-1">
           <label
-            className="text-sm text-custom-text-300 font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="text-sm text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="organization_size"
           >
             {t("workspace_creation.form.organization_size.label")}
@@ -261,7 +261,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
                   onChange={onChange}
                   label={
                     ORGANIZATION_SIZE.find((c) => c === value) ?? (
-                      <span className="text-custom-text-400">
+                      <span className="text-placeholder">
                         {t("workspace_creation.form.organization_size.placeholder")}
                       </span>
                     )

@@ -54,7 +54,7 @@ export const BillingRoot = observer(function BillingRoot() {
                 >
                   Community
                 </h4>
-                <div className="text-sm text-custom-text-200 font-medium">
+                <div className="text-sm text-secondary font-medium">
                   Unlimited projects, issues, cycles, modules, pages, and storage
                 </div>
               </div>

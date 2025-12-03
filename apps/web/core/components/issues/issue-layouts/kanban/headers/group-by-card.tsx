@@ -122,14 +122,14 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
           }`}
         >
           <div
-            className={`line-clamp-1 inline-block overflow-hidden truncate font-medium text-custom-text-100 ${
+            className={`line-clamp-1 inline-block overflow-hidden truncate font-medium text-primary ${
               verticalAlignPosition ? `vertical-lr max-h-[400px]` : ``
             }`}
           >
             {title}
           </div>
           <div
-            className={`flex-shrink-0 text-sm font-medium text-custom-text-300 ${verticalAlignPosition ? `pr-0.5` : `pl-2`}`}
+            className={`flex-shrink-0 text-sm font-medium text-tertiary ${verticalAlignPosition ? `pr-0.5` : `pl-2`}`}
           >
             {count || 0}
           </div>

@@ -33,9 +33,9 @@ export const WorkItemPreviewCard = observer(function WorkItemPreviewCard(props: 
 
   return (
     <div className="p-3 space-y-2 w-72 rounded-lg shadow-custom-shadow-rg bg-custom-background-100 border-[0.5px] border-strong">
-      <div className="flex items-center justify-between gap-3 text-custom-text-200">
+      <div className="flex items-center justify-between gap-3 text-secondary">
         <IssueIdentifier
-          textContainerClassName="shrink-0 text-xs text-custom-text-200"
+          textContainerClassName="shrink-0 text-xs text-secondary"
           projectId={projectId}
           projectIdentifier={projectIdentifier}
           issueSequenceId={workItem.sequence_id}

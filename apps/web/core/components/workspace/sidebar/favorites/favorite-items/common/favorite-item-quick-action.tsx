@@ -26,7 +26,7 @@ export const FavoriteItemQuickAction = observer(function FavoriteItemQuickAction
       customButton={
         <span
           ref={ref}
-          className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded"
+          className="grid place-items-center p-0.5 text-placeholder hover:bg-custom-sidebar-background-80 rounded"
         >
           <MoreHorizontal className="size-4" />
         </span>

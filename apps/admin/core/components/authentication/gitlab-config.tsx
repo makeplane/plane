@@ -41,11 +41,8 @@ export const GitlabConfiguration = observer(function GitlabConfiguration(props: 
           />
         </div>
       ) : (
-        <Link
-          href="/authentication/gitlab"
-          className={cn(getButtonStyling("neutral-primary", "sm"), "text-custom-text-300")}
-        >
-          <Settings2 className="h-4 w-4 p-0.5 text-custom-text-300/80" />
+        <Link href="/authentication/gitlab" className={cn(getButtonStyling("neutral-primary", "sm"), "text-tertiary")}>
+          <Settings2 className="h-4 w-4 p-0.5 text-tertiary/80" />
           Configure
         </Link>
       )}

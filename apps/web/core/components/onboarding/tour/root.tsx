@@ -92,13 +92,13 @@ export const TourRoot = observer(function TourRoot(props: Props) {
         <div className="h-3/4 w-4/5 overflow-hidden rounded-[10px] bg-custom-background-100 md:w-1/2 lg:w-2/5">
           <div className="h-full overflow-hidden">
             <div className="grid h-3/5 place-items-center bg-custom-primary-100">
-              <PlaneLockup className="h-10 w-auto text-custom-text-100" />
+              <PlaneLockup className="h-10 w-auto text-primary" />
             </div>
             <div className="flex h-2/5 flex-col overflow-y-auto p-6">
               <h3 className="font-semibold sm:text-xl">
                 Welcome to Plane, {currentUser?.first_name} {currentUser?.last_name}
               </h3>
-              <p className="mt-3 text-sm text-custom-text-200">
+              <p className="mt-3 text-sm text-secondary">
                 We{"'"}re glad that you decided to try out Plane. You can now manage your projects with ease. Get
                 started by creating a project.
               </p>
@@ -139,7 +139,7 @@ export const TourRoot = observer(function TourRoot(props: Props) {
             className="fixed right-[9%] top-[19%] z-10 -translate-y-1/2 translate-x-1/2 cursor-pointer rounded-full border border-custom-text-100 p-1 sm:top-[11.5%] md:right-[24%] lg:right-[19%]"
             onClick={onComplete}
           >
-            <CloseIcon className="h-3 w-3 text-custom-text-100" />
+            <CloseIcon className="h-3 w-3 text-primary" />
           </button>
           <TourSidebar step={step} setStep={setStep} />
           <div className="col-span-10 h-full overflow-hidden lg:col-span-7">
@@ -152,7 +152,7 @@ export const TourRoot = observer(function TourRoot(props: Props) {
             </div>
             <div className="flex h-1/2 flex-col overflow-y-auto p-4 sm:h-2/5">
               <h3 className="font-semibold sm:text-xl">{currentStep?.title}</h3>
-              <p className="mt-3 text-sm text-custom-text-200">{currentStep?.description}</p>
+              <p className="mt-3 text-sm text-secondary">{currentStep?.description}</p>
               <div className="mt-3 flex h-full items-end justify-between gap-4">
                 <div className="flex items-center gap-4">
                   {currentStep?.prevStep && (

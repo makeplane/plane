@@ -159,10 +159,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
       <button
         type="button"
         ref={setReferenceElement}
-        className={cn(
-          "h-full flex cursor-pointer items-center gap-2 text-xs text-custom-text-200",
-          buttonContainerClassName
-        )}
+        className={cn("h-full flex cursor-pointer items-center gap-2 text-xs text-secondary", buttonContainerClassName)}
         onClick={handleOnClick}
       >
         {label ? (
@@ -197,11 +194,11 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
             {...attributes.popper}
           >
             <div className="flex items-center gap-1.5 rounded border border-subtle bg-custom-background-90 px-2">
-              <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+              <Search className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
               <Combobox.Input
                 as="input"
                 ref={inputRef}
-                className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                className="w-full bg-transparent py-1 text-xs text-secondary placeholder:text-placeholder focus:outline-none"
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder={t("search")}
                 displayValue={(assigned: any) => assigned?.name}
@@ -222,7 +219,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
                             className={({ active }) =>
                               `${
                                 active ? "bg-custom-background-80" : ""
-                              } group flex w-full cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-custom-text-200`
+                              } group flex w-full cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-secondary`
                             }
                             value={label.id}
                           >
@@ -247,7 +244,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
                     } else
                       return (
                         <div key={label.id} className="border-y border-subtle-1">
-                          <div className="flex select-none items-center gap-2 truncate p-2 text-custom-text-100">
+                          <div className="flex select-none items-center gap-2 truncate p-2 text-primary">
                             <Component className="h-3 w-3" /> {label.name}
                           </div>
                           <div>
@@ -257,7 +254,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
                                 className={({ active }) =>
                                   `${
                                     active ? "bg-custom-background-80" : ""
-                                  } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-custom-text-200`
+                                  } group flex min-w-[14rem] cursor-pointer select-none items-center gap-2 truncate rounded px-1 py-1.5 text-secondary`
                                 }
                                 value={child.id}
                               >
@@ -291,22 +288,22 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
                       if (!query.length) return;
                       handleAddLabel(query);
                     }}
-                    className={`text-left text-custom-text-200 ${query.length ? "cursor-pointer" : "cursor-default"}`}
+                    className={`text-left text-secondary ${query.length ? "cursor-pointer" : "cursor-default"}`}
                   >
                     {/* TODO: translate here */}
                     {query.length ? (
                       <>
-                        + Add <span className="text-custom-text-100">&quot;{query}&quot;</span> to labels
+                        + Add <span className="text-primary">&quot;{query}&quot;</span> to labels
                       </>
                     ) : (
                       t("label.create.type")
                     )}
                   </p>
                 ) : (
-                  <p className="text-custom-text-400 italic py-1 px-1.5">{t("no_matching_results")}</p>
+                  <p className="text-placeholder italic py-1 px-1.5">{t("no_matching_results")}</p>
                 )
               ) : (
-                <p className="text-custom-text-400 italic py-1 px-1.5">{t("loading")}</p>
+                <p className="text-placeholder italic py-1 px-1.5">{t("loading")}</p>
               )}
             </div>
           </div>

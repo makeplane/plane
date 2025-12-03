@@ -44,20 +44,20 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
     <div className="space-y-2 px-3 py-2">
       <WithDisplayPropertiesHOC displayProperties={displayProperties || {}} displayPropertyKey="key">
         <div className="relative">
-          <div className="line-clamp-1 text-xs text-custom-text-300">
+          <div className="line-clamp-1 text-xs text-tertiary">
             {project_details?.identifier}-{issue.sequence_id}
           </div>
         </div>
       </WithDisplayPropertiesHOC>
 
-      <div className="w-full line-clamp-1 text-sm text-custom-text-100 mb-1.5">
+      <div className="w-full line-clamp-1 text-sm text-primary mb-1.5">
         <Tooltip tooltipContent={issue.name}>
           <span>{issue.name}</span>
         </Tooltip>
       </div>
 
       <IssueProperties
-        className="flex flex-wrap items-center gap-2 whitespace-nowrap text-custom-text-300 pt-1.5"
+        className="flex flex-wrap items-center gap-2 whitespace-nowrap text-tertiary pt-1.5"
         issue={issue}
         displayProperties={displayProperties}
       />

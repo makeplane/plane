@@ -58,10 +58,10 @@ const TabsTrigger = React.forwardRef(function TabsTrigger(
     <TabsPrimitive.Tab
       data-slot="tabs-trigger"
       className={cn(
-        "flex items-center justify-center p-1 min-w-fit w-full font-medium text-custom-text-100 outline-none focus:outline-none cursor-pointer transition-all duration-200 ease-in-out rounded",
-        "data-[selected]:bg-custom-background-100 data-[selected]:text-custom-text-100 data-[selected]:shadow-sm",
-        "text-custom-text-400 hover:text-custom-text-300 hover:bg-custom-background-80/60",
-        "disabled:text-custom-text-400 disabled:cursor-not-allowed",
+        "flex items-center justify-center p-1 min-w-fit w-full font-medium text-primary outline-none focus:outline-none cursor-pointer transition-all duration-200 ease-in-out rounded",
+        "data-[selected]:bg-custom-background-100 data-[selected]:text-primary data-[selected]:shadow-sm",
+        "text-placeholder hover:text-tertiary hover:bg-custom-background-80/60",
+        "disabled:text-placeholder disabled:cursor-not-allowed",
         {
           "text-xs": size === "sm",
           "text-sm": size === "md",

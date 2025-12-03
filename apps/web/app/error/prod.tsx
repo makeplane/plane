@@ -51,10 +51,8 @@ export function ProdErrorComponent({ onGoHome }: ProdErrorComponentProps) {
         </div>
         <div className="w-full relative flex flex-col gap-4 mt-4">
           <div className="flex flex-col gap-2.5">
-            <h1 className="text-xl font-semibold text-custom-text-100 text-left">
-              &#x1F6A7; Looks like something went wrong!
-            </h1>
-            <span className="text-base font-medium text-custom-text-200 text-left">
+            <h1 className="text-xl font-semibold text-primary text-left">&#x1F6A7; Looks like something went wrong!</h1>
+            <span className="text-base font-medium text-secondary text-left">
               We track these errors automatically and working on getting things back up and running. If the problem
               persists feel free to contact us. In the meantime, try refreshing.
             </span>

@@ -82,7 +82,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
         )}
 
         <span className="absolute -bottom-0.5 -right-1 rounded-tl bg-custom-background-80 px-0.5 py-px">
-          <MessageSquare className="h-3 w-3 text-custom-text-200" aria-hidden="true" strokeWidth={2} />
+          <MessageSquare className="h-3 w-3 text-secondary" aria-hidden="true" strokeWidth={2} />
         </span>
       </div>
       <div className="min-w-0 flex-1">
@@ -90,7 +90,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
           <div className="text-xs">
             {comment.actor_detail.is_bot ? comment.actor_detail.first_name + " Bot" : comment.actor_detail.display_name}
           </div>
-          <p className="mt-0.5 text-xs text-custom-text-200">
+          <p className="mt-0.5 text-xs text-secondary">
             <>commented {timeAgo(comment.created_at)}</>
           </p>
         </div>
@@ -165,9 +165,9 @@ export const CommentCard = observer(function CommentCard(props: Props) {
           <Menu.Button
             type="button"
             onClick={() => {}}
-            className="relative grid cursor-pointer place-items-center rounded p-1 text-custom-text-200 outline-none hover:bg-custom-background-80 hover:text-custom-text-100"
+            className="relative grid cursor-pointer place-items-center rounded p-1 text-secondary outline-none hover:bg-custom-background-80 hover:text-primary"
           >
-            <MoreVertical className="h-4 w-4 text-custom-text-200 duration-300" strokeWidth={2} />
+            <MoreVertical className="h-4 w-4 text-secondary duration-300" strokeWidth={2} />
           </Menu.Button>
 
           <Transition
@@ -188,7 +188,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
                       onClick={() => {
                         setIsEditing(true);
                       }}
-                      className={`w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80 ${
+                      className={`w-full select-none truncate rounded px-1 py-1.5 text-left text-secondary hover:bg-custom-background-80 ${
                         active ? "bg-custom-background-80" : ""
                       }`}
                     >
@@ -203,7 +203,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
                     <button
                       type="button"
                       onClick={handleDelete}
-                      className={`w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80 ${
+                      className={`w-full select-none truncate rounded px-1 py-1.5 text-left text-secondary hover:bg-custom-background-80 ${
                         active ? "bg-custom-background-80" : ""
                       }`}
                     >

@@ -128,7 +128,7 @@ export const WorkspaceImageUploadModal = observer(function WorkspaceImageUploadM
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-xl sm:p-6">
                 <div className="space-y-5">
-                  <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
+                  <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-primary">
                     Upload image
                   </Dialog.Title>
                   <div className="space-y-3">
@@ -145,7 +145,7 @@ export const WorkspaceImageUploadModal = observer(function WorkspaceImageUploadM
                           <>
                             <button
                               type="button"
-                              className="absolute right-0 top-0 z-40 -translate-y-1/2 translate-x-1/2 rounded bg-custom-background-90 px-2 py-0.5 text-xs font-medium text-custom-text-200"
+                              className="absolute right-0 top-0 z-40 -translate-y-1/2 translate-x-1/2 rounded bg-custom-background-90 px-2 py-0.5 text-xs font-medium text-secondary"
                             >
                               Edit
                             </button>
@@ -157,8 +157,8 @@ export const WorkspaceImageUploadModal = observer(function WorkspaceImageUploadM
                           </>
                         ) : (
                           <div>
-                            <UserCirclePropertyIcon className="mx-auto h-16 w-16 text-custom-text-200" />
-                            <span className="mt-2 block text-sm font-medium text-custom-text-200">
+                            <UserCirclePropertyIcon className="mx-auto h-16 w-16 text-secondary" />
+                            <span className="mt-2 block text-sm font-medium text-secondary">
                               {isDragActive ? "Drop image here to upload" : "Drag & drop image here"}
                             </span>
                           </div>
@@ -176,7 +176,7 @@ export const WorkspaceImageUploadModal = observer(function WorkspaceImageUploadM
                     )}
                   </div>
                 </div>
-                <p className="my-4 text-sm text-custom-text-200">File formats supported- .jpeg, .jpg, .png, .webp</p>
+                <p className="my-4 text-sm text-secondary">File formats supported- .jpeg, .jpg, .png, .webp</p>
                 <div className="flex items-center justify-between">
                   <Button variant="danger" size="sm" onClick={handleImageRemove} disabled={!value} loading={isRemoving}>
                     {isRemoving ? "Removing" : "Remove"}

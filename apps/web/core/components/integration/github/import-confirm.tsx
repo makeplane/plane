@@ -15,7 +15,7 @@ type Props = {
 export function GithubImportConfirm({ handleStepChange, watch }: Props) {
   return (
     <div className="mt-6">
-      <h4 className="font-medium text-custom-text-200">
+      <h4 className="font-medium text-secondary">
         You are about to import work items from {watch("github").full_name}. Click on {'"'}Confirm & Import{'" '}
         to complete the process.
       </h4>

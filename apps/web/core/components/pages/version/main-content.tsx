@@ -80,12 +80,12 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
       {versionDetailsError ? (
         <div className="flex-grow grid place-items-center">
           <div className="flex flex-col items-center gap-4 text-center">
-            <span className="flex-shrink-0 grid place-items-center size-11 text-custom-text-300">
+            <span className="flex-shrink-0 grid place-items-center size-11 text-tertiary">
               <TriangleAlert className="size-10" />
             </span>
             <div>
               <h6 className="text-lg font-semibold">Something went wrong!</h6>
-              <p className="text-sm text-custom-text-300">The version could not be loaded, please try again.</p>
+              <p className="text-sm text-tertiary">The version could not be loaded, please try again.</p>
             </div>
             <Button variant="link-primary" onClick={handleRetry} loading={isRetrying}>
               Try again

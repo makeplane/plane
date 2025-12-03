@@ -54,14 +54,14 @@ export function PasswordStrengthIndicator({
                 <CircleCheck
                   className={cn("h-3 w-3 flex-shrink-0", {
                     "text-green-500": criterion.isValid,
-                    "text-custom-text-100": !criterion.isValid,
+                    "text-primary": !criterion.isValid,
                   })}
                 />
               </div>
               <span
                 className={cn("text-xs", {
                   "text-green-500": criterion.isValid,
-                  "text-custom-text-100": !criterion.isValid,
+                  "text-primary": !criterion.isValid,
                 })}
               >
                 {criterion.label}

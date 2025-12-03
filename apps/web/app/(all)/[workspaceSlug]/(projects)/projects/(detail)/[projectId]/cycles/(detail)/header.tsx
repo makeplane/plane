@@ -141,7 +141,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
                   <BreadcrumbLink
                     label="Cycles"
                     href={`/${workspaceSlug}/projects/${projectId}/cycles/`}
-                    icon={<CycleIcon className="h-4 w-4 text-custom-text-300" />}
+                    icon={<CycleIcon className="h-4 w-4 text-tertiary" />}
                   />
                 }
               />
@@ -156,7 +156,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
                     title={cycleDetails?.name}
                     icon={
                       <Breadcrumbs.Icon>
-                        <CycleIcon className="size-4 flex-shrink-0 text-custom-text-300" />
+                        <CycleIcon className="size-4 flex-shrink-0 text-tertiary" />
                       </Breadcrumbs.Icon>
                     }
                     isLast
@@ -255,7 +255,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
               className="p-1.5 rounded outline-none hover:bg-custom-sidebar-background-80 bg-custom-background-80/70"
               onClick={toggleSidebar}
             >
-              <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
+              <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-secondary")} />
             </button>
             <CycleQuickActions
               parentRef={parentRef}

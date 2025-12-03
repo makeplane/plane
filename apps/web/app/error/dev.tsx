@@ -53,9 +53,9 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
               </div>
 
               <div className="space-y-2">
-                <h3 className="text-sm font-medium text-custom-text-300 uppercase tracking-wide">Error Data</h3>
+                <h3 className="text-sm font-medium text-tertiary uppercase tracking-wide">Error Data</h3>
                 <div className="bg-custom-background-80 rounded-md p-4">
-                  <p className="text-sm text-custom-text-200 font-mono">{error.data}</p>
+                  <p className="text-sm text-secondary font-mono">{error.data}</p>
                 </div>
               </div>
 
@@ -85,17 +85,17 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
               </div>
 
               <div className="space-y-2">
-                <h3 className="text-sm font-medium text-custom-text-300 uppercase tracking-wide">Message</h3>
+                <h3 className="text-sm font-medium text-tertiary uppercase tracking-wide">Message</h3>
                 <div className="bg-custom-background-80 rounded-md p-4">
-                  <p className="text-sm text-custom-text-100 font-medium">{error.message}</p>
+                  <p className="text-sm text-primary font-medium">{error.message}</p>
                 </div>
               </div>
 
               {error.stack && (
                 <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-custom-text-300 uppercase tracking-wide">Stack Trace</h3>
+                  <h3 className="text-sm font-medium text-tertiary uppercase tracking-wide">Stack Trace</h3>
                   <div className="bg-custom-background-80 rounded-md border border-subtle-1 max-h-96 overflow-auto">
-                    <pre className="p-4 text-xs text-custom-text-200 font-mono whitespace-pre-wrap break-words">
+                    <pre className="p-4 text-xs text-secondary font-mono whitespace-pre-wrap break-words">
                       {error.stack}
                     </pre>
                   </div>
@@ -108,10 +108,10 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
 
           <Card variant={ECardVariant.WITHOUT_SHADOW} className="!p-4 bg-custom-background-80 transition-none">
             <div className="flex items-start gap-3">
-              <InfoFillIcon className="size-5 text-custom-text-300 flex-shrink-0 mt-0.5" />
+              <InfoFillIcon className="size-5 text-tertiary flex-shrink-0 mt-0.5" />
               <div className="space-y-1">
-                <p className="text-sm font-medium text-custom-text-200">Development Mode</p>
-                <p className="text-xs text-custom-text-300">
+                <p className="text-sm font-medium text-secondary">Development Mode</p>
+                <p className="text-xs text-tertiary">
                   This detailed error view is only visible in development. In production, users will see a friendly
                   error page.
                 </p>
@@ -136,12 +136,12 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
         <Card variant={ECardVariant.WITH_SHADOW} className="!p-6">
           <div className="space-y-4">
             <div>
-              <h2 className="text-2xl font-semibold text-custom-text-100 mb-2">Unknown Error</h2>
+              <h2 className="text-2xl font-semibold text-primary mb-2">Unknown Error</h2>
               <div className="h-px w-full bg-custom-border-200" />
             </div>
 
             <div className="bg-custom-background-80 rounded-md p-4">
-              <p className="text-sm text-custom-text-200">
+              <p className="text-sm text-secondary">
                 An unknown error occurred. Please try refreshing the page or contact support if the problem persists.
               </p>
             </div>

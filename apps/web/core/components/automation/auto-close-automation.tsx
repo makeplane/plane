@@ -98,7 +98,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
             </div>
             <div className="">
               <h4 className="text-sm font-medium">{t("project_settings.automations.auto-close.title")}</h4>
-              <p className="text-sm tracking-tight text-custom-text-200">
+              <p className="text-sm tracking-tight text-secondary">
                 {t("project_settings.automations.auto-close.description")}
               </p>
             </div>
@@ -154,7 +154,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
                         ))}
                         <button
                           type="button"
-                          className="flex w-full select-none items-center rounded px-1 py-1.5 text-custom-text-200 hover:bg-custom-background-80"
+                          className="flex w-full select-none items-center rounded px-1 py-1.5 text-secondary hover:bg-custom-background-80"
                           onClick={() => setmonthModal(true)}
                         >
                           {t("common.customize_time_range")}
@@ -186,11 +186,11 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
                               size={EIconSize.LG}
                             />
                           ) : (
-                            <StatePropertyIcon className="h-3.5 w-3.5 text-custom-text-200" />
+                            <StatePropertyIcon className="h-3.5 w-3.5 text-secondary" />
                           )}
                           {selectedOption?.name
                             ? selectedOption.name
-                            : (currentDefaultState?.name ?? <span className="text-custom-text-200">{t("state")}</span>)}
+                            : (currentDefaultState?.name ?? <span className="text-secondary">{t("state")}</span>)}
                         </div>
                       }
                       onChange={(val: string) => {

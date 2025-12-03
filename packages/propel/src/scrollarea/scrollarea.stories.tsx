@@ -109,7 +109,7 @@ export const ScrollTypeScroll: Story = {
       <ScrollArea className="h-64 w-80 border rounded-lg" scrollType="scroll">
         <div className="p-4 space-y-2">
           <h3 className="text-lg font-semibold">Scroll to Show</h3>
-          <p className="text-sm text-custom-text-400">Scrollbar appears when scrolling</p>
+          <p className="text-sm text-placeholder">Scrollbar appears when scrolling</p>
           {[...Array(15)].map((_, i) => (
             <p key={i}>Line {i + 1}: Try scrolling to see the scrollbar appear.</p>
           ))}
@@ -125,7 +125,7 @@ export const ScrollTypeHover: Story = {
       <ScrollArea className="h-64 w-80 border rounded-lg" scrollType="hover">
         <div className="p-4 space-y-2">
           <h3 className="text-lg font-semibold">Hover to Show</h3>
-          <p className="text-sm text-custom-text-400">Scrollbar appears on hover</p>
+          <p className="text-sm text-placeholder">Scrollbar appears on hover</p>
           {[...Array(15)].map((_, i) => (
             <p key={i}>Line {i + 1}: Hover over the area to see the scrollbar.</p>
           ))}
@@ -160,7 +160,7 @@ export const BothDirections: Story = {
       <ScrollArea className="h-64 w-96 border rounded-lg">
         <div className="w-[800px] p-4 space-y-2">
           <h3 className="text-lg font-semibold">Both Directions</h3>
-          <p className="text-sm text-custom-text-400">Content scrolls both vertically and horizontally</p>
+          <p className="text-sm text-placeholder">Content scrolls both vertically and horizontally</p>
           {[...Array(20)].map((_, i) => (
             <p key={i}>
               Line {i + 1}: This line is very long and extends beyond the container width to demonstrate horizontal
@@ -190,7 +190,7 @@ export const ListExample: Story = {
                 </div>
                 <div>
                   <div className="font-medium">User {i + 1}</div>
-                  <div className="text-sm text-custom-text-400">user{i + 1}@example.com</div>
+                  <div className="text-sm text-placeholder">user{i + 1}@example.com</div>
                 </div>
               </div>
             ))}

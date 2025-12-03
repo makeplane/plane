@@ -60,20 +60,20 @@ export function GithubRepoDetails({ selectedRepo, handleStepChange, setUsers, se
           <div className="flex items-center justify-between gap-4">
             <div>
               <div className="font-medium">Repository Details</div>
-              <div className="text-sm text-custom-text-200">Import completed. We have found:</div>
+              <div className="text-sm text-secondary">Import completed. We have found:</div>
             </div>
             <div className="mt-4 flex gap-16">
               <div className="flex-shrink-0 text-center">
                 <p className="text-3xl font-bold">{repoInfo.issue_count}</p>
-                <h6 className="text-sm text-custom-text-200">Work items</h6>
+                <h6 className="text-sm text-secondary">Work items</h6>
               </div>
               <div className="flex-shrink-0 text-center">
                 <p className="text-3xl font-bold">{repoInfo.labels}</p>
-                <h6 className="text-sm text-custom-text-200">Labels</h6>
+                <h6 className="text-sm text-secondary">Labels</h6>
               </div>
               <div className="flex-shrink-0 text-center">
                 <p className="text-3xl font-bold">{repoInfo.collaborators.length}</p>
-                <h6 className="text-sm text-custom-text-200">Users</h6>
+                <h6 className="text-sm text-secondary">Users</h6>
               </div>
             </div>
           </div>

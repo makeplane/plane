@@ -33,7 +33,7 @@ function DefaultSettingItem({ title, description, children }: TDefaultSettingIte
     <div className="flex items-center justify-between gap-x-2">
       <div className="flex flex-col gap-0.5">
         <h4 className="text-sm font-medium">{title}</h4>
-        <p className="text-xs text-custom-text-300">{description}</p>
+        <p className="text-xs text-tertiary">{description}</p>
       </div>
       <div className="w-full max-w-48 sm:max-w-64">{children}</div>
     </div>

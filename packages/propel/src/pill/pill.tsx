@@ -34,7 +34,7 @@ export interface PillProps extends React.HTMLAttributes<HTMLSpanElement> {
 }
 
 const pillVariants = {
-  [EPillVariant.DEFAULT]: "bg-custom-background-90 text-custom-text-200 border border-subtle-1",
+  [EPillVariant.DEFAULT]: "bg-custom-background-90 text-secondary border border-subtle-1",
   [EPillVariant.PRIMARY]: "bg-custom-primary-100/10 text-custom-primary-100 border border-custom-primary-100/20",
   [EPillVariant.SUCCESS]: "bg-green-50 text-green-700 border border-green-200",
   [EPillVariant.WARNING]: "bg-amber-50 text-amber-700 border border-amber-200",

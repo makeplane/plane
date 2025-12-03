@@ -58,7 +58,7 @@ export function SetPasswordRoot({ onPasswordChange, onConfirmPasswordChange, dis
 
   const chevronIconClasses = useMemo(
     () =>
-      `w-4 h-4 text-custom-text-400 transition-transform duration-300 ease-in-out ${isExpanded ? "rotate-180" : "rotate-0"}`,
+      `w-4 h-4 text-placeholder transition-transform duration-300 ease-in-out ${isExpanded ? "rotate-180" : "rotate-0"}`,
     [isExpanded]
   );
 
@@ -82,12 +82,12 @@ export function SetPasswordRoot({ onPasswordChange, onConfirmPasswordChange, dis
         )}
         onClick={handleToggleExpand}
       >
-        <div className="flex items-center gap-1 text-custom-text-300">
+        <div className="flex items-center gap-1 text-tertiary">
           <Lock className="size-3" />
           <span className="font-medium">Set a password</span>
           <span>{`(Optional)`}</span>
         </div>
-        <div className="flex items-center gap-2 text-custom-text-400">
+        <div className="flex items-center gap-2 text-placeholder">
           <ChevronDownIcon className={chevronIconClasses} />
         </div>
       </div>
@@ -107,7 +107,7 @@ export function SetPasswordRoot({ onPasswordChange, onConfirmPasswordChange, dis
 
         <div className="flex flex-col gap-2 pb-2">
           {/* Confirm password label */}
-          <div className="text-custom-text-300 font-medium transform transition-all duration-300 ease-in-out delay-75 text-sm">
+          <div className="text-tertiary font-medium transform transition-all duration-300 ease-in-out delay-75 text-sm">
             Confirm password
           </div>
 

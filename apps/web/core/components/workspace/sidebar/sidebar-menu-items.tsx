@@ -96,11 +96,11 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
         ))}
       </div>
       <Disclosure as="div" className="flex flex-col" defaultOpen={!!isWorkspaceMenuOpen}>
-        <div className="group w-full flex items-center justify-between px-2 py-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-90">
+        <div className="group w-full flex items-center justify-between px-2 py-1.5 rounded text-placeholder hover:bg-custom-sidebar-background-90">
           <Disclosure.Button
             as="button"
             type="button"
-            className="w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-custom-sidebar-text-400"
+            className="w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-placeholder"
             onClick={() => toggleListDisclosure(!isWorkspaceMenuOpen)}
             aria-label={t(
               isWorkspaceMenuOpen

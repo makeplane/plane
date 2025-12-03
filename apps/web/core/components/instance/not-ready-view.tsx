@@ -19,7 +19,7 @@ export function InstanceNotReady() {
         <div className="container h-[110px] flex-shrink-0 mx-auto px-5 lg:px-0 flex items-center justify-between gap-5 z-50">
           <div className="flex items-center gap-x-2 py-10">
             <Link href={`/`}>
-              <PlaneLockup className="h-7 w-auto text-custom-text-100" />
+              <PlaneLockup className="h-7 w-auto text-primary" />
             </Link>
           </div>
         </div>
@@ -34,7 +34,7 @@ export function InstanceNotReady() {
               <div className="relative flex flex-col justify-center items-center space-y-4">
                 <h1 className="text-3xl font-bold pb-3">Welcome aboard Plane!</h1>
                 <img src={PlaneTakeOffImage} className="object-contain" alt="Plane Logo" />
-                <p className="font-medium text-base text-custom-text-400">
+                <p className="font-medium text-base text-placeholder">
                   Get started by setting up your instance and workspace
                 </p>
               </div>

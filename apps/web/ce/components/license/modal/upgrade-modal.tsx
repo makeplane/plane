@@ -50,7 +50,7 @@ export const PaidPlanUpgradeModal = observer(function PaidPlanUpgradeModal(props
           <div className={cn(COMMON_CARD_CLASSNAME)}>
             <div className="text-3xl font-bold leading-8 flex">Upgrade to a paid plan and unlock missing features.</div>
             <div className="mt-4 mb-2">
-              <p className="text-sm mb-4 pr-8 text-custom-text-100">
+              <p className="text-sm mb-4 pr-8 text-primary">
                 Dashboards, Workflows, Approvals, Time Management, and other superpowers are just a click away. Upgrade
                 today to unlock features your teams need yesterday.
               </p>

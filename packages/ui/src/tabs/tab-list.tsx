@@ -42,12 +42,12 @@ export function TabList({
         <Tab
           className={({ selected }) =>
             cn(
-              "flex items-center justify-center p-1 min-w-fit w-full font-medium text-custom-text-100 outline-none focus:outline-none cursor-pointer transition-all rounded",
+              "flex items-center justify-center p-1 min-w-fit w-full font-medium text-primary outline-none focus:outline-none cursor-pointer transition-all rounded",
               (selectedTab ? selectedTab === tab.key : selected)
-                ? "bg-custom-background-100 text-custom-text-100 shadow-sm"
+                ? "bg-custom-background-100 text-primary shadow-sm"
                 : tab.disabled
-                  ? "text-custom-text-400 cursor-not-allowed"
-                  : "text-custom-text-400 hover:text-custom-text-300 hover:bg-custom-background-80/60",
+                  ? "text-placeholder cursor-not-allowed"
+                  : "text-placeholder hover:text-tertiary hover:bg-custom-background-80/60",
               {
                 "text-xs": size === "sm",
                 "text-sm": size === "md",

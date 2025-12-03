@@ -51,7 +51,7 @@ export const SubIssueDisplayFilters = observer(function SubIssueDisplayFilters(p
               )}
             >
               {isFilterApplied && <span className="p-1 rounded-full bg-custom-primary-100 absolute -top-1 -right-1" />}
-              <SlidersHorizontal className="h-3.5 w-3.5 text-custom-text-100" />
+              <SlidersHorizontal className="h-3.5 w-3.5 text-primary" />
             </div>
           }
         >

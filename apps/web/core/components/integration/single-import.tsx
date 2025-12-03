@@ -46,7 +46,7 @@ export const SingleImport = observer(function SingleImport({ service, refreshing
             {refreshing ? "Refreshing..." : service.status}
           </span>
         </h4>
-        <div className="mt-2 flex items-center gap-2 text-xs text-custom-text-200">
+        <div className="mt-2 flex items-center gap-2 text-xs text-secondary">
           <span>{renderFormattedDate(service.created_at)}</span>|
           <span>Imported by {service.initiated_by_detail?.display_name}</span>
         </div>

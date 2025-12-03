@@ -159,7 +159,7 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
       <DropIndicator classNames="absolute top-0" isVisible={instruction === "DRAG_OVER"} />
       <div
         className={cn(
-          "group/project-item relative w-full  flex items-center rounded-md text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-90"
+          "group/project-item relative w-full  flex items-center rounded-md text-primary hover:bg-custom-sidebar-background-90"
         )}
         id={`${item.key}`}
       >
@@ -173,7 +173,7 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
             <button
               type="button"
               className={cn(
-                "flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded text-custom-sidebar-text-400 cursor-grab",
+                "flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded text-placeholder cursor-grab",
                 {
                   "cursor-grabbing": isDragging,
                 }
@@ -200,14 +200,14 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
             {isPinned ? (
               <Tooltip tooltipContent="Unpin">
                 <PinOff
-                  className="size-3.5 flex-shrink-0 hover:text-custom-text-300 outline-none text-custom-text-400"
+                  className="size-3.5 flex-shrink-0 hover:text-tertiary outline-none text-placeholder"
                   onClick={() => unPinNavigationItem(workspaceSlug.toString(), item.key)}
                 />
               </Tooltip>
             ) : (
               <Tooltip tooltipContent="Pin">
                 <Pin
-                  className="size-3.5 flex-shrink-0 hover:text-custom-text-300 outline-none text-custom-text-400"
+                  className="size-3.5 flex-shrink-0 hover:text-tertiary outline-none text-placeholder"
                   onClick={() => pinNavigationItem(workspaceSlug.toString(), item.key)}
                 />
               </Tooltip>

@@ -56,10 +56,10 @@ export const buttonStyling: IButtonStyling = {
     disabled: `cursor-not-allowed !text-custom-primary-60 !border-custom-primary-60 `,
   },
   "neutral-primary": {
-    default: `text-custom-text-200 bg-custom-background-100 border border-subtle-1`,
+    default: `text-secondary bg-custom-background-100 border border-subtle-1`,
     hover: `hover:bg-custom-background-90`,
-    pressed: `focus:text-custom-text-300 focus:bg-custom-background-90`,
-    disabled: `cursor-not-allowed !text-custom-text-400`,
+    pressed: `focus:text-tertiary focus:bg-custom-background-90`,
+    disabled: `cursor-not-allowed !text-placeholder`,
   },
   "link-primary": {
     default: `text-custom-primary-100 bg-custom-background-100`,
@@ -99,10 +99,10 @@ export const buttonStyling: IButtonStyling = {
     disabled: `cursor-not-allowed !text-red-300`,
   },
   "link-neutral": {
-    default: `text-custom-text-300`,
-    hover: `hover:text-custom-text-200`,
-    pressed: `focus:text-custom-text-100`,
-    disabled: `cursor-not-allowed !text-custom-text-400`,
+    default: `text-tertiary`,
+    hover: `hover:text-secondary`,
+    pressed: `focus:text-primary`,
+    disabled: `cursor-not-allowed !text-placeholder`,
   },
 };
 

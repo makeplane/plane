@@ -8,7 +8,7 @@ export function TermsAndConditions(props: Props) {
   const { isSignUp = false } = props;
   return (
     <span className="flex items-center justify-center py-6">
-      <p className="text-center text-sm text-custom-text-200 whitespace-pre-line">
+      <p className="text-center text-sm text-secondary whitespace-pre-line">
         {isSignUp ? "By creating an account" : "By signing in"}, you agree to our{" \n"}
         <Link href="https://plane.so/legals/terms-and-conditions" target="_blank" rel="noopener noreferrer">
           <span className="text-sm font-medium underline hover:cursor-pointer">Terms of Service</span>

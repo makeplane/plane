@@ -43,11 +43,11 @@ export function ConfirmDiscardModal(props: Props) {
                 <div className="px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
                     <div className="mt-3 text-center sm:mt-0 sm:text-left">
-                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-300">
+                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-tertiary">
                         You have unsaved changes
                       </Dialog.Title>
                       <div className="mt-2">
-                        <p className="text-sm text-custom-text-400">
+                        <p className="text-sm text-placeholder">
                           Changes you made will be lost if you go back. Do you wish to go back?
                         </p>
                       </div>

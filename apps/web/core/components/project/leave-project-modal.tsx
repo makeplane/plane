@@ -146,17 +146,17 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
                   </div>
 
                   <span>
-                    <p className="text-sm leading-7 text-custom-text-200">
+                    <p className="text-sm leading-7 text-secondary">
                       Are you sure you want to leave the project -
-                      <span className="font-medium text-custom-text-100">{` "${project?.name}" `}</span>? All of the
-                      work items associated with you will become inaccessible.
+                      <span className="font-medium text-primary">{` "${project?.name}" `}</span>? All of the work items
+                      associated with you will become inaccessible.
                     </p>
                   </span>
 
-                  <div className="text-custom-text-200">
+                  <div className="text-secondary">
                     <p className="break-words text-sm ">
-                      Enter the project name <span className="font-medium text-custom-text-100">{project?.name}</span>{" "}
-                      to continue:
+                      Enter the project name <span className="font-medium text-primary">{project?.name}</span> to
+                      continue:
                     </p>
                     <Controller
                       control={control}
@@ -180,9 +180,9 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
                     />
                   </div>
 
-                  <div className="text-custom-text-200">
+                  <div className="text-secondary">
                     <p className="text-sm">
-                      To confirm, type <span className="font-medium text-custom-text-100">Leave Project</span> below:
+                      To confirm, type <span className="font-medium text-primary">Leave Project</span> below:
                     </p>
                     <Controller
                       control={control}

@@ -34,11 +34,11 @@ export function RecentProject(props: BlockProps) {
           <div className="flex-shrink-0 grid place-items-center rounded bg-custom-background-80 size-8">
             <Logo logo={projectDetails?.logo_props} size={16} />
           </div>
-          <div className="font-medium text-custom-text-400 text-sm whitespace-nowrap">{projectDetails?.identifier}</div>
+          <div className="font-medium text-placeholder text-sm whitespace-nowrap">{projectDetails?.identifier}</div>
         </div>
       }
       appendTitleElement={
-        <div className="flex-shrink-0 font-medium text-xs text-custom-text-400">
+        <div className="flex-shrink-0 font-medium text-xs text-placeholder">
           {calculateTimeAgo(activity.visited_at)}
         </div>
       }

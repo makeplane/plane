@@ -30,9 +30,7 @@ export const PageNavigationPaneInfoTabActorsInfo = observer(function PageNavigat
   return (
     <div className="space-y-3 mt-4">
       <div>
-        <p className="text-xs font-medium text-custom-text-300">
-          {t("page_navigation_pane.tabs.info.actors_info.edited_by")}
-        </p>
+        <p className="text-xs font-medium text-tertiary">{t("page_navigation_pane.tabs.info.actors_info.edited_by")}</p>
         <div className="mt-2 flex items-center justify-between gap-2 text-sm font-medium">
           <Link href={`/${workspaceSlug?.toString()}/profile/${page.updated_by}`} className="flex items-center gap-1">
             <Avatar
@@ -43,11 +41,11 @@ export const PageNavigationPaneInfoTabActorsInfo = observer(function PageNavigat
             />
             <span>{editorInformation?.display_name ?? t("common.deactivated_user")}</span>
           </Link>
-          <span className="flex-shrink-0 text-custom-text-300">{calculateTimeAgoShort(page.updated_at ?? "")} ago</span>
+          <span className="flex-shrink-0 text-tertiary">{calculateTimeAgoShort(page.updated_at ?? "")} ago</span>
         </div>
       </div>
       <div>
-        <p className="text-xs font-medium text-custom-text-300">
+        <p className="text-xs font-medium text-tertiary">
           {t("page_navigation_pane.tabs.info.actors_info.created_by")}
         </p>
         <div className="mt-2 flex items-center justify-between gap-2 text-sm font-medium">
@@ -60,7 +58,7 @@ export const PageNavigationPaneInfoTabActorsInfo = observer(function PageNavigat
             />
             <span>{creatorInformation?.display_name ?? t("common.deactivated_user")}</span>
           </Link>
-          <span className="flex-shrink-0 text-custom-text-300">{renderFormattedDate(page.created_at)}</span>
+          <span className="flex-shrink-0 text-tertiary">{renderFormattedDate(page.created_at)}</span>
         </div>
       </div>
     </div>

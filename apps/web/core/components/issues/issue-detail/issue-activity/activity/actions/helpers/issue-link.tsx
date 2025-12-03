@@ -36,7 +36,7 @@ export function IssueLink(props: TIssueLink) {
         href={`${activity.issue_detail ? workItemLink : "#"}`}
         target={activity.issue === null ? "_self" : "_blank"}
         rel={activity.issue === null ? "" : "noopener noreferrer"}
-        className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
+        className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
       >
         {activity.issue_detail
           ? `${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}`

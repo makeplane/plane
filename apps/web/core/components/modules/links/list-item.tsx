@@ -46,7 +46,7 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
       <div className="flex w-full items-start justify-between gap-2">
         <div className="flex items-start gap-2 truncate">
           <span className="py-1">
-            <Icon className="size-3 stroke-2 text-custom-text-350 group-hover:text-custom-text-100 flex-shrink-0" />
+            <Icon className="size-3 stroke-2 text-custom-text-350 group-hover:text-primary flex-shrink-0" />
           </span>
           <Tooltip tooltipContent={link.title && link.title !== "" ? link.title : link.url} isMobile={isMobile}>
             <a href={link.url} target="_blank" rel="noopener noreferrer" className="cursor-pointer truncate text-xs">
@@ -67,7 +67,7 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
                 handleEditLink();
               }}
             >
-              <Pencil className="size-3 stroke-[1.5] text-custom-text-200" />
+              <Pencil className="size-3 stroke-[1.5] text-secondary" />
             </button>
           )}
           <span
@@ -87,13 +87,13 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
                 handleDeleteLink();
               }}
             >
-              <Trash2 className="size-3 stroke-[1.5] text-custom-text-200" />
+              <Trash2 className="size-3 stroke-[1.5] text-secondary" />
             </button>
           )}
         </div>
       </div>
       <div className="px-5">
-        <p className="flex items-center gap-1.5 mt-0.5 stroke-[1.5] text-xs text-custom-text-300">
+        <p className="flex items-center gap-1.5 mt-0.5 stroke-[1.5] text-xs text-tertiary">
           Added {calculateTimeAgo(link.created_at)}{" "}
           {createdByDetails && (
             <>by {createdByDetails?.is_bot ? createdByDetails?.first_name + " Bot" : createdByDetails?.display_name}</>

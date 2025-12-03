@@ -17,7 +17,7 @@ type InputViewProps = {
 function InputView({ label, value, placeholder, onChange, autoFocus }: InputViewProps) {
   return (
     <div className="flex flex-col gap-1">
-      <label className="inline-block font-semibold text-xs text-custom-text-400">{label}</label>
+      <label className="inline-block font-semibold text-xs text-placeholder">{label}</label>
       <input
         placeholder={placeholder}
         onClick={(e) => e.stopPropagation()}
@@ -143,7 +143,7 @@ export function LinkEditView({ viewProps }: LinkEditViewProps) {
       <div className="mb-1 bg-custom-border-300 h-[1px] w-full gap-2" />
       <div className="flex text-sm text-custom-text-800 gap-2 items-center">
         <Link2Off size={14} className="inline-block" />
-        <button onClick={removeLink} className="cursor-pointer hover:text-custom-text-400 transition-colors">
+        <button onClick={removeLink} className="cursor-pointer hover:text-placeholder transition-colors">
           Remove Link
         </button>
       </div>

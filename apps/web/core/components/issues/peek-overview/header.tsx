@@ -179,13 +179,13 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
       <div className="flex items-center gap-4">
         <Tooltip tooltipContent={t("common.close_peek_view")} isMobile={isMobile}>
           <button onClick={removeRoutePeekId}>
-            <MoveRight className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+            <MoveRight className="h-4 w-4 text-tertiary hover:text-secondary" />
           </button>
         </Tooltip>
 
         <Tooltip tooltipContent={t("issue.open_in_full_screen")} isMobile={isMobile}>
           <Link href={workItemLink} onClick={() => removeRoutePeekId()}>
-            <MoveDiagonal className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+            <MoveDiagonal className="h-4 w-4 text-tertiary hover:text-secondary" />
           </Link>
         </Tooltip>
         {currentMode && embedIssue === false && (
@@ -196,7 +196,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
               customButton={
                 <Tooltip tooltipContent={t("common.toggle_peek_view_layout")} isMobile={isMobile}>
                   <button type="button" className="">
-                    <currentMode.icon className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+                    <currentMode.icon className="h-4 w-4 text-tertiary hover:text-secondary" />
                   </button>
                 </Tooltip>
               }
@@ -205,9 +205,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
                 <CustomSelect.Option key={mode.key} value={mode.key}>
                   <div
                     className={`flex items-center gap-1.5 ${
-                      currentMode.key === mode.key
-                        ? "text-custom-text-200"
-                        : "text-custom-text-400 hover:text-custom-text-200"
+                      currentMode.key === mode.key ? "text-secondary" : "text-placeholder hover:text-secondary"
                     }`}
                   >
                     <mode.icon className="-my-1 h-4 w-4 flex-shrink-0" />
@@ -227,7 +225,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
           )}
           <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
             <button type="button" onClick={handleCopyText}>
-              <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
+              <Link2 className="h-4 w-4 -rotate-45 text-tertiary hover:text-secondary" />
             </button>
           </Tooltip>
           {issueDetails && (

@@ -86,7 +86,7 @@ export function SendTestEmailModal(props: Props) {
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 px-4 text-left shadow-custom-shadow-md transition-all w-full sm:max-w-xl">
-                <h3 className="text-lg font-medium leading-6 text-custom-text-100">
+                <h3 className="text-lg font-medium leading-6 text-primary">
                   {sendEmailStep === ESendEmailSteps.SEND_EMAIL
                     ? "Send test email"
                     : sendEmailStep === ESendEmailSteps.SUCCESS

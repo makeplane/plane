@@ -187,7 +187,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
         </button>
         <input type="file" className="hidden" id="profile-image-input" />
         <button
-          className="flex items-center gap-1.5 text-custom-text-300 hover:text-custom-text-200 text-sm px-2 py-1"
+          className="flex items-center gap-1.5 text-tertiary hover:text-secondary text-sm px-2 py-1"
           type="button"
           onClick={() => setIsImageUploadModalOpen(true)}
         >
@@ -200,7 +200,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
         {/* Name Input */}
         <div className="flex flex-col gap-2">
           <label
-            className="block text-sm font-medium text-custom-text-300 after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="block text-sm font-medium text-tertiary after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="first_name"
           >
             Name
@@ -225,7 +225,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
                 onChange={(e) => onChange(e.target.value)}
                 autoFocus
                 className={cn(
-                  "w-full px-3 py-2 text-custom-text-200 border border-strong rounded-md bg-custom-background-100 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 placeholder:text-custom-text-400 focus:border-transparent transition-all duration-200",
+                  "w-full px-3 py-2 text-secondary border border-strong rounded-md bg-custom-background-100 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 placeholder:text-placeholder focus:border-transparent transition-all duration-200",
                   {
                     "border-strong": !errors.first_name,
                     "border-red-500": errors.first_name,

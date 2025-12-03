@@ -173,7 +173,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
     <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.XXL}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="flex items-center justify-between gap-2 p-5">
-          <h5 className="text-xl font-medium text-custom-text-200">Publish project</h5>
+          <h5 className="text-xl font-medium text-secondary">Publish project</h5>
           {isProjectPublished && (
             <Button variant="danger" onClick={() => handleUnPublishProject(watch("id") ?? "")} loading={isUnPublishing}>
               {isUnPublishing ? "Unpublishing" : "Unpublish"}
@@ -196,7 +196,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                 <div className="bg-custom-background-80 border border-strong rounded-md py-1.5 pl-4 pr-1 flex items-center justify-between gap-2">
                   <a
                     href={publishLink}
-                    className="text-sm text-custom-text-200 truncate"
+                    className="text-sm text-secondary truncate"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -301,7 +301,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
 
         {/* modal handlers */}
         <div className="relative flex items-center justify-between border-t border-subtle-1 px-5 py-4 mt-4">
-          <div className="flex items-center gap-1 text-sm text-custom-text-400">
+          <div className="flex items-center gap-1 text-sm text-placeholder">
             <Globe2 className="size-3.5" />
             <div className="text-sm">Anyone with the link can access</div>
           </div>

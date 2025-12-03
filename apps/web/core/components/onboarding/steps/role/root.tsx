@@ -107,7 +107,7 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
       <CommonOnboardingHeader title="What's your role?" description="Let's set up Plane for how you work." />
       {/* Role Selection */}
       <div className="flex flex-col gap-3">
-        <p className="text-sm font-medium text-custom-text-400">Select one</p>
+        <p className="text-sm font-medium text-placeholder">Select one</p>
         <Controller
           control={control}
           name="role"
@@ -131,7 +131,7 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
                     className={`w-full px-3 py-2 rounded-lg border transition-all duration-200 flex items-center justify-between ${
                       isSelected
                         ? "border-custom-primary-100 bg-custom-primary-10 text-custom-primary-100"
-                        : "border-subtle-1 hover:border-strong text-custom-text-300"
+                        : "border-subtle-1 hover:border-strong text-tertiary"
                     }`}
                   >
                     <div className="flex items-center space-x-3">

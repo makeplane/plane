@@ -133,13 +133,13 @@ export const ProfileLayoutSidebar = observer(function ProfileLayoutSidebar() {
               <ChevronLeftIcon className="h-5 w-5" strokeWidth={1} />
             </span>
             {!sidebarCollapsed && (
-              <h4 className="truncate text-lg font-semibold text-custom-text-200">{t("profile_settings")}</h4>
+              <h4 className="truncate text-lg font-semibold text-secondary">{t("profile_settings")}</h4>
             )}
           </div>
         </Link>
         <div className="flex flex-shrink-0 flex-col overflow-x-hidden">
           {!sidebarCollapsed && (
-            <h6 className="rounded px-6 text-sm font-semibold text-custom-sidebar-text-400">{t("your_account")}</h6>
+            <h6 className="rounded px-6 text-sm font-semibold text-placeholder">{t("your_account")}</h6>
           )}
           <div className="vertical-scrollbar scrollbar-sm mt-2 px-4 h-full space-y-1 overflow-y-auto">
             {PROFILE_ACTION_LINKS.map((link) => {
@@ -173,7 +173,7 @@ export const ProfileLayoutSidebar = observer(function ProfileLayoutSidebar() {
         </div>
         <div className="flex flex-col overflow-x-hidden">
           {!sidebarCollapsed && (
-            <h6 className="rounded px-6 text-sm font-semibold text-custom-sidebar-text-400">{t("workspaces")}</h6>
+            <h6 className="rounded px-6 text-sm font-semibold text-placeholder">{t("workspaces")}</h6>
           )}
           {workspacesList && workspacesList.length > 0 && (
             <div
@@ -211,9 +211,7 @@ export const ProfileLayoutSidebar = observer(function ProfileLayoutSidebar() {
                         (workspace?.name?.charAt(0) ?? "...")
                       )}
                     </span>
-                    {!sidebarCollapsed && (
-                      <p className="truncate text-sm text-custom-sidebar-text-200">{workspace.name}</p>
-                    )}
+                    {!sidebarCollapsed && <p className="truncate text-sm text-secondary">{workspace.name}</p>}
                   </span>
                 </Link>
               ))}
@@ -230,7 +228,7 @@ export const ProfileLayoutSidebar = observer(function ProfileLayoutSidebar() {
                   isMobile={isMobile}
                 >
                   <div
-                    className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-custom-sidebar-text-200 outline-none hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80 ${
+                    className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-secondary outline-none hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80 ${
                       sidebarCollapsed ? "justify-center" : ""
                     }`}
                   >
@@ -259,14 +257,14 @@ export const ProfileLayoutSidebar = observer(function ProfileLayoutSidebar() {
             </button>
             <button
               type="button"
-              className="grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:hidden"
+              className="grid place-items-center rounded-md p-1.5 text-secondary outline-none hover:bg-custom-background-90 hover:text-primary md:hidden"
               onClick={() => toggleSidebar()}
             >
               <MoveLeft className="h-3.5 w-3.5" />
             </button>
             <button
               type="button"
-              className={`ml-auto hidden place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:grid ${
+              className={`ml-auto hidden place-items-center rounded-md p-1.5 text-secondary outline-none hover:bg-custom-background-90 hover:text-primary md:grid ${
                 sidebarCollapsed ? "w-full" : ""
               }`}
               onClick={() => toggleSidebar()}

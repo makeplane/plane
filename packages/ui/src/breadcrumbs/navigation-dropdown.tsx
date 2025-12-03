@@ -39,13 +39,13 @@ export function BreadcrumbNavigationDropdown(props: TBreadcrumbNavigationDropdow
             }
           }}
           className={cn(
-            "group h-full flex items-center gap-2 px-1.5 py-1 text-sm font-medium text-custom-text-300 cursor-pointer rounded rounded-r-none",
+            "group h-full flex items-center gap-2 px-1.5 py-1 text-sm font-medium text-tertiary cursor-pointer rounded rounded-r-none",
             {
-              "hover:bg-custom-background-80 hover:text-custom-text-100": !isLast,
+              "hover:bg-custom-background-80 hover:text-primary": !isLast,
             }
           )}
         >
-          <div className="flex @4xl:hidden text-custom-text-300">...</div>
+          <div className="flex @4xl:hidden text-tertiary">...</div>
           <div className="hidden @4xl:flex gap-2">
             {selectedItemIcon && <Breadcrumbs.Icon>{selectedItemIcon}</Breadcrumbs.Icon>}
             <Breadcrumbs.Label>{selectedItem?.title}</Breadcrumbs.Label>
@@ -70,8 +70,8 @@ export function BreadcrumbNavigationDropdown(props: TBreadcrumbNavigationDropdow
               "hover:bg-custom-background-80": !isLast,
             })}
             containerClassName="p-0"
-            iconClassName={cn("group-hover:rotate-90 hover:text-custom-text-100", {
-              "text-custom-text-100": isOpen,
+            iconClassName={cn("group-hover:rotate-90 hover:text-primary", {
+              "text-primary": isOpen,
               "rotate-90": isOpen || isLast,
             })}
             showDivider={!isLast}
@@ -108,7 +108,7 @@ export function BreadcrumbNavigationDropdown(props: TBreadcrumbNavigationDropdow
             className={cn(
               "flex items-center gap-2",
               {
-                "text-custom-text-400": item.disabled,
+                "text-placeholder": item.disabled,
               },
               item.className
             )}
@@ -119,8 +119,8 @@ export function BreadcrumbNavigationDropdown(props: TBreadcrumbNavigationDropdow
               <h5>{item.title}</h5>
               {item.description && (
                 <p
-                  className={cn("text-custom-text-300 whitespace-pre-line", {
-                    "text-custom-text-400": item.disabled,
+                  className={cn("text-tertiary whitespace-pre-line", {
+                    "text-placeholder": item.disabled,
                   })}
                 >
                   {item.description}

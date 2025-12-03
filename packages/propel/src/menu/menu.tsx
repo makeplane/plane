@@ -44,9 +44,9 @@ function MenuItem(props: TMenuItemProps) {
     <BaseMenu.Item
       disabled={disabled}
       className={cn(
-        "w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80 cursor-pointer outline-none",
+        "w-full select-none truncate rounded px-1 py-1.5 text-left text-secondary hover:bg-custom-background-80 cursor-pointer outline-none",
         {
-          "text-custom-text-400": disabled,
+          "text-placeholder": disabled,
         },
         className
       )}
@@ -142,7 +142,7 @@ function Menu(props: TMenuProps) {
               type="button"
               onClick={handleMenuButtonClick}
               disabled={disabled}
-              className={`relative grid place-items-center rounded p-1 text-custom-text-200 outline-none hover:text-custom-text-100 ${
+              className={`relative grid place-items-center rounded p-1 text-secondary outline-none hover:text-primary ${
                 disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
               } ${buttonClassName}`}
               tabIndex={customButtonTabIndex}
@@ -154,9 +154,9 @@ function Menu(props: TMenuProps) {
             <BaseMenu.Trigger
               type="button"
               className={`flex items-center justify-between gap-1 whitespace-nowrap rounded-md px-2.5 py-1 text-xs duration-300 outline-none ${
-                isOpen ? "bg-custom-background-90 text-custom-text-100" : "text-custom-text-200"
+                isOpen ? "bg-custom-background-90 text-primary" : "text-secondary"
               } ${noBorder ? "" : "border border-strong shadow-sm focus:outline-none"} ${
-                disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
+                disabled ? "cursor-not-allowed text-secondary" : "cursor-pointer hover:bg-custom-background-80"
               } ${buttonClassName}`}
               onClick={handleMenuButtonClick}
               tabIndex={customButtonTabIndex}

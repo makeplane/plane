@@ -64,7 +64,7 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
         <Tooltip tooltipContent="Help" position={isSidebarCollapsed ? "right" : "top"} className="ml-4">
           <button
             type="button"
-            className={`ml-auto grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
+            className={`ml-auto grid place-items-center rounded-md p-1.5 text-secondary outline-none hover:bg-custom-background-90 hover:text-primary ${
               isSidebarCollapsed ? "w-full" : ""
             }`}
             onClick={() => setIsNeedHelpOpen((prev) => !prev)}
@@ -75,7 +75,7 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
         <Tooltip tooltipContent="Toggle sidebar" position={isSidebarCollapsed ? "right" : "top"} className="ml-4">
           <button
             type="button"
-            className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 ${
+            className={`grid place-items-center rounded-md p-1.5 text-secondary outline-none hover:bg-custom-background-90 hover:text-primary ${
               isSidebarCollapsed ? "w-full" : ""
             }`}
             onClick={() => toggleSidebar(!isSidebarCollapsed)}
@@ -108,7 +108,7 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
                     <Link href={href} key={name} target="_blank">
                       <div className="flex items-center gap-x-2 rounded px-2 py-1 text-xs hover:bg-custom-background-80">
                         <div className="grid flex-shrink-0 place-items-center">
-                          <Icon className="h-3.5 w-3.5 text-custom-text-200" width={14} height={14} />
+                          <Icon className="h-3.5 w-3.5 text-secondary" width={14} height={14} />
                         </div>
                         <span className="text-xs">{name}</span>
                       </div>
@@ -122,7 +122,7 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
                       className="flex w-full items-center gap-x-2 rounded px-2 py-1 text-xs hover:bg-custom-background-80"
                     >
                       <div className="grid flex-shrink-0 place-items-center">
-                        <Icon className="h-3.5 w-3.5 text-custom-text-200" />
+                        <Icon className="h-3.5 w-3.5 text-secondary" />
                       </div>
                       <span className="text-xs">{name}</span>
                     </button>

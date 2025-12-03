@@ -68,19 +68,19 @@ export const Sizes: Story = {
         </div>
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-4">
-            <span className="text-sm text-custom-text-400 w-20">Small:</span>
+            <span className="text-sm text-placeholder w-20">Small:</span>
             <div className="flex items-center justify-center min-w-[40px] h-8 bg-custom-background-80 border border-subtle-1 rounded">
               <AnimatedCounter count={count} size="sm" />
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-custom-text-400 w-20">Medium:</span>
+            <span className="text-sm text-placeholder w-20">Medium:</span>
             <div className="flex items-center justify-center min-w-[50px] h-10 bg-custom-background-80 border border-subtle-1 rounded">
               <AnimatedCounter count={count} size="md" />
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-custom-text-400 w-20">Large:</span>
+            <span className="text-sm text-placeholder w-20">Large:</span>
             <div className="flex items-center justify-center min-w-[60px] h-12 bg-custom-background-80 border border-subtle-1 rounded">
               <AnimatedCounter count={count} size="lg" />
             </div>
@@ -221,7 +221,7 @@ export const MultipleCounters: Story = {
           </div>
           <div className="flex gap-4">
             <div className="flex-1 flex flex-col items-center gap-2">
-              <div className="text-custom-text-400 text-sm">Likes</div>
+              <div className="text-placeholder text-sm">Likes</div>
               <div className="flex items-center gap-2">
                 <button
                   className="w-8 h-8 flex items-center justify-center bg-custom-background-80 rounded hover:bg-custom-background-90"
@@ -235,7 +235,7 @@ export const MultipleCounters: Story = {
               </div>
             </div>
             <div className="flex-1 flex flex-col items-center gap-2">
-              <div className="text-custom-text-400 text-sm">Comments</div>
+              <div className="text-placeholder text-sm">Comments</div>
               <div className="flex items-center gap-2">
                 <button
                   className="w-8 h-8 flex items-center justify-center bg-custom-background-80 rounded hover:bg-custom-background-90"
@@ -249,7 +249,7 @@ export const MultipleCounters: Story = {
               </div>
             </div>
             <div className="flex-1 flex flex-col items-center gap-2">
-              <div className="text-custom-text-400 text-sm">Shares</div>
+              <div className="text-placeholder text-sm">Shares</div>
               <div className="flex items-center gap-2">
                 <button
                   className="w-8 h-8 flex items-center justify-center bg-custom-background-80 rounded hover:bg-custom-background-90"

@@ -93,7 +93,7 @@ export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(p
         <Tooltip tooltipContent={t("page_navigation_pane.close_button")}>
           <button
             type="button"
-            className="size-3.5 grid place-items-center text-custom-text-200 hover:text-custom-text-100 transition-colors"
+            className="size-3.5 grid place-items-center text-secondary hover:text-primary transition-colors"
             onClick={handleClose}
             aria-label={t("page_navigation_pane.close_button")}
           >

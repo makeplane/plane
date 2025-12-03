@@ -51,7 +51,7 @@ export function NameColumn(props: NameProps) {
             <div className="flex items-center gap-x-2 gap-y-2 flex-1">
               {isSuspended ? (
                 <div className="bg-custom-background-80 rounded-full p-0.5">
-                  <SuspendedUserIcon className="h-4 w-4 text-custom-text-400" />
+                  <SuspendedUserIcon className="h-4 w-4 text-placeholder" />
                 </div>
               ) : avatar_url && avatar_url.trim() !== "" ? (
                 <Link href={`/${workspaceSlug}/profile/${id}`}>
@@ -70,7 +70,7 @@ export function NameColumn(props: NameProps) {
                   </span>
                 </Link>
               )}
-              <span className={isSuspended ? "text-custom-text-400" : ""}>
+              <span className={isSuspended ? "text-placeholder" : ""}>
                 {first_name} {last_name}
               </span>
             </div>

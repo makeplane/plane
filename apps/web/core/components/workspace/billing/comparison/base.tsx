@@ -55,7 +55,7 @@ export const PlansComparisonBase = observer(function PlansComparisonBase(props: 
           <section className="flex-shrink-0">
             {/* Plan Highlights */}
             <div
-              className="grid gap-3 py-1 text-sm text-custom-text-200 even:bg-custom-background-90 rounded-sm"
+              className="grid gap-3 py-1 text-sm text-secondary even:bg-custom-background-90 rounded-sm"
               style={{ gridTemplateColumns: `repeat(${numberOfPlansToRender + 1}, minmax(0, 1fr))` }}
             >
               <div className="col-span-1 p-3 text-base font-medium">Highlights</div>
@@ -79,14 +79,14 @@ export const PlansComparisonBase = observer(function PlansComparisonBase(props: 
             <>
               {planComparison.map((section, sectionIdx) => (
                 <section key={sectionIdx} className="flex-shrink-0">
-                  <h2 className="flex gap-2 items-start text-lg font-semibold text-custom-text-300 mb-2 pl-2">
+                  <h2 className="flex gap-2 items-start text-lg font-semibold text-tertiary mb-2 pl-2">
                     {section.title} {section.comingSoon && <ComingSoonBadge />}
                   </h2>
                   <div className="border-t border-subtle-1">
                     {section.features.map((feature, featureIdx) => (
                       <div
                         key={featureIdx}
-                        className="grid gap-3 text-sm text-custom-text-200 even:bg-custom-background-90 rounded-sm"
+                        className="grid gap-3 text-sm text-secondary even:bg-custom-background-90 rounded-sm"
                         style={{ gridTemplateColumns: `repeat(${numberOfPlansToRender + 1}, minmax(0, 1fr))` }}
                       >
                         <div className="col-span-1 p-3 flex items-center text-base font-medium">

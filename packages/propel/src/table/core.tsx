@@ -62,7 +62,7 @@ const TableHead = React.forwardRef(function TableHead(
     <th
       ref={ref}
       className={cn(
-        "h-10 px-2 text-left align-middle font-medium text-custom-text-300 [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+        "h-10 px-2 text-left align-middle font-medium text-tertiary [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
         className
       )}
       {...props}
@@ -89,7 +89,7 @@ const TableCaption = React.forwardRef(function TableCaption(
   { className, ...props }: React.ComponentPropsWithoutRef<"caption">,
   ref: React.ForwardedRef<React.ComponentRef<"caption">>
 ) {
-  return <caption ref={ref} className={cn("mt-4 text-sm text-custom-text-300", className)} {...props} />;
+  return <caption ref={ref} className={cn("mt-4 text-sm text-tertiary", className)} {...props} />;
 });
 TableCaption.displayName = "TableCaption";
 

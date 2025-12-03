@@ -65,8 +65,8 @@ export const MemberSelect = observer(function MemberSelect(props: Props) {
             selectedOption.member?.display_name
           ) : (
             <div className="flex items-center gap-2">
-              <Ban className="h-3.5 w-3.5 rotate-90 text-custom-sidebar-text-400" />
-              <span className="text-sm text-custom-sidebar-text-400">None</span>
+              <Ban className="h-3.5 w-3.5 rotate-90 text-placeholder" />
+              <span className="text-sm text-placeholder">None</span>
             </div>
           )}
         </div>
@@ -81,8 +81,8 @@ export const MemberSelect = observer(function MemberSelect(props: Props) {
             query: "none",
             content: (
               <div className="flex items-center gap-2">
-                <Ban className="h-3.5 w-3.5 rotate-90 text-custom-sidebar-text-400" />
-                <span className="py-0.5 text-sm text-custom-sidebar-text-400">None</span>
+                <Ban className="h-3.5 w-3.5 rotate-90 text-placeholder" />
+                <span className="py-0.5 text-sm text-placeholder">None</span>
               </div>
             ),
           },

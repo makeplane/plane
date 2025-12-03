@@ -106,8 +106,8 @@ export const LanguageTimezone = observer(function LanguageTimezone() {
         <div className="flex flex-col gap-1">
           <div className="flex gap-4 sm:gap-16 w-full justify-between">
             <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-base font-medium text-custom-text-100"> {t("timezone")}&nbsp;</h4>
-              <p className="text-sm text-custom-text-200">{t("timezone_setting")}</p>
+              <h4 className="text-base font-medium text-primary"> {t("timezone")}&nbsp;</h4>
+              <p className="text-sm text-secondary">{t("timezone_setting")}</p>
             </div>
             <div className="col-span-12 sm:col-span-6 my-auto">
               <TimezoneSelect value={user?.user_timezone || "Asia/Kolkata"} onChange={handleTimezoneChange} />
@@ -117,8 +117,8 @@ export const LanguageTimezone = observer(function LanguageTimezone() {
         <div className="flex flex-col gap-1">
           <div className="flex gap-4 sm:gap-16 w-full justify-between">
             <div className="col-span-12 sm:col-span-6">
-              <h4 className="text-base font-medium text-custom-text-100"> {t("language")}&nbsp;</h4>
-              <p className="text-sm text-custom-text-200">{t("language_setting")}</p>
+              <h4 className="text-base font-medium text-primary"> {t("language")}&nbsp;</h4>
+              <p className="text-sm text-secondary">{t("language_setting")}</p>
             </div>
             <div className="col-span-12 sm:col-span-6 my-auto">
               <CustomSelect

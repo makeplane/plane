@@ -65,7 +65,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
         >
           <div className="space-y-1">
             <div className="relative flex items-center justify-between gap-2">
-              <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
+              <div className="flex-shrink-0 text-xs font-medium text-tertiary">
                 {projectIdentifier}-{issue.sequence_id}
               </div>
               <div className="flex items-center gap-2">
@@ -83,7 +83,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
                 tooltipContent={`${renderFormattedDate(issue.created_at ?? "")}`}
                 isMobile={isMobile}
               >
-                <div className="text-xs text-custom-text-200">{renderFormattedDate(issue.created_at ?? "")}</div>
+                <div className="text-xs text-secondary">{renderFormattedDate(issue.created_at ?? "")}</div>
               </Tooltip>
 
               <div className="border-2 rounded-full border-strong-1" />

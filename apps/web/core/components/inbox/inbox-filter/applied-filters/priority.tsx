@@ -25,7 +25,7 @@ export const InboxIssueAppliedFiltersPriority = observer(function InboxIssueAppl
   if (filteredValues.length === 0) return <></>;
   return (
     <Tag>
-      <div className="text-xs text-custom-text-200">{t("common.priority")}</div>
+      <div className="text-xs text-secondary">{t("common.priority")}</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
         if (!optionDetail) return <></>;
@@ -36,7 +36,7 @@ export const InboxIssueAppliedFiltersPriority = observer(function InboxIssueAppl
             </div>
             <div className="text-xs truncate">{optionDetail?.title}</div>
             <div
-              className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
+              className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-tertiary hover:text-secondary transition-all"
               onClick={() => handleInboxIssueFilters("priority", handleFilterValue(optionDetail?.key))}
             >
               <CloseIcon className={`w-3 h-3`} />
@@ -46,7 +46,7 @@ export const InboxIssueAppliedFiltersPriority = observer(function InboxIssueAppl
       })}
 
       <div
-        className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
+        className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-tertiary hover:text-secondary transition-all"
         onClick={clearFilter}
       >
         <CloseIcon className={`w-3 h-3`} />

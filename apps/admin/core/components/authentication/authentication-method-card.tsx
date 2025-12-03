@@ -30,7 +30,7 @@ export function AuthenticationMethodCard(props: Props) {
         </div>
         <div className="grow">
           <div
-            className={cn("font-medium leading-5 text-custom-text-100", {
+            className={cn("font-medium leading-5 text-primary", {
               "text-sm": withBorder,
               "text-xl": !withBorder,
             })}
@@ -38,7 +38,7 @@ export function AuthenticationMethodCard(props: Props) {
             {name}
           </div>
           <div
-            className={cn("font-normal leading-5 text-custom-text-300", {
+            className={cn("font-normal leading-5 text-tertiary", {
               "text-xs": withBorder,
               "text-sm": !withBorder,
             })}

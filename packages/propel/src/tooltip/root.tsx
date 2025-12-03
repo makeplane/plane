@@ -50,7 +50,7 @@ export function Tooltip(props: ITooltipProps) {
         <BaseTooltip.Portal>
           <BaseTooltip.Positioner
             className={cn(
-              "z-tooltip max-w-xs gap-1 overflow-hidden break-words rounded-md bg-custom-background-100 p-2 text-xs text-custom-text-200 shadow-custom-shadow-xs",
+              "z-tooltip max-w-xs gap-1 overflow-hidden break-words rounded-md bg-custom-background-100 p-2 text-xs text-secondary shadow-custom-shadow-xs",
               {
                 hidden: isMobile,
               },
@@ -61,7 +61,7 @@ export function Tooltip(props: ITooltipProps) {
             align={finalAlign}
             render={
               <BaseTooltip.Popup>
-                {tooltipHeading && <h5 className="font-medium text-custom-text-100">{tooltipHeading}</h5>}
+                {tooltipHeading && <h5 className="font-medium text-primary">{tooltipHeading}</h5>}
                 {tooltipContent && tooltipContent}
               </BaseTooltip.Popup>
             }

@@ -57,8 +57,8 @@ export const ProfileActivity = observer(function ProfileActivity() {
                     )}
                   </div>
                   <div className="-mt-1 w-4/5 break-words">
-                    <p className="inline text-sm text-custom-text-200">
-                      <span className="font-medium text-custom-text-100">
+                    <p className="inline text-sm text-secondary">
+                      <span className="font-medium text-primary">
                         {currentUser?.id === activity.actor_detail?.id
                           ? "You"
                           : activity.actor_detail?.display_name}{" "}
@@ -71,9 +71,7 @@ export const ProfileActivity = observer(function ProfileActivity() {
                         </span>
                       )}
                     </p>
-                    <p className="text-xs text-custom-text-200 whitespace-nowrap ">
-                      {calculateTimeAgo(activity.created_at)}
-                    </p>
+                    <p className="text-xs text-secondary whitespace-nowrap ">{calculateTimeAgo(activity.created_at)}</p>
                   </div>
                 </div>
               ))}

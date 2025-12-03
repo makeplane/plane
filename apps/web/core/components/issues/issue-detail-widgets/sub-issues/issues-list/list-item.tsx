@@ -120,7 +120,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                     </div>
                   ) : (
                     <div
-                      className="flex h-full w-full cursor-pointer items-center justify-center text-custom-text-400 hover:text-custom-text-300"
+                      className="flex h-full w-full cursor-pointer items-center justify-center text-placeholder hover:text-tertiary"
                       onClick={async (e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -153,13 +153,13 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                       issueTypeId={issue.type_id}
                       projectIdentifier={projectDetail.identifier}
                       issueSequenceId={issue.sequence_id}
-                      textContainerClassName="text-xs text-custom-text-200"
+                      textContainerClassName="text-xs text-secondary"
                     />
                   )}
                 </div>
               </WithDisplayPropertiesHOC>
               <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-                <span className="w-full truncate text-sm text-custom-text-100">{issue.name}</span>
+                <span className="w-full truncate text-sm text-primary">{issue.name}</span>
               </Tooltip>
             </div>
 

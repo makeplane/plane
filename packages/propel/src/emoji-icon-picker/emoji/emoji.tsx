@@ -52,7 +52,7 @@ export function EmojiRoot(props: EmojiRootProps) {
             CategoryHeader: ({ category, ...props }) => (
               <div
                 data-slot="emoji-picker-list-category-header"
-                className="bg-custom-background-100 text-custom-text-300 px-3 pb-1.5 text-xs font-medium"
+                className="bg-custom-background-100 text-tertiary px-3 pb-1.5 text-xs font-medium"
                 {...props}
               >
                 {category.label}

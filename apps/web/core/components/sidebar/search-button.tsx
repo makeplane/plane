@@ -17,7 +17,7 @@ export function SidebarSearchButton(props: Props) {
       )}
     >
       <Search
-        className={cn("size-4 text-custom-sidebar-text-300", {
+        className={cn("size-4 text-tertiary", {
           "text-custom-primary-200": isActive,
         })}
       />

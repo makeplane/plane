@@ -17,9 +17,7 @@ export const CustomPieChartTooltip = React.memo(function CustomPieChartTooltip(p
       className="flex flex-col max-h-[40vh] w-[12rem] overflow-y-scroll vertical-scrollbar scrollbar-sm"
       spacing={ECardSpacing.SM}
     >
-      <p className="flex-shrink-0 text-xs text-custom-text-100 font-medium border-b border-subtle-1 pb-2 truncate">
-        {label}
-      </p>
+      <p className="flex-shrink-0 text-xs text-primary font-medium border-b border-subtle-1 pb-2 truncate">{label}</p>
       {payload?.map((item) => (
         <div key={item?.dataKey} className="flex items-center gap-2 text-xs capitalize">
           <div className="flex items-center gap-2 truncate">
@@ -29,9 +27,9 @@ export const CustomPieChartTooltip = React.memo(function CustomPieChartTooltip(p
                 backgroundColor: dotColor,
               }}
             />
-            <span className="text-custom-text-300 truncate">{item?.name}:</span>
+            <span className="text-tertiary truncate">{item?.name}:</span>
           </div>
-          <span className="flex-shrink-0 font-medium text-custom-text-200">{item?.value}</span>
+          <span className="flex-shrink-0 font-medium text-secondary">{item?.value}</span>
         </div>
       ))}
     </Card>

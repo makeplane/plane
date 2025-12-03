@@ -263,8 +263,8 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
                     <h5>{item.title}</h5>
                     {item.description && (
                       <p
-                        className={cn("text-custom-text-300 whitespace-pre-line", {
-                          "text-custom-text-400": item.disabled,
+                        className={cn("text-tertiary whitespace-pre-line", {
+                          "text-placeholder": item.disabled,
                         })}
                       >
                         {item.description}
@@ -276,7 +276,7 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
                 className={cn(
                   "flex items-center gap-2",
                   {
-                    "text-custom-text-400": item.disabled,
+                    "text-placeholder": item.disabled,
                   },
                   item.className
                 )}
@@ -291,7 +291,7 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
                     className={cn(
                       "flex items-center gap-2",
                       {
-                        "text-custom-text-400": nestedItem.disabled,
+                        "text-placeholder": nestedItem.disabled,
                       },
                       nestedItem.className
                     )}
@@ -302,8 +302,8 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
                       <h5>{nestedItem.title}</h5>
                       {nestedItem.description && (
                         <p
-                          className={cn("text-custom-text-300 whitespace-pre-line", {
-                            "text-custom-text-400": nestedItem.disabled,
+                          className={cn("text-tertiary whitespace-pre-line", {
+                            "text-placeholder": nestedItem.disabled,
                           })}
                         >
                           {nestedItem.description}
@@ -327,7 +327,7 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
               className={cn(
                 "flex items-center gap-2",
                 {
-                  "text-custom-text-400": item.disabled,
+                  "text-placeholder": item.disabled,
                 },
                 item.className
               )}
@@ -338,8 +338,8 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
                 <h5>{item.title}</h5>
                 {item.description && (
                   <p
-                    className={cn("text-custom-text-300 whitespace-pre-line", {
-                      "text-custom-text-400": item.disabled,
+                    className={cn("text-tertiary whitespace-pre-line", {
+                      "text-placeholder": item.disabled,
                     })}
                   >
                     {item.description}

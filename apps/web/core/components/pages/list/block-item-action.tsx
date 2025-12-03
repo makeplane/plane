@@ -43,18 +43,18 @@ export const BlockItemAction = observer(function BlockItemAction(props: Props) {
           <Avatar src={getFileURL(ownerDetails?.avatar_url ?? "")} name={ownerDetails?.display_name} />
         </Tooltip>
       </div>
-      <div className="cursor-default text-custom-text-300">
+      <div className="cursor-default text-tertiary">
         <Tooltip tooltipContent={access === 0 ? "Public" : "Private"}>
           {access === 0 ? <Earth className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
         </Tooltip>
       </div>
       {/* vertical divider */}
-      <Minus className="h-5 w-5 text-custom-text-400 rotate-90 -mx-3" strokeWidth={1} />
+      <Minus className="h-5 w-5 text-placeholder rotate-90 -mx-3" strokeWidth={1} />
 
       {/* page info */}
       <Tooltip tooltipContent={`Created on ${renderFormattedDate(created_at)}`}>
         <span className="h-4 w-4 grid place-items-center cursor-default">
-          <Info className="h-4 w-4 text-custom-text-300" />
+          <Info className="h-4 w-4 text-tertiary" />
         </span>
       </Tooltip>
 

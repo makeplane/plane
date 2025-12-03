@@ -38,7 +38,7 @@ export function ApiTokenListItem(props: Props) {
           <h5 className="truncate text-sm font-medium">{token.label}</h5>
           <span
             className={`${
-              token.is_active ? "bg-green-500/10 text-green-500" : "bg-custom-background-80 text-custom-text-400"
+              token.is_active ? "bg-green-500/10 text-green-500" : "bg-custom-background-80 text-placeholder"
             } ml-2 flex h-4 max-h-fit items-center rounded-sm px-2 text-xs font-medium`}
           >
             {token.is_active ? "Active" : "Expired"}
@@ -48,7 +48,7 @@ export function ApiTokenListItem(props: Props) {
           {token.description.trim() !== "" && (
             <p className="mb-1 max-w-[70%] break-words text-sm">{token.description}</p>
           )}
-          <p className="mb-1 text-xs leading-6 text-custom-text-400">
+          <p className="mb-1 text-xs leading-6 text-placeholder">
             {token.is_active
               ? token.expired_at
                 ? `Expires ${renderFormattedDate(token.expired_at!)} at ${renderFormattedTime(token.expired_at!)}`

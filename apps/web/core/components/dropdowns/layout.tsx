@@ -38,8 +38,8 @@ export const LayoutDropDown = observer(function LayoutDropDown(props: TLayoutDro
   const buttonContent = useCallback((isOpen: boolean, buttonValue: string | string[] | undefined) => {
     const dropdownValue = ISSUE_LAYOUT_MAP[buttonValue as EIssueLayoutTypes];
     return (
-      <div className="flex gap-2 items-center text-custom-text-200">
-        <IssueLayoutIcon layout={dropdownValue.key} strokeWidth={2} className={`size-3.5 text-custom-text-200`} />
+      <div className="flex gap-2 items-center text-secondary">
+        <IssueLayoutIcon layout={dropdownValue.key} strokeWidth={2} className={`size-3.5 text-secondary`} />
         <span className="font-medium text-xs">{t(dropdownValue.i18n_label)}</span>
       </div>
     );
@@ -49,9 +49,9 @@ export const LayoutDropDown = observer(function LayoutDropDown(props: TLayoutDro
     const dropdownValue = ISSUE_LAYOUT_MAP[props.value as EIssueLayoutTypes];
 
     return (
-      <div className={cn("flex gap-2 items-center text-custom-text-200 w-full justify-between")}>
+      <div className={cn("flex gap-2 items-center text-secondary w-full justify-between")}>
         <div className="flex gap-2 items-center">
-          <IssueLayoutIcon layout={dropdownValue.key} strokeWidth={2} className={`size-3 text-custom-text-200`} />
+          <IssueLayoutIcon layout={dropdownValue.key} strokeWidth={2} className={`size-3 text-secondary`} />
           <span className="font-medium text-xs">{t(dropdownValue.i18n_label)}</span>
         </div>
         {props.selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
@@ -67,7 +67,7 @@ export const LayoutDropDown = observer(function LayoutDropDown(props: TLayoutDro
       value={value?.toString()}
       keyExtractor={keyExtractor}
       options={options}
-      buttonContainerClassName="bg-custom-background-100 border border-subtle-1 hover:bg-custom-background-90 focus:text-custom-text-300 focus:bg-custom-background-90 px-2 py-1.5  rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center relative"
+      buttonContainerClassName="bg-custom-background-100 border border-subtle-1 hover:bg-custom-background-90 focus:text-tertiary focus:bg-custom-background-90 px-2 py-1.5  rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center relative"
       buttonContent={buttonContent}
       renderItem={itemContent}
       disableSearch

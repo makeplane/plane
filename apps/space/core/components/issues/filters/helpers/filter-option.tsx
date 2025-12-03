@@ -28,7 +28,7 @@ export function FilterOption(props: Props) {
       </div>
       <div className="flex items-center gap-2 truncate">
         {icon && <div className="grid w-5 flex-shrink-0 place-items-center">{icon}</div>}
-        <div className="flex-grow truncate text-xs text-custom-text-200">{title}</div>
+        <div className="flex-grow truncate text-xs text-secondary">{title}</div>
       </div>
     </button>
   );

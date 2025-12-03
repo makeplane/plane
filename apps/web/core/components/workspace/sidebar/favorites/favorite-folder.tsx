@@ -84,7 +84,7 @@ export function FavoriteFolder(props: Props) {
                   <div className="size-5 grid place-items-center flex-shrink-0">
                     <FavoriteFolderIcon />
                   </div>
-                  <p className="truncate text-sm font-medium text-custom-sidebar-text-200">{favorite.name}</p>
+                  <p className="truncate text-sm font-medium text-secondary">{favorite.name}</p>
                 </div>
               );
               return () => root.unmount();
@@ -154,7 +154,7 @@ export function FavoriteFolder(props: Props) {
             <DropIndicator isVisible={instruction === "reorder-above"} />
             <div
               className={cn(
-                "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-custom-sidebar-text-100 hover:bg-custom-sidebar-background-90",
+                "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-primary hover:bg-custom-sidebar-background-90",
                 {
                   "bg-custom-sidebar-background-90": isMenuActive,
                 }
@@ -162,7 +162,7 @@ export function FavoriteFolder(props: Props) {
             >
               {/* draggable indicator */}
 
-              <div className="flex-shrink-0 w-3 h-3 rounded-sm absolute left-0 hidden group-hover:flex justify-center items-center transition-colors bg-custom-background-90 cursor-pointer text-custom-text-200 hover:text-custom-text-100">
+              <div className="flex-shrink-0 w-3 h-3 rounded-sm absolute left-0 hidden group-hover:flex justify-center items-center transition-colors bg-custom-background-90 cursor-pointer text-secondary hover:text-primary">
                 <GripVertical className="w-3 h-3" />
               </div>
 
@@ -185,7 +185,7 @@ export function FavoriteFolder(props: Props) {
                         <button
                           type="button"
                           className={cn(
-                            "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded text-custom-sidebar-text-400 cursor-grab",
+                            "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded text-placeholder cursor-grab",
                             {
                               "cursor-not-allowed opacity-60": favorite.sort_order === null,
                               "cursor-grabbing": isDragging,
@@ -198,7 +198,7 @@ export function FavoriteFolder(props: Props) {
                       <div className="size-5 grid place-items-center flex-shrink-0">
                         <FavoriteFolderIcon />
                       </div>
-                      <p className="truncate text-sm font-medium text-custom-sidebar-text-200">{favorite.name}</p>
+                      <p className="truncate text-sm font-medium text-secondary">{favorite.name}</p>
                     </Disclosure.Button>
                   </div>
                 </Tooltip>
@@ -206,7 +206,7 @@ export function FavoriteFolder(props: Props) {
                   customButton={
                     <span
                       ref={actionSectionRef}
-                      className="grid place-items-center p-0.5 text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 rounded"
+                      className="grid place-items-center p-0.5 text-placeholder hover:bg-custom-sidebar-background-80 rounded"
                     >
                       <MoreHorizontal className="size-3" />
                     </span>
@@ -230,7 +230,7 @@ export function FavoriteFolder(props: Props) {
                   </CustomMenu.MenuItem>
                   <CustomMenu.MenuItem onClick={() => setFolderToRename(favorite.id)}>
                     <div className="flex items-center justify-start gap-2">
-                      <DraftIcon className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
+                      <DraftIcon className="h-3.5 w-3.5 stroke-[1.5] text-tertiary" />
                       <span>Rename Folder</span>
                     </div>
                   </CustomMenu.MenuItem>
@@ -249,7 +249,7 @@ export function FavoriteFolder(props: Props) {
                   )}
                 >
                   <ChevronRightIcon
-                    className={cn("size-3 flex-shrink-0 text-custom-sidebar-text-400 transition-transform", {
+                    className={cn("size-3 flex-shrink-0 text-placeholder transition-transform", {
                       "rotate-90": open,
                     })}
                   />

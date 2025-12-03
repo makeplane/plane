@@ -64,7 +64,7 @@ export function IdentifierText(props: TIdentifierTextProps) {
     <Tooltip tooltipContent="Click to copy" disabled={!enableClickToCopyIdentifier} position="top">
       <span
         className={cn(
-          "text-base font-medium text-custom-text-300",
+          "text-base font-medium text-tertiary",
           {
             "cursor-pointer": enableClickToCopyIdentifier,
           },

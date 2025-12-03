@@ -84,7 +84,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
           {/* TODO: render properties using a common component */}
           <div className={`mb-2 mt-3 space-y-2.5 ${!isEditable ? "opacity-60" : ""}`}>
             <div className="flex h-8 items-center gap-2">
-              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-tertiary">
                 <StatePropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>{t("common.state")}</span>
               </div>
@@ -103,7 +103,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
             </div>
 
             <div className="flex h-8 items-center gap-2">
-              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-tertiary">
                 <MembersPropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>{t("common.assignees")}</span>
               </div>
@@ -117,9 +117,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 buttonVariant={issue?.assignee_ids?.length > 1 ? "transparent-without-text" : "transparent-with-text"}
                 className="group w-3/5 flex-grow"
                 buttonContainerClassName="w-full text-left"
-                buttonClassName={`text-sm justify-between ${
-                  issue?.assignee_ids?.length > 0 ? "" : "text-custom-text-400"
-                }`}
+                buttonClassName={`text-sm justify-between ${issue?.assignee_ids?.length > 0 ? "" : "text-placeholder"}`}
                 hideIcon={issue.assignee_ids?.length === 0}
                 dropdownArrow
                 dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
@@ -127,7 +125,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
             </div>
 
             <div className="flex h-8 items-center gap-2">
-              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-tertiary">
                 <PriorityPropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>{t("common.priority")}</span>
               </div>
@@ -144,7 +142,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
 
             {createdByDetails && (
               <div className="flex h-8 items-center gap-2">
-                <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+                <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-tertiary">
                   <UserCirclePropertyIcon className="h-4 w-4 flex-shrink-0" />
                   <span>{t("common.created_by")}</span>
                 </div>
@@ -156,7 +154,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
             )}
 
             <div className="flex h-8 items-center gap-2">
-              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-tertiary">
                 <StartDatePropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>{t("common.order_by.start_date")}</span>
               </div>
@@ -173,7 +171,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 buttonVariant="transparent-with-text"
                 className="group w-3/5 flex-grow"
                 buttonContainerClassName="w-full text-left"
-                buttonClassName={`text-sm ${issue?.start_date ? "" : "text-custom-text-400"}`}
+                buttonClassName={`text-sm ${issue?.start_date ? "" : "text-placeholder"}`}
                 hideIcon
                 clearIconClassName="h-3 w-3 hidden group-hover:inline"
                 // TODO: add this logic
@@ -182,7 +180,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
             </div>
 
             <div className="flex h-8 items-center gap-2">
-              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-tertiary">
                 <DueDatePropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>{t("common.order_by.due_date")}</span>
               </div>
@@ -201,11 +199,11 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                   className="group w-3/5 flex-grow"
                   buttonContainerClassName="w-full text-left"
                   buttonClassName={cn("text-sm", {
-                    "text-custom-text-400": !issue.target_date,
+                    "text-placeholder": !issue.target_date,
                     "text-red-500": shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
                   })}
                   hideIcon
-                  clearIconClassName="h-3 w-3 hidden group-hover:inline !text-custom-text-100"
+                  clearIconClassName="h-3 w-3 hidden group-hover:inline !text-primary"
                   // TODO: add this logic
                   // showPlaceholderIcon
                 />
@@ -215,7 +213,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
 
             {projectId && areEstimateEnabledByProjectId(projectId) && (
               <div className="flex h-8 items-center gap-2">
-                <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+                <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-tertiary">
                   <EstimatePropertyIcon className="h-4 w-4 flex-shrink-0" />
                   <span>{t("common.estimate")}</span>
                 </div>
@@ -229,7 +227,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                   buttonVariant="transparent-with-text"
                   className="group w-3/5 flex-grow"
                   buttonContainerClassName="w-full text-left"
-                  buttonClassName={`text-sm ${issue?.estimate_point !== null ? "" : "text-custom-text-400"}`}
+                  buttonClassName={`text-sm ${issue?.estimate_point !== null ? "" : "text-placeholder"}`}
                   placeholder={t("common.none")}
                   hideIcon
                   dropdownArrow
@@ -240,7 +238,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
 
             {projectDetails?.module_view && (
               <div className="flex min-h-8 gap-2">
-                <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
+                <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-tertiary">
                   <ModuleIcon className="h-4 w-4 flex-shrink-0" />
                   <span>{t("common.modules")}</span>
                 </div>
@@ -257,7 +255,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
 
             {projectDetails?.cycle_view && (
               <div className="flex h-8 items-center gap-2">
-                <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+                <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-tertiary">
                   <CycleIcon className="h-4 w-4 flex-shrink-0" />
                   <span>{t("common.cycle")}</span>
                   <TransferHopInfo workItem={issue} />
@@ -274,7 +272,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
             )}
 
             <div className="flex h-8 items-center gap-2">
-              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-tertiary">
                 <ParentPropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>{t("common.parent")}</span>
               </div>
@@ -289,7 +287,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
             </div>
 
             <div className="flex min-h-8 gap-2">
-              <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
+              <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-tertiary">
                 <LabelPropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>{t("common.labels")}</span>
               </div>

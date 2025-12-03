@@ -157,7 +157,7 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
       className={cn(
         "clickable block h-full max-w-full outline-none",
         {
-          "cursor-not-allowed text-custom-text-200": disabled,
+          "cursor-not-allowed text-secondary": disabled,
           "cursor-pointer": !disabled,
         },
         buttonContainerClassName
@@ -197,11 +197,11 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
             ) : (
               renderPlaceholder && (
                 <>
-                  <span className="text-custom-text-400">{placeholder.from}</span>
+                  <span className="text-placeholder">{placeholder.from}</span>
                   {placeholder.from && placeholder.to && (
-                    <ArrowRight className="h-3 w-3 flex-shrink-0 text-custom-text-400" />
+                    <ArrowRight className="h-3 w-3 flex-shrink-0 text-placeholder" />
                   )}
-                  <span className="text-custom-text-400">{placeholder.to}</span>
+                  <span className="text-placeholder">{placeholder.to}</span>
                 </>
               )
             )}

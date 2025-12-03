@@ -32,7 +32,7 @@ export const StateMarksAsDefault = observer(function StateMarksAsDefault(props: 
     <button
       className={cn(
         "text-xs whitespace-nowrap transition-colors",
-        isDefault ? "text-custom-text-300" : "text-custom-text-200 hover:text-custom-text-100"
+        isDefault ? "text-tertiary" : "text-secondary hover:text-primary"
       )}
       disabled={isDefault || isLoading}
       onClick={handleMarkAsDefault}

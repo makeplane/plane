@@ -39,11 +39,11 @@ export function JoinProject(props: Props) {
       <div className="h-44 w-72">
         <img src={Unauthorized} className="h-[176px] w-[288px] object-contain" alt="JoinProject" />
       </div>
-      <h1 className="text-xl font-medium text-custom-text-100">
+      <h1 className="text-xl font-medium text-primary">
         {!isPrivateProject ? `You are not a member of this project yet.` : `You are not a member of this project.`}
       </h1>
 
-      <div className="w-full max-w-md text-base text-custom-text-200">
+      <div className="w-full max-w-md text-base text-secondary">
         <p className="mx-auto w-full text-sm md:w-3/4">
           {!isPrivateProject
             ? `Click the button below to join it.`

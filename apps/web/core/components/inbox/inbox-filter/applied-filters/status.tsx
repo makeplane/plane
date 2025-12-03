@@ -24,7 +24,7 @@ export const InboxIssueAppliedFiltersStatus = observer(function InboxIssueApplie
   if (filteredValues.length === 0) return <></>;
   return (
     <Tag>
-      <div className="text-xs text-custom-text-200">Status</div>
+      <div className="text-xs text-secondary">Status</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
         if (!optionDetail) return <></>;
@@ -36,7 +36,7 @@ export const InboxIssueAppliedFiltersStatus = observer(function InboxIssueApplie
             <div className="text-xs truncate">{t(optionDetail?.i18n_title)}</div>
             {handleFilterValue(optionDetail?.status).length >= 1 && (
               <div
-                className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-custom-text-300 hover:text-custom-text-200 transition-all"
+                className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-tertiary hover:text-secondary transition-all"
                 onClick={() => handleInboxIssueFilters("status", handleFilterValue(optionDetail?.status))}
               >
                 <CloseIcon className={`w-3 h-3`} />

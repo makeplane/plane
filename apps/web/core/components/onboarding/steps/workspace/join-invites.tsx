@@ -98,7 +98,7 @@ export function WorkspaceJoinInvitesStep(props: Props) {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="text-sm font-medium">{truncateText(invitedWorkspace?.name, 30)}</div>
-                  <p className="text-xs text-custom-text-200">{ROLE[invitation.role]}</p>
+                  <p className="text-xs text-secondary">{ROLE[invitation.role]}</p>
                 </div>
                 <span className={`flex-shrink-0`}>
                   <Checkbox checked={isSelected} />

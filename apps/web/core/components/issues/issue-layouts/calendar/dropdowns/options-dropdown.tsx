@@ -105,7 +105,7 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
             <button type="button" ref={setReferenceElement}>
               <div
                 className={`hidden md:flex items-center gap-1.5 rounded bg-custom-background-80 px-2.5 py-1 text-xs outline-none hover:bg-custom-background-80 ${
-                  open ? "text-custom-text-100" : "text-custom-text-200"
+                  open ? "text-primary" : "text-secondary"
                 }`}
               >
                 <div className="font-medium">{t("common.options")}</div>
@@ -116,7 +116,7 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
                 </div>
               </div>
               <div className="md:hidden">
-                <MoreVerticalIcon className="h-4 text-custom-text-200" strokeWidth={2} />
+                <MoreVerticalIcon className="h-4 text-secondary" strokeWidth={2} />
               </div>
             </button>
           </Popover.Button>

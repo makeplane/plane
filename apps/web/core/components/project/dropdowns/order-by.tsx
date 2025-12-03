@@ -34,13 +34,13 @@ export function ProjectOrderByDropdown(props: Props) {
       customButton={
         <>
           {isMobile ? (
-            <div className="flex text-sm items-center gap-2 neutral-primary text-custom-text-200">
+            <div className="flex text-sm items-center gap-2 neutral-primary text-secondary">
               <ArrowDownWideNarrow className="h-3 w-3" />
               {orderByDetails && t(orderByDetails?.i18n_label)}
               <ChevronDownIcon className="h-3 w-3" strokeWidth={2} />
             </div>
           ) : (
-            <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-200")}>
+            <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-secondary")}>
               <ArrowDownWideNarrow className="h-3 w-3" />
               {orderByDetails && t(orderByDetails?.i18n_label)}
               <ChevronDownIcon className="h-3 w-3" strokeWidth={2} />

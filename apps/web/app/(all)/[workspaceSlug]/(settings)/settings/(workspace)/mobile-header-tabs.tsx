@@ -26,7 +26,7 @@ export const MobileWorkspaceSettingsTabs = observer(function MobileWorkspaceSett
               className={`${
                 item.highlight(pathname, `/${workspaceSlug}`)
                   ? "text-custom-primary-100 text-sm py-2 px-3 whitespace-nowrap flex flex-grow cursor-pointer justify-around border-b border-custom-primary-200"
-                  : "text-custom-text-200 flex flex-grow cursor-pointer justify-around border-b border-subtle-1 text-sm py-2 px-3 whitespace-nowrap"
+                  : "text-secondary flex flex-grow cursor-pointer justify-around border-b border-subtle-1 text-sm py-2 px-3 whitespace-nowrap"
               }`}
               key={index}
               onClick={() => router.push(`/${workspaceSlug}${item.href}`)}

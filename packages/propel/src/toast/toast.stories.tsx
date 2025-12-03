@@ -153,7 +153,7 @@ export const WithActionItems: Story = {
               title: "File uploaded",
               message: "Your file has been uploaded successfully.",
               actionItems: (
-                <div className="flex items-center gap-1 text-xs text-custom-text-200">
+                <div className="flex items-center gap-1 text-xs text-secondary">
                   <a
                     href="#"
                     target="_blank"
@@ -162,7 +162,7 @@ export const WithActionItems: Story = {
                   >
                     {`View work item`}
                   </a>
-                  <button className="cursor-pointer hidden group-hover:flex px-2 py-1 text-custom-text-300 hover:text-custom-text-200 hover:bg-custom-background-90 rounded">
+                  <button className="cursor-pointer hidden group-hover:flex px-2 py-1 text-tertiary hover:text-secondary hover:bg-custom-background-90 rounded">
                     Copy link
                   </button>
                 </div>

@@ -58,8 +58,8 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
     <>
       <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
         <div className="border-b border-subtle mx-4 py-4 space-y-1 flex-shrink-0">
-          <div className="text-xl font-medium text-custom-text-100">Manage authentication modes for your instance</div>
-          <div className="text-sm font-normal text-custom-text-300">
+          <div className="text-xl font-medium text-primary">Manage authentication modes for your instance</div>
+          <div className="text-sm font-normal text-tertiary">
             Configure authentication modes for your team and restrict sign-ups to be invite only.
           </div>
         </div>
@@ -70,7 +70,7 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
                 <div className="flex grow items-center gap-4">
                   <div className="grow">
                     <div className="text-lg font-medium pb-1">Allow anyone to sign up even without an invite</div>
-                    <div className={cn("font-normal leading-5 text-custom-text-300 text-xs")}>
+                    <div className={cn("font-normal leading-5 text-tertiary text-xs")}>
                       Toggling this off will only let users sign up when they are invited.
                     </div>
                   </div>

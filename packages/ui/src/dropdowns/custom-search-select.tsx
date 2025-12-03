@@ -101,7 +101,7 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                   className={cn(
                     "flex w-full items-center justify-between gap-1 text-xs",
                     {
-                      "cursor-not-allowed text-custom-text-200": disabled,
+                      "cursor-not-allowed text-secondary": disabled,
                       "cursor-pointer hover:bg-custom-background-80": !disabled,
                     },
                     customButtonClassName
@@ -121,7 +121,7 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                     {
                       "px-3 py-2 text-sm": input,
                       "px-2 py-1 text-xs": !input,
-                      "cursor-not-allowed text-custom-text-200": disabled,
+                      "cursor-not-allowed text-secondary": disabled,
                       "cursor-pointer hover:bg-custom-background-80": !disabled,
                     },
                     buttonClassName
@@ -148,9 +148,9 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                     {...attributes.popper}
                   >
                     <div className="flex items-center gap-1.5 rounded border border-subtle bg-custom-background-90 px-2 mx-2">
-                      <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+                      <Search className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
                       <Combobox.Input
-                        className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                        className="w-full bg-transparent py-1 text-xs text-secondary placeholder:text-placeholder focus:outline-none"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         placeholder="Search"
@@ -178,7 +178,7 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                                   "w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none",
                                   {
                                     "bg-custom-background-80": active,
-                                    "text-custom-text-400 opacity-60 cursor-not-allowed": option.disabled,
+                                    "text-placeholder opacity-60 cursor-not-allowed": option.disabled,
                                   }
                                 )
                               }
@@ -195,7 +195,7 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                                     <>
                                       {typeof option.tooltip === "string" ? (
                                         <Tooltip tooltipContent={option.tooltip}>
-                                          <Info className="h-3.5 w-3.5 flex-shrink-0 cursor-pointer text-custom-text-200" />
+                                          <Info className="h-3.5 w-3.5 flex-shrink-0 cursor-pointer text-secondary" />
                                         </Tooltip>
                                       ) : (
                                         option.tooltip
@@ -207,10 +207,10 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                             </Combobox.Option>
                           ))
                         ) : (
-                          <p className="text-custom-text-400 italic py-1 px-1.5">{noResultsMessage}</p>
+                          <p className="text-placeholder italic py-1 px-1.5">{noResultsMessage}</p>
                         )
                       ) : (
-                        <p className="text-custom-text-400 italic py-1 px-1.5">Loading...</p>
+                        <p className="text-placeholder italic py-1 px-1.5">Loading...</p>
                       )}
                     </div>
                     {footerOption}

@@ -59,9 +59,9 @@ function CreateWorkspacePage() {
             className="absolute left-5 top-1/2 grid -translate-y-1/2 place-items-center bg-custom-background-100 px-3 sm:left-1/2 sm:top-12 sm:-translate-x-[15px] sm:translate-y-0 sm:px-0 sm:py-5 md:left-1/3"
             href="/"
           >
-            <PlaneLogo className="h-9 w-auto text-custom-text-100" />
+            <PlaneLogo className="h-9 w-auto text-primary" />
           </Link>
-          <div className="absolute right-4 top-1/4 -translate-y-1/2 text-sm text-custom-text-100 sm:fixed sm:right-16 sm:top-12 sm:translate-y-0 sm:py-5">
+          <div className="absolute right-4 top-1/4 -translate-y-1/2 text-sm text-primary sm:fixed sm:right-16 sm:top-12 sm:translate-y-0 sm:py-5">
             {currentUser?.email}
           </div>
         </div>
@@ -76,7 +76,7 @@ function CreateWorkspacePage() {
               <div className="text-lg font-medium text-center">
                 {t("workspace_creation.errors.creation_disabled.title")}
               </div>
-              <p className="text-sm text-custom-text-300 break-words text-center">
+              <p className="text-sm text-tertiary break-words text-center">
                 {t("workspace_creation.errors.creation_disabled.description")}
               </p>
               <div className="flex gap-4 mt-6">

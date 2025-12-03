@@ -12,7 +12,7 @@ export function LatestFeatureBlock() {
     <>
       <div className="mx-auto mt-16 flex rounded-[3.5px] border border-subtle-1 bg-custom-background-100 py-2 sm:w-96">
         <Lightbulb className="mx-3 mr-2 h-7 w-7" />
-        <p className="text-left text-sm text-custom-text-100">
+        <p className="text-left text-sm text-primary">
           Pages gets a facelift! Write anything and use Galileo to help you start.{" "}
           <Link href="https://plane.so/changelog" target="_blank" rel="noopener noreferrer">
             <span className="text-sm font-medium underline hover:cursor-pointer">Learn more</span>

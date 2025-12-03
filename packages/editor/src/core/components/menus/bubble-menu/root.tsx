@@ -211,9 +211,9 @@ export function EditorBubbleMenu(props: Props) {
                   e.stopPropagation();
                 }}
                 className={cn(
-                  "size-7 grid place-items-center rounded text-custom-text-300 hover:bg-custom-background-80 active:bg-custom-background-80 transition-colors",
+                  "size-7 grid place-items-center rounded text-tertiary hover:bg-custom-background-80 active:bg-custom-background-80 transition-colors",
                   {
-                    "bg-custom-background-80 text-custom-text-100": editorState[item.key],
+                    "bg-custom-background-80 text-primary": editorState[item.key],
                   }
                 )}
               >

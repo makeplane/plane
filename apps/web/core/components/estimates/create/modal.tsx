@@ -153,7 +153,7 @@ export const CreateEstimateModal = observer(function CreateEstimateModal(props: 
                 <ChevronLeftIcon className="w-4 h-4" />
               </div>
             )}
-            <div className="text-xl font-medium text-custom-text-100">{t("project_settings.estimates.new")}</div>
+            <div className="text-xl font-medium text-primary">{t("project_settings.estimates.new")}</div>
           </div>
           <div className="text-xs text-gray-400">
             {t("project_settings.estimates.create.step", {

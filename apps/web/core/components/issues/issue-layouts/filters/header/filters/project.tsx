@@ -80,7 +80,7 @@ export const FilterProjects = observer(function FilterProjects(props: Props) {
                 )}
               </>
             ) : (
-              <p className="text-xs italic text-custom-text-400">No matches found</p>
+              <p className="text-xs italic text-placeholder">No matches found</p>
             )
           ) : (
             <Loader className="space-y-2">

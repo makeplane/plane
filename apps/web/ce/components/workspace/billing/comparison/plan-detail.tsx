@@ -72,9 +72,9 @@ export const PlanDetail = observer(function PlanDetail(props: TPlanDetailProps) 
             <span className="px-2 rounded text-custom-primary-200 bg-custom-primary-100/20 text-xs">Popular</span>
           )}
         </div>
-        <div className="flex gap-x-2 items-start text-custom-text-300 pb-1 transition-all duration-300 animate-slide-up">
+        <div className="flex gap-x-2 items-start text-tertiary pb-1 transition-all duration-300 animate-slide-up">
           {isSubscriptionActive && displayPrice !== undefined && (
-            <div className="flex items-center gap-1 text-2xl text-custom-text-100 font-semibold transition-all duration-300">
+            <div className="flex items-center gap-1 text-2xl text-primary font-semibold transition-all duration-300">
               <DiscountInfo
                 currency="$"
                 frequency={billingFrequency ?? "month"}
@@ -87,9 +87,7 @@ export const PlanDetail = observer(function PlanDetail(props: TPlanDetailProps) 
           <div className="pt-1">
             {pricingDescription && <div className="transition-all duration-300">{pricingDescription}</div>}
             {pricingSecondaryDescription && (
-              <div className="text-xs text-custom-text-400 transition-all duration-300">
-                {pricingSecondaryDescription}
-              </div>
+              <div className="text-xs text-placeholder transition-all duration-300">{pricingSecondaryDescription}</div>
             )}
           </div>
         </div>

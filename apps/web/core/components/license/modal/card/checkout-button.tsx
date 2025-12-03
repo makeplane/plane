@@ -65,7 +65,7 @@ export const PlanCheckoutButton = observer(function PlanCheckoutButton(props: Pr
             </span>
           )}
         </div>
-        <div className="text-sm font-medium text-custom-text-300 transition-all duration-300 animate-fade-in">
+        <div className="text-sm font-medium text-tertiary transition-all duration-300 animate-fade-in">
           per user per month
         </div>
       </div>

@@ -69,7 +69,7 @@ export const IssuesHeader = observer(function IssuesHeader() {
                 <BreadcrumbLink
                   label="Work Items"
                   href={`/${workspaceSlug}/projects/${projectId}/issues/`}
-                  icon={<WorkItemsIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<WorkItemsIcon className="h-4 w-4 text-tertiary" />}
                   isLast
                 />
               }

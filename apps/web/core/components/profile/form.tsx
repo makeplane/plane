@@ -204,7 +204,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
                   <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
                     {!userAvatar || userAvatar === "" ? (
                       <div className="h-16 w-16 rounded-md bg-custom-background-80 p-2">
-                        <CircleUserRound className="h-full w-full text-custom-text-200" />
+                        <CircleUserRound className="h-full w-full text-secondary" />
                       </div>
                     ) : (
                       <div className="relative h-16 w-16 overflow-hidden">
@@ -239,16 +239,16 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
           </div>
           <div className="item-center mt-6 flex justify-between">
             <div className="flex flex-col">
-              <div className="item-center flex text-lg font-medium text-custom-text-200">
+              <div className="item-center flex text-lg font-medium text-secondary">
                 <span>{`${watch("first_name")} ${watch("last_name")}`}</span>
               </div>
-              <span className="text-sm text-custom-text-300 tracking-tight">{watch("email")}</span>
+              <span className="text-sm text-tertiary tracking-tight">{watch("email")}</span>
             </div>
           </div>
           <div className="flex flex-col gap-2">
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-4">
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm font-medium text-custom-text-200">
+                <h4 className="text-sm font-medium text-secondary">
                   {t("first_name")}&nbsp;
                   <span className="text-red-500">*</span>
                 </h4>
@@ -277,7 +277,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
                 {errors.first_name && <span className="text-xs text-red-500">{errors.first_name.message}</span>}
               </div>
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm font-medium text-custom-text-200">{t("last_name")}</h4>
+                <h4 className="text-sm font-medium text-secondary">{t("last_name")}</h4>
                 <Controller
                   control={control}
                   name="last_name"
@@ -299,7 +299,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
                 />
               </div>
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm font-medium text-custom-text-200">
+                <h4 className="text-sm font-medium text-secondary">
                   {t("display_name")}&nbsp;
                   <span className="text-red-500">*</span>
                 </h4>
@@ -335,7 +335,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
                 {errors?.display_name && <span className="text-xs text-red-500">{errors?.display_name?.message}</span>}
               </div>
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm font-medium text-custom-text-200">
+                <h4 className="text-sm font-medium text-secondary">
                   {t("auth.common.email.label")}&nbsp;
                   <span className="text-red-500">*</span>
                 </h4>
@@ -365,7 +365,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
                 {isSMTPConfigured && (
                   <button
                     type="button"
-                    className="text-xs underline btn w-fit text-custom-text-200"
+                    className="text-xs underline btn w-fit text-secondary"
                     onClick={() => setIsChangeEmailModalOpen(true)}
                   >
                     {t("account_settings.profile.change_email_modal.title")}

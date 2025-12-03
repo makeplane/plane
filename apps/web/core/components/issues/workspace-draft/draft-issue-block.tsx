@@ -145,7 +145,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
                       <IdentifierText
                         identifier={projectIdentifier}
                         enableClickToCopyIdentifier
-                        textContainerClassName="text-xs font-medium text-custom-text-300"
+                        textContainerClassName="text-xs font-medium text-tertiary"
                       />
                     </div>
                   )}
@@ -156,7 +156,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
               </div>
 
               <Tooltip tooltipContent={issue.name} position="top-start" renderByDefault={false}>
-                <p className="w-full truncate cursor-pointer text-sm text-custom-text-100">{issue.name}</p>
+                <p className="w-full truncate cursor-pointer text-sm text-primary">{issue.name}</p>
               </Tooltip>
             </div>
 

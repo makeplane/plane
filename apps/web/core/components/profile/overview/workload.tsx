@@ -28,7 +28,7 @@ export function ProfileWorkload({ stateDistribution }: Props) {
                   }}
                 />
                 <div className="space-y-1 flex-col">
-                  <span className="text-sm text-custom-text-400">
+                  <span className="text-sm text-placeholder">
                     {group.state_group === "unstarted"
                       ? "Not started"
                       : group.state_group === "started"

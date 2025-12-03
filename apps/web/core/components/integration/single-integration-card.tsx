@@ -118,7 +118,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
               ? isInstalled && <CheckCircle className="h-3.5 w-3.5 fill-transparent text-green-500" />
               : null}
           </h3>
-          <p className="text-sm tracking-tight text-custom-text-200">
+          <p className="text-sm tracking-tight text-secondary">
             {workspaceIntegrations
               ? isInstalled
                 ? integrationDetails[integration.provider].installed

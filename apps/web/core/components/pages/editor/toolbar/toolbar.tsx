@@ -30,7 +30,7 @@ const ToolbarButton = React.memo(function ToolbarButton(props: ToolbarButtonProp
       tooltipContent={
         <p className="flex flex-col gap-1 text-center text-xs">
           <span className="font-medium">{item.name}</span>
-          {item.shortcut && <kbd className="text-custom-text-400">{item.shortcut.join(" + ")}</kbd>}
+          {item.shortcut && <kbd className="text-placeholder">{item.shortcut.join(" + ")}</kbd>}
         </p>
       }
     >
@@ -44,16 +44,13 @@ const ToolbarButton = React.memo(function ToolbarButton(props: ToolbarButtonProp
             ...item.extraProps,
           })
         }
-        className={cn(
-          "shrink-0 grid size-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80",
-          {
-            "bg-custom-background-80 text-custom-text-100": isActive,
-          }
-        )}
+        className={cn("shrink-0 grid size-7 place-items-center rounded text-tertiary hover:bg-custom-background-80", {
+          "bg-custom-background-80 text-primary": isActive,
+        })}
       >
         <item.icon
           className={cn("size-4", {
-            "text-custom-text-100": isActive,
+            "text-primary": isActive,
           })}
         />
       </button>
@@ -102,7 +99,7 @@ export function PageToolbar(props: Props) {
     <div className="flex items-center divide-x divide-custom-border-200 overflow-x-scroll">
       <CustomMenu
         customButton={
-          <span className="text-custom-text-300 text-sm border-[0.5px] border-strong hover:bg-custom-background-80 h-7 w-24 rounded px-2 flex items-center justify-between gap-2 whitespace-nowrap text-left">
+          <span className="text-tertiary text-sm border-[0.5px] border-strong hover:bg-custom-background-80 h-7 w-24 rounded px-2 flex items-center justify-between gap-2 whitespace-nowrap text-left">
             {activeTypography?.name || "Text"}
             <ChevronDownIcon className="flex-shrink-0 size-3" />
           </span>
@@ -127,9 +124,7 @@ export function PageToolbar(props: Props) {
               <item.icon className="size-3" />
               {item.name}
             </span>
-            {activeTypography?.itemKey === item.itemKey && (
-              <Check className="size-3 text-custom-text-300 flex-shrink-0" />
-            )}
+            {activeTypography?.itemKey === item.itemKey && <Check className="size-3 text-tertiary flex-shrink-0" />}
           </CustomMenu.MenuItem>
         ))}
       </CustomMenu>

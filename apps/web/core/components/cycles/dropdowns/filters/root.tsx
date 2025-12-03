@@ -28,10 +28,10 @@ export const CycleFiltersSelection = observer(function CycleFiltersSelection(pro
     <div className="flex h-full w-full flex-col overflow-hidden">
       <div className="bg-custom-background-100 p-2.5 pb-0">
         <div className="flex items-center gap-1.5 rounded border-[0.5px] border-subtle-1 bg-custom-background-90 px-1.5 py-1 text-xs">
-          <Search className="text-custom-text-400" size={12} strokeWidth={2} />
+          <Search className="text-placeholder" size={12} strokeWidth={2} />
           <input
             type="text"
-            className="w-full bg-custom-background-90 outline-none placeholder:text-custom-text-400"
+            className="w-full bg-custom-background-90 outline-none placeholder:text-placeholder"
             placeholder="Search"
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
@@ -39,7 +39,7 @@ export const CycleFiltersSelection = observer(function CycleFiltersSelection(pro
           />
           {filtersSearchQuery !== "" && (
             <button type="button" className="grid place-items-center" onClick={() => setFiltersSearchQuery("")}>
-              <CloseIcon className="text-custom-text-300" height={12} width={12} strokeWidth={2} />
+              <CloseIcon className="text-tertiary" height={12} width={12} strokeWidth={2} />
             </button>
           )}
         </div>

@@ -153,11 +153,11 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
           {currentUser && !issue?.archived_at && (
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           )}
-          <div className="flex flex-wrap items-center gap-2.5 text-custom-text-300">
+          <div className="flex flex-wrap items-center gap-2.5 text-tertiary">
             <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
               <button
                 type="button"
-                className="grid h-5 w-5 place-items-center rounded hover:text-custom-text-200 focus:outline-none focus:ring-2 focus:ring-custom-primary"
+                className="grid h-5 w-5 place-items-center rounded hover:text-secondary focus:outline-none focus:ring-2 focus:ring-custom-primary"
                 onClick={handleCopyText}
               >
                 <LinkIcon className="h-4 w-4" />

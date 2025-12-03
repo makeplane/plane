@@ -109,8 +109,8 @@ export function IssueCommentToolbar(props: Props) {
                   })}
                 >
                   <access.icon
-                    className={cn("h-3.5 w-3.5 text-custom-text-400", {
-                      "text-custom-text-100": isAccessActive,
+                    className={cn("h-3.5 w-3.5 text-placeholder", {
+                      "text-primary": isAccessActive,
                     })}
                     strokeWidth={2}
                   />
@@ -138,7 +138,7 @@ export function IssueCommentToolbar(props: Props) {
                     tooltipContent={
                       <p className="flex flex-col gap-1 text-center text-xs">
                         <span className="font-medium">{item.name}</span>
-                        {item.shortcut && <kbd className="text-custom-text-400">{item.shortcut.join(" + ")}</kbd>}
+                        {item.shortcut && <kbd className="text-placeholder">{item.shortcut.join(" + ")}</kbd>}
                       </p>
                     }
                   >
@@ -146,15 +146,15 @@ export function IssueCommentToolbar(props: Props) {
                       type="button"
                       onClick={() => executeCommand(item)}
                       className={cn(
-                        "grid place-items-center aspect-square rounded-sm p-0.5 text-custom-text-400 hover:bg-custom-background-80",
+                        "grid place-items-center aspect-square rounded-sm p-0.5 text-placeholder hover:bg-custom-background-80",
                         {
-                          "bg-custom-background-80 text-custom-text-100": isItemActive,
+                          "bg-custom-background-80 text-primary": isItemActive,
                         }
                       )}
                     >
                       <item.icon
                         className={cn("h-3.5 w-3.5", {
-                          "text-custom-text-100": isItemActive,
+                          "text-primary": isItemActive,
                         })}
                         strokeWidth={2.5}
                       />

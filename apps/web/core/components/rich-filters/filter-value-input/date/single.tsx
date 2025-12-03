@@ -29,7 +29,7 @@ export const SingleDateFilterValueInput = observer(function SingleDateFilterValu
       }}
       buttonClassName={cn("rounded-none", {
         [COMMON_FILTER_ITEM_BORDER_CLASSNAME]: !isDisabled,
-        "text-custom-text-400": !conditionValue,
+        "text-placeholder": !conditionValue,
         "hover:bg-custom-background-100": isDisabled,
       })}
       minDate={config.min}

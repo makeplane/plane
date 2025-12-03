@@ -61,13 +61,13 @@ export function BreadcrumbNavigationSearchDropdown(props: TBreadcrumbNavigationS
                 }
               }}
               className={cn(
-                "group h-full flex items-center gap-2 px-1.5 py-1 text-sm font-medium text-custom-text-300 cursor-pointer rounded rounded-r-none",
+                "group h-full flex items-center gap-2 px-1.5 py-1 text-sm font-medium text-tertiary cursor-pointer rounded rounded-r-none",
                 {
-                  "hover:bg-custom-background-80 hover:text-custom-text-100": !isLast,
+                  "hover:bg-custom-background-80 hover:text-primary": !isLast,
                 }
               )}
             >
-              {shouldTruncate && <div className="flex @4xl:hidden text-custom-text-300">...</div>}
+              {shouldTruncate && <div className="flex @4xl:hidden text-tertiary">...</div>}
               <div
                 className={cn("flex gap-2", {
                   "hidden @4xl:flex gap-2": shouldTruncate,
@@ -84,8 +84,8 @@ export function BreadcrumbNavigationSearchDropdown(props: TBreadcrumbNavigationS
               "hover:bg-custom-background-80": !isLast,
             })}
             containerClassName="p-0"
-            iconClassName={cn("group-hover:rotate-90 hover:text-custom-text-100", {
-              "text-custom-text-100": isDropdownOpen,
+            iconClassName={cn("group-hover:rotate-90 hover:text-primary", {
+              "text-primary": isDropdownOpen,
               "rotate-90": isDropdownOpen || isLast,
             })}
             showDivider={!isLast}

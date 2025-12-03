@@ -87,7 +87,7 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
         >
           <Disclosure
             as="div"
-            className={`rounded  text-custom-text-100 ${
+            className={`rounded  text-primary ${
               !isDroppingInLabel ? "border-[0.5px] border-subtle-1" : ""
             } ${isDragging ? "bg-custom-background-80" : "bg-custom-background-100"}`}
             defaultOpen
@@ -123,7 +123,7 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
                       <Disclosure.Button>
                         <span>
                           <ChevronDownIcon
-                            className={`h-4 w-4 text-custom-sidebar-text-400 ${!open ? "rotate-90 transform" : ""}`}
+                            className={`h-4 w-4 text-placeholder ${!open ? "rotate-90 transform" : ""}`}
                           />
                         </span>
                       </Disclosure.Button>

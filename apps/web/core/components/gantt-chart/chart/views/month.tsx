@@ -44,7 +44,7 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
                   style={{ width: `${monthBlock.days * currentViewData?.data.dayWidth}px` }}
                 >
                   <div
-                    className="sticky flex items-center font-normal z-[1] m-1 whitespace-nowrap px-3 py-1 text-base capitalize bg-custom-background-100 text-custom-text-200"
+                    className="sticky flex items-center font-normal z-[1] m-1 whitespace-nowrap px-3 py-1 text-base capitalize bg-custom-background-100 text-secondary"
                     style={{
                       left: `${SIDEBAR_WIDTH}px`,
                     }}
@@ -72,7 +72,7 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
                   )}
                   style={{ width: `${currentViewData?.data.dayWidth * 7}px` }}
                 >
-                  <div className="space-x-1 text-xs font-medium text-custom-text-400">
+                  <div className="space-x-1 text-xs font-medium text-placeholder">
                     <span
                       className={cn({
                         "rounded bg-custom-primary-100 px-1 text-white": weekBlock.today,

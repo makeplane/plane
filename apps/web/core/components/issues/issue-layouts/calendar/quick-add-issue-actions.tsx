@@ -114,7 +114,7 @@ export const CalendarQuickAddIssueActions = observer(function CalendarQuickAddIs
               className="w-full"
               customButtonClassName="w-full"
               customButton={
-                <div className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-text-350 hover:text-custom-text-300">
+                <div className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-text-350 hover:text-tertiary">
                   <PlusIcon className="h-3.5 w-3.5 stroke-2 flex-shrink-0" />
                   <span className="text-sm font-medium flex-shrink-0">
                     {isEpic ? t("epic.add.label") : t("issue.add.label")}

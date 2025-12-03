@@ -73,13 +73,13 @@ export const DeleteEstimateModal = observer(function DeleteEstimateModal(props: 
       <div className="relative space-y-6 py-5">
         {/* heading */}
         <div className="relative flex justify-between items-center gap-2 px-5">
-          <div className="text-xl font-medium text-custom-text-100">Delete Estimate System</div>
+          <div className="text-xl font-medium text-primary">Delete Estimate System</div>
         </div>
 
         {/* estimate steps */}
         <div className="px-5">
-          <div className="text-base text-custom-text-200">
-            Deleting the estimate <span className="font-bold text-custom-text-100">{estimate?.name}</span>
+          <div className="text-base text-secondary">
+            Deleting the estimate <span className="font-bold text-primary">{estimate?.name}</span>
             &nbsp;system will remove it from all work items permanently. This action cannot be undone. If you add
             estimates again, you will need to update all the work items.
           </div>

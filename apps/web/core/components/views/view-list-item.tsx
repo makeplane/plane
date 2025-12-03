@@ -34,7 +34,7 @@ export const ProjectViewListItem = observer(function ProjectViewListItem(props: 
           {view?.logo_props?.in_use ? (
             <Logo logo={view?.logo_props} size={16} type="lucide" />
           ) : (
-            <ViewsIcon className="h-4 w-4 text-custom-text-300" />
+            <ViewsIcon className="h-4 w-4 text-tertiary" />
           )}
         </>
       }

@@ -82,7 +82,7 @@ const ContextMenuItem = React.forwardRef(function ContextMenuItem(
       ref={ref}
       className={cn(
         "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none",
-        "focus:bg-custom-background-90 focus:text-custom-text-100",
+        "focus:bg-custom-background-90 focus:text-primary",
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         className
       )}

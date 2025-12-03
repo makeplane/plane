@@ -68,11 +68,7 @@ export function StickyEditorToolbar(props: Props) {
             </p>
           }
         >
-          <button
-            type="button"
-            onClick={() => setShowColorPalette(!showColorPalette)}
-            className="flex text-custom-text-100/50"
-          >
+          <button type="button" onClick={() => setShowColorPalette(!showColorPalette)} className="flex text-primary/50">
             <Palette className="size-4 my-auto" />
           </button>
         </Tooltip>
@@ -90,17 +86,14 @@ export function StickyEditorToolbar(props: Props) {
                       tooltipContent={
                         <p className="flex flex-col gap-1 text-center text-xs">
                           <span className="font-medium">{item.name}</span>
-                          {item.shortcut && <kbd className="text-custom-text-400">{item.shortcut.join(" + ")}</kbd>}
+                          {item.shortcut && <kbd className="text-placeholder">{item.shortcut.join(" + ")}</kbd>}
                         </p>
                       }
                     >
                       <button
                         type="button"
                         onClick={() => executeCommand(item)}
-                        className={cn(
-                          "grid place-items-center aspect-square rounded-sm p-0.5 text-custom-text-100/50",
-                          {}
-                        )}
+                        className={cn("grid place-items-center aspect-square rounded-sm p-0.5 text-primary/50", {})}
                       >
                         <item.icon
                           className={cn("h-3.5 w-3.5", {
@@ -125,7 +118,7 @@ export function StickyEditorToolbar(props: Props) {
           </p>
         }
       >
-        <button type="button" onClick={handleDelete} className="my-auto text-custom-text-100/50">
+        <button type="button" onClick={handleDelete} className="my-auto text-primary/50">
           <Trash2 className="size-4" />
         </button>
       </Tooltip>

@@ -134,7 +134,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
                   <BreadcrumbLink
                     label="Modules"
                     href={`/${workspaceSlug}/projects/${projectId}/modules/`}
-                    icon={<ModuleIcon className="h-4 w-4 text-custom-text-300" />}
+                    icon={<ModuleIcon className="h-4 w-4 text-tertiary" />}
                     isLast
                   />
                 }
@@ -149,7 +149,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
                       router.push(`/${workspaceSlug}/projects/${projectId}/modules/${value}`);
                     }}
                     title={moduleDetails?.name}
-                    icon={<ModuleIcon className="size-3.5 flex-shrink-0 text-custom-text-300" />}
+                    icon={<ModuleIcon className="size-3.5 flex-shrink-0 text-tertiary" />}
                     isLast
                   />
                 }
@@ -251,7 +251,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
             className="p-1.5 rounded outline-none hover:bg-custom-sidebar-background-80 bg-custom-background-80/70"
             onClick={toggleSidebar}
           >
-            <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200")} />
+            <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-secondary")} />
           </button>
           {moduleId && (
             <ModuleQuickActions

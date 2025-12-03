@@ -28,7 +28,7 @@ export const Stickies = observer(function Stickies(props: TProps) {
       {/* header */}
       <div className="flex items-center justify-between mb-6">
         {/* Title */}
-        <div className="text-custom-text-200 flex items-center gap-2">
+        <div className="text-secondary flex items-center gap-2">
           <RecentStickyIcon className="size-5 rotate-90 flex-shrink-0" />
           <p className="text-xl font-medium">Your stickies</p>
         </div>
@@ -58,9 +58,9 @@ export const Stickies = observer(function Stickies(props: TProps) {
             <button
               type="button"
               onClick={handleClose}
-              className="flex-shrink-0 grid place-items-center text-custom-text-300 hover:text-custom-text-100 hover:bg-custom-background-80 rounded p-1 transition-colors my-auto"
+              className="flex-shrink-0 grid place-items-center text-tertiary hover:text-primary hover:bg-custom-background-80 rounded p-1 transition-colors my-auto"
             >
-              <CloseIcon className="text-custom-text-400 size-4" />
+              <CloseIcon className="text-placeholder size-4" />
             </button>
           )}
         </div>

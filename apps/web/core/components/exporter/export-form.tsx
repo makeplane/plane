@@ -84,7 +84,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
       query: `${projectDetails?.name} ${projectDetails?.identifier}`,
       content: (
         <div className="flex items-center gap-2">
-          <span className="text-[0.65rem] text-custom-text-200 flex-shrink-0">{projectDetails?.identifier}</span>
+          <span className="text-[0.65rem] text-secondary flex-shrink-0">{projectDetails?.identifier}</span>
           <span className="truncate">{projectDetails?.name}</span>
         </div>
       ),
@@ -150,7 +150,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
       <div className="flex gap-4">
         {/* Project Selector */}
         <div className="w-1/2">
-          <div className="text-sm font-medium text-custom-text-200 mb-2">
+          <div className="text-sm font-medium text-secondary mb-2">
             {t("workspace_settings.settings.exports.exporting_projects")}
           </div>
           <Controller
@@ -183,7 +183,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
         </div>
         {/* Format Selector */}
         <div className="w-1/2">
-          <div className="text-sm font-medium text-custom-text-200 mb-2">
+          <div className="text-sm font-medium text-secondary mb-2">
             {t("workspace_settings.settings.exports.format")}
           </div>
           <Controller
@@ -212,7 +212,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
       {/* Rich Filters */}
       <div className="w-full">
         <div className="flex items-center gap-2 mb-2">
-          <div className="text-sm font-medium text-custom-text-200 leading-tight">{t("common.filters")}</div>
+          <div className="text-sm font-medium text-secondary leading-tight">{t("common.filters")}</div>
           <Tooltip
             tooltipContent={
               <div className="max-w-[238px] flex gap-2">
@@ -225,7 +225,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
             position="top"
           >
             <button type="button" className="flex items-center justify-center">
-              <Info className="h-3 w-3 text-custom-text-300" />
+              <Info className="h-3 w-3 text-tertiary" />
             </button>
           </Tooltip>
         </div>

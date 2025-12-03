@@ -102,9 +102,7 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateView)}>
       <div className="space-y-5 p-5">
-        <h3 className="text-xl font-medium text-custom-text-200">
-          {data ? t("view.update.label") : t("view.create.label")}
-        </h3>
+        <h3 className="text-xl font-medium text-secondary">{data ? t("view.update.label") : t("view.create.label")}</h3>
         <div className="space-y-3">
           <div className="flex items-start gap-2 w-full">
             <EmojiPicker
@@ -119,7 +117,7 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
                     {logoValue?.in_use ? (
                       <Logo logo={logoValue} size={18} type="lucide" />
                     ) : (
-                      <ViewsIcon className="h-4 w-4 text-custom-text-300" />
+                      <ViewsIcon className="h-4 w-4 text-tertiary" />
                     )}
                   </>
                 </span>

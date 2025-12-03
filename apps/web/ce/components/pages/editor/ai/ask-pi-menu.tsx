@@ -33,7 +33,7 @@ export function AskPiMenu(props: Props) {
           "items-start": response,
         })}
       >
-        <span className="flex-shrink-0 size-7 grid place-items-center text-custom-text-200 rounded-full border border-subtle-1">
+        <span className="flex-shrink-0 size-7 grid place-items-center text-secondary rounded-full border border-subtle-1">
           <Sparkles className="size-3" />
         </span>
         {response ? (
@@ -53,7 +53,7 @@ export function AskPiMenu(props: Props) {
             <div className="mt-3 flex items-center gap-4">
               <button
                 type="button"
-                className="p-1 text-custom-text-300 text-sm font-medium rounded hover:bg-custom-background-80 outline-none"
+                className="p-1 text-tertiary text-sm font-medium rounded hover:bg-custom-background-80 outline-none"
                 onClick={() => handleInsertText(false)}
               >
                 Replace selection
@@ -64,7 +64,7 @@ export function AskPiMenu(props: Props) {
                   className="flex-shrink-0 size-6 grid place-items-center rounded hover:bg-custom-background-80 outline-none"
                   onClick={() => handleInsertText(true)}
                 >
-                  <CornerDownRight className="text-custom-text-300 size-4" />
+                  <CornerDownRight className="text-tertiary size-4" />
                 </button>
               </Tooltip>
               <Tooltip tooltipContent="Re-generate response">
@@ -79,7 +79,7 @@ export function AskPiMenu(props: Props) {
                   disabled={isRegenerating}
                 >
                   <RefreshCcw
-                    className={cn("text-custom-text-300 size-4", {
+                    className={cn("text-tertiary size-4", {
                       "animate-spin": isRegenerating,
                     })}
                   />
@@ -88,23 +88,23 @@ export function AskPiMenu(props: Props) {
             </div>
           </div>
         ) : (
-          <p className="text-sm text-custom-text-200">Pi is answering...</p>
+          <p className="text-sm text-secondary">Pi is answering...</p>
         )}
       </div>
       <div className="py-3 px-4">
         <div className="flex items-center gap-2 border border-subtle-1 rounded-md p-2">
           <span className="flex-shrink-0 size-3 grid place-items-center">
-            <Sparkles className="size-3 text-custom-text-200" />
+            <Sparkles className="size-3 text-secondary" />
           </span>
           <input
             type="text"
-            className="w-full bg-transparent border-none outline-none placeholder:text-custom-text-400 text-sm"
+            className="w-full bg-transparent border-none outline-none placeholder:text-placeholder text-sm"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Tell Pi what to do..."
           />
           <span className="flex-shrink-0 size-4 grid place-items-center">
-            <CircleArrowUp className="size-4 text-custom-text-200" />
+            <CircleArrowUp className="size-4 text-secondary" />
           </span>
         </div>
       </div>

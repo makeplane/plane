@@ -64,7 +64,7 @@ export const AddFilterButton = observer(function AddFilterButton<P extends TFilt
       handleFilterSelect={handleFilterSelect}
       customButton={
         <div className="flex items-center gap-1">
-          {iconConfig.shouldShowIcon && <FilterIcon className="size-4 text-custom-text-200" />}
+          {iconConfig.shouldShowIcon && <FilterIcon className="size-4 text-secondary" />}
           {label}
         </div>
       }

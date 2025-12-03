@@ -90,7 +90,7 @@ export function CycleForm(props: Props) {
               )}
             />
           )}
-          <h3 className="text-xl font-medium text-custom-text-200">
+          <h3 className="text-xl font-medium text-secondary">
             {status ? t("project_cycles.update_cycle") : t("project_cycles.create_cycle")}
           </h3>
         </div>

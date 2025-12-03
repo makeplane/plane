@@ -71,7 +71,7 @@ export function FiltersDropdown(props: Props) {
                       className="relative"
                     >
                       <>
-                        <div className={`${open ? "text-custom-text-100" : "text-custom-text-200"}`}>
+                        <div className={`${open ? "text-primary" : "text-secondary"}`}>
                           <span>{title}</span>
                         </div>
                         {isFiltersApplied && (

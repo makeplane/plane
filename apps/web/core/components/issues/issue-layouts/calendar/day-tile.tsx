@@ -152,7 +152,7 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
             isMonthLayout // if month layout, highlight current month days
               ? date.is_current_month
                 ? "font-medium"
-                : "text-custom-text-300"
+                : "text-tertiary"
               : "font-medium" // if week layout, highlight all days
           } ${isWeekend ? "bg-custom-background-90" : "bg-custom-background-100"} `}
         >

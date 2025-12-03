@@ -53,10 +53,10 @@ const InstanceEmailPage = observer(function InstanceEmailPage(_props: Route.Comp
       <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
         <div className="flex items-center justify-between gap-4 border-b border-subtle mx-4 py-4 space-y-1 flex-shrink-0">
           <div className="py-4 space-y-1 flex-shrink-0">
-            <div className="text-xl font-medium text-custom-text-100">Secure emails from your own instance</div>
-            <div className="text-sm font-normal text-custom-text-300">
+            <div className="text-xl font-medium text-primary">Secure emails from your own instance</div>
+            <div className="text-sm font-normal text-tertiary">
               Plane can send useful emails to you and your users from your own instance without talking to the Internet.
-              <div className="text-sm font-normal text-custom-text-300">
+              <div className="text-sm font-normal text-tertiary">
                 Set it up below and please test your settings before you save them.&nbsp;
                 <span className="text-red-400">Misconfigs can lead to email bounces and errors.</span>
               </div>

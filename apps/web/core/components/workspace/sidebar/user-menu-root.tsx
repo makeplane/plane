@@ -75,7 +75,7 @@ export const UserMenuRoot = observer(function UserMenuRoot(props: Props) {
       closeOnSelect
     >
       <div className="flex flex-col gap-2.5 pb-2">
-        <span className="px-2 text-custom-sidebar-text-200 truncate">{currentUser?.email}</span>
+        <span className="px-2 text-secondary truncate">{currentUser?.email}</span>
         <Link href={`/${workspaceSlug}/settings/account`}>
           <CustomMenu.MenuItem>
             <div className="flex w-full items-center gap-2 rounded text-xs">

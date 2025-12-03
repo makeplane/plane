@@ -85,7 +85,7 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
                         </Tooltip>
                       )}
                     </div>
-                    <p className="text-sm leading-5 tracking-tight text-custom-text-300">
+                    <p className="text-sm leading-5 tracking-tight text-tertiary">
                       {t(`${featureItem.key}_description`)}
                     </p>
                   </div>

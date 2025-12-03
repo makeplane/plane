@@ -54,8 +54,8 @@ export function DropdownOptions(props: IMultiSelectDropdownOptions | ISingleSele
                       "flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5",
                       {
                         "bg-custom-background-80": active,
-                        "text-custom-text-100": selected,
-                        "text-custom-text-200": !selected,
+                        "text-primary": selected,
+                        "text-secondary": !selected,
                       },
                       option.className && option.className({ active, selected })
                     )
@@ -77,7 +77,7 @@ export function DropdownOptions(props: IMultiSelectDropdownOptions | ISingleSele
                 </Combobox.Option>
               ))
             ) : (
-              <p className="px-1.5 py-1 italic text-custom-text-400">No matching results</p>
+              <p className="px-1.5 py-1 italic text-placeholder">No matching results</p>
             )
           ) : loader ? (
             <> {loader} </>

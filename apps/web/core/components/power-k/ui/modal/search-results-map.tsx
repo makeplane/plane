@@ -27,7 +27,7 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
     icon: ContrastIcon,
     itemName: (cycle: IWorkspaceDefaultSearchResult) => (
       <p>
-        <span className="text-xs text-custom-text-300">{cycle.project__identifier}</span> {cycle.name}
+        <span className="text-xs text-tertiary">{cycle.project__identifier}</span> {cycle.name}
       </p>
     ),
     path: (cycle: IWorkspaceDefaultSearchResult) =>
@@ -61,7 +61,7 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
     icon: Layers,
     itemName: (view: IWorkspaceDefaultSearchResult) => (
       <p>
-        <span className="text-xs text-custom-text-300">{view.project__identifier}</span> {view.name}
+        <span className="text-xs text-tertiary">{view.project__identifier}</span> {view.name}
       </p>
     ),
     path: (view: IWorkspaceDefaultSearchResult) =>
@@ -72,7 +72,7 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
     icon: DiceIcon,
     itemName: (module: IWorkspaceDefaultSearchResult) => (
       <p>
-        <span className="text-xs text-custom-text-300">{module.project__identifier}</span> {module.name}
+        <span className="text-xs text-tertiary">{module.project__identifier}</span> {module.name}
       </p>
     ),
     path: (module: IWorkspaceDefaultSearchResult) =>
@@ -83,7 +83,7 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
     icon: FileText,
     itemName: (page: IWorkspacePageSearchResult) => (
       <p>
-        <span className="text-xs text-custom-text-300">{page.project__identifiers?.[0]}</span> {page.name}
+        <span className="text-xs text-tertiary">{page.project__identifiers?.[0]}</span> {page.name}
       </p>
     ),
     path: (page: IWorkspacePageSearchResult, projectId: string | undefined) => {

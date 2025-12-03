@@ -88,9 +88,7 @@ export function ColorPickerInput(props: Props) {
             <>
               <Popover.Button
                 type="button"
-                className={`group inline-flex items-center outline-none ${
-                  open ? "text-custom-text-100" : "text-custom-text-200"
-                }`}
+                className={`group inline-flex items-center outline-none ${open ? "text-primary" : "text-secondary"}`}
               >
                 {watch(name) && watch(name) !== "" ? (
                   <span
@@ -100,7 +98,7 @@ export function ColorPickerInput(props: Props) {
                     }}
                   />
                 ) : (
-                  <Palette className="h-3.5 w-3.5 text-custom-text-100" />
+                  <Palette className="h-3.5 w-3.5 text-primary" />
                 )}
               </Popover.Button>
 

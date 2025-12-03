@@ -59,19 +59,19 @@ export const ConfirmWorkspaceMemberRemove = observer(function ConfirmWorkspaceMe
                       <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </div>
                     <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
+                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-primary">
                         {currentUser?.id === userDetails.id
                           ? "Leave workspace?"
                           : `Remove ${userDetails?.display_name}?`}
                       </Dialog.Title>
                       <div className="mt-2">
                         {currentUser?.id === userDetails.id ? (
-                          <p className="text-sm text-custom-text-200">
+                          <p className="text-sm text-secondary">
                             Are you sure you want to leave the workspace? You will no longer have access to this
                             workspace. This action cannot be undone.
                           </p>
                         ) : (
-                          <p className="text-sm text-custom-text-200">
+                          <p className="text-sm text-secondary">
                             Are you sure you want to remove member-{" "}
                             <span className="font-bold">{userDetails?.display_name}</span>? They will no longer have
                             access to this workspace. This action cannot be undone.

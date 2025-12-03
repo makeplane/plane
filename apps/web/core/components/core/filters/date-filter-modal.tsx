@@ -135,9 +135,9 @@ export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props)
                   </div>
                   {watch("filterType") === "range" && (
                     <h6 className="flex items-center gap-1 text-xs">
-                      <span className="text-custom-text-200">After:</span>
+                      <span className="text-secondary">After:</span>
                       <span>{renderFormattedDate(watch("date1"))}</span>
-                      <span className="ml-1 text-custom-text-200">Before:</span>
+                      <span className="ml-1 text-secondary">Before:</span>
                       {!isInvalid && <span>{renderFormattedDate(watch("date2"))}</span>}
                     </h6>
                   )}

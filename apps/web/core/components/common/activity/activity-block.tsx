@@ -31,10 +31,10 @@ export function ActivityBlockComponent(props: TActivityBlockComponent) {
         ends === "top" ? `pb-3` : ends === "bottom" ? `pt-3` : `py-3`
       }`}
     >
-      <div className="flex-shrink-0 ring-6 w-7 h-7 rounded-full overflow-hidden flex justify-center items-start mt-0.5 z-[4] text-custom-text-200">
+      <div className="flex-shrink-0 ring-6 w-7 h-7 rounded-full overflow-hidden flex justify-center items-start mt-0.5 z-[4] text-secondary">
         {icon ? icon : <Network className="w-3.5 h-3.5" />}
       </div>
-      <div className="w-full text-custom-text-200">
+      <div className="w-full text-secondary">
         <div className="line-clamp-2">
           <User activity={activity} customUserName={customUserName} /> {children}
         </div>

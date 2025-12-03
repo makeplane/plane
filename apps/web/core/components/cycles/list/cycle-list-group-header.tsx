@@ -26,12 +26,12 @@ export function CycleListGroupHeader(props: Props) {
         </div>
 
         <div className="relative flex w-full flex-row items-center gap-1 overflow-hidden">
-          <div className="inline-block line-clamp-1 truncate font-medium text-custom-text-100">{title}</div>
-          {showCount && <div className="pl-2 text-sm font-medium text-custom-text-300">{`${count ?? "0"}`}</div>}
+          <div className="inline-block line-clamp-1 truncate font-medium text-primary">{title}</div>
+          {showCount && <div className="pl-2 text-sm font-medium text-tertiary">{`${count ?? "0"}`}</div>}
         </div>
       </div>
       <ChevronDownIcon
-        className={cn("h-4 w-4 text-custom-sidebar-text-300 duration-300 ", {
+        className={cn("h-4 w-4 text-tertiary duration-300 ", {
           "rotate-180": isExpanded,
         })}
       />

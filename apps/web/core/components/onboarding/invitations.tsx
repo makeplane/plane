@@ -75,8 +75,8 @@ export function Invitations(props: Props) {
   return invitations && invitations.length > 0 ? (
     <div className="space-y-4">
       <div className="text-center space-y-1 py-4 mx-auto">
-        <h3 className="text-3xl font-bold text-custom-text-100">You are invited!</h3>
-        <p className="font-medium text-custom-text-400">Accept the invites to collaborate with your team.</p>
+        <h3 className="text-3xl font-bold text-primary">You are invited!</h3>
+        <p className="font-medium text-placeholder">Accept the invites to collaborate with your team.</p>
       </div>
       <div>
         {invitations &&
@@ -99,7 +99,7 @@ export function Invitations(props: Props) {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="text-sm font-medium">{truncateText(invitedWorkspace?.name, 30)}</div>
-                  <p className="text-xs text-custom-text-200">{ROLE[invitation.role]}</p>
+                  <p className="text-xs text-secondary">{ROLE[invitation.role]}</p>
                 </div>
                 <span className={`flex-shrink-0`}>
                   <Checkbox checked={isSelected} />
@@ -120,7 +120,7 @@ export function Invitations(props: Props) {
       </Button>
       <div className="mx-auto mt-4 flex items-center sm:w-96">
         <hr className="w-full border-strong" />
-        <p className="mx-3 flex-shrink-0 text-center text-sm text-custom-text-400">or</p>
+        <p className="mx-3 flex-shrink-0 text-center text-sm text-placeholder">or</p>
         <hr className="w-full border-strong" />
       </div>
       <Button

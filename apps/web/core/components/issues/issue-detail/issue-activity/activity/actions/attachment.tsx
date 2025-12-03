@@ -19,7 +19,7 @@ export const IssueAttachmentActivity = observer(function IssueAttachmentActivity
   if (!activity) return <></>;
   return (
     <IssueActivityBlockComponent
-      icon={<Paperclip size={14} className="text-custom-text-200" aria-hidden="true" />}
+      icon={<Paperclip size={14} className="text-secondary" aria-hidden="true" />}
       activityId={activityId}
       ends={ends}
     >

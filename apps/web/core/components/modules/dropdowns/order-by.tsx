@@ -29,7 +29,7 @@ export function ModuleOrderByDropdown(props: Props) {
   return (
     <CustomMenu
       customButton={
-        <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-custom-text-300")}>
+        <div className={cn(getButtonStyling("neutral-primary", "sm"), "px-2 text-tertiary")}>
           {!isDescending ? <ArrowUpWideNarrow className="size-3 " /> : <ArrowDownWideNarrow className="size-3 " />}
           {orderByDetails && t(orderByDetails?.i18n_label)}
           <ChevronDownIcon className="size-3" strokeWidth={2} />

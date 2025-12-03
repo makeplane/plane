@@ -156,7 +156,7 @@ export function GithubImporterRoot() {
     <form onSubmit={handleSubmit(createGithubImporterService)}>
       <div className="mt-4 space-y-2">
         <Link href={`/${workspaceSlug}/settings/imports`}>
-          <span className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-custom-text-200 hover:text-custom-text-100">
+          <span className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-secondary hover:text-primary">
             <ArrowLeft className="h-3 w-3" />
             <div>Cancel import & go back</div>
           </span>
@@ -182,7 +182,7 @@ export function GithubImporterRoot() {
                     }`}
                   >
                     <integration.icon
-                      className={`h-5 w-5 ${index <= activeIntegrationState() ? "text-white" : "text-custom-text-400"}`}
+                      className={`h-5 w-5 ${index <= activeIntegrationState() ? "text-white" : "text-placeholder"}`}
                     />
                   </div>
                   {index < integrationWorkflowData.length - 1 && (

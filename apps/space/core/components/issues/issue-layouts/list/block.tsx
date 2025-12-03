@@ -61,7 +61,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
         <div className="flex flex-grow items-center gap-0.5 truncate">
           <div className="flex items-center gap-1">
             {displayProperties && displayProperties?.key && (
-              <div className="flex-shrink-0 text-xs font-medium text-custom-text-300 px-4">
+              <div className="flex-shrink-0 text-xs font-medium text-tertiary px-4">
                 {projectIdentifier}-{issue.sequence_id}
               </div>
             )}
@@ -71,7 +71,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
             id={`issue-${issue.id}`}
             href={`?${queryParam}`}
             onClick={handleIssuePeekOverview}
-            className="w-full truncate cursor-pointer text-sm text-custom-text-100"
+            className="w-full truncate cursor-pointer text-sm text-primary"
           >
             <Tooltip tooltipContent={issue.name} position="top-start">
               <p className="truncate">{issue.name}</p>

@@ -13,7 +13,7 @@ function CommandInput({ className, ...props }: React.ComponentProps<typeof Comma
       data-slot="command-input-wrapper"
       className="flex items-center gap-1.5 rounded border border-subtle bg-custom-background-90 px-2"
     >
-      <SearchIcon className="size-3.5 flex-shrink-0 text-custom-text-400" strokeWidth={1.5} />
+      <SearchIcon className="size-3.5 flex-shrink-0 text-placeholder" strokeWidth={1.5} />
       <CommandPrimitive.Input data-slot="command-input" className={cn(className)} {...props} />
     </div>
   );

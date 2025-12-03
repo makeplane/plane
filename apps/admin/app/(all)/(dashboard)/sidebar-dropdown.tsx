@@ -40,7 +40,7 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
       )}
     >
       <div className="flex flex-col gap-2.5 pb-2">
-        <span className="px-2 text-custom-sidebar-text-200 truncate">{currentUser?.email}</span>
+        <span className="px-2 text-secondary truncate">{currentUser?.email}</span>
       </div>
       <div className="py-2">
         <Menu.Item
@@ -89,7 +89,7 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
               })}
             >
               <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded bg-custom-sidebar-background-80">
-                <UserCog2 className="h-5 w-5 text-custom-text-200" />
+                <UserCog2 className="h-5 w-5 text-secondary" />
               </div>
             </Menu.Button>
             {isSidebarCollapsed && (
@@ -109,7 +109,7 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
 
           {!isSidebarCollapsed && (
             <div className="flex w-full gap-2">
-              <h4 className="grow truncate text-base font-medium text-custom-text-200">Instance admin</h4>
+              <h4 className="grow truncate text-base font-medium text-secondary">Instance admin</h4>
             </div>
           )}
         </div>

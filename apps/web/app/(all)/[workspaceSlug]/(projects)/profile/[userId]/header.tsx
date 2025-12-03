@@ -57,7 +57,7 @@ export const UserProfileHeader = observer(function UserProfileHeader(props: TUse
               <BreadcrumbLink
                 label={breadcrumbLabel}
                 disableTooltip
-                icon={<YourWorkIcon className="h-4 w-4 text-custom-text-300" />}
+                icon={<YourWorkIcon className="h-4 w-4 text-tertiary" />}
               />
             }
           />
@@ -68,15 +68,15 @@ export const UserProfileHeader = observer(function UserProfileHeader(props: TUse
         <div className="flex gap-4 md:hidden">
           <CustomMenu
             maxHeight={"md"}
-            className="flex flex-grow justify-center text-sm text-custom-text-200"
+            className="flex flex-grow justify-center text-sm text-secondary"
             placement="bottom-start"
             customButton={
               <div className="flex items-center gap-2 rounded-md border border-subtle-1 px-2 py-1.5">
-                <span className="flex flex-grow justify-center text-sm text-custom-text-200">{type}</span>
-                <ChevronDownIcon className="h-4 w-4 text-custom-text-400" />
+                <span className="flex flex-grow justify-center text-sm text-secondary">{type}</span>
+                <ChevronDownIcon className="h-4 w-4 text-placeholder" />
               </div>
             }
-            customButtonClassName="flex flex-grow justify-center text-custom-text-200 text-sm"
+            customButtonClassName="flex flex-grow justify-center text-secondary text-sm"
             closeOnSelect
           >
             <></>
@@ -86,7 +86,7 @@ export const UserProfileHeader = observer(function UserProfileHeader(props: TUse
                 key={tab.route}
                 onClick={() => router.push(`/${workspaceSlug}/profile/${userId}/${tab.route}`)}
               >
-                <span className="w-full text-custom-text-300">{t(tab.i18n_label)}</span>
+                <span className="w-full text-tertiary">{t(tab.i18n_label)}</span>
               </CustomMenu.MenuItem>
             ))}
           </CustomMenu>
@@ -97,10 +97,7 @@ export const UserProfileHeader = observer(function UserProfileHeader(props: TUse
             }}
           >
             <PanelRight
-              className={cn(
-                "block h-4 w-4 md:hidden",
-                !profileSidebarCollapsed ? "text-[#3E63DD]" : "text-custom-text-200"
-              )}
+              className={cn("block h-4 w-4 md:hidden", !profileSidebarCollapsed ? "text-[#3E63DD]" : "text-secondary")}
             />
           </button>
         </div>

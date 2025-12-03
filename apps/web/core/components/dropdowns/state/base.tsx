@@ -152,7 +152,7 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
           className={cn(
             "clickable block h-full max-w-full outline-none",
             {
-              "cursor-not-allowed text-custom-text-200": disabled,
+              "cursor-not-allowed text-secondary": disabled,
               "cursor-pointer": !disabled,
             },
             buttonContainerClassName
@@ -219,11 +219,11 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
             {...attributes.popper}
           >
             <div className="flex items-center gap-1.5 rounded border border-subtle bg-custom-background-90 px-2">
-              <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+              <Search className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
               <Combobox.Input
                 as="input"
                 ref={inputRef}
-                className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                className="w-full bg-transparent py-1 text-xs text-secondary placeholder:text-placeholder focus:outline-none"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={t("common.search.label")}
@@ -244,10 +244,10 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
                     />
                   ))
                 ) : (
-                  <p className="px-1.5 py-1 italic text-custom-text-400">{t("no_matching_results")}</p>
+                  <p className="px-1.5 py-1 italic text-placeholder">{t("no_matching_results")}</p>
                 )
               ) : (
-                <p className="px-1.5 py-1 italic text-custom-text-400">{t("loading")}</p>
+                <p className="px-1.5 py-1 italic text-placeholder">{t("loading")}</p>
               )}
             </div>
           </div>

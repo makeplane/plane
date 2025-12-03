@@ -345,7 +345,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                 className="text-sm"
                 position="right-start"
               >
-                <Info className="absolute right-2 top-2.5 h-4 w-4 text-custom-text-400" />
+                <Info className="absolute right-2 top-2.5 h-4 w-4 text-placeholder" />
               </Tooltip>
             </div>
             <span className="text-xs text-red-500">
@@ -371,7 +371,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                             {t(selectedNetwork.i18n_label)}
                           </>
                         ) : (
-                          <span className="text-custom-text-400">{t("select_network")}</span>
+                          <span className="text-placeholder">{t("select_network")}</span>
                         )}
                       </div>
                     }
@@ -386,7 +386,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                           <ProjectNetworkIcon iconKey={network.iconKey} className="h-3.5 w-3.5" />
                           <div className="-mt-1">
                             <p>{t(network.i18n_label)}</p>
-                            <p className="text-xs text-custom-text-400">{t(network.description)}</p>
+                            <p className="text-xs text-placeholder">{t(network.description)}</p>
                           </div>
                         </div>
                       </CustomSelect.Option>
@@ -430,7 +430,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
             >
               {isLoading ? `${t("updating")}...` : t("common.update_project")}
             </Button>
-            <span className="text-sm italic text-custom-sidebar-text-400">
+            <span className="text-sm italic text-placeholder">
               {t("common.created_on")} {renderFormattedDate(project?.created_at)}
             </span>
           </>

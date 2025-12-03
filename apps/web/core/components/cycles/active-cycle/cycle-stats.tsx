@@ -128,10 +128,10 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
           <Tab
             className={({ selected }) =>
               cn(
-                "relative z-[1] font-semibold text-xs rounded-[3px] py-1.5 text-custom-text-400 focus:outline-none transition duration-500",
+                "relative z-[1] font-semibold text-xs rounded-[3px] py-1.5 text-placeholder focus:outline-none transition duration-500",
                 {
-                  "text-custom-text-300 bg-custom-background-100": selected,
-                  "hover:text-custom-text-300": !selected,
+                  "text-tertiary bg-custom-background-100": selected,
+                  "hover:text-tertiary": !selected,
                 }
               )
             }
@@ -141,10 +141,10 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
           <Tab
             className={({ selected }) =>
               cn(
-                "relative z-[1] font-semibold text-xs rounded-[3px] py-1.5 text-custom-text-400 focus:outline-none transition duration-500",
+                "relative z-[1] font-semibold text-xs rounded-[3px] py-1.5 text-placeholder focus:outline-none transition duration-500",
                 {
-                  "text-custom-text-300 bg-custom-background-100": selected,
-                  "hover:text-custom-text-300": !selected,
+                  "text-tertiary bg-custom-background-100": selected,
+                  "hover:text-tertiary": !selected,
                 }
               )
             }
@@ -154,10 +154,10 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
           <Tab
             className={({ selected }) =>
               cn(
-                "relative z-[1] font-semibold text-xs rounded-[3px] py-1.5 text-custom-text-400 focus:outline-none transition duration-500",
+                "relative z-[1] font-semibold text-xs rounded-[3px] py-1.5 text-placeholder focus:outline-none transition duration-500",
                 {
-                  "text-custom-text-300 bg-custom-background-100": selected,
-                  "hover:text-custom-text-300": !selected,
+                  "text-tertiary bg-custom-background-100": selected,
+                  "hover:text-tertiary": !selected,
                 }
               )
             }
@@ -169,7 +169,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
         <Tab.Panels as={Fragment}>
           <Tab.Panel
             as="div"
-            className="flex h-52 w-full flex-col gap-1 overflow-y-auto  text-custom-text-200 vertical-scrollbar scrollbar-sm"
+            className="flex h-52 w-full flex-col gap-1 overflow-y-auto  text-secondary vertical-scrollbar scrollbar-sm"
           >
             <div
               ref={issuesContainerRef}
@@ -205,10 +205,10 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                             <IssueIdentifier
                               issueId={issue.id}
                               projectId={projectId}
-                              textContainerClassName="text-xs text-custom-text-200"
+                              textContainerClassName="text-xs text-secondary"
                             />
                             <Tooltip position="top-start" tooltipHeading="Title" tooltipContent={issue.name}>
-                              <span className="text-[0.825rem] text-custom-text-100 truncate">{issue.name}</span>
+                              <span className="text-[0.825rem] text-primary truncate">{issue.name}</span>
                             </Tooltip>
                           </div>
                           <PriorityIcon priority={issue.priority} withContainer size={12} />
@@ -264,7 +264,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
 
           <Tab.Panel
             as="div"
-            className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-custom-text-200 vertical-scrollbar scrollbar-sm"
+            className="flex h-52 w-full flex-col gap-1 overflow-y-auto text-secondary vertical-scrollbar scrollbar-sm"
           >
             {cycle && !isEmpty(cycle.distribution) ? (
               cycle?.distribution?.assignees && cycle.distribution.assignees.length > 0 ? (
@@ -326,7 +326,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
 
           <Tab.Panel
             as="div"
-            className="flex h-52 w-full flex-col gap-1 overflow-y-auto  text-custom-text-200 vertical-scrollbar scrollbar-sm"
+            className="flex h-52 w-full flex-col gap-1 overflow-y-auto  text-secondary vertical-scrollbar scrollbar-sm"
           >
             {cycle && !isEmpty(cycle.distribution) ? (
               cycle?.distribution?.labels && cycle.distribution.labels.length > 0 ? (

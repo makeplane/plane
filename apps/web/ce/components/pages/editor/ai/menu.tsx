@@ -158,7 +158,7 @@ export function EditorAIMenu(props: Props) {
                 key={item.key}
                 type="button"
                 className={cn(
-                  "w-full flex items-center justify-between gap-2 truncate rounded px-1 py-1.5 text-xs text-custom-text-200 hover:bg-custom-background-80 transition-colors",
+                  "w-full flex items-center justify-between gap-2 truncate rounded px-1 py-1.5 text-xs text-secondary hover:bg-custom-background-80 transition-colors",
                   {
                     "bg-custom-background-80": isActiveTask,
                   }
@@ -203,7 +203,7 @@ export function EditorAIMenu(props: Props) {
                   "items-start": response,
                 })}
               >
-                <span className="flex-shrink-0 size-7 grid place-items-center text-custom-text-200 rounded-full border border-subtle-1">
+                <span className="flex-shrink-0 size-7 grid place-items-center text-secondary rounded-full border border-subtle-1">
                   <Sparkles className="size-3" />
                 </span>
                 {response ? (
@@ -223,7 +223,7 @@ export function EditorAIMenu(props: Props) {
                     <div className="mt-3 flex items-center gap-4">
                       <button
                         type="button"
-                        className="p-1 text-custom-text-300 text-sm font-medium rounded hover:bg-custom-background-80 outline-none"
+                        className="p-1 text-tertiary text-sm font-medium rounded hover:bg-custom-background-80 outline-none"
                         onClick={() => handleInsertText(false)}
                       >
                         Replace selection
@@ -234,7 +234,7 @@ export function EditorAIMenu(props: Props) {
                           className="flex-shrink-0 size-6 grid place-items-center rounded hover:bg-custom-background-80 outline-none"
                           onClick={() => handleInsertText(true)}
                         >
-                          <CornerDownRight className="text-custom-text-300 size-4" />
+                          <CornerDownRight className="text-tertiary size-4" />
                         </button>
                       </Tooltip>
                       <Tooltip tooltipContent="Re-generate response">
@@ -249,7 +249,7 @@ export function EditorAIMenu(props: Props) {
                           disabled={isRegenerating}
                         >
                           <RefreshCcw
-                            className={cn("text-custom-text-300 size-4", {
+                            className={cn("text-tertiary size-4", {
                               "animate-spin": isRegenerating,
                             })}
                           />
@@ -258,7 +258,7 @@ export function EditorAIMenu(props: Props) {
                     </div>
                   </div>
                 ) : (
-                  <p className="text-sm text-custom-text-200">
+                  <p className="text-sm text-secondary">
                     {activeTask ? LOADING_TEXTS[activeTask] : "Pi is writing"}...
                   </p>
                 )}
@@ -269,7 +269,7 @@ export function EditorAIMenu(props: Props) {
                     key={tone.key}
                     type="button"
                     className={cn(
-                      "p-1 text-xs text-custom-text-200 font-medium bg-custom-background-80 rounded transition-colors outline-none",
+                      "p-1 text-xs text-secondary font-medium bg-custom-background-80 rounded transition-colors outline-none",
                       {
                         "bg-custom-primary-100/20 text-custom-primary-100": tone.key === "default",
                       }
@@ -289,7 +289,7 @@ export function EditorAIMenu(props: Props) {
         </div>
       </div>
       {activeTask && (
-        <div className="bg-custom-background-90 rounded-b-md py-2 px-4 text-custom-text-300 flex items-center gap-2 border-t border-subtle-1">
+        <div className="bg-custom-background-90 rounded-b-md py-2 px-4 text-tertiary flex items-center gap-2 border-t border-subtle-1">
           <span className="flex-shrink-0 size-4 grid place-items-center">
             <TriangleAlert className="size-3" />
           </span>

@@ -26,10 +26,7 @@ export const WorkspaceDashboardHeader = observer(function WorkspaceDashboardHead
             <Breadcrumbs>
               <Breadcrumbs.Item
                 component={
-                  <BreadcrumbLink
-                    label={t("home.title")}
-                    icon={<HomeIcon className="h-4 w-4 text-custom-text-300" />}
-                  />
+                  <BreadcrumbLink label={t("home.title")} icon={<HomeIcon className="h-4 w-4 text-tertiary" />} />
                 }
               />
             </Breadcrumbs>

@@ -94,8 +94,8 @@ export function InstanceAIForm(props: IInstanceAIForm) {
     <div className="space-y-8">
       <div className="space-y-3">
         <div>
-          <div className="pb-1 text-xl font-medium text-custom-text-100">OpenAI</div>
-          <div className="text-sm font-normal text-custom-text-300">If you use ChatGPT, this is for you.</div>
+          <div className="pb-1 text-xl font-medium text-primary">OpenAI</div>
+          <div className="text-sm font-normal text-tertiary">If you use ChatGPT, this is for you.</div>
         </div>
         <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-x-12 gap-y-8 lg:grid-cols-3">
           {aiFormFields.map((field) => (

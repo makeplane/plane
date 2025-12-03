@@ -21,7 +21,7 @@ export function SectionEmptyState(props: Props) {
       <div className="flex flex-col items-center gap-2">
         <div className="flex items-center justify-center size-8 bg-custom-background-80 rounded">{icon}</div>
         <span className="text-sm font-medium">{title}</span>
-        {description && <span className="text-xs text-custom-text-300">{description}</span>}
+        {description && <span className="text-xs text-tertiary">{description}</span>}
       </div>
       {actionElement && <>{actionElement}</>}
     </div>

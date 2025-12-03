@@ -31,7 +31,7 @@ export function AuthInput({
   return (
     <div className={cn(baseContainerClassName)}>
       {label && (
-        <label htmlFor={id} className={cn("text-sm font-semibold text-custom-text-300")}>
+        <label htmlFor={id} className={cn("text-sm font-semibold text-tertiary")}>
           {label}
         </label>
       )}
@@ -40,7 +40,7 @@ export function AuthInput({
           {...props}
           type={inputType}
           className={cn(
-            "rounded-md disable-autofill-style h-6 w-full placeholder:text-base placeholder:text-custom-text-400 p-0 border-none",
+            "rounded-md disable-autofill-style h-6 w-full placeholder:text-base placeholder:text-placeholder p-0 border-none",
             {
               "border-red-500": error,
             },

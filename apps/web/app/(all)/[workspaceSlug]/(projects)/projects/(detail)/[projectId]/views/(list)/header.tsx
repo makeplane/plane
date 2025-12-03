@@ -31,7 +31,7 @@ export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
                 <BreadcrumbLink
                   label="Views"
                   href={`/${workspaceSlug}/projects/${projectId}/views/`}
-                  icon={<ViewsIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<ViewsIcon className="h-4 w-4 text-tertiary" />}
                   isLast
                 />
               }

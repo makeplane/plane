@@ -87,7 +87,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
 
   const label = (
     <div
-      className={`relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded-full border border-subtle p-0.5 px-2 py-0.5 text-xs text-custom-text-300 transition-all hover:bg-custom-background-90 hover:text-custom-text-200`}
+      className={`relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded-full border border-subtle p-0.5 px-2 py-0.5 text-xs text-tertiary transition-all hover:bg-custom-background-90 hover:text-secondary`}
     >
       <div className="flex-shrink-0">
         <LabelPropertyIcon className="h-2.5 w-2.5" />
@@ -148,9 +148,9 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
           >
             <div className="px-2">
               <div className="flex w-full items-center justify-start rounded border border-subtle-1 bg-custom-background-90 px-2">
-                <Search className="h-3.5 w-3.5 text-custom-text-300" />
+                <Search className="h-3.5 w-3.5 text-tertiary" />
                 <Combobox.Input
-                  className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                  className="w-full bg-transparent px-2 py-1 text-xs text-secondary placeholder:text-placeholder focus:outline-none"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder={t("common.search.label")}
@@ -162,7 +162,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
             </div>
             <div className={`vertical-scrollbar scrollbar-sm mt-2 max-h-48 space-y-1 overflow-y-scroll px-2 pr-0`}>
               {isLoading ? (
-                <p className="text-center text-custom-text-200">{t("common.loading")}</p>
+                <p className="text-center text-secondary">{t("common.loading")}</p>
               ) : filteredOptions.length > 0 ? (
                 filteredOptions.map((option) => (
                   <Combobox.Option
@@ -170,7 +170,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
                     value={option.value}
                     className={({ selected }) =>
                       `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 hover:bg-custom-background-80 ${
-                        selected ? "text-custom-text-100" : "text-custom-text-200"
+                        selected ? "text-primary" : "text-secondary"
                       }`
                     }
                   >
@@ -197,19 +197,19 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
                     if (!query.length) return;
                     handleAddLabel(query);
                   }}
-                  className={`text-left text-custom-text-200 ${query.length ? "cursor-pointer" : "cursor-default"}`}
+                  className={`text-left text-secondary ${query.length ? "cursor-pointer" : "cursor-default"}`}
                 >
                   {query.length ? (
                     <>
-                      {/* TODO: Translate here */}+ Add{" "}
-                      <span className="text-custom-text-100">&quot;{query}&quot;</span> to labels
+                      {/* TODO: Translate here */}+ Add <span className="text-primary">&quot;{query}&quot;</span> to
+                      labels
                     </>
                   ) : (
                     t("label.create.type")
                   )}
                 </Combobox.Option>
               ) : (
-                <p className="text-left text-custom-text-200 ">{t("common.search.no_matching_results")}</p>
+                <p className="text-left text-secondary ">{t("common.search.no_matching_results")}</p>
               )}
             </div>
           </div>

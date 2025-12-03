@@ -139,7 +139,7 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
               <div className="item-center flex gap-1 rounded px-2 py-0.5">
                 <span
                   className={`flex items-center rounded text-xs font-medium ${
-                    hasRoleChangeAccess ? "" : "text-custom-sidebar-text-400"
+                    hasRoleChangeAccess ? "" : "text-placeholder"
                   }`}
                 >
                   {ROLE[invitationDetails.role]}
@@ -192,7 +192,7 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
                     className={cn(
                       "flex items-center gap-2",
                       {
-                        "text-custom-text-400": item.disabled,
+                        "text-placeholder": item.disabled,
                       },
                       item.className
                     )}
@@ -203,8 +203,8 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
                       <h5>{item.title}</h5>
                       {item.description && (
                         <p
-                          className={cn("text-custom-text-300 whitespace-pre-line", {
-                            "text-custom-text-400": item.disabled,
+                          className={cn("text-tertiary whitespace-pre-line", {
+                            "text-placeholder": item.disabled,
                           })}
                         >
                           {item.description}

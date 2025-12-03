@@ -60,8 +60,8 @@ export const NavItemChildren = observer(function NavItemChildren(props: { projec
                     className={cn(
                       "cursor-pointer relative group w-full flex items-center justify-between gap-1.5 rounded p-1 px-1.5 outline-none",
                       {
-                        "text-custom-text-200 bg-custom-background-80/75": isActive,
-                        "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 active:bg-custom-sidebar-background-90":
+                        "text-secondary bg-custom-background-80/75": isActive,
+                        "text-secondary hover:bg-custom-sidebar-background-90 active:bg-custom-sidebar-background-90":
                           !isActive,
                       },
                       "text-xs font-medium"

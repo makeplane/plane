@@ -65,7 +65,7 @@ export const IssueModuleSelect = observer(function IssueModuleSelect(props: TIss
         disabled={disableSelect}
         className="group h-full w-full"
         buttonContainerClassName="w-full rounded"
-        buttonClassName={`min-h-8 text-sm justify-between ${issue?.module_ids?.length ? "" : "text-custom-text-400"}`}
+        buttonClassName={`min-h-8 text-sm justify-between ${issue?.module_ids?.length ? "" : "text-placeholder"}`}
         buttonVariant="transparent-with-text"
         hideIcon
         dropdownArrow

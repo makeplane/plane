@@ -129,11 +129,11 @@ export const CycleProgressStats = observer(function CycleProgressStats(props: TC
           {PROGRESS_STATS.map((stat) => (
             <Tab
               className={cn(
-                `p-1 w-full text-custom-text-100 outline-none focus:outline-none cursor-pointer transition-all`,
+                `p-1 w-full text-primary outline-none focus:outline-none cursor-pointer transition-all`,
                 roundedTab ? `rounded-3xl border border-subtle-1` : `rounded`,
                 stat.key === currentTab
-                  ? "bg-custom-background-100 text-custom-text-300"
-                  : "text-custom-text-400 hover:text-custom-text-300"
+                  ? "bg-custom-background-100 text-tertiary"
+                  : "text-placeholder hover:text-tertiary"
               )}
               key={stat.key}
               onClick={() => setCycleTab(stat.key)}
@@ -142,7 +142,7 @@ export const CycleProgressStats = observer(function CycleProgressStats(props: TC
             </Tab>
           ))}
         </Tab.List>
-        <Tab.Panels className="py-3 text-custom-text-200">
+        <Tab.Panels className="py-3 text-secondary">
           <Tab.Panel key={"stat-states"}>
             <StateGroupStatComponent
               distribution={distributionStateData}

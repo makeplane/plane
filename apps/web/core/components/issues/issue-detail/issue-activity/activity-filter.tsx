@@ -30,7 +30,7 @@ export const ActivityFilter = observer(function ActivityFilter(props: TActivityF
           prependIcon={<ListFilter className="h-3 w-3" />}
           className="relative"
         >
-          <span className="text-custom-text-200">{t("common.filters")}</span>
+          <span className="text-secondary">{t("common.filters")}</span>
           {selectedFilters.length < filterOptions.length && (
             <span className="absolute h-2 w-2 -right-0.5 -top-0.5 bg-custom-primary-100 rounded-full" />
           )}
@@ -50,14 +50,14 @@ export const ActivityFilter = observer(function ActivityFilter(props: TActivityF
               "flex-shrink-0 w-3 h-3 flex justify-center items-center rounded-sm transition-all bg-custom-background-90",
               {
                 "bg-custom-primary text-white": item.isSelected,
-                "bg-custom-background-80 text-custom-text-400": item.isSelected && selectedFilters.length === 1,
+                "bg-custom-background-80 text-placeholder": item.isSelected && selectedFilters.length === 1,
                 "bg-custom-background-90": !item.isSelected,
               }
             )}
           >
             {item.isSelected && <Check className="h-2.5 w-2.5" />}
           </div>
-          <div className={cn("whitespace-nowrap", item.isSelected ? "text-custom-text-100" : "text-custom-text-200")}>
+          <div className={cn("whitespace-nowrap", item.isSelected ? "text-primary" : "text-secondary")}>
             {t(item.labelTranslationKey)}
           </div>
         </div>

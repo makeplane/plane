@@ -15,6 +15,6 @@ export const ProjectHeader: FC<ProjectHeaderProps> = ({ project }) => (
     <div className="size-7 rounded-md bg-custom-background-90 flex items-center justify-center flex-shrink-0">
       <Logo logo={project.logo_props} size={16} />
     </div>
-    <p className="truncate text-base font-medium text-custom-sidebar-text-200 flex-shrink-0">{project.name}</p>
+    <p className="truncate text-base font-medium text-secondary flex-shrink-0">{project.name}</p>
   </div>
 );

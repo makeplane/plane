@@ -38,7 +38,7 @@ export const Default: Story = {
           closeOnSelect
           label={
             <span className="flex items-center justify-center rounded-md px-2 size-8 text-xl">
-              {selectedEmoji ? stringToEmoji(selectedEmoji) : <SmilePlus className="h-6 text-custom-text-100" />}
+              {selectedEmoji ? stringToEmoji(selectedEmoji) : <SmilePlus className="h-6 text-primary" />}
             </span>
           }
         />
@@ -136,7 +136,7 @@ export const InlineReactions: Story = {
           onChange={handleReactionAdd}
           closeOnSelect
           label={
-            <button className="inline-flex items-center justify-center rounded-full border border-dashed border-strong bg-custom-background-100 text-custom-text-400 transition-all duration-200 hover:border-custom-primary-100 hover:text-custom-primary-100 hover:bg-custom-primary-100/5 h-7 w-7">
+            <button className="inline-flex items-center justify-center rounded-full border border-dashed border-strong bg-custom-background-100 text-placeholder transition-all duration-200 hover:border-custom-primary-100 hover:text-custom-primary-100 hover:bg-custom-primary-100/5 h-7 w-7">
               <SmilePlus className="h-3.5 w-3.5" />
             </button>
           }
@@ -367,7 +367,7 @@ export const InMessageContext: Story = {
           </div>
           <div className="flex-1">
             <div className="font-medium text-sm">Alice Brown</div>
-            <div className="text-sm text-custom-text-300 mt-1">
+            <div className="text-sm text-tertiary mt-1">
               Just finished the design for the new dashboard! Would love to hear your thoughts.
             </div>
           </div>
@@ -380,7 +380,7 @@ export const InMessageContext: Story = {
             onChange={handleReactionAdd}
             closeOnSelect
             label={
-              <button className="inline-flex items-center justify-center rounded-full border border-dashed border-strong bg-custom-background-100 text-custom-text-400 transition-all duration-200 hover:border-custom-primary-100 hover:text-custom-primary-100 hover:bg-custom-primary-100/5 h-7 w-7">
+              <button className="inline-flex items-center justify-center rounded-full border border-dashed border-strong bg-custom-background-100 text-placeholder transition-all duration-200 hover:border-custom-primary-100 hover:text-custom-primary-100 hover:bg-custom-primary-100/5 h-7 w-7">
                 <SmilePlus className="h-3.5 w-3.5" />
               </button>
             }

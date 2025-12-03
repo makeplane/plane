@@ -232,11 +232,11 @@ export const TopNavPowerK = observer(() => {
             onFocus={handleFocus}
             onKeyDown={handleKeyDown}
             placeholder="Search commands..."
-            className="flex-1 bg-transparent text-sm text-custom-text-100 placeholder-custom-text-350 outline-none min-w-0"
+            className="flex-1 bg-transparent text-sm text-primary placeholder-custom-text-350 outline-none min-w-0"
           />
           {searchTerm && (
             <button type="button" onClick={handleClear} className="shrink-0 ml-2">
-              <CloseIcon className="size-3.5 text-custom-text-400 hover:text-custom-text-100" />
+              <CloseIcon className="size-3.5 text-placeholder hover:text-primary" />
             </button>
           )}
         </div>

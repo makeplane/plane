@@ -173,7 +173,7 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
           className={cn(
             "clickable block h-full max-w-full outline-none",
             {
-              "cursor-not-allowed text-custom-text-200": disabled,
+              "cursor-not-allowed text-secondary": disabled,
               "cursor-pointer": !disabled,
             },
             buttonContainerClassName
@@ -231,11 +231,11 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
             {...attributes.popper}
           >
             <div className="flex items-center gap-1.5 rounded border border-subtle bg-custom-background-90 px-2">
-              <Search className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={1.5} />
+              <Search className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
               <Combobox.Input
                 as="input"
                 ref={inputRef}
-                className="w-full bg-transparent py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                className="w-full bg-transparent py-1 text-xs text-secondary placeholder:text-placeholder focus:outline-none"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={t("common.search.placeholder")}
@@ -246,7 +246,7 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
             <div className="mt-2 max-h-48 space-y-1 overflow-y-scroll">
               {currentActiveEstimateId === undefined ? (
                 <div
-                  className={`flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 text-custom-text-200`}
+                  className={`flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 text-secondary`}
                 >
                   {/* NOTE: This condition renders when estimates are not enabled for the project */}
                   <div className="flex-grow flex items-center gap-2">
@@ -266,8 +266,8 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
                                 "flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5",
                                 {
                                   "bg-custom-background-80": active,
-                                  "text-custom-text-100": selected,
-                                  "text-custom-text-200": !selected,
+                                  "text-primary": selected,
+                                  "text-secondary": !selected,
                                 }
                               )}
                             >
@@ -278,12 +278,10 @@ export const EstimateDropdown = observer(function EstimateDropdown(props: Props)
                         </Combobox.Option>
                       ))
                     ) : (
-                      <p className="px-1.5 py-1 italic text-custom-text-400">
-                        {t("common.search.no_matching_results")}
-                      </p>
+                      <p className="px-1.5 py-1 italic text-placeholder">{t("common.search.no_matching_results")}</p>
                     )
                   ) : (
-                    <p className="px-1.5 py-1 italic text-custom-text-400">{t("common.loading")}</p>
+                    <p className="px-1.5 py-1 italic text-placeholder">{t("common.loading")}</p>
                   )}
                 </>
               )}

@@ -39,7 +39,7 @@ export const IssueBlockLabels = observer(function IssueBlockLabels({ labelIds, s
                 key={label?.id}
                 className={`flex overflow-hidden h-full max-w-full flex-shrink-0 items-center rounded border-[0.5px] border-strong px-2.5 py-1 text-xs`}
               >
-                <div className="flex max-w-full items-center gap-1.5 overflow-hidden text-custom-text-200">
+                <div className="flex max-w-full items-center gap-1.5 overflow-hidden text-secondary">
                   <span
                     className="h-2 w-2 flex-shrink-0 rounded-full"
                     style={{
@@ -58,7 +58,7 @@ export const IssueBlockLabels = observer(function IssueBlockLabels({ labelIds, s
             `}
         >
           <Tooltip position="top" tooltipHeading="Labels" tooltipContent={labelsString}>
-            <div className="flex h-full items-center gap-1.5 text-custom-text-200">
+            <div className="flex h-full items-center gap-1.5 text-secondary">
               <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
               {`${labels.length} Labels`}
             </div>

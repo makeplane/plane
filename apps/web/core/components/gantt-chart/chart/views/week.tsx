@@ -30,14 +30,14 @@ export const WeekChartView = observer(function WeekChartView(_props: any) {
               {/** Main Months Title */}
               <div className="w-full inline-flex h-7 justify-between">
                 <div
-                  className="sticky flex items-center font-normal z-[1] m-1 whitespace-nowrap px-3 py-1 text-sm capitalize bg-custom-background-100 text-custom-text-200"
+                  className="sticky flex items-center font-normal z-[1] m-1 whitespace-nowrap px-3 py-1 text-sm capitalize bg-custom-background-100 text-secondary"
                   style={{
                     left: `${SIDEBAR_WIDTH}px`,
                   }}
                 >
                   {block?.title}
                 </div>
-                <div className="sticky whitespace-nowrap px-3 py-2 text-xs capitalize text-custom-text-400">
+                <div className="sticky whitespace-nowrap px-3 py-2 text-xs capitalize text-placeholder">
                   {block?.weekData?.title}
                 </div>
               </div>
@@ -54,9 +54,7 @@ export const WeekChartView = observer(function WeekChartView(_props: any) {
                     )}
                     style={{ width: `${currentViewData?.data.dayWidth}px` }}
                   >
-                    <div className="space-x-1 text-xs font-medium text-custom-text-400">
-                      {weekDay.dayData.abbreviation}
-                    </div>
+                    <div className="space-x-1 text-xs font-medium text-placeholder">{weekDay.dayData.abbreviation}</div>
                     <div className="space-x-1 text-xs font-medium">
                       <span
                         className={cn({

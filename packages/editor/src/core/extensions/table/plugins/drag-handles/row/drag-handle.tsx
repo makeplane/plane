@@ -194,7 +194,7 @@ export function RowDragHandle(props: RowDragHandleProps) {
             }
           )}
         >
-          <Ellipsis className="size-4 text-custom-text-100 rotate-90" />
+          <Ellipsis className="size-4 text-primary rotate-90" />
         </button>
       </div>
       {isDropdownOpen && (

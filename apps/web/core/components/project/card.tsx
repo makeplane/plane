@@ -264,7 +264,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
             "opacity-90": isArchived,
           })}
         >
-          <p className="line-clamp-2 break-words text-sm text-custom-text-300">
+          <p className="line-clamp-2 break-words text-sm text-tertiary">
             {project.description && project.description.trim() !== ""
               ? project.description
               : `Created on ${renderFormattedDate(project.created_at)}`}
@@ -280,7 +280,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                 position="top"
               >
                 {projectMembersIds && projectMembersIds.length > 0 ? (
-                  <div className="flex cursor-pointer items-center gap-2 text-custom-text-200">
+                  <div className="flex cursor-pointer items-center gap-2 text-secondary">
                     <AvatarGroup showTooltip={false}>
                       {projectMembersIds.map((memberId) => {
                         const member = getUserDetails(memberId);
@@ -292,16 +292,16 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                     </AvatarGroup>
                   </div>
                 ) : (
-                  <span className="text-sm italic text-custom-text-400">No Member Yet</span>
+                  <span className="text-sm italic text-placeholder">No Member Yet</span>
                 )}
               </Tooltip>
-              {isArchived && <div className="text-xs text-custom-text-400 font-medium">Archived</div>}
+              {isArchived && <div className="text-xs text-placeholder font-medium">Archived</div>}
             </div>
             {isArchived ? (
               hasAdminRole && (
                 <div className="flex items-center justify-center gap-2">
                   <div
-                    className="flex items-center justify-center text-xs text-custom-text-400 font-medium hover:text-custom-text-200"
+                    className="flex items-center justify-center text-xs text-placeholder font-medium hover:text-secondary"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -314,7 +314,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                     </div>
                   </div>
                   <div
-                    className="flex items-center justify-center text-xs text-custom-text-400 font-medium hover:text-custom-text-200"
+                    className="flex items-center justify-center text-xs text-placeholder font-medium hover:text-secondary"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -330,7 +330,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                 {isMemberOfProject &&
                   (hasAdminRole || hasMemberRole ? (
                     <Link
-                      className="flex items-center justify-center rounded p-1 text-custom-text-400 hover:bg-custom-background-80 hover:text-custom-text-200"
+                      className="flex items-center justify-center rounded p-1 text-placeholder hover:bg-custom-background-80 hover:text-secondary"
                       onClick={(e) => {
                         e.stopPropagation();
                       }}
@@ -339,7 +339,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                       <Settings className="h-3.5 w-3.5" />
                     </Link>
                   ) : (
-                    <span className="flex items-center gap-1 text-custom-text-400 text-sm">
+                    <span className="flex items-center gap-1 text-placeholder text-sm">
                       <Check className="h-3.5 w-3.5" />
                       Joined
                     </span>

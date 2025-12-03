@@ -38,10 +38,7 @@ export function AccessField(props: Props) {
               tabIndex={2 + index}
             >
               <access.icon
-                className={cn(
-                  "h-3.5 w-3.5 transition-all",
-                  value === access.key ? "text-custom-text-100" : "text-custom-text-400"
-                )}
+                className={cn("h-3.5 w-3.5 transition-all", value === access.key ? "text-primary" : "text-placeholder")}
                 strokeWidth={2}
               />
             </button>

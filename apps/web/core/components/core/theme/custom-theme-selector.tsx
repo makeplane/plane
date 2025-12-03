@@ -127,11 +127,11 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
   return (
     <form onSubmit={handleSubmit(handleUpdateTheme)}>
       <div className="space-y-5">
-        <h3 className="text-lg font-semibold text-custom-text-100">{t("customize_your_theme")}</h3>
+        <h3 className="text-lg font-semibold text-primary">{t("customize_your_theme")}</h3>
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2 md:grid-cols-3">
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-custom-text-200">{t("background_color")}</h3>
+              <h3 className="text-left text-sm font-medium text-secondary">{t("background_color")}</h3>
               <div className="w-full">
                 <Controller
                   control={control}
@@ -143,7 +143,7 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
                       value={value}
                       onChange={(val) => handleValueChange(val, onChange)}
                       placeholder="#0d101b"
-                      className="w-full placeholder:text-custom-text-400/60"
+                      className="w-full placeholder:text-placeholder/60"
                       style={{
                         backgroundColor: watch("background"),
                         color: watch("text"),
@@ -157,7 +157,7 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-custom-text-200">{t("text_color")}</h3>
+              <h3 className="text-left text-sm font-medium text-secondary">{t("text_color")}</h3>
               <div className="w-full">
                 <Controller
                   control={control}
@@ -169,7 +169,7 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
                       value={value}
                       onChange={(val) => handleValueChange(val, onChange)}
                       placeholder="#c5c5c5"
-                      className="w-full placeholder:text-custom-text-400/60"
+                      className="w-full placeholder:text-placeholder/60"
                       style={{
                         backgroundColor: watch("text"),
                         color: watch("background"),
@@ -183,7 +183,7 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-custom-text-200">{t("primary_color")}</h3>
+              <h3 className="text-left text-sm font-medium text-secondary">{t("primary_color")}</h3>
               <div className="w-full">
                 <Controller
                   control={control}
@@ -195,7 +195,7 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
                       value={value}
                       onChange={(val) => handleValueChange(val, onChange)}
                       placeholder="#3f76ff"
-                      className="w-full placeholder:text-custom-text-400/60"
+                      className="w-full placeholder:text-placeholder/60"
                       style={{
                         backgroundColor: watch("primary"),
                         color: watch("text"),
@@ -209,7 +209,7 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-custom-text-200">{t("sidebar_background_color")}</h3>
+              <h3 className="text-left text-sm font-medium text-secondary">{t("sidebar_background_color")}</h3>
               <div className="w-full">
                 <Controller
                   control={control}
@@ -221,7 +221,7 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
                       value={value}
                       onChange={(val) => handleValueChange(val, onChange)}
                       placeholder="#0d101b"
-                      className="w-full placeholder:text-custom-text-400/60"
+                      className="w-full placeholder:text-placeholder/60"
                       style={{
                         backgroundColor: watch("sidebarBackground"),
                         color: watch("sidebarText"),
@@ -237,7 +237,7 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-custom-text-200">{t("sidebar_text_color")}</h3>
+              <h3 className="text-left text-sm font-medium text-secondary">{t("sidebar_text_color")}</h3>
               <div className="w-full">
                 <Controller
                   control={control}
@@ -249,7 +249,7 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
                       value={value}
                       onChange={(val) => handleValueChange(val, onChange)}
                       placeholder="#c5c5c5"
-                      className="w-full placeholder:text-custom-text-400/60"
+                      className="w-full placeholder:text-placeholder/60"
                       style={{
                         backgroundColor: watch("sidebarText"),
                         color: watch("sidebarBackground"),

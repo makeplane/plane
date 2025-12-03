@@ -23,7 +23,7 @@ export function PageNavigationPaneOutlineTabEmptyState() {
         />
         <div className="space-y-2.5">
           <h4 className="text-base font-medium">{t("page_navigation_pane.tabs.outline.empty_state.title")}</h4>
-          <p className="text-sm text-custom-text-200 font-medium">
+          <p className="text-sm text-secondary font-medium">
             {t("page_navigation_pane.tabs.outline.empty_state.description")}
           </p>
         </div>

@@ -72,8 +72,8 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
   const customActionButton = (
     <div
       ref={menuActionRef}
-      className={`flex items-center h-full w-full cursor-pointer rounded p-1 text-custom-sidebar-text-400 hover:bg-custom-background-80 ${
-        isMenuActive ? "bg-custom-background-80 text-custom-text-100" : "text-custom-text-200"
+      className={`flex items-center h-full w-full cursor-pointer rounded p-1 text-placeholder hover:bg-custom-background-80 ${
+        isMenuActive ? "bg-custom-background-80 text-primary" : "text-secondary"
       }`}
       onClick={() => setIsMenuActive(!isMenuActive)}
     >
@@ -98,7 +98,7 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
           <IssueIdentifier
             issueId={issue.id}
             projectId={issue.project_id}
-            textContainerClassName="line-clamp-1 text-xs text-custom-text-300"
+            textContainerClassName="line-clamp-1 text-xs text-tertiary"
             displayProperties={displayProperties}
           />
         )}
@@ -118,13 +118,13 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
       </div>
 
       <Tooltip tooltipContent={issue.name} isMobile={isMobile} renderByDefault={false}>
-        <div className="w-full line-clamp-1 text-sm text-custom-text-100">
+        <div className="w-full line-clamp-1 text-sm text-primary">
           <span>{issue.name}</span>
         </div>
       </Tooltip>
 
       <IssueProperties
-        className="flex flex-wrap items-center gap-2 whitespace-nowrap text-custom-text-300 pt-1.5"
+        className="flex flex-wrap items-center gap-2 whitespace-nowrap text-tertiary pt-1.5"
         issue={issue}
         displayProperties={displayProperties}
         activeLayout="Kanban"

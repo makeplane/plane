@@ -98,7 +98,7 @@ function LabelSummary({ isMobile, fullWidth, noLabelBorder, disabled, projectLab
           .join(", ")}
         renderByDefault={false}
       >
-        <div className="flex h-full items-center gap-1.5 text-custom-text-200">
+        <div className="flex h-full items-center gap-1.5 text-secondary">
           <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
           {`${value.length} Labels`}
         </div>
@@ -142,7 +142,7 @@ const LabelItem = observer(function LabelItem({
           noLabelBorder ? "rounded-none" : "border-[0.5px] border-strong"
         )}
       >
-        <div className="flex max-w-full items-center gap-1.5 overflow-hidden text-custom-text-200">
+        <div className="flex max-w-full items-center gap-1.5 overflow-hidden text-secondary">
           <span
             className="h-2 w-2 flex-shrink-0 rounded-full"
             style={{

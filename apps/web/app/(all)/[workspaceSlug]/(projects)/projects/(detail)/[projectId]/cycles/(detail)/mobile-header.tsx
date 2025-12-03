@@ -93,12 +93,12 @@ export const CycleIssuesMobileHeader = observer(function CycleIssuesMobileHeader
       <div className="flex justify-evenly py-2 border-b border-subtle-1 md:hidden bg-custom-background-100">
         <CustomMenu
           maxHeight={"md"}
-          className="flex flex-grow justify-center text-custom-text-200 text-sm"
+          className="flex flex-grow justify-center text-secondary text-sm"
           placement="bottom-start"
           customButton={
-            <span className="flex flex-grow justify-center text-custom-text-200 text-sm">{t("common.layout")}</span>
+            <span className="flex flex-grow justify-center text-secondary text-sm">{t("common.layout")}</span>
           }
-          customButtonClassName="flex flex-grow justify-center text-custom-text-200 text-sm"
+          customButtonClassName="flex flex-grow justify-center text-secondary text-sm"
           closeOnSelect
         >
           {SUPPORTED_LAYOUTS.map((layout, index) => (
@@ -110,18 +110,18 @@ export const CycleIssuesMobileHeader = observer(function CycleIssuesMobileHeader
               className="flex items-center gap-2"
             >
               <IssueLayoutIcon layout={ISSUE_LAYOUTS[index].key} className="w-3 h-3" />
-              <div className="text-custom-text-300">{t(layout.titleTranslationKey)}</div>
+              <div className="text-tertiary">{t(layout.titleTranslationKey)}</div>
             </CustomMenu.MenuItem>
           ))}
         </CustomMenu>
-        <div className="flex flex-grow justify-center border-l border-subtle-1 items-center text-custom-text-200 text-sm">
+        <div className="flex flex-grow justify-center border-l border-subtle-1 items-center text-secondary text-sm">
           <FiltersDropdown
             title={t("common.display")}
             placement="bottom-end"
             menuButton={
-              <span className="flex items-center text-custom-text-200 text-sm">
+              <span className="flex items-center text-secondary text-sm">
                 {t("common.display")}
-                <ChevronDownIcon className="text-custom-text-200 h-4 w-4 ml-2" />
+                <ChevronDownIcon className="text-secondary h-4 w-4 ml-2" />
               </span>
             }
           >
@@ -142,7 +142,7 @@ export const CycleIssuesMobileHeader = observer(function CycleIssuesMobileHeader
 
         <span
           onClick={() => setAnalyticsModal(true)}
-          className="flex flex-grow justify-center text-custom-text-200 text-sm border-l border-subtle-1"
+          className="flex flex-grow justify-center text-secondary text-sm border-l border-subtle-1"
         >
           {t("common.analytics")}
         </span>

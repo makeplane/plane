@@ -257,7 +257,7 @@ function CustomMenu(props: ICustomMenuDropdownProps) {
                     type="button"
                     onClick={handleMenuButtonClick}
                     disabled={disabled}
-                    className={`relative grid place-items-center rounded p-1 text-custom-text-200 outline-none hover:text-custom-text-100 ${
+                    className={`relative grid place-items-center rounded p-1 text-secondary outline-none hover:text-primary ${
                       disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
                     } ${buttonClassName}`}
                     tabIndex={customButtonTabIndex}
@@ -272,11 +272,9 @@ function CustomMenu(props: ICustomMenuDropdownProps) {
                     ref={setReferenceElement}
                     type="button"
                     className={`flex items-center justify-between gap-1 whitespace-nowrap rounded-md px-2.5 py-1 text-xs duration-300 ${
-                      open ? "bg-custom-background-90 text-custom-text-100" : "text-custom-text-200"
+                      open ? "bg-custom-background-90 text-primary" : "text-secondary"
                     } ${noBorder ? "" : "border border-strong shadow-sm focus:outline-none"} ${
-                      disabled
-                        ? "cursor-not-allowed text-custom-text-200"
-                        : "cursor-pointer hover:bg-custom-background-80"
+                      disabled ? "cursor-not-allowed text-secondary" : "cursor-pointer hover:bg-custom-background-80"
                     } ${buttonClassName}`}
                     onClick={handleMenuButtonClick}
                     tabIndex={customButtonTabIndex}
@@ -396,10 +394,10 @@ function SubMenu(props: ICustomSubMenuProps) {
           {({ active }) => (
             <div
               className={cn(
-                "w-full select-none rounded px-1 py-1.5 text-left text-custom-text-200 flex items-center justify-between cursor-pointer",
+                "w-full select-none rounded px-1 py-1.5 text-left text-secondary flex items-center justify-between cursor-pointer",
                 {
                   "bg-custom-background-80": active && !disabled,
-                  "text-custom-text-400": disabled,
+                  "text-placeholder": disabled,
                   "cursor-not-allowed": disabled,
                 }
               )}
@@ -459,10 +457,10 @@ function MenuItem(props: ICustomMenuItemProps) {
         <button
           type="button"
           className={cn(
-            "w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200",
+            "w-full select-none truncate rounded px-1 py-1.5 text-left text-secondary",
             {
               "bg-custom-background-80": active && !disabled,
-              "text-custom-text-400": disabled,
+              "text-placeholder": disabled,
             },
             className
           )}
@@ -489,10 +487,10 @@ function SubMenuTrigger(props: ICustomSubMenuTriggerProps) {
       {({ active }) => (
         <div
           className={cn(
-            "w-full select-none rounded px-1 py-1.5 text-left text-custom-text-200 flex items-center justify-between",
+            "w-full select-none rounded px-1 py-1.5 text-left text-secondary flex items-center justify-between",
             {
               "bg-custom-background-80": active && !disabled,
-              "text-custom-text-400": disabled,
+              "text-placeholder": disabled,
               "cursor-pointer": !disabled,
               "cursor-not-allowed": disabled,
             },

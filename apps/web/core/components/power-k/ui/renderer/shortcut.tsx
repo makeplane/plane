@@ -81,7 +81,7 @@ export function ShortcutRenderer(props: Props) {
               {group.commands.map((command) => (
                 <div key={command.id} className="mt-1">
                   <div className="flex items-center justify-between">
-                    <h4 className="text-xs text-custom-text-200 text-left">{t(command.i18n_title)}</h4>
+                    <h4 className="text-xs text-secondary text-left">{t(command.i18n_title)}</h4>
                     <div className="flex items-center gap-x-1.5">
                       {command.keySequence && <KeySequenceBadge sequence={command.keySequence} />}
                       {(command.shortcut || command.modifierShortcut) && (
@@ -95,7 +95,7 @@ export function ShortcutRenderer(props: Props) {
           </div>
         ))
       ) : (
-        <p className="flex justify-center text-center text-sm text-custom-text-200">
+        <p className="flex justify-center text-center text-sm text-secondary">
           No shortcuts found for{" "}
           <span className="font-semibold italic">
             {`"`}

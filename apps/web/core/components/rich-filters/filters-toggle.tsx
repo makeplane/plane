@@ -60,7 +60,7 @@ export const FiltersToggle = observer(function FiltersToggle<P extends TFilterPr
         <ListFilter
           className={cn("size-4", {
             "text-custom-primary-100": isFilterRowVisible,
-            "text-custom-text-300": !isFilterRowVisible,
+            "text-tertiary": !isFilterRowVisible,
           })}
         />
         {showFilterRowChangesPill && (

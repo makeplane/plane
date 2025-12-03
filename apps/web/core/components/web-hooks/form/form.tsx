@@ -63,7 +63,7 @@ export const WebhookForm = observer(function WebhookForm(props: Props) {
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
       <div className="space-y-5 ">
-        <div className="text-xl font-medium text-custom-text-200">
+        <div className="text-xl font-medium text-secondary">
           {data
             ? t("workspace_settings.settings.webhooks.modal.details")
             : t("workspace_settings.settings.webhooks.modal.title")}

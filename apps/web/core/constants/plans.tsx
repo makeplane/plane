@@ -46,7 +46,7 @@ type PlanePlans = {
 };
 
 function RiDiscordFill({ className }: { className?: string }) {
-  return <DiscordIcon className={cn(className, "size-5 text-custom-text-200")} />;
+  return <DiscordIcon className={cn(className, "size-5 text-secondary")} />;
 }
 
 export function ComingSoonBadge({ className }: { className?: string }) {

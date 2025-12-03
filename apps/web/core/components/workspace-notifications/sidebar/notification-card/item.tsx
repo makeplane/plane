@@ -90,7 +90,7 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
 
         <div className="w-full space-y-1 -mt-2">
           <div className="relative flex items-center gap-3 h-8">
-            <div className="w-full overflow-hidden whitespace-normal break-all truncate line-clamp-1 text-sm text-custom-text-100">
+            <div className="w-full overflow-hidden whitespace-normal break-all truncate line-clamp-1 text-sm text-primary">
               <NotificationContent
                 notification={notification}
                 workspaceId={workspace.id}
@@ -108,14 +108,14 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
             />
           </div>
 
-          <div className="relative flex items-center gap-3 text-xs text-custom-text-200">
+          <div className="relative flex items-center gap-3 text-xs text-secondary">
             <div className="w-full overflow-hidden whitespace-normal break-words truncate line-clamp-1">
               {notification?.data?.issue?.identifier}-{notification?.data?.issue?.sequence_id}&nbsp;
               {notification?.data?.issue?.name}
             </div>
             <div className="flex-shrink-0">
               {notification?.snoozed_till ? (
-                <p className="flex flex-shrink-0 items-center justify-end gap-x-1 text-custom-text-300">
+                <p className="flex flex-shrink-0 items-center justify-end gap-x-1 text-tertiary">
                   <Clock className="h-4 w-4" />
                   <span>
                     Till {renderFormattedDate(notification.snoozed_till)},&nbsp;
@@ -123,7 +123,7 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
                   </span>
                 </p>
               ) : (
-                <p className="mt-auto flex-shrink-0 text-custom-text-300">
+                <p className="mt-auto flex-shrink-0 text-tertiary">
                   {notification.created_at && calculateTimeAgo(notification.created_at)}
                 </p>
               )}

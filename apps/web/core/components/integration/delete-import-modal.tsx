@@ -100,15 +100,15 @@ export function DeleteImportModal({ isOpen, handleClose, data }: Props) {
                     </span>
                   </div>
                   <span>
-                    <p className="text-sm leading-7 text-custom-text-200">
+                    <p className="text-sm leading-7 text-secondary">
                       Are you sure you want to delete import from{" "}
-                      <span className="break-words font-semibold capitalize text-custom-text-100">{data?.service}</span>
-                      ? All of the data related to the import will be permanently removed. This action cannot be undone.
+                      <span className="break-words font-semibold capitalize text-primary">{data?.service}</span>? All of
+                      the data related to the import will be permanently removed. This action cannot be undone.
                     </p>
                   </span>
                   <div>
-                    <p className="text-sm text-custom-text-200">
-                      To confirm, type <span className="font-medium text-custom-text-100">delete import</span> below:
+                    <p className="text-sm text-secondary">
+                      To confirm, type <span className="font-medium text-primary">delete import</span> below:
                     </p>
                     <Input
                       id="typeDelete"

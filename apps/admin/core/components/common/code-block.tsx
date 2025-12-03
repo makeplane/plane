@@ -10,9 +10,9 @@ export function CodeBlock({ children, className, darkerShade }: TProps) {
   return (
     <span
       className={cn(
-        "px-0.5 text-xs text-custom-text-300 bg-custom-background-90 font-semibold rounded-md border border-subtle",
+        "px-0.5 text-xs text-tertiary bg-custom-background-90 font-semibold rounded-md border border-subtle",
         {
-          "text-custom-text-200 bg-custom-background-80 border-subtle-1": darkerShade,
+          "text-secondary bg-custom-background-80 border-subtle-1": darkerShade,
         },
         className
       )}

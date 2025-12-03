@@ -32,8 +32,8 @@ export const PlanFrequencyToggle = observer(function PlanFrequencyToggle(props: 
           className={cn(
             "w-full rounded px-1 py-0.5 text-xs font-medium leading-5 text-center",
             selectedFrequency === "month"
-              ? "bg-custom-background-100 text-custom-text-100 shadow"
-              : "text-custom-text-300 hover:text-custom-text-200"
+              ? "bg-custom-background-100 text-primary shadow"
+              : "text-tertiary hover:text-secondary"
           )}
         >
           Monthly
@@ -44,8 +44,8 @@ export const PlanFrequencyToggle = observer(function PlanFrequencyToggle(props: 
           className={cn(
             "w-full rounded px-1 py-0.5 text-xs font-medium leading-5 text-center",
             selectedFrequency === "year"
-              ? "bg-custom-background-100 text-custom-text-100 shadow"
-              : "text-custom-text-300 hover:text-custom-text-200"
+              ? "bg-custom-background-100 text-primary shadow"
+              : "text-tertiary hover:text-secondary"
           )}
         >
           Yearly

@@ -85,7 +85,7 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
               key={option?.key}
               className={cn(
                 `text-sm relative flex items-center gap-1 h-full px-3 cursor-pointer transition-all font-medium`,
-                currentTab === option?.key ? `text-custom-primary-100` : `hover:text-custom-text-200`
+                currentTab === option?.key ? `text-custom-primary-100` : `hover:text-secondary`
               )}
               onClick={() => {
                 if (currentTab != option?.key) {

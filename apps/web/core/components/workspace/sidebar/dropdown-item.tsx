@@ -43,7 +43,7 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
           "hover:bg-custom-sidebar-background-90": workspace.id !== activeWorkspace?.id,
         })}
       >
-        <div className="flex items-center justify-between gap-1 rounded p-1 text-sm text-custom-sidebar-text-100 ">
+        <div className="flex items-center justify-between gap-1 rounded p-1 text-sm text-primary ">
           <div className="flex items-center justify-start gap-2.5 w-[80%] relative">
             <span
               className={`relative flex h-8 w-8 flex-shrink-0 items-center  justify-center p-2 text-base uppercase font-medium border-subtle-1 ${
@@ -62,11 +62,11 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
             </span>
             <div className="w-[inherit]">
               <div
-                className={`truncate text-left text-ellipsis text-sm font-medium ${workspaceSlug === workspace.slug ? "" : "text-custom-text-200"}`}
+                className={`truncate text-left text-ellipsis text-sm font-medium ${workspaceSlug === workspace.slug ? "" : "text-secondary"}`}
               >
                 {workspace.name}
               </div>
-              <div className="text-sm text-custom-text-300 flex gap-2 capitalize w-fit">
+              <div className="text-sm text-tertiary flex gap-2 capitalize w-fit">
                 <span>{getUserRole(workspace.role)?.toLowerCase() || "guest"}</span>
                 <div className="w-1 h-1 bg-custom-text-300/50 rounded-full m-auto" />
                 <span className="capitalize">{t("member", { count: workspace.total_members || 0 })}</span>
@@ -75,7 +75,7 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
           </div>
           {workspace.id === activeWorkspace?.id ? (
             <span className="flex-shrink-0 p-1">
-              <Check className="h-5 w-5 text-custom-sidebar-text-100" />
+              <Check className="h-5 w-5 text-primary" />
             </span>
           ) : (
             <SubscriptionPill workspace={workspace} />
@@ -88,7 +88,7 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
                 <Link
                   href={`/${workspace.slug}/settings`}
                   onClick={handleClose}
-                  className="flex border border-subtle-1 rounded-md py-1 px-2 gap-1 bg-custom-sidebar-background-100 hover:shadow-sm hover:text-custom-text-200 text-custom-text-300 hover:border-strong "
+                  className="flex border border-subtle-1 rounded-md py-1 px-2 gap-1 bg-custom-sidebar-background-100 hover:shadow-sm hover:text-secondary text-tertiary hover:border-strong "
                 >
                   <Settings className="h-4 w-4 my-auto" />
                   <span className="text-sm font-medium my-auto">{t("settings")}</span>
@@ -98,7 +98,7 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
                 <Link
                   href={`/${workspace.slug}/settings/members`}
                   onClick={handleClose}
-                  className="flex border border-subtle-1 rounded-md py-1 px-2 gap-1 bg-custom-sidebar-background-100 hover:shadow-sm hover:text-custom-text-200 text-custom-text-300 hover:border-strong "
+                  className="flex border border-subtle-1 rounded-md py-1 px-2 gap-1 bg-custom-sidebar-background-100 hover:shadow-sm hover:text-secondary text-tertiary hover:border-strong "
                 >
                   <UserPlus className="h-4 w-4 my-auto" />
                   <span className="text-sm font-medium my-auto">

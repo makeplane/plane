@@ -47,9 +47,9 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
     <div className="flex flex-col min-h-[17rem] gap-5 py-4 px-3.5 bg-custom-background-100 border border-subtle-1 rounded-lg">
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between gap-4">
-          <h3 className="text-base text-custom-text-300 font-semibold">{t("project_cycles.active_cycle.progress")}</h3>
+          <h3 className="text-base text-tertiary font-semibold">{t("project_cycles.active_cycle.progress")}</h3>
           {cycle.total_issues > 0 && (
-            <span className="flex gap-1 text-sm text-custom-text-400 font-medium whitespace-nowrap rounded-sm px-3 py-1 ">
+            <span className="flex gap-1 text-sm text-placeholder font-medium whitespace-nowrap rounded-sm px-3 py-1 ">
               {`${cycle.completed_issues + cycle.cancelled_issues}/${cycle.total_issues - cycle.cancelled_issues} ${
                 cycle.completed_issues + cycle.cancelled_issues > 1 ? "Work items" : "Work item"
               } closed`}
@@ -78,9 +78,9 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
                           backgroundColor: PROGRESS_STATE_GROUPS_DETAILS[index].color,
                         }}
                       />
-                      <span className="text-custom-text-300 capitalize font-medium w-16">{group}</span>
+                      <span className="text-tertiary capitalize font-medium w-16">{group}</span>
                     </div>
-                    <span className="text-custom-text-300">{`${groupedIssues[group]} ${
+                    <span className="text-tertiary">{`${groupedIssues[group]} ${
                       groupedIssues[group] > 1 ? "Work items" : "Work item"
                     }`}</span>
                   </div>
@@ -89,7 +89,7 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
             </>
           ))}
           {cycle.cancelled_issues > 0 && (
-            <span className="flex items-center gap-2 text-sm text-custom-text-300">
+            <span className="flex items-center gap-2 text-sm text-tertiary">
               <span>
                 {`${cycle.cancelled_issues} cancelled ${
                   cycle.cancelled_issues > 1 ? "work items are" : "work item is"

@@ -120,7 +120,7 @@ export function CreateApiTokenForm(props: Props) {
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
       <div className="space-y-5 p-5">
-        <h3 className="text-xl font-medium text-custom-text-200">
+        <h3 className="text-xl font-medium text-secondary">
           {t("workspace_settings.settings.api_tokens.create_token")}
         </h3>
         <div className="space-y-3">
@@ -177,7 +177,7 @@ export function CreateApiTokenForm(props: Props) {
                           className={cn(
                             "h-7 flex items-center gap-2 rounded border-[0.5px] border-strong px-2 py-0.5",
                             {
-                              "text-custom-text-400": neverExpires,
+                              "text-placeholder": neverExpires,
                             }
                           )}
                         >
@@ -218,7 +218,7 @@ export function CreateApiTokenForm(props: Props) {
               )}
             </div>
             {!neverExpires && (
-              <span className="text-xs text-custom-text-400">
+              <span className="text-xs text-placeholder">
                 {expiredAt === "custom"
                   ? customDate
                     ? `Expires ${renderFormattedDate(customDateFormatted ?? "")} at ${renderFormattedTime(customDateFormatted ?? "")}`

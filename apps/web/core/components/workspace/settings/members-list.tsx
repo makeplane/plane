@@ -69,7 +69,7 @@ export const WorkspaceMembersList = observer(function WorkspaceMembersList(props
       <div className="divide-y-[0.5px] divide-custom-border-100 overflow-scroll	">
         {searchedMemberIds?.length !== 0 && <WorkspaceMembersListItem memberDetails={memberDetails ?? []} />}
         {searchedInvitationsIds?.length === 0 && searchedMemberIds?.length === 0 && (
-          <h4 className="mt-16 text-center text-sm text-custom-text-400">{t("no_matching_members")}</h4>
+          <h4 className="mt-16 text-center text-sm text-placeholder">{t("no_matching_members")}</h4>
         )}
       </div>
       {isAdmin && searchedInvitationsIds && searchedInvitationsIds.length > 0 && (

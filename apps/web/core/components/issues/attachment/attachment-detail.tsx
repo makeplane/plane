@@ -87,7 +87,7 @@ export const IssueAttachmentsDetail = observer(function IssueAttachmentsDetail(p
                 </Tooltip>
               </div>
 
-              <div className="flex items-center gap-3 text-xs text-custom-text-200">
+              <div className="flex items-center gap-3 text-xs text-secondary">
                 <span>{fileExtension.toUpperCase()}</span>
                 <span>{convertBytesToSize(attachment.attributes.size)}</span>
               </div>
@@ -97,7 +97,7 @@ export const IssueAttachmentsDetail = observer(function IssueAttachmentsDetail(p
 
         {!disabled && (
           <button type="button" onClick={() => setIsDeleteIssueAttachmentModalOpen(true)}>
-            <CloseIcon className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" />
+            <CloseIcon className="h-4 w-4 text-secondary hover:text-primary" />
           </button>
         )}
       </div>

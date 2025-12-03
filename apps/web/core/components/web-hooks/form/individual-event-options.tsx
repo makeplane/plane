@@ -60,7 +60,7 @@ export function WebhookIndividualEventOptions({ control }: Props) {
                   {option.label}
                 </label>
               </div>
-              <p className="ml-6 mt-0.5 text-xs text-custom-text-300">{option.description}</p>
+              <p className="ml-6 mt-0.5 text-xs text-tertiary">{option.description}</p>
             </div>
           )}
         />

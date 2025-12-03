@@ -62,7 +62,7 @@ export function ModuleButtonContent(props: ModuleButtonContentProps) {
                 <div
                   key={moduleId}
                   className={cn(
-                    "flex max-w-full items-center gap-1 rounded bg-custom-background-80 py-1 text-custom-text-200",
+                    "flex max-w-full items-center gap-1 rounded bg-custom-background-80 py-1 text-secondary",
                     className
                   )}
                 >
@@ -93,7 +93,7 @@ export function ModuleButtonContent(props: ModuleButtonContentProps) {
                           onChange(newModuleIds);
                         }}
                       >
-                        <CloseIcon className="h-2.5 w-2.5 text-custom-text-300 hover:text-red-500" />
+                        <CloseIcon className="h-2.5 w-2.5 text-tertiary hover:text-red-500" />
                       </button>
                     </Tooltip>
                   )}

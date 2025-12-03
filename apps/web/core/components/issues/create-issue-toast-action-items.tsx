@@ -55,7 +55,7 @@ export const CreateIssueToastActionItems = observer(function CreateIssueToastAct
   };
 
   return (
-    <div className="flex items-center gap-1 text-xs text-custom-text-200">
+    <div className="flex items-center gap-1 text-xs text-secondary">
       <a
         href={workItemLink}
         target="_blank"
@@ -67,12 +67,12 @@ export const CreateIssueToastActionItems = observer(function CreateIssueToastAct
 
       {copied ? (
         <>
-          <span className="cursor-default px-2 py-1 text-custom-text-200">Copied!</span>
+          <span className="cursor-default px-2 py-1 text-secondary">Copied!</span>
         </>
       ) : (
         <>
           <button
-            className="cursor-pointer hidden group-hover:flex px-2 py-1 text-custom-text-300 hover:text-custom-text-200 hover:bg-custom-background-90 rounded"
+            className="cursor-pointer hidden group-hover:flex px-2 py-1 text-tertiary hover:text-secondary hover:bg-custom-background-90 rounded"
             onClick={copyToClipboard}
           >
             Copy link

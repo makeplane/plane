@@ -50,9 +50,7 @@ export const BasePaidPlanCard = observer(function BasePaidPlanCard(props: TBaseP
                 className={({ selected }) =>
                   cn(
                     "w-full rounded py-1 text-sm font-medium leading-5",
-                    selected
-                      ? "bg-custom-background-100 text-custom-text-100 shadow"
-                      : "text-custom-text-300 hover:text-custom-text-200"
+                    selected ? "bg-custom-background-100 text-primary shadow" : "text-tertiary hover:text-secondary"
                   )
                 }
                 onClick={() => setSelectedPlan(price.recurring)}
@@ -80,8 +78,8 @@ export const BasePaidPlanCard = observer(function BasePaidPlanCard(props: TBaseP
                       })}
                     >
                       <p className="w-full text-sm font-medium leading-5 flex items-center line-clamp-1">
-                        <CheckCircle className="h-4 w-4 mr-2 text-custom-text-300 flex-shrink-0" />
-                        <span className="text-custom-text-200 truncate">{feature}</span>
+                        <CheckCircle className="h-4 w-4 mr-2 text-tertiary flex-shrink-0" />
+                        <span className="text-secondary truncate">{feature}</span>
                       </p>
                     </li>
                   ))}

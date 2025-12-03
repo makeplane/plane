@@ -17,28 +17,28 @@ export function JiraConfirmImport() {
         </div>
 
         <div className="col-span-1">
-          <p className="text-sm text-custom-text-200">Migrating</p>
+          <p className="text-sm text-secondary">Migrating</p>
         </div>
         <div className="col-span-1 flex items-center justify-between">
           <div>
             <h4 className="mb-2 text-lg font-semibold">{watch("data.total_issues")}</h4>
-            <p className="text-sm text-custom-text-200">Work items</p>
+            <p className="text-sm text-secondary">Work items</p>
           </div>
           <div>
             <h4 className="mb-2 text-lg font-semibold">{watch("data.total_states")}</h4>
-            <p className="text-sm text-custom-text-200">States</p>
+            <p className="text-sm text-secondary">States</p>
           </div>
           <div>
             <h4 className="mb-2 text-lg font-semibold">{watch("data.total_modules")}</h4>
-            <p className="text-sm text-custom-text-200">Modules</p>
+            <p className="text-sm text-secondary">Modules</p>
           </div>
           <div>
             <h4 className="mb-2 text-lg font-semibold">{watch("data.total_labels")}</h4>
-            <p className="text-sm text-custom-text-200">Labels</p>
+            <p className="text-sm text-secondary">Labels</p>
           </div>
           <div>
             <h4 className="mb-2 text-lg font-semibold">{watch("data.users").filter((user) => user.import).length}</h4>
-            <p className="text-sm text-custom-text-200">User</p>
+            <p className="text-sm text-secondary">User</p>
           </div>
         </div>
       </div>

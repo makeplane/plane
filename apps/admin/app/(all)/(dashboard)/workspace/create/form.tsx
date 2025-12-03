@@ -84,7 +84,7 @@ export function WorkspaceCreateForm() {
     <div className="space-y-8">
       <div className="grid-col grid w-full max-w-4xl grid-cols-1 items-start justify-between gap-x-10 gap-y-6 lg:grid-cols-2">
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm text-custom-text-300">Name your workspace</h4>
+          <h4 className="text-sm text-tertiary">Name your workspace</h4>
           <div className="flex flex-col gap-1">
             <Controller
               control={control}
@@ -122,9 +122,9 @@ export function WorkspaceCreateForm() {
           </div>
         </div>
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm text-custom-text-300">Set your workspace&apos;s URL</h4>
+          <h4 className="text-sm text-tertiary">Set your workspace&apos;s URL</h4>
           <div className="flex gap-0.5 w-full items-center rounded-md border-[0.5px] border-subtle-1 px-3">
-            <span className="whitespace-nowrap text-sm text-custom-text-200">{workspaceBaseURL}</span>
+            <span className="whitespace-nowrap text-sm text-secondary">{workspaceBaseURL}</span>
             <Controller
               control={control}
               name="slug"
@@ -160,7 +160,7 @@ export function WorkspaceCreateForm() {
           {errors.slug && <span className="text-xs text-red-500">{errors.slug.message}</span>}
         </div>
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm text-custom-text-300">How many people will use this workspace?</h4>
+          <h4 className="text-sm text-tertiary">How many people will use this workspace?</h4>
           <div className="w-full">
             <Controller
               name="organization_size"
@@ -172,7 +172,7 @@ export function WorkspaceCreateForm() {
                   onChange={onChange}
                   label={
                     ORGANIZATION_SIZE.find((c) => c === value) ?? (
-                      <span className="text-custom-text-400">Select a range</span>
+                      <span className="text-placeholder">Select a range</span>
                     )
                   }
                   buttonClassName="!border-[0.5px] !border-subtle-1 !shadow-none"

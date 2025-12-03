@@ -108,7 +108,7 @@ const IntegrationGuide = observer(function IntegrationGuide() {
                   </div>
                   <div>
                     <h3 className="flex items-center gap-4 text-sm font-medium">{t(service.i18n_title)}</h3>
-                    <p className="text-sm tracking-tight text-custom-text-200">{t(service.i18n_description)}</p>
+                    <p className="text-sm tracking-tight text-secondary">{t(service.i18n_description)}</p>
                   </div>
                 </div>
                 <div className="flex-shrink-0">

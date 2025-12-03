@@ -15,7 +15,7 @@ export const HamburgerToggle = observer(function HamburgerToggle() {
       className="w-7 h-7 rounded flex justify-center items-center bg-custom-background-80 transition-all hover:bg-custom-background-90 cursor-pointer group md:hidden"
       onClick={() => toggleSidebar(!isSidebarCollapsed)}
     >
-      <Menu size={14} className="text-custom-text-200 group-hover:text-custom-text-100 transition-all" />
+      <Menu size={14} className="text-secondary group-hover:text-primary transition-all" />
     </div>
   );
 });
@@ -82,7 +82,7 @@ export const AdminHeader = observer(function AdminHeader() {
                   <BreadcrumbLink
                     href="/general/"
                     label="Settings"
-                    icon={<Settings className="h-4 w-4 text-custom-text-300" />}
+                    icon={<Settings className="h-4 w-4 text-tertiary" />}
                   />
                 }
               />

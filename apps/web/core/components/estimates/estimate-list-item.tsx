@@ -36,7 +36,7 @@ export const EstimateListItem = observer(function EstimateListItem(props: TEstim
     <div
       className={cn(
         "relative border-b border-subtle-1 flex justify-between items-center gap-3 py-3.5",
-        isAdmin && isEditable && isEstimateEnabled ? `text-custom-text-100` : `text-custom-text-200`
+        isAdmin && isEditable && isEstimateEnabled ? `text-primary` : `text-secondary`
       )}
     >
       <div className="space-y-1">

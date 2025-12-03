@@ -55,7 +55,7 @@ export function TourSidebar({ step, setStep }: Props) {
             className={`flex cursor-pointer items-center gap-2 border-l-[3px] py-0.5 pl-3 pr-2 text-sm font-medium capitalize ${
               step === option.key
                 ? "border-custom-primary-100 text-custom-primary-100"
-                : "border-transparent text-custom-text-200"
+                : "border-transparent text-secondary"
             }`}
             onClick={() => setStep(option.key)}
             role="button"

@@ -38,11 +38,11 @@ const SettingsSidebarNavItem = observer(function SettingsSidebarNavItem(props: T
   const { toggleSidebar } = useUserSettings();
   // derived
   const buttonClass = cn(
-    "flex w-full items-center px-2 py-1.5 rounded text-custom-text-200 justify-between",
+    "flex w-full items-center px-2 py-1.5 rounded text-secondary justify-between",
     "hover:bg-custom-primary-100/10",
     {
-      "text-custom-text-200 bg-custom-background-80/75": typeof isActive === "function" ? isActive(setting) : isActive,
-      "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-90 active:bg-custom-sidebar-background-90":
+      "text-secondary bg-custom-background-80/75": typeof isActive === "function" ? isActive(setting) : isActive,
+      "text-secondary hover:bg-custom-sidebar-background-90 active:bg-custom-sidebar-background-90":
         typeof isActive === "function" ? !isActive(setting) : !isActive,
     }
   );
@@ -65,7 +65,7 @@ const SettingsSidebarNavItem = observer(function SettingsSidebarNavItem(props: T
         as="button"
         type="button"
         className={cn(
-          "group w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-custom-sidebar-text-400"
+          "group w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-placeholder"
         )}
         onClick={() => setIsExpanded(!isExpanded)}
       >

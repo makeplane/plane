@@ -76,7 +76,7 @@ export const PageNavigationPaneInfoTabDocumentInfo = observer(function PageNavig
       {documentInfoCards.map((card) => (
         <div key={card.key} className="p-2 bg-custom-background-90 rounded">
           <h6 className="text-base font-semibold">{card.info}</h6>
-          <p className="mt-1.5 text-sm text-custom-text-300 font-medium">{card.title}</p>
+          <p className="mt-1.5 text-sm text-tertiary font-medium">{card.title}</p>
         </div>
       ))}
     </div>

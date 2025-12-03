@@ -17,7 +17,7 @@ export function FavoriteStar(props: Props) {
     <button type="button" className={cn("h-4 w-4 grid place-items-center", buttonClassName)} onClick={onClick}>
       <Star
         className={cn(
-          "h-4 w-4 text-custom-text-300 transition-all",
+          "h-4 w-4 text-tertiary transition-all",
           {
             "fill-yellow-500 stroke-yellow-500": selected,
           },

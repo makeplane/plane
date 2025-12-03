@@ -73,12 +73,12 @@ export const IssueLinkCreateUpdateModal = observer(function IssueLinkCreateUpdat
     <ModalCore isOpen={isModalOpen} handleClose={onClose}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="space-y-5 p-5">
-          <h3 className="text-xl font-medium text-custom-text-200">
+          <h3 className="text-xl font-medium text-secondary">
             {preloadedData?.id ? t("common.update_link") : t("common.add_link")}
           </h3>
           <div className="mt-2 space-y-3">
             <div>
-              <label htmlFor="url" className="mb-2 text-custom-text-200">
+              <label htmlFor="url" className="mb-2 text-secondary">
                 {t("common.url")}
               </label>
               <Controller
@@ -103,7 +103,7 @@ export const IssueLinkCreateUpdateModal = observer(function IssueLinkCreateUpdat
               {errors.url && <span className="text-xs text-red-500">{t("common.url_is_invalid")}</span>}
             </div>
             <div>
-              <label htmlFor="title" className="mb-2 text-custom-text-200">
+              <label htmlFor="title" className="mb-2 text-secondary">
                 {t("common.display_title")}
                 <span className="text-[10px] block">{t("common.optional")}</span>
               </label>

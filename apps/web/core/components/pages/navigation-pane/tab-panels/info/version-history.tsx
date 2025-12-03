@@ -51,7 +51,7 @@ const VersionHistoryItem = observer(function VersionHistoryItem(props: VersionHi
           "bg-custom-background-80 hover:bg-custom-background-80": isVersionActive,
         })}
       >
-        <p className="text-custom-text-300">
+        <p className="text-tertiary">
           {renderFormattedDate(version.last_saved_at)}, {renderFormattedTime(version.last_saved_at)}
         </p>
         <p className="mt-1 flex items-center gap-1">
@@ -104,9 +104,7 @@ export const PageNavigationPaneInfoTabVersionHistory = observer(function PageNav
 
   return (
     <div>
-      <p className="text-xs font-medium text-custom-text-200">
-        {t("page_navigation_pane.tabs.info.version_history.label")}
-      </p>
+      <p className="text-xs font-medium text-secondary">{t("page_navigation_pane.tabs.info.version_history.label")}</p>
       <div className="mt-3">
         <ul role="list" className="relative">
           {/* timeline line */}

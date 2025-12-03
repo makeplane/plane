@@ -65,11 +65,11 @@ export const AutoArchiveAutomation = observer(function AutoArchiveAutomation(pro
         <div className="flex items-center justify-between">
           <div className="flex items-start gap-3">
             <div className="flex items-center justify-center rounded bg-custom-background-90 p-3">
-              <ArchiveRestore className="h-4 w-4 flex-shrink-0 text-custom-text-100" />
+              <ArchiveRestore className="h-4 w-4 flex-shrink-0 text-primary" />
             </div>
             <div className="">
               <h4 className="text-sm font-medium">{t("project_settings.automations.auto-archive.title")}</h4>
-              <p className="text-sm tracking-tight text-custom-text-200">
+              <p className="text-sm tracking-tight text-secondary">
                 {t("project_settings.automations.auto-archive.description")}
               </p>
             </div>
@@ -125,7 +125,7 @@ export const AutoArchiveAutomation = observer(function AutoArchiveAutomation(pro
 
                       <button
                         type="button"
-                        className="flex w-full select-none items-center rounded px-1 py-1.5 text-sm text-custom-text-200 hover:bg-custom-background-80"
+                        className="flex w-full select-none items-center rounded px-1 py-1.5 text-sm text-secondary hover:bg-custom-background-80"
                         onClick={() => setmonthModal(true)}
                       >
                         {t("common.customize_time_range")}

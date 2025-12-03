@@ -32,12 +32,12 @@ export function CollapsibleButton(props: Props) {
         <div className="flex items-center gap-3">
           {!hideChevron && (
             <ChevronIcon
-              className={cn("size-2 text-custom-text-300 hover:text-custom-text-200 duration-300", {
+              className={cn("size-2 text-tertiary hover:text-secondary duration-300", {
                 "-rotate-90": !isOpen,
               })}
             />
           )}
-          <span className={cn("text-base text-custom-text-100 font-medium", titleClassName)}>{title}</span>
+          <span className={cn("text-base text-primary font-medium", titleClassName)}>{title}</span>
         </div>
         {indicatorElement && indicatorElement}
       </div>

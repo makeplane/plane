@@ -208,8 +208,8 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
   const customActionButton = (
     <div
       ref={menuActionRef}
-      className={`flex items-center h-full w-full cursor-pointer rounded p-1 text-custom-sidebar-text-400 hover:bg-custom-background-80 ${
-        isMenuActive ? "bg-custom-background-80 text-custom-text-100" : "text-custom-text-200"
+      className={`flex items-center h-full w-full cursor-pointer rounded p-1 text-placeholder hover:bg-custom-background-80 ${
+        isMenuActive ? "bg-custom-background-80 text-primary" : "text-secondary"
       }`}
       onClick={() => setIsMenuActive(!isMenuActive)}
     >
@@ -312,13 +312,13 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
               {nestingLevel !== 0 && <div style={{ width: subIssueIndentation }} />}
 
               {(displayProperties?.key || displayProperties?.issue_type) && (
-                <div className="relative flex cursor-pointer items-center text-center text-xs hover:text-custom-text-100">
+                <div className="relative flex cursor-pointer items-center text-center text-xs hover:text-primary">
                   <p className={`flex font-medium leading-7`} style={{ minWidth: `${keyMinWidth}px` }}>
                     {issueDetail.project_id && (
                       <IssueIdentifier
                         issueId={issueDetail.id}
                         projectId={issueDetail.project_id}
-                        textContainerClassName="text-sm md:text-xs text-custom-text-300"
+                        textContainerClassName="text-sm md:text-xs text-tertiary"
                         displayProperties={displayProperties}
                       />
                     )}
@@ -331,7 +331,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
                 {subIssuesCount > 0 && !isEpic && (
                   <button
                     type="button"
-                    className="grid place-items-center size-4 rounded-sm text-custom-text-400 hover:text-custom-text-300"
+                    className="grid place-items-center size-4 rounded-sm text-placeholder hover:text-tertiary"
                     onClick={handleToggleExpand}
                   >
                     <ChevronRightIcon
@@ -346,11 +346,11 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
             </div>
 
             <div className="flex items-center gap-2 justify-between h-full w-full truncate my-auto">
-              <div className="w-full line-clamp-1 text-sm text-custom-text-100">
+              <div className="w-full line-clamp-1 text-sm text-primary">
                 <div className="w-full overflow-hidden">
                   <Tooltip tooltipContent={issueDetail.name} isMobile={isMobile}>
                     <div
-                      className="h-full w-full cursor-pointer truncate pr-4 text-left text-[0.825rem] text-custom-text-100 focus:outline-none"
+                      className="h-full w-full cursor-pointer truncate pr-4 text-left text-[0.825rem] text-primary focus:outline-none"
                       tabIndex={-1}
                     >
                       {issueDetail.name}

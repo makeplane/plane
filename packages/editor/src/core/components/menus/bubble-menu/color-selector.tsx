@@ -30,7 +30,7 @@ export function BubbleMenuColorSelector(props: Props) {
       classNames={{
         buttonContainer: "h-full",
         button:
-          "flex items-center gap-1 h-full whitespace-nowrap px-3 text-sm font-medium text-custom-text-300 hover:bg-custom-background-80 active:bg-custom-background-80 rounded transition-colors",
+          "flex items-center gap-1 h-full whitespace-nowrap px-3 text-sm font-medium text-tertiary hover:bg-custom-background-80 active:bg-custom-background-80 rounded transition-colors",
       }}
       menuButton={
         <>
@@ -45,7 +45,7 @@ export function BubbleMenuColorSelector(props: Props) {
           >
             <ALargeSmall
               className={cn("size-3.5", {
-                "text-custom-text-100": !activeTextColor,
+                "text-primary": !activeTextColor,
               })}
               style={{
                 color: activeTextColor ? activeTextColor.textColor : "inherit",
@@ -60,7 +60,7 @@ export function BubbleMenuColorSelector(props: Props) {
     >
       <section className="mt-1 rounded-md border-[0.5px] border-strong bg-custom-background-100 p-2 space-y-2 shadow-custom-shadow-rg">
         <div className="space-y-1.5">
-          <p className="text-xs text-custom-text-300 font-semibold">Text colors</p>
+          <p className="text-xs text-tertiary font-semibold">Text colors</p>
           <div className="flex items-center gap-2">
             {COLORS_LIST.map((color) => (
               <button
@@ -75,7 +75,7 @@ export function BubbleMenuColorSelector(props: Props) {
             ))}
             <button
               type="button"
-              className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-300 border-[0.5px] border-strong-1 hover:bg-custom-background-80 transition-colors"
+              className="flex-shrink-0 size-6 grid place-items-center rounded text-tertiary border-[0.5px] border-strong-1 hover:bg-custom-background-80 transition-colors"
               onClick={() => TextColorItem(editor).command({ color: undefined })}
             >
               <Ban className="size-4" />
@@ -83,7 +83,7 @@ export function BubbleMenuColorSelector(props: Props) {
           </div>
         </div>
         <div className="space-y-1.5">
-          <p className="text-xs text-custom-text-300 font-semibold">Background colors</p>
+          <p className="text-xs text-tertiary font-semibold">Background colors</p>
           <div className="flex items-center gap-2">
             {COLORS_LIST.map((color) => (
               <button
@@ -98,7 +98,7 @@ export function BubbleMenuColorSelector(props: Props) {
             ))}
             <button
               type="button"
-              className="flex-shrink-0 size-6 grid place-items-center rounded text-custom-text-300 border-[0.5px] border-strong-1 hover:bg-custom-background-80 transition-colors"
+              className="flex-shrink-0 size-6 grid place-items-center rounded text-tertiary border-[0.5px] border-strong-1 hover:bg-custom-background-80 transition-colors"
               onClick={() => BackgroundColorItem(editor).command({ color: undefined })}
             >
               <Ban className="size-4" />

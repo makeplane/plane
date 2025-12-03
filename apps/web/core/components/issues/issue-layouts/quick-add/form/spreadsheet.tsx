@@ -13,7 +13,7 @@ export const SpreadsheetQuickAddIssueForm = observer(function SpreadsheetQuickAd
         onSubmit={onSubmit}
         className="z-10 flex items-center gap-x-5 border-[0.5px] border-t-0 border-subtle bg-custom-background-100 px-4 shadow-custom-shadow-sm"
       >
-        <h4 className="w-20 text-xs leading-5 text-custom-text-400">{projectDetail?.identifier ?? "..."}</h4>
+        <h4 className="w-20 text-xs leading-5 text-placeholder">{projectDetail?.identifier ?? "..."}</h4>
         <input
           type="text"
           autoComplete="off"
@@ -21,10 +21,10 @@ export const SpreadsheetQuickAddIssueForm = observer(function SpreadsheetQuickAd
           {...register("name", {
             required: isEpic ? t("epic.title.required") : t("issue.title.required"),
           })}
-          className="w-full rounded-md bg-transparent py-3 text-sm leading-5 text-custom-text-200 outline-none"
+          className="w-full rounded-md bg-transparent py-3 text-sm leading-5 text-secondary outline-none"
         />
       </form>
-      <p className="ml-3 mt-3 text-xs italic text-custom-text-200">
+      <p className="ml-3 mt-3 text-xs italic text-secondary">
         {isEpic ? t("epic.add.press_enter") : t("issue.add.press_enter")}
       </p>
     </div>

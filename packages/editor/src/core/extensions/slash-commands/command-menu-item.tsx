@@ -30,7 +30,7 @@ const highlightMatch = (text: string, query: string): React.ReactNode => {
     return (
       <>
         {before}
-        <span className="font-medium text-custom-text-100">{match}</span>
+        <span className="font-medium text-primary">{match}</span>
         {after}
       </>
     );
@@ -47,12 +47,9 @@ export function CommandMenuItem(props: Props) {
     <button
       type="button"
       id={`item-${sectionIndex}-${itemIndex}`}
-      className={cn(
-        "flex items-center gap-2 w-full rounded px-1 py-1.5 text-sm text-left truncate text-custom-text-200",
-        {
-          "bg-custom-background-80": isSelected,
-        }
-      )}
+      className={cn("flex items-center gap-2 w-full rounded px-1 py-1.5 text-sm text-left truncate text-secondary", {
+        "bg-custom-background-80": isSelected,
+      })}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
     >

@@ -53,7 +53,7 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
           {faviconUrl ? (
             <img src={faviconUrl} alt="favicon" className="size-4" />
           ) : (
-            <Link className="size-4 text-custom-text-350 group-hover:text-custom-text-100" />
+            <Link className="size-4 text-custom-text-350 group-hover:text-primary" />
           )}
           <Tooltip tooltipContent={linkDetail.url} isMobile={isMobile}>
             <a
@@ -64,12 +64,12 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
             >
               {linkDetail.title && linkDetail.title !== "" ? linkDetail.title : linkDetail.url}
 
-              {linkTitle && linkTitle !== "" && <span className="text-custom-text-400 text-xs">{linkTitle}</span>}
+              {linkTitle && linkTitle !== "" && <span className="text-placeholder text-xs">{linkTitle}</span>}
             </a>
           </Tooltip>
         </div>
         <div className="flex items-center gap-1 flex-shrink-0">
-          <p className="p-1 text-xs align-bottom leading-5 text-custom-text-400 group-hover-text-custom-text-200">
+          <p className="p-1 text-xs align-bottom leading-5 text-placeholder group-hover-text-secondary">
             {calculateTimeAgo(linkDetail.created_at)}
           </p>
           <span
@@ -81,13 +81,13 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
                 message: t("common.link_copied_to_clipboard"),
               });
             }}
-            className="relative grid place-items-center rounded p-1 text-custom-text-400 outline-none group-hover:text-custom-text-200 cursor-pointer hover:bg-custom-background-80"
+            className="relative grid place-items-center rounded p-1 text-placeholder outline-none group-hover:text-secondary cursor-pointer hover:bg-custom-background-80"
           >
             <Copy className="h-3.5 w-3.5 stroke-[1.5]" />
           </span>
           <CustomMenu
             ellipsis
-            buttonClassName="text-custom-text-400 group-hover:text-custom-text-200"
+            buttonClassName="text-placeholder group-hover:text-secondary"
             placement="bottom-end"
             closeOnSelect
             disabled={isNotAllowed}
@@ -98,7 +98,7 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
                 toggleIssueLinkModal(true);
               }}
             >
-              <Pencil className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
+              <Pencil className="h-3 w-3 stroke-[1.5] text-secondary" />
               {t("common.actions.edit")}
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem

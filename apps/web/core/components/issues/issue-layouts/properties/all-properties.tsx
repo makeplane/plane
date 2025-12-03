@@ -300,7 +300,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             mergeDates
             buttonVariant={issue.start_date || issue.target_date ? "border-with-text" : "border-without-text"}
             buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-red-500" : ""}
-            clearIconClassName="!text-custom-text-100"
+            clearIconClassName="!text-primary"
             disabled={isReadOnly}
             renderByDefault={isMobile}
             showTooltip
@@ -347,7 +347,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             icon={<DueDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
             buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-red-500" : ""}
-            clearIconClassName="!text-custom-text-100"
+            clearIconClassName="!text-primary"
             optionsClassName="z-10"
             disabled={isReadOnly}
             renderByDefault={isMobile}

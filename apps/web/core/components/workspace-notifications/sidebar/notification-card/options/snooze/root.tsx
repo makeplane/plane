@@ -102,7 +102,7 @@ export const NotificationItemSnoozeOption = observer(function NotificationItemSn
                     open ? "bg-custom-background-80" : ""
                   )}
                 >
-                  <Clock className="h-3 w-3 text-custom-text-300" />
+                  <Clock className="h-3 w-3 text-tertiary" />
                 </Popover.Button>
               </Tooltip>
 
@@ -119,7 +119,7 @@ export const NotificationItemSnoozeOption = observer(function NotificationItemSn
                   <div className="p-2 rounded-md border border-subtle-1 bg-custom-background-100 space-y-1">
                     {data.snoozed_till && (
                       <button
-                        className="w-full text-left cursor-pointer px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm text-custom-text-200 text-sm"
+                        className="w-full text-left cursor-pointer px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm text-secondary text-sm"
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
@@ -133,7 +133,7 @@ export const NotificationItemSnoozeOption = observer(function NotificationItemSn
                     {NOTIFICATION_SNOOZE_OPTIONS.map((option) => (
                       <button
                         key={option.key}
-                        className="w-full text-left cursor-pointer px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm text-custom-text-200 text-sm"
+                        className="w-full text-left cursor-pointer px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm text-secondary text-sm"
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
