@@ -30,6 +30,8 @@ import {
   SheetLayoutIcon,
   TimelineLayoutIcon,
 } from "./layouts";
+// Misc icons
+import { InfoIcon } from "./misc";
 // Project icons
 import { CycleIcon, EpicIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "./project";
 // Property icons
@@ -152,6 +154,9 @@ export const ICON_REGISTRY = {
   "arrow.chevron-left": ChevronLeftIcon,
   "arrow.chevron-right": ChevronRightIcon,
   "arrow.chevron-up": ChevronUpIcon,
+
+  // Misc icons
+  "misc.info": InfoIcon,
 
   // Default fallback
   default: DefaultIcon,

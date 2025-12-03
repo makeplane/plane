@@ -84,3 +84,5 @@ export const PropertyIconsMap = [
   { icon: <Icon name="property.user-square" />, title: "UserSquarePropertyIcon" },
   { icon: <Icon name="property.workflows" />, title: "WorkflowsPropertyIcon" },
 ];
+
+export const MiscIconsMap = [{ icon: <Icon name="misc.info" />, title: "InfoIcon" }];
