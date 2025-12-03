@@ -1,12 +1,12 @@
 import type { FC } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { CircleCheck, CircleX, Clock, ExternalLink, FileStack, Link, MoveRight, Copy } from "lucide-react";
+import { CircleCheck, CircleX, Clock, FileStack, Link, MoveRight, Copy } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { TrashIcon , ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
+import { NewTabIcon , TrashIcon , ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { EInboxIssueStatus } from "@plane/types";
@@ -359,7 +359,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
                   {t("inbox_issue.actions.copy")}
                 </Button>
                 <ControlLink href={workItemLink} onClick={() => router.push(workItemLink)} target="_self">
-                  <Button variant="neutral-primary" prependIcon={<ExternalLink className="h-2.5 w-2.5" />} size="sm">
+                  <Button variant="neutral-primary" prependIcon={<NewTabIcon className="h-2.5 w-2.5" />} size="sm">
                     {t("inbox_issue.actions.open")}
                   </Button>
                 </ControlLink>

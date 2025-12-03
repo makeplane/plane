@@ -4,7 +4,6 @@ import { useParams } from "next/navigation";
 import {
   ArchiveRestoreIcon,
   Copy,
-  ExternalLink,
   FileOutput,
   Globe2,
   Link,
@@ -16,7 +15,7 @@ import {
 import { EPageAccess, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 // plane editor
 import type { EditorRefApi } from "@plane/editor";
-import { ArchiveIcon, TrashIcon } from "@plane/propel/icons";
+import { NewTabIcon , ArchiveIcon, TrashIcon } from "@plane/propel/icons";
 // plane ui
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
@@ -116,7 +115,7 @@ export const PageActions = observer(function PageActions(props: Props) {
         key: "open-in-new-tab",
         action: pageOperations.openInNewTab,
         title: "Open in new tab",
-        icon: ExternalLink,
+        icon: NewTabIcon,
         shouldRender: true,
       },
       {

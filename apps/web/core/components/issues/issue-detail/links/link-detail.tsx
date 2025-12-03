@@ -1,5 +1,5 @@
-import { ExternalLink } from "lucide-react";
-import { EditIcon , TrashIcon } from "@plane/propel/icons";
+
+import { NewTabIcon , EditIcon , TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@plane/utils";
@@ -86,7 +86,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
                 rel="noopener noreferrer"
                 className="flex items-center justify-center p-1 hover:bg-custom-background-80"
               >
-                <ExternalLink className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
+                <NewTabIcon className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
               </a>
               <button
                 type="button"

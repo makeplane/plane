@@ -1,6 +1,6 @@
-import { ExternalLink, Link } from "lucide-react";
+import { Link } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { EditIcon , TrashIcon } from "@plane/propel/icons";
+import { NewTabIcon , EditIcon , TrashIcon } from "@plane/propel/icons";
 import type { EIssueLayoutTypes, IProjectView } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import type { TWorkspaceLayoutProps } from "@/components/views/helper";
@@ -49,7 +49,7 @@ export const useMenuItemsFactory = (props: TMenuItemsFactoryProps) => {
     key: "open-new-tab",
     action: handleOpenInNewTab,
     title: t("open_in_new_tab"),
-    icon: ExternalLink,
+    icon: NewTabIcon,
   });
 
   const copyLinkMenuItem = () => ({

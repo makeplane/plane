@@ -2,13 +2,13 @@ import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArchiveRestoreIcon, ExternalLink, LinkIcon, Lock, Settings, UserPlus } from "lucide-react";
+import { ArchiveRestoreIcon, LinkIcon, Lock, Settings, UserPlus } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { TrashIcon , CheckIcon } from "@plane/propel/icons";
+import { NewTabIcon , TrashIcon , CheckIcon } from "@plane/propel/icons";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IProject } from "@plane/types";
@@ -134,7 +134,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
       key: "open-new-tab",
       action: handleOpenInNewTab,
       title: "Open in new tab",
-      icon: ExternalLink,
+      icon: NewTabIcon,
       shouldRender: !isMemberOfProject && !isArchived,
     },
     {

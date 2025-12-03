@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 
 // icons
-import { ArchiveRestoreIcon, ExternalLink, LinkIcon } from "lucide-react";
+import { ArchiveRestoreIcon, LinkIcon } from "lucide-react";
 // ui
 import {
   CYCLE_TRACKER_EVENTS,
@@ -11,7 +11,7 @@ import {
   CYCLE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EditIcon , TrashIcon , ArchiveIcon } from "@plane/propel/icons";
+import { NewTabIcon , EditIcon , TrashIcon , ArchiveIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
@@ -129,7 +129,7 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
       key: "open-new-tab",
       action: handleOpenInNewTab,
       title: t("open_in_new_tab"),
-      icon: ExternalLink,
+      icon: NewTabIcon,
       shouldRender: !isArchived,
     },
     {

@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-import { ExternalLink, Link } from "lucide-react";
+import { Link } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { EditIcon , TrashIcon } from "@plane/propel/icons";
+import { NewTabIcon , EditIcon , TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { LinkItemBlock } from "@plane/ui";
@@ -71,7 +71,7 @@ export const ProjectLinkDetail = observer(function ProjectLinkDetail(props: TPro
         key: "open-new-tab",
         action: handleOpenInNewTab,
         title: t("open_in_new_tab"),
-        icon: ExternalLink,
+        icon: NewTabIcon,
       },
       {
         key: "copy-link",

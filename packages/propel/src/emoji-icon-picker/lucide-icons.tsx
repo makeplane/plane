@@ -76,7 +76,6 @@ import {
   Edit,
   Edit2,
   Edit3,
-  ExternalLink,
   Eye,
   EyeOff,
   Facebook,
@@ -149,7 +148,7 @@ import {
   ToggleLeft,
   User,
 } from "lucide-react";
-import { CheckIcon, SearchIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon } from "../icons";
+import { NewTabIcon , CheckIcon, SearchIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon } from "../icons";
 
 export const LUCIDE_ICONS_LIST = [
   { name: "Activity", element: Activity },
@@ -235,7 +234,7 @@ export const LUCIDE_ICONS_LIST = [
   { name: "Edit", element: Edit },
   { name: "Edit2", element: Edit2 },
   { name: "Edit3", element: Edit3 },
-  { name: "ExternalLink", element: ExternalLink },
+  { name: "ExternalLink", element: NewTabIcon },
   { name: "Eye", element: Eye },
   { name: "EyeOff", element: EyeOff },
   { name: "Facebook", element: Facebook },

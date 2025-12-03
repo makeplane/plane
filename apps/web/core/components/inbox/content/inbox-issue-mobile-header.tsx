@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { CircleCheck, CircleX, Clock, ExternalLink, FileStack, Link, PanelLeft, MoveRight } from "lucide-react";
-import { TrashIcon , ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
+import { CircleCheck, CircleX, Clock, FileStack, Link, PanelLeft, MoveRight } from "lucide-react";
+import { NewTabIcon , TrashIcon , ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { Header, CustomMenu, EHeaderVariant } from "@plane/ui";
 import { cn, findHowManyDaysLeft, generateWorkItemLink } from "@plane/utils";
@@ -133,7 +133,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
             {isAcceptedOrDeclined && (
               <CustomMenu.MenuItem onClick={() => router.push(workItemLink)}>
                 <div className="flex items-center gap-2">
-                  <ExternalLink size={14} strokeWidth={2} />
+                  <NewTabIcon width={14} height={14} strokeWidth={2} />
                   Open work item
                 </div>
               </CustomMenu.MenuItem>

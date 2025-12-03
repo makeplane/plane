@@ -1,9 +1,8 @@
 import { useMemo } from "react";
-import { Copy, ExternalLink, Link, XCircle, ArchiveRestoreIcon } from "lucide-react";
-import { EditIcon } from "@plane/propel/icons";
+import { Copy, Link, XCircle, ArchiveRestoreIcon } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { ArchiveIcon, TrashIcon } from "@plane/propel/icons";
+import { NewTabIcon, EditIcon, ArchiveIcon, TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { EIssuesStoreType, TIssue } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
@@ -156,7 +155,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
   const createEditMenuItem = (customEditAction?: () => void): TContextMenuItem => ({
     key: "edit",
     title: t("common.actions.edit"),
-    icon: Pencil,
+    icon: EditIcon,
     action:
       customEditAction ||
       (() => {
@@ -189,7 +188,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
   const createOpenInNewTabMenuItem = (): TContextMenuItem => ({
     key: "open-in-new-tab",
     title: t("common.actions.open_in_new_tab"),
-    icon: ExternalLink,
+    icon: NewTabIcon,
     action: actionHandlers.handleOpenInNewTab,
   });
 
