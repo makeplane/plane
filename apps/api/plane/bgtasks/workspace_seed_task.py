@@ -37,13 +37,10 @@ from plane.db.models import (
     ModuleIssue,
     IssueView,
     User,
+    BotTypeEnum,
 )
 
 logger = logging.getLogger("plane.worker")
-
-
-class BotTypeEnum(models.TextChoices):
-    WORKSPACE_SEED = "WORKSPACE_SEED", "Workspace Seed"
 
 
 def read_seed_file(filename):
@@ -512,7 +509,7 @@ def workspace_seed(workspace_id: uuid.UUID) -> None:
             first_name="Plane",
             last_name="Bot",
             is_bot=True,
-            bot_type="WORKSPACE_SEED",
+            bot_type=BotTypeEnum.WORKSPACE_SEED,
             email=f"bot_user_{workspace.id}@plane.so",
             password=make_password(uuid.uuid4().hex),
             is_password_autoset=True,
