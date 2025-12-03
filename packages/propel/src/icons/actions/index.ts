@@ -4,6 +4,7 @@ export * from "./add-workitem-icon";
 export * from "./add-reaction-icon";
 export * from "./check-icon";
 export * from "./close-icon";
+export * from "./copy-icon";
 export * from "./edit-icon";
 export * from "./globe-icon";
 export * from "./lock-icon";
