@@ -1,5 +1,5 @@
-import { Copy, GlobeIcon, Link2Off } from "lucide-react";
-import { EditIcon } from "@plane/propel/icons";
+import { Copy, Link2Off } from "lucide-react";
+import { GlobeIcon , EditIcon } from "@plane/propel/icons";
 // components
 import type { LinkViewProps, LinkViews } from "@/components/links";
 
@@ -30,7 +30,7 @@ export function LinkPreview({
       }}
     >
       <div className="shadow-md items-center rounded p-2 flex gap-3 bg-custom-background-90 border-custom-border-100 border-2 text-custom-text-300 text-xs">
-        <GlobeIcon size={14} className="inline-block" />
+        <GlobeIcon width={14} height={14} className="inline-block" />
         <p>{url?.length > 40 ? url.slice(0, 40) + "..." : url}</p>
         <div className="flex gap-2">
           <button onClick={copyLinkToClipboard} className="cursor-pointer hover:text-custom-text-100 transition-colors">

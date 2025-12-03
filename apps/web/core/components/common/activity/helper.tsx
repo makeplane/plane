@@ -9,7 +9,6 @@ import {
   Paperclip,
   Type,
   FileText,
-  Globe,
   Hash,
   Clock,
   Bell,
@@ -19,11 +18,12 @@ import {
   ListTodo,
   Layers,
 } from "lucide-react";
-
 // components
+
 import {
   ArchiveIcon,
   CycleIcon,
+  GlobeIcon,
   StatePropertyIcon,
   IntakeIcon,
   ModuleIcon,
@@ -58,7 +58,7 @@ export const iconsMap: ActivityIconMap = {
   cycle: <CycleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
   module: <ModuleIcon className="h-4 w-4 flex-shrink-0 text-custom-text-200" />,
   page: <FileText className="h-3.5 w-3.5 text-custom-text-200" />,
-  network: <Globe className="h-3.5 w-3.5 text-custom-text-200" />,
+  network: <GlobeIcon className="h-3.5 w-3.5 text-custom-text-200" />,
   identifier: <Hash className="h-3.5 w-3.5 text-custom-text-200" />,
   timezone: <Clock className="h-3.5 w-3.5 text-custom-text-200" />,
   is_project_updates_enabled: <Bell className="h-3.5 w-3.5 text-custom-text-200" />,

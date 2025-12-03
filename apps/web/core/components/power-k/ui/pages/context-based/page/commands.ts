@@ -3,7 +3,6 @@ import { useParams } from "next/navigation";
 import {
   ArchiveIcon,
   ArchiveRestoreIcon,
-  Globe2,
   LinkIcon,
   LockKeyhole,
   LockKeyholeOpen,
@@ -12,7 +11,7 @@ import {
 } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { LockIcon } from "@plane/propel/icons";
+import { GlobeIcon , LockIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EPageAccess } from "@plane/types";
 import { copyTextToClipboard } from "@plane/utils";
@@ -110,7 +109,7 @@ export const usePowerKPageContextBasedActions = (): TPowerKCommandConfig[] => {
         access === EPageAccess.PUBLIC
           ? "power_k.contextual_actions.page.make_private"
           : "power_k.contextual_actions.page.make_public",
-      icon: access === EPageAccess.PUBLIC ? LockIcon : Globe2,
+      icon: access === EPageAccess.PUBLIC ? LockIcon : GlobeIcon,
       group: "contextual",
       contextType: "page",
       type: "action",

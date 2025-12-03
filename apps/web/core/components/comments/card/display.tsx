@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
-import { Globe2 } from "lucide-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import { useHashScroll } from "@plane/hooks";
-import { LockIcon } from "@plane/propel/icons";
+import { GlobeIcon , LockIcon } from "@plane/propel/icons";
 import { EIssueCommentAccessSpecifier } from "@plane/types";
 import type { TCommentsOperations, TIssueComment } from "@plane/types";
 import { cn } from "@plane/utils";
@@ -65,7 +64,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
           {comment.access === EIssueCommentAccessSpecifier.INTERNAL ? (
             <LockIcon className="size-3" />
           ) : (
-            <Globe2 className="size-3" />
+            <GlobeIcon className="size-3" />
           )}
         </div>
       )}

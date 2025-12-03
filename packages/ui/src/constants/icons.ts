@@ -101,7 +101,6 @@ import {
   GitPullRequest,
   Github,
   Gitlab,
-  Globe,
   Grid,
   HardDrive,
   Hash,
@@ -148,6 +147,7 @@ import {
   User,
 } from "lucide-react";
 import {
+  GlobeIcon,
   LockIcon,
   NewTabIcon,
   CheckIcon,
@@ -874,7 +874,7 @@ export const LUCIDE_ICONS_LIST = [
   { name: "GitPullRequest", element: GitPullRequest },
   { name: "Github", element: Github },
   { name: "Gitlab", element: Gitlab },
-  { name: "Globe", element: Globe },
+  { name: "Globe", element: GlobeIcon },
   { name: "Grid", element: Grid },
   { name: "HardDrive", element: HardDrive },
   { name: "Hash", element: Hash },

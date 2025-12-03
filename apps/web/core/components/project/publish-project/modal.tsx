@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { Globe2 } from "lucide-react";
+
 // types
 import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { Button } from "@plane/propel/button";
-import { NewTabIcon , CheckIcon } from "@plane/propel/icons";
+import { GlobeIcon , NewTabIcon , CheckIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TProjectPublishLayouts, TProjectPublishSettings } from "@plane/types";
 // ui
@@ -303,7 +303,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
         {/* modal handlers */}
         <div className="relative flex items-center justify-between border-t border-custom-border-200 px-5 py-4 mt-4">
           <div className="flex items-center gap-1 text-sm text-custom-text-400">
-            <Globe2 className="size-3.5" />
+            <GlobeIcon className="size-3.5" />
             <div className="text-sm">Anyone with the link can access</div>
           </div>
           {!fetchSettingsLoader && (

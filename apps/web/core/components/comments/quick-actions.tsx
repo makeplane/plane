@@ -1,11 +1,11 @@
 import type { FC } from "react";
 import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { Globe2, Link } from "lucide-react";
+import { Link } from "lucide-react";
 // plane imports
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { LockIcon , EditIcon , TrashIcon } from "@plane/propel/icons";
+import { GlobeIcon, LockIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 import type { TIssueComment, TCommentsOperations } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
@@ -61,7 +61,7 @@ export const CommentQuickActions = observer(function CommentQuickActions(props: 
           comment.access === EIssueCommentAccessSpecifier.INTERNAL
             ? t("issue.comments.switch.public")
             : t("issue.comments.switch.private"),
-        icon: comment.access === EIssueCommentAccessSpecifier.INTERNAL ? Globe2 : LockIcon,
+        icon: comment.access === EIssueCommentAccessSpecifier.INTERNAL ? GlobeIcon : LockIcon,
         shouldRender: showAccessSpecifier,
       },
       {

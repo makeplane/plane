@@ -5,7 +5,6 @@ import {
   ArchiveRestoreIcon,
   Copy,
   FileOutput,
-  Globe2,
   Link,
   LockKeyhole,
   LockKeyholeOpen,
@@ -14,7 +13,7 @@ import {
 import { EPageAccess, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 // plane editor
 import type { EditorRefApi } from "@plane/editor";
-import { LockIcon , NewTabIcon , ArchiveIcon, TrashIcon } from "@plane/propel/icons";
+import { LockIcon , NewTabIcon , ArchiveIcon, TrashIcon, GlobeIcon } from "@plane/propel/icons";
 // plane ui
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
@@ -107,7 +106,7 @@ export const PageActions = observer(function PageActions(props: Props) {
           pageOperations.toggleAccess();
         },
         title: access === EPageAccess.PUBLIC ? "Make private" : "Make public",
-        icon: access === EPageAccess.PUBLIC ? LockIcon : Globe2,
+        icon: access === EPageAccess.PUBLIC ? LockIcon : GlobeIcon,
         shouldRender: canCurrentUserChangeAccess && !archived_at,
       },
       {
