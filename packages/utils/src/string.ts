@@ -376,6 +376,44 @@ export const copyTextToClipboard = async (text: string): Promise<void> => {
 };
 
 /**
+ * @description Copies markdown and HTML content to clipboard with multiple formats including custom plane-editor format
+ * @param {Object} params - Parameters object
+ * @param {string} params.markdown - Markdown text to copy
+ * @param {string} params.html - HTML content to copy
+ * @returns {Promise<void>} Promise that resolves when copying is complete
+ * @example
+ * await copyMarkdownToClipboard({ markdown: "# Hello", html: "<h1>Hello</h1>" })
+ */
+export const copyMarkdownToClipboard = async ({
+  markdown,
+  html,
+}: {
+  markdown: string;
+  html: string;
+}): Promise<void> => {
+  // Try using the copy event to support custom MIME types
+  try {
+    const handleCopy = (event: ClipboardEvent) => {
+      event.preventDefault();
+      event.clipboardData?.clearData();
+      event.clipboardData?.setData("text/plain", markdown);
+      event.clipboardData?.setData("text/html", html);
+      event.clipboardData?.setData("text/plane-editor-html", html);
+      document.removeEventListener("copy", handleCopy);
+    };
+
+    document.addEventListener("copy", handleCopy);
+    document.execCommand("copy");
+    return;
+  } catch (error) {
+    console.warn("Failed to copy with custom formats, trying standard clipboard API:", error);
+  }
+
+  // Final fallback to simple text copy
+  await copyTextToClipboard(markdown);
+};
+
+/**
  * @description Joins URL path segments properly, removing duplicate slashes using URL encoding
  * @param {...string} segments - URL path segments to join
  * @returns {string} Properly joined URL path

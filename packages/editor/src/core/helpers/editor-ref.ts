@@ -79,7 +79,7 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
     }),
     getHeadings: () => (editor ? editor.storage.headingsList?.headings : []),
     getMarkDown: () => {
-      if (!editor) return "";
+      if (!editor) return { markdown: "", html: "" };
       const editorHTML = editor.getHTML();
       const metaData = getEditorMetaData(editorHTML);
       // convert to markdown
@@ -87,7 +87,7 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
         description_html: editorHTML,
         metaData,
       });
-      return markdown;
+      return { markdown, html: editorHTML };
     },
     isAnyDropbarOpen: () => {
       if (!editor) return false;

@@ -10,7 +10,7 @@ import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TDescriptionVersion } from "@plane/types";
 import { Avatar, EModalPosition, EModalWidth, Loader, ModalCore } from "@plane/ui";
-import { calculateTimeAgo, cn, copyTextToClipboard, getFileURL } from "@plane/utils";
+import { calculateTimeAgo, cn, copyMarkdownToClipboard, getFileURL } from "@plane/utils";
 // components
 import { RichTextEditor } from "@/components/editor/rich-text";
 // hooks
@@ -59,13 +59,23 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
 
   const handleCopyMarkdown = useCallback(() => {
     if (!editorRef.current) return;
-    copyTextToClipboard(editorRef.current.getMarkDown()).then(() =>
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: t("toast.success"),
-        message: "Markdown copied to clipboard.",
-      })
-    );
+    const { markdown, html } = editorRef.current.getMarkDown();
+
+    copyMarkdownToClipboard({ markdown, html })
+      .then(() =>
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: t("toast.success"),
+          message: "Markdown copied to clipboard.",
+        })
+      )
+      .catch(() =>
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("toast.error"),
+          message: "Failed to copy markdown to clipboard.",
+        })
+      );
   }, [t]);
 
   if (!workspaceId) return null;

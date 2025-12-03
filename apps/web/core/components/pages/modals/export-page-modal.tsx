@@ -156,7 +156,7 @@ export function ExportPageModal(props: Props) {
   // handle export as markdown
   const handleExportAsMarkdown = async () => {
     try {
-      const markdownContent = editorRef?.getMarkDown() ?? "";
+      const { markdown: markdownContent } = editorRef?.getMarkDown() ?? { markdown: "" };
       const parsedMarkdownContent = replaceCustomComponentsFromMarkdownContent({
         markdownContent,
         noAssets: selectedContentVariety === "no-assets",
