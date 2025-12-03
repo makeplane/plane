@@ -28,7 +28,7 @@ def page_version(page_id, existing_instance, user_id):
                 description_binary=page.description_binary,
                 owned_by_id=user_id,
                 last_saved_at=page.updated_at,
-                description_json=page.description,
+                description_json=page.description_json,
                 description_stripped=page.description_stripped,
             )
 

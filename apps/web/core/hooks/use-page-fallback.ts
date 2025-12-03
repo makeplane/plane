@@ -39,7 +39,7 @@ export const usePageFallback = (args: TArgs) => {
       await updatePageDescription({
         description_binary: encodedBinary,
         description_html: html,
-        description: json,
+        description_json: json,
       });
     } catch (error) {
       console.error("Error in updating description using fallback logic:", error);
