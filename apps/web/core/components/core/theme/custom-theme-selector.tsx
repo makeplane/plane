@@ -127,11 +127,11 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
   return (
     <form onSubmit={handleSubmit(handleUpdateTheme)}>
       <div className="space-y-5">
-        <h3 className="text-lg font-semibold text-primary">{t("customize_your_theme")}</h3>
+        <h3 className="text-16 font-semibold text-primary">{t("customize_your_theme")}</h3>
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2 md:grid-cols-3">
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-secondary">{t("background_color")}</h3>
+              <h3 className="text-left text-13 font-medium text-secondary">{t("background_color")}</h3>
               <div className="w-full">
                 <Controller
                   control={control}
@@ -152,12 +152,12 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
                     />
                   )}
                 />
-                {errors.background && <p className="mt-1 text-xs text-red-500">{errors.background.message}</p>}
+                {errors.background && <p className="mt-1 text-11 text-red-500">{errors.background.message}</p>}
               </div>
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-secondary">{t("text_color")}</h3>
+              <h3 className="text-left text-13 font-medium text-secondary">{t("text_color")}</h3>
               <div className="w-full">
                 <Controller
                   control={control}
@@ -178,12 +178,12 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
                     />
                   )}
                 />
-                {errors.text && <p className="mt-1 text-xs text-red-500">{errors.text.message}</p>}
+                {errors.text && <p className="mt-1 text-11 text-red-500">{errors.text.message}</p>}
               </div>
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-secondary">{t("primary_color")}</h3>
+              <h3 className="text-left text-13 font-medium text-secondary">{t("primary_color")}</h3>
               <div className="w-full">
                 <Controller
                   control={control}
@@ -204,12 +204,12 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
                     />
                   )}
                 />
-                {errors.primary && <p className="mt-1 text-xs text-red-500">{errors.primary.message}</p>}
+                {errors.primary && <p className="mt-1 text-11 text-red-500">{errors.primary.message}</p>}
               </div>
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-secondary">{t("sidebar_background_color")}</h3>
+              <h3 className="text-left text-13 font-medium text-secondary">{t("sidebar_background_color")}</h3>
               <div className="w-full">
                 <Controller
                   control={control}
@@ -231,13 +231,13 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
                   )}
                 />
                 {errors.sidebarBackground && (
-                  <p className="mt-1 text-xs text-red-500">{errors.sidebarBackground.message}</p>
+                  <p className="mt-1 text-11 text-red-500">{errors.sidebarBackground.message}</p>
                 )}
               </div>
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="text-left text-sm font-medium text-secondary">{t("sidebar_text_color")}</h3>
+              <h3 className="text-left text-13 font-medium text-secondary">{t("sidebar_text_color")}</h3>
               <div className="w-full">
                 <Controller
                   control={control}
@@ -258,7 +258,7 @@ export const CustomThemeSelector = observer(function CustomThemeSelector(props: 
                     />
                   )}
                 />
-                {errors.sidebarText && <p className="mt-1 text-xs text-red-500">{errors.sidebarText.message}</p>}
+                {errors.sidebarText && <p className="mt-1 text-11 text-red-500">{errors.sidebarText.message}</p>}
               </div>
             </div>
           </div>

@@ -40,7 +40,7 @@ export const LayoutDropDown = observer(function LayoutDropDown(props: TLayoutDro
     return (
       <div className="flex gap-2 items-center text-secondary">
         <IssueLayoutIcon layout={dropdownValue.key} strokeWidth={2} className={`size-3.5 text-secondary`} />
-        <span className="font-medium text-xs">{t(dropdownValue.i18n_label)}</span>
+        <span className="font-medium text-11">{t(dropdownValue.i18n_label)}</span>
       </div>
     );
   }, []);
@@ -52,7 +52,7 @@ export const LayoutDropDown = observer(function LayoutDropDown(props: TLayoutDro
       <div className={cn("flex gap-2 items-center text-secondary w-full justify-between")}>
         <div className="flex gap-2 items-center">
           <IssueLayoutIcon layout={dropdownValue.key} strokeWidth={2} className={`size-3 text-secondary`} />
-          <span className="font-medium text-xs">{t(dropdownValue.i18n_label)}</span>
+          <span className="font-medium text-11">{t(dropdownValue.i18n_label)}</span>
         </div>
         {props.selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
       </div>

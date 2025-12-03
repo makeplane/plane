@@ -25,7 +25,7 @@ export const NavbarTheme = observer(function NavbarTheme() {
       onClick={handleTheme}
       className="relative grid h-7 w-7 place-items-center rounded bg-custom-background-100 text-primary hover:bg-custom-background-80"
     >
-      <span className="material-symbols-rounded text-sm">{appTheme === "light" ? "dark_mode" : "light_mode"}</span>
+      <span className="material-symbols-rounded text-13">{appTheme === "light" ? "dark_mode" : "light_mode"}</span>
     </button>
   );
 });

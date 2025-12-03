@@ -25,7 +25,7 @@ export function PowerKModalContextIndicator(props: Props) {
   return (
     <div className="w-full px-4 pt-3 pb-2">
       <div className="max-w-full bg-custom-background-80 pl-2 pr-1 py-0.5 rounded inline-flex items-center gap-1 truncate">
-        <div className="flex items-center gap-1.5 text-xs font-medium truncate">
+        <div className="flex items-center gap-1.5 text-11 font-medium truncate">
           <span className="shrink-0 text-secondary">{t(contextEntity.i18n_indicator)}</span>
           <span className="shrink-0 bg-custom-text-200 size-1 rounded-full" />
           <p className="truncate">{contextIndicator}</p>

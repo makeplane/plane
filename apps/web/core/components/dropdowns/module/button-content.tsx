@@ -75,7 +75,7 @@ export function ModuleButtonContent(props: ModuleButtonContentProps) {
                       isMobile={isMobile}
                       renderByDefault={false}
                     >
-                      <span className="max-w-40 flex-grow truncate text-xs font-medium">{moduleDetails?.name}</span>
+                      <span className="max-w-40 flex-grow truncate text-11 font-medium">{moduleDetails?.name}</span>
                     </Tooltip>
                   )}
                   {!disabled && (

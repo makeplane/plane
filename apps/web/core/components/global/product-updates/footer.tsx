@@ -14,7 +14,7 @@ export function ProductUpdatesFooter() {
         <a
           href="https://go.plane.so/p-docs"
           target="_blank"
-          className="text-sm text-secondary hover:text-primary hover:underline underline-offset-1 outline-none"
+          className="text-13 text-secondary hover:text-primary hover:underline underline-offset-1 outline-none"
         >
           {t("docs")}
         </a>
@@ -25,7 +25,7 @@ export function ProductUpdatesFooter() {
           data-ph-element={USER_TRACKER_ELEMENTS.CHANGELOG_REDIRECTED}
           href="https://go.plane.so/p-changelog"
           target="_blank"
-          className="text-sm text-secondary hover:text-primary hover:underline underline-offset-1 outline-none"
+          className="text-13 text-secondary hover:text-primary hover:underline underline-offset-1 outline-none"
         >
           {t("full_changelog")}
         </a>
@@ -35,7 +35,7 @@ export function ProductUpdatesFooter() {
         <a
           href="mailto:support@plane.so"
           target="_blank"
-          className="text-sm text-secondary hover:text-primary hover:underline underline-offset-1 outline-none"
+          className="text-13 text-secondary hover:text-primary hover:underline underline-offset-1 outline-none"
         >
           {t("support")}
         </a>
@@ -45,7 +45,7 @@ export function ProductUpdatesFooter() {
         <a
           href="https://go.plane.so/p-discord"
           target="_blank"
-          className="text-sm text-secondary hover:text-primary hover:underline underline-offset-1 outline-none"
+          className="text-13 text-secondary hover:text-primary hover:underline underline-offset-1 outline-none"
         >
           Discord
         </a>

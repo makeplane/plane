@@ -122,18 +122,18 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
                       <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </span>
                     <span className="flex items-center justify-start">
-                      <h3 className="text-xl font-medium 2xl:text-2xl">Delete project</h3>
+                      <h3 className="text-18 font-medium 2xl:text-20">Delete project</h3>
                     </span>
                   </div>
                   <span>
-                    <p className="text-sm leading-7 text-secondary">
+                    <p className="text-13 leading-7 text-secondary">
                       Are you sure you want to delete project{" "}
                       <span className="break-words font-semibold">{project?.name}</span>? All of the data related to the
                       project will be permanently removed. This action cannot be undone
                     </p>
                   </span>
                   <div className="text-secondary">
-                    <p className="break-words text-sm ">
+                    <p className="break-words text-13 ">
                       Enter the project name <span className="font-medium text-primary">{project?.name}</span> to
                       continue:
                     </p>
@@ -157,7 +157,7 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
                     />
                   </div>
                   <div className="text-secondary">
-                    <p className="text-sm">
+                    <p className="text-13">
                       To confirm, type <span className="font-medium text-primary">delete my project</span> below:
                     </p>
                     <Controller

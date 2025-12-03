@@ -265,7 +265,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                 <CustomSelect
                   customButton={
                     <span
-                      className={`flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs ${
+                      className={`flex h-6 w-20 items-center justify-center rounded-sm text-center text-11 ${
                         isEditingAllowed && !isArchived ? "cursor-pointer" : "cursor-not-allowed"
                       }`}
                       style={{
@@ -294,12 +294,12 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
               )}
             />
           </div>
-          <h4 className="w-full break-words text-xl font-semibold text-primary">{moduleDetails.name}</h4>
+          <h4 className="w-full break-words text-18 font-semibold text-primary">{moduleDetails.name}</h4>
         </div>
 
         {moduleDetails.description && (
           <TextArea
-            className="outline-none ring-none w-full max-h-max bg-transparent !p-0 !m-0 !border-0 resize-none text-sm leading-5 text-secondary"
+            className="outline-none ring-none w-full max-h-max bg-transparent !p-0 !m-0 !border-0 resize-none text-13 leading-5 text-secondary"
             value={moduleDetails.description}
             disabled
           />
@@ -309,7 +309,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
               <StartDatePropertyIcon className="h-4 w-4" />
-              <span className="text-base">{t("date_range")}</span>
+              <span className="text-14">{t("date_range")}</span>
             </div>
             <div className="h-7">
               <Controller
@@ -351,7 +351,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
               <SquareUser className="h-4 w-4" />
-              <span className="text-base">{t("lead")}</span>
+              <span className="text-14">{t("lead")}</span>
             </div>
             <Controller
               control={control}
@@ -377,7 +377,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
               <MembersPropertyIcon className="h-4 w-4" />
-              <span className="text-base">{t("members")}</span>
+              <span className="text-14">{t("members")}</span>
             </div>
             <Controller
               control={control}
@@ -402,10 +402,10 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
           <div className="flex items-center justify-start gap-1">
             <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
               <WorkItemsIcon className="h-4 w-4" />
-              <span className="text-base">{t("issues")}</span>
+              <span className="text-14">{t("issues")}</span>
             </div>
             <div className="flex h-7 w-3/5 items-center">
-              <span className="px-1.5 text-sm text-tertiary">{issueCount}</span>
+              <span className="px-1.5 text-13 text-tertiary">{issueCount}</span>
             </div>
           </div>
 
@@ -416,10 +416,10 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
             <div className="flex items-center justify-start gap-1">
               <div className="flex w-2/5 items-center justify-start gap-2 text-tertiary">
                 <WorkItemsIcon className="h-4 w-4" />
-                <span className="text-base">{t("points")}</span>
+                <span className="text-14">{t("points")}</span>
               </div>
               <div className="flex h-7 w-3/5 items-center">
-                <span className="px-1.5 text-sm text-tertiary">{issueEstimatePointCount}</span>
+                <span className="px-1.5 text-13 text-tertiary">{issueEstimatePointCount}</span>
               </div>
             </div>
           )}
@@ -440,7 +440,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
               {({ open }) => (
                 <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
                   <Disclosure.Button className="flex w-full items-center justify-between gap-2 p-1.5">
-                    <div className="flex items-center justify-start gap-2 text-sm">
+                    <div className="flex items-center justify-start gap-2 text-13">
                       <span className="font-medium text-secondary">{t("common.links")}</span>
                     </div>
 
@@ -459,7 +459,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                             {isEditingAllowed && !isArchived && (
                               <div className="flex w-full items-center justify-end">
                                 <button
-                                  className="flex items-center gap-1.5 text-sm font-medium text-custom-primary-100"
+                                  className="flex items-center gap-1.5 text-13 font-medium text-custom-primary-100"
                                   onClick={() => setModuleLinkModal(true)}
                                 >
                                   <Plus className="h-3 w-3" />
@@ -481,11 +481,11 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-2">
                               <Info className="h-3.5 w-3.5 stroke-[1.5] text-tertiary" />
-                              <span className="p-0.5 text-xs text-tertiary">{t("common.no_links_added_yet")}</span>
+                              <span className="p-0.5 text-11 text-tertiary">{t("common.no_links_added_yet")}</span>
                             </div>
                             {isEditingAllowed && !isArchived && (
                               <button
-                                className="flex items-center gap-1.5 text-sm font-medium text-custom-primary-100"
+                                className="flex items-center gap-1.5 text-13 font-medium text-custom-primary-100"
                                 onClick={() => setModuleLinkModal(true)}
                               >
                                 <Plus className="h-3 w-3" />

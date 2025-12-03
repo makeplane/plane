@@ -211,7 +211,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
         <form ref={formRef} onSubmit={handleFormSubmit} className="flex flex-col w-full">
           <div className="space-y-5 p-5 rounded-t-lg bg-custom-background-100">
             <div className="flex items-center justify-between gap-2">
-              <h3 className="text-xl font-medium text-secondary">{t("inbox_issue.modal.title")}</h3>
+              <h3 className="text-18 font-medium text-secondary">{t("inbox_issue.modal.title")}</h3>
               {duplicateIssues?.length > 0 && (
                 <DeDupeButtonRoot
                   workspaceSlug={workspaceSlug}
@@ -249,7 +249,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
               tabIndex={getIndex("create_more")}
             >
               <ToggleSwitch value={createMore} onChange={() => {}} size="sm" />
-              <span className="text-xs">{t("create_more")}</span>
+              <span className="text-11">{t("create_more")}</span>
             </div>
             <div className="flex items-center gap-3">
               <Button

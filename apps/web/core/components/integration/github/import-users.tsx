@@ -21,7 +21,7 @@ export function GithubImportUsers({ handleStepChange, users, setUsers, watch }: 
   return (
     <div className="mt-6">
       <div>
-        <div className="mb-2 grid grid-cols-3 gap-2 text-sm font-medium">
+        <div className="mb-2 grid grid-cols-3 gap-2 text-13 font-medium">
           <div className="text-secondary">Name</div>
           <div className="text-secondary">Import as...</div>
           <div className="text-right">{users.filter((u) => u.import !== false).length} users selected</div>

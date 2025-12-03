@@ -128,7 +128,7 @@ export function InstanceSignInForm() {
             <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
 
             <div className="w-full space-y-1">
-              <label className="text-sm text-tertiary font-medium" htmlFor="email">
+              <label className="text-13 text-tertiary font-medium" htmlFor="email">
                 Email <span className="text-red-500">*</span>
               </label>
               <Input
@@ -146,7 +146,7 @@ export function InstanceSignInForm() {
             </div>
 
             <div className="w-full space-y-1">
-              <label className="text-sm text-tertiary font-medium" htmlFor="password">
+              <label className="text-13 text-tertiary font-medium" htmlFor="password">
                 Password <span className="text-red-500">*</span>
               </label>
               <div className="relative">

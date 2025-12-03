@@ -27,10 +27,10 @@ export interface IBadgeStyling {
 
 // TODO: convert them to objects instead of enums
 enum badgeSizeStyling {
-  sm = `px-2.5 py-1 font-medium text-xs rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
-  md = `px-4 py-1.5 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
-  lg = `px-4 py-2 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
-  xl = `px-5 py-3 font-medium text-sm rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
+  sm = `px-2.5 py-1 font-medium text-11 rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
+  md = `px-4 py-1.5 font-medium text-13 rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
+  lg = `px-4 py-2 font-medium text-13 rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
+  xl = `px-5 py-3 font-medium text-13 rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
 }
 
 // TODO: convert them to objects instead of enums

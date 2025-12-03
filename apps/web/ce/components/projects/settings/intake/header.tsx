@@ -57,7 +57,7 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
           {loader === "pagination-loading" && (
             <div className="flex items-center gap-1.5 text-tertiary">
               <RefreshCcw className="h-3.5 w-3.5 animate-spin" />
-              <p className="text-sm">{t("syncing")}...</p>
+              <p className="text-13">{t("syncing")}...</p>
             </div>
           )}
         </div>

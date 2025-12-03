@@ -102,7 +102,7 @@ export const IssueActivity = observer(function IssueActivity(props: TIssueActivi
     <div className="space-y-4 pt-3">
       {/* header */}
       <div className="flex items-center justify-between">
-        <div className="text-lg text-primary">{t("common.activity")}</div>
+        <div className="text-16 text-primary">{t("common.activity")}</div>
         <div className="flex items-center gap-2">
           {isWorklogButtonEnabled && (
             <IssueActivityWorklogCreateButton

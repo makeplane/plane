@@ -30,7 +30,7 @@ export function BubbleMenuColorSelector(props: Props) {
       classNames={{
         buttonContainer: "h-full",
         button:
-          "flex items-center gap-1 h-full whitespace-nowrap px-3 text-sm font-medium text-tertiary hover:bg-custom-background-80 active:bg-custom-background-80 rounded transition-colors",
+          "flex items-center gap-1 h-full whitespace-nowrap px-3 text-13 font-medium text-tertiary hover:bg-custom-background-80 active:bg-custom-background-80 rounded transition-colors",
       }}
       menuButton={
         <>
@@ -60,7 +60,7 @@ export function BubbleMenuColorSelector(props: Props) {
     >
       <section className="mt-1 rounded-md border-[0.5px] border-strong bg-custom-background-100 p-2 space-y-2 shadow-custom-shadow-rg">
         <div className="space-y-1.5">
-          <p className="text-xs text-tertiary font-semibold">Text colors</p>
+          <p className="text-11 text-tertiary font-semibold">Text colors</p>
           <div className="flex items-center gap-2">
             {COLORS_LIST.map((color) => (
               <button
@@ -83,7 +83,7 @@ export function BubbleMenuColorSelector(props: Props) {
           </div>
         </div>
         <div className="space-y-1.5">
-          <p className="text-xs text-tertiary font-semibold">Background colors</p>
+          <p className="text-11 text-tertiary font-semibold">Background colors</p>
           <div className="flex items-center gap-2">
             {COLORS_LIST.map((color) => (
               <button

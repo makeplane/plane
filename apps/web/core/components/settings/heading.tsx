@@ -31,8 +31,8 @@ export function SettingsHeading({
       )}
     >
       <div className="flex flex-col items-start gap-1">
-        {typeof title === "string" ? <h3 className="text-xl font-medium">{title}</h3> : title}
-        {description && <div className="text-sm text-tertiary">{description}</div>}
+        {typeof title === "string" ? <h3 className="text-18 font-medium">{title}</h3> : title}
+        {description && <div className="text-13 text-tertiary">{description}</div>}
       </div>
       {showButton && customButton}
       {button && showButton && (

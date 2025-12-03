@@ -182,7 +182,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
       />
       <div className="w-full flex text-custom-primary-200 bg-custom-primary-100/10 rounded-md p-2 gap-2 items-center mb-4">
         <InfoIcon className="h-4 w-4 flex-shrink-0" />
-        <div className="text-sm font-medium flex-1">{t("settings_moved_to_preferences")}</div>
+        <div className="text-13 font-medium flex-1">{t("settings_moved_to_preferences")}</div>
         <Link
           href={`/${workspaceSlug}/settings/account/preferences`}
           className={cn(getButtonStyling("neutral-primary", "sm"))}
@@ -239,16 +239,16 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
           </div>
           <div className="item-center mt-6 flex justify-between">
             <div className="flex flex-col">
-              <div className="item-center flex text-lg font-medium text-secondary">
+              <div className="item-center flex text-16 font-medium text-secondary">
                 <span>{`${watch("first_name")} ${watch("last_name")}`}</span>
               </div>
-              <span className="text-sm text-tertiary tracking-tight">{watch("email")}</span>
+              <span className="text-13 text-tertiary tracking-tight">{watch("email")}</span>
             </div>
           </div>
           <div className="flex flex-col gap-2">
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-4">
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm font-medium text-secondary">
+                <h4 className="text-13 font-medium text-secondary">
                   {t("first_name")}&nbsp;
                   <span className="text-red-500">*</span>
                 </h4>
@@ -274,10 +274,10 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
                     />
                   )}
                 />
-                {errors.first_name && <span className="text-xs text-red-500">{errors.first_name.message}</span>}
+                {errors.first_name && <span className="text-11 text-red-500">{errors.first_name.message}</span>}
               </div>
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm font-medium text-secondary">{t("last_name")}</h4>
+                <h4 className="text-13 font-medium text-secondary">{t("last_name")}</h4>
                 <Controller
                   control={control}
                   name="last_name"
@@ -299,7 +299,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
                 />
               </div>
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm font-medium text-secondary">
+                <h4 className="text-13 font-medium text-secondary">
                   {t("display_name")}&nbsp;
                   <span className="text-red-500">*</span>
                 </h4>
@@ -332,10 +332,10 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
                     />
                   )}
                 />
-                {errors?.display_name && <span className="text-xs text-red-500">{errors?.display_name?.message}</span>}
+                {errors?.display_name && <span className="text-11 text-red-500">{errors?.display_name?.message}</span>}
               </div>
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm font-medium text-secondary">
+                <h4 className="text-13 font-medium text-secondary">
                   {t("auth.common.email.label")}&nbsp;
                   <span className="text-red-500">*</span>
                 </h4>
@@ -365,7 +365,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
                 {isSMTPConfigured && (
                   <button
                     type="button"
-                    className="text-xs underline btn w-fit text-secondary"
+                    className="text-11 underline btn w-fit text-secondary"
                     onClick={() => setIsChangeEmailModalOpen(true)}
                   >
                     {t("account_settings.profile.change_email_modal.title")}
@@ -392,7 +392,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
         {({ open }) => (
           <>
             <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">
-              <span className="text-lg font-medium tracking-tight">{t("deactivate_account")}</span>
+              <span className="text-16 font-medium tracking-tight">{t("deactivate_account")}</span>
               <ChevronDownIcon className={`h-5 w-5 transition-all ${open ? "rotate-180" : ""}`} />
             </Disclosure.Button>
             <Transition
@@ -406,7 +406,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
             >
               <Disclosure.Panel>
                 <div className="flex flex-col gap-8">
-                  <span className="text-sm tracking-tight">{t("deactivate_account_description")}</span>
+                  <span className="text-13 tracking-tight">{t("deactivate_account_description")}</span>
                   <div>
                     <Button
                       variant="danger"

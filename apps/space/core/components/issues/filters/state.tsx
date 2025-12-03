@@ -59,7 +59,7 @@ export const FilterState = observer(function FilterState(props: Props) {
                 {filteredOptions.length > 5 && (
                   <button
                     type="button"
-                    className="ml-8 text-xs font-medium text-custom-primary-100"
+                    className="ml-8 text-11 font-medium text-custom-primary-100"
                     onClick={handleViewToggle}
                   >
                     {itemsToRender === filteredOptions.length ? "View less" : "View all"}
@@ -67,7 +67,7 @@ export const FilterState = observer(function FilterState(props: Props) {
                 )}
               </>
             ) : (
-              <p className="text-xs italic text-placeholder">No matches found</p>
+              <p className="text-11 italic text-placeholder">No matches found</p>
             )
           ) : (
             <Loader className="space-y-2">

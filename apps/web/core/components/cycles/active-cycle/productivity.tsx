@@ -48,7 +48,7 @@ export const ActiveCycleProductivity = observer(function ActiveCycleProductivity
     <div className="flex flex-col min-h-[17rem] gap-5 px-3.5 py-4 bg-custom-background-100 border border-subtle-1 rounded-lg">
       <div className="relative flex items-center justify-between gap-4">
         <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle?.id}`}>
-          <h3 className="text-base text-tertiary font-semibold">{t("project_cycles.active_cycle.issue_burndown")}</h3>
+          <h3 className="text-14 text-tertiary font-semibold">{t("project_cycles.active_cycle.issue_burndown")}</h3>
         </Link>
         <EstimateTypeDropdown value={estimateType} onChange={onChange} cycleId={cycle.id} projectId={projectId} />
       </div>
@@ -57,7 +57,7 @@ export const ActiveCycleProductivity = observer(function ActiveCycleProductivity
         {cycle.total_issues > 0 ? (
           <>
             <div className="h-full w-full px-2">
-              <div className="flex items-center justify-end gap-4 py-1 text-xs text-tertiary">
+              <div className="flex items-center justify-end gap-4 py-1 text-11 text-tertiary">
                 {estimateType === "points" ? (
                   <span>{`Pending points - ${cycle.backlog_estimate_points + cycle.unstarted_estimate_points + cycle.started_estimate_points}`}</span>
                 ) : (

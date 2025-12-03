@@ -50,7 +50,7 @@ export function ModuleAppliedFiltersList(props: Props) {
           return (
             <Tag key={filterKey}>
               <div className="flex flex-wrap items-center gap-1.5">
-                <span className="text-xs text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
+                <span className="text-11 text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
                 {filterKey === "status" && (
                   <AppliedStatusFilters
                     editable={isEditingAllowed}
@@ -91,8 +91,8 @@ export function ModuleAppliedFiltersList(props: Props) {
             className="flex flex-wrap items-center gap-2 rounded-md border border-subtle-1 px-2 py-1 capitalize"
           >
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-xs text-tertiary">Modules</span>
-              <div className="flex items-center gap-1 rounded p-1 text-xs bg-custom-background-80">
+              <span className="text-11 text-tertiary">Modules</span>
+              <div className="flex items-center gap-1 rounded p-1 text-11 bg-custom-background-80">
                 Favorite
                 {isEditingAllowed && (
                   <button

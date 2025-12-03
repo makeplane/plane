@@ -23,7 +23,7 @@ export const AppliedModuleFilters = observer(function AppliedModuleFilters(props
         if (!moduleDetails) return null;
 
         return (
-          <div key={moduleId} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs truncate">
+          <div key={moduleId} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-11 truncate">
             <ModuleIcon className="h-3 w-3 flex-shrink-0" />
             <span className="normal-case truncate">{moduleDetails.name}</span>
             {editable && (

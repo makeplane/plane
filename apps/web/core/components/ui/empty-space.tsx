@@ -21,15 +21,15 @@ function EmptySpace({ title, description, children, Icon, link }: EmptySpaceProp
           </div>
         ) : null}
 
-        <h2 className="text-lg font-medium text-primary">{title}</h2>
-        <div className="mt-1 text-sm text-secondary">{description}</div>
+        <h2 className="text-16 font-medium text-primary">{title}</h2>
+        <div className="mt-1 text-13 text-secondary">{description}</div>
         <ul role="list" className="mt-6 divide-y divide-subtle-1 border-b border-t border-subtle-1">
           {children}
         </ul>
         {link ? (
           <div className="mt-6 flex">
             <Link href={link.href}>
-              <span className="text-sm font-medium text-custom-primary hover:text-custom-primary">
+              <span className="text-13 font-medium text-custom-primary hover:text-custom-primary">
                 {link.text}
                 <span aria-hidden="true"> &rarr;</span>
               </span>
@@ -58,8 +58,8 @@ function EmptySpaceItem({ title, description, Icon, action, href }: EmptySpaceIt
         </span>
       </div>
       <div className="min-w-0 flex-1 text-secondary">
-        <div className="text-sm font-medium group-hover:text-primary">{title}</div>
-        {description ? <div className="text-sm">{description}</div> : null}
+        <div className="text-13 font-medium group-hover:text-primary">{title}</div>
+        {description ? <div className="text-13">{description}</div> : null}
       </div>
       <div className="flex-shrink-0 self-center">
         <ChevronRightIcon className="h-5 w-5 text-secondary group-hover:text-primary" aria-hidden="true" />

@@ -61,7 +61,7 @@ export function PageForm(props: Props) {
   return (
     <form onSubmit={handlePageFormSubmit}>
       <div className="space-y-5 p-5">
-        <h3 className="text-xl font-medium text-secondary">Create page</h3>
+        <h3 className="text-18 font-medium text-secondary">Create page</h3>
         <div className="flex items-start gap-2 h-9 w-full">
           <EmojiPicker
             isOpen={isOpen}
@@ -113,13 +113,13 @@ export function PageForm(props: Props) {
               value={formData.name}
               onChange={(e) => handleFormData("name", e.target.value)}
               placeholder="Title"
-              className="w-full resize-none text-base"
+              className="w-full resize-none text-14"
               tabIndex={getIndex("name")}
               required
               autoFocus
             />
             {isTitleLengthMoreThan255Character && (
-              <span className="text-xs text-red-500">Max length of the name should be less than 255 characters</span>
+              <span className="text-11 text-red-500">Max length of the name should be less than 255 characters</span>
             )}
           </div>
         </div>
@@ -132,7 +132,7 @@ export function PageForm(props: Props) {
             accessSpecifiers={PAGE_ACCESS_SPECIFIERS}
             isMobile={isMobile}
           />
-          <h6 className="text-xs font-medium">{t(i18n_access_label || "")}</h6>
+          <h6 className="text-11 font-medium">{t(i18n_access_label || "")}</h6>
         </div>
         <div className="flex items-center justify-end gap-2">
           <Button variant="neutral-primary" size="sm" onClick={handleModalClose} tabIndex={getIndex("cancel")}>

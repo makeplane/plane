@@ -64,7 +64,7 @@ export const NavItemChildren = observer(function NavItemChildren(props: { projec
                         "text-secondary hover:bg-custom-sidebar-background-90 active:bg-custom-sidebar-background-90":
                           !isActive,
                       },
-                      "text-xs font-medium"
+                      "text-11 font-medium"
                     )}
                   >
                     {t(getProjectSettingsPageLabelI18nKey(link.key, link.i18n_label))}

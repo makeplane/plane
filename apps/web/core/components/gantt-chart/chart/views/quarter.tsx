@@ -33,19 +33,19 @@ export const QuarterChartView = observer(function QuarterChartView(_props: any) 
               {/** Main Quarter Title */}
               <div className="w-full inline-flex h-7 justify-between">
                 <div
-                  className="sticky flex items-center font-normal z-[1] my-1 whitespace-nowrap px-3 py-1 text-base capitalize bg-custom-background-100 text-secondary"
+                  className="sticky flex items-center font-regular z-[1] my-1 whitespace-nowrap px-3 py-1 text-14 capitalize bg-custom-background-100 text-secondary"
                   style={{
                     left: `${SIDEBAR_WIDTH}px`,
                   }}
                 >
                   {quarterBlock?.title}
                   {quarterBlock.today && (
-                    <span className={cn("rounded ml-2 font-medium  bg-custom-primary-100 px-1 text-2xs text-white")}>
+                    <span className={cn("rounded ml-2 font-medium  bg-custom-primary-100 px-1 text-9 text-white")}>
                       Current
                     </span>
                   )}
                 </div>
-                <div className="sticky whitespace-nowrap px-3 py-2 text-xs capitalize text-placeholder">
+                <div className="sticky whitespace-nowrap px-3 py-2 text-11 capitalize text-placeholder">
                   {quarterBlock.shortTitle}
                 </div>
               </div>
@@ -62,7 +62,7 @@ export const QuarterChartView = observer(function QuarterChartView(_props: any) 
                     )}
                     style={{ width: `${currentViewData?.data.dayWidth * monthBlock.days}px` }}
                   >
-                    <div className="space-x-1 flex items-center justify-center text-xs font-medium h-full">
+                    <div className="space-x-1 flex items-center justify-center text-11 font-medium h-full">
                       <span
                         className={cn({
                           "rounded-lg bg-custom-primary-100 px-2 text-white": monthBlock.today,

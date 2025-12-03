@@ -221,7 +221,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
               <div className="flex w-full flex-col justify-between gap-0.5 truncate">
                 <h3 className="truncate font-semibold text-white">{project.name}</h3>
                 <span className="flex items-center gap-1.5">
-                  <p className="text-xs font-medium text-white">{project.identifier} </p>
+                  <p className="text-11 font-medium text-white">{project.identifier} </p>
                   {project.network === 0 && <Lock className="h-2.5 w-2.5 text-white " />}
                 </span>
               </div>
@@ -264,7 +264,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
             "opacity-90": isArchived,
           })}
         >
-          <p className="line-clamp-2 break-words text-sm text-tertiary">
+          <p className="line-clamp-2 break-words text-13 text-tertiary">
             {project.description && project.description.trim() !== ""
               ? project.description
               : `Created on ${renderFormattedDate(project.created_at)}`}
@@ -292,16 +292,16 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                     </AvatarGroup>
                   </div>
                 ) : (
-                  <span className="text-sm italic text-placeholder">No Member Yet</span>
+                  <span className="text-13 italic text-placeholder">No Member Yet</span>
                 )}
               </Tooltip>
-              {isArchived && <div className="text-xs text-placeholder font-medium">Archived</div>}
+              {isArchived && <div className="text-11 text-placeholder font-medium">Archived</div>}
             </div>
             {isArchived ? (
               hasAdminRole && (
                 <div className="flex items-center justify-center gap-2">
                   <div
-                    className="flex items-center justify-center text-xs text-placeholder font-medium hover:text-secondary"
+                    className="flex items-center justify-center text-11 text-placeholder font-medium hover:text-secondary"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -314,7 +314,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                     </div>
                   </div>
                   <div
-                    className="flex items-center justify-center text-xs text-placeholder font-medium hover:text-secondary"
+                    className="flex items-center justify-center text-11 text-placeholder font-medium hover:text-secondary"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -339,7 +339,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                       <Settings className="h-3.5 w-3.5" />
                     </Link>
                   ) : (
-                    <span className="flex items-center gap-1 text-placeholder text-sm">
+                    <span className="flex items-center gap-1 text-placeholder text-13">
                       <Check className="h-3.5 w-3.5" />
                       Joined
                     </span>

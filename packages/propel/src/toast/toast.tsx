@@ -161,7 +161,7 @@ function ToastRender({ id, toast }: { id: React.Key; toast: BaseToast.Root.Toast
         <div className="w-full h-full flex items-center justify-center px-4 py-2">
           {data.icon && <div className="flex items-center justify-center">{data.icon}</div>}
           <div className={cn("w-full flex items-center gap-0.5 pr-1", data.icon ? "pl-4" : "pl-1")}>
-            <div className={cn("grow text-sm font-semibold", data.textColorClassName)}>
+            <div className={cn("grow text-13 font-semibold", data.textColorClassName)}>
               {toastData.title ?? "Loading..."}
             </div>
             <BaseToast.Close
@@ -181,11 +181,11 @@ function ToastRender({ id, toast }: { id: React.Key; toast: BaseToast.Root.Toast
             <div className="flex items-center w-full">
               {data.icon && <div className="flex items-center justify-center">{data.icon}</div>}
               <div className={cn("flex flex-col gap-0.5 pr-1", data.icon ? "pl-4" : "pl-1")}>
-                <BaseToast.Title className={cn("text-sm font-semibold", data.textColorClassName)}>
+                <BaseToast.Title className={cn("text-13 font-semibold", data.textColorClassName)}>
                   {toastData.title}
                 </BaseToast.Title>
                 {toastData.message && (
-                  <BaseToast.Description className="text-toast-text-secondary text-xs font-medium">
+                  <BaseToast.Description className="text-toast-text-secondary text-11 font-medium">
                     {toastData.message}
                   </BaseToast.Description>
                 )}

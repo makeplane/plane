@@ -20,7 +20,7 @@ function CalendarDay() {
 export function CalendarLayoutLoader() {
   return (
     <div className="h-full w-full overflow-y-auto bg-custom-background-100 animate-pulse">
-      <span className="relative grid divide-x-[0.5px] divide-subtle-1 text-sm font-medium grid-cols-5">
+      <span className="relative grid divide-x-[0.5px] divide-subtle-1 text-13 font-medium grid-cols-5">
         {range(5).map((index) => (
           <span key={index} className="h-11 w-full bg-custom-background-80" />
         ))}

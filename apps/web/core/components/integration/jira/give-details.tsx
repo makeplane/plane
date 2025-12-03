@@ -30,7 +30,7 @@ export const JiraGetImportDetail = observer(function JiraGetImportDetail() {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Jira Personal Access Token</h3>
-          <p className="text-sm text-secondary">
+          <p className="text-13 text-secondary">
             Get to know your access token by navigating to{" "}
             <Link href="https://id.atlassian.com/manage-profile/security/api-tokens" target="_blank" rel="noreferrer">
               <span className="text-custom-primary underline">Atlassian Settings</span>
@@ -59,13 +59,13 @@ export const JiraGetImportDetail = observer(function JiraGetImportDetail() {
               />
             )}
           />
-          {errors.metadata?.api_token && <p className="text-xs text-red-500">{errors.metadata.api_token.message}</p>}
+          {errors.metadata?.api_token && <p className="text-11 text-red-500">{errors.metadata.api_token.message}</p>}
         </div>
       </div>
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Jira Project Key</h3>
-          <p className="text-sm text-secondary">If XXX-123 is your work item, then enter XXX</p>
+          <p className="text-13 text-secondary">If XXX-123 is your work item, then enter XXX</p>
         </div>
         <div className="col-span-1">
           <Controller
@@ -88,14 +88,14 @@ export const JiraGetImportDetail = observer(function JiraGetImportDetail() {
             )}
           />
           {errors.metadata?.project_key && (
-            <p className="text-xs text-red-500">{errors.metadata.project_key.message}</p>
+            <p className="text-11 text-red-500">{errors.metadata.project_key.message}</p>
           )}
         </div>
       </div>
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Jira Email Address</h3>
-          <p className="text-sm text-secondary">Enter the Email account that you use in Jira account</p>
+          <p className="text-13 text-secondary">Enter the Email account that you use in Jira account</p>
         </div>
         <div className="col-span-1">
           <Controller
@@ -118,13 +118,13 @@ export const JiraGetImportDetail = observer(function JiraGetImportDetail() {
               />
             )}
           />
-          {errors.metadata?.email && <p className="text-xs text-red-500">{errors.metadata.email.message}</p>}
+          {errors.metadata?.email && <p className="text-11 text-red-500">{errors.metadata.email.message}</p>}
         </div>
       </div>
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Jira Installation or Cloud Host Name</h3>
-          <p className="text-sm text-secondary">Enter your companies cloud host name</p>
+          <p className="text-13 text-secondary">Enter your companies cloud host name</p>
         </div>
         <div className="col-span-1">
           <Controller
@@ -147,14 +147,14 @@ export const JiraGetImportDetail = observer(function JiraGetImportDetail() {
             )}
           />
           {errors.metadata?.cloud_hostname && (
-            <p className="text-xs text-red-500">{errors.metadata.cloud_hostname.message}</p>
+            <p className="text-11 text-red-500">{errors.metadata.cloud_hostname.message}</p>
           )}
         </div>
       </div>
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Import to project</h3>
-          <p className="text-sm text-secondary">Select which project you want to import to.</p>
+          <p className="text-13 text-secondary">Select which project you want to import to.</p>
         </div>
         <div className="col-span-1">
           <Controller

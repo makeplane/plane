@@ -51,7 +51,7 @@ export function IconRoot(props: IconRootProps) {
                 placeholder="Search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="block rounded-md bg-transparent placeholder-custom-text-400 focus:outline-none px-3 py-2 border-[0.5px] border-subtle-1 text-[1rem] border-none p-0 h-full w-full"
+                className="block rounded-md bg-transparent placeholder-custom-text-400 focus:outline-none px-3 py-2 border-[0.5px] border-subtle-1 text-16 border-none p-0 h-full w-full"
               />
             </div>
           </div>
@@ -65,8 +65,8 @@ export function IconRoot(props: IconRootProps) {
                   backgroundColor: `#${hexValue}`,
                 }}
               />
-              <span className="text-xs text-tertiary flex-shrink-0">HEX</span>
-              <span className="text-xs text-secondary flex-shrink-0 -mr-1">#</span>
+              <span className="text-11 text-tertiary flex-shrink-0">HEX</span>
+              <span className="text-11 text-secondary flex-shrink-0 -mr-1">#</span>
               <input
                 type="text"
                 value={hexValue}
@@ -75,7 +75,7 @@ export function IconRoot(props: IconRootProps) {
                   setHexValue(value);
                   if (/^[0-9A-Fa-f]{6}$/.test(value)) setActiveColor(adjustColorForContrast(`#${value}`));
                 }}
-                className="block placeholder-custom-text-400 focus:outline-none px-3 py-2 border-[0.5px] border-subtle-1 flex-grow pl-0 text-xs text-secondary rounded border-none bg-transparent ring-0"
+                className="block placeholder-custom-text-400 focus:outline-none px-3 py-2 border-[0.5px] border-subtle-1 flex-grow pl-0 text-11 text-secondary rounded border-none bg-transparent ring-0"
                 autoFocus
               />
             </div>
@@ -107,13 +107,13 @@ export function IconRoot(props: IconRootProps) {
             {showHexInput ? (
               <span className="conical-gradient h-4 w-4 rounded-full" />
             ) : (
-              <span className="text-tertiary text-[0.6rem] grid place-items-center">#</span>
+              <span className="text-tertiary text-10 grid place-items-center">#</span>
             )}
           </button>
         </div>
         <div className="flex items-center gap-2 w-full pl-4 pr-3 py-1 h-6">
           <InfoIcon className="h-3 w-3" />
-          <p className="text-xs"> Colors will be adjusted to ensure sufficient contrast.</p>
+          <p className="text-11"> Colors will be adjusted to ensure sufficient contrast.</p>
         </div>
       </div>
       <div className="grid grid-cols-8 gap-1 px-2.5 justify-items-center mt-2">

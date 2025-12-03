@@ -33,7 +33,7 @@ export const ProjectFeatureUpdate = observer(function ProjectFeatureUpdate(props
         <ProjectFeaturesList workspaceSlug={workspaceSlug} projectId={projectId} isAdmin />
       </Row>
       <div className="flex items-center justify-between gap-2 mt-4 px-6 py-4 border-t border-subtle">
-        <div className="flex gap-1 text-sm text-tertiary font-medium">
+        <div className="flex gap-1 text-13 text-tertiary font-medium">
           {t("congrats")}
           <Logo logo={currentProjectDetails.logo_props} /> <p className="break-all">{currentProjectDetails.name}</p>{" "}
           {t("created").toLowerCase()}.

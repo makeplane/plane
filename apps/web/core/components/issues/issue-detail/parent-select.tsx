@@ -93,7 +93,7 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
                     issueTypeId={parentIssue.type_id}
                     projectIdentifier={parentIssueProjectDetails?.identifier}
                     issueSequenceId={parentIssue.sequence_id}
-                    textContainerClassName="text-xs font-medium text-green-700"
+                    textContainerClassName="text-11 font-medium text-green-700"
                   />
                 )}
               </Link>
@@ -114,7 +114,7 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
             )}
           </div>
         ) : (
-          <span className="text-sm text-placeholder">{t("issue.add.parent")}</span>
+          <span className="text-13 text-placeholder">{t("issue.add.parent")}</span>
         )}
         {!disabled && (
           <span

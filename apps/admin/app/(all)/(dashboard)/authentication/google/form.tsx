@@ -172,7 +172,7 @@ export function InstanceGoogleConfigForm(props: Props) {
       <div className="flex flex-col gap-8">
         <div className="grid grid-cols-2 gap-x-12 gap-y-8 w-full">
           <div className="flex flex-col gap-y-4 col-span-2 md:col-span-1 pt-1">
-            <div className="pt-2.5 text-xl font-medium">Google-provided details for Plane</div>
+            <div className="pt-2.5 text-18 font-medium">Google-provided details for Plane</div>
             {GOOGLE_FORM_FIELDS.map((field) => (
               <ControllerInput
                 key={field.key}
@@ -202,7 +202,7 @@ export function InstanceGoogleConfigForm(props: Props) {
             </div>
           </div>
           <div className="col-span-2 md:col-span-1 flex flex-col gap-y-6">
-            <div className="pt-2 text-xl font-medium">Plane-provided details for Google</div>
+            <div className="pt-2 text-18 font-medium">Plane-provided details for Google</div>
 
             <div className="flex flex-col gap-y-4">
               {/* common service details */}
@@ -214,7 +214,7 @@ export function InstanceGoogleConfigForm(props: Props) {
 
               {/* web service details */}
               <div className="flex flex-col rounded-lg overflow-hidden">
-                <div className="px-6 py-3 bg-custom-background-80/60 font-medium text-xs uppercase flex items-center gap-x-3 text-secondary">
+                <div className="px-6 py-3 bg-custom-background-80/60 font-medium text-11 uppercase flex items-center gap-x-3 text-secondary">
                   <Monitor className="w-3 h-3" />
                   Web
                 </div>

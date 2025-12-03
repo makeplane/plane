@@ -76,7 +76,7 @@ function WorkspaceInvitationPage() {
         {invitationDetail && !invitationDetail.responded_at ? (
           error ? (
             <div className="flex w-full flex-col space-y-4 rounded border border-subtle-1 bg-custom-background-100 px-4 py-8 text-center shadow-2xl md:w-1/3">
-              <h2 className="text-xl uppercase">INVITATION NOT FOUND</h2>
+              <h2 className="text-18 uppercase">INVITATION NOT FOUND</h2>
             </div>
           ) : (
             <EmptySpace

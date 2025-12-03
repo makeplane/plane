@@ -56,11 +56,11 @@ export const EstimatePointItemPreview = observer(function EstimatePointItemPrevi
   return (
     <div>
       {!estimatePointEditToggle && !estimatePointDeleteToggle && (
-        <div className="border border-subtle-1 rounded relative flex items-center px-1 gap-2 text-base my-1">
+        <div className="border border-subtle-1 rounded relative flex items-center px-1 gap-2 text-14 my-1">
           <div className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer">
             <GripVertical size={14} className="text-secondary" />
           </div>
-          <div ref={EstimatePointValueRef} className="py-2 w-full text-sm">
+          <div ref={EstimatePointValueRef} className="py-2 w-full text-13">
             {estimatePoint?.value ? (
               `${estimateType === EEstimateSystem.TIME ? convertMinutesToHoursMinutesString(Number(estimatePoint?.value)) : estimatePoint?.value}`
             ) : (

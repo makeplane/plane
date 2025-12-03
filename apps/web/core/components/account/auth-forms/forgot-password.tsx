@@ -92,7 +92,7 @@ export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
       <AuthFormHeader title="Reset password" description="Regain access to your account." />
       <form onSubmit={handleSubmit(handleForgotPassword)} className="space-y-4">
         <div className="space-y-1">
-          <label className="text-sm font-medium text-tertiary" htmlFor="email">
+          <label className="text-13 font-medium text-tertiary" htmlFor="email">
             {t("auth.common.email.label")}
           </label>
           <Controller
@@ -119,7 +119,7 @@ export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
             )}
           />
           {resendTimerCode > 0 && (
-            <p className="flex items-start w-full gap-1 px-1 text-xs font-medium text-green-700">
+            <p className="flex items-start w-full gap-1 px-1 text-11 font-medium text-green-700">
               <CircleCheck height={12} width={12} className="mt-0.5" />
               {t("auth.forgot_password.email_sent")}
             </p>

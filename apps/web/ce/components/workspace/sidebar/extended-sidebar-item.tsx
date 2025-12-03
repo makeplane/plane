@@ -188,7 +188,7 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
           <Link href={itemHref} onClick={() => handleLinkClick()} className="group flex-grow">
             <div className="flex items-center gap-1.5 py-[1px]">
               {icon}
-              <p className="text-sm leading-5 font-medium">{t(item.labelTranslationKey)}</p>
+              <p className="text-13 leading-5 font-medium">{t(item.labelTranslationKey)}</p>
             </div>
           </Link>
           <div className="flex items-center gap-2">

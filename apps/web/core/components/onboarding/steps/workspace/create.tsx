@@ -127,7 +127,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
   if (!isWorkspaceCreationEnabled) {
     return (
       <div className="flex flex-col gap-10">
-        <span className="text-center text-base text-tertiary">
+        <span className="text-center text-14 text-tertiary">
           You don&apos;t seem to have any invites to a workspace and your instance admin has restricted creation of new
           workspaces. Please ask a workspace owner or admin to invite you to a workspace first and come back to this
           screen to join.
@@ -141,7 +141,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-2">
           <label
-            className="text-sm text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="name"
           >
             {t("workspace_creation.form.name.label")}
@@ -186,11 +186,11 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
               </div>
             )}
           />
-          {errors.name && <span className="text-sm text-red-500">{errors.name.message}</span>}
+          {errors.name && <span className="text-13 text-red-500">{errors.name.message}</span>}
         </div>
         <div className="flex flex-col gap-2">
           <label
-            className="text-sm text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="slug"
           >
             {t("workspace_creation.form.url.label")}
@@ -237,18 +237,18 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
               </div>
             )}
           />
-          <p className="text-sm text-tertiary">{t("workspace_creation.form.url.edit_slug")}</p>
+          <p className="text-13 text-tertiary">{t("workspace_creation.form.url.edit_slug")}</p>
           {slugError && (
-            <p className="-mt-3 text-sm text-red-500">{t("workspace_creation.errors.validation.url_already_taken")}</p>
+            <p className="-mt-3 text-13 text-red-500">{t("workspace_creation.errors.validation.url_already_taken")}</p>
           )}
           {invalidSlug && (
-            <p className="text-sm text-red-500">{t("workspace_creation.errors.validation.url_alphanumeric")}</p>
+            <p className="text-13 text-red-500">{t("workspace_creation.errors.validation.url_alphanumeric")}</p>
           )}
-          {errors.slug && <span className="text-sm text-red-500">{errors.slug.message}</span>}
+          {errors.slug && <span className="text-13 text-red-500">{errors.slug.message}</span>}
         </div>
         <div className="flex flex-col gap-2">
           <label
-            className="text-sm text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="organization_size"
           >
             {t("workspace_creation.form.organization_size.label")}
@@ -270,7 +270,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                           e.stopPropagation();
                           onChange(size);
                         }}
-                        className={`text-sm px-3 py-2 rounded-lg border transition-all duration-200 flex gap-1 items-center justify-between ${
+                        className={`text-13 px-3 py-2 rounded-lg border transition-all duration-200 flex gap-1 items-center justify-between ${
                           isSelected
                             ? "border-subtle-1 bg-custom-background-80 text-secondary"
                             : "border-subtle-1 hover:border-strong text-tertiary"
@@ -286,7 +286,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
               )}
             />
             {errors.organization_size && (
-              <span className="text-sm text-red-500">{errors.organization_size.message}</span>
+              <span className="text-13 text-red-500">{errors.organization_size.message}</span>
             )}
           </div>
         </div>

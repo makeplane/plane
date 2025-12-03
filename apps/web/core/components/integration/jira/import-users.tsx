@@ -61,7 +61,7 @@ export function JiraImportUsers() {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Users</h3>
-          <p className="text-sm text-secondary">Update, invite or choose not to invite assignee</p>
+          <p className="text-13 text-secondary">Update, invite or choose not to invite assignee</p>
         </div>
         <div className="col-span-1">
           <Controller
@@ -75,8 +75,8 @@ export function JiraImportUsers() {
       {watch("data.invite_users") && (
         <div className="pt-6">
           <div className="grid grid-cols-3 gap-3">
-            <div className="col-span-1 text-sm text-secondary">Name</div>
-            <div className="col-span-1 text-sm text-secondary">Import as</div>
+            <div className="col-span-1 text-13 text-secondary">Name</div>
+            <div className="col-span-1 text-13 text-secondary">Import as</div>
           </div>
 
           <div className="mt-5 space-y-3">

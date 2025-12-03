@@ -27,7 +27,7 @@ export function ProfileNavbar(props: Props) {
         {tabsList.map((tab) => (
           <Link key={tab.route} href={`/${workspaceSlug}/profile/${userId}/${tab.route}`}>
             <span
-              className={`flex whitespace-nowrap border-b-2 p-4 text-sm font-medium outline-none ${
+              className={`flex whitespace-nowrap border-b-2 p-4 text-13 font-medium outline-none ${
                 pathname === `/${workspaceSlug}/profile/${userId}${tab.selected}`
                   ? "border-custom-primary-100 text-custom-primary-100"
                   : "border-transparent"

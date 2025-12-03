@@ -47,7 +47,7 @@ export function CommandMenuItem(props: Props) {
     <button
       type="button"
       id={`item-${sectionIndex}-${itemIndex}`}
-      className={cn("flex items-center gap-2 w-full rounded px-1 py-1.5 text-sm text-left truncate text-secondary", {
+      className={cn("flex items-center gap-2 w-full rounded px-1 py-1.5 text-13 text-left truncate text-secondary", {
         "bg-custom-background-80": isSelected,
       })}
       onClick={onClick}

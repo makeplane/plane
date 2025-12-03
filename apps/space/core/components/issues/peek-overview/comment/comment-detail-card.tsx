@@ -87,10 +87,10 @@ export const CommentCard = observer(function CommentCard(props: Props) {
       </div>
       <div className="min-w-0 flex-1">
         <div>
-          <div className="text-xs">
+          <div className="text-11">
             {comment.actor_detail.is_bot ? comment.actor_detail.first_name + " Bot" : comment.actor_detail.display_name}
           </div>
-          <p className="mt-0.5 text-xs text-secondary">
+          <p className="mt-0.5 text-11 text-secondary">
             <>commented {timeAgo(comment.created_at)}</>
           </p>
         </div>
@@ -179,7 +179,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="absolute right-0 z-10 mt-1 max-h-36 min-w-[8rem] origin-top-right overflow-auto overflow-y-scroll whitespace-nowrap rounded-md border border-strong bg-custom-background-90 p-1 text-xs shadow-lg focus:outline-none">
+            <Menu.Items className="absolute right-0 z-10 mt-1 max-h-36 min-w-[8rem] origin-top-right overflow-auto overflow-y-scroll whitespace-nowrap rounded-md border border-strong bg-custom-background-90 p-1 text-11 shadow-lg focus:outline-none">
               <Menu.Item>
                 {({ active }) => (
                   <div className="py-1">

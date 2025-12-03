@@ -127,9 +127,9 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
     issues.length > 0 ? (
       <li className="p-2">
         {query === "" && (
-          <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-primary">Select work items to delete</h2>
+          <h2 className="mb-2 mt-4 px-3 text-11 font-semibold text-primary">Select work items to delete</h2>
         )}
-        <ul className="text-sm text-secondary">
+        <ul className="text-13 text-secondary">
           {issues.map((issue) => (
             <BulkDeleteIssuesModalItem
               issue={issue}
@@ -183,7 +183,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
                       />
                       <input
                         type="text"
-                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-primary outline-none focus:ring-0 sm:text-sm"
+                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-primary outline-none focus:ring-0 sm:text-13"
                         placeholder="Search..."
                         onChange={(event) => setQuery(event.target.value)}
                       />

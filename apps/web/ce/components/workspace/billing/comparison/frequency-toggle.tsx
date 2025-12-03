@@ -30,7 +30,7 @@ export const PlanFrequencyToggle = observer(function PlanFrequencyToggle(props: 
           key="month"
           onClick={() => setSelectedFrequency("month")}
           className={cn(
-            "w-full rounded px-1 py-0.5 text-xs font-medium leading-5 text-center",
+            "w-full rounded px-1 py-0.5 text-11 font-medium leading-5 text-center",
             selectedFrequency === "month"
               ? "bg-custom-background-100 text-primary shadow"
               : "text-tertiary hover:text-secondary"
@@ -42,7 +42,7 @@ export const PlanFrequencyToggle = observer(function PlanFrequencyToggle(props: 
           key="year"
           onClick={() => setSelectedFrequency("year")}
           className={cn(
-            "w-full rounded px-1 py-0.5 text-xs font-medium leading-5 text-center",
+            "w-full rounded px-1 py-0.5 text-11 font-medium leading-5 text-center",
             selectedFrequency === "year"
               ? "bg-custom-background-100 text-primary shadow"
               : "text-tertiary hover:text-secondary"
@@ -50,7 +50,7 @@ export const PlanFrequencyToggle = observer(function PlanFrequencyToggle(props: 
         >
           Yearly
           {yearlyDiscount > 0 && (
-            <span className={cn(getDiscountPillStyle(subscriptionType), "rounded-full px-1 py-0.5 ml-1 text-[9px]")}>
+            <span className={cn(getDiscountPillStyle(subscriptionType), "rounded-full px-1 py-0.5 ml-1 text-9")}>
               -{yearlyDiscount}%
             </span>
           )}

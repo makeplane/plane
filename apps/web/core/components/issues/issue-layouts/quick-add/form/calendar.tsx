@@ -16,7 +16,7 @@ export const CalendarQuickAddIssueForm = observer(function CalendarQuickAddIssue
         onSubmit={onSubmit}
         className="z-50 flex w-full items-center gap-x-2 rounded md:border-[0.5px] border-subtle-1 bg-custom-background-100 px-2 md:shadow-custom-shadow-2xs transition-opacity"
       >
-        <h4 className="text-sm md:text-xs leading-5 text-placeholder">{projectDetail?.identifier ?? "..."}</h4>
+        <h4 className="text-13 md:text-11 leading-5 text-placeholder">{projectDetail?.identifier ?? "..."}</h4>
         <input
           type="text"
           autoComplete="off"
@@ -24,7 +24,7 @@ export const CalendarQuickAddIssueForm = observer(function CalendarQuickAddIssue
           {...register("name", {
             required: `${isEpic ? "Epic" : "Work item"} title is required.`,
           })}
-          className="w-full rounded-md bg-transparent py-1.5 pr-2 text-sm md:text-xs font-medium leading-5 text-secondary outline-none"
+          className="w-full rounded-md bg-transparent py-1.5 pr-2 text-13 md:text-11 font-medium leading-5 text-secondary outline-none"
         />
       </form>
     </div>

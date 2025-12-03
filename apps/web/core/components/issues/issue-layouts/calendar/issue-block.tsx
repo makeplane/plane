@@ -93,7 +93,7 @@ export const CalendarIssueBlock = observer(
               id={`issue-${issue.id}`}
               href={workItemLink}
               onClick={() => handleIssuePeekOverview(issue)}
-              className="block w-full text-sm text-primary rounded border-b md:border-[1px] border-subtle-1 hover:border-strong-1"
+              className="block w-full text-13 text-primary rounded border-b md:border-[1px] border-subtle-1 hover:border-strong-1"
               disabled={!!issue?.tempId || isMobile}
               ref={ref}
             >
@@ -124,11 +124,11 @@ export const CalendarIssueBlock = observer(
                       <IssueIdentifier
                         issueId={issue.id}
                         projectId={issue.project_id}
-                        textContainerClassName="text-sm md:text-xs text-tertiary"
+                        textContainerClassName="text-13 md:text-11 text-tertiary"
                         displayProperties={issuesFilter?.issueFilters?.displayProperties}
                       />
                     )}
-                    <div className="truncate text-sm font-medium md:font-normal md:text-xs">{issue.name}</div>
+                    <div className="truncate text-13 font-medium md:font-regular md:text-11">{issue.name}</div>
                   </div>
                   <div
                     className={cn("flex-shrink-0 size-5", {

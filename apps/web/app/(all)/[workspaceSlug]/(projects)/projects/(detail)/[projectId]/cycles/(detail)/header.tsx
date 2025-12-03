@@ -173,7 +173,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
                 } in this cycle`}
                 position="bottom"
               >
-                <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-custom-primary-100/20 px-2 text-center text-xs font-semibold text-custom-primary-100">
+                <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-custom-primary-100/20 px-2 text-center text-11 font-semibold text-custom-primary-100">
                   {workItemsCount}
                 </span>
               </Tooltip>

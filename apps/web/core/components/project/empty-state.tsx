@@ -22,7 +22,7 @@ export function EmptyState({ title, description, image, primaryButton, secondary
         <img src={image} className="w-52 sm:w-60 object-cover" alt={primaryButton?.text ?? ""} />
       </div>
       <div className="absolute flex w-full flex-col items-center pt-[30vh] text-center md:pt-[35vh] lg:pt-[45vh]">
-        <h6 className="mt-6 text-xl font-semibold">{title}</h6>
+        <h6 className="mt-6 text-18 font-semibold">{title}</h6>
         {description && <p className="mb-7 text-tertiary">{description}</p>}
         <div className="flex items-center gap-4">
           {primaryButton && (

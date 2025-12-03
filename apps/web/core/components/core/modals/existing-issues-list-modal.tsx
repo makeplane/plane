@@ -171,7 +171,7 @@ export function ExistingIssuesListModal(props: Props) {
                       aria-hidden="true"
                     />
                     <Combobox.Input
-                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-sm text-primary outline-none placeholder:text-placeholder focus:ring-0"
+                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-13 text-primary outline-none placeholder:text-placeholder focus:ring-0"
                       placeholder={t("common.search.placeholder")}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -179,20 +179,20 @@ export function ExistingIssuesListModal(props: Props) {
                     />
                   </div>
 
-                  <div className="flex flex-col-reverse gap-4 p-2 text-[0.825rem] text-secondary sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex flex-col-reverse gap-4 p-2 text-13 text-secondary sm:flex-row sm:items-center sm:justify-between">
                     {selectedIssues.length > 0 ? (
                       <div className="mt-1 flex flex-wrap items-center gap-2">
                         {selectedIssues.map((issue) => (
                           <div
                             key={issue.id}
-                            className="flex items-center gap-1 whitespace-nowrap rounded-md border border-subtle-1 bg-custom-background-80 py-1 pl-2 text-xs text-primary"
+                            className="flex items-center gap-1 whitespace-nowrap rounded-md border border-subtle-1 bg-custom-background-80 py-1 pl-2 text-11 text-primary"
                           >
                             <IssueIdentifier
                               projectId={issue.project_id}
                               issueTypeId={issue.type_id}
                               projectIdentifier={issue.project__identifier}
                               issueSequenceId={issue.sequence_id}
-                              textContainerClassName="text-xs text-secondary"
+                              textContainerClassName="text-11 text-secondary"
                             />
                             <button
                               type="button"
@@ -205,14 +205,14 @@ export function ExistingIssuesListModal(props: Props) {
                         ))}
                       </div>
                     ) : (
-                      <div className="w-min whitespace-nowrap rounded-md border border-subtle-1 bg-custom-background-80 p-2 text-xs">
+                      <div className="w-min whitespace-nowrap rounded-md border border-subtle-1 bg-custom-background-80 p-2 text-11">
                         {t("issue.select.empty")}
                       </div>
                     )}
                     {workspaceLevelToggle && (
                       <Tooltip tooltipContent="Toggle workspace level search" isMobile={isMobile}>
                         <div
-                          className={`flex flex-shrink-0 cursor-pointer items-center gap-1 text-xs ${
+                          className={`flex flex-shrink-0 cursor-pointer items-center gap-1 text-11 ${
                             isWorkspaceLevel ? "text-primary" : "text-secondary"
                           }`}
                         >
@@ -238,7 +238,7 @@ export function ExistingIssuesListModal(props: Props) {
                   >
                     {/* TODO: Translate here */}
                     {searchTerm !== "" && (
-                      <h5 className="mx-2 text-[0.825rem] text-secondary">
+                      <h5 className="mx-2 text-13 text-secondary">
                         Search results for{" "}
                         <span className="text-primary">
                           {'"'}
@@ -266,7 +266,7 @@ export function ExistingIssuesListModal(props: Props) {
                             searchTerm={searchTerm}
                           />
                         ) : (
-                          <ul className={`text-sm text-primary ${filteredIssues.length > 0 ? "p-2" : ""}`}>
+                          <ul className={`text-13 text-primary ${filteredIssues.length > 0 ? "p-2" : ""}`}>
                             {filteredIssues.map((issue) => {
                               const selected = selectedIssues.some((i) => i.id === issue.id);
 
@@ -296,7 +296,7 @@ export function ExistingIssuesListModal(props: Props) {
                                         issueTypeId={issue.type_id}
                                         projectIdentifier={issue.project__identifier}
                                         issueSequenceId={issue.sequence_id}
-                                        textContainerClassName="text-xs text-secondary"
+                                        textContainerClassName="text-11 text-secondary"
                                       />
                                     </span>
                                     <span className="truncate">{issue.name}</span>

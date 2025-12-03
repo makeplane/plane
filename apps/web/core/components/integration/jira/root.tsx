@@ -91,7 +91,7 @@ export function JiraImporterRoot() {
   return (
     <div className="mt-4 flex h-full flex-col space-y-2">
       <Link href={`/${workspaceSlug}/settings/imports`}>
-        <span className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-secondary hover:text-primary">
+        <span className="inline-flex cursor-pointer items-center gap-2 text-13 font-medium text-secondary hover:text-primary">
           <div>
             <ArrowLeft className="h-3 w-3" />
           </div>

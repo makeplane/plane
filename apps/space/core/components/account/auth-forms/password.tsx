@@ -116,7 +116,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
       <input type="hidden" value={passwordFormData.email} name="email" />
       <input type="hidden" value={nextPath} name="next_path" />
       <div className="space-y-1">
-        <label className="text-sm font-medium text-tertiary" htmlFor="email">
+        <label className="text-13 font-medium text-tertiary" htmlFor="email">
           Email
         </label>
         <div className={`relative flex items-center rounded-md bg-custom-background-100 border border-subtle`}>
@@ -140,7 +140,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
       </div>
 
       <div className="space-y-1">
-        <label className="text-sm text-tertiary font-medium" htmlFor="password">
+        <label className="text-13 text-tertiary font-medium" htmlFor="password">
           {mode === EAuthModes.SIGN_IN ? "Password" : "Set a password"}
         </label>
         <div className="relative flex items-center rounded-md bg-custom-background-100">
@@ -173,7 +173,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
 
       {mode === EAuthModes.SIGN_UP && (
         <div className="space-y-1">
-          <label className="text-sm text-tertiary font-medium" htmlFor="confirm_password">
+          <label className="text-13 text-tertiary font-medium" htmlFor="confirm_password">
             Confirm password
           </label>
           <div className="relative flex items-center rounded-md bg-custom-background-100">
@@ -201,7 +201,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
           </div>
           {!!passwordFormData.confirm_password &&
             passwordFormData.password !== passwordFormData.confirm_password &&
-            renderPasswordMatchError && <span className="text-sm text-red-500">Passwords don{"'"}t match</span>}
+            renderPasswordMatchError && <span className="text-13 text-red-500">Passwords don{"'"}t match</span>}
         </div>
       )}
 

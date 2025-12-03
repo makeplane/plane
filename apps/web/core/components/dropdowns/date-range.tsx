@@ -192,7 +192,7 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
               <MergedDateDisplay
                 startDate={dateRange.from}
                 endDate={dateRange.to}
-                className="flex-grow truncate text-xs"
+                className="flex-grow truncate text-11"
               />
             ) : (
               renderPlaceholder && (

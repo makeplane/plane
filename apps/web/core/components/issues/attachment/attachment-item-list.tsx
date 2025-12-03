@@ -131,7 +131,7 @@ export const IssueAttachmentItemList = observer(function IssueAttachmentItemList
                 <div className="flex items-center justify-center p-1 rounded-md bg-custom-background-100">
                   <div className="flex flex-col justify-center items-center px-5 py-6 rounded-md border border-dashed border-strong">
                     <UploadCloud className="size-7" />
-                    <span className="text-sm text-tertiary">{t("attachment.drag_and_drop")}</span>
+                    <span className="text-13 text-tertiary">{t("attachment.drag_and_drop")}</span>
                   </div>
                 </div>
               </div>

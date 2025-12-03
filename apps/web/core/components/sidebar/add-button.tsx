@@ -11,7 +11,7 @@ export function SidebarAddButton(props: Props) {
     <button
       type="button"
       className={cn(
-        "flex-grow text-tertiary text-sm font-medium border-[0.5px] border-strong text-left rounded-md shadow-sm h-8 px-2 flex items-center gap-1.5",
+        "flex-grow text-tertiary text-13 font-medium border-[0.5px] border-strong text-left rounded-md shadow-sm h-8 px-2 flex items-center gap-1.5",
         !disabled && "hover:bg-custom-sidebar-background-90"
       )}
       onClick={onClick}

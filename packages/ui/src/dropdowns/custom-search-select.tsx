@@ -99,7 +99,7 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                   ref={setReferenceElement}
                   type="button"
                   className={cn(
-                    "flex w-full items-center justify-between gap-1 text-xs",
+                    "flex w-full items-center justify-between gap-1 text-11",
                     {
                       "cursor-not-allowed text-secondary": disabled,
                       "cursor-pointer hover:bg-custom-background-80": !disabled,
@@ -119,8 +119,8 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                   className={cn(
                     "flex w-full items-center justify-between gap-1 rounded border-[0.5px] border-strong",
                     {
-                      "px-3 py-2 text-sm": input,
-                      "px-2 py-1 text-xs": !input,
+                      "px-3 py-2 text-13": input,
+                      "px-2 py-1 text-11": !input,
                       "cursor-not-allowed text-secondary": disabled,
                       "cursor-pointer hover:bg-custom-background-80": !disabled,
                     },
@@ -140,7 +140,7 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                 <Combobox.Options data-prevent-outside-click static>
                   <div
                     className={cn(
-                      "my-1 overflow-y-scroll rounded-md border-[0.5px] border-strong bg-custom-background-100 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-48 whitespace-nowrap z-30",
+                      "my-1 overflow-y-scroll rounded-md border-[0.5px] border-strong bg-custom-background-100 py-2.5 text-11 shadow-custom-shadow-rg focus:outline-none min-w-48 whitespace-nowrap z-30",
                       optionsClassName
                     )}
                     ref={setPopperElement}
@@ -150,7 +150,7 @@ export function CustomSearchSelect(props: ICustomSearchSelectProps) {
                     <div className="flex items-center gap-1.5 rounded border border-subtle bg-custom-background-90 px-2 mx-2">
                       <Search className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
                       <Combobox.Input
-                        className="w-full bg-transparent py-1 text-xs text-secondary placeholder:text-placeholder focus:outline-none"
+                        className="w-full bg-transparent py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         placeholder="Search"

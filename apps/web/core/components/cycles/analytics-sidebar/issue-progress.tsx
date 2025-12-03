@@ -106,7 +106,7 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
             {isCycleDateValid ? (
               <div className="relative w-full flex justify-between items-center gap-2">
                 <Disclosure.Button className="relative flex items-center gap-2 w-full">
-                  <div className="font-medium text-secondary text-sm">{t("project_cycles.active_cycle.progress")}</div>
+                  <div className="font-medium text-secondary text-13">{t("project_cycles.active_cycle.progress")}</div>
                 </Disclosure.Button>
                 <Disclosure.Button className="ml-auto">
                   {open ? (
@@ -118,7 +118,7 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
               </div>
             ) : (
               <div className="relative w-full flex justify-between items-center gap-2">
-                <div className="font-medium text-secondary text-sm">{t("project_cycles.active_cycle.progress")}</div>
+                <div className="font-medium text-secondary text-13">{t("project_cycles.active_cycle.progress")}</div>
               </div>
             )}
             <Transition show={open}>
@@ -156,7 +156,7 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
                     )}
                   </>
                 ) : (
-                  <div className="my-2 py-2 text-sm text-custom-text-350  bg-custom-background-90 rounded-md px-2 w-full">
+                  <div className="my-2 py-2 text-13 text-custom-text-350  bg-custom-background-90 rounded-md px-2 w-full">
                     {t("no_data_yet")}
                   </div>
                 )}

@@ -176,8 +176,8 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
         {/* Header */}
         <div className="flex justify-between px-6 py-4">
           <div>
-            <h2 className="text-xl font-semibold text-primary">{t("customize_navigation")}</h2>
-            <p className="mt-1 text-sm text-tertiary">
+            <h2 className="text-18 font-semibold text-primary">{t("customize_navigation")}</h2>
+            <p className="mt-1 text-13 text-tertiary">
               Selected items will always stay visible in your sidebar. You can still find the others anytime from the
               More menu. These changes are personal to you and won&apos;t affect anyone else on your workspace.
             </p>
@@ -195,7 +195,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
           {/* Personal Section */}
           <div className="flex flex-col gap-2">
-            <h3 className="text-sm font-semibold text-placeholder">{t("personal")}</h3>
+            <h3 className="text-13 font-semibold text-placeholder">{t("personal")}</h3>
             <div className="border border-subtle-1 rounded-md py-2 bg-custom-background-90">
               <Sortable
                 data={personalItems}
@@ -211,7 +211,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
                     />
                     <div className="flex items-center gap-2 flex-1">
                       {getSidebarNavigationItemIcon(item.key)}
-                      <label className="text-sm text-secondary flex-1 cursor-pointer">
+                      <label className="text-13 text-secondary flex-1 cursor-pointer">
                         {t(item.labelTranslationKey)}
                       </label>
                     </div>
@@ -223,7 +223,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
 
           {/* Workspace Section */}
           <div className="flex flex-col gap-2">
-            <h3 className="text-sm font-semibold text-placeholder">{t("workspace")}</h3>
+            <h3 className="text-13 font-semibold text-placeholder">{t("workspace")}</h3>
             <div className="border border-subtle-1 rounded-md py-2 bg-custom-background-90">
               {/* Pinned Items - Draggable */}
               <Sortable
@@ -242,7 +242,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
                       />
                       <div className="flex items-center gap-2 flex-1">
                         {icon}
-                        <span className="text-sm text-secondary">{t(item.labelTranslationKey)}</span>
+                        <span className="text-13 text-secondary">{t(item.labelTranslationKey)}</span>
                       </div>
                     </div>
                   );
@@ -253,7 +253,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
 
           {/* Projects Section */}
           <div className="flex flex-col gap-2">
-            <h3 className="text-sm font-semibold text-placeholder">{t("projects")}</h3>
+            <h3 className="text-13 font-semibold text-placeholder">{t("projects")}</h3>
 
             <div className="border border-subtle-1 rounded-md px-2 py-2 bg-custom-background-90">
               <div className="space-y-3">
@@ -269,8 +269,8 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
                       className="size-4 text-custom-primary-100 focus:ring-custom-primary-100"
                     />
                     <div className="flex-1">
-                      <div className="text-sm text-secondary">{t("accordion_navigation_control")}</div>
-                      <div className="text-xs text-tertiary">
+                      <div className="text-13 text-secondary">{t("accordion_navigation_control")}</div>
+                      <div className="text-11 text-tertiary">
                         Feature tabs will appear as nested items under project and acts as accordion.
                       </div>
                     </div>
@@ -286,8 +286,8 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
                       className="size-4 text-custom-primary-100 focus:ring-custom-primary-100"
                     />
                     <div className="flex-1">
-                      <div className="text-sm text-secondary">{t("horizontal_navigation_bar")}</div>
-                      <div className="text-xs text-tertiary">
+                      <div className="text-13 text-secondary">{t("horizontal_navigation_bar")}</div>
+                      <div className="text-11 text-tertiary">
                         Feature tabs will appear as horizontal tabs inside a project.
                       </div>
                     </div>
@@ -301,14 +301,14 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
                       checked={projectPreferences.showLimitedProjects}
                       onChange={(e) => updateShowLimitedProjects(e.target.checked)}
                     />
-                    <span className="text-sm text-secondary">{t("show_limited_projects_on_sidebar")}</span>
+                    <span className="text-13 text-secondary">{t("show_limited_projects_on_sidebar")}</span>
                   </label>
 
                   {projectPreferences.showLimitedProjects && (
                     <div className="pl-8">
                       <div className="flex flex-col gap-1 w-full">
                         <div className="flex flex-col gap-2 w-full">
-                          <label className="text-xs text-tertiary w-full">{t("enter_number_of_projects")}</label>
+                          <label className="text-11 text-tertiary w-full">{t("enter_number_of_projects")}</label>
                           <input
                             type="number"
                             min="1"
@@ -317,7 +317,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
                             onKeyDown={handleKeyDown}
                             onChange={(e) => handleProjectCountChange(e.target.value)}
                             className={cn(
-                              "w-full px-2 py-1 text-sm rounded-md",
+                              "w-full px-2 py-1 text-13 rounded-md",
                               "bg-custom-background-90 border",
                               "text-secondary",
                               parseInt(projectCountInput) >= 1
@@ -327,7 +327,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
                           />
                         </div>
                         {parseInt(projectCountInput) < 1 && projectCountInput !== "" && (
-                          <span className="text-xs text-red-500 pl-0.5">Minimum value is 1</span>
+                          <span className="text-11 text-red-500 pl-0.5">Minimum value is 1</span>
                         )}
                       </div>
                     </div>

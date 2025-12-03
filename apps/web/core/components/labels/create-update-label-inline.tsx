@@ -168,7 +168,7 @@ export const CreateUpdateLabelInline = observer(
               {({ open }) => (
                 <>
                   <Popover.Button
-                    className={`group inline-flex items-center text-base font-medium focus:outline-none ${
+                    className={`group inline-flex items-center text-14 font-medium focus:outline-none ${
                       open ? "text-primary" : "text-secondary"
                     }`}
                   >
@@ -249,7 +249,7 @@ export const CreateUpdateLabelInline = observer(
             {isUpdating ? (isSubmitting ? t("updating") : t("update")) : isSubmitting ? t("adding") : t("add")}
           </Button>
         </div>
-        {errors.name?.message && <p className="p-0.5 pl-8 text-sm text-red-500">{errors.name?.message}</p>}
+        {errors.name?.message && <p className="p-0.5 pl-8 text-13 text-red-500">{errors.name?.message}</p>}
       </>
     );
   })

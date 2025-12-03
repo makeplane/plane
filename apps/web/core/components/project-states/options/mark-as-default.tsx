@@ -31,7 +31,7 @@ export const StateMarksAsDefault = observer(function StateMarksAsDefault(props: 
   return (
     <button
       className={cn(
-        "text-xs whitespace-nowrap transition-colors",
+        "text-11 whitespace-nowrap transition-colors",
         isDefault ? "text-tertiary" : "text-secondary hover:text-primary"
       )}
       disabled={isDefault || isLoading}

@@ -70,8 +70,8 @@ export function EmailNotificationForm(props: IEmailNotificationFormProps) {
       <div className="flex flex-col py-2 w-full">
         <div className="flex gap-2 items-center pt-2">
           <div className="grow">
-            <div className="pb-1 text-base font-medium text-primary">{t("property_changes")}</div>
-            <div className="text-sm font-normal text-tertiary">{t("property_changes_description")}</div>
+            <div className="pb-1 text-14 font-medium text-primary">{t("property_changes")}</div>
+            <div className="text-13 font-regular text-tertiary">{t("property_changes_description")}</div>
           </div>
           <div className="shrink-0">
             <Controller
@@ -95,8 +95,8 @@ export function EmailNotificationForm(props: IEmailNotificationFormProps) {
         </div>
         <div className="flex gap-2 items-center pt-6 pb-2">
           <div className="grow">
-            <div className="pb-1 text-base font-medium text-primary">{t("state_change")}</div>
-            <div className="text-sm font-normal text-tertiary">{t("state_change_description")}</div>
+            <div className="pb-1 text-14 font-medium text-primary">{t("state_change")}</div>
+            <div className="text-13 font-regular text-tertiary">{t("state_change_description")}</div>
           </div>
           <div className="shrink-0">
             <Controller
@@ -120,8 +120,8 @@ export function EmailNotificationForm(props: IEmailNotificationFormProps) {
         </div>
         <div className="flex gap-2 items-center border-0 border-l-[3px] border-strong pl-3">
           <div className="grow">
-            <div className="pb-1 text-base font-medium text-primary">{t("issue_completed")}</div>
-            <div className="text-sm font-normal text-tertiary">{t("issue_completed_description")}</div>
+            <div className="pb-1 text-14 font-medium text-primary">{t("issue_completed")}</div>
+            <div className="text-13 font-regular text-tertiary">{t("issue_completed_description")}</div>
           </div>
           <div className="shrink-0">
             <Controller
@@ -142,8 +142,8 @@ export function EmailNotificationForm(props: IEmailNotificationFormProps) {
         </div>
         <div className="flex gap-2 items-center pt-6">
           <div className="grow">
-            <div className="pb-1 text-base font-medium text-primary">{t("comments")}</div>
-            <div className="text-sm font-normal text-tertiary">{t("comments_description")}</div>
+            <div className="pb-1 text-14 font-medium text-primary">{t("comments")}</div>
+            <div className="text-13 font-regular text-tertiary">{t("comments_description")}</div>
           </div>
           <div className="shrink-0">
             <Controller
@@ -167,8 +167,8 @@ export function EmailNotificationForm(props: IEmailNotificationFormProps) {
         </div>
         <div className="flex gap-2 items-center pt-6">
           <div className="grow">
-            <div className="pb-1 text-base font-medium text-primary">{t("mentions")}</div>
-            <div className="text-sm font-normal text-tertiary">{t("mentions_description")}</div>
+            <div className="pb-1 text-14 font-medium text-primary">{t("mentions")}</div>
+            <div className="text-13 font-regular text-tertiary">{t("mentions_description")}</div>
           </div>
           <div className="shrink-0">
             <Controller

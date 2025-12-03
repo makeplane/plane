@@ -124,7 +124,7 @@ export const IssueRelationSelect = observer(function IssueRelationSelect(props: 
                         })}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs font-medium"
+                        className="text-11 font-medium"
                         onClick={(e) => e.stopPropagation()}
                       >
                         {`${projectDetails?.identifier}-${currentIssue?.sequence_id}`}
@@ -148,7 +148,7 @@ export const IssueRelationSelect = observer(function IssueRelationSelect(props: 
               })}
             </div>
           ) : (
-            <span className="text-sm text-placeholder">{currRelationOption?.placeholder}</span>
+            <span className="text-13 text-placeholder">{currRelationOption?.placeholder}</span>
           )}
           {!disabled && (
             <span

@@ -174,13 +174,13 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
             </button>
           </div>
           <div className="flex flex-col gap-1">
-            <div className="text-lg font-semibold leading-6 mb:-my-5">{watch("name")}</div>
-            <button type="button" onClick={handleCopyUrl} className="text-sm tracking-tight text-left">{`${
+            <div className="text-16 font-semibold leading-6 mb:-my-5">{watch("name")}</div>
+            <button type="button" onClick={handleCopyUrl} className="text-13 tracking-tight text-left">{`${
               typeof window !== "undefined" && window.location.origin.replace("http://", "").replace("https://", "")
             }/${currentWorkspace.slug}`}</button>
             {isAdmin && (
               <button
-                className="flex items-center gap-1.5 text-left text-xs font-medium text-custom-primary-100"
+                className="flex items-center gap-1.5 text-left text-11 font-medium text-custom-primary-100"
                 onClick={() => setIsImageUploadModalOpen(true)}
               >
                 {workspaceLogo && workspaceLogo !== "" ? (
@@ -199,7 +199,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
         <div className="my-8 flex flex-col gap-8">
           <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-10 xl:grid-cols-2 2xl:grid-cols-3">
             <div className="flex flex-col gap-1">
-              <h4 className="text-sm">{t("workspace_settings.settings.general.name")}</h4>
+              <h4 className="text-13">{t("workspace_settings.settings.general.name")}</h4>
               <Controller
                 control={control}
                 name="name"
@@ -228,7 +228,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
             </div>
 
             <div className="flex flex-col gap-1 ">
-              <h4 className="text-sm">{t("workspace_settings.settings.general.company_size")}</h4>
+              <h4 className="text-13">{t("workspace_settings.settings.general.company_size")}</h4>
               <Controller
                 name="organization_size"
                 control={control}
@@ -255,7 +255,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
             </div>
 
             <div className="flex flex-col gap-1 ">
-              <h4 className="text-sm">{t("workspace_settings.settings.general.url")}</h4>
+              <h4 className="text-13">{t("workspace_settings.settings.general.url")}</h4>
               <Controller
                 control={control}
                 name="url"

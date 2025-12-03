@@ -168,7 +168,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
               <Disclosure.Button
                 as="button"
                 type="button"
-                className="w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-placeholder"
+                className="w-full flex items-center gap-1 whitespace-nowrap text-left text-13 font-semibold text-placeholder"
                 onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
                 aria-label={t(
                   isAllProjectsListOpen
@@ -176,7 +176,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
                     : "aria_labels.projects_sidebar.open_projects_menu"
                 )}
               >
-                <span className="text-sm font-semibold">{t("projects")}</span>
+                <span className="text-13 font-semibold">{t("projects")}</span>
               </Disclosure.Button>
               <div className="flex items-center opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
                 {isAuthorizedUser && (
@@ -249,7 +249,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
                         <button
                           type="button"
                           onClick={() => toggleExtendedProjectSidebar()}
-                          className="flex items-center gap-1.5 text-sm font-medium flex-grow text-custom-text-350"
+                          className="flex items-center gap-1.5 text-13 font-medium flex-grow text-custom-text-350"
                           id="extended-project-sidebar-toggle"
                           aria-label={t(
                             isExtendedProjectSidebarOpened
@@ -273,7 +273,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
           <button
             type="button"
             data-ph-element={PROJECT_TRACKER_ELEMENTS.SIDEBAR_CREATE_PROJECT_BUTTON}
-            className="w-full flex items-center gap-1.5 px-2 py-1.5 text-sm leading-5 font-medium text-secondary hover:bg-custom-sidebar-background-90 rounded-md"
+            className="w-full flex items-center gap-1.5 px-2 py-1.5 text-13 leading-5 font-medium text-secondary hover:bg-custom-sidebar-background-90 rounded-md"
             onClick={() => {
               toggleCreateProjectModal(true);
             }}

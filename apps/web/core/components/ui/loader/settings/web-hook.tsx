@@ -3,7 +3,7 @@ export function WebhookSettingsLoader() {
     <div className="h-full w-full overflow-hidden py-8 pr-9">
       <div className="flex h-full w-full flex-col">
         <div className="flex items-center justify-between gap-4 border-b border-subtle-1 pb-3.5">
-          <div className="text-xl font-medium">Webhooks</div>
+          <div className="text-18 font-medium">Webhooks</div>
           <span className="h-8 w-28 bg-custom-background-80 rounded" />
         </div>
         <div className="h-full w-full overflow-y-auto">

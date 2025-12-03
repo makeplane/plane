@@ -36,7 +36,7 @@ export const ProfileActivity = observer(function ProfileActivity() {
 
   return (
     <div className="space-y-2">
-      <h3 className="text-lg font-medium">{t("profile.stats.recent_activity.title")}</h3>
+      <h3 className="text-16 font-medium">{t("profile.stats.recent_activity.title")}</h3>
       <Card>
         {userProfileActivity ? (
           userProfileActivity.results.length > 0 ? (
@@ -51,13 +51,13 @@ export const ProfileActivity = observer(function ProfileActivity() {
                         className="rounded"
                       />
                     ) : (
-                      <div className="grid h-6 w-6 place-items-center rounded border-2 bg-gray-700 text-xs text-white">
+                      <div className="grid h-6 w-6 place-items-center rounded border-2 bg-gray-700 text-11 text-white">
                         {activity.actor_detail?.display_name?.charAt(0)}
                       </div>
                     )}
                   </div>
                   <div className="-mt-1 w-4/5 break-words">
-                    <p className="inline text-sm text-secondary">
+                    <p className="inline text-13 text-secondary">
                       <span className="font-medium text-primary">
                         {currentUser?.id === activity.actor_detail?.id
                           ? "You"
@@ -71,7 +71,7 @@ export const ProfileActivity = observer(function ProfileActivity() {
                         </span>
                       )}
                     </p>
-                    <p className="text-xs text-secondary whitespace-nowrap ">{calculateTimeAgo(activity.created_at)}</p>
+                    <p className="text-11 text-secondary whitespace-nowrap ">{calculateTimeAgo(activity.created_at)}</p>
                   </div>
                 </div>
               ))}

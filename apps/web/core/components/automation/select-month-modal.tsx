@@ -71,7 +71,7 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
               <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 px-4 pb-4 pt-5 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div>
-                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-primary">
+                    <Dialog.Title as="h3" className="text-16 font-medium leading-6 text-primary">
                       Customize time range
                     </Dialog.Title>
                     <div className="mt-8 flex items-center gap-2">
@@ -101,13 +101,13 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
                                     min={1}
                                     max={12}
                                   />
-                                  <span className="absolute right-8 top-2.5 text-sm text-secondary">Months</span>
+                                  <span className="absolute right-8 top-2.5 text-13 text-secondary">Months</span>
                                 </div>
                               )}
                             />
 
                             {errors.close_in && (
-                              <span className="px-1 text-sm text-red-500">Select a month between 1 and 12.</span>
+                              <span className="px-1 text-13 text-red-500">Select a month between 1 and 12.</span>
                             )}
                           </>
                         ) : (
@@ -135,12 +135,12 @@ export function SelectMonthModal({ type, initialValues, isOpen, handleClose, han
                                     min={1}
                                     max={12}
                                   />
-                                  <span className="absolute right-8 top-2.5 text-sm text-secondary">Months</span>
+                                  <span className="absolute right-8 top-2.5 text-13 text-secondary">Months</span>
                                 </div>
                               )}
                             />
                             {errors.archive_in && (
-                              <span className="px-1 text-sm text-red-500">Select a month between 1 and 12.</span>
+                              <span className="px-1 text-13 text-red-500">Select a month between 1 and 12.</span>
                             )}
                           </>
                         )}

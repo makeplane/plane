@@ -38,14 +38,14 @@ export const ProductUpdatesModal = observer(function ProductUpdatesModal(props: 
           <iframe src={config?.instance_changelog_url} className="w-full h-full" />
         ) : (
           <div className="flex flex-col items-center justify-center w-full h-full mb-8">
-            <div className="text-lg font-medium">{t("we_are_having_trouble_fetching_the_updates")}</div>
-            <div className="text-sm text-secondary">
+            <div className="text-16 font-medium">{t("we_are_having_trouble_fetching_the_updates")}</div>
+            <div className="text-13 text-secondary">
               {t("please_visit")}
               <a
                 data-ph-element={USER_TRACKER_ELEMENTS.CHANGELOG_REDIRECTED}
                 href="https://go.plane.so/p-changelog"
                 target="_blank"
-                className="text-sm text-custom-primary-100 font-medium hover:text-custom-primary-200 underline underline-offset-1 outline-none"
+                className="text-13 text-custom-primary-100 font-medium hover:text-custom-primary-200 underline underline-offset-1 outline-none"
               >
                 {t("our_changelogs")}
               </a>{" "}

@@ -113,7 +113,7 @@ export function IssueLinkRoot(props: TIssueLinkRoot) {
         issueServiceType={EIssueServiceType.ISSUES}
       />
 
-      <div className="py-1 text-xs">
+      <div className="py-1 text-11">
         <div className="flex items-center justify-between gap-2">
           <h4>Links</h4>
           {!disabled && (

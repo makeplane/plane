@@ -63,7 +63,7 @@ export function StickyEditorToolbar(props: Props) {
         {showColorPalette && <ColorPalette handleUpdate={handleColorChange} />}
         <Tooltip
           tooltipContent={
-            <p className="flex flex-col gap-1 text-center text-xs">
+            <p className="flex flex-col gap-1 text-center text-11">
               <span className="font-medium">Background color</span>
             </p>
           }
@@ -84,7 +84,7 @@ export function StickyEditorToolbar(props: Props) {
                     <Tooltip
                       key={item.renderKey}
                       tooltipContent={
-                        <p className="flex flex-col gap-1 text-center text-xs">
+                        <p className="flex flex-col gap-1 text-center text-11">
                           <span className="font-medium">{item.name}</span>
                           {item.shortcut && <kbd className="text-placeholder">{item.shortcut.join(" + ")}</kbd>}
                         </p>
@@ -97,7 +97,7 @@ export function StickyEditorToolbar(props: Props) {
                       >
                         <item.icon
                           className={cn("h-3.5 w-3.5", {
-                            "font-extrabold": isItemActive,
+                            "font-heavy": isItemActive,
                           })}
                           strokeWidth={2.5}
                         />
@@ -113,7 +113,7 @@ export function StickyEditorToolbar(props: Props) {
       {/* delete action */}
       <Tooltip
         tooltipContent={
-          <p className="flex flex-col gap-1 text-center text-xs">
+          <p className="flex flex-col gap-1 text-center text-11">
             <span className="font-medium">Delete</span>
           </p>
         }

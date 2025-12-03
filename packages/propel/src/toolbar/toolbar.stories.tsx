@@ -101,7 +101,7 @@ export const CommentToolbar: Story = {
   render() {
     return (
       <div className="p-4 space-y-4">
-        <h3 className="text-sm font-medium">Comment Toolbar with Access Control</h3>
+        <h3 className="text-13 font-medium">Comment Toolbar with Access Control</h3>
         <div className="rounded border-[0.5px] border-subtle-1 p-1">
           <Toolbar>
             {/* Access Specifier */}

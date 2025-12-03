@@ -63,21 +63,21 @@ export const SettingsHeader = observer(function SettingsHeader() {
             "h-0 w-0 overflow-hidden": isScrolled,
           })}
         >
-          <div className="text-sm my-auto font-semibold text-secondary">{t("back_to_workspace")}</div>
+          <div className="text-13 my-auto font-semibold text-secondary">{t("back_to_workspace")}</div>
           {/* Last workspace */}
           <div className="flex items-center gap-1">
             <WorkspaceLogo
               name={currentWorkspace?.name || ""}
               logo={currentWorkspace?.logo_url || ""}
-              classNames="my-auto size-4 text-xs"
+              classNames="my-auto size-4 text-11"
             />
-            <div className="text-xs my-auto text-primary font-semibold">{currentWorkspace?.name}</div>
+            <div className="text-11 my-auto text-primary font-semibold">{currentWorkspace?.name}</div>
           </div>
         </div>
       </Link>
       <div className="flex flex-col gap-1.5">
         {/* Description */}
-        <div className="text-primary font-semibold text-2xl">{t("settings")}</div>
+        <div className="text-primary font-semibold text-20">{t("settings")}</div>
         {/* Actions */}
         <SettingsTabs />
       </div>

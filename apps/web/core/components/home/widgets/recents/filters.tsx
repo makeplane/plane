@@ -26,7 +26,7 @@ export const FiltersDropdown = observer(function FiltersDropdown(props: TFilters
           setActiveFilter(filter.name);
         }}
       >
-        <div className="truncate font-medium text-xs capitalize">{t(filter.i18n_key)}</div>
+        <div className="truncate font-medium text-11 capitalize">{t(filter.i18n_key)}</div>
       </CustomMenu.MenuItem>
     ));
   }
@@ -35,11 +35,11 @@ export const FiltersDropdown = observer(function FiltersDropdown(props: TFilters
   return (
     <CustomMenu
       maxHeight={"md"}
-      className={cn("flex justify-center text-xs text-secondary w-fit ", className)}
+      className={cn("flex justify-center text-11 text-secondary w-fit ", className)}
       placement="bottom-start"
       customButton={
         <button className="flex hover:bg-custom-background-80 px-2 py-1 rounded gap-1 capitalize border border-subtle-1">
-          <span className="font-medium text-sm my-auto"> {t(title || "")}</span>
+          <span className="font-medium text-13 my-auto"> {t(title || "")}</span>
           <ChevronDownIcon className={cn("size-3 my-auto text-tertiary hover:text-secondary duration-300")} />
         </button>
       }

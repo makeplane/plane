@@ -113,18 +113,18 @@ export const AllPositions: Story = {
     return (
       <div className="flex flex-col items-center gap-4">
         <Tooltip tooltipContent="Top position" position="top">
-          <button className="rounded bg-blue-500 px-4 py-2 text-sm text-white">Top</button>
+          <button className="rounded bg-blue-500 px-4 py-2 text-13 text-white">Top</button>
         </Tooltip>
         <div className="flex gap-4">
           <Tooltip tooltipContent="Left position" position="left">
-            <button className="rounded bg-blue-500 px-4 py-2 text-sm text-white">Left</button>
+            <button className="rounded bg-blue-500 px-4 py-2 text-13 text-white">Left</button>
           </Tooltip>
           <Tooltip tooltipContent="Right position" position="right">
-            <button className="rounded bg-blue-500 px-4 py-2 text-sm text-white">Right</button>
+            <button className="rounded bg-blue-500 px-4 py-2 text-13 text-white">Right</button>
           </Tooltip>
         </div>
         <Tooltip tooltipContent="Bottom position" position="bottom">
-          <button className="rounded bg-blue-500 px-4 py-2 text-sm text-white">Bottom</button>
+          <button className="rounded bg-blue-500 px-4 py-2 text-13 text-white">Bottom</button>
         </Tooltip>
       </div>
     );
@@ -137,7 +137,7 @@ export const OnText: Story = {
   },
   render() {
     return (
-      <p className="text-sm text-gray-700">
+      <p className="text-13 text-gray-700">
         This is some text with a{" "}
         <Tooltip tooltipContent="Additional information about this word" position="top">
           <span className="cursor-help border-b border-dashed border-blue-500 text-blue-500">tooltip</span>
@@ -169,8 +169,8 @@ export const ComplexContent: Story = {
     tooltipContent: (
       <div className="space-y-1">
         <p className="font-semibold">John Doe</p>
-        <p className="text-xs">john@example.com</p>
-        <p className="text-xs text-gray-400">Last seen: 2 hours ago</p>
+        <p className="text-11">john@example.com</p>
+        <p className="text-11 text-gray-400">Last seen: 2 hours ago</p>
       </div>
     ),
     children: <button className="rounded bg-blue-500 px-4 py-2 text-white">View User</button>,
@@ -193,16 +193,16 @@ export const MultipleTooltips: Story = {
     return (
       <div className="flex gap-4">
         <Tooltip tooltipContent="Save your work" position="top">
-          <button className="rounded bg-green-500 px-4 py-2 text-sm text-white">Save</button>
+          <button className="rounded bg-green-500 px-4 py-2 text-13 text-white">Save</button>
         </Tooltip>
         <Tooltip tooltipContent="Discard changes" position="top">
-          <button className="rounded bg-red-500 px-4 py-2 text-sm text-white">Cancel</button>
+          <button className="rounded bg-red-500 px-4 py-2 text-13 text-white">Cancel</button>
         </Tooltip>
         <Tooltip tooltipContent="Export to PDF" position="top">
-          <button className="rounded bg-blue-500 px-4 py-2 text-sm text-white">Export</button>
+          <button className="rounded bg-blue-500 px-4 py-2 text-13 text-white">Export</button>
         </Tooltip>
         <Tooltip tooltipContent="Share with team" position="top">
-          <button className="rounded bg-purple-500 px-4 py-2 text-sm text-white">Share</button>
+          <button className="rounded bg-purple-500 px-4 py-2 text-13 text-white">Share</button>
         </Tooltip>
       </div>
     );
@@ -282,7 +282,7 @@ export const InFormField: Story = {
   render() {
     return (
       <div className="w-80">
-        <label className="mb-1 flex items-center gap-2 text-sm font-medium text-gray-700">
+        <label className="mb-1 flex items-center gap-2 text-13 font-medium text-gray-700">
           Email Address
           <Tooltip
             tooltipHeading="Email Requirements"
@@ -294,7 +294,7 @@ export const InFormField: Story = {
         </label>
         <input
           type="email"
-          className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+          className="w-full rounded border border-gray-300 px-3 py-2 text-13"
           placeholder="you@example.com"
         />
       </div>

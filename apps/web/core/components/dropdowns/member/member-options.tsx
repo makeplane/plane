@@ -119,7 +119,7 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
     <Combobox.Options data-prevent-outside-click static>
       <div
         className={cn(
-          "my-1 w-48 rounded border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none z-30",
+          "my-1 w-48 rounded border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 text-11 shadow-custom-shadow-rg focus:outline-none z-30",
           optionsClassName
         )}
         ref={setPopperElement}
@@ -133,7 +133,7 @@ export const MemberOptions = observer(function MemberOptions(props: Props) {
           <Combobox.Input
             as="input"
             ref={inputRef}
-            className="w-full bg-transparent py-1 text-xs text-secondary placeholder:text-placeholder focus:outline-none"
+            className="w-full bg-transparent py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t("search")}

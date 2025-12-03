@@ -30,7 +30,7 @@ const Input = React.forwardRef(function Input(props: InputProps, ref: React.Forw
       type={type}
       name={name}
       className={cn(
-        "block rounded-md bg-transparent text-sm placeholder-custom-text-400 focus:outline-none",
+        "block rounded-md bg-transparent text-13 placeholder-custom-text-400 focus:outline-none",
         {
           "rounded-md border-[0.5px] border-subtle-1": mode === "primary",
           "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-custom-primary":

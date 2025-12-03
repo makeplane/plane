@@ -35,7 +35,7 @@ export const WorkItemPreviewCard = observer(function WorkItemPreviewCard(props: 
     <div className="p-3 space-y-2 w-72 rounded-lg shadow-custom-shadow-rg bg-custom-background-100 border-[0.5px] border-strong">
       <div className="flex items-center justify-between gap-3 text-secondary">
         <IssueIdentifier
-          textContainerClassName="shrink-0 text-xs text-secondary"
+          textContainerClassName="shrink-0 text-11 text-secondary"
           projectId={projectId}
           projectIdentifier={projectIdentifier}
           issueSequenceId={workItem.sequence_id}
@@ -44,11 +44,11 @@ export const WorkItemPreviewCard = observer(function WorkItemPreviewCard(props: 
         />
         <div className="shrink-0 flex items-center gap-1">
           <StateGroupIcon stateGroup={stateGroup} className="shrink-0 size-3" />
-          <p className="text-xs font-medium">{stateName}</p>
+          <p className="text-11 font-medium">{stateName}</p>
         </div>
       </div>
       <div>
-        <h6 className="text-sm">{workItem.name}</h6>
+        <h6 className="text-13">{workItem.name}</h6>
       </div>
       <div className="flex items-center gap-1 h-5">
         <PriorityIcon priority={workItem.priority} withContainer />

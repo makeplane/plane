@@ -53,7 +53,7 @@ export function RadioInput({
             key={index}
             onClick={() => !disabled && setSelected(value)}
             className={cn(
-              "flex items-center gap-2 text-base",
+              "flex items-center gap-2 text-14",
               disabled ? `bg-custom-background-200 border-subtle-1 cursor-not-allowed` : ``,
               inputFieldClassName
             )}

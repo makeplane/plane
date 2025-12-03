@@ -36,7 +36,7 @@ export const GanttChartHeader = observer(function GanttChartHeader(props: Props)
       style={{ height: `${GANTT_BREADCRUMBS_HEIGHT}px` }}
     >
       <div className="ml-auto">
-        <div className="ml-auto text-sm font-medium">
+        <div className="ml-auto text-13 font-medium">
           {blockIds ? `${blockIds.length} ${loaderTitle}` : t("common.loading")}
         </div>
       </div>
@@ -45,7 +45,7 @@ export const GanttChartHeader = observer(function GanttChartHeader(props: Props)
         {VIEWS_LIST.map((chartView: any) => (
           <div
             key={chartView?.key}
-            className={cn("cursor-pointer rounded-sm p-1 px-2 text-xs", {
+            className={cn("cursor-pointer rounded-sm p-1 px-2 text-11", {
               "bg-custom-background-80": currentView === chartView?.key,
               "hover:bg-custom-background-90": currentView !== chartView?.key,
             })}
@@ -59,7 +59,7 @@ export const GanttChartHeader = observer(function GanttChartHeader(props: Props)
       {showToday && (
         <button
           type="button"
-          className="rounded-sm p-1 px-2 text-xs hover:bg-custom-background-80"
+          className="rounded-sm p-1 px-2 text-11 hover:bg-custom-background-80"
           onClick={handleToday}
         >
           {t("common.today")}

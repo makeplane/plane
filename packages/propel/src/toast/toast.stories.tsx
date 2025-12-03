@@ -22,10 +22,10 @@ export const Provider: Story = {
       <div>
         <Toast theme="light" />
         <div className="space-y-2">
-          <p className="text-sm text-gray-600">
+          <p className="text-13 text-gray-600">
             Toast provider is required to display toasts. It should be added to your app root.
           </p>
-          <code className="block rounded bg-gray-100 p-2 text-xs">{`<Toast theme="light" />`}</code>
+          <code className="block rounded bg-gray-100 p-2 text-11">{`<Toast theme="light" />`}</code>
         </div>
       </div>
     );
@@ -153,7 +153,7 @@ export const WithActionItems: Story = {
               title: "File uploaded",
               message: "Your file has been uploaded successfully.",
               actionItems: (
-                <div className="flex items-center gap-1 text-xs text-secondary">
+                <div className="flex items-center gap-1 text-11 text-secondary">
                   <a
                     href="#"
                     target="_blank"
@@ -253,7 +253,7 @@ export const AllTypes: Story = {
                 message: "Operation successful",
               })
             }
-            className="rounded bg-green-500 px-3 py-2 text-sm text-white hover:bg-green-600"
+            className="rounded bg-green-500 px-3 py-2 text-13 text-white hover:bg-green-600"
           >
             Success
           </button>
@@ -265,7 +265,7 @@ export const AllTypes: Story = {
                 message: "Operation failed",
               })
             }
-            className="rounded bg-red-500 px-3 py-2 text-sm text-white hover:bg-red-600"
+            className="rounded bg-red-500 px-3 py-2 text-13 text-white hover:bg-red-600"
           >
             Error
           </button>
@@ -277,7 +277,7 @@ export const AllTypes: Story = {
                 message: "Please be careful",
               })
             }
-            className="rounded bg-yellow-500 px-3 py-2 text-sm text-white hover:bg-yellow-600"
+            className="rounded bg-yellow-500 px-3 py-2 text-13 text-white hover:bg-yellow-600"
           >
             Warning
           </button>
@@ -289,7 +289,7 @@ export const AllTypes: Story = {
                 message: "Here's some info",
               })
             }
-            className="rounded bg-blue-500 px-3 py-2 text-sm text-white hover:bg-blue-600"
+            className="rounded bg-blue-500 px-3 py-2 text-13 text-white hover:bg-blue-600"
           >
             Info
           </button>
@@ -300,7 +300,7 @@ export const AllTypes: Story = {
                 title: "Loading",
               })
             }
-            className="rounded bg-gray-500 px-3 py-2 text-sm text-white hover:bg-gray-600"
+            className="rounded bg-gray-500 px-3 py-2 text-13 text-white hover:bg-gray-600"
           >
             Loading
           </button>

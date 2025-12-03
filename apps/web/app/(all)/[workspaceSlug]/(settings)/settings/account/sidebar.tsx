@@ -63,8 +63,8 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
             )}
           </div>
           <div className="w-full overflow-hidden">
-            <div className="text-base font-medium text-secondary truncate">{currentUser?.display_name}</div>
-            <div className="text-sm text-tertiary truncate">{currentUser?.email}</div>
+            <div className="text-14 font-medium text-secondary truncate">{currentUser?.display_name}</div>
+            <div className="text-13 text-tertiary truncate">{currentUser?.email}</div>
           </div>
         </div>
       }

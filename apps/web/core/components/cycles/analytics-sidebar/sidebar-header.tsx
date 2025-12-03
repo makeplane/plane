@@ -165,10 +165,10 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
       </div>
       <div className="flex flex-col gap-2 w-full">
         <div className="flex items-start justify-between gap-3 pt-2">
-          <h4 className="w-full break-words text-xl font-semibold text-primary">{cycleDetails.name}</h4>
+          <h4 className="w-full break-words text-18 font-semibold text-primary">{cycleDetails.name}</h4>
           {currentCycle && (
             <span
-              className="flex h-6 min-w-20 px-3 items-center justify-center rounded text-center text-xs font-medium"
+              className="flex h-6 min-w-20 px-3 items-center justify-center rounded text-center text-11 font-medium"
               style={{
                 color: currentCycle.color,
                 backgroundColor: `${currentCycle.color}20`,
@@ -223,7 +223,7 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
                 )}
               />
               {projectUTCOffset && (
-                <span className="rounded-md text-xs px-2 cursor-default  py-1 bg-custom-background-80 text-tertiary">
+                <span className="rounded-md text-11 px-2 cursor-default  py-1 bg-custom-background-80 text-tertiary">
                   {projectUTCOffset}
                 </span>
               )}

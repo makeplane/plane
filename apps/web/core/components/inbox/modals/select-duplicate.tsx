@@ -80,8 +80,8 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
   const issueList =
     filteredIssues.length > 0 ? (
       <li className="p-2">
-        {query === "" && <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-primary">Select work item</h2>}
-        <ul className="text-sm text-primary">
+        {query === "" && <h2 className="mb-2 mt-4 px-3 text-11 font-semibold text-primary">Select work item</h2>}
+        <ul className="text-13 text-primary">
           {filteredIssues.map((issue) => {
             const stateColor = issue.state__color || "";
 
@@ -103,7 +103,7 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
                       backgroundColor: stateColor,
                     }}
                   />
-                  <span className="flex-shrink-0 text-xs text-secondary">
+                  <span className="flex-shrink-0 text-11 text-secondary">
                     {getProjectById(issue?.project_id)?.identifier}-{issue.sequence_id}
                   </span>
                   <span className="text-secondary">{issue.name}</span>
@@ -159,7 +159,7 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
                       />
                       <input
                         type="text"
-                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-primary outline-none focus:ring-0 sm:text-sm"
+                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-primary outline-none focus:ring-0 sm:text-13"
                         placeholder="Search..."
                         onChange={(e) => setQuery(e.target.value)}
                       />

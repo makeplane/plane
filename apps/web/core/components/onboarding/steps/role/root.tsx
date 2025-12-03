@@ -107,7 +107,7 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
       <CommonOnboardingHeader title="What's your role?" description="Let's set up Plane for how you work." />
       {/* Role Selection */}
       <div className="flex flex-col gap-3">
-        <p className="text-sm font-medium text-placeholder">Select one</p>
+        <p className="text-13 font-medium text-placeholder">Select one</p>
         <Controller
           control={control}
           name="role"
@@ -153,7 +153,7 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
             </div>
           )}
         />
-        {errors.role && <span className="text-sm text-red-500">{errors.role.message}</span>}
+        {errors.role && <span className="text-13 text-red-500">{errors.role.message}</span>}
       </div>
       {/* Action Buttons */}
       <div className="space-y-3">

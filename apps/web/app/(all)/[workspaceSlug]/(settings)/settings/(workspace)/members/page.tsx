@@ -124,7 +124,7 @@ function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
         })}
       >
         <div className="flex justify-between gap-4 pb-3.5 items-start">
-          <h4 className="flex items-center gap-2.5 text-xl font-medium">
+          <h4 className="flex items-center gap-2.5 text-18 font-medium">
             {t("workspace_settings.settings.members.title")}
             {workspaceMemberIds && workspaceMemberIds.length > 0 && (
               <CountChip count={workspaceMemberIds.length} className="h-5 m-auto" />
@@ -134,7 +134,7 @@ function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
             <div className="flex items-center gap-1.5 rounded-md border border-subtle-1 bg-custom-background-100 px-2.5 py-1.5">
               <Search className="h-3.5 w-3.5 text-placeholder" />
               <input
-                className="w-full max-w-[234px] border-none bg-transparent text-sm outline-none placeholder:text-placeholder"
+                className="w-full max-w-[234px] border-none bg-transparent text-13 outline-none placeholder:text-placeholder"
                 placeholder={`${t("search")}...`}
                 value={searchQuery}
                 autoFocus

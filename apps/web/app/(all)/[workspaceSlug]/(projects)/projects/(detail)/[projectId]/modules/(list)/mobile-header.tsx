@@ -16,14 +16,14 @@ export const ModulesListMobileHeader = observer(function ModulesListMobileHeader
     <div className="flex justify-start md:hidden">
       <CustomMenu
         maxHeight={"md"}
-        className="flex flex-grow justify-start text-secondary text-sm py-2 border-b border-subtle-1 bg-custom-sidebar-background-100"
+        className="flex flex-grow justify-start text-secondary text-13 py-2 border-b border-subtle-1 bg-custom-sidebar-background-100"
         // placement="bottom-start"
         customButton={
-          <Row className="flex flex-grow justify-center text-secondary text-sm gap-2">
+          <Row className="flex flex-grow justify-center text-secondary text-13 gap-2">
             <span>Layout</span> <ChevronDownIcon className="h-4 w-4 text-secondary my-auto" strokeWidth={1} />
           </Row>
         }
-        customButtonClassName="flex flex-grow justify-center items-center text-secondary text-sm"
+        customButtonClassName="flex flex-grow justify-center items-center text-secondary text-13"
         closeOnSelect
       >
         {MODULE_VIEW_LAYOUTS.map((layout) => {

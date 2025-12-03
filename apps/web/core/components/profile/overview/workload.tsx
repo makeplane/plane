@@ -15,7 +15,7 @@ export function ProfileWorkload({ stateDistribution }: Props) {
 
   return (
     <div className="space-y-2">
-      <h3 className="text-lg font-medium">{t("profile.stats.workload")}</h3>
+      <h3 className="text-16 font-medium">{t("profile.stats.workload")}</h3>
       <div className="grid grid-cols-1 justify-stretch gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {stateDistribution.map((group) => (
           <div key={group.state_group}>
@@ -28,14 +28,14 @@ export function ProfileWorkload({ stateDistribution }: Props) {
                   }}
                 />
                 <div className="space-y-1 flex-col">
-                  <span className="text-sm text-placeholder">
+                  <span className="text-13 text-placeholder">
                     {group.state_group === "unstarted"
                       ? "Not started"
                       : group.state_group === "started"
                         ? "Working on"
                         : STATE_GROUPS[group.state_group].label}
                   </span>
-                  <p className="text-xl font-semibold">{group.state_count}</p>
+                  <p className="text-18 font-semibold">{group.state_count}</p>
                 </div>
               </Card>
             </a>

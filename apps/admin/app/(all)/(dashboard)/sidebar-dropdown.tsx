@@ -33,7 +33,7 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
   const getSidebarMenuItems = () => (
     <Menu.Items
       className={cn(
-        "absolute left-0 z-20 mt-1.5 flex w-52 flex-col divide-y divide-custom-sidebar-border-100 rounded-md border border-subtle-1 bg-custom-sidebar-background-100 px-1 py-2 text-xs shadow-lg outline-none",
+        "absolute left-0 z-20 mt-1.5 flex w-52 flex-col divide-y divide-custom-sidebar-border-100 rounded-md border border-subtle-1 bg-custom-sidebar-background-100 px-1 py-2 text-11 shadow-lg outline-none",
         {
           "left-4": isSidebarCollapsed,
         }
@@ -109,7 +109,7 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
 
           {!isSidebarCollapsed && (
             <div className="flex w-full gap-2">
-              <h4 className="grow truncate text-base font-medium text-secondary">Instance admin</h4>
+              <h4 className="grow truncate text-14 font-medium text-secondary">Instance admin</h4>
             </div>
           )}
         </div>
@@ -123,7 +123,7 @@ export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
               src={getFileURL(currentUser.avatar_url)}
               size={24}
               shape="square"
-              className="!text-base"
+              className="!text-14"
             />
           </Menu.Button>
 

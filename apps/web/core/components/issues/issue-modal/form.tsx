@@ -380,7 +380,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
             className="flex flex-col w-full"
           >
             <div className="p-5 rounded-t-lg bg-custom-background-100">
-              <h3 className="text-xl font-medium text-secondary pb-2">{modalTitle}</h3>
+              <h3 className="text-18 font-medium text-secondary pb-2">{modalTitle}</h3>
               <div className="flex items-center justify-between pt-2 pb-4">
                 <div className="flex items-center gap-x-1">
                   <IssueProjectSelect
@@ -518,7 +518,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                       role="button"
                     >
                       <ToggleSwitch value={isCreateMoreToggleEnabled} onChange={() => {}} size="sm" />
-                      <span className="text-xs">{t("create_more")}</span>
+                      <span className="text-11">{t("create_more")}</span>
                     </div>
                   )}
                   <div className="flex items-center gap-2">

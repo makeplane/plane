@@ -19,7 +19,7 @@ export const ReadonlyDate = observer(function ReadonlyDate(props: TReadonlyDateP
   const formattedDate = value ? renderFormattedDate(getDate(value), formatToken) : null;
 
   return (
-    <div className={cn("flex items-center gap-1 text-sm", className)}>
+    <div className={cn("flex items-center gap-1 text-13", className)}>
       {!hideIcon && <Calendar className="size-4 flex-shrink-0" />}
       <span className="flex-grow truncate">{formattedDate ?? placeholder ?? t("common.none")}</span>
     </div>

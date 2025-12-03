@@ -46,7 +46,7 @@ export function BubbleMenuLinkSelector(props: Props) {
       classNames={{
         buttonContainer: "h-full",
         button: cn(
-          "h-full flex items-center gap-1 px-3 text-sm font-medium text-tertiary hover:bg-custom-background-80 active:bg-custom-background-80 rounded whitespace-nowrap transition-colors",
+          "h-full flex items-center gap-1 px-3 text-13 font-medium text-tertiary hover:bg-custom-background-80 active:bg-custom-background-80 rounded whitespace-nowrap transition-colors",
           {
             "bg-custom-background-80": context.open,
             "text-primary": editor.isActive(CORE_EXTENSIONS.CUSTOM_LINK),
@@ -74,7 +74,7 @@ export function BubbleMenuLinkSelector(props: Props) {
             type="url"
             placeholder="Enter or paste a link"
             onClick={(e) => e.stopPropagation()}
-            className="flex-1 border-r-[0.5px] border-strong bg-custom-background-100 py-2 px-1.5 text-xs outline-none placeholder:text-placeholder rounded"
+            className="flex-1 border-r-[0.5px] border-strong bg-custom-background-100 py-2 px-1.5 text-11 outline-none placeholder:text-placeholder rounded"
             defaultValue={editor.getAttributes("link").href || ""}
             onKeyDown={(e) => {
               setError(false);
@@ -112,7 +112,7 @@ export function BubbleMenuLinkSelector(props: Props) {
           )}
         </div>
         {error && (
-          <p className="text-xs text-red-500 my-1 px-2 pointer-events-none animate-in fade-in slide-in-from-top-0">
+          <p className="text-11 text-red-500 my-1 px-2 pointer-events-none animate-in fade-in slide-in-from-top-0">
             Please enter a valid URL
           </p>
         )}

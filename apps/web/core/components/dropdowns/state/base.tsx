@@ -213,7 +213,7 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
       {isOpen && (
         <Combobox.Options className="fixed z-10" static>
           <div
-            className="my-1 w-48 rounded border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
+            className="my-1 w-48 rounded border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 text-11 shadow-custom-shadow-rg focus:outline-none"
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
@@ -223,7 +223,7 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
               <Combobox.Input
                 as="input"
                 ref={inputRef}
-                className="w-full bg-transparent py-1 text-xs text-secondary placeholder:text-placeholder focus:outline-none"
+                className="w-full bg-transparent py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={t("common.search.label")}

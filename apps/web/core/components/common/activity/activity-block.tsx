@@ -27,7 +27,7 @@ export function ActivityBlockComponent(props: TActivityBlockComponent) {
   if (!activity) return <></>;
   return (
     <div
-      className={`relative flex items-start gap-2 text-xs ${
+      className={`relative flex items-start gap-2 text-11 ${
         ends === "top" ? `pb-3` : ends === "bottom" ? `pt-3` : `py-3`
       }`}
     >

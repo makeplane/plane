@@ -5,7 +5,7 @@ export function APITokenSettingsLoader() {
   return (
     <section className="w-full overflow-y-auto">
       <div className="mb-2 flex items-center justify-between border-b border-subtle-1 pb-3.5">
-        <h3 className="text-xl font-medium">{t("workspace_settings.settings.api_tokens.title")}</h3>
+        <h3 className="text-18 font-medium">{t("workspace_settings.settings.api_tokens.title")}</h3>
         <span className="h-8 w-28 bg-custom-background-80 rounded" />
       </div>
       <div className="divide-y-[0.5px] divide-subtle-1">

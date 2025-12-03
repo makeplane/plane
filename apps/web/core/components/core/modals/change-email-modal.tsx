@@ -156,15 +156,15 @@ export const ChangeEmailModal: React.FC<Props> = observer((props) => {
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 px-4 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-[30rem]">
                 <div className="py-4 space-y-0">
-                  <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-primary">
+                  <Dialog.Title as="h3" className="text-16 font-medium leading-6 text-primary">
                     {changeEmailT("title")}
                   </Dialog.Title>
-                  <p className="my-4 text-sm text-secondary">{changeEmailT("description")}</p>
+                  <p className="my-4 text-13 text-secondary">{changeEmailT("description")}</p>
                 </div>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
                   <div className="flex flex-col gap-1">
                     {secondStep && (
-                      <h4 className="text-sm font-medium text-secondary">{changeEmailT("form.email.label")}</h4>
+                      <h4 className="text-13 font-medium text-secondary">{changeEmailT("form.email.label")}</h4>
                     )}
                     <Controller
                       control={control}
@@ -194,12 +194,12 @@ export const ChangeEmailModal: React.FC<Props> = observer((props) => {
                         />
                       )}
                     />
-                    {errors?.email && <span className="text-xs text-red-500">{errors?.email?.message}</span>}
+                    {errors?.email && <span className="text-11 text-red-500">{errors?.email?.message}</span>}
                   </div>
 
                   {secondStep && (
                     <div className="flex flex-col gap-1">
-                      <h4 className="text-sm font-medium text-secondary">{changeEmailT("form.code.label")}</h4>
+                      <h4 className="text-13 font-medium text-secondary">{changeEmailT("form.code.label")}</h4>
                       <Controller
                         control={control}
                         name="code"
@@ -218,9 +218,9 @@ export const ChangeEmailModal: React.FC<Props> = observer((props) => {
                         )}
                       />
                       {errors?.code ? (
-                        <span className="text-xs text-red-500">{errors?.code?.message}</span>
+                        <span className="text-11 text-red-500">{errors?.code?.message}</span>
                       ) : (
-                        <span className="text-xs text-green-700">{changeEmailT("form.code.helper_text")}</span>
+                        <span className="text-11 text-green-700">{changeEmailT("form.code.helper_text")}</span>
                       )}
                     </div>
                   )}

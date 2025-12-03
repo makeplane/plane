@@ -226,8 +226,8 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               )}
             />
             <div className="flex flex-col gap-1 truncate text-white">
-              <span className="truncate text-lg font-semibold">{watch("name")}</span>
-              <span className="flex items-center gap-2 text-sm">
+              <span className="truncate text-16 font-semibold">{watch("name")}</span>
+              <span className="flex items-center gap-2 text-13">
                 <span>{watch("identifier")} .</span>
                 <span className="flex items-center gap-1.5">
                   {project.network === 0 && <Lock className="h-2.5 w-2.5 text-white " />}
@@ -258,7 +258,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
       </div>
       <div className="my-8 flex flex-col gap-8">
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm">{t("common.project_name")}</h4>
+          <h4 className="text-13">{t("common.project_name")}</h4>
           <Controller
             control={control}
             name="name"
@@ -284,10 +284,10 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               />
             )}
           />
-          <span className="text-xs text-red-500">{errors?.name?.message}</span>
+          <span className="text-11 text-red-500">{errors?.name?.message}</span>
         </div>
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm">{t("description")}</h4>
+          <h4 className="text-13">{t("description")}</h4>
           <Controller
             name="description"
             control={control}
@@ -298,7 +298,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                 value={value}
                 placeholder={t("project_description_placeholder")}
                 onChange={onChange}
-                className="min-h-[102px] text-sm font-medium"
+                className="min-h-[102px] text-13 font-medium"
                 hasError={Boolean(errors?.description)}
                 disabled={!isAdmin}
               />
@@ -307,7 +307,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex flex-col gap-1">
-            <h4 className="text-sm">Project ID</h4>
+            <h4 className="text-13">Project ID</h4>
             <div className="relative">
               <Controller
                 control={control}
@@ -342,18 +342,18 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               <Tooltip
                 isMobile={isMobile}
                 tooltipContent="Helps you identify work items in the project uniquely. Max 5 characters."
-                className="text-sm"
+                className="text-13"
                 position="right-start"
               >
                 <Info className="absolute right-2 top-2.5 h-4 w-4 text-placeholder" />
               </Tooltip>
             </div>
-            <span className="text-xs text-red-500">
+            <span className="text-11 text-red-500">
               <>{errors?.identifier?.message}</>
             </span>
           </div>
           <div className="flex flex-col gap-1">
-            <h4 className="text-sm">{t("workspace_projects.network.label")}</h4>
+            <h4 className="text-13">{t("workspace_projects.network.label")}</h4>
             <Controller
               name="network"
               control={control}
@@ -386,7 +386,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                           <ProjectNetworkIcon iconKey={network.iconKey} className="h-3.5 w-3.5" />
                           <div className="-mt-1">
                             <p>{t(network.i18n_label)}</p>
-                            <p className="text-xs text-placeholder">{t(network.description)}</p>
+                            <p className="text-11 text-placeholder">{t(network.description)}</p>
                           </div>
                         </div>
                       </CustomSelect.Option>
@@ -397,7 +397,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
             />
           </div>
           <div className="flex flex-col gap-1 col-span-1 sm:col-span-2 xl:col-span-1">
-            <h4 className="text-sm">{t("common.project_timezone")}</h4>
+            <h4 className="text-13">{t("common.project_timezone")}</h4>
             <Controller
               name="timezone"
               control={control}
@@ -416,7 +416,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                 </>
               )}
             />
-            {errors.timezone && <span className="text-xs text-red-500">{errors.timezone.message}</span>}
+            {errors.timezone && <span className="text-11 text-red-500">{errors.timezone.message}</span>}
           </div>
         </div>
         <div className="flex items-center justify-between py-2">
@@ -430,7 +430,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
             >
               {isLoading ? `${t("updating")}...` : t("common.update_project")}
             </Button>
-            <span className="text-sm italic text-placeholder">
+            <span className="text-13 italic text-placeholder">
               {t("common.created_on")} {renderFormattedDate(project?.created_at)}
             </span>
           </>

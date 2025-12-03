@@ -132,7 +132,7 @@ export const MemberDropdownBase = observer(function MemberDropdownBase(props: TM
           tabIndex={tabIndex}
         >
           <DropdownButton
-            className={cn("text-xs", buttonClassName)}
+            className={cn("text-11", buttonClassName)}
             isActive={isOpen}
             tooltipHeading={placeholder}
             tooltipContent={

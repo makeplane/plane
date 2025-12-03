@@ -50,18 +50,18 @@ export const BillingRoot = observer(function BillingRoot() {
             <div className="flex gap-2 font-medium items-center justify-between">
               <div className="flex flex-col gap-1">
                 <h4
-                  className={cn("text-xl leading-6 font-bold", getSubscriptionTextColor(EProductSubscriptionEnum.FREE))}
+                  className={cn("text-18 leading-6 font-bold", getSubscriptionTextColor(EProductSubscriptionEnum.FREE))}
                 >
                   Community
                 </h4>
-                <div className="text-sm text-secondary font-medium">
+                <div className="text-13 text-secondary font-medium">
                   Unlimited projects, issues, cycles, modules, pages, and storage
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="text-xl font-semibold mt-3">All plans</div>
+        <div className="text-18 font-semibold mt-3">All plans</div>
       </div>
       <PlansComparison
         isCompareAllFeaturesSectionOpen={isCompareAllFeaturesSectionOpen}

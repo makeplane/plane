@@ -100,7 +100,7 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
 
       {/* Use Case Selection */}
       <div className="flex flex-col gap-3">
-        <p className="text-sm font-medium text-placeholder">Select any</p>
+        <p className="text-13 font-medium text-placeholder">Select any</p>
 
         <Controller
           control={control}
@@ -147,7 +147,7 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
             </div>
           )}
         />
-        {errors.use_case && <span className="text-sm text-red-500">{errors.use_case.message}</span>}
+        {errors.use_case && <span className="text-13 text-red-500">{errors.use_case.message}</span>}
       </div>
 
       {/* Action Buttons */}

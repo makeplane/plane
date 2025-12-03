@@ -104,7 +104,7 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
           <Popover.Button as={React.Fragment}>
             <button type="button" ref={setReferenceElement}>
               <div
-                className={`hidden md:flex items-center gap-1.5 rounded bg-custom-background-80 px-2.5 py-1 text-xs outline-none hover:bg-custom-background-80 ${
+                className={`hidden md:flex items-center gap-1.5 rounded bg-custom-background-80 px-2.5 py-1 text-11 outline-none hover:bg-custom-background-80 ${
                   open ? "text-primary" : "text-secondary"
                 }`}
               >
@@ -141,7 +141,7 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
                     <button
                       key={layout}
                       type="button"
-                      className="flex w-full items-center justify-between gap-2 rounded px-1 py-1.5 text-left text-xs hover:bg-custom-background-80"
+                      className="flex w-full items-center justify-between gap-2 rounded px-1 py-1.5 text-left text-11 hover:bg-custom-background-80"
                       onClick={() => handleLayoutChange(layoutDetails.key, closePopover)}
                     >
                       {layoutDetails.title}
@@ -150,7 +150,7 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
                   ))}
                   <button
                     type="button"
-                    className="flex w-full items-center justify-between gap-2 rounded px-1 py-1.5 text-left text-xs hover:bg-custom-background-80"
+                    className="flex w-full items-center justify-between gap-2 rounded px-1 py-1.5 text-left text-11 hover:bg-custom-background-80"
                     onClick={handleToggleWeekends}
                   >
                     {t("common.actions.show_weekends")}

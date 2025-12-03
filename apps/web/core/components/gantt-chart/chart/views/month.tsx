@@ -43,14 +43,14 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
                   style={{ width: `${monthBlock.days * currentViewData?.data.dayWidth}px` }}
                 >
                   <div
-                    className="sticky flex items-center font-normal z-[1] m-1 whitespace-nowrap px-3 py-1 text-base capitalize bg-custom-background-100 text-secondary"
+                    className="sticky flex items-center font-regular z-[1] m-1 whitespace-nowrap px-3 py-1 text-14 capitalize bg-custom-background-100 text-secondary"
                     style={{
                       left: `${SIDEBAR_WIDTH}px`,
                     }}
                   >
                     {monthBlock?.title}
                     {monthBlock.today && (
-                      <span className={cn("rounded ml-2 font-medium bg-custom-primary-100 px-1 text-2xs text-white")}>
+                      <span className={cn("rounded ml-2 font-medium bg-custom-primary-100 px-1 text-9 text-white")}>
                         Current
                       </span>
                     )}
@@ -71,7 +71,7 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
                   )}
                   style={{ width: `${currentViewData?.data.dayWidth * 7}px` }}
                 >
-                  <div className="space-x-1 text-xs font-medium text-placeholder">
+                  <div className="space-x-1 text-11 font-medium text-placeholder">
                     <span
                       className={cn({
                         "rounded bg-custom-primary-100 px-1 text-white": weekBlock.today,
@@ -80,7 +80,7 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
                       {weekBlock.startDate.getDate()}-{weekBlock.endDate.getDate()}
                     </span>
                   </div>
-                  <div className="space-x-1 text-xs font-medium">{weekBlock.weekData.shortTitle}</div>
+                  <div className="space-x-1 text-11 font-medium">{weekBlock.weekData.shortTitle}</div>
                 </div>
               ))}
             </div>

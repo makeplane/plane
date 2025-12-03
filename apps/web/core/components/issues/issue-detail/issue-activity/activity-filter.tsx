@@ -42,7 +42,7 @@ export const ActivityFilter = observer(function ActivityFilter(props: TActivityF
       render={(item) => (
         <div
           key={item.key}
-          className="flex items-center gap-2 text-sm cursor-pointer px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm"
+          className="flex items-center gap-2 text-13 cursor-pointer px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm"
           onClick={item.onClick}
         >
           <div

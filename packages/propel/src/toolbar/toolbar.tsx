@@ -102,7 +102,7 @@ const ToolbarItem = React.forwardRef(function ToolbarItem(
     return (
       <Tooltip
         tooltipContent={
-          <div className="flex flex-col gap-1 text-center text-xs">
+          <div className="flex flex-col gap-1 text-center text-11">
             <span className="font-medium">{tooltip}</span>
             {shortcut && <kbd className="text-placeholder">{shortcut.join(" + ")}</kbd>}
           </div>
@@ -142,7 +142,7 @@ const ToolbarSubmitButton = React.forwardRef(function ToolbarSubmitButton(
       <button
         ref={ref}
         className={cn(
-          "inline-flex items-center justify-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors duration-200",
+          "inline-flex items-center justify-center gap-2 rounded-md px-2.5 py-1.5 text-11 font-medium transition-colors duration-200",
           "focus:outline-none focus:ring-2 focus:ring-custom-primary-100/20 focus:ring-offset-2",
           "disabled:opacity-50 disabled:pointer-events-none",
           buttonVariants[variant],

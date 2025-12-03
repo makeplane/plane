@@ -81,15 +81,15 @@ export const ProfileIssuesMobileHeader = observer(function ProfileIssuesMobileHe
     <div className="flex justify-evenly border-b border-subtle-1 py-2 md:hidden">
       <CustomMenu
         maxHeight={"md"}
-        className="flex flex-grow justify-center text-sm text-secondary"
+        className="flex flex-grow justify-center text-13 text-secondary"
         placement="bottom-start"
         customButton={
-          <div className="flex flex-center text-sm text-secondary">
+          <div className="flex flex-center text-13 text-secondary">
             {t("common.layout")}
             <ChevronDownIcon className="ml-2  h-4 w-4 text-secondary my-auto" strokeWidth={2} />
           </div>
         }
-        customButtonClassName="flex flex-center text-secondary text-sm"
+        customButtonClassName="flex flex-center text-secondary text-13"
         closeOnSelect
       >
         {ISSUE_LAYOUTS.map((layout, index) => {
@@ -108,12 +108,12 @@ export const ProfileIssuesMobileHeader = observer(function ProfileIssuesMobileHe
           );
         })}
       </CustomMenu>
-      <div className="flex flex-grow items-center justify-center border-l border-subtle-1 text-sm text-secondary">
+      <div className="flex flex-grow items-center justify-center border-l border-subtle-1 text-13 text-secondary">
         <FiltersDropdown
           title={t("common.display")}
           placement="bottom-end"
           menuButton={
-            <div className="flex flex-center text-sm text-secondary">
+            <div className="flex flex-center text-13 text-secondary">
               {t("common.display")}
               <ChevronDownIcon className="ml-2 h-4 w-4 text-secondary" strokeWidth={2} />
             </div>

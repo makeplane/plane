@@ -45,7 +45,7 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
   return (
     <form onSubmit={handleFormSubmit} className="space-y-4">
       <div className="space-y-1">
-        <label htmlFor="email" className="text-sm text-tertiary font-medium">
+        <label htmlFor="email" className="text-13 text-tertiary font-medium">
           {t("auth.common.email.label")}
         </label>
         <div
@@ -88,7 +88,7 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
           )}
         </div>
         {emailError?.email && !isFocused && (
-          <p className="flex items-center gap-1 text-xs text-red-600 px-0.5">
+          <p className="flex items-center gap-1 text-11 text-red-600 px-0.5">
             <CircleAlert height={12} width={12} />
             {t(emailError.email)}
           </p>

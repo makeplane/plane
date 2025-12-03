@@ -51,7 +51,7 @@ export const SettingsSidebar = observer(function SettingsSidebar(props: Settings
           if (groupedSettings[category].length === 0) return null;
           return (
             <div key={category} className="py-3">
-              <span className="text-sm font-semibold text-custom-text-350 capitalize mb-2 px-2">{t(category)}</span>
+              <span className="text-13 font-semibold text-custom-text-350 capitalize mb-2 px-2">{t(category)}</span>
               <div className="relative flex flex-col gap-0.5 h-full mt-2">
                 {groupedSettings[category].map(
                   (setting) =>

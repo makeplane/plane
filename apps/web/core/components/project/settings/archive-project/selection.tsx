@@ -20,7 +20,7 @@ export function ArchiveProjectSelection(props: IArchiveProject) {
       {({ open }) => (
         <div className="w-full">
           <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between">
-            <span className="text-xl tracking-tight">Archive project</span>
+            <span className="text-18 tracking-tight">Archive project</span>
             {open ? <ChevronUpIcon className="h-5 w-5" /> : <ChevronRightIcon className="h-5 w-5" />}
           </Disclosure.Button>
           <Transition
@@ -34,7 +34,7 @@ export function ArchiveProjectSelection(props: IArchiveProject) {
           >
             <Disclosure.Panel>
               <div className="flex flex-col gap-8 pt-4">
-                <span className="text-sm tracking-tight">
+                <span className="text-13 tracking-tight">
                   Archiving a project will unlist your project from your side navigation although you will still be able
                   to access it from your projects page. You can restore the project or delete it whenever you want.
                 </span>

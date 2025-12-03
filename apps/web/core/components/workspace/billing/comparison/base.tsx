@@ -42,23 +42,23 @@ export const PlansComparisonBase = observer(function PlansComparisonBase(props: 
         <div className="h-full flex flex-col gap-y-10">
           <div
             className={cn(
-              "flex-shrink-0 sticky top-2 z-10 bg-custom-background-100 grid gap-3 text-sm font-medium even:bg-custom-background-90 transition-all duration-500 ease-out will-change-transform"
+              "flex-shrink-0 sticky top-2 z-10 bg-custom-background-100 grid gap-3 text-13 font-medium even:bg-custom-background-90 transition-all duration-500 ease-out will-change-transform"
             )}
             style={{
               gridTemplateColumns: `repeat(${numberOfPlansToRender + 1}, minmax(0, 1fr))`,
             }}
           >
-            <div className="col-span-1 p-3 space-y-0.5 text-base font-medium" />
+            <div className="col-span-1 p-3 space-y-0.5 text-14 font-medium" />
             {planeDetails}
           </div>
           {/* Plan Headers */}
           <section className="flex-shrink-0">
             {/* Plan Highlights */}
             <div
-              className="grid gap-3 py-1 text-sm text-secondary even:bg-custom-background-90 rounded-sm"
+              className="grid gap-3 py-1 text-13 text-secondary even:bg-custom-background-90 rounded-sm"
               style={{ gridTemplateColumns: `repeat(${numberOfPlansToRender + 1}, minmax(0, 1fr))` }}
             >
-              <div className="col-span-1 p-3 text-base font-medium">Highlights</div>
+              <div className="col-span-1 p-3 text-14 font-medium">Highlights</div>
               {Object.entries(planHighlights).map(
                 ([planKey, highlights]) =>
                   shouldRenderPlanDetail(planKey as TPlanePlans) && (
@@ -79,17 +79,17 @@ export const PlansComparisonBase = observer(function PlansComparisonBase(props: 
             <>
               {planComparison.map((section, sectionIdx) => (
                 <section key={sectionIdx} className="flex-shrink-0">
-                  <h2 className="flex gap-2 items-start text-lg font-semibold text-tertiary mb-2 pl-2">
+                  <h2 className="flex gap-2 items-start text-16 font-semibold text-tertiary mb-2 pl-2">
                     {section.title} {section.comingSoon && <ComingSoonBadge />}
                   </h2>
                   <div className="border-t border-subtle-1">
                     {section.features.map((feature, featureIdx) => (
                       <div
                         key={featureIdx}
-                        className="grid gap-3 text-sm text-secondary even:bg-custom-background-90 rounded-sm"
+                        className="grid gap-3 text-13 text-secondary even:bg-custom-background-90 rounded-sm"
                         style={{ gridTemplateColumns: `repeat(${numberOfPlansToRender + 1}, minmax(0, 1fr))` }}
                       >
-                        <div className="col-span-1 p-3 flex items-center text-base font-medium">
+                        <div className="col-span-1 p-3 flex items-center text-14 font-medium">
                           <div className="w-full flex gap-2 items-start justify-between">
                             {feature.title} {feature.comingSoon && <ComingSoonBadge />}
                           </div>

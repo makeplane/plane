@@ -66,7 +66,7 @@ export const IssueGanttBlock = observer(function IssueGanttBlock(props: Props) {
           >
             <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50 " />
             <div
-              className="sticky w-auto overflow-hidden truncate px-2.5 py-1 text-sm text-primary flex-1"
+              className="sticky w-auto overflow-hidden truncate px-2.5 py-1 text-13 text-primary flex-1"
               style={{ left: `${SIDEBAR_WIDTH}px` }}
             >
               {issueDetails?.name}
@@ -140,7 +140,7 @@ export const IssueGanttSidebarBlock = observer(function IssueGanttSidebarBlock(p
       id={`issue-${issueId}`}
       href={workItemLink}
       onClick={handleIssuePeekOverview}
-      className="line-clamp-1 w-full cursor-pointer text-sm text-primary"
+      className="line-clamp-1 w-full cursor-pointer text-13 text-primary"
       disabled={!!issueDetails?.tempId}
     >
       <div className="relative flex h-full w-full cursor-pointer items-center gap-2">
@@ -148,12 +148,12 @@ export const IssueGanttSidebarBlock = observer(function IssueGanttSidebarBlock(p
           <IssueIdentifier
             issueId={issueDetails.id}
             projectId={issueDetails.project_id}
-            textContainerClassName="text-xs text-tertiary"
+            textContainerClassName="text-11 text-tertiary"
             displayProperties={issuesFilter?.issueFilters?.displayProperties}
           />
         )}
         <Tooltip tooltipContent={issueDetails?.name} isMobile={isMobile}>
-          <span className="flex-grow truncate text-sm font-medium">{issueDetails?.name}</span>
+          <span className="flex-grow truncate text-13 font-medium">{issueDetails?.name}</span>
         </Tooltip>
       </div>
     </ControlLink>

@@ -79,17 +79,17 @@ export const ProfileActivityListPage = observer(function ProfileActivityListPage
                       )}
 
                       <span className="ring-6 flex h-6 w-6 p-2 items-center justify-center rounded-full bg-custom-background-80 text-secondary ring-white">
-                        <MessageSquare className="!text-2xl text-secondary" aria-hidden="true" />
+                        <MessageSquare className="!text-20 text-secondary" aria-hidden="true" />
                       </span>
                     </div>
                     <div className="min-w-0 flex-1">
                       <div>
-                        <div className="text-xs">
+                        <div className="text-11">
                           {activityItem.actor_detail.is_bot
                             ? activityItem.actor_detail.first_name + " Bot"
                             : activityItem.actor_detail.display_name}
                         </div>
-                        <p className="mt-0.5 text-xs text-secondary">
+                        <p className="mt-0.5 text-11 text-secondary">
                           Commented {calculateTimeAgo(activityItem.created_at)}
                         </p>
                       </div>
@@ -100,7 +100,7 @@ export const ProfileActivityListPage = observer(function ProfileActivityListPage
                           initialValue={
                             activityItem?.new_value !== "" ? activityItem.new_value : activityItem.old_value
                           }
-                          containerClassName="text-xs bg-custom-background-100"
+                          containerClassName="text-11 bg-custom-background-100"
                           workspaceId={activityItem?.workspace_detail?.id?.toString() ?? ""}
                           workspaceSlug={activityItem?.workspace_detail?.slug?.toString() ?? ""}
                           projectId={activityItem.project ?? ""}
@@ -139,7 +139,7 @@ export const ProfileActivityListPage = observer(function ProfileActivityListPage
                                     className="h-full w-full rounded-full object-cover"
                                   />
                                 ) : (
-                                  <div className="grid h-6 w-6 place-items-center rounded-full border-2 border-white bg-gray-700 text-xs capitalize text-white">
+                                  <div className="grid h-6 w-6 place-items-center rounded-full border-2 border-white bg-gray-700 text-11 capitalize text-white">
                                     {activityItem.actor_detail.display_name?.[0]}
                                   </div>
                                 )}
@@ -148,7 +148,7 @@ export const ProfileActivityListPage = observer(function ProfileActivityListPage
                           </div>
                         </div>
                         <div className="min-w-0 flex-1 border-b border-subtle py-4">
-                          <div className="break-words text-sm text-secondary">
+                          <div className="break-words text-13 text-secondary">
                             {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (
                               <span className="text-gray font-medium">Plane</span>
                             ) : activityItem.actor_detail.is_bot ? (

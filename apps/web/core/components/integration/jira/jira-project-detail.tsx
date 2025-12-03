@@ -103,7 +103,7 @@ export function JiraProjectDetail(props: Props) {
   if (error) {
     return (
       <div className="flex h-full w-full items-center justify-center">
-        <p className="text-sm text-secondary">
+        <p className="text-13 text-secondary">
           Something went wrong. Please{" "}
           <button
             onClick={() => setCurrentStep({ state: "import-configure" })}
@@ -123,28 +123,28 @@ export function JiraProjectDetail(props: Props) {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Import Data</h3>
-          <p className="text-sm text-secondary">Import Completed. We have found:</p>
+          <p className="text-13 text-secondary">Import Completed. We have found:</p>
         </div>
         <div className="col-span-1 flex items-center justify-between">
           <div>
-            <h4 className="mb-2 text-lg font-semibold">{projectInfo?.issues}</h4>
-            <p className="text-sm text-secondary">Work items</p>
+            <h4 className="mb-2 text-16 font-semibold">{projectInfo?.issues}</h4>
+            <p className="text-13 text-secondary">Work items</p>
           </div>
           <div>
-            <h4 className="mb-2 text-lg font-semibold">{projectInfo?.states}</h4>
-            <p className="text-sm text-secondary">States</p>
+            <h4 className="mb-2 text-16 font-semibold">{projectInfo?.states}</h4>
+            <p className="text-13 text-secondary">States</p>
           </div>
           <div>
-            <h4 className="mb-2 text-lg font-semibold">{projectInfo?.modules}</h4>
-            <p className="text-sm text-secondary">Modules</p>
+            <h4 className="mb-2 text-16 font-semibold">{projectInfo?.modules}</h4>
+            <p className="text-13 text-secondary">Modules</p>
           </div>
           <div>
-            <h4 className="mb-2 text-lg font-semibold">{projectInfo?.labels}</h4>
-            <p className="text-sm text-secondary">Labels</p>
+            <h4 className="mb-2 text-16 font-semibold">{projectInfo?.labels}</h4>
+            <p className="text-13 text-secondary">Labels</p>
           </div>
           <div>
-            <h4 className="mb-2 text-lg font-semibold">{projectInfo?.users?.length}</h4>
-            <p className="text-sm text-secondary">Users</p>
+            <h4 className="mb-2 text-16 font-semibold">{projectInfo?.users?.length}</h4>
+            <p className="text-13 text-secondary">Users</p>
           </div>
         </div>
       </div>
@@ -152,7 +152,7 @@ export function JiraProjectDetail(props: Props) {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Import Epics</h3>
-          <p className="text-sm text-secondary">Import epics as modules</p>
+          <p className="text-13 text-secondary">Import epics as modules</p>
         </div>
         <div className="col-span-1">
           <Controller

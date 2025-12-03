@@ -54,13 +54,13 @@ export const Sizes: Story = {
       <div className="space-y-6 p-4">
         <div className="flex items-center gap-4">
           <button
-            className="px-3 py-1 bg-custom-background-80 text-sm rounded hover:bg-custom-background-90"
+            className="px-3 py-1 bg-custom-background-80 text-13 rounded hover:bg-custom-background-90"
             onClick={() => setCount((prev) => Math.max(0, prev - 1))}
           >
             -1
           </button>
           <button
-            className="px-3 py-1 bg-custom-background-80 text-sm rounded hover:bg-custom-background-90"
+            className="px-3 py-1 bg-custom-background-80 text-13 rounded hover:bg-custom-background-90"
             onClick={() => setCount((prev) => prev + 1)}
           >
             +1
@@ -68,19 +68,19 @@ export const Sizes: Story = {
         </div>
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-4">
-            <span className="text-sm text-placeholder w-20">Small:</span>
+            <span className="text-13 text-placeholder w-20">Small:</span>
             <div className="flex items-center justify-center min-w-[40px] h-8 bg-custom-background-80 border border-subtle-1 rounded">
               <AnimatedCounter count={count} size="sm" />
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-placeholder w-20">Medium:</span>
+            <span className="text-13 text-placeholder w-20">Medium:</span>
             <div className="flex items-center justify-center min-w-[50px] h-10 bg-custom-background-80 border border-subtle-1 rounded">
               <AnimatedCounter count={count} size="md" />
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-placeholder w-20">Large:</span>
+            <span className="text-13 text-placeholder w-20">Large:</span>
             <div className="flex items-center justify-center min-w-[60px] h-12 bg-custom-background-80 border border-subtle-1 rounded">
               <AnimatedCounter count={count} size="lg" />
             </div>
@@ -99,13 +99,13 @@ export const LargeNumbers: Story = {
       <div className="space-y-6 p-4">
         <div className="flex items-center gap-4">
           <button
-            className="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600"
+            className="px-3 py-1 bg-red-500 text-white text-13 rounded hover:bg-red-600"
             onClick={() => setCount((prev) => Math.max(0, prev - 1000))}
           >
             -1000
           </button>
           <button
-            className="px-3 py-1 bg-green-500 text-white text-sm rounded hover:bg-green-600"
+            className="px-3 py-1 bg-green-500 text-white text-13 rounded hover:bg-green-600"
             onClick={() => setCount((prev) => prev + 1000)}
           >
             +1000
@@ -143,7 +143,7 @@ export const Countdown: Story = {
       <div className="space-y-6 p-4">
         <div className="flex flex-col items-center gap-4">
           <div className="flex items-center justify-center min-w-[60px] h-16 bg-custom-background-80 border-2 border-subtle-1 rounded-lg">
-            <AnimatedCounter count={count} size="lg" className="text-2xl" />
+            <AnimatedCounter count={count} size="lg" className="text-20" />
           </div>
           <button
             className="px-6 py-2 bg-custom-primary-100 text-white font-medium rounded-lg hover:bg-custom-primary-200"
@@ -174,7 +174,7 @@ export const LiveCounter: Story = {
       <div className="space-y-6 p-4">
         <div className="flex flex-col items-center gap-4">
           <div className="flex items-center justify-center min-w-[80px] h-16 bg-custom-background-80 border-2 border-subtle-1 rounded-lg">
-            <AnimatedCounter count={count} size="lg" className="text-2xl" />
+            <AnimatedCounter count={count} size="lg" className="text-20" />
           </div>
           <div className="flex gap-2">
             <button
@@ -221,7 +221,7 @@ export const MultipleCounters: Story = {
           </div>
           <div className="flex gap-4">
             <div className="flex-1 flex flex-col items-center gap-2">
-              <div className="text-placeholder text-sm">Likes</div>
+              <div className="text-placeholder text-13">Likes</div>
               <div className="flex items-center gap-2">
                 <button
                   className="w-8 h-8 flex items-center justify-center bg-custom-background-80 rounded hover:bg-custom-background-90"
@@ -235,7 +235,7 @@ export const MultipleCounters: Story = {
               </div>
             </div>
             <div className="flex-1 flex flex-col items-center gap-2">
-              <div className="text-placeholder text-sm">Comments</div>
+              <div className="text-placeholder text-13">Comments</div>
               <div className="flex items-center gap-2">
                 <button
                   className="w-8 h-8 flex items-center justify-center bg-custom-background-80 rounded hover:bg-custom-background-90"
@@ -249,7 +249,7 @@ export const MultipleCounters: Story = {
               </div>
             </div>
             <div className="flex-1 flex flex-col items-center gap-2">
-              <div className="text-placeholder text-sm">Shares</div>
+              <div className="text-placeholder text-13">Shares</div>
               <div className="flex items-center gap-2">
                 <button
                   className="w-8 h-8 flex items-center justify-center bg-custom-background-80 rounded hover:bg-custom-background-90"
@@ -281,7 +281,7 @@ export const InBadge: Story = {
               Notifications
             </button>
             <div className="absolute -top-2 -right-2 min-w-[24px] h-6 flex items-center justify-center bg-red-500 text-white rounded-full px-1.5">
-              <AnimatedCounter count={notifications} size="sm" className="text-xs font-medium" />
+              <AnimatedCounter count={notifications} size="sm" className="text-11 font-medium" />
             </div>
           </div>
           <button

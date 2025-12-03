@@ -74,9 +74,9 @@ const AssetItem = observer(function AssetItem(props: AssetItemProps) {
           }}
         />
         <div className="flex-1 space-y-0.5 truncate">
-          <p className="text-sm font-medium truncate">{asset.name}</p>
+          <p className="text-13 font-medium truncate">{asset.name}</p>
           <div className="flex items-end justify-between gap-2">
-            <p className="shrink-0 text-xs text-secondary" />
+            <p className="shrink-0 text-11 text-secondary" />
             <a
               href={assetDownloadSrc}
               target="_blank"
@@ -84,7 +84,7 @@ const AssetItem = observer(function AssetItem(props: AssetItemProps) {
               className="shrink-0 py-0.5 px-1 flex items-center gap-1 rounded text-secondary hover:text-primary opacity-0 pointer-events-none group-hover/asset-item:opacity-100 group-hover/asset-item:pointer-events-auto transition-opacity"
             >
               <Download className="shrink-0 size-3" />
-              <span className="text-xs font-medium">{t("page_navigation_pane.tabs.assets.download_button")}</span>
+              <span className="text-11 font-medium">{t("page_navigation_pane.tabs.assets.download_button")}</span>
             </a>
           </div>
         </div>

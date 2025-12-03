@@ -84,7 +84,7 @@ function BorderButton(props: ButtonProps) {
     >
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 border-[0.5px] rounded text-xs px-2 py-0.5",
+          "h-full flex items-center gap-1.5 border-[0.5px] rounded text-11 px-2 py-0.5",
           priorityClasses[priority ?? "none"],
           {
             // compact the icons if text is hidden
@@ -167,7 +167,7 @@ function BackgroundButton(props: ButtonProps) {
     >
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5",
+          "h-full flex items-center gap-1.5 rounded text-11 px-2 py-0.5",
           priorityClasses[priority ?? "none"],
           {
             // compact the icons if text is hidden
@@ -253,7 +253,7 @@ function TransparentButton(props: ButtonProps) {
     >
       <div
         className={cn(
-          "h-full w-full flex items-center gap-1.5 rounded text-xs px-2 py-0.5 hover:bg-custom-background-80",
+          "h-full w-full flex items-center gap-1.5 rounded text-11 px-2 py-0.5 hover:bg-custom-background-80",
           priorityClasses[priority ?? "none"],
           {
             // compact the icons if text is hidden
@@ -455,7 +455,7 @@ export function PriorityDropdown(props: Props) {
       {isOpen && (
         <Combobox.Options className="fixed z-10" static>
           <div
-            className="my-1 w-48 rounded border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
+            className="my-1 w-48 rounded border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 text-11 shadow-custom-shadow-rg focus:outline-none"
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
@@ -465,7 +465,7 @@ export function PriorityDropdown(props: Props) {
               <Combobox.Input
                 as="input"
                 ref={inputRef}
-                className="w-full bg-transparent py-1 text-xs text-secondary placeholder:text-placeholder focus:outline-none"
+                className="w-full bg-transparent py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={t("search")}

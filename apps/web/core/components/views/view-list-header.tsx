@@ -72,7 +72,7 @@ export const ViewListHeader = observer(function ViewListHeader() {
           <Search className="h-3.5 w-3.5" />
           <input
             ref={inputRef}
-            className="w-full max-w-[234px] border-none bg-transparent text-sm text-primary placeholder:text-placeholder focus:outline-none"
+            className="w-full max-w-[234px] border-none bg-transparent text-13 text-primary placeholder:text-placeholder focus:outline-none"
             placeholder="Search"
             value={filters?.searchQuery}
             onChange={(e) => updateFilters("searchQuery", e.target.value)}

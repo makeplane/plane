@@ -13,8 +13,8 @@ export function ProfileEmptyState({ title, description, image }: Props) {
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-custom-background-90">
           <img src={image} width="32" height="32" className="w-full h-full object-cover" alt={title} />
         </div>
-        <h6 className="mb-3 mt-3.5 text-base font-semibold">{title}</h6>
-        {description && <p className="text-sm text-tertiary">{description}</p>}
+        <h6 className="mb-3 mt-3.5 text-14 font-semibold">{title}</h6>
+        {description && <p className="text-13 text-tertiary">{description}</p>}
       </div>
     </div>
   );

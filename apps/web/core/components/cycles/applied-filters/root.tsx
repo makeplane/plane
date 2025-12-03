@@ -45,7 +45,7 @@ export const CycleAppliedFiltersList = observer(function CycleAppliedFiltersList
 
         return (
           <Tag key={filterKey}>
-            <span className="text-xs text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
+            <span className="text-11 text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
             <div className="flex flex-wrap items-center gap-1">
               {filterKey === "status" && (
                 <AppliedStatusFilters

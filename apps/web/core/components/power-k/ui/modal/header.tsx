@@ -41,7 +41,7 @@ export function PowerKModalHeader(props: Props) {
           value={searchTerm}
           onValueChange={onSearchChange}
           placeholder={placeholder}
-          className="flex-1 bg-transparent text-sm text-primary placeholder-custom-text-400 outline-none"
+          className="flex-1 bg-transparent text-13 text-primary placeholder-custom-text-400 outline-none"
           autoFocus
         />
         {searchTerm && (

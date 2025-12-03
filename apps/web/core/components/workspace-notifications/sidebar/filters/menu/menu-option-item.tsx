@@ -38,7 +38,7 @@ export const NotificationFilterOptionItem = observer(function NotificationFilter
       >
         {isSelected && <Check className="h-2.5 w-2.5" />}
       </div>
-      <div className={cn("whitespace-nowrap text-sm", isSelected ? "text-primary" : "text-secondary")}>{label}</div>
+      <div className={cn("whitespace-nowrap text-13", isSelected ? "text-primary" : "text-secondary")}>{label}</div>
     </div>
   );
 });

@@ -135,7 +135,7 @@ function UserInvitationsPage() {
           >
             <PlaneLogo className="h-9 w-auto text-primary" />
           </Link>
-          <div className="absolute right-4 top-1/4 -translate-y-1/2 text-sm text-primary sm:fixed sm:right-16 sm:top-12 sm:translate-y-0 sm:py-5">
+          <div className="absolute right-4 top-1/4 -translate-y-1/2 text-13 text-primary sm:fixed sm:right-16 sm:top-12 sm:translate-y-0 sm:py-5">
             {currentUser?.email}
           </div>
         </div>
@@ -143,8 +143,8 @@ function UserInvitationsPage() {
           invitations.length > 0 ? (
             <div className="relative flex h-full justify-center px-8 pb-8 sm:w-10/12 sm:items-center sm:justify-start sm:p-0 sm:pr-[8.33%] md:w-9/12 lg:w-4/5">
               <div className="w-full space-y-10">
-                <h5 className="text-lg">{t("we_see_that_someone_has_invited_you_to_join_a_workspace")}</h5>
-                <h4 className="text-2xl font-semibold">{t("join_a_workspace")}</h4>
+                <h5 className="text-16">{t("we_see_that_someone_has_invited_you_to_join_a_workspace")}</h5>
+                <h4 className="text-20 font-semibold">{t("join_a_workspace")}</h4>
                 <div className="max-h-[37vh] space-y-4 overflow-y-auto md:w-3/5">
                   {invitations.map((invitation) => {
                     const isSelected = invitationsRespond.includes(invitation.id);
@@ -165,8 +165,8 @@ function UserInvitationsPage() {
                           />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="text-sm font-medium">{truncateText(invitation.workspace.name, 30)}</div>
-                          <p className="text-xs text-secondary">{ROLE[invitation.role]}</p>
+                          <div className="text-13 font-medium">{truncateText(invitation.workspace.name, 30)}</div>
+                          <p className="text-11 text-secondary">{ROLE[invitation.role]}</p>
                         </div>
                         <span className={`flex-shrink-0 ${isSelected ? "text-custom-primary-100" : "text-secondary"}`}>
                           <CheckCircle2 className="h-5 w-5" />

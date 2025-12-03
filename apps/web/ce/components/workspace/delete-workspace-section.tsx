@@ -39,7 +39,7 @@ export const DeleteWorkspaceSection = observer(function DeleteWorkspaceSection(p
             buttonClassName="flex w-full items-center justify-between py-4"
             title={
               <>
-                <span className="text-lg tracking-tight">
+                <span className="text-16 tracking-tight">
                   {t("workspace_settings.settings.general.delete_workspace")}
                 </span>
                 {isOpen ? <ChevronUpIcon className="h-5 w-5" /> : <ChevronDownIcon className="h-5 w-5" />}
@@ -47,7 +47,7 @@ export const DeleteWorkspaceSection = observer(function DeleteWorkspaceSection(p
             }
           >
             <div className="flex flex-col gap-4">
-              <span className="text-base tracking-tight">
+              <span className="text-14 tracking-tight">
                 {t("workspace_settings.settings.general.delete_workspace_description")}
               </span>
               <div>

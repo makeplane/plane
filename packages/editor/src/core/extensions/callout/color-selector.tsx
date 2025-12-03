@@ -36,7 +36,7 @@ export function CalloutBlockColorSelector(props: Props) {
             e.stopPropagation();
           }}
           className={cn(
-            "flex items-center gap-1 h-full whitespace-nowrap py-1 px-2.5 text-sm font-medium text-tertiary hover:bg-white/10 active:bg-custom-background-80 rounded transition-colors",
+            "flex items-center gap-1 h-full whitespace-nowrap py-1 px-2.5 text-13 font-medium text-tertiary hover:bg-white/10 active:bg-custom-background-80 rounded transition-colors",
             {
               "bg-white/10": isOpen,
             }

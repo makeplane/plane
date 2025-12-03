@@ -68,8 +68,8 @@ export function ComicBoxButton(props: Props) {
             {...attributes.popper}
           >
             <div className="absolute w-2 h-2 bg-custom-background-100 border rounded-lb-sm  border-subtle-1 border-r-0 border-t-0 transform rotate-45 bottom-2 -left-[5px]" />
-            <h3 className="text-lg font-semibold w-full">{title}</h3>
-            <h4 className="mt-1 text-sm">{description}</h4>
+            <h3 className="text-16 font-semibold w-full">{title}</h3>
+            <h4 className="mt-1 text-13">{description}</h4>
           </div>
         </Popover.Panel>
       )}

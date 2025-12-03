@@ -150,7 +150,7 @@ export const EmojisListDropdown = forwardRef(function EmojisListDropdown(
                 id={`emoji-item-${index}`}
                 type="button"
                 className={cn(
-                  "flex items-center gap-2 w-full rounded px-2 py-1.5 text-sm text-left truncate text-secondary hover:bg-custom-background-80 transition-colors duration-150",
+                  "flex items-center gap-2 w-full rounded px-2 py-1.5 text-13 text-left truncate text-secondary hover:bg-custom-background-80 transition-colors duration-150",
                   {
                     "bg-custom-background-80": isSelected,
                   }
@@ -158,7 +158,7 @@ export const EmojisListDropdown = forwardRef(function EmojisListDropdown(
                 onClick={() => selectItem(index)}
                 onMouseEnter={() => setSelectedIndex(index)}
               >
-                <span className="size-5 grid place-items-center flex-shrink-0 text-base">{item.emoji}</span>
+                <span className="size-5 grid place-items-center flex-shrink-0 text-14">{item.emoji}</span>
                 <span className="flex-grow truncate">
                   <span className="font-medium">:{item.name}:</span>
                 </span>
@@ -166,7 +166,7 @@ export const EmojisListDropdown = forwardRef(function EmojisListDropdown(
             );
           })
         ) : (
-          <div className="text-center text-sm text-placeholder py-2">No emojis found</div>
+          <div className="text-center text-13 text-placeholder py-2">No emojis found</div>
         )}
       </div>
     </>

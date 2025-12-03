@@ -144,7 +144,7 @@ export const SlashCommandsMenu = forwardRef(function SlashCommandsMenu(props: Sl
       >
         {sections.map((section, sectionIndex) => (
           <div key={section.key} className="space-y-2">
-            {section.title && <h6 className="text-xs font-semibold text-tertiary">{section.title}</h6>}
+            {section.title && <h6 className="text-11 font-semibold text-tertiary">{section.title}</h6>}
             <div>
               {section.items?.map((item, itemIndex) => (
                 <CommandMenuItem

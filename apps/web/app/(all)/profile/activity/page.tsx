@@ -69,7 +69,7 @@ function ProfileActivityPage() {
         <ProfileSettingContentHeader title={t("activity")} />
         {activityPages}
         {isLoadMoreVisible && (
-          <div className="flex w-full items-center justify-center text-xs">
+          <div className="flex w-full items-center justify-center text-11">
             <Button variant="accent-primary" size="sm" onClick={handleLoadMore}>
               {t("load_more")}
             </Button>

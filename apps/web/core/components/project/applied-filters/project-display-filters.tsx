@@ -22,7 +22,7 @@ export const AppliedProjectDisplayFilters = observer(function AppliedProjectDisp
       {values.map((key) => {
         const filterLabel = PROJECT_DISPLAY_FILTER_OPTIONS.find((s) => s.key === key)?.i18n_label;
         return (
-          <div key={key} className="flex items-center gap-1 rounded px-1.5 py-1 text-xs bg-custom-background-80">
+          <div key={key} className="flex items-center gap-1 rounded px-1.5 py-1 text-11 bg-custom-background-80">
             {filterLabel && t(filterLabel)}
             {editable && (
               <button

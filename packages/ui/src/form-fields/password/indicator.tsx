@@ -42,7 +42,7 @@ export function PasswordStrengthIndicator({
         </div>
 
         {/* Strength Message */}
-        {password && <p className={cn("text-sm font-medium", strengthInfo.textColor)}>{strengthInfo.message}</p>}
+        {password && <p className={cn("text-13 font-medium", strengthInfo.textColor)}>{strengthInfo.message}</p>}
       </div>
 
       {/* Criteria list */}
@@ -59,7 +59,7 @@ export function PasswordStrengthIndicator({
                 />
               </div>
               <span
-                className={cn("text-xs", {
+                className={cn("text-11", {
                   "text-green-500": criterion.isValid,
                   "text-primary": !criterion.isValid,
                 })}

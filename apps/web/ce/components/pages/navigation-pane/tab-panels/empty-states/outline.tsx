@@ -22,8 +22,8 @@ export function PageNavigationPaneOutlineTabEmptyState() {
           alt="An image depicting the outline of a page"
         />
         <div className="space-y-2.5">
-          <h4 className="text-base font-medium">{t("page_navigation_pane.tabs.outline.empty_state.title")}</h4>
-          <p className="text-sm text-secondary font-medium">
+          <h4 className="text-14 font-medium">{t("page_navigation_pane.tabs.outline.empty_state.title")}</h4>
+          <p className="text-13 text-secondary font-medium">
             {t("page_navigation_pane.tabs.outline.empty_state.description")}
           </p>
         </div>

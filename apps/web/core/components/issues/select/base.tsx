@@ -159,13 +159,13 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
       <button
         type="button"
         ref={setReferenceElement}
-        className={cn("h-full flex cursor-pointer items-center gap-2 text-xs text-secondary", buttonContainerClassName)}
+        className={cn("h-full flex cursor-pointer items-center gap-2 text-11 text-secondary", buttonContainerClassName)}
         onClick={handleOnClick}
       >
         {label ? (
           label
         ) : value && value.length > 0 ? (
-          <span className={cn("flex items-center justify-center gap-2 text-xs h-full", buttonClassName)}>
+          <span className={cn("flex items-center justify-center gap-2 text-11 h-full", buttonClassName)}>
             <IssueLabelsList
               labels={value.map((v) => labelsList?.find((l) => l.id === v)) ?? []}
               length={3}
@@ -175,7 +175,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
         ) : (
           <div
             className={cn(
-              "h-full flex items-center justify-center gap-1 rounded border-[0.5px] border-strong px-2 py-1 text-xs hover:bg-custom-background-80",
+              "h-full flex items-center justify-center gap-1 rounded border-[0.5px] border-strong px-2 py-1 text-11 hover:bg-custom-background-80",
               buttonClassName
             )}
           >
@@ -188,7 +188,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
       {isDropdownOpen && (
         <Combobox.Options className="fixed z-10" static>
           <div
-            className="my-1 w-48 rounded border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none"
+            className="my-1 w-48 rounded border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 text-11 shadow-custom-shadow-rg focus:outline-none"
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
@@ -198,7 +198,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
               <Combobox.Input
                 as="input"
                 ref={inputRef}
-                className="w-full bg-transparent py-1 text-xs text-secondary placeholder:text-placeholder focus:outline-none"
+                className="w-full bg-transparent py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder={t("search")}
                 displayValue={(assigned: any) => assigned?.name}

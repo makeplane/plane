@@ -32,7 +32,7 @@ export function IssueBlockPriority({
     <Tooltip tooltipHeading="Priority" tooltipContent={t(priority_detail?.titleTranslationKey || "")}>
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 border-[0.5px] rounded text-xs px-2 py-0.5",
+          "h-full flex items-center gap-1.5 border-[0.5px] rounded text-11 px-2 py-0.5",
           priorityClasses[priority ?? "none"],
           {
             // compact the icons if text is hidden
@@ -59,7 +59,7 @@ export function IssueBlockPriority({
         ) : (
           <SignalHigh className="size-3" />
         )}
-        {shouldShowName && <span className="pl-2 text-sm">{t(priority_detail?.titleTranslationKey || "")}</span>}
+        {shouldShowName && <span className="pl-2 text-13">{t(priority_detail?.titleTranslationKey || "")}</span>}
       </div>
     </Tooltip>
   );

@@ -40,8 +40,8 @@ export const EstimateListItem = observer(function EstimateListItem(props: TEstim
       )}
     >
       <div className="space-y-1">
-        <h3 className="font-medium text-base">{currentEstimate?.name}</h3>
-        <p className="text-xs">
+        <h3 className="font-medium text-14">{currentEstimate?.name}</h3>
+        <p className="text-11">
           {estimatePointValues
             ?.map((estimatePointValue) => {
               if (currentEstimate?.type === EEstimateSystem.TIME) {

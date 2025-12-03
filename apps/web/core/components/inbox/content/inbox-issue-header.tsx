@@ -277,7 +277,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
             </button>
           )}
           {issue?.project_id && issue.sequence_id && (
-            <h3 className="text-base font-medium text-tertiary flex-shrink-0">
+            <h3 className="text-14 font-medium text-tertiary flex-shrink-0">
               {getProjectById(issue.project_id)?.identifier}-{issue.sequence_id}
             </h3>
           )}

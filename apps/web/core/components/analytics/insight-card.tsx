@@ -15,10 +15,10 @@ function InsightCard(props: InsightCardProps) {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="text-sm text-tertiary">{label}</div>
+      <div className="text-13 text-tertiary">{label}</div>
       {!isLoading ? (
         <div className="flex flex-col gap-1">
-          <div className="text-2xl font-bold text-primary">{count}</div>
+          <div className="text-20 font-bold text-primary">{count}</div>
         </div>
       ) : (
         <Loader.Item height="50px" width="100%" />

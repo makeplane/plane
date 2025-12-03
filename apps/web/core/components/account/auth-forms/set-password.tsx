@@ -122,7 +122,7 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
       <AuthFormHeader title="Set password" description="Create a new password." />
       <form className="space-y-4" onSubmit={(e) => handleSubmit(e)}>
         <div className="space-y-1">
-          <label className="text-sm text-tertiary font-medium" htmlFor="email">
+          <label className="text-13 text-tertiary font-medium" htmlFor="email">
             {t("auth.common.email.label")}
           </label>
           <div className="relative flex items-center rounded-md bg-custom-background-100">
@@ -140,7 +140,7 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
           </div>
         </div>
         <div className="space-y-1">
-          <label className="text-sm text-tertiary font-medium" htmlFor="password">
+          <label className="text-13 text-tertiary font-medium" htmlFor="password">
             {t("auth.common.password.label")}
           </label>
           <div className="relative flex items-center rounded-md bg-custom-background-100">
@@ -173,7 +173,7 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
           <PasswordStrengthIndicator password={passwordFormData.password} isFocused={isPasswordInputFocused} />
         </div>
         <div className="space-y-1">
-          <label className="text-sm text-tertiary font-medium" htmlFor="confirm_password">
+          <label className="text-13 text-tertiary font-medium" htmlFor="confirm_password">
             {t("auth.common.password.confirm_password.label")}
           </label>
           <div className="relative flex items-center rounded-md bg-custom-background-100">
@@ -202,7 +202,7 @@ export const SetPasswordForm = observer(function SetPasswordForm() {
           {!!passwordFormData.confirm_password &&
             passwordFormData.password !== passwordFormData.confirm_password &&
             renderPasswordMatchError && (
-              <span className="text-sm text-red-500">{t("auth.common.password.errors.match")}</span>
+              <span className="text-13 text-red-500">{t("auth.common.password.errors.match")}</span>
             )}
         </div>
         <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>

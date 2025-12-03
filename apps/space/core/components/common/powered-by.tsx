@@ -20,7 +20,7 @@ export function PoweredBy(props: TPoweredBy) {
       rel="noreferrer noopener"
     >
       <PlaneLogo className="h-3 w-auto text-primary" />
-      <div className="text-xs">
+      <div className="text-11">
         Powered by <span className="font-semibold">Plane Publish</span>
       </div>
     </a>

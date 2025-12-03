@@ -88,10 +88,10 @@ export function ArchiveIssueModal(props: Props) {
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-lg">
                 <div className="px-5 py-4">
-                  <h3 className="text-xl font-medium 2xl:text-2xl">
+                  <h3 className="text-18 font-medium 2xl:text-20">
                     {t("issue.archive.label")} {projectDetails?.identifier} {issue.sequence_id}
                   </h3>
-                  <p className="mt-3 text-sm text-secondary">{t("issue.archive.confirm_message")}</p>
+                  <p className="mt-3 text-13 text-secondary">{t("issue.archive.confirm_message")}</p>
                   <div className="mt-3 flex justify-end gap-2">
                     <Button variant="neutral-primary" size="sm" onClick={onClose}>
                       {t("common.cancel")}

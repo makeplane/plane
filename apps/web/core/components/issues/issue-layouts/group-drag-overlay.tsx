@@ -45,7 +45,7 @@ export function GroupDragOverlay(props: Props) {
     <div
       ref={messageContainerRef}
       className={cn(
-        `absolute top-0 left-0 h-full w-full items-center text-sm font-medium text-tertiary rounded bg-custom-background-80/85 ${dragColumnOrientation}`,
+        `absolute top-0 left-0 h-full w-full items-center text-13 font-medium text-tertiary rounded bg-custom-background-80/85 ${dragColumnOrientation}`,
         {
           "flex flex-col border-[1px] border-strong z-[2]": shouldOverlayBeVisible,
           "bg-red-200/60": workflowDisabledSource && isDropDisabled,

@@ -66,7 +66,7 @@ function PercentageText({
   className?: string;
 }) {
   return (
-    <text x={x} y={y} textAnchor="middle" className={cn("text-xs font-medium", className)} fill="currentColor">
+    <text x={x} y={y} textAnchor="middle" className={cn("text-11 font-medium", className)} fill="currentColor">
       {percentage}%
     </text>
   );

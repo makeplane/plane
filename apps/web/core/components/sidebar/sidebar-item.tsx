@@ -52,7 +52,7 @@ const styles = {
   icon: "flex items-center justify-center gap-2 size-8 rounded-md text-tertiary",
   iconActive: "bg-custom-background-80 text-secondary",
   iconInactive: "group-hover:text-secondary group-hover:bg-custom-background-80",
-  label: "text-xs font-medium",
+  label: "text-11 font-medium",
   labelActive: "text-secondary",
   labelInactive: "group-hover:text-secondary text-tertiary",
 } as const;

@@ -36,7 +36,6 @@
   --color-alpha-black-1200: oklch(0.1482 0.0034 196.79 / 95%);
 
   /* ---------- Spacing ---------- */
-  --spacing-*: initial;
   --spacing-0: 0;
   --spacing-25: 0.0625rem;
   --spacing-50: 0.125rem;
@@ -81,12 +80,12 @@
 
   /* ---------- Font weight ---------- */
   --font-weight-*: initial;
-  --font-weight-light: Light;
+  --font-weight-light: 300;
   --font-weight-regular: 400;
-  --font-weight-medium: medium;
-  --font-weight-semi-bold: semi bold;
-  --font-weight-bold: bold;
-  --font-weight-heavy: heavy;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-heavy: 800;
 
   /* ---------- Font size ---------- */
   --text-*: initial;

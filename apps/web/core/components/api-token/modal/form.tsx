@@ -120,7 +120,7 @@ export function CreateApiTokenForm(props: Props) {
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
       <div className="space-y-5 p-5">
-        <h3 className="text-xl font-medium text-secondary">
+        <h3 className="text-18 font-medium text-secondary">
           {t("workspace_settings.settings.api_tokens.create_token")}
         </h3>
         <div className="space-y-3">
@@ -143,11 +143,11 @@ export function CreateApiTokenForm(props: Props) {
                   onChange={onChange}
                   hasError={Boolean(errors.label)}
                   placeholder={t("title")}
-                  className="w-full text-base"
+                  className="w-full text-14"
                 />
               )}
             />
-            {errors.label && <span className="text-xs text-red-500">{errors.label.message}</span>}
+            {errors.label && <span className="text-11 text-red-500">{errors.label.message}</span>}
           </div>
           <Controller
             control={control}
@@ -158,7 +158,7 @@ export function CreateApiTokenForm(props: Props) {
                 onChange={onChange}
                 hasError={Boolean(errors.description)}
                 placeholder={t("description")}
-                className="w-full text-base resize-none min-h-24"
+                className="w-full text-14 resize-none min-h-24"
               />
             )}
           />
@@ -218,7 +218,7 @@ export function CreateApiTokenForm(props: Props) {
               )}
             </div>
             {!neverExpires && (
-              <span className="text-xs text-placeholder">
+              <span className="text-11 text-placeholder">
                 {expiredAt === "custom"
                   ? customDate
                     ? `Expires ${renderFormattedDate(customDateFormatted ?? "")} at ${renderFormattedTime(customDateFormatted ?? "")}`
@@ -236,7 +236,7 @@ export function CreateApiTokenForm(props: Props) {
           <div className="flex cursor-pointer items-center justify-center">
             <ToggleSwitch value={neverExpires} onChange={() => {}} size="sm" />
           </div>
-          <span className="text-xs">{t("workspace_settings.settings.api_tokens.never_expires")}</span>
+          <span className="text-11">{t("workspace_settings.settings.api_tokens.never_expires")}</span>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="neutral-primary" size="sm" onClick={handleClose}>

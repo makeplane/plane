@@ -14,7 +14,7 @@ export function SomethingWentWrongError() {
             />
           </div>
         </div>
-        <h1 className="mt-12 text-3xl font-semibold">Oops! Something went wrong.</h1>
+        <h1 className="mt-12 text-24 font-semibold">Oops! Something went wrong.</h1>
         <p className="mt-4 text-tertiary">The public board does not exist. Please check the URL.</p>
       </div>
     </div>

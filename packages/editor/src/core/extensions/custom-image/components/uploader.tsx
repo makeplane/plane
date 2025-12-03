@@ -219,13 +219,13 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
       }}
     >
       <ImageIcon className="size-4" />
-      <div className="text-base font-medium flex-1">{getDisplayMessage()}</div>
+      <div className="text-14 font-medium flex-1">{getDisplayMessage()}</div>
       {hasDuplicationFailed && editor.isEditable && (
         <button
           type="button"
           onClick={handleRetryClick}
           className={cn(
-            "flex items-center gap-1 px-2 py-1 text-xs font-medium text-tertiary hover:bg-custom-background-90 hover:text-secondary rounded-md transition-all duration-200 ease-in-out",
+            "flex items-center gap-1 px-2 py-1 text-11 font-medium text-tertiary hover:bg-custom-background-90 hover:text-secondary rounded-md transition-all duration-200 ease-in-out",
             {
               "hover:bg-red-500/20": selected,
             }

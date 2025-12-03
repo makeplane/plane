@@ -16,7 +16,7 @@ export function PageNavigationPaneTabsList() {
             <Tab
               key={tab.key}
               type="button"
-              className="relative z-[1] flex-1 py-1.5 text-sm font-semibold outline-none"
+              className="relative z-[1] flex-1 py-1.5 text-13 font-semibold outline-none"
             >
               {t(tab.i18n_label)}
             </Tab>

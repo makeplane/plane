@@ -36,7 +36,7 @@ const SettingsTabs = observer(function SettingsTabs() {
       : TABS.workspace;
 
   return (
-    <div className="flex w-fit min-w-fit items-center justify-between gap-1.5 rounded-md text-sm p-0.5 bg-custom-background-80">
+    <div className="flex w-fit min-w-fit items-center justify-between gap-1.5 rounded-md text-13 p-0.5 bg-custom-background-80">
       {Object.values(TABS).map((tab) => {
         const isActive = currentTab?.key === tab.key;
         const href = tab.key === TABS.projects.key ? `${tab.href}${joinedProjectIds[0] || ""}` : tab.href;
@@ -52,7 +52,7 @@ const SettingsTabs = observer(function SettingsTabs() {
               }
             )}
           >
-            <div className="text-xs font-semibold p-1">{tab.label}</div>
+            <div className="text-11 font-semibold p-1">{tab.label}</div>
           </Link>
         );
       })}

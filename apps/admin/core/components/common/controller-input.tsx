@@ -35,7 +35,7 @@ export function ControllerInput(props: Props) {
 
   return (
     <div className="flex flex-col gap-1">
-      <h4 className="text-sm text-tertiary">{label}</h4>
+      <h4 className="text-13 text-tertiary">{label}</h4>
       <div className="relative">
         <Controller
           control={control}
@@ -76,7 +76,7 @@ export function ControllerInput(props: Props) {
             </button>
           ))}
       </div>
-      {description && <p className="pt-0.5 text-xs text-tertiary">{description}</p>}
+      {description && <p className="pt-0.5 text-11 text-tertiary">{description}</p>}
     </div>
   );
 }

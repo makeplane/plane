@@ -124,7 +124,7 @@ export function ParentIssuesListModal({
                       aria-hidden="true"
                     />
                     <Combobox.Input
-                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-primary outline-none placeholder:text-placeholder focus:ring-0 sm:text-sm"
+                      className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-primary outline-none placeholder:text-placeholder focus:ring-0 sm:text-13"
                       placeholder={t("common.search.placeholder")}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -137,7 +137,7 @@ export function ParentIssuesListModal({
                     className="max-h-80 scroll-py-2 overflow-y-auto vertical-scrollbar scrollbar-md"
                   >
                     {searchTerm !== "" && (
-                      <h5 className="mx-2 text-[0.825rem] text-secondary">
+                      <h5 className="mx-2 text-13 text-secondary">
                         Search results for{" "}
                         <span className="text-primary">
                           {'"'}
@@ -165,7 +165,7 @@ export function ParentIssuesListModal({
                             searchTerm={searchTerm}
                           />
                         ) : (
-                          <ul className={`text-sm ${issues.length > 0 ? "p-2" : ""}`}>
+                          <ul className={`text-13 ${issues.length > 0 ? "p-2" : ""}`}>
                             {issues.map((issue) => (
                               <Combobox.Option
                                 key={issue.id}
@@ -189,7 +189,7 @@ export function ParentIssuesListModal({
                                       issueTypeId={issue.type_id}
                                       projectIdentifier={issue.project__identifier}
                                       issueSequenceId={issue.sequence_id}
-                                      textContainerClassName="text-xs text-secondary"
+                                      textContainerClassName="text-11 text-secondary"
                                     />
                                   </span>{" "}
                                   <span className="truncate">{issue.name}</span>

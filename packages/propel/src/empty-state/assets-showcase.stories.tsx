@@ -31,8 +31,8 @@ export const HorizontalStackAssets: Story = {
   render: () => (
     <div className="p-8">
       <div className="mb-6">
-        <h2 className="text-xl font-semibold text-primary">Horizontal Stack Assets</h2>
-        <p className="text-sm text-tertiary">Used primarily in EmptyStateCompact component</p>
+        <h2 className="text-18 font-semibold text-primary">Horizontal Stack Assets</h2>
+        <p className="text-13 text-tertiary">Used primarily in EmptyStateCompact component</p>
       </div>
       <div className="grid w-full grid-cols-12 gap-6">
         {HorizontalStackAssetsMap.map((item) => (
@@ -41,8 +41,8 @@ export const HorizontalStackAssets: Story = {
             className="col-span-6 flex flex-col items-center justify-center gap-3 rounded-lg border border-subtle-1 bg-custom-background-100 p-6 sm:col-span-4 lg:col-span-3"
           >
             <div className="flex h-24 w-24 items-center justify-center">{item.asset}</div>
-            <p className="text-center text-xs font-medium text-secondary">{item.title}</p>
-            <code className="rounded bg-custom-background-80 px-2 py-1 text-xs text-tertiary">
+            <p className="text-center text-11 font-medium text-secondary">{item.title}</p>
+            <code className="rounded bg-custom-background-80 px-2 py-1 text-11 text-tertiary">
               {item.title.toLowerCase().replace(/\s+/g, "-")}
             </code>
           </div>
@@ -64,8 +64,8 @@ export const VerticalStackAssets: Story = {
   render: () => (
     <div className="p-8">
       <div className="mb-6">
-        <h2 className="text-xl font-semibold text-primary">Vertical Stack Assets</h2>
-        <p className="text-sm text-tertiary">Used primarily in EmptyStateDetailed component</p>
+        <h2 className="text-18 font-semibold text-primary">Vertical Stack Assets</h2>
+        <p className="text-13 text-tertiary">Used primarily in EmptyStateDetailed component</p>
       </div>
       <div className="grid w-full grid-cols-12 gap-6">
         {VerticalStackAssetsMap.map((item) => (
@@ -74,10 +74,10 @@ export const VerticalStackAssets: Story = {
             className="col-span-6 flex flex-col items-center justify-center gap-3 rounded-lg border border-subtle-1 bg-custom-background-100 p-6 sm:col-span-4 lg:col-span-3"
           >
             <div className="flex h-32 w-32 items-center justify-center">{item.asset}</div>
-            <p className="text-center text-xs font-medium text-secondary">
+            <p className="text-center text-11 font-medium text-secondary">
               {item.title.replace(/VerticalStackIllustration$/, "")}
             </p>
-            <code className="rounded bg-custom-background-80 px-2 py-1 text-xs text-tertiary">
+            <code className="rounded bg-custom-background-80 px-2 py-1 text-11 text-tertiary">
               {item.title
                 .replace(/VerticalStackIllustration$/, "")
                 .replace(/([A-Z])/g, "-$1")
@@ -102,8 +102,8 @@ export const IllustrationAssets: Story = {
   render: () => (
     <div className="p-8">
       <div className="mb-6">
-        <h2 className="text-xl font-semibold text-primary">Illustration Assets</h2>
-        <p className="text-sm text-tertiary">Available in both EmptyStateCompact and EmptyStateDetailed</p>
+        <h2 className="text-18 font-semibold text-primary">Illustration Assets</h2>
+        <p className="text-13 text-tertiary">Available in both EmptyStateCompact and EmptyStateDetailed</p>
       </div>
       <div className="grid w-full grid-cols-12 gap-6">
         {IllustrationMap.map((item) => (
@@ -112,8 +112,8 @@ export const IllustrationAssets: Story = {
             className="col-span-6 flex flex-col items-center justify-center gap-3 rounded-lg border border-subtle-1 bg-custom-background-100 p-6 sm:col-span-4 lg:col-span-3"
           >
             <div className="flex h-24 w-24 items-center justify-center">{item.asset}</div>
-            <p className="text-center text-xs font-medium text-secondary">{item.title}</p>
-            <code className="rounded bg-custom-background-80 px-2 py-1 text-xs text-tertiary">
+            <p className="text-center text-11 font-medium text-secondary">{item.title}</p>
+            <code className="rounded bg-custom-background-80 px-2 py-1 text-11 text-tertiary">
               {item.title.toLowerCase()}
             </code>
           </div>
@@ -136,8 +136,8 @@ export const AllAssets: Story = {
       {/* Horizontal Stack */}
       <div>
         <div className="mb-6">
-          <h2 className="text-xl font-semibold text-primary">Horizontal Stack Assets</h2>
-          <p className="text-sm text-tertiary">For EmptyStateCompact - {HorizontalStackAssetsMap.length} assets</p>
+          <h2 className="text-18 font-semibold text-primary">Horizontal Stack Assets</h2>
+          <p className="text-13 text-tertiary">For EmptyStateCompact - {HorizontalStackAssetsMap.length} assets</p>
         </div>
         <div className="grid w-full grid-cols-12 gap-4">
           {HorizontalStackAssetsMap.map((item) => (
@@ -146,7 +146,7 @@ export const AllAssets: Story = {
               className="col-span-6 flex flex-col items-center justify-center gap-2 rounded border border-subtle-1 bg-custom-background-100 p-4 sm:col-span-3 lg:col-span-2"
             >
               <div className="flex h-16 w-16 items-center justify-center">{item.asset}</div>
-              <code className="text-[10px] text-placeholder">{item.title.toLowerCase().replace(/\s+/g, "-")}</code>
+              <code className="text-10 text-placeholder">{item.title.toLowerCase().replace(/\s+/g, "-")}</code>
             </div>
           ))}
         </div>
@@ -155,8 +155,8 @@ export const AllAssets: Story = {
       {/* Vertical Stack */}
       <div>
         <div className="mb-6">
-          <h2 className="text-xl font-semibold text-primary">Vertical Stack Assets</h2>
-          <p className="text-sm text-tertiary">For EmptyStateDetailed - {VerticalStackAssetsMap.length} assets</p>
+          <h2 className="text-18 font-semibold text-primary">Vertical Stack Assets</h2>
+          <p className="text-13 text-tertiary">For EmptyStateDetailed - {VerticalStackAssetsMap.length} assets</p>
         </div>
         <div className="grid w-full grid-cols-12 gap-4">
           {VerticalStackAssetsMap.map((item) => (
@@ -165,7 +165,7 @@ export const AllAssets: Story = {
               className="col-span-6 flex flex-col items-center justify-center gap-2 rounded border border-subtle-1 bg-custom-background-100 p-4 sm:col-span-3 lg:col-span-2"
             >
               <div className="flex h-20 w-20 items-center justify-center">{item.asset}</div>
-              <code className="text-center text-[10px] text-placeholder">
+              <code className="text-center text-10 text-placeholder">
                 {item.title
                   .replace(/VerticalStackIllustration$/, "")
                   .replace(/([A-Z])/g, "-$1")
@@ -180,8 +180,8 @@ export const AllAssets: Story = {
       {/* Illustrations */}
       <div>
         <div className="mb-6">
-          <h2 className="text-xl font-semibold text-primary">Illustration Assets</h2>
-          <p className="text-sm text-tertiary">For both components - {IllustrationMap.length} assets</p>
+          <h2 className="text-18 font-semibold text-primary">Illustration Assets</h2>
+          <p className="text-13 text-tertiary">For both components - {IllustrationMap.length} assets</p>
         </div>
         <div className="grid w-full grid-cols-12 gap-4">
           {IllustrationMap.map((item) => (
@@ -190,7 +190,7 @@ export const AllAssets: Story = {
               className="col-span-6 flex flex-col items-center justify-center gap-2 rounded border border-subtle-1 bg-custom-background-100 p-4 sm:col-span-3 lg:col-span-2"
             >
               <div className="flex h-16 w-16 items-center justify-center">{item.asset}</div>
-              <code className="text-[10px] text-placeholder">{item.title.toLowerCase()}</code>
+              <code className="text-10 text-placeholder">{item.title.toLowerCase()}</code>
             </div>
           ))}
         </div>

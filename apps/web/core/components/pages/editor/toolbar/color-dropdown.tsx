@@ -38,7 +38,7 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
         {({ open }) => (
           <span
             className={cn(
-              "h-full px-2 text-tertiary text-sm flex items-center gap-1.5 rounded hover:bg-custom-background-80",
+              "h-full px-2 text-tertiary text-13 flex items-center gap-1.5 rounded hover:bg-custom-background-80",
               {
                 "text-primary bg-custom-background-80": open,
               }
@@ -70,7 +70,7 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
         className="fixed z-20 mt-1 rounded-md border-[0.5px] border-strong bg-custom-background-100 shadow-custom-shadow-rg p-2 space-y-2"
       >
         <div className="space-y-1.5">
-          <p className="text-xs text-tertiary font-semibold">Text colors</p>
+          <p className="text-11 text-tertiary font-semibold">Text colors</p>
           <div className="flex items-center gap-2">
             {COLORS_LIST.map((color) => (
               <button
@@ -93,7 +93,7 @@ export const ColorDropdown = memo(function ColorDropdown(props: Props) {
           </div>
         </div>
         <div className="space-y-1.5">
-          <p className="text-xs text-tertiary font-semibold">Background colors</p>
+          <p className="text-11 text-tertiary font-semibold">Background colors</p>
           <div className="flex items-center gap-2">
             {COLORS_LIST.map((color) => (
               <button

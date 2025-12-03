@@ -58,7 +58,7 @@ export function ShortcutsModal(props: Props) {
               <Dialog.Panel className="relative flex h-full items-center justify-center">
                 <div className="flex h-[61vh] w-full flex-col  space-y-4 overflow-hidden rounded-lg bg-custom-background-100 p-5 shadow-custom-shadow-md transition-all sm:w-[28rem]">
                   <Dialog.Title as="h3" className="flex justify-between">
-                    <span className="text-lg font-medium">Keyboard shortcuts</span>
+                    <span className="text-16 font-medium">Keyboard shortcuts</span>
                     <button type="button" onClick={handleClose}>
                       <CloseIcon className="h-4 w-4 text-secondary hover:text-primary" aria-hidden="true" />
                     </button>
@@ -72,7 +72,7 @@ export function ShortcutsModal(props: Props) {
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
                       placeholder="Search for shortcuts"
-                      className="w-full border-none bg-transparent py-1 text-xs text-secondary outline-none"
+                      className="w-full border-none bg-transparent py-1 text-11 text-secondary outline-none"
                       autoFocus
                       tabIndex={1}
                     />

@@ -43,7 +43,7 @@ type Props = {
 export function TourSidebar({ step, setStep }: Props) {
   return (
     <div className="col-span-3 hidden bg-custom-background-90 p-8 lg:block">
-      <h3 className="text-lg font-medium">
+      <h3 className="text-16 font-medium">
         Let{"'"}s get started!
         <br />
         Get more out of Plane.
@@ -52,7 +52,7 @@ export function TourSidebar({ step, setStep }: Props) {
         {sidebarOptions.map((option) => (
           <h5
             key={option.key}
-            className={`flex cursor-pointer items-center gap-2 border-l-[3px] py-0.5 pl-3 pr-2 text-sm font-medium capitalize ${
+            className={`flex cursor-pointer items-center gap-2 border-l-[3px] py-0.5 pl-3 pr-2 text-13 font-medium capitalize ${
               step === option.key
                 ? "border-custom-primary-100 text-custom-primary-100"
                 : "border-transparent text-secondary"

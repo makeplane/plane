@@ -22,7 +22,7 @@ export function CopyField(props: Props) {
 
   return (
     <div className="flex flex-col gap-1">
-      <h4 className="text-sm text-secondary">{label}</h4>
+      <h4 className="text-13 text-secondary">{label}</h4>
       <Button
         variant="neutral-primary"
         className="flex items-center justify-between py-2"
@@ -35,10 +35,10 @@ export function CopyField(props: Props) {
           });
         }}
       >
-        <p className="text-sm font-medium">{url}</p>
+        <p className="text-13 font-medium">{url}</p>
         <Copy size={18} color="#B9B9B9" />
       </Button>
-      <div className="text-xs text-tertiary">{description}</div>
+      <div className="text-11 text-tertiary">{description}</div>
     </div>
   );
 }

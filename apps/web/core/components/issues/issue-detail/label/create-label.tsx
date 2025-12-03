@@ -76,7 +76,7 @@ export function LabelCreate(props: ILabelCreate) {
   return (
     <>
       <div
-        className="relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded-full border border-subtle p-0.5 px-2 text-xs text-tertiary transition-all hover:bg-custom-background-90 hover:text-secondary"
+        className="relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded-full border border-subtle p-0.5 px-2 text-11 text-tertiary transition-all hover:bg-custom-background-90 hover:text-secondary"
         onClick={handleIsCreateToggle}
       >
         <div className="flex-shrink-0">
@@ -137,7 +137,7 @@ export function LabelCreate(props: ILabelCreate) {
                 ref={ref}
                 hasError={Boolean(errors.name)}
                 placeholder="Title"
-                className="w-full text-xs px-1.5 py-1"
+                className="w-full text-11 px-1.5 py-1"
                 disabled={isSubmitting}
               />
             )}

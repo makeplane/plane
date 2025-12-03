@@ -36,12 +36,12 @@ export function EmojiRoot(props: EmojiRootProps) {
           <EmojiPicker.Search
             placeholder={searchPlaceholder}
             disabled={searchDisabled}
-            className="block rounded-md bg-transparent placeholder-custom-text-400 focus:outline-none px-3 py-2 border-[0.5px] border-subtle-1 text-[1rem] p-0 h-full w-full flex-grow-0 focus:border-custom-primary-100"
+            className="block rounded-md bg-transparent placeholder-custom-text-400 focus:outline-none px-3 py-2 border-[0.5px] border-subtle-1 text-16 p-0 h-full w-full flex-grow-0 focus:border-custom-primary-100"
           />
         </div>
         <EmojiPicker.SkinToneSelector
           data-slot="emoji-picker-skin-tone-selector"
-          className="bg-custom-background-100 hover:bg-accent mx-2 mb-1.5 size-8 rounded-md text-lg flex-shrink-0"
+          className="bg-custom-background-100 hover:bg-accent mx-2 mb-1.5 size-8 rounded-md text-16 flex-shrink-0"
         />
       </div>
       <EmojiPicker.Viewport data-slot="emoji-picker-content" className={cn("relative flex-1 outline-none")}>
@@ -52,7 +52,7 @@ export function EmojiRoot(props: EmojiRootProps) {
             CategoryHeader: ({ category, ...props }) => (
               <div
                 data-slot="emoji-picker-list-category-header"
-                className="bg-custom-background-100 text-tertiary px-3 pb-1.5 text-xs font-medium"
+                className="bg-custom-background-100 text-tertiary px-3 pb-1.5 text-11 font-medium"
                 {...props}
               >
                 {category.label}
@@ -68,7 +68,7 @@ export function EmojiRoot(props: EmojiRootProps) {
                 type="button"
                 aria-label={emoji?.label ?? emoji?.emoji}
                 data-slot="emoji-picker-list-emoji"
-                className="data-active:bg-accent flex size-8 items-center justify-center rounded-md text-lg"
+                className="data-active:bg-accent flex size-8 items-center justify-center rounded-md text-16"
                 {...props}
               >
                 {emoji.emoji}

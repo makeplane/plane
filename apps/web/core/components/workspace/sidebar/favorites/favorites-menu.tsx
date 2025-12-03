@@ -185,7 +185,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
             as="button"
             type="button"
             className={cn(
-              "w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-placeholder",
+              "w-full flex items-center gap-1 whitespace-nowrap text-left text-13 font-semibold text-placeholder",
               {
                 "bg-custom-sidebar-background-80 opacity-60": isDragging,
               }
@@ -197,7 +197,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
                 : "aria_labels.projects_sidebar.open_favorites_menu"
             )}
           >
-            <span className="text-sm font-semibold">{t("favorites")}</span>
+            <span className="text-13 font-semibold">{t("favorites")}</span>
           </Disclosure.Button>
           <div className="flex items-center opacity-0 pointer-events-none group-hover/favorites-button:opacity-100 group-hover/favorites-button:pointer-events-auto">
             <Tooltip tooltipHeading={t("create_folder")} tooltipContent="">
@@ -246,7 +246,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
               {createNewFolder && <NewFavoriteFolder setCreateNewFolder={setCreateNewFolder} actionType="create" />}
               {Object.keys(groupedFavorites).length === 0 ? (
                 <>
-                  <span className="text-placeholder text-xs font-medium px-8 py-1.5">{t("no_favorites_yet")}</span>
+                  <span className="text-placeholder text-11 font-medium px-8 py-1.5">{t("no_favorites_yet")}</span>
                 </>
               ) : (
                 orderBy(Object.values(groupedFavorites), "sequence", "desc")

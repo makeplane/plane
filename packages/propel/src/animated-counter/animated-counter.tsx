@@ -8,9 +8,9 @@ export interface AnimatedCounterProps {
 }
 
 const sizeClasses = {
-  sm: "text-xs",
-  md: "text-sm",
-  lg: "text-base",
+  sm: "text-11",
+  md: "text-13",
+  lg: "text-14",
 };
 
 export function AnimatedCounter({ count, className, size = "md" }: AnimatedCounterProps) {

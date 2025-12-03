@@ -43,7 +43,7 @@ export function TableDragHandleDropdownColorSelector(props: Props) {
       <Disclosure.Button
         as="button"
         type="button"
-        className="flex items-center justify-between gap-2 w-full rounded px-1 py-1.5 text-xs text-left truncate text-secondary hover:bg-custom-background-80"
+        className="flex items-center justify-between gap-2 w-full rounded px-1 py-1.5 text-11 text-left truncate text-secondary hover:bg-custom-background-80"
       >
         {({ open }) => (
           <>
@@ -61,7 +61,7 @@ export function TableDragHandleDropdownColorSelector(props: Props) {
       </Disclosure.Button>
       <Disclosure.Panel className="p-1 space-y-2 mb-1.5">
         {/* <div className="space-y-1.5">
-          <p className="text-xs text-tertiary font-semibold">Text colors</p>
+          <p className="text-11 text-tertiary font-semibold">Text colors</p>
           <div className="flex items-center flex-wrap gap-2">
             {COLORS_LIST.map((color) => (
               <button
@@ -84,7 +84,7 @@ export function TableDragHandleDropdownColorSelector(props: Props) {
           </div>
         </div> */}
         <div className="space-y-1">
-          <p className="text-xs text-tertiary font-semibold">Background colors</p>
+          <p className="text-11 text-tertiary font-semibold">Background colors</p>
           <div className="flex items-center flex-wrap gap-2">
             {COLORS_LIST.map((color) => (
               <button

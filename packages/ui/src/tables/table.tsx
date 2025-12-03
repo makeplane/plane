@@ -21,7 +21,7 @@ export function Table<T>(props: TTableData<T>) {
   return (
     <table className={cn("table-auto w-full overflow-hidden whitespace-nowrap", tableClassName)}>
       <thead className={cn("divide-y divide-subtle-1", tHeadClassName)}>
-        <tr className={cn("divide-x divide-subtle-1 text-sm text-primary", tHeadTrClassName)}>
+        <tr className={cn("divide-x divide-subtle-1 text-13 text-primary", tHeadTrClassName)}>
           {columns.map((column) => (
             <th key={column.key} className={cn("px-2.5 py-2", thClassName)}>
               {(column?.thRender && column?.thRender()) || column.content}
@@ -33,7 +33,7 @@ export function Table<T>(props: TTableData<T>) {
         {data.map((item) => (
           <tr
             key={keyExtractor(item)}
-            className={cn("divide-x divide-subtle-1 text-sm text-secondary", tBodyTrClassName)}
+            className={cn("divide-x divide-subtle-1 text-13 text-secondary", tBodyTrClassName)}
           >
             {columns.map((column) => (
               <td key={`${column.key}-${keyExtractor(item)}`} className={cn("px-2.5 py-2", tdClassName)}>

@@ -28,8 +28,8 @@ export const UserLoggedIn = observer(function UserLoggedIn() {
               <img src={UserLoggedInImage} alt="User already logged in" className="w-full h-full object-cover" />
             </div>
           </div>
-          <h1 className="mt-8 md:mt-12 text-xl md:text-3xl font-semibold">Nice! Just one more step.</h1>
-          <p className="mt-2 md:mt-4 text-sm md:text-base">
+          <h1 className="mt-8 md:mt-12 text-18 md:text-24 font-semibold">Nice! Just one more step.</h1>
+          <p className="mt-2 md:mt-4 text-13 md:text-14">
             Enter the public-share URL or link of the view or Page you are trying to see in the browser{"'"}s address
             bar.
           </p>

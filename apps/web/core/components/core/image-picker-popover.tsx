@@ -165,7 +165,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
   return (
     <Popover className="relative z-19" ref={ref} tabIndex={tabIndex} onKeyDown={handleKeyDown}>
       <Popover.Button
-        className="rounded border border-strong bg-custom-background-100 px-2 py-1 text-xs text-secondary hover:text-primary"
+        className="rounded border border-strong bg-custom-background-100 px-2 py-1 text-11 text-secondary hover:text-primary"
         onClick={handleOnClick}
         disabled={disabled}
       >
@@ -191,7 +191,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                     <Tab
                       key={tab.key}
                       className={({ selected }) =>
-                        `rounded px-4 py-1 text-center text-sm outline-none transition-colors ${
+                        `rounded px-4 py-1 text-center text-13 outline-none transition-colors ${
                           selected ? "bg-custom-primary text-white" : "text-primary"
                         }`
                       }
@@ -223,7 +223,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                             onChange={(e) => setFormData({ ...formData, search: e.target.value })}
                             ref={ref}
                             placeholder="Search for images"
-                            className="w-full text-sm"
+                            className="w-full text-13"
                           />
                         )}
                       />
@@ -252,7 +252,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                           ))}
                         </div>
                       ) : (
-                        <p className="pt-7 text-center text-xs text-tertiary">No images found.</p>
+                        <p className="pt-7 text-center text-11 text-tertiary">No images found.</p>
                       )
                     ) : (
                       <Loader className="grid grid-cols-4 gap-4">
@@ -291,7 +291,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                           ))}
                         </div>
                       ) : (
-                        <p className="pt-7 text-center text-xs text-tertiary">No images found.</p>
+                        <p className="pt-7 text-center text-11 text-tertiary">No images found.</p>
                       )
                     ) : (
                       <Loader className="grid grid-cols-4 gap-4 pt-4">
@@ -320,7 +320,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                       >
                         <button
                           type="button"
-                          className="absolute right-0 top-0 z-40 -translate-y-1/2 rounded bg-custom-background-90 px-2 py-0.5 text-xs font-medium text-secondary"
+                          className="absolute right-0 top-0 z-40 -translate-y-1/2 rounded bg-custom-background-90 px-2 py-0.5 text-11 font-medium text-secondary"
                         >
                           Edit
                         </button>
@@ -334,7 +334,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                           </>
                         ) : (
                           <div>
-                            <span className="mt-2 block text-sm font-medium text-secondary">
+                            <span className="mt-2 block text-13 font-medium text-secondary">
                               {isDragActive ? "Drop image here to upload" : "Drag & drop image here"}
                             </span>
                           </div>
@@ -344,14 +344,14 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                       </div>
                     </div>
                     {fileRejections.length > 0 && (
-                      <p className="text-sm text-red-500">
+                      <p className="text-13 text-red-500">
                         {fileRejections[0].errors[0].code === "file-too-large"
                           ? "The image size cannot exceed 5 MB."
                           : "Please upload a file in a valid format."}
                       </p>
                     )}
 
-                    <p className="text-sm text-secondary">File formats supported- .jpeg, .jpg, .png, .webp</p>
+                    <p className="text-13 text-secondary">File formats supported- .jpeg, .jpg, .png, .webp</p>
 
                     <div className="flex h-12 items-start justify-end gap-2">
                       <Button

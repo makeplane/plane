@@ -96,18 +96,18 @@ export function DeleteImportModal({ isOpen, handleClose, data }: Props) {
                       <AlertTriangle className="h-6 w-6 text-red-500" aria-hidden="true" />
                     </span>
                     <span className="flex items-center justify-start">
-                      <h3 className="text-xl font-medium 2xl:text-2xl">Delete project</h3>
+                      <h3 className="text-18 font-medium 2xl:text-20">Delete project</h3>
                     </span>
                   </div>
                   <span>
-                    <p className="text-sm leading-7 text-secondary">
+                    <p className="text-13 leading-7 text-secondary">
                       Are you sure you want to delete import from{" "}
                       <span className="break-words font-semibold capitalize text-primary">{data?.service}</span>? All of
                       the data related to the import will be permanently removed. This action cannot be undone.
                     </p>
                   </span>
                   <div>
-                    <p className="text-sm text-secondary">
+                    <p className="text-13 text-secondary">
                       To confirm, type <span className="font-medium text-primary">delete import</span> below:
                     </p>
                     <Input

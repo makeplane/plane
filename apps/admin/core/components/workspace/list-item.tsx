@@ -27,7 +27,7 @@ export const WorkspaceListItem = observer(function WorkspaceListItem({ workspace
     >
       <div className="flex items-start gap-4">
         <span
-          className={`relative flex h-8 w-8 flex-shrink-0 items-center justify-center p-2 mt-1 text-xs uppercase ${
+          className={`relative flex h-8 w-8 flex-shrink-0 items-center justify-center p-2 mt-1 text-11 uppercase ${
             !workspace?.logo_url && "rounded bg-custom-primary-500 text-white"
           }`}
         >
@@ -43,18 +43,18 @@ export const WorkspaceListItem = observer(function WorkspaceListItem({ workspace
         </span>
         <div className="flex flex-col items-start gap-1">
           <div className="flex flex-wrap w-full items-center gap-2.5">
-            <h3 className={`text-base font-medium capitalize`}>{workspace.name}</h3>/
+            <h3 className={`text-14 font-medium capitalize`}>{workspace.name}</h3>/
             <Tooltip tooltipContent="The unique URL of your workspace">
-              <h4 className="text-sm text-tertiary">[{workspace.slug}]</h4>
+              <h4 className="text-13 text-tertiary">[{workspace.slug}]</h4>
             </Tooltip>
           </div>
           {workspace.owner.email && (
-            <div className="flex items-center gap-1 text-xs">
+            <div className="flex items-center gap-1 text-11">
               <h3 className="text-secondary font-medium">Owned by:</h3>
               <h4 className="text-tertiary">{workspace.owner.email}</h4>
             </div>
           )}
-          <div className="flex items-center gap-2.5 text-xs">
+          <div className="flex items-center gap-2.5 text-11">
             {workspace.total_projects !== null && (
               <span className="flex items-center gap-1">
                 <h3 className="text-secondary font-medium">Total projects:</h3>

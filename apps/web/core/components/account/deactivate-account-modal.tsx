@@ -98,10 +98,10 @@ export function DeactivateAccountModal(props: Props) {
                         />
                       </div>
                       <div>
-                        <Dialog.Title as="h3" className="my-4 text-2xl font-medium leading-6 text-primary">
+                        <Dialog.Title as="h3" className="my-4 text-20 font-medium leading-6 text-primary">
                           {t("deactivate_your_account")}
                         </Dialog.Title>
-                        <p className="mt-6 list-disc pr-4 text-base font-normal text-secondary">
+                        <p className="mt-6 list-disc pr-4 text-14 font-regular text-secondary">
                           {t("deactivate_your_account_description")}
                         </p>
                       </div>

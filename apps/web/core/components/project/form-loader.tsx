@@ -25,26 +25,26 @@ export function ProjectDetailsFormLoader() {
       </div>
       <div className="my-8 flex flex-col gap-8">
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm">Project name</h4>
+          <h4 className="text-13">Project name</h4>
           <Loader>
             <Loader.Item height="46px" width="100%" />
           </Loader>
         </div>
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm">Description</h4>
+          <h4 className="text-13">Description</h4>
           <Loader className="w-full">
             <Loader.Item height="102px" width="full" />
           </Loader>
         </div>
         <div className="flex w-full items-center justify-between gap-10">
           <div className="flex w-1/2 flex-col gap-1">
-            <h4 className="text-sm">Identifier</h4>
+            <h4 className="text-13">Identifier</h4>
             <Loader>
               <Loader.Item height="36px" width="100%" />
             </Loader>
           </div>
           <div className="flex w-1/2 flex-col gap-1">
-            <h4 className="text-sm">Network</h4>
+            <h4 className="text-13">Network</h4>
             <Loader className="w-full">
               <Loader.Item height="46px" width="100%" />
             </Loader>

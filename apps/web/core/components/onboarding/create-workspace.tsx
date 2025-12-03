@@ -127,29 +127,29 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
           <Button
             variant="link-neutral"
             size="lg"
-            className="w-full flex items-center gap-2 text-base bg-custom-background-90"
+            className="w-full flex items-center gap-2 text-14 bg-custom-background-90"
             onClick={handleCurrentViewChange}
           >
             I want to join invited workspaces{" "}
-            <span className="bg-custom-primary-200 h-4 w-4 flex items-center justify-center rounded-sm text-xs font-medium text-white">
+            <span className="bg-custom-primary-200 h-4 w-4 flex items-center justify-center rounded-sm text-11 font-medium text-white">
               {invitedWorkspaces}
             </span>
           </Button>
           <div className="mx-auto mt-4 flex items-center sm:w-96">
             <hr className="w-full border-strong" />
-            <p className="mx-3 flex-shrink-0 text-center text-sm text-placeholder">or</p>
+            <p className="mx-3 flex-shrink-0 text-center text-13 text-placeholder">or</p>
             <hr className="w-full border-strong" />
           </div>
         </>
       )}
       <div className="text-center space-y-1 py-4 mx-auto">
-        <h3 className="text-3xl font-bold text-primary">{t("workspace_creation.heading")}</h3>
+        <h3 className="text-24 font-bold text-primary">{t("workspace_creation.heading")}</h3>
         <p className="font-medium text-placeholder">{t("workspace_creation.subheading")}</p>
       </div>
       <form className="w-full mx-auto mt-2 space-y-4" onSubmit={handleSubmit(handleCreateWorkspace)}>
         <div className="space-y-1">
           <label
-            className="text-sm text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="name"
           >
             {t("workspace_creation.form.name.label")}
@@ -189,11 +189,11 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
               </div>
             )}
           />
-          {errors.name && <span className="text-sm text-red-500">{errors.name.message}</span>}
+          {errors.name && <span className="text-13 text-red-500">{errors.name.message}</span>}
         </div>
         <div className="space-y-1">
           <label
-            className="text-sm text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="slug"
           >
             {t("workspace_creation.form.url.label")}
@@ -214,7 +214,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
                   invalidSlug ? "border-red-500" : "border-strong"
                 }`}
               >
-                <span className="whitespace-nowrap text-sm">{window && window.location.host}/</span>
+                <span className="whitespace-nowrap text-13">{window && window.location.host}/</span>
                 <Input
                   id="slug"
                   name="slug"
@@ -233,19 +233,19 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
               </div>
             )}
           />
-          <p className="text-sm text-tertiary">{t("workspace_creation.form.url.edit_slug")}</p>
+          <p className="text-13 text-tertiary">{t("workspace_creation.form.url.edit_slug")}</p>
           {slugError && (
-            <p className="-mt-3 text-sm text-red-500">{t("workspace_creation.errors.validation.url_already_taken")}</p>
+            <p className="-mt-3 text-13 text-red-500">{t("workspace_creation.errors.validation.url_already_taken")}</p>
           )}
           {invalidSlug && (
-            <p className="text-sm text-red-500">{t("workspace_creation.errors.validation.url_alphanumeric")}</p>
+            <p className="text-13 text-red-500">{t("workspace_creation.errors.validation.url_alphanumeric")}</p>
           )}
-          {errors.slug && <span className="text-sm text-red-500">{errors.slug.message}</span>}
+          {errors.slug && <span className="text-13 text-red-500">{errors.slug.message}</span>}
         </div>
         <hr className="w-full border-strong" />
         <div className="space-y-1">
           <label
-            className="text-sm text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="organization_size"
           >
             {t("workspace_creation.form.organization_size.label")}
@@ -278,7 +278,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
               )}
             />
             {errors.organization_size && (
-              <span className="text-sm text-red-500">{errors.organization_size.message}</span>
+              <span className="text-13 text-red-500">{errors.organization_size.message}</span>
             )}
           </div>
         </div>

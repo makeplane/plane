@@ -54,7 +54,7 @@ export const TabNavigationOverflowMenu: React.FC<Props> = ({
           <Menu.MenuItem key={`${item.key}-overflow-${itemIsActive ? "active" : "inactive"}`} className="p-0 w-full">
             <div className="flex items-center justify-between w-full group/menu-item">
               <Link to={item.href} className="flex-1 min-w-0 w-full p-1">
-                <span className="text-xs">{t(item.i18n_key)}</span>
+                <span className="text-11">{t(item.i18n_key)}</span>
               </Link>
               <div className="flex items-center">
                 {/* Show Eye icon ONLY for user-hidden items */}

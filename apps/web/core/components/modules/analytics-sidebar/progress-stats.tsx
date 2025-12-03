@@ -121,7 +121,7 @@ export const ModuleProgressStats = observer(function ModuleProgressStats(props: 
             `flex w-full items-center justify-between gap-2 rounded-md p-1`,
             roundedTab ? `rounded-3xl` : `rounded-md`,
             noBackground ? `` : `bg-custom-background-90`,
-            size === "xs" ? `text-xs` : `text-sm`
+            size === "xs" ? `text-11` : `text-13`
           )}
         >
           {PROGRESS_STATS.map((stat) => (

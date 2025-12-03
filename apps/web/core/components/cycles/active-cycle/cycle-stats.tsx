@@ -128,7 +128,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
           <Tab
             className={({ selected }) =>
               cn(
-                "relative z-[1] font-semibold text-xs rounded-[3px] py-1.5 text-placeholder focus:outline-none transition duration-500",
+                "relative z-[1] font-semibold text-11 rounded-[3px] py-1.5 text-placeholder focus:outline-none transition duration-500",
                 {
                   "text-tertiary bg-custom-background-100": selected,
                   "hover:text-tertiary": !selected,
@@ -141,7 +141,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
           <Tab
             className={({ selected }) =>
               cn(
-                "relative z-[1] font-semibold text-xs rounded-[3px] py-1.5 text-placeholder focus:outline-none transition duration-500",
+                "relative z-[1] font-semibold text-11 rounded-[3px] py-1.5 text-placeholder focus:outline-none transition duration-500",
                 {
                   "text-tertiary bg-custom-background-100": selected,
                   "hover:text-tertiary": !selected,
@@ -154,7 +154,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
           <Tab
             className={({ selected }) =>
               cn(
-                "relative z-[1] font-semibold text-xs rounded-[3px] py-1.5 text-placeholder focus:outline-none transition duration-500",
+                "relative z-[1] font-semibold text-11 rounded-[3px] py-1.5 text-placeholder focus:outline-none transition duration-500",
                 {
                   "text-tertiary bg-custom-background-100": selected,
                   "hover:text-tertiary": !selected,
@@ -205,10 +205,10 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                             <IssueIdentifier
                               issueId={issue.id}
                               projectId={projectId}
-                              textContainerClassName="text-xs text-secondary"
+                              textContainerClassName="text-11 text-secondary"
                             />
                             <Tooltip position="top-start" tooltipHeading="Title" tooltipContent={issue.name}>
-                              <span className="text-[0.825rem] text-primary truncate">{issue.name}</span>
+                              <span className="text-13 text-primary truncate">{issue.name}</span>
                             </Tooltip>
                           </div>
                           <PriorityIcon priority={issue.priority} withContainer size={12} />
@@ -227,9 +227,9 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                                 tooltipHeading="Target Date"
                                 tooltipContent={renderFormattedDate(issue.target_date)}
                               >
-                                <div className="h-full flex truncate items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80 group-hover:bg-custom-background-100 cursor-pointer">
+                                <div className="h-full flex truncate items-center gap-1.5 rounded text-11 px-2 py-0.5 bg-custom-background-80 group-hover:bg-custom-background-100 cursor-pointer">
                                   <CalendarCheck className="h-3 w-3 flex-shrink-0" />
-                                  <span className="text-xs truncate">
+                                  <span className="text-11 truncate">
                                     {renderFormattedDateWithoutYear(issue.target_date)}
                                   </span>
                                 </div>
@@ -243,7 +243,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                       <div
                         ref={setIssueLoaderElement}
                         className={
-                          "h-11 relative flex items-center gap-3 bg-custom-background-80 p-3 text-sm cursor-pointer animate-pulse"
+                          "h-11 relative flex items-center gap-3 bg-custom-background-80 p-3 text-13 cursor-pointer animate-pulse"
                         }
                       />
                     )}
@@ -341,7 +341,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                             backgroundColor: label.color ?? "#000000",
                           }}
                         />
-                        <span className="text-xs text-ellipsis truncate">{label.label_name ?? "No labels"}</span>
+                        <span className="text-11 text-ellipsis truncate">{label.label_name ?? "No labels"}</span>
                       </div>
                     }
                     completed={label.completed_issues}

@@ -25,14 +25,14 @@ export const CustomTooltip = React.memo(function CustomTooltip(props: Props) {
       className="flex flex-col max-h-[40vh] w-[12rem] overflow-y-scroll vertical-scrollbar scrollbar-sm"
       spacing={ECardSpacing.SM}
     >
-      <p className="flex-shrink-0 text-xs text-primary font-medium border-b border-subtle-1 pb-2 truncate">{label}</p>
+      <p className="flex-shrink-0 text-11 text-primary font-medium border-b border-subtle-1 pb-2 truncate">{label}</p>
       {filteredPayload.map((item) => {
         if (!item.dataKey) return null;
 
         return (
           <div
             key={item?.dataKey}
-            className={cn("flex items-center gap-2 text-xs transition-opacity", {
+            className={cn("flex items-center gap-2 text-11 transition-opacity", {
               "opacity-20": activeKey && item.dataKey !== activeKey,
             })}
           >

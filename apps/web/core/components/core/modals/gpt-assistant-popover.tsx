@@ -215,7 +215,7 @@ export function GptAssistantPopover(props: Props) {
         >
           <div className="vertical-scroll-enable max-h-72 space-y-4 overflow-y-auto">
             {prompt && (
-              <div className="text-sm">
+              <div className="text-13">
                 Content:
                 <RichTextEditor
                   editable={false}
@@ -230,7 +230,7 @@ export function GptAssistantPopover(props: Props) {
               </div>
             )}
             {response !== "" && (
-              <div className="page-block-section max-h-[8rem] text-sm">
+              <div className="page-block-section max-h-[8rem] text-13">
                 Response:
                 <RichTextEditor
                   editable={false}
@@ -244,7 +244,7 @@ export function GptAssistantPopover(props: Props) {
               </div>
             )}
             {invalidResponse && (
-              <div className="text-sm text-red-500">
+              <div className="text-13 text-red-500">
                 No response could be generated. This may be due to insufficient content or task information. Please try
                 again.
               </div>
@@ -274,7 +274,7 @@ export function GptAssistantPopover(props: Props) {
               <>{responseActionButton}</>
             ) : (
               <>
-                <div className="flex items-start justify-center gap-2 text-sm text-custom-primary">
+                <div className="flex items-start justify-center gap-2 text-13 text-custom-primary">
                   <AlertCircle className="h-4 w-4" />
                   <p>By using this feature, you consent to sharing the message with a 3rd party service. </p>
                 </div>

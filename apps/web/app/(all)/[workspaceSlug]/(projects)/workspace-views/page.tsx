@@ -27,7 +27,7 @@ function WorkspaceViewsPage() {
         <div className="flex h-11 w-full items-center gap-2.5  px-5 py-3 overflow-hidden border-b border-subtle-1">
           <Search className="text-secondary" size={14} strokeWidth={2} />
           <Input
-            className="w-full bg-transparent !p-0 text-xs leading-5 text-secondary placeholder:text-placeholder focus:outline-none"
+            className="w-full bg-transparent !p-0 text-11 leading-5 text-secondary placeholder:text-placeholder focus:outline-none"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search"

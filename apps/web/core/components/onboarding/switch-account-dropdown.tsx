@@ -34,7 +34,7 @@ export const SwitchAccountDropdown = observer(function SwitchAccountDropdown(pro
       <SwitchAccountModal isOpen={showSwitchAccountModal} onClose={() => setShowSwitchAccountModal(false)} />
       <Menu as="div" className="relative">
         <Menu.Button className="flex items-center gap-x-2.5 px-2 py-1.5 rounded-lg bg-custom-background-90 z-10">
-          <div className="size-6 rounded-full bg-green-700 flex items-center justify-center text-white font-semibold text-sm capitalize">
+          <div className="size-6 rounded-full bg-green-700 flex items-center justify-center text-white font-semibold text-13 capitalize">
             {user?.avatar_url ? (
               <img
                 src={getFileURL(user?.avatar_url)}
@@ -45,7 +45,7 @@ export const SwitchAccountDropdown = observer(function SwitchAccountDropdown(pro
               <>{fullName?.[0] ?? "R"}</>
             )}
           </div>
-          <span className="text-sm font-medium text-secondary">{displayName}</span>
+          <span className="text-13 font-medium text-secondary">{displayName}</span>
         </Menu.Button>
         <Transition
           enter="transition duration-100 ease-out"
@@ -55,7 +55,7 @@ export const SwitchAccountDropdown = observer(function SwitchAccountDropdown(pro
           leaveFrom="transform scale-100 opacity-100"
           leaveTo="transform scale-95 opacity-0"
         >
-          <Menu.Items className="absolute z-10 right-0 rounded-md border-[0.5px] border-strong mt-2 bg-custom-background-100 px-2 py-2.5 text-sm min-w-[12rem] shadow-custom-shadow-rg">
+          <Menu.Items className="absolute z-10 right-0 rounded-md border-[0.5px] border-strong mt-2 bg-custom-background-100 px-2 py-2.5 text-13 min-w-[12rem] shadow-custom-shadow-rg">
             <Menu.Item
               as="button"
               type="button"

@@ -211,11 +211,11 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
               <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="space-y-5">
-                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-primary">
+                    <Dialog.Title as="h3" className="text-16 font-medium leading-6 text-primary">
                       {t("project_settings.members.invite_members.title")}
                     </Dialog.Title>
                     <div className="mt-2">
-                      <p className="text-sm text-secondary">
+                      <p className="text-13 text-secondary">
                         {t("project_settings.members.invite_members.sub_heading")}
                       </p>
                     </div>
@@ -224,7 +224,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                       {fields.map((field, index) => (
                         <div
                           key={field.id}
-                          className="group mb-1 flex items-start justify-between gap-x-4 text-sm w-full"
+                          className="group mb-1 flex items-start justify-between gap-x-4 text-13 w-full"
                         >
                           <div className="flex flex-col gap-1 flex-grow w-full">
                             <Controller
@@ -237,7 +237,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                                   <CustomSearchSelect
                                     value={value}
                                     customButton={
-                                      <button className="flex w-full items-center justify-between gap-1 rounded-md border border-subtle-1 px-3 py-2 text-left text-sm text-secondary shadow-sm duration-300 hover:bg-custom-background-80 hover:text-primary focus:outline-none">
+                                      <button className="flex w-full items-center justify-between gap-1 rounded-md border border-subtle-1 px-3 py-2 text-left text-13 text-secondary shadow-sm duration-300 hover:bg-custom-background-80 hover:text-primary focus:outline-none">
                                         {value && value !== "" ? (
                                           <div className="flex items-center gap-2">
                                             <Avatar
@@ -270,7 +270,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                               }}
                             />
                             {errors.members && errors.members[index]?.member_id && (
-                              <span className="px-1 text-sm text-red-500">
+                              <span className="px-1 text-13 text-red-500">
                                 {errors.members[index]?.member_id?.message}
                               </span>
                             )}
@@ -286,7 +286,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                                   <CustomSelect
                                     {...field}
                                     customButton={
-                                      <div className="flex w-24 items-center justify-between gap-1 rounded-md border border-subtle-1 px-3 py-2.5 text-left text-sm text-secondary shadow-sm duration-300 hover:bg-custom-background-80 hover:text-primary focus:outline-none">
+                                      <div className="flex w-24 items-center justify-between gap-1 rounded-md border border-subtle-1 px-3 py-2.5 text-left text-13 text-secondary shadow-sm duration-300 hover:bg-custom-background-80 hover:text-primary focus:outline-none">
                                         <span className="capitalize">
                                           {field.value ? ROLE[field.value] : "Select role"}
                                         </span>
@@ -310,7 +310,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                                 )}
                               />
                               {errors.members && errors.members[index]?.role && (
-                                <span className="px-1 text-sm text-red-500">
+                                <span className="px-1 text-13 text-red-500">
                                   {errors.members[index]?.role?.message}
                                 </span>
                               )}
@@ -336,7 +336,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                   <div className="mt-5 flex items-center justify-between gap-2">
                     <button
                       type="button"
-                      className="flex items-center gap-2 bg-transparent py-2 pr-3 text-sm font-medium text-custom-primary outline-custom-primary"
+                      className="flex items-center gap-2 bg-transparent py-2 pr-3 text-13 font-medium text-custom-primary outline-custom-primary"
                       onClick={appendField}
                     >
                       <Plus className="h-4 w-4" />

@@ -33,13 +33,13 @@ export function GeneratedTokenDetails(props: Props) {
   return (
     <div className="w-full p-5">
       <div className="w-full space-y-3 text-wrap">
-        <h3 className="text-lg font-medium leading-6 text-primary">{t("workspace_settings.key_created")}</h3>
-        <p className="text-sm text-placeholder">{t("workspace_settings.copy_key")}</p>
+        <h3 className="text-16 font-medium leading-6 text-primary">{t("workspace_settings.key_created")}</h3>
+        <p className="text-13 text-placeholder">{t("workspace_settings.copy_key")}</p>
       </div>
       <button
         type="button"
         onClick={() => copyApiToken(tokenDetails.token ?? "")}
-        className="mt-4 flex truncate w-full items-center justify-between rounded-md border-[0.5px] border-subtle-1 px-3 py-2 text-sm font-medium outline-none"
+        className="mt-4 flex truncate w-full items-center justify-between rounded-md border-[0.5px] border-subtle-1 px-3 py-2 text-13 font-medium outline-none"
       >
         <span className="truncate pr-2">{tokenDetails.token}</span>
         <Tooltip tooltipContent="Copy secret key" isMobile={isMobile}>
@@ -47,7 +47,7 @@ export function GeneratedTokenDetails(props: Props) {
         </Tooltip>
       </button>
       <div className="mt-6 flex items-center justify-between">
-        <p className="text-xs text-placeholder">
+        <p className="text-11 text-placeholder">
           {tokenDetails.expired_at
             ? `Expires ${renderFormattedDate(tokenDetails.expired_at!)} at ${renderFormattedTime(tokenDetails.expired_at!)}`
             : "Never expires"}

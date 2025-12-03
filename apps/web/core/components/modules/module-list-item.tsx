@@ -74,12 +74,12 @@ export const ModuleListItem = observer(function ModuleListItem(props: Props) {
             progress === 100 ? (
               <Check className="h-3 w-3 stroke-[2] text-custom-primary-100" />
             ) : (
-              <span className="text-sm text-custom-primary-100">{`!`}</span>
+              <span className="text-13 text-custom-primary-100">{`!`}</span>
             )
           ) : progress === 100 ? (
             <Check className="h-3 w-3 stroke-[2] text-custom-primary-100" />
           ) : (
-            <span className="text-[9px] text-tertiary">{`${progress}%`}</span>
+            <span className="text-9 text-tertiary">{`${progress}%`}</span>
           )}
         </CircularProgressIndicator>
       }

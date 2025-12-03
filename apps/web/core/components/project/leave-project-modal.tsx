@@ -141,12 +141,12 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
                       <AlertTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </span>
                     <span className="flex items-center justify-start">
-                      <h3 className="text-xl font-medium 2xl:text-2xl">Leave Project</h3>
+                      <h3 className="text-18 font-medium 2xl:text-20">Leave Project</h3>
                     </span>
                   </div>
 
                   <span>
-                    <p className="text-sm leading-7 text-secondary">
+                    <p className="text-13 leading-7 text-secondary">
                       Are you sure you want to leave the project -
                       <span className="font-medium text-primary">{` "${project?.name}" `}</span>? All of the work items
                       associated with you will become inaccessible.
@@ -154,7 +154,7 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
                   </span>
 
                   <div className="text-secondary">
-                    <p className="break-words text-sm ">
+                    <p className="break-words text-13 ">
                       Enter the project name <span className="font-medium text-primary">{project?.name}</span> to
                       continue:
                     </p>
@@ -181,7 +181,7 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
                   </div>
 
                   <div className="text-secondary">
-                    <p className="text-sm">
+                    <p className="text-13">
                       To confirm, type <span className="font-medium text-primary">Leave Project</span> below:
                     </p>
                     <Controller

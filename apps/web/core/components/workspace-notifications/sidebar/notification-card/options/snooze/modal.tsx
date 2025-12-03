@@ -138,7 +138,7 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
               <Dialog.Panel className="relative w-full transform rounded-lg bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:!max-w-2xl">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="flex items-center justify-between">
-                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-primary">
+                    <Dialog.Title as="h3" className="text-16 font-medium leading-6 text-primary">
                       Customize Snooze Time
                     </Dialog.Title>
 
@@ -151,7 +151,7 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
 
                   <div className="mt-5 flex flex-col gap-3 md:!flex-row md:items-center">
                     <div className="flex-1 pb-3 md:pb-0">
-                      <h6 className="mb-2 block text-sm font-medium text-placeholder">Pick a date</h6>
+                      <h6 className="mb-2 block text-13 font-medium text-placeholder">Pick a date</h6>
                       <Controller
                         name="date"
                         control={control}
@@ -174,7 +174,7 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
                       />
                     </div>
                     <div className="flex-1">
-                      <h6 className="mb-2 block text-sm font-medium text-placeholder">Pick a time</h6>
+                      <h6 className="mb-2 block text-13 font-medium text-placeholder">Pick a time</h6>
                       <Controller
                         control={control}
                         name="time"
@@ -190,7 +190,7 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
                                     {value} {watch("period").toLowerCase()}
                                   </span>
                                 ) : (
-                                  <span className="text-sm text-placeholder">Select a time</span>
+                                  <span className="text-13 text-placeholder">Select a time</span>
                                 )}
                               </div>
                             }

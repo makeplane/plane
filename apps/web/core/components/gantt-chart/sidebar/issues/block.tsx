@@ -76,7 +76,7 @@ export const IssuesSidebarBlock = observer(function IssuesSidebarBlock(props: Pr
             <IssueGanttSidebarBlock issueId={block.data.id} isEpic={isEpic} />
           </div>
           {duration && (
-            <div className="flex-shrink-0 text-sm text-secondary">
+            <div className="flex-shrink-0 text-13 text-secondary">
               <span>
                 {duration} day{duration > 1 ? "s" : ""}
               </span>

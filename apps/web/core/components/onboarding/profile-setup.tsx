@@ -315,11 +315,11 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                   {!userAvatar || userAvatar === "" ? (
                     <div className="flex flex-col items-center justify-between">
                       <div className="relative h-14 w-14 overflow-hidden">
-                        <div className="absolute left-0 top-0 flex items-center justify-center h-full w-full rounded-full text-white text-3xl font-medium bg-[#9747FF] uppercase">
+                        <div className="absolute left-0 top-0 flex items-center justify-center h-full w-full rounded-full text-white text-24 font-medium bg-[#9747FF] uppercase">
                           {watch("first_name")[0] ?? "R"}
                         </div>
                       </div>
-                      <div className="pt-1 text-sm font-medium text-custom-primary-300 hover:text-custom-primary-400">
+                      <div className="pt-1 text-13 font-medium text-custom-primary-300 hover:text-custom-primary-400">
                         Choose image
                       </div>
                     </div>
@@ -338,7 +338,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label
-                    className="text-sm text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+                    className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
                     htmlFor="first_name"
                   >
                     First name
@@ -369,11 +369,11 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                       />
                     )}
                   />
-                  {errors.first_name && <span className="text-sm text-red-500">{errors.first_name.message}</span>}
+                  {errors.first_name && <span className="text-13 text-red-500">{errors.first_name.message}</span>}
                 </div>
                 <div className="space-y-1">
                   <label
-                    className="text-sm text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+                    className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
                     htmlFor="last_name"
                   >
                     Last name
@@ -403,7 +403,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                       />
                     )}
                   />
-                  {errors.last_name && <span className="text-sm text-red-500">{errors.last_name.message}</span>}
+                  {errors.last_name && <span className="text-13 text-red-500">{errors.last_name.message}</span>}
                 </div>
               </div>
 
@@ -411,7 +411,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
               {!isPasswordAlreadySetup && (
                 <>
                   <div className="space-y-1">
-                    <label className="text-sm text-tertiary font-medium" htmlFor="password">
+                    <label className="text-13 text-tertiary font-medium" htmlFor="password">
                       Set a password ({t("common.optional")})
                     </label>
                     <Controller
@@ -452,7 +452,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     <PasswordStrengthIndicator password={watch("password") ?? ""} isFocused={isPasswordInputFocused} />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-sm text-tertiary font-medium" htmlFor="confirm_password">
+                    <label className="text-13 text-tertiary font-medium" htmlFor="confirm_password">
                       {t("auth.common.password.confirm_password.label")} ({t("common.optional")})
                     </label>
                     <Controller
@@ -490,7 +490,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                       )}
                     />
                     {errors.confirm_password && (
-                      <span className="text-sm text-red-500">{errors.confirm_password.message}</span>
+                      <span className="text-13 text-red-500">{errors.confirm_password.message}</span>
                     )}
                   </div>
                 </>
@@ -503,7 +503,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
             <>
               <div className="space-y-1">
                 <label
-                  className="text-sm text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+                  className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
                   htmlFor="role"
                 >
                   What role are you working on? Choose one.
@@ -521,7 +521,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                           key={userRole}
                           className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-custom-background-90 ${
                             value === userRole ? "border-custom-primary-100" : "border-strong"
-                          } rounded px-3 py-1.5 text-sm font-medium`}
+                          } rounded px-3 py-1.5 text-13 font-medium`}
                           onClick={() => onChange(userRole)}
                         >
                           {userRole}
@@ -530,11 +530,11 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     </div>
                   )}
                 />
-                {errors.role && <span className="text-sm text-red-500">{errors.role.message}</span>}
+                {errors.role && <span className="text-13 text-red-500">{errors.role.message}</span>}
               </div>
               <div className="space-y-1">
                 <label
-                  className="text-sm text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
+                  className="text-13 text-tertiary font-medium after:content-['*'] after:ml-0.5 after:text-red-500"
                   htmlFor="use_case"
                 >
                   What is your domain expertise? Choose one.
@@ -552,7 +552,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                           key={userDomain}
                           className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-custom-background-90 ${
                             value === userDomain ? "border-custom-primary-100" : "border-strong"
-                          } rounded px-3 py-1.5 text-sm font-medium`}
+                          } rounded px-3 py-1.5 text-13 font-medium`}
                           onClick={() => onChange(userDomain)}
                         >
                           {userDomain}
@@ -561,7 +561,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                     </div>
                   )}
                 />
-                {errors.use_case && <span className="text-sm text-red-500">{errors.use_case.message}</span>}
+                {errors.use_case && <span className="text-13 text-red-500">{errors.use_case.message}</span>}
               </div>
             </>
           )}

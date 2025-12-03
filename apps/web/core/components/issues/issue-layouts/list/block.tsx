@@ -173,7 +173,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
       <Row
         ref={issueRef}
         className={cn(
-          "group/list-block min-h-11 relative flex flex-col gap-3 bg-custom-background-100 hover:bg-custom-background-90 py-3 text-sm transition-colors border border-transparent",
+          "group/list-block min-h-11 relative flex flex-col gap-3 bg-custom-background-100 hover:bg-custom-background-90 py-3 text-13 transition-colors border border-transparent",
           {
             "border-custom-primary-70": getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
             "border-strong-1": isIssueActive,
@@ -233,7 +233,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
                     <IssueIdentifier
                       issueId={issueId}
                       projectId={issue.project_id}
-                      textContainerClassName="text-xs font-medium text-tertiary"
+                      textContainerClassName="text-11 font-medium text-tertiary"
                       displayProperties={displayProperties}
                     />
                   )}
@@ -270,7 +270,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
               disabled={isCurrentBlockDragging}
               renderByDefault={false}
             >
-              <p className="truncate cursor-pointer text-sm text-primary">{issue.name}</p>
+              <p className="truncate cursor-pointer text-13 text-primary">{issue.name}</p>
             </Tooltip>
             {isEpic && displayProperties && (
               <WithDisplayPropertiesHOC

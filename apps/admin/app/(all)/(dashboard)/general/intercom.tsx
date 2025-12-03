@@ -58,8 +58,8 @@ export const IntercomConfig = observer(function IntercomConfig(props: TIntercomC
           </div>
 
           <div className="grow">
-            <div className="text-sm font-medium text-primary leading-5">Chat with us</div>
-            <div className="text-xs font-normal text-tertiary leading-5">
+            <div className="text-13 font-medium text-primary leading-5">Chat with us</div>
+            <div className="text-11 font-regular text-tertiary leading-5">
               Let your users chat with us via Intercom or another service. Toggling Telemetry off turns this off
               automatically.
             </div>

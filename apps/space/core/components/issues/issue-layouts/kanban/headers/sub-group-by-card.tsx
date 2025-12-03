@@ -26,9 +26,9 @@ export const HeaderSubGroupByCard = observer(function HeaderSubGroupByCard(props
         {icon ? icon : <Circle width={14} strokeWidth={2} />}
       </div>
 
-      <div className="flex flex-shrink-0 items-center gap-1 text-sm">
+      <div className="flex flex-shrink-0 items-center gap-1 text-13">
         <div className="line-clamp-1 text-primary">{title}</div>
-        <div className="pl-2 text-sm font-medium text-tertiary">{count || 0}</div>
+        <div className="pl-2 text-13 font-medium text-tertiary">{count || 0}</div>
       </div>
     </div>
   );

@@ -28,7 +28,7 @@ export const Default: Story = {
     return (
       <ScrollArea {...args} className="h-64 w-80 border rounded-lg">
         <div className="p-4 space-y-4">
-          <h3 className="text-lg font-semibold">Long Text Content</h3>
+          <h3 className="text-16 font-semibold">Long Text Content</h3>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
             dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
@@ -66,19 +66,19 @@ export const Sizes: Story = {
     return (
       <div className="flex flex-col gap-6">
         <div className="space-y-2">
-          <div className="text-sm font-medium">Small</div>
+          <div className="text-13 font-medium">Small</div>
           <ScrollArea className="h-48 w-80 border rounded-lg" size="sm">
             {content}
           </ScrollArea>
         </div>
         <div className="space-y-2">
-          <div className="text-sm font-medium">Medium</div>
+          <div className="text-13 font-medium">Medium</div>
           <ScrollArea className="h-48 w-80 border rounded-lg" size="md">
             {content}
           </ScrollArea>
         </div>
         <div className="space-y-2">
-          <div className="text-sm font-medium">Large</div>
+          <div className="text-13 font-medium">Large</div>
           <ScrollArea className="h-48 w-80 border rounded-lg" size="lg">
             {content}
           </ScrollArea>
@@ -93,7 +93,7 @@ export const ScrollTypeAlways: Story = {
     return (
       <ScrollArea className="h-64 w-80 border rounded-lg" scrollType="always">
         <div className="p-4 space-y-2">
-          <h3 className="text-lg font-semibold">Always Visible Scrollbar</h3>
+          <h3 className="text-16 font-semibold">Always Visible Scrollbar</h3>
           {[...Array(15)].map((_, i) => (
             <p key={i}>Line {i + 1}: The scrollbar is always visible.</p>
           ))}
@@ -108,8 +108,8 @@ export const ScrollTypeScroll: Story = {
     return (
       <ScrollArea className="h-64 w-80 border rounded-lg" scrollType="scroll">
         <div className="p-4 space-y-2">
-          <h3 className="text-lg font-semibold">Scroll to Show</h3>
-          <p className="text-sm text-placeholder">Scrollbar appears when scrolling</p>
+          <h3 className="text-16 font-semibold">Scroll to Show</h3>
+          <p className="text-13 text-placeholder">Scrollbar appears when scrolling</p>
           {[...Array(15)].map((_, i) => (
             <p key={i}>Line {i + 1}: Try scrolling to see the scrollbar appear.</p>
           ))}
@@ -124,8 +124,8 @@ export const ScrollTypeHover: Story = {
     return (
       <ScrollArea className="h-64 w-80 border rounded-lg" scrollType="hover">
         <div className="p-4 space-y-2">
-          <h3 className="text-lg font-semibold">Hover to Show</h3>
-          <p className="text-sm text-placeholder">Scrollbar appears on hover</p>
+          <h3 className="text-16 font-semibold">Hover to Show</h3>
+          <p className="text-13 text-placeholder">Scrollbar appears on hover</p>
           {[...Array(15)].map((_, i) => (
             <p key={i}>Line {i + 1}: Hover over the area to see the scrollbar.</p>
           ))}
@@ -159,8 +159,8 @@ export const BothDirections: Story = {
     return (
       <ScrollArea className="h-64 w-96 border rounded-lg">
         <div className="w-[800px] p-4 space-y-2">
-          <h3 className="text-lg font-semibold">Both Directions</h3>
-          <p className="text-sm text-placeholder">Content scrolls both vertically and horizontally</p>
+          <h3 className="text-16 font-semibold">Both Directions</h3>
+          <p className="text-13 text-placeholder">Content scrolls both vertically and horizontally</p>
           {[...Array(20)].map((_, i) => (
             <p key={i}>
               Line {i + 1}: This line is very long and extends beyond the container width to demonstrate horizontal
@@ -178,7 +178,7 @@ export const ListExample: Story = {
     return (
       <ScrollArea className="h-80 w-96 border rounded-lg">
         <div className="p-4">
-          <h3 className="text-lg font-semibold mb-4">User List</h3>
+          <h3 className="text-16 font-semibold mb-4">User List</h3>
           <div className="space-y-2">
             {[...Array(25)].map((_, i) => (
               <div
@@ -190,7 +190,7 @@ export const ListExample: Story = {
                 </div>
                 <div>
                   <div className="font-medium">User {i + 1}</div>
-                  <div className="text-sm text-placeholder">user{i + 1}@example.com</div>
+                  <div className="text-13 text-placeholder">user{i + 1}@example.com</div>
                 </div>
               </div>
             ))}
@@ -236,7 +236,7 @@ async function fetchData() {
 
     return (
       <ScrollArea className="h-96 w-full max-w-2xl border rounded-lg bg-custom-background-100">
-        <pre className="p-4 text-sm">
+        <pre className="p-4 text-13">
           <code>{code}</code>
         </pre>
       </ScrollArea>
@@ -256,7 +256,7 @@ export const ChatMessages: Story = {
                   i % 3 === 0 ? "bg-custom-primary-100 text-white" : "bg-custom-background-80"
                 }`}
               >
-                <div className="text-sm">{i % 3 === 0 ? "You" : `User ${i + 1}`}</div>
+                <div className="text-13">{i % 3 === 0 ? "You" : `User ${i + 1}`}</div>
                 <div className="mt-1">Message content for message number {i + 1}</div>
               </div>
             </div>
@@ -288,7 +288,7 @@ export const DataTable: Story = {
                 <td className="px-4 py-2">user{i + 1}@example.com</td>
                 <td className="px-4 py-2">
                   <span
-                    className={`px-2 py-1 rounded text-xs ${i % 3 === 0 ? "bg-green-500/20 text-green-500" : "bg-gray-500/20 text-gray-500"}`}
+                    className={`px-2 py-1 rounded text-11 ${i % 3 === 0 ? "bg-green-500/20 text-green-500" : "bg-gray-500/20 text-gray-500"}`}
                   >
                     {i % 3 === 0 ? "Active" : "Inactive"}
                   </span>

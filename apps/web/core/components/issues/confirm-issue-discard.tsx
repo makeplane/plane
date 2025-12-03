@@ -58,11 +58,11 @@ export function ConfirmIssueDiscard(props: Props) {
                 <div className="px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
                     <div className="mt-3 text-center sm:mt-0 sm:text-left">
-                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-primary">
+                      <Dialog.Title as="h3" className="text-16 font-medium leading-6 text-primary">
                         Save this draft?
                       </Dialog.Title>
                       <div className="mt-2">
-                        <p className="text-sm text-secondary">
+                        <p className="text-13 text-secondary">
                           You can save this work item to Drafts so you can come back to it later.{" "}
                         </p>
                       </div>

@@ -105,7 +105,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
       >
         <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
         <div className="space-y-1">
-          <label className="text-sm text-tertiary font-medium" htmlFor="email">
+          <label className="text-13 text-tertiary font-medium" htmlFor="email">
             {t("auth.common.email.label")}
           </label>
           <div className="relative flex items-center rounded-md bg-custom-background-100">
@@ -123,7 +123,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
           </div>
         </div>
         <div className="space-y-1">
-          <label className="text-sm text-tertiary font-medium" htmlFor="password">
+          <label className="text-13 text-tertiary font-medium" htmlFor="password">
             {t("auth.common.password.label")}
           </label>
           <div className="relative flex items-center rounded-md bg-custom-background-100">
@@ -156,7 +156,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
           <PasswordStrengthIndicator password={resetFormData.password} isFocused={isPasswordInputFocused} />
         </div>
         <div className="space-y-1">
-          <label className="text-sm text-tertiary font-medium" htmlFor="confirm_password">
+          <label className="text-13 text-tertiary font-medium" htmlFor="confirm_password">
             {t("auth.common.password.confirm_password.label")}
           </label>
           <div className="relative flex items-center rounded-md bg-custom-background-100">
@@ -185,7 +185,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
           {!!resetFormData.confirm_password &&
             resetFormData.password !== resetFormData.confirm_password &&
             renderPasswordMatchError && (
-              <span className="text-sm text-red-500">{t("auth.common.password.errors.match")}</span>
+              <span className="text-13 text-red-500">{t("auth.common.password.errors.match")}</span>
             )}
         </div>
         <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isButtonDisabled}>

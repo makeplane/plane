@@ -80,8 +80,8 @@ export const WorkspaceActiveCyclesUpgrade = observer(function WorkspaceActiveCyc
       >
         <div className="relative flex flex-col justify-center gap-7 px-14 lg:w-1/2">
           <div className="flex max-w-64 flex-col gap-2">
-            <h2 className="text-2xl font-semibold">{t("on_demand_snapshots_of_all_your_cycles")}</h2>
-            <p className="text-base font-medium text-tertiary">{t("active_cycles_description")}</p>
+            <h2 className="text-20 font-semibold">{t("on_demand_snapshots_of_all_your_cycles")}</h2>
+            <p className="text-14 font-medium text-tertiary">{t("active_cycles_description")}</p>
           </div>
           <div className="flex items-center gap-3">
             <a
@@ -118,7 +118,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(function WorkspaceActiveCyc
               <h3 className="font-medium">{t(item.key)}</h3>
               <item.icon className="mt-1 h-4 w-4 text-blue-500" />
             </div>
-            <span className="text-sm text-tertiary">{t(`${item.key}_description`)}</span>
+            <span className="text-13 text-tertiary">{t(`${item.key}_description`)}</span>
           </div>
         ))}
       </div>

@@ -182,7 +182,7 @@ export const AllVariants: Story = {
     return (
       <div className="space-y-4">
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold">Primary Variants</h3>
+          <h3 className="text-16 font-semibold">Primary Variants</h3>
           <div className="flex flex-wrap gap-2">
             <Button variant="primary">Primary</Button>
             <Button variant="accent-primary">Accent Primary</Button>
@@ -192,7 +192,7 @@ export const AllVariants: Story = {
           </div>
         </div>
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold">Danger Variants</h3>
+          <h3 className="text-16 font-semibold">Danger Variants</h3>
           <div className="flex flex-wrap gap-2">
             <Button variant="danger">Danger</Button>
             <Button variant="accent-danger">Accent Danger</Button>
@@ -202,7 +202,7 @@ export const AllVariants: Story = {
           </div>
         </div>
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold">Other Variants</h3>
+          <h3 className="text-16 font-semibold">Other Variants</h3>
           <div className="flex flex-wrap gap-2">
             <Button variant="link-neutral">Link Neutral</Button>
           </div>
@@ -232,7 +232,7 @@ export const AllStates: Story = {
     return (
       <div className="space-y-4">
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold">Button States</h3>
+          <h3 className="text-16 font-semibold">Button States</h3>
           <div className="flex flex-wrap gap-2">
             <Button>Default</Button>
             <Button loading>Loading</Button>

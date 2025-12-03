@@ -66,14 +66,14 @@ export const IssueAttachmentsDetail = observer(function IssueAttachmentsDetail(p
           attachmentId={attachmentId}
         />
       )}
-      <div className="flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-subtle-1 bg-custom-background-100 px-4 py-2 text-sm">
+      <div className="flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-subtle-1 bg-custom-background-100 px-4 py-2 text-13">
         <Link href={fileURL ?? ""} target="_blank" rel="noopener noreferrer">
           <div className="flex items-center gap-3">
             <div className="h-7 w-7">{fileIcon}</div>
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
                 <Tooltip tooltipContent={fileName} isMobile={isMobile}>
-                  <span className="text-sm">{truncateText(`${fileName}`, 10)}</span>
+                  <span className="text-13">{truncateText(`${fileName}`, 10)}</span>
                 </Tooltip>
                 <Tooltip
                   isMobile={isMobile}
@@ -87,7 +87,7 @@ export const IssueAttachmentsDetail = observer(function IssueAttachmentsDetail(p
                 </Tooltip>
               </div>
 
-              <div className="flex items-center gap-3 text-xs text-secondary">
+              <div className="flex items-center gap-3 text-11 text-secondary">
                 <span>{fileExtension.toUpperCase()}</span>
                 <span>{convertBytesToSize(attachment.attributes.size)}</span>
               </div>

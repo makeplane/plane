@@ -62,20 +62,20 @@ export const PrevExports = observer(function PrevExports(props: Props) {
     <div>
       <div className="flex items-center justify-between border-b border-subtle pb-3.5 pt-7">
         <div className="flex items-center gap-2">
-          <h3 className="flex gap-2 text-xl font-medium">
+          <h3 className="flex gap-2 text-18 font-medium">
             {t("workspace_settings.settings.exports.previous_exports")}
           </h3>
 
           <button
             type="button"
-            className="flex flex-shrink-0 items-center gap-1 rounded bg-custom-background-80 px-1.5 py-1 text-xs outline-none"
+            className="flex flex-shrink-0 items-center gap-1 rounded bg-custom-background-80 px-1.5 py-1 text-11 outline-none"
             onClick={handleRefresh}
           >
             <RefreshCw className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />{" "}
             {refreshing ? `${t("refreshing")}...` : t("refresh_status")}
           </button>
         </div>
-        <div className="flex items-center gap-2 text-xs">
+        <div className="flex items-center gap-2 text-11">
           <button
             disabled={!exporterServices?.prev_page_results}
             onClick={() => exporterServices?.prev_page_results && setCursor(exporterServices?.prev_cursor)}

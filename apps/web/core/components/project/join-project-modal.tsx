@@ -70,7 +70,7 @@ export function JoinProjectModal(props: TJoinProjectModalProps) {
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-xl sm:p-6">
                 <div className="space-y-5">
-                  <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-primary">
+                  <Dialog.Title as="h3" className="text-16 font-medium leading-6 text-primary">
                     Join Project?
                   </Dialog.Title>
                   <p>

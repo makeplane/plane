@@ -170,7 +170,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
       />
       <div className="flex items-center gap-4">
         <button
-          className="size-12 rounded-full bg-[#028375] flex items-center justify-center text-white font-semibold text-xl"
+          className="size-12 rounded-full bg-[#028375] flex items-center justify-center text-white font-semibold text-18"
           type="button"
           onClick={() => setIsImageUploadModalOpen(true)}
         >
@@ -187,12 +187,12 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
         </button>
         <input type="file" className="hidden" id="profile-image-input" />
         <button
-          className="flex items-center gap-1.5 text-tertiary hover:text-secondary text-sm px-2 py-1"
+          className="flex items-center gap-1.5 text-tertiary hover:text-secondary text-13 px-2 py-1"
           type="button"
           onClick={() => setIsImageUploadModalOpen(true)}
         >
           <ImageIcon className="size-4" />
-          <span className="text-sm">{userAvatar ? "Change image" : "Upload image"}</span>
+          <span className="text-13">{userAvatar ? "Change image" : "Upload image"}</span>
         </button>
       </div>
 
@@ -200,7 +200,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
         {/* Name Input */}
         <div className="flex flex-col gap-2">
           <label
-            className="block text-sm font-medium text-tertiary after:content-['*'] after:ml-0.5 after:text-red-500"
+            className="block text-13 font-medium text-tertiary after:content-['*'] after:ml-0.5 after:text-red-500"
             htmlFor="first_name"
           >
             Name
@@ -236,7 +236,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
               />
             )}
           />
-          {errors.first_name && <span className="text-sm text-red-500">{errors.first_name.message}</span>}
+          {errors.first_name && <span className="text-13 text-red-500">{errors.first_name.message}</span>}
         </div>
 
         {/* setting up password for the first time */}

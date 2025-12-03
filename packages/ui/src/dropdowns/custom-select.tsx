@@ -72,7 +72,7 @@ function CustomSelect(props: ICustomSelectProps) {
             <button
               ref={setReferenceElement}
               type="button"
-              className={`flex items-center justify-between gap-1 text-xs ${
+              className={`flex items-center justify-between gap-1 text-11 ${
                 disabled ? "cursor-not-allowed text-secondary" : "cursor-pointer hover:bg-custom-background-80"
               } ${customButtonClassName}`}
               onClick={toggleDropdown}
@@ -88,8 +88,8 @@ function CustomSelect(props: ICustomSelectProps) {
               className={cn(
                 "flex w-full items-center justify-between gap-1 rounded border-[0.5px] border-strong",
                 {
-                  "px-3 py-2 text-sm": input,
-                  "px-2 py-1 text-xs": !input,
+                  "px-3 py-2 text-13": input,
+                  "px-2 py-1 text-11": !input,
                   "cursor-not-allowed text-secondary": disabled,
                   "cursor-pointer hover:bg-custom-background-80": !disabled,
                 },
@@ -108,7 +108,7 @@ function CustomSelect(props: ICustomSelectProps) {
           <Combobox.Options data-prevent-outside-click static>
             <div
               className={cn(
-                "my-1 overflow-y-scroll rounded-md border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none min-w-48 whitespace-nowrap z-30",
+                "my-1 overflow-y-scroll rounded-md border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 text-11 shadow-custom-shadow-rg focus:outline-none min-w-48 whitespace-nowrap z-30",
                 optionsClassName
               )}
               ref={setPopperElement}

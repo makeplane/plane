@@ -21,7 +21,7 @@ export function DeleteProjectSection(props: IDeleteProjectSection) {
       {({ open }) => (
         <div className="w-full">
           <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between">
-            <span className="text-xl tracking-tight">Delete project</span>
+            <span className="text-18 tracking-tight">Delete project</span>
             {open ? <ChevronUpIcon className="h-5 w-5" /> : <ChevronRightIcon className="h-5 w-5" />}
           </Disclosure.Button>
 
@@ -36,7 +36,7 @@ export function DeleteProjectSection(props: IDeleteProjectSection) {
           >
             <Disclosure.Panel>
               <div className="flex flex-col gap-8 pt-4">
-                <span className="text-sm tracking-tight">
+                <span className="text-13 tracking-tight">
                   When deleting a project, all of the data and resources within that project will be permanently removed
                   and cannot be recovered.
                 </span>

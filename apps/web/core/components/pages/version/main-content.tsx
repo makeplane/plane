@@ -84,8 +84,8 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
               <TriangleAlert className="size-10" />
             </span>
             <div>
-              <h6 className="text-lg font-semibold">Something went wrong!</h6>
-              <p className="text-sm text-tertiary">The version could not be loaded, please try again.</p>
+              <h6 className="text-16 font-semibold">Something went wrong!</h6>
+              <p className="text-13 text-tertiary">The version could not be loaded, please try again.</p>
             </div>
             <Button variant="link-primary" onClick={handleRetry} loading={isRetrying}>
               Try again
@@ -96,12 +96,12 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
         <>
           <div className="min-h-14 py-3 px-5 border-b border-subtle-1 flex items-center justify-between gap-2">
             <div className="flex items-center gap-4">
-              <h6 className="text-base font-medium">
+              <h6 className="text-14 font-medium">
                 {versionDetails
                   ? `${renderFormattedDate(versionDetails.last_saved_at)} ${renderFormattedTime(versionDetails.last_saved_at)}`
                   : "Loading version details"}
               </h6>
-              <span className="flex-shrink-0 flex items-center gap-1 text-xs font-medium text-custom-primary-100 bg-custom-primary-100/20 py-1 px-1.5 rounded">
+              <span className="flex-shrink-0 flex items-center gap-1 text-11 font-medium text-custom-primary-100 bg-custom-primary-100/20 py-1 px-1.5 rounded">
                 <EyeIcon className="flex-shrink-0 size-3" />
                 View only
               </span>

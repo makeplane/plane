@@ -86,7 +86,7 @@ export function SendTestEmailModal(props: Props) {
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 px-4 text-left shadow-custom-shadow-md transition-all w-full sm:max-w-xl">
-                <h3 className="text-lg font-medium leading-6 text-primary">
+                <h3 className="text-16 font-medium leading-6 text-primary">
                   {sendEmailStep === ESendEmailSteps.SEND_EMAIL
                     ? "Send test email"
                     : sendEmailStep === ESendEmailSteps.SUCCESS
@@ -101,12 +101,12 @@ export function SendTestEmailModal(props: Props) {
                       value={receiverEmail}
                       onChange={(e) => setReceiverEmail(e.target.value)}
                       placeholder="Receiver email"
-                      className="w-full resize-none text-lg"
+                      className="w-full resize-none text-16"
                       tabIndex={1}
                     />
                   )}
                   {sendEmailStep === ESendEmailSteps.SUCCESS && (
-                    <div className="flex flex-col gap-y-4 text-sm">
+                    <div className="flex flex-col gap-y-4 text-13">
                       <p>
                         We have sent the test email to {receiverEmail}. Please check your spam folder if you cannot find
                         it.
@@ -114,7 +114,7 @@ export function SendTestEmailModal(props: Props) {
                       <p>If you still cannot find it, recheck your SMTP configuration and trigger a new test email.</p>
                     </div>
                   )}
-                  {sendEmailStep === ESendEmailSteps.FAILED && <div className="text-sm">{error}</div>}
+                  {sendEmailStep === ESendEmailSteps.FAILED && <div className="text-13">{error}</div>}
                   <div className="flex items-center gap-2 justify-end mt-5">
                     <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={2}>
                       {sendEmailStep === ESendEmailSteps.SEND_EMAIL ? "Cancel" : "Close"}

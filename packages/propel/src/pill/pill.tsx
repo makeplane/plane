@@ -43,10 +43,10 @@ const pillVariants = {
 };
 
 const pillSizes = {
-  [EPillSize.XS]: "px-1.5 py-0.5 text-xs",
-  [EPillSize.SM]: "px-2 py-0.5 text-xs",
-  [EPillSize.MD]: "px-2.5 py-1 text-sm",
-  [EPillSize.LG]: "px-3 py-1.5 text-base",
+  [EPillSize.XS]: "px-1.5 py-0.5 text-11",
+  [EPillSize.SM]: "px-2 py-0.5 text-11",
+  [EPillSize.MD]: "px-2.5 py-1 text-13",
+  [EPillSize.LG]: "px-3 py-1.5 text-14",
 };
 
 const Pill = React.forwardRef(function Pill(

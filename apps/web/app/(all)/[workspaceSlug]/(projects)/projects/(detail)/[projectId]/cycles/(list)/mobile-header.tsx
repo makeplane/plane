@@ -40,15 +40,15 @@ export const CyclesListMobileHeader = observer(function CyclesListMobileHeader()
     <div className="flex justify-center sm:hidden">
       <CustomMenu
         maxHeight={"md"}
-        className="flex flex-grow justify-center text-secondary text-sm py-2 border-b border-subtle-1 bg-custom-sidebar-background-100"
+        className="flex flex-grow justify-center text-secondary text-13 py-2 border-b border-subtle-1 bg-custom-sidebar-background-100"
         // placement="bottom-start"
         customButton={
           <span className="flex items-center gap-2">
             <ListLayoutIcon className="h-4 w-4" />
-            <span className="flex flex-grow justify-center text-secondary text-sm">Layout</span>
+            <span className="flex flex-grow justify-center text-secondary text-13">Layout</span>
           </span>
         }
-        customButtonClassName="flex flex-grow justify-center items-center text-secondary text-sm"
+        customButtonClassName="flex flex-grow justify-center items-center text-secondary text-13"
         closeOnSelect
       >
         {CYCLE_VIEW_LAYOUTS.map((layout) => {

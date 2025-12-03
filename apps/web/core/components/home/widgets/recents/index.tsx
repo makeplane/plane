@@ -73,7 +73,7 @@ export const RecentActivityWidget = observer(function RecentActivityWidget(props
     return (
       <div ref={ref} className="max-h-[500px] overflow-y-scroll">
         <div className="flex items-center justify-between mb-4">
-          <div className="text-base font-semibold text-custom-text-350">{t("home.recents.title")}</div>
+          <div className="text-14 font-semibold text-custom-text-350">{t("home.recents.title")}</div>
           {showFilterSelect && <FiltersDropdown filters={filters} activeFilter={filter} setActiveFilter={setFilter} />}
         </div>
         <div className="flex flex-col items-center justify-center">
@@ -90,7 +90,7 @@ export const RecentActivityWidget = observer(function RecentActivityWidget(props
       buttonClassName="bg-custom-background-90/20"
     >
       <div className="flex items-center justify-between mb-2">
-        <div className="text-base font-semibold text-custom-text-350">{t("home.recents.title")}</div>
+        <div className="text-14 font-semibold text-custom-text-350">{t("home.recents.title")}</div>
         {showFilterSelect && <FiltersDropdown filters={filters} activeFilter={filter} setActiveFilter={setFilter} />}
       </div>
       <div className="min-h-[250px] flex flex-col">

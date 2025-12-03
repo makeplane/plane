@@ -21,8 +21,8 @@ export const NewUserPopup = observer(function NewUserPopup() {
     <div className="absolute bottom-8 right-8 p-6 w-96 border border-subtle shadow-md rounded-lg bg-custom-background-100">
       <div className="flex gap-4">
         <div className="grow">
-          <div className="text-base font-semibold">Create workspace</div>
-          <div className="py-2 text-sm font-medium text-tertiary">
+          <div className="text-14 font-semibold">Create workspace</div>
+          <div className="py-2 text-13 font-medium text-tertiary">
             Instance setup done! Welcome to Plane instance portal. Start your journey with by creating your first
             workspace.
           </div>

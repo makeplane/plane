@@ -78,14 +78,14 @@ export const ProjectFeaturesList = observer(function ProjectFeaturesList(props: 
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h4 className="text-sm font-medium leading-5">{t(featureItem.key)}</h4>
+                      <h4 className="text-13 font-medium leading-5">{t(featureItem.key)}</h4>
                       {featureItem.isPro && (
                         <Tooltip tooltipContent="Pro feature" position="top">
                           <UpgradeBadge className="rounded" />
                         </Tooltip>
                       )}
                     </div>
-                    <p className="text-sm leading-5 tracking-tight text-tertiary">
+                    <p className="text-13 leading-5 tracking-tight text-tertiary">
                       {t(`${featureItem.key}_description`)}
                     </p>
                   </div>

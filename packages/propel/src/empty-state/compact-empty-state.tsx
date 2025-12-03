@@ -33,11 +33,11 @@ export function EmptyStateCompact({
         <div className="flex flex-col gap-4">
           {title && description ? (
             <div className="flex flex-col gap-2">
-              {title && <h3 className="text-lg font-semibold leading-7 text-primary">{title}</h3>}
-              {description && <p className="text-sm leading-5 text-tertiary">{description}</p>}
+              {title && <h3 className="text-16 font-semibold leading-7 text-primary">{title}</h3>}
+              {description && <p className="text-13 leading-5 text-tertiary">{description}</p>}
             </div>
           ) : (
-            title && <p className="text-sm leading-5 text-tertiary">{title}</p>
+            title && <p className="text-13 leading-5 text-tertiary">{title}</p>
           )}
 
           {customButton

@@ -80,8 +80,8 @@ export const DetailedEmptyState = observer(function DetailedEmptyState(props: Pr
     >
       <div className={cn("flex flex-col gap-5", sizeClasses[size])}>
         <div className="flex flex-col gap-1.5 flex-shrink">
-          <h3 className={cn("text-xl font-semibold", { "font-medium": !description })}>{title}</h3>
-          {description && <p className="text-sm">{description}</p>}
+          <h3 className={cn("text-18 font-semibold", { "font-medium": !description })}>{title}</h3>
+          {description && <p className="text-13">{description}</p>}
         </div>
 
         {assetPath && <img src={assetPath} alt={title} className="w-full h-auto" loading="lazy" />}

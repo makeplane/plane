@@ -24,7 +24,7 @@ export const StickiesWidget = observer(function StickiesWidget() {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <div className="text-base font-semibold text-custom-text-350">{t("stickies.title")}</div>
+        <div className="text-14 font-semibold text-custom-text-350">{t("stickies.title")}</div>
         {/* actions */}
         <div className="flex gap-2">
           <StickySearch />
@@ -33,7 +33,7 @@ export const StickiesWidget = observer(function StickiesWidget() {
               toggleShowNewSticky(true);
               stickyOperations.create();
             }}
-            className="flex gap-1 text-sm font-medium text-custom-primary-100 my-auto"
+            className="flex gap-1 text-13 font-medium text-custom-primary-100 my-auto"
             disabled={creatingSticky}
           >
             <Plus className="size-4 my-auto" />

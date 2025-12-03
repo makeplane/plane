@@ -49,7 +49,7 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
             <Icon className="size-3 stroke-2 text-custom-text-350 group-hover:text-primary flex-shrink-0" />
           </span>
           <Tooltip tooltipContent={link.title && link.title !== "" ? link.title : link.url} isMobile={isMobile}>
-            <a href={link.url} target="_blank" rel="noopener noreferrer" className="cursor-pointer truncate text-xs">
+            <a href={link.url} target="_blank" rel="noopener noreferrer" className="cursor-pointer truncate text-11">
               {link.title && link.title !== "" ? link.title : link.url}
             </a>
           </Tooltip>
@@ -93,7 +93,7 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
         </div>
       </div>
       <div className="px-5">
-        <p className="flex items-center gap-1.5 mt-0.5 stroke-[1.5] text-xs text-tertiary">
+        <p className="flex items-center gap-1.5 mt-0.5 stroke-[1.5] text-11 text-tertiary">
           Added {calculateTimeAgo(link.created_at)}{" "}
           {createdByDetails && (
             <>by {createdByDetails?.is_bot ? createdByDetails?.first_name + " Bot" : createdByDetails?.display_name}</>

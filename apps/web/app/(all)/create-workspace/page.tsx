@@ -61,22 +61,22 @@ function CreateWorkspacePage() {
           >
             <PlaneLogo className="h-9 w-auto text-primary" />
           </Link>
-          <div className="absolute right-4 top-1/4 -translate-y-1/2 text-sm text-primary sm:fixed sm:right-16 sm:top-12 sm:translate-y-0 sm:py-5">
+          <div className="absolute right-4 top-1/4 -translate-y-1/2 text-13 text-primary sm:fixed sm:right-16 sm:top-12 sm:translate-y-0 sm:py-5">
             {currentUser?.email}
           </div>
         </div>
         <div className="relative flex h-full justify-center px-8 pb-8 sm:w-10/12 sm:items-center sm:justify-start sm:p-0 sm:pr-[8.33%] md:w-9/12 lg:w-4/5">
           {isWorkspaceCreationDisabled ? (
-            <div className="w-4/5 h-full flex flex-col items-center justify-center text-lg font-medium gap-1">
+            <div className="w-4/5 h-full flex flex-col items-center justify-center text-16 font-medium gap-1">
               <img
                 src={WorkspaceCreationDisabled}
                 className="w-full h-full object-contain mb-4"
                 alt="Workspace creation disabled"
               />
-              <div className="text-lg font-medium text-center">
+              <div className="text-16 font-medium text-center">
                 {t("workspace_creation.errors.creation_disabled.title")}
               </div>
-              <p className="text-sm text-tertiary break-words text-center">
+              <p className="text-13 text-tertiary break-words text-center">
                 {t("workspace_creation.errors.creation_disabled.description")}
               </p>
               <div className="flex gap-4 mt-6">
@@ -90,7 +90,7 @@ function CreateWorkspacePage() {
             </div>
           ) : (
             <div className="w-full space-y-7 sm:space-y-10">
-              <h4 className="text-2xl font-semibold">{t("workspace_creation.heading")}</h4>
+              <h4 className="text-20 font-semibold">{t("workspace_creation.heading")}</h4>
               <div className="sm:w-3/4 md:w-2/5">
                 <CreateWorkspaceForm
                   onSubmit={onSubmit}

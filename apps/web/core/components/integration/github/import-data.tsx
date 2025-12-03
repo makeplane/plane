@@ -43,7 +43,7 @@ export const GithubImportData = observer(function GithubImportData(props: Props)
         <div className="grid grid-cols-12 gap-4 sm:gap-16">
           <div className="col-span-12 sm:col-span-8">
             <h4 className="font-semibold">Select Repository</h4>
-            <p className="text-xs text-secondary">
+            <p className="text-11 text-secondary">
               Select the repository that you want the work items to be imported from.
             </p>
           </div>
@@ -68,7 +68,7 @@ export const GithubImportData = observer(function GithubImportData(props: Props)
         <div className="grid grid-cols-12 gap-4 sm:gap-16">
           <div className="col-span-12 sm:col-span-8">
             <h4 className="font-semibold">Select Project</h4>
-            <p className="text-xs text-secondary">Select the project to import the work item to.</p>
+            <p className="text-11 text-secondary">Select the project to import the work item to.</p>
           </div>
           <div className="col-span-12 sm:col-span-4">
             {workspaceProjectIds && (
@@ -91,7 +91,7 @@ export const GithubImportData = observer(function GithubImportData(props: Props)
         <div className="grid grid-cols-12 gap-4 sm:gap-16">
           <div className="col-span-12 sm:col-span-8">
             <h4 className="font-semibold">Sync work item</h4>
-            <p className="text-xs text-secondary">Set whether you want to sync the work items or not.</p>
+            <p className="text-11 text-secondary">Set whether you want to sync the work items or not.</p>
           </div>
           <div className="col-span-12 sm:col-span-4">
             <Controller

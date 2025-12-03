@@ -58,12 +58,12 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
   return (
     <div className="flex w-full flex-col divide-y-2 divide-subtle-1">
       <div className="w-full overflow-y-auto">
-        <h5 className="text-sm font-medium my-4">Properties</h5>
+        <h5 className="text-13 font-medium my-4">Properties</h5>
         <div className={`divide-y-2 divide-subtle-1 ${!isEditable ? "opacity-60" : ""}`}>
           <div className="flex flex-col gap-3">
             {/* Intake State */}
             <div className="flex h-8 items-center gap-2">
-              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-tertiary">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
                 <StatePropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>State</span>
               </div>
@@ -76,7 +76,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
                   buttonVariant="transparent-with-text"
                   className="w-3/5 flex-grow group"
                   buttonContainerClassName="w-full text-left"
-                  buttonClassName="text-sm"
+                  buttonClassName="text-13"
                   dropdownArrow
                   dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
                 />
@@ -84,7 +84,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
             </div>
             {/* Assignee */}
             <div className="flex h-8 items-center gap-2">
-              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-tertiary">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
                 <MembersPropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>Assignees</span>
               </div>
@@ -102,7 +102,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
                 }
                 className="w-3/5 flex-grow group"
                 buttonContainerClassName="w-full text-left"
-                buttonClassName={`text-sm justify-between ${
+                buttonClassName={`text-13 justify-between ${
                   (issue?.assignee_ids || [])?.length > 0 ? "" : "text-placeholder"
                 }`}
                 hideIcon={issue.assignee_ids?.length === 0}
@@ -112,7 +112,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
             </div>
             {/* Priority */}
             <div className="flex h-8 items-center gap-2">
-              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-tertiary">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
                 <PriorityPropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>Priority</span>
               </div>
@@ -134,7 +134,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
           <div className="flex flex-col gap-3">
             {/* Due Date */}
             <div className="flex h-8 items-center gap-2">
-              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-tertiary">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
                 <DueDatePropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>Due date</span>
               </div>
@@ -152,14 +152,14 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
                 buttonVariant="transparent-with-text"
                 className="group w-3/5 flex-grow"
                 buttonContainerClassName="w-full text-left"
-                buttonClassName={`text-sm ${issue?.target_date ? "" : "text-placeholder"}`}
+                buttonClassName={`text-13 ${issue?.target_date ? "" : "text-placeholder"}`}
                 hideIcon
                 clearIconClassName="h-3 w-3 hidden group-hover:inline"
               />
             </div>
             {/* Labels */}
             <div className="flex min-h-8 items-center gap-2">
-              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-tertiary">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
                 <LabelPropertyIcon className="h-4 w-4 flex-shrink-0" />
                 <span>Labels</span>
               </div>
@@ -182,7 +182,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
             {/* duplicate to*/}
             {duplicateIssueDetails && (
               <div className="flex min-h-8 gap-2">
-                <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-tertiary">
+                <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-13 text-tertiary">
                   <DuplicatePropertyIcon className="h-4 w-4 flex-shrink-0" />
                   <span>Duplicate of</span>
                 </div>
@@ -195,7 +195,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
                   target="_self"
                 >
                   <Tooltip tooltipContent={`${duplicateIssueDetails?.name}`}>
-                    <span className="flex items-center gap-1 cursor-pointer text-xs rounded px-1.5 py-1 pb-0.5 bg-custom-background-80 text-secondary">
+                    <span className="flex items-center gap-1 cursor-pointer text-11 rounded px-1.5 py-1 pb-0.5 bg-custom-background-80 text-secondary">
                       {`${currentProjectDetails?.identifier}-${duplicateIssueDetails?.sequence_id}`}
                     </span>
                   </Tooltip>

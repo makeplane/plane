@@ -58,7 +58,7 @@ export const TabNavigationVisibleItem: React.FC<TTabNavigationVisibleItemProps> 
                 className="flex items-center gap-2 text-secondary transition-colors cursor-pointer"
               >
                 <SetAsDefaultIcon className="shrink-0 size-3" />
-                <span className="text-xs">{isDefault ? "Clear default" : "Set as default"}</span>
+                <span className="text-11">{isDefault ? "Clear default" : "Set as default"}</span>
               </ContextMenu.Item>
               <ContextMenu.Item
                 onClick={(e) => {
@@ -68,7 +68,7 @@ export const TabNavigationVisibleItem: React.FC<TTabNavigationVisibleItemProps> 
                 className="flex items-center gap-2 text-secondary transition-colors cursor-pointer"
               >
                 <PinOff className="shrink-0 size-3" />
-                <span className="text-xs">Hide in more menu</span>
+                <span className="text-11">Hide in more menu</span>
               </ContextMenu.Item>
             </ContextMenu.Content>
           </ContextMenu.Portal>

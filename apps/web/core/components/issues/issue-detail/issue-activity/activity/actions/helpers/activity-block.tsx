@@ -30,7 +30,7 @@ export function IssueActivityBlockComponent(props: TIssueActivityBlockComponent)
   if (!activity) return <></>;
   return (
     <div
-      className={`relative flex items-center gap-3 text-xs ${
+      className={`relative flex items-center gap-3 text-11 ${
         ends === "top" ? `pb-2` : ends === "bottom" ? `pt-2` : `py-2`
       }`}
     >

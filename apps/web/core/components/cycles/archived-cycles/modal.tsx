@@ -96,8 +96,8 @@ export function ArchiveCycleModal(props: Props) {
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-lg">
                 <div className="px-5 py-4">
-                  <h3 className="text-xl font-medium 2xl:text-2xl">Archive cycle {cycleName}</h3>
-                  <p className="mt-3 text-sm text-secondary">
+                  <h3 className="text-18 font-medium 2xl:text-20">Archive cycle {cycleName}</h3>
+                  <p className="mt-3 text-13 text-secondary">
                     Are you sure you want to archive the cycle? All your archives can be restored later.
                   </p>
                   <div className="mt-3 flex justify-end gap-2">

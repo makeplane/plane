@@ -18,7 +18,7 @@ type Props = {
 function CompletionPercentage({ percentage }: { percentage: number }) {
   const percentageColor = percentage > 50 ? "bg-green-500/30 text-green-500" : "bg-red-500/30 text-red-500";
   return (
-    <div className={cn("flex items-center gap-2 rounded p-1 text-xs", percentageColor)}>
+    <div className={cn("flex items-center gap-2 rounded p-1 text-11", percentageColor)}>
       <span>{percentage}%</span>
     </div>
   );
@@ -48,7 +48,7 @@ function ActiveProjectItem(props: Props) {
           </span>
         </div>
         <Tooltip tooltipContent={projectDetails?.name} position="top-start">
-          <p className="text-sm font-medium truncate">{projectDetails?.name}</p>
+          <p className="text-13 font-medium truncate">{projectDetails?.name}</p>
         </Tooltip>
       </div>
       <CompletionPercentage

@@ -53,7 +53,7 @@ const SettingsSidebarNavItem = observer(function SettingsSidebarNavItem(props: T
         {setting.icon
           ? setting.icon
           : actionIcons && actionIcons({ type: setting.key, size: 16, className: "w-4 h-4" })}
-        <div className="text-sm font-medium truncate">{t(setting.i18n_label)}</div>
+        <div className="text-13 font-medium truncate">{t(setting.i18n_label)}</div>
       </div>
       {appendItemsToTitle?.(setting.key)}
     </>
@@ -65,7 +65,7 @@ const SettingsSidebarNavItem = observer(function SettingsSidebarNavItem(props: T
         as="button"
         type="button"
         className={cn(
-          "group w-full flex items-center gap-1 whitespace-nowrap text-left text-sm font-semibold text-placeholder"
+          "group w-full flex items-center gap-1 whitespace-nowrap text-left text-13 font-semibold text-placeholder"
         )}
         onClick={() => setIsExpanded(!isExpanded)}
       >

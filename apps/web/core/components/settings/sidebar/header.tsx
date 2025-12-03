@@ -24,10 +24,10 @@ export const SettingsSidebarHeader = observer(function SettingsSidebarHeader(pro
               classNames="size-8 border border-subtle-1"
             />
             <div className="w-full overflow-hidden">
-              <div className="text-base font-medium text-secondary truncate text-ellipsis ">
+              <div className="text-14 font-medium text-secondary truncate text-ellipsis ">
                 {currentWorkspace.name ?? "Workspace"}
               </div>
-              <div className="text-sm text-tertiary capitalize">
+              <div className="text-13 text-tertiary capitalize">
                 {getUserRole(currentWorkspace.role)?.toLowerCase() || "guest"}
               </div>
             </div>

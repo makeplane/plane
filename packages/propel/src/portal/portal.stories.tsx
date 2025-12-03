@@ -78,8 +78,8 @@ function ModalContent({
     <div className="flex flex-col h-full bg-white">
       <div className="flex items-center justify-between p-6 border-b border-gray-200">
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
-          <p className="text-sm text-gray-500 mt-1">Modal demonstration</p>
+          <h2 className="text-18 font-semibold text-gray-900">{title}</h2>
+          <p className="text-13 text-gray-500 mt-1">Modal demonstration</p>
         </div>
         {showCloseButton && onClose && (
           <Button variant="link-neutral" size="sm" onClick={onClose} aria-label="Close modal">
@@ -93,7 +93,7 @@ function ModalContent({
         <div className="space-y-4">
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="font-medium text-gray-900 mb-2">Feature Highlights</h3>
-            <ul className="text-sm text-gray-600 space-y-1">
+            <ul className="text-13 text-gray-600 space-y-1">
               <li>• ESC key closes the modal</li>
               <li>• Click outside overlay to close</li>
             </ul>

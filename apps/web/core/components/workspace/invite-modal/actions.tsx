@@ -38,7 +38,7 @@ export const InvitationModalActions = observer(function InvitationModalActions(p
       <button
         type="button"
         className={cn(
-          "flex items-center gap-1 bg-transparent py-2 pr-3 text-xs font-medium text-custom-primary outline-custom-primary",
+          "flex items-center gap-1 bg-transparent py-2 pr-3 text-11 font-medium text-custom-primary outline-custom-primary",
           {
             "cursor-not-allowed opacity-60": isInviteDisabled,
           }

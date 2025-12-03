@@ -49,7 +49,7 @@ export const BasePaidPlanCard = observer(function BasePaidPlanCard(props: TBaseP
                 key={price.key}
                 className={({ selected }) =>
                   cn(
-                    "w-full rounded py-1 text-sm font-medium leading-5",
+                    "w-full rounded py-1 text-13 font-medium leading-5",
                     selected ? "bg-custom-background-100 text-primary shadow" : "text-tertiary hover:text-secondary"
                   )
                 }
@@ -64,11 +64,11 @@ export const BasePaidPlanCard = observer(function BasePaidPlanCard(props: TBaseP
           {prices.map((price: TSubscriptionPrice) => (
             <Tab.Panel key={price.key}>
               <div className="pt-6 text-center">
-                <div className="text-xl font-medium">Plane {planeName}</div>
+                <div className="text-18 font-medium">Plane {planeName}</div>
                 {renderActionButton(price)}
               </div>
               <div className="px-2 pt-6 pb-2">
-                <div className="p-2 text-sm font-semibold">{`Everything in ${basePlan} +`}</div>
+                <div className="p-2 text-13 font-semibold">{`Everything in ${basePlan} +`}</div>
                 <ul className="grid grid-cols-12 gap-x-4">
                   {features.map((feature) => (
                     <li
@@ -77,7 +77,7 @@ export const BasePaidPlanCard = observer(function BasePaidPlanCard(props: TBaseP
                         "sm:col-span-6": !verticalFeatureList,
                       })}
                     >
-                      <p className="w-full text-sm font-medium leading-5 flex items-center line-clamp-1">
+                      <p className="w-full text-13 font-medium leading-5 flex items-center line-clamp-1">
                         <CheckCircle className="h-4 w-4 mr-2 text-tertiary flex-shrink-0" />
                         <span className="text-secondary truncate">{feature}</span>
                       </p>

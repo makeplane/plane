@@ -156,7 +156,7 @@ export function GithubImporterRoot() {
     <form onSubmit={handleSubmit(createGithubImporterService)}>
       <div className="mt-4 space-y-2">
         <Link href={`/${workspaceSlug}/settings/imports`}>
-          <span className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-secondary hover:text-primary">
+          <span className="inline-flex cursor-pointer items-center gap-2 text-13 font-medium text-secondary hover:text-primary">
             <ArrowLeft className="h-3 w-3" />
             <div>Cancel import & go back</div>
           </span>

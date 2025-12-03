@@ -27,7 +27,7 @@ export function CycleListGroupHeader(props: Props) {
 
         <div className="relative flex w-full flex-row items-center gap-1 overflow-hidden">
           <div className="inline-block line-clamp-1 truncate font-medium text-primary">{title}</div>
-          {showCount && <div className="pl-2 text-sm font-medium text-tertiary">{`${count ?? "0"}`}</div>}
+          {showCount && <div className="pl-2 text-13 font-medium text-tertiary">{`${count ?? "0"}`}</div>}
         </div>
       </div>
       <ChevronDownIcon

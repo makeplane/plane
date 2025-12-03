@@ -182,7 +182,7 @@ function ComboboxOptions({
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={onSearchQueryKeyDown}
                   className={cn(
-                    "w-full rounded border border-subtle bg-custom-background-90 py-1.5 pl-8 pr-2 text-sm outline-none placeholder:text-placeholder",
+                    "w-full rounded border border-subtle bg-custom-background-90 py-1.5 pl-8 pr-2 text-13 outline-none placeholder:text-placeholder",
                     inputClassName
                   )}
                 />
@@ -198,7 +198,7 @@ function ComboboxOptions({
                   React.Children.toArray(filteredChildren).filter(
                     (child) => React.isValidElement(child) && child.type === ComboboxOption
                   )
-                ) === 0 && <div className="px-2 py-1.5 text-sm text-placeholder">{emptyMessage}</div>}
+                ) === 0 && <div className="px-2 py-1.5 text-13 text-placeholder">{emptyMessage}</div>}
             </BaseCombobox.List>
           </div>
         </BaseCombobox.Popup>
@@ -213,7 +213,7 @@ function ComboboxOption({ value, children, disabled, className }: ComboboxOption
     <BaseCombobox.Item
       value={value}
       disabled={disabled}
-      className={cn("cursor-pointer rounded px-2 py-1.5 text-sm outline-none transition-colors", className)}
+      className={cn("cursor-pointer rounded px-2 py-1.5 text-13 outline-none transition-colors", className)}
     >
       {children}
     </BaseCombobox.Item>

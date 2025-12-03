@@ -158,7 +158,7 @@ export function EditorAIMenu(props: Props) {
                 key={item.key}
                 type="button"
                 className={cn(
-                  "w-full flex items-center justify-between gap-2 truncate rounded px-1 py-1.5 text-xs text-secondary hover:bg-custom-background-80 transition-colors",
+                  "w-full flex items-center justify-between gap-2 truncate rounded px-1 py-1.5 text-11 text-secondary hover:bg-custom-background-80 transition-colors",
                   {
                     "bg-custom-background-80": isActiveTask,
                   }
@@ -223,7 +223,7 @@ export function EditorAIMenu(props: Props) {
                     <div className="mt-3 flex items-center gap-4">
                       <button
                         type="button"
-                        className="p-1 text-tertiary text-sm font-medium rounded hover:bg-custom-background-80 outline-none"
+                        className="p-1 text-tertiary text-13 font-medium rounded hover:bg-custom-background-80 outline-none"
                         onClick={() => handleInsertText(false)}
                       >
                         Replace selection
@@ -258,7 +258,7 @@ export function EditorAIMenu(props: Props) {
                     </div>
                   </div>
                 ) : (
-                  <p className="text-sm text-secondary">
+                  <p className="text-13 text-secondary">
                     {activeTask ? LOADING_TEXTS[activeTask] : "Pi is writing"}...
                   </p>
                 )}
@@ -269,7 +269,7 @@ export function EditorAIMenu(props: Props) {
                     key={tone.key}
                     type="button"
                     className={cn(
-                      "p-1 text-xs text-secondary font-medium bg-custom-background-80 rounded transition-colors outline-none",
+                      "p-1 text-11 text-secondary font-medium bg-custom-background-80 rounded transition-colors outline-none",
                       {
                         "bg-custom-primary-100/20 text-custom-primary-100": tone.key === "default",
                       }
@@ -293,7 +293,7 @@ export function EditorAIMenu(props: Props) {
           <span className="flex-shrink-0 size-4 grid place-items-center">
             <TriangleAlert className="size-3" />
           </span>
-          <p className="flex-shrink-0 text-xs font-medium">
+          <p className="flex-shrink-0 text-11 font-medium">
             By using this feature, you consent to sharing the message with a 3rd party service.
           </p>
         </div>

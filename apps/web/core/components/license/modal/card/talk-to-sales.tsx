@@ -54,7 +54,7 @@ export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSa
     return (
       <>
         <div className="pb-4 text-center">
-          <div className="text-2xl font-semibold h-9 flex justify-center items-center">
+          <div className="text-20 font-semibold h-9 flex justify-center items-center">
             {isLoading ? (
               <Loader className="flex flex-col items-center justify-center">
                 <Loader.Item height="36px" width="4rem" />
@@ -63,7 +63,7 @@ export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSa
               <>Quote on request</>
             )}
           </div>
-          <div className="text-sm font-medium text-tertiary">per user per month</div>
+          <div className="text-13 font-medium text-tertiary">per user per month</div>
         </div>
         {isLoading ? (
           <Loader className="flex flex-col items-center justify-center">
@@ -76,7 +76,7 @@ export const TalkToSalesCard = observer(function TalkToSalesCard(props: TalkToSa
               target="_blank"
               className={cn(
                 upgradeButtonStyle,
-                "relative inline-flex items-center justify-center w-56 px-4 py-2 text-sm font-medium rounded-lg focus:outline-none"
+                "relative inline-flex items-center justify-center w-56 px-4 py-2 text-13 font-medium rounded-lg focus:outline-none"
               )}
             >
               Talk to Sales

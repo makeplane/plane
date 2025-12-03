@@ -108,8 +108,8 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
             }
           )}
         >
-          <span className="material-symbols-rounded !m-0 !p-0 text-base">arrow_upward_alt</span>
-          <span className="text-sm font-normal transition-opacity ease-in-out">{allUpVotes.length}</span>
+          <span className="material-symbols-rounded !m-0 !p-0 text-14">arrow_upward_alt</span>
+          <span className="text-13 font-regular transition-opacity ease-in-out">{allUpVotes.length}</span>
         </button>
       </Tooltip>
 
@@ -149,8 +149,8 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
             }
           )}
         >
-          <span className="material-symbols-rounded !m-0 !p-0 text-base">arrow_downward_alt</span>
-          <span className="text-sm font-normal transition-opacity ease-in-out">{allDownVotes.length}</span>
+          <span className="material-symbols-rounded !m-0 !p-0 text-14">arrow_downward_alt</span>
+          <span className="text-13 font-regular transition-opacity ease-in-out">{allDownVotes.length}</span>
         </button>
       </Tooltip>
     </div>

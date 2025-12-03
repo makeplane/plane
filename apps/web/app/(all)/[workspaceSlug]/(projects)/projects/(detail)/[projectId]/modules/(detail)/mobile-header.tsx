@@ -79,10 +79,10 @@ export const ModuleIssuesMobileHeader = observer(function ModuleIssuesMobileHead
       <div className="flex justify-evenly border-b border-subtle-1 bg-custom-background-100 py-2">
         <CustomMenu
           maxHeight={"md"}
-          className="flex flex-grow justify-center text-sm text-secondary"
+          className="flex flex-grow justify-center text-13 text-secondary"
           placement="bottom-start"
-          customButton={<span className="flex flex-grow justify-center text-sm text-secondary">Layout</span>}
-          customButtonClassName="flex flex-grow justify-center text-secondary text-sm"
+          customButton={<span className="flex flex-grow justify-center text-13 text-secondary">Layout</span>}
+          customButtonClassName="flex flex-grow justify-center text-secondary text-13"
           closeOnSelect
         >
           {SUPPORTED_LAYOUTS.map((layout, index) => (
@@ -98,12 +98,12 @@ export const ModuleIssuesMobileHeader = observer(function ModuleIssuesMobileHead
             </CustomMenu.MenuItem>
           ))}
         </CustomMenu>
-        <div className="flex flex-grow items-center justify-center border-l border-subtle-1 text-sm text-secondary">
+        <div className="flex flex-grow items-center justify-center border-l border-subtle-1 text-13 text-secondary">
           <FiltersDropdown
             title="Display"
             placement="bottom-end"
             menuButton={
-              <span className="flex items-center text-sm text-secondary">
+              <span className="flex items-center text-13 text-secondary">
                 Display
                 <ChevronDownIcon className="ml-2 h-4 w-4 text-secondary" />
               </span>
@@ -126,7 +126,7 @@ export const ModuleIssuesMobileHeader = observer(function ModuleIssuesMobileHead
 
         <button
           onClick={() => setAnalyticsModal(true)}
-          className="flex flex-grow justify-center border-l border-subtle-1 text-sm text-secondary"
+          className="flex flex-grow justify-center border-l border-subtle-1 text-13 text-secondary"
         >
           Analytics
         </button>

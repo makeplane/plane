@@ -40,11 +40,11 @@ export const InboxIssueStatus = observer(function InboxIssueStatus(props: Props)
     >
       <div className={`flex items-center gap-1`}>
         <InboxStatusIcon type={inboxIssue?.status} size={iconSize} className="flex-shrink-0" renderColor={false} />
-        <div className="font-medium text-xs whitespace-nowrap">
+        <div className="font-medium text-11 whitespace-nowrap">
           {inboxIssue?.status === 0 && inboxIssue?.snoozed_till ? description : t(inboxIssueStatusDetail.i18n_title)}
         </div>
       </div>
-      {showDescription && <div className="text-sm whitespace-nowrap">{description}</div>}
+      {showDescription && <div className="text-13 whitespace-nowrap">{description}</div>}
     </div>
   );
 });

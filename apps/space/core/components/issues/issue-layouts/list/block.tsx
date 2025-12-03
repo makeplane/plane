@@ -50,7 +50,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
     <div
       ref={issueRef}
       className={cn(
-        "group/list-block min-h-11 relative flex flex-col md:flex-row md:items-center gap-3 bg-custom-background-100 hover:bg-custom-background-90 p-3 pl-1.5 text-sm transition-colors border-b border-b-subtle-1",
+        "group/list-block min-h-11 relative flex flex-col md:flex-row md:items-center gap-3 bg-custom-background-100 hover:bg-custom-background-90 p-3 pl-1.5 text-13 transition-colors border-b border-b-subtle-1",
         {
           "border-custom-primary-70": getIsIssuePeeked(issue.id),
           "last:border-b-transparent": !getIsIssuePeeked(issue.id),
@@ -61,7 +61,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
         <div className="flex flex-grow items-center gap-0.5 truncate">
           <div className="flex items-center gap-1">
             {displayProperties && displayProperties?.key && (
-              <div className="flex-shrink-0 text-xs font-medium text-tertiary px-4">
+              <div className="flex-shrink-0 text-11 font-medium text-tertiary px-4">
                 {projectIdentifier}-{issue.sequence_id}
               </div>
             )}
@@ -71,7 +71,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
             id={`issue-${issue.id}`}
             href={`?${queryParam}`}
             onClick={handleIssuePeekOverview}
-            className="w-full truncate cursor-pointer text-sm text-primary"
+            className="w-full truncate cursor-pointer text-13 text-primary"
           >
             <Tooltip tooltipContent={issue.name} position="top-start">
               <p className="truncate">{issue.name}</p>

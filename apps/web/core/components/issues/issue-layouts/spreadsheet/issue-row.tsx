@@ -269,7 +269,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
         >
           <Row
             className={cn(
-              "group clickable cursor-pointer h-11 w-full flex items-center text-sm after:absolute border-r-[0.5px] z-10 border-subtle-1 bg-transparent group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10",
+              "group clickable cursor-pointer h-11 w-full flex items-center text-13 after:absolute border-r-[0.5px] z-10 border-subtle-1 bg-transparent group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10",
               {
                 "border-b-[0.5px]": !getIsIssuePeeked(issueDetail.id),
                 "border border-custom-primary-70 hover:border-custom-primary-70":
@@ -312,13 +312,13 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
               {nestingLevel !== 0 && <div style={{ width: subIssueIndentation }} />}
 
               {(displayProperties?.key || displayProperties?.issue_type) && (
-                <div className="relative flex cursor-pointer items-center text-center text-xs hover:text-primary">
+                <div className="relative flex cursor-pointer items-center text-center text-11 hover:text-primary">
                   <p className={`flex font-medium leading-7`} style={{ minWidth: `${keyMinWidth}px` }}>
                     {issueDetail.project_id && (
                       <IssueIdentifier
                         issueId={issueDetail.id}
                         projectId={issueDetail.project_id}
-                        textContainerClassName="text-sm md:text-xs text-tertiary"
+                        textContainerClassName="text-13 md:text-11 text-tertiary"
                         displayProperties={displayProperties}
                       />
                     )}
@@ -346,11 +346,11 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
             </div>
 
             <div className="flex items-center gap-2 justify-between h-full w-full truncate my-auto">
-              <div className="w-full line-clamp-1 text-sm text-primary">
+              <div className="w-full line-clamp-1 text-13 text-primary">
                 <div className="w-full overflow-hidden">
                   <Tooltip tooltipContent={issueDetail.name} isMobile={isMobile}>
                     <div
-                      className="h-full w-full cursor-pointer truncate pr-4 text-left text-[0.825rem] text-primary focus:outline-none"
+                      className="h-full w-full cursor-pointer truncate pr-4 text-left text-13 text-primary focus:outline-none"
                       tabIndex={-1}
                     >
                       {issueDetail.name}

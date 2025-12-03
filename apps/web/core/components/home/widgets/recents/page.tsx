@@ -46,14 +46,14 @@ export function RecentPage(props: BlockProps) {
             )}
           </div>
           {pageDetails?.project_identifier && (
-            <div className="font-medium text-placeholder text-sm whitespace-nowrap">
+            <div className="font-medium text-placeholder text-13 whitespace-nowrap">
               {pageDetails?.project_identifier}
             </div>
           )}
         </div>
       }
       appendTitleElement={
-        <div className="flex-shrink-0 font-medium text-xs text-placeholder">
+        <div className="flex-shrink-0 font-medium text-11 text-placeholder">
           {calculateTimeAgo(activity.visited_at)}
         </div>
       }

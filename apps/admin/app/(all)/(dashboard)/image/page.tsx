@@ -17,8 +17,8 @@ const InstanceImagePage = observer(function InstanceImagePage(_props: Route.Comp
     <>
       <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
         <div className="border-b border-subtle mx-4 py-4 space-y-1 flex-shrink-0">
-          <div className="text-xl font-medium text-primary">Third-party image libraries</div>
-          <div className="text-sm font-normal text-tertiary">
+          <div className="text-18 font-medium text-primary">Third-party image libraries</div>
+          <div className="text-13 font-regular text-tertiary">
             Let your users search and choose images from third-party libraries
           </div>
         </div>

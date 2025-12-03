@@ -40,7 +40,7 @@ export function ViewAppliedFiltersList(props: Props) {
 
         return (
           <Tag key={filterKey}>
-            <span className="text-xs text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
+            <span className="text-11 text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
             {VIEW_ACCESS_FILTERS.includes(filterKey) && (
               <AppliedAccessFilters
                 editable={isEditingAllowed}

@@ -6,7 +6,7 @@ import type { TTabNavigationItemProps } from "./tab-navigation-types";
 export const TabNavigationItem: FC<TTabNavigationItemProps> = ({ children, isActive, className }) => (
   <div
     className={cn(
-      "relative flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors z-10",
+      "relative flex items-center gap-2 rounded-md px-2 py-1.5 text-13 font-medium transition-colors z-10",
       isActive ? "text-primary" : "text-secondary hover:text-primary",
       className
     )}

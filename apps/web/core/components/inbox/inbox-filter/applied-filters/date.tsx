@@ -41,13 +41,13 @@ export const InboxIssueAppliedFiltersDate = observer(function InboxIssueAppliedF
   if (filteredValues.length === 0) return <></>;
   return (
     <Tag>
-      <div className="text-xs text-secondary">{label}</div>
+      <div className="text-11 text-secondary">{label}</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
         if (!optionDetail) return <></>;
         return (
-          <div key={value} className="relative flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
-            <div className="text-xs truncate">{optionDetail?.name}</div>
+          <div key={value} className="relative flex items-center gap-1 rounded bg-custom-background-80 p-1 text-11">
+            <div className="text-11 truncate">{optionDetail?.name}</div>
             <div
               className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-tertiary hover:text-secondary transition-all"
               onClick={() => handleInboxIssueFilters(filterKey, handleFilterValue(optionDetail?.value))}

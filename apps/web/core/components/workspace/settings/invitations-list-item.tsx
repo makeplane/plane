@@ -127,18 +127,18 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
             {(invitationDetails.email ?? "?")[0]}
           </span>
           <div>
-            <h4 className="cursor-default text-sm">{invitationDetails.email}</h4>
+            <h4 className="cursor-default text-13">{invitationDetails.email}</h4>
           </div>
         </div>
-        <div className="flex items-center gap-2 text-xs">
-          <div className="flex items-center justify-center rounded bg-yellow-500/20 px-2.5 py-1 text-center text-xs font-medium text-yellow-500">
+        <div className="flex items-center gap-2 text-11">
+          <div className="flex items-center justify-center rounded bg-yellow-500/20 px-2.5 py-1 text-center text-11 font-medium text-yellow-500">
             <p>{t("common.pending")}</p>
           </div>
           <CustomSelect
             customButton={
               <div className="item-center flex gap-1 rounded px-2 py-0.5">
                 <span
-                  className={`flex items-center rounded text-xs font-medium ${
+                  className={`flex items-center rounded text-11 font-medium ${
                     hasRoleChangeAccess ? "" : "text-placeholder"
                   }`}
                 >

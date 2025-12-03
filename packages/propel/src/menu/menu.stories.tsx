@@ -161,7 +161,7 @@ export const WithSubmenu: Story = {
         <Menu.MenuItem onClick={() => alert("Open")}>Open</Menu.MenuItem>
         <Menu.SubMenu
           trigger="Export"
-          className="min-w-[12rem] rounded-md border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg"
+          className="min-w-[12rem] rounded-md border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 text-11 shadow-custom-shadow-rg"
         >
           <Menu.MenuItem onClick={() => alert("Export as PDF")}>Export as PDF</Menu.MenuItem>
           <Menu.MenuItem onClick={() => alert("Export as CSV")}>Export as CSV</Menu.MenuItem>
@@ -209,7 +209,7 @@ export const ComplexMenu: Story = {
           <div className="flex items-center gap-2">
             <Bell className="h-4 w-4" />
             <span>Notifications</span>
-            <span className="ml-auto rounded bg-red-500 px-2 py-0.5 text-xs text-white">3</span>
+            <span className="ml-auto rounded bg-red-500 px-2 py-0.5 text-11 text-white">3</span>
           </div>
         </Menu.MenuItem>
         <Menu.MenuItem onClick={() => alert("Help")}>
@@ -220,7 +220,7 @@ export const ComplexMenu: Story = {
         </Menu.MenuItem>
         <Menu.SubMenu
           trigger="Settings"
-          className="min-w-[12rem] rounded-md border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg"
+          className="min-w-[12rem] rounded-md border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 text-11 shadow-custom-shadow-rg"
         >
           <Menu.MenuItem onClick={() => alert("General Settings")}>General</Menu.MenuItem>
           <Menu.MenuItem onClick={() => alert("Privacy Settings")}>Privacy</Menu.MenuItem>

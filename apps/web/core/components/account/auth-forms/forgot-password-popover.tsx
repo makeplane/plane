@@ -30,7 +30,7 @@ export function ForgotPasswordPopover() {
         <button
           type="button"
           ref={setReferenceElement}
-          className="text-xs font-medium text-custom-primary-100 outline-none"
+          className="text-11 font-medium text-custom-primary-100 outline-none"
         >
           {t("auth.common.forgot_password")}
         </button>
@@ -44,7 +44,7 @@ export function ForgotPasswordPopover() {
             {...attributes.popper}
           >
             <span className="flex-shrink-0">🤥</span>
-            <p className="text-xs">{t("auth.forgot_password.errors.smtp_not_enabled")}</p>
+            <p className="text-11">{t("auth.forgot_password.errors.smtp_not_enabled")}</p>
             <button
               type="button"
               className="flex-shrink-0 size-3 grid place-items-center"

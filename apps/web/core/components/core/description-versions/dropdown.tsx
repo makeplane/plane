@@ -38,7 +38,7 @@ export const DescriptionVersionsDropdown = observer(function DescriptionVersions
           <span className="flex-shrink-0 size-4 grid place-items-center">
             <History className="size-3.5" />
           </span>
-          <p className="text-xs">
+          <p className="text-11">
             {t("description_versions.last_edited_by")}{" "}
             <span className="font-medium">{lastUpdatedByUserDisplayName ?? t("common.deactivated_user")}</span>{" "}
             {calculateTimeAgo(lastUpdatedAt)}
@@ -52,7 +52,7 @@ export const DescriptionVersionsDropdown = observer(function DescriptionVersions
       disabled={disabled}
       closeOnSelect
     >
-      <p className="text-xs text-tertiary font-medium mb-1">{t("description_versions.previously_edited_by")}</p>
+      <p className="text-11 text-tertiary font-medium mb-1">{t("description_versions.previously_edited_by")}</p>
       {versions?.map((version) => (
         <DescriptionVersionsDropdownItem key={version.id} onClick={onVersionClick} version={version} />
       ))}

@@ -35,20 +35,20 @@ export function ApiTokenListItem(props: Props) {
           </button>
         </Tooltip>
         <div className="flex w-4/5 items-center">
-          <h5 className="truncate text-sm font-medium">{token.label}</h5>
+          <h5 className="truncate text-13 font-medium">{token.label}</h5>
           <span
             className={`${
               token.is_active ? "bg-green-500/10 text-green-500" : "bg-custom-background-80 text-placeholder"
-            } ml-2 flex h-4 max-h-fit items-center rounded-sm px-2 text-xs font-medium`}
+            } ml-2 flex h-4 max-h-fit items-center rounded-sm px-2 text-11 font-medium`}
           >
             {token.is_active ? "Active" : "Expired"}
           </span>
         </div>
         <div className="mt-1 flex w-full flex-col justify-center">
           {token.description.trim() !== "" && (
-            <p className="mb-1 max-w-[70%] break-words text-sm">{token.description}</p>
+            <p className="mb-1 max-w-[70%] break-words text-13">{token.description}</p>
           )}
-          <p className="mb-1 text-xs leading-6 text-placeholder">
+          <p className="mb-1 text-11 leading-6 text-placeholder">
             {token.is_active
               ? token.expired_at
                 ? `Expires ${renderFormattedDate(token.expired_at!)} at ${renderFormattedTime(token.expired_at!)}`

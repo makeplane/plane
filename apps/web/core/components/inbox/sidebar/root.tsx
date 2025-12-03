@@ -84,7 +84,7 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
             <div
               key={option?.key}
               className={cn(
-                `text-sm relative flex items-center gap-1 h-full px-3 cursor-pointer transition-all font-medium`,
+                `text-13 relative flex items-center gap-1 h-full px-3 cursor-pointer transition-all font-medium`,
                 currentTab === option?.key ? `text-custom-primary-100` : `hover:text-secondary`
               )}
               onClick={() => {
@@ -96,7 +96,7 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
             >
               <div>{t(option?.i18n_label)}</div>
               {option?.key === "open" && currentTab === option?.key && (
-                <div className="rounded-full p-1.5 py-0.5 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold">
+                <div className="rounded-full p-1.5 py-0.5 bg-custom-primary-100/20 text-custom-primary-100 text-11 font-semibold">
                   {inboxIssuePaginationInfo?.total_results || 0}
                 </div>
               )}

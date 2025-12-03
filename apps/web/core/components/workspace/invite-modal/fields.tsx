@@ -39,7 +39,7 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
   return (
     <div className={cn("mb-3 space-y-4", className)}>
       {fields.map((field, index) => (
-        <div key={field.id} className="relative group mb-1 flex items-start justify-between gap-x-4 text-sm w-full">
+        <div key={field.id} className="relative group mb-1 flex items-start justify-between gap-x-4 text-13 w-full">
           <div className="w-full">
             <Controller
               control={control}
@@ -62,10 +62,10 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
                     ref={ref}
                     hasError={Boolean(errors.emails?.[index]?.email)}
                     placeholder={t("workspace_settings.settings.members.modal.placeholder")}
-                    className="w-full text-xs sm:text-sm"
+                    className="w-full text-11 sm:text-13"
                   />
                   {errors.emails?.[index]?.email && (
-                    <span className="ml-1 text-xs text-red-500">{errors.emails?.[index]?.email?.message}</span>
+                    <span className="ml-1 text-11 text-red-500">{errors.emails?.[index]?.email?.message}</span>
                   )}
                 </>
               )}
@@ -80,7 +80,7 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
                 render={({ field: { value, onChange } }) => (
                   <CustomSelect
                     value={value}
-                    label={<span className="text-xs sm:text-sm">{ROLE[value]}</span>}
+                    label={<span className="text-11 sm:text-13">{ROLE[value]}</span>}
                     onChange={onChange}
                     className="flex-grow w-24"
                     input

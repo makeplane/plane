@@ -7,8 +7,8 @@ const WorkspaceCreatePage = observer(function WorkspaceCreatePage(_props: Route.
   return (
     <div className="relative container mx-auto w-full h-full p-4 py-4 space-y-6 flex flex-col">
       <div className="border-b border-subtle mx-4 py-4 space-y-1 flex-shrink-0">
-        <div className="text-xl font-medium text-primary">Create a new workspace on this instance.</div>
-        <div className="text-sm font-normal text-tertiary">
+        <div className="text-18 font-medium text-primary">Create a new workspace on this instance.</div>
+        <div className="text-13 font-regular text-tertiary">
           You will need to invite users from Workspace Settings after you create this workspace.
         </div>
       </div>

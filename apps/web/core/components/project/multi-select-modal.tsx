@@ -87,7 +87,7 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
         <div className="flex items-center gap-2 px-4 border-b border-subtle">
           <Search className="flex-shrink-0 size-4 text-placeholder" aria-hidden="true" />
           <Combobox.Input
-            className="h-12 w-full border-0 bg-transparent text-sm text-primary outline-none placeholder:text-placeholder focus:ring-0"
+            className="h-12 w-full border-0 bg-transparent text-13 text-primary outline-none placeholder:text-placeholder focus:ring-0"
             placeholder="Search for projects"
             displayValue={() => ""}
             value={searchTerm}
@@ -108,7 +108,7 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
                   }}
                 >
                   <Logo logo={projectDetails.logo_props} size={14} />
-                  <p className="text-xs truncate text-tertiary group-hover:text-secondary transition-colors">
+                  <p className="text-11 truncate text-tertiary group-hover:text-secondary transition-colors">
                     {projectDetails.identifier}
                   </p>
                   <CloseIcon className="size-3 flex-shrink-0 text-placeholder group-hover:text-secondary transition-colors" />
@@ -158,8 +158,8 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
                         <Checkbox checked={isProjectSelected} />
                         <Logo logo={projectDetails.logo_props} size={16} />
                       </span>
-                      <span className="flex-shrink-0 text-[10px]">{projectDetails.identifier}</span>
-                      <p className="text-sm truncate">{projectDetails.name}</p>
+                      <span className="flex-shrink-0 text-10">{projectDetails.identifier}</span>
+                      <p className="text-13 truncate">{projectDetails.name}</p>
                     </div>
                   </Combobox.Option>
                 );

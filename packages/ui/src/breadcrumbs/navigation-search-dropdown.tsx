@@ -61,7 +61,7 @@ export function BreadcrumbNavigationSearchDropdown(props: TBreadcrumbNavigationS
                 }
               }}
               className={cn(
-                "group h-full flex items-center gap-2 px-1.5 py-1 text-sm font-medium text-tertiary cursor-pointer rounded rounded-r-none",
+                "group h-full flex items-center gap-2 px-1.5 py-1 text-13 font-medium text-tertiary cursor-pointer rounded rounded-r-none",
                 {
                   "hover:bg-custom-background-80 hover:text-primary": !isLast,
                 }

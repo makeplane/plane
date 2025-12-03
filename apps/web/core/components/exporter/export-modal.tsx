@@ -52,7 +52,7 @@ export const Exporter = observer(function Exporter(props: Props) {
       query: `${projectDetails?.name} ${projectDetails?.identifier}`,
       content: (
         <div className="flex items-center gap-2">
-          <span className="text-[0.65rem] text-secondary flex-shrink-0">{projectDetails?.identifier}</span>
+          <span className="text-10 text-secondary flex-shrink-0">{projectDetails?.identifier}</span>
           <span className="truncate">{projectDetails?.name}</span>
         </div>
       ),
@@ -134,7 +134,7 @@ export const Exporter = observer(function Exporter(props: Props) {
                 <div className="flex flex-col gap-6 gap-y-4 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="flex items-center justify-start">
-                      <h3 className="text-xl font-medium 2xl:text-2xl">
+                      <h3 className="text-18 font-medium 2xl:text-20">
                         {t("workspace_settings.settings.exports.modal.title")}{" "}
                         {provider === "csv" ? "CSV" : provider === "xlsx" ? "Excel" : provider === "json" ? "JSON" : ""}
                       </h3>
@@ -169,7 +169,7 @@ export const Exporter = observer(function Exporter(props: Props) {
                     className="flex max-w-min cursor-pointer items-center gap-2"
                   >
                     <input type="checkbox" checked={multiple} onChange={() => setMultiple(!multiple)} />
-                    <div className="whitespace-nowrap text-sm">
+                    <div className="whitespace-nowrap text-13">
                       {t("workspace_settings.settings.exports.export_separate_files")}
                     </div>
                   </div>

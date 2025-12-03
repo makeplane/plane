@@ -50,7 +50,7 @@ export function Tooltip(props: ITooltipProps) {
         <BaseTooltip.Portal>
           <BaseTooltip.Positioner
             className={cn(
-              "z-tooltip max-w-xs gap-1 overflow-hidden break-words rounded-md bg-custom-background-100 p-2 text-xs text-secondary shadow-custom-shadow-xs",
+              "z-tooltip max-w-xs gap-1 overflow-hidden break-words rounded-md bg-custom-background-100 p-2 text-11 text-secondary shadow-custom-shadow-xs",
               {
                 hidden: isMobile,
               },

@@ -8,7 +8,7 @@ export function HomeLoader() {
       {range(3).map((index) => (
         <div key={index}>
           <div className="mb-2">
-            <div className="text-base font-semibold text-custom-text-350 mb-4">
+            <div className="text-14 font-semibold text-custom-text-350 mb-4">
               <Loader.Item height="20px" width="100px" />
             </div>
             <Loader className="h-[110px] w-full flex items-center justify-center gap-2 text-placeholder rounded">

@@ -13,7 +13,7 @@ type BreadcrumbsProps = {
 export function BreadcrumbItemLoader() {
   return (
     <div className="flex items-center gap-2 h-7 animate-pulse">
-      <div className="group h-full flex items-center gap-2 rounded px-2 py-1 text-sm font-medium">
+      <div className="group h-full flex items-center gap-2 rounded px-2 py-1 text-13 font-medium">
         <span className="h-full w-5 bg-custom-background-80 rounded" />
         <span className="h-full w-16 bg-custom-background-80 rounded" />
       </div>
@@ -170,7 +170,7 @@ function BreadcrumbItemWrapper(props: BreadcrumbItemWrapperProps) {
     <Tooltip tooltipContent={label} position="bottom" disabled={!label || label === "" || disableTooltip}>
       <div
         className={cn(
-          "group h-full flex items-center gap-2 rounded px-1.5 py-1 text-sm font-medium text-tertiary cursor-default",
+          "group h-full flex items-center gap-2 rounded px-1.5 py-1 text-13 font-medium text-tertiary cursor-default",
           {
             "hover:text-primary hover:bg-custom-background-90 cursor-pointer": type === "link" && !isLast,
           },

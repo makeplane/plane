@@ -80,11 +80,11 @@ export function FavoriteFolder(props: Props) {
             render: ({ container }) => {
               const root = createRoot(container);
               root.render(
-                <div className="rounded flex gap-1 bg-custom-background-100 text-sm p-1 pr-2">
+                <div className="rounded flex gap-1 bg-custom-background-100 text-13 p-1 pr-2">
                   <div className="size-5 grid place-items-center flex-shrink-0">
                     <FavoriteFolderIcon />
                   </div>
-                  <p className="truncate text-sm font-medium text-secondary">{favorite.name}</p>
+                  <p className="truncate text-13 font-medium text-secondary">{favorite.name}</p>
                 </div>
               );
               return () => root.unmount();
@@ -198,7 +198,7 @@ export function FavoriteFolder(props: Props) {
                       <div className="size-5 grid place-items-center flex-shrink-0">
                         <FavoriteFolderIcon />
                       </div>
-                      <p className="truncate text-sm font-medium text-secondary">{favorite.name}</p>
+                      <p className="truncate text-13 font-medium text-secondary">{favorite.name}</p>
                     </Disclosure.Button>
                   </div>
                 </Tooltip>

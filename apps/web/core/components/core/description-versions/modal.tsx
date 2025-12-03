@@ -75,7 +75,7 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
       <div className="p-4" data-prevent-outside-click>
         {/* Header */}
         <div className="flex items-center justify-between gap-2 py-0.5">
-          <div className="flex-shrink-0 flex items-center gap-2 text-sm">
+          <div className="flex-shrink-0 flex items-center gap-2 text-13">
             <p className="flex items-center gap-1">
               {t("description_versions.edited_by")}
               <span className="flex-shrink-0">

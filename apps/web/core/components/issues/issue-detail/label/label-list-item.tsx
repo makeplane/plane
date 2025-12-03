@@ -32,7 +32,7 @@ export const LabelListItem = observer(function LabelListItem(props: TLabelListIt
   return (
     <div
       key={labelId}
-      className={`transition-all relative flex items-center gap-1 truncate border border-subtle rounded-full text-xs p-0.5 px-1 group ${
+      className={`transition-all relative flex items-center gap-1 truncate border border-subtle rounded-full text-11 p-0.5 px-1 group ${
         !disabled ? "cursor-pointer hover:border-red-500/50 hover:bg-red-500/20" : "cursor-not-allowed"
       } `}
       onClick={handleLabel}

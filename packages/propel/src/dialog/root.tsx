@@ -113,7 +113,7 @@ const DialogTitle = memo(function DialogTitle({ className, children, ...props }:
   return (
     <BaseDialog.Title
       data-slot="dialog-title"
-      className={cn("text-lg leading-none font-semibold", className)}
+      className={cn("text-16 leading-none font-semibold", className)}
       {...props}
     >
       {children}

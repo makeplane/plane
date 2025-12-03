@@ -78,12 +78,12 @@ export function SingleUserSelect({ collaborator, index, users, setUsers }: Props
             alt={`${collaborator.login} GitHub user`}
           />
         </div>
-        <p className="text-sm">{collaborator.login}</p>
+        <p className="text-13">{collaborator.login}</p>
       </div>
       <div>
         <CustomSelect
           value={users[index].import}
-          label={<div className="text-xs">{importOptions.find((o) => o.key === users[index].import)?.label}</div>}
+          label={<div className="text-11">{importOptions.find((o) => o.key === users[index].import)?.label}</div>}
           onChange={(val: any) => {
             const newUsers = [...users];
             newUsers[index].import = val;
@@ -111,7 +111,7 @@ export function SingleUserSelect({ collaborator, index, users, setUsers }: Props
             setUsers(newUsers);
           }}
           placeholder="Enter email of the user"
-          className="w-full py-1 text-xs"
+          className="w-full py-1 text-11"
         />
       )}
       {users[index].import === "map" && members && (

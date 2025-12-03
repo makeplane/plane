@@ -110,7 +110,7 @@ export const EstimatePointCreateRoot = observer(function EstimatePointCreateRoot
   if (!workspaceSlug || !projectId) return <></>;
   return (
     <div className="space-y-1">
-      <div className="text-sm font-medium text-secondary capitalize">{estimateType}</div>
+      <div className="text-13 font-medium text-secondary capitalize">{estimateType}</div>
 
       <div>
         <Sortable

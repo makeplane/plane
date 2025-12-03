@@ -41,7 +41,7 @@ export function IssueLink(props: TIssueLink) {
         {activity.issue_detail
           ? `${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}`
           : "Work items"}{" "}
-        <span className="font-normal">{activity.issue_detail?.name}</span>
+        <span className="font-regular">{activity.issue_detail?.name}</span>
       </a>
     </Tooltip>
   );

@@ -51,8 +51,8 @@ export function ProdErrorComponent({ onGoHome }: ProdErrorComponentProps) {
         </div>
         <div className="w-full relative flex flex-col gap-4 mt-4">
           <div className="flex flex-col gap-2.5">
-            <h1 className="text-xl font-semibold text-primary text-left">&#x1F6A7; Looks like something went wrong!</h1>
-            <span className="text-base font-medium text-secondary text-left">
+            <h1 className="text-18 font-semibold text-primary text-left">&#x1F6A7; Looks like something went wrong!</h1>
+            <span className="text-14 font-medium text-secondary text-left">
               We track these errors automatically and working on getting things back up and running. If the problem
               persists feel free to contact us. In the meantime, try refreshing.
             </span>
@@ -65,7 +65,7 @@ export function ProdErrorComponent({ onGoHome }: ProdErrorComponentProps) {
                   href={link.value}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-custom-primary-100 hover:underline text-sm"
+                  className="text-custom-primary-100 hover:underline text-13"
                 >
                   {link.label}
                 </a>

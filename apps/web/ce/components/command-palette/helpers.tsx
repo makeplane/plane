@@ -26,7 +26,7 @@ export const commandGroups: TCommandGroups = {
     icon: <CycleIcon className="h-3 w-3" />,
     itemName: (cycle: IWorkspaceDefaultSearchResult) => (
       <h6>
-        <span className="text-xs text-tertiary">{cycle.project__identifier}</span> {cycle.name}
+        <span className="text-11 text-tertiary">{cycle.project__identifier}</span> {cycle.name}
       </h6>
     ),
     path: (cycle: IWorkspaceDefaultSearchResult) =>
@@ -42,7 +42,7 @@ export const commandGroups: TCommandGroups = {
           issueTypeId={issue.type_id}
           projectIdentifier={issue.project__identifier}
           issueSequenceId={issue.sequence_id}
-          textContainerClassName="text-xs"
+          textContainerClassName="text-11"
         />{" "}
         {issue.name}
       </div>
@@ -61,7 +61,7 @@ export const commandGroups: TCommandGroups = {
     icon: <ViewsIcon className="h-3 w-3" />,
     itemName: (view: IWorkspaceDefaultSearchResult) => (
       <h6>
-        <span className="text-xs text-tertiary">{view.project__identifier}</span> {view.name}
+        <span className="text-11 text-tertiary">{view.project__identifier}</span> {view.name}
       </h6>
     ),
     path: (view: IWorkspaceDefaultSearchResult) =>
@@ -72,7 +72,7 @@ export const commandGroups: TCommandGroups = {
     icon: <ModuleIcon className="h-3 w-3" />,
     itemName: (module: IWorkspaceDefaultSearchResult) => (
       <h6>
-        <span className="text-xs text-tertiary">{module.project__identifier}</span> {module.name}
+        <span className="text-11 text-tertiary">{module.project__identifier}</span> {module.name}
       </h6>
     ),
     path: (module: IWorkspaceDefaultSearchResult) =>
@@ -83,7 +83,7 @@ export const commandGroups: TCommandGroups = {
     icon: <PageIcon className="h-3 w-3" />,
     itemName: (page: IWorkspacePageSearchResult) => (
       <h6>
-        <span className="text-xs text-tertiary">{page.project__identifiers?.[0]}</span> {page.name}
+        <span className="text-11 text-tertiary">{page.project__identifiers?.[0]}</span> {page.name}
       </h6>
     ),
     path: (page: IWorkspacePageSearchResult, projectId: string | undefined) => {

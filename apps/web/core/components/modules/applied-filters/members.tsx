@@ -28,7 +28,7 @@ export const AppliedMembersFilters = observer(function AppliedMembersFilters(pro
         if (!memberDetails) return null;
 
         return (
-          <div key={memberId} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
+          <div key={memberId} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-11">
             <Avatar
               name={memberDetails.display_name}
               src={getFileURL(memberDetails.avatar_url)}

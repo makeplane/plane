@@ -34,7 +34,7 @@ export function TabList({
     <Tab.List
       as="div"
       className={cn(
-        "flex w-full min-w-fit items-center justify-between gap-1.5 rounded-md text-sm p-0.5 bg-custom-background-80/60",
+        "flex w-full min-w-fit items-center justify-between gap-1.5 rounded-md text-13 p-0.5 bg-custom-background-80/60",
         tabListClassName
       )}
     >
@@ -49,9 +49,9 @@ export function TabList({
                   ? "text-placeholder cursor-not-allowed"
                   : "text-placeholder hover:text-tertiary hover:bg-custom-background-80/60",
               {
-                "text-xs": size === "sm",
-                "text-sm": size === "md",
-                "text-base": size === "lg",
+                "text-11": size === "sm",
+                "text-13": size === "md",
+                "text-14": size === "lg",
               },
               tabClassName
             )

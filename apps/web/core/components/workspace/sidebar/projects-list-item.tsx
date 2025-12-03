@@ -152,7 +152,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
             render: ({ container }) => {
               const root = createRoot(container);
               root.render(
-                <div className="rounded flex items-center bg-custom-background-100 text-sm p-1 pr-2">
+                <div className="rounded flex items-center bg-custom-background-100 text-13 p-1 pr-2">
                   <div className="size-4 grid place-items-center flex-shrink-0">
                     {project && <Logo logo={project?.logo_props} />}
                   </div>
@@ -303,14 +303,14 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                     <div className="size-4 grid place-items-center flex-shrink-0">
                       <Logo logo={project.logo_props} size={16} />
                     </div>
-                    <p className="truncate text-sm font-medium text-secondary">{project.name}</p>
+                    <p className="truncate text-13 font-medium text-secondary">{project.name}</p>
                   </Disclosure.Button>
                 ) : (
                   <div className="flex-grow flex items-center gap-1.5 text-left select-none w-full">
                     <div className="size-4 grid place-items-center flex-shrink-0">
                       <Logo logo={project.logo_props} size={16} />
                     </div>
-                    <p className="truncate text-sm font-medium text-secondary">{project.name}</p>
+                    <p className="truncate text-13 font-medium text-secondary">{project.name}</p>
                   </div>
                 )}
               </ControlLink>

@@ -63,7 +63,7 @@ export const WebhookForm = observer(function WebhookForm(props: Props) {
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
       <div className="space-y-5 ">
-        <div className="text-xl font-medium text-secondary">
+        <div className="text-18 font-medium text-secondary">
           {data
             ? t("workspace_settings.settings.webhooks.modal.details")
             : t("workspace_settings.settings.webhooks.modal.title")}
@@ -80,7 +80,7 @@ export const WebhookForm = observer(function WebhookForm(props: Props) {
                 <WebhookInput value={value} onChange={onChange} hasError={Boolean(errors.url)} />
               )}
             />
-            {errors.url && <div className="text-xs text-red-500">{errors.url.message}</div>}
+            {errors.url && <div className="text-11 text-red-500">{errors.url.message}</div>}
           </div>
           {data && <WebhookToggle control={control} />}
           <WebhookOptions value={webhookEventType} onChange={(val) => setWebhookEventType(val)} />

@@ -97,7 +97,7 @@ export const PageLockControl = observer(function PageLockControl({ page }: Props
           aria-label="Locked"
         >
           <LockKeyhole className="flex-shrink-0 size-3.5 animate-lock-icon" />
-          <span className="text-xs font-medium whitespace-nowrap overflow-hidden transition-all duration-500 ease-out animate-text-slide-in">
+          <span className="text-11 font-medium whitespace-nowrap overflow-hidden transition-all duration-500 ease-out animate-text-slide-in">
             Locked
           </span>
         </button>
@@ -106,7 +106,7 @@ export const PageLockControl = observer(function PageLockControl({ page }: Props
       {displayState === "unlocked" && (
         <div className="h-6 flex items-center gap-1 px-2 rounded text-secondary animate-fade-out" aria-label="Unlocked">
           <LockKeyholeOpen className="flex-shrink-0 size-3.5 animate-unlock-icon" />
-          <span className="text-xs font-medium whitespace-nowrap overflow-hidden transition-all duration-500 ease-out animate-text-slide-in animate-text-fade-out">
+          <span className="text-11 font-medium whitespace-nowrap overflow-hidden transition-all duration-500 ease-out animate-text-slide-in animate-text-fade-out">
             Unlocked
           </span>
         </div>

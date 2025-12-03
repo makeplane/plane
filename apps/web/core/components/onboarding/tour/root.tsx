@@ -95,10 +95,10 @@ export const TourRoot = observer(function TourRoot(props: Props) {
               <PlaneLockup className="h-10 w-auto text-primary" />
             </div>
             <div className="flex h-2/5 flex-col overflow-y-auto p-6">
-              <h3 className="font-semibold sm:text-xl">
+              <h3 className="font-semibold sm:text-18">
                 Welcome to Plane, {currentUser?.first_name} {currentUser?.last_name}
               </h3>
-              <p className="mt-3 text-sm text-secondary">
+              <p className="mt-3 text-13 text-secondary">
                 We{"'"}re glad that you decided to try out Plane. You can now manage your projects with ease. Get
                 started by creating a project.
               </p>
@@ -117,7 +117,7 @@ export const TourRoot = observer(function TourRoot(props: Props) {
                   </Button>
                   <button
                     type="button"
-                    className="bg-transparent text-xs font-medium text-custom-primary-100 outline-custom-text-100"
+                    className="bg-transparent text-11 font-medium text-custom-primary-100 outline-custom-text-100"
                     onClick={() => {
                       captureClick({
                         elementName: PRODUCT_TOUR_TRACKER_ELEMENTS.SKIP_BUTTON,
@@ -151,8 +151,8 @@ export const TourRoot = observer(function TourRoot(props: Props) {
               <img src={currentStep?.image} className="w-full h-full object-cover" alt={currentStep?.title} />
             </div>
             <div className="flex h-1/2 flex-col overflow-y-auto p-4 sm:h-2/5">
-              <h3 className="font-semibold sm:text-xl">{currentStep?.title}</h3>
-              <p className="mt-3 text-sm text-secondary">{currentStep?.description}</p>
+              <h3 className="font-semibold sm:text-18">{currentStep?.title}</h3>
+              <p className="mt-3 text-13 text-secondary">{currentStep?.description}</p>
               <div className="mt-3 flex h-full items-end justify-between gap-4">
                 <div className="flex items-center gap-4">
                   {currentStep?.prevStep && (

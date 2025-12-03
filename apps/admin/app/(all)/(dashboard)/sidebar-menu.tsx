@@ -82,7 +82,7 @@ export const AdminSidebarMenu = observer(function AdminSidebarMenu() {
                     <div className="w-full ">
                       <div
                         className={cn(
-                          `text-sm font-medium transition-colors`,
+                          `text-13 font-medium transition-colors`,
                           isActive ? "text-custom-primary-100" : "text-secondary"
                         )}
                       >
@@ -90,7 +90,7 @@ export const AdminSidebarMenu = observer(function AdminSidebarMenu() {
                       </div>
                       <div
                         className={cn(
-                          `text-[10px] transition-colors`,
+                          `text-10 transition-colors`,
                           isActive ? "text-custom-primary-90" : "text-placeholder"
                         )}
                       >

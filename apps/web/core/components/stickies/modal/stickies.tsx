@@ -30,7 +30,7 @@ export const Stickies = observer(function Stickies(props: TProps) {
         {/* Title */}
         <div className="text-secondary flex items-center gap-2">
           <RecentStickyIcon className="size-5 rotate-90 flex-shrink-0" />
-          <p className="text-xl font-medium">Your stickies</p>
+          <p className="text-18 font-medium">Your stickies</p>
         </div>
         {/* actions */}
         <div className="flex gap-2">
@@ -40,7 +40,7 @@ export const Stickies = observer(function Stickies(props: TProps) {
               toggleShowNewSticky(true);
               stickyOperations.create();
             }}
-            className="flex gap-1 text-sm font-medium text-custom-primary-100 my-auto"
+            className="flex gap-1 text-13 font-medium text-custom-primary-100 my-auto"
             disabled={creatingSticky}
           >
             <Plus className="size-4 my-auto" /> <span>Add sticky</span>

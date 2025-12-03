@@ -48,7 +48,7 @@ export function InputSearch(props: IInputSearch) {
         as="input"
         ref={inputRef}
         className={cn(
-          "w-full bg-transparent py-1 text-xs text-secondary placeholder:text-placeholder focus:outline-none",
+          "w-full bg-transparent py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none",
           inputClassName
         )}
         value={query}

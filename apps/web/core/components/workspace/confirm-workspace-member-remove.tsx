@@ -72,18 +72,18 @@ export const ConfirmWorkspaceMemberRemove = observer(function ConfirmWorkspaceMe
                       <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </div>
                     <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-primary">
+                      <Dialog.Title as="h3" className="text-16 font-medium leading-6 text-primary">
                         {currentUser?.id === userDetails.id
                           ? "Leave workspace?"
                           : `Remove ${userDetails?.display_name}?`}
                       </Dialog.Title>
                       <div className="mt-2">
                         {currentUser?.id === userDetails.id ? (
-                          <p className="text-sm text-secondary">
+                          <p className="text-13 text-secondary">
                             {t("workspace_settings.settings.members.leave_confirmation")}
                           </p>
                         ) : (
-                          <p className="text-sm text-secondary">
+                          <p className="text-13 text-secondary">
                             {/* TODO: Add translation here */}
                             Are you sure you want to remove member-{" "}
                             <span className="font-bold">{userDetails?.display_name}</span>? They will no longer have

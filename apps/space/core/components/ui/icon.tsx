@@ -6,5 +6,5 @@ type Props = {
 };
 
 export function Icon({ iconName, className = "" }: Props) {
-  return <span className={`material-symbols-rounded text-sm font-light leading-5 ${className}`}>{iconName}</span>;
+  return <span className={`material-symbols-rounded text-13 font-light leading-5 ${className}`}>{iconName}</span>;
 }

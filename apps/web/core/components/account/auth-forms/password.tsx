@@ -84,7 +84,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
           <Link
             data-ph-element={AUTH_TRACKER_ELEMENTS.FORGOT_PASSWORD_FROM_SIGNIN}
             href={`/accounts/forgot-password?email=${encodeURIComponent(email)}`}
-            className="text-xs font-medium text-custom-primary-100"
+            className="text-11 font-medium text-custom-primary-100"
           >
             {t("auth.common.forgot_password")}
           </Link>
@@ -128,7 +128,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
           <div className="w-4 h-4 flex-shrink-0 relative flex justify-center items-center">
             <Info size={16} className="text-red-500" />
           </div>
-          <div className="w-full text-sm font-medium text-red-500">{t("auth.sign_up.errors.password.strength")}</div>
+          <div className="w-full text-13 font-medium text-red-500">{t("auth.sign_up.errors.password.strength")}</div>
           <div
             className="relative ml-auto w-6 h-6 rounded-sm flex justify-center items-center transition-all cursor-pointer hover:bg-red-500/20 text-custom-primary-100/80"
             onClick={() => setBannerMessage(false)}
@@ -182,7 +182,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
         <input type="hidden" value={passwordFormData.email} name="email" />
         {nextPath && <input type="hidden" value={nextPath} name="next_path" />}
         <div className="space-y-1">
-          <label htmlFor="email" className="text-sm font-medium text-tertiary">
+          <label htmlFor="email" className="text-13 font-medium text-tertiary">
             {t("auth.common.email.label")}
           </label>
           <div className={`relative flex items-center rounded-md bg-custom-background-100 border border-strong`}>
@@ -210,7 +210,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
         </div>
 
         <div className="space-y-1">
-          <label htmlFor="password" className="text-sm text-tertiary font-medium">
+          <label htmlFor="password" className="text-13 text-tertiary font-medium">
             {mode === EAuthModes.SIGN_IN ? t("auth.common.password.label") : t("auth.common.password.set_password")}
           </label>
           <div className="relative flex items-center rounded-md bg-custom-background-100">
@@ -247,7 +247,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
 
         {mode === EAuthModes.SIGN_UP && (
           <div className="space-y-1">
-            <label htmlFor="confirm-password" className="text-sm text-tertiary font-medium">
+            <label htmlFor="confirm-password" className="text-13 text-tertiary font-medium">
               {t("auth.common.password.confirm_password.label")}
             </label>
             <div className="relative flex items-center rounded-md bg-custom-background-100">
@@ -282,7 +282,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
             {!!passwordFormData.confirm_password &&
               passwordFormData.password !== passwordFormData.confirm_password &&
               renderPasswordMatchError && (
-                <span className="text-sm text-red-500">{t("auth.common.password.errors.match")}</span>
+                <span className="text-13 text-red-500">{t("auth.common.password.errors.match")}</span>
               )}
           </div>
         )}

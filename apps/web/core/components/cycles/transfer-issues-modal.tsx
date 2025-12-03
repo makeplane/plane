@@ -111,7 +111,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
                   <div className="flex items-center justify-between px-5">
                     <div className="flex items-center gap-1">
                       <TransferIcon className="w-5 fill-custom-text-100" />
-                      <h4 className="text-xl font-medium text-primary">Transfer work items</h4>
+                      <h4 className="text-18 font-medium text-primary">Transfer work items</h4>
                     </div>
                     <button onClick={handleClose}>
                       <CloseIcon className="h-4 w-4" />
@@ -120,7 +120,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
                   <div className="flex items-center gap-2 border-b border-subtle-1 px-5 pb-3">
                     <Search className="h-4 w-4 text-secondary" />
                     <input
-                      className="outline-none text-sm"
+                      className="outline-none text-13"
                       placeholder="Search for a cycle..."
                       onChange={(e) => setQuery(e.target.value)}
                       value={query}
@@ -137,7 +137,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
                           return (
                             <button
                               key={optionId}
-                              className="flex w-full items-center gap-4 rounded px-4 py-3 text-sm text-secondary hover:bg-custom-background-90"
+                              className="flex w-full items-center gap-4 rounded px-4 py-3 text-13 text-secondary hover:bg-custom-background-90"
                               onClick={() => {
                                 transferIssue({
                                   new_cycle_id: optionId,
@@ -158,7 +158,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
                           );
                         })
                       ) : (
-                        <div className="flex w-full items-center justify-center gap-4 p-5 text-sm">
+                        <div className="flex w-full items-center justify-center gap-4 p-5 text-13">
                           <AlertCircle className="h-3.5 w-3.5 text-secondary" />
                           <span className="text-center text-secondary">
                             You don’t have any current cycle. Please create one to transfer the work items.

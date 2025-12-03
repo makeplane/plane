@@ -14,7 +14,7 @@ export const NotificationMenuOptionItem = observer(function NotificationMenuOpti
         onClick={() => onClick && onClick()}
       >
         {prependIcon && prependIcon}
-        <div className={cn("whitespace-nowrap text-sm", isActive ? "text-primary" : "text-secondary")}>{label}</div>
+        <div className={cn("whitespace-nowrap text-13", isActive ? "text-primary" : "text-secondary")}>{label}</div>
         {appendIcon && <div className="ml-auto">{appendIcon}</div>}
       </div>
     );

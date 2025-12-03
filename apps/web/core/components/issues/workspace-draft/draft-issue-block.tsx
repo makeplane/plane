@@ -128,7 +128,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
         <Row
           ref={issueRef}
           className={cn(
-            "group/list-block min-h-11 relative flex flex-col gap-3 bg-custom-background-100 hover:bg-custom-background-90 py-3 text-sm transition-colors border border-transparent last:border-b-transparent",
+            "group/list-block min-h-11 relative flex flex-col gap-3 bg-custom-background-100 hover:bg-custom-background-90 py-3 text-13 transition-colors border border-transparent last:border-b-transparent",
             {
               "md:flex-row md:items-center": isSidebarCollapsed,
               "lg:flex-row lg:items-center": !isSidebarCollapsed,
@@ -145,7 +145,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
                       <IdentifierText
                         identifier={projectIdentifier}
                         enableClickToCopyIdentifier
-                        textContainerClassName="text-xs font-medium text-tertiary"
+                        textContainerClassName="text-11 font-medium text-tertiary"
                       />
                     </div>
                   )}
@@ -156,7 +156,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
               </div>
 
               <Tooltip tooltipContent={issue.name} position="top-start" renderByDefault={false}>
-                <p className="w-full truncate cursor-pointer text-sm text-primary">{issue.name}</p>
+                <p className="w-full truncate cursor-pointer text-13 text-primary">{issue.name}</p>
               </Tooltip>
             </div>
 

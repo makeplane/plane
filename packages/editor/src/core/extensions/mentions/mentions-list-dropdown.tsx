@@ -136,11 +136,11 @@ export const MentionsListDropdown = forwardRef(function MentionsListDropdown(pro
         }}
       >
         {isLoading ? (
-          <div className="text-center text-sm text-placeholder">Loading...</div>
+          <div className="text-center text-13 text-placeholder">Loading...</div>
         ) : sections.length ? (
           sections.map((section, sectionIndex) => (
             <div key={section.key} className="space-y-2">
-              {section.title && <h6 className="text-xs font-semibold text-tertiary">{section.title}</h6>}
+              {section.title && <h6 className="text-11 font-semibold text-tertiary">{section.title}</h6>}
               {section.items.map((item, itemIndex) => {
                 const isSelected = sectionIndex === selectedIndex.section && itemIndex === selectedIndex.item;
 
@@ -150,7 +150,7 @@ export const MentionsListDropdown = forwardRef(function MentionsListDropdown(pro
                     id={`mention-item-${sectionIndex}-${itemIndex}`}
                     type="button"
                     className={cn(
-                      "flex items-center gap-2 w-full rounded px-1 py-1.5 text-xs text-left truncate text-secondary",
+                      "flex items-center gap-2 w-full rounded px-1 py-1.5 text-11 text-left truncate text-secondary",
                       {
                         "bg-custom-background-80": isSelected,
                       }
@@ -169,7 +169,7 @@ export const MentionsListDropdown = forwardRef(function MentionsListDropdown(pro
                   >
                     <span className="size-5 grid place-items-center flex-shrink-0">{item.icon}</span>
                     {item.subTitle && (
-                      <h5 className="whitespace-nowrap text-xs text-tertiary flex-shrink-0">{item.subTitle}</h5>
+                      <h5 className="whitespace-nowrap text-11 text-tertiary flex-shrink-0">{item.subTitle}</h5>
                     )}
                     <p className="flex-grow truncate">{item.title}</p>
                   </button>
@@ -178,7 +178,7 @@ export const MentionsListDropdown = forwardRef(function MentionsListDropdown(pro
             </div>
           ))
         ) : (
-          <div className="text-center text-sm text-placeholder">No results</div>
+          <div className="text-center text-13 text-placeholder">No results</div>
         )}
       </div>
     </>

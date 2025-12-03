@@ -134,17 +134,17 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
                     issueTypeId={issue.type_id}
                     projectIdentifier={projectDetail.identifier}
                     issueSequenceId={issue.sequence_id}
-                    textContainerClassName="text-xs text-secondary"
+                    textContainerClassName="text-11 text-secondary"
                   />
                 )}
               </div>
 
               <Tooltip tooltipContent={issue.name} isMobile={isMobile}>
-                <span className="w-full truncate text-sm text-primary">{issue.name}</span>
+                <span className="w-full truncate text-13 text-primary">{issue.name}</span>
               </Tooltip>
             </div>
             <div
-              className="flex-shrink-0 text-sm"
+              className="flex-shrink-0 text-13"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -158,7 +158,7 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
                 issueServiceType={issueServiceType}
               />
             </div>
-            <div className="flex-shrink-0 text-sm">
+            <div className="flex-shrink-0 text-13">
               <CustomMenu placement="bottom-end" ellipsis>
                 {!disabled && (
                   <CustomMenu.MenuItem onClick={handleEditIssue}>

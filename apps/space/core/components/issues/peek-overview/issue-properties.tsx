@@ -65,24 +65,24 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
       )}
       <div className={`space-y-2 ${mode === "full" ? "pt-3" : ""}`}>
         <div className="flex items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-tertiary">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-13 text-tertiary">
             <StatePropertyIcon className="size-4 flex-shrink-0" />
             <span>State</span>
           </div>
-          <div className="w-3/4 flex items-center gap-1.5 py-0.5 text-sm">
+          <div className="w-3/4 flex items-center gap-1.5 py-0.5 text-13">
             <StateGroupIcon stateGroup={state?.group ?? "backlog"} color={state?.color} />
             {addSpaceIfCamelCase(state?.name ?? "")}
           </div>
         </div>
 
         <div className="flex items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-tertiary">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-13 text-tertiary">
             <PriorityPropertyIcon className="size-4 flex-shrink-0" />
             <span>Priority</span>
           </div>
           <div className="w-3/4">
             <div
-              className={`inline-flex items-center gap-1.5 rounded px-2.5 py-0.5 text-left text-sm capitalize ${
+              className={`inline-flex items-center gap-1.5 rounded px-2.5 py-0.5 text-left text-13 capitalize ${
                 priority?.key === "urgent"
                   ? "border-red-500/20 bg-red-500/20 text-red-500"
                   : priority?.key === "high"
@@ -105,14 +105,14 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
         </div>
 
         <div className="flex items-center gap-3 h-8">
-          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-tertiary">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-13 text-tertiary">
             <DueDatePropertyIcon className="size-4 flex-shrink-0" />
             <span>Due date</span>
           </div>
           <div>
             {issueDetails.target_date ? (
               <div
-                className={cn("flex items-center gap-1.5 rounded py-0.5 text-xs text-primary", {
+                className={cn("flex items-center gap-1.5 rounded py-0.5 text-11 text-primary", {
                   "text-red-500": shouldHighlightIssueDueDate(issueDetails.target_date, state?.group),
                 })}
               >

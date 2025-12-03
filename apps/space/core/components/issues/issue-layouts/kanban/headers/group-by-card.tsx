@@ -22,7 +22,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
 
         <div className={`relative flex items-center gap-1 w-full flex-row overflow-hidden`}>
           <div className={`line-clamp-1 inline-block overflow-hidden truncate font-medium text-primary`}>{title}</div>
-          <div className={`flex-shrink-0 text-sm font-medium text-tertiary pl-2`}>{count || 0}</div>
+          <div className={`flex-shrink-0 text-13 font-medium text-tertiary pl-2`}>{count || 0}</div>
         </div>
       </div>
     </>

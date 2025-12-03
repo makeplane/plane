@@ -97,8 +97,8 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
               <ArchiveX className="h-4 w-4 flex-shrink-0 text-red-500" />
             </div>
             <div className="">
-              <h4 className="text-sm font-medium">{t("project_settings.automations.auto-close.title")}</h4>
-              <p className="text-sm tracking-tight text-secondary">
+              <h4 className="text-13 font-medium">{t("project_settings.automations.auto-close.title")}</h4>
+              <p className="text-13 tracking-tight text-secondary">
                 {t("project_settings.automations.auto-close.description")}
               </p>
             </div>
@@ -131,7 +131,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
             <div className="mx-6">
               <div className="flex flex-col rounded border border-subtle-1 bg-custom-background-90">
                 <div className="flex w-full items-center justify-between gap-2 px-5 py-4">
-                  <div className="w-1/2 text-sm font-medium">
+                  <div className="w-1/2 text-13 font-medium">
                     {t("project_settings.automations.auto-close.duration")}
                   </div>
                   <div className="w-1/2">
@@ -165,7 +165,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
                 </div>
 
                 <div className="ppy sm:py-10 flex w-full items-center justify-between gap-2 px-5 py-4">
-                  <div className="w-1/2 text-sm font-medium">
+                  <div className="w-1/2 text-13 font-medium">
                     {t("project_settings.automations.auto-close.auto_close_status")}
                   </div>
                   <div className="w-1/2 ">

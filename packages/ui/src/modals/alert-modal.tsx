@@ -80,8 +80,8 @@ export function AlertModalCore(props: Props) {
           </span>
         )}
         <div className="text-center sm:text-left">
-          <h3 className="text-lg font-medium">{title}</h3>
-          <p className="mt-1 text-sm text-secondary">{content}</p>
+          <h3 className="text-16 font-medium">{title}</h3>
+          <p className="mt-1 text-13 text-secondary">{content}</p>
         </div>
       </div>
       <div className="px-5 py-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t-[0.5px] border-subtle-1">

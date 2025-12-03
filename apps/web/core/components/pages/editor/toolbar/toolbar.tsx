@@ -28,7 +28,7 @@ const ToolbarButton = React.memo(function ToolbarButton(props: ToolbarButtonProp
   return (
     <Tooltip
       tooltipContent={
-        <p className="flex flex-col gap-1 text-center text-xs">
+        <p className="flex flex-col gap-1 text-center text-11">
           <span className="font-medium">{item.name}</span>
           {item.shortcut && <kbd className="text-placeholder">{item.shortcut.join(" + ")}</kbd>}
         </p>
@@ -99,7 +99,7 @@ export function PageToolbar(props: Props) {
     <div className="flex items-center divide-x divide-subtle-1 overflow-x-scroll">
       <CustomMenu
         customButton={
-          <span className="text-tertiary text-sm border-[0.5px] border-strong hover:bg-custom-background-80 h-7 w-24 rounded px-2 flex items-center justify-between gap-2 whitespace-nowrap text-left">
+          <span className="text-tertiary text-13 border-[0.5px] border-strong hover:bg-custom-background-80 h-7 w-24 rounded px-2 flex items-center justify-between gap-2 whitespace-nowrap text-left">
             {activeTypography?.name || "Text"}
             <ChevronDownIcon className="flex-shrink-0 size-3" />
           </span>

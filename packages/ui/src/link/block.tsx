@@ -28,8 +28,8 @@ export function LinkItemBlock(props: TLinkItemBlockProps) {
         <Icon className="size-4 stroke-2 text-custom-text-350 group-hover:text-primary" />
       </div>
       <div className="flex-1 truncate">
-        <div className="text-sm font-medium truncate">{title}</div>
-        {createdAt && <div className="text-xs font-medium text-placeholder">{calculateTimeAgo(createdAt)}</div>}
+        <div className="text-13 font-medium truncate">{title}</div>
+        {createdAt && <div className="text-11 font-medium text-placeholder">{calculateTimeAgo(createdAt)}</div>}
       </div>
       {menuItems && (
         <div className="hidden group-hover:block">

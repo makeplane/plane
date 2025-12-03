@@ -69,8 +69,8 @@ export const SubIssuesListGroup = observer(function SubIssuesListGroup(props: TS
               <div className="flex-shrink-0 grid place-items-center overflow-hidden">
                 {group.icon ?? <CircleDashed className="size-3.5" strokeWidth={2} />}
               </div>
-              <span className="text-sm text-primary font-medium">{group.name}</span>
-              <span className="text-sm text-placeholder">{workItemIds.length}</span>
+              <span className="text-13 text-primary font-medium">{group.name}</span>
+              <span className="text-13 text-placeholder">{workItemIds.length}</span>
             </div>
           )
         }

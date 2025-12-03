@@ -26,7 +26,7 @@ export function AuthBanner(props: TAuthBanner) {
       <div className="size-4 flex-shrink-0 grid place-items-center">
         <Info size={16} className="text-custom-primary-100" />
       </div>
-      <p className="w-full text-sm font-medium text-custom-primary-100">{bannerData?.message}</p>
+      <p className="w-full text-13 font-medium text-custom-primary-100">{bannerData?.message}</p>
       <button
         type="button"
         className="relative ml-auto size-6 rounded-sm grid place-items-center transition-all hover:bg-custom-primary-100/20 text-custom-primary-100/80"

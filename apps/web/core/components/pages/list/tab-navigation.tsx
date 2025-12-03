@@ -42,7 +42,7 @@ export function PageTabNavigation(props: TPageTabNavigation) {
           onClick={(e) => handleTabClick(e, tab.key)}
         >
           <span
-            className={cn(`block p-3 py-4 text-sm font-medium transition-all`, {
+            className={cn(`block p-3 py-4 text-13 font-medium transition-all`, {
               "text-custom-primary-100": tab.key === pageType,
             })}
           >

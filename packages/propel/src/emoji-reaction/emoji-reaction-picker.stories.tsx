@@ -37,13 +37,13 @@ export const Default: Story = {
           onChange={setSelectedEmoji}
           closeOnSelect
           label={
-            <span className="flex items-center justify-center rounded-md px-2 size-8 text-xl">
+            <span className="flex items-center justify-center rounded-md px-2 size-8 text-18">
               {selectedEmoji ? stringToEmoji(selectedEmoji) : <SmilePlus className="h-6 text-primary" />}
             </span>
           }
         />
         {selectedEmoji && (
-          <div className="text-sm p-4 bg-custom-background-80 rounded border border-subtle-1">
+          <div className="text-13 p-4 bg-custom-background-80 rounded border border-subtle-1">
             Selected: {selectedEmoji}
           </div>
         )}
@@ -73,11 +73,11 @@ export const WithCustomLabel: Story = {
           label={
             <button className="px-4 py-2 bg-custom-background-80 border border-subtle-1 rounded hover:bg-custom-background-90 flex items-center gap-2">
               {selectedEmoji ? stringToEmoji(selectedEmoji) : <SmilePlus className="h-4 w-4" />}
-              <span className="text-sm">Add Reaction</span>
+              <span className="text-13">Add Reaction</span>
             </button>
           }
         />
-        {selectedEmoji && <div className="text-sm">Selected: {selectedEmoji}</div>}
+        {selectedEmoji && <div className="text-13">Selected: {selectedEmoji}</div>}
       </div>
     );
   },
@@ -162,7 +162,7 @@ export const DifferentPlacements: Story = {
     return (
       <div className="p-8 space-y-8">
         <div className="flex gap-4 items-center">
-          <span className="text-sm w-32">Bottom Start:</span>
+          <span className="text-13 w-32">Bottom Start:</span>
           <EmojiReactionPicker
             isOpen={isOpen1}
             handleToggle={setIsOpen1}
@@ -172,7 +172,7 @@ export const DifferentPlacements: Story = {
           />
         </div>
         <div className="flex gap-4 items-center">
-          <span className="text-sm w-32">Bottom End:</span>
+          <span className="text-13 w-32">Bottom End:</span>
           <EmojiReactionPicker
             isOpen={isOpen2}
             handleToggle={setIsOpen2}
@@ -182,7 +182,7 @@ export const DifferentPlacements: Story = {
           />
         </div>
         <div className="flex gap-4 items-center">
-          <span className="text-sm w-32">Top Start:</span>
+          <span className="text-13 w-32">Top Start:</span>
           <EmojiReactionPicker
             isOpen={isOpen3}
             handleToggle={setIsOpen3}
@@ -192,7 +192,7 @@ export const DifferentPlacements: Story = {
           />
         </div>
         <div className="flex gap-4 items-center">
-          <span className="text-sm w-32">Top End:</span>
+          <span className="text-13 w-32">Top End:</span>
           <EmojiReactionPicker
             isOpen={isOpen4}
             handleToggle={setIsOpen4}
@@ -231,7 +231,7 @@ export const SearchDisabled: Story = {
             </button>
           }
         />
-        {selectedEmoji && <div className="text-sm">Selected: {selectedEmoji}</div>}
+        {selectedEmoji && <div className="text-13">Selected: {selectedEmoji}</div>}
       </div>
     );
   },
@@ -262,7 +262,7 @@ export const CustomSearchPlaceholder: Story = {
             </button>
           }
         />
-        {selectedEmoji && <div className="text-sm">Selected: {selectedEmoji}</div>}
+        {selectedEmoji && <div className="text-13">Selected: {selectedEmoji}</div>}
       </div>
     );
   },
@@ -298,18 +298,18 @@ export const CloseOnSelectDisabled: Story = {
             }
           />
           <button
-            className="px-3 py-1.5 text-sm bg-custom-background-80 rounded hover:bg-custom-background-90"
+            className="px-3 py-1.5 text-13 bg-custom-background-80 rounded hover:bg-custom-background-90"
             onClick={() => setSelectedEmojis([])}
           >
             Clear
           </button>
         </div>
         {selectedEmojis.length > 0 && (
-          <div className="text-sm p-4 bg-custom-background-80 rounded border border-subtle-1">
+          <div className="text-13 p-4 bg-custom-background-80 rounded border border-subtle-1">
             <div className="font-medium mb-2">Selected ({selectedEmojis.length}):</div>
             <div className="flex gap-2 flex-wrap">
               {selectedEmojis.map((emoji, idx) => (
-                <span key={idx} className="text-xl">
+                <span key={idx} className="text-18">
                   {emoji}
                 </span>
               ))}
@@ -362,12 +362,12 @@ export const InMessageContext: Story = {
     return (
       <div className="max-w-md border border-subtle-1 rounded-lg p-4 space-y-3">
         <div className="flex items-start gap-3">
-          <div className="w-8 h-8 rounded-full bg-custom-primary-100 flex items-center justify-center text-white text-sm">
+          <div className="w-8 h-8 rounded-full bg-custom-primary-100 flex items-center justify-center text-white text-13">
             AB
           </div>
           <div className="flex-1">
-            <div className="font-medium text-sm">Alice Brown</div>
-            <div className="text-sm text-tertiary mt-1">
+            <div className="font-medium text-13">Alice Brown</div>
+            <div className="text-13 text-tertiary mt-1">
               Just finished the design for the new dashboard! Would love to hear your thoughts.
             </div>
           </div>

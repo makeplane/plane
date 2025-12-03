@@ -83,14 +83,14 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
               src={getFileURL(notificationTriggeredBy.avatar_url)}
               size={42}
               shape="circle"
-              className="!text-base !bg-custom-background-80"
+              className="!text-14 !bg-custom-background-80"
             />
           )}
         </div>
 
         <div className="w-full space-y-1 -mt-2">
           <div className="relative flex items-center gap-3 h-8">
-            <div className="w-full overflow-hidden whitespace-normal break-all truncate line-clamp-1 text-sm text-primary">
+            <div className="w-full overflow-hidden whitespace-normal break-all truncate line-clamp-1 text-13 text-primary">
               <NotificationContent
                 notification={notification}
                 workspaceId={workspace.id}
@@ -108,7 +108,7 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
             />
           </div>
 
-          <div className="relative flex items-center gap-3 text-xs text-secondary">
+          <div className="relative flex items-center gap-3 text-11 text-secondary">
             <div className="w-full overflow-hidden whitespace-normal break-words truncate line-clamp-1">
               {notification?.data?.issue?.identifier}-{notification?.data?.issue?.sequence_id}&nbsp;
               {notification?.data?.issue?.name}

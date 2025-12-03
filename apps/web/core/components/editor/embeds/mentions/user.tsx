@@ -60,15 +60,15 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
                   src={getFileURL(userDetails?.avatar_url ?? "")}
                   name={userDetails?.display_name}
                   size={40}
-                  className="text-xl"
+                  className="text-18"
                   showTooltip={false}
                 />
               </div>
               <div>
-                <Link to={profileLink} className="not-prose font-medium text-primary text-sm hover:underline">
+                <Link to={profileLink} className="not-prose font-medium text-primary text-13 hover:underline">
                   {userDetails?.first_name} {userDetails?.last_name}
                 </Link>
-                {roleDetails && <p className="text-secondary text-xs">{ROLE[roleDetails]}</p>}
+                {roleDetails && <p className="text-secondary text-11">{ROLE[roleDetails]}</p>}
               </div>
             </div>
           </div>

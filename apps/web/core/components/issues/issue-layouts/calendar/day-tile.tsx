@@ -148,7 +148,7 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
       <div ref={dayTileRef} className="group relative flex h-full w-full flex-col bg-custom-background-90">
         {/* header */}
         <div
-          className={`hidden flex-shrink-0 items-center justify-end px-2 py-1.5 text-right text-xs md:flex ${
+          className={`hidden flex-shrink-0 items-center justify-end px-2 py-1.5 text-right text-11 md:flex ${
             isMonthLayout // if month layout, highlight current month days
               ? date.is_current_month
                 ? "font-medium"
@@ -199,7 +199,7 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
         <div
           onClick={() => setSelectedDate(date.date)}
           className={cn(
-            "text-sm py-2.5 h-full w-full font-medium mx-auto flex flex-col justify-start items-center md:hidden cursor-pointer opacity-80",
+            "text-13 py-2.5 h-full w-full font-medium mx-auto flex flex-col justify-start items-center md:hidden cursor-pointer opacity-80",
             {
               "bg-custom-background-100": !isWeekend,
             }

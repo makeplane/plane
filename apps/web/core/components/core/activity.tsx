@@ -62,7 +62,7 @@ export function IssueLink({ activity }: { activity: IIssueActivity }) {
           className="inline items-center gap-1 font-medium text-primary hover:underline"
         >
           <span className="whitespace-nowrap">{`${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}`}</span>{" "}
-          <span className="font-normal break-all">{activity.issue_detail?.name}</span>
+          <span className="font-regular break-all">{activity.issue_detail?.name}</span>
         </a>
       ) : (
         <span className="inline-flex items-center gap-1 font-medium text-primary whitespace-nowrap">
@@ -320,7 +320,7 @@ const activityDetails: {
         return (
           <span className="overflow-hidden">
             added a new label{" "}
-            <span className="inline-flex items-center gap-2 rounded-full border border-strong px-2 py-0.5 text-xs">
+            <span className="inline-flex items-center gap-2 rounded-full border border-strong px-2 py-0.5 text-11">
               <LabelPill labelId={activity.new_identifier ?? ""} workspaceSlug={workspaceSlug} />
               <span className="flex-shrink font-medium text-primary break-all line-clamp-1">{activity.new_value}</span>
             </span>
@@ -336,7 +336,7 @@ const activityDetails: {
         return (
           <>
             removed the label{" "}
-            <span className="inline-flex items-center gap-2 rounded-full border border-strong px-2 py-0.5 text-xs">
+            <span className="inline-flex items-center gap-2 rounded-full border border-strong px-2 py-0.5 text-11">
               <LabelPill labelId={activity.old_identifier ?? ""} workspaceSlug={workspaceSlug} />
               <span className="flex-shrink font-medium text-primary break-all line-clamp-1">{activity.old_value}</span>
             </span>

@@ -65,7 +65,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
         >
           <div className="space-y-1">
             <div className="relative flex items-center justify-between gap-2">
-              <div className="flex-shrink-0 text-xs font-medium text-tertiary">
+              <div className="flex-shrink-0 text-11 font-medium text-tertiary">
                 {projectIdentifier}-{issue.sequence_id}
               </div>
               <div className="flex items-center gap-2">
@@ -73,7 +73,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
                 {inboxIssue.status !== -2 && <InboxIssueStatus inboxIssue={inboxIssue} iconSize={12} />}
               </div>
             </div>
-            <h3 className="truncate w-full text-sm">{issue.name}</h3>
+            <h3 className="truncate w-full text-13">{issue.name}</h3>
           </div>
 
           <div className="flex items-center justify-between">
@@ -83,7 +83,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
                 tooltipContent={`${renderFormattedDate(issue.created_at ?? "")}`}
                 isMobile={isMobile}
               >
-                <div className="text-xs text-secondary">{renderFormattedDate(issue.created_at ?? "")}</div>
+                <div className="text-11 text-secondary">{renderFormattedDate(issue.created_at ?? "")}</div>
               </Tooltip>
 
               <div className="border-2 rounded-full border-strong-1" />
@@ -95,7 +95,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
               )}
 
               {issue.label_ids && issue.label_ids.length > 3 ? (
-                <div className="relative !h-[17.5px] flex items-center gap-1 rounded border border-strong px-1 text-xs">
+                <div className="relative !h-[17.5px] flex items-center gap-1 rounded border border-strong px-1 text-11">
                   <span className="h-2 w-2 rounded-full bg-orange-400" />
                   <span className="normal-case max-w-28 truncate">{`${issue.label_ids.length} labels`}</span>
                 </div>
@@ -107,7 +107,7 @@ export const InboxIssueListItem = observer(function InboxIssueListItem(props: In
                     return (
                       <div
                         key={labelId}
-                        className="relative !h-[17.5px] flex items-center gap-1 rounded border border-strong px-1 text-xs"
+                        className="relative !h-[17.5px] flex items-center gap-1 rounded border border-strong px-1 text-11"
                       >
                         <span
                           className="h-2 w-2 rounded-full"

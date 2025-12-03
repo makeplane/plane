@@ -161,7 +161,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                 ref={ref}
                 hasError={Boolean(errors.emails?.[index]?.email)}
                 placeholder={placeholderEmails[index % placeholderEmails.length]}
-                className="w-full border-strong text-xs placeholder:text-placeholder sm:text-sm"
+                className="w-full border-strong text-11 placeholder:text-placeholder sm:text-13"
                 autoComplete="off"
               />
             )}
@@ -185,12 +185,12 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                 <Listbox.Button
                   type="button"
                   ref={setReferenceElement}
-                  className="flex w-full items-center justify-between gap-1 rounded-md px-2.5 py-2 text-sm border-[0.5px] border-strong"
+                  className="flex w-full items-center justify-between gap-1 rounded-md px-2.5 py-2 text-13 border-[0.5px] border-strong"
                 >
                   <span
-                    className={`text-sm ${
+                    className={`text-13 ${
                       !getValues(`emails.${index}.role_active`) ? "text-placeholder" : "text-primary"
-                    } sm:text-sm`}
+                    } sm:text-13`}
                   >
                     {ROLE[value]}
                   </span>
@@ -225,8 +225,8 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                         {({ selected }) => (
                           <div className="flex items-center text-wrap gap-2 p-1">
                             <div className="flex flex-col">
-                              <div className="text-sm font-medium">{t(value.i18n_title)}</div>
-                              <div className="flex text-xs text-tertiary">{t(value.i18n_description)}</div>
+                              <div className="text-13 font-medium">{t(value.i18n_title)}</div>
+                              <div className="flex text-11 text-tertiary">{t(value.i18n_description)}</div>
                             </div>
                             {selected && <Check className="h-4 w-4 shrink-0" />}
                           </div>
@@ -251,8 +251,8 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
       </div>
       {email && !emailRegex.test(email) && (
         <div className="mx-8 my-1">
-          <span className="text-sm">🤥</span>{" "}
-          <span className="mt-1 text-xs text-red-500">That doesn{"'"}t look like an email address.</span>
+          <span className="text-13">🤥</span>{" "}
+          <span className="mt-1 text-11 text-red-500">That doesn{"'"}t look like an email address.</span>
         </div>
       )}
     </div>
@@ -350,7 +350,7 @@ export function InviteMembers(props: Props) {
       <div className="w-full h-full overflow-auto px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
         <div className="flex flex-col w-full items-center justify-center p-8 mt-6 md:w-4/5 mx-auto">
           <div className="text-center space-y-1 py-4 mx-auto w-4/5">
-            <h3 className="text-3xl font-bold text-primary">Invite your teammates</h3>
+            <h3 className="text-24 font-bold text-primary">Invite your teammates</h3>
             <p className="font-medium text-placeholder">
               Work in plane happens best with your team. Invite them now to use Plane to its potential.
             </p>
@@ -362,10 +362,10 @@ export function InviteMembers(props: Props) {
               if (e.code === "Enter") e.preventDefault();
             }}
           >
-            <div className="w-full text-sm py-4">
+            <div className="w-full text-13 py-4">
               <div className="group relative grid grid-cols-10 gap-4 mx-8 py-2">
-                <div className="col-span-6 px-1 text-sm text-secondary font-medium">Email</div>
-                <div className="col-span-4 px-1 text-sm text-secondary font-medium">Role</div>
+                <div className="col-span-6 px-1 text-13 text-secondary font-medium">Email</div>
+                <div className="col-span-4 px-1 text-13 text-secondary font-medium">Role</div>
               </div>
               <div className="mb-3 space-y-3 sm:space-y-4">
                 {fields.map((field, index) => (
@@ -387,7 +387,7 @@ export function InviteMembers(props: Props) {
               </div>
               <button
                 type="button"
-                className="flex items-center mx-8 gap-1.5 bg-transparent text-sm font-medium text-custom-primary-100 outline-custom-primary-100"
+                className="flex items-center mx-8 gap-1.5 bg-transparent text-13 font-medium text-custom-primary-100 outline-custom-primary-100"
                 onClick={appendField}
               >
                 <Plus className="h-4 w-4" strokeWidth={2} />

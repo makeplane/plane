@@ -248,7 +248,7 @@ function ImageFullScreenModalWithoutPortal(props: Props) {
             >
               <Minus className="size-4" />
             </button>
-            <span className="text-sm w-12 text-center text-white">{Math.round(100 * magnification)}%</span>
+            <span className="text-13 w-12 text-center text-white">{Math.round(100 * magnification)}%</span>
             <button
               type="button"
               onClick={(e) => {

@@ -59,23 +59,23 @@ export const AllSizes: Story = {
       <div className="flex items-center gap-6">
         <div className="text-center">
           <Spinner height="16px" width="16px" />
-          <p className="mt-2 text-xs text-gray-600">Small</p>
+          <p className="mt-2 text-11 text-gray-600">Small</p>
         </div>
         <div className="text-center">
           <Spinner height="24px" width="24px" />
-          <p className="mt-2 text-xs text-gray-600">Medium</p>
+          <p className="mt-2 text-11 text-gray-600">Medium</p>
         </div>
         <div className="text-center">
           <Spinner height="32px" width="32px" />
-          <p className="mt-2 text-xs text-gray-600">Default</p>
+          <p className="mt-2 text-11 text-gray-600">Default</p>
         </div>
         <div className="text-center">
           <Spinner height="48px" width="48px" />
-          <p className="mt-2 text-xs text-gray-600">Large</p>
+          <p className="mt-2 text-11 text-gray-600">Large</p>
         </div>
         <div className="text-center">
           <Spinner height="64px" width="64px" />
-          <p className="mt-2 text-xs text-gray-600">XL</p>
+          <p className="mt-2 text-11 text-gray-600">XL</p>
         </div>
       </div>
     );
@@ -88,23 +88,23 @@ export const ColorVariations: Story = {
       <div className="flex items-center gap-6">
         <div className="text-center">
           <Spinner className="text-blue-500" />
-          <p className="mt-2 text-xs text-gray-600">Blue</p>
+          <p className="mt-2 text-11 text-gray-600">Blue</p>
         </div>
         <div className="text-center">
           <Spinner className="text-green-500" />
-          <p className="mt-2 text-xs text-gray-600">Green</p>
+          <p className="mt-2 text-11 text-gray-600">Green</p>
         </div>
         <div className="text-center">
           <Spinner className="text-red-500" />
-          <p className="mt-2 text-xs text-gray-600">Red</p>
+          <p className="mt-2 text-11 text-gray-600">Red</p>
         </div>
         <div className="text-center">
           <Spinner className="text-purple-500" />
-          <p className="mt-2 text-xs text-gray-600">Purple</p>
+          <p className="mt-2 text-11 text-gray-600">Purple</p>
         </div>
         <div className="text-center">
           <Spinner className="text-orange-500" />
-          <p className="mt-2 text-xs text-gray-600">Orange</p>
+          <p className="mt-2 text-11 text-gray-600">Orange</p>
         </div>
       </div>
     );
@@ -128,7 +128,7 @@ export const CenteredInCard: Story = {
       <div className="w-96 rounded-lg border border-gray-200 bg-white p-8 shadow-md">
         <div className="flex flex-col items-center justify-center space-y-4">
           <Spinner height="48px" width="48px" />
-          <p className="text-sm text-gray-600">Loading content...</p>
+          <p className="text-13 text-gray-600">Loading content...</p>
         </div>
       </div>
     );

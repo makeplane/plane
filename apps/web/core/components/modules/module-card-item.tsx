@@ -209,7 +209,7 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
           <div>
             <div className="flex items-center justify-between gap-2">
               <Tooltip tooltipContent={moduleDetails.name} position="top" isMobile={isMobile}>
-                <span className="truncate text-base font-medium">{moduleDetails.name}</span>
+                <span className="truncate text-14 font-medium">{moduleDetails.name}</span>
               </Tooltip>
               <div className="flex items-center gap-2" onClick={handleEventPropagation}>
                 {moduleStatus && (
@@ -229,7 +229,7 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 text-secondary">
                 <WorkItemsIcon className="h-4 w-4 text-tertiary" />
-                <span className="text-xs text-tertiary">{issueCount ?? "0 Work item"}</span>
+                <span className="text-11 text-tertiary">{issueCount ?? "0 Work item"}</span>
               </div>
               {moduleLeadDetails ? (
                 <span className="cursor-default">
@@ -244,7 +244,7 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
             <LinearProgressIndicator size="lg" data={progressIndicatorData} />
             <div className="flex items-center justify-between py-0.5" onClick={handleEventPropagation}>
               <DateRangeDropdown
-                buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-tertiary border-[0.5px] border-strong rounded text-xs`}
+                buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-tertiary border-[0.5px] border-strong rounded text-11`}
                 buttonVariant="transparent-with-text"
                 className="h-7"
                 value={{
