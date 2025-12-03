@@ -33,6 +33,7 @@ const convert12To24 = (time12: string | null) => {
   if (!time12) return "";
 
   const [time, period] = time12.split(" ");
+  // eslint-disable-next-line prefer-const
   let [h, m] = time.split(":").map(Number);
 
   if (period === "PM" && h !== 12) h += 12;

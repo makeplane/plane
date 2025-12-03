@@ -34,6 +34,8 @@ import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 // local
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import type { TRenderQuickActions } from "../list/list-view-types";
+import { CalendarDayHeader } from "./day-header";
+import { DayView } from "./day-view";
 import { CalendarHeader } from "./header";
 import { CalendarIssueBlocks } from "./issue-blocks";
 import { CalendarWeekDays } from "./week-days";
@@ -141,6 +143,15 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
 
   const issueIdList = groupedIssueIds ? groupedIssueIds[formattedDatePayload] : [];
 
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  // This function can also trigger your calendar store update
+  const handleChangeDate = (newDate: Date) => {
+    setCurrentDate(newDate);
+
+    // Example: update your calendar store or fetch events
+    // issueCalendarView.updateCalendarPayload(newDate);
+  };
 
   return (
     <>
@@ -158,7 +169,11 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
             })}
             ref={scrollableContainerRef}
           >
-            <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />
+            {/* SHOW WEEK HEADER ONLY ON MONTH/WEEK */}
+            {layout !== "day" && <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />}
+
+            {/* SHOW DAY HEADER ONLY ON DAY VIEW */}
+            {layout === "day" && <CalendarDayHeader date={currentDate} isLoading={!issues} onChangeDate={handleChangeDate} />}
 
             <div className="h-full w-full">
               {/* ---------------- MONTH VIEW ---------------- */}
@@ -166,28 +181,28 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                 <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-custom-border-200">
                   {allWeeksOfActiveMonth &&
                     Object.values(allWeeksOfActiveMonth).map((week: ICalendarWeek, weekIndex) => (
-                        <CalendarWeekDays
-                          selectedDate={selectedDate}
-                          setSelectedDate={setSelectedDate}
-                          handleDragAndDrop={handleDragAndDrop}
-                          issuesFilterStore={issuesFilterStore}
-                          key={weekIndex}
-                          week={week}
-                          issues={issues}
-                          groupedIssueIds={groupedIssueIds}
-                          loadMoreIssues={loadMoreIssues}
-                          getPaginationData={getPaginationData}
-                          getGroupIssueCount={getGroupIssueCount}
-                          enableQuickIssueCreate={enableQuickAdd}
-                          disableIssueCreation={!enableIssueCreation}
-                          quickActions={quickActions}
-                          quickAddCallback={quickAddCallback}
-                          addIssuesToView={addIssuesToView}
-                          readOnly={readOnly}
-                          canEditProperties={canEditProperties}
-                          isEpic={isEpic}
-                        />
-                      ))}
+                      <CalendarWeekDays
+                        selectedDate={selectedDate}
+                        setSelectedDate={setSelectedDate}
+                        handleDragAndDrop={handleDragAndDrop}
+                        issuesFilterStore={issuesFilterStore}
+                        key={weekIndex}
+                        week={week}
+                        issues={issues}
+                        groupedIssueIds={groupedIssueIds}
+                        loadMoreIssues={loadMoreIssues}
+                        getPaginationData={getPaginationData}
+                        getGroupIssueCount={getGroupIssueCount}
+                        enableQuickIssueCreate={enableQuickAdd}
+                        disableIssueCreation={!enableIssueCreation}
+                        quickActions={quickActions}
+                        quickAddCallback={quickAddCallback}
+                        addIssuesToView={addIssuesToView}
+                        readOnly={readOnly}
+                        canEditProperties={canEditProperties}
+                        isEpic={isEpic}
+                      />
+                    ))}
                 </div>
               )}
 
@@ -216,10 +231,27 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                   />
                 </>
               )}
-            {/* TODO : add a day layout */}
+              {/* TODO : add a day layout */}
               {layout === "day" && (
-                <>
-                </>
+                <div className="h-full w-full">
+                  <DayView
+                    date={selectedDate}
+                    issues={issues}
+                    groupedIssueIds={groupedIssueIds}
+                    loadMoreIssues={loadMoreIssues}
+                    getPaginationData={getPaginationData}
+                    getGroupIssueCount={getGroupIssueCount}
+                    quickActions={quickActions}
+                    enableQuickIssueCreate={enableQuickAdd}
+                    disableIssueCreation={!enableIssueCreation}
+                    quickAddCallback={quickAddCallback}
+                    addIssuesToView={addIssuesToView}
+                    readOnly={readOnly}
+                    canEditProperties={canEditProperties}
+                    handleDragAndDrop={handleDragAndDrop}
+                    isEpic={isEpic}
+                  />
+                </div>
               )}
             </div>
 

@@ -81,7 +81,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   const groupedIssueIds = (issues.groupedIssueIds ?? {}) as TGroupedIssues;
 
   const layout = displayFilters?.calendar?.layout ?? "month";
-  const { startDate, endDate } = issueCalendarView.getStartAndEndDate(layout) ?? {};
+  const { startDate, endDate } = (layout === "month" || layout === "week") ? (issueCalendarView.getStartAndEndDate(layout) ?? {}) : {};
 
   useEffect(() => {
     if (startDate && endDate && layout) {
