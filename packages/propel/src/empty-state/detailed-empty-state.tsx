@@ -15,16 +15,29 @@ export function EmptyStateDetailed({
   rootClassName,
   assetClassName,
   customButton,
+  align = "start",
 }: BaseEmptyStateCommonProps) {
   // Determine which asset to use: assetKey takes precedence, fallback to custom asset
   const resolvedAsset = assetKey ? getDetailedAsset(assetKey as DetailedAssetType, assetClassName) : asset;
 
   return (
     <div className={cn("flex size-full items-center justify-center", rootClassName)}>
-      <div className={cn("flex max-w-[25rem] size-full flex-col justify-center gap-6 text-left", className)}>
+      <div
+        className={cn(
+          "flex max-w-[25rem] size-full flex-col justify-center gap-6 text-left",
+          {
+            "items-center text-center": align === "center",
+          },
+          className
+        )}
+      >
         {resolvedAsset && <div className="flex max-w-40 items-center">{resolvedAsset}</div>}
 
-        <div className="flex flex-col gap-4">
+        <div
+          className={cn("flex flex-col gap-4", {
+            "items-center": align === "center",
+          })}
+        >
           {(title || description) && (
             <div className="flex flex-col gap-2">
               {title && <h3 className="text-lg font-semibold leading-7 text-custom-text-100">{title}</h3>}

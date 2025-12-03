@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useDropzone } from "react-dropzone";
@@ -16,24 +16,16 @@ import { Input, Loader } from "@plane/ui";
 // helpers
 import { getFileURL } from "@plane/utils";
 // hooks
+import { useInstance } from "@/hooks/store/use-instance";
 import { useDropdownKeyDown } from "@/hooks/use-dropdown-key-down";
 // services
 import { FileService } from "@/services/file.service";
 
-const tabOptions = [
-  {
-    key: "unsplash",
-    title: "Unsplash",
-  },
-  {
-    key: "images",
-    title: "Images",
-  },
-  {
-    key: "upload",
-    title: "Upload",
-  },
-];
+type TTabOption = {
+  key: string;
+  title: string;
+  isEnabled: boolean;
+};
 
 type Props = {
   label: string | React.ReactNode;
@@ -63,6 +55,30 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
   const ref = useRef<HTMLDivElement>(null);
   // router params
   const { workspaceSlug } = useParams();
+  // store hooks
+  const { config } = useInstance();
+  // derived values
+  const hasUnsplashConfigured = config?.has_unsplash_configured || false;
+  const tabOptions: TTabOption[] = useMemo(
+    () => [
+      {
+        key: "unsplash",
+        title: "Unsplash",
+        isEnabled: hasUnsplashConfigured,
+      },
+      {
+        key: "images",
+        title: "Images",
+        isEnabled: true,
+      },
+      {
+        key: "upload",
+        title: "Upload",
+        isEnabled: true,
+      },
+    ],
+    [hasUnsplashConfigured]
+  );
 
   const { data: unsplashImages, error: unsplashError } = useSWR(
     `UNSPLASH_IMAGES_${searchParams}`,
