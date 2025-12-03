@@ -8,7 +8,15 @@ export const PasteAssetPlugin = (): Plugin =>
       handlePaste: (view, event) => {
         if (!event.clipboardData) return false;
 
-        const htmlContent = event.clipboardData.getData("text/html");
+        let htmlContent;
+        if (event.clipboardData.getData("text/plane-editor-html")) {
+          htmlContent = event.clipboardData.getData("text/plane-editor-html");
+          const new_metaTag = document.createElement("meta");
+          new_metaTag.setAttribute("charset", "utf-8");
+          htmlContent = new_metaTag.outerHTML + htmlContent;
+        } else {
+          htmlContent = event.clipboardData.getData("text/html");
+        }
         if (!htmlContent || htmlContent.includes('data-uploaded="true"')) return false;
 
         // Process the HTML content using the registry
