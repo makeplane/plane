@@ -66,10 +66,6 @@ html {
   -webkit-font-smoothing: antialiased;
 }
 
-body {
-  color: rgba(var(--color-text-100));
-}
-
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;

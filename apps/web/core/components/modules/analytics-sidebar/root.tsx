@@ -248,7 +248,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
         >
           <div>
             <button
-              className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-border-300"
+              className="flex h-5 w-5 items-center justify-center rounded-full bg-strong"
               onClick={() => handleClose()}
             >
               <ChevronRightIcon className="h-3 w-3 stroke-2 text-white" />

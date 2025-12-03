@@ -555,3 +555,8 @@
     }
   }
 }
+
+@utility outline-* {
+  outline-width: --value(--border-width-*);
+  outline-color: --value(--border-color-*);
+}

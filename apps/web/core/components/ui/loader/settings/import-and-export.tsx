@@ -2,7 +2,7 @@ import { range } from "lodash-es";
 
 export function ImportExportSettingsLoader() {
   return (
-    <div className="divide-y-[0.5px] divide-custom-border-200 animate-pulse">
+    <div className="divide-y-[0.5px] divide-subtle-1 animate-pulse">
       {range(2).map((i) => (
         <div key={i} className="flex items-center justify-between gap-2 px-4 py-3">
           <div className="flex flex-col gap-1.5">

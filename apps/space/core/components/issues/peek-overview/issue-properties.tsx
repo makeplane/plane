@@ -50,7 +50,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
   };
 
   return (
-    <div className={mode === "full" ? "divide-y divide-custom-border-200" : ""}>
+    <div className={mode === "full" ? "divide-y divide-subtle-1" : ""}>
       {mode === "full" && (
         <div className="flex justify-between gap-2 pb-3">
           <h6 className="flex items-center gap-2 font-medium">

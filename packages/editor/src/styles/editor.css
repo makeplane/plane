@@ -48,7 +48,7 @@
 .ProseMirror blockquote {
   font-style: normal;
   font-weight: 400;
-  border-left: 3px solid rgb(var(--color-border-300));
+  @apply border-[3px] border-strong;
 }
 
 .ProseMirror blockquote p::before,
@@ -84,7 +84,7 @@
 
 /* Custom gap cursor styles  */
 .ProseMirror-gapcursor::after {
-  border-top: 1px solid rgb(var(--color-text-100)) !important;
+  @apply !border-t !border-strong;
 }
 
 /* to-do list */
@@ -105,7 +105,7 @@ ul[data-type="taskList"] li > div {
 }
 
 ul[data-type="taskList"] li > label input[type="checkbox"] {
-  border: 1px solid rgba(var(--color-text-100), 0.2) !important;
+  @apply !border !border-strong/20;
   outline: none;
   border-radius: 2px;
   transform: scale(1.05);
@@ -151,7 +151,7 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
   width: 0.8rem;
   height: 0.8rem;
   position: relative;
-  border: 1.5px solid rgb(var(--color-text-100));
+  @apply !border-md !border-subtle-1;
   margin-right: 0.2rem;
   margin-top: 0.15rem;
 
@@ -257,7 +257,7 @@ div[data-type="horizontalRule"] {
   margin-bottom: 0;
 
   & > div {
-    border-bottom: 2px solid rgb(var(--color-border-200));
+    @apply border-b-lg border-subtle-1;
   }
 }
 

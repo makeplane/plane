@@ -23,7 +23,7 @@ function EmptySpace({ title, description, children, Icon, link }: EmptySpaceProp
 
         <h2 className="text-lg font-medium text-primary">{title}</h2>
         <div className="mt-1 text-sm text-secondary">{description}</div>
-        <ul role="list" className="mt-6 divide-y divide-custom-border-200 border-b border-t border-subtle-1">
+        <ul role="list" className="mt-6 divide-y divide-subtle-1 border-b border-t border-subtle-1">
           {children}
         </ul>
         {link ? (

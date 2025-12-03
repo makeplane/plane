@@ -18,11 +18,11 @@ export const WeekChartView = observer(function WeekChartView(_props: any) {
         weekBlocks?.map((block, rootIndex) => (
           <div
             key={`month-${block?.startDate}-${block?.endDate}`}
-            className="relative flex flex-col outline-[0.25px] outline outline-custom-border-200"
+            className="relative flex flex-col outline-[0.25px] outline-subtle-1"
           >
             {/** Header Div */}
             <div
-              className="w-full sticky top-0 z-[5] bg-custom-background-100 flex-shrink-0 outline-[1px] outline outline-custom-border-200"
+              className="w-full sticky top-0 z-[5] bg-custom-background-100 flex-shrink-0 outline-[1px] outline-subtle-1"
               style={{
                 height: `${HEADER_HEIGHT}px`,
               }}
@@ -47,7 +47,7 @@ export const WeekChartView = observer(function WeekChartView(_props: any) {
                   <div
                     key={`sub-title-${rootIndex}-${index}`}
                     className={cn(
-                      "flex flex-shrink-0 p-1 text-center capitalize justify-between outline-[0.25px] outline outline-custom-border-200",
+                      "flex flex-shrink-0 p-1 text-center capitalize justify-between outline-[0.25px] outline outline-subtle-1",
                       {
                         "bg-custom-primary-100/20": weekDay.today,
                       }
@@ -73,13 +73,13 @@ export const WeekChartView = observer(function WeekChartView(_props: any) {
               {block?.children?.map((weekDay, index) => (
                 <div
                   key={`column-${rootIndex}-${index}`}
-                  className={cn("h-full overflow-hidden outline-[0.25px] outline outline-custom-border-100", {
+                  className={cn("h-full overflow-hidden outline-[0.25px] outline outline-subtle", {
                     "bg-custom-primary-100/20": weekDay.today,
                   })}
                   style={{ width: `${currentViewData?.data.dayWidth}px` }}
                 >
                   {["sat", "sun"].includes(weekDay?.dayData?.shortTitle) && (
-                    <div className="h-full bg-custom-background-90 outline-[0.25px] outline outline-custom-border-300" />
+                    <div className="h-full bg-custom-background-90 outline-[0.25px] outline outline-strong" />
                   )}
                 </div>
               ))}

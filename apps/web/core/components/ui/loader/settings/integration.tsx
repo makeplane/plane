@@ -2,7 +2,7 @@ import { range } from "lodash-es";
 
 export function IntegrationsSettingsLoader() {
   return (
-    <div className="divide-y-[0.5px] divide-custom-border-100 animate-pulse">
+    <div className="divide-y-[0.5px] divide-subtle animate-pulse">
       {range(2).map((i) => (
         <div
           key={i}

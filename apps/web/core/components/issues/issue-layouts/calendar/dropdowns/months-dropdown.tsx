@@ -107,7 +107,7 @@ export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(p
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
-            className="w-56 divide-y divide-custom-border-200 rounded border border-subtle-1 bg-custom-background-100 p-3 shadow-custom-shadow-rg"
+            className="w-56 divide-y divide-subtle-1 rounded border border-subtle-1 bg-custom-background-100 p-3 shadow-custom-shadow-rg"
           >
             <div className="flex items-center justify-between gap-2 pb-3">
               <button

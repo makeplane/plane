@@ -77,7 +77,7 @@ function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
             className="border-b border-subtle-1"
           />
           <div className="flex h-full overflow-hidden">
-            <div className="h-full w-full space-y-3 divide-y-2 divide-custom-border-200 overflow-y-auto">
+            <div className="h-full w-full space-y-3 divide-y-2 divide-subtle-1 overflow-y-auto">
               <IssueDetailRoot
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}

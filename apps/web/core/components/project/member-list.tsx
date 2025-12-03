@@ -110,7 +110,7 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
       {!projectMemberIds ? (
         <MembersSettingsLoader />
       ) : (
-        <div className="divide-y divide-custom-border-100 overflow-scroll">
+        <div className="divide-y divide-subtle overflow-scroll">
           {searchedProjectMembers.length !== 0 && (
             <ProjectMemberListItem
               memberDetails={memberDetails ?? []}

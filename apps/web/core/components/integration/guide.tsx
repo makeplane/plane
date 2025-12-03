@@ -141,7 +141,7 @@ const IntegrationGuide = observer(function IntegrationGuide() {
                 {importerServices ? (
                   importerServices.length > 0 ? (
                     <div className="space-y-2">
-                      <div className="divide-y divide-custom-border-200">
+                      <div className="divide-y divide-subtle-1">
                         {importerServices.map((service) => (
                           <SingleImport
                             key={service.id}

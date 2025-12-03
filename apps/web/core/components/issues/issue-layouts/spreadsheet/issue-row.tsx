@@ -88,7 +88,7 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
         placeholderChildren={
           <td
             colSpan={100}
-            className="border-[0.5px] border-transparent border-b-custom-border-200"
+            className="border-[0.5px] border-transparent border-b-subtle-1"
             style={{ height: "calc(2.75rem - 1px)" }}
           />
         }

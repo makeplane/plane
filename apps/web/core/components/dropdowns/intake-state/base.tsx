@@ -175,7 +175,7 @@ export const WorkItemStateDropdownBase: React.FC<TWorkItemStateDropdownBaseProps
                 {!hideIcon && (
                   <IntakeStateGroupIcon
                     stateGroup={selectedState?.group ?? "triage"}
-                    color={selectedState?.color ?? "rgba(var(--color-text-300))"}
+                    color={selectedState?.color ?? "var(--text-color-tertiary)"}
                     className={cn("flex-shrink-0", iconSize)}
                   />
                 )}

@@ -62,16 +62,16 @@ export const badgeStyling: IBadgeStyling = {
   neutral: {
     default: `text-custom-background-100 bg-custom-text-100 border border-subtle-1`,
     hover: `hover:bg-custom-text-200`,
-    disabled: `cursor-not-allowed bg-custom-border-200 !text-placeholder`,
+    disabled: `cursor-not-allowed bg-subtle-1 !text-placeholder`,
   },
   "accent-neutral": {
     default: `text-secondary bg-custom-background-80`,
-    hover: `hover:bg-custom-border-200 hover:text-primary`,
+    hover: `hover:bg-subtle-1 hover:text-primary`,
     disabled: `cursor-not-allowed !text-placeholder`,
   },
   "outline-neutral": {
     default: `text-secondary bg-custom-background-100 border border-subtle-1`,
-    hover: `hover:text-primary hover:bg-custom-border-200`,
+    hover: `hover:text-primary hover:bg-subtle-1`,
     disabled: `cursor-not-allowed !text-placeholder`,
   },
 

@@ -96,7 +96,7 @@ export function PageToolbar(props: Props) {
   );
 
   return (
-    <div className="flex items-center divide-x divide-custom-border-200 overflow-x-scroll">
+    <div className="flex items-center divide-x divide-subtle-1 overflow-x-scroll">
       <CustomMenu
         customButton={
           <span className="text-tertiary text-sm border-[0.5px] border-strong hover:bg-custom-background-80 h-7 w-24 rounded px-2 flex items-center justify-between gap-2 whitespace-nowrap text-left">

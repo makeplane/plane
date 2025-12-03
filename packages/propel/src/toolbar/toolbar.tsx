@@ -120,7 +120,7 @@ const ToolbarSeparator = React.forwardRef(function ToolbarSeparator(
   { className, ...props }: ToolbarSeparatorProps,
   ref: React.ForwardedRef<HTMLDivElement>
 ) {
-  return <div ref={ref} className={cn("h-full w-px bg-custom-border-200 mx-1", className)} {...props} />;
+  return <div ref={ref} className={cn("h-full w-px bg-subtle-1 mx-1", className)} {...props} />;
 });
 
 const buttonVariants = {

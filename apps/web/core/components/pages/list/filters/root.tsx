@@ -65,7 +65,7 @@ export const PageFiltersSelection = observer(function PageFiltersSelection(props
           )}
         </div>
       </div>
-      <div className="h-full w-full divide-y divide-custom-border-200 overflow-y-auto px-2.5 vertical-scrollbar scrollbar-sm">
+      <div className="h-full w-full divide-y divide-subtle-1 overflow-y-auto px-2.5 vertical-scrollbar scrollbar-sm">
         <div className="py-2">
           <FilterOption
             isChecked={!!filters.filters?.favorites}

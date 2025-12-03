@@ -146,7 +146,7 @@ export function EditorAIMenu(props: Props) {
     >
       <div
         className={cn("flex max-h-72 w-full", {
-          "divide-x divide-custom-border-200": activeTask,
+          "divide-x divide-subtle-1": activeTask,
         })}
       >
         <div className="flex-shrink-0 w-[210px] overflow-y-auto px-2 py-2.5 transition-all">

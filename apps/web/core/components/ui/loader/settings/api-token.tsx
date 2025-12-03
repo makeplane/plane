@@ -8,7 +8,7 @@ export function APITokenSettingsLoader() {
         <h3 className="text-xl font-medium">{t("workspace_settings.settings.api_tokens.title")}</h3>
         <span className="h-8 w-28 bg-custom-background-80 rounded" />
       </div>
-      <div className="divide-y-[0.5px] divide-custom-border-200">
+      <div className="divide-y-[0.5px] divide-subtle-1">
         {range(2).map((i) => (
           <div key={i} className="flex flex-col gap-2 py-3">
             <div className="flex items-center gap-2">

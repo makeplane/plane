@@ -137,7 +137,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                 </div>
               ))}
             </div>
-            <div className="mt-9 divide-y divide-custom-border-100">
+            <div className="mt-9 divide-y divide-subtle">
               {userProjectsData.project_data.map((project, index) => {
                 const projectDetails = getProjectById(project.id);
 

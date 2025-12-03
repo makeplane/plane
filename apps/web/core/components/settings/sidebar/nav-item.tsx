@@ -84,7 +84,7 @@ const SettingsSidebarNavItem = observer(function SettingsSidebarNavItem(props: T
       {/* Nested Navigation */}
       {isExpanded && (
         <Disclosure.Panel as="div" className={cn("relative flex flex-col gap-0.5 mt-1 pl-6 mb-1.5")} static>
-          <div className="absolute left-[15px] top-0 bottom-1 w-[1px] bg-custom-border-200" />
+          <div className="absolute left-[15px] top-0 bottom-1 w-[1px] bg-subtle-1" />
           {renderChildren?.(setting.key)}
         </Disclosure.Panel>
       )}

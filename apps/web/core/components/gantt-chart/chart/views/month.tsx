@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // components
 import { cn } from "@plane/utils";
@@ -25,9 +24,9 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
   const marginLeftDays = getNumberOfDaysBetweenTwoDates(monthsStartDate, weeksStartDate);
 
   return (
-    <div className={`absolute top-0 left-0 min-h-full h-max w-max flex`}>
+    <div className="absolute top-0 left-0 min-h-full h-max w-max flex">
       {currentViewData && (
-        <div className="relative flex flex-col outline-[0.25px] outline outline-custom-border-200">
+        <div className="relative flex flex-col outline-[0.25px] outline-subtle-1">
           {/** Header Div */}
           <div
             className="w-full sticky top-0 z-[5] bg-custom-background-100 flex-shrink-0"
@@ -40,7 +39,7 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
               {months?.map((monthBlock) => (
                 <div
                   key={`month-${monthBlock?.month}-${monthBlock?.year}`}
-                  className="flex outline-[0.5px] outline outline-custom-border-200"
+                  className="flex outline-[0.5px] outline-subtle-1"
                   style={{ width: `${monthBlock.days * currentViewData?.data.dayWidth}px` }}
                 >
                   <div
@@ -65,7 +64,7 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
                 <div
                   key={`sub-title-${weekBlock.startDate}-${weekBlock.endDate}`}
                   className={cn(
-                    "flex flex-shrink-0 py-1 px-2 text-center capitalize justify-between outline-[0.25px] outline outline-custom-border-200",
+                    "flex flex-shrink-0 py-1 px-2 text-center capitalize justify-between outline-[0.25px] outline-subtle-1",
                     {
                       "bg-custom-primary-100/20": weekBlock.today,
                     }
@@ -91,7 +90,7 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
             {weeks?.map((weekBlock) => (
               <div
                 key={`column-${weekBlock.startDate}-${weekBlock.endDate}`}
-                className={cn("h-full overflow-hidden outline-[0.25px] outline outline-custom-border-100", {
+                className={cn("h-full overflow-hidden outline-[0.25px] outline-subtle", {
                   "bg-custom-primary-100/20": weekBlock.today,
                 })}
                 style={{ width: `${currentViewData?.data.dayWidth * 7}px` }}

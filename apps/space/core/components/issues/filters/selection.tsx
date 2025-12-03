@@ -41,7 +41,7 @@ export const FilterSelection = observer(function FilterSelection(props: Props) {
           )}
         </div>
       </div>
-      <div className="h-full w-full divide-y divide-custom-border-200 overflow-y-auto px-2.5">
+      <div className="h-full w-full divide-y divide-subtle-1  overflow-y-auto px-2.5">
         {/* priority */}
         {isFilterEnabled("priority") && (
           <div className="py-2">

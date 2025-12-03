@@ -71,7 +71,7 @@ export const SubIssueFilters = observer(function SubIssueFilters(props: TSubIssu
               )}
             </div>
           </div>
-          <div className="vertical-scrollbar scrollbar-sm h-full w-full divide-y divide-custom-border-200 overflow-y-auto px-2.5 text-left">
+          <div className="vertical-scrollbar scrollbar-sm h-full w-full divide-y divide-subtle-1 overflow-y-auto px-2.5 text-left">
             {/* Priority */}
             {isFilterEnabled("priority") && (
               <div className="py-2">

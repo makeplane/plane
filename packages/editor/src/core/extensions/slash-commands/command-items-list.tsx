@@ -215,14 +215,7 @@ export const getSlashCommandFilteredSections =
             title: "Default",
             description: "Change text color",
             searchTerms: ["color", "text", "default"],
-            icon: (
-              <ALargeSmall
-                className="size-3.5"
-                style={{
-                  color: "rgba(var(--color-text-100))",
-                }}
-              />
-            ),
+            icon: <ALargeSmall className="size-3.5 text-primary" />,
             command: ({ editor, range }) => toggleTextColor(undefined, editor, range),
           },
           ...COLORS_LIST.map(
@@ -262,7 +255,7 @@ export const getSlashCommandFilteredSections =
             iconContainerStyle: {
               borderRadius: "4px",
               backgroundColor: "rgba(var(--color-background-100))",
-              border: "1px solid rgba(var(--color-border-300))",
+              border: "1px solid var(--border-color-strong)",
             },
             command: ({ editor, range }) => toggleTextColor(undefined, editor, range),
           },

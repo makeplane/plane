@@ -78,7 +78,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
 
   return (
     <>
-      <div className="flex items-center h-full w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
+      <div className="flex items-center h-full w-full flex-col divide-y-2 divide-subtle-1 overflow-hidden">
         <div className="h-full w-full overflow-y-auto px-6">
           <h5 className="mt-6 text-sm font-medium">{t("common.properties")}</h5>
           {/* TODO: render properties using a common component */}

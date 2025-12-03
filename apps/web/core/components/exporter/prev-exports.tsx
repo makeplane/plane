@@ -107,7 +107,7 @@ export const PrevExports = observer(function PrevExports(props: Props) {
         {exporterServices && exporterServices?.results ? (
           exporterServices?.results?.length > 0 ? (
             <div>
-              <div className="divide-y divide-custom-border-200">
+              <div className="divide-y divide-subtle-1">
                 <Table
                   columns={columns}
                   data={exporterServices?.results ?? []}

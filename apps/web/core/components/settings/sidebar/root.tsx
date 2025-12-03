@@ -46,7 +46,7 @@ export const SettingsSidebar = observer(function SettingsSidebar(props: Settings
       {/* Header */}
       <SettingsSidebarHeader customHeader={customHeader} />
       {/* Navigation */}
-      <div className="divide-y divide-custom-border-100 overflow-x-hidden w-full h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
+      <div className="divide-y divide-subtle overflow-x-hidden w-full h-full overflow-y-scroll vertical-scrollbar scrollbar-sm">
         {categories.map((category) => {
           if (groupedSettings[category].length === 0) return null;
           return (

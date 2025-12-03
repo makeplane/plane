@@ -17,10 +17,6 @@ html {
   -webkit-font-smoothing: antialiased;
 }
 
-body {
-  color: rgba(var(--color-text-100));
-}
-
 /* scrollbar style */
 ::-webkit-scrollbar {
   display: none;

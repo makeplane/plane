@@ -49,7 +49,7 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
                 <h2 className="text-2xl font-semibold text-red-500 mb-2">
                   {error.status} {error.statusText}
                 </h2>
-                <div className="h-px w-full bg-custom-border-200" />
+                <div className="h-px w-full bg-subtle-1" />
               </div>
 
               <div className="space-y-2">
@@ -81,7 +81,7 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
             <div className="space-y-4">
               <div>
                 <h2 className="text-2xl font-semibold text-red-500 mb-2">Error</h2>
-                <div className="h-px w-full bg-custom-border-200" />
+                <div className="h-px w-full bg-subtle-1" />
               </div>
 
               <div className="space-y-2">
@@ -137,7 +137,7 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
           <div className="space-y-4">
             <div>
               <h2 className="text-2xl font-semibold text-primary mb-2">Unknown Error</h2>
-              <div className="h-px w-full bg-custom-border-200" />
+              <div className="h-px w-full bg-subtle-1" />
             </div>
 
             <div className="bg-custom-background-80 rounded-md p-4">

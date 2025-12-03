@@ -53,7 +53,7 @@ export const DisplayFiltersSelection = observer(function DisplayFiltersSelection
   }
 
   return (
-    <div className="vertical-scrollbar scrollbar-sm relative h-full w-full divide-y divide-custom-border-200 overflow-hidden overflow-y-auto px-2.5">
+    <div className="vertical-scrollbar scrollbar-sm relative h-full w-full divide-y divide-subtle-1 overflow-hidden overflow-y-auto px-2.5">
       {/* display properties */}
       {layoutDisplayFiltersOptions?.display_properties && layoutDisplayFiltersOptions.display_properties.length > 0 && (
         <div className="py-2">

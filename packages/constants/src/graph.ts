@@ -1,7 +1,7 @@
 export const CHARTS_THEME = {
   background: "transparent",
   text: {
-    color: "rgb(var(--color-text-200))",
+    color: "var(--text-color-secondary)",
   },
   axis: {
     domain: {
@@ -14,14 +14,14 @@ export const CHARTS_THEME = {
   tooltip: {
     container: {
       background: "rgb(var(--color-background-80))",
-      color: "rgb(var(--color-text-200))",
+      color: "var(--text-color-secondary)",
       fontSize: "0.8rem",
-      border: "1px solid rgb(var(--color-border-300))",
+      border: "1px solid var(--border-color-strong)",
     },
   },
   grid: {
     line: {
-      stroke: "rgb(var(--color-border-100))",
+      stroke: "var(--border-color-subtle)",
     },
   },
 };

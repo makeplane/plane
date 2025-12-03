@@ -55,7 +55,7 @@ export const SubIssueDisplayFilters = observer(function SubIssueDisplayFilters(p
             </div>
           }
         >
-          <div className="vertical-scrollbar scrollbar-sm relative h-full w-full divide-y divide-custom-border-200 overflow-hidden overflow-y-auto px-2.5 max-h-[25rem] text-left">
+          <div className="vertical-scrollbar scrollbar-sm relative h-full w-full divide-y divide-subtle-1 overflow-hidden overflow-y-auto px-2.5 max-h-[25rem] text-left">
             {/* display properties */}
             <div className="py-2">
               <FilterDisplayProperties

@@ -140,7 +140,7 @@ export function LinkEditView({ viewProps }: LinkEditViewProps) {
     >
       <InputView label="URL" placeholder="Enter or paste URL" value={localUrl} onChange={setLocalUrl} autoFocus />
       <InputView label="Text" placeholder="Enter Text to display" value={localText} onChange={handleTextChange} />
-      <div className="mb-1 bg-custom-border-300 h-[1px] w-full gap-2" />
+      <div className="mb-1 bg-strong h-[1px] w-full gap-2" />
       <div className="flex text-sm text-custom-text-800 gap-2 items-center">
         <Link2Off size={14} className="inline-block" />
         <button onClick={removeLink} className="cursor-pointer hover:text-placeholder transition-colors">

@@ -6,7 +6,7 @@ export const ILLUSTRATION_COLOR_TOKEN_MAP = {
   },
   stroke: {
     primary: "rgba(var(--color-text-200))", // #1D1F20
-    secondary: "rgba(var(--color-border-400))", // #7A8185 or #CFD2D3
+    secondary: "var(--border-color-strong-1)",
   },
 };
 

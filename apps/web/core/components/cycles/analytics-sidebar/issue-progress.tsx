@@ -122,7 +122,7 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
               </div>
             )}
             <Transition show={open}>
-              <Disclosure.Panel className="flex flex-col divide-y divide-custom-border-200">
+              <Disclosure.Panel className="flex flex-col divide-y divide-subtle-1">
                 {cycleStartDate && cycleEndDate ? (
                   <>
                     {isCycleDateValid && (

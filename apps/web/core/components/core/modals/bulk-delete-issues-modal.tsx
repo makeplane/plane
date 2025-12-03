@@ -163,7 +163,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
             leaveTo="opacity-0 scale-95"
           >
             <Dialog.Panel className="relative flex w-full items-center justify-center ">
-              <div className="w-full max-w-2xl transform divide-y divide-custom-border-200 divide-opacity-10 rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
+              <div className="w-full max-w-2xl transform divide-y divide-subtle-1 divide-opacity-10 rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
                 <form>
                   <Combobox
                     onChange={(val: string) => {
@@ -189,10 +189,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
                       />
                     </div>
 
-                    <Combobox.Options
-                      static
-                      className="max-h-80 scroll-py-2 divide-y divide-custom-border-200 overflow-y-auto"
-                    >
+                    <Combobox.Options static className="max-h-80 scroll-py-2 divide-y divide-subtle-1 overflow-y-auto">
                       {isSearching ? (
                         <Loader className="space-y-3 p-3">
                           <Loader.Item height="40px" />

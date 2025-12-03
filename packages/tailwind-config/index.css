@@ -21,7 +21,7 @@ html {
 }
 
 body {
-  color: rgba(var(--color-text-100));
+  @apply text-primary;
 }
 
 /* scrollbar style */
@@ -94,6 +94,7 @@ body {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
+  line-clamp: 1;
 }
 
 /* popover2 styling */

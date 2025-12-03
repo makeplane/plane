@@ -176,7 +176,7 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
                 {!hideIcon && (
                   <StateGroupIcon
                     stateGroup={selectedState?.group ?? "backlog"}
-                    color={selectedState?.color ?? "rgba(var(--color-text-300))"}
+                    color={selectedState?.color ?? "var(--text-color-tertiary)"}
                     className={cn("flex-shrink-0", iconSize)}
                     percentage={selectedState?.order}
                   />

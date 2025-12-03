@@ -22,14 +22,14 @@ export const BlockReactions = observer(function BlockReactions(props: Props) {
   return (
     <div
       className={cn(
-        "flex flex-wrap border-t-[1px] outline-transparent w-full border-t-custom-border-200 bg-custom-background-90 rounded-b"
+        "flex flex-wrap border-t-[1px] outline-transparent w-full border-t-subtle-1 bg-custom-background-90 rounded-b"
       )}
     >
       <div className="py-2 px-3 flex flex-wrap items-center gap-2">
         {canVote && (
           <div
             className={cn(`flex items-center gap-2 pr-1`, {
-              "after:h-6 after:ml-1 after:w-[1px] after:bg-custom-border-200": canReact,
+              "after:h-6 after:ml-1 after:w-[1px] after:bg-subtle-1": canReact,
             })}
           >
             <IssueVotes anchor={anchor.toString()} issueIdFromProps={issueId} size="sm" />

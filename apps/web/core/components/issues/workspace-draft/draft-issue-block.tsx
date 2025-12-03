@@ -119,7 +119,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
       />
       <div
         id={`issue-${issue.id}`}
-        className=" relative border-b border-b-custom-border-200 w-full cursor-pointer"
+        className=" relative border-b border-b-subtle-1 w-full cursor-pointer"
         onDoubleClick={() => {
           setIssueToEdit(issue);
           setCreateUpdateIssueModal(true);

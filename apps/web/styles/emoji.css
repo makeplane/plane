@@ -15,7 +15,7 @@
 
 .epr-emoji-category-label {
   font-size: 0.7875rem !important;
-  color: rgba(var(--color-text-300)) !important;
+  @apply text-tertiary;
   background-color: rgba(var(--color-background-100), 0.8) !important;
 }
 
@@ -33,20 +33,20 @@ input.epr-search {
   font-size: 0.7875rem !important;
   height: 2rem !important;
   background: transparent !important;
-  border-color: rgba(var(--color-border-200)) !important;
+  @apply !border-subtle-1;
   border-radius: 0.25rem !important;
 }
 
 input.epr-search::placeholder {
-  color: rgba(var(--color-text-400)) !important;
+  @apply !text-placeholder;
 }
 
 button.epr-btn-clear-search:hover {
   background-color: rgba(var(--color-background-80)) !important;
-  color: rgba(var(--color-text-300)) !important;
+  @apply !text-tertiary;
 }
 
 .epr-emoji-variation-picker {
   background-color: rgba(var(--color-background-100)) !important;
-  border-color: rgba(var(--color-border-200)) !important;
+  @apply !border-subtle-1;
 }

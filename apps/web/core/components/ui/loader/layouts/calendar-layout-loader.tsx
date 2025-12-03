@@ -20,15 +20,15 @@ function CalendarDay() {
 export function CalendarLayoutLoader() {
   return (
     <div className="h-full w-full overflow-y-auto bg-custom-background-100 animate-pulse">
-      <span className="relative grid divide-x-[0.5px] divide-custom-border-200 text-sm font-medium grid-cols-5">
+      <span className="relative grid divide-x-[0.5px] divide-subtle-1 text-sm font-medium grid-cols-5">
         {range(5).map((index) => (
           <span key={index} className="h-11 w-full bg-custom-background-80" />
         ))}
       </span>
       <div className="h-full w-full overflow-y-auto">
-        <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-custom-border-200 overflow-y-auto">
+        <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-subtle-1 overflow-y-auto">
           {range(6).map((index) => (
-            <div key={index} className="grid divide-x-[0.5px] divide-custom-border-200 grid-cols-5">
+            <div key={index} className="grid divide-x-[0.5px] divide-subtle-1 grid-cols-5">
               {range(5).map((index) => (
                 <CalendarDay key={index} />
               ))}

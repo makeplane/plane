@@ -18,10 +18,6 @@ html {
   -webkit-font-smoothing: antialiased;
 }
 
-body {
-  color: rgba(var(--color-text-100));
-}
-
 /* scrollbar style */
 @-moz-document url-prefix() {
   * {

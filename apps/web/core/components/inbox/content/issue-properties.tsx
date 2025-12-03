@@ -56,10 +56,10 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
   const DropdownComponent = isIntakeAccepted ? StateDropdown : IntakeStateDropdown;
 
   return (
-    <div className="flex w-full flex-col divide-y-2 divide-custom-border-200">
+    <div className="flex w-full flex-col divide-y-2 divide-subtle-1">
       <div className="w-full overflow-y-auto">
         <h5 className="text-sm font-medium my-4">Properties</h5>
-        <div className={`divide-y-2 divide-custom-border-200 ${!isEditable ? "opacity-60" : ""}`}>
+        <div className={`divide-y-2 divide-subtle-1 ${!isEditable ? "opacity-60" : ""}`}>
           <div className="flex flex-col gap-3">
             {/* Intake State */}
             <div className="flex h-8 items-center gap-2">
@@ -130,7 +130,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
             </div>
           </div>
         </div>
-        <div className={`divide-y-2 divide-custom-border-200 mt-3 ${!isEditable ? "opacity-60" : ""}`}>
+        <div className={`divide-y-2 divide-subtle-1 mt-3 ${!isEditable ? "opacity-60" : ""}`}>
           <div className="flex flex-col gap-3">
             {/* Due Date */}
             <div className="flex h-8 items-center gap-2">
