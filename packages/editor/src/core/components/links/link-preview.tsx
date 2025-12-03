@@ -1,4 +1,5 @@
-import { Copy, GlobeIcon, Link2Off, PencilIcon } from "lucide-react";
+import { Copy, GlobeIcon, Link2Off } from "lucide-react";
+import { EditIcon } from "@plane/propel/icons";
 // components
 import type { LinkViewProps, LinkViews } from "@/components/links";
 
@@ -41,7 +42,7 @@ export function LinkPreview({
                 onClick={() => switchView("LinkEditView")}
                 className="cursor-pointer hover:text-custom-text-100 transition-colors"
               >
-                <PencilIcon size={14} className="inline-block" />
+                <EditIcon width={14} height={14} className="inline-block" />
               </button>
               <button onClick={removeLink} className="cursor-pointer hover:text-custom-text-100 transition-colors">
                 <Link2Off size={14} className="inline-block" />

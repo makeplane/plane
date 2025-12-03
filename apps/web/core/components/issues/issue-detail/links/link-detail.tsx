@@ -1,5 +1,5 @@
-import { Pencil, ExternalLink } from "lucide-react";
-import { TrashIcon } from "@plane/propel/icons";
+import { ExternalLink } from "lucide-react";
+import { EditIcon , TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { getIconForLink, copyTextToClipboard, calculateTimeAgo } from "@plane/utils";
@@ -78,7 +78,7 @@ export function IssueLinkDetail(props: TIssueLinkDetail) {
                   toggleIssueLinkModal(true);
                 }}
               >
-                <Pencil className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
+                <EditIcon className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
               </button>
               <a
                 href={linkDetail.url}

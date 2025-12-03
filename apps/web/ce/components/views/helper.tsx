@@ -1,6 +1,6 @@
-import { ExternalLink, Link, Pencil } from "lucide-react";
+import { ExternalLink, Link } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { TrashIcon } from "@plane/propel/icons";
+import { EditIcon , TrashIcon } from "@plane/propel/icons";
 import type { EIssueLayoutTypes, IProjectView } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import type { TWorkspaceLayoutProps } from "@/components/views/helper";
@@ -41,7 +41,7 @@ export const useMenuItemsFactory = (props: TMenuItemsFactoryProps) => {
     key: "edit",
     action: () => setCreateUpdateViewModal(true),
     title: t("edit"),
-    icon: Pencil,
+    icon: EditIcon,
     shouldRender: isOwner,
   });
 

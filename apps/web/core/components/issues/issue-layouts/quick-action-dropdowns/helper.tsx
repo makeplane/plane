@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import { Copy, ExternalLink, Link, Pencil, XCircle, ArchiveRestoreIcon } from "lucide-react";
+import { Copy, ExternalLink, Link, XCircle, ArchiveRestoreIcon } from "lucide-react";
+import { EditIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { ArchiveIcon, TrashIcon } from "@plane/propel/icons";

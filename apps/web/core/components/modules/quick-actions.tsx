@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 
 // icons
-import { ArchiveRestoreIcon, ExternalLink, LinkIcon, Pencil } from "lucide-react";
+import { ArchiveRestoreIcon, ExternalLink, LinkIcon } from "lucide-react";
 // plane imports
 import {
   EUserPermissions,
@@ -11,7 +11,7 @@ import {
   MODULE_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ArchiveIcon, TrashIcon } from "@plane/propel/icons";
+import { EditIcon , ArchiveIcon, TrashIcon } from "@plane/propel/icons";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
@@ -114,7 +114,7 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
     {
       key: "edit",
       title: t("edit"),
-      icon: Pencil,
+      icon: EditIcon,
       action: handleEditModule,
       shouldRender: isEditingAllowed && !isArchived,
     },

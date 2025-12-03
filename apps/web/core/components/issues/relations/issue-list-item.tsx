@@ -1,9 +1,9 @@
 import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
-import { Pencil, Link as LinkIcon } from "lucide-react";
+import { Link as LinkIcon } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { TrashIcon , CloseIcon } from "@plane/propel/icons";
+import { EditIcon , TrashIcon , CloseIcon } from "@plane/propel/icons";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssue, TIssueServiceType } from "@plane/types";
@@ -163,7 +163,7 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
                 {!disabled && (
                   <CustomMenu.MenuItem onClick={handleEditIssue}>
                     <div className="flex items-center gap-2">
-                      <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
+                      <EditIcon className="h-3.5 w-3.5" strokeWidth={2} />
                       <span>{t("common.actions.edit")}</span>
                     </div>
                   </CustomMenu.MenuItem>

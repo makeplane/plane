@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
-import { Pencil, Copy, Link } from "lucide-react";
+import { Copy, Link } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { TrashIcon } from "@plane/propel/icons";
+import { EditIcon , TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssueServiceType } from "@plane/types";
@@ -99,7 +99,7 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
                 toggleIssueLinkModal(true);
               }}
             >
-              <Pencil className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
+              <EditIcon className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
               {t("common.actions.edit")}
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem

@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
-import { Copy, Pencil } from "lucide-react";
+import { Copy } from "lucide-react";
 import { MODULE_TRACKER_ELEMENTS } from "@plane/constants";
-import { TrashIcon } from "@plane/propel/icons";
+import { EditIcon , TrashIcon } from "@plane/propel/icons";
 // plane types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -68,7 +68,7 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
                 handleEditLink();
               }}
             >
-              <Pencil className="size-3 stroke-[1.5] text-custom-text-200" />
+              <EditIcon className="size-3 stroke-[1.5] text-custom-text-200" />
             </button>
           )}
           <span
