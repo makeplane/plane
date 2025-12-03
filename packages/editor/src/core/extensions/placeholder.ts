@@ -6,10 +6,11 @@ import type { IEditorProps } from "@/types";
 
 type TArgs = {
   placeholder: IEditorProps["placeholder"];
+  placeholderOnEmpty: IEditorProps["placeholderOnEmpty"];
 };
 
 export const CustomPlaceholderExtension = (args: TArgs) => {
-  const { placeholder } = args;
+  const { placeholder, placeholderOnEmpty } = args;
 
   return Placeholder.configure({
     placeholder: ({ editor, node }) => {
@@ -28,6 +29,13 @@ export const CustomPlaceholderExtension = (args: TArgs) => {
         editor.isActive(CORE_EXTENSIONS.CUSTOM_IMAGE);
 
       if (shouldHidePlaceholder) return "";
+
+      if (placeholderOnEmpty) {
+        const isDocumentEmpty = editor.state.doc.textContent.length === 0;
+        if (!isDocumentEmpty && editor.isActive(CORE_EXTENSIONS.PARAGRAPH)) {
+          return "";
+        }
+      }
 
       if (placeholder) {
         if (typeof placeholder === "string") return placeholder;

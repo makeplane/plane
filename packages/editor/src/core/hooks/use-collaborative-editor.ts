@@ -33,6 +33,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     mentionHandler,
     onEditorFocus,
     placeholder,
+    placeholderOnEmpty,
     realtimeConfig,
     serverHandler,
     tabIndex,
@@ -119,6 +120,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     onEditorFocus,
     onTransaction,
     placeholder,
+    placeholderOnEmpty,
     provider,
     tabIndex,
   });

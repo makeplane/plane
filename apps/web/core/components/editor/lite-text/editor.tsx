@@ -154,6 +154,7 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
               }),
             }}
             placeholder={placeholder}
+            placeholderOnEmpty={true}
             containerClassName={cn(containerClassName, "relative", {
               "p-2": !editable,
             })}

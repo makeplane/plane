@@ -164,6 +164,7 @@ export type IEditorProps = {
   onEnterKeyPress?: (e?: any) => void;
   onTransaction?: () => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
+  placeholderOnEmpty?: boolean;
   tabIndex?: number;
   value?: string | null;
   extendedEditorProps: IEditorPropsExtended;
