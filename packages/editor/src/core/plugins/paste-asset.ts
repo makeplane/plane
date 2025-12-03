@@ -11,9 +11,9 @@ export const PasteAssetPlugin = (): Plugin =>
         let htmlContent;
         if (event.clipboardData.getData("text/plane-editor-html")) {
           htmlContent = event.clipboardData.getData("text/plane-editor-html");
-          const new_metaTag = document.createElement("meta");
-          new_metaTag.setAttribute("charset", "utf-8");
-          htmlContent = new_metaTag.outerHTML + htmlContent;
+          const metaTag = document.createElement("meta");
+          metaTag.setAttribute("charset", "utf-8");
+          htmlContent = metaTag.outerHTML + htmlContent;
         } else {
           htmlContent = event.clipboardData.getData("text/html");
         }
