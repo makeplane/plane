@@ -255,25 +255,21 @@ export const handleCoverImageChange = async (
     };
   }
 
-  // Local static image - needs upload
+  // Local static image - needs upload first
   if (analysis.needsUpload) {
     const uploadedUrl = await uploadCoverImage(newImage, uploadConfig);
 
-    // For BOTH user assets AND project assets:
-    // The backend auto-links when entity_identifier is set correctly
-    // For project assets: auto-linked server-side, no payload needed
-    // For user assets: return URL for immediate UI feedback
-
-    if (uploadConfig.isUserAsset) {
-      return {
-        cover_image_url: uploadedUrl,
-      };
-    } else {
-      return null;
-    }
+    // Backend auto-links the asset when entity_identifier is set correctly.
+    // We still return the URL for immediate UI feedback regardless of asset type.
+    return {
+      cover_image_url: uploadedUrl,
+    };
   }
 
-  return null;
+  // Already an uploaded URL (e.g., from Unsplash or gallery) - just update the reference
+  return {
+    cover_image_url: newImage,
+  };
 };
 
 /**
