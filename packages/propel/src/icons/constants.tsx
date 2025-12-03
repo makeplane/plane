@@ -6,6 +6,7 @@ export const ActionsIconsMap = [
   { icon: <Icon name="action.check" />, title: "CheckIcon" },
   { icon: <Icon name="action.close" />, title: "CloseIcon" },
   { icon: <Icon name="action.edit" />, title: "EditIcon" },
+  { icon: <Icon name="action.globe" />, title: "GlobeIcon" },
   { icon: <Icon name="action.lock" />, title: "LockIcon" },
   { icon: <Icon name="action.new-tab" />, title: "NewTabIcon" },
   { icon: <Icon name="action.search" />, title: "SearchIcon" },
