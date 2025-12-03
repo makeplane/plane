@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
-import { Copy, Link } from "lucide-react";
+import { Link } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { EditIcon , TrashIcon } from "@plane/propel/icons";
+import { CopyIcon , EditIcon , TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssueServiceType } from "@plane/types";
@@ -84,7 +84,7 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
             }}
             className="relative grid place-items-center rounded p-1 text-custom-text-400 outline-none group-hover:text-custom-text-200 cursor-pointer hover:bg-custom-background-80"
           >
-            <Copy className="h-3.5 w-3.5 stroke-[1.5]" />
+            <CopyIcon className="h-3.5 w-3.5 stroke-[1.5]" />
           </span>
           <CustomMenu
             ellipsis

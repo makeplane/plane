@@ -1,5 +1,5 @@
-import { Copy, Link2Off } from "lucide-react";
-import { GlobeIcon , EditIcon } from "@plane/propel/icons";
+import { Link2Off } from "lucide-react";
+import { CopyIcon , GlobeIcon , EditIcon } from "@plane/propel/icons";
 // components
 import type { LinkViewProps, LinkViews } from "@/components/links";
 
@@ -34,7 +34,7 @@ export function LinkPreview({
         <p>{url?.length > 40 ? url.slice(0, 40) + "..." : url}</p>
         <div className="flex gap-2">
           <button onClick={copyLinkToClipboard} className="cursor-pointer hover:text-custom-text-100 transition-colors">
-            <Copy size={14} className="inline-block" />
+            <CopyIcon width={14} height={14} className="inline-block" />
           </button>
           {editor.isEditable && (
             <>

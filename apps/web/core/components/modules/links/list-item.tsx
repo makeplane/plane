@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
-import { Copy } from "lucide-react";
+
 import { MODULE_TRACKER_ELEMENTS } from "@plane/constants";
-import { EditIcon , TrashIcon } from "@plane/propel/icons";
+import { CopyIcon , EditIcon , TrashIcon } from "@plane/propel/icons";
 // plane types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -75,7 +75,7 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
             onClick={() => copyToClipboard(link.url)}
             className="grid place-items-center p-1 hover:bg-custom-background-80 cursor-pointer"
           >
-            <Copy className="h-3.5 w-3.5 stroke-[1.5]" />
+            <CopyIcon className="h-3.5 w-3.5 stroke-[1.5]" />
           </span>
           {isEditingAllowed && (
             <button

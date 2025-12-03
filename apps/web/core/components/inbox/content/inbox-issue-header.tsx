@@ -1,12 +1,12 @@
 import type { FC } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { CircleCheck, CircleX, Clock, FileStack, Link, MoveRight, Copy } from "lucide-react";
+import { CircleCheck, CircleX, Clock, FileStack, Link, MoveRight } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { NewTabIcon , TrashIcon , ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
+import { CopyIcon , NewTabIcon , TrashIcon , ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { EInboxIssueStatus } from "@plane/types";
@@ -404,7 +404,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
                     )}
                     <CustomMenu.MenuItem onClick={() => handleCopyIssueLink(workItemLink)}>
                       <div className="flex items-center gap-2">
-                        <Copy size={14} strokeWidth={2} />
+                        <CopyIcon width={14} height={14} strokeWidth={2} />
                         {t("inbox_issue.actions.copy")}
                       </div>
                     </CustomMenu.MenuItem>

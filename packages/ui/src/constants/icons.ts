@@ -49,7 +49,6 @@ import {
   Columns,
   Command,
   Compass,
-  Copy,
   CornerDownLeft,
   CornerDownRight,
   CornerLeftDown,
@@ -147,6 +146,7 @@ import {
   User,
 } from "lucide-react";
 import {
+  CopyIcon,
   GlobeIcon,
   LockIcon,
   NewTabIcon,
@@ -821,7 +821,7 @@ export const LUCIDE_ICONS_LIST = [
   { name: "Columns", element: Columns },
   { name: "Command", element: Command },
   { name: "Compass", element: Compass },
-  { name: "Copy", element: Copy },
+  { name: "Copy", element: CopyIcon },
   { name: "CornerDownLeft", element: CornerDownLeft },
   { name: "CornerDownRight", element: CornerDownRight },
   { name: "CornerLeftDown", element: CornerLeftDown },

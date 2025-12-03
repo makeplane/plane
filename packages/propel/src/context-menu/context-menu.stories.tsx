@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { Copy, Download, Edit, Share, Star, Archive } from "lucide-react";
-import { TrashIcon } from "../icons";
+import { Download, Edit, Share, Star, Archive } from "lucide-react";
+import { CopyIcon , TrashIcon } from "../icons";
 import { ChevronRightIcon } from "../icons/arrows/chevron-right";
 import { ContextMenu } from "./context-menu";
 
@@ -64,7 +64,7 @@ export const WithIcons: Story = {
         <ContextMenu.Portal>
           <ContextMenu.Content>
             <ContextMenu.Item>
-              <Copy className="mr-2 h-4 w-4" />
+              <CopyIcon className="mr-2 h-4 w-4" />
               Copy
             </ContextMenu.Item>
             <ContextMenu.Item>
@@ -103,7 +103,7 @@ export const WithSubmenus: Story = {
         <ContextMenu.Portal>
           <ContextMenu.Content>
             <ContextMenu.Item>
-              <Copy className="mr-2 h-4 w-4" />
+              <CopyIcon className="mr-2 h-4 w-4" />
               Copy
             </ContextMenu.Item>
             <ContextMenu.Item>
@@ -149,7 +149,7 @@ export const DisabledItems: Story = {
         <ContextMenu.Portal>
           <ContextMenu.Content>
             <ContextMenu.Item>
-              <Copy className="mr-2 h-4 w-4" />
+              <CopyIcon className="mr-2 h-4 w-4" />
               Copy
             </ContextMenu.Item>
             <ContextMenu.Item disabled>
@@ -200,7 +200,7 @@ export const OnFileCard: Story = {
               Download
             </ContextMenu.Item>
             <ContextMenu.Item>
-              <Copy className="mr-2 h-4 w-4" />
+              <CopyIcon className="mr-2 h-4 w-4" />
               Copy Link
             </ContextMenu.Item>
             <ContextMenu.Item>
@@ -241,11 +241,11 @@ export const OnImage: Story = {
               Save Image
             </ContextMenu.Item>
             <ContextMenu.Item>
-              <Copy className="mr-2 h-4 w-4" />
+              <CopyIcon className="mr-2 h-4 w-4" />
               Copy Image
             </ContextMenu.Item>
             <ContextMenu.Item>
-              <Copy className="mr-2 h-4 w-4" />
+              <CopyIcon className="mr-2 h-4 w-4" />
               Copy Image URL
             </ContextMenu.Item>
             <ContextMenu.Separator />
@@ -273,7 +273,7 @@ export const OnText: Story = {
         <ContextMenu.Portal>
           <ContextMenu.Content>
             <ContextMenu.Item>
-              <Copy className="mr-2 h-4 w-4" />
+              <CopyIcon className="mr-2 h-4 w-4" />
               Copy
             </ContextMenu.Item>
             <ContextMenu.Item>
@@ -352,7 +352,7 @@ export const WithKeyboardShortcuts: Story = {
         <ContextMenu.Portal>
           <ContextMenu.Content>
             <ContextMenu.Item>
-              <Copy className="mr-2 h-4 w-4" />
+              <CopyIcon className="mr-2 h-4 w-4" />
               Copy
               <span className="ml-auto text-xs text-custom-text-400">⌘C</span>
             </ContextMenu.Item>

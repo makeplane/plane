@@ -1,11 +1,10 @@
 import { useCallback, useRef } from "react";
 import { observer } from "mobx-react";
-import { Copy } from "lucide-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { Button, getButtonStyling } from "@plane/propel/button";
-import { ChevronLeftIcon, ChevronRightIcon } from "@plane/propel/icons";
+import { CopyIcon , ChevronLeftIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TDescriptionVersion } from "@plane/types";
@@ -167,7 +166,7 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
               )}
               onClick={handleCopyMarkdown}
             >
-              <Copy className="size-4" />
+              <CopyIcon className="size-4" />
             </button>
           </Tooltip>
           <div className="flex items-center gap-2">

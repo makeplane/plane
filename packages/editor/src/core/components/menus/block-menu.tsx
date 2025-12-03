@@ -10,9 +10,8 @@ import {
 } from "@floating-ui/react";
 import type { Editor } from "@tiptap/react";
 import type { LucideIcon } from "lucide-react";
-import { Copy } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { TrashIcon } from "@plane/propel/icons";
+import { CopyIcon , TrashIcon } from "@plane/propel/icons";
 import type { ISvgIcons } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 // constants
@@ -154,7 +153,7 @@ export function BlockMenu(props: Props) {
       },
     },
     {
-      icon: Copy,
+      icon: CopyIcon,
       key: "duplicate",
       label: "Duplicate",
       isDisabled:

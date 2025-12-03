@@ -1,7 +1,7 @@
 import React from "react";
 // ui
-import { Copy } from "lucide-react";
 import { Button } from "@plane/propel/button";
+import { CopyIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 
 type Props = {
@@ -36,7 +36,7 @@ export function CopyField(props: Props) {
         }}
       >
         <p className="text-sm font-medium">{url}</p>
-        <Copy size={18} color="#B9B9B9" />
+        <CopyIcon width={18} height={18} color="#B9B9B9" />
       </Button>
       <div className="text-xs text-custom-text-300">{description}</div>
     </div>

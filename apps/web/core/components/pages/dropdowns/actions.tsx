@@ -3,7 +3,6 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import {
   ArchiveRestoreIcon,
-  Copy,
   FileOutput,
   Link,
   LockKeyhole,
@@ -13,7 +12,7 @@ import {
 import { EPageAccess, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 // plane editor
 import type { EditorRefApi } from "@plane/editor";
-import { LockIcon , NewTabIcon , ArchiveIcon, TrashIcon, GlobeIcon } from "@plane/propel/icons";
+import { CopyIcon , LockIcon , NewTabIcon , ArchiveIcon, TrashIcon, GlobeIcon } from "@plane/propel/icons";
 // plane ui
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
@@ -132,7 +131,7 @@ export const PageActions = observer(function PageActions(props: Props) {
           pageOperations.duplicate();
         },
         title: "Make a copy",
-        icon: Copy,
+        icon: CopyIcon,
         shouldRender: canCurrentUserDuplicatePage,
       },
       {
