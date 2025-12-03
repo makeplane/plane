@@ -11,7 +11,7 @@ export const AppSidebarToggleButton = observer(function AppSidebarToggleButton()
   if (!isSidebarToggleVisible()) return null;
   return (
     <button
-      className="flex items-center justify-center size-6 rounded-md text-placeholder hover:text-custom-primary-100 hover:bg-custom-background-90"
+      className="flex items-center justify-center size-6 rounded-md text-placeholder hover:text-custom-primary-100 hover:bg-surface-2"
       onClick={() => {
         if (sidebarPeek) toggleSidebarPeek(false);
         toggleSidebar();

@@ -193,7 +193,7 @@ export function InstanceGiteaConfigForm(props: Props) {
             </div>
           </div>
           <div className="col-span-2 md:col-span-1">
-            <div className="flex flex-col gap-y-4 px-6 pt-1.5 pb-4 bg-custom-background-80/60 rounded-lg">
+            <div className="flex flex-col gap-y-4 px-6 pt-1.5 pb-4 bg-layer-1/60 rounded-lg">
               <div className="pt-2 text-18 font-medium">Plane-provided details for Gitea</div>
               {GITEA_SERVICE_FIELD.map((field) => (
                 <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />

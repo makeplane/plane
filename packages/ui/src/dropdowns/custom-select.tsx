@@ -73,7 +73,7 @@ function CustomSelect(props: ICustomSelectProps) {
               ref={setReferenceElement}
               type="button"
               className={`flex items-center justify-between gap-1 text-11 ${
-                disabled ? "cursor-not-allowed text-secondary" : "cursor-pointer hover:bg-custom-background-80"
+                disabled ? "cursor-not-allowed text-secondary" : "cursor-pointer hover:bg-layer-1"
               } ${customButtonClassName}`}
               onClick={toggleDropdown}
             >
@@ -86,12 +86,12 @@ function CustomSelect(props: ICustomSelectProps) {
               ref={setReferenceElement}
               type="button"
               className={cn(
-                "flex w-full items-center justify-between gap-1 rounded border-[0.5px] border-strong",
+                "flex w-full items-center justify-between gap-1 rounded-sm border-[0.5px] border-strong",
                 {
                   "px-3 py-2 text-13": input,
                   "px-2 py-1 text-11": !input,
                   "cursor-not-allowed text-secondary": disabled,
-                  "cursor-pointer hover:bg-custom-background-80": !disabled,
+                  "cursor-pointer hover:bg-layer-1": !disabled,
                 },
                 buttonClassName
               )}
@@ -108,7 +108,7 @@ function CustomSelect(props: ICustomSelectProps) {
           <Combobox.Options data-prevent-outside-click static>
             <div
               className={cn(
-                "my-1 overflow-y-scroll rounded-md border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 text-11 shadow-custom-shadow-rg focus:outline-none min-w-48 whitespace-nowrap z-30",
+                "my-1 overflow-y-scroll rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-custom-shadow-rg focus:outline-none min-w-48 whitespace-nowrap z-30",
                 optionsClassName
               )}
               ref={setPopperElement}
@@ -140,9 +140,9 @@ function Option(props: ICustomSelectItemProps) {
       value={value}
       className={({ active }) =>
         cn(
-          "cursor-pointer select-none truncate rounded px-1 py-1.5 text-secondary flex items-center justify-between gap-2",
+          "cursor-pointer select-none truncate rounded-sm px-1 py-1.5 text-secondary flex items-center justify-between gap-2",
           {
-            "bg-custom-background-80": active,
+            "bg-layer-1": active,
           },
           className
         )

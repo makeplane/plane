@@ -175,7 +175,7 @@ export function CreateApiTokenForm(props: Props) {
                       customButton={
                         <div
                           className={cn(
-                            "h-7 flex items-center gap-2 rounded border-[0.5px] border-strong px-2 py-0.5",
+                            "h-7 flex items-center gap-2 rounded-sm border-[0.5px] border-strong px-2 py-0.5",
                             {
                               "text-placeholder": neverExpires,
                             }

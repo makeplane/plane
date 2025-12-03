@@ -178,7 +178,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
         <div
           ref={elementRef}
           className={cn(
-            "group/favorites-button w-full flex items-center justify-between px-2 py-1.5 rounded text-placeholder hover:bg-custom-sidebar-background-90"
+            "group/favorites-button w-full flex items-center justify-between px-2 py-1.5 rounded-sm text-placeholder hover:bg-surface-2"
           )}
         >
           <Disclosure.Button
@@ -187,7 +187,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
             className={cn(
               "w-full flex items-center gap-1 whitespace-nowrap text-left text-13 font-semibold text-placeholder",
               {
-                "bg-custom-sidebar-background-80 opacity-60": isDragging,
+                "bg-layer-1 opacity-60": isDragging,
               }
             )}
             onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)}
@@ -203,7 +203,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
             <Tooltip tooltipHeading={t("create_folder")} tooltipContent="">
               <button
                 type="button"
-                className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0 grid place-items-center"
+                className="p-0.5 rounded-sm hover:bg-layer-1 flex-shrink-0 grid place-items-center"
                 onClick={() => {
                   setCreateNewFolder(true);
                   if (!isFavoriteMenuOpen) toggleFavoriteMenu(!isFavoriteMenuOpen);
@@ -216,7 +216,7 @@ export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
             <Disclosure.Button
               as="button"
               type="button"
-              className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0 grid place-items-center"
+              className="p-0.5 rounded-sm hover:bg-layer-1 flex-shrink-0 grid place-items-center"
               onClick={() => toggleFavoriteMenu(!isFavoriteMenuOpen)}
               aria-label={t(
                 isFavoriteMenuOpen

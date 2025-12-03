@@ -215,7 +215,7 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
                 >
                   <PageContentBrowser className="overflow-y-auto" editorRef={editorRef} showOutline />
                 </div>
-                <div className="absolute top-0 right-0 opacity-0 translate-x-1/2 pointer-events-none group-hover/page-toc:opacity-100 group-hover/page-toc:-translate-x-1/4 group-hover/page-toc:pointer-events-auto transition-all duration-300 w-52 max-h-[70vh] overflow-y-scroll vertical-scrollbar scrollbar-sm whitespace-nowrap bg-custom-background-90 p-4 rounded">
+                <div className="absolute top-0 right-0 opacity-0 translate-x-1/2 pointer-events-none group-hover/page-toc:opacity-100 group-hover/page-toc:-translate-x-1/4 group-hover/page-toc:pointer-events-auto transition-all duration-300 w-52 max-h-[70vh] overflow-y-scroll vertical-scrollbar scrollbar-sm whitespace-nowrap bg-surface-2 p-4 rounded-sm">
                   <PageContentBrowser className="overflow-y-auto" editorRef={editorRef} />
                 </div>
               </div>

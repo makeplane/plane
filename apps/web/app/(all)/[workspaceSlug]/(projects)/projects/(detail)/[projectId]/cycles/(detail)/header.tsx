@@ -252,7 +252,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
             )}
             <button
               type="button"
-              className="p-1.5 rounded outline-none hover:bg-custom-sidebar-background-80 bg-custom-background-80/70"
+              className="p-1.5 rounded-sm outline-none hover:bg-layer-1 bg-layer-1/70"
               onClick={toggleSidebar}
             >
               <PanelRight className={cn("h-4 w-4", !isSidebarCollapsed ? "text-[#3E63DD]" : "text-secondary")} />
@@ -262,7 +262,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
               cycleId={cycleId}
               projectId={projectId}
               workspaceSlug={workspaceSlug}
-              customClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-custom-background-80/70 rounded"
+              customClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-layer-1/70 rounded-sm"
             />
           </div>
         </Header.RightItem>

@@ -16,7 +16,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
   return (
     <>
       <div className={`relative flex flex-shrink-0 gap-2 p-1.5 w-full flex-row items-center`}>
-        <div className="flex h-[20px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded-sm">
+        <div className="flex h-[20px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded-xs">
           {icon ? icon : <Circle width={14} strokeWidth={2} />}
         </div>
 

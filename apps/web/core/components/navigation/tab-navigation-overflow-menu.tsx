@@ -39,7 +39,7 @@ export const TabNavigationOverflowMenu: React.FC<Props> = ({
       buttonClassName="!p-1.5"
       optionsClassName="min-w-[200px] space-y-1"
       customButton={
-        <div className="flex items-center justify-center rounded-md p-1 hover:bg-custom-background-80 transition-colors">
+        <div className="flex items-center justify-center rounded-md p-1 hover:bg-layer-1 transition-colors">
           <MoreHorizontal className="h-4 w-4 text-secondary" />
         </div>
       }
@@ -66,7 +66,7 @@ export const TabNavigationOverflowMenu: React.FC<Props> = ({
                       e.preventDefault();
                       onShow(item.key);
                     }}
-                    className="invisible group-hover/menu-item:visible p-1 rounded text-tertiary hover:text-primary transition-colors"
+                    className="invisible group-hover/menu-item:visible p-1 rounded-sm text-tertiary hover:text-primary transition-colors"
                     title="Show"
                   >
                     <Pin className="size-3" />
@@ -80,7 +80,7 @@ export const TabNavigationOverflowMenu: React.FC<Props> = ({
                       onToggleDefault(item.key);
                     }}
                     className={cn(
-                      "invisible group-hover/menu-item:visible p-1 rounded text-tertiary hover:text-primary transition-colors",
+                      "invisible group-hover/menu-item:visible p-1 rounded-sm text-tertiary hover:text-primary transition-colors",
                       {
                         visible: isDefault,
                       }

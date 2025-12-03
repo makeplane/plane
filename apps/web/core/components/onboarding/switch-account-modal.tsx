@@ -62,7 +62,7 @@ export function SwitchAccountModal(props: Props) {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
+          <div className="fixed inset-0 bg-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -76,7 +76,7 @@ export function SwitchAccountModal(props: Props) {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-[40rem]">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-surface-1 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-[40rem]">
                 <div className="p-6 pb-1">
                   <div className="flex gap-x-4">
                     <div className="flex items-start">

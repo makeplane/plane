@@ -124,7 +124,7 @@ export const MentionsListDropdown = forwardRef(function MentionsListDropdown(pro
       />
       <div
         ref={dropdownContainer}
-        className="relative max-h-80 w-[14rem] overflow-y-auto rounded-md border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 shadow-custom-shadow-rg space-y-2"
+        className="relative max-h-80 w-[14rem] overflow-y-auto rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 shadow-custom-shadow-rg space-y-2"
         style={{
           zIndex: 100,
         }}
@@ -150,9 +150,9 @@ export const MentionsListDropdown = forwardRef(function MentionsListDropdown(pro
                     id={`mention-item-${sectionIndex}-${itemIndex}`}
                     type="button"
                     className={cn(
-                      "flex items-center gap-2 w-full rounded px-1 py-1.5 text-11 text-left truncate text-secondary",
+                      "flex items-center gap-2 w-full rounded-sm px-1 py-1.5 text-11 text-left truncate text-secondary",
                       {
-                        "bg-custom-background-80": isSelected,
+                        "bg-layer-1": isSelected,
                       }
                     )}
                     onClick={(e) => {

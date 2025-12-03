@@ -152,7 +152,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
             render: ({ container }) => {
               const root = createRoot(container);
               root.render(
-                <div className="rounded flex items-center bg-custom-background-100 text-13 p-1 pr-2">
+                <div className="rounded-sm flex items-center bg-surface-1 text-13 p-1 pr-2">
                   <div className="size-4 grid place-items-center flex-shrink-0">
                     {project && <Logo logo={project?.logo_props} />}
                   </div>
@@ -248,16 +248,16 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
         <div
           id={`sidebar-${projectId}-${projectListType}`}
           className={cn("relative", {
-            "bg-custom-sidebar-background-80 opacity-60": isDragging,
+            "bg-layer-1 opacity-60": isDragging,
           })}
           ref={projectRef}
         >
           <DropIndicator classNames="absolute top-0" isVisible={instruction === "DRAG_OVER"} />
           <div
             className={cn(
-              "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-primary hover:bg-custom-sidebar-background-90",
+              "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-primary hover:bg-surface-2",
               {
-                "bg-custom-sidebar-background-90": isMenuActive,
+                "bg-surface-2": isMenuActive,
               }
             )}
             id={`${project?.id}`}
@@ -274,7 +274,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                 <button
                   type="button"
                   className={cn(
-                    "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded text-placeholder cursor-grab",
+                    "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded-sm text-placeholder cursor-grab",
                     {
                       "cursor-not-allowed opacity-60": project.sort_order === null,
                       "cursor-grabbing": isDragging,
@@ -318,7 +318,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                 customButton={
                   <span
                     ref={actionSectionRef}
-                    className="grid place-items-center p-0.5 text-placeholder hover:bg-custom-sidebar-background-80 rounded"
+                    className="grid place-items-center p-0.5 text-placeholder hover:bg-layer-1 rounded-sm"
                     onClick={() => setIsMenuActive(!isMenuActive)}
                   >
                     <MoreHorizontal className="size-4" />
@@ -357,7 +357,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                 {isAdmin && (
                   <CustomMenu.MenuItem onClick={() => setPublishModal(true)}>
                     <div className="relative flex flex-shrink-0 items-center justify-start gap-2">
-                      <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded text-secondary transition-all duration-300 hover:bg-custom-sidebar-background-80">
+                      <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded-sm text-secondary transition-all duration-300 hover:bg-layer-1">
                         <Share2 className="h-3.5 w-3.5 stroke-[1.5]" />
                       </div>
                       <div>{t("publish_project")}</div>
@@ -409,12 +409,9 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                 <Disclosure.Button
                   as="button"
                   type="button"
-                  className={cn(
-                    "hidden group-hover/project-item:inline-block p-0.5 rounded hover:bg-custom-sidebar-background-80",
-                    {
-                      "inline-block": isMenuActive,
-                    }
-                  )}
+                  className={cn("hidden group-hover/project-item:inline-block p-0.5 rounded-sm hover:bg-layer-1", {
+                    "inline-block": isMenuActive,
+                  })}
                   onClick={() => setIsProjectListOpen(!isProjectListOpen)}
                   aria-label={t(
                     isProjectListOpen

@@ -5,7 +5,7 @@ export function SomethingWentWrongError() {
   return (
     <div className="grid min-h-screen w-full place-items-center p-6">
       <div className="text-center">
-        <div className="mx-auto grid h-52 w-52 place-items-center rounded-full bg-custom-background-80">
+        <div className="mx-auto grid h-52 w-52 place-items-center rounded-full bg-layer-1">
           <div className="grid h-32 w-32 place-items-center">
             <img
               src={SomethingWentWrongImage}

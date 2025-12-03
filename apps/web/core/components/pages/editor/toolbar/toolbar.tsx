@@ -44,8 +44,8 @@ const ToolbarButton = React.memo(function ToolbarButton(props: ToolbarButtonProp
             ...item.extraProps,
           })
         }
-        className={cn("shrink-0 grid size-7 place-items-center rounded text-tertiary hover:bg-custom-background-80", {
-          "bg-custom-background-80 text-primary": isActive,
+        className={cn("shrink-0 grid size-7 place-items-center rounded-sm text-tertiary hover:bg-layer-1", {
+          "bg-layer-1 text-primary": isActive,
         })}
       >
         <item.icon
@@ -99,7 +99,7 @@ export function PageToolbar(props: Props) {
     <div className="flex items-center divide-x divide-subtle-1 overflow-x-scroll">
       <CustomMenu
         customButton={
-          <span className="text-tertiary text-13 border-[0.5px] border-strong hover:bg-custom-background-80 h-7 w-24 rounded px-2 flex items-center justify-between gap-2 whitespace-nowrap text-left">
+          <span className="text-tertiary text-13 border-[0.5px] border-strong hover:bg-layer-1 h-7 w-24 rounded-sm px-2 flex items-center justify-between gap-2 whitespace-nowrap text-left">
             {activeTypography?.name || "Text"}
             <ChevronDownIcon className="flex-shrink-0 size-3" />
           </span>

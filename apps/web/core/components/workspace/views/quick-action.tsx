@@ -64,7 +64,7 @@ export const WorkspaceViewQuickActions = observer(function WorkspaceViewQuickAct
         ellipsis
         placement="bottom-end"
         closeOnSelect
-        buttonClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-custom-background-80/70 rounded"
+        buttonClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-layer-1/70 rounded-sm"
       >
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;

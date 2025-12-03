@@ -28,7 +28,7 @@ export const ModulesSidebarBlock = observer(function ModulesSidebarBlock(props: 
   return (
     <div
       className={cn({
-        "rounded bg-custom-background-80": isDragging,
+        "rounded-sm bg-layer-1": isDragging,
       })}
       onMouseEnter={() => updateActiveBlockId(block.id)}
       onMouseLeave={() => updateActiveBlockId(null)}
@@ -36,7 +36,7 @@ export const ModulesSidebarBlock = observer(function ModulesSidebarBlock(props: 
       <Row
         id={`sidebar-block-${block.id}`}
         className={cn("group w-full flex items-center gap-2 pr-4", {
-          "bg-custom-background-90": isBlockActive(block.id),
+          "bg-surface-2": isBlockActive(block.id),
         })}
         style={{
           height: `${BLOCK_HEIGHT}px`,

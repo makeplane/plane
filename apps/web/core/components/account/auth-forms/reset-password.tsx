@@ -108,7 +108,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
           <label className="text-13 text-tertiary font-medium" htmlFor="email">
             {t("auth.common.email.label")}
           </label>
-          <div className="relative flex items-center rounded-md bg-custom-background-100">
+          <div className="relative flex items-center rounded-md bg-surface-1">
             <Input
               id="email"
               name="email"
@@ -116,7 +116,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
               value={resetFormData.email}
               //hasError={Boolean(errors.email)}
               placeholder={t("auth.common.email.placeholder")}
-              className="h-10 w-full border border-strong !bg-custom-background-100 pr-12 text-placeholder cursor-not-allowed"
+              className="h-10 w-full border border-strong !bg-surface-1 pr-12 text-placeholder cursor-not-allowed"
               autoComplete="on"
               disabled
             />
@@ -126,7 +126,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
           <label className="text-13 text-tertiary font-medium" htmlFor="password">
             {t("auth.common.password.label")}
           </label>
-          <div className="relative flex items-center rounded-md bg-custom-background-100">
+          <div className="relative flex items-center rounded-md bg-surface-1">
             <Input
               type={showPassword.password ? "text" : "password"}
               name="password"
@@ -134,7 +134,7 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
               onChange={(e) => handleFormChange("password", e.target.value)}
               //hasError={Boolean(errors.password)}
               placeholder={t("auth.common.password.placeholder")}
-              className="h-10 w-full border border-strong !bg-custom-background-100 pr-12 placeholder:text-placeholder"
+              className="h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
               minLength={8}
               onFocus={() => setIsPasswordInputFocused(true)}
               onBlur={() => setIsPasswordInputFocused(false)}
@@ -159,14 +159,14 @@ export const ResetPasswordForm = observer(function ResetPasswordForm() {
           <label className="text-13 text-tertiary font-medium" htmlFor="confirm_password">
             {t("auth.common.password.confirm_password.label")}
           </label>
-          <div className="relative flex items-center rounded-md bg-custom-background-100">
+          <div className="relative flex items-center rounded-md bg-surface-1">
             <Input
               type={showPassword.retypePassword ? "text" : "password"}
               name="confirm_password"
               value={resetFormData.confirm_password}
               onChange={(e) => handleFormChange("confirm_password", e.target.value)}
               placeholder={t("auth.common.password.confirm_password.placeholder")}
-              className="h-10 w-full border border-strong !bg-custom-background-100 pr-12 placeholder:text-placeholder"
+              className="h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
               onFocus={() => setIsRetryPasswordInputFocused(true)}
               onBlur={() => setIsRetryPasswordInputFocused(false)}
             />

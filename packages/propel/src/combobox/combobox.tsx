@@ -168,7 +168,7 @@ function ComboboxOptions({
     <BaseCombobox.Portal>
       <BaseCombobox.Positioner sideOffset={8} className={positionerClassName}>
         <BaseCombobox.Popup
-          className={cn("rounded-md border border-subtle-1 bg-custom-background-100 p-1 shadow-lg", className)}
+          className={cn("rounded-md border border-subtle-1 bg-surface-1 p-1 shadow-lg", className)}
           data-prevent-outside-click={dataPreventOutsideClick}
         >
           <div className="flex flex-col gap-1">
@@ -182,7 +182,7 @@ function ComboboxOptions({
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={onSearchQueryKeyDown}
                   className={cn(
-                    "w-full rounded border border-subtle bg-custom-background-90 py-1.5 pl-8 pr-2 text-13 outline-none placeholder:text-placeholder",
+                    "w-full rounded-sm border border-subtle bg-surface-2 py-1.5 pl-8 pr-2 text-13 outline-none placeholder:text-placeholder",
                     inputClassName
                   )}
                 />
@@ -213,7 +213,7 @@ function ComboboxOption({ value, children, disabled, className }: ComboboxOption
     <BaseCombobox.Item
       value={value}
       disabled={disabled}
-      className={cn("cursor-pointer rounded px-2 py-1.5 text-13 outline-none transition-colors", className)}
+      className={cn("cursor-pointer rounded-sm px-2 py-1.5 text-13 outline-none transition-colors", className)}
     >
       {children}
     </BaseCombobox.Item>

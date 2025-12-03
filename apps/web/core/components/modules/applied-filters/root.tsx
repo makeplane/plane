@@ -92,7 +92,7 @@ export function ModuleAppliedFiltersList(props: Props) {
           >
             <div className="flex flex-wrap items-center gap-1.5">
               <span className="text-11 text-tertiary">Modules</span>
-              <div className="flex items-center gap-1 rounded p-1 text-11 bg-custom-background-80">
+              <div className="flex items-center gap-1 rounded-sm p-1 text-11 bg-layer-1">
                 Favorite
                 {isEditingAllowed && (
                   <button

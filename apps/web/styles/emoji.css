@@ -1,3 +1,5 @@
+@reference "@plane/tailwind-config/index.css";
+
 .EmojiPickerReact {
   --epr-category-navigation-button-size: 1.25rem !important;
   --epr-category-label-height: 1.5rem !important;

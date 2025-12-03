@@ -39,11 +39,11 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
       <Menu.Item
         as="div"
         className={cn("px-4 py-2", {
-          "bg-custom-sidebar-background-90": workspace.id === activeWorkspace?.id,
-          "hover:bg-custom-sidebar-background-90": workspace.id !== activeWorkspace?.id,
+          "bg-surface-2": workspace.id === activeWorkspace?.id,
+          "hover:bg-surface-2": workspace.id !== activeWorkspace?.id,
         })}
       >
-        <div className="flex items-center justify-between gap-1 rounded p-1 text-13 text-primary ">
+        <div className="flex items-center justify-between gap-1 rounded-sm p-1 text-13 text-primary ">
           <div className="flex items-center justify-start gap-2.5 w-[80%] relative">
             <span
               className={`relative flex h-8 w-8 flex-shrink-0 items-center  justify-center p-2 text-14 uppercase font-medium border-subtle-1 ${
@@ -53,7 +53,7 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
               {workspace?.logo_url && workspace.logo_url !== "" ? (
                 <img
                   src={getFileURL(workspace.logo_url)}
-                  className="absolute left-0 top-0 h-full w-full rounded object-cover"
+                  className="absolute left-0 top-0 h-full w-full rounded-sm object-cover"
                   alt={t("workspace_logo")}
                 />
               ) : (
@@ -88,7 +88,7 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
                 <Link
                   href={`/${workspace.slug}/settings`}
                   onClick={handleClose}
-                  className="flex border border-subtle-1 rounded-md py-1 px-2 gap-1 bg-custom-sidebar-background-100 hover:shadow-sm hover:text-secondary text-tertiary hover:border-strong "
+                  className="flex border border-subtle-1 rounded-md py-1 px-2 gap-1 bg-surface-1 hover:shadow-sm hover:text-secondary text-tertiary hover:border-strong "
                 >
                   <Settings className="h-4 w-4 my-auto" />
                   <span className="text-13 font-medium my-auto">{t("settings")}</span>
@@ -98,7 +98,7 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
                 <Link
                   href={`/${workspace.slug}/settings/members`}
                   onClick={handleClose}
-                  className="flex border border-subtle-1 rounded-md py-1 px-2 gap-1 bg-custom-sidebar-background-100 hover:shadow-sm hover:text-secondary text-tertiary hover:border-strong "
+                  className="flex border border-subtle-1 rounded-md py-1 px-2 gap-1 bg-surface-1 hover:shadow-sm hover:text-secondary text-tertiary hover:border-strong "
                 >
                   <UserPlus className="h-4 w-4 my-auto" />
                   <span className="text-13 font-medium my-auto">

@@ -3,14 +3,24 @@
 @import "./animations.css";
 @source "../**/*.{ts,tsx}";
 
+@layer base {
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+}
+
 html {
   font-family: "Inter", sans-serif;
 }
 
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
   font-variant-ligatures: none;

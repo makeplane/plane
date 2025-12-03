@@ -82,7 +82,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
   return (
     <div
       className={cn(
-        `vertical-scrollbar scrollbar-md fixed z-[5] h-full w-full flex-shrink-0 overflow-hidden overflow-y-auto border-l border-subtle bg-custom-sidebar-background-100 transition-all md:relative md:w-[300px]`,
+        `vertical-scrollbar scrollbar-md fixed z-[5] h-full w-full flex-shrink-0 overflow-hidden overflow-y-auto border-l border-subtle bg-surface-1 transition-all md:relative md:w-[300px]`,
         className
       )}
       style={profileSidebarCollapsed ? { marginLeft: `${window?.innerWidth || 0}px` } : {}}
@@ -91,7 +91,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
         <>
           <div className="relative h-[110px]">
             {currentUser?.id === userId && (
-              <div className="absolute right-3.5 top-3.5 grid h-5 w-5 place-items-center rounded bg-white">
+              <div className="absolute right-3.5 top-3.5 grid h-5 w-5 place-items-center rounded-sm bg-white">
                 <Link href={`/${workspaceSlug}/settings/account`}>
                   <span className="grid place-items-center text-black">
                     <Pencil className="h-3 w-3" />
@@ -108,15 +108,15 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
               alt={userData?.display_name}
               className="h-[110px] w-full object-cover"
             />
-            <div className="absolute -bottom-[26px] left-5 h-[52px] w-[52px] rounded">
+            <div className="absolute -bottom-[26px] left-5 h-[52px] w-[52px] rounded-sm">
               {userData?.avatar_url && userData?.avatar_url !== "" ? (
                 <img
                   src={getFileURL(userData?.avatar_url)}
                   alt={userData?.display_name}
-                  className="h-full w-full rounded object-cover"
+                  className="h-full w-full rounded-sm object-cover"
                 />
               ) : (
-                <div className="flex h-[52px] w-[52px] items-center justify-center rounded bg-[#028375] capitalize text-white">
+                <div className="flex h-[52px] w-[52px] items-center justify-center rounded-sm bg-[#028375] capitalize text-white">
                   {userData?.first_name?.[0]}
                 </div>
               )}
@@ -166,7 +166,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                             {project.assigned_issues > 0 && (
                               <Tooltip tooltipContent="Completion percentage" position="left" isMobile={isMobile}>
                                 <div
-                                  className={`rounded px-1 py-0.5 text-11 font-medium ${
+                                  className={`rounded-sm px-1 py-0.5 text-11 font-medium ${
                                     completedIssuePercentage <= 35
                                       ? "bg-red-500/10 text-red-500"
                                       : completedIssuePercentage <= 70
@@ -194,28 +194,28 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                             {totalIssues > 0 && (
                               <div className="flex items-center gap-0.5">
                                 <div
-                                  className="h-1 rounded"
+                                  className="h-1 rounded-sm"
                                   style={{
                                     backgroundColor: "#203b80",
                                     width: `${(project.created_issues / totalIssues) * 100}%`,
                                   }}
                                 />
                                 <div
-                                  className="h-1 rounded"
+                                  className="h-1 rounded-sm"
                                   style={{
                                     backgroundColor: "#3f76ff",
                                     width: `${(project.assigned_issues / totalIssues) * 100}%`,
                                   }}
                                 />
                                 <div
-                                  className="h-1 rounded"
+                                  className="h-1 rounded-sm"
                                   style={{
                                     backgroundColor: "#f59e0b",
                                     width: `${(project.pending_issues / totalIssues) * 100}%`,
                                   }}
                                 />
                                 <div
-                                  className="h-1 rounded"
+                                  className="h-1 rounded-sm"
                                   style={{
                                     backgroundColor: "#16a34a",
                                     width: `${(project.completed_issues / totalIssues) * 100}%`,
@@ -226,7 +226,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                             <div className="mt-7 space-y-5 text-13 text-secondary">
                               <div className="flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
-                                  <div className="h-2.5 w-2.5 rounded-sm bg-[#203b80]" />
+                                  <div className="h-2.5 w-2.5 rounded-xs bg-[#203b80]" />
                                   Created
                                 </div>
                                 <div className="font-medium">
@@ -235,7 +235,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                               </div>
                               <div className="flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
-                                  <div className="h-2.5 w-2.5 rounded-sm bg-[#3f76ff]" />
+                                  <div className="h-2.5 w-2.5 rounded-xs bg-[#3f76ff]" />
                                   Assigned
                                 </div>
                                 <div className="font-medium">
@@ -244,7 +244,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                               </div>
                               <div className="flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
-                                  <div className="h-2.5 w-2.5 rounded-sm bg-[#f59e0b]" />
+                                  <div className="h-2.5 w-2.5 rounded-xs bg-[#f59e0b]" />
                                   Due
                                 </div>
                                 <div className="font-medium">
@@ -253,7 +253,7 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
                               </div>
                               <div className="flex items-center justify-between gap-2">
                                 <div className="flex items-center gap-2">
-                                  <div className="h-2.5 w-2.5 rounded-sm bg-[#16a34a]" />
+                                  <div className="h-2.5 w-2.5 rounded-xs bg-[#16a34a]" />
                                   Completed
                                 </div>
                                 <div className="font-medium">

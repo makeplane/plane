@@ -134,7 +134,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
                 disabled={!isEditable}
                 buttonVariant="border-with-text"
-                className="w-3/5 flex-grow rounded px-2 hover:bg-custom-background-80"
+                className="w-3/5 flex-grow rounded-sm px-2 hover:bg-layer-1"
                 buttonContainerClassName="w-full text-left"
                 buttonClassName="w-min h-auto whitespace-nowrap"
               />
@@ -146,7 +146,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                   <UserCirclePropertyIcon className="h-4 w-4 flex-shrink-0" />
                   <span>{t("common.created_by")}</span>
                 </div>
-                <div className="w-full h-full flex items-center gap-1.5 rounded px-2 py-0.5 text-13 justify-between cursor-not-allowed">
+                <div className="w-full h-full flex items-center gap-1.5 rounded-sm px-2 py-0.5 text-13 justify-between cursor-not-allowed">
                   <ButtonAvatars showTooltip userIds={createdByDetails.id} />
                   <span className="flex-grow truncate text-11 leading-5">{createdByDetails?.display_name}</span>
                 </div>

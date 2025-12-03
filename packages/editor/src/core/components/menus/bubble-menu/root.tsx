@@ -186,7 +186,7 @@ export function EditorBubbleMenu(props: Props) {
       {!isSelecting && (
         <div
           ref={menuRef}
-          className="flex py-2 divide-x divide-subtle-1 rounded-lg border border-subtle-1 bg-custom-background-100 shadow-custom-shadow-rg overflow-x-scroll horizontal-scrollbar scrollbar-xs"
+          className="flex py-2 divide-x divide-subtle-1 rounded-lg border border-subtle-1 bg-surface-1 shadow-custom-shadow-rg overflow-x-scroll horizontal-scrollbar scrollbar-xs"
         >
           <div className="px-2">
             <BubbleMenuNodeSelector editor={editor} />
@@ -211,9 +211,9 @@ export function EditorBubbleMenu(props: Props) {
                   e.stopPropagation();
                 }}
                 className={cn(
-                  "size-7 grid place-items-center rounded text-tertiary hover:bg-custom-background-80 active:bg-custom-background-80 transition-colors",
+                  "size-7 grid place-items-center rounded-sm text-tertiary hover:bg-layer-1 active:bg-layer-1 transition-colors",
                   {
-                    "bg-custom-background-80 text-primary": editorState[item.key],
+                    "bg-layer-1 text-primary": editorState[item.key],
                   }
                 )}
               >

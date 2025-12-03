@@ -78,10 +78,10 @@ export const InboxIssueRoot = observer(function InboxIssueRoot(props: TInboxIssu
           />
         </div>
       )}
-      <div className="w-full h-full flex overflow-hidden bg-custom-background-100">
+      <div className="w-full h-full flex overflow-hidden bg-surface-1">
         <div
           className={cn(
-            "absolute z-10 top-[50px] lg:!top-0 lg:!relative bg-custom-background-100 flex-shrink-0 w-full lg:w-2/6 bottom-0 transition-all",
+            "absolute z-10 top-[50px] lg:!top-0 lg:!relative bg-surface-1 flex-shrink-0 w-full lg:w-2/6 bottom-0 transition-all",
             isMobileSidebar ? "translate-x-0" : "-translate-x-full lg:!translate-x-0"
           )}
         >

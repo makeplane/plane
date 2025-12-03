@@ -39,8 +39,8 @@ export const IssuesSidebarBlock = observer(function IssuesSidebarBlock(props: Pr
   return (
     <div
       className={cn("group/list-block", {
-        "rounded bg-custom-background-80": isDragging,
-        "rounded-l border border-r-0 border-custom-primary-70": getIsIssuePeeked(block.data.id),
+        "rounded-sm bg-layer-1": isDragging,
+        "rounded-l-sm border border-r-0 border-custom-primary-70": getIsIssuePeeked(block.data.id),
         "border border-r-0 border-strong-1": isIssueFocused,
       })}
       onMouseEnter={() => updateActiveBlockId(block.id)}
@@ -48,7 +48,7 @@ export const IssuesSidebarBlock = observer(function IssuesSidebarBlock(props: Pr
     >
       <Row
         className={cn("group w-full flex items-center gap-2 pr-4", {
-          "bg-custom-background-90": isBlockHoveredOn,
+          "bg-surface-2": isBlockHoveredOn,
           "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isIssueSelected,
           "bg-custom-primary-100/10": isIssueSelected && isBlockHoveredOn,
         })}

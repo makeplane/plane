@@ -141,10 +141,7 @@ export const HorizontalScroll: Story = {
       <ScrollArea className="h-32 w-96 border rounded-lg" orientation="horizontal">
         <div className="flex gap-4 p-4 w-[1200px]">
           {[...Array(12)].map((_, i) => (
-            <div
-              key={i}
-              className="flex-shrink-0 w-32 h-20 bg-custom-background-80 rounded flex items-center justify-center"
-            >
+            <div key={i} className="flex-shrink-0 w-32 h-20 bg-layer-1 rounded-sm flex items-center justify-center">
               Item {i + 1}
             </div>
           ))}
@@ -183,7 +180,7 @@ export const ListExample: Story = {
             {[...Array(25)].map((_, i) => (
               <div
                 key={i}
-                className="flex items-center gap-3 p-3 bg-custom-background-80 rounded hover:bg-custom-background-90 cursor-pointer"
+                className="flex items-center gap-3 p-3 bg-layer-1 rounded-sm hover:bg-surface-2 cursor-pointer"
               >
                 <div className="w-10 h-10 rounded-full bg-custom-primary-100 flex items-center justify-center text-white font-medium">
                   {String.fromCharCode(65 + (i % 26))}
@@ -235,7 +232,7 @@ async function fetchData() {
 }`;
 
     return (
-      <ScrollArea className="h-96 w-full max-w-2xl border rounded-lg bg-custom-background-100">
+      <ScrollArea className="h-96 w-full max-w-2xl border rounded-lg bg-surface-1">
         <pre className="p-4 text-13">
           <code>{code}</code>
         </pre>
@@ -253,7 +250,7 @@ export const ChatMessages: Story = {
             <div key={i} className={`flex ${i % 3 === 0 ? "justify-end" : "justify-start"}`}>
               <div
                 className={`max-w-[70%] p-3 rounded-lg ${
-                  i % 3 === 0 ? "bg-custom-primary-100 text-white" : "bg-custom-background-80"
+                  i % 3 === 0 ? "bg-custom-primary-100 text-white" : "bg-layer-1"
                 }`}
               >
                 <div className="text-13">{i % 3 === 0 ? "You" : `User ${i + 1}`}</div>
@@ -272,7 +269,7 @@ export const DataTable: Story = {
     return (
       <ScrollArea className="h-96 w-full max-w-3xl border rounded-lg">
         <table className="w-full">
-          <thead className="bg-custom-background-80 sticky top-0">
+          <thead className="bg-layer-1 sticky top-0">
             <tr>
               <th className="px-4 py-2 text-left">ID</th>
               <th className="px-4 py-2 text-left">Name</th>
@@ -282,13 +279,13 @@ export const DataTable: Story = {
           </thead>
           <tbody>
             {[...Array(50)].map((_, i) => (
-              <tr key={i} className="border-t border-subtle-1 hover:bg-custom-background-80">
+              <tr key={i} className="border-t border-subtle-1 hover:bg-layer-1">
                 <td className="px-4 py-2">#{i + 1}</td>
                 <td className="px-4 py-2">User {i + 1}</td>
                 <td className="px-4 py-2">user{i + 1}@example.com</td>
                 <td className="px-4 py-2">
                   <span
-                    className={`px-2 py-1 rounded text-11 ${i % 3 === 0 ? "bg-green-500/20 text-green-500" : "bg-gray-500/20 text-gray-500"}`}
+                    className={`px-2 py-1 rounded-sm text-11 ${i % 3 === 0 ? "bg-green-500/20 text-green-500" : "bg-gray-500/20 text-gray-500"}`}
                   >
                     {i % 3 === 0 ? "Active" : "Inactive"}
                   </span>

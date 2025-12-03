@@ -125,8 +125,8 @@ export const RegistryUsage: Story = {
       <div className="space-y-4">
         <h3 className="text-16 font-semibold text-primary">Registry-Based Usage</h3>
         <p className="text-13 text-tertiary">
-          Use the <code className="px-1 py-0.5 bg-custom-background-80 rounded">Icon</code> component with{" "}
-          <code className="px-1 py-0.5 bg-custom-background-80 rounded">name</code> prop for dynamic icon selection.
+          Use the <code className="px-1 py-0.5 bg-layer-1 rounded-sm">Icon</code> component with{" "}
+          <code className="px-1 py-0.5 bg-layer-1 rounded-sm">name</code> prop for dynamic icon selection.
         </p>
         <div className="grid grid-cols-12 gap-6 w-full">
           <div className="flex flex-col items-center justify-center gap-3 p-4 col-span-2">

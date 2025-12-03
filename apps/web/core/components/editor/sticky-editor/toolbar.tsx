@@ -73,7 +73,7 @@ export function StickyEditorToolbar(props: Props) {
           </button>
         </Tooltip>
 
-        <div className="flex w-fit items-stretch justify-between gap-4 rounded p-1 my-auto">
+        <div className="flex w-fit items-stretch justify-between gap-4 rounded-sm p-1 my-auto">
           <div className="flex items-stretch my-auto gap-4">
             {Object.keys(toolbarItems).map((key) => (
               <div key={key} className={cn("flex items-stretch gap-4", {})}>
@@ -93,7 +93,7 @@ export function StickyEditorToolbar(props: Props) {
                       <button
                         type="button"
                         onClick={() => executeCommand(item)}
-                        className={cn("grid place-items-center aspect-square rounded-sm p-0.5 text-primary/50", {})}
+                        className={cn("grid place-items-center aspect-square rounded-xs p-0.5 text-primary/50", {})}
                       >
                         <item.icon
                           className={cn("h-3.5 w-3.5", {

@@ -53,7 +53,7 @@ export function AskPiMenu(props: Props) {
             <div className="mt-3 flex items-center gap-4">
               <button
                 type="button"
-                className="p-1 text-tertiary text-13 font-medium rounded hover:bg-custom-background-80 outline-none"
+                className="p-1 text-tertiary text-13 font-medium rounded-sm hover:bg-layer-1 outline-none"
                 onClick={() => handleInsertText(false)}
               >
                 Replace selection
@@ -61,7 +61,7 @@ export function AskPiMenu(props: Props) {
               <Tooltip tooltipContent="Add to next line">
                 <button
                   type="button"
-                  className="flex-shrink-0 size-6 grid place-items-center rounded hover:bg-custom-background-80 outline-none"
+                  className="flex-shrink-0 size-6 grid place-items-center rounded-sm hover:bg-layer-1 outline-none"
                   onClick={() => handleInsertText(true)}
                 >
                   <CornerDownRight className="text-tertiary size-4" />
@@ -70,7 +70,7 @@ export function AskPiMenu(props: Props) {
               <Tooltip tooltipContent="Re-generate response">
                 <button
                   type="button"
-                  className="flex-shrink-0 size-6 grid place-items-center rounded hover:bg-custom-background-80 outline-none"
+                  className="flex-shrink-0 size-6 grid place-items-center rounded-sm hover:bg-layer-1 outline-none"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();

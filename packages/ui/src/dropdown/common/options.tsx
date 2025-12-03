@@ -51,9 +51,9 @@ export function DropdownOptions(props: IMultiSelectDropdownOptions | ISingleSele
                   disabled={option.disabled}
                   className={({ active, selected }) =>
                     cn(
-                      "flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5",
+                      "flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5",
                       {
-                        "bg-custom-background-80": active,
+                        "bg-layer-1": active,
                         "text-primary": selected,
                         "text-secondary": !selected,
                       },

@@ -206,7 +206,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
         <div className="hidden md:block">
           <ViewQuickActions
             parentRef={parentRef}
-            customClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-custom-background-80/70 rounded"
+            customClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-layer-1/70 rounded-sm"
             projectId={projectId.toString()}
             view={viewDetails}
             workspaceSlug={workspaceSlug.toString()}

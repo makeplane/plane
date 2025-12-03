@@ -30,14 +30,14 @@ export function BubbleMenuColorSelector(props: Props) {
       classNames={{
         buttonContainer: "h-full",
         button:
-          "flex items-center gap-1 h-full whitespace-nowrap px-3 text-13 font-medium text-tertiary hover:bg-custom-background-80 active:bg-custom-background-80 rounded transition-colors",
+          "flex items-center gap-1 h-full whitespace-nowrap px-3 text-13 font-medium text-tertiary hover:bg-layer-1 active:bg-layer-1 rounded-sm transition-colors",
       }}
       menuButton={
         <>
           <span>Color</span>
           <span
-            className={cn("flex-shrink-0 size-6 grid place-items-center rounded border-[0.5px] border-strong", {
-              "bg-custom-background-100": !activeBackgroundColor,
+            className={cn("flex-shrink-0 size-6 grid place-items-center rounded-sm border-[0.5px] border-strong", {
+              "bg-surface-1": !activeBackgroundColor,
             })}
             style={{
               backgroundColor: activeBackgroundColor ? activeBackgroundColor.backgroundColor : "transparent",
@@ -58,7 +58,7 @@ export function BubbleMenuColorSelector(props: Props) {
       getFloatingProps={getFloatingProps}
       getReferenceProps={getReferenceProps}
     >
-      <section className="mt-1 rounded-md border-[0.5px] border-strong bg-custom-background-100 p-2 space-y-2 shadow-custom-shadow-rg">
+      <section className="mt-1 rounded-md border-[0.5px] border-strong bg-surface-1 p-2 space-y-2 shadow-custom-shadow-rg">
         <div className="space-y-1.5">
           <p className="text-11 text-tertiary font-semibold">Text colors</p>
           <div className="flex items-center gap-2">
@@ -66,7 +66,7 @@ export function BubbleMenuColorSelector(props: Props) {
               <button
                 key={color.key}
                 type="button"
-                className="flex-shrink-0 size-6 rounded border-[0.5px] border-strong-1 hover:opacity-60 transition-opacity"
+                className="flex-shrink-0 size-6 rounded-sm border-[0.5px] border-strong-1 hover:opacity-60 transition-opacity"
                 style={{
                   backgroundColor: color.textColor,
                 }}
@@ -75,7 +75,7 @@ export function BubbleMenuColorSelector(props: Props) {
             ))}
             <button
               type="button"
-              className="flex-shrink-0 size-6 grid place-items-center rounded text-tertiary border-[0.5px] border-strong-1 hover:bg-custom-background-80 transition-colors"
+              className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-tertiary border-[0.5px] border-strong-1 hover:bg-layer-1 transition-colors"
               onClick={() => TextColorItem(editor).command({ color: undefined })}
             >
               <Ban className="size-4" />
@@ -89,7 +89,7 @@ export function BubbleMenuColorSelector(props: Props) {
               <button
                 key={color.key}
                 type="button"
-                className="flex-shrink-0 size-6 rounded border-[0.5px] border-strong-1 hover:opacity-60 transition-opacity"
+                className="flex-shrink-0 size-6 rounded-sm border-[0.5px] border-strong-1 hover:opacity-60 transition-opacity"
                 style={{
                   backgroundColor: color.backgroundColor,
                 }}
@@ -98,7 +98,7 @@ export function BubbleMenuColorSelector(props: Props) {
             ))}
             <button
               type="button"
-              className="flex-shrink-0 size-6 grid place-items-center rounded text-tertiary border-[0.5px] border-strong-1 hover:bg-custom-background-80 transition-colors"
+              className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-tertiary border-[0.5px] border-strong-1 hover:bg-layer-1 transition-colors"
               onClick={() => BackgroundColorItem(editor).command({ color: undefined })}
             >
               <Ban className="size-4" />

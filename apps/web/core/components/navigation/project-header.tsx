@@ -12,7 +12,7 @@ type ProjectHeaderProps = {
 
 export const ProjectHeader: FC<ProjectHeaderProps> = ({ project }) => (
   <div className="flex items-center gap-1.5 text-left select-none w-full">
-    <div className="size-7 rounded-md bg-custom-background-90 flex items-center justify-center flex-shrink-0">
+    <div className="size-7 rounded-md bg-surface-2 flex items-center justify-center flex-shrink-0">
       <Logo logo={project.logo_props} size={16} />
     </div>
     <p className="truncate text-14 font-medium text-secondary flex-shrink-0">{project.name}</p>

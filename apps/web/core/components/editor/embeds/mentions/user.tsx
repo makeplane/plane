@@ -33,7 +33,7 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
 
   if (!userDetails) {
     return (
-      <div className="not-prose inline px-1 py-0.5 rounded bg-custom-background-80 text-tertiary no-underline">
+      <div className="not-prose inline px-1 py-0.5 rounded-sm bg-layer-1 text-tertiary no-underline">
         @suspended user
       </div>
     );
@@ -42,7 +42,7 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
   return (
     <div
       className={cn(
-        "not-prose inline px-1 py-0.5 rounded bg-custom-primary-100/20 text-custom-primary-100 no-underline",
+        "not-prose inline px-1 py-0.5 rounded-sm bg-custom-primary-100/20 text-custom-primary-100 no-underline",
         {
           "bg-yellow-500/20 text-yellow-500": id === currentUser?.id,
         }
@@ -53,7 +53,7 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
           <Link to={profileLink}>@{userDetails?.display_name}</Link>
         </Popover.Button>
         <Popover.Panel side="bottom" align="start">
-          <div className="w-60 bg-custom-background-100 shadow-custom-shadow-rg rounded-lg p-3 border-[0.5px] border-strong">
+          <div className="w-60 bg-surface-1 shadow-custom-shadow-rg rounded-lg p-3 border-[0.5px] border-strong">
             <div className="flex items-center gap-3">
               <div className="flex-shrink-0 size-10 grid place-items-center">
                 <Avatar

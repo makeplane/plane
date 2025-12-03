@@ -69,12 +69,12 @@ export function SingleUserSelect({ collaborator, index, users, setUsers }: Props
     | undefined;
 
   return (
-    <div className="grid grid-cols-3 items-center gap-2 rounded-md bg-custom-background-80 px-2 py-3">
+    <div className="grid grid-cols-3 items-center gap-2 rounded-md bg-layer-1 px-2 py-3">
       <div className="flex items-center gap-2">
-        <div className="relative h-8 w-8 flex-shrink-0 rounded">
+        <div className="relative h-8 w-8 flex-shrink-0 rounded-sm">
           <img
             src={collaborator.avatar_url}
-            className="absolute left-0 top-0 h-full w-full rounded object-cover"
+            className="absolute left-0 top-0 h-full w-full rounded-sm object-cover"
             alt={`${collaborator.login} GitHub user`}
           />
         </div>

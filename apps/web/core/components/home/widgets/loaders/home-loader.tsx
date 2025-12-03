@@ -11,7 +11,7 @@ export function HomeLoader() {
             <div className="text-14 font-semibold text-custom-text-350 mb-4">
               <Loader.Item height="20px" width="100px" />
             </div>
-            <Loader className="h-[110px] w-full flex items-center justify-center gap-2 text-placeholder rounded">
+            <Loader className="h-[110px] w-full flex items-center justify-center gap-2 text-placeholder rounded-sm">
               <Loader.Item height="100%" width="100%" />
             </Loader>
           </div>

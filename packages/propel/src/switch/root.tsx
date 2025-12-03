@@ -24,10 +24,10 @@ function Switch({ value, onChange, label, size = "sm", disabled, className }: IT
         size === "sm" ? "h-4 w-6" : size === "md" ? "h-5 w-8" : "h-6 w-10",
         // state
         disabled
-          ? "cursor-not-allowed bg-custom-background-80"
+          ? "cursor-not-allowed bg-layer-1"
           : value
             ? "cursor-pointer bg-custom-primary-100"
-            : "cursor-pointer bg-custom-background-90",
+            : "cursor-pointer bg-surface-2",
         className
       )}
     >
@@ -45,9 +45,9 @@ function Switch({ value, onChange, label, size = "sm", disabled, className }: IT
               : size === "md"
                 ? "translate-x-4 bg-white"
                 : "translate-x-5 bg-white"
-            : "translate-x-0.5 bg-custom-background-90",
+            : "translate-x-0.5 bg-surface-2",
           // disabled
-          disabled && "cursor-not-allowed bg-custom-background-90"
+          disabled && "cursor-not-allowed bg-surface-2"
         )}
       />
     </BaseSwitch.Root>

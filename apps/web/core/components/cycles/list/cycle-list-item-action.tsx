@@ -253,7 +253,7 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
               </div>
             </Tooltip>
             {projectUTCOffset && (
-              <span className="rounded-md text-11 px-2 cursor-default  py-1 bg-custom-background-80 text-tertiary">
+              <span className="rounded-md text-11 px-2 cursor-default  py-1 bg-layer-1 text-tertiary">
                 {projectUTCOffset}
               </span>
             )}
@@ -266,7 +266,7 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
           <>
             <DateRangeDropdown
               buttonVariant={"transparent-with-text"}
-              buttonContainerClassName={`h-6 w-full cursor-auto flex items-center gap-1.5 text-tertiary rounded text-11 [&>div]:hover:bg-transparent`}
+              buttonContainerClassName={`h-6 w-full cursor-auto flex items-center gap-1.5 text-tertiary rounded-sm text-11 [&>div]:hover:bg-transparent`}
               buttonClassName="p-0"
               minDate={new Date()}
               value={{

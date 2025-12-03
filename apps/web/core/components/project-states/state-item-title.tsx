@@ -41,7 +41,7 @@ export const StateItemTitle = observer(function StateItemTitle(props: TStateItem
       <div className="flex items-center gap-1 px-1">
         {/* draggable indicator */}
         {!disabled && stateCount != 1 && (
-          <div className="flex-shrink-0 w-3 h-3 rounded-sm absolute -left-1.5 hidden group-hover:flex justify-center items-center transition-colors bg-custom-background-90 cursor-pointer text-secondary hover:text-primary">
+          <div className="flex-shrink-0 w-3 h-3 rounded-xs absolute -left-1.5 hidden group-hover:flex justify-center items-center transition-colors bg-surface-2 cursor-pointer text-secondary hover:text-primary">
             <GripVertical className="w-3 h-3" />
           </div>
         )}
@@ -68,7 +68,7 @@ export const StateItemTitle = observer(function StateItemTitle(props: TStateItem
           {/* state edit options */}
           <div className="flex items-center gap-1 transition-all">
             <button
-              className="flex-shrink-0 w-5 h-5 rounded flex justify-center items-center overflow-hidden transition-colors hover:bg-custom-background-80 cursor-pointer text-secondary hover:text-primary"
+              className="flex-shrink-0 w-5 h-5 rounded-sm flex justify-center items-center overflow-hidden transition-colors hover:bg-layer-1 cursor-pointer text-secondary hover:text-primary"
               onClick={() => setUpdateStateModal(true)}
               data-ph-element={STATE_TRACKER_ELEMENTS.STATE_LIST_EDIT_BUTTON}
             >

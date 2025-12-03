@@ -34,7 +34,7 @@ export function TabList({
     <Tab.List
       as="div"
       className={cn(
-        "flex w-full min-w-fit items-center justify-between gap-1.5 rounded-md text-13 p-0.5 bg-custom-background-80/60",
+        "flex w-full min-w-fit items-center justify-between gap-1.5 rounded-md text-13 p-0.5 bg-layer-1/60",
         tabListClassName
       )}
     >
@@ -42,12 +42,12 @@ export function TabList({
         <Tab
           className={({ selected }) =>
             cn(
-              "flex items-center justify-center p-1 min-w-fit w-full font-medium text-primary outline-none focus:outline-none cursor-pointer transition-all rounded",
+              "flex items-center justify-center p-1 min-w-fit w-full font-medium text-primary outline-none focus:outline-none cursor-pointer transition-all rounded-sm",
               (selectedTab ? selectedTab === tab.key : selected)
-                ? "bg-custom-background-100 text-primary shadow-sm"
+                ? "bg-surface-1 text-primary shadow-sm"
                 : tab.disabled
                   ? "text-placeholder cursor-not-allowed"
-                  : "text-placeholder hover:text-tertiary hover:bg-custom-background-80/60",
+                  : "text-placeholder hover:text-tertiary hover:bg-layer-1/60",
               {
                 "text-11": size === "sm",
                 "text-13": size === "md",

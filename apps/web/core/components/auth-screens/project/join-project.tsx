@@ -35,7 +35,7 @@ export function JoinProject(props: Props) {
   };
 
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center gap-y-5 bg-custom-background-100 text-center">
+    <div className="flex h-full w-full flex-col items-center justify-center gap-y-5 bg-surface-1 text-center">
       <div className="h-44 w-72">
         <img src={Unauthorized} className="h-[176px] w-[288px] object-contain" alt="JoinProject" />
       </div>

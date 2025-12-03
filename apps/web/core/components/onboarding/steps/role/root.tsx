@@ -141,7 +141,7 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
                     {isSelected && (
                       <>
                         <button
-                          className={`size-4 rounded border-2 flex items-center justify-center bg-blue-500 border-blue-500`}
+                          className={`size-4 rounded-sm border-2 flex items-center justify-center bg-blue-500 border-blue-500`}
                         >
                           <Check className="w-3 h-3 text-white" />
                         </button>

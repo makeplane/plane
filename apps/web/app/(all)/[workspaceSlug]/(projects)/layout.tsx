@@ -14,7 +14,7 @@ function WorkspaceLayout() {
         <div className="relative flex size-full overflow-hidden">
           <ProjectAppSidebar />
           <ExtendedProjectSidebar />
-          <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
+          <main className="relative flex h-full w-full flex-col overflow-hidden bg-surface-1">
             <Outlet />
           </main>
         </div>

@@ -92,7 +92,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
+          <div className="fixed inset-0 bg-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10">
@@ -106,7 +106,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 py-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform rounded-lg bg-surface-1 py-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
                 <div className="flex flex-col gap-4">
                   <div className="flex items-center justify-between px-5">
                     <div className="flex items-center gap-1">
@@ -137,7 +137,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
                           return (
                             <button
                               key={optionId}
-                              className="flex w-full items-center gap-4 rounded px-4 py-3 text-13 text-secondary hover:bg-custom-background-90"
+                              className="flex w-full items-center gap-4 rounded-sm px-4 py-3 text-13 text-secondary hover:bg-surface-2"
                               onClick={() => {
                                 transferIssue({
                                   new_cycle_id: optionId,
@@ -149,7 +149,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
                               <div className="flex w-full justify-between truncate">
                                 <span className="truncate">{cycleDetails?.name}</span>
                                 {cycleDetails.status && (
-                                  <span className="flex-shrink-0 flex items-center rounded-full bg-custom-background-80  px-2 capitalize">
+                                  <span className="flex-shrink-0 flex items-center rounded-full bg-layer-1  px-2 capitalize">
                                     {cycleDetails.status.toLocaleLowerCase()}
                                   </span>
                                 )}

@@ -16,13 +16,13 @@ export function FilterOption(props: Props) {
   return (
     <button
       type="button"
-      className="flex w-full items-center gap-2 rounded p-1.5 hover:bg-custom-background-80"
+      className="flex w-full items-center gap-2 rounded-sm p-1.5 hover:bg-layer-1"
       onClick={onClick}
     >
       <div
-        className={`grid h-3 w-3 flex-shrink-0 place-items-center border bg-custom-background-90 ${
+        className={`grid h-3 w-3 flex-shrink-0 place-items-center border bg-surface-2 ${
           isChecked ? "border-custom-primary-100 bg-custom-primary-100 text-white" : "border-strong"
-        } ${multiple ? "rounded-sm" : "rounded-full"}`}
+        } ${multiple ? "rounded-xs" : "rounded-full"}`}
       >
         {isChecked && <Check size={10} strokeWidth={3} />}
       </div>

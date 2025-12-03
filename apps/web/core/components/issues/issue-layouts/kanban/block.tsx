@@ -72,8 +72,8 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
   const customActionButton = (
     <div
       ref={menuActionRef}
-      className={`flex items-center h-full w-full cursor-pointer rounded p-1 text-placeholder hover:bg-custom-background-80 ${
-        isMenuActive ? "bg-custom-background-80 text-primary" : "text-secondary"
+      className={`flex items-center h-full w-full cursor-pointer rounded-sm p-1 text-placeholder hover:bg-layer-1 ${
+        isMenuActive ? "bg-layer-1 text-primary" : "text-secondary"
       }`}
       onClick={() => setIsMenuActive(!isMenuActive)}
     >
@@ -268,10 +268,10 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
           href={workItemLink}
           ref={cardRef}
           className={cn(
-            "block rounded border-[1px] outline-[0.5px] outline-transparent w-full border-subtle-1 bg-custom-background-100 text-13 transition-all hover:border-strong-1",
+            "block rounded-sm border-[1px] outline-[0.5px] outline-transparent w-full border-subtle-1 bg-surface-1 text-13 transition-all hover:border-strong-1",
             { "hover:cursor-pointer": isDragAllowed },
             { "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id) },
-            { "bg-custom-background-80 z-[100]": isCurrentBlockDragging }
+            { "bg-layer-1 z-[100]": isCurrentBlockDragging }
           )}
           onClick={() => handleIssuePeekOverview(issue)}
           disabled={!!issue?.tempId}

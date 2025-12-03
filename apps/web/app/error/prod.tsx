@@ -39,7 +39,7 @@ export function ProdErrorComponent({ onGoHome }: ProdErrorComponentProps) {
 
   return (
     <DefaultLayout>
-      <div className="relative container mx-auto h-full w-full max-w-xl flex flex-col gap-2 items-center justify-center gap-y-6 bg-custom-background-100 text-center px-6">
+      <div className="relative container mx-auto h-full w-full max-w-xl flex flex-col gap-2 items-center justify-center gap-y-6 bg-surface-1 text-center px-6">
         <div className="relative w-full">
           <img
             src={maintenanceModeImage}

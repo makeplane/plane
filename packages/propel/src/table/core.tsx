@@ -18,9 +18,7 @@ const TableHeader = React.forwardRef(function TableHeader(
   { className, ...props }: React.ComponentPropsWithoutRef<"thead">,
   ref: React.ForwardedRef<React.ComponentRef<"thead">>
 ) {
-  return (
-    <thead ref={ref} className={cn("bg-custom-background-80 py-4 border-y border-subtle-1", className)} {...props} />
-  );
+  return <thead ref={ref} className={cn("bg-layer-1 py-4 border-y border-subtle-1", className)} {...props} />;
 });
 TableHeader.displayName = "TableHeader";
 
@@ -44,13 +42,7 @@ const TableRow = React.forwardRef(function TableRow(
   { className, ...props }: React.ComponentPropsWithoutRef<"tr">,
   ref: React.ForwardedRef<React.ComponentRef<"tr">>
 ) {
-  return (
-    <tr
-      ref={ref}
-      className={cn("transition-colors data-[state=selected]:bg-custom-background-100", className)}
-      {...props}
-    />
-  );
+  return <tr ref={ref} className={cn("transition-colors data-[state=selected]:bg-surface-1", className)} {...props} />;
 });
 TableRow.displayName = "TableRow";
 

@@ -169,7 +169,7 @@ export const EstimatePointUpdate = observer(function EstimatePointUpdate(props: 
     <form onSubmit={handleUpdate} className="relative flex items-center gap-2 text-14 pr-2.5">
       <div
         className={cn(
-          "relative w-full border rounded flex items-center my-1",
+          "relative w-full border rounded-sm flex items-center my-1",
           estimatePointError?.message ? `border-red-500` : `border-subtle-1`
         )}
       >
@@ -199,7 +199,7 @@ export const EstimatePointUpdate = observer(function EstimatePointUpdate(props: 
       {estimateInputValue && estimateInputValue.length > 0 && (
         <button
           type="submit"
-          className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer text-green-500"
+          className="rounded-xs w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-layer-1 transition-colors cursor-pointer text-green-500"
           disabled={loader}
         >
           {loader ? <Spinner className="w-4 h-4" /> : <Check size={14} />}
@@ -207,7 +207,7 @@ export const EstimatePointUpdate = observer(function EstimatePointUpdate(props: 
       )}
       <button
         type="button"
-        className="rounded-sm w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-custom-background-80 transition-colors cursor-pointer"
+        className="rounded-xs w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-layer-1 transition-colors cursor-pointer"
         onClick={handleClose}
         disabled={loader}
       >

@@ -90,7 +90,7 @@ export const CycleIssuesMobileHeader = observer(function CycleIssuesMobileHeader
         onClose={() => setAnalyticsModal(false)}
         cycleDetails={cycleDetails ?? undefined}
       />
-      <div className="flex justify-evenly py-2 border-b border-subtle-1 md:hidden bg-custom-background-100">
+      <div className="flex justify-evenly py-2 border-b border-subtle-1 md:hidden bg-surface-1">
         <CustomMenu
           maxHeight={"md"}
           className="flex flex-grow justify-center text-secondary text-13"

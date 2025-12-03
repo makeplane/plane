@@ -265,7 +265,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
             customButton={
               <button
                 type="button"
-                className="flex cursor-pointer items-center justify-between gap-1 h-full rounded border-[0.5px] border-strong px-2 py-0.5 text-11 hover:bg-custom-background-80"
+                className="flex cursor-pointer items-center justify-between gap-1 h-full rounded-sm border-[0.5px] border-strong px-2 py-0.5 text-11 hover:bg-layer-1"
               >
                 {selectedParentIssue?.project_id && (
                   <IssueIdentifier
@@ -307,7 +307,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
         ) : (
           <button
             type="button"
-            className="flex cursor-pointer items-center justify-between gap-1 h-full rounded border-[0.5px] border-strong px-2 py-0.5 text-11 hover:bg-custom-background-80"
+            className="flex cursor-pointer items-center justify-between gap-1 h-full rounded-sm border-[0.5px] border-strong px-2 py-0.5 text-11 hover:bg-layer-1"
             onClick={() => setParentIssueListModalOpen(true)}
           >
             <ParentPropertyIcon className="h-3 w-3 flex-shrink-0" />

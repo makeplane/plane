@@ -161,7 +161,7 @@ export const CreateUpdateLabelInline = observer(
       <>
         <div
           ref={ref}
-          className={`flex w-full scroll-m-8 items-center gap-2 bg-custom-background-100 ${labelForm ? "" : "hidden"}`}
+          className={`flex w-full scroll-m-8 items-center gap-2 bg-surface-1 ${labelForm ? "" : "hidden"}`}
         >
           <div className="flex-shrink-0">
             <Popover className="relative z-10 flex h-full w-full items-center justify-center">

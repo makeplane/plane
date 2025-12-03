@@ -30,7 +30,7 @@ function ProjectCreateHeader(props: Props) {
   const { getIndex } = getTabIndex(ETabIndices.PROJECT_CREATE, isMobile);
 
   return (
-    <div className="group relative h-44 w-full rounded-lg bg-custom-background-80">
+    <div className="group relative h-44 w-full rounded-lg bg-layer-1">
       {coverImage && (
         <img
           src={getFileURL(coverImage)}
@@ -73,7 +73,7 @@ function ProjectCreateHeader(props: Props) {
               className="flex items-center justify-center"
               buttonClassName="flex items-center justify-center"
               label={
-                <span className="grid h-11 w-11 place-items-center rounded-md bg-custom-background-80">
+                <span className="grid h-11 w-11 place-items-center rounded-md bg-layer-1">
                   <Logo logo={value} size={20} />
                 </span>
               }

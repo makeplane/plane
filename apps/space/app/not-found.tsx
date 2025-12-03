@@ -5,7 +5,7 @@ function NotFound() {
   return (
     <div className="h-screen w-screen grid place-items-center">
       <div className="text-center">
-        <div className="mx-auto size-32 md:size-52 grid place-items-center rounded-full bg-custom-background-80">
+        <div className="mx-auto size-32 md:size-52 grid place-items-center rounded-full bg-layer-1">
           <div className="size-16 md:size-32 grid place-items-center">
             <img src={SomethingWentWrongImage} alt="Something went wrong" width={128} height={128} />
           </div>

@@ -48,7 +48,7 @@
 .ProseMirror blockquote {
   font-style: normal;
   font-weight: 400;
-  @apply border-[3px] border-strong;
+  @apply border-l-[3px] border-strong;
 }
 
 .ProseMirror blockquote p::before,

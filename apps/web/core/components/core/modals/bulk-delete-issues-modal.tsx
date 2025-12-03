@@ -152,7 +152,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
   return (
     <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setQuery("")} appear>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
-        <div className="fixed inset-0 z-20 overflow-y-auto bg-custom-backdrop p-4 transition-opacity sm:p-6 md:p-20">
+        <div className="fixed inset-0 z-20 overflow-y-auto bg-backdrop p-4 transition-opacity sm:p-6 md:p-20">
           <Transition.Child
             as={React.Fragment}
             enter="ease-out duration-300"
@@ -163,7 +163,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
             leaveTo="opacity-0 scale-95"
           >
             <Dialog.Panel className="relative flex w-full items-center justify-center ">
-              <div className="w-full max-w-2xl transform divide-y divide-subtle-1 divide-opacity-10 rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
+              <div className="w-full max-w-2xl transform divide-y divide-subtle-1 divide-opacity-10 rounded-lg bg-surface-1 shadow-custom-shadow-md transition-all">
                 <form>
                   <Combobox
                     onChange={(val: string) => {

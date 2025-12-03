@@ -99,7 +99,7 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
             else router.push(`/?next_path=${pathName}?${queryParam}`);
           }}
           className={cn(
-            "flex items-center justify-center gap-x-1 overflow-hidden rounded border focus:outline-none bg-custom-background-100",
+            "flex items-center justify-center gap-x-1 overflow-hidden rounded-sm border focus:outline-none bg-surface-1",
             votingDimensions,
             {
               "border-custom-primary-200 text-custom-primary-200": isUpVotedByUser,
@@ -140,7 +140,7 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
             else router.push(`/?next_path=${pathName}?${queryParam}`);
           }}
           className={cn(
-            "flex items-center justify-center gap-x-1 overflow-hidden rounded border focus:outline-none bg-custom-background-100",
+            "flex items-center justify-center gap-x-1 overflow-hidden rounded-sm border focus:outline-none bg-surface-1",
             votingDimensions,
             {
               "border-red-600 text-red-600": isDownVotedByUser,

@@ -12,7 +12,7 @@ type TFiltersToggleProps<P extends TFilterProperty, E extends TExternalFilter> =
 };
 
 const COMMON_CLASSNAME =
-  "grid place-items-center h-7 w-full py-0.5 px-2 rounded border transition-all duration-200 cursor-pointer";
+  "grid place-items-center h-7 w-full py-0.5 px-2 rounded-sm border transition-all duration-200 cursor-pointer";
 
 export const FiltersToggle = observer(function FiltersToggle<P extends TFilterProperty, E extends TExternalFilter>(
   props: TFiltersToggleProps<P, E>
@@ -52,7 +52,7 @@ export const FiltersToggle = observer(function FiltersToggle<P extends TFilterPr
     <div
       className={cn(COMMON_CLASSNAME, {
         "border-transparent bg-custom-primary-100/10 hover:bg-custom-primary-100/20": isFilterRowVisible,
-        "border-subtle-1 hover:bg-custom-background-90": !isFilterRowVisible,
+        "border-subtle-1 hover:bg-surface-2": !isFilterRowVisible,
       })}
       onClick={handleToggleFilter}
     >

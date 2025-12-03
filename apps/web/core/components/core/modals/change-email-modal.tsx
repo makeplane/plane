@@ -140,7 +140,7 @@ export const ChangeEmailModal: React.FC<Props> = observer((props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 transition-opacity bg-custom-backdrop" />
+          <div className="fixed inset-0 transition-opacity bg-backdrop" />
         </Transition.Child>
 
         <div className="overflow-y-auto fixed inset-0 z-30">
@@ -154,7 +154,7 @@ export const ChangeEmailModal: React.FC<Props> = observer((props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 px-4 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-[30rem]">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-surface-1 px-4 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-[30rem]">
                 <div className="py-4 space-y-0">
                   <Dialog.Title as="h3" className="text-16 font-medium leading-6 text-primary">
                     {changeEmailT("title")}
@@ -188,7 +188,7 @@ export const ChangeEmailModal: React.FC<Props> = observer((props) => {
                           placeholder={changeEmailT("form.email.placeholder")}
                           className={cn(
                             { "border-red-500": errors.email },
-                            { "cursor-not-allowed !bg-custom-background-90": secondStep }
+                            { "cursor-not-allowed !bg-surface-2": secondStep }
                           )}
                           disabled={secondStep}
                         />

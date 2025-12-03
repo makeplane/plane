@@ -128,7 +128,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
         <Row
           ref={issueRef}
           className={cn(
-            "group/list-block min-h-11 relative flex flex-col gap-3 bg-custom-background-100 hover:bg-custom-background-90 py-3 text-13 transition-colors border border-transparent last:border-b-transparent",
+            "group/list-block min-h-11 relative flex flex-col gap-3 bg-surface-1 hover:bg-surface-2 py-3 text-13 transition-colors border border-transparent last:border-b-transparent",
             {
               "md:flex-row md:items-center": isSidebarCollapsed,
               "lg:flex-row lg:items-center": !isSidebarCollapsed,
@@ -162,7 +162,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
 
             {/* quick actions */}
             <div
-              className={cn("block border border-strong rounded", {
+              className={cn("block border border-strong rounded-sm", {
                 "md:hidden": isSidebarCollapsed,
                 "lg:hidden": !isSidebarCollapsed,
               })}

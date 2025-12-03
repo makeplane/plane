@@ -65,10 +65,10 @@ const AssetItem = observer(function AssetItem(props: AssetItemProps) {
     return (
       <a
         href={asset.href}
-        className="relative group/asset-item h-12 flex items-center gap-2 pr-2 rounded border border-subtle-1 hover:bg-custom-background-80 transition-colors"
+        className="relative group/asset-item h-12 flex items-center gap-2 pr-2 rounded-sm border border-subtle-1 hover:bg-layer-1 transition-colors"
       >
         <div
-          className="flex-shrink-0 w-11 h-12 rounded-l bg-cover bg-no-repeat bg-center"
+          className="flex-shrink-0 w-11 h-12 rounded-l-sm bg-cover bg-no-repeat bg-center"
           style={{
             backgroundImage: `url('${assetSrc}')`,
           }}
@@ -81,7 +81,7 @@ const AssetItem = observer(function AssetItem(props: AssetItemProps) {
               href={assetDownloadSrc}
               target="_blank"
               rel="noreferrer noopener"
-              className="shrink-0 py-0.5 px-1 flex items-center gap-1 rounded text-secondary hover:text-primary opacity-0 pointer-events-none group-hover/asset-item:opacity-100 group-hover/asset-item:pointer-events-auto transition-opacity"
+              className="shrink-0 py-0.5 px-1 flex items-center gap-1 rounded-sm text-secondary hover:text-primary opacity-0 pointer-events-none group-hover/asset-item:opacity-100 group-hover/asset-item:pointer-events-auto transition-opacity"
             >
               <Download className="shrink-0 size-3" />
               <span className="text-11 font-medium">{t("page_navigation_pane.tabs.assets.download_button")}</span>

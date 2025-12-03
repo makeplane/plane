@@ -10,7 +10,7 @@ export const NotificationMenuOptionItem = observer(function NotificationMenuOpti
   if (type === "menu-item")
     return (
       <div
-        className="flex items-center gap-2 cursor-pointer mx-2 px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm"
+        className="flex items-center gap-2 cursor-pointer mx-2 px-2 p-1 transition-all hover:bg-layer-1 rounded-xs"
         onClick={() => onClick && onClick()}
       >
         {prependIcon && prependIcon}

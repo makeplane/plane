@@ -10,7 +10,7 @@ export function ProjectDetailsFormLoader() {
         </Loader>
         <div className="absolute bottom-4 flex w-full items-end justify-between gap-3 px-4">
           <div className="flex flex-grow gap-3 truncate">
-            <div className="flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-lg bg-custom-background-90">
+            <div className="flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-lg bg-surface-2">
               <Loader>
                 <Loader.Item height="46px" width="46px" />
               </Loader>

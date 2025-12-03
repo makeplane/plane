@@ -87,7 +87,7 @@ export function Invitations(props: Props) {
             return (
               <div
                 key={invitation.id}
-                className={`flex cursor-pointer items-center gap-2 rounded border p-3.5 border-subtle-1 hover:bg-custom-background-90`}
+                className={`flex cursor-pointer items-center gap-2 rounded-sm border p-3.5 border-subtle-1 hover:bg-surface-2`}
                 onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
               >
                 <div className="flex-shrink-0">
@@ -126,7 +126,7 @@ export function Invitations(props: Props) {
       <Button
         variant="link-neutral"
         size="lg"
-        className="w-full text-14 bg-custom-background-90"
+        className="w-full text-14 bg-surface-2"
         onClick={handleCurrentViewChange}
         disabled={isJoiningWorkspaces}
       >

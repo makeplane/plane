@@ -15,9 +15,9 @@ export function FavoriteItemWrapper(props: Props) {
       <div
         ref={elementRef}
         className={cn(
-          "group/project-item cursor-pointer relative group flex items-center justify-between w-full gap-1.5 rounded px-2 py-1 outline-none text-secondary hover:bg-custom-sidebar-background-90 active:bg-custom-sidebar-background-90",
+          "group/project-item cursor-pointer relative group flex items-center justify-between w-full gap-1.5 rounded-sm px-2 py-1 outline-none text-secondary hover:bg-surface-2 active:bg-surface-2",
           {
-            "bg-custom-sidebar-background-90": isMenuActive,
+            "bg-surface-2": isMenuActive,
           }
         )}
       >

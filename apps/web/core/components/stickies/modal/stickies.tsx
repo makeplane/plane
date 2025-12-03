@@ -58,7 +58,7 @@ export const Stickies = observer(function Stickies(props: TProps) {
             <button
               type="button"
               onClick={handleClose}
-              className="flex-shrink-0 grid place-items-center text-tertiary hover:text-primary hover:bg-custom-background-80 rounded p-1 transition-colors my-auto"
+              className="flex-shrink-0 grid place-items-center text-tertiary hover:text-primary hover:bg-layer-1 rounded-sm p-1 transition-colors my-auto"
             >
               <CloseIcon className="text-placeholder size-4" />
             </button>

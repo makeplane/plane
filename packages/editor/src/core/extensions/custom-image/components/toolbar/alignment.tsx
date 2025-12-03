@@ -42,7 +42,7 @@ export function ImageAlignmentAction(props: Props) {
         </button>
       </Tooltip>
       {isDropdownOpen && (
-        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-0.5 h-7 bg-black/80 flex items-center gap-2 px-2 rounded">
+        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-0.5 h-7 bg-black/80 flex items-center gap-2 px-2 rounded-sm">
           {IMAGE_ALIGNMENT_OPTIONS.map((option) => (
             <Tooltip disabled={isTouchDevice} key={option.value} tooltipContent={option.label}>
               <button

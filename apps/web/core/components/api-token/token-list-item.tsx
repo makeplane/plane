@@ -38,8 +38,8 @@ export function ApiTokenListItem(props: Props) {
           <h5 className="truncate text-13 font-medium">{token.label}</h5>
           <span
             className={`${
-              token.is_active ? "bg-green-500/10 text-green-500" : "bg-custom-background-80 text-placeholder"
-            } ml-2 flex h-4 max-h-fit items-center rounded-sm px-2 text-11 font-medium`}
+              token.is_active ? "bg-green-500/10 text-green-500" : "bg-layer-1 text-placeholder"
+            } ml-2 flex h-4 max-h-fit items-center rounded-xs px-2 text-11 font-medium`}
           >
             {token.is_active ? "Active" : "Expired"}
           </span>

@@ -66,7 +66,7 @@ export const getBorderRadius = (shape: "circle" | "square") => {
     case "circle":
       return "rounded-full";
     case "square":
-      return "rounded";
+      return "rounded-sm";
     default:
       return "rounded-full";
   }

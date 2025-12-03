@@ -108,10 +108,10 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
       <div className="space-y-3">
         <div className="text-16 font-medium">Chat + telemetry</div>
         <IntercomConfig isTelemetryEnabled={watch("is_telemetry_enabled") ?? false} />
-        <div className="flex items-center gap-14 px-4 py-3 border border-subtle-1 rounded">
+        <div className="flex items-center gap-14 px-4 py-3 border border-subtle-1 rounded-sm">
           <div className="grow flex items-center gap-4">
             <div className="shrink-0">
-              <div className="flex items-center justify-center w-10 h-10 bg-custom-background-80 rounded-full">
+              <div className="flex items-center justify-center w-10 h-10 bg-layer-1 rounded-full">
                 <Telescope className="w-6 h-6 text-tertiary/80 p-0.5" />
               </div>
             </div>

@@ -101,7 +101,7 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
                   ? `${renderFormattedDate(versionDetails.last_saved_at)} ${renderFormattedTime(versionDetails.last_saved_at)}`
                   : "Loading version details"}
               </h6>
-              <span className="flex-shrink-0 flex items-center gap-1 text-11 font-medium text-custom-primary-100 bg-custom-primary-100/20 py-1 px-1.5 rounded">
+              <span className="flex-shrink-0 flex items-center gap-1 text-11 font-medium text-custom-primary-100 bg-custom-primary-100/20 py-1 px-1.5 rounded-sm">
                 <EyeIcon className="flex-shrink-0 size-3" />
                 View only
               </span>

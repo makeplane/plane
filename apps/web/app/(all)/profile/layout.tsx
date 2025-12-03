@@ -13,7 +13,7 @@ export default function ProfileSettingsLayout() {
       <AuthenticationWrapper>
         <div className="relative flex h-full w-full overflow-hidden rounded-lg border border-subtle-1">
           <ProfileLayoutSidebar />
-          <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
+          <main className="relative flex h-full w-full flex-col overflow-hidden bg-surface-1">
             <div className="h-full w-full overflow-hidden">
               <Outlet />
             </div>

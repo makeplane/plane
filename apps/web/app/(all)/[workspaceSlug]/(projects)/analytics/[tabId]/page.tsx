@@ -69,7 +69,7 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
       {workspaceProjectIds && (
         <>
           {workspaceProjectIds.length > 0 || loader === "init-loader" ? (
-            <div className="flex h-full overflow-hidden bg-custom-background-100 ">
+            <div className="flex h-full overflow-hidden bg-surface-1 ">
               <Tabs value={selectedTab} onValueChange={handleTabChange} className="w-full h-full">
                 <div className={"flex flex-col w-full h-full"}>
                   <div

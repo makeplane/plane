@@ -114,7 +114,7 @@ export const ColorVariations: Story = {
 export const InButton: Story = {
   render() {
     return (
-      <button className="flex items-center gap-2 rounded bg-blue-500 px-4 py-2 text-white">
+      <button className="flex items-center gap-2 rounded-sm bg-blue-500 px-4 py-2 text-white">
         <Spinner height="16px" width="16px" />
         <span>Loading...</span>
       </button>

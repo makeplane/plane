@@ -20,7 +20,7 @@ export function PriorityIcon(props: IPriorityIcon) {
     high: "bg-orange-500/20 text-orange-500 border-orange-500",
     medium: "bg-yellow-500/20 text-yellow-500 border-yellow-500",
     low: "bg-custom-primary-100/20 text-custom-primary-100 border-custom-primary-100",
-    none: "bg-custom-background-80 text-secondary border-strong",
+    none: "bg-layer-1 text-secondary border-strong",
   };
 
   // get priority icon
@@ -40,7 +40,7 @@ export function PriorityIcon(props: IPriorityIcon) {
       {withContainer ? (
         <div
           className={cn(
-            "flex items-center justify-center border rounded p-0.5 flex-shrink-0",
+            "flex items-center justify-center border rounded-sm p-0.5 flex-shrink-0",
             priorityClasses[priority ?? "none"],
             containerClassName
           )}

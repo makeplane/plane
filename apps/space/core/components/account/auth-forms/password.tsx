@@ -119,7 +119,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
         <label className="text-13 font-medium text-tertiary" htmlFor="email">
           Email
         </label>
-        <div className={`relative flex items-center rounded-md bg-custom-background-100 border border-subtle`}>
+        <div className={`relative flex items-center rounded-md bg-surface-1 border border-subtle`}>
           <Input
             id="email"
             name="email"
@@ -143,14 +143,14 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
         <label className="text-13 text-tertiary font-medium" htmlFor="password">
           {mode === EAuthModes.SIGN_IN ? "Password" : "Set a password"}
         </label>
-        <div className="relative flex items-center rounded-md bg-custom-background-100">
+        <div className="relative flex items-center rounded-md bg-surface-1">
           <Input
             type={showPassword?.password ? "text" : "password"}
             name="password"
             value={passwordFormData.password}
             onChange={(e) => handleFormChange("password", e.target.value)}
             placeholder="Enter password"
-            className="disable-autofill-style h-10 w-full border border-subtle !bg-custom-background-100 pr-12 placeholder:text-placeholder"
+            className="disable-autofill-style h-10 w-full border border-subtle !bg-surface-1 pr-12 placeholder:text-placeholder"
             onFocus={() => setIsPasswordInputFocused(true)}
             onBlur={() => setIsPasswordInputFocused(false)}
             autoComplete="on"
@@ -176,14 +176,14 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
           <label className="text-13 text-tertiary font-medium" htmlFor="confirm_password">
             Confirm password
           </label>
-          <div className="relative flex items-center rounded-md bg-custom-background-100">
+          <div className="relative flex items-center rounded-md bg-surface-1">
             <Input
               type={showPassword?.retypePassword ? "text" : "password"}
               name="confirm_password"
               value={passwordFormData.confirm_password}
               onChange={(e) => handleFormChange("confirm_password", e.target.value)}
               placeholder="Confirm password"
-              className="disable-autofill-style h-10 w-full border border-subtle !bg-custom-background-100 pr-12 placeholder:text-placeholder"
+              className="disable-autofill-style h-10 w-full border border-subtle !bg-surface-1 pr-12 placeholder:text-placeholder"
               onFocus={() => setIsRetryPasswordInputFocused(true)}
               onBlur={() => setIsRetryPasswordInputFocused(false)}
             />

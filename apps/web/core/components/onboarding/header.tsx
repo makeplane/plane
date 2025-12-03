@@ -60,7 +60,7 @@ export const OnboardingHeader = observer(function OnboardingHeader(props: Onboar
 
   return (
     <div className="flex flex-col gap-4 sticky top-0 z-10">
-      <div className="h-1.5 rounded-t-lg w-full bg-custom-background-100 overflow-hidden cursor-pointer">
+      <div className="h-1.5 rounded-t-lg w-full bg-surface-1 overflow-hidden cursor-pointer">
         <Tooltip tooltipContent={`${currentStepNumber}/${totalSteps}`} position="bottom-end">
           <div
             className="h-full bg-custom-primary-100 transition-all duration-700 ease-out"

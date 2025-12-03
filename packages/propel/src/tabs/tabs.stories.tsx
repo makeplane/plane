@@ -237,10 +237,7 @@ export const DynamicTabs: Story = {
     return (
       <div className="w-[500px]">
         <div className="mb-4">
-          <button
-            onClick={addTab}
-            className="px-3 py-1.5 text-13 bg-custom-background-80 rounded hover:bg-custom-background-90"
-          >
+          <button onClick={addTab} className="px-3 py-1.5 text-13 bg-layer-1 rounded-sm hover:bg-surface-2">
             Add Tab
           </button>
         </div>
@@ -320,11 +317,11 @@ export const WithComplexContent: Story = {
             <div className="space-y-4">
               <div>
                 <label className="text-13 font-medium">Username</label>
-                <input type="text" className="mt-1 w-full px-3 py-2 bg-custom-background-80 rounded" />
+                <input type="text" className="mt-1 w-full px-3 py-2 bg-layer-1 rounded-sm" />
               </div>
               <div>
                 <label className="text-13 font-medium">Email</label>
-                <input type="email" className="mt-1 w-full px-3 py-2 bg-custom-background-80 rounded" />
+                <input type="email" className="mt-1 w-full px-3 py-2 bg-layer-1 rounded-sm" />
               </div>
             </div>
           </Tabs.Content>
@@ -332,11 +329,11 @@ export const WithComplexContent: Story = {
             <div className="space-y-4">
               <div>
                 <label className="text-13 font-medium">Current Password</label>
-                <input type="password" className="mt-1 w-full px-3 py-2 bg-custom-background-80 rounded" />
+                <input type="password" className="mt-1 w-full px-3 py-2 bg-layer-1 rounded-sm" />
               </div>
               <div>
                 <label className="text-13 font-medium">New Password</label>
-                <input type="password" className="mt-1 w-full px-3 py-2 bg-custom-background-80 rounded" />
+                <input type="password" className="mt-1 w-full px-3 py-2 bg-layer-1 rounded-sm" />
               </div>
             </div>
           </Tabs.Content>

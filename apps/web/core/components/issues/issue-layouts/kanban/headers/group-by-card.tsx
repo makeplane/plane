@@ -112,7 +112,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
           verticalAlignPosition ? `w-[44px] flex-col items-center` : `w-full flex-row items-center`
         }`}
       >
-        <div className="flex h-[25px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded-sm">
+        <div className="flex h-[25px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded-xs">
           {icon ? icon : <Circle width={14} strokeWidth={2} />}
         </div>
 
@@ -139,7 +139,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
 
         {sub_group_by === null && (
           <div
-            className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
+            className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xs transition-all hover:bg-layer-1"
             onClick={() => handleCollapsedGroups("group_by", column_id)}
           >
             {verticalAlignPosition ? (
@@ -154,7 +154,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
           (renderExistingIssueModal ? (
             <CustomMenu
               customButton={
-                <span className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80">
+                <span className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xs transition-all hover:bg-layer-1">
                   <Plus height={14} width={14} strokeWidth={2} />
                 </span>
               }
@@ -179,7 +179,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
             </CustomMenu>
           ) : (
             <div
-              className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
+              className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xs transition-all hover:bg-layer-1"
               onClick={() => {
                 captureClick({ elementName: WORK_ITEM_TRACKER_EVENTS.create });
                 setIsOpen(true);

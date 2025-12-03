@@ -45,7 +45,7 @@ export const ActiveCycleProductivity = observer(function ActiveCycleProductivity
   const completionChartDistributionData = chartDistributionData?.completion_chart || undefined;
 
   return cycle && completionChartDistributionData ? (
-    <div className="flex flex-col min-h-[17rem] gap-5 px-3.5 py-4 bg-custom-background-100 border border-subtle-1 rounded-lg">
+    <div className="flex flex-col min-h-[17rem] gap-5 px-3.5 py-4 bg-surface-1 border border-subtle-1 rounded-lg">
       <div className="relative flex items-center justify-between gap-4">
         <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle?.id}`}>
           <h3 className="text-14 text-tertiary font-semibold">{t("project_cycles.active_cycle.issue_burndown")}</h3>
@@ -96,7 +96,7 @@ export const ActiveCycleProductivity = observer(function ActiveCycleProductivity
       </Link>
     </div>
   ) : (
-    <Loader className="flex flex-col min-h-[17rem] gap-5 bg-custom-background-100 border border-subtle-1 rounded-lg">
+    <Loader className="flex flex-col min-h-[17rem] gap-5 bg-surface-1 border border-subtle-1 rounded-lg">
       <Loader.Item width="100%" height="100%" />
     </Loader>
   );

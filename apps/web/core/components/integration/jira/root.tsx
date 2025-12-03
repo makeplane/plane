@@ -99,7 +99,7 @@ export function JiraImporterRoot() {
         </span>
       </Link>
 
-      <div className="flex h-full flex-col space-y-4 rounded-[10px] border border-subtle-1 bg-custom-background-100 p-4">
+      <div className="flex h-full flex-col space-y-4 rounded-[10px] border border-subtle-1 bg-surface-1 p-4">
         <div className="flex items-center gap-2">
           <div className="h-10 w-10 flex-shrink-0">
             <img src={JiraLogo} className="w-full h-full object-cover" alt="jira logo" />

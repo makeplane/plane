@@ -54,7 +54,7 @@ type TProps = {
 export function ColorPalette(props: TProps) {
   const { handleUpdate } = props;
   return (
-    <div className="absolute z-10 bottom-5 left-0 w-56 shadow p-2 rounded-md bg-custom-background-100 mb-2">
+    <div className="absolute z-10 bottom-5 left-0 w-56 shadow p-2 rounded-md bg-surface-1 mb-2">
       <div className="text-13 font-semibold text-placeholder mb-2">Background colors</div>
       <div className="flex flex-wrap gap-2">
         {STICKY_COLORS_LIST.map((color) => (

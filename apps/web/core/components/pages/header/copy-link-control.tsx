@@ -19,7 +19,7 @@ export const PageCopyLinkControl = observer(function PageCopyLinkControl({ page 
     <button
       type="button"
       onClick={pageOperations.copyLink}
-      className="flex-shrink-0 size-6 grid place-items-center rounded text-secondary hover:text-primary hover:bg-custom-background-80 transition-colors"
+      className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-secondary hover:text-primary hover:bg-layer-1 transition-colors"
     >
       <Link className="size-3.5" />
     </button>

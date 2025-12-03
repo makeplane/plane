@@ -189,7 +189,7 @@ export const JiraGetImportDetail = observer(function JiraGetImportDetail() {
                     );
                   })
                 ) : (
-                  <div className="flex cursor-pointer select-none items-center space-x-2 truncate rounded px-1 py-1.5 text-secondary">
+                  <div className="flex cursor-pointer select-none items-center space-x-2 truncate rounded-sm px-1 py-1.5 text-secondary">
                     <p>You don{"'"}t have any project. Please create a project first.</p>
                   </div>
                 )}
@@ -201,7 +201,7 @@ export const JiraGetImportDetail = observer(function JiraGetImportDetail() {
                       captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.CREATE_PROJECT_JIRA_IMPORT_DETAIL_PAGE });
                       toggleCreateProjectModal(true);
                     }}
-                    className="flex cursor-pointer select-none items-center space-x-2 truncate rounded px-1 py-1.5 text-secondary"
+                    className="flex cursor-pointer select-none items-center space-x-2 truncate rounded-sm px-1 py-1.5 text-secondary"
                   >
                     <Plus className="h-4 w-4 text-secondary" />
                     <span>Create new project</span>

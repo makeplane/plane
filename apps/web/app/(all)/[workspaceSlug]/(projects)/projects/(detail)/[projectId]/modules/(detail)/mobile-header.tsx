@@ -76,7 +76,7 @@ export const ModuleIssuesMobileHeader = observer(function ModuleIssuesMobileHead
         moduleDetails={moduleDetails ?? undefined}
         projectDetails={currentProjectDetails}
       />
-      <div className="flex justify-evenly border-b border-subtle-1 bg-custom-background-100 py-2">
+      <div className="flex justify-evenly border-b border-subtle-1 bg-surface-1 py-2">
         <CustomMenu
           maxHeight={"md"}
           className="flex flex-grow justify-center text-13 text-secondary"

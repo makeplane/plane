@@ -243,9 +243,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
         updateLink={handleUpdateLink}
       />
       <>
-        <div
-          className={`sticky z-10 top-0 flex items-center justify-between bg-custom-sidebar-background-100 pb-5 pt-5`}
-        >
+        <div className={`sticky z-10 top-0 flex items-center justify-between bg-surface-1 pb-5 pt-5`}>
           <div>
             <button
               className="flex h-5 w-5 items-center justify-center rounded-full bg-strong"
@@ -265,7 +263,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                 <CustomSelect
                   customButton={
                     <span
-                      className={`flex h-6 w-20 items-center justify-center rounded-sm text-center text-11 ${
+                      className={`flex h-6 w-20 items-center justify-center rounded-xs text-center text-11 ${
                         isEditingAllowed && !isArchived ? "cursor-pointer" : "cursor-not-allowed"
                       }`}
                       style={{

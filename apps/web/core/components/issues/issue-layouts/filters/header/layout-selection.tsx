@@ -27,13 +27,13 @@ export function LayoutSelection(props: Props) {
   };
 
   return (
-    <div className="flex items-center gap-1 rounded bg-custom-background-80 p-1">
+    <div className="flex items-center gap-1 rounded-sm bg-layer-1 p-1">
       {ISSUE_LAYOUTS.filter((l) => layouts.includes(l.key)).map((layout) => (
         <Tooltip key={layout.key} tooltipContent={t(layout.i18n_title)} isMobile={isMobile}>
           <button
             type="button"
-            className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${
-              selectedLayout == layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
+            className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded-sm transition-all hover:bg-surface-1 ${
+              selectedLayout == layout.key ? "bg-surface-1 shadow-custom-shadow-2xs" : ""
             }`}
             onClick={() => handleOnChange(layout.key)}
           >

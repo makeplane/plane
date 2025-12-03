@@ -25,7 +25,7 @@ export const IssuesNavbarRoot = observer(function IssuesNavbarRoot(props: Props)
             <ProjectLogo logo={project_details.logo_props} className="text-16" />
           </span>
         ) : (
-          <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+          <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded-sm uppercase">
             <ProjectIcon className="h-4 w-4" />
           </span>
         )}

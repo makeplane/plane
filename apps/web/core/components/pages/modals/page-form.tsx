@@ -69,7 +69,7 @@ export function PageForm(props: Props) {
             className="flex items-center justify-center flex-shrink0"
             buttonClassName="flex items-center justify-center"
             label={
-              <span className="grid h-9 w-9 place-items-center rounded-md bg-custom-background-90">
+              <span className="grid h-9 w-9 place-items-center rounded-md bg-surface-2">
                 <>
                   {formData?.logo_props?.in_use ? (
                     <Logo logo={formData?.logo_props} size={18} type="lucide" />

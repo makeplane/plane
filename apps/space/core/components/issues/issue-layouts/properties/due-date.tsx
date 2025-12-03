@@ -26,7 +26,7 @@ export const IssueBlockDate = observer(function IssueBlockDate(props: Props) {
   return (
     <Tooltip tooltipHeading="Due Date" tooltipContent={formattedDate}>
       <div
-        className={cn("flex h-full items-center gap-1 rounded px-2.5 py-1 text-11 text-primary", {
+        className={cn("flex h-full items-center gap-1 rounded-sm px-2.5 py-1 text-11 text-primary", {
           "text-red-500": shouldHighLight && due_date && shouldHighlightIssueDueDate(due_date, state?.group),
           "border-[0.5px] border-strong": shouldShowBorder,
         })}

@@ -193,7 +193,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
           <div className="px-5 space-y-4">
             {isProjectPublished && projectPublishSettings && (
               <>
-                <div className="bg-custom-background-80 border border-strong rounded-md py-1.5 pl-4 pr-1 flex items-center justify-between gap-2">
+                <div className="bg-layer-1 border border-strong rounded-md py-1.5 pl-4 pr-1 flex items-center justify-between gap-2">
                   <a
                     href={publishLink}
                     className="text-13 text-secondary truncate"
@@ -205,7 +205,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                   <div className="flex-shrink-0 flex items-center gap-1">
                     <a
                       href={publishLink}
-                      className="size-8 grid place-items-center bg-custom-background-90 hover:bg-custom-background-100 rounded"
+                      className="size-8 grid place-items-center bg-surface-2 hover:bg-surface-1 rounded-sm"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -213,7 +213,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                     </a>
                     <button
                       type="button"
-                      className="h-8 bg-custom-background-90 hover:bg-custom-background-100 rounded text-11 font-medium py-2 px-3"
+                      className="h-8 bg-surface-2 hover:bg-surface-1 rounded-sm text-11 font-medium py-2 px-3"
                       onClick={handleCopyLink}
                     >
                       Copy link

@@ -36,22 +36,22 @@ export const ActivityFilter = observer(function ActivityFilter(props: TActivityF
           )}
         </Button>
       }
-      panelClassName="p-2 rounded-md border border-subtle-1 bg-custom-background-100"
+      panelClassName="p-2 rounded-md border border-subtle-1 bg-surface-1"
       data={filterOptions}
       keyExtractor={(item) => item.key}
       render={(item) => (
         <div
           key={item.key}
-          className="flex items-center gap-2 text-13 cursor-pointer px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm"
+          className="flex items-center gap-2 text-13 cursor-pointer px-2 p-1 transition-all hover:bg-layer-1 rounded-xs"
           onClick={item.onClick}
         >
           <div
             className={cn(
-              "flex-shrink-0 w-3 h-3 flex justify-center items-center rounded-sm transition-all bg-custom-background-90",
+              "flex-shrink-0 w-3 h-3 flex justify-center items-center rounded-xs transition-all bg-surface-2",
               {
                 "bg-custom-primary text-white": item.isSelected,
-                "bg-custom-background-80 text-placeholder": item.isSelected && selectedFilters.length === 1,
-                "bg-custom-background-90": !item.isSelected,
+                "bg-layer-1 text-placeholder": item.isSelected && selectedFilters.length === 1,
+                "bg-surface-2": !item.isSelected,
               }
             )}
           >

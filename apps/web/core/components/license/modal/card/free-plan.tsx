@@ -15,7 +15,7 @@ export const FreePlanCard = observer(function FreePlanCard(props: FreePlanCardPr
     <div className="py-4 px-2 border border-subtle-1 rounded-xl">
       {isOnFreePlan && (
         <div className="py-2 px-3">
-          <span className="px-2 py-1 bg-custom-background-90 text-13 text-tertiary font-medium rounded">Your plan</span>
+          <span className="px-2 py-1 bg-surface-2 text-13 text-tertiary font-medium rounded-sm">Your plan</span>
         </div>
       )}
       <div className="px-4 py-2 font-semibold">

@@ -32,7 +32,7 @@ export function InboxIssueSnoozeModal(props: InboxIssueSnoozeModalProps) {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
+          <div className="fixed inset-0 bg-backdrop transition-opacity" />
         </Transition.Child>
         <div className="fixed inset-0 z-20 flex w-full justify-center overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
@@ -45,7 +45,7 @@ export function InboxIssueSnoozeModal(props: InboxIssueSnoozeModalProps) {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative flex transform rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+              <Dialog.Panel className="relative flex transform rounded-lg bg-surface-1 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <div className="flex h-full w-full flex-col gap-y-1">
                   <Calendar
                     className="rounded-md border border-subtle-1 p-3"

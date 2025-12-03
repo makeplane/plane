@@ -31,17 +31,14 @@ export function IconRoot(props: IconRootProps) {
 
   return (
     <>
-      <div className="flex flex-col sticky top-0 bg-custom-background-100">
+      <div className="flex flex-col sticky top-0 bg-surface-1">
         {!searchDisabled && (
           <div className="flex items-center px-2 py-[15px] w-full ">
             <div
-              className={cn(
-                "relative flex items-center gap-2 bg-custom-background-90 h-10 rounded-lg w-full px-[30px] border",
-                {
-                  "border-custom-primary-100": isInputFocused,
-                  "border-transparent": !isInputFocused,
-                }
-              )}
+              className={cn("relative flex items-center gap-2 bg-surface-2 h-10 rounded-lg w-full px-[30px] border", {
+                "border-custom-primary-100": isInputFocused,
+                "border-transparent": !isInputFocused,
+              })}
               onFocus={() => setIsInputFocused(true)}
               onBlur={() => setIsInputFocused(false)}
             >
@@ -75,7 +72,7 @@ export function IconRoot(props: IconRootProps) {
                   setHexValue(value);
                   if (/^[0-9A-Fa-f]{6}$/.test(value)) setActiveColor(adjustColorForContrast(`#${value}`));
                 }}
-                className="block placeholder-custom-text-400 focus:outline-none px-3 py-2 border-[0.5px] border-subtle-1 flex-grow pl-0 text-11 text-secondary rounded border-none bg-transparent ring-0"
+                className="block placeholder-custom-text-400 focus:outline-none px-3 py-2 border-[0.5px] border-subtle-1 flex-grow pl-0 text-11 text-secondary rounded-sm border-none bg-transparent ring-0"
                 autoFocus
               />
             </div>

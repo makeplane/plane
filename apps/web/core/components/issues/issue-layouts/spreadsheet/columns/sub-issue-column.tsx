@@ -36,7 +36,7 @@ export const SpreadsheetSubIssueColumn = observer(function SpreadsheetSubIssueCo
     <Row
       onClick={subIssueCount ? redirectToIssueDetail : () => {}}
       className={cn(
-        "flex h-11 w-full items-center border-b-[0.5px] border-subtle-1 py-1 text-11 hover:bg-custom-background-90 group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-90",
+        "flex h-11 w-full items-center border-b-[0.5px] border-subtle-1 py-1 text-11 hover:bg-surface-2 group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-90",
         {
           "cursor-pointer": subIssueCount,
         }

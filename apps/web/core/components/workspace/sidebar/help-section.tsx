@@ -42,15 +42,15 @@ export const SidebarHelpSection = observer(function SidebarHelpSection(_props: W
   return (
     <>
       <ProductUpdatesModal isOpen={isProductUpdatesModalOpen} handleClose={() => setProductUpdatesModalOpen(false)} />
-      <div className="flex w-full items-center justify-between px-2 self-baseline border-t border-subtle-1 bg-custom-sidebar-background-100 h-12 flex-shrink-0">
+      <div className="flex w-full items-center justify-between px-2 self-baseline border-t border-subtle-1 bg-surface-1 h-12 flex-shrink-0">
         <div className="relative flex flex-shrink-0 items-center gap-1 justify-evenly">
           <CustomMenu
             customButton={
               <div
                 className={cn(
-                  "grid place-items-center rounded-md p-1 outline-none text-secondary hover:text-primary hover:bg-custom-background-90",
+                  "grid place-items-center rounded-md p-1 outline-none text-secondary hover:text-primary hover:bg-surface-2",
                   {
-                    "bg-custom-background-90": isNeedHelpOpen,
+                    "bg-surface-2": isNeedHelpOpen,
                   }
                 )}
               >
@@ -67,7 +67,7 @@ export const SidebarHelpSection = observer(function SidebarHelpSection(_props: W
             closeOnSelect
           >
             <CustomMenu.MenuItem onClick={() => window.open("https://go.plane.so/p-docs", "_blank")}>
-              <div className="flex items-center gap-x-2 rounded text-11">
+              <div className="flex items-center gap-x-2 rounded-sm text-11">
                 <PageIcon className="h-3.5 w-3.5 text-secondary" height={14} width={14} />
                 <span className="text-11">{t("documentation")}</span>
               </div>
@@ -77,7 +77,7 @@ export const SidebarHelpSection = observer(function SidebarHelpSection(_props: W
                 <button
                   type="button"
                   onClick={handleCrispWindowShow}
-                  className="flex w-full items-center gap-x-2 rounded text-11 hover:bg-custom-background-80"
+                  className="flex w-full items-center gap-x-2 rounded-sm text-11 hover:bg-layer-1"
                 >
                   <MessagesSquare className="h-3.5 w-3.5 text-secondary" />
                   <span className="text-11">{t("message_support")}</span>
@@ -85,7 +85,7 @@ export const SidebarHelpSection = observer(function SidebarHelpSection(_props: W
               </CustomMenu.MenuItem>
             )}
             <CustomMenu.MenuItem onClick={() => window.open("mailto:sales@plane.so", "_blank")}>
-              <div className="flex items-center gap-x-2 rounded text-11">
+              <div className="flex items-center gap-x-2 rounded-sm text-11">
                 <User className="h-3.5 w-3.5 text-secondary" size={14} />
                 <span className="text-11">{t("contact_sales")}</span>
               </div>
@@ -95,7 +95,7 @@ export const SidebarHelpSection = observer(function SidebarHelpSection(_props: W
               <button
                 type="button"
                 onClick={() => toggleShortcutsListModal(true)}
-                className="flex w-full items-center justify-start text-11 hover:bg-custom-background-80"
+                className="flex w-full items-center justify-start text-11 hover:bg-layer-1"
               >
                 <span className="text-11">{t("keyboard_shortcuts")}</span>
               </button>
@@ -104,13 +104,13 @@ export const SidebarHelpSection = observer(function SidebarHelpSection(_props: W
               <button
                 type="button"
                 onClick={() => setProductUpdatesModalOpen(true)}
-                className="flex w-full items-center justify-start text-11 hover:bg-custom-background-80"
+                className="flex w-full items-center justify-start text-11 hover:bg-layer-1"
               >
                 <span className="text-11">{t("whats_new")}</span>
               </button>
             </CustomMenu.MenuItem>
             <CustomMenu.MenuItem onClick={() => window.open("https://go.plane.so/p-discord", "_blank")}>
-              <div className="flex items-center gap-x-2 rounded text-11">
+              <div className="flex items-center gap-x-2 rounded-sm text-11">
                 <span className="text-11">Discord</span>
               </div>
             </CustomMenu.MenuItem>
@@ -126,7 +126,7 @@ export const SidebarHelpSection = observer(function SidebarHelpSection(_props: W
           <Tooltip tooltipContent={`${isCollapsed ? "Expand" : "Hide"}`} isMobile={isMobile}>
             <button
               type="button"
-              className="grid place-items-center rounded-md p-1 text-secondary outline-none hover:bg-custom-background-90 hover:text-primary"
+              className="grid place-items-center rounded-md p-1 text-secondary outline-none hover:bg-surface-2 hover:text-primary"
               onClick={() => {
                 if (sidebarPeek) toggleSidebarPeek(false);
                 toggleSidebar();

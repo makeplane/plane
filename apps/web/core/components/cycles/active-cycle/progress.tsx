@@ -44,12 +44,12 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
   const resolvedPath = resolvedTheme === "light" ? lightProgressAsset : darkProgressAsset;
 
   return cycle && cycle.hasOwnProperty("started_issues") ? (
-    <div className="flex flex-col min-h-[17rem] gap-5 py-4 px-3.5 bg-custom-background-100 border border-subtle-1 rounded-lg">
+    <div className="flex flex-col min-h-[17rem] gap-5 py-4 px-3.5 bg-surface-1 border border-subtle-1 rounded-lg">
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between gap-4">
           <h3 className="text-14 text-tertiary font-semibold">{t("project_cycles.active_cycle.progress")}</h3>
           {cycle.total_issues > 0 && (
-            <span className="flex gap-1 text-13 text-placeholder font-medium whitespace-nowrap rounded-sm px-3 py-1 ">
+            <span className="flex gap-1 text-13 text-placeholder font-medium whitespace-nowrap rounded-xs px-3 py-1 ">
               {`${cycle.completed_issues + cycle.cancelled_issues}/${cycle.total_issues - cycle.cancelled_issues} ${
                 cycle.completed_issues + cycle.cancelled_issues > 1 ? "Work items" : "Work item"
               } closed`}
@@ -105,7 +105,7 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
       )}
     </div>
   ) : (
-    <Loader className="flex flex-col min-h-[17rem] gap-5 bg-custom-background-100 border border-subtle-1 rounded-lg">
+    <Loader className="flex flex-col min-h-[17rem] gap-5 bg-surface-1 border border-subtle-1 rounded-lg">
       <Loader.Item width="100%" height="100%" />
     </Loader>
   );

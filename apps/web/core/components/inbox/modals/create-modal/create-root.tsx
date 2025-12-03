@@ -209,7 +209,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
     <div className="flex gap-2 bg-transparent w-full">
       <div className="rounded-lg w-full">
         <form ref={formRef} onSubmit={handleFormSubmit} className="flex flex-col w-full">
-          <div className="space-y-5 p-5 rounded-t-lg bg-custom-background-100">
+          <div className="space-y-5 p-5 rounded-t-lg bg-surface-1">
             <div className="flex items-center justify-between gap-2">
               <h3 className="text-18 font-medium text-secondary">{t("inbox_issue.modal.title")}</h3>
               {duplicateIssues?.length > 0 && (
@@ -241,7 +241,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
               <InboxIssueProperties projectId={projectId} data={formData} handleData={handleFormData} />
             </div>
           </div>
-          <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-subtle-1 rounded-b-lg bg-custom-background-100">
+          <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-subtle-1 rounded-b-lg bg-surface-1">
             <div
               className="inline-flex items-center gap-1.5 cursor-pointer"
               onClick={() => setCreateMore((prevData) => !prevData)}

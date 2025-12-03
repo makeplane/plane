@@ -96,7 +96,7 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
         ))}
       </div>
       <Disclosure as="div" className="flex flex-col" defaultOpen={!!isWorkspaceMenuOpen}>
-        <div className="group w-full flex items-center justify-between px-2 py-1.5 rounded text-placeholder hover:bg-custom-sidebar-background-90">
+        <div className="group w-full flex items-center justify-between px-2 py-1.5 rounded-sm text-placeholder hover:bg-surface-2">
           <Disclosure.Button
             as="button"
             type="button"
@@ -114,7 +114,7 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
             <Disclosure.Button
               as="button"
               type="button"
-              className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
+              className="p-0.5 rounded-sm hover:bg-layer-1 flex-shrink-0"
               onClick={() => toggleListDisclosure(!isWorkspaceMenuOpen)}
               aria-label={t(
                 isWorkspaceMenuOpen

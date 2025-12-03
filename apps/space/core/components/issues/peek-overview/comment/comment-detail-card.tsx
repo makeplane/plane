@@ -81,7 +81,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
           </div>
         )}
 
-        <span className="absolute -bottom-0.5 -right-1 rounded-tl bg-custom-background-80 px-0.5 py-px">
+        <span className="absolute -bottom-0.5 -right-1 rounded-tl-sm bg-layer-1 px-0.5 py-px">
           <MessageSquare className="h-3 w-3 text-secondary" aria-hidden="true" strokeWidth={2} />
         </span>
       </div>
@@ -131,13 +131,13 @@ export const CommentCard = observer(function CommentCard(props: Props) {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300 hover:bg-green-500"
+                className="group rounded-sm border border-green-500 bg-green-500/20 p-2 shadow-md duration-300 hover:bg-green-500"
               >
                 <Check className="h-3 w-3 text-green-500 duration-300 group-hover:text-white" strokeWidth={2} />
               </button>
               <button
                 type="button"
-                className="group rounded border border-red-500 bg-red-500/20 p-2 shadow-md duration-300 hover:bg-red-500"
+                className="group rounded-sm border border-red-500 bg-red-500/20 p-2 shadow-md duration-300 hover:bg-red-500"
                 onClick={() => setIsEditing(false)}
               >
                 <CloseIcon className="h-3 w-3 text-red-500 duration-300 group-hover:text-white" strokeWidth={2} />
@@ -165,7 +165,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
           <Menu.Button
             type="button"
             onClick={() => {}}
-            className="relative grid cursor-pointer place-items-center rounded p-1 text-secondary outline-none hover:bg-custom-background-80 hover:text-primary"
+            className="relative grid cursor-pointer place-items-center rounded-sm p-1 text-secondary outline-none hover:bg-layer-1 hover:text-primary"
           >
             <MoreVertical className="h-4 w-4 text-secondary duration-300" strokeWidth={2} />
           </Menu.Button>
@@ -179,7 +179,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="absolute right-0 z-10 mt-1 max-h-36 min-w-[8rem] origin-top-right overflow-auto overflow-y-scroll whitespace-nowrap rounded-md border border-strong bg-custom-background-90 p-1 text-11 shadow-lg focus:outline-none">
+            <Menu.Items className="absolute right-0 z-10 mt-1 max-h-36 min-w-[8rem] origin-top-right overflow-auto overflow-y-scroll whitespace-nowrap rounded-md border border-strong bg-surface-2 p-1 text-11 shadow-lg focus:outline-none">
               <Menu.Item>
                 {({ active }) => (
                   <div className="py-1">
@@ -188,8 +188,8 @@ export const CommentCard = observer(function CommentCard(props: Props) {
                       onClick={() => {
                         setIsEditing(true);
                       }}
-                      className={`w-full select-none truncate rounded px-1 py-1.5 text-left text-secondary hover:bg-custom-background-80 ${
-                        active ? "bg-custom-background-80" : ""
+                      className={`w-full select-none truncate rounded-sm px-1 py-1.5 text-left text-secondary hover:bg-layer-1 ${
+                        active ? "bg-layer-1" : ""
                       }`}
                     >
                       Edit
@@ -203,8 +203,8 @@ export const CommentCard = observer(function CommentCard(props: Props) {
                     <button
                       type="button"
                       onClick={handleDelete}
-                      className={`w-full select-none truncate rounded px-1 py-1.5 text-left text-secondary hover:bg-custom-background-80 ${
-                        active ? "bg-custom-background-80" : ""
+                      className={`w-full select-none truncate rounded-sm px-1 py-1.5 text-left text-secondary hover:bg-layer-1 ${
+                        active ? "bg-layer-1" : ""
                       }`}
                     >
                       Delete

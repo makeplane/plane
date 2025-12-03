@@ -97,7 +97,7 @@ export function ParentIssuesListModal({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
+            <div className="fixed inset-0 bg-backdrop transition-opacity" />
           </Transition.Child>
 
           <div className="fixed inset-0 z-30 overflow-y-auto p-4 sm:p-6 md:p-20">
@@ -110,7 +110,7 @@ export function ParentIssuesListModal({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
+              <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-surface-1 shadow-custom-shadow-md transition-all">
                 <Combobox
                   value={value}
                   onChange={(val) => {
@@ -172,7 +172,7 @@ export function ParentIssuesListModal({
                                 value={issue}
                                 className={({ active, selected }) =>
                                   `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-secondary ${
-                                    active ? "bg-custom-background-80 text-primary" : ""
+                                    active ? "bg-layer-1 text-primary" : ""
                                   } ${selected ? "text-primary" : ""}`
                                 }
                               >

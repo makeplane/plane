@@ -35,7 +35,7 @@ export const IssueBlockState: React.FC<Props> = observer((props) => {
   return (
     <Tooltip tooltipHeading="State" tooltipContent={state.name}>
       <div
-        className={cn("flex h-full w-full items-center justify-between gap-1 rounded px-2.5 py-1 text-11", {
+        className={cn("flex h-full w-full items-center justify-between gap-1 rounded-sm px-2.5 py-1 text-11", {
           "border-[0.5px] border-strong": shouldShowBorder,
         })}
       >

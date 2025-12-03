@@ -1,11 +1,7 @@
 import { Outlet } from "react-router";
 import type { Route } from "./+types/layout";
 import { PreloadResources } from "./layout.preload";
-// types
-
 // styles
-import "@/styles/power-k.css";
-import "@/styles/emoji.css";
 import "@plane/propel/styles/react-day-picker.css";
 
 export const meta: Route.MetaFunction = () => [

@@ -107,7 +107,7 @@ export const getUpgradeButtonStyle = (
   planVariant: EProductSubscriptionEnum,
   isDisabled: boolean
 ): string | undefined => {
-  const baseClassNames = "border bg-custom-background-100";
+  const baseClassNames = "border bg-surface-1";
   const hoverClassNames = !isDisabled ? "hover:text-white hover:bg-gradient-to-br" : "";
   const disabledClassNames = isDisabled ? "opacity-70 cursor-not-allowed" : "";
 

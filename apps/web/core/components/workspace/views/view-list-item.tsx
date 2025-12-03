@@ -35,9 +35,9 @@ export const GlobalViewListItem = observer(function GlobalViewListItem(props: Pr
     <>
       <CreateUpdateWorkspaceViewModal data={view} isOpen={updateViewModal} onClose={() => setUpdateViewModal(false)} />
       <DeleteGlobalViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
-      <div className="group border-b border-subtle-1 hover:bg-custom-background-90">
+      <div className="group border-b border-subtle-1 hover:bg-surface-2">
         <Link href={`/${workspaceSlug}/workspace-views/${view.id}`}>
-          <div className="relative flex h-[52px] w-full items-center justify-between rounded p-4">
+          <div className="relative flex h-[52px] w-full items-center justify-between rounded-sm p-4">
             <div className="flex w-full items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="flex flex-col">

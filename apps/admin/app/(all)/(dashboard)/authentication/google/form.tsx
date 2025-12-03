@@ -206,7 +206,7 @@ export function InstanceGoogleConfigForm(props: Props) {
 
             <div className="flex flex-col gap-y-4">
               {/* common service details */}
-              <div className="flex flex-col gap-y-4 px-6 py-4 bg-custom-background-80 rounded-lg">
+              <div className="flex flex-col gap-y-4 px-6 py-4 bg-layer-1 rounded-lg">
                 {GOOGLE_COMMON_SERVICE_DETAILS.map((field) => (
                   <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
                 ))}
@@ -214,11 +214,11 @@ export function InstanceGoogleConfigForm(props: Props) {
 
               {/* web service details */}
               <div className="flex flex-col rounded-lg overflow-hidden">
-                <div className="px-6 py-3 bg-custom-background-80/60 font-medium text-11 uppercase flex items-center gap-x-3 text-secondary">
+                <div className="px-6 py-3 bg-layer-1/60 font-medium text-11 uppercase flex items-center gap-x-3 text-secondary">
                   <Monitor className="w-3 h-3" />
                   Web
                 </div>
-                <div className="px-6 py-4 flex flex-col gap-y-4 bg-custom-background-80">
+                <div className="px-6 py-4 flex flex-col gap-y-4 bg-layer-1">
                   {GOOGLE_SERVICE_DETAILS.map((field) => (
                     <CopyField key={field.key} label={field.label} url={field.url} description={field.description} />
                   ))}

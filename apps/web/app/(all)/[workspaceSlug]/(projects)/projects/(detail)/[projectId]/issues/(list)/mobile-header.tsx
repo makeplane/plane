@@ -65,7 +65,7 @@ export const ProjectIssuesMobileHeader = observer(function ProjectIssuesMobileHe
         onClose={() => setAnalyticsModal(false)}
         projectDetails={currentProjectDetails ?? undefined}
       />
-      <div className="md:hidden flex justify-evenly border-b border-subtle-1 py-2 z-[13] bg-custom-background-100">
+      <div className="md:hidden flex justify-evenly border-b border-subtle-1 py-2 z-[13] bg-surface-1">
         <MobileLayoutSelection
           layouts={[EIssueLayoutTypes.LIST, EIssueLayoutTypes.KANBAN, EIssueLayoutTypes.CALENDAR]}
           onChange={handleLayoutChange}

@@ -95,7 +95,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
               } `}
             >
               {isNil(subGroupBy) && (
-                <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-custom-background-90 py-1">
+                <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-surface-2 py-1">
                   <HeaderGroupByCard
                     groupBy={groupBy}
                     icon={subList.icon as any}

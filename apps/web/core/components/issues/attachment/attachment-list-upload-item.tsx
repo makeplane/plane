@@ -26,7 +26,7 @@ export const IssueAttachmentsUploadItem = observer(function IssueAttachmentsUplo
   const { isMobile } = usePlatformOS();
 
   return (
-    <div className="flex items-center justify-between gap-3 h-11 bg-custom-background-90 pl-9 pr-2 pointer-events-none">
+    <div className="flex items-center justify-between gap-3 h-11 bg-surface-2 pl-9 pr-2 pointer-events-none">
       <div className="flex items-center gap-3 text-13 truncate">
         <div className="flex-shrink-0">{fileIcon}</div>
         <Tooltip tooltipContent={fileName} isMobile={isMobile}>

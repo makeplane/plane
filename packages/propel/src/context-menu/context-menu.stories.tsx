@@ -180,9 +180,9 @@ export const OnFileCard: Story = {
     return (
       <ContextMenu>
         <ContextMenu.Trigger>
-          <div className="w-64 p-4 border border-subtle-1 rounded-lg hover:bg-custom-background-80 cursor-pointer">
+          <div className="w-64 p-4 border border-subtle-1 rounded-lg hover:bg-layer-1 cursor-pointer">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-custom-primary-100 rounded flex items-center justify-center text-white text-16">
+              <div className="w-12 h-12 bg-custom-primary-100 rounded-sm flex items-center justify-center text-white text-16">
                 📄
               </div>
               <div className="flex-1">
@@ -227,7 +227,7 @@ export const OnImage: Story = {
     return (
       <ContextMenu>
         <ContextMenu.Trigger>
-          <div className="relative w-80 h-56 bg-custom-background-80 rounded-lg overflow-hidden cursor-pointer">
+          <div className="relative w-80 h-56 bg-layer-1 rounded-lg overflow-hidden cursor-pointer">
             <div className="absolute inset-0 flex items-center justify-center text-placeholder">Image Placeholder</div>
           </div>
         </ContextMenu.Trigger>

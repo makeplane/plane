@@ -24,7 +24,7 @@ export const StateOption = observer(function StateOption(props: TStateOptionProp
       key={option.value}
       value={option.value}
       className={({ active, selected }) =>
-        `${className} ${active ? "bg-custom-background-80" : ""} ${selected ? "text-primary" : "text-secondary"}`
+        `${className} ${active ? "bg-layer-1" : ""} ${selected ? "text-primary" : "text-secondary"}`
       }
     >
       {({ selected }) => (

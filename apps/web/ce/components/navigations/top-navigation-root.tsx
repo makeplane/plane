@@ -29,7 +29,7 @@ export const TopNavigationRoot = observer(() => {
       {/* Additional Actions */}
       <div className="shrink-0 flex-1 flex gap-1 items-center justify-end">
         <HelpMenuRoot />
-        <div className="flex items-center justify-center size-8 hover:bg-custom-background-80 rounded-md">
+        <div className="flex items-center justify-center size-8 hover:bg-layer-1 rounded-md">
           <UserMenuRoot size="xs" />
         </div>
       </div>

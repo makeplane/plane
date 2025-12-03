@@ -211,12 +211,12 @@ export const WorkItemStateDropdownBase: React.FC<TWorkItemStateDropdownBaseProps
       {isOpen && (
         <Combobox.Options className="fixed z-10" static>
           <div
-            className="my-1 w-48 rounded border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 text-11 shadow-custom-shadow-rg focus:outline-none"
+            className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-custom-shadow-rg focus:outline-none"
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
           >
-            <div className="flex items-center gap-1.5 rounded border border-subtle bg-custom-background-90 px-2">
+            <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
               <Search className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
               <Combobox.Input
                 as="input"
@@ -238,7 +238,7 @@ export const WorkItemStateDropdownBase: React.FC<TWorkItemStateDropdownBaseProps
                       key={option.value}
                       option={option}
                       selectedValue={value}
-                      className="flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5"
+                      className="flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5"
                     />
                   ))
                 ) : (

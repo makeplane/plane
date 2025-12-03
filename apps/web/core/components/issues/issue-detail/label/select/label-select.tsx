@@ -87,7 +87,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
 
   const label = (
     <div
-      className={`relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded-full border border-subtle p-0.5 px-2 py-0.5 text-11 text-tertiary transition-all hover:bg-custom-background-90 hover:text-secondary`}
+      className={`relative flex flex-shrink-0 cursor-pointer items-center gap-1 rounded-full border border-subtle p-0.5 px-2 py-0.5 text-11 text-tertiary transition-all hover:bg-surface-2 hover:text-secondary`}
     >
       <div className="flex-shrink-0">
         <LabelPropertyIcon className="h-2.5 w-2.5" />
@@ -132,7 +132,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
           <button
             ref={setReferenceElement}
             type="button"
-            className="cursor-pointer rounded"
+            className="cursor-pointer rounded-sm"
             onClick={() => !projectLabels && fetchLabels()}
           >
             {label}
@@ -141,13 +141,13 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
 
         <Combobox.Options className="fixed z-10">
           <div
-            className={`z-10 my-1 w-48 whitespace-nowrap rounded border border-strong bg-custom-background-100 py-2.5 text-11 shadow-custom-shadow-rg focus:outline-none`}
+            className={`z-10 my-1 w-48 whitespace-nowrap rounded-sm border border-strong bg-surface-1 py-2.5 text-11 shadow-custom-shadow-rg focus:outline-none`}
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
           >
             <div className="px-2">
-              <div className="flex w-full items-center justify-start rounded border border-subtle-1 bg-custom-background-90 px-2">
+              <div className="flex w-full items-center justify-start rounded-sm border border-subtle-1 bg-surface-2 px-2">
                 <Search className="h-3.5 w-3.5 text-tertiary" />
                 <Combobox.Input
                   className="w-full bg-transparent px-2 py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"
@@ -169,7 +169,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
                     key={option.value}
                     value={option.value}
                     className={({ selected }) =>
-                      `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 hover:bg-custom-background-80 ${
+                      `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded-sm px-1 py-1.5 hover:bg-layer-1 ${
                         selected ? "text-primary" : "text-secondary"
                       }`
                     }

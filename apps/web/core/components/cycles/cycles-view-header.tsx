@@ -75,7 +75,7 @@ export const CyclesViewHeader = observer(function CyclesViewHeader(props: Props)
       {!isSearchOpen && (
         <button
           type="button"
-          className="-mr-5 p-2 hover:bg-custom-background-80 rounded text-placeholder grid place-items-center"
+          className="-mr-5 p-2 hover:bg-layer-1 rounded-sm text-placeholder grid place-items-center"
           onClick={() => {
             setIsSearchOpen(true);
             inputRef.current?.focus();
@@ -86,7 +86,7 @@ export const CyclesViewHeader = observer(function CyclesViewHeader(props: Props)
       )}
       <div
         className={cn(
-          "ml-auto flex items-center justify-start gap-1 rounded-md border border-transparent bg-custom-background-100 text-placeholder w-0 transition-[width] ease-linear overflow-hidden opacity-0",
+          "ml-auto flex items-center justify-start gap-1 rounded-md border border-transparent bg-surface-1 text-placeholder w-0 transition-[width] ease-linear overflow-hidden opacity-0",
           {
             "w-64 px-2.5 py-1.5 border-subtle-1 opacity-100": isSearchOpen,
           }

@@ -221,7 +221,7 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
           <>
             <span
               className={cn(
-                "h-full flex items-center justify-center gap-1 rounded-sm flex-grow",
+                "h-full flex items-center justify-center gap-1 rounded-xs flex-grow",
                 buttonFromDateClassName
               )}
             >
@@ -231,7 +231,7 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
             <ArrowRight className="h-3 w-3 flex-shrink-0" />
             <span
               className={cn(
-                "h-full flex items-center justify-center gap-1 rounded-sm flex-grow",
+                "h-full flex items-center justify-center gap-1 rounded-xs flex-grow",
                 buttonToDateClassName
               )}
             >
@@ -257,7 +257,7 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
   const comboOptions = (
     <Combobox.Options data-prevent-outside-click static>
       <div
-        className="my-1 bg-custom-background-100 shadow-custom-shadow-rg border-[0.5px] border-strong rounded-md overflow-hidden z-30"
+        className="my-1 bg-surface-1 shadow-custom-shadow-rg border-[0.5px] border-strong rounded-md overflow-hidden z-30"
         ref={setPopperElement}
         style={styles.popper}
         {...attributes.popper}

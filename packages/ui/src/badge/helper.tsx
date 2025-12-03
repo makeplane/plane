@@ -27,10 +27,10 @@ export interface IBadgeStyling {
 
 // TODO: convert them to objects instead of enums
 enum badgeSizeStyling {
-  sm = `px-2.5 py-1 font-medium text-11 rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
-  md = `px-4 py-1.5 font-medium text-13 rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
-  lg = `px-4 py-2 font-medium text-13 rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
-  xl = `px-5 py-3 font-medium text-13 rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
+  sm = `px-2.5 py-1 font-medium text-11 rounded-sm flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
+  md = `px-4 py-1.5 font-medium text-13 rounded-sm flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
+  lg = `px-4 py-2 font-medium text-13 rounded-sm flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
+  xl = `px-5 py-3 font-medium text-13 rounded-sm flex items-center gap-1.5 whitespace-nowrap transition-all justify-center inline`,
 }
 
 // TODO: convert them to objects instead of enums
@@ -54,7 +54,7 @@ export const badgeStyling: IBadgeStyling = {
     disabled: `cursor-not-allowed !text-custom-primary-60`,
   },
   "outline-primary": {
-    default: `text-custom-primary-100 bg-custom-background-100 border border-custom-primary-100`,
+    default: `text-custom-primary-100 bg-surface-1 border border-custom-primary-100`,
     hover: `hover:border-custom-primary-80 hover:bg-custom-primary-10`,
     disabled: `cursor-not-allowed !text-custom-primary-60 !border-custom-primary-60 `,
   },
@@ -65,12 +65,12 @@ export const badgeStyling: IBadgeStyling = {
     disabled: `cursor-not-allowed bg-subtle-1 !text-placeholder`,
   },
   "accent-neutral": {
-    default: `text-secondary bg-custom-background-80`,
+    default: `text-secondary bg-layer-1`,
     hover: `hover:bg-subtle-1 hover:text-primary`,
     disabled: `cursor-not-allowed !text-placeholder`,
   },
   "outline-neutral": {
-    default: `text-secondary bg-custom-background-100 border border-subtle-1`,
+    default: `text-secondary bg-surface-1 border border-subtle-1`,
     hover: `hover:text-primary hover:bg-subtle-1`,
     disabled: `cursor-not-allowed !text-placeholder`,
   },
@@ -86,7 +86,7 @@ export const badgeStyling: IBadgeStyling = {
     disabled: `cursor-not-allowed !text-green-300`,
   },
   "outline-success": {
-    default: `text-green-500 bg-custom-background-100 border border-green-500`,
+    default: `text-green-500 bg-surface-1 border border-green-500`,
     hover: `hover:text-green-600 hover:bg-green-50`,
     disabled: `cursor-not-allowed !text-green-300 border-green-300`,
   },
@@ -102,7 +102,7 @@ export const badgeStyling: IBadgeStyling = {
     disabled: `cursor-not-allowed !text-amber-300`,
   },
   "outline-warning": {
-    default: `text-amber-500 bg-custom-background-100 border border-amber-500`,
+    default: `text-amber-500 bg-surface-1 border border-amber-500`,
     hover: `hover:text-amber-600 hover:bg-amber-50`,
     disabled: `cursor-not-allowed !text-amber-300 border-amber-300`,
   },
@@ -118,7 +118,7 @@ export const badgeStyling: IBadgeStyling = {
     disabled: `cursor-not-allowed !text-red-300`,
   },
   "outline-destructive": {
-    default: `text-red-500 bg-custom-background-100 border border-red-500`,
+    default: `text-red-500 bg-surface-1 border border-red-500`,
     hover: `hover:text-red-600 hover:bg-red-50`,
     disabled: `cursor-not-allowed !text-red-300 border-red-300`,
   },

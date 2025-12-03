@@ -197,7 +197,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
           }
         }}
         data-prevent-progress={!isMemberOfProject || isArchived}
-        className="flex flex-col rounded border border-subtle-1 bg-custom-background-100"
+        className="flex flex-col rounded-sm border border-subtle-1 bg-surface-1"
       >
         <ContextMenu parentRef={projectCardRef} items={MENU_ITEMS} />
         <div className="relative h-[118px] w-full rounded-t ">
@@ -214,7 +214,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
 
           <div className="absolute bottom-4 z-[1] flex h-10 w-full items-center justify-between gap-3 px-4">
             <div className="flex flex-grow items-center gap-2.5 truncate">
-              <div className="h-9 w-9 flex-shrink-0 grid place-items-center rounded bg-white/10">
+              <div className="h-9 w-9 flex-shrink-0 grid place-items-center rounded-sm bg-white/10">
                 <Logo logo={project.logo_props} size={18} />
               </div>
 
@@ -230,7 +230,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
             {!isArchived && (
               <div data-prevent-progress className="flex h-full flex-shrink-0 items-center gap-2">
                 <button
-                  className="flex h-6 w-6 items-center justify-center rounded bg-white/10"
+                  className="flex h-6 w-6 items-center justify-center rounded-sm bg-white/10"
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
@@ -241,7 +241,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                 </button>
                 {shouldRenderFavorite && (
                   <FavoriteStar
-                    buttonClassName="h-6 w-6 bg-white/10 rounded"
+                    buttonClassName="h-6 w-6 bg-white/10 rounded-sm"
                     iconClassName={cn("h-3 w-3", {
                       "text-white": !project.is_favorite,
                     })}
@@ -260,7 +260,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
         </div>
 
         <div
-          className={cn("flex h-[104px] w-full flex-col justify-between rounded-b p-4", {
+          className={cn("flex h-[104px] w-full flex-col justify-between rounded-b-sm p-4", {
             "opacity-90": isArchived,
           })}
         >
@@ -330,7 +330,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                 {isMemberOfProject &&
                   (hasAdminRole || hasMemberRole ? (
                     <Link
-                      className="flex items-center justify-center rounded p-1 text-placeholder hover:bg-custom-background-80 hover:text-secondary"
+                      className="flex items-center justify-center rounded-sm p-1 text-placeholder hover:bg-layer-1 hover:text-secondary"
                       onClick={(e) => {
                         e.stopPropagation();
                       }}

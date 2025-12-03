@@ -175,7 +175,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                   placeholder="Enter workspace name"
                   ref={ref}
                   className={cn(
-                    "w-full px-3 py-2 text-secondary border border-strong rounded-md bg-custom-background-100 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 placeholder:text-placeholder focus:border-transparent transition-all duration-200",
+                    "w-full px-3 py-2 text-secondary border border-strong rounded-md bg-surface-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 placeholder:text-placeholder focus:border-transparent transition-all duration-200",
                     {
                       "border-strong": !errors.name,
                       "border-red-500": errors.name,
@@ -208,7 +208,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
             render={({ field: { value, ref, onChange } }) => (
               <div
                 className={cn(
-                  "flex items-center w-full px-3 py-2 text-secondary border border-strong rounded-md bg-custom-background-100 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 focus:border-transparent transition-all duration-200",
+                  "flex items-center w-full px-3 py-2 text-secondary border border-strong rounded-md bg-surface-1 focus:outline-none focus:ring-2 focus:ring-custom-primary-100 focus:border-transparent transition-all duration-200",
                   {
                     "border-strong": !errors.name,
                     "border-red-500": errors.name,
@@ -231,7 +231,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                   ref={ref}
                   placeholder={t("workspace_creation.form.url.placeholder")}
                   className={cn(
-                    "w-full px-3 py-0 pl-0 text-secondary border-none ring-none outline-none rounded-md bg-custom-background-100 placeholder:text-placeholder"
+                    "w-full px-3 py-0 pl-0 text-secondary border-none ring-none outline-none rounded-md bg-surface-1 placeholder:text-placeholder"
                   )}
                 />
               </div>
@@ -272,7 +272,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                         }}
                         className={`text-13 px-3 py-2 rounded-lg border transition-all duration-200 flex gap-1 items-center justify-between ${
                           isSelected
-                            ? "border-subtle-1 bg-custom-background-80 text-secondary"
+                            ? "border-subtle-1 bg-layer-1 text-secondary"
                             : "border-subtle-1 hover:border-strong text-tertiary"
                         }`}
                       >

@@ -118,7 +118,7 @@ export function ProjectAppliedFiltersList(props: Props) {
             </p>
           }
         >
-          <span className="bg-custom-background-80 rounded-full text-13 font-medium py-1 px-2.5">
+          <span className="bg-layer-1 rounded-full text-13 font-medium py-1 px-2.5">
             {filteredProjects}/{totalProjects}
           </span>
         </Tooltip>

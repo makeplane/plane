@@ -66,7 +66,7 @@ function CycleDetailPage({ params }: Route.ComponentProps) {
             {!isSidebarCollapsed && (
               <div
                 className={cn(
-                  "flex h-full w-[21.5rem] flex-shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-subtle bg-custom-sidebar-background-100 px-4 duration-300 vertical-scrollbar scrollbar-sm absolute right-0 z-[13]"
+                  "flex h-full w-[21.5rem] flex-shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-subtle bg-surface-1 px-4 duration-300 vertical-scrollbar scrollbar-sm absolute right-0 z-[13]"
                 )}
                 style={{
                   boxShadow:

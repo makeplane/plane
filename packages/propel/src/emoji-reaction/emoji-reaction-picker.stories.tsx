@@ -43,9 +43,7 @@ export const Default: Story = {
           }
         />
         {selectedEmoji && (
-          <div className="text-13 p-4 bg-custom-background-80 rounded border border-subtle-1">
-            Selected: {selectedEmoji}
-          </div>
+          <div className="text-13 p-4 bg-layer-1 rounded-sm border border-subtle-1">Selected: {selectedEmoji}</div>
         )}
       </div>
     );
@@ -71,7 +69,7 @@ export const WithCustomLabel: Story = {
           onChange={setSelectedEmoji}
           closeOnSelect
           label={
-            <button className="px-4 py-2 bg-custom-background-80 border border-subtle-1 rounded hover:bg-custom-background-90 flex items-center gap-2">
+            <button className="px-4 py-2 bg-layer-1 border border-subtle-1 rounded-sm hover:bg-surface-2 flex items-center gap-2">
               {selectedEmoji ? stringToEmoji(selectedEmoji) : <SmilePlus className="h-4 w-4" />}
               <span className="text-13">Add Reaction</span>
             </button>
@@ -136,7 +134,7 @@ export const InlineReactions: Story = {
           onChange={handleReactionAdd}
           closeOnSelect
           label={
-            <button className="inline-flex items-center justify-center rounded-full border border-dashed border-strong bg-custom-background-100 text-placeholder transition-all duration-200 hover:border-custom-primary-100 hover:text-custom-primary-100 hover:bg-custom-primary-100/5 h-7 w-7">
+            <button className="inline-flex items-center justify-center rounded-full border border-dashed border-strong bg-surface-1 text-placeholder transition-all duration-200 hover:border-custom-primary-100 hover:text-custom-primary-100 hover:bg-custom-primary-100/5 h-7 w-7">
               <SmilePlus className="h-3.5 w-3.5" />
             </button>
           }
@@ -226,7 +224,7 @@ export const SearchDisabled: Story = {
           closeOnSelect
           searchDisabled
           label={
-            <button className="px-4 py-2 bg-custom-background-80 border border-subtle-1 rounded hover:bg-custom-background-90">
+            <button className="px-4 py-2 bg-layer-1 border border-subtle-1 rounded-sm hover:bg-surface-2">
               No Search
             </button>
           }
@@ -257,7 +255,7 @@ export const CustomSearchPlaceholder: Story = {
           closeOnSelect
           searchPlaceholder="Find your emoji..."
           label={
-            <button className="px-4 py-2 bg-custom-background-80 border border-subtle-1 rounded hover:bg-custom-background-90">
+            <button className="px-4 py-2 bg-layer-1 border border-subtle-1 rounded-sm hover:bg-surface-2">
               Custom Search
             </button>
           }
@@ -292,20 +290,20 @@ export const CloseOnSelectDisabled: Story = {
             onChange={handleChange}
             closeOnSelect={false}
             label={
-              <button className="px-4 py-2 bg-custom-background-80 border border-subtle-1 rounded hover:bg-custom-background-90">
+              <button className="px-4 py-2 bg-layer-1 border border-subtle-1 rounded-sm hover:bg-surface-2">
                 Select Multiple (Stays Open)
               </button>
             }
           />
           <button
-            className="px-3 py-1.5 text-13 bg-custom-background-80 rounded hover:bg-custom-background-90"
+            className="px-3 py-1.5 text-13 bg-layer-1 rounded-sm hover:bg-surface-2"
             onClick={() => setSelectedEmojis([])}
           >
             Clear
           </button>
         </div>
         {selectedEmojis.length > 0 && (
-          <div className="text-13 p-4 bg-custom-background-80 rounded border border-subtle-1">
+          <div className="text-13 p-4 bg-layer-1 rounded-sm border border-subtle-1">
             <div className="font-medium mb-2">Selected ({selectedEmojis.length}):</div>
             <div className="flex gap-2 flex-wrap">
               {selectedEmojis.map((emoji, idx) => (
@@ -380,7 +378,7 @@ export const InMessageContext: Story = {
             onChange={handleReactionAdd}
             closeOnSelect
             label={
-              <button className="inline-flex items-center justify-center rounded-full border border-dashed border-strong bg-custom-background-100 text-placeholder transition-all duration-200 hover:border-custom-primary-100 hover:text-custom-primary-100 hover:bg-custom-primary-100/5 h-7 w-7">
+              <button className="inline-flex items-center justify-center rounded-full border border-dashed border-strong bg-surface-1 text-placeholder transition-all duration-200 hover:border-custom-primary-100 hover:text-custom-primary-100 hover:bg-custom-primary-100/5 h-7 w-7">
                 <SmilePlus className="h-3.5 w-3.5" />
               </button>
             }

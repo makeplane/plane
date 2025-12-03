@@ -25,7 +25,7 @@ export const Provider: Story = {
           <p className="text-13 text-gray-600">
             Toast provider is required to display toasts. It should be added to your app root.
           </p>
-          <code className="block rounded bg-gray-100 p-2 text-11">{`<Toast theme="light" />`}</code>
+          <code className="block rounded-sm bg-gray-100 p-2 text-11">{`<Toast theme="light" />`}</code>
         </div>
       </div>
     );
@@ -45,7 +45,7 @@ export const Success: Story = {
               message: "Your changes have been saved successfully.",
             })
           }
-          className="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+          className="rounded-sm bg-green-500 px-4 py-2 text-white hover:bg-green-600"
         >
           Show Success Toast
         </button>
@@ -67,7 +67,7 @@ export const Error: Story = {
               message: "Something went wrong. Please try again.",
             })
           }
-          className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+          className="rounded-sm bg-red-500 px-4 py-2 text-white hover:bg-red-600"
         >
           Show Error Toast
         </button>
@@ -89,7 +89,7 @@ export const Warning: Story = {
               message: "This action cannot be undone.",
             })
           }
-          className="rounded bg-yellow-500 px-4 py-2 text-white hover:bg-yellow-600"
+          className="rounded-sm bg-yellow-500 px-4 py-2 text-white hover:bg-yellow-600"
         >
           Show Warning Toast
         </button>
@@ -111,7 +111,7 @@ export const Info: Story = {
               message: "Here's some helpful information for you.",
             })
           }
-          className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+          className="rounded-sm bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
         >
           Show Info Toast
         </button>
@@ -132,7 +132,7 @@ export const Loading: Story = {
               title: "Loading...",
             })
           }
-          className="rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
+          className="rounded-sm bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
         >
           Show Loading Toast
         </button>
@@ -158,18 +158,18 @@ export const WithActionItems: Story = {
                     href="#"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-medium rounded"
+                    className="text-custom-primary px-2 py-1 hover:bg-surface-2 font-medium rounded-sm"
                   >
                     {`View work item`}
                   </a>
-                  <button className="cursor-pointer hidden group-hover:flex px-2 py-1 text-tertiary hover:text-secondary hover:bg-custom-background-90 rounded">
+                  <button className="cursor-pointer hidden group-hover:flex px-2 py-1 text-tertiary hover:text-secondary hover:bg-surface-2 rounded-sm">
                     Copy link
                   </button>
                 </div>
               ),
             })
           }
-          className="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+          className="rounded-sm bg-green-500 px-4 py-2 text-white hover:bg-green-600"
         >
           Show Toast with Action
         </button>
@@ -198,7 +198,7 @@ export const UpdateToast: Story = {
     return (
       <>
         <Toast theme="light" />
-        <button onClick={handleUpdate} className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+        <button onClick={handleUpdate} className="rounded-sm bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
           Update Toast After 2s
         </button>
       </>
@@ -231,7 +231,7 @@ export const PromiseToast: Story = {
     return (
       <>
         <Toast theme="light" />
-        <button onClick={handlePromise} className="rounded bg-purple-500 px-4 py-2 text-white hover:bg-purple-600">
+        <button onClick={handlePromise} className="rounded-sm bg-purple-500 px-4 py-2 text-white hover:bg-purple-600">
           Show Promise Toast
         </button>
       </>
@@ -253,7 +253,7 @@ export const AllTypes: Story = {
                 message: "Operation successful",
               })
             }
-            className="rounded bg-green-500 px-3 py-2 text-13 text-white hover:bg-green-600"
+            className="rounded-sm bg-green-500 px-3 py-2 text-13 text-white hover:bg-green-600"
           >
             Success
           </button>
@@ -265,7 +265,7 @@ export const AllTypes: Story = {
                 message: "Operation failed",
               })
             }
-            className="rounded bg-red-500 px-3 py-2 text-13 text-white hover:bg-red-600"
+            className="rounded-sm bg-red-500 px-3 py-2 text-13 text-white hover:bg-red-600"
           >
             Error
           </button>
@@ -277,7 +277,7 @@ export const AllTypes: Story = {
                 message: "Please be careful",
               })
             }
-            className="rounded bg-yellow-500 px-3 py-2 text-13 text-white hover:bg-yellow-600"
+            className="rounded-sm bg-yellow-500 px-3 py-2 text-13 text-white hover:bg-yellow-600"
           >
             Warning
           </button>
@@ -289,7 +289,7 @@ export const AllTypes: Story = {
                 message: "Here's some info",
               })
             }
-            className="rounded bg-blue-500 px-3 py-2 text-13 text-white hover:bg-blue-600"
+            className="rounded-sm bg-blue-500 px-3 py-2 text-13 text-white hover:bg-blue-600"
           >
             Info
           </button>
@@ -300,7 +300,7 @@ export const AllTypes: Story = {
                 title: "Loading",
               })
             }
-            className="rounded bg-gray-500 px-3 py-2 text-13 text-white hover:bg-gray-600"
+            className="rounded-sm bg-gray-500 px-3 py-2 text-13 text-white hover:bg-gray-600"
           >
             Loading
           </button>
@@ -337,7 +337,7 @@ export const MultipleToasts: Story = {
               });
             }, 1000);
           }}
-          className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+          className="rounded-sm bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
         >
           Show Multiple Toasts
         </button>
@@ -358,7 +358,7 @@ export const TitleOnly: Story = {
               title: "Saved!",
             })
           }
-          className="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+          className="rounded-sm bg-green-500 px-4 py-2 text-white hover:bg-green-600"
         >
           Show Title Only
         </button>
@@ -381,7 +381,7 @@ export const LongMessage: Story = {
                 "This is a longer message that provides more detailed information about what happened and what the user should do next.",
             })
           }
-          className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+          className="rounded-sm bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
         >
           Show Long Message
         </button>

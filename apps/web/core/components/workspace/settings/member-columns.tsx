@@ -50,7 +50,7 @@ export function NameColumn(props: NameProps) {
           <div className="flex items-center gap-x-4 gap-y-2 w-72 justify-between">
             <div className="flex items-center gap-x-2 gap-y-2 flex-1">
               {isSuspended ? (
-                <div className="bg-custom-background-80 rounded-full p-0.5">
+                <div className="bg-layer-1 rounded-full p-0.5">
                   <SuspendedUserIcon className="h-4 w-4 text-placeholder" />
                 </div>
               ) : avatar_url && avatar_url.trim() !== "" ? (
@@ -161,7 +161,7 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
                   <span>{ROLE[rowData.role]}</span>
                 </div>
               }
-              buttonClassName={`!px-0 !justify-start hover:bg-custom-background-100 ${errors.role ? "border-red-500" : "border-none"}`}
+              buttonClassName={`!px-0 !justify-start hover:bg-surface-1 ${errors.role ? "border-red-500" : "border-none"}`}
               className="rounded-md p-0 w-32"
               input
             >

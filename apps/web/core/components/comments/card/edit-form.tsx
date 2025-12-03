@@ -111,7 +111,7 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
             type="button"
             onClick={handleSubmit(onEnter)}
             disabled={isDisabled}
-            className={`group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300  ${
+            className={`group rounded-sm border border-green-500 bg-green-500/20 p-2 shadow-md duration-300  ${
               isEmpty ? "cursor-not-allowed bg-gray-200" : "hover:bg-green-500"
             }`}
           >
@@ -122,7 +122,7 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
         )}
         <button
           type="button"
-          className="group rounded border border-red-500 bg-red-500/20 p-2 shadow-md duration-300 hover:bg-red-500"
+          className="group rounded-sm border border-red-500 bg-red-500/20 p-2 shadow-md duration-300 hover:bg-red-500"
           onClick={() => {
             setIsEditing(false);
             editorRef.current?.setEditorValue(comment.comment_html ?? "<p></p>");

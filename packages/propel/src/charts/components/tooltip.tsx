@@ -39,7 +39,7 @@ export const CustomTooltip = React.memo(function CustomTooltip(props: Props) {
             <div className="flex items-center gap-2 truncate">
               {itemDotColors[item?.dataKey] && (
                 <div
-                  className="flex-shrink-0 size-2 rounded-sm"
+                  className="flex-shrink-0 size-2 rounded-xs"
                   style={{
                     backgroundColor: itemDotColors[item?.dataKey],
                   }}

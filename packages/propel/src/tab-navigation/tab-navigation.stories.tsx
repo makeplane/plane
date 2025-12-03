@@ -20,7 +20,7 @@ const meta: Meta<typeof TabNavigationList> = {
   },
   decorators: [
     (Story) => (
-      <div className="w-[900px] p-8 bg-custom-background-100">
+      <div className="w-[900px] p-8 bg-surface-1">
         <Story />
       </div>
     ),
@@ -77,7 +77,7 @@ export const Default: Story = {
         </div>
 
         {/* Code example */}
-        <div className="mt-6 p-4 bg-custom-background-80 rounded-md">
+        <div className="mt-6 p-4 bg-layer-1 rounded-md">
           <div className="text-11 font-medium text-secondary mb-2">Example Code:</div>
           <pre className="text-11 text-tertiary overflow-x-auto">
             {`// With React Router Link

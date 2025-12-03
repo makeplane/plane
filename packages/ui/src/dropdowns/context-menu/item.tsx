@@ -152,9 +152,9 @@ export function ContextMenuItem(props: ContextMenuItemProps) {
         ref={setReferenceElement}
         type="button"
         className={cn(
-          "w-full flex items-center gap-2 px-1 py-1.5 text-left text-secondary rounded text-11 select-none",
+          "w-full flex items-center gap-2 px-1 py-1.5 text-left text-secondary rounded-sm text-11 select-none",
           {
-            "bg-custom-background-90": isActive,
+            "bg-surface-2": isActive,
             "text-placeholder": item.disabled,
           },
           item.className
@@ -191,7 +191,7 @@ export function ContextMenuItem(props: ContextMenuItemProps) {
             style={styles.popper}
             {...attributes.popper}
             className={cn(
-              "fixed z-[35] min-w-[12rem] overflow-hidden rounded-md border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 text-11 shadow-custom-shadow-lg",
+              "fixed z-[35] min-w-[12rem] overflow-hidden rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-custom-shadow-lg",
               "ring-1 ring-black ring-opacity-5"
             )}
             data-context-submenu="true"
@@ -202,9 +202,9 @@ export function ContextMenuItem(props: ContextMenuItemProps) {
                   key={nestedItem.key}
                   type="button"
                   className={cn(
-                    "w-full flex items-center gap-2 px-1 py-1.5 text-left text-secondary rounded text-11 select-none",
+                    "w-full flex items-center gap-2 px-1 py-1.5 text-left text-secondary rounded-sm text-11 select-none",
                     {
-                      "bg-custom-background-90": index === activeNestedIndex,
+                      "bg-surface-2": index === activeNestedIndex,
                       "text-placeholder": nestedItem.disabled,
                     },
                     nestedItem.className

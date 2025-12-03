@@ -56,7 +56,7 @@ export const NotificationSidebarHeaderOptions = observer(function NotificationSi
       {/* mark all notifications as read*/}
       <Tooltip tooltipContent={t("notification.options.mark_all_as_read")} isMobile={isMobile} position="bottom">
         <div
-          className="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-custom-background-80 rounded-sm"
+          className="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-layer-1 rounded-xs"
           data-ph-element={NOTIFICATION_TRACKER_ELEMENTS.MARK_ALL_AS_READ_BUTTON}
           onClick={() => {
             captureSuccess({
@@ -76,7 +76,7 @@ export const NotificationSidebarHeaderOptions = observer(function NotificationSi
       {/* refetch current notifications */}
       <Tooltip tooltipContent={t("notification.options.refresh")} isMobile={isMobile} position="bottom">
         <div
-          className="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-custom-background-80 rounded-sm"
+          className="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-layer-1 rounded-xs"
           onClick={refreshNotifications}
         >
           <RefreshCw className={`h-3 w-3 ${loader === ENotificationLoader.MUTATION_LOADER ? "animate-spin" : ""}`} />

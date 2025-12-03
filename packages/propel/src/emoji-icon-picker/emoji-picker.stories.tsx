@@ -38,7 +38,7 @@ export const Default: Story = {
           closeOnSelect
         />
         {selectedValue && (
-          <div className="text-13 p-4 bg-custom-background-80 rounded border border-subtle-1">
+          <div className="text-13 p-4 bg-layer-1 rounded-sm border border-subtle-1">
             <div className="font-medium mb-2">Selected:</div>
             <pre className="text-11">{JSON.stringify(selectedValue, null, 2)}</pre>
           </div>
@@ -134,7 +134,7 @@ export const LucideIcons: Story = {
           iconType="lucide"
         />
         {selectedValue && (
-          <div className="text-13 p-4 bg-custom-background-80 rounded border border-subtle-1">
+          <div className="text-13 p-4 bg-layer-1 rounded-sm border border-subtle-1">
             <div className="font-medium mb-2">Selected Icon:</div>
             <pre className="text-11">{JSON.stringify(selectedValue, null, 2)}</pre>
           </div>
@@ -167,7 +167,7 @@ export const MaterialIcons: Story = {
           iconType="material"
         />
         {selectedValue && (
-          <div className="text-13 p-4 bg-custom-background-80 rounded border border-subtle-1">
+          <div className="text-13 p-4 bg-layer-1 rounded-sm border border-subtle-1">
             <div className="font-medium mb-2">Selected Icon:</div>
             <pre className="text-11">{JSON.stringify(selectedValue, null, 2)}</pre>
           </div>
@@ -204,14 +204,14 @@ export const CloseOnSelectDisabled: Story = {
             closeOnSelect={false}
           />
           <button
-            className="px-3 py-1.5 text-13 bg-custom-background-80 rounded hover:bg-custom-background-90"
+            className="px-3 py-1.5 text-13 bg-layer-1 rounded-sm hover:bg-surface-2"
             onClick={() => setSelectedValues([])}
           >
             Clear
           </button>
         </div>
         {selectedValues.length > 0 && (
-          <div className="text-13 p-4 bg-custom-background-80 rounded border border-subtle-1">
+          <div className="text-13 p-4 bg-layer-1 rounded-sm border border-subtle-1">
             <div className="font-medium mb-2">Selected ({selectedValues.length}):</div>
             <div className="flex gap-2 flex-wrap">
               {selectedValues.map((val, idx) => (
@@ -306,7 +306,7 @@ export const CustomIconColor: Story = {
           defaultIconColor="#FF5733"
         />
         {selectedValue && (
-          <div className="text-13 p-4 bg-custom-background-80 rounded border border-subtle-1">
+          <div className="text-13 p-4 bg-layer-1 rounded-sm border border-subtle-1">
             <pre className="text-11">{JSON.stringify(selectedValue, null, 2)}</pre>
           </div>
         )}
@@ -407,7 +407,7 @@ export const InFormContext: Story = {
               type="text"
               value={formData.title}
               onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
-              className="w-full px-3 py-2 bg-custom-background-80 border border-subtle-1 rounded"
+              className="w-full px-3 py-2 bg-layer-1 border border-subtle-1 rounded-sm"
               placeholder="Enter project title"
             />
           </div>
@@ -420,12 +420,12 @@ export const InFormContext: Story = {
               label={formData.emoji && formData.emoji.type === "emoji" ? formData.emoji.value : "Click to select icon"}
               defaultOpen={EmojiIconPickerTypes.EMOJI}
               closeOnSelect
-              buttonClassName="px-4 py-2 bg-custom-background-80 border border-subtle-1 rounded hover:bg-custom-background-90 w-full text-left"
+              buttonClassName="px-4 py-2 bg-layer-1 border border-subtle-1 rounded-sm hover:bg-surface-2 w-full text-left"
             />
           </div>
           <button
             type="submit"
-            className="w-full px-4 py-2 bg-custom-primary-100 text-white rounded hover:bg-custom-primary-200"
+            className="w-full px-4 py-2 bg-custom-primary-100 text-white rounded-sm hover:bg-custom-primary-200"
           >
             Create Project
           </button>

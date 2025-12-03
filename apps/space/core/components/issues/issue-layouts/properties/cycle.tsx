@@ -21,7 +21,7 @@ export const IssueBlockCycle = observer(function IssueBlockCycle({ cycleId, shou
     <Tooltip tooltipHeading="Cycle" tooltipContent={cycle?.name ?? "No Cycle"}>
       <div
         className={cn(
-          "flex h-full w-full items-center justify-between gap-1 rounded px-2.5 py-1 text-11  duration-300 focus:outline-none",
+          "flex h-full w-full items-center justify-between gap-1 rounded-sm px-2.5 py-1 text-11  duration-300 focus:outline-none",
           { "border-[0.5px] border-strong": shouldShowBorder }
         )}
       >

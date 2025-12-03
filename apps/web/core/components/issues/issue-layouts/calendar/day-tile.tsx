@@ -140,12 +140,12 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
   const isWeekend = [0, 6].includes(date.date.getDay());
   const isMonthLayout = calendarLayout === "month";
 
-  const normalBackground = isWeekend ? "bg-custom-background-90" : "bg-custom-background-100";
-  const draggingOverBackground = isWeekend ? "bg-custom-background-80" : "bg-custom-background-90";
+  const normalBackground = isWeekend ? "bg-surface-2" : "bg-surface-1";
+  const draggingOverBackground = isWeekend ? "bg-layer-1" : "bg-surface-2";
 
   return (
     <>
-      <div ref={dayTileRef} className="group relative flex h-full w-full flex-col bg-custom-background-90">
+      <div ref={dayTileRef} className="group relative flex h-full w-full flex-col bg-surface-2">
         {/* header */}
         <div
           className={`hidden flex-shrink-0 items-center justify-end px-2 py-1.5 text-right text-11 md:flex ${
@@ -154,7 +154,7 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
                 ? "font-medium"
                 : "text-tertiary"
               : "font-medium" // if week layout, highlight all days
-          } ${isWeekend ? "bg-custom-background-90" : "bg-custom-background-100"} `}
+          } ${isWeekend ? "bg-surface-2" : "bg-surface-1"} `}
         >
           {date.date.getDate() === 1 && MONTHS_LIST[date.date.getMonth() + 1].shortTitle + " "}
           {isToday ? (
@@ -201,7 +201,7 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
           className={cn(
             "text-13 py-2.5 h-full w-full font-medium mx-auto flex flex-col justify-start items-center md:hidden cursor-pointer opacity-80",
             {
-              "bg-custom-background-100": !isWeekend,
+              "bg-surface-1": !isWeekend,
             }
           )}
         >

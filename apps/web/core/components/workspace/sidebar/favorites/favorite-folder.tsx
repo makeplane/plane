@@ -80,7 +80,7 @@ export function FavoriteFolder(props: Props) {
             render: ({ container }) => {
               const root = createRoot(container);
               root.render(
-                <div className="rounded flex gap-1 bg-custom-background-100 text-13 p-1 pr-2">
+                <div className="rounded-sm flex gap-1 bg-surface-1 text-13 p-1 pr-2">
                   <div className="size-5 grid place-items-center flex-shrink-0">
                     <FavoriteFolderIcon />
                   </div>
@@ -146,7 +146,7 @@ export function FavoriteFolder(props: Props) {
           <div
             // id={`sidebar-${projectId}-${projectListType}`}
             className={cn("relative", {
-              "bg-custom-sidebar-background-80 opacity-60": isDragging,
+              "bg-layer-1 opacity-60": isDragging,
               "border-[2px] border-custom-primary-100": instruction === "make-child",
             })}
           >
@@ -154,15 +154,15 @@ export function FavoriteFolder(props: Props) {
             <DropIndicator isVisible={instruction === "reorder-above"} />
             <div
               className={cn(
-                "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-primary hover:bg-custom-sidebar-background-90",
+                "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-primary hover:bg-surface-2",
                 {
-                  "bg-custom-sidebar-background-90": isMenuActive,
+                  "bg-surface-2": isMenuActive,
                 }
               )}
             >
               {/* draggable indicator */}
 
-              <div className="flex-shrink-0 w-3 h-3 rounded-sm absolute left-0 hidden group-hover:flex justify-center items-center transition-colors bg-custom-background-90 cursor-pointer text-secondary hover:text-primary">
+              <div className="flex-shrink-0 w-3 h-3 rounded-xs absolute left-0 hidden group-hover:flex justify-center items-center transition-colors bg-surface-2 cursor-pointer text-secondary hover:text-primary">
                 <GripVertical className="w-3 h-3" />
               </div>
 
@@ -185,7 +185,7 @@ export function FavoriteFolder(props: Props) {
                         <button
                           type="button"
                           className={cn(
-                            "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded text-placeholder cursor-grab",
+                            "hidden group-hover/project-item:flex items-center justify-center absolute top-1/2 -left-3 -translate-y-1/2 rounded-sm text-placeholder cursor-grab",
                             {
                               "cursor-not-allowed opacity-60": favorite.sort_order === null,
                               "cursor-grabbing": isDragging,
@@ -206,7 +206,7 @@ export function FavoriteFolder(props: Props) {
                   customButton={
                     <span
                       ref={actionSectionRef}
-                      className="grid place-items-center p-0.5 text-placeholder hover:bg-custom-sidebar-background-80 rounded"
+                      className="grid place-items-center p-0.5 text-placeholder hover:bg-layer-1 rounded-sm"
                     >
                       <MoreHorizontal className="size-3" />
                     </span>
@@ -238,12 +238,9 @@ export function FavoriteFolder(props: Props) {
                 <Disclosure.Button
                   as="button"
                   type="button"
-                  className={cn(
-                    "hidden group-hover/project-item:inline-block p-0.5 rounded hover:bg-custom-sidebar-background-80",
-                    {
-                      "inline-block": isMenuActive,
-                    }
-                  )}
+                  className={cn("hidden group-hover/project-item:inline-block p-0.5 rounded-sm hover:bg-layer-1", {
+                    "inline-block": isMenuActive,
+                  })}
                   aria-label={t(
                     open ? "aria_labels.projects_sidebar.close_folder" : "aria_labels.projects_sidebar.open_folder"
                   )}

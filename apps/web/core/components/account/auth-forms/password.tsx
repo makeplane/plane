@@ -130,7 +130,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
           </div>
           <div className="w-full text-13 font-medium text-red-500">{t("auth.sign_up.errors.password.strength")}</div>
           <div
-            className="relative ml-auto w-6 h-6 rounded-sm flex justify-center items-center transition-all cursor-pointer hover:bg-red-500/20 text-custom-primary-100/80"
+            className="relative ml-auto w-6 h-6 rounded-xs flex justify-center items-center transition-all cursor-pointer hover:bg-red-500/20 text-custom-primary-100/80"
             onClick={() => setBannerMessage(false)}
           >
             <CloseIcon className="w-4 h-4 flex-shrink-0 text-red-500" />
@@ -185,7 +185,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
           <label htmlFor="email" className="text-13 font-medium text-tertiary">
             {t("auth.common.email.label")}
           </label>
-          <div className={`relative flex items-center rounded-md bg-custom-background-100 border border-strong`}>
+          <div className={`relative flex items-center rounded-md bg-surface-1 border border-strong`}>
             <Input
               id="email"
               name="email"
@@ -213,7 +213,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
           <label htmlFor="password" className="text-13 text-tertiary font-medium">
             {mode === EAuthModes.SIGN_IN ? t("auth.common.password.label") : t("auth.common.password.set_password")}
           </label>
-          <div className="relative flex items-center rounded-md bg-custom-background-100">
+          <div className="relative flex items-center rounded-md bg-surface-1">
             <Input
               type={showPassword?.password ? "text" : "password"}
               id="password"
@@ -221,7 +221,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               value={passwordFormData.password}
               onChange={(e) => handleFormChange("password", e.target.value)}
               placeholder={t("auth.common.password.placeholder")}
-              className="disable-autofill-style h-10 w-full border border-strong !bg-custom-background-100 pr-12 placeholder:text-placeholder"
+              className="disable-autofill-style h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
               onFocus={() => setIsPasswordInputFocused(true)}
               onBlur={() => setIsPasswordInputFocused(false)}
               autoComplete="on"
@@ -250,7 +250,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
             <label htmlFor="confirm-password" className="text-13 text-tertiary font-medium">
               {t("auth.common.password.confirm_password.label")}
             </label>
-            <div className="relative flex items-center rounded-md bg-custom-background-100">
+            <div className="relative flex items-center rounded-md bg-surface-1">
               <Input
                 type={showPassword?.retypePassword ? "text" : "password"}
                 id="confirm-password"
@@ -258,7 +258,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
                 value={passwordFormData.confirm_password}
                 onChange={(e) => handleFormChange("confirm_password", e.target.value)}
                 placeholder={t("auth.common.password.confirm_password.placeholder")}
-                className="disable-autofill-style h-10 w-full border border-strong !bg-custom-background-100 pr-12 placeholder:text-placeholder"
+                className="disable-autofill-style h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
                 onFocus={() => setIsRetryPasswordInputFocused(true)}
                 onBlur={() => setIsRetryPasswordInputFocused(false)}
               />

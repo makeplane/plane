@@ -52,7 +52,7 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                className="flex items-center justify-center size-6 rounded-md text-placeholder hover:text-custom-primary-100 hover:bg-custom-background-90"
+                className="flex items-center justify-center size-6 rounded-md text-placeholder hover:text-custom-primary-100 hover:bg-surface-2"
                 onClick={() => setIsCustomizeNavDialogOpen(true)}
               >
                 <PreferencesIcon className="size-4" />
@@ -74,7 +74,7 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
           {children}
         </ScrollArea>
         {/* Help Section */}
-        <div className="flex items-center justify-between p-3 border-t border-subtle-1 bg-custom-sidebar-background-100 h-12">
+        <div className="flex items-center justify-between p-3 border-t border-subtle-1 bg-surface-1 h-12">
           <WorkspaceEditionBadge />
           {/* TODO: To be checked if we need this */}
           {/* <div className="flex items-center gap-2">

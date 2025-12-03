@@ -11,7 +11,7 @@ export const ListQuickAddIssueForm = observer(function ListQuickAddIssueForm(pro
       <form
         ref={ref}
         onSubmit={onSubmit}
-        className="flex w-full items-center gap-x-3 border-[0.5px] border-t-0 border-subtle bg-custom-background-100 px-3"
+        className="flex w-full items-center gap-x-3 border-[0.5px] border-t-0 border-subtle bg-surface-1 px-3"
       >
         <div className="flex w-full items-center gap-3">
           <div className="text-11 font-medium text-placeholder">{projectDetail?.identifier ?? "..."}</div>

@@ -207,7 +207,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
 
                 <Listbox.Options as="div">
                   <div
-                    className="p-2 absolute space-y-1 z-10 mt-1 h-fit w-48 sm:w-60 rounded-md border border-strong bg-custom-background-100 shadow-sm focus:outline-none"
+                    className="p-2 absolute space-y-1 z-10 mt-1 h-fit w-48 sm:w-60 rounded-md border border-strong bg-surface-1 shadow-sm focus:outline-none"
                     ref={setPopperElement}
                     style={styles.popper}
                     {...attributes.popper}
@@ -218,7 +218,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                         key={key}
                         value={parseInt(key)}
                         className={({ active, selected }) =>
-                          `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
+                          `cursor-pointer select-none truncate rounded-sm px-1 py-1.5 ${
                             active || selected ? "bg-onboarding-background-400/40" : ""
                           } ${selected ? "text-primary" : "text-secondary"}`
                         }
@@ -243,7 +243,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
         {fields.length > 1 && (
           <button
             type="button"
-            className="absolute right-0 hidden place-items-center self-center rounded group-hover:grid"
+            className="absolute right-0 hidden place-items-center self-center rounded-sm group-hover:grid"
             onClick={() => remove(index)}
           >
             <XCircle className="h-5 w-5 pl-0.5 text-placeholder" />

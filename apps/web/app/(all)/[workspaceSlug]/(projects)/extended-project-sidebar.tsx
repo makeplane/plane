@@ -112,7 +112,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
                 <button
                   type="button"
                   data-ph-element={PROJECT_TRACKER_ELEMENTS.EXTENDED_SIDEBAR_ADD_BUTTON}
-                  className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0 text-tertiary hover:text-secondary transition-colors"
+                  className="p-0.5 rounded-sm hover:bg-layer-1 flex-shrink-0 text-tertiary hover:text-secondary transition-colors"
                   onClick={() => {
                     setIsProjectModalOpen(true);
                   }}
@@ -122,7 +122,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
               </Tooltip>
             )}
           </div>
-          <div className="ml-auto flex items-center gap-1.5 rounded-md border border-subtle-1 bg-custom-background-100 px-2.5 py-1 w-full">
+          <div className="ml-auto flex items-center gap-1.5 rounded-md border border-subtle-1 bg-surface-1 px-2.5 py-1 w-full">
             <Search className="h-3.5 w-3.5 text-placeholder" />
             <input
               className="w-full max-w-[234px] border-none bg-transparent text-13 outline-none placeholder:text-placeholder"

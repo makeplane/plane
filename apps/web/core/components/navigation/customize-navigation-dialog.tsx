@@ -172,7 +172,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
 
   return (
     <ModalCore isOpen={isOpen} handleClose={onClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
-      <div className="flex flex-col max-h-[90vh] bg-custom-background-100 rounded-lg">
+      <div className="flex flex-col max-h-[90vh] bg-surface-1 rounded-lg">
         {/* Header */}
         <div className="flex justify-between px-6 py-4">
           <div>
@@ -184,7 +184,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
           </div>
           <button
             onClick={onClose}
-            className="flex-shrink-0 size-5 flex items-center justify-center rounded hover:bg-custom-background-80 text-placeholder"
+            className="flex-shrink-0 size-5 flex items-center justify-center rounded-sm hover:bg-layer-1 text-placeholder"
             aria-label={t("close")}
           >
             <X className="size-4" />
@@ -196,14 +196,14 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
           {/* Personal Section */}
           <div className="flex flex-col gap-2">
             <h3 className="text-13 font-semibold text-placeholder">{t("personal")}</h3>
-            <div className="border border-subtle-1 rounded-md py-2 bg-custom-background-90">
+            <div className="border border-subtle-1 rounded-md py-2 bg-surface-2">
               <Sortable
                 data={personalItems}
                 onChange={handlePersonalReorder}
                 keyExtractor={(item) => item.key}
                 id="personal-enabled-items"
                 render={(item) => (
-                  <div className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-custom-background-90 transition-all duration-200">
+                  <div className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-surface-2 transition-all duration-200">
                     <GripVertical className="size-4 text-placeholder cursor-grab active:cursor-grabbing transition-colors" />
                     <Checkbox
                       checked={!!personalPreferences.items[item.key]?.enabled}
@@ -224,7 +224,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
           {/* Workspace Section */}
           <div className="flex flex-col gap-2">
             <h3 className="text-13 font-semibold text-placeholder">{t("workspace")}</h3>
-            <div className="border border-subtle-1 rounded-md py-2 bg-custom-background-90">
+            <div className="border border-subtle-1 rounded-md py-2 bg-surface-2">
               {/* Pinned Items - Draggable */}
               <Sortable
                 data={workspaceItems}
@@ -234,7 +234,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
                 render={(item) => {
                   const icon = getSidebarNavigationItemIcon(item.key);
                   return (
-                    <div className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-custom-background-90 group transition-all duration-200">
+                    <div className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-surface-2 group transition-all duration-200">
                       <GripVertical className="size-4 text-placeholder cursor-grab active:cursor-grabbing transition-colors" />
                       <Checkbox
                         checked={!!workspacePreferences.items[item.key]?.is_pinned}
@@ -255,11 +255,11 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
           <div className="flex flex-col gap-2">
             <h3 className="text-13 font-semibold text-placeholder">{t("projects")}</h3>
 
-            <div className="border border-subtle-1 rounded-md px-2 py-2 bg-custom-background-90">
+            <div className="border border-subtle-1 rounded-md px-2 py-2 bg-surface-2">
               <div className="space-y-3">
                 {/* Navigation Mode Radio Buttons */}
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-custom-background-90 cursor-pointer">
+                  <label className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-surface-2 cursor-pointer">
                     <input
                       type="radio"
                       name="navigation-mode"
@@ -276,7 +276,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
                     </div>
                   </label>
 
-                  <label className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-custom-background-90 cursor-pointer">
+                  <label className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-surface-2 cursor-pointer">
                     <input
                       type="radio"
                       name="navigation-mode"
@@ -296,7 +296,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
 
                 {/* Limited Projects Checkbox */}
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-custom-background-90 cursor-pointer">
+                  <label className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-surface-2 cursor-pointer">
                     <Checkbox
                       checked={projectPreferences.showLimitedProjects}
                       onChange={(e) => updateShowLimitedProjects(e.target.checked)}
@@ -318,7 +318,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
                             onChange={(e) => handleProjectCountChange(e.target.value)}
                             className={cn(
                               "w-full px-2 py-1 text-13 rounded-md",
-                              "bg-custom-background-90 border",
+                              "bg-surface-2 border",
                               "text-secondary",
                               parseInt(projectCountInput) >= 1
                                 ? "border-strong focus:border-custom-primary-100 focus:ring-1 focus:ring-custom-primary-100"

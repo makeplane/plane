@@ -43,15 +43,15 @@ export const ProfileActivity = observer(function ProfileActivity() {
             <div className="space-y-5">
               {userProfileActivity.results.map((activity) => (
                 <div key={activity.id} className="flex gap-3">
-                  <div className="flex-shrink-0 grid place-items-center overflow-hidden rounded h-6 w-6">
+                  <div className="flex-shrink-0 grid place-items-center overflow-hidden rounded-sm h-6 w-6">
                     {activity.actor_detail?.avatar_url && activity.actor_detail?.avatar_url !== "" ? (
                       <img
                         src={getFileURL(activity.actor_detail?.avatar_url)}
                         alt={activity.actor_detail?.display_name}
-                        className="rounded"
+                        className="rounded-sm"
                       />
                     ) : (
-                      <div className="grid h-6 w-6 place-items-center rounded border-2 bg-gray-700 text-11 text-white">
+                      <div className="grid h-6 w-6 place-items-center rounded-sm border-2 bg-gray-700 text-11 text-white">
                         {activity.actor_detail?.display_name?.charAt(0)}
                       </div>
                     )}

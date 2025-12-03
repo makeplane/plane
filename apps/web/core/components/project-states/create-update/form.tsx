@@ -15,7 +15,7 @@ type TStateForm = {
 function PopoverButton({ color }: { color?: string }) {
   return (
     <div
-      className="group inline-flex items-center text-14 font-medium focus:outline-none h-5 w-5 rounded transition-all"
+      className="group inline-flex items-center text-14 font-medium focus:outline-none h-5 w-5 rounded-sm transition-all"
       style={{
         backgroundColor: color ?? "black",
       }}
@@ -57,7 +57,7 @@ export function StateForm(props: TStateForm) {
   };
 
   return (
-    <div className="relative flex space-x-2 bg-custom-background-100 p-3 rounded">
+    <div className="relative flex space-x-2 bg-surface-1 p-3 rounded-sm">
       {/* color */}
       <div className="flex-shrink-0 h-full mt-2">
         <Popover button={<PopoverButton color={formData?.color} />} panelClassName="mt-4 -ml-3">

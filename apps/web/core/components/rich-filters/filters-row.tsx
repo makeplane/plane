@@ -44,13 +44,13 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
 
   const headerButtonConfig: Partial<TAddFilterButtonProps<K, E>["buttonConfig"]> = {
     variant: "link-neutral",
-    className: "bg-custom-background-90",
+    className: "bg-surface-2",
     label: null,
   };
 
   const modalButtonConfig: Partial<TAddFilterButtonProps<K, E>["buttonConfig"]> = {
     variant: "neutral-primary",
-    className: "bg-custom-background-100",
+    className: "bg-surface-1",
     label: !hasAnyConditions ? "Filters" : null,
   };
 
@@ -138,9 +138,7 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
   );
 
   const ModalVariant = (
-    <div className="w-full flex flex-wrap items-center gap-2 min-h-11 bg-custom-background-90 rounded-lg p-2">
-      {mainContent}
-    </div>
+    <div className="w-full flex flex-wrap items-center gap-2 min-h-11 bg-surface-2 rounded-lg p-2">{mainContent}</div>
   );
 
   const HeaderVariant = (

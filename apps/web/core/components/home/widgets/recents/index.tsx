@@ -87,7 +87,7 @@ export const RecentActivityWidget = observer(function RecentActivityWidget(props
       maxHeight={415}
       containerClassName="box-border min-h-[250px]"
       fallback={<></>}
-      buttonClassName="bg-custom-background-90/20"
+      buttonClassName="bg-surface-2/20"
     >
       <div className="flex items-center justify-between mb-2">
         <div className="text-14 font-semibold text-custom-text-350">{t("home.recents.title")}</div>

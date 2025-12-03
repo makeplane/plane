@@ -48,8 +48,8 @@ export function IssueCommentToolbar(props: Props) {
   }, [editorRef, updateActiveStates]);
 
   return (
-    <div className="flex h-9 w-full items-stretch gap-1.5 bg-custom-background-90 overflow-x-scroll">
-      <div className="flex w-full items-stretch justify-between gap-2 rounded border-[0.5px] border-subtle-1 p-1">
+    <div className="flex h-9 w-full items-stretch gap-1.5 bg-surface-2 overflow-x-scroll">
+      <div className="flex w-full items-stretch justify-between gap-2 rounded-sm border-[0.5px] border-subtle-1 p-1">
         <div className="flex items-stretch">
           {Object.keys(toolbarItems).map((key, index) => (
             <div
@@ -75,9 +75,9 @@ export function IssueCommentToolbar(props: Props) {
                       type="button"
                       onClick={() => executeCommand(item)}
                       className={cn(
-                        "grid place-items-center aspect-square rounded-sm p-0.5 text-placeholder hover:bg-custom-background-80",
+                        "grid place-items-center aspect-square rounded-xs p-0.5 text-placeholder hover:bg-layer-1",
                         {
-                          "bg-custom-background-80 text-primary": isItemActive,
+                          "bg-layer-1 text-primary": isItemActive,
                         }
                       )}
                     >

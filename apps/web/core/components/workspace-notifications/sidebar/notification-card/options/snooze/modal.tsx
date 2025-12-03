@@ -121,7 +121,7 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
+          <div className="fixed inset-0 bg-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -135,7 +135,7 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative w-full transform rounded-lg bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:!max-w-2xl">
+              <Dialog.Panel className="relative w-full transform rounded-lg bg-surface-1 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:!max-w-2xl">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="flex items-center justify-between">
                     <Dialog.Title as="h3" className="text-16 font-medium leading-6 text-primary">
@@ -196,7 +196,7 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
                             }
                             input
                           >
-                            <div className="mb-2 flex h-9 w-full overflow-hidden rounded">
+                            <div className="mb-2 flex h-9 w-full overflow-hidden rounded-sm">
                               <div
                                 onClick={() => {
                                   setValue("period", "AM");
@@ -204,7 +204,7 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
                                 className={`flex h-full w-1/2 cursor-pointer items-center justify-center text-center ${
                                   watch("period") === "AM"
                                     ? "bg-custom-primary-100/90 text-custom-primary-0"
-                                    : "bg-custom-background-80"
+                                    : "bg-layer-1"
                                 }`}
                               >
                                 AM
@@ -216,7 +216,7 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
                                 className={`flex h-full w-1/2 cursor-pointer items-center justify-center text-center ${
                                   watch("period") === "PM"
                                     ? "bg-custom-primary-100/90 text-custom-primary-0"
-                                    : "bg-custom-background-80"
+                                    : "bg-layer-1"
                                 }`}
                               >
                                 PM

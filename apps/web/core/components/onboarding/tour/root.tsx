@@ -89,7 +89,7 @@ export const TourRoot = observer(function TourRoot(props: Props) {
   return (
     <>
       {step === "welcome" ? (
-        <div className="h-3/4 w-4/5 overflow-hidden rounded-[10px] bg-custom-background-100 md:w-1/2 lg:w-2/5">
+        <div className="h-3/4 w-4/5 overflow-hidden rounded-[10px] bg-surface-1 md:w-1/2 lg:w-2/5">
           <div className="h-full overflow-hidden">
             <div className="grid h-3/5 place-items-center bg-custom-primary-100">
               <PlaneLockup className="h-10 w-auto text-primary" />
@@ -133,7 +133,7 @@ export const TourRoot = observer(function TourRoot(props: Props) {
           </div>
         </div>
       ) : (
-        <div className="relative grid h-3/5 w-4/5 grid-cols-10 overflow-hidden rounded-[10px] bg-custom-background-100 sm:h-3/4 md:w-1/2 lg:w-3/5">
+        <div className="relative grid h-3/5 w-4/5 grid-cols-10 overflow-hidden rounded-[10px] bg-surface-1 sm:h-3/4 md:w-1/2 lg:w-3/5">
           <button
             type="button"
             className="fixed right-[9%] top-[19%] z-10 -translate-y-1/2 translate-x-1/2 cursor-pointer rounded-full border border-custom-text-100 p-1 sm:top-[11.5%] md:right-[24%] lg:right-[19%]"

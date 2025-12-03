@@ -121,9 +121,9 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
         }}
         onSubmit={handleRemoveInvitation}
       />
-      <div className="group flex items-center justify-between px-3 py-4 hover:bg-custom-background-90 w-full h-full">
+      <div className="group flex items-center justify-between px-3 py-4 hover:bg-surface-2 w-full h-full">
         <div className="flex items-center gap-x-4 gap-y-2">
-          <span className="relative flex h-10 w-10 items-center justify-center rounded bg-gray-700 p-4 capitalize text-white">
+          <span className="relative flex h-10 w-10 items-center justify-center rounded-sm bg-gray-700 p-4 capitalize text-white">
             {(invitationDetails.email ?? "?")[0]}
           </span>
           <div>
@@ -131,14 +131,14 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
           </div>
         </div>
         <div className="flex items-center gap-2 text-11">
-          <div className="flex items-center justify-center rounded bg-yellow-500/20 px-2.5 py-1 text-center text-11 font-medium text-yellow-500">
+          <div className="flex items-center justify-center rounded-sm bg-yellow-500/20 px-2.5 py-1 text-center text-11 font-medium text-yellow-500">
             <p>{t("common.pending")}</p>
           </div>
           <CustomSelect
             customButton={
-              <div className="item-center flex gap-1 rounded px-2 py-0.5">
+              <div className="item-center flex gap-1 rounded-sm px-2 py-0.5">
                 <span
-                  className={`flex items-center rounded text-11 font-medium ${
+                  className={`flex items-center rounded-sm text-11 font-medium ${
                     hasRoleChangeAccess ? "" : "text-placeholder"
                   }`}
                 >

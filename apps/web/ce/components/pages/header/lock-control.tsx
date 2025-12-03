@@ -80,7 +80,7 @@ export const PageLockControl = observer(function PageLockControl({ page }: Props
             type="button"
             onClick={toggleLock}
             data-ph-element={PROJECT_PAGE_TRACKER_ELEMENTS.LOCK_BUTTON}
-            className="flex-shrink-0 size-6 grid place-items-center rounded text-secondary hover:text-primary hover:bg-custom-background-80 transition-colors"
+            className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-secondary hover:text-primary hover:bg-layer-1 transition-colors"
             aria-label="Lock"
           >
             <LockKeyhole className="size-3.5" />
@@ -93,7 +93,7 @@ export const PageLockControl = observer(function PageLockControl({ page }: Props
           type="button"
           onClick={toggleLock}
           data-ph-element={PROJECT_PAGE_TRACKER_ELEMENTS.LOCK_BUTTON}
-          className="h-6 flex items-center gap-1 px-2 rounded text-custom-primary-100 bg-custom-primary-100/20 hover:bg-custom-primary-100/30 transition-colors"
+          className="h-6 flex items-center gap-1 px-2 rounded-sm text-custom-primary-100 bg-custom-primary-100/20 hover:bg-custom-primary-100/30 transition-colors"
           aria-label="Locked"
         >
           <LockKeyhole className="flex-shrink-0 size-3.5 animate-lock-icon" />
@@ -104,7 +104,10 @@ export const PageLockControl = observer(function PageLockControl({ page }: Props
       )}
 
       {displayState === "unlocked" && (
-        <div className="h-6 flex items-center gap-1 px-2 rounded text-secondary animate-fade-out" aria-label="Unlocked">
+        <div
+          className="h-6 flex items-center gap-1 px-2 rounded-sm text-secondary animate-fade-out"
+          aria-label="Unlocked"
+        >
           <LockKeyholeOpen className="flex-shrink-0 size-3.5 animate-unlock-icon" />
           <span className="text-11 font-medium whitespace-nowrap overflow-hidden transition-all duration-500 ease-out animate-text-slide-in animate-text-fade-out">
             Unlocked

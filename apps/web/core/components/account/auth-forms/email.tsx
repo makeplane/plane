@@ -50,7 +50,7 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
         </label>
         <div
           className={cn(
-            `relative flex items-center rounded-md bg-custom-background-100 border`,
+            `relative flex items-center rounded-md bg-surface-1 border`,
             !isFocused && Boolean(emailError?.email) ? `border-red-500` : `border-strong`
           )}
           onFocus={() => {

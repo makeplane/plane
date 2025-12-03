@@ -34,7 +34,7 @@ interface DevErrorComponentProps {
 export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorComponentProps) {
   if (isRouteErrorResponse(error)) {
     return (
-      <div className="min-h-screen bg-custom-background-90 p-6 flex items-start justify-center transition-none">
+      <div className="min-h-screen bg-surface-2 p-6 flex items-start justify-center transition-none">
         <div className="w-full max-w-4xl mt-12 space-y-4 transition-none">
           <Banner
             variant="error"
@@ -54,7 +54,7 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
 
               <div className="space-y-2">
                 <h3 className="text-13 font-medium text-tertiary uppercase tracking-wide">Error Data</h3>
-                <div className="bg-custom-background-80 rounded-md p-4">
+                <div className="bg-layer-1 rounded-md p-4">
                   <p className="text-13 text-secondary font-mono">{error.data}</p>
                 </div>
               </div>
@@ -69,7 +69,7 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
 
   if (error instanceof Error) {
     return (
-      <div className="min-h-screen bg-custom-background-90 p-6 flex items-start justify-center transition-none">
+      <div className="min-h-screen bg-surface-2 p-6 flex items-start justify-center transition-none">
         <div className="w-full max-w-4xl mt-12 space-y-4 transition-none">
           <Banner
             variant="error"
@@ -86,7 +86,7 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
 
               <div className="space-y-2">
                 <h3 className="text-13 font-medium text-tertiary uppercase tracking-wide">Message</h3>
-                <div className="bg-custom-background-80 rounded-md p-4">
+                <div className="bg-layer-1 rounded-md p-4">
                   <p className="text-13 text-primary font-medium">{error.message}</p>
                 </div>
               </div>
@@ -94,7 +94,7 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
               {error.stack && (
                 <div className="space-y-2">
                   <h3 className="text-13 font-medium text-tertiary uppercase tracking-wide">Stack Trace</h3>
-                  <div className="bg-custom-background-80 rounded-md border border-subtle-1 max-h-96 overflow-auto">
+                  <div className="bg-layer-1 rounded-md border border-subtle-1 max-h-96 overflow-auto">
                     <pre className="p-4 text-11 text-secondary font-mono whitespace-pre-wrap break-words">
                       {error.stack}
                     </pre>
@@ -106,7 +106,7 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
             </div>
           </Card>
 
-          <Card variant={ECardVariant.WITHOUT_SHADOW} className="!p-4 bg-custom-background-80 transition-none">
+          <Card variant={ECardVariant.WITHOUT_SHADOW} className="!p-4 bg-layer-1 transition-none">
             <div className="flex items-start gap-3">
               <InfoFillIcon className="size-5 text-tertiary flex-shrink-0 mt-0.5" />
               <div className="space-y-1">
@@ -124,7 +124,7 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
   }
 
   return (
-    <div className="min-h-screen bg-custom-background-90 p-6 flex items-start justify-center transition-none">
+    <div className="min-h-screen bg-surface-2 p-6 flex items-start justify-center transition-none">
       <div className="w-full max-w-4xl mt-12 space-y-4 transition-none">
         <Banner
           variant="error"
@@ -140,7 +140,7 @@ export function DevErrorComponent({ error, onGoHome, onReload }: DevErrorCompone
               <div className="h-px w-full bg-subtle-1" />
             </div>
 
-            <div className="bg-custom-background-80 rounded-md p-4">
+            <div className="bg-layer-1 rounded-md p-4">
               <p className="text-13 text-secondary">
                 An unknown error occurred. Please try refreshing the page or contact support if the problem persists.
               </p>

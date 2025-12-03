@@ -14,7 +14,7 @@ export const TabNavigationItem: FC<TTabNavigationItemProps> = ({ children, isAct
     <AnimatePresence>
       {isActive && (
         <motion.div
-          className="absolute inset-0 bg-custom-background-90 rounded-md -z-10"
+          className="absolute inset-0 bg-surface-2 rounded-md -z-10"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}

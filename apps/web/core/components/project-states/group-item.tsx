@@ -50,10 +50,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
 
   return (
     <div
-      className={cn(
-        "space-y-1 border border-subtle-1 rounded bg-custom-background-90 transition-all p-2",
-        groupItemClassName
-      )}
+      className={cn("space-y-1 border border-subtle-1 rounded-sm bg-surface-2 transition-all p-2", groupItemClassName)}
       ref={dropElementRef}
     >
       <div className="flex justify-between items-center gap-2">
@@ -63,7 +60,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
         >
           <div
             className={cn(
-              "flex-shrink-0 w-5 h-5 rounded flex justify-center items-center overflow-hidden transition-all",
+              "flex-shrink-0 w-5 h-5 rounded-sm flex justify-center items-center overflow-hidden transition-all",
               {
                 "rotate-0": currentStateExpanded,
                 "-rotate-90": !currentStateExpanded,
@@ -72,7 +69,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
           >
             <ChevronDownIcon className="w-4 h-4" />
           </div>
-          <div className="flex-shrink-0 w-6 h-6 rounded flex justify-center items-center overflow-hidden">
+          <div className="flex-shrink-0 w-6 h-6 rounded-sm flex justify-center items-center overflow-hidden">
             <StateGroupIcon stateGroup={groupKey} size={EIconSize.XL} />
           </div>
           <div className="text-14 font-medium text-secondary capitalize px-1">{groupKey}</div>
@@ -81,7 +78,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
           type="button"
           data-ph-element={STATE_TRACKER_ELEMENTS.STATE_GROUP_ADD_BUTTON}
           className={cn(
-            "flex-shrink-0 w-6 h-6 rounded flex justify-center items-center overflow-hidden transition-colors hover:bg-custom-background-80 cursor-pointer text-custom-primary-100/80 hover:text-custom-primary-100",
+            "flex-shrink-0 w-6 h-6 rounded-sm flex justify-center items-center overflow-hidden transition-colors hover:bg-layer-1 cursor-pointer text-custom-primary-100/80 hover:text-custom-primary-100",
             (!isEditable || createState) && "cursor-not-allowed text-placeholder hover:text-placeholder"
           )}
           onClick={() => {

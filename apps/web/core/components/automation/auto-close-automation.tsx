@@ -93,7 +93,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
       <div className="flex flex-col gap-4 py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-start gap-3">
-            <div className="flex items-center justify-center rounded bg-custom-background-90 p-3">
+            <div className="flex items-center justify-center rounded-sm bg-surface-2 p-3">
               <ArchiveX className="h-4 w-4 flex-shrink-0 text-red-500" />
             </div>
             <div className="">
@@ -129,7 +129,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
         {currentProjectDetails ? (
           autoCloseStatus && (
             <div className="mx-6">
-              <div className="flex flex-col rounded border border-subtle-1 bg-custom-background-90">
+              <div className="flex flex-col rounded-sm border border-subtle-1 bg-surface-2">
                 <div className="flex w-full items-center justify-between gap-2 px-5 py-4">
                   <div className="w-1/2 text-13 font-medium">
                     {t("project_settings.automations.auto-close.duration")}
@@ -154,7 +154,7 @@ export const AutoCloseAutomation = observer(function AutoCloseAutomation(props: 
                         ))}
                         <button
                           type="button"
-                          className="flex w-full select-none items-center rounded px-1 py-1.5 text-secondary hover:bg-custom-background-80"
+                          className="flex w-full select-none items-center rounded-sm px-1 py-1.5 text-secondary hover:bg-layer-1"
                           onClick={() => setmonthModal(true)}
                         >
                           {t("common.customize_time_range")}

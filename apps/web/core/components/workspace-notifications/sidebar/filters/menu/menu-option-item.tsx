@@ -27,13 +27,13 @@ export const NotificationFilterOptionItem = observer(function NotificationFilter
   return (
     <div
       key={value}
-      className="flex items-center gap-2 cursor-pointer px-2 p-1 transition-all hover:bg-custom-background-80 rounded-sm"
+      className="flex items-center gap-2 cursor-pointer px-2 p-1 transition-all hover:bg-layer-1 rounded-xs"
       onClick={() => handleFilterTypeChange(value, !isSelected)}
     >
       <div
-        className={cn("flex-shrink-0 w-3 h-3 flex justify-center items-center rounded-sm transition-all", {
+        className={cn("flex-shrink-0 w-3 h-3 flex justify-center items-center rounded-xs transition-all", {
           "bg-custom-primary text-white": isSelected,
-          "bg-custom-background-90": !isSelected,
+          "bg-surface-2": !isSelected,
         })}
       >
         {isSelected && <Check className="h-2.5 w-2.5" />}

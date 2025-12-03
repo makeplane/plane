@@ -84,8 +84,8 @@ export const BlockRow = observer(function BlockRow(props: Props) {
     >
       <div
         className={cn("relative h-full", {
-          "rounded-l border border-r-0 border-custom-primary-70": getIsIssuePeeked(block.data.id),
-          "bg-custom-background-90": isBlockHoveredOn,
+          "rounded-l-sm border border-r-0 border-custom-primary-70": getIsIssuePeeked(block.data.id),
+          "bg-surface-2": isBlockHoveredOn,
           "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isBlockSelected,
           "bg-custom-primary-100/10": isBlockSelected && isBlockHoveredOn,
           "border border-r-0 border-strong-1": isBlockFocused,
@@ -95,7 +95,7 @@ export const BlockRow = observer(function BlockRow(props: Props) {
           ? isHidden && (
               <button
                 type="button"
-                className="sticky z-[5] grid h-8 w-8 translate-y-1.5 cursor-pointer place-items-center rounded border border-strong bg-custom-background-80 text-secondary hover:text-primary"
+                className="sticky z-[5] grid h-8 w-8 translate-y-1.5 cursor-pointer place-items-center rounded-sm border border-strong bg-layer-1 text-secondary hover:text-primary"
                 style={{
                   left: `${SIDEBAR_WIDTH + 4}px`,
                 }}

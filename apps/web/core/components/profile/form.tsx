@@ -200,10 +200,10 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
             />
             <div className="absolute -bottom-6 left-6 flex items-end justify-between">
               <div className="flex gap-3">
-                <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-custom-background-90">
+                <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-surface-2">
                   <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
                     {!userAvatar || userAvatar === "" ? (
-                      <div className="h-16 w-16 rounded-md bg-custom-background-80 p-2">
+                      <div className="h-16 w-16 rounded-md bg-layer-1 p-2">
                         <CircleUserRound className="h-full w-full text-secondary" />
                       </div>
                     ) : (
@@ -354,7 +354,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
                       ref={ref}
                       hasError={Boolean(errors.email)}
                       placeholder="Enter your email"
-                      className={`w-full cursor-not-allowed rounded-md !bg-custom-background-90 ${
+                      className={`w-full cursor-not-allowed rounded-md !bg-surface-2 ${
                         errors.email ? "border-red-500" : ""
                       }`}
                       autoComplete="on"

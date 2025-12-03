@@ -78,7 +78,7 @@ export const ProfileActivityListPage = observer(function ProfileActivityListPage
                         </div>
                       )}
 
-                      <span className="ring-6 flex h-6 w-6 p-2 items-center justify-center rounded-full bg-custom-background-80 text-secondary ring-white">
+                      <span className="ring-6 flex h-6 w-6 p-2 items-center justify-center rounded-full bg-layer-1 text-secondary ring-white">
                         <MessageSquare className="!text-20 text-secondary" aria-hidden="true" />
                       </span>
                     </div>
@@ -100,7 +100,7 @@ export const ProfileActivityListPage = observer(function ProfileActivityListPage
                           initialValue={
                             activityItem?.new_value !== "" ? activityItem.new_value : activityItem.old_value
                           }
-                          containerClassName="text-11 bg-custom-background-100"
+                          containerClassName="text-11 bg-surface-1"
                           workspaceId={activityItem?.workspace_detail?.id?.toString() ?? ""}
                           workspaceSlug={activityItem?.workspace_detail?.slug?.toString() ?? ""}
                           projectId={activityItem.project ?? ""}

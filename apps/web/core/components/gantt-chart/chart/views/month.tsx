@@ -29,7 +29,7 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
         <div className="relative flex flex-col outline-[0.25px] outline-subtle-1">
           {/** Header Div */}
           <div
-            className="w-full sticky top-0 z-[5] bg-custom-background-100 flex-shrink-0"
+            className="w-full sticky top-0 z-[5] bg-surface-1 flex-shrink-0"
             style={{
               height: `${HEADER_HEIGHT}px`,
             }}
@@ -43,14 +43,14 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
                   style={{ width: `${monthBlock.days * currentViewData?.data.dayWidth}px` }}
                 >
                   <div
-                    className="sticky flex items-center font-regular z-[1] m-1 whitespace-nowrap px-3 py-1 text-14 capitalize bg-custom-background-100 text-secondary"
+                    className="sticky flex items-center font-regular z-[1] m-1 whitespace-nowrap px-3 py-1 text-14 capitalize bg-surface-1 text-secondary"
                     style={{
                       left: `${SIDEBAR_WIDTH}px`,
                     }}
                   >
                     {monthBlock?.title}
                     {monthBlock.today && (
-                      <span className={cn("rounded ml-2 font-medium bg-custom-primary-100 px-1 text-9 text-white")}>
+                      <span className={cn("rounded-sm ml-2 font-medium bg-custom-primary-100 px-1 text-9 text-white")}>
                         Current
                       </span>
                     )}
@@ -74,7 +74,7 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
                   <div className="space-x-1 text-11 font-medium text-placeholder">
                     <span
                       className={cn({
-                        "rounded bg-custom-primary-100 px-1 text-white": weekBlock.today,
+                        "rounded-sm bg-custom-primary-100 px-1 text-white": weekBlock.today,
                       })}
                     >
                       {weekBlock.startDate.getDate()}-{weekBlock.endDate.getDate()}

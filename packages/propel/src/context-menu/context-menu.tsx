@@ -59,7 +59,7 @@ const ContextMenuContent = React.forwardRef(function ContextMenuContent(
     >
       <ContextMenuPrimitive.Popup
         className={cn(
-          "z-50 min-w-32 overflow-hidden rounded-md border border-subtle-1 bg-custom-background-100 p-1 shadow-md",
+          "z-50 min-w-32 overflow-hidden rounded-md border border-subtle-1 bg-surface-1 p-1 shadow-md",
           "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
           "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
           "data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2",
@@ -81,8 +81,8 @@ const ContextMenuItem = React.forwardRef(function ContextMenuItem(
     <ContextMenuPrimitive.Item
       ref={ref}
       className={cn(
-        "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-13 outline-none",
-        "focus:bg-custom-background-90 focus:text-primary",
+        "relative flex cursor-default select-none items-center rounded-xs px-2 py-1.5 text-13 outline-none",
+        "focus:bg-surface-2 focus:text-primary",
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         className
       )}
@@ -113,8 +113,8 @@ const ContextMenuSubmenuTrigger = React.forwardRef(function ContextMenuSubmenuTr
     <ContextMenuPrimitive.SubmenuTrigger
       ref={ref}
       className={cn(
-        "flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-13 outline-none focus:outline-none",
-        "focus:bg-custom-background-90 data-[state=open]:bg-custom-background-90",
+        "flex cursor-default select-none items-center rounded-xs px-2 py-1.5 text-13 outline-none focus:outline-none",
+        "focus:bg-surface-2 data-[state=open]:bg-surface-2",
         className
       )}
       {...props}

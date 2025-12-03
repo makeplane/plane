@@ -26,7 +26,7 @@ const meta = {
 
     return (
       <>
-        <button onClick={() => setOpen(true)} className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+        <button onClick={() => setOpen(true)} className="rounded-sm bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
           Open Dialog
         </button>
         {open && (
@@ -40,13 +40,13 @@ const meta = {
                 <div className="mt-6 flex justify-end gap-2">
                   <button
                     onClick={() => setOpen(false)}
-                    className="rounded bg-gray-200 px-4 py-2 text-13 hover:bg-gray-300"
+                    className="rounded-sm bg-gray-200 px-4 py-2 text-13 hover:bg-gray-300"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={() => setOpen(false)}
-                    className="rounded bg-blue-500 px-4 py-2 text-13 text-white hover:bg-blue-600"
+                    className="rounded-sm bg-blue-500 px-4 py-2 text-13 text-white hover:bg-blue-600"
                   >
                     Confirm
                   </button>
@@ -74,7 +74,7 @@ export const TopPosition: Story = {
     const [open, setOpen] = useState(args.open);
     return (
       <>
-        <button onClick={() => setOpen(true)} className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+        <button onClick={() => setOpen(true)} className="rounded-sm bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
           Open Dialog (Top)
         </button>
         {open && (
@@ -90,7 +90,7 @@ export const TopPosition: Story = {
                 <div className="mt-6 flex justify-end gap-2">
                   <button
                     onClick={() => setOpen(false)}
-                    className="rounded bg-gray-200 px-4 py-2 text-13 hover:bg-gray-300"
+                    className="rounded-sm bg-gray-200 px-4 py-2 text-13 hover:bg-gray-300"
                   >
                     Close
                   </button>
@@ -109,7 +109,7 @@ export const SmallWidth: Story = {
     const [open, setOpen] = useState(args.open);
     return (
       <>
-        <button onClick={() => setOpen(true)} className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+        <button onClick={() => setOpen(true)} className="rounded-sm bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
           Open Small Dialog
         </button>
         {open && (
@@ -123,7 +123,7 @@ export const SmallWidth: Story = {
                 <div className="mt-6 flex justify-end">
                   <button
                     onClick={() => setOpen(false)}
-                    className="rounded bg-blue-500 px-4 py-2 text-13 text-white hover:bg-blue-600"
+                    className="rounded-sm bg-blue-500 px-4 py-2 text-13 text-white hover:bg-blue-600"
                   >
                     Close
                   </button>
@@ -142,7 +142,7 @@ export const LargeWidth: Story = {
     const [open, setOpen] = useState(args.open);
     return (
       <>
-        <button onClick={() => setOpen(true)} className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+        <button onClick={() => setOpen(true)} className="rounded-sm bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
           Open Large Dialog
         </button>
         {open && (
@@ -158,7 +158,7 @@ export const LargeWidth: Story = {
                 <div className="mt-6 flex justify-end">
                   <button
                     onClick={() => setOpen(false)}
-                    className="rounded bg-blue-500 px-4 py-2 text-13 text-white hover:bg-blue-600"
+                    className="rounded-sm bg-blue-500 px-4 py-2 text-13 text-white hover:bg-blue-600"
                   >
                     Close
                   </button>
@@ -177,7 +177,7 @@ export const WithCloseButton: Story = {
     const [open, setOpen] = useState(args.open);
     return (
       <>
-        <button onClick={() => setOpen(true)} className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+        <button onClick={() => setOpen(true)} className="rounded-sm bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
           Open Dialog with Close Button
         </button>
         {open && (
@@ -211,7 +211,7 @@ export const ConfirmationDialog: Story = {
     };
     return (
       <>
-        <button onClick={() => setOpen(true)} className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600">
+        <button onClick={() => setOpen(true)} className="rounded-sm bg-red-500 px-4 py-2 text-white hover:bg-red-600">
           Delete Item
         </button>
         {open && (
@@ -227,13 +227,13 @@ export const ConfirmationDialog: Story = {
                 <div className="mt-6 flex justify-end gap-2">
                   <button
                     onClick={() => setOpen(false)}
-                    className="rounded bg-gray-200 px-4 py-2 text-13 hover:bg-gray-300"
+                    className="rounded-sm bg-gray-200 px-4 py-2 text-13 hover:bg-gray-300"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleConfirm}
-                    className="rounded bg-red-500 px-4 py-2 text-13 text-white hover:bg-red-600"
+                    className="rounded-sm bg-red-500 px-4 py-2 text-13 text-white hover:bg-red-600"
                   >
                     Delete
                   </button>
@@ -257,7 +257,7 @@ export const FormDialog: Story = {
     };
     return (
       <>
-        <button onClick={() => setOpen(true)} className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+        <button onClick={() => setOpen(true)} className="rounded-sm bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
           Open Form
         </button>
         {open && (
@@ -273,7 +273,7 @@ export const FormDialog: Story = {
                     <input
                       type="text"
                       id="name"
-                      className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-13"
+                      className="mt-1 w-full rounded-sm border border-gray-300 px-3 py-2 text-13"
                       placeholder="Enter name"
                     />
                   </div>
@@ -284,7 +284,7 @@ export const FormDialog: Story = {
                     <textarea
                       id="description"
                       rows={3}
-                      className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-13"
+                      className="mt-1 w-full rounded-sm border border-gray-300 px-3 py-2 text-13"
                       placeholder="Enter description"
                     />
                   </div>
@@ -293,11 +293,14 @@ export const FormDialog: Story = {
                   <button
                     type="button"
                     onClick={() => setOpen(false)}
-                    className="rounded bg-gray-200 px-4 py-2 text-13 hover:bg-gray-300"
+                    className="rounded-sm bg-gray-200 px-4 py-2 text-13 hover:bg-gray-300"
                   >
                     Cancel
                   </button>
-                  <button type="submit" className="rounded bg-blue-500 px-4 py-2 text-13 text-white hover:bg-blue-600">
+                  <button
+                    type="submit"
+                    className="rounded-sm bg-blue-500 px-4 py-2 text-13 text-white hover:bg-blue-600"
+                  >
                     Create
                   </button>
                 </div>
@@ -315,7 +318,7 @@ export const ScrollableContent: Story = {
     const [open, setOpen] = useState(args.open);
     return (
       <>
-        <button onClick={() => setOpen(true)} className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+        <button onClick={() => setOpen(true)} className="rounded-sm bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
           Open Scrollable Dialog
         </button>
         {open && (
@@ -334,7 +337,7 @@ export const ScrollableContent: Story = {
                 <div className="mt-6 flex justify-end">
                   <button
                     onClick={() => setOpen(false)}
-                    className="rounded bg-blue-500 px-4 py-2 text-13 text-white hover:bg-blue-600"
+                    className="rounded-sm bg-blue-500 px-4 py-2 text-13 text-white hover:bg-blue-600"
                   >
                     Close
                   </button>
@@ -368,7 +371,7 @@ export const AllWidths: Story = {
           <button
             key={width}
             onClick={() => setOpenWidth(width)}
-            className="rounded bg-blue-500 px-4 py-2 text-13 text-white hover:bg-blue-600"
+            className="rounded-sm bg-blue-500 px-4 py-2 text-13 text-white hover:bg-blue-600"
           >
             {label}
           </button>
@@ -384,7 +387,7 @@ export const AllWidths: Story = {
                 <div className="mt-6 flex justify-end">
                   <button
                     onClick={() => setOpenWidth(null)}
-                    className="rounded bg-blue-500 px-4 py-2 text-13 text-white hover:bg-blue-600"
+                    className="rounded-sm bg-blue-500 px-4 py-2 text-13 text-white hover:bg-blue-600"
                   >
                     Close
                   </button>

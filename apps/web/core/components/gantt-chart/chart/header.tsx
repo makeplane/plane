@@ -45,9 +45,9 @@ export const GanttChartHeader = observer(function GanttChartHeader(props: Props)
         {VIEWS_LIST.map((chartView: any) => (
           <div
             key={chartView?.key}
-            className={cn("cursor-pointer rounded-sm p-1 px-2 text-11", {
-              "bg-custom-background-80": currentView === chartView?.key,
-              "hover:bg-custom-background-90": currentView !== chartView?.key,
+            className={cn("cursor-pointer rounded-xs p-1 px-2 text-11", {
+              "bg-layer-1": currentView === chartView?.key,
+              "hover:bg-surface-2": currentView !== chartView?.key,
             })}
             onClick={() => handleChartView(chartView?.key)}
           >
@@ -57,18 +57,14 @@ export const GanttChartHeader = observer(function GanttChartHeader(props: Props)
       </div>
 
       {showToday && (
-        <button
-          type="button"
-          className="rounded-sm p-1 px-2 text-11 hover:bg-custom-background-80"
-          onClick={handleToday}
-        >
+        <button type="button" className="rounded-xs p-1 px-2 text-11 hover:bg-layer-1" onClick={handleToday}>
           {t("common.today")}
         </button>
       )}
 
       <button
         type="button"
-        className="flex items-center justify-center rounded-sm border border-subtle-1 p-1 transition-all hover:bg-custom-background-80"
+        className="flex items-center justify-center rounded-xs border border-subtle-1 p-1 transition-all hover:bg-layer-1"
         onClick={toggleFullScreenMode}
       >
         {fullScreenMode ? <Shrink className="h-4 w-4" /> : <Expand className="h-4 w-4" />}

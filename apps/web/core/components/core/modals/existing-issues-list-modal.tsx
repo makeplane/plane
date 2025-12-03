@@ -143,7 +143,7 @@ export function ExistingIssuesListModal(props: Props) {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
+            <div className="fixed inset-0 bg-backdrop transition-opacity" />
           </Transition.Child>
 
           <div className="fixed inset-0 z-30 overflow-y-auto p-4 sm:p-6 md:p-20">
@@ -156,7 +156,7 @@ export function ExistingIssuesListModal(props: Props) {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
+              <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-surface-1 shadow-custom-shadow-md transition-all">
                 <Combobox
                   as="div"
                   onChange={(val: ISearchIssueResponse) => {
@@ -185,7 +185,7 @@ export function ExistingIssuesListModal(props: Props) {
                         {selectedIssues.map((issue) => (
                           <div
                             key={issue.id}
-                            className="flex items-center gap-1 whitespace-nowrap rounded-md border border-subtle-1 bg-custom-background-80 py-1 pl-2 text-11 text-primary"
+                            className="flex items-center gap-1 whitespace-nowrap rounded-md border border-subtle-1 bg-layer-1 py-1 pl-2 text-11 text-primary"
                           >
                             <IssueIdentifier
                               projectId={issue.project_id}
@@ -205,7 +205,7 @@ export function ExistingIssuesListModal(props: Props) {
                         ))}
                       </div>
                     ) : (
-                      <div className="w-min whitespace-nowrap rounded-md border border-subtle-1 bg-custom-background-80 p-2 text-11">
+                      <div className="w-min whitespace-nowrap rounded-md border border-subtle-1 bg-layer-1 p-2 text-11">
                         {t("issue.select.empty")}
                       </div>
                     )}
@@ -278,7 +278,7 @@ export function ExistingIssuesListModal(props: Props) {
                                   value={issue}
                                   className={({ active }) =>
                                     `group flex w-full cursor-pointer select-none items-center justify-between gap-2 rounded-md px-3 py-2 my-0.5 text-secondary ${
-                                      active ? "bg-custom-background-80 text-primary" : ""
+                                      active ? "bg-layer-1 text-primary" : ""
                                     } ${selected ? "text-primary" : ""}`
                                   }
                                 >

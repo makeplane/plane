@@ -47,7 +47,7 @@ export const getCommonCustomSearchSelectProps = (isDisabled?: boolean) => ({
   customButtonClassName: cn(
     "h-full w-full px-2 text-13 font-regular transition-all duration-300 ease-in-out",
     !isDisabled && COMMON_FILTER_ITEM_BORDER_CLASSNAME,
-    isDisabled && "hover:bg-custom-background-100"
+    isDisabled && "hover:bg-surface-1"
   ),
   optionsClassName: "w-56",
   maxHeight: "md" as const,

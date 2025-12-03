@@ -94,8 +94,8 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
             <button
               type="button"
               onClick={() => handleNavigation("prev")}
-              className={cn("size-6 text-secondary grid place-items-center rounded outline-none transition-colors", {
-                "hover:bg-custom-background-80": !isPrevDisabled,
+              className={cn("size-6 text-secondary grid place-items-center rounded-sm outline-none transition-colors", {
+                "hover:bg-layer-1": !isPrevDisabled,
                 "opacity-50": isPrevDisabled,
               })}
               disabled={isPrevDisabled}
@@ -105,8 +105,8 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
             <button
               type="button"
               onClick={() => handleNavigation("next")}
-              className={cn("size-6 text-secondary grid place-items-center rounded outline-none transition-colors", {
-                "hover:bg-custom-background-80": !isNextDisabled,
+              className={cn("size-6 text-secondary grid place-items-center rounded-sm outline-none transition-colors", {
+                "hover:bg-layer-1": !isNextDisabled,
                 "opacity-50": isNextDisabled,
               })}
               disabled={isNextDisabled}

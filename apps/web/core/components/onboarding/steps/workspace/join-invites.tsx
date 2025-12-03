@@ -86,7 +86,7 @@ export function WorkspaceJoinInvitesStep(props: Props) {
             return (
               <div
                 key={invitation.id}
-                className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 border-subtle-1 hover:bg-custom-background-90`}
+                className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 border-subtle-1 hover:bg-surface-2`}
                 onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
               >
                 <div className="flex-shrink-0">

@@ -3,10 +3,6 @@
 @import "@plane/editor/styles";
 @plugin "@tailwindcss/typography";
 
-html {
-  font-family: "Inter", sans-serif;
-}
-
 :root {
   /* Plane subscriptions */
   --color-subscription-free-200: 69, 80, 104;
@@ -109,19 +105,6 @@ html {
   --editor-colors-purple-background: #3d325a;
 }
 /* end background colors */
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  -webkit-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
-  font-variant-ligatures: none;
-  -webkit-font-variant-ligatures: none;
-  text-rendering: optimizeLegibility;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-}
 
 /* scrollbar xs size */
 .scrollbar-xs::-webkit-scrollbar {

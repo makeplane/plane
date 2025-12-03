@@ -234,10 +234,7 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
         }}
       >
         {showImageLoader && (
-          <div
-            className="animate-pulse bg-custom-background-80 rounded-md"
-            style={{ width: size.width, height: size.height }}
-          />
+          <div className="animate-pulse bg-layer-1 rounded-md" style={{ width: size.width, height: size.height }} />
         )}
         <img
           ref={imageRef}

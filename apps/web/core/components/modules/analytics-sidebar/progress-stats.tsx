@@ -120,7 +120,7 @@ export const ModuleProgressStats = observer(function ModuleProgressStats(props: 
           className={cn(
             `flex w-full items-center justify-between gap-2 rounded-md p-1`,
             roundedTab ? `rounded-3xl` : `rounded-md`,
-            noBackground ? `` : `bg-custom-background-90`,
+            noBackground ? `` : `bg-surface-2`,
             size === "xs" ? `text-11` : `text-13`
           )}
         >
@@ -128,10 +128,8 @@ export const ModuleProgressStats = observer(function ModuleProgressStats(props: 
             <Tab
               className={cn(
                 `p-1 w-full text-primary outline-none focus:outline-none cursor-pointer transition-all`,
-                roundedTab ? `rounded-3xl border border-subtle-1` : `rounded`,
-                stat.key === currentTab
-                  ? "bg-custom-background-100 text-tertiary"
-                  : "text-placeholder hover:text-tertiary"
+                roundedTab ? `rounded-3xl border border-subtle-1` : `rounded-sm`,
+                stat.key === currentTab ? "bg-surface-1 text-tertiary" : "text-placeholder hover:text-tertiary"
               )}
               key={stat.key}
               onClick={() => setModuleTab(stat.key)}

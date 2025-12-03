@@ -83,7 +83,7 @@ export function Tooltip({
       content={
         <div
           className={cn(
-            "relative block z-50 max-w-xs gap-1 overflow-hidden break-words rounded-md bg-custom-background-100 p-2 text-11 text-secondary shadow-md",
+            "relative block z-50 max-w-xs gap-1 overflow-hidden break-words rounded-md bg-surface-1 p-2 text-11 text-secondary shadow-md",
             {
               hidden: isMobile,
             },

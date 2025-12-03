@@ -78,7 +78,7 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
       <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-4">
         <div className="space-y-3">
           {formattedConfig ? (
-            <div className={cn("w-full flex items-center gap-14 rounded")}>
+            <div className={cn("w-full flex items-center gap-14 rounded-sm")}>
               <div className="flex grow items-center gap-4">
                 <div className="grow">
                   <div className="text-16 font-medium pb-1">Prevent anyone else from creating a workspace.</div>

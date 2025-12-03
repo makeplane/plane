@@ -167,7 +167,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
                   />
                 </div>
               ) : (
-                <div className="relative flex h-14 w-14 items-center justify-center rounded bg-[#026292] p-4 uppercase text-white">
+                <div className="relative flex h-14 w-14 items-center justify-center rounded-sm bg-[#026292] p-4 uppercase text-white">
                   {currentWorkspace?.name?.charAt(0) ?? "N"}
                 </div>
               )}

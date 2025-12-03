@@ -72,11 +72,11 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
       <button
         type="button"
         className={cn(
-          "group flex items-center justify-between gap-2 px-2 py-0.5 rounded outline-none",
+          "group flex items-center justify-between gap-2 px-2 py-0.5 rounded-sm outline-none",
           {
             "cursor-not-allowed": disabled,
-            "hover:bg-custom-background-80": !disabled,
-            "bg-custom-background-80": isParentIssueModalOpen,
+            "hover:bg-layer-1": !disabled,
+            "bg-layer-1": isParentIssueModalOpen,
           },
           className
         )}
@@ -84,7 +84,7 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
         disabled={disabled}
       >
         {issue.parent_id && parentIssue ? (
-          <div className="flex items-center gap-1 bg-green-500/20 rounded px-1.5 py-1">
+          <div className="flex items-center gap-1 bg-green-500/20 rounded-sm px-1.5 py-1">
             <Tooltip tooltipHeading="Title" tooltipContent={parentIssue.name} isMobile={isMobile}>
               <Link href={workItemLink} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
                 {parentIssue?.project_id && parentIssueProjectDetails && (

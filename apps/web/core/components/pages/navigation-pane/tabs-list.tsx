@@ -9,7 +9,7 @@ export function PageNavigationPaneTabsList() {
   const { t } = useTranslation();
 
   return (
-    <Tab.List className="relative flex items-center p-[2px] rounded-md bg-custom-background-80 mx-3.5">
+    <Tab.List className="relative flex items-center p-[2px] rounded-md bg-layer-1 mx-3.5">
       {({ selectedIndex }) => (
         <>
           {ORDERED_PAGE_NAVIGATION_TABS_LIST.map((tab) => (
@@ -23,7 +23,7 @@ export function PageNavigationPaneTabsList() {
           ))}
           {/* active tab indicator */}
           <div
-            className="absolute top-1/2 -translate-y-1/2 bg-custom-background-90 rounded transition-all duration-500 ease-in-out pointer-events-none"
+            className="absolute top-1/2 -translate-y-1/2 bg-surface-2 rounded-sm transition-all duration-500 ease-in-out pointer-events-none"
             style={{
               left: `calc(${(selectedIndex / ORDERED_PAGE_NAVIGATION_TABS_LIST.length) * 100}% + 2px)`,
               height: "calc(100% - 4px)",

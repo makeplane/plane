@@ -519,9 +519,9 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                       {USER_ROLE.map((userRole) => (
                         <div
                           key={userRole}
-                          className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-custom-background-90 ${
+                          className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-surface-2 ${
                             value === userRole ? "border-custom-primary-100" : "border-strong"
-                          } rounded px-3 py-1.5 text-13 font-medium`}
+                          } rounded-sm px-3 py-1.5 text-13 font-medium`}
                           onClick={() => onChange(userRole)}
                         >
                           {userRole}
@@ -550,9 +550,9 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                       {USER_DOMAIN.map((userDomain) => (
                         <div
                           key={userDomain}
-                          className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-custom-background-90 ${
+                          className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-surface-2 ${
                             value === userDomain ? "border-custom-primary-100" : "border-strong"
-                          } rounded px-3 py-1.5 text-13 font-medium`}
+                          } rounded-sm px-3 py-1.5 text-13 font-medium`}
                           onClick={() => onChange(userDomain)}
                         >
                           {userDomain}

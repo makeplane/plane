@@ -68,7 +68,7 @@ function BorderButton(props: ButtonProps) {
     high: "bg-orange-500/20 text-orange-950 border-orange-500",
     medium: "bg-yellow-500/20 text-yellow-950 border-yellow-500",
     low: "bg-custom-primary-100/20 text-custom-primary-950 border-custom-primary-100",
-    none: "hover:bg-custom-background-80 border-strong",
+    none: "hover:bg-layer-1 border-strong",
   };
 
   const { isMobile } = usePlatformOS();
@@ -84,7 +84,7 @@ function BorderButton(props: ButtonProps) {
     >
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 border-[0.5px] rounded text-11 px-2 py-0.5",
+          "h-full flex items-center gap-1.5 border-[0.5px] rounded-sm text-11 px-2 py-0.5",
           priorityClasses[priority ?? "none"],
           {
             // compact the icons if text is hidden
@@ -100,7 +100,7 @@ function BorderButton(props: ButtonProps) {
             <div
               className={cn({
                 // highlight just the icon if text is visible and priority is urgent
-                "bg-red-600/20 p-0.5 rounded border border-red-600":
+                "bg-red-600/20 p-0.5 rounded-sm border border-red-600":
                   priority === "urgent" && !hideText && highlightUrgent,
               })}
             >
@@ -151,7 +151,7 @@ function BackgroundButton(props: ButtonProps) {
     high: "bg-orange-500/20 text-orange-950",
     medium: "bg-yellow-500/20 text-yellow-950",
     low: "bg-blue-500/20 text-blue-950",
-    none: "bg-custom-background-80",
+    none: "bg-layer-1",
   };
 
   const { isMobile } = usePlatformOS();
@@ -167,7 +167,7 @@ function BackgroundButton(props: ButtonProps) {
     >
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 rounded text-11 px-2 py-0.5",
+          "h-full flex items-center gap-1.5 rounded-sm text-11 px-2 py-0.5",
           priorityClasses[priority ?? "none"],
           {
             // compact the icons if text is hidden
@@ -183,7 +183,7 @@ function BackgroundButton(props: ButtonProps) {
             <div
               className={cn({
                 // highlight just the icon if text is visible and priority is urgent
-                "bg-red-600/20 p-0.5 rounded border border-red-600":
+                "bg-red-600/20 p-0.5 rounded-sm border border-red-600":
                   priority === "urgent" && !hideText && highlightUrgent,
               })}
             >
@@ -253,14 +253,14 @@ function TransparentButton(props: ButtonProps) {
     >
       <div
         className={cn(
-          "h-full w-full flex items-center gap-1.5 rounded text-11 px-2 py-0.5 hover:bg-custom-background-80",
+          "h-full w-full flex items-center gap-1.5 rounded-sm text-11 px-2 py-0.5 hover:bg-layer-1",
           priorityClasses[priority ?? "none"],
           {
             // compact the icons if text is hidden
             "px-0.5": hideText,
             // highlight the whole button if text is hidden and priority is urgent
             "bg-red-600/10 border-red-600": priority === "urgent" && hideText && highlightUrgent,
-            "bg-custom-background-80": isActive,
+            "bg-layer-1": isActive,
           },
           className
         )}
@@ -270,7 +270,7 @@ function TransparentButton(props: ButtonProps) {
             <div
               className={cn({
                 // highlight just the icon if text is visible and priority is urgent
-                "bg-red-600/20 p-0.5 rounded border border-red-600":
+                "bg-red-600/20 p-0.5 rounded-sm border border-red-600":
                   priority === "urgent" && !hideText && highlightUrgent,
               })}
             >
@@ -441,7 +441,7 @@ export function PriorityDropdown(props: Props) {
       className={cn(
         "h-full",
         {
-          "bg-custom-background-80": isOpen,
+          "bg-layer-1": isOpen,
         },
         className
       )}
@@ -455,12 +455,12 @@ export function PriorityDropdown(props: Props) {
       {isOpen && (
         <Combobox.Options className="fixed z-10" static>
           <div
-            className="my-1 w-48 rounded border-[0.5px] border-strong bg-custom-background-100 px-2 py-2.5 text-11 shadow-custom-shadow-rg focus:outline-none"
+            className="my-1 w-48 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 text-11 shadow-custom-shadow-rg focus:outline-none"
             ref={setPopperElement}
             style={styles.popper}
             {...attributes.popper}
           >
-            <div className="flex items-center gap-1.5 rounded border border-subtle bg-custom-background-90 px-2">
+            <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-surface-2 px-2">
               <Search className="h-3.5 w-3.5 text-placeholder" strokeWidth={1.5} />
               <Combobox.Input
                 as="input"
@@ -480,8 +480,8 @@ export function PriorityDropdown(props: Props) {
                     key={option.value}
                     value={option.value}
                     className={({ active, selected }) =>
-                      `w-full truncate flex items-center justify-between gap-2 rounded px-1 py-1.5 cursor-pointer select-none ${
-                        active ? "bg-custom-background-80" : ""
+                      `w-full truncate flex items-center justify-between gap-2 rounded-sm px-1 py-1.5 cursor-pointer select-none ${
+                        active ? "bg-layer-1" : ""
                       } ${selected ? "text-primary" : "text-secondary"}`
                     }
                   >

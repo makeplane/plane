@@ -45,7 +45,7 @@ export const SpreadsheetHeader = observer(function SpreadsheetHeader(props: Prop
     <thead className="sticky top-0 left-0 z-[12] border-b-[0.5px] border-subtle">
       <tr>
         <th
-          className="group/list-header sticky min-w-60 left-0 z-[15] h-11 flex items-center gap-1 bg-custom-background-90 text-13 font-medium before:absolute before:h-full before:right-0 before:border-subtle"
+          className="group/list-header sticky min-w-60 left-0 z-[15] h-11 flex items-center gap-1 bg-surface-2 text-13 font-medium before:absolute before:h-full before:right-0 before:border-subtle"
           tabIndex={-1}
         >
           <Row>

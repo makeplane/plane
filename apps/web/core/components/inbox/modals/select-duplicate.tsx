@@ -92,7 +92,7 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
                 value={issue.id}
                 className={({ active, selected }) =>
                   `flex w-full cursor-pointer select-none items-center gap-2 rounded-md px-3 py-2 text-secondary ${
-                    active || selected ? "bg-custom-background-80 text-primary" : ""
+                    active || selected ? "bg-layer-1 text-primary" : ""
                   } `
                 }
               >
@@ -137,7 +137,7 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
+              <div className="fixed inset-0 bg-backdrop transition-opacity" />
             </Transition.Child>
 
             <div className="fixed inset-0 z-30 overflow-y-auto p-4 sm:p-6 md:p-20">
@@ -150,7 +150,7 @@ export function SelectDuplicateInboxIssueModal(props: Props) {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
+                <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-surface-1 shadow-custom-shadow-md transition-all">
                   <Combobox value={value} onChange={handleSubmit}>
                     <div className="relative m-1">
                       <Search

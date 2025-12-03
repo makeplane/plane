@@ -164,7 +164,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
       >
         <>
           <Disclosure as="div" className="flex flex-col" defaultOpen={isAllProjectsListOpen}>
-            <div className="group w-full flex items-center justify-between px-2 py-1.5 rounded text-placeholder hover:bg-custom-sidebar-background-90">
+            <div className="group w-full flex items-center justify-between px-2 py-1.5 rounded-sm text-placeholder hover:bg-surface-2">
               <Disclosure.Button
                 as="button"
                 type="button"
@@ -184,7 +184,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
                     <button
                       type="button"
                       data-ph-element={PROJECT_TRACKER_ELEMENTS.SIDEBAR_CREATE_PROJECT_TOOLTIP}
-                      className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
+                      className="p-0.5 rounded-sm hover:bg-layer-1 flex-shrink-0"
                       onClick={() => {
                         setIsProjectModalOpen(true);
                       }}
@@ -197,7 +197,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
                 <Disclosure.Button
                   as="button"
                   type="button"
-                  className="p-0.5 rounded hover:bg-custom-sidebar-background-80 flex-shrink-0"
+                  className="p-0.5 rounded-sm hover:bg-layer-1 flex-shrink-0"
                   onClick={() => toggleListDisclosure(!isAllProjectsListOpen)}
                   aria-label={t(
                     isAllProjectsListOpen
@@ -273,7 +273,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
           <button
             type="button"
             data-ph-element={PROJECT_TRACKER_ELEMENTS.SIDEBAR_CREATE_PROJECT_BUTTON}
-            className="w-full flex items-center gap-1.5 px-2 py-1.5 text-13 leading-5 font-medium text-secondary hover:bg-custom-sidebar-background-90 rounded-md"
+            className="w-full flex items-center gap-1.5 px-2 py-1.5 text-13 leading-5 font-medium text-secondary hover:bg-surface-2 rounded-md"
             onClick={() => {
               toggleCreateProjectModal(true);
             }}

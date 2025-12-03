@@ -54,7 +54,7 @@ export const ActivityList = observer(function ActivityList(props: Props) {
                         </div>
                       )}
 
-                      <span className="ring-6 flex h-6 w-6 items-center justify-center rounded-full bg-custom-background-80 text-secondary ring-white">
+                      <span className="ring-6 flex h-6 w-6 items-center justify-center rounded-full bg-layer-1 text-secondary ring-white">
                         <MessageSquare className="h-6 w-6 !text-20 text-secondary" aria-hidden="true" />
                       </span>
                     </div>
@@ -78,7 +78,7 @@ export const ActivityList = observer(function ActivityList(props: Props) {
                               ? (activityItem.new_value?.toString() as string)
                               : (activityItem.old_value?.toString() as string)
                           }
-                          containerClassName="text-11 bg-custom-background-100"
+                          containerClassName="text-11 bg-surface-1"
                           workspaceId={workspaceId}
                           workspaceSlug={workspaceSlug?.toString() ?? ""}
                           projectId={activityItem.project}

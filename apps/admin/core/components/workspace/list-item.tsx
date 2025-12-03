@@ -23,18 +23,18 @@ export const WorkspaceListItem = observer(function WorkspaceListItem({ workspace
       key={workspaceId}
       href={`${WEB_BASE_URL}/${encodeURIComponent(workspace.slug)}`}
       target="_blank"
-      className="group flex items-center justify-between p-4 gap-2.5 truncate border border-subtle-1/70 hover:border-subtle-1 hover:bg-custom-background-90 rounded-md"
+      className="group flex items-center justify-between p-4 gap-2.5 truncate border border-subtle-1/70 hover:border-subtle-1 hover:bg-surface-2 rounded-md"
     >
       <div className="flex items-start gap-4">
         <span
           className={`relative flex h-8 w-8 flex-shrink-0 items-center justify-center p-2 mt-1 text-11 uppercase ${
-            !workspace?.logo_url && "rounded bg-custom-primary-500 text-white"
+            !workspace?.logo_url && "rounded-sm bg-custom-primary-500 text-white"
           }`}
         >
           {workspace?.logo_url && workspace.logo_url !== "" ? (
             <img
               src={getFileURL(workspace.logo_url)}
-              className="absolute left-0 top-0 h-full w-full rounded object-cover"
+              className="absolute left-0 top-0 h-full w-full rounded-sm object-cover"
               alt="Workspace Logo"
             />
           ) : (

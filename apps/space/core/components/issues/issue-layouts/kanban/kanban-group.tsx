@@ -38,7 +38,7 @@ const KanbanIssueBlockLoader = forwardRef(function KanbanIssueBlockLoader(
   props: Record<string, unknown>,
   ref: React.ForwardedRef<HTMLSpanElement>
 ) {
-  return <span ref={ref} className="block h-28 m-1.5 animate-pulse bg-custom-background-80 rounded" />;
+  return <span ref={ref} className="block h-28 m-1.5 animate-pulse bg-layer-1 rounded-sm" />;
 });
 KanbanIssueBlockLoader.displayName = "KanbanIssueBlockLoader";
 

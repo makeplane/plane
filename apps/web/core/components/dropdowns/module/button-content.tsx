@@ -62,7 +62,7 @@ export function ModuleButtonContent(props: ModuleButtonContentProps) {
                 <div
                   key={moduleId}
                   className={cn(
-                    "flex max-w-full items-center gap-1 rounded bg-custom-background-80 py-1 text-secondary",
+                    "flex max-w-full items-center gap-1 rounded-sm bg-layer-1 py-1 text-secondary",
                     className
                   )}
                 >

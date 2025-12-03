@@ -100,7 +100,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
   );
 
   return cycleId ? (
-    <div className="flex flex-col gap-4 p-4 min-h-[17rem] overflow-hidden bg-custom-background-100 col-span-1 lg:col-span-2 xl:col-span-1 border border-subtle-1 rounded-lg">
+    <div className="flex flex-col gap-4 p-4 min-h-[17rem] overflow-hidden bg-surface-1 col-span-1 lg:col-span-2 xl:col-span-1 border border-subtle-1 rounded-lg">
       <Tab.Group
         as={Fragment}
         defaultIndex={currentValue(tab)}
@@ -120,7 +120,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
       >
         <Tab.List
           as="div"
-          className="relative border-[0.5px] border-subtle-1 rounded bg-custom-background-80 p-[1px] grid"
+          className="relative border-[0.5px] border-subtle-1 rounded-sm bg-layer-1 p-[1px] grid"
           style={{
             gridTemplateColumns: `repeat(3, 1fr)`,
           }}
@@ -130,7 +130,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
               cn(
                 "relative z-[1] font-semibold text-11 rounded-[3px] py-1.5 text-placeholder focus:outline-none transition duration-500",
                 {
-                  "text-tertiary bg-custom-background-100": selected,
+                  "text-tertiary bg-surface-1": selected,
                   "hover:text-tertiary": !selected,
                 }
               )
@@ -143,7 +143,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
               cn(
                 "relative z-[1] font-semibold text-11 rounded-[3px] py-1.5 text-placeholder focus:outline-none transition duration-500",
                 {
-                  "text-tertiary bg-custom-background-100": selected,
+                  "text-tertiary bg-surface-1": selected,
                   "hover:text-tertiary": !selected,
                 }
               )
@@ -156,7 +156,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
               cn(
                 "relative z-[1] font-semibold text-11 rounded-[3px] py-1.5 text-placeholder focus:outline-none transition duration-500",
                 {
-                  "text-tertiary bg-custom-background-100": selected,
+                  "text-tertiary bg-surface-1": selected,
                   "hover:text-tertiary": !selected,
                 }
               )
@@ -186,7 +186,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                       return (
                         <div
                           key={issue.id}
-                          className="group flex cursor-pointer items-center justify-between gap-2 rounded-md hover:bg-custom-background-90 p-1"
+                          className="group flex cursor-pointer items-center justify-between gap-2 rounded-md hover:bg-surface-2 p-1"
                           onClick={() => {
                             if (issue.id) {
                               setPeekIssue({
@@ -227,7 +227,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                                 tooltipHeading="Target Date"
                                 tooltipContent={renderFormattedDate(issue.target_date)}
                               >
-                                <div className="h-full flex truncate items-center gap-1.5 rounded text-11 px-2 py-0.5 bg-custom-background-80 group-hover:bg-custom-background-100 cursor-pointer">
+                                <div className="h-full flex truncate items-center gap-1.5 rounded-sm text-11 px-2 py-0.5 bg-layer-1 group-hover:bg-surface-1 cursor-pointer">
                                   <CalendarCheck className="h-3 w-3 flex-shrink-0" />
                                   <span className="text-11 truncate">
                                     {renderFormattedDateWithoutYear(issue.target_date)}
@@ -243,7 +243,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                       <div
                         ref={setIssueLoaderElement}
                         className={
-                          "h-11 relative flex items-center gap-3 bg-custom-background-80 p-3 text-13 cursor-pointer animate-pulse"
+                          "h-11 relative flex items-center gap-3 bg-layer-1 p-3 text-13 cursor-pointer animate-pulse"
                         }
                       />
                     )}
@@ -300,7 +300,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                         key={`unassigned-${index}`}
                         title={
                           <div className="flex items-center gap-2">
-                            <div className="h-5 w-5 rounded-full border-2 border-subtle-1 bg-custom-background-80">
+                            <div className="h-5 w-5 rounded-full border-2 border-subtle-1 bg-layer-1">
                               <img src={userImage} height="100%" width="100%" className="rounded-full" alt="User" />
                             </div>
                             <span>{t("no_assignee")}</span>
@@ -370,7 +370,7 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
       </Tab.Group>
     </div>
   ) : (
-    <Loader className="flex flex-col gap-4 min-h-[17rem] overflow-hidden bg-custom-background-100 col-span-1 lg:col-span-2 xl:col-span-1">
+    <Loader className="flex flex-col gap-4 min-h-[17rem] overflow-hidden bg-surface-1 col-span-1 lg:col-span-2 xl:col-span-1">
       <Loader.Item width="100%" height="17rem" />
     </Loader>
   );

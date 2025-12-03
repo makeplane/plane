@@ -66,7 +66,7 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
         <div className="flex-grow overflow-hidden overflow-y-scroll vertical-scrollbar scrollbar-md px-4">
           {formattedConfig ? (
             <div className="space-y-3">
-              <div className={cn("w-full flex items-center gap-14 rounded")}>
+              <div className={cn("w-full flex items-center gap-14 rounded-sm")}>
                 <div className="flex grow items-center gap-4">
                   <div className="grow">
                     <div className="text-16 font-medium pb-1">Allow anyone to sign up even without an invite</div>

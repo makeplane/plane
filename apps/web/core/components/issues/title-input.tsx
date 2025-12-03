@@ -145,7 +145,7 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
         <TextArea
           id="title-input"
           className={cn(
-            "block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-0 text-20 font-medium outline-none ring-0",
+            "block w-full resize-none overflow-hidden rounded-sm border-none bg-transparent px-3 py-0 text-20 font-medium outline-none ring-0",
             {
               "ring-1 ring-red-400 mx-2.5": title?.length === 0,
             },
@@ -161,7 +161,7 @@ export const IssueTitleInput = observer(function IssueTitleInput(props: IssueTit
         />
         <div
           className={cn(
-            "pointer-events-none absolute bottom-1 right-1 z-[2] rounded bg-custom-background-100 p-0.5 text-11 text-secondary opacity-0 transition-opacity",
+            "pointer-events-none absolute bottom-1 right-1 z-[2] rounded-sm bg-surface-1 p-0.5 text-11 text-secondary opacity-0 transition-opacity",
             {
               "opacity-100": isLengthVisible,
             }

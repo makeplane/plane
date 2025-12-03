@@ -23,7 +23,7 @@ export function IssueBlockPriority({
     high: "bg-orange-500/20 text-orange-950 border-orange-500",
     medium: "bg-yellow-500/20 text-yellow-950 border-yellow-500",
     low: "bg-custom-primary-100/20 text-custom-primary-950 border-custom-primary-100",
-    none: "hover:bg-custom-background-80 border-strong",
+    none: "hover:bg-layer-1 border-strong",
   };
 
   if (priority_detail === null) return <></>;
@@ -32,7 +32,7 @@ export function IssueBlockPriority({
     <Tooltip tooltipHeading="Priority" tooltipContent={t(priority_detail?.titleTranslationKey || "")}>
       <div
         className={cn(
-          "h-full flex items-center gap-1.5 border-[0.5px] rounded text-11 px-2 py-0.5",
+          "h-full flex items-center gap-1.5 border-[0.5px] rounded-sm text-11 px-2 py-0.5",
           priorityClasses[priority ?? "none"],
           {
             // compact the icons if text is hidden

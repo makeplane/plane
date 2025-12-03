@@ -82,7 +82,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
           </div>
           <div className="w-3/4">
             <div
-              className={`inline-flex items-center gap-1.5 rounded px-2.5 py-0.5 text-left text-13 capitalize ${
+              className={`inline-flex items-center gap-1.5 rounded-sm px-2.5 py-0.5 text-left text-13 capitalize ${
                 priority?.key === "urgent"
                   ? "border-red-500/20 bg-red-500/20 text-red-500"
                   : priority?.key === "high"
@@ -91,7 +91,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
                       ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
                       : priority?.key === "low"
                         ? "border-green-500/20 bg-green-500/20 text-green-500"
-                        : "border-subtle-1 bg-custom-background-80"
+                        : "border-subtle-1 bg-layer-1"
               }`}
             >
               {priority && (
@@ -112,7 +112,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
           <div>
             {issueDetails.target_date ? (
               <div
-                className={cn("flex items-center gap-1.5 rounded py-0.5 text-11 text-primary", {
+                className={cn("flex items-center gap-1.5 rounded-sm py-0.5 text-11 text-primary", {
                   "text-red-500": shouldHighlightIssueDueDate(issueDetails.target_date, state?.group),
                 })}
               >

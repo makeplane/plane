@@ -78,7 +78,7 @@ export const UserMenuRoot = observer(function UserMenuRoot(props: Props) {
         <span className="px-2 text-secondary truncate">{currentUser?.email}</span>
         <Link href={`/${workspaceSlug}/settings/account`}>
           <CustomMenu.MenuItem>
-            <div className="flex w-full items-center gap-2 rounded text-11">
+            <div className="flex w-full items-center gap-2 rounded-sm text-11">
               <Settings className="h-4 w-4 stroke-[1.5]" />
               <span>{t("settings")}</span>
             </div>
@@ -90,7 +90,7 @@ export const UserMenuRoot = observer(function UserMenuRoot(props: Props) {
         <CustomMenu.MenuItem>
           <button
             type="button"
-            className="flex w-full items-center gap-2 rounded text-11 hover:bg-custom-background-80"
+            className="flex w-full items-center gap-2 rounded-sm text-11 hover:bg-layer-1"
             onClick={handleSignOut}
           >
             <LogOut className="size-4 stroke-[1.5]" />
@@ -104,7 +104,7 @@ export const UserMenuRoot = observer(function UserMenuRoot(props: Props) {
           <div className="px-1">
             <Link href={GOD_MODE_URL}>
               <CustomMenu.MenuItem>
-                <div className="flex w-full items-center justify-center rounded bg-custom-primary-100/20 px-2 py-1 text-11 font-medium text-custom-primary-100 hover:bg-custom-primary-100/30 hover:text-custom-primary-200">
+                <div className="flex w-full items-center justify-center rounded-sm bg-custom-primary-100/20 px-2 py-1 text-11 font-medium text-custom-primary-100 hover:bg-custom-primary-100/30 hover:text-custom-primary-200">
                   {t("enter_god_mode")}
                 </div>
               </CustomMenu.MenuItem>

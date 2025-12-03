@@ -123,7 +123,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
                 }
                 disabled={!isEditable}
                 buttonVariant="border-with-text"
-                className="w-3/5 flex-grow rounded px-2 hover:bg-custom-background-80"
+                className="w-3/5 flex-grow rounded-sm px-2 hover:bg-layer-1"
                 buttonContainerClassName="w-full text-left"
                 buttonClassName="w-min h-auto whitespace-nowrap"
               />
@@ -195,7 +195,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
                   target="_self"
                 >
                   <Tooltip tooltipContent={`${duplicateIssueDetails?.name}`}>
-                    <span className="flex items-center gap-1 cursor-pointer text-11 rounded px-1.5 py-1 pb-0.5 bg-custom-background-80 text-secondary">
+                    <span className="flex items-center gap-1 cursor-pointer text-11 rounded-sm px-1.5 py-1 pb-0.5 bg-layer-1 text-secondary">
                       {`${currentProjectDetails?.identifier}-${duplicateIssueDetails?.sequence_id}`}
                     </span>
                   </Tooltip>

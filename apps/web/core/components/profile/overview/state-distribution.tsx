@@ -57,7 +57,7 @@ export function ProfileStateDistribution({ stateDistribution, userProfile }: Pro
                   <div key={group.state_group} className="flex items-center justify-between gap-2 text-11">
                     <div className="flex items-center gap-1.5">
                       <div
-                        className="h-2.5 w-2.5 rounded-sm"
+                        className="h-2.5 w-2.5 rounded-xs"
                         style={{
                           backgroundColor: STATE_GROUPS[group.state_group]?.color ?? "rgb(var(--color-primary-100))",
                         }}

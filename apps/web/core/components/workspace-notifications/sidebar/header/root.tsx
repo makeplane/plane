@@ -20,7 +20,7 @@ export const NotificationSidebarHeader = observer(function NotificationSidebarHe
 
   if (!workspaceSlug) return <></>;
   return (
-    <Header className="my-auto bg-custom-background-100">
+    <Header className="my-auto bg-surface-1">
       <Header.LeftItem>
         <Breadcrumbs>
           <Breadcrumbs.Item

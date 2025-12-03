@@ -23,10 +23,10 @@ export interface IButtonStyling {
 }
 
 enum buttonSizeStyling {
-  sm = `px-3 py-1.5 font-medium text-11 rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
-  md = `px-4 py-1.5 font-medium text-13 rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
-  lg = `px-5 py-2 font-medium text-13 rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
-  xl = `px-5 py-3.5 font-medium text-13 rounded flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
+  sm = `px-3 py-1.5 font-medium text-11 rounded-sm flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
+  md = `px-4 py-1.5 font-medium text-13 rounded-sm flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
+  lg = `px-5 py-2 font-medium text-13 rounded-sm flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
+  xl = `px-5 py-3.5 font-medium text-13 rounded-sm flex items-center gap-1.5 whitespace-nowrap transition-all justify-center`,
 }
 
 enum buttonIconStyling {
@@ -56,13 +56,13 @@ export const buttonStyling: IButtonStyling = {
     disabled: `cursor-not-allowed !text-custom-primary-60 !border-custom-primary-60 `,
   },
   "neutral-primary": {
-    default: `text-secondary bg-custom-background-100 border border-subtle-1`,
-    hover: `hover:bg-custom-background-90`,
-    pressed: `focus:text-tertiary focus:bg-custom-background-90`,
+    default: `text-secondary bg-surface-1 border border-subtle-1`,
+    hover: `hover:bg-surface-2`,
+    pressed: `focus:text-tertiary focus:bg-surface-2`,
     disabled: `cursor-not-allowed !text-placeholder`,
   },
   "link-primary": {
-    default: `text-custom-primary-100 bg-custom-background-100`,
+    default: `text-custom-primary-100 bg-surface-1`,
     hover: `hover:text-custom-primary-200`,
     pressed: `focus:text-custom-primary-80 `,
     disabled: `cursor-not-allowed !text-custom-primary-60`,
@@ -87,13 +87,13 @@ export const buttonStyling: IButtonStyling = {
     disabled: `cursor-not-allowed !text-red-300 !border-red-300`,
   },
   "link-danger": {
-    default: `text-red-500 bg-custom-background-100`,
+    default: `text-red-500 bg-surface-1`,
     hover: `hover:text-red-400`,
     pressed: `focus:text-red-400`,
     disabled: `cursor-not-allowed !text-red-300`,
   },
   "tertiary-danger": {
-    default: `text-red-500 bg-custom-background-100 border border-red-200`,
+    default: `text-red-500 bg-surface-1 border border-red-200`,
     hover: `hover:bg-red-50 hover:border-red-300`,
     pressed: `focus:text-red-400`,
     disabled: `cursor-not-allowed !text-red-300`,

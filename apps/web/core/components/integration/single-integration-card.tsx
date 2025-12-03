@@ -102,7 +102,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
   const isInstalled = workspaceIntegrations?.find((i: any) => i.integration_detail.id === integration.id);
 
   return (
-    <div className="flex items-center justify-between gap-2 border-b border-subtle bg-custom-background-100 px-4 py-6">
+    <div className="flex items-center justify-between gap-2 border-b border-subtle bg-surface-1 px-4 py-6">
       <div className="flex items-start gap-4">
         <div className="h-10 w-10 flex-shrink-0">
           <img

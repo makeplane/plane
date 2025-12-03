@@ -28,7 +28,7 @@ export function Logo(props: Props) {
 
   const isMaterialSymbolsFontLoaded = useFontFaceObserver([
     {
-      family: `Material Symbols Rounded`,
+      family: `Material Symbols rounded-sm`,
       style: `normal`,
       weight: `normal`,
       stretch: `condensed`,
@@ -44,7 +44,7 @@ export function Logo(props: Props) {
           height: size,
           width: size,
         }}
-        className="rounded animate-pulse bg-custom-background-80"
+        className="rounded-sm animate-pulse bg-layer-1"
       />
     );
   }

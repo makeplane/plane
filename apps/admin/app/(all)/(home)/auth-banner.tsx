@@ -20,7 +20,7 @@ export function AuthBanner(props: TAuthBanner) {
       </div>
       <div className="w-full text-13 font-medium text-custom-primary-100">{bannerData?.message}</div>
       <div
-        className="relative ml-auto w-6 h-6 rounded-sm flex justify-center items-center transition-all cursor-pointer hover:bg-custom-primary-100/20 text-custom-primary-100/80"
+        className="relative ml-auto w-6 h-6 rounded-xs flex justify-center items-center transition-all cursor-pointer hover:bg-custom-primary-100/20 text-custom-primary-100/80"
         onClick={() => handleBannerData && handleBannerData(undefined)}
       >
         <CloseIcon className="w-4 h-4 flex-shrink-0" />

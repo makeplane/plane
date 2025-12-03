@@ -36,7 +36,7 @@ export function SingleExport({ service, refreshing }: Props) {
             </span>{" "}
           </span>
           <span
-            className={`rounded px-2 py-0.5 text-11 capitalize ${
+            className={`rounded-sm px-2 py-0.5 text-11 capitalize ${
               service.status === "completed"
                 ? "bg-green-500/20 text-green-500"
                 : service.status === "processing"

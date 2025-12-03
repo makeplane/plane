@@ -12,7 +12,7 @@ export const GanttQuickAddIssueForm = observer(function GanttQuickAddIssueForm(p
       <form
         ref={ref}
         onSubmit={onSubmit}
-        className="flex w-full items-center gap-x-3 border-[0.5px] border-subtle bg-custom-background-100 px-3"
+        className="flex w-full items-center gap-x-3 border-[0.5px] border-subtle bg-surface-1 px-3"
       >
         <div className="flex w-full items-center gap-3">
           <div className="text-11 font-medium text-placeholder">{projectDetail?.identifier ?? "..."}</div>
@@ -27,7 +27,7 @@ export const GanttQuickAddIssueForm = observer(function GanttQuickAddIssueForm(p
           />
         </div>
       </form>
-      <div className="px-3 py-2 text-11 bg-custom-background-100 italic text-secondary">
+      <div className="px-3 py-2 text-11 bg-surface-1 italic text-secondary">
         {isEpic ? t("epic.add.press_enter") : t("issue.add.press_enter")}
       </div>
     </div>

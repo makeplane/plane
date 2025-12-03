@@ -92,7 +92,7 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
             style={{ height: "calc(2.75rem - 1px)" }}
           />
         }
-        classNames={cn("bg-custom-background-100 transition-[background-color]", {
+        classNames={cn("bg-surface-1 transition-[background-color]", {
           "group selected-issue-row": isIssueSelected,
           "border-[0.5px] border-strong-1": isIssueActive,
         })}
@@ -208,8 +208,8 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
   const customActionButton = (
     <div
       ref={menuActionRef}
-      className={`flex items-center h-full w-full cursor-pointer rounded p-1 text-placeholder hover:bg-custom-background-80 ${
-        isMenuActive ? "bg-custom-background-80 text-primary" : "text-secondary"
+      className={`flex items-center h-full w-full cursor-pointer rounded-sm p-1 text-placeholder hover:bg-layer-1 ${
+        isMenuActive ? "bg-layer-1 text-primary" : "text-secondary"
       }`}
       onClick={() => setIsMenuActive(!isMenuActive)}
     >
@@ -259,7 +259,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
         id={`issue-${issueId}`}
         ref={cellRef}
         tabIndex={0}
-        className="relative md:sticky left-0 z-10 group/list-block bg-custom-background-100 min-w-60 max-w-[30vw]"
+        className="relative md:sticky left-0 z-10 group/list-block bg-surface-1 min-w-60 max-w-[30vw]"
       >
         <ControlLink
           href={workItemLink}
@@ -331,7 +331,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
                 {subIssuesCount > 0 && !isEpic && (
                   <button
                     type="button"
-                    className="grid place-items-center size-4 rounded-sm text-placeholder hover:text-tertiary"
+                    className="grid place-items-center size-4 rounded-xs text-placeholder hover:text-tertiary"
                     onClick={handleToggleExpand}
                   >
                     <ChevronRightIcon

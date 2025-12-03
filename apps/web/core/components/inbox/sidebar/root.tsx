@@ -77,7 +77,7 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
   }, [currentTab, filteredInboxIssueIds, inboxIssueId, projectId, router, workspaceSlug]);
 
   return (
-    <div className="bg-custom-background-100 flex-shrink-0 w-full h-full border-r border-strong ">
+    <div className="bg-surface-1 flex-shrink-0 w-full h-full border-r border-strong ">
       <div className="relative w-full h-full flex flex-col overflow-hidden">
         <Header variant={EHeaderVariant.SECONDARY}>
           {tabNavigationOptions.map((option) => (

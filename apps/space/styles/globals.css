@@ -2,10 +2,6 @@
 @import "@plane/propel/styles/fonts";
 @import "@plane/editor/styles";
 
-html {
-  font-family: "Inter", sans-serif;
-}
-
 /* stickies and editor colors */
 :root {
   /* text colors */
@@ -52,19 +48,6 @@ html {
   --editor-colors-purple-background: #3d325a;
 }
 /* end background colors */
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  -webkit-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
-  font-variant-ligatures: none;
-  -webkit-font-variant-ligatures: none;
-  text-rendering: optimizeLegibility;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-}
 
 ::-webkit-scrollbar {
   width: 5px;

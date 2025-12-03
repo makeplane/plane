@@ -88,11 +88,11 @@ export const IssueRelationSelect = observer(function IssueRelationSelect(props: 
       <button
         type="button"
         className={cn(
-          "group flex items-center gap-2 rounded px-2 py-0.5 outline-none",
+          "group flex items-center gap-2 rounded-sm px-2 py-0.5 outline-none",
           {
             "cursor-not-allowed": disabled,
-            "hover:bg-custom-background-80": !disabled,
-            "bg-custom-background-80": isRelationKeyModalActive,
+            "hover:bg-layer-1": !disabled,
+            "bg-layer-1": isRelationKeyModalActive,
           },
           className
         )}
@@ -111,7 +111,7 @@ export const IssueRelationSelect = observer(function IssueRelationSelect(props: 
                 return (
                   <div
                     key={relationIssueId}
-                    className={`group flex items-center gap-1 rounded px-1.5 pb-1 pt-1 leading-3 hover:bg-custom-background-90 ${currRelationOption?.className}`}
+                    className={`group flex items-center gap-1 rounded-sm px-1.5 pb-1 pt-1 leading-3 hover:bg-surface-2 ${currRelationOption?.className}`}
                   >
                     <Tooltip tooltipHeading="Title" tooltipContent={currentIssue.name} isMobile={isMobile}>
                       <Link

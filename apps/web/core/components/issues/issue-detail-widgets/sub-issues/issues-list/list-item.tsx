@@ -107,7 +107,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
       >
         {issue && (
           <div
-            className="group relative flex min-h-11 h-full w-full items-center pr-2 py-1 transition-all hover:bg-custom-background-90"
+            className="group relative flex min-h-11 h-full w-full items-center pr-2 py-1 transition-all hover:bg-surface-2"
             style={{ paddingLeft: `${spacingLeft}px` }}
           >
             <div className="flex size-5 items-center justify-center flex-shrink-0">
@@ -115,7 +115,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
               {subIssueCount > 0 && !isCurrentIssueRoot && (
                 <>
                   {subIssueHelpers.preview_loader.includes(issue.id) ? (
-                    <div className="flex h-full w-full cursor-not-allowed items-center justify-center rounded-sm bg-custom-background-80 transition-all">
+                    <div className="flex h-full w-full cursor-not-allowed items-center justify-center rounded-xs bg-layer-1 transition-all">
                       <Loader width={14} strokeWidth={2} className="animate-spin" />
                     </div>
                   ) : (

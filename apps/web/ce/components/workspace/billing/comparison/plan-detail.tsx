@@ -69,7 +69,7 @@ export const PlanDetail = observer(function PlanDetail(props: TPlanDetailProps) 
         <div className="flex w-full gap-2 items-center text-18 font-medium">
           <span className="transition-all duration-300">{subscriptionName}</span>
           {subscriptionType === EProductSubscriptionEnum.PRO && (
-            <span className="px-2 rounded text-custom-primary-200 bg-custom-primary-100/20 text-11">Popular</span>
+            <span className="px-2 rounded-sm text-custom-primary-200 bg-custom-primary-100/20 text-11">Popular</span>
           )}
         </div>
         <div className="flex gap-x-2 items-start text-tertiary pb-1 transition-all duration-300 animate-slide-up">

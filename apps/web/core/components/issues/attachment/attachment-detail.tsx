@@ -66,7 +66,7 @@ export const IssueAttachmentsDetail = observer(function IssueAttachmentsDetail(p
           attachmentId={attachmentId}
         />
       )}
-      <div className="flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-subtle-1 bg-custom-background-100 px-4 py-2 text-13">
+      <div className="flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-subtle-1 bg-surface-1 px-4 py-2 text-13">
         <Link href={fileURL ?? ""} target="_blank" rel="noopener noreferrer">
           <div className="flex items-center gap-3">
             <div className="h-7 w-7">{fileIcon}</div>

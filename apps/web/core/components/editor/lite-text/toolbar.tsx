@@ -93,9 +93,9 @@ export function IssueCommentToolbar(props: Props) {
   const isSubmitButtonDisabled = isCommentEmpty || !isEditorReadyToDiscard;
 
   return (
-    <div className="flex h-9 w-full items-stretch gap-1.5 bg-custom-background-90 overflow-x-scroll">
+    <div className="flex h-9 w-full items-stretch gap-1.5 bg-surface-2 overflow-x-scroll">
       {showAccessSpecifier && (
-        <div className="flex flex-shrink-0 items-stretch gap-0.5 rounded border-[0.5px] border-subtle-1 p-1">
+        <div className="flex flex-shrink-0 items-stretch gap-0.5 rounded-sm border-[0.5px] border-subtle-1 p-1">
           {COMMENT_ACCESS_SPECIFIERS.map((access) => {
             const isAccessActive = accessSpecifier === access.key;
 
@@ -104,8 +104,8 @@ export function IssueCommentToolbar(props: Props) {
                 <button
                   type="button"
                   onClick={() => handleAccessChange?.(access.key)}
-                  className={cn("grid place-items-center aspect-square rounded-sm p-1 hover:bg-custom-background-80", {
-                    "bg-custom-background-80": isAccessActive,
+                  className={cn("grid place-items-center aspect-square rounded-xs p-1 hover:bg-layer-1", {
+                    "bg-layer-1": isAccessActive,
                   })}
                 >
                   <access.icon
@@ -120,7 +120,7 @@ export function IssueCommentToolbar(props: Props) {
           })}
         </div>
       )}
-      <div className="flex w-full items-stretch justify-between gap-2 rounded border-[0.5px] border-subtle-1 p-1">
+      <div className="flex w-full items-stretch justify-between gap-2 rounded-sm border-[0.5px] border-subtle-1 p-1">
         <div className="flex items-stretch">
           {Object.keys(toolbarItems).map((key, index) => (
             <div
@@ -146,9 +146,9 @@ export function IssueCommentToolbar(props: Props) {
                       type="button"
                       onClick={() => executeCommand(item)}
                       className={cn(
-                        "grid place-items-center aspect-square rounded-sm p-0.5 text-placeholder hover:bg-custom-background-80",
+                        "grid place-items-center aspect-square rounded-xs p-0.5 text-placeholder hover:bg-layer-1",
                         {
-                          "bg-custom-background-80 text-primary": isItemActive,
+                          "bg-layer-1 text-primary": isItemActive,
                         }
                       )}
                     >

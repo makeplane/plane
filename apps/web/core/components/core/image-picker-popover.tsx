@@ -165,7 +165,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
   return (
     <Popover className="relative z-19" ref={ref} tabIndex={tabIndex} onKeyDown={handleKeyDown}>
       <Popover.Button
-        className="rounded border border-strong bg-custom-background-100 px-2 py-1 text-11 text-secondary hover:text-primary"
+        className="rounded-sm border border-strong bg-surface-1 px-2 py-1 text-11 text-secondary hover:text-primary"
         onClick={handleOnClick}
         disabled={disabled}
       >
@@ -174,15 +174,15 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
 
       {isOpen && (
         <Popover.Panel
-          className="absolute right-0 z-20 mt-2 rounded-md border border-subtle-1 bg-custom-background-100 shadow-custom-shadow-sm"
+          className="absolute right-0 z-20 mt-2 rounded-md border border-subtle-1 bg-surface-1 shadow-custom-shadow-sm"
           static
         >
           <div
             ref={imagePickerRef}
-            className="flex h-96 w-80 flex-col overflow-auto rounded border border-strong bg-custom-background-100 p-3 shadow-2xl md:h-[28rem] md:w-[36rem]"
+            className="flex h-96 w-80 flex-col overflow-auto rounded-sm border border-strong bg-surface-1 p-3 shadow-2xl md:h-[28rem] md:w-[36rem]"
           >
             <Tab.Group>
-              <Tab.List as="span" className="inline-block rounded bg-custom-background-80 p-1">
+              <Tab.List as="span" className="inline-block rounded-sm bg-layer-1 p-1">
                 {tabOptions.map((tab) => {
                   if (!unsplashImages && unsplashError && tab.key === "unsplash") return null;
                   if (projectCoverImages && projectCoverImages.length === 0 && tab.key === "images") return null;
@@ -191,7 +191,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                     <Tab
                       key={tab.key}
                       className={({ selected }) =>
-                        `rounded px-4 py-1 text-center text-13 outline-none transition-colors ${
+                        `rounded-sm px-4 py-1 text-center text-13 outline-none transition-colors ${
                           selected ? "bg-custom-primary text-white" : "text-primary"
                         }`
                       }
@@ -246,7 +246,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                               <img
                                 src={image.urls.small}
                                 alt={image.alt_description}
-                                className="absolute left-0 top-0 h-full w-full cursor-pointer rounded object-cover"
+                                className="absolute left-0 top-0 h-full w-full cursor-pointer rounded-sm object-cover"
                               />
                             </div>
                           ))}
@@ -285,7 +285,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                               <img
                                 src={image}
                                 alt={`Default project cover image- ${index}`}
-                                className="absolute left-0 top-0 h-full w-full cursor-pointer rounded object-cover"
+                                className="absolute left-0 top-0 h-full w-full cursor-pointer rounded-sm object-cover"
                               />
                             </div>
                           ))}
@@ -314,13 +314,13 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                         {...getRootProps()}
                         className={`relative grid h-full w-full cursor-pointer place-items-center rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-custom-primary focus:ring-offset-2 ${
                           (image === null && isDragActive) || !value
-                            ? "border-2 border-dashed border-subtle-1 hover:bg-custom-background-90"
+                            ? "border-2 border-dashed border-subtle-1 hover:bg-surface-2"
                             : ""
                         }`}
                       >
                         <button
                           type="button"
-                          className="absolute right-0 top-0 z-40 -translate-y-1/2 rounded bg-custom-background-90 px-2 py-0.5 text-11 font-medium text-secondary"
+                          className="absolute right-0 top-0 z-40 -translate-y-1/2 rounded-sm bg-surface-2 px-2 py-0.5 text-11 font-medium text-secondary"
                         >
                           Edit
                         </button>

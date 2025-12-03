@@ -52,7 +52,7 @@ export const ProjectsListMobileHeader = observer(function ProjectsListMobileHead
   const isFiltersApplied = calculateTotalFilters(filters ?? {}) !== 0;
 
   return (
-    <div className="flex py-2 border-b border-subtle-1 md:hidden bg-custom-background-100 w-full">
+    <div className="flex py-2 border-b border-subtle-1 md:hidden bg-surface-1 w-full">
       <ProjectOrderByDropdown
         value={displayFilters?.order_by}
         onChange={(val) => {

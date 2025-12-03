@@ -38,7 +38,7 @@ export function RecentPage(props: BlockProps) {
       title={getPageName(pageDetails?.name)}
       prependTitleElement={
         <div className="flex-shrink-0 flex items-center gap-2">
-          <div className="flex-shrink-0 grid place-items-center rounded bg-custom-background-80 size-8">
+          <div className="flex-shrink-0 grid place-items-center rounded-sm bg-layer-1 size-8">
             {pageDetails?.logo_props?.in_use ? (
               <Logo logo={pageDetails?.logo_props} size={16} type="lucide" />
             ) : (

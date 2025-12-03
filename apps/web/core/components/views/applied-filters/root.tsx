@@ -31,7 +31,7 @@ export function ViewAppliedFiltersList(props: Props) {
   const isEditingAllowed = alwaysAllowEditing;
 
   return (
-    <div className="flex flex-wrap items-stretch gap-2 bg-custom-background-100">
+    <div className="flex flex-wrap items-stretch gap-2 bg-surface-1">
       {Object.entries(appliedFilters).map(([key, value]) => {
         const filterKey = key as keyof TViewFilterProps;
 

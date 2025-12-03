@@ -42,7 +42,7 @@ const ToolbarRoot = React.forwardRef(function ToolbarRoot(
   return (
     <div
       ref={ref}
-      className={cn("flex h-9 w-full items-stretch gap-1.5 bg-custom-background-90 overflow-x-scroll", className)}
+      className={cn("flex h-9 w-full items-stretch gap-1.5 bg-surface-2 overflow-x-scroll", className)}
       {...props}
     >
       {children}
@@ -80,9 +80,9 @@ const ToolbarItem = React.forwardRef(function ToolbarItem(
       ref={ref}
       type="button"
       className={cn(
-        "grid place-items-center aspect-square rounded-sm p-0.5 text-placeholder hover:bg-custom-background-80 transition-colors",
+        "grid place-items-center aspect-square rounded-xs p-0.5 text-placeholder hover:bg-layer-1 transition-colors",
         {
-          "bg-custom-background-80 text-primary": isActive,
+          "bg-layer-1 text-primary": isActive,
         },
         className
       )}
@@ -125,11 +125,10 @@ const ToolbarSeparator = React.forwardRef(function ToolbarSeparator(
 
 const buttonVariants = {
   primary: "bg-custom-primary-100 text-white hover:bg-custom-primary-200 focus:bg-custom-primary-200",
-  secondary:
-    "bg-custom-background-100 text-secondary border border-subtle-1 hover:bg-custom-background-90 focus:bg-custom-background-90",
+  secondary: "bg-surface-1 text-secondary border border-subtle-1 hover:bg-surface-2 focus:bg-surface-2",
   outline:
     "border border-custom-primary-100 text-custom-primary-100 bg-transparent hover:bg-custom-primary-100/10 focus:bg-custom-primary-100/20",
-  ghost: "text-secondary hover:bg-custom-background-90 focus:bg-custom-background-90",
+  ghost: "text-secondary hover:bg-surface-2 focus:bg-surface-2",
   destructive: "bg-red-500 text-white hover:bg-red-600 focus:bg-red-600",
 };
 

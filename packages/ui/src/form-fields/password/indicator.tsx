@@ -34,7 +34,7 @@ export function PasswordStrengthIndicator({
             <div
               key={fragmentIndex}
               className={cn(
-                "h-1 flex-1 rounded-sm transition-all duration-300 ease-in-out",
+                "h-1 flex-1 rounded-xs transition-all duration-300 ease-in-out",
                 getFragmentColor(fragmentIndex, strengthInfo.activeFragments)
               )}
             />

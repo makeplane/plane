@@ -76,7 +76,7 @@ export const CycleSidebarDetails = observer(function CycleSidebarDetails(props: 
             <SquareUser className="h-4 w-4" />
             <span className="text-14">{t("lead")}</span>
           </div>
-          <div className="flex w-3/5 items-center rounded-sm">
+          <div className="flex w-3/5 items-center rounded-xs">
             <div className="flex items-center gap-2.5">
               <Avatar name={cycleOwnerDetails?.display_name} src={getFileURL(cycleOwnerDetails?.avatar_url ?? "")} />
               <span className="text-13 text-secondary">{cycleOwnerDetails?.display_name}</span>
@@ -89,7 +89,7 @@ export const CycleSidebarDetails = observer(function CycleSidebarDetails(props: 
             <MembersPropertyIcon className="h-4 w-4" />
             <span className="text-14">{t("members")}</span>
           </div>
-          <div className="flex w-3/5 items-center rounded-sm">
+          <div className="flex w-3/5 items-center rounded-xs">
             <div className="flex items-center gap-2.5">
               {cycleDetails?.assignee_ids && cycleDetails.assignee_ids.length > 0 ? (
                 <>

@@ -124,7 +124,7 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
                 <Disclosure.Button className="relative flex items-center gap-2 w-full">
                   <div className="font-medium text-secondary text-13">{t("progress")}</div>
                   {progressHeaderPercentage > 0 && (
-                    <div className="flex h-5 w-9 items-center justify-center rounded bg-amber-500/20 text-11 font-medium text-amber-500">{`${progressHeaderPercentage}%`}</div>
+                    <div className="flex h-5 w-9 items-center justify-center rounded-sm bg-amber-500/20 text-11 font-medium text-amber-500">{`${progressHeaderPercentage}%`}</div>
                   )}
                 </Disclosure.Button>
                 {isCurrentEstimateTypeIsPoints && (

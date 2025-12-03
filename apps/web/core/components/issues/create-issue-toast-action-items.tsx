@@ -60,7 +60,7 @@ export const CreateIssueToastActionItems = observer(function CreateIssueToastAct
         href={workItemLink}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-custom-primary px-2 py-1 hover:bg-custom-background-90 font-medium rounded"
+        className="text-custom-primary px-2 py-1 hover:bg-surface-2 font-medium rounded-sm"
       >
         {`View ${isEpic ? "epic" : "work item"}`}
       </a>
@@ -72,7 +72,7 @@ export const CreateIssueToastActionItems = observer(function CreateIssueToastAct
       ) : (
         <>
           <button
-            className="cursor-pointer hidden group-hover:flex px-2 py-1 text-tertiary hover:text-secondary hover:bg-custom-background-90 rounded"
+            className="cursor-pointer hidden group-hover:flex px-2 py-1 text-tertiary hover:text-secondary hover:bg-surface-2 rounded-sm"
             onClick={copyToClipboard}
           >
             Copy link

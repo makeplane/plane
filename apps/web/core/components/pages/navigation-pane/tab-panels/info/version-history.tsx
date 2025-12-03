@@ -42,13 +42,13 @@ const VersionHistoryItem = observer(function VersionHistoryItem(props: VersionHi
     <li className="relative flex items-center gap-x-4 text-11 font-medium">
       {/* timeline icon */}
       <div className="relative size-6 flex-none grid place-items-center">
-        <div className="size-2 rounded-full bg-custom-background-80" />
+        <div className="size-2 rounded-full bg-layer-1" />
       </div>
       {/* end timeline icon */}
       <Link
         href={getVersionLink(version.id)}
-        className={cn("block flex-1 hover:bg-custom-background-90 rounded-md py-2 px-1", {
-          "bg-custom-background-80 hover:bg-custom-background-80": isVersionActive,
+        className={cn("block flex-1 hover:bg-surface-2 rounded-md py-2 px-1", {
+          "bg-layer-1 hover:bg-layer-1": isVersionActive,
         })}
       >
         <p className="text-tertiary">
@@ -109,7 +109,7 @@ export const PageNavigationPaneInfoTabVersionHistory = observer(function PageNav
         <ul role="list" className="relative">
           {/* timeline line */}
           <div className={cn("absolute left-0 top-0 h-full flex w-6 justify-center")}>
-            <div className="w-px bg-custom-background-80" />
+            <div className="w-px bg-layer-1" />
           </div>
           {/* end timeline line */}
           <li className="relative flex items-center gap-x-4 text-11 font-medium">
@@ -120,8 +120,8 @@ export const PageNavigationPaneInfoTabVersionHistory = observer(function PageNav
             {/* end timeline icon */}
             <Link
               href={getVersionLink()}
-              className={cn("flex-1 hover:bg-custom-background-90 rounded-md py-2 px-1", {
-                "bg-custom-background-80 hover:bg-custom-background-80": !activeVersion,
+              className={cn("flex-1 hover:bg-surface-2 rounded-md py-2 px-1", {
+                "bg-layer-1 hover:bg-layer-1": !activeVersion,
               })}
             >
               {t("page_navigation_pane.tabs.info.version_history.current_version")}

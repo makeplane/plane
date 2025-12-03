@@ -131,7 +131,7 @@ function UserInvitationsPage() {
           <div className="absolute left-0 top-1/2 h-[0.5px] w-full -translate-y-1/2 border-b-[0.5px] border-subtle-1 sm:left-1/2 sm:top-0 sm:h-screen sm:w-[0.5px] sm:-translate-x-1/2 sm:translate-y-0 sm:border-r-[0.5px] md:left-1/3" />
           <Link
             href="/"
-            className="absolute left-5 top-1/2 grid -translate-y-1/2 place-items-center bg-custom-background-100 px-3 sm:left-1/2 sm:top-12 sm:-translate-x-[15px] sm:translate-y-0 sm:px-0 sm:py-5 md:left-1/3 z-10"
+            className="absolute left-5 top-1/2 grid -translate-y-1/2 place-items-center bg-surface-1 px-3 sm:left-1/2 sm:top-12 sm:-translate-x-[15px] sm:translate-y-0 sm:px-0 sm:py-5 md:left-1/3 z-10"
           >
             <PlaneLogo className="h-9 w-auto text-primary" />
           </Link>
@@ -152,8 +152,8 @@ function UserInvitationsPage() {
                     return (
                       <div
                         key={invitation.id}
-                        className={`flex cursor-pointer items-center gap-2 rounded border px-3.5 py-5 ${
-                          isSelected ? "border-custom-primary-100" : "border-subtle-1 hover:bg-custom-background-80"
+                        className={`flex cursor-pointer items-center gap-2 rounded-sm border px-3.5 py-5 ${
+                          isSelected ? "border-custom-primary-100" : "border-subtle-1 hover:bg-layer-1"
                         }`}
                         onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
                       >

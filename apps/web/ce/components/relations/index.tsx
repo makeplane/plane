@@ -9,14 +9,14 @@ export const ISSUE_RELATION_OPTIONS: Record<TIssueRelationTypes, TRelationObject
   relates_to: {
     key: "relates_to",
     i18n_label: "issue.relation.relates_to",
-    className: "bg-custom-background-80 text-secondary",
+    className: "bg-layer-1 text-secondary",
     icon: (size) => <RelatedIcon height={size} width={size} className="text-secondary" />,
     placeholder: "Add related work items",
   },
   duplicate: {
     key: "duplicate",
     i18n_label: "issue.relation.duplicate",
-    className: "bg-custom-background-80 text-secondary",
+    className: "bg-layer-1 text-secondary",
     icon: (size) => <DuplicatePropertyIcon width={size} height={size} className="text-secondary" />,
     placeholder: "None",
   },

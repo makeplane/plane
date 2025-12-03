@@ -66,7 +66,7 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
     <Row
       className={cn(
         "relative py-4 flex items-center gap-2 border-b border-subtle-1 cursor-pointer transition-all group",
-        currentSelectedNotificationId === notification?.id ? "bg-custom-background-80/30" : "",
+        currentSelectedNotificationId === notification?.id ? "bg-layer-1/30" : "",
         notification.read_at === null ? "bg-custom-primary-100/5" : ""
       )}
       onClick={handleNotificationIssuePeekOverview}
@@ -76,14 +76,14 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
       )}
 
       <div className="relative w-full flex gap-2">
-        <div className="flex-shrink-0 relative flex justify-center items-center w-12 h-12 bg-custom-background-80 rounded-full">
+        <div className="flex-shrink-0 relative flex justify-center items-center w-12 h-12 bg-layer-1 rounded-full">
           {notificationTriggeredBy && (
             <Avatar
               name={notificationTriggeredBy.display_name || notificationTriggeredBy?.first_name}
               src={getFileURL(notificationTriggeredBy.avatar_url)}
               size={42}
               shape="circle"
-              className="!text-14 !bg-custom-background-80"
+              className="!text-14 !bg-layer-1"
             />
           )}
         </div>

@@ -26,7 +26,7 @@ export const IssueAttachmentsUploadDetails = observer(function IssueAttachmentsU
   const { isMobile } = usePlatformOS();
 
   return (
-    <div className="flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-subtle-1 bg-custom-background-90 px-4 py-2 text-13 pointer-events-none">
+    <div className="flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-subtle-1 bg-surface-2 px-4 py-2 text-13 pointer-events-none">
       <div className="flex-shrink-0 flex items-center gap-3">
         <div className="h-7 w-7">{fileIcon}</div>
         <div className="flex flex-col gap-1">
