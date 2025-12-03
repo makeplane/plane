@@ -1,10 +1,11 @@
 import type { FC } from "react";
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
-import { LinkIcon } from "lucide-react";
+
 // plane imports
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { LinkIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { EIssuesStoreType } from "@plane/types";

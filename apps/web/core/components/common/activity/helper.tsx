@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import {
   RotateCcw,
   Network,
-  Link as LinkIcon,
   Calendar,
   Inbox,
   AlignLeft,
@@ -21,6 +20,7 @@ import {
 // components
 
 import {
+  LinkIcon,
   ArchiveIcon,
   CycleIcon,
   GlobeIcon,

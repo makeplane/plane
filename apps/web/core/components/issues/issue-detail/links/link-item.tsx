@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
-import { Link } from "lucide-react";
+
 import { useTranslation } from "@plane/i18n";
-import { CopyIcon , EditIcon , TrashIcon } from "@plane/propel/icons";
+import { LinkIcon , CopyIcon , EditIcon , TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssueServiceType } from "@plane/types";
@@ -54,7 +54,7 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
           {faviconUrl ? (
             <img src={faviconUrl} alt="favicon" className="size-4" />
           ) : (
-            <Link className="size-4 text-custom-text-350 group-hover:text-custom-text-100" />
+            <LinkIcon className="size-4 text-custom-text-350 group-hover:text-custom-text-100" />
           )}
           <Tooltip tooltipContent={linkDetail.url} isMobile={isMobile}>
             <a

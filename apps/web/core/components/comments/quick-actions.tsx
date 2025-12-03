@@ -1,11 +1,11 @@
 import type { FC } from "react";
 import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { Link } from "lucide-react";
+
 // plane imports
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { GlobeIcon, LockIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
+import { LinkIcon , GlobeIcon, LockIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 import type { TIssueComment, TCommentsOperations } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
@@ -45,7 +45,7 @@ export const CommentQuickActions = observer(function CommentQuickActions(props: 
         key: "copy_link",
         action: () => activityOperations.copyCommentLink(comment.id),
         title: t("common.actions.copy_link"),
-        icon: Link,
+        icon: LinkIcon,
         shouldRender: showCopyLinkOption,
       },
       {

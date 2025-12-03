@@ -117,7 +117,6 @@ import {
   Layers,
   Layout,
   LifeBuoy,
-  Link,
   Link2,
   Linkedin,
   List,
@@ -146,6 +145,7 @@ import {
   User,
 } from "lucide-react";
 import {
+  LinkIcon,
   CopyIcon,
   GlobeIcon,
   LockIcon,
@@ -892,7 +892,7 @@ export const LUCIDE_ICONS_LIST = [
   { name: "Layers", element: Layers },
   { name: "Layout", element: Layout },
   { name: "LifeBuoy", element: LifeBuoy },
-  { name: "Link", element: Link },
+  { name: "Link", element: LinkIcon },
   { name: "Link2", element: Link2 },
   { name: "Linkedin", element: Linkedin },
   { name: "List", element: List },

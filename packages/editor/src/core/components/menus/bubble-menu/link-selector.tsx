@@ -1,8 +1,8 @@
 import type { Editor } from "@tiptap/core";
-import { Link } from "lucide-react";
+
 import type { FC } from "react";
 import { useCallback, useRef, useState } from "react";
-import { TrashIcon , CheckIcon } from "@plane/propel/icons";
+import { LinkIcon , TrashIcon , CheckIcon } from "@plane/propel/icons";
 // plane imports
 import { cn } from "@plane/utils";
 // constants
@@ -59,7 +59,7 @@ export function BubbleMenuLinkSelector(props: Props) {
       menuButton={
         <>
           Link
-          <Link className="shrink-0 size-3" />
+          <LinkIcon className="shrink-0 size-3" />
         </>
       }
       options={options}

@@ -2,13 +2,13 @@ import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArchiveRestoreIcon, LinkIcon, Settings, UserPlus } from "lucide-react";
+import { ArchiveRestoreIcon, Settings, UserPlus } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { LockIcon , NewTabIcon , TrashIcon , CheckIcon } from "@plane/propel/icons";
+import { LinkIcon , LockIcon , NewTabIcon , TrashIcon , CheckIcon } from "@plane/propel/icons";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IProject } from "@plane/types";
@@ -330,7 +330,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
               <>
                 {isMemberOfProject &&
                   (hasAdminRole || hasMemberRole ? (
-                    <Link
+                    <LinkIcon
                       className="flex items-center justify-center rounded p-1 text-custom-text-400 hover:bg-custom-background-80 hover:text-custom-text-200"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -338,7 +338,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                       href={`/${workspaceSlug}/settings/projects/${project.id}`}
                     >
                       <Settings className="h-3.5 w-3.5" />
-                    </Link>
+                    </LinkIcon>
                   ) : (
                     <span className="flex items-center gap-1 text-custom-text-400 text-sm">
                       <CheckIcon className="h-3.5 w-3.5" />

@@ -1,7 +1,7 @@
 import { useCallback } from "react";
-import { Link, PanelLeft } from "lucide-react";
+import { PanelLeft } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { SearchIcon } from "@plane/propel/icons";
+import { LinkIcon , SearchIcon } from "@plane/propel/icons";
 // plane imports
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { copyTextToClipboard } from "@plane/utils";
@@ -63,7 +63,7 @@ export const usePowerKMiscellaneousCommands = (): TPowerKCommandConfig[] => {
       group: "miscellaneous",
       type: "action",
       i18n_title: "power_k.miscellaneous_actions.copy_current_page_url",
-      icon: Link,
+      icon: LinkIcon,
       action: copyCurrentPageUrlToClipboard,
       modifierShortcut: "cmd+shift+c",
       isEnabled: () => true,

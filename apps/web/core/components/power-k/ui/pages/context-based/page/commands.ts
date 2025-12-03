@@ -3,15 +3,14 @@ import { useParams } from "next/navigation";
 import {
   ArchiveIcon,
   ArchiveRestoreIcon,
-  LinkIcon,
   LockKeyhole,
   LockKeyholeOpen,
   Star,
   StarOff,
 } from "lucide-react";
-// plane imports
 import { useTranslation } from "@plane/i18n";
-import { GlobeIcon , LockIcon } from "@plane/propel/icons";
+// plane imports
+import { LinkIcon , GlobeIcon , LockIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EPageAccess } from "@plane/types";
 import { copyTextToClipboard } from "@plane/utils";

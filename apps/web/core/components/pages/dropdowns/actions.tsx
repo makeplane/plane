@@ -4,7 +4,6 @@ import { useParams } from "next/navigation";
 import {
   ArchiveRestoreIcon,
   FileOutput,
-  Link,
   LockKeyhole,
   LockKeyholeOpen,
 } from "lucide-react";
@@ -12,7 +11,7 @@ import {
 import { EPageAccess, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 // plane editor
 import type { EditorRefApi } from "@plane/editor";
-import { CopyIcon , LockIcon , NewTabIcon , ArchiveIcon, TrashIcon, GlobeIcon } from "@plane/propel/icons";
+import { LinkIcon , CopyIcon , LockIcon , NewTabIcon , ArchiveIcon, TrashIcon, GlobeIcon } from "@plane/propel/icons";
 // plane ui
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
@@ -119,7 +118,7 @@ export const PageActions = observer(function PageActions(props: Props) {
         key: "copy-link",
         action: pageOperations.copyLink,
         title: "Copy link",
-        icon: Link,
+        icon: LinkIcon,
         shouldRender: true,
       },
       {

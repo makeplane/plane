@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 
 // icons
-import { ArchiveRestoreIcon, LinkIcon } from "lucide-react";
+import { ArchiveRestoreIcon } from "lucide-react";
 // plane imports
 import {
   EUserPermissions,
@@ -11,7 +11,7 @@ import {
   MODULE_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { NewTabIcon , EditIcon , ArchiveIcon, TrashIcon } from "@plane/propel/icons";
+import { LinkIcon , NewTabIcon , EditIcon , ArchiveIcon, TrashIcon } from "@plane/propel/icons";
 // ui
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";

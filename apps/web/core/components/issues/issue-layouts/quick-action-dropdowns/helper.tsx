@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import { Link, XCircle, ArchiveRestoreIcon } from "lucide-react";
+import { XCircle, ArchiveRestoreIcon } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { CopyIcon , NewTabIcon, EditIcon, ArchiveIcon, TrashIcon } from "@plane/propel/icons";
+import { LinkIcon , CopyIcon , NewTabIcon, EditIcon, ArchiveIcon, TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { EIssuesStoreType, TIssue } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
@@ -195,7 +195,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
   const createCopyLinkMenuItem = (): TContextMenuItem => ({
     key: "copy-link",
     title: t("common.actions.copy_link"),
-    icon: Link,
+    icon: LinkIcon,
     action: actionHandlers.handleCopyIssueLink,
   });
 

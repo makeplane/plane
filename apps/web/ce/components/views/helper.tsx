@@ -1,6 +1,6 @@
-import { Link } from "lucide-react";
+
 import { useTranslation } from "@plane/i18n";
-import { NewTabIcon , EditIcon , TrashIcon } from "@plane/propel/icons";
+import { LinkIcon , NewTabIcon , EditIcon , TrashIcon } from "@plane/propel/icons";
 import type { EIssueLayoutTypes, IProjectView } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import type { TWorkspaceLayoutProps } from "@/components/views/helper";
@@ -56,7 +56,7 @@ export const useMenuItemsFactory = (props: TMenuItemsFactoryProps) => {
     key: "copy-link",
     action: handleCopyText,
     title: t("copy_link"),
-    icon: Link,
+    icon: LinkIcon,
   });
 
   const deleteMenuItem = () => ({

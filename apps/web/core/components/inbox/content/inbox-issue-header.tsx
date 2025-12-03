@@ -1,12 +1,12 @@
 import type { FC } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { CircleCheck, CircleX, Clock, FileStack, Link, MoveRight } from "lucide-react";
+import { CircleCheck, CircleX, Clock, FileStack, MoveRight } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { CopyIcon , NewTabIcon , TrashIcon , ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
+import { LinkIcon , CopyIcon , NewTabIcon , TrashIcon , ChevronDownIcon, ChevronUpIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TNameDescriptionLoader } from "@plane/types";
 import { EInboxIssueStatus } from "@plane/types";
@@ -352,7 +352,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
               <div className="flex items-center gap-2">
                 <Button
                   variant="neutral-primary"
-                  prependIcon={<Link className="h-2.5 w-2.5" />}
+                  prependIcon={<LinkIcon className="h-2.5 w-2.5" />}
                   size="sm"
                   onClick={() => handleCopyIssueLink(workItemLink)}
                 >

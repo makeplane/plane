@@ -5,7 +5,6 @@ import {
   Underline,
   Strikethrough,
   Code,
-  Link,
   ListOrdered,
   Quote,
   AlignLeft,
@@ -14,7 +13,7 @@ import {
   Undo,
   Redo,
 } from "lucide-react";
-import { GlobeIcon , LockIcon } from "../icons";
+import { LinkIcon , GlobeIcon , LockIcon } from "../icons";
 import { ListLayoutIcon } from "../icons/layouts/list-icon";
 import { Toolbar } from "./toolbar";
 
@@ -60,7 +59,7 @@ export const Default: Story = {
               <Toolbar.Item icon={AlignRight} tooltip="Align Right" />
             </Toolbar.Group>
             <Toolbar.Group>
-              <Toolbar.Item icon={Link} tooltip="Link" />
+              <Toolbar.Item icon={LinkIcon} tooltip="Link" />
               <Toolbar.Item icon={Code} tooltip="Code" />
             </Toolbar.Group>
           </Toolbar>

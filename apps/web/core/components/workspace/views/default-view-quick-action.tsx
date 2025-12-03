@@ -1,8 +1,8 @@
 import { observer } from "mobx-react";
-import { LinkIcon } from "lucide-react";
-// plane imports
+
 import { useTranslation } from "@plane/i18n";
-import { NewTabIcon } from "@plane/propel/icons";
+// plane imports
+import { LinkIcon , NewTabIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // ui
 import type { TStaticViewTypes } from "@plane/types";

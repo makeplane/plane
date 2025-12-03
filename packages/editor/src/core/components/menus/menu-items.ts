@@ -21,9 +21,9 @@ import {
   MinusSquare,
   Palette,
   AlignCenter,
-  LinkIcon,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { LinkIcon } from "@plane/propel/icons";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers

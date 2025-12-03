@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-import { Link } from "lucide-react";
+
 import { useTranslation } from "@plane/i18n";
-import { NewTabIcon , EditIcon , TrashIcon } from "@plane/propel/icons";
+import { LinkIcon , NewTabIcon , EditIcon , TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { LinkItemBlock } from "@plane/ui";
@@ -77,7 +77,7 @@ export const ProjectLinkDetail = observer(function ProjectLinkDetail(props: TPro
         key: "copy-link",
         action: handleCopyText,
         title: t("copy_link"),
-        icon: Link,
+        icon: LinkIcon,
       },
       {
         key: "delete",
