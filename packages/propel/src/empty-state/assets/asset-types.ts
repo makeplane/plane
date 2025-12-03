@@ -26,6 +26,7 @@ export type VerticalStackAssetType =
   | "archived-cycle"
   | "archived-module"
   | "archived-work-item"
+  | "changelog"
   | "customer"
   | "cycle"
   | "dashboard"

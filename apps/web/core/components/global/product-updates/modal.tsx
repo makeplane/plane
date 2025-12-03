@@ -28,9 +28,7 @@ export const ProductUpdatesModal = observer(function ProductUpdatesModal(props: 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXXXL}>
       <ProductUpdatesHeader />
-      <div className="flex flex-col h-[60vh] vertical-scrollbar scrollbar-xs overflow-hidden overflow-y-scroll px-6 mx-0.5">
-        <ProductUpdatesChangelog />
-      </div>
+      <ProductUpdatesChangelog />
       <ProductUpdatesFooter />
     </ModalCore>
   );
