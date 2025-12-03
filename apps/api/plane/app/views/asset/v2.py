@@ -792,7 +792,7 @@ class DuplicateAssetEndpoint(BaseAPIView):
 
         storage = S3Storage(request=request)
         original_asset = FileAsset.objects.filter(
-            workspace=workspace, id=asset_id, is_uploaded=True
+            id=asset_id, is_uploaded=True
         ).first()
 
         if not original_asset:
