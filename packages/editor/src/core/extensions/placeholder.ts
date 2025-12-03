@@ -32,7 +32,7 @@ export const CustomPlaceholderExtension = (args: TArgs) => {
 
       if (placeholderOnEmpty) {
         const isDocumentEmpty = editor.state.doc.textContent.length === 0;
-        if (!isDocumentEmpty && editor.isActive(CORE_EXTENSIONS.PARAGRAPH)) {
+        if (!isDocumentEmpty) {
           return "";
         }
       }
