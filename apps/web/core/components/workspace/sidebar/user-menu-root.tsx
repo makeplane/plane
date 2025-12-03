@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // icons
-import { LogOut, Settings } from "lucide-react";
+import { LogOut, Settings, PanelLeft, PanelLeftClose } from "lucide-react";
 // plane imports
 import { GOD_MODE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -14,6 +14,7 @@ import { getFileURL } from "@plane/utils";
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUser } from "@/hooks/store/user";
+import { useAppRailVisibility } from "@/lib/app-rail";
 
 type Props = {
   size?: "xs" | "sm" | "md";
@@ -26,6 +27,7 @@ export const UserMenuRoot = observer(function UserMenuRoot(props: Props) {
   const { toggleAnySidebarDropdown } = useAppTheme();
   const { data: currentUser } = useUser();
   const { signOut } = useUser();
+  const { isCollapsed, toggleAppRail } = useAppRailVisibility();
   // derived values
   const isUserInstanceAdmin = false;
   // translation
@@ -84,6 +86,16 @@ export const UserMenuRoot = observer(function UserMenuRoot(props: Props) {
             </div>
           </CustomMenu.MenuItem>
         </Link>
+        <CustomMenu.MenuItem onClick={toggleAppRail}>
+          <div className="flex w-full items-center gap-2 rounded text-xs">
+            {isCollapsed ? (
+              <PanelLeft className="h-4 w-4 stroke-[1.5]" />
+            ) : (
+              <PanelLeftClose className="h-4 w-4 stroke-[1.5]" />
+            )}
+            <span>{isCollapsed ? "Show app rail" : "Hide app rail"}</span>
+          </div>
+        </CustomMenu.MenuItem>
       </div>
       <div className="my-1 border-t border-custom-border-200" />
       <div className={`${isUserInstanceAdmin ? "pb-2" : ""}`}>
