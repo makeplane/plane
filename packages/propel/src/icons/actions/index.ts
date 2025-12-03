@@ -7,6 +7,7 @@ export * from "./close-icon";
 export * from "./copy-icon";
 export * from "./edit-icon";
 export * from "./globe-icon";
+export * from "./link-icon";
 export * from "./lock-icon";
 export * from "./new-tab-icon";
 export * from "./search-icon";
