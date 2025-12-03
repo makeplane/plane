@@ -124,7 +124,6 @@ import {
   Linkedin,
   List,
   Loader,
-  Lock,
   LogIn,
   LogOut,
   Mail,
@@ -148,7 +147,9 @@ import {
   ToggleLeft,
   User,
 } from "lucide-react";
-import { NewTabIcon ,
+import {
+  LockIcon,
+  NewTabIcon,
   CheckIcon,
   SearchIcon,
   ChevronDownIcon,
@@ -896,7 +897,7 @@ export const LUCIDE_ICONS_LIST = [
   { name: "Linkedin", element: Linkedin },
   { name: "List", element: List },
   { name: "Loader", element: Loader },
-  { name: "Lock", element: Lock },
+  { name: "Lock", element: LockIcon },
   { name: "LogIn", element: LogIn },
   { name: "LogOut", element: LogOut },
   { name: "Mail", element: Mail },

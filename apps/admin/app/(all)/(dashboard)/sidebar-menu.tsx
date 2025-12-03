@@ -1,9 +1,9 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Image, BrainCog, Cog, Lock, Mail } from "lucide-react";
+import { Image, BrainCog, Cog, Mail } from "lucide-react";
 // plane internal packages
-import { WorkspaceIcon } from "@plane/propel/icons";
+import { LockIcon, WorkspaceIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // hooks
@@ -29,7 +29,7 @@ const INSTANCE_ADMIN_LINKS = [
     href: `/email/`,
   },
   {
-    Icon: Lock,
+    Icon: LockIcon,
     name: "Authentication",
     description: "Configure authentication modes.",
     href: `/authentication/`,

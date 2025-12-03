@@ -2,13 +2,13 @@ import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArchiveRestoreIcon, LinkIcon, Lock, Settings, UserPlus } from "lucide-react";
+import { ArchiveRestoreIcon, LinkIcon, Settings, UserPlus } from "lucide-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
-import { NewTabIcon , TrashIcon , CheckIcon } from "@plane/propel/icons";
+import { LockIcon , NewTabIcon , TrashIcon , CheckIcon } from "@plane/propel/icons";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IProject } from "@plane/types";
@@ -223,7 +223,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                 <h3 className="truncate font-semibold text-white">{project.name}</h3>
                 <span className="flex items-center gap-1.5">
                   <p className="text-xs font-medium text-white">{project.identifier} </p>
-                  {project.network === 0 && <Lock className="h-2.5 w-2.5 text-white " />}
+                  {project.network === 0 && <LockIcon className="h-2.5 w-2.5 text-white " />}
                 </span>
               </div>
             </div>

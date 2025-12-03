@@ -1,6 +1,7 @@
-import { Lock, Globe2 } from "lucide-react";
+import { Globe2 } from "lucide-react";
 // plane imports
 import type { TNetworkChoiceIconKey } from "@plane/constants";
+import { LockIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 
 type Props = {
@@ -14,7 +15,7 @@ export function ProjectNetworkIcon(props: Props) {
   const getProjectNetworkIcon = () => {
     switch (iconKey) {
       case "Lock":
-        return Lock;
+        return LockIcon;
       case "Globe2":
         return Globe2;
       default:

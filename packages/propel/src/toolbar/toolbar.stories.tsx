@@ -14,8 +14,8 @@ import {
   Undo,
   Redo,
   Globe2,
-  Lock,
 } from "lucide-react";
+import { LockIcon } from "../icons";
 import { ListLayoutIcon } from "../icons/layouts/list-icon";
 import { Toolbar } from "./toolbar";
 
@@ -106,7 +106,7 @@ export const CommentToolbar: Story = {
           <Toolbar>
             {/* Access Specifier */}
             <div className="flex flex-shrink-0 items-stretch gap-0.5 rounded border-[0.5px] border-custom-border-200 p-1">
-              <Toolbar.Item icon={Lock} tooltip="Private" isActive />
+              <Toolbar.Item icon={LockIcon} tooltip="Private" isActive />
               <Toolbar.Item icon={Globe2} tooltip="Public" />
             </div>
 

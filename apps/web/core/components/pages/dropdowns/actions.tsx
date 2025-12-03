@@ -7,7 +7,6 @@ import {
   FileOutput,
   Globe2,
   Link,
-  Lock,
   LockKeyhole,
   LockKeyholeOpen,
 } from "lucide-react";
@@ -15,7 +14,7 @@ import {
 import { EPageAccess, PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 // plane editor
 import type { EditorRefApi } from "@plane/editor";
-import { NewTabIcon , ArchiveIcon, TrashIcon } from "@plane/propel/icons";
+import { LockIcon , NewTabIcon , ArchiveIcon, TrashIcon } from "@plane/propel/icons";
 // plane ui
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
@@ -108,7 +107,7 @@ export const PageActions = observer(function PageActions(props: Props) {
           pageOperations.toggleAccess();
         },
         title: access === EPageAccess.PUBLIC ? "Make private" : "Make public",
-        icon: access === EPageAccess.PUBLIC ? Lock : Globe2,
+        icon: access === EPageAccess.PUBLIC ? LockIcon : Globe2,
         shouldRender: canCurrentUserChangeAccess && !archived_at,
       },
       {

@@ -1,8 +1,9 @@
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
-import { CircleUser, Activity, Bell, CircleUserRound, KeyRound, Settings2, Blocks, Lock } from "lucide-react";
+import { CircleUser, Activity, Bell, CircleUserRound, KeyRound, Settings2, Blocks } from "lucide-react";
 // plane imports
 import { GROUPED_PROFILE_SETTINGS, PROFILE_SETTINGS_CATEGORIES } from "@plane/constants";
+import { LockIcon } from "@plane/propel/icons";
 import { getFileURL } from "@plane/utils";
 // components
 import { SettingsSidebar } from "@/components/settings/sidebar";
@@ -11,7 +12,7 @@ import { useUser } from "@/hooks/store/user";
 
 const ICONS = {
   profile: CircleUser,
-  security: Lock,
+  security: LockIcon,
   activity: Activity,
   preferences: Settings2,
   notifications: Bell,
