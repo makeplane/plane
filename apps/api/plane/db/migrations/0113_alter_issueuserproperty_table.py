@@ -34,7 +34,8 @@ class Migration(migrations.Migration):
             model_name='projectuserproperty',
             name='sort_order',
             field=models.FloatField(default=65535),
-        ),        migrations.AlterModelOptions(
+        ),        
+        migrations.AlterModelOptions(
             name='projectuserproperty',
             options={'ordering': ('-created_at',), 'verbose_name': 'Project User Property', 'verbose_name_plural': 'Project User Properties'},
         ),
