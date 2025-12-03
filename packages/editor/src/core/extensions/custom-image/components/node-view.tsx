@@ -56,16 +56,24 @@ export function CustomImageNodeView(props: CustomImageNodeViewProps) {
       return;
     }
 
+    setResolvedSrc(undefined);
+    setResolvedDownloadSrc(undefined);
+    setFailedToLoadImage(false);
+
     const getImageSource = async () => {
-      const url = await extension.options.getImageSource?.(imgNodeSrc);
-      setResolvedSrc(url);
-      const downloadUrl = await extension.options.getImageDownloadSource?.(imgNodeSrc);
-      setResolvedDownloadSrc(downloadUrl);
+      try {
+        const url = await extension.options.getImageSource?.(imgNodeSrc);
+        setResolvedSrc(url);
+        const downloadUrl = await extension.options.getImageDownloadSource?.(imgNodeSrc);
+        setResolvedDownloadSrc(downloadUrl);
+      } catch (error) {
+        console.error("Error fetching image source:", error);
+        setFailedToLoadImage(true);
+      }
     };
     getImageSource();
   }, [imgNodeSrc, extension.options]);
 
-  // Handle image duplication when status is duplicating
   useEffect(() => {
     const handleDuplication = async () => {
       if (status !== ECustomImageStatus.DUPLICATING || !extension.options.duplicateImage || !imgNodeSrc) {
@@ -87,11 +95,8 @@ export function CustomImageNodeView(props: CustomImageNodeViewProps) {
           throw new Error("Duplication returned invalid asset ID");
         }
 
-        // Update node with new source and success status
-        updateAttributes({
-          src: newAssetId,
-          status: ECustomImageStatus.UPLOADED,
-        });
+        setFailedToLoadImage(false);
+        updateAttributes({ src: newAssetId, status: ECustomImageStatus.UPLOADED });
       } catch (error: unknown) {
         console.error("Failed to duplicate image:", error);
         // Update status to failed
@@ -115,11 +120,13 @@ export function CustomImageNodeView(props: CustomImageNodeViewProps) {
   useEffect(() => {
     if (status === ECustomImageStatus.UPLOADED) {
       hasRetriedOnMount.current = false;
+      setFailedToLoadImage(false);
     }
   }, [status]);
 
   const hasDuplicationFailed = hasImageDuplicationFailed(status);
-  const shouldShowBlock = (isUploaded || imageFromFileSystem) && !failedToLoadImage;
+  const hasValidImageSource = imageFromFileSystem || (isUploaded && resolvedSrc);
+  const shouldShowBlock = hasValidImageSource && !failedToLoadImage && !hasDuplicationFailed;
 
   return (
     <NodeViewWrapper>
