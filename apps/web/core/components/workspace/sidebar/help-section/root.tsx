@@ -9,9 +9,8 @@ import { CustomMenu } from "@plane/ui";
 import { ProductUpdatesModal } from "@/components/global";
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 // hooks
-import { useInstance } from "@/hooks/store/use-instance";
 import { usePowerK } from "@/hooks/store/use-power-k";
-import { useTransient } from "@/hooks/store/use-transient";
+import { useChatSupport } from "@/hooks/use-chat-support";
 // plane web components
 import { PlaneVersionNumber } from "@/plane-web/components/global";
 
@@ -19,15 +18,10 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
   // store hooks
   const { t } = useTranslation();
   const { toggleShortcutsListModal } = usePowerK();
-  const { config } = useInstance();
-  const { isIntercomToggle, toggleIntercom } = useTransient();
+  const { openChatSupport, isEnabled: isChatSupportEnabled } = useChatSupport();
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   const [isProductUpdatesModalOpen, setProductUpdatesModalOpen] = useState(false);
-
-  const handleCrispWindowShow = () => {
-    toggleIntercom(!isIntercomToggle);
-  };
 
   return (
     <>
@@ -38,7 +32,7 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
           <AppSidebarItem
             variant="button"
             item={{
-              icon: <HelpCircle className="size-5" />,
+              icon: <HelpCircle className="size-4" />,
               isActive: isNeedHelpOpen,
             }}
           />
@@ -56,11 +50,11 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
             <span className="text-xs">{t("documentation")}</span>
           </div>
         </CustomMenu.MenuItem>
-        {config?.intercom_app_id && config?.is_intercom_enabled && (
+        {isChatSupportEnabled && (
           <CustomMenu.MenuItem>
             <button
               type="button"
-              onClick={handleCrispWindowShow}
+              onClick={openChatSupport}
               className="flex w-full items-center gap-x-2 rounded text-xs hover:bg-custom-background-80"
             >
               <MessagesSquare className="h-3.5 w-3.5 text-custom-text-200" />
