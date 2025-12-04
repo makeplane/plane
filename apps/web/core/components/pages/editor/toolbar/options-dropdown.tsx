@@ -72,7 +72,7 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
         key: "copy-markdown",
         action: () => {
           if (!editorRef) return;
-          copyTextToClipboard(editorRef.getMarkDown()).then(() =>
+          editorRef.copyMarkdownToClipboard().then(() =>
             setToast({
               type: TOAST_TYPE.SUCCESS,
               title: "Success!",

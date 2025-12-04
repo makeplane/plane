@@ -8,9 +8,8 @@ export const PasteAssetPlugin = (): Plugin =>
       handlePaste: (view, event) => {
         if (!event.clipboardData) return false;
 
-        let htmlContent;
-        if (event.clipboardData.getData("text/plane-editor-html")) {
-          htmlContent = event.clipboardData.getData("text/plane-editor-html");
+        let htmlContent = event.clipboardData.getData("text/plane-editor-html");
+        if (htmlContent) {
           const metaTag = document.createElement("meta");
           metaTag.setAttribute("charset", "utf-8");
           htmlContent = metaTag.outerHTML + htmlContent;
@@ -39,6 +38,7 @@ export const PasteAssetPlugin = (): Plugin =>
 
         const newDataTransfer = new DataTransfer();
         newDataTransfer.setData("text/html", finalHtml);
+        newDataTransfer.setData("text/plane-editor-html", finalHtml);
         if (event.clipboardData) {
           newDataTransfer.setData("text/plain", event.clipboardData.getData("text/plain"));
         }
