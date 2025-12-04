@@ -38,7 +38,6 @@
   --background-color-backdrop: oklch(0 0 0 / 25%);
 
   /* ---------- Spacing ---------- */
-  /* --spacing-0: 0;
   --spacing-25: 0.0625rem;
   --spacing-50: 0.125rem;
   --spacing-100: 0.25rem;
@@ -53,7 +52,7 @@
   --spacing-900: 2.25rem;
   --spacing-1000: 2.5rem;
   --spacing-1100: 2.75rem;
-  --spacing-1200: 3rem; */
+  --spacing-1200: 3rem;
 
   /* ---------- Borders radius ---------- */
   --radius-*: initial;
@@ -409,7 +408,7 @@
 }
 
 @layer theme {
-  :root {
+  :root, :host {
     @variant dark {
       /* ---------- Dark mode color tokens ---------- */
       /* Neutral colors */
