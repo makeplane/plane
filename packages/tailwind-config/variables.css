@@ -1,11 +1,10 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-/* ---------- Static tokens ---------- */
 @theme {
   --color-*: initial;
 
-  /* ---------- Common colors ---------- */
-  /* White with opacity */
+  /* ---------- Alpha colors ---------- */
+  /* White alpha */
   --color-alpha-white-0: oklch(1 0 0 / 0%);
   --color-alpha-white-100: oklch(1 0 0 / 5%);
   --color-alpha-white-200: oklch(1 0 0 / 10%);
@@ -20,7 +19,7 @@
   --color-alpha-white-1100: oklch(1 0 0 / 90%);
   --color-alpha-white-1200: oklch(1 0 0 / 95%);
 
-  /* Black with opacity */
+  /* Black alpha */
   --color-alpha-black-0: oklch(0.1482 0.0034 196.79 / 0%);
   --color-alpha-black-100: oklch(0.1482 0.0034 196.79 / 5%);
   --color-alpha-black-200: oklch(0.1482 0.0034 196.79 / 10%);
@@ -35,7 +34,10 @@
   --color-alpha-black-1100: oklch(0.1482 0.0034 196.79 / 90%);
   --color-alpha-black-1200: oklch(0.1482 0.0034 196.79 / 95%);
 
+  --background-color-backdrop: oklch(0 0 0 / 25%);
+
   /* ---------- Spacing ---------- */
+  --spacing-0: 0;
   --spacing-25: 0.0625rem;
   --spacing-50: 0.125rem;
   --spacing-100: 0.25rem;
@@ -52,7 +54,7 @@
   --spacing-1100: 2.75rem;
   --spacing-1200: 3rem;
 
-  /* ---------- Borders radius ---------- */
+  /* ---------- Border radius ---------- */
   --radius-*: initial;
   --radius-none: 0;
   --radius-xs: 0.125rem;
@@ -60,8 +62,9 @@
   --radius-md: 0.375rem;
   --radius-lg: 0.5rem;
   --radius-xl: 0.75rem;
-  --radius-xxl: 1rem;
-  --radius-rounded: 9999px;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+  --radius-full: 9999px;
 
   /* ---------- Border width ---------- */
   --border-width-*: initial;
@@ -70,9 +73,7 @@
   --border-width-lg: 2px;
   --border-width-xl: 2.5px;
   --default-border-width: 1px;
-}
 
-@theme {
   /* Neutral colors */
   --color-neutral-white: oklch(1 0 0);
   --color-neutral-100: oklch(0.9851 0 129.63);
@@ -405,7 +406,8 @@
 }
 
 @layer theme {
-  :root, :host {
+  :root,
+  :host {
     @variant dark {
       /* ---------- Dark mode color tokens ---------- */
       /* Neutral colors */
@@ -508,7 +510,7 @@
       --background-color-success-primary: var(--color-green-700);
       --background-color-success-subtle: var(--color-green-100);
       --background-color-success-subtle-1: var(--color-green-100);
-      --background-color-warning-primary: hsla(201, 100%, 48%, 1);
+      --background-color-warning-primary: var(--color-amber-600);
       --background-color-warning-subtle: var(--color-amber-100);
       --background-color-danger-primary: var(--color-red-300);
       --background-color-danger-primary-hover: var(--color-red-400);
@@ -562,7 +564,7 @@
 
       /* Icon colors */
       --text-color-icon-primary: var(--color-neutral-1200);
-      --text-color-icon-accent-subtle: var(--brand-light-500);
+      --text-color-icon-accent-subtle: var(--color-brand-700);
       --text-color-icon-accent-primary: var(--color-brand-default);
       --text-color-icon-danger-primary: var(--color-red-900);
       --text-color-icon-danger-secondary: var(--color-red-700);
@@ -583,7 +585,7 @@
 
       /* Link colors */
       --text-color-link-primary: var(--color-brand-default);
-      --text-color-link-primary-hover: var(--brand-light-600);
+      --text-color-link-primary-hover: var(--color-brand-700);
       --text-color-link-secondary: var(--color-neutral-1100);
 
       /* Label colors */
@@ -626,6 +628,289 @@
       --illustration-stroke-3: var(--color-neutral-1000);
     }
   }
+}
+
+/* ---------- Typography tokens ---------- */
+@theme {
+  /* ---------- Font family ---------- */
+  --font-family-*: initial;
+  --font-family-heading: Inter;
+  --font-family-body: Inter;
+  --font-family-code: IBM Mono;
+
+  /* ---------- Font weight ---------- */
+  --font-weight-*: initial;
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-heavy: 800;
+
+  /* ---------- Font size ---------- */
+  --text-*: initial;
+  --text-9: 0.5625rem;
+  --text-10: 0.625rem;
+  --text-11: 0.6875rem;
+  --text-12: 0.75rem;
+  --text-13: 0.8125rem;
+  --text-14: 0.875rem;
+  --text-16: 1rem;
+  --text-18: 1.125rem;
+  --text-20: 1.25rem;
+  --text-24: 1.5rem;
+  --text-28: 1.75rem;
+  --text-32: 2rem;
+  --text-40: 2.5rem;
+
+  /* ---------- Letter spacing ---------- */
+  --tracking-*: initial;
+  --tracking-extra-tight: -0.025rem;
+  --tracking-tight: -0.05rem;
+  --tracking-default: 0;
+  --tracking-wide: 0.05rem;
+
+  /* ---------- Heading text tokens ---------- */
+  --text-h1-regular: var(--text-32);
+  --text-h1-regular--line-height: 1.2;
+  --text-h1-regular--letter-spacing: var(--tracking-default);
+  --text-h1-regular--font-weight: var(--font-weight-regular);
+
+  --text-h1-medium: var(--text-32);
+  --text-h1-medium--line-height: 1.2;
+  --text-h1-medium--letter-spacing: var(--tracking-default);
+  --text-h1-medium--font-weight: var(--font-weight-medium);
+
+  --text-h1-semibold: var(--text-32);
+  --text-h1-semibold--line-height: 1.2;
+  --text-h1-semibold--letter-spacing: var(--tracking-default);
+  --text-h1-semibold--font-weight: var(--font-weight-semibold);
+
+  --text-h1-bold: var(--text-32);
+  --text-h1-bold--line-height: 1.2;
+  --text-h1-bold--letter-spacing: var(--tracking-default);
+  --text-h1-bold--font-weight: var(--font-weight-bold);
+
+  --text-h2-regular: var(--text-28);
+  --text-h2-regular--line-height: 1.2;
+  --text-h2-regular--letter-spacing: var(--tracking-default);
+  --text-h2-regular--font-weight: var(--font-weight-regular);
+
+  --text-h2-medium: var(--text-28);
+  --text-h2-medium--line-height: 1.2;
+  --text-h2-medium--letter-spacing: var(--tracking-default);
+  --text-h2-medium--font-weight: var(--font-weight-medium);
+
+  --text-h2-semibold: var(--text-28);
+  --text-h2-semibold--line-height: 1.2;
+  --text-h2-semibold--letter-spacing: var(--tracking-default);
+  --text-h2-semibold--font-weight: var(--font-weight-semibold);
+
+  --text-h2-bold: var(--text-28);
+  --text-h2-bold--line-height: 1.2;
+  --text-h2-bold--letter-spacing: var(--tracking-default);
+  --text-h2-bold--font-weight: var(--font-weight-bold);
+
+  --text-h3-regular: var(--text-24);
+  --text-h3-regular--line-height: 1.2;
+  --text-h3-regular--letter-spacing: var(--tracking-default);
+  --text-h3-regular--font-weight: var(--font-weight-regular);
+
+  --text-h3-medium: var(--text-24);
+  --text-h3-medium--line-height: 1.2;
+  --text-h3-medium--letter-spacing: var(--tracking-default);
+  --text-h3-medium--font-weight: var(--font-weight-medium);
+
+  --text-h3-semibold: var(--text-24);
+  --text-h3-semibold--line-height: 1.2;
+  --text-h3-semibold--letter-spacing: var(--tracking-default);
+  --text-h3-semibold--font-weight: var(--font-weight-semibold);
+
+  --text-h3-bold: var(--text-24);
+  --text-h3-bold--line-height: 1.2;
+  --text-h3-bold--letter-spacing: var(--tracking-default);
+  --text-h3-bold--font-weight: var(--font-weight-bold);
+
+  --text-h4-regular: var(--text-20);
+  --text-h4-regular--line-height: 1.2;
+  --text-h4-regular--letter-spacing: var(--tracking-default);
+  --text-h4-regular--font-weight: var(--font-weight-regular);
+
+  --text-h4-medium: var(--text-20);
+  --text-h4-medium--line-height: 1.2;
+  --text-h4-medium--letter-spacing: var(--tracking-default);
+  --text-h4-medium--font-weight: var(--font-weight-medium);
+
+  --text-h4-semibold: var(--text-20);
+  --text-h4-semibold--line-height: 1.2;
+  --text-h4-semibold--letter-spacing: var(--tracking-default);
+  --text-h4-semibold--font-weight: var(--font-weight-semibold);
+
+  --text-h4-bold: var(--text-20);
+  --text-h4-bold--line-height: 1.2;
+  --text-h4-bold--letter-spacing: var(--tracking-default);
+  --text-h4-bold--font-weight: var(--font-weight-bold);
+
+  --text-h5-regular: var(--text-16);
+  --text-h5-regular--line-height: 1.2;
+  --text-h5-regular--letter-spacing: var(--tracking-default);
+  --text-h5-regular--font-weight: var(--font-weight-regular);
+
+  --text-h5-medium: var(--text-16);
+  --text-h5-medium--line-height: 1.2;
+  --text-h5-medium--letter-spacing: var(--tracking-default);
+  --text-h5-medium--font-weight: var(--font-weight-medium);
+
+  --text-h5-semibold: var(--text-16);
+  --text-h5-semibold--line-height: 1.2;
+  --text-h5-semibold--letter-spacing: var(--tracking-default);
+  --text-h5-semibold--font-weight: var(--font-weight-semibold);
+
+  --text-h5-bold: var(--text-16);
+  --text-h5-bold--line-height: 1.2;
+  --text-h5-bold--letter-spacing: var(--tracking-default);
+  --text-h5-bold--font-weight: var(--font-weight-bold);
+
+  --text-h6-regular: var(--text-14);
+  --text-h6-regular--line-height: 1.2;
+  --text-h6-regular--letter-spacing: var(--tracking-default);
+  --text-h6-regular--font-weight: var(--font-weight-regular);
+
+  --text-h6-medium: var(--text-14);
+  --text-h6-medium--line-height: 1.2;
+  --text-h6-medium--letter-spacing: var(--tracking-default);
+  --text-h6-medium--font-weight: var(--font-weight-medium);
+
+  --text-h6-semibold: var(--text-14);
+  --text-h6-semibold--line-height: 1.2;
+  --text-h6-semibold--letter-spacing: var(--tracking-default);
+  --text-h6-semibold--font-weight: var(--font-weight-semibold);
+
+  --text-h6-bold: var(--text-14);
+  --text-h6-bold--line-height: 1.2;
+  --text-h6-bold--letter-spacing: var(--tracking-default);
+  --text-h6-bold--font-weight: var(--font-weight-bold);
+
+  /* ---------- Body text tokens ---------- */
+  --text-body-md-regular: var(--text-16);
+  --text-body-md-regular--line-height: 1.4;
+  --text-body-md-regular--letter-spacing: calc(0.01 * var(--text-16));
+  --text-body-md-regular--font-weight: var(--font-weight-regular);
+
+  --text-body-md-medium: var(--text-16);
+  --text-body-md-medium--line-height: 1.4;
+  --text-body-md-medium--letter-spacing: calc(0.01 * var(--text-16));
+  --text-body-md-medium--font-weight: var(--font-weight-medium);
+
+  --text-body-md-semibold: var(--text-16);
+  --text-body-md-semibold--line-height: 1.4;
+  --text-body-md-semibold--letter-spacing: calc(0.01 * var(--text-16));
+  --text-body-md-semibold--font-weight: var(--font-weight-semibold);
+
+  --text-body-md-bold: var(--text-16);
+  --text-body-md-bold--line-height: 1.4;
+  --text-body-md-bold--letter-spacing: calc(0.01 * var(--text-16));
+  --text-body-md-bold--font-weight: var(--font-weight-bold);
+
+  --text-body-sm-regular: var(--text-14);
+  --text-body-sm-regular--line-height: 1.4;
+  --text-body-sm-regular--letter-spacing: calc(0.01 * var(--text-14));
+  --text-body-sm-regular--font-weight: var(--font-weight-regular);
+
+  --text-body-sm-medium: var(--text-14);
+  --text-body-sm-medium--line-height: 1.4;
+  --text-body-sm-medium--letter-spacing: calc(0.01 * var(--text-14));
+  --text-body-sm-medium--font-weight: var(--font-weight-medium);
+
+  --text-body-sm-semibold: var(--text-14);
+  --text-body-sm-semibold--line-height: 1.4;
+  --text-body-sm-semibold--letter-spacing: calc(0.01 * var(--text-14));
+  --text-body-sm-semibold--font-weight: var(--font-weight-semibold);
+
+  --text-body-sm-bold: var(--text-14);
+  --text-body-sm-bold--line-height: 1.4;
+  --text-body-sm-bold--letter-spacing: calc(0.01 * var(--text-14));
+  --text-body-sm-bold--font-weight: var(--font-weight-bold);
+
+  --text-body-xs-regular: var(--text-13);
+  --text-body-xs-regular--line-height: 1.4;
+  --text-body-xs-regular--letter-spacing: calc(0.01 * var(--text-13));
+  --text-body-xs-regular--font-weight: var(--font-weight-regular);
+
+  --text-body-xs-medium: var(--text-13);
+  --text-body-xs-medium--line-height: 1.4;
+  --text-body-xs-medium--letter-spacing: calc(0.01 * var(--text-13));
+  --text-body-xs-medium--font-weight: var(--font-weight-medium);
+
+  --text-body-xs-semibold: var(--text-13);
+  --text-body-xs-semibold--line-height: 1.4;
+  --text-body-xs-semibold--letter-spacing: calc(0.01 * var(--text-13));
+  --text-body-xs-semibold--font-weight: var(--font-weight-semibold);
+
+  --text-body-xs-bold: var(--text-13);
+  --text-body-xs-bold--line-height: 1.4;
+  --text-body-xs-bold--letter-spacing: calc(0.01 * var(--text-13));
+  --text-body-xs-bold--font-weight: var(--font-weight-bold);
+
+  --text-caption-md-regular: var(--text-12);
+  --text-caption-md-regular--line-height: 1.1;
+  --text-caption-md-regular--letter-spacing: var(--tracking-default);
+  --text-caption-md-regular--font-weight: var(--font-weight-regular);
+
+  --text-caption-md-medium: var(--text-12);
+  --text-caption-md-medium--line-height: 1.1;
+  --text-caption-md-medium--letter-spacing: var(--tracking-default);
+  --text-caption-md-medium--font-weight: var(--font-weight-medium);
+
+  --text-caption-md-semibold: var(--text-12);
+  --text-caption-md-semibold--line-height: 1.1;
+  --text-caption-md-semibold--letter-spacing: var(--tracking-default);
+  --text-caption-md-semibold--font-weight: var(--font-weight-semibold);
+
+  --text-caption-md-bold: var(--text-12);
+  --text-caption-md-bold--line-height: 1.1;
+  --text-caption-md-bold--letter-spacing: var(--tracking-default);
+  --text-caption-md-bold--font-weight: var(--font-weight-bold);
+
+  --text-caption-sm-regular: var(--text-11);
+  --text-caption-sm-regular--line-height: 1.1;
+  --text-caption-sm-regular--letter-spacing: var(--tracking-default);
+  --text-caption-sm-regular--font-weight: var(--font-weight-regular);
+
+  --text-caption-sm-medium: var(--text-11);
+  --text-caption-sm-medium--line-height: 1.1;
+  --text-caption-sm-medium--letter-spacing: var(--tracking-default);
+  --text-caption-sm-medium--font-weight: var(--font-weight-medium);
+
+  --text-caption-sm-semibold: var(--text-11);
+  --text-caption-sm-semibold--line-height: 1.1;
+  --text-caption-sm-semibold--letter-spacing: var(--tracking-default);
+  --text-caption-sm-semibold--font-weight: var(--font-weight-semibold);
+
+  --text-caption-sm-bold: var(--text-11);
+  --text-caption-sm-bold--line-height: 1.1;
+  --text-caption-sm-bold--letter-spacing: var(--tracking-default);
+  --text-caption-sm-bold--font-weight: var(--font-weight-bold);
+
+  --text-caption-xs-regular: var(--text-10);
+  --text-caption-xs-regular--line-height: 1;
+  --text-caption-xs-regular--letter-spacing: calc(0.01 * var(--text-10));
+  --text-caption-xs-regular--font-weight: var(--font-weight-regular);
+
+  --text-caption-xs-medium: var(--text-10);
+  --text-caption-xs-medium--line-height: 1;
+  --text-caption-xs-medium--letter-spacing: calc(0.01 * var(--text-10));
+  --text-caption-xs-medium--font-weight: var(--font-weight-medium);
+
+  --text-caption-xs-semibold: var(--text-10);
+  --text-caption-xs-semibold--line-height: 1;
+  --text-caption-xs-semibold--letter-spacing: calc(0.01 * var(--text-10));
+  --text-caption-xs-semibold--font-weight: var(--font-weight-semibold);
+
+  --text-caption-xs-bold: var(--text-10);
+  --text-caption-xs-bold--line-height: 1;
+  --text-caption-xs-bold--letter-spacing: calc(0.01 * var(--text-10));
+  --text-caption-xs-bold--font-weight: var(--font-weight-bold);
 }
 
 @utility outline-* {

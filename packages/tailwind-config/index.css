@@ -1,17 +1,22 @@
 @import "tailwindcss";
 @import "./variables.css";
-@import "./typography.css";
 @import "./animations.css";
 @source "../**/*.{ts,tsx}";
 
-html {
-  font-family: "Inter", sans-serif;
+@layer base {
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 }
 
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
   font-variant-ligatures: none;
@@ -22,7 +27,7 @@ html {
 }
 
 body {
-  color: rgba(var(--color-text-100));
+  @apply text-primary;
 }
 
 /* scrollbar style */
