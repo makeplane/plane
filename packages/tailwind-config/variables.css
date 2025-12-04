@@ -74,7 +74,6 @@
   --default-border-width: 1px;
 }
 
-/* ---------- Light mode color tokens ---------- */
 @theme {
   /* Neutral colors */
   --color-neutral-white: oklch(1 0 0);
@@ -144,6 +143,120 @@
   --color-red-900: oklch(0.4446 0.1774 26.79);
   --color-red-1000: oklch(0.3967 0.1408 25.71);
   --color-red-1100: oklch(0.3493 0.1215 25.21);
+
+  /* --------- Extended colors ---------- */
+  /* Purple colors */
+  --extended-palette-purple-25: oklch(0.981 0.0054 297.73);
+  --extended-palette-purple-50: oklch(0.9421 0.0162 293.74);
+  --extended-palette-purple-100: oklch(0.8808 0.0343 293.03);
+  --extended-palette-purple-200: oklch(0.779 0.0639 293.01);
+  --extended-palette-purple-300: oklch(0.6978 0.0888 291.44);
+  --extended-palette-purple-400: oklch(0.6139 0.1164 290.19);
+  --extended-palette-purple-500: oklch(0.5527 0.1361 288.8);
+  --extended-palette-purple-600: oklch(0.4895 0.157 286.65);
+  --extended-palette-purple-700: oklch(0.42 0.1303 287.25);
+  --extended-palette-purple-800: oklch(0.3617 0.1077 287.53);
+  --extended-palette-purple-900: oklch(0.2861 0.0795 287.41);
+  --extended-palette-purple-950: oklch(0.219 0.0552 288.93);
+
+  /* Orange colors */
+  --extended-palette-orange-25: oklch(0.9856 0.0084 56.32);
+  --extended-palette-orange-50: oklch(0.964 0.0219 58.79);
+  --extended-palette-orange-100: oklch(0.9152 0.0522 56.77);
+  --extended-palette-orange-200: oklch(0.8504 0.097 56.87);
+  --extended-palette-orange-300: oklch(0.801 0.1323 55.27);
+  --extended-palette-orange-400:oklch(0.7563 0.1644 52.56);
+  --extended-palette-orange-500: oklch(0.7177 0.1905 47.86);
+  --extended-palette-orange-600: oklch(0.6601 0.1884 45.09);
+  --extended-palette-orange-700: oklch(0.5737 0.162 45.72);
+  --extended-palette-orange-800: oklch(0.5059 0.141467 46.3267);
+  --extended-palette-orange-900:oklch(0.3897 0.105571 48.3415);
+  --extended-palette-orange-950: oklch(0.2896 0.0746 51.86);
+
+  /* Crimson colors */
+  --extended-palette-crimson-25: oklch(0.9805 0.0066 28.83);
+  --extended-palette-crimson-50: oklch(0.9503 0.0186 21.57);
+  --extended-palette-crimson-100: oklch(0.8847 0.0455 23.1);
+  --extended-palette-crimson-200: oklch(0.791 0.0874 23.59);
+  --extended-palette-crimson-300: oklch(0.72 0.124 24.83);
+  --extended-palette-crimson-400: oklch(0.6556 0.1604 26.47);
+  --extended-palette-crimson-500: oklch(0.5954 0.1956 28.51);
+  --extended-palette-crimson-600: oklch(0.5284 0.185 28.96);
+  --extended-palette-crimson-700: oklch(0.4754 0.1647 28.98);
+  --extended-palette-crimson-800: oklch(0.4209 0.1438 29.01);
+  --extended-palette-crimson-900: oklch(0.3249 0.106 28.39);
+  --extended-palette-crimson-950: oklch(0.2457 0.0742 27.56);
+  
+  /* Emerald colors */
+  --extended-palette-emerald-25: oklch(0.9884 0.0082 157.1);
+  --extended-palette-emerald-50: oklch(0.9563 0.0256 154.47);
+  --extended-palette-emerald-100: oklch(0.9153 0.0531 153.59);
+  --extended-palette-emerald-200: oklch(0.8679 0.0829 153.02);
+  --extended-palette-emerald-300: oklch(0.8221 0.1121 152.16);
+  --extended-palette-emerald-400:oklch(0.7785 0.1398 151.07);
+  --extended-palette-emerald-500: oklch(0.7401 0.166 149.61);
+  --extended-palette-emerald-600: oklch(0.6567 0.1599 148.98);
+  --extended-palette-emerald-700: oklch(0.5883 0.1413 149.06);
+  --extended-palette-emerald-800: oklch(0.4965 0.1172 149.18);
+  --extended-palette-emerald-900: oklch(0.4003 0.0918 149.37);
+  --extended-palette-emerald-950: oklch(0.2982 0.0631 150.55);
+
+  /* Pink colors */
+  --extended-palette-pink-25: oklch(0.9828 0.005 345.28);
+  --extended-palette-pink-50: oklch(0.9394 0.0201 340.71);
+  --extended-palette-pink-100: oklch(0.8759 0.0418 339.71);
+  --extended-palette-pink-200: oklch(0.805 0.0664 341.18);
+  --extended-palette-pink-300: oklch(0.736 0.0938 342.16);
+  --extended-palette-pink-400: oklch(0.6673 0.1206 342.89);
+  --extended-palette-pink-500: oklch(0.6185 0.1388 344.06);
+  --extended-palette-pink-600: oklch(0.5704 0.1574 345.25);
+  --extended-palette-pink-700: oklch(0.4947 0.1333 344.88);
+  --extended-palette-pink-800: oklch(0.4162 0.1108 344.66);
+  --extended-palette-pink-900: oklch(0.326 0.0807 344.57);
+  --extended-palette-pink-950: oklch(0.2474 0.0553 344.95);
+
+  /* yellow colors */
+  --extended-palette-yellow-25: oklch(0.989 0.0073 80.72);
+  --extended-palette-yellow-50: oklch(0.9631 0.0268 85.66);
+  --extended-palette-yellow-100: oklch(0.9297 0.0545 86.15);
+  --extended-palette-yellow-200: oklch(0.8893 0.0843 85.3);
+  --extended-palette-yellow-300: oklch(0.8522 0.1121 85.14);
+  --extended-palette-yellow-400: oklch(0.8167 0.1342 83.9);
+  --extended-palette-yellow-500: oklch(0.79 0.1466 82.04);
+  --extended-palette-yellow-600: oklch(0.7399 0.1487 79.36);
+  --extended-palette-yellow-700: oklch(0.683 0.1365 79.84);
+  --extended-palette-yellow-800: oklch(0.5522 0.1093 80.44);
+  --extended-palette-yellow-900: oklch(0.425 0.0824 81.46);
+  --extended-palette-yellow-950: oklch(0.3142 0.0586 82.21);
+
+  /* indigo colors */
+  --extended-palette-indigo-25: oklch(0.9813 0.0074 260.73);
+  --extended-palette-indigo-50: oklch(0.9415 0.022 263.19);
+  --extended-palette-indigo-100: oklch(0.8828 0.045 263.07);
+  --extended-palette-indigo-200: oklch(0.7852 0.086 263.89);
+  --extended-palette-indigo-300: oklch(0.7066 0.121 263.57);
+  --extended-palette-indigo-400: oklch(0.6322 0.1556 262.59);
+  --extended-palette-indigo-500: oklch(0.579 0.1807 262.31);
+  --extended-palette-indigo-600: oklch(0.5291 0.2045 262.05);
+  --extended-palette-indigo-700: oklch(0.458 0.1753 262.2);
+  --extended-palette-indigo-800: oklch(0.3862 0.1436 262.12);
+  --extended-palette-indigo-900: oklch(0.3019 0.1051 262.16); 
+  --extended-palette-indigo-950: oklch(0.2308 0.0713 261.96);
+
+  /* grey colors */
+  --extended-palette-grey-25: oklch(0.9851 0 0);
+  --extended-palette-grey-50: oklch(0.9461 0 0);
+  --extended-palette-grey-100: oklch(0.9067 0 0);
+  --extended-palette-grey-200: oklch(0.8297 0 0);
+  --extended-palette-grey-300: oklch(0.7668 0 0);
+  --extended-palette-grey-400: oklch(0.6993 0 0);
+  --extended-palette-grey-500: oklch(0.65 0 0);
+  --extended-palette-grey-600: oklch(0.5999 0 0);
+  --extended-palette-grey-700: oklch(0.5208 0 0);
+  --extended-palette-grey-800: oklch(0.4386 0 0);
+  --extended-palette-grey-900: oklch(0.3407 0 0);
+  --extended-palette-grey-950: oklch(0.2603 0 0);
+
 
   /* -------------------- Light mode custom(derived) colors -------------------- */
   /* Background colors */
