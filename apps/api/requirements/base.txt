@@ -1,7 +1,7 @@
 # base requirements
 
 # django
-Django==4.2.26
+Django==4.2.27
 # rest framework
 djangorestframework==3.15.2
 # postgres
