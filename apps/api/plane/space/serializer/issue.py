@@ -196,6 +196,7 @@ class IssueFlatSerializer(BaseSerializer):
             "description",
             "description_html",
             "priority",
+            "start_time",
             "start_date",
             "target_date",
             "sequence_id",
