@@ -36,8 +36,6 @@
   --color-alpha-black-1200: oklch(0.1482 0.0034 196.79 / 95%);
 
   /* ---------- Spacing ---------- */
-  --spacing-*: initial;
-  --spacing-0: 0;
   --spacing-25: 0.0625rem;
   --spacing-50: 0.125rem;
   --spacing-100: 0.25rem;
@@ -446,7 +444,7 @@
 }
 
 @layer theme {
-  * {
+  :root, :host {
     @variant dark {
       /* ---------- Dark mode color tokens ---------- */
       /* Neutral colors */
