@@ -2,7 +2,7 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
-import { Plus, Unlink } from "lucide-react";
+import { Plus, Unlink, Pencil } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@plane/propel/button";
 import { BarChart } from "@plane/propel/charts/bar-chart";
@@ -13,6 +13,7 @@ import { ReadonlyDate } from "@/components/readonly/date";
 import { ModuleService } from "@/services/module.service";
 import { renderFormattedPayloadDate, findTotalDaysInRange } from "@plane/utils";
 import { useModule } from "@/hooks/store/use-module";
+import "quill/dist/quill.snow.css";
 
 type Props = {
   moduleId: string;
@@ -20,10 +21,71 @@ type Props = {
   isOpen?: boolean;
 };
 
+const InlineQuillEditor: React.FC<{ value: string; onChange: (v: string) => void }> = ({ value, onChange }) => {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const quillRef = useRef<any>(null);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!containerRef.current) return;
+    if (!quillRef.current) {
+      (async () => {
+        const mod = await import("quill");
+        const Quill = mod.default || (mod as any);
+        const q = new Quill(containerRef.current!, { theme: "snow" });
+        quillRef.current = q;
+        q.on("text-change", () => {
+          const html = (containerRef.current?.querySelector(".ql-editor") as HTMLElement | null)?.innerHTML || "";
+          onChange(html);
+        });
+        q.clipboard.dangerouslyPasteHTML(value || "");
+      })();
+    }
+  }, []);
+
+  // Prevent global shortcuts when typing in editor
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const handler = (e: KeyboardEvent) => {
+      const q = quillRef.current;
+      // Check if editor has focus
+      const isFocused = !!q?.hasFocus() || (document.activeElement && el.contains(document.activeElement as Node));
+
+      if (!isFocused) return;
+
+      // Allow meta keys and navigation keys
+      if (e.ctrlKey || e.metaKey || e.altKey || e.key === "Escape" || e.key === "Tab") return;
+
+      // Stop propagation for other keys to prevent global shortcuts
+      e.stopPropagation();
+    };
+
+    el.addEventListener("keydown", handler, { capture: true });
+    return () => el.removeEventListener("keydown", handler, { capture: true });
+  }, []);
+
+  useEffect(() => {
+    if (!quillRef.current) return;
+    const editor = quillRef.current;
+    const currentContent = containerRef.current?.querySelector(".ql-editor")?.innerHTML || "";
+    if (value !== currentContent) {
+      const range = editor.getSelection();
+      editor.clipboard.dangerouslyPasteHTML(value || "");
+      if (range) editor.setSelection(range);
+    }
+  }, [value]);
+  return (
+    <div className="border border-gray-300 rounded-md">
+      <div ref={containerRef} style={{ minHeight: 180 }} />
+    </div>
+  );
+};
+
 export const ModuleDetailContent: React.FC<Props> = observer(({ moduleId, isOpen }) => {
   const { workspaceSlug, projectId } = useParams();
   const router = useRouter();
-  const { getModuleById } = useModule();
+  const { getModuleById, fetchModuleDetails } = useModule();
   const moduleDetails = getModuleById(moduleId);
 
   const todayStr = renderFormattedPayloadDate(new Date());
@@ -65,6 +127,10 @@ export const ModuleDetailContent: React.FC<Props> = observer(({ moduleId, isOpen
   const [statsLoading, setStatsLoading] = useState(false);
   const [statsError, setStatsError] = useState<string | null>(null);
   const [stats, setStats] = useState<any | null>(null);
+
+  const [noteOpen, setNoteOpen] = useState(false);
+  const [noteHtml, setNoteHtml] = useState<string>("");
+  const [noteSubmitting, setNoteSubmitting] = useState(false);
 
   const fetchModuleStatistics = async () => {
     if (!workspaceSlug || !projectId || !moduleId) return;
@@ -124,6 +190,26 @@ export const ModuleDetailContent: React.FC<Props> = observer(({ moduleId, isOpen
       fetchModuleStatistics();
     }
   }, [isOpen]);
+
+  const handleNoteOpen = () => {
+    setNoteHtml(moduleDetails?.note || "");
+    setNoteOpen(true);
+  };
+
+  const handleNoteSubmit = async () => {
+    if (!workspaceSlug || !projectId || !moduleId) return;
+    try {
+      setNoteSubmitting(true);
+      await moduleService.updateNote(workspaceSlug.toString(), projectId.toString(), moduleId, noteHtml);
+      setToast({ type: TOAST_TYPE.SUCCESS, title: "更新成功", message: "发布日志已更新" });
+      setNoteOpen(false);
+      await fetchModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId);
+    } catch (e: any) {
+      setToast({ type: TOAST_TYPE.ERROR, title: "更新失败", message: e?.detail || e?.error || "请稍后重试" });
+    } finally {
+      setNoteSubmitting(false);
+    }
+  };
 
   const handleAssociateConfirm = async () => {
     if (!workspaceSlug || !projectId || !moduleId || selectedCycleIds.length === 0) {
@@ -217,7 +303,7 @@ export const ModuleDetailContent: React.FC<Props> = observer(({ moduleId, isOpen
         </div>
 
         <div className="bg-white border border-gray-200">
-          <div className="p-4 border-b border-gray-200">
+          <div className="p-4 ">
             <div className="text-lg font-semibold text-gray-800">发布进度</div>
           </div>
           <div className="p-4">
@@ -365,7 +451,26 @@ export const ModuleDetailContent: React.FC<Props> = observer(({ moduleId, isOpen
             )}
           </div>
         </div>
-        <div className="h-[300px] bg-white border border-gray-200"></div>
+        <div className="relative bg-white border border-gray-200 p-4 group">
+          <div className="flex items-center justify-between">
+            <div className="text-lg font-semibold text-gray-800">发布日志</div>
+            <div className="flex">
+              <Button variant="link-neutral" className="p-0 opacity-0 group-hover:opacity-100" onClick={handleNoteOpen}>
+                <Pencil className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+          </div>
+          <div className="mt-3 max-h-[500px] overflow-y-auto vertical-scrollbar scrollbar-sm">
+            {moduleDetails?.note ? (
+              <div
+                className="prose max-w-none text-sm text-gray-700"
+                dangerouslySetInnerHTML={{ __html: moduleDetails.note }}
+              />
+            ) : (
+              <div className="text-sm text-custom-text-300">暂无发布日志</div>
+            )}
+          </div>
+        </div>
         <div className="relative bg-white border border-gray-200 p-4 group">
           <div className="flex items-center justify-between">
             <div className="text-lg font-semibold text-gray-800">迭代</div>
@@ -439,7 +544,9 @@ export const ModuleDetailContent: React.FC<Props> = observer(({ moduleId, isOpen
             )}
           </div>
         </div>
-        <div className="h-[300px] bg-white border border-gray-200"></div>
+        <div className="h-[300px] relative bg-white border border-gray-200 p-4 group">
+          <div className="text-lg font-semibold text-gray-800">测试计划</div>
+        </div>
       </div>
       <Transition.Root show={associateOpen} as={Fragment}>
         <Dialog as="div" className="relative z-[10000]" onClose={() => setAssociateOpen(false)}>
@@ -565,6 +672,61 @@ export const ModuleDetailContent: React.FC<Props> = observer(({ moduleId, isOpen
                         取消
                       </Button>
                       <Button size="sm" onClick={handleAssociateConfirm} disabled={selectedCycleIds.length === 0}>
+                        确定
+                      </Button>
+                    </div>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
+      <Transition.Root show={noteOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-[11000]" onClose={() => setNoteOpen(false)}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
+          </Transition.Child>
+          <div className="fixed inset-0 z-10 overflow-y-auto">
+            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+                  <div className="px-5 py-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-medium">编辑发布日志</h3>
+                      <Button variant="neutral-primary" size="sm" onClick={() => setNoteOpen(false)}>
+                        关闭
+                      </Button>
+                    </div>
+                    <div className="mt-3">
+                      <InlineQuillEditor value={noteHtml} onChange={setNoteHtml} />
+                    </div>
+                    <div className="mt-4 flex justify-end gap-2">
+                      <Button
+                        variant="neutral-primary"
+                        size="sm"
+                        onClick={() => setNoteOpen(false)}
+                        disabled={noteSubmitting}
+                      >
+                        取消
+                      </Button>
+                      <Button size="sm" onClick={handleNoteSubmit} disabled={noteSubmitting} loading={noteSubmitting}>
                         确定
                       </Button>
                     </div>

@@ -39,7 +39,7 @@ export const getProjectFeatureNavigation = (
   {
     i18n_key: "sidebar.cycles",
     key: EProjectFeatureKey.CYCLES,
-    name: "Cycles",
+    name: "Sprints",
     href: `/${workspaceSlug}/projects/${projectId}/cycles`,
     icon: CycleIcon,
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -49,7 +49,7 @@ export const getProjectFeatureNavigation = (
   {
     i18n_key: "sidebar.modules",
     key: EProjectFeatureKey.MODULES,
-    name: "Modules",
+    name: "Releases",
     href: `/${workspaceSlug}/projects/${projectId}/modules`,
     icon: ModuleIcon,
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],

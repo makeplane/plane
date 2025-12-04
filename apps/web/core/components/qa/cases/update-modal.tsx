@@ -158,17 +158,16 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
     setForceTypeName(type);
     if (workspaceSlug && caseId) {
       try {
-        const data = await caseService.getCaseIssueWithType(String(workspaceSlug), {
-          id: caseId,
-          issues__type__name: type,
+        const typeName = type === "Requirement" ? "史诗,特性,用户故事" : type === "Task" ? "任务" : "缺陷";
+        const res = await caseService.issueList(String(workspaceSlug), {
+          case_id: caseId,
+          type_name: typeName,
         });
-        let resolved: TIssue[] = [];
-        if (Array.isArray(data)) {
-          const item = data.find((d: any) => String(d?.id) === String(caseId));
-          resolved = Array.isArray(item?.issues) ? (item.issues as TIssue[]) : [];
-        } else if (data && typeof data === "object") {
-          resolved = Array.isArray((data as any).issues) ? ((data as any).issues as TIssue[]) : [];
-        }
+        const resolved: TIssue[] = Array.isArray((res as any)?.data)
+          ? ((res as any).data as TIssue[])
+          : Array.isArray(res)
+            ? (res as TIssue[])
+            : [];
         setPreselectedIssues(resolved);
       } catch {
         setPreselectedIssues([]);
@@ -190,34 +189,6 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
       message.error(e?.message || e?.detail || e?.error || "更新失败");
     }
   };
-
-  React.useEffect(() => {
-    const map: Record<string, { type: "Requirement" | "Task" | "Bug"; label: string }> = {
-      requirement: { type: "Requirement", label: "产品需求" },
-      work: { type: "Task", label: "工作项" },
-      defect: { type: "Bug", label: "缺陷" },
-    };
-    const m = map[activeTab];
-    if (!m || !workspaceSlug || !caseId) {
-      setCurrentCount(0);
-      setCurrentLabel("");
-      return;
-    }
-    setCurrentLabel(m.label);
-    caseService
-      .getCaseIssueWithType(String(workspaceSlug), { id: caseId, issues__type__name: m.type })
-      .then((data) => {
-        let resolved: any[] = [];
-        if (Array.isArray(data)) {
-          const item = data.find((d: any) => String(d?.id) === String(caseId));
-          resolved = Array.isArray(item?.issues) ? (item.issues as any[]) : [];
-        } else if (data && typeof data === "object") {
-          resolved = Array.isArray((data as any).issues) ? ((data as any).issues as any[]) : [];
-        }
-        setCurrentCount(resolved.length);
-      })
-      .catch(() => setCurrentCount(0));
-  }, [activeTab, workspaceSlug, caseId, reloadToken]);
 
   // 新增：附件相关本地状态（编辑模式展示与上传）
   const [caseAttachments, setCaseAttachments] = React.useState<any[]>([]);
@@ -1091,7 +1062,12 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
                     <PlusOutlined /> 添加
                   </button>
                 </div>
-                <WorkItemDisplayModal caseId={String(caseId)} defaultType="Requirement" reloadToken={reloadToken} />
+                <WorkItemDisplayModal
+                  caseId={String(caseId)}
+                  defaultType="Requirement"
+                  reloadToken={reloadToken}
+                  onCountChange={(n) => setCurrentCount(n)}
+                />
               </div>
             )}
             {activeTab === "work" && caseId && (
@@ -1106,7 +1082,12 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
                     <PlusOutlined /> 添加
                   </button>
                 </div>
-                <WorkItemDisplayModal caseId={String(caseId)} defaultType="Task" reloadToken={reloadToken} />
+                <WorkItemDisplayModal
+                  caseId={String(caseId)}
+                  defaultType="Task"
+                  reloadToken={reloadToken}
+                  onCountChange={(n) => setCurrentCount(n)}
+                />
               </div>
             )}
             {activeTab === "defect" && caseId && (
@@ -1121,7 +1102,12 @@ function UpdateModal({ open, onClose, caseId }: UpdateModalProps) {
                     <PlusOutlined /> 添加
                   </button>
                 </div>
-                <WorkItemDisplayModal caseId={String(caseId)} defaultType="Bug" reloadToken={reloadToken} />
+                <WorkItemDisplayModal
+                  caseId={String(caseId)}
+                  defaultType="Bug"
+                  reloadToken={reloadToken}
+                  onCountChange={(n) => setCurrentCount(n)}
+                />
               </div>
             )}
           </div>

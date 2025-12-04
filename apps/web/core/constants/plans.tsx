@@ -101,8 +101,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Cycles",
-        description: "Track work in timeboxes with differing frequency.",
+        title: "Sprints",
+        description: "Track work in timeboxed iterations with differing frequency.",
         cloud: {
           free: true,
           one: true,
@@ -112,8 +112,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Modules",
-        description: "Group replicable work in modules with their own\nleads.",
+        title: "Releases",
+        description: "Group work into releases with their own\nleads.",
         cloud: {
           free: true,
           one: true,
@@ -184,8 +184,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Active Cycles",
-        description: "See all running cycles across all projects, or soon, in\na single project.",
+        title: "Active Sprints",
+        description: "See all running sprints across all projects, or soon, in\na single project.",
         cloud: {
           free: false,
           one: true,
@@ -287,8 +287,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Module Overview",
-        description: "Like Cycle Overviews, see relevant details and\nprogress charts for each module.",
+        title: "Release Overview",
+        description: "Like Sprint Overviews, see relevant details and\nprogress charts for each release.",
         cloud: {
           free: false,
           one: false,
@@ -298,8 +298,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Auto-assignment In Modules",
-        description: "Choose assignment rules for work items in a\nmodule including Linear, Round Robin, or Capacity.",
+        title: "Auto-assignment In Releases",
+        description: "Choose assignment rules for work items in a\nrelease including Linear, Round Robin, or Capacity.",
         cloud: {
           free: false,
           one: false,
@@ -371,8 +371,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Teamspace Cycles",
-        description: "See multiple cycles in multiple projects at once.",
+        title: "Teamspace Sprints",
+        description: "See multiple sprints in multiple projects at once.",
         cloud: {
           free: false,
           one: false,
@@ -530,7 +530,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       {
         title: "Progress Charts",
         description:
-          "Track progress in cycles, modules, and overviews\nthroughout Plane without switching to dashboards\nor Analytics.",
+          "Track progress in sprints, releases, and overviews\nthroughout Plane without switching to dashboards\nor Analytics.",
         cloud: {
           free: false,
           one: false,
@@ -540,8 +540,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Cycle Reports",
-        description: "Get on-demand cycle reports during and after a\ncycle. Revisit reports anytime from permalinks.",
+        title: "Sprint Reports",
+        description: "Get on-demand sprint reports during and after a\nsprint. Revisit reports anytime from permalinks.",
         cloud: {
           free: false,
           one: false,
@@ -1295,7 +1295,7 @@ export const PLANE_PLANS: PlanePlans = {
   },
   planHighlights: {
     free: ["Upto 12 users", "Pages", "Unlimited projects", "Unlimited cycles and modules"],
-    one: ["Upto 50 users", "OIDC and SAML", "Active cycles", "Limited time tracking"],
+    one: ["Upto 50 users", "OIDC and SAML", "Active sprints", "Limited time tracking"],
     pro: ["Unlimited users", "Custom work items + Properties", "Work item templates", "Full Time Tracking"],
     business: ["RBAC", "Project Templates", "Baselines And Deviations", "Custom Reports"],
     enterprise: ["Private + managed deployments", "GAC", "LDAP support", "Databases + Formulas"],

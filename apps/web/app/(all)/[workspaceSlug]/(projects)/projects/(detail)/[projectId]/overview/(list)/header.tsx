@@ -13,7 +13,7 @@ import {
 // plane types
 import { TPage } from "@plane/types";
 // plane ui
-import { Breadcrumbs, Button, Header, setToast, TOAST_TYPE } from "@plane/ui";
+import { Breadcrumbs, Button, Header } from "@plane/ui";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks

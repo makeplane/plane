@@ -51,8 +51,8 @@ export const ModulesListGanttChartView: React.FC = observer(() => {
   return (
     <TimeLineTypeContext.Provider value={ETimeLineTypeType.MODULE}>
       <GanttChartRoot
-        title="Modules"
-        loaderTitle="Modules"
+        title="Releases"
+        loaderTitle="Releases"
         blockIds={filteredModuleIds}
         sidebarToRender={(props) => <ModuleGanttSidebar {...props} />}
         blockUpdateHandler={(block, payload) => handleModuleUpdate(block, payload)}

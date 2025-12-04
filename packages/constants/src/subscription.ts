@@ -27,7 +27,7 @@ export const PRO_PLAN_FEATURES = [
 
 export const ONE_PLAN_FEATURES = [
   "OIDC + SAML for SSO",
-  "Active Cycles",
+  "Active Sprints",
   "Real-time collab + public views and page",
   "Link pages in issues and vice-versa",
   "Time-tracking + limited bulk ops",

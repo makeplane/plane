@@ -45,7 +45,7 @@ const ModuleDetailPage = observer(() => {
                 />
                 <Breadcrumbs.Item
                   component={
-                    <BreadcrumbLink label="Modules" href={`/${workspaceSlug}/projects/${projectId}/modules`} />
+                    <BreadcrumbLink label="Releases" href={`/${workspaceSlug}/projects/${projectId}/modules`} />
                   }
                 />
                 <Breadcrumbs.Item component={<BreadcrumbLink label={moduleDetails?.name ?? "Module Details"} />} />

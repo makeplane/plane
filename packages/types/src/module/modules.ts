@@ -86,6 +86,7 @@ export interface IModule {
   updated_at: string;
   created_by?: string;
   updated_by?: string;
+  note?: string;
 }
 
 export interface ModuleIssueResponse {

@@ -199,4 +199,14 @@ export class ProjectService extends APIService {
         throw error?.response?.data;
       });
   }
+
+    async getUserProjects(workspaceSlug: string, params: any): Promise<any[]> {
+      return this.get(`/api/workspaces/${workspaceSlug}/project/user-project/`,{
+      params: params,
+    })
+        .then((response) => response?.data)
+        .catch((error) => {
+          throw error?.response?.data;
+        });
+    }
 }

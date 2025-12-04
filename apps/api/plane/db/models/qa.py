@@ -154,6 +154,10 @@ class TestPlan(BaseModel):
     cases = models.ManyToManyField(TestCase, blank=True, related_name="plans", through="PlanCase",
                                    through_fields=("plan", "case"))
 
+    cycles = models.ManyToManyField("db.Cycle", blank=True, related_name="plans")
+    modules = models.ManyToManyField("db.Module", blank=True, related_name="plans",db_table="plan_modules_relations")
+
+
     @property
     def state_display(self):
         return self.get_state_display()

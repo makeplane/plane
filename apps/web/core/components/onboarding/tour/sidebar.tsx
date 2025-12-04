@@ -17,12 +17,12 @@ const sidebarOptions: {
   },
   {
     key: "cycles",
-    label: "Cycles",
+    label: "Sprints",
     Icon: CycleIcon,
   },
   {
     key: "modules",
-    label: "Modules",
+    label: "Releases",
     Icon: ModuleIcon,
   },
   {

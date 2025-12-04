@@ -949,7 +949,7 @@ class ModuleAPI(BaseViewSet):
         module_id = request.GET.get("module_id")
         if not module_id:
             return Response(
-                {"error": "Module ID is required"}, 
+                {"error": "Module ID is required"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -994,3 +994,11 @@ class ModuleAPI(BaseViewSet):
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @action(detail=False, methods=["post"], url_path="note")
+    def update_note(self, request, slug, project_id):
+        module_id = request.data.get("module_id")
+        note = request.data.get("note")
+        Module.objects.filter(pk=module_id).update(note=note)
+        return Response(status=status.HTTP_200_OK)

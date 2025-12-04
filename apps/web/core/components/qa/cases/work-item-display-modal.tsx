@@ -45,6 +45,7 @@ type WorkItemDisplayModalProps = {
   defaultType?: TWorkItemType;
   className?: string;
   reloadToken?: number;
+  onCountChange?: (n: number) => void;
 };
 
 export const WorkItemDisplayModal: React.FC<WorkItemDisplayModalProps> = ({
@@ -52,6 +53,7 @@ export const WorkItemDisplayModal: React.FC<WorkItemDisplayModalProps> = ({
   defaultType = "Requirement",
   className,
   reloadToken,
+  onCountChange,
 }) => {
   const { workspaceSlug } = useParams() as { workspaceSlug?: string };
   const caseService = React.useMemo(() => new CaseService(), []);
@@ -72,19 +74,22 @@ export const WorkItemDisplayModal: React.FC<WorkItemDisplayModalProps> = ({
     setLoading(true);
     setButtonLoading((prev) => ({ ...prev, [type]: true }));
     try {
-      const data = await caseService.getCaseIssueWithType(String(workspaceSlug), {
-        id: caseId,
-        issues__type__name: type,
+      const type_name = type === "Requirement" ? "史诗,特性,用户故事" : type === "Task" ? "任务" : "缺陷";
+      const res = await caseService.issueList(String(workspaceSlug), {
+        case_id: caseId,
+        type_name,
+        page_size: 1000,
       });
-      let resolved: TIssue[] = [];
-      if (Array.isArray(data)) {
-        const item = data.find((d: any) => String(d?.id) === String(caseId));
-        resolved = Array.isArray(item?.issues) ? (item.issues as TIssue[]) : [];
-      } else if (data && typeof data === "object") {
-        resolved = Array.isArray((data as any).issues) ? ((data as any).issues as TIssue[]) : [];
-      }
+      const resolved: TIssue[] = Array.isArray((res as any)?.data)
+        ? ((res as any).data as TIssue[])
+        : Array.isArray(res)
+          ? (res as TIssue[])
+          : [];
       setIssues(resolved);
+      onCountChange?.(resolved.length);
       setCurrentPage(1);
+    } catch {
+      onCountChange?.(0);
     } finally {
       setLoading(false);
       setButtonLoading((prev) => ({ ...prev, [type]: false }));

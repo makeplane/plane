@@ -34,7 +34,7 @@ const ProjectModulesPage = observer(() => {
   const { allowPermissions } = useUserPermissions();
   // derived values
   const project = projectId ? getProjectById(projectId.toString()) : undefined;
-  const pageTitle = project?.name ? `${project?.name} - Modules` : undefined;
+  const pageTitle = project?.name ? `${project?.name} - Releases` : undefined;
   const canPerformEmptyStateActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
   const resolvedPath = useResolvedAssetPath({ basePath: "/empty-state/disabled-feature/modules" });
 

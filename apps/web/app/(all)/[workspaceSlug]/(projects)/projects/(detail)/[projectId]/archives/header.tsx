@@ -35,12 +35,12 @@ const PROJECT_ARCHIVES_BREADCRUMB_LIST: {
     icon: WorkItemsIcon,
   },
   cycles: {
-    label: "Cycles",
+    label: "Sprints",
     href: "/cycles",
     icon: CycleIcon,
   },
   modules: {
-    label: "Modules",
+    label: "Releases",
     href: "/modules",
     icon: ModuleIcon,
   },

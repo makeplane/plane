@@ -107,7 +107,7 @@ export default {
   general_settings: "General settings",
   sign_out: "Sign out",
   signing_out: "Signing out",
-  active_cycles: "Active cycles",
+  active_cycles: "Active sprints",
   active_cycles_description:
     "Monitor cycles across projects, track high-priority work items, and zoom in cycles that need attention.",
   on_demand_snapshots_of_all_your_cycles: "On-demand snapshots of all your cycles",
@@ -207,8 +207,8 @@ export default {
   congrats: "Congrats!",
   open_project: "Open project",
   issues: "Work items",
-  cycles: "Cycles",
-  modules: "Modules",
+  cycles: "Sprints",
+  modules: "Releases",
   pages: "Pages",
   intake: "Intake",
   time_tracking: "Time Tracking",
@@ -489,9 +489,9 @@ export default {
     team_project: "Team project",
     project: "Project",
     cycle: "Cycle",
-    cycles: "Cycles",
+    cycles: "Sprints",
     module: "Module",
-    modules: "Modules",
+    modules: "Releases",
     labels: "Labels",
     label: "Label",
     admins: "Admins",
@@ -1234,9 +1234,9 @@ export default {
         primary_button: {
           text: "Start your first project",
           comic: {
-            title: "Analytics works best with Cycles + Modules",
+            title: "Analytics works best with Sprints + Releases",
             description:
-              "First, timebox your issues into Cycles and, if you can, group issues that span more than a cycle into Modules. Check out both on the left nav.",
+              "First, timebox your work items into Sprints and, if you can, group items that span more than a sprint into Releases. Check out both on the left nav.",
           },
         },
       },
@@ -1896,15 +1896,15 @@ export default {
     },
     empty_state: {
       general: {
-        title: "Group and timebox your work in Cycles.",
+        title: "Group and timebox your work in Sprints.",
         description:
           "Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team.",
         primary_button: {
-          text: "Set your first cycle",
+          text: "Set your first sprint",
           comic: {
-            title: "Cycles are repetitive time-boxes.",
+            title: "Sprints are repetitive time-boxes.",
             description:
-              "A sprint, an iteration, and or any other term you use for weekly or fortnightly tracking of work is a cycle.",
+              "A sprint, an iteration, and other terms you use for weekly or fortnightly tracking of work is a sprint.",
           },
         },
       },
@@ -2187,17 +2187,17 @@ export default {
         },
       },
       cycle: {
-        title: "Cycles is not enabled for this project.",
+        title: "Sprints is not enabled for this project.",
         description:
-          "Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team. Enable the cycles feature for your project to start using them.",
+          "Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team. Enable the sprints feature for your project to start using them.",
         primary_button: {
           text: "Manage features",
         },
       },
       module: {
-        title: "Modules are not enabled for the project.",
+        title: "Releases are not enabled for the project.",
         description:
-          "Modules are the building blocks of your project. Enable modules from project settings to start using them.",
+          "Releases are the building blocks of your project. Enable releases from project settings to start using them.",
         primary_button: {
           text: "Manage features",
         },

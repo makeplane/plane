@@ -246,6 +246,7 @@ class ModuleSerializer(DynamicBaseSerializer):
             "created_at",
             "updated_at",
             "archived_at",
+            'note'
         ]
         read_only_fields = fields
 
@@ -265,7 +266,7 @@ class ModuleDetailSerializer(ModuleSerializer):
             "backlog_estimate_points",
             "unstarted_estimate_points",
             "started_estimate_points",
-            "cancelled_estimate_points",
+            "cancelled_estimate_points"
         ]
 
 

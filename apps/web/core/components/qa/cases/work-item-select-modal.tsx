@@ -547,7 +547,11 @@ const typeNameMatches = (
 ) => {
   if (!force) return true;
   const name = getTypeNameById((issue as any)?.type_id as string | undefined, map);
-  return name === force;
+  if (!name) return false;
+  if (force === "Requirement") return ["史诗", "特性", "用户故事"].includes(name);
+  if (force === "Task") return name === "任务";
+  if (force === "Bug") return name === "缺陷";
+  return false;
 };
 
 const displayIssuesSelector = (

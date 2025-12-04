@@ -63,6 +63,7 @@ class ModuleStatus(models.TextChoices):
 class Module(ProjectBaseModel):
     name = models.CharField(max_length=255, verbose_name="Module Name")
     description = models.TextField(verbose_name="Module Description", blank=True)
+    note = models.TextField(verbose_name="Module Note", blank=True, null=True)
     description_text = models.JSONField(verbose_name="Module Description RT", blank=True, null=True)
     description_html = models.JSONField(verbose_name="Module Description HTML", blank=True, null=True)
     start_date = models.DateField(null=True)

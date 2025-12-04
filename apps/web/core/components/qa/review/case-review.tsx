@@ -193,27 +193,26 @@ export default function CaseReview() {
   }, [initialCaseId]);
 
   React.useEffect(() => {
-    const map: Record<string, "Requirement" | "Task" | "Bug"> = {
-      requirement: "Requirement",
-      work: "Task",
-      defect: "Bug",
+    const map: Record<string, string> = {
+      requirement: "史诗,特性,用户故事",
+      work: "任务",
+      defect: "缺陷",
     };
-    const typeName = map[activeTab];
-    if (!typeName || !workspaceSlug || !selectedCaseId) {
+    const type_name = map[activeTab];
+    if (!type_name || !workspaceSlug || !selectedCaseId) {
       setCurrentCount(0);
       return;
     }
     caseService
-      .getCaseIssueWithType(String(workspaceSlug), { id: String(selectedCaseId), issues__type__name: typeName })
-      .then((data) => {
-        let resolved: any[] = [];
-        if (Array.isArray(data)) {
-          const item = data.find((d: any) => String(d?.id) === String(selectedCaseId));
-          resolved = Array.isArray(item?.issues) ? (item.issues as any[]) : [];
-        } else if (data && typeof data === "object") {
-          resolved = Array.isArray((data as any).issues) ? ((data as any).issues as any[]) : [];
-        }
-        setCurrentCount(resolved.length);
+      .issueList(String(workspaceSlug), { case_id: String(selectedCaseId), type_name })
+      .then((res) => {
+        const list = Array.isArray((res as any)?.data)
+          ? ((res as any).data as any[])
+          : Array.isArray(res)
+            ? (res as any[])
+            : [];
+        const count = (res as any)?.count ?? list.length;
+        setCurrentCount(count);
       })
       .catch(() => setCurrentCount(0));
   }, [activeTab, workspaceSlug, selectedCaseId]);

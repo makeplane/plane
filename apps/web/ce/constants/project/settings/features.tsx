@@ -27,7 +27,7 @@ export const PROJECT_BASE_FEATURES_LIST: TBaseFeatureList = {
   cycles: {
     key: "cycles",
     property: "cycle_view",
-    title: "Cycles",
+    title: "Sprints",
     description: "Timebox work as you see fit per project and change frequency from one period to the next.",
     icon: <CycleIcon className="h-5 w-5 flex-shrink-0 rotate-180 text-custom-text-300" />,
     isPro: false,
@@ -36,8 +36,8 @@ export const PROJECT_BASE_FEATURES_LIST: TBaseFeatureList = {
   modules: {
     key: "modules",
     property: "module_view",
-    title: "Modules",
-    description: "Group work into sub-project-like set-ups with their own leads and assignees.",
+    title: "Releases",
+    description: "Group work into releases with their own leads and assignees.",
     icon: <ModuleIcon width={20} height={20} className="flex-shrink-0 text-custom-text-300" />,
     isPro: false,
     isEnabled: true,

@@ -89,7 +89,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
       {
         i18n_key: "sidebar.cycles",
         key: "cycles",
-        name: "Cycles",
+        name: "Sprints",
         href: `/${workspaceSlug}/projects/${projectId}/cycles`,
         icon: CycleIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -99,7 +99,7 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
       {
         i18n_key: "sidebar.modules",
         key: "modules",
-        name: "Modules",
+        name: "Releases",
         href: `/${workspaceSlug}/projects/${projectId}/modules`,
         icon: ModuleIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],

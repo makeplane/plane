@@ -91,7 +91,7 @@ export const ModuleAppliedFiltersList: React.FC<Props> = (props) => {
             className="flex flex-wrap items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 capitalize"
           >
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-xs text-custom-text-300">Modules</span>
+              <span className="text-xs text-custom-text-300">Releases</span>
               <div className="flex items-center gap-1 rounded p-1 text-xs bg-custom-background-80">
                 Favorite
                 {isEditingAllowed && (

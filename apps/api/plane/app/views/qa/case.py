@@ -7,7 +7,7 @@ from plane.app.serializers.qa import CaseAttachmentSerializer, IssueListSerializ
     TestCaseCommentSerializer, PlanCaseRecordSerializer
 from plane.app.serializers.qa.case import CaseExecuteRecordSerializer
 from plane.app.views import BaseAPIView, BaseViewSet
-from plane.db.models import TestCase, FileAsset, TestCaseComment, PlanCase
+from plane.db.models import TestCase, FileAsset, TestCaseComment, PlanCase, Issue
 from plane.utils.paginator import CustomPaginator
 from plane.utils.response import list_response
 
@@ -122,3 +122,14 @@ class CaseAPI(BaseViewSet):
             serializer = CaseExecuteRecordSerializer(record)
             result.append(serializer.data)
         return list_response(data=result, count=len(result))
+
+    @action(detail=False, methods=['get'], url_path='issues-list')
+    def issue_list(self, request, slug):
+        type_name = request.query_params.get('type_name').split(',')
+        case_id = request.query_params.get('case_id')
+
+        issues = TestCase.objects.get(id=case_id).issues.filter(type__name__in=type_name)
+        paginator = self.pagination_class()
+        paginated_queryset = paginator.paginate_queryset(issues, request)
+        serializer = IssueListSerializer(paginated_queryset, many=True)
+        return list_response(data=serializer.data, count=issues.count())

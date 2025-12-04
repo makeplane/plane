@@ -1,19 +1,20 @@
 "use client";
 
 import { useParams, useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, cloneElement } from "react";
 import { PageHead } from "@/components/core/page-title";
 import { Breadcrumbs } from "@plane/ui";
 import { Button } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import PlanCasesModal from "@/components/qa/plans/plan-cases-modal";
+import PlanIterationModal from "@/components/qa/plans/plan-iteration-modal";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
-import { Row, Col, Tree, Table, Space, Tag, message } from "antd";
+import { Row, Col, Tree, Table, Space, Tag, message, Dropdown } from "antd";
 import type { TableProps } from "antd";
 import type { TreeProps } from "antd";
 import { CaseModuleService } from "@/services/qa";
 import { PlanService } from "@/services/qa/plan.service";
-import { AppstoreOutlined, DeploymentUnitOutlined } from "@ant-design/icons";
+import { AppstoreOutlined, DeploymentUnitOutlined, DownOutlined } from "@ant-design/icons";
 import { formatDateTime, globalEnums } from "../util";
 import { FolderOpenDot } from "lucide-react";
 
@@ -67,6 +68,13 @@ export default function PlanCasesPage() {
   const [activeCase, setActiveCase] = useState<TestCase | null>(null);
   const [detailLoading, setDetailLoading] = useState<boolean>(false);
   const [isPlanModalOpen, setIsPlanModalOpen] = useState<boolean>(false);
+  const [isIterationModalOpen, setIsIterationModalOpen] = useState<boolean>(false);
+
+  const dropdownItems = [
+    { key: "by_work_item", label: "通过工作项规划" },
+    { key: "by_iteration", label: "通过迭代规划" },
+    { key: "by_release", label: "通过发布规划" },
+  ];
 
   useEffect(() => {
     if (!workspaceSlug || !repositoryId) return;
@@ -295,7 +303,7 @@ export default function PlanCasesPage() {
   return (
     <div className="w-full h-full flex flex-col">
       <PageHead title="计划用例" description={repositoryName || ""} />
-      <div className="px-4 py-3 border-b border-custom-border-200 flex items-center justify-between">
+      <div className="px-4 py-3 flex items-center justify-between">
         <div>
           <Breadcrumbs>
             <Breadcrumbs.Item
@@ -305,14 +313,31 @@ export default function PlanCasesPage() {
           </Breadcrumbs>
         </div>
         <div>
-          <Button
+          <Dropdown.Button
             type="primary"
-            icon={<PlusOutlined />}
+            icon={<DownOutlined />}
+            menu={{
+              items: dropdownItems,
+              onClick: ({ key }) => {
+                if (key === "by_work_item") {
+                  setIsPlanModalOpen(true);
+                } else if (key === "by_iteration") {
+                  setIsIterationModalOpen(true);
+                } else if (key === "by_release") {
+                  message.info("通过发布规划暂未实现");
+                }
+              },
+            }}
             onClick={() => setIsPlanModalOpen(true)}
             disabled={!repositoryId}
+            style={{ backgroundColor: "#6897f7", borderColor: "#6897f7" }}
+            buttonsRender={(buttons) => [
+              cloneElement(buttons[0] as any, { style: { backgroundColor: "#6897f7", borderColor: "#6897f7" } }),
+              cloneElement(buttons[1] as any, { style: { backgroundColor: "#6897f7", borderColor: "#6897f7" } }),
+            ]}
           >
             规划用例
-          </Button>
+          </Dropdown.Button>
         </div>
       </div>
       <div className="flex-1 overflow-hidden">
@@ -346,7 +371,7 @@ export default function PlanCasesPage() {
               </div>
             )}
             {!loading && !error && (
-              <div className="p-2">
+              <div className="px-0 py-2">
                 <Table
                   dataSource={cases}
                   columns={columns}
@@ -382,6 +407,16 @@ export default function PlanCasesPage() {
         initialSelectedCaseIds={(cases || []).map((c) => c?.case?.id).filter((id): id is string => Boolean(id))}
         onClosed={() => {
           // 关闭后刷新列表，保留当前查询参数与筛选
+          fetchCases(currentPage, pageSize, selectedModuleId || undefined);
+        }}
+      />
+      <PlanIterationModal
+        isOpen={isIterationModalOpen}
+        onClose={() => setIsIterationModalOpen(false)}
+        workspaceSlug={String(workspaceSlug)}
+        repositoryId={String(repositoryId)}
+        planId={String(planId || "")}
+        onClosed={() => {
           fetchCases(currentPage, pageSize, selectedModuleId || undefined);
         }}
       />

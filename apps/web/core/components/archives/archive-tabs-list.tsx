@@ -19,12 +19,12 @@ const ARCHIVES_TAB_LIST: {
   },
   {
     key: "cycles",
-    label: "Cycles",
+    label: "Sprints",
     shouldRender: (projectDetails) => projectDetails.cycle_view,
   },
   {
     key: "modules",
-    label: "Modules",
+    label: "Releases",
     shouldRender: (projectDetails) => projectDetails.module_view,
   },
 ];

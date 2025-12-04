@@ -275,6 +275,15 @@ export class ModuleService extends APIService {
         throw error?.response?.data;
       });
   }
+
+    async updateNote(workspaceSlug: string, projectId: string, moduleId: string,note:string): Promise<any> {
+    const data = {module_id:moduleId,note:note}
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/module/note/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
  
 
 }

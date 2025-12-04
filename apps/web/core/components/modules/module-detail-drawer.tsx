@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Drawer } from "antd";
-import { FullscreenOutlined } from "@ant-design/icons";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { usePathname, useSearchParams, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { ModuleDetailContent } from "./module-detail-content";
 import { useModule } from "@/hooks/store/use-module";
 
@@ -34,15 +33,6 @@ export const ModuleDetailDrawer: React.FC<Props> = observer((props) => {
 
   return (
     <Drawer
-      title={
-        <div className="flex items-center justify-between w-full pr-8">
-          <span></span>
-          <FullscreenOutlined
-            className="cursor-pointer text-lg hover:text-custom-primary-100 transition-colors"
-            onClick={handleFullscreen}
-          />
-        </div>
-      }
       placement="right"
       onClose={onClose}
       open={isOpen}

@@ -138,7 +138,7 @@ export const JiraProjectDetail: React.FC<Props> = (props) => {
           </div>
           <div>
             <h4 className="mb-2 text-lg font-semibold">{projectInfo?.modules}</h4>
-            <p className="text-sm text-custom-text-200">Modules</p>
+            <p className="text-sm text-custom-text-200">Releases</p>
           </div>
           <div>
             <h4 className="mb-2 text-lg font-semibold">{projectInfo?.labels}</h4>
@@ -154,7 +154,7 @@ export const JiraProjectDetail: React.FC<Props> = (props) => {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Import Epics</h3>
-          <p className="text-sm text-custom-text-200">Import epics as modules</p>
+          <p className="text-sm text-custom-text-200">Import epics as releases</p>
         </div>
         <div className="col-span-1">
           <Controller

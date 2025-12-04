@@ -2,7 +2,7 @@
 
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
-import {  Controller } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { Check, ChevronDown, Search } from "lucide-react";
@@ -16,7 +16,6 @@ import { ComboDropDown } from "@plane/ui";
 import { cn, getTabIndex } from "@plane/utils";
 // types
 import type { TBulkIssueProperties, TIssue } from "@plane/types";
-import { TBulkIssueProperties, TIssue } from "@plane/types";
 import type { EditorRefApi } from "@plane/editor";
 // hooks
 import { useProjectIssueTypes } from "@/hooks/store/use-project-issue-types";

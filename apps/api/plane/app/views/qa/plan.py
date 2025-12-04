@@ -10,12 +10,12 @@ from plane.app.serializers.qa.plan import PlanModuleCreateUpdateSerializer, Plan
     PlanCaseListSerializer, PlanCaseCardSerializer, PlanCaseRecordSerializer
 from plane.app.views.qa.filters import TestPlanFilter
 from plane.db.models import TestPlan, TestCaseRepository, TestCase, CaseModule, CaseLabel, FileAsset, Workspace, \
-    PlanModule, PlanCase, PlanCaseRecord, Issue
+    PlanModule, PlanCase, PlanCaseRecord, Issue, Cycle, CycleIssue
 from plane.utils.paginator import CustomPaginator
 from plane.utils.response import list_response
 from plane.app.views import BaseAPIView, BaseViewSet
 from plane.app.serializers import TestPlanCreateUpdateSerializer, TestCaseRepositorySerializer, \
-    TestCaseRepositoryDetailSerializer
+    TestCaseRepositoryDetailSerializer, CycleSerializer
 from plane.app.permissions import allow_permission, ROLE
 from plane.settings.storage import S3Storage
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
@@ -47,7 +47,6 @@ class RepositoryAPIView(BaseAPIView):
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-
     def put(self, request, slug):
         repository_id = request.data.pop('id')
         repository = self.queryset.get(id=repository_id)
@@ -64,12 +63,10 @@ class RepositoryAPIView(BaseAPIView):
         serializer = TestCaseRepositoryDetailSerializer(instance=paginated_queryset, many=True)
         return list_response(data=serializer.data, count=repositories.count())
 
-
     def delete(self, request, slug):
         plan_ids = request.data.pop('ids')
         self.queryset.filter(id__in=plan_ids).delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 
 class PlanAPIView(BaseAPIView):
@@ -258,6 +255,58 @@ class PlanView(BaseViewSet):
         serializer = PlanCaseRecordSerializer(instance=records, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['post'], url_path='associate-cycle')
+    def associate_cycle(self, request, slug):
+        plan_id = request.data['plan_id']
+        cycle_ids: list = request.data['cycle_id']
+        
+        # 1. 获取 Plan 对象
+        plan = TestPlan.objects.get(pk=plan_id)
+        
+        # 2. 批量关联 Cycle
+        # 使用 set 运算找出需要新增的 cycle_id，减少数据库查询
+        existing_cycle_ids = set(plan.cycles.filter(id__in=cycle_ids).values_list('id', flat=True))
+        new_cycle_ids = set(cycle_ids) - existing_cycle_ids
+        
+        if new_cycle_ids:
+            # 批量查询并添加
+            new_cycles = Cycle.objects.filter(pk__in=new_cycle_ids)
+            plan.cycles.add(*new_cycles)
+            
+        # 3. 批量导入关联的用例
+        # 获取所有选中 Cycle 下 Issue 关联的 Case ID
+        # 通过连表查询一次性获取所有相关的 case_id
+        related_case_ids = CycleIssue.objects.filter(
+            cycle_id__in=cycle_ids
+        ).values_list('issue__cases__id', flat=True).distinct()
+        
+        # 排除无效的 None 值（如果某些 Issue 没有关联 Case）
+        valid_case_ids = [cid for cid in related_case_ids if cid]
+        
+        if not valid_case_ids:
+            return Response(status=status.HTTP_200_OK)
+            
+        # 4. 批量创建 PlanCase
+        # 获取该 Plan 已存在的 case_id，避免重复创建
+        existing_plan_case_ids = set(
+            PlanCase.objects.filter(
+                plan=plan, 
+                case_id__in=valid_case_ids
+            ).values_list('case_id', flat=True)
+        )
+        
+        # 计算需要新创建的 case_id
+        new_case_ids = set(valid_case_ids) - existing_plan_case_ids
+        
+        if new_case_ids:
+            new_plan_cases = [
+                PlanCase(plan=plan, case_id=case_id)
+                for case_id in new_case_ids
+            ]
+            PlanCase.objects.bulk_create(new_plan_cases, batch_size=1000)
+            
+        return Response(status=status.HTTP_200_OK)
+
 
 class CaseAPIView(BaseAPIView):
     model = TestCase
@@ -297,13 +346,9 @@ class CaseAPIView(BaseAPIView):
         serializer = self.serializer_class(instance=case)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
     def delete(self, request, slug):
         self.filter_queryset(self.queryset).all().delete(soft=False)
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-
 
 
 class CaseDetailAPIView(BaseAPIView):

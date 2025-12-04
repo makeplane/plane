@@ -7,6 +7,7 @@ import json
 # Django imports
 from django.db.models import Exists, F, OuterRef, Prefetch, Q, Subquery
 from django.core.serializers.json import DjangoJSONEncoder
+from rest_framework.decorators import action
 
 # Third Party imports
 from rest_framework.response import Response
@@ -40,6 +41,8 @@ from plane.bgtasks.webhook_task import model_activity, webhook_activity
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.exception_logger import log_exception
 from plane.utils.host import base_host
+from plane.utils.paginator import CustomPaginator
+from plane.utils.response import list_response
 
 
 class ProjectViewSet(BaseViewSet):
@@ -102,10 +105,10 @@ class ProjectViewSet(BaseViewSet):
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
         projects = self.get_queryset().order_by("sort_order", "name")
         if WorkspaceMember.objects.filter(
-            member=request.user,
-            workspace__slug=slug,
-            is_active=True,
-            role=ROLE.GUEST.value,
+                member=request.user,
+                workspace__slug=slug,
+                is_active=True,
+                role=ROLE.GUEST.value,
         ).exists():
             projects = projects.filter(
                 project_projectmember__member=self.request.user,
@@ -113,10 +116,10 @@ class ProjectViewSet(BaseViewSet):
             )
 
         if WorkspaceMember.objects.filter(
-            member=request.user,
-            workspace__slug=slug,
-            is_active=True,
-            role=ROLE.MEMBER.value,
+                member=request.user,
+                workspace__slug=slug,
+                is_active=True,
+                role=ROLE.MEMBER.value,
         ).exists():
             projects = projects.filter(
                 Q(
@@ -183,10 +186,10 @@ class ProjectViewSet(BaseViewSet):
         )
 
         if WorkspaceMember.objects.filter(
-            member=request.user,
-            workspace__slug=slug,
-            is_active=True,
-            role=ROLE.GUEST.value,
+                member=request.user,
+                workspace__slug=slug,
+                is_active=True,
+                role=ROLE.GUEST.value,
         ).exists():
             projects = projects.filter(
                 project_projectmember__member=self.request.user,
@@ -194,10 +197,10 @@ class ProjectViewSet(BaseViewSet):
             )
 
         if WorkspaceMember.objects.filter(
-            member=request.user,
-            workspace__slug=slug,
-            is_active=True,
-            role=ROLE.MEMBER.value,
+                member=request.user,
+                workspace__slug=slug,
+                is_active=True,
+                role=ROLE.MEMBER.value,
         ).exists():
             projects = projects.filter(
                 Q(
@@ -253,7 +256,7 @@ class ProjectViewSet(BaseViewSet):
             _ = IssueUserProperty.objects.create(project_id=serializer.data["id"], user=request.user)
 
             if serializer.data["project_lead"] is not None and str(serializer.data["project_lead"]) != str(
-                request.user.id
+                    request.user.id
             ):
                 ProjectMember.objects.create(
                     project_id=serializer.data["id"],
@@ -404,19 +407,19 @@ class ProjectViewSet(BaseViewSet):
 
     def destroy(self, request, slug, pk):
         if (
-            WorkspaceMember.objects.filter(
-                member=request.user,
-                workspace__slug=slug,
-                is_active=True,
-                role=ROLE.ADMIN.value,
-            ).exists()
-            or ProjectMember.objects.filter(
-                member=request.user,
-                workspace__slug=slug,
-                project_id=pk,
-                role=ROLE.ADMIN.value,
-                is_active=True,
-            ).exists()
+                WorkspaceMember.objects.filter(
+                    member=request.user,
+                    workspace__slug=slug,
+                    is_active=True,
+                    role=ROLE.ADMIN.value,
+                ).exists()
+                or ProjectMember.objects.filter(
+            member=request.user,
+            workspace__slug=slug,
+            project_id=pk,
+            role=ROLE.ADMIN.value,
+            is_active=True,
+        ).exists()
         ):
             project = Project.objects.get(pk=pk, workspace__slug=slug)
             project.delete()
@@ -586,7 +589,7 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
             if "Contents" in response:
                 for content in response["Contents"]:
                     if not content["Key"].endswith(
-                        "/"
+                            "/"
                     ):  # This line ensures we're only getting files, not "sub-folders"
                         files.append(
                             f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{content['Key']}"
@@ -640,3 +643,32 @@ class DeployBoardViewSet(BaseViewSet):
 
         serializer = DeployBoardSerializer(project_deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ProjectAPI(BaseViewSet):
+    model = Project
+    queryset = Project.objects.all()
+    pagination_class = CustomPaginator
+    filterset_fields = {
+        'name': ['exact', 'icontains', 'in'],
+        'id': ['exact']
+    }
+    serializer_class = ProjectListSerializer
+
+
+    @action(detail=False, methods=['get'], url_path='user-project')
+    def get_user_project(self, request, slug):
+        project_id = ProjectMember.objects.filter(
+            workspace__slug=slug,
+            member_id=request.user.id,
+            is_active=True,
+            member__member_workspace__workspace__slug=slug,
+            member__member_workspace__is_active=True,
+        ).values_list("project_id", flat=True)
+
+        query = Project.objects.filter(pk__in=project_id)
+        query = self.filter_queryset(query).order_by('-created_at')
+        paginator = self.pagination_class()
+        paginated_queryset = paginator.paginate_queryset(query, request)
+        serializer = self.serializer_class(instance=paginated_queryset, many=True)
+        return list_response(data=serializer.data, count=query.count())
