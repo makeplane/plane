@@ -15,8 +15,9 @@ export const PasteAssetPlugin = (): Plugin =>
           metaTag.setAttribute("charset", "utf-8");
           htmlContent = metaTag.outerHTML + htmlContent;
         } else {
-          htmlContent = event.clipboardData.getData("text/html");
+          return false;
         }
+
         if (!htmlContent || htmlContent.includes('data-uploaded="true"')) return false;
 
         // Process the HTML content using the registry

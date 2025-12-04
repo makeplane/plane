@@ -117,7 +117,8 @@ export type EditorRefApi = {
   };
   getDocumentInfo: () => TDocumentInfo;
   getHeadings: () => IMarking[];
-  getMarkDown: () => { markdown: string; html: string };
+  getMarkDown: () => string;
+  copyMarkdownToClipboard: () => Promise<void>;
   getSelectedText: () => string | null;
   insertText: (contentHTML: string, insertOnNextLine?: boolean) => void;
   isAnyDropbarOpen: () => boolean;

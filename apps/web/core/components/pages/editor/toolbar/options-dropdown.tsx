@@ -5,7 +5,7 @@ import { ArrowUpToLine, Clipboard, History } from "lucide-react";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { ToggleSwitch } from "@plane/ui";
 import type { TContextMenuItem } from "@plane/ui";
-import { copyMarkdownToClipboard } from "@plane/utils";
+import { copyTextToClipboard } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePageFilters } from "@/hooks/use-page-filters";
@@ -72,23 +72,13 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
         key: "copy-markdown",
         action: () => {
           if (!editorRef) return;
-          const { markdown, html } = editorRef.getMarkDown();
-
-          copyMarkdownToClipboard({ markdown, html })
-            .then(() =>
-              setToast({
-                type: TOAST_TYPE.SUCCESS,
-                title: "Success!",
-                message: "Markdown copied to clipboard.",
-              })
-            )
-            .catch(() =>
-              setToast({
-                type: TOAST_TYPE.ERROR,
-                title: "Error!",
-                message: "Failed to copy markdown to clipboard.",
-              })
-            );
+          copyTextToClipboard(editorRef.getMarkDown()).then(() =>
+            setToast({
+              type: TOAST_TYPE.SUCCESS,
+              title: "Success!",
+              message: "Markdown copied to clipboard.",
+            })
+          );
         },
         title: "Copy markdown",
         icon: Clipboard,

@@ -79,7 +79,7 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
     }),
     getHeadings: () => (editor ? editor.storage.headingsList?.headings : []),
     getMarkDown: () => {
-      if (!editor) return { markdown: "", html: "" };
+      if (!editor) return "";
       const editorHTML = editor.getHTML();
       const metaData = getEditorMetaData(editorHTML);
       // convert to markdown
@@ -87,7 +87,28 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
         description_html: editorHTML,
         metaData,
       });
-      return { markdown, html: editorHTML };
+      return markdown;
+    },
+    copyMarkdownToClipboard: async () => {
+      if (!editor) return;
+
+      const html = editor.getHTML();
+      const metaData = getEditorMetaData(html);
+      const markdown = convertHTMLToMarkdown({
+        description_html: html,
+        metaData,
+      });
+
+      const copyHandler = (event: ClipboardEvent) => {
+        event.preventDefault();
+        event.clipboardData?.setData("text/plain", markdown);
+        event.clipboardData?.setData("text/html", html);
+        event.clipboardData?.setData("text/plane-editor-html", html);
+        document.removeEventListener("copy", copyHandler);
+      };
+
+      document.addEventListener("copy", copyHandler);
+      document.execCommand("copy");
     },
     isAnyDropbarOpen: () => {
       if (!editor) return false;
