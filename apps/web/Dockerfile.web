@@ -14,7 +14,7 @@ RUN apk add --no-cache libc6-compat
 # Set working directory
 WORKDIR /app
 
-ARG TURBO_VERSION=2.5.6
+ARG TURBO_VERSION=2.6.1
 RUN corepack enable pnpm && pnpm add -g turbo@${TURBO_VERSION}
 COPY . .
 
