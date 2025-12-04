@@ -15,6 +15,7 @@ import { UserImageUploadModal } from "@/components/core/modals/user-image-upload
 // helpers
 import { captureError, captureView } from "@/helpers/event-tracker.helper";
 // hooks
+import { useInstance } from "@/hooks/store/use-instance";
 import { useUser, useUserProfile } from "@/hooks/store/user";
 // services
 import { AuthService } from "@/services/auth.service";
@@ -22,7 +23,6 @@ import { AuthService } from "@/services/auth.service";
 import { CommonOnboardingHeader } from "../common";
 import { MarketingConsent } from "./consent";
 import { SetPasswordRoot } from "./set-password";
-import { useInstance } from "@/hooks/store/use-instance";
 
 type Props = {
   handleStepChange: (step: EOnboardingSteps, skipInvites?: boolean) => void;
@@ -255,7 +255,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
       </Button>
 
       {/* Marketing Consent */}
-      {!instanceConfig.is_self_managed && (
+      {!instanceConfig?.is_self_managed && (
         <MarketingConsent
           isChecked={!!watch("has_marketing_email_consent")}
           handleChange={(has_marketing_email_consent) =>

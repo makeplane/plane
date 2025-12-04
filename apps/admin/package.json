@@ -52,7 +52,7 @@
     "@plane/eslint-config": "workspace:*",
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@prettier/plugin-oxc": "0.0.4",
+    "@prettier/plugin-oxc": "0.1.3",
     "@react-router/dev": "catalog:",
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
