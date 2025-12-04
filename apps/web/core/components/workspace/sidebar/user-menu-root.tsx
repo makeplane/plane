@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 // icons
 import { LogOut, Settings, Settings2 } from "lucide-react";
 // plane imports
@@ -22,6 +21,8 @@ type Props = {
 export const UserMenuRoot = observer(function UserMenuRoot(props: Props) {
   const { size = "sm" } = props;
   const { workspaceSlug } = useParams();
+  // router
+  const router = useRouter();
   // store hooks
   const { toggleAnySidebarDropdown } = useAppTheme();
   const { data: currentUser } = useUser();
@@ -76,22 +77,18 @@ export const UserMenuRoot = observer(function UserMenuRoot(props: Props) {
     >
       <div className="flex flex-col gap-2">
         <span className="px-2 text-custom-sidebar-text-200 truncate">{currentUser?.email}</span>
-        <Link href={`/${workspaceSlug}/settings/account`}>
-          <CustomMenu.MenuItem>
-            <div className="flex w-full items-center gap-2 rounded text-xs">
-              <Settings className="h-4 w-4 stroke-[1.5]" />
-              <span>{t("settings")}</span>
-            </div>
-          </CustomMenu.MenuItem>
-        </Link>
-        <Link href={`/${workspaceSlug}/settings/account/preferences`}>
-          <CustomMenu.MenuItem>
-            <div className="flex w-full items-center gap-2 rounded text-xs">
-              <Settings2 className="h-4 w-4 stroke-[1.5]" />
-              <span>Preferences</span>
-            </div>
-          </CustomMenu.MenuItem>
-        </Link>
+        <CustomMenu.MenuItem onClick={() => router.push(`/${workspaceSlug}/settings/account`)}>
+          <div className="flex w-full items-center gap-2 rounded text-xs">
+            <Settings className="h-4 w-4 stroke-[1.5]" />
+            <span>{t("settings")}</span>
+          </div>
+        </CustomMenu.MenuItem>
+        <CustomMenu.MenuItem onClick={() => router.push(`/${workspaceSlug}/settings/account/preferences`)}>
+          <div className="flex w-full items-center gap-2 rounded text-xs">
+            <Settings2 className="h-4 w-4 stroke-[1.5]" />
+            <span>Preferences</span>
+          </div>
+        </CustomMenu.MenuItem>
       </div>
       <div className="my-1 border-t border-custom-border-200" />
       <div className={`${isUserInstanceAdmin ? "pb-2" : ""}`}>
@@ -110,13 +107,11 @@ export const UserMenuRoot = observer(function UserMenuRoot(props: Props) {
         <>
           <div className="my-1 border-t border-custom-border-200" />
           <div className="px-1">
-            <Link href={GOD_MODE_URL}>
-              <CustomMenu.MenuItem>
-                <div className="flex w-full items-center justify-center rounded bg-custom-primary-100/20 px-2 py-1 text-xs font-medium text-custom-primary-100 hover:bg-custom-primary-100/30 hover:text-custom-primary-200">
-                  {t("enter_god_mode")}
-                </div>
-              </CustomMenu.MenuItem>
-            </Link>
+            <CustomMenu.MenuItem onClick={() => router.push(GOD_MODE_URL)}>
+              <div className="flex w-full items-center justify-center rounded bg-custom-primary-100/20 px-2 py-1 text-xs font-medium text-custom-primary-100 hover:bg-custom-primary-100/30 hover:text-custom-primary-200">
+                {t("enter_god_mode")}
+              </div>
+            </CustomMenu.MenuItem>
           </div>
         </>
       )}
