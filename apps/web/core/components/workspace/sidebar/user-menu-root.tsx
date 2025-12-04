@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // icons
-import { LogOut, Settings, PanelLeft, PanelLeftClose } from "lucide-react";
+import { LogOut, Settings, Settings2 } from "lucide-react";
 // plane imports
 import { GOD_MODE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -14,7 +14,6 @@ import { getFileURL } from "@plane/utils";
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUser } from "@/hooks/store/user";
-import { useAppRailVisibility } from "@/lib/app-rail";
 
 type Props = {
   size?: "xs" | "sm" | "md";
@@ -27,7 +26,6 @@ export const UserMenuRoot = observer(function UserMenuRoot(props: Props) {
   const { toggleAnySidebarDropdown } = useAppTheme();
   const { data: currentUser } = useUser();
   const { signOut } = useUser();
-  const { isEnabled, isCollapsed, toggleAppRail } = useAppRailVisibility();
   // derived values
   const isUserInstanceAdmin = false;
   // translation
@@ -76,7 +74,7 @@ export const UserMenuRoot = observer(function UserMenuRoot(props: Props) {
       maxHeight="lg"
       closeOnSelect
     >
-      <div className="flex flex-col gap-2.5 pb-2">
+      <div className="flex flex-col gap-2">
         <span className="px-2 text-custom-sidebar-text-200 truncate">{currentUser?.email}</span>
         <Link href={`/${workspaceSlug}/settings/account`}>
           <CustomMenu.MenuItem>
@@ -86,18 +84,14 @@ export const UserMenuRoot = observer(function UserMenuRoot(props: Props) {
             </div>
           </CustomMenu.MenuItem>
         </Link>
-        {isEnabled && (
-          <CustomMenu.MenuItem onClick={toggleAppRail}>
+        <Link href={`/${workspaceSlug}/settings/account/preferences`}>
+          <CustomMenu.MenuItem>
             <div className="flex w-full items-center gap-2 rounded text-xs">
-              {isCollapsed ? (
-                <PanelLeft className="h-4 w-4 stroke-[1.5]" />
-              ) : (
-                <PanelLeftClose className="h-4 w-4 stroke-[1.5]" />
-              )}
-              <span>{isCollapsed ? "Show app rail" : "Hide app rail"}</span>
+              <Settings2 className="h-4 w-4 stroke-[1.5]" />
+              <span>Preferences</span>
             </div>
           </CustomMenu.MenuItem>
-        )}
+        </Link>
       </div>
       <div className="my-1 border-t border-custom-border-200" />
       <div className={`${isUserInstanceAdmin ? "pb-2" : ""}`}>
