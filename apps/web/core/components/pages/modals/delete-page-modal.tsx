@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { PROJECT_PAGE_TRACKER_EVENTS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { AlertModalCore } from "@plane/ui";
+import { getPageName } from "@plane/utils";
 // constants
 // hooks
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
@@ -91,8 +92,8 @@ export const DeletePageModal = observer(function DeletePageModal(props: TConfirm
       content={
         <>
           Are you sure you want to delete page-{" "}
-          <span className="break-words font-medium text-primary break-all">{name}</span> ? The Page will be deleted
-          permanently. This action cannot be undone.
+          <span className="break-words font-medium text-primary break-all">{getPageName(name)}</span> ? The Page will be
+          deleted permanently. This action cannot be undone.
         </>
       }
     />

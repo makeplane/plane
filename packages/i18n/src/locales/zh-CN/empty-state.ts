@@ -24,6 +24,17 @@ export default {
     },
   },
   project_empty_state: {
+    no_access: {
+      title: "您似乎无权访问该项目",
+      restricted_description: "请联系管理员申请访问权限，通过后您可以在此继续。",
+      join_description: "点击下方按钮加入该项目。",
+      cta_primary: "加入项目",
+      cta_loading: "正在加入项目",
+    },
+    invalid_project: {
+      title: "未找到项目",
+      description: "您查找的项目不存在。",
+    },
     work_items: {
       title: "从您的第一个工作项开始。",
       description: "工作项是项目的构建块 — 分配负责人、设置优先级并轻松跟踪进度。",

@@ -88,7 +88,7 @@ export function AskPiMenu(props: Props) {
             </div>
           </div>
         ) : (
-          <p className="text-13 text-secondary">Pi is answering...</p>
+          <p className="text-13 text-secondary">AI is answering...</p>
         )}
       </div>
       <div className="py-3 px-4">
@@ -101,7 +101,7 @@ export function AskPiMenu(props: Props) {
             className="w-full bg-transparent border-none outline-none placeholder:text-placeholder text-13"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Tell Pi what to do..."
+            placeholder="Tell AI what to do..."
           />
           <span className="flex-shrink-0 size-4 grid place-items-center">
             <CircleArrowUp className="size-4 text-secondary" />

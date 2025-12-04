@@ -49,16 +49,18 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
 
           <div className="flex items-center justify-between gap-2 px-2">
             <span className="text-md text-secondary font-medium pt-1">{title}</span>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                className="flex items-center justify-center size-6 rounded-md text-placeholder hover:text-custom-primary-100 hover:bg-surface-2"
-                onClick={() => setIsCustomizeNavDialogOpen(true)}
-              >
-                <PreferencesIcon className="size-4" />
-              </button>
-              <AppSidebarToggleButton />
-            </div>
+            {title === "Projects" && (
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  className="flex items-center justify-center size-6 rounded-md text-placeholder hover:text-custom-primary-100 hover:bg-surface-2"
+                  onClick={() => setIsCustomizeNavDialogOpen(true)}
+                >
+                  <PreferencesIcon className="size-4" />
+                </button>
+                <AppSidebarToggleButton />
+              </div>
+            )}
           </div>
           {/* Quick actions */}
           {quickActions}

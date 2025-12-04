@@ -8,12 +8,14 @@ import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
+import { EFileAssetType } from "@plane/types";
 import type { IProject, IWorkspace } from "@plane/types";
 import { CustomSelect, Input, TextArea } from "@plane/ui";
-import { renderFormattedDate, getFileURL } from "@plane/utils";
+import { renderFormattedDate } from "@plane/utils";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 import { TimezoneSelect } from "@/components/global";
 // helpers
+import { DEFAULT_COVER_IMAGE_URL, getCoverImageDisplayURL, handleCoverImageChange } from "@/helpers/cover-image.helper";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
@@ -30,6 +32,7 @@ export interface IProjectDetailsForm {
   isAdmin: boolean;
 }
 const projectService = new ProjectService();
+
 export function ProjectDetailsForm(props: IProjectDetailsForm) {
   const { project, workspaceSlug, projectId, isAdmin } = props;
   const { t } = useTranslation();
@@ -156,10 +159,28 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
       logo_props: formData.logo_props,
       timezone: formData.timezone,
     };
-    // if unsplash or a pre-defined image is uploaded, delete the old uploaded asset
-    if (formData.cover_image_url?.startsWith("http")) {
-      payload.cover_image = formData.cover_image_url;
-      payload.cover_image_asset = null;
+
+    // Handle cover image changes
+    try {
+      const coverImagePayload = await handleCoverImageChange(project.cover_image_url, formData.cover_image_url, {
+        workspaceSlug: workspaceSlug.toString(),
+        entityIdentifier: project.id,
+        entityType: EFileAssetType.PROJECT_COVER,
+        isUserAsset: false,
+      });
+
+      if (coverImagePayload) {
+        Object.assign(payload, coverImagePayload);
+      }
+    } catch (error) {
+      console.error("Error handling cover image:", error);
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("toast.error"),
+        message: error instanceof Error ? error.message : "Failed to process cover image",
+      });
+      setIsLoading(false);
+      return;
     }
 
     if (project.identifier !== formData.identifier)
@@ -180,10 +201,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
       <div className="relative h-44 w-full">
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
         <img
-          src={getFileURL(
-            coverImage ??
-              "https://images.unsplash.com/photo-1672243775941-10d763d9adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
-          )}
+          src={getCoverImageDisplayURL(coverImage, DEFAULT_COVER_IMAGE_URL)}
           alt="Project cover image"
           className="h-44 w-full rounded-md object-cover"
         />
