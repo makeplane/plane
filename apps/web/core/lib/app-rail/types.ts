@@ -24,4 +24,3 @@ export interface IAppRailVisibilityContext {
    */
   toggleAppRail: () => void;
 }
-
