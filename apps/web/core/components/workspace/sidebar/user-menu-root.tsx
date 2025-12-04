@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 // icons
-import { LogOut, Settings } from "lucide-react";
+import { LogOut, Settings, Settings2 } from "lucide-react";
 // plane imports
 import { GOD_MODE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -74,13 +74,21 @@ export const UserMenuRoot = observer(function UserMenuRoot(props: Props) {
       maxHeight="lg"
       closeOnSelect
     >
-      <div className="flex flex-col gap-2.5 pb-2">
+      <div className="flex flex-col gap-2">
         <span className="px-2 text-custom-sidebar-text-200 truncate">{currentUser?.email}</span>
         <Link href={`/${workspaceSlug}/settings/account`}>
           <CustomMenu.MenuItem>
             <div className="flex w-full items-center gap-2 rounded text-xs">
               <Settings className="h-4 w-4 stroke-[1.5]" />
               <span>{t("settings")}</span>
+            </div>
+          </CustomMenu.MenuItem>
+        </Link>
+        <Link href={`/${workspaceSlug}/settings/account/preferences`}>
+          <CustomMenu.MenuItem>
+            <div className="flex w-full items-center gap-2 rounded text-xs">
+              <Settings2 className="h-4 w-4 stroke-[1.5]" />
+              <span>Preferences</span>
             </div>
           </CustomMenu.MenuItem>
         </Link>
