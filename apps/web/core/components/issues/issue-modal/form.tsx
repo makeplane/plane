@@ -5,6 +5,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
+import { isValid, parse, parseISO, set } from "date-fns";
 // editor
 import { ETabIndices, DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
@@ -215,6 +216,28 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workItemTemplateId]);
 
+  const normalizeStartTime = (startDate: string | null, startTime: string | null) => {
+    // Require a date to build a valid ISO datetime
+    if (!startTime || !startDate) return null;
+
+    const parsedTime12 = parse(startTime, "hh:mm a", new Date());
+    const parsedTime24 = parse(startTime, "HH:mm", new Date());
+    const timeSource = isValid(parsedTime12) ? parsedTime12 : parsedTime24;
+    if (!isValid(timeSource)) return null;
+
+    const parsedDate = parseISO(startDate);
+    if (!isValid(parsedDate)) return null;
+
+    const combined = set(parsedDate, {
+      hours: timeSource.getHours(),
+      minutes: timeSource.getMinutes(),
+      seconds: 0,
+      milliseconds: 0,
+    });
+
+    return isValid(combined) ? combined.toISOString() : null;
+  };
+
   const handleFormSubmit = async (formData: Partial<TIssue>, is_draft_issue = false) => {
     // Check if the editor is ready to discard
     if (!editorRef.current?.isEditorReadyToDiscard()) {
@@ -236,10 +259,15 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     )
       return;
 
+    const normalizedStartTime = normalizeStartTime(formData.start_date ?? null, formData.start_time ?? null);
+
     const submitData = !data?.id
-      ? formData
+      ? { ...formData, start_time: normalizedStartTime }
       : {
-          ...getChangedIssuefields(formData, dirtyFields as { [key: string]: boolean | undefined }),
+          ...getChangedIssuefields(
+            { ...formData, start_time: normalizedStartTime },
+            dirtyFields as { [key: string]: boolean | undefined }
+          ),
           project_id: getValues<"project_id">("project_id"),
           id: data.id,
           description_html: formData.description_html ?? "<p></p>",

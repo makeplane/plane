@@ -139,6 +139,7 @@ export type TBulkIssueProperties = Pick<
   | "label_ids"
   | "assignee_ids"
   | "start_date"
+  | "start_time"
   | "target_date"
   | "module_ids"
   | "cycle_id"
