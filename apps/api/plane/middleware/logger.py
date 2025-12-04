@@ -4,6 +4,7 @@ import time
 
 # Django imports
 from django.http import HttpRequest
+from django.utils import timezone
 
 # Third party imports
 from rest_framework.request import Request
@@ -11,6 +12,8 @@ from rest_framework.request import Request
 # Module imports
 from plane.utils.ip_address import get_client_ip
 from plane.db.models import APIActivityLog
+from plane.settings.mongo import MongoConnection
+from plane.utils.exception_logger import log_exception
 
 api_logger = logging.getLogger("plane.api.request")
 
@@ -70,8 +73,32 @@ class RequestLoggerMiddleware:
 
 
 class APITokenLogMiddleware:
+    """
+    Middleware to log External API requests to MongoDB or PostgreSQL.
+    """
+
     def __init__(self, get_response):
         self.get_response = get_response
+        self.mongo_available = False
+
+        # Initialize MongoDB collection
+        try:
+            self.mongo_collection = self.get_mongo_collection()
+            self.mongo_available = True
+        except Exception as e:
+            api_logger.error(f"Error getting MongoDB collection: {str(e)}")
+            log_exception(e)
+
+    def get_mongo_collection(self):
+        """
+        Returns the MongoDB collection for API activity logs.
+        """
+        try:
+            return MongoConnection.get_collection("api_activity_logs")
+        except Exception as e:
+            api_logger.error(f"Error getting MongoDB collection: {str(e)}")
+            log_exception(e)
+            return None
 
     def __call__(self, request):
         request_body = request.body
@@ -101,27 +128,74 @@ class APITokenLogMiddleware:
         except UnicodeDecodeError:
             return "[Could not decode content]"
 
+    def log_to_mongo(self, log_document):
+        """
+        Logs the request to MongoDB if available.
+        """
+
+        if not self.mongo_available:
+            return False
+
+        try:
+            self.mongo_collection.insert_one(log_document)
+            return True
+        except Exception as e:
+            log_exception(e)
+            self.mongo_available = self.get_mongo_collection() is not None
+            return False
+
+    def log_to_postgres(self, log_data):
+        """
+        Fallback to logging to PostgreSQL if MongoDB is unavailable.
+        """
+        try:
+            APIActivityLog.objects.create(**log_data)
+            return True
+        except Exception as e:
+            log_exception(e)
+            return False
+
     def process_request(self, request, response, request_body):
         api_key_header = "X-Api-Key"
         api_key = request.headers.get(api_key_header)
-        # If the API key is present, log the request
-        if api_key:
-            try:
-                APIActivityLog.objects.create(
-                    token_identifier=api_key,
-                    path=request.path,
-                    method=request.method,
-                    query_params=request.META.get("QUERY_STRING", ""),
-                    headers=str(request.headers),
-                    body=(self._safe_decode_body(request_body) if request_body else None),
-                    response_body=(self._safe_decode_body(response.content) if response.content else None),
-                    response_code=response.status_code,
-                    ip_address=get_client_ip(request=request),
-                    user_agent=request.META.get("HTTP_USER_AGENT", None),
-                )
 
-            except Exception as e:
-                api_logger.exception(e)
-                # If the token does not exist, you can decide whether to log this as an invalid attempt
+        # If the API key is not present, return
+        if not api_key:
+            return
+
+        try:
+            log_data = {
+                "token_identifier": api_key,
+                "path": request.path,
+                "method": request.method,
+                "query_params": request.META.get("QUERY_STRING", ""),
+                "headers": str(request.headers),
+                "body": self._safe_decode_body(request_body) if request_body else None,
+                "response_body": self._safe_decode_body(response.content) if response.content else None,
+                "response_code": response.status_code,
+                "ip_address": get_client_ip(request=request),
+                "user_agent": request.META.get("HTTP_USER_AGENT", None),
+            }
+            user_id = (
+                str(request.user.id)
+                if getattr(request, "user") and getattr(request.user, "is_authenticated", False)
+                else None
+            )
+            # Additional fields for MongoDB
+            mongo_log = {
+                **log_data,
+                "created_at": timezone.now(),
+                "updated_at": timezone.now(),
+                "created_by": user_id,
+                "updated_by": user_id,
+            }
+
+            # Log to MongoDB if available
+            if not self.log_to_mongo(mongo_log):
+                # Fallback to logging to PostgreSQL
+                self.log_to_postgres(log_data)
+
+        except Exception as e:
+            log_exception(e)
 
         return None
