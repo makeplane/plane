@@ -107,7 +107,7 @@ export const CalendarIssueBlock = observer(
                   className={cn(
                     "group/calendar-block flex h-10 md:h-8 w-full items-center justify-between gap-1.5 rounded-sm  md:px-1 px-4 py-1.5 ",
                     {
-                      "bg-surface-2 shadow-custom-shadow-rg border-custom-primary-100": isDragging,
+                      "bg-surface-2 shadow-custom-shadow-rg border-accent-strong": isDragging,
                       "bg-surface-1 hover:bg-surface-2": !isDragging,
                       "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id),
                     }

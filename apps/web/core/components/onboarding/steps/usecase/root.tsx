@@ -122,13 +122,13 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
                     }}
                     className={`w-full px-3 py-2 rounded-lg border transition-all duration-200 flex items-center gap-2 ${
                       isSelected
-                        ? "border-custom-primary-100 bg-custom-primary-10 text-custom-primary-100"
+                        ? "border-accent-strong bg-custom-primary-10 text-accent-primary"
                         : "border-subtle-1 hover:border-strong text-tertiary"
                     }`}
                   >
                     <span
                       className={cn(`size-4 rounded-sm border-2 flex items-center justify-center`, {
-                        "bg-custom-primary-100 border-custom-primary-100": isSelected,
+                        "bg-accent-primary border-accent-strong": isSelected,
                         "border-strong": !isSelected,
                       })}
                     >

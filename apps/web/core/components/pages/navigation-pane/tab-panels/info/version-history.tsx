@@ -114,8 +114,8 @@ export const PageNavigationPaneInfoTabVersionHistory = observer(function PageNav
           {/* end timeline line */}
           <li className="relative flex items-center gap-x-4 text-11 font-medium">
             {/* timeline icon */}
-            <div className="relative size-6 flex-none rounded-full grid place-items-center bg-custom-primary-100/20">
-              <div className="size-2.5 rounded-full bg-custom-primary-100/40" />
+            <div className="relative size-6 flex-none rounded-full grid place-items-center bg-accent-primary/20">
+              <div className="size-2.5 rounded-full bg-accent-primary/40" />
             </div>
             {/* end timeline icon */}
             <Link

@@ -153,7 +153,7 @@ function UserInvitationsPage() {
                       <div
                         key={invitation.id}
                         className={`flex cursor-pointer items-center gap-2 rounded-sm border px-3.5 py-5 ${
-                          isSelected ? "border-custom-primary-100" : "border-subtle-1 hover:bg-layer-1"
+                          isSelected ? "border-accent-strong" : "border-subtle-1 hover:bg-layer-1"
                         }`}
                         onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
                       >
@@ -168,7 +168,7 @@ function UserInvitationsPage() {
                           <div className="text-13 font-medium">{truncateText(invitation.workspace.name, 30)}</div>
                           <p className="text-11 text-secondary">{ROLE[invitation.role]}</p>
                         </div>
-                        <span className={`flex-shrink-0 ${isSelected ? "text-custom-primary-100" : "text-secondary"}`}>
+                        <span className={`flex-shrink-0 ${isSelected ? "text-accent-primary" : "text-secondary"}`}>
                           <CheckCircle2 className="h-5 w-5" />
                         </span>
                       </div>

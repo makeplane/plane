@@ -65,7 +65,7 @@ export function ProdErrorComponent({ onGoHome }: ProdErrorComponentProps) {
                   href={link.value}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-custom-primary-100 hover:underline text-13"
+                  className="text-accent-primary hover:underline text-13"
                 >
                   {link.label}
                 </a>

@@ -128,7 +128,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
   ) : (
     <div
       className={
-        "h-11 relative flex items-center gap-3 bg-surface-1 border border-transparent border-t-subtle-1 pl-8 p-3 text-13 font-medium text-custom-primary-100 hover:text-custom-primary-200 hover:underline cursor-pointer"
+        "h-11 relative flex items-center gap-3 bg-surface-1 border border-transparent border-t-subtle-1 pl-8 p-3 text-13 font-medium text-accent-primary hover:text-custom-primary-200 hover:underline cursor-pointer"
       }
       onClick={() => loadMoreIssues(group.id)}
     >
@@ -251,7 +251,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
     <div
       ref={groupRef}
       className={cn(`relative flex flex-shrink-0 flex-col border-[1px] border-transparent`, {
-        "border-custom-primary-100": isDraggingOverColumn,
+        "border-accent-strong": isDraggingOverColumn,
         "border-custom-error-200": isDraggingOverColumn && isDropDisabled,
       })}
     >

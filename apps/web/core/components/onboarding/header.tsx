@@ -63,7 +63,7 @@ export const OnboardingHeader = observer(function OnboardingHeader(props: Onboar
       <div className="h-1.5 rounded-t-lg w-full bg-surface-1 overflow-hidden cursor-pointer">
         <Tooltip tooltipContent={`${currentStepNumber}/${totalSteps}`} position="bottom-end">
           <div
-            className="h-full bg-custom-primary-100 transition-all duration-700 ease-out"
+            className="h-full bg-accent-primary transition-all duration-700 ease-out"
             style={{ width: `${(currentStepNumber / totalSteps) * 100}%` }}
           />
         </Tooltip>

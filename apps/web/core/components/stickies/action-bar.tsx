@@ -50,7 +50,7 @@ export const StickyActionBar = observer(function StickyActionBar() {
   return (
     <div
       ref={ref}
-      className="sticky-action-bar__item flex flex-col bg-surface-2 rounded-full p-[2px] border-2 border-custom-primary-100/10 overflow-hidden"
+      className="sticky-action-bar__item flex flex-col bg-surface-2 rounded-full p-[2px] border-2 border-accent-strong/10 overflow-hidden"
     >
       <div
         className={`flex flex-col gap-2 transition-all duration-300 ease-in-out origin-bottom ${isExpanded ? "scale-y-100 opacity-100 mb-2 " : "scale-y-0 opacity-0 h-0"}`}

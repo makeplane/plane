@@ -44,7 +44,7 @@ export const NotificationCardListRoot = observer(function NotificationCardListRo
             </div>
           ) : (
             <div className="py-4 flex justify-center items-center text-13 font-medium" onClick={getNextNotifications}>
-              <div className="text-custom-primary-90 hover:text-custom-primary-100 transition-all cursor-pointer">
+              <div className="text-custom-primary-90 hover:text-accent-primary transition-all cursor-pointer">
                 {t("load_more")}
               </div>
             </div>

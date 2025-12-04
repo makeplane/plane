@@ -134,7 +134,7 @@ export const InlineReactions: Story = {
           onChange={handleReactionAdd}
           closeOnSelect
           label={
-            <button className="inline-flex items-center justify-center rounded-full border border-dashed border-strong bg-surface-1 text-placeholder transition-all duration-200 hover:border-custom-primary-100 hover:text-custom-primary-100 hover:bg-custom-primary-100/5 h-7 w-7">
+            <button className="inline-flex items-center justify-center rounded-full border border-dashed border-strong bg-surface-1 text-placeholder transition-all duration-200 hover:border-accent-strong hover:text-accent-primary hover:bg-accent-primary/5 h-7 w-7">
               <SmilePlus className="h-3.5 w-3.5" />
             </button>
           }
@@ -360,7 +360,7 @@ export const InMessageContext: Story = {
     return (
       <div className="max-w-md border border-subtle-1 rounded-lg p-4 space-y-3">
         <div className="flex items-start gap-3">
-          <div className="w-8 h-8 rounded-full bg-custom-primary-100 flex items-center justify-center text-white text-13">
+          <div className="w-8 h-8 rounded-full bg-accent-primary flex items-center justify-center text-white text-13">
             AB
           </div>
           <div className="flex-1">
@@ -378,7 +378,7 @@ export const InMessageContext: Story = {
             onChange={handleReactionAdd}
             closeOnSelect
             label={
-              <button className="inline-flex items-center justify-center rounded-full border border-dashed border-strong bg-surface-1 text-placeholder transition-all duration-200 hover:border-custom-primary-100 hover:text-custom-primary-100 hover:bg-custom-primary-100/5 h-7 w-7">
+              <button className="inline-flex items-center justify-center rounded-full border border-dashed border-strong bg-surface-1 text-placeholder transition-all duration-200 hover:border-accent-strong hover:text-accent-primary hover:bg-accent-primary/5 h-7 w-7">
                 <SmilePlus className="h-3.5 w-3.5" />
               </button>
             }

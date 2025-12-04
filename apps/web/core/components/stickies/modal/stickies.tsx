@@ -40,14 +40,14 @@ export const Stickies = observer(function Stickies(props: TProps) {
               toggleShowNewSticky(true);
               stickyOperations.create();
             }}
-            className="flex gap-1 text-13 font-medium text-custom-primary-100 my-auto"
+            className="flex gap-1 text-13 font-medium text-accent-primary my-auto"
             disabled={creatingSticky}
           >
             <Plus className="size-4 my-auto" /> <span>Add sticky</span>
             {creatingSticky && (
               <div className="flex items-center justify-center ml-2">
                 <div
-                  className={`w-4 h-4 border-2 border-t-transparent rounded-full animate-spin border-custom-primary-100`}
+                  className={`w-4 h-4 border-2 border-t-transparent rounded-full animate-spin border-accent-strong`}
                   role="status"
                   aria-label="loading"
                 />

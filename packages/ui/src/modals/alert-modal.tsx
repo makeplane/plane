@@ -42,7 +42,7 @@ const BUTTON_VARIANTS: Record<TModalVariant, TButtonVariant> = {
 
 const VARIANT_CLASSES: Record<TModalVariant, string> = {
   danger: "bg-red-500/20 text-red-500",
-  primary: "bg-custom-primary-100/20 text-custom-primary-100",
+  primary: "bg-accent-primary/20 text-accent-primary",
 };
 
 export function AlertModalCore(props: Props) {

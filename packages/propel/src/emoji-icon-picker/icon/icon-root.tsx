@@ -36,7 +36,7 @@ export function IconRoot(props: IconRootProps) {
           <div className="flex items-center px-2 py-[15px] w-full ">
             <div
               className={cn("relative flex items-center gap-2 bg-surface-2 h-10 rounded-lg w-full px-[30px] border", {
-                "border-custom-primary-100": isInputFocused,
+                "border-accent-strong": isInputFocused,
                 "border-transparent": !isInputFocused,
               })}
               onFocus={() => setIsInputFocused(true)}

@@ -25,7 +25,7 @@ export const MobileWorkspaceSettingsTabs = observer(function MobileWorkspaceSett
             <div
               className={`${
                 item.highlight(pathname, `/${workspaceSlug}`)
-                  ? "text-custom-primary-100 text-13 py-2 px-3 whitespace-nowrap flex flex-grow cursor-pointer justify-around border-b border-custom-primary-200"
+                  ? "text-accent-primary text-13 py-2 px-3 whitespace-nowrap flex flex-grow cursor-pointer justify-around border-b border-custom-primary-200"
                   : "text-secondary flex flex-grow cursor-pointer justify-around border-b border-subtle-1 text-13 py-2 px-3 whitespace-nowrap"
               }`}
               key={index}

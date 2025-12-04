@@ -42,7 +42,7 @@ export function InstanceAIForm(props: IInstanceAIForm) {
           <a
             href="https://platform.openai.com/docs/models/overview"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             Learn more
@@ -63,7 +63,7 @@ export function InstanceAIForm(props: IInstanceAIForm) {
           <a
             href="https://platform.openai.com/api-keys"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             here.
@@ -119,7 +119,7 @@ export function InstanceAIForm(props: IInstanceAIForm) {
           {isSubmitting ? "Saving..." : "Save changes"}
         </Button>
 
-        <div className="relative inline-flex items-center gap-2 rounded-sm border border-custom-primary-100/20 bg-custom-primary-100/10 px-4 py-2 text-11 text-custom-primary-200">
+        <div className="relative inline-flex items-center gap-2 rounded-sm border border-accent-strong/20 bg-accent-primary/10 px-4 py-2 text-11 text-custom-primary-200">
           <Lightbulb height="14" width="14" />
           <div>
             If you have a preferred AI models vendor, please get in{" "}

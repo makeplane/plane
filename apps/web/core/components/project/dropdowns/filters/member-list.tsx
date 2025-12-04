@@ -100,7 +100,7 @@ export const MemberListFiltersDropdown = observer(function MemberListFiltersDrop
             <ChevronDownIcon className="h-3 w-3" />
           </Button>
           {appliedFiltersCount > 0 && (
-            <div className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-custom-primary-100" />
+            <div className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-accent-primary" />
           )}
         </div>
       }

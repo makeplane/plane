@@ -60,7 +60,7 @@ export function InstanceGithubConfigForm(props: Props) {
             tabIndex={-1}
             href="https://github.com/settings/applications/new"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             GitHub OAuth application settings.
@@ -82,7 +82,7 @@ export function InstanceGithubConfigForm(props: Props) {
             tabIndex={-1}
             href="https://github.com/settings/applications/new"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             GitHub OAuth application settings.
@@ -116,7 +116,7 @@ export function InstanceGithubConfigForm(props: Props) {
             tabIndex={-1}
             href="https://github.com/settings/applications/new"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             here.
@@ -139,7 +139,7 @@ export function InstanceGithubConfigForm(props: Props) {
             tabIndex={-1}
             href="https://github.com/settings/applications/new"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             here.

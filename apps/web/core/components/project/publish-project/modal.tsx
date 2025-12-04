@@ -220,10 +220,10 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
                     </button>
                   </div>
                 </div>
-                <p className="text-13 font-medium text-custom-primary-100 flex items-center gap-1 mt-3">
+                <p className="text-13 font-medium text-accent-primary flex items-center gap-1 mt-3">
                   <span className="relative grid place-items-center size-2.5">
-                    <span className="animate-ping absolute inline-flex size-full rounded-full bg-custom-primary-100 opacity-75" />
-                    <span className="relative inline-flex rounded-full size-1.5 bg-custom-primary-100" />
+                    <span className="animate-ping absolute inline-flex size-full rounded-full bg-accent-primary opacity-75" />
+                    <span className="relative inline-flex rounded-full size-1.5 bg-accent-primary" />
                   </span>
                   This project is now live on web
                 </p>

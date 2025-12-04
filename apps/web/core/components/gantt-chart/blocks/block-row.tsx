@@ -86,8 +86,8 @@ export const BlockRow = observer(function BlockRow(props: Props) {
         className={cn("relative h-full", {
           "rounded-l-sm border border-r-0 border-custom-primary-70": getIsIssuePeeked(block.data.id),
           "bg-surface-2": isBlockHoveredOn,
-          "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isBlockSelected,
-          "bg-custom-primary-100/10": isBlockSelected && isBlockHoveredOn,
+          "bg-accent-primary/5 hover:bg-accent-primary/10": isBlockSelected,
+          "bg-accent-primary/10": isBlockSelected && isBlockHoveredOn,
           "border border-r-0 border-strong-1": isBlockFocused,
         })}
       >

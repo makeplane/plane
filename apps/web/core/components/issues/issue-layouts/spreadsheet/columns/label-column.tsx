@@ -29,7 +29,7 @@ export const SpreadsheetLabelColumn = observer(function SpreadsheetLabelColumn(p
         defaultOptions={defaultLabelOptions}
         onChange={(data) => onChange(issue, { label_ids: data }, { changed_property: "labels", change_details: data })}
         className="h-full w-full "
-        buttonClassName="px-page-x w-full h-full group-[.selected-issue-row]:bg-custom-primary-100/5 group-[.selected-issue-row]:hover:bg-custom-primary-100/10 rounded-none"
+        buttonClassName="px-page-x w-full h-full group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10 rounded-none"
         hideDropdownArrow
         maxRender={1}
         disabled={disabled}

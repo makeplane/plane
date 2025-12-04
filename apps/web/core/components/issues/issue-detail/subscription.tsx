@@ -80,7 +80,7 @@ export const IssueSubscription = observer(function IssueSubscription(props: TIss
         size="sm"
         prependIcon={isSubscribed ? <BellOff /> : <Bell className="h-3 w-3" />}
         variant="outline-primary"
-        className="hover:!bg-custom-primary-100/20"
+        className="hover:!bg-accent-primary/20"
         onClick={handleSubscription}
         disabled={!isEditable || loading}
       >

@@ -104,7 +104,7 @@ export const UserMenuRoot = observer(function UserMenuRoot(props: Props) {
           <div className="px-1">
             <Link href={GOD_MODE_URL}>
               <CustomMenu.MenuItem>
-                <div className="flex w-full items-center justify-center rounded-sm bg-custom-primary-100/20 px-2 py-1 text-11 font-medium text-custom-primary-100 hover:bg-custom-primary-100/30 hover:text-custom-primary-200">
+                <div className="flex w-full items-center justify-center rounded-sm bg-accent-primary/20 px-2 py-1 text-11 font-medium text-accent-primary hover:bg-accent-primary/30 hover:text-custom-primary-200">
                   {t("enter_god_mode")}
                 </div>
               </CustomMenu.MenuItem>

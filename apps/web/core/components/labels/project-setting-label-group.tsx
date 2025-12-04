@@ -83,7 +83,7 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
     <LabelDndHOC label={label} isGroup isChild={false} isLastChild={isLastChild} onDrop={onDrop}>
       {(isDragging, isDroppingInLabel, dragHandleRef) => (
         <div
-          className={`rounded-sm ${isDroppingInLabel ? "border-[2px] border-custom-primary-100" : "border-[1.5px] border-transparent"}`}
+          className={`rounded-sm ${isDroppingInLabel ? "border-[2px] border-accent-strong" : "border-[1.5px] border-transparent"}`}
         >
           <Disclosure
             as="div"

@@ -13,7 +13,7 @@ export function MarketingConsent({ isChecked, handleChange }: Props) {
         type="button"
         onClick={() => handleChange(!isChecked)}
         className={`size-4 rounded-sm border-2 flex items-center justify-center ${
-          isChecked ? "bg-custom-primary-100 border-custom-primary-100" : "border-strong"
+          isChecked ? "bg-accent-primary border-accent-strong" : "border-strong"
         }`}
       >
         {isChecked && <Check className="w-3 h-3 text-white" />}

@@ -457,7 +457,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                             {isEditingAllowed && !isArchived && (
                               <div className="flex w-full items-center justify-end">
                                 <button
-                                  className="flex items-center gap-1.5 text-13 font-medium text-custom-primary-100"
+                                  className="flex items-center gap-1.5 text-13 font-medium text-accent-primary"
                                   onClick={() => setModuleLinkModal(true)}
                                 >
                                   <Plus className="h-3 w-3" />
@@ -483,7 +483,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                             </div>
                             {isEditingAllowed && !isArchived && (
                               <button
-                                className="flex items-center gap-1.5 text-13 font-medium text-custom-primary-100"
+                                className="flex items-center gap-1.5 text-13 font-medium text-accent-primary"
                                 onClick={() => setModuleLinkModal(true)}
                               >
                                 <Plus className="h-3 w-3" />

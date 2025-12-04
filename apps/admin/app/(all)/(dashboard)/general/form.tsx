@@ -123,7 +123,7 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
                 <a
                   href="https://developers.plane.so/self-hosting/telemetry"
                   target="_blank"
-                  className="text-custom-primary-100 hover:underline"
+                  className="text-accent-primary hover:underline"
                   rel="noreferrer"
                 >
                   our Telemetry Policy.

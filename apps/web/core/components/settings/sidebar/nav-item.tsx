@@ -39,7 +39,7 @@ const SettingsSidebarNavItem = observer(function SettingsSidebarNavItem(props: T
   // derived
   const buttonClass = cn(
     "flex w-full items-center px-2 py-1.5 rounded-sm text-secondary justify-between",
-    "hover:bg-custom-primary-100/10",
+    "hover:bg-accent-primary/10",
     {
       "text-secondary bg-layer-1/75": typeof isActive === "function" ? isActive(setting) : isActive,
       "text-secondary hover:bg-surface-2 active:bg-surface-2":

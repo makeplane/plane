@@ -38,21 +38,21 @@ enum buttonIconStyling {
 
 export const buttonStyling: IButtonStyling = {
   primary: {
-    default: `text-white bg-custom-primary-100`,
+    default: `text-white bg-accent-primary`,
     hover: `hover:bg-custom-primary-200`,
     pressed: `focus:text-custom-brand-40 focus:bg-custom-primary-200`,
     disabled: `cursor-not-allowed !bg-custom-primary-60 hover:bg-custom-primary-60`,
   },
   "accent-primary": {
-    default: `bg-custom-primary-100/20 text-custom-primary-100`,
-    hover: `hover:bg-custom-primary-100/10 hover:text-custom-primary-200`,
-    pressed: `focus:bg-custom-primary-100/10`,
+    default: `bg-accent-primary/20 text-accent-primary`,
+    hover: `hover:bg-accent-primary/10 hover:text-custom-primary-200`,
+    pressed: `focus:bg-accent-primary/10`,
     disabled: `cursor-not-allowed !text-custom-primary-60`,
   },
   "outline-primary": {
-    default: `text-custom-primary-100 bg-transparent border border-custom-primary-100`,
-    hover: `hover:bg-custom-primary-100/20`,
-    pressed: `focus:text-custom-primary-100 focus:bg-custom-primary-100/30`,
+    default: `text-accent-primary bg-transparent border border-accent-strong`,
+    hover: `hover:bg-accent-primary/20`,
+    pressed: `focus:text-accent-primary focus:bg-accent-primary/30`,
     disabled: `cursor-not-allowed !text-custom-primary-60 !border-custom-primary-60 `,
   },
   "neutral-primary": {
@@ -62,7 +62,7 @@ export const buttonStyling: IButtonStyling = {
     disabled: `cursor-not-allowed !text-placeholder`,
   },
   "link-primary": {
-    default: `text-custom-primary-100 bg-surface-1`,
+    default: `text-accent-primary bg-surface-1`,
     hover: `hover:text-custom-primary-200`,
     pressed: `focus:text-custom-primary-80 `,
     disabled: `cursor-not-allowed !text-custom-primary-60`,

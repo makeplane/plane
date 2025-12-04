@@ -271,7 +271,7 @@ export function EditorAIMenu(props: Props) {
                     className={cn(
                       "p-1 text-11 text-secondary font-medium bg-layer-1 rounded-sm transition-colors outline-none",
                       {
-                        "bg-custom-primary-100/20 text-custom-primary-100": tone.key === "default",
+                        "bg-accent-primary/20 text-accent-primary": tone.key === "default",
                       }
                     )}
                     onClick={(e) => {

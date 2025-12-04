@@ -77,7 +77,7 @@ const EmojiReaction = React.forwardRef(function EmojiReaction(
       className={cn(
         "inline-flex items-center rounded-full border px-1.5 text-11 gap-0.5 transition-all duration-200",
         reacted
-          ? "bg-custom-primary-100/10 border-custom-primary-100 text-custom-primary-100"
+          ? "bg-accent-primary/10 border-accent-strong text-accent-primary"
           : "bg-surface-1 border-subtle-1 text-tertiary hover:border-strong hover:bg-surface-2",
         className
       )}
@@ -106,7 +106,7 @@ const EmojiReactionButton = React.forwardRef(function EmojiReactionButton(
       className={cn(
         "inline-flex items-center justify-center rounded-full border border-dashed border-strong",
         "bg-surface-1 text-placeholder transition-all duration-200",
-        "hover:border-custom-primary-100 hover:text-custom-primary-100 hover:bg-custom-primary-100/5",
+        "hover:border-accent-strong hover:text-accent-primary hover:bg-accent-primary/5",
         "focus:outline-none focus:ring-2 focus:ring-custom-primary-100/20 focus:ring-offset-1",
         "h-6 w-6",
         className

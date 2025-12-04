@@ -49,7 +49,7 @@ export const WeekChartView = observer(function WeekChartView(_props: any) {
                     className={cn(
                       "flex flex-shrink-0 p-1 text-center capitalize justify-between outline-[0.25px] outline outline-subtle-1",
                       {
-                        "bg-custom-primary-100/20": weekDay.today,
+                        "bg-accent-primary/20": weekDay.today,
                       }
                     )}
                     style={{ width: `${currentViewData?.data.dayWidth}px` }}
@@ -58,7 +58,7 @@ export const WeekChartView = observer(function WeekChartView(_props: any) {
                     <div className="space-x-1 text-11 font-medium">
                       <span
                         className={cn({
-                          "rounded-sm bg-custom-primary-100 px-1 text-white": weekDay.today,
+                          "rounded-sm bg-accent-primary px-1 text-white": weekDay.today,
                         })}
                       >
                         {weekDay.date.getDate()}
@@ -74,7 +74,7 @@ export const WeekChartView = observer(function WeekChartView(_props: any) {
                 <div
                   key={`column-${rootIndex}-${index}`}
                   className={cn("h-full overflow-hidden outline-[0.25px] outline outline-subtle", {
-                    "bg-custom-primary-100/20": weekDay.today,
+                    "bg-accent-primary/20": weekDay.today,
                   })}
                   style={{ width: `${currentViewData?.data.dayWidth}px` }}
                 >

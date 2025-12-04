@@ -67,12 +67,12 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
       className={cn(
         "relative py-4 flex items-center gap-2 border-b border-subtle-1 cursor-pointer transition-all group",
         currentSelectedNotificationId === notification?.id ? "bg-layer-1/30" : "",
-        notification.read_at === null ? "bg-custom-primary-100/5" : ""
+        notification.read_at === null ? "bg-accent-primary/5" : ""
       )}
       onClick={handleNotificationIssuePeekOverview}
     >
       {notification.read_at === null && (
-        <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-custom-primary-100 absolute top-[50%] left-2" />
+        <div className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-accent-primary absolute top-[50%] left-2" />
       )}
 
       <div className="relative w-full flex gap-2">

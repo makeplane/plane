@@ -71,7 +71,7 @@ export function InstanceGitlabConfigForm(props: Props) {
             tabIndex={-1}
             href="https://docs.gitlab.com/ee/integration/oauth_provider.html"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             GitLab OAuth application settings
@@ -94,7 +94,7 @@ export function InstanceGitlabConfigForm(props: Props) {
             tabIndex={-1}
             href="https://docs.gitlab.com/ee/integration/oauth_provider.html"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             GitLab OAuth application settings
@@ -120,7 +120,7 @@ export function InstanceGitlabConfigForm(props: Props) {
             tabIndex={-1}
             href="https://docs.gitlab.com/ee/integration/oauth_provider.html"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             GitLab OAuth application

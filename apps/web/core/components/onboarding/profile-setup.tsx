@@ -520,7 +520,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                         <div
                           key={userRole}
                           className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-surface-2 ${
-                            value === userRole ? "border-custom-primary-100" : "border-strong"
+                            value === userRole ? "border-accent-strong" : "border-strong"
                           } rounded-sm px-3 py-1.5 text-13 font-medium`}
                           onClick={() => onChange(userRole)}
                         >
@@ -551,7 +551,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                         <div
                           key={userDomain}
                           className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-surface-2 ${
-                            value === userDomain ? "border-custom-primary-100" : "border-strong"
+                            value === userDomain ? "border-accent-strong" : "border-strong"
                           } rounded-sm px-3 py-1.5 text-13 font-medium`}
                           onClick={() => onChange(userDomain)}
                         >

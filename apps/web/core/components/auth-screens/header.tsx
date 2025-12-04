@@ -46,7 +46,7 @@ export const AuthHeader = observer(function AuthHeader({ type }: AuthHeaderProps
             <Link
               data-ph-element={AUTH_TRACKER_ELEMENTS.NAVIGATE_TO_SIGN_UP}
               href={authContentMap[type].linkHref}
-              className="font-semibold text-custom-primary-100 hover:underline"
+              className="font-semibold text-accent-primary hover:underline"
             >
               {t(authContentMap[type].linkText)}
             </Link>

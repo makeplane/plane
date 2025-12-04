@@ -163,7 +163,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
                 } in this module`}
                 position="bottom"
               >
-                <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-custom-primary-100/20 px-2 text-center text-11 font-semibold text-custom-primary-100">
+                <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-accent-primary/20 px-2 text-center text-11 font-semibold text-accent-primary">
                   {workItemsCount}
                 </span>
               </Tooltip>

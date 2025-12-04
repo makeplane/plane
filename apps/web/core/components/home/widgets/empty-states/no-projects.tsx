@@ -153,7 +153,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
             <div key={item.id} className="flex flex-col p-4 bg-surface-1 rounded-xl border border-subtle-1/40">
               <div
                 className={cn("grid place-items-center bg-surface-2 rounded-full size-9 mb-3 text-placeholder", {
-                  "text-custom-primary-100 bg-custom-primary-100/10": !isStateComplete,
+                  "text-accent-primary bg-accent-primary/10": !isStateComplete,
                 })}
               >
                 <span className="text-24 my-auto">{item.icon}</span>
@@ -162,7 +162,7 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
               <p className="text-11 text-tertiary mb-2">{t(item.description)}</p>
               {isStateComplete ? (
                 <div className="flex items-center gap-2 bg-[#17a34a] rounded-full p-1 w-fit">
-                  <Check className="size-3 text-custom-primary-100 text-white" />
+                  <Check className="size-3 text-accent-primary text-white" />
                 </div>
               ) : (
                 !item.cta.disabled &&
@@ -180,14 +180,14 @@ export const NoProjectsEmptyState = observer(function NoProjectsEmptyState() {
                         [item.flag]: true,
                       });
                     }}
-                    className={cn("text-custom-primary-100 hover:text-custom-primary-200 text-13 font-medium", {})}
+                    className={cn("text-accent-primary hover:text-custom-primary-200 text-13 font-medium", {})}
                   >
                     {t(item.cta.text)}
                   </Link>
                 ) : (
                   <button
                     type="button"
-                    className="text-custom-primary-100 hover:text-custom-primary-200 text-13 font-medium"
+                    className="text-accent-primary hover:text-custom-primary-200 text-13 font-medium"
                     onClick={item.cta.onClick}
                   >
                     {t(item.cta.text)}

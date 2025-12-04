@@ -147,7 +147,7 @@ export function FavoriteFolder(props: Props) {
             // id={`sidebar-${projectId}-${projectListType}`}
             className={cn("relative", {
               "bg-layer-1 opacity-60": isDragging,
-              "border-[2px] border-custom-primary-100": instruction === "make-child",
+              "border-[2px] border-accent-strong": instruction === "make-child",
             })}
           >
             {/* draggable drop top indicator */}

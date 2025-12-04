@@ -158,7 +158,7 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
         >
           {date.date.getDate() === 1 && MONTHS_LIST[date.date.getMonth() + 1].shortTitle + " "}
           {isToday ? (
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-primary-100 text-white">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent-primary text-white">
               {date.date.getDate()}
             </span>
           ) : (
@@ -207,8 +207,8 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
         >
           <div
             className={cn("size-6 flex items-center justify-center rounded-full", {
-              "bg-custom-primary-100 text-white": isSelectedDate,
-              "bg-custom-primary-100/10 text-custom-primary-100 ": isToday && !isSelectedDate,
+              "bg-accent-primary text-white": isSelectedDate,
+              "bg-accent-primary/10 text-accent-primary ": isToday && !isSelectedDate,
             })}
           >
             {date.date.getDate()}

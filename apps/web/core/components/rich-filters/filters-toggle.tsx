@@ -51,7 +51,7 @@ export const FiltersToggle = observer(function FiltersToggle<P extends TFilterPr
   return (
     <div
       className={cn(COMMON_CLASSNAME, {
-        "border-transparent bg-custom-primary-100/10 hover:bg-custom-primary-100/20": isFilterRowVisible,
+        "border-transparent bg-accent-primary/10 hover:bg-accent-primary/20": isFilterRowVisible,
         "border-subtle-1 hover:bg-surface-2": !isFilterRowVisible,
       })}
       onClick={handleToggleFilter}
@@ -59,13 +59,13 @@ export const FiltersToggle = observer(function FiltersToggle<P extends TFilterPr
       <div className="relative">
         <ListFilter
           className={cn("size-4", {
-            "text-custom-primary-100": isFilterRowVisible,
+            "text-accent-primary": isFilterRowVisible,
             "text-tertiary": !isFilterRowVisible,
           })}
         />
         {showFilterRowChangesPill && (
           <span
-            className={cn("p-[3px] rounded-full bg-custom-primary-100 absolute top-[0.2px] -right-[0.4px]", {
+            className={cn("p-[3px] rounded-full bg-accent-primary absolute top-[0.2px] -right-[0.4px]", {
               "bg-custom-text-300": hasAnyConditions === false && filter?.hasChanges === true, // If there are no conditions and there are changes, show the pill in the background color
             })}
           />

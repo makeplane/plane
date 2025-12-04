@@ -69,7 +69,7 @@ export function InstanceGiteaConfigForm(props: Props) {
             tabIndex={-1}
             href="https://gitea.com/user/settings/applications"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             Gitea OAuth application settings.
@@ -91,7 +91,7 @@ export function InstanceGiteaConfigForm(props: Props) {
             tabIndex={-1}
             href="https://gitea.com/user/settings/applications"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             Gitea OAuth application settings.
@@ -117,7 +117,7 @@ export function InstanceGiteaConfigForm(props: Props) {
             tabIndex={-1}
             href={`${control._formValues.GITEA_HOST || "https://gitea.com"}/user/settings/applications`}
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             here.

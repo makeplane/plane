@@ -58,7 +58,7 @@ export function InstanceGoogleConfigForm(props: Props) {
             tabIndex={-1}
             href="https://developers.google.com/identity/protocols/oauth2/javascript-implicit-flow#creatingcred"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             Learn more
@@ -80,7 +80,7 @@ export function InstanceGoogleConfigForm(props: Props) {
             tabIndex={-1}
             href="https://developers.google.com/identity/oauth2/web/guides/get-google-api-clientid"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             Learn more
@@ -105,7 +105,7 @@ export function InstanceGoogleConfigForm(props: Props) {
           <a
             href="https://console.cloud.google.com/apis/credentials/oauthclient"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             here.
@@ -127,7 +127,7 @@ export function InstanceGoogleConfigForm(props: Props) {
           <a
             href="https://console.cloud.google.com/apis/credentials/oauthclient"
             target="_blank"
-            className="text-custom-primary-100 hover:underline"
+            className="text-accent-primary hover:underline"
             rel="noreferrer"
           >
             here.

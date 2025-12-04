@@ -27,7 +27,7 @@ export const CalendarWeekHeader = observer(function CalendarWeekHeader(props: Pr
       }`}
     >
       {isLoading && (
-        <div className="absolute h-[1.5px] w-3/4 animate-[bar-loader_2s_linear_infinite] bg-custom-primary-100" />
+        <div className="absolute h-[1.5px] w-3/4 animate-[bar-loader_2s_linear_infinite] bg-accent-primary" />
       )}
       {orderedDays.map((day) => {
         if (!showWeekends && (day.value === EStartOfTheWeek.SUNDAY || day.value === EStartOfTheWeek.SATURDAY))

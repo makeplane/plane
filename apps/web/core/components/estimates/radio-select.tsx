@@ -63,7 +63,7 @@ export function RadioInput({
               name={name}
               className={cn(
                 `group flex flex-shrink-0 size-5 items-center justify-center rounded-full border border-strong-1 bg-custom-background-500 cursor-pointer`,
-                selected === value ? `bg-custom-primary-200 border-custom-primary-100 ` : ``,
+                selected === value ? `bg-custom-primary-200 border-accent-strong ` : ``,
                 disabled ? `bg-custom-background-200 border-subtle-1 cursor-not-allowed` : ``,
                 inputButtonClassName
               )}

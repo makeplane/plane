@@ -49,8 +49,8 @@ export const IssuesSidebarBlock = observer(function IssuesSidebarBlock(props: Pr
       <Row
         className={cn("group w-full flex items-center gap-2 pr-4", {
           "bg-surface-2": isBlockHoveredOn,
-          "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isIssueSelected,
-          "bg-custom-primary-100/10": isIssueSelected && isBlockHoveredOn,
+          "bg-accent-primary/5 hover:bg-accent-primary/10": isIssueSelected,
+          "bg-accent-primary/10": isIssueSelected && isBlockHoveredOn,
         })}
         style={{
           height: `${BLOCK_HEIGHT}px`,

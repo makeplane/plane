@@ -186,10 +186,13 @@ export function RowDragHandle(props: RowDragHandleProps) {
           {...getReferenceProps()}
           type="button"
           onMouseDown={handleMouseDown}
-          className={cn("py-1 bg-surface-2 border border-strong-1 rounded-sm outline-none transition-all duration-200", {
-            "!opacity-100 bg-custom-primary-100 border-custom-primary-100": isDropdownOpen,
-            "hover:bg-layer-1": !isDropdownOpen,
-          })}
+          className={cn(
+            "py-1 bg-surface-2 border border-strong-1 rounded-sm outline-none transition-all duration-200",
+            {
+              "!opacity-100 bg-accent-primary border-accent-strong": isDropdownOpen,
+              "hover:bg-layer-1": !isDropdownOpen,
+            }
+          )}
         >
           <Ellipsis className="size-4 text-primary rotate-90" />
         </button>

@@ -202,9 +202,7 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
                                   setValue("period", "AM");
                                 }}
                                 className={`flex h-full w-1/2 cursor-pointer items-center justify-center text-center ${
-                                  watch("period") === "AM"
-                                    ? "bg-custom-primary-100/90 text-custom-primary-0"
-                                    : "bg-layer-1"
+                                  watch("period") === "AM" ? "bg-accent-primary/90 text-custom-primary-0" : "bg-layer-1"
                                 }`}
                               >
                                 AM
@@ -214,9 +212,7 @@ export function NotificationSnoozeModal(props: TNotificationSnoozeModal) {
                                   setValue("period", "PM");
                                 }}
                                 className={`flex h-full w-1/2 cursor-pointer items-center justify-center text-center ${
-                                  watch("period") === "PM"
-                                    ? "bg-custom-primary-100/90 text-custom-primary-0"
-                                    : "bg-layer-1"
+                                  watch("period") === "PM" ? "bg-accent-primary/90 text-custom-primary-0" : "bg-layer-1"
                                 }`}
                               >
                                 PM

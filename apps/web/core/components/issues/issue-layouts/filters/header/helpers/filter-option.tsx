@@ -22,7 +22,7 @@ export function FilterOption(props: Props) {
     >
       <div
         className={`grid h-3 w-3 flex-shrink-0 place-items-center border bg-surface-2 ${
-          isChecked ? "border-custom-primary-100 bg-custom-primary-100 text-white" : "border-strong"
+          isChecked ? "border-accent-strong bg-accent-primary text-white" : "border-strong"
         } ${multiple ? "rounded-xs" : "rounded-full"}`}
       >
         {isChecked && <Check size={10} strokeWidth={3} />}
@@ -32,7 +32,7 @@ export function FilterOption(props: Props) {
         <div className="flex-grow truncate text-11 text-secondary">{title}</div>
       </div>
       {activePulse && (
-        <div className="flex-shrink-0 text-11 w-2 h-2 rounded-full bg-custom-primary-100 animate-pulse ml-auto" />
+        <div className="flex-shrink-0 text-11 w-2 h-2 rounded-full bg-accent-primary animate-pulse ml-auto" />
       )}
     </button>
   );

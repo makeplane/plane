@@ -53,7 +53,7 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  className="flex items-center justify-center size-6 rounded-md text-placeholder hover:text-custom-primary-100 hover:bg-surface-2"
+                  className="flex items-center justify-center size-6 rounded-md text-placeholder hover:text-accent-primary hover:bg-surface-2"
                   onClick={() => setIsCustomizeNavDialogOpen(true)}
                 >
                   <PreferencesIcon className="size-4" />

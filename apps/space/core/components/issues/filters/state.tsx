@@ -59,7 +59,7 @@ export const FilterState = observer(function FilterState(props: Props) {
                 {filteredOptions.length > 5 && (
                   <button
                     type="button"
-                    className="ml-8 text-11 font-medium text-custom-primary-100"
+                    className="ml-8 text-11 font-medium text-accent-primary"
                     onClick={handleViewToggle}
                   >
                     {itemsToRender === filteredOptions.length ? "View less" : "View all"}

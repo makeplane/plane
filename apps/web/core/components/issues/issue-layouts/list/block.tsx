@@ -178,7 +178,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
             "border-custom-primary-70": getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
             "border-strong-1": isIssueActive,
             "last:border-b-transparent": !getIsIssuePeeked(issue.id) && !isIssueActive,
-            "bg-custom-primary-100/5 hover:bg-custom-primary-100/10": isIssueSelected,
+            "bg-accent-primary/5 hover:bg-accent-primary/10": isIssueSelected,
             "bg-layer-1": isCurrentBlockDragging,
             "md:flex-row md:items-center": isSidebarCollapsed,
             "lg:flex-row lg:items-center": !isSidebarCollapsed,

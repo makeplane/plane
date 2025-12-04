@@ -34,7 +34,7 @@ const Checkbox = React.forwardRef(function Checkbox(props: CheckboxProps, ref: R
           {
             "border-subtle-1 bg-layer-1 cursor-not-allowed": disabled,
             "border-strong hover:border-strong-1 bg-transparent": !disabled,
-            "border-custom-primary-40 hover:border-custom-primary-40 bg-custom-primary-100 hover:bg-custom-primary-200":
+            "border-custom-primary-40 hover:border-custom-primary-40 bg-accent-primary hover:bg-custom-primary-200":
               !disabled && (checked || indeterminate),
           },
           className

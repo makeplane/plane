@@ -8,7 +8,7 @@ export type THeadingComponentProps = {
 };
 
 const COMMON_CLASSNAME =
-  "flex-shrink-0 w-full py-1 text-left font-medium text-tertiary hover:text-custom-primary-100 truncate transition-colors";
+  "flex-shrink-0 w-full py-1 text-left font-medium text-tertiary hover:text-accent-primary truncate transition-colors";
 
 export function OutlineHeading1({ marking, onClick }: THeadingComponentProps) {
   return (

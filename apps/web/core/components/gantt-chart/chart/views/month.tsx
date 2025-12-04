@@ -50,7 +50,7 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
                   >
                     {monthBlock?.title}
                     {monthBlock.today && (
-                      <span className={cn("rounded-sm ml-2 font-medium bg-custom-primary-100 px-1 text-9 text-white")}>
+                      <span className={cn("rounded-sm ml-2 font-medium bg-accent-primary px-1 text-9 text-white")}>
                         Current
                       </span>
                     )}
@@ -66,7 +66,7 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
                   className={cn(
                     "flex flex-shrink-0 py-1 px-2 text-center capitalize justify-between outline-[0.25px] outline-subtle-1",
                     {
-                      "bg-custom-primary-100/20": weekBlock.today,
+                      "bg-accent-primary/20": weekBlock.today,
                     }
                   )}
                   style={{ width: `${currentViewData?.data.dayWidth * 7}px` }}
@@ -74,7 +74,7 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
                   <div className="space-x-1 text-11 font-medium text-placeholder">
                     <span
                       className={cn({
-                        "rounded-sm bg-custom-primary-100 px-1 text-white": weekBlock.today,
+                        "rounded-sm bg-accent-primary px-1 text-white": weekBlock.today,
                       })}
                     >
                       {weekBlock.startDate.getDate()}-{weekBlock.endDate.getDate()}
@@ -91,7 +91,7 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
               <div
                 key={`column-${weekBlock.startDate}-${weekBlock.endDate}`}
                 className={cn("h-full overflow-hidden outline-[0.25px] outline-subtle", {
-                  "bg-custom-primary-100/20": weekBlock.today,
+                  "bg-accent-primary/20": weekBlock.today,
                 })}
                 style={{ width: `${currentViewData?.data.dayWidth * 7}px` }}
               />

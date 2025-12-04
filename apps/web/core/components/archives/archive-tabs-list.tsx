@@ -50,7 +50,7 @@ export const ArchiveTabsList = observer(function ArchiveTabsList() {
               <span
                 className={`flex min-w-min flex-shrink-0 whitespace-nowrap border-b-2 py-4 px-4 text-13 font-medium outline-none ${
                   pathname.includes(tab.key)
-                    ? "border-custom-primary-100 text-custom-primary-100"
+                    ? "border-accent-strong text-accent-primary"
                     : "border-transparent hover:border-subtle-1 text-tertiary hover:text-placeholder"
                 }`}
               >

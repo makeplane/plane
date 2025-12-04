@@ -92,10 +92,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
       )}
       <PanelLeft
         onClick={() => setIsMobileSidebar(!isMobileSidebar)}
-        className={cn(
-          "w-4 h-4 flex-shrink-0 mr-2 my-auto",
-          isMobileSidebar ? "text-custom-primary-100" : "text-secondary"
-        )}
+        className={cn("w-4 h-4 flex-shrink-0 mr-2 my-auto", isMobileSidebar ? "text-accent-primary" : "text-secondary")}
       />
       <div className="flex items-center gap-2 w-full bg-surface-1 z-[15]">
         <div className="flex items-center gap-x-2">

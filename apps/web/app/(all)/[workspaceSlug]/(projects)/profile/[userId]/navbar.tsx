@@ -29,7 +29,7 @@ export function ProfileNavbar(props: Props) {
             <span
               className={`flex whitespace-nowrap border-b-2 p-4 text-13 font-medium outline-none ${
                 pathname === `/${workspaceSlug}/profile/${userId}${tab.selected}`
-                  ? "border-custom-primary-100 text-custom-primary-100"
+                  ? "border-accent-strong text-accent-primary"
                   : "border-transparent"
               }`}
             >

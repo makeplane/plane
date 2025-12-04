@@ -44,7 +44,7 @@ export const DashboardQuickLinks = observer(function DashboardQuickLinks(props: 
           <div className="text-14 font-semibold text-custom-text-350">{t("home.quick_links.title_plural")}</div>
           <button
             onClick={handleCreateLinkModal}
-            className="flex gap-1 text-13 font-medium text-custom-primary-100 my-auto"
+            className="flex gap-1 text-13 font-medium text-accent-primary my-auto"
           >
             <Plus className="size-4 my-auto" /> <span>{t("home.quick_links.add")}</span>
           </button>

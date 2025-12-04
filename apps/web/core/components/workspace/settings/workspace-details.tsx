@@ -173,7 +173,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
             }/${currentWorkspace.slug}`}</button>
             {isAdmin && (
               <button
-                className="flex items-center gap-1.5 text-left text-11 font-medium text-custom-primary-100"
+                className="flex items-center gap-1.5 text-left text-11 font-medium text-accent-primary"
                 onClick={() => setIsImageUploadModalOpen(true)}
               >
                 {workspaceLogo && workspaceLogo !== "" ? (

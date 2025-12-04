@@ -84,7 +84,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
           <Link
             data-ph-element={AUTH_TRACKER_ELEMENTS.FORGOT_PASSWORD_FROM_SIGNIN}
             href={`/accounts/forgot-password?email=${encodeURIComponent(email)}`}
-            className="text-11 font-medium text-custom-primary-100"
+            className="text-11 font-medium text-accent-primary"
           >
             {t("auth.common.forgot_password")}
           </Link>
@@ -130,7 +130,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
           </div>
           <div className="w-full text-13 font-medium text-red-500">{t("auth.sign_up.errors.password.strength")}</div>
           <div
-            className="relative ml-auto w-6 h-6 rounded-xs flex justify-center items-center transition-all cursor-pointer hover:bg-red-500/20 text-custom-primary-100/80"
+            className="relative ml-auto w-6 h-6 rounded-xs flex justify-center items-center transition-all cursor-pointer hover:bg-red-500/20 text-accent-primary/80"
             onClick={() => setBannerMessage(false)}
           >
             <CloseIcon className="w-4 h-4 flex-shrink-0 text-red-500" />

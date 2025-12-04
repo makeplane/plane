@@ -33,14 +33,14 @@ export const StickiesWidget = observer(function StickiesWidget() {
               toggleShowNewSticky(true);
               stickyOperations.create();
             }}
-            className="flex gap-1 text-13 font-medium text-custom-primary-100 my-auto"
+            className="flex gap-1 text-13 font-medium text-accent-primary my-auto"
             disabled={creatingSticky}
           >
             <Plus className="size-4 my-auto" />
             <span>{t("stickies.add")}</span>
             {creatingSticky && (
               <div
-                className="size-4 border-2 border-t-transparent border-custom-primary-100 rounded-full animate-spin"
+                className="size-4 border-2 border-t-transparent border-accent-strong rounded-full animate-spin"
                 role="status"
                 aria-label="loading"
               />

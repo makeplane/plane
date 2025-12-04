@@ -19,7 +19,7 @@ export function PriorityIcon(props: IPriorityIcon) {
     urgent: "bg-red-600/20 text-red-600 border-red-600",
     high: "bg-orange-500/20 text-orange-500 border-orange-500",
     medium: "bg-yellow-500/20 text-yellow-500 border-yellow-500",
-    low: "bg-custom-primary-100/20 text-custom-primary-100 border-custom-primary-100",
+    low: "bg-accent-primary/20 text-accent-primary border-accent-strong",
     none: "bg-layer-1 text-secondary border-strong",
   };
 
@@ -66,7 +66,7 @@ export function PriorityIcon(props: IPriorityIcon) {
               "text-red-600": priority === "urgent",
               "text-orange-500": priority === "high",
               "text-yellow-500": priority === "medium",
-              "text-custom-primary-100": priority === "low",
+              "text-accent-primary": priority === "low",
               "text-secondary": priority === "none",
             },
             className

@@ -49,7 +49,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
 
   useEffect(() => {
     if (!isHashMatch) return;
-    setHighlightClassName("border-custom-primary-100");
+    setHighlightClassName("border-accent-strong");
     const timeout = setTimeout(() => {
       setHighlightClassName("");
     }, 8000);

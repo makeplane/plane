@@ -26,7 +26,7 @@ function Switch({ value, onChange, label, size = "sm", disabled, className }: IT
         disabled
           ? "cursor-not-allowed bg-layer-1"
           : value
-            ? "cursor-pointer bg-custom-primary-100"
+            ? "cursor-pointer bg-accent-primary"
             : "cursor-pointer bg-surface-2",
         className
       )}

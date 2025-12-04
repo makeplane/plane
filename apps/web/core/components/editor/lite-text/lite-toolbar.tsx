@@ -25,7 +25,7 @@ export function LiteToolbar({ onSubmit, isSubmitting, isEmpty, executeCommand }:
         type="button"
         onClick={(e) => onSubmit(e)}
         disabled={isEmpty || isSubmitting}
-        className="p-1 bg-custom-primary-100 hover:bg-custom-primary-200 disabled:bg-custom-text-400 disabled:text-secondary text-primary rounded-sm transition-colors"
+        className="p-1 bg-accent-primary hover:bg-custom-primary-200 disabled:bg-custom-text-400 disabled:text-secondary text-primary rounded-sm transition-colors"
       >
         <ArrowUp className="size-3" />
       </button>

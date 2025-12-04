@@ -40,7 +40,7 @@ export const QuarterChartView = observer(function QuarterChartView(_props: any) 
                 >
                   {quarterBlock?.title}
                   {quarterBlock.today && (
-                    <span className={cn("rounded-sm ml-2 font-medium  bg-custom-primary-100 px-1 text-9 text-white")}>
+                    <span className={cn("rounded-sm ml-2 font-medium  bg-accent-primary px-1 text-9 text-white")}>
                       Current
                     </span>
                   )}
@@ -57,7 +57,7 @@ export const QuarterChartView = observer(function QuarterChartView(_props: any) 
                     className={cn(
                       "flex flex-shrink-0 text-center capitalize justify-center outline-[0.25px] outline outline-subtle-1",
                       {
-                        "bg-custom-primary-100/20": monthBlock.today,
+                        "bg-accent-primary/20": monthBlock.today,
                       }
                     )}
                     style={{ width: `${currentViewData?.data.dayWidth * monthBlock.days}px` }}
@@ -65,7 +65,7 @@ export const QuarterChartView = observer(function QuarterChartView(_props: any) 
                     <div className="space-x-1 flex items-center justify-center text-11 font-medium h-full">
                       <span
                         className={cn({
-                          "rounded-lg bg-custom-primary-100 px-2 text-white": monthBlock.today,
+                          "rounded-lg bg-accent-primary px-2 text-white": monthBlock.today,
                         })}
                       >
                         {monthBlock.monthData.shortTitle}
@@ -81,7 +81,7 @@ export const QuarterChartView = observer(function QuarterChartView(_props: any) 
                 <div
                   key={`column-${rootIndex}-${index}`}
                   className={cn("h-full overflow-hidden outline-[0.25px] outline outline-subtle", {
-                    "bg-custom-primary-100/20": monthBlock.today,
+                    "bg-accent-primary/20": monthBlock.today,
                   })}
                   style={{ width: `${currentViewData?.data.dayWidth * monthBlock.days}px` }}
                 />

@@ -25,7 +25,7 @@ function ToggleSwitch(props: IToggleSwitchProps) {
         {
           "h-4 w-6": size === "sm",
           "h-5 w-8": size === "md",
-          "bg-custom-primary-100": value,
+          "bg-accent-primary": value,
           "cursor-not-allowed bg-layer-1": disabled,
         },
         className

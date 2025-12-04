@@ -74,7 +74,7 @@ export const InboxIssueRoot = observer(function InboxIssueRoot(props: TInboxIssu
         <div className="flex lg:hidden items-center px-4 w-full h-12 border-b border-subtle-1">
           <PanelLeft
             onClick={() => setIsMobileSidebar(!isMobileSidebar)}
-            className={cn("w-4 h-4 ", isMobileSidebar ? "text-custom-primary-100" : " text-secondary")}
+            className={cn("w-4 h-4 ", isMobileSidebar ? "text-accent-primary" : " text-secondary")}
           />
         </div>
       )}

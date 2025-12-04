@@ -94,7 +94,7 @@ export const useExportColumns = () => {
           <>
             {rowData.status == "completed" ? (
               <a target="_blank" href={rowData?.url} rel="noopener noreferrer">
-                <button className="w-full flex items-center gap-1 text-custom-primary-100 font-medium">
+                <button className="w-full flex items-center gap-1 text-accent-primary font-medium">
                   <Download className="h-4 w-4" />
                   <div>Download</div>
                 </button>

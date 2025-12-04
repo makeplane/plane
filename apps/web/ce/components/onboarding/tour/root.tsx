@@ -91,7 +91,7 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
       {step === "welcome" ? (
         <div className="w-4/5 overflow-hidden rounded-[10px] bg-surface-1 md:w-1/2 lg:w-2/5">
           <div className="h-full overflow-hidden">
-            <div className="grid h-64 place-items-center bg-custom-primary-100">
+            <div className="grid h-64 place-items-center bg-accent-primary">
               <PlaneLockup className="h-10 w-auto text-white" />
             </div>
             <div className="flex flex-col overflow-y-auto p-6">
@@ -117,7 +117,7 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
                   </Button>
                   <button
                     type="button"
-                    className="bg-transparent text-11 font-medium text-custom-primary-100 outline-custom-text-100"
+                    className="bg-transparent text-11 font-medium text-accent-primary outline-custom-text-100"
                     onClick={() => {
                       captureClick({
                         elementName: PRODUCT_TOUR_TRACKER_ELEMENTS.SKIP_BUTTON,
@@ -144,7 +144,7 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
           <TourSidebar step={step} setStep={setStep} />
           <div className="col-span-10 h-full overflow-hidden lg:col-span-7">
             <div
-              className={`flex h-1/2 items-end overflow-hidden bg-custom-primary-100 sm:h-3/5 ${
+              className={`flex h-1/2 items-end overflow-hidden bg-accent-primary sm:h-3/5 ${
                 currentStepIndex % 2 === 0 ? "justify-end" : "justify-start"
               }`}
             >

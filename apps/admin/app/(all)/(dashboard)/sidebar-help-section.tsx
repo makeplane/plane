@@ -55,7 +55,7 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
         <Tooltip tooltipContent="Redirect to Plane" position="right" className="ml-4" disabled={!isSidebarCollapsed}>
           <a
             href={redirectionLink}
-            className={`relative px-2 py-1.5 flex items-center gap-2 font-medium rounded-sm border border-custom-primary-100/20 bg-custom-primary-100/10 text-11 text-custom-primary-200 whitespace-nowrap`}
+            className={`relative px-2 py-1.5 flex items-center gap-2 font-medium rounded-sm border border-accent-strong/20 bg-accent-primary/10 text-11 text-custom-primary-200 whitespace-nowrap`}
           >
             <ExternalLink size={14} />
             {!isSidebarCollapsed && "Redirect to Plane"}

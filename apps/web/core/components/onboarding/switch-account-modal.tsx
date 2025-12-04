@@ -80,8 +80,8 @@ export function SwitchAccountModal(props: Props) {
                 <div className="p-6 pb-1">
                   <div className="flex gap-x-4">
                     <div className="flex items-start">
-                      <div className="grid place-items-center rounded-full bg-custom-primary-100/20 p-4">
-                        <ArrowRightLeft className="h-5 w-5 text-custom-primary-100" aria-hidden="true" />
+                      <div className="grid place-items-center rounded-full bg-accent-primary/20 p-4">
+                        <ArrowRightLeft className="h-5 w-5 text-accent-primary" aria-hidden="true" />
                       </div>
                     </div>
                     <div className="flex flex-col py-3 gap-y-6">
@@ -90,7 +90,7 @@ export function SwitchAccountModal(props: Props) {
                       </Dialog.Title>
                       {userData?.email && (
                         <div className="text-14 font-regular text-secondary">
-                          If you have signed up via <span className="text-custom-primary-100">{userData.email}</span>{" "}
+                          If you have signed up via <span className="text-accent-primary">{userData.email}</span>{" "}
                           un-intentionally, you can switch your account to a different one from here.
                         </div>
                       )}

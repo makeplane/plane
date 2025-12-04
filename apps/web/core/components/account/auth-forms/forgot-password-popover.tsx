@@ -30,7 +30,7 @@ export function ForgotPasswordPopover() {
         <button
           type="button"
           ref={setReferenceElement}
-          className="text-11 font-medium text-custom-primary-100 outline-none"
+          className="text-11 font-medium text-accent-primary outline-none"
         >
           {t("auth.common.forgot_password")}
         </button>

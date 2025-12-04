@@ -44,17 +44,17 @@ enum badgeIconStyling {
 
 export const badgeStyling: IBadgeStyling = {
   primary: {
-    default: `text-white bg-custom-primary-100`,
+    default: `text-white bg-accent-primary`,
     hover: `hover:bg-custom-primary-200`,
     disabled: `cursor-not-allowed !bg-custom-primary-60 hover:bg-custom-primary-60`,
   },
   "accent-primary": {
-    default: `bg-custom-primary-10 text-custom-primary-100`,
+    default: `bg-custom-primary-10 text-accent-primary`,
     hover: `hover:bg-custom-primary-20 hover:text-custom-primary-200`,
     disabled: `cursor-not-allowed !text-custom-primary-60`,
   },
   "outline-primary": {
-    default: `text-custom-primary-100 bg-surface-1 border border-custom-primary-100`,
+    default: `text-accent-primary bg-surface-1 border border-accent-strong`,
     hover: `hover:border-custom-primary-80 hover:bg-custom-primary-10`,
     disabled: `cursor-not-allowed !text-custom-primary-60 !border-custom-primary-60 `,
   },

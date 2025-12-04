@@ -200,7 +200,7 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
         {
           "hover:text-secondary hover:bg-layer-1 cursor-pointer": editor.isEditable,
           "bg-layer-1 text-secondary": draggedInside && editor.isEditable,
-          "text-custom-primary-200 bg-custom-primary-100/10 border-custom-primary-200/10 hover:bg-custom-primary-100/10 hover:text-custom-primary-200":
+          "text-custom-primary-200 bg-accent-primary/10 border-custom-primary-200/10 hover:bg-accent-primary/10 hover:text-custom-primary-200":
             selected && editor.isEditable,
           "text-red-500 cursor-default": failedToLoadImage || hasDuplicationFailed,
           "hover:text-red-500": (failedToLoadImage || hasDuplicationFailed) && editor.isEditable,
