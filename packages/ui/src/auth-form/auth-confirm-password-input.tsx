@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { cn } from "@plane/utils";
 import { AuthInput } from "./auth-input";
 
-export interface AuthConfirmPasswordInputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "autoComplete"> {
+export interface AuthConfirmPasswordInputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "autoComplete"
+> {
   password: string;
   label?: string;
   error?: string;
