@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "./variables.css";
-@import "./typography.css";
 @import "./animations.css";
 @source "../**/*.{ts,tsx}";
 
@@ -15,10 +14,6 @@
     padding: 0;
     box-sizing: border-box;
   }
-}
-
-html {
-  font-family: "Inter", sans-serif;
 }
 
 * {

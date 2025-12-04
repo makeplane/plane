@@ -124,17 +124,16 @@
 }
 
 .epr-search-container > input {
-  background-color: rgb(var(--color-background-90)) !important;
-  @apply !text-primary;
+  @apply !bg-surface-2 !text-primary;
   border: none !important;
 }
 
 .epr-search-container > input::placeholder {
-  color: rgb(var(--color-text-400)) !important;
+  @apply !text-placeholder;
 }
 
 .epr-search-container > .epr-icn-search {
-  color: rgb(var(--color-text-400)) !important;
+  @apply !text-placeholder;
 }
 
 /* Lock icon animations */

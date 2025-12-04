@@ -17,8 +17,8 @@
 
 .epr-emoji-category-label {
   font-size: 0.7875rem !important;
-  @apply text-tertiary;
   background-color: rgba(var(--color-background-100), 0.8) !important;
+  @apply !text-tertiary;
 }
 
 .epr-category-nav,
@@ -35,7 +35,7 @@ input.epr-search {
   font-size: 0.7875rem !important;
   height: 2rem !important;
   background: transparent !important;
-  @apply !border-subtle-1;
+  @apply !border-subtle;
   border-radius: 0.25rem !important;
 }
 
