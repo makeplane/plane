@@ -27,7 +27,7 @@ export const UserMenuRoot = observer(function UserMenuRoot(props: Props) {
   const { toggleAnySidebarDropdown } = useAppTheme();
   const { data: currentUser } = useUser();
   const { signOut } = useUser();
-  const { isCollapsed, toggleAppRail } = useAppRailVisibility();
+  const { isEnabled, isCollapsed, toggleAppRail } = useAppRailVisibility();
   // derived values
   const isUserInstanceAdmin = false;
   // translation
@@ -86,16 +86,18 @@ export const UserMenuRoot = observer(function UserMenuRoot(props: Props) {
             </div>
           </CustomMenu.MenuItem>
         </Link>
-        <CustomMenu.MenuItem onClick={toggleAppRail}>
-          <div className="flex w-full items-center gap-2 rounded text-xs">
-            {isCollapsed ? (
-              <PanelLeft className="h-4 w-4 stroke-[1.5]" />
-            ) : (
-              <PanelLeftClose className="h-4 w-4 stroke-[1.5]" />
-            )}
-            <span>{isCollapsed ? "Show app rail" : "Hide app rail"}</span>
-          </div>
-        </CustomMenu.MenuItem>
+        {isEnabled && (
+          <CustomMenu.MenuItem onClick={toggleAppRail}>
+            <div className="flex w-full items-center gap-2 rounded text-xs">
+              {isCollapsed ? (
+                <PanelLeft className="h-4 w-4 stroke-[1.5]" />
+              ) : (
+                <PanelLeftClose className="h-4 w-4 stroke-[1.5]" />
+              )}
+              <span>{isCollapsed ? "Show app rail" : "Hide app rail"}</span>
+            </div>
+          </CustomMenu.MenuItem>
+        )}
       </div>
       <div className="my-1 border-t border-custom-border-200" />
       <div className={`${isUserInstanceAdmin ? "pb-2" : ""}`}>

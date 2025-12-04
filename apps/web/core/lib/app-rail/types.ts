@@ -4,6 +4,11 @@
 
 export interface IAppRailVisibilityContext {
   /**
+   * Whether the app rail is enabled
+   */
+  isEnabled: boolean;
+
+  /**
    * Whether the app rail is collapsed (user preference from localStorage)
    */
   isCollapsed: boolean;

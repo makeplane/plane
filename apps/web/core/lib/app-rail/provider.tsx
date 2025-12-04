@@ -9,14 +9,14 @@ import type { IAppRailVisibilityContext } from "./types";
 
 interface AppRailVisibilityProviderProps {
   children: React.ReactNode;
+  isEnabled?: boolean; // Allow override, default false
 }
 
 /**
  * AppRailVisibilityProvider - manages app rail visibility state
- * The app rail is always available, but can be collapsed by the user
+ * Base provider that accepts isEnabled as a prop
  */
-export const AppRailVisibilityProvider = observer(({ children }: AppRailVisibilityProviderProps) => {
-  // router
+export const AppRailVisibilityProvider = observer(({ children, isEnabled = false }: AppRailVisibilityProviderProps) => {
   const { workspaceSlug } = useParams();
 
   // User preference from localStorage
@@ -30,15 +30,16 @@ export const AppRailVisibilityProvider = observer(({ children }: AppRailVisibili
   }, [isCollapsed, setIsCollapsed]);
 
   // Compute final visibility: enabled and not collapsed
-  const shouldRenderAppRail = !isCollapsed;
+  const shouldRenderAppRail = isEnabled && !isCollapsed;
 
   const value: IAppRailVisibilityContext = useMemo(
     () => ({
+      isEnabled,
       isCollapsed: isCollapsed ?? false,
       shouldRenderAppRail,
       toggleAppRail,
     }),
-    [isCollapsed, shouldRenderAppRail, toggleAppRail]
+    [isEnabled, isCollapsed, shouldRenderAppRail, toggleAppRail]
   );
 
   return <AppRailVisibilityContext.Provider value={value}>{children}</AppRailVisibilityContext.Provider>;
