@@ -84,7 +84,7 @@ class APITokenLogMiddleware:
         # Initialize MongoDB collection
         try:
             self.mongo_collection = self.get_mongo_collection()
-            self.mongo_available = True
+            self.mongo_available = True if self.mongo_collection is not None else False
         except Exception as e:
             api_logger.error(f"Error getting MongoDB collection: {str(e)}")
             log_exception(e)
@@ -93,6 +93,10 @@ class APITokenLogMiddleware:
         """
         Returns the MongoDB collection for API activity logs.
         """
+        if not MongoConnection.is_configured():
+            api_logger.info("MongoDB not configured")
+            return None
+
         try:
             return MongoConnection.get_collection("api_activity_logs")
         except Exception as e:
@@ -133,7 +137,7 @@ class APITokenLogMiddleware:
         Logs the request to MongoDB if available.
         """
 
-        if not self.mongo_available:
+        if not self.mongo_available or self.mongo_collection is None:
             return False
 
         try:
@@ -141,7 +145,8 @@ class APITokenLogMiddleware:
             return True
         except Exception as e:
             log_exception(e)
-            self.mongo_available = self.get_mongo_collection() is not None
+            self.mongo_collection = self.get_mongo_collection()
+            self.mongo_available = True if self.mongo_collection is not None else False
             return False
 
     def log_to_postgres(self, log_data):
