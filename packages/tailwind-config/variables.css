@@ -72,44 +72,6 @@
   --border-width-lg: 2px;
   --border-width-xl: 2.5px;
   --default-border-width: 1px;
-
-  /* ---------- Font family ---------- */
-  --font-family-*: initial;
-  --font-family-heading: Inter;
-  --font-family-body: Inter;
-  --font-family-code: IBM Mono;
-
-  /* ---------- Font weight ---------- */
-  --font-weight-*: initial;
-  --font-weight-light: Light;
-  --font-weight-regular: 400;
-  --font-weight-medium: medium;
-  --font-weight-semi-bold: semi bold;
-  --font-weight-bold: bold;
-  --font-weight-heavy: heavy;
-
-  /* ---------- Font size ---------- */
-  --text-*: initial;
-  --text-9: 0.5625rem;
-  --text-10: 0.625rem;
-  --text-11: 0.6875rem;
-  --text-12: 0.75rem;
-  --text-13: 0.8125rem;
-  --text-14: 0.875rem;
-  --text-16: 1rem;
-  --text-18: 1.125rem;
-  --text-20: 1.25rem;
-  --text-24: 1.5rem;
-  --text-28: 1.75rem;
-  --text-32: 2rem;
-  --text-40: 2.5rem;
-
-  /* ---------- Letter spacing ---------- */
-  --tracking-*: initial;
-  --tracking-extra-tight: -0.025rem;
-  --tracking-tight: -0.05rem;
-  --tracking-default: 0;
-  --tracking-wide: 0.05rem;
 }
 
 /* ---------- Light mode color tokens ---------- */
@@ -554,4 +516,19 @@
       --illustration-stroke-3: var(--color-neutral-1000);
     }
   }
+}
+
+@utility outline-* {
+  outline-width: --value(--border-width-*);
+  outline-color: --value(--border-color-*);
+}
+
+@utility px-page-x {
+  padding-left: 1.35rem;
+  padding-right: 1.35rem;
+}
+
+@utility py-page-y {
+  padding-top: 1.35rem;
+  padding-bottom: 1.35rem;
 }
