@@ -5,7 +5,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
-import { isValid, parse, parseISO, set } from "date-fns";
+import { format, isValid, parse, parseISO, set } from "date-fns";
 // editor
 import { ETabIndices, DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
@@ -259,13 +259,17 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     )
       return;
 
-    const normalizedStartTime = normalizeStartTime(formData.start_date ?? null, formData.start_time ?? null);
+    // Ensure we always have a date when a time is provided (fallback to today)
+    const effectiveStartDate =
+      formData.start_date ?? (formData.start_time ? format(new Date(), "yyyy-MM-dd") : null);
+    const normalizedStartTime = normalizeStartTime(effectiveStartDate, formData.start_time ?? null);
+    const basePayload = { ...formData, start_date: effectiveStartDate, start_time: normalizedStartTime };
 
     const submitData = !data?.id
-      ? { ...formData, start_time: normalizedStartTime }
+      ? basePayload
       : {
           ...getChangedIssuefields(
-            { ...formData, start_time: normalizedStartTime },
+            basePayload,
             dirtyFields as { [key: string]: boolean | undefined }
           ),
           project_id: getValues<"project_id">("project_id"),
