@@ -10,7 +10,7 @@ export function LatestFeatureBlock() {
 
   return (
     <>
-      <div className="mx-auto mt-16 flex rounded-[3.5px] border border-subtle-1 bg-surface-1 py-2 sm:w-96">
+      <div className="mx-auto mt-16 flex rounded-[3.5px] border border-subtle bg-surface-1 py-2 sm:w-96">
         <Lightbulb className="mx-3 mr-2 h-7 w-7" />
         <p className="text-left text-13 text-primary">
           Pages gets a facelift! Write anything and use Galileo to help you start.{" "}
@@ -20,7 +20,7 @@ export function LatestFeatureBlock() {
         </p>
       </div>
       <div
-        className={`mx-auto mt-8 overflow-hidden rounded-md border border-subtle-1 object-cover sm:h-52 sm:w-96 ${
+        className={`mx-auto mt-8 overflow-hidden rounded-md border border-subtle object-cover sm:h-52 sm:w-96 ${
           resolvedTheme === "dark" ? "bg-surface-1" : "bg-custom-primary-70"
         }`}
       >

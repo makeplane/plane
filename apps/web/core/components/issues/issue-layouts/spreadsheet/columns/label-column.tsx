@@ -22,7 +22,7 @@ export const SpreadsheetLabelColumn = observer(function SpreadsheetLabelColumn(p
   const defaultLabelOptions = issue?.label_ids?.map((id) => labelMap[id]) || [];
 
   return (
-    <div className="h-11 border-b-[0.5px] border-subtle-1 w-full">
+    <div className="h-11 border-b-[0.5px] border-subtle w-full">
       <IssuePropertyLabels
         projectId={issue.project_id ?? null}
         value={issue.label_ids || []}

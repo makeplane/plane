@@ -44,7 +44,7 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
   const resolvedPath = resolvedTheme === "light" ? lightProgressAsset : darkProgressAsset;
 
   return cycle && cycle.hasOwnProperty("started_issues") ? (
-    <div className="flex flex-col min-h-[17rem] gap-5 py-4 px-3.5 bg-surface-1 border border-subtle-1 rounded-lg">
+    <div className="flex flex-col min-h-[17rem] gap-5 py-4 px-3.5 bg-surface-1 border border-subtle rounded-lg">
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between gap-4">
           <h3 className="text-14 text-tertiary font-semibold">{t("project_cycles.active_cycle.progress")}</h3>
@@ -105,7 +105,7 @@ export const ActiveCycleProgress = observer(function ActiveCycleProgress(props: 
       )}
     </div>
   ) : (
-    <Loader className="flex flex-col min-h-[17rem] gap-5 bg-surface-1 border border-subtle-1 rounded-lg">
+    <Loader className="flex flex-col min-h-[17rem] gap-5 bg-surface-1 border border-subtle rounded-lg">
       <Loader.Item width="100%" height="100%" />
     </Loader>
   );

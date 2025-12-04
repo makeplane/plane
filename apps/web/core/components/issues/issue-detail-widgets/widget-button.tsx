@@ -14,7 +14,7 @@ export function IssueDetailWidgetButton(props: Props) {
   return (
     <div
       className={cn(
-        "h-full w-min whitespace-nowrap flex items-center gap-2 border border-subtle-1 rounded-sm px-3 py-1.5",
+        "h-full w-min whitespace-nowrap flex items-center gap-2 border border-subtle rounded-sm px-3 py-1.5",
         {
           "cursor-not-allowed text-placeholder bg-surface-2": disabled,
           "cursor-pointer text-tertiary hover:bg-layer-1": !disabled,

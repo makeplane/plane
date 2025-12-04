@@ -272,8 +272,8 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                         }}
                         className={`text-13 px-3 py-2 rounded-lg border transition-all duration-200 flex gap-1 items-center justify-between ${
                           isSelected
-                            ? "border-subtle-1 bg-layer-1 text-secondary"
-                            : "border-subtle-1 hover:border-strong text-tertiary"
+                            ? "border-subtle bg-layer-1 text-secondary"
+                            : "border-subtle hover:border-strong text-tertiary"
                         }`}
                       >
                         <CircleCheck className={cn("size-4 text-placeholder", isSelected && "text-secondary")} />

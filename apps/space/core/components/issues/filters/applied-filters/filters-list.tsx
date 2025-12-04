@@ -30,7 +30,7 @@ export const AppliedFiltersList = observer(function AppliedFiltersList(props: Pr
         return (
           <div
             key={filterKey}
-            className="flex flex-wrap items-center gap-2 rounded-md border border-subtle-1 px-2 py-1 capitalize"
+            className="flex flex-wrap items-center gap-2 rounded-md border border-subtle px-2 py-1 capitalize"
           >
             <span className="text-11 text-tertiary">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
             <div className="flex flex-wrap items-center gap-1">
@@ -62,7 +62,7 @@ export const AppliedFiltersList = observer(function AppliedFiltersList(props: Pr
       <button
         type="button"
         onClick={handleRemoveAllFilters}
-        className="flex items-center gap-2 rounded-md border border-subtle-1 px-2 py-1 text-11 text-tertiary hover:text-secondary"
+        className="flex items-center gap-2 rounded-md border border-subtle px-2 py-1 text-11 text-tertiary hover:text-secondary"
       >
         {t("common.clear_all")}
         <CloseIcon height={12} width={12} strokeWidth={2} />

@@ -55,7 +55,7 @@ export const InboxIssueOrderByDropdown = observer(function InboxIssueOrderByDrop
           {inboxSorting?.order_by?.includes(option.key) && <Check className="size-3" />}
         </CustomMenu.MenuItem>
       ))}
-      <hr className="my-2 border-subtle-1" />
+      <hr className="my-2 border-subtle" />
       {INBOX_ISSUE_SORT_BY_OPTIONS.map((option) => (
         <CustomMenu.MenuItem
           key={option.key}

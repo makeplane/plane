@@ -83,7 +83,7 @@ export function DataTable<TData, TValue>({ columns, data, searchPlaceholder, act
             className={cn(
               "mr-auto flex w-0 items-center justify-start gap-1 overflow-hidden rounded-md border border-transparent bg-surface-1 text-placeholder opacity-0 transition-[width] ease-linear",
               {
-                "w-64 border-subtle-1 px-2.5 py-1.5 opacity-100": isSearchOpen,
+                "w-64 border-subtle px-2.5 py-1.5 opacity-100": isSearchOpen,
               }
             )}
           >

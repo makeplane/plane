@@ -101,7 +101,7 @@ export const WebhookForm = observer(function WebhookForm(props: Props) {
           </Button>
         </div>
       ) : (
-        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle-1">
+        <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
           <Button variant="neutral-primary" size="sm" onClick={handleClose}>
             {t("cancel")}
           </Button>

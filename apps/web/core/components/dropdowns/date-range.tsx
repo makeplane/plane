@@ -263,7 +263,7 @@ export const DateRangeDropdown = observer(function DateRangeDropdown(props: Prop
         {...attributes.popper}
       >
         <Calendar
-          className="rounded-md border border-subtle-1 p-3"
+          className="rounded-md border border-subtle p-3"
           captionLayout="dropdown"
           selected={dateRange}
           onSelect={(val: DateRange | undefined) => {

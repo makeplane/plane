@@ -12,7 +12,7 @@ export const SpreadsheetAttachmentColumn = observer(function SpreadsheetAttachme
   const { issue } = props;
 
   return (
-    <Row className="flex h-11 w-full items-center border-b-[0.5px] border-subtle-1 py-1 text-11 hover:bg-layer-1 group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10">
+    <Row className="flex h-11 w-full items-center border-b-[0.5px] border-subtle py-1 text-11 hover:bg-layer-1 group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10">
       {issue?.attachment_count ?? 0} {issue?.attachment_count === 1 ? "attachment" : "attachments"}
     </Row>
   );

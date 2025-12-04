@@ -11,7 +11,7 @@ export const GanttQuickAddIssueButton = observer(function GanttQuickAddIssueButt
   return (
     <button
       type="button"
-      className="sticky bottom-0 z-[1] flex w-full cursor-pointer items-center border-t-[1px] border-subtle-1 bg-surface-1 text-custom-text-350 hover:text-tertiary"
+      className="sticky bottom-0 z-[1] flex w-full cursor-pointer items-center border-t-[1px] border-subtle bg-surface-1 text-custom-text-350 hover:text-tertiary"
       onClick={onClick}
     >
       <Row className="flex py-2 gap-2">

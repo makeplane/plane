@@ -103,7 +103,7 @@ export const CalendarQuickAddIssueActions = observer(function CalendarQuickAddIs
         quickAddCallback={quickAddCallback}
         customQuickAddButton={
           <div
-            className={cn("md:opacity-0 rounded-sm md:border-[0.5px] border-subtle-1 md:group-hover:opacity-100", {
+            className={cn("md:opacity-0 rounded-sm md:border-[0.5px] border-subtle md:group-hover:opacity-100", {
               block: isMenuOpen,
             })}
           >

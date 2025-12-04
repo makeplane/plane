@@ -91,7 +91,7 @@ export function ProjectSettingLabelItem(props: Props) {
         >
           <div
             className={`py-3 px-1 group relative flex items-center justify-between gap-2 space-y-3 rounded-sm  ${
-              isDroppingInLabel ? "" : "border-[0.5px] border-subtle-1"
+              isDroppingInLabel ? "" : "border-[0.5px] border-subtle"
             } ${isDragging || isParentDragging ? "bg-layer-1" : "bg-surface-1"}`}
           >
             {isEditLabelForm ? (

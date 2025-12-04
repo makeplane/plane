@@ -224,7 +224,7 @@ export const ChangeEmailModal: React.FC<Props> = observer((props) => {
                       )}
                     </div>
                   )}
-                  <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle-1 py-4">
+                  <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle py-4">
                     <Button type="button" variant="neutral-primary" size="sm" onClick={handleClose}>
                       {changeEmailT("actions.cancel")}
                     </Button>

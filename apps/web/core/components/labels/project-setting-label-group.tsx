@@ -88,7 +88,7 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
           <Disclosure
             as="div"
             className={`rounded-sm  text-primary ${
-              !isDroppingInLabel ? "border-[0.5px] border-subtle-1" : ""
+              !isDroppingInLabel ? "border-[0.5px] border-subtle" : ""
             } ${isDragging ? "bg-layer-1" : "bg-surface-1"}`}
             defaultOpen
           >

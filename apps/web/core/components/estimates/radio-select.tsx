@@ -54,7 +54,7 @@ export function RadioInput({
             onClick={() => !disabled && setSelected(value)}
             className={cn(
               "flex items-center gap-2 text-14",
-              disabled ? `bg-custom-background-200 border-subtle-1 cursor-not-allowed` : ``,
+              disabled ? `bg-custom-background-200 border-subtle cursor-not-allowed` : ``,
               inputFieldClassName
             )}
           >
@@ -64,7 +64,7 @@ export function RadioInput({
               className={cn(
                 `group flex flex-shrink-0 size-5 items-center justify-center rounded-full border border-strong-1 bg-custom-background-500 cursor-pointer`,
                 selected === value ? `bg-custom-primary-200 border-accent-strong ` : ``,
-                disabled ? `bg-custom-background-200 border-subtle-1 cursor-not-allowed` : ``,
+                disabled ? `bg-custom-background-200 border-subtle cursor-not-allowed` : ``,
                 inputButtonClassName
               )}
               type="radio"

@@ -117,7 +117,7 @@ export const TransferIssuesModal = observer(function TransferIssuesModal(props: 
                       <CloseIcon className="h-4 w-4" />
                     </button>
                   </div>
-                  <div className="flex items-center gap-2 border-b border-subtle-1 px-5 pb-3">
+                  <div className="flex items-center gap-2 border-b border-subtle px-5 pb-3">
                     <Search className="h-4 w-4 text-secondary" />
                     <input
                       className="outline-none text-13"

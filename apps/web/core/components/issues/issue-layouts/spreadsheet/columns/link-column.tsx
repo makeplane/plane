@@ -12,7 +12,7 @@ export const SpreadsheetLinkColumn = observer(function SpreadsheetLinkColumn(pro
   const { issue } = props;
 
   return (
-    <Row className="flex h-11 w-full items-center border-b-[0.5px] border-subtle-1 px-2.5 py-1 text-11 hover:bg-layer-1 group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10 px-page-x">
+    <Row className="flex h-11 w-full items-center border-b-[0.5px] border-subtle px-2.5 py-1 text-11 hover:bg-layer-1 group-[.selected-issue-row]:bg-accent-primary/5 group-[.selected-issue-row]:hover:bg-accent-primary/10 px-page-x">
       {issue?.link_count ?? 0} {issue?.link_count === 1 ? "link" : "links"}
     </Row>
   );

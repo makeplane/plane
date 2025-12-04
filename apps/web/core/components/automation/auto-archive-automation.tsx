@@ -100,7 +100,7 @@ export const AutoArchiveAutomation = observer(function AutoArchiveAutomation(pro
         {currentProjectDetails ? (
           autoArchiveStatus && (
             <div className="mx-6">
-              <div className="flex w-full items-center justify-between gap-2 rounded-sm border border-subtle-1 bg-surface-2 px-5 py-4">
+              <div className="flex w-full items-center justify-between gap-2 rounded-sm border border-subtle bg-surface-2 px-5 py-4">
                 <div className="w-1/2 text-13 font-medium">
                   {t("project_settings.automations.auto-archive.duration")}
                 </div>

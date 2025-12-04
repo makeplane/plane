@@ -38,7 +38,7 @@ export const FiltersDropdown = observer(function FiltersDropdown(props: TFilters
       className={cn("flex justify-center text-11 text-secondary w-fit ", className)}
       placement="bottom-start"
       customButton={
-        <button className="flex hover:bg-layer-1 px-2 py-1 rounded-sm gap-1 capitalize border border-subtle-1">
+        <button className="flex hover:bg-layer-1 px-2 py-1 rounded-sm gap-1 capitalize border border-subtle">
           <span className="font-medium text-13 my-auto"> {t(title || "")}</span>
           <ChevronDownIcon className={cn("size-3 my-auto text-tertiary hover:text-secondary duration-300")} />
         </button>

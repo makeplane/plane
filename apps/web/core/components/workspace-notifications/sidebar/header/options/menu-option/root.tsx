@@ -74,7 +74,7 @@ export const NotificationHeaderMenuOption = observer(function NotificationHeader
       data={popoverMenuOptions}
       buttonClassName="flex-shrink-0 w-5 h-5 flex justify-center items-center overflow-hidden cursor-pointer transition-all hover:bg-layer-1 bg-surface-1 rounded-xs outline-none"
       keyExtractor={(item: TPopoverMenuOptions) => item.key}
-      panelClassName="p-0 py-2 rounded-md border border-subtle-1 bg-surface-1 space-y-1"
+      panelClassName="p-0 py-2 rounded-md border border-subtle bg-surface-1 space-y-1"
       render={(item: TPopoverMenuOptions) => <NotificationMenuOptionItem {...item} />}
     />
   );

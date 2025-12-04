@@ -38,7 +38,7 @@ export const HorizontalStackAssets: Story = {
         {HorizontalStackAssetsMap.map((item) => (
           <div
             key={item.title}
-            className="col-span-6 flex flex-col items-center justify-center gap-3 rounded-lg border border-subtle-1 bg-surface-1 p-6 sm:col-span-4 lg:col-span-3"
+            className="col-span-6 flex flex-col items-center justify-center gap-3 rounded-lg border border-subtle bg-surface-1 p-6 sm:col-span-4 lg:col-span-3"
           >
             <div className="flex h-24 w-24 items-center justify-center">{item.asset}</div>
             <p className="text-center text-11 font-medium text-secondary">{item.title}</p>
@@ -71,7 +71,7 @@ export const VerticalStackAssets: Story = {
         {VerticalStackAssetsMap.map((item) => (
           <div
             key={item.title}
-            className="col-span-6 flex flex-col items-center justify-center gap-3 rounded-lg border border-subtle-1 bg-surface-1 p-6 sm:col-span-4 lg:col-span-3"
+            className="col-span-6 flex flex-col items-center justify-center gap-3 rounded-lg border border-subtle bg-surface-1 p-6 sm:col-span-4 lg:col-span-3"
           >
             <div className="flex h-32 w-32 items-center justify-center">{item.asset}</div>
             <p className="text-center text-11 font-medium text-secondary">
@@ -109,7 +109,7 @@ export const IllustrationAssets: Story = {
         {IllustrationMap.map((item) => (
           <div
             key={item.title}
-            className="col-span-6 flex flex-col items-center justify-center gap-3 rounded-lg border border-subtle-1 bg-surface-1 p-6 sm:col-span-4 lg:col-span-3"
+            className="col-span-6 flex flex-col items-center justify-center gap-3 rounded-lg border border-subtle bg-surface-1 p-6 sm:col-span-4 lg:col-span-3"
           >
             <div className="flex h-24 w-24 items-center justify-center">{item.asset}</div>
             <p className="text-center text-11 font-medium text-secondary">{item.title}</p>
@@ -141,7 +141,7 @@ export const AllAssets: Story = {
           {HorizontalStackAssetsMap.map((item) => (
             <div
               key={item.title}
-              className="col-span-6 flex flex-col items-center justify-center gap-2 rounded-sm border border-subtle-1 bg-surface-1 p-4 sm:col-span-3 lg:col-span-2"
+              className="col-span-6 flex flex-col items-center justify-center gap-2 rounded-sm border border-subtle bg-surface-1 p-4 sm:col-span-3 lg:col-span-2"
             >
               <div className="flex h-16 w-16 items-center justify-center">{item.asset}</div>
               <code className="text-10 text-placeholder">{item.title.toLowerCase().replace(/\s+/g, "-")}</code>
@@ -160,7 +160,7 @@ export const AllAssets: Story = {
           {VerticalStackAssetsMap.map((item) => (
             <div
               key={item.title}
-              className="col-span-6 flex flex-col items-center justify-center gap-2 rounded-sm border border-subtle-1 bg-surface-1 p-4 sm:col-span-3 lg:col-span-2"
+              className="col-span-6 flex flex-col items-center justify-center gap-2 rounded-sm border border-subtle bg-surface-1 p-4 sm:col-span-3 lg:col-span-2"
             >
               <div className="flex h-20 w-20 items-center justify-center">{item.asset}</div>
               <code className="text-center text-10 text-placeholder">
@@ -185,7 +185,7 @@ export const AllAssets: Story = {
           {IllustrationMap.map((item) => (
             <div
               key={item.title}
-              className="col-span-6 flex flex-col items-center justify-center gap-2 rounded-sm border border-subtle-1 bg-surface-1 p-4 sm:col-span-3 lg:col-span-2"
+              className="col-span-6 flex flex-col items-center justify-center gap-2 rounded-sm border border-subtle bg-surface-1 p-4 sm:col-span-3 lg:col-span-2"
             >
               <div className="flex h-16 w-16 items-center justify-center">{item.asset}</div>
               <code className="text-10 text-placeholder">{item.title.toLowerCase()}</code>

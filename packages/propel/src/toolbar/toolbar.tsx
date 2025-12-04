@@ -58,7 +58,7 @@ const ToolbarGroup = React.forwardRef(function ToolbarGroup(
     <div
       ref={ref}
       className={cn(
-        "flex items-stretch gap-0.5 border-r border-subtle-1 px-2.5",
+        "flex items-stretch gap-0.5 border-r border-subtle px-2.5",
         {
           "pl-0": isFirst,
         },
@@ -125,7 +125,7 @@ const ToolbarSeparator = React.forwardRef(function ToolbarSeparator(
 
 const buttonVariants = {
   primary: "bg-accent-primary text-white hover:bg-custom-primary-200 focus:bg-custom-primary-200",
-  secondary: "bg-surface-1 text-secondary border border-subtle-1 hover:bg-surface-2 focus:bg-surface-2",
+  secondary: "bg-surface-1 text-secondary border border-subtle hover:bg-surface-2 focus:bg-surface-2",
   outline:
     "border border-accent-strong text-accent-primary bg-transparent hover:bg-accent-primary/10 focus:bg-accent-primary/20",
   ghost: "text-secondary hover:bg-surface-2 focus:bg-surface-2",

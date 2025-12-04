@@ -48,7 +48,7 @@ export function InputColorPicker(props: InputColorPickerProps) {
         onChange={handleInputChange}
         hasError={hasError}
         placeholder={placeholder}
-        className={cn("border-[0.5px] border-subtle-1", className)}
+        className={cn("border-[0.5px] border-subtle", className)}
         style={style}
       />
 
@@ -96,7 +96,7 @@ export function InputColorPicker(props: InputColorPickerProps) {
               >
                 <Popover.Panel>
                   <div
-                    className="z-10 overflow-hidden rounded-sm border border-subtle-1 bg-surface-1 shadow-custom-shadow-rg"
+                    className="z-10 overflow-hidden rounded-sm border border-subtle bg-surface-1 shadow-custom-shadow-rg"
                     ref={setPopperElement}
                     style={styles.popper}
                     {...attributes.popper}

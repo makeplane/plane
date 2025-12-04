@@ -203,7 +203,7 @@ export function EditorAIMenu(props: Props) {
                   "items-start": response,
                 })}
               >
-                <span className="flex-shrink-0 size-7 grid place-items-center text-secondary rounded-full border border-subtle-1">
+                <span className="flex-shrink-0 size-7 grid place-items-center text-secondary rounded-full border border-subtle">
                   <Sparkles className="size-3" />
                 </span>
                 {response ? (
@@ -289,7 +289,7 @@ export function EditorAIMenu(props: Props) {
         </div>
       </div>
       {activeTask && (
-        <div className="bg-surface-2 rounded-b-md py-2 px-4 text-tertiary flex items-center gap-2 border-t border-subtle-1">
+        <div className="bg-surface-2 rounded-b-md py-2 px-4 text-tertiary flex items-center gap-2 border-t border-subtle">
           <span className="flex-shrink-0 size-4 grid place-items-center">
             <TriangleAlert className="size-3" />
           </span>

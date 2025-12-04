@@ -65,7 +65,7 @@ export function ProjectOrderByDropdown(props: Props) {
           {value?.includes(option.key) && <Check className="h-3 w-3" />}
         </CustomMenu.MenuItem>
       ))}
-      <hr className="my-2 border-subtle-1" />
+      <hr className="my-2 border-subtle" />
       <CustomMenu.MenuItem
         className="flex items-center justify-between gap-2"
         onClick={() => {

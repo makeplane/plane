@@ -194,7 +194,7 @@ export const CreateEstimateModal = observer(function CreateEstimateModal(props: 
           )} */}
         </div>
 
-        <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-subtle-1">
+        <div className="relative flex justify-end items-center gap-3 px-5 pt-5 border-t border-subtle">
           <Button variant="neutral-primary" size="sm" onClick={handleClose} disabled={buttonLoader}>
             {t("common.cancel")}
           </Button>

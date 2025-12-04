@@ -45,7 +45,7 @@ export const AdminSidebarHelpSection = observer(function AdminSidebarHelpSection
   return (
     <div
       className={cn(
-        "flex w-full items-center justify-between gap-1 self-baseline border-t border-subtle-1 bg-surface-1 px-4 h-14 flex-shrink-0",
+        "flex w-full items-center justify-between gap-1 self-baseline border-t border-subtle bg-surface-1 px-4 h-14 flex-shrink-0",
         {
           "flex-col h-auto py-1.5": isSidebarCollapsed,
         }

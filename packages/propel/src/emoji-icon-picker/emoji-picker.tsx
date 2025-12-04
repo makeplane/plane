@@ -126,7 +126,7 @@ export function EmojiPicker(props: TCustomEmojiPicker) {
                 key={tab.key}
                 value={tab.key}
                 className={({ selected }) =>
-                  cn("py-1 text-13 rounded-sm border border-subtle-1 bg-layer-1", {
+                  cn("py-1 text-13 rounded-sm border border-subtle bg-layer-1", {
                     "bg-surface-1 text-primary": selected,
                     "text-placeholder hover:text-tertiary hover:bg-layer-1/60": !selected,
                   })

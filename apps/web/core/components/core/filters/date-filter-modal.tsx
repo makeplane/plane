@@ -94,7 +94,7 @@ export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props)
                         const date2Value = getDate(watch("date2"));
                         return (
                           <Calendar
-                            className="rounded-md border border-subtle-1 p-3"
+                            className="rounded-md border border-subtle p-3"
                             captionLayout="dropdown"
                             selected={dateValue}
                             defaultMonth={dateValue}
@@ -117,7 +117,7 @@ export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props)
                           const date1Value = getDate(watch("date1"));
                           return (
                             <Calendar
-                              className="rounded-md border border-subtle-1 p-3"
+                              className="rounded-md border border-subtle p-3"
                               captionLayout="dropdown"
                               selected={dateValue}
                               defaultMonth={dateValue}

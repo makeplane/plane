@@ -36,7 +36,7 @@ export const ActivityFilter = observer(function ActivityFilter(props: TActivityF
           )}
         </Button>
       }
-      panelClassName="p-2 rounded-md border border-subtle-1 bg-surface-1"
+      panelClassName="p-2 rounded-md border border-subtle bg-surface-1"
       data={filterOptions}
       keyExtractor={(item) => item.key}
       render={(item) => (

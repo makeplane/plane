@@ -300,7 +300,7 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
         )}
 
         {/* modal handlers */}
-        <div className="relative flex items-center justify-between border-t border-subtle-1 px-5 py-4 mt-4">
+        <div className="relative flex items-center justify-between border-t border-subtle px-5 py-4 mt-4">
           <div className="flex items-center gap-1 text-13 text-placeholder">
             <Globe2 className="size-3.5" />
             <div className="text-13">Anyone with the link can access</div>

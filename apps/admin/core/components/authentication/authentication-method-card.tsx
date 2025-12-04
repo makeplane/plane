@@ -17,7 +17,7 @@ export function AuthenticationMethodCard(props: Props) {
   return (
     <div
       className={cn("w-full flex items-center gap-14 rounded-sm", {
-        "px-4 py-3 border border-subtle-1": withBorder,
+        "px-4 py-3 border border-subtle": withBorder,
       })}
     >
       <div

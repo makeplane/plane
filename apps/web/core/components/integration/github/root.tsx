@@ -162,7 +162,7 @@ export function GithubImporterRoot() {
           </span>
         </Link>
 
-        <div className="space-y-4 rounded-[10px] border border-subtle-1 bg-surface-1 p-4">
+        <div className="space-y-4 rounded-[10px] border border-subtle bg-surface-1 p-4">
           <div className="flex items-center gap-2">
             <div className="h-10 w-10 flex-shrink-0">
               <img src={GithubLogo} className="w-full h-full object-cover" alt="GitHubLogo" />
@@ -178,7 +178,7 @@ export function GithubImporterRoot() {
                               ? "border-opacity-100 bg-opacity-100"
                               : "border-opacity-80 bg-opacity-80"
                           }`
-                        : "border-subtle-1"
+                        : "border-subtle"
                     }`}
                   >
                     <integration.icon
@@ -189,7 +189,7 @@ export function GithubImporterRoot() {
                     <div
                       key={index}
                       className={`border-b px-7 ${
-                        index <= activeIntegrationState() - 1 ? `border-custom-primary` : `border-subtle-1`
+                        index <= activeIntegrationState() - 1 ? `border-custom-primary` : `border-subtle`
                       }`}
                     >
                       {" "}

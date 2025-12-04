@@ -46,7 +46,7 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
         <div className="flex items-center justify-between gap-1 rounded-sm p-1 text-13 text-primary ">
           <div className="flex items-center justify-start gap-2.5 w-[80%] relative">
             <span
-              className={`relative flex h-8 w-8 flex-shrink-0 items-center  justify-center p-2 text-14 uppercase font-medium border-subtle-1 ${
+              className={`relative flex h-8 w-8 flex-shrink-0 items-center  justify-center p-2 text-14 uppercase font-medium border-subtle ${
                 !workspace?.logo_url && "rounded-md bg-[#026292] text-white"
               }`}
             >
@@ -88,7 +88,7 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
                 <Link
                   href={`/${workspace.slug}/settings`}
                   onClick={handleClose}
-                  className="flex border border-subtle-1 rounded-md py-1 px-2 gap-1 bg-surface-1 hover:shadow-sm hover:text-secondary text-tertiary hover:border-strong "
+                  className="flex border border-subtle rounded-md py-1 px-2 gap-1 bg-surface-1 hover:shadow-sm hover:text-secondary text-tertiary hover:border-strong "
                 >
                   <Settings className="h-4 w-4 my-auto" />
                   <span className="text-13 font-medium my-auto">{t("settings")}</span>
@@ -98,7 +98,7 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
                 <Link
                   href={`/${workspace.slug}/settings/members`}
                   onClick={handleClose}
-                  className="flex border border-subtle-1 rounded-md py-1 px-2 gap-1 bg-surface-1 hover:shadow-sm hover:text-secondary text-tertiary hover:border-strong "
+                  className="flex border border-subtle rounded-md py-1 px-2 gap-1 bg-surface-1 hover:shadow-sm hover:text-secondary text-tertiary hover:border-strong "
                 >
                   <UserPlus className="h-4 w-4 my-auto" />
                   <span className="text-13 font-medium my-auto">

@@ -39,7 +39,7 @@ const TextArea = React.forwardRef(function TextArea(
       className={cn(
         "no-scrollbar w-full bg-transparent placeholder-custom-text-400 outline-none",
         {
-          "rounded-md border-[0.5px] border-subtle-1": mode === "primary",
+          "rounded-md border-[0.5px] border-subtle": mode === "primary",
           "focus:ring-theme rounded-sm border-none bg-transparent ring-0 transition-all focus:ring-1":
             mode === "transparent",
           "rounded-sm border-none bg-transparent ring-0": mode === "true-transparent",

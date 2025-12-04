@@ -128,7 +128,7 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
     <div className="w-full flex items-start gap-2">
       <div className="w-full flex flex-wrap items-center gap-2">{leftContent}</div>
       <div
-        className={cn("flex items-center gap-2 border-l border-subtle-1 pl-4", {
+        className={cn("flex items-center gap-2 border-l border-subtle pl-4", {
           "border-l-transparent pl-0": !hasAvailableOperations,
         })}
       >

@@ -38,7 +38,7 @@ export const SidePeekView = observer(function SidePeekView(props: Props) {
             <PeekOverviewIssueProperties issueDetails={issueDetails} />
           </div>
           {/* divider */}
-          <div className="my-5 h-[1] w-full border-t border-subtle-1" />
+          <div className="my-5 h-[1] w-full border-t border-subtle" />
           {/* issue activity/comments */}
           {canComment && (
             <div className="w-full pb-5">

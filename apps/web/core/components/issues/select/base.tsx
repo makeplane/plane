@@ -243,7 +243,7 @@ export const WorkItemLabelSelectBase = observer(function WorkItemLabelSelectBase
                         );
                     } else
                       return (
-                        <div key={label.id} className="border-y border-subtle-1">
+                        <div key={label.id} className="border-y border-subtle">
                           <div className="flex select-none items-center gap-2 truncate p-2 text-primary">
                             <Component className="h-3 w-3" /> {label.name}
                           </div>

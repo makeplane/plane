@@ -196,7 +196,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
           {/* Personal Section */}
           <div className="flex flex-col gap-2">
             <h3 className="text-13 font-semibold text-placeholder">{t("personal")}</h3>
-            <div className="border border-subtle-1 rounded-md py-2 bg-surface-2">
+            <div className="border border-subtle rounded-md py-2 bg-surface-2">
               <Sortable
                 data={personalItems}
                 onChange={handlePersonalReorder}
@@ -224,7 +224,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
           {/* Workspace Section */}
           <div className="flex flex-col gap-2">
             <h3 className="text-13 font-semibold text-placeholder">{t("workspace")}</h3>
-            <div className="border border-subtle-1 rounded-md py-2 bg-surface-2">
+            <div className="border border-subtle rounded-md py-2 bg-surface-2">
               {/* Pinned Items - Draggable */}
               <Sortable
                 data={workspaceItems}
@@ -255,7 +255,7 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
           <div className="flex flex-col gap-2">
             <h3 className="text-13 font-semibold text-placeholder">{t("projects")}</h3>
 
-            <div className="border border-subtle-1 rounded-md px-2 py-2 bg-surface-2">
+            <div className="border border-subtle rounded-md px-2 py-2 bg-surface-2">
               <div className="space-y-3">
                 {/* Navigation Mode Radio Buttons */}
                 <div className="space-y-2">

@@ -13,7 +13,7 @@ export function ApiTokenEmptyState(props: Props) {
 
   return (
     <div
-      className={`mx-auto flex w-full items-center justify-center rounded-xs border border-subtle-1 bg-surface-2 px-16 py-10 lg:w-3/4`}
+      className={`mx-auto flex w-full items-center justify-center rounded-xs border border-subtle bg-surface-2 px-16 py-10 lg:w-3/4`}
     >
       <div className="flex w-full flex-col items-center text-center">
         <img src={emptyApiTokens} className="w-52 sm:w-60 object-contain" alt="empty" />

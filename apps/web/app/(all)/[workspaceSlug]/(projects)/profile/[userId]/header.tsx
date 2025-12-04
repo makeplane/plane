@@ -71,7 +71,7 @@ export const UserProfileHeader = observer(function UserProfileHeader(props: TUse
             className="flex flex-grow justify-center text-13 text-secondary"
             placement="bottom-start"
             customButton={
-              <div className="flex items-center gap-2 rounded-md border border-subtle-1 px-2 py-1.5">
+              <div className="flex items-center gap-2 rounded-md border border-subtle px-2 py-1.5">
                 <span className="flex flex-grow justify-center text-13 text-secondary">{type}</span>
                 <ChevronDownIcon className="h-4 w-4 text-placeholder" />
               </div>

@@ -432,7 +432,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
         )}
 
         <div className="flex flex-col">
-          <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-subtle-1 px-1.5 py-5">
+          <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-subtle px-1.5 py-5">
             {/* Accessing link outside the disclosure as mobx is not  considering the children inside Disclosure as part of the component hence not observing their state change*/}
             <Disclosure defaultOpen={!!moduleDetails?.link_module?.length}>
               {({ open }) => (

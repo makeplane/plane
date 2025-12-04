@@ -147,7 +147,7 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
             {...attributes.popper}
           >
             <div className="px-2">
-              <div className="flex w-full items-center justify-start rounded-sm border border-subtle-1 bg-surface-2 px-2">
+              <div className="flex w-full items-center justify-start rounded-sm border border-subtle bg-surface-2 px-2">
                 <Search className="h-3.5 w-3.5 text-tertiary" />
                 <Combobox.Input
                   className="w-full bg-transparent px-2 py-1 text-11 text-secondary placeholder:text-placeholder focus:outline-none"

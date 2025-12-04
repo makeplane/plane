@@ -50,7 +50,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
 
   return (
     <div
-      className={cn("space-y-1 border border-subtle-1 rounded-sm bg-surface-2 transition-all p-2", groupItemClassName)}
+      className={cn("space-y-1 border border-subtle rounded-sm bg-surface-2 transition-all p-2", groupItemClassName)}
       ref={dropElementRef}
     >
       <div className="flex justify-between items-center gap-2">

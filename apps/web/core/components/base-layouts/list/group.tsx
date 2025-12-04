@@ -38,7 +38,7 @@ export const BaseListGroup = observer(function BaseListGroup<T extends IBaseLayo
       })}
     >
       {/* Group Header */}
-      <Row className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-subtle-1 bg-surface-2 py-1">
+      <Row className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-subtle bg-surface-2 py-1">
         {renderGroupHeader ? (
           renderGroupHeader({ group, itemCount: itemIds.length, isCollapsed, onToggleGroup })
         ) : (

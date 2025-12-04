@@ -190,7 +190,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
 
       {isOpen && (
         <Popover.Panel
-          className="absolute right-0 z-20 mt-2 rounded-md border border-subtle-1 bg-surface-1 shadow-custom-shadow-sm"
+          className="absolute right-0 z-20 mt-2 rounded-md border border-subtle bg-surface-1 shadow-custom-shadow-sm"
           static
         >
           <div
@@ -305,7 +305,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                         {...getRootProps()}
                         className={`relative grid h-full w-full cursor-pointer place-items-center rounded-lg p-12 text-center focus:outline-none focus:ring-2 focus:ring-custom-primary focus:ring-offset-2 ${
                           (image === null && isDragActive) || !value
-                            ? "border-2 border-dashed border-subtle-1 hover:bg-surface-2"
+                            ? "border-2 border-dashed border-subtle hover:bg-surface-2"
                             : ""
                         }`}
                       >

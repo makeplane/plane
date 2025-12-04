@@ -50,7 +50,7 @@ export const ProjectSearch = observer(function ProjectSearch() {
         className={cn(
           "ml-auto flex items-center justify-start gap-1 rounded-md border border-transparent bg-surface-1 text-placeholder w-0 transition-[width] ease-linear overflow-hidden opacity-0",
           {
-            "w-30 md:w-64 px-2.5 py-1.5 border-subtle-1 opacity-100": isSearchOpen,
+            "w-30 md:w-64 px-2.5 py-1.5 border-subtle opacity-100": isSearchOpen,
           }
         )}
       >

@@ -95,7 +95,7 @@ export function IssueCommentToolbar(props: Props) {
   return (
     <div className="flex h-9 w-full items-stretch gap-1.5 bg-surface-2 overflow-x-scroll">
       {showAccessSpecifier && (
-        <div className="flex flex-shrink-0 items-stretch gap-0.5 rounded-sm border-[0.5px] border-subtle-1 p-1">
+        <div className="flex flex-shrink-0 items-stretch gap-0.5 rounded-sm border-[0.5px] border-subtle p-1">
           {COMMENT_ACCESS_SPECIFIERS.map((access) => {
             const isAccessActive = accessSpecifier === access.key;
 
@@ -120,12 +120,12 @@ export function IssueCommentToolbar(props: Props) {
           })}
         </div>
       )}
-      <div className="flex w-full items-stretch justify-between gap-2 rounded-sm border-[0.5px] border-subtle-1 p-1">
+      <div className="flex w-full items-stretch justify-between gap-2 rounded-sm border-[0.5px] border-subtle p-1">
         <div className="flex items-stretch">
           {Object.keys(toolbarItems).map((key, index) => (
             <div
               key={key}
-              className={cn("flex items-stretch gap-0.5 border-r border-subtle-1 px-2.5", {
+              className={cn("flex items-stretch gap-0.5 border-r border-subtle px-2.5", {
                 "pl-0": index === 0,
               })}
             >

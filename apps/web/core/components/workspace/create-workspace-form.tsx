@@ -166,7 +166,7 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
             {t("workspace_creation.form.url.label")}
             <span className="ml-0.5 text-red-500">*</span>
           </label>
-          <div className="flex w-full items-center rounded-md border-[0.5px] border-subtle-1 px-3">
+          <div className="flex w-full items-center rounded-md border-[0.5px] border-subtle px-3">
             <span className="whitespace-nowrap text-13 text-secondary">{window && window.location.host}/</span>
             <Controller
               control={control}
@@ -225,7 +225,7 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
                       </span>
                     )
                   }
-                  buttonClassName="!border-[0.5px] !border-subtle-1 !shadow-none"
+                  buttonClassName="!border-[0.5px] !border-subtle !shadow-none"
                   input
                 >
                   {ORGANIZATION_SIZE.map((item) => (

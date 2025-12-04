@@ -173,7 +173,7 @@ export function ResizableSidebar({
       {/* Main Sidebar */}
       <div
         className={cn(
-          "h-full z-20 bg-surface-1 border-r border-subtle-1",
+          "h-full z-20 bg-surface-1 border-r border-subtle",
           !isResizing && "transition-all duration-300 ease-in-out",
           isCollapsed ? "translate-x-[-100%] opacity-0 w-0" : "translate-x-0 opacity-100",
           isMobile && "absolute",
@@ -232,7 +232,7 @@ export function ResizableSidebar({
         <aside
           className={cn(
             "group/sidebar h-full w-full bg-surface-1 overflow-hidden relative flex flex-col z-20 pt-4",
-            "self-center border-r border-subtle-1 rounded-md rounded-tl-none rounded-bl-none",
+            "self-center border-r border-subtle rounded-md rounded-tl-none rounded-bl-none",
             isAnyExtendedSidebarExpanded && "rounded-none"
           )}
         >

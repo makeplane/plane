@@ -71,7 +71,7 @@ export const AdminHeader = observer(function AdminHeader() {
   const breadcrumbItems = generateBreadcrumbItems(pathName);
 
   return (
-    <div className="relative z-10 flex h-header w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-subtle-1 bg-surface-1 p-4">
+    <div className="relative z-10 flex h-header w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-subtle bg-surface-1 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <HamburgerToggle />
         {breadcrumbItems.length >= 0 && (

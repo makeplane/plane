@@ -78,7 +78,7 @@ const EmojiReaction = React.forwardRef(function EmojiReaction(
         "inline-flex items-center rounded-full border px-1.5 text-11 gap-0.5 transition-all duration-200",
         reacted
           ? "bg-accent-primary/10 border-accent-strong text-accent-primary"
-          : "bg-surface-1 border-subtle-1 text-tertiary hover:border-strong hover:bg-surface-2",
+          : "bg-surface-1 border-subtle text-tertiary hover:border-strong hover:bg-surface-2",
         className
       )}
       {...props}

@@ -234,7 +234,7 @@ export function LabelDropdown(props: ILabelDropdownProps) {
               style={styles.popper}
               {...attributes.popper}
             >
-              <div className="flex w-full items-center justify-start rounded-sm border border-subtle-1 bg-surface-2 px-2">
+              <div className="flex w-full items-center justify-start rounded-sm border border-subtle bg-surface-2 px-2">
                 <Search className="h-3.5 w-3.5 text-tertiary" />
                 <Combobox.Input
                   ref={inputRef}

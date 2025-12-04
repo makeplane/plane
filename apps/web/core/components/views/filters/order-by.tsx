@@ -59,7 +59,7 @@ export function ViewOrderByDropdown(props: Props) {
           {sortKey === option.key && <Check className="h-3 w-3" />}
         </CustomMenu.MenuItem>
       ))}
-      <hr className="my-2 border-subtle-1" />
+      <hr className="my-2 border-subtle" />
       {VIEW_SORT_BY_OPTIONS.map((option) => {
         const isSelected = (option.key === "asc" && !isDescending) || (option.key === "desc" && isDescending);
         return (

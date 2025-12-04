@@ -5,7 +5,7 @@ export function InboxSidebarLoader() {
   return (
     <div className="flex flex-col">
       {range(6).map((index) => (
-        <div key={index} className="flex flex-col gap-2.5 h-[105px] space-y-3 border-b border-subtle-1 p-4">
+        <div key={index} className="flex flex-col gap-2.5 h-[105px] space-y-3 border-b border-subtle p-4">
           <div className="flex flex-col gap-2">
             <span className="h-5 w-16 bg-layer-1 rounded-sm" />
             <span className="h-5 w-36 bg-layer-1 rounded-sm" />

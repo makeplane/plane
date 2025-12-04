@@ -14,7 +14,7 @@ export const GlobalDefaultViewListItem = observer(function GlobalDefaultViewList
   const { t } = useTranslation();
 
   return (
-    <div className="group border-b border-subtle-1 hover:bg-surface-2">
+    <div className="group border-b border-subtle hover:bg-surface-2">
       <Link href={`/${workspaceSlug}/workspace-views/${view.key}`}>
         <div className="relative flex w-full h-[52px] items-center justify-between rounded-sm px-5 py-4">
           <div className="flex w-full items-center justify-between">

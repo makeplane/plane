@@ -180,7 +180,7 @@ export const OnFileCard: Story = {
     return (
       <ContextMenu>
         <ContextMenu.Trigger>
-          <div className="w-64 p-4 border border-subtle-1 rounded-lg hover:bg-layer-1 cursor-pointer">
+          <div className="w-64 p-4 border border-subtle rounded-lg hover:bg-layer-1 cursor-pointer">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-accent-primary rounded-sm flex items-center justify-center text-white text-16">
                 📄
@@ -259,7 +259,7 @@ export const OnText: Story = {
     return (
       <ContextMenu>
         <ContextMenu.Trigger>
-          <div className="w-96 p-6 border border-subtle-1 rounded-lg">
+          <div className="w-96 p-6 border border-subtle rounded-lg">
             <h3 className="text-16 font-semibold mb-2">Context Menu on Text</h3>
             <p className="text-tertiary">
               Right click anywhere on this text area to see the context menu. This demonstrates how context menus can be

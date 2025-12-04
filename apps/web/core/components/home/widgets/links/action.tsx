@@ -10,7 +10,7 @@ export function AddLink(props: TProps) {
 
   return (
     <button
-      className="btn btn-primary flex bg-surface-1 px-4 w-[230px] h-[56px] border-[0.5px] border-subtle-1 rounded-md gap-4"
+      className="btn btn-primary flex bg-surface-1 px-4 w-[230px] h-[56px] border-[0.5px] border-subtle rounded-md gap-4"
       onClick={onClick}
     >
       <div className="rounded-sm p-2 bg-layer-1/40 w-8 h-8 my-auto">

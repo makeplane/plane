@@ -56,7 +56,7 @@ export function PageOrderByDropdown(props: Props) {
           {sortKey === option.key && <Check className="h-3 w-3" />}
         </CustomMenu.MenuItem>
       ))}
-      <hr className="my-2 border-subtle-1" />
+      <hr className="my-2 border-subtle" />
       <CustomMenu.MenuItem
         className="flex items-center justify-between gap-2"
         onClick={() => {

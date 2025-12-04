@@ -116,7 +116,7 @@ export const ProfileLayoutSidebar = observer(function ProfileLayoutSidebar() {
 
   return (
     <div
-      className={`fixed inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-r border-subtle-1 bg-surface-1 duration-300 md:relative 
+      className={`fixed inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-r border-subtle bg-surface-1 duration-300 md:relative 
         ${sidebarCollapsed ? "-ml-[250px]" : ""}
         sm:${sidebarCollapsed ? "-ml-[250px]" : ""}
         md:ml-0 ${sidebarCollapsed ? "w-[70px]" : "w-[250px]"}

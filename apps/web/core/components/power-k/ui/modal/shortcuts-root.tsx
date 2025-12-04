@@ -63,7 +63,7 @@ export function ShortcutsModal(props: Props) {
                       <CloseIcon className="h-4 w-4 text-secondary hover:text-primary" aria-hidden="true" />
                     </button>
                   </Dialog.Title>
-                  <div className="flex w-full items-center rounded-sm border-[0.5px] border-subtle-1 bg-surface-2 px-2">
+                  <div className="flex w-full items-center rounded-sm border-[0.5px] border-subtle bg-surface-2 px-2">
                     <Search className="h-3.5 w-3.5 text-secondary" />
                     <Input
                       id="search"

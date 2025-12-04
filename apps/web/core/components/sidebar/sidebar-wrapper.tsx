@@ -76,7 +76,7 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
           {children}
         </ScrollArea>
         {/* Help Section */}
-        <div className="flex items-center justify-between p-3 border-t border-subtle-1 bg-surface-1 h-12">
+        <div className="flex items-center justify-between p-3 border-t border-subtle bg-surface-1 h-12">
           <WorkspaceEditionBadge />
           {/* TODO: To be checked if we need this */}
           {/* <div className="flex items-center gap-2">

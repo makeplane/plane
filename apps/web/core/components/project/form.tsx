@@ -393,7 +393,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                         )}
                       </div>
                     }
-                    buttonClassName="!border-subtle-1 !shadow-none font-medium rounded-md"
+                    buttonClassName="!border-subtle !shadow-none font-medium rounded-md"
                     input
                     disabled={!isAdmin}
                     // optionsClassName="w-full"

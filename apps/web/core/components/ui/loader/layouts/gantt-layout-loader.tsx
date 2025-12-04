@@ -15,12 +15,12 @@ export function GanttLayoutListItemLoader() {
 export function GanttLayoutLoader() {
   return (
     <div className="flex flex-col h-full overflow-x-auto animate-pulse">
-      <div className="min-h-10 w-full border-b border-subtle-1 ">
+      <div className="min-h-10 w-full border-b border-subtle ">
         <span className="h-6 w-12 bg-layer-1 rounded-sm" />
       </div>
       <div className="flex h-full">
-        <div className="h-full w-[25.5rem] border-r border-subtle-1">
-          <Row className="flex items-end h-header py-2 border-b border-subtle-1">
+        <div className="h-full w-[25.5rem] border-r border-subtle">
+          <Row className="flex items-end h-header py-2 border-b border-subtle">
             <div className="flex items-center justify-between w-full">
               <span className="h-5 w-14 bg-layer-1 rounded-sm" />
               <span className="h-5 w-16 bg-layer-1 rounded-sm" />
@@ -35,8 +35,8 @@ export function GanttLayoutLoader() {
             ))}
           </Row>
         </div>
-        <div className="h-full w-full border-r border-subtle-1">
-          <div className="flex flex-col justify-between gap-2 h-header py-1.5 px-4 border-b border-subtle-1">
+        <div className="h-full w-full border-r border-subtle">
+          <div className="flex flex-col justify-between gap-2 h-header py-1.5 px-4 border-b border-subtle">
             <div className="flex items-center justify-start">
               <span className="h-5 w-20 bg-layer-1 rounded-sm" />
             </div>

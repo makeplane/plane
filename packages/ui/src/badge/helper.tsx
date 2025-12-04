@@ -60,7 +60,7 @@ export const badgeStyling: IBadgeStyling = {
   },
 
   neutral: {
-    default: `text-custom-background-100 bg-custom-text-100 border border-subtle-1`,
+    default: `text-custom-background-100 bg-custom-text-100 border border-subtle`,
     hover: `hover:bg-custom-text-200`,
     disabled: `cursor-not-allowed bg-subtle-1 !text-placeholder`,
   },
@@ -70,7 +70,7 @@ export const badgeStyling: IBadgeStyling = {
     disabled: `cursor-not-allowed !text-placeholder`,
   },
   "outline-neutral": {
-    default: `text-secondary bg-surface-1 border border-subtle-1`,
+    default: `text-secondary bg-surface-1 border border-subtle`,
     hover: `hover:text-primary hover:bg-subtle-1`,
     disabled: `cursor-not-allowed !text-placeholder`,
   },

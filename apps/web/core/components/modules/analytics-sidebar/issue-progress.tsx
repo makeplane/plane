@@ -114,7 +114,7 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
 
   if (!moduleDetails) return <></>;
   return (
-    <div className="border-t border-subtle-1 space-y-4 py-4 px-3">
+    <div className="border-t border-subtle space-y-4 py-4 px-3">
       <Disclosure defaultOpen={isModuleDateValid ? true : false}>
         {({ open }) => (
           <div className="space-y-6">
@@ -197,7 +197,7 @@ export const ModuleAnalyticsProgress = observer(function ModuleAnalyticsProgress
 
                 {/* progress detailed view */}
                 {chartDistributionData && (
-                  <div className="w-full border-t border-subtle-1 pt-5">
+                  <div className="w-full border-t border-subtle pt-5">
                     <ModuleProgressStats
                       distribution={chartDistributionData}
                       groupedIssues={groupedIssues}

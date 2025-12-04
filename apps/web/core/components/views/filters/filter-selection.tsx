@@ -54,7 +54,7 @@ export const ViewFiltersSelection = observer(function ViewFiltersSelection(props
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
       <div className="bg-surface-1 p-2.5 pb-0">
-        <div className="flex items-center gap-1.5 rounded-sm border-[0.5px] border-subtle-1 bg-surface-2 px-1.5 py-1 text-11">
+        <div className="flex items-center gap-1.5 rounded-sm border-[0.5px] border-subtle bg-surface-2 px-1.5 py-1 text-11">
           <Search className="text-placeholder" size={12} strokeWidth={2} />
           <input
             type="text"

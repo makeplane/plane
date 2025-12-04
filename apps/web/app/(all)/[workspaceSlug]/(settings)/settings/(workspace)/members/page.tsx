@@ -131,7 +131,7 @@ function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
             )}
           </h4>
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 rounded-md border border-subtle-1 bg-surface-1 px-2.5 py-1.5">
+            <div className="flex items-center gap-1.5 rounded-md border border-subtle bg-surface-1 px-2.5 py-1.5">
               <Search className="h-3.5 w-3.5 text-placeholder" />
               <input
                 className="w-full max-w-[234px] border-none bg-transparent text-13 outline-none placeholder:text-placeholder"

@@ -177,7 +177,7 @@ export const ChartViewRoot = observer(function ChartViewRoot(props: ChartViewRoo
     <div
       className={cn("relative flex flex-col h-full select-none rounded-xs bg-surface-1 shadow", {
         "inset-0 z-[25] bg-surface-1": fullScreenMode,
-        "border-[0.5px] border-subtle-1": border,
+        "border-[0.5px] border-subtle": border,
       })}
     >
       <GanttChartHeader

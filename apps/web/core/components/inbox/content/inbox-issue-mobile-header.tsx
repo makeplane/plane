@@ -98,14 +98,14 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
         <div className="flex items-center gap-x-2">
           <button
             type="button"
-            className="rounded-sm border border-subtle-1 p-1.5"
+            className="rounded-sm border border-subtle p-1.5"
             onClick={() => handleInboxIssueNavigation("prev")}
           >
             <ChevronUpIcon height={14} width={14} strokeWidth={2} />
           </button>
           <button
             type="button"
-            className="rounded-sm border border-subtle-1 p-1.5"
+            className="rounded-sm border border-subtle p-1.5"
             onClick={() => handleInboxIssueNavigation("next")}
           >
             <ChevronDownIcon height={14} width={14} strokeWidth={2} />

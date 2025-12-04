@@ -71,7 +71,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
             }
             height={30}
             width={30}
-            className="grid h-7 w-7 place-items-center rounded-full border-2 border-subtle-1"
+            className="grid h-7 w-7 place-items-center rounded-full border-2 border-subtle"
           />
         ) : (
           <div className={`grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 text-white`}>

@@ -11,7 +11,7 @@ export default function ProfileSettingsLayout() {
     <>
       <ProjectsAppPowerKProvider />
       <AuthenticationWrapper>
-        <div className="relative flex h-full w-full overflow-hidden rounded-lg border border-subtle-1">
+        <div className="relative flex h-full w-full overflow-hidden rounded-lg border border-subtle">
           <ProfileLayoutSidebar />
           <main className="relative flex h-full w-full flex-col overflow-hidden bg-surface-1">
             <div className="h-full w-full overflow-hidden">

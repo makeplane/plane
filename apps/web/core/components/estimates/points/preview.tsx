@@ -56,7 +56,7 @@ export const EstimatePointItemPreview = observer(function EstimatePointItemPrevi
   return (
     <div>
       {!estimatePointEditToggle && !estimatePointDeleteToggle && (
-        <div className="border border-subtle-1 rounded-sm relative flex items-center px-1 gap-2 text-14 my-1">
+        <div className="border border-subtle rounded-sm relative flex items-center px-1 gap-2 text-14 my-1">
           <div className="rounded-xs w-6 h-6 flex-shrink-0 relative flex justify-center items-center hover:bg-layer-1 transition-colors cursor-pointer">
             <GripVertical size={14} className="text-secondary" />
           </div>

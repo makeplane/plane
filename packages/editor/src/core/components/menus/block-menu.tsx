@@ -215,7 +215,7 @@ export function BlockMenu(props: Props) {
           zIndex: 100,
         }}
         className={cn(
-          "max-h-60 min-w-[7rem] overflow-y-scroll rounded-lg border border-subtle-1 bg-surface-1 p-1.5 shadow-custom-shadow-rg",
+          "max-h-60 min-w-[7rem] overflow-y-scroll rounded-lg border border-subtle bg-surface-1 p-1.5 shadow-custom-shadow-rg",
           "transition-all duration-300 transform origin-top-right",
           isAnimatedIn ? "opacity-100 scale-100" : "opacity-0 scale-75"
         )}

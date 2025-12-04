@@ -16,7 +16,7 @@ export const SpreadsheetPriorityColumn = observer(function SpreadsheetPriorityCo
   const { issue, onChange, disabled, onClose } = props;
 
   return (
-    <div className="h-11 border-b-[0.5px] border-subtle-1">
+    <div className="h-11 border-b-[0.5px] border-subtle">
       <PriorityDropdown
         value={issue.priority}
         onChange={(data) => onChange(issue, { priority: data }, { changed_property: "priority", change_details: data })}

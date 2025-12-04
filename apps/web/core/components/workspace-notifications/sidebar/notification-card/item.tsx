@@ -65,7 +65,7 @@ export const NotificationItem = observer(function NotificationItem(props: TNotif
   return (
     <Row
       className={cn(
-        "relative py-4 flex items-center gap-2 border-b border-subtle-1 cursor-pointer transition-all group",
+        "relative py-4 flex items-center gap-2 border-b border-subtle cursor-pointer transition-all group",
         currentSelectedNotificationId === notification?.id ? "bg-layer-1/30" : "",
         notification.read_at === null ? "bg-accent-primary/5" : ""
       )}

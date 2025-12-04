@@ -185,7 +185,7 @@ export function ExistingIssuesListModal(props: Props) {
                         {selectedIssues.map((issue) => (
                           <div
                             key={issue.id}
-                            className="flex items-center gap-1 whitespace-nowrap rounded-md border border-subtle-1 bg-layer-1 py-1 pl-2 text-11 text-primary"
+                            className="flex items-center gap-1 whitespace-nowrap rounded-md border border-subtle bg-layer-1 py-1 pl-2 text-11 text-primary"
                           >
                             <IssueIdentifier
                               projectId={issue.project_id}
@@ -205,7 +205,7 @@ export function ExistingIssuesListModal(props: Props) {
                         ))}
                       </div>
                     ) : (
-                      <div className="w-min whitespace-nowrap rounded-md border border-subtle-1 bg-layer-1 p-2 text-11">
+                      <div className="w-min whitespace-nowrap rounded-md border border-subtle bg-layer-1 p-2 text-11">
                         {t("issue.select.empty")}
                       </div>
                     )}

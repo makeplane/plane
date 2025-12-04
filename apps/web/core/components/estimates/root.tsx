@@ -58,7 +58,7 @@ export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot)
           {currentActiveEstimateId ? (
             <div className="">
               {/* estimates activated deactivated section */}
-              <div className="relative border-b border-subtle-1 pb-4 flex justify-between items-center gap-3">
+              <div className="relative border-b border-subtle pb-4 flex justify-between items-center gap-3">
                 <div className="space-y-1">
                   <h3 className="text-16 font-medium text-primary">{t("project_settings.estimates.title")}</h3>
                   <p className="text-13 text-secondary">{t("project_settings.estimates.enable_description")}</p>
@@ -95,7 +95,7 @@ export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot)
           {/* archived estimates section */}
           {archivedEstimateIds && archivedEstimateIds.length > 0 && (
             <div className="">
-              <div className="border-b border-subtle-1 space-y-1 pb-4">
+              <div className="border-b border-subtle space-y-1 pb-4">
                 <h3 className="text-16 font-medium text-primary">Archived estimates</h3>
                 <p className="text-13 text-secondary">
                   Estimates have gone through a change, these are the estimates you had in your older versions which

@@ -78,7 +78,7 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
       <div className="flex items-center justify-between gap-4 py-2 overflow-x-hidden border-b border-subtle">
         <div className="text-14 font-semibold">{t("common.members")}</div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-start gap-1.5 rounded-md border border-subtle-1 bg-surface-1 px-2 py-1">
+          <div className="flex items-center justify-start gap-1.5 rounded-md border border-subtle bg-surface-1 px-2 py-1">
             <Search className="h-3.5 w-3.5" />
             <input
               className="w-full max-w-[234px] border-none bg-transparent text-13 focus:outline-none placeholder:text-placeholder"

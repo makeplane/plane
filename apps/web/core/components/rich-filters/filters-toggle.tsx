@@ -52,7 +52,7 @@ export const FiltersToggle = observer(function FiltersToggle<P extends TFilterPr
     <div
       className={cn(COMMON_CLASSNAME, {
         "border-transparent bg-accent-primary/10 hover:bg-accent-primary/20": isFilterRowVisible,
-        "border-subtle-1 hover:bg-surface-2": !isFilterRowVisible,
+        "border-subtle hover:bg-surface-2": !isFilterRowVisible,
       })}
       onClick={handleToggleFilter}
     >

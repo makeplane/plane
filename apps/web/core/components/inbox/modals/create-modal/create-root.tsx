@@ -234,14 +234,14 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
                 data={formData}
                 handleData={handleFormData}
                 editorRef={descriptionEditorRef}
-                containerClassName="border-[0.5px] border-subtle-1 py-3 min-h-[150px]"
+                containerClassName="border-[0.5px] border-subtle py-3 min-h-[150px]"
                 onEnterKeyPress={() => submitBtnRef?.current?.click()}
                 onAssetUpload={(assetId) => setUploadedAssetIds((prev) => [...prev, assetId])}
               />
               <InboxIssueProperties projectId={projectId} data={formData} handleData={handleFormData} />
             </div>
           </div>
-          <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-subtle-1 rounded-b-lg bg-surface-1">
+          <div className="px-5 py-4 flex items-center justify-between gap-2 border-t-[0.5px] border-subtle rounded-b-lg bg-surface-1">
             <div
               className="inline-flex items-center gap-1.5 cursor-pointer"
               onClick={() => setCreateMore((prevData) => !prevData)}
