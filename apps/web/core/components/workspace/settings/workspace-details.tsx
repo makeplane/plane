@@ -17,7 +17,6 @@ import type { IWorkspace } from "@plane/types";
 import { CustomSelect, Input } from "@plane/ui";
 import { copyUrlToClipboard, getFileURL } from "@plane/utils";
 // components
-import { LogoSpinner } from "@/components/common/logo-spinner";
 import { WorkspaceImageUploadModal } from "@/components/core/modals/workspace-image-upload-modal";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
@@ -129,13 +128,7 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
 
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
-  if (!currentWorkspace)
-    return (
-      <div className="grid h-full w-full place-items-center px-4 sm:px-0">
-        <LogoSpinner />
-      </div>
-    );
-
+  if (!currentWorkspace) return <></>;
   return (
     <>
       <Controller

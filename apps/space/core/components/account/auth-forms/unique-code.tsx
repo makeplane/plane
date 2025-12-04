@@ -111,7 +111,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
           name="code"
           value={uniqueCodeFormData.code}
           onChange={(e) => handleFormChange("code", e.target.value)}
-          placeholder="gets-sets-flys"
+          placeholder="123456"
           className="disable-autofill-style h-10 w-full border border-subtle !bg-surface-1 pr-12 placeholder:text-placeholder"
           autoFocus
         />

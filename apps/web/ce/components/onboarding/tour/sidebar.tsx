@@ -1,12 +1,13 @@
-// icons
+// plane imports
 import { CycleIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/propel/icons";
 // types
 import type { TTourSteps } from "./root";
 
 const sidebarOptions: {
   key: TTourSteps;
   label: string;
-  Icon: any;
+  Icon: React.FC<ISvgIcons>;
 }[] = [
   {
     key: "work-items",

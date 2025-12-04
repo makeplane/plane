@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "Унікальний код",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "Вставте код, надісланий на вашу електронну пошту",
         requesting_new_code: "Запитую новий код",
         sending_code: "Надсилаю код",
@@ -1551,7 +1551,7 @@ export default {
           },
           code: {
             label: "Унікальний код",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "Код підтвердження надіслано на ваш новий email.",
             errors: {
               required: "Унікальний код є обов’язковим",

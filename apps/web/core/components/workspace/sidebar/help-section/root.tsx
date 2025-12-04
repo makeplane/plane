@@ -9,9 +9,8 @@ import { CustomMenu } from "@plane/ui";
 import { ProductUpdatesModal } from "@/components/global";
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 // hooks
-import { useInstance } from "@/hooks/store/use-instance";
 import { usePowerK } from "@/hooks/store/use-power-k";
-import { useTransient } from "@/hooks/store/use-transient";
+import { useChatSupport } from "@/hooks/use-chat-support";
 // plane web components
 import { PlaneVersionNumber } from "@/plane-web/components/global";
 
@@ -19,15 +18,10 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
   // store hooks
   const { t } = useTranslation();
   const { toggleShortcutsListModal } = usePowerK();
-  const { config } = useInstance();
-  const { isIntercomToggle, toggleIntercom } = useTransient();
+  const { openChatSupport, isEnabled: isChatSupportEnabled } = useChatSupport();
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   const [isProductUpdatesModalOpen, setProductUpdatesModalOpen] = useState(false);
-
-  const handleCrispWindowShow = () => {
-    toggleIntercom(!isIntercomToggle);
-  };
 
   return (
     <>
@@ -56,11 +50,11 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
             <span className="text-11">{t("documentation")}</span>
           </div>
         </CustomMenu.MenuItem>
-        {config?.intercom_app_id && config?.is_intercom_enabled && (
+        {isChatSupportEnabled && (
           <CustomMenu.MenuItem>
             <button
               type="button"
-              onClick={handleCrispWindowShow}
+              onClick={openChatSupport}
               className="flex w-full items-center gap-x-2 rounded-sm text-11 hover:bg-layer-1"
             >
               <MessagesSquare className="h-3.5 w-3.5 text-secondary" />
@@ -79,7 +73,7 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
           <button
             type="button"
             onClick={() => toggleShortcutsListModal(true)}
-            className="flex w-full items-center justify-start text-11 hover:bg-layer-1"
+            className="flex w-full items-center justify-sbg-layer-211 hover:bg-layer-1"
           >
             <span className="text-11">{t("keyboard_shortcuts")}</span>
           </button>
@@ -88,7 +82,7 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
           <button
             type="button"
             onClick={() => setProductUpdatesModalOpen(true)}
-            className="flex w-full items-center justify-start text-11 hover:bg-layer-1"
+            className="flex w-full items-center justify-sbg-layer-211 hover:bg-layer-1"
           >
             <span className="text-11">{t("whats_new")}</span>
           </button>

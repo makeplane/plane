@@ -1,8 +1,14 @@
+import { observer } from "mobx-react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
+// plane imports
 import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";
+// assets
+import ProjectDarkEmptyState from "@/app/assets/empty-state/project-settings/no-projects-dark.png?url";
+import ProjectLightEmptyState from "@/app/assets/empty-state/project-settings/no-projects-light.png?url";
+// hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 
 function ProjectSettingsPage() {
@@ -10,13 +16,10 @@ function ProjectSettingsPage() {
   const { resolvedTheme } = useTheme();
   const { toggleCreateProjectModal } = useCommandPalette();
   // derived values
-  const resolvedPath =
-    resolvedTheme === "dark"
-      ? "/empty-state/project-settings/no-projects-dark.png"
-      : "/empty-state/project-settings/no-projects-light.png";
+  const resolvedPath = resolvedTheme === "dark" ? ProjectDarkEmptyState : ProjectLightEmptyState;
   return (
     <div className="flex flex-col gap-4 items-center justify-center h-full max-w-[480px] mx-auto">
-      <img src={resolvedPath} className="w-full h-full object-contain" alt="No projects yet" />
+      <img src={resolvedPath} alt="No projects yet" />
       <div className="text-16 font-semibold text-custom-text-350">No projects yet</div>
       <div className="text-13 text-custom-text-350 text-center">
         Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you
@@ -38,4 +41,4 @@ function ProjectSettingsPage() {
   );
 }
 
-export default ProjectSettingsPage;
+export default observer(ProjectSettingsPage);

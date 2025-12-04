@@ -22,10 +22,11 @@ type Props = {
   isWorkspaceLevel: boolean;
   searchTerm: string;
   updateSearchTerm: (value: string) => void;
+  handleSearchMenuClose?: () => void;
 };
 
 export function PowerKModalSearchMenu(props: Props) {
-  const { activePage, context, isWorkspaceLevel, searchTerm, updateSearchTerm } = props;
+  const { activePage, context, isWorkspaceLevel, searchTerm, updateSearchTerm, handleSearchMenuClose } = props;
   // states
   const [resultsCount, setResultsCount] = useState(0);
   const [isSearching, setIsSearching] = useState(false);
@@ -68,6 +69,11 @@ export function PowerKModalSearchMenu(props: Props) {
 
   if (activePage) return null;
 
+  const handleClosePalette = () => {
+    handleSearchMenuClose?.();
+    togglePowerKModal(false);
+  };
+
   return (
     <>
       {searchTerm.trim() !== "" && (
@@ -97,9 +103,7 @@ export function PowerKModalSearchMenu(props: Props) {
         />
       )}
 
-      {searchTerm.trim() !== "" && (
-        <PowerKModalSearchResults closePalette={() => togglePowerKModal(false)} results={results} />
-      )}
+      {searchTerm.trim() !== "" && <PowerKModalSearchResults closePalette={handleClosePalette} results={results} />}
     </>
   );
 }

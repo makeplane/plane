@@ -24,6 +24,17 @@ export default {
     },
   },
   project_empty_state: {
+    no_access: {
+      title: "Vypadá to, že nemáte přístup k tomuto projektu",
+      restricted_description: "Kontaktujte administrátora a požádejte o přístup, abyste zde mohli pokračovat.",
+      join_description: "Klikněte na tlačítko níže pro připojení k projektu.",
+      cta_primary: "Připojit se k projektu",
+      cta_loading: "Připojování k projektu",
+    },
+    invalid_project: {
+      title: "Projekt nebyl nalezen",
+      description: "Projekt, který hledáte, neexistuje.",
+    },
     work_items: {
       title: "Začněte s vaší první pracovní položkou.",
       description:

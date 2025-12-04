@@ -1378,7 +1378,7 @@ export default {
           },
           code: {
             label: "Unique code",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "Verification code sent to your new email.",
             errors: {
               required: "Unique code is required",

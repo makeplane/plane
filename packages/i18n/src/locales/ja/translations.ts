@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "ユニークコード",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "メールで送信されたコードを貼り付けてください",
         requesting_new_code: "新しいコードをリクエスト中",
         sending_code: "コードを送信中",
@@ -1543,7 +1543,7 @@ export default {
           },
           code: {
             label: "認証コード",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "認証コードを新しいメールに送信しました。",
             errors: {
               required: "認証コードは必須です",
