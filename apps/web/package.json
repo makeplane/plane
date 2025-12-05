@@ -71,7 +71,6 @@
     "serve": "14.2.5",
     "smooth-scroll-into-view-if-needed": "^2.0.2",
     "swr": "catalog:",
-    "tailwind-merge": "^2.0.0",
     "use-font-face-observer": "^1.2.2",
     "uuid": "catalog:"
   },

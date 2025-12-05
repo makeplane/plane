@@ -1,5 +1,3 @@
-@reference "@plane/tailwind-config/index.css";
-
 @layer components {
   .EmojiPickerReact {
     --epr-category-navigation-button-size: 1.25rem !important;

@@ -38,7 +38,7 @@
     "rehype-remark": "^10.0.1",
     "remark-gfm": "^4.0.1",
     "remark-stringify": "^11.0.0",
-    "tailwind-merge": "^2.5.5",
+    "tailwind-merge": "3.4.0",
     "unified": "^11.0.5",
     "uuid": "catalog:"
   },
