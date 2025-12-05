@@ -1284,9 +1284,6 @@ export default {
         label: "Скільки людей користуватиметься цим простором?",
         placeholder: "Виберіть діапазон",
       },
-      workspace_timezone: {
-        label: "Часовий пояс робочого простору",
-      },
     },
     errors: {
       creation_disabled: {

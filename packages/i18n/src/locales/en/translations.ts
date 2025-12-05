@@ -1121,9 +1121,6 @@ export default {
         label: "How many people will use this workspace?",
         placeholder: "Select a range",
       },
-      workspace_timezone: {
-        label: "Workspace Timezone",
-      },
     },
     errors: {
       creation_disabled: {

@@ -1268,9 +1268,6 @@ export default {
         label: "有多少人會使用這個工作區？",
         placeholder: "選擇一個範圍",
       },
-      workspace_timezone: {
-        label: "工作區時區",
-      },
     },
     errors: {
       creation_disabled: {

@@ -1294,9 +1294,6 @@ export default {
         label: "Quantas pessoas usarão este espaço de trabalho?",
         placeholder: "Selecione um intervalo",
       },
-      workspace_timezone: {
-        label: "Fuso horário do espaço de trabalho",
-      },
     },
     errors: {
       creation_disabled: {

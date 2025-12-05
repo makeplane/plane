@@ -1295,9 +1295,6 @@ export default {
         label: "Combien de personnes utiliseront cet espace de travail ?",
         placeholder: "Sélectionnez une plage",
       },
-      workspace_timezone: {
-        label: "Fuseau horaire de l'espace de travail",
-      },
     },
     errors: {
       creation_disabled: {

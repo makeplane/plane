@@ -1274,9 +1274,6 @@ export default {
         label: "이 작업 공간을 사용할 사람 수",
         placeholder: "범위 선택",
       },
-      workspace_timezone: {
-        label: "작업 공간 시간대",
-      },
     },
     errors: {
       creation_disabled: {

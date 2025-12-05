@@ -1283,9 +1283,6 @@ export default {
         label: "Bu çalışma alanını kaç kişi kullanacak?",
         placeholder: "Bir aralık seçin",
       },
-      workspace_timezone: {
-        label: "Çalışma Alanı Saat Dilimi",
-      },
     },
     errors: {
       creation_disabled: {

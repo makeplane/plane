@@ -15,7 +15,6 @@ import type { IWorkspace } from "@plane/types";
 // ui
 import { CustomSelect, Input } from "@plane/ui";
 // hooks
-import { TimezoneSelect } from "@/components/global/timezone-select";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -28,9 +27,8 @@ type Props = {
     name: string;
     slug: string;
     organization_size: string;
-    timezone: string;
   };
-  setDefaultValues: Dispatch<SetStateAction<Pick<IWorkspace, "name" | "slug" | "organization_size" | "timezone">>>;
+  setDefaultValues: Dispatch<SetStateAction<Pick<IWorkspace, "name" | "slug" | "organization_size">>>;
   secondaryButton?: React.ReactNode;
   primaryButtonText?: {
     loading: string;
@@ -245,20 +243,6 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
             {errors.organization_size && (
               <span className="text-sm text-red-500">{errors.organization_size.message}</span>
             )}
-          </div>
-        </div>
-        <div className="space-y-1 text-sm">
-          <span>{t("workspace_creation.form.workspace_timezone.label")}</span>
-          <div className="w-full">
-            <Controller
-              name="timezone"
-              control={control}
-              render={({ field: { value, onChange } }) => (
-                <>
-                  <TimezoneSelect value={value} onChange={onChange} buttonClassName="border-none" />
-                </>
-              )}
-            />
           </div>
         </div>
       </div>

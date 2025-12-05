@@ -26,13 +26,10 @@ const CreateWorkspacePage = observer(function CreateWorkspacePage() {
   const { data: currentUser } = useUser();
   const { updateUserProfile } = useUserProfile();
   // states
-  const [defaultValues, setDefaultValues] = useState<
-    Pick<IWorkspace, "name" | "slug" | "organization_size" | "timezone">
-  >({
+  const [defaultValues, setDefaultValues] = useState<Pick<IWorkspace, "name" | "slug" | "organization_size">>({
     name: "",
     slug: "",
     organization_size: "",
-    timezone: "UTC",
   });
   // derived values
   const isWorkspaceCreationDisabled = getIsWorkspaceCreationDisabled();

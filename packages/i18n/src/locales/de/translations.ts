@@ -1295,9 +1295,6 @@ export default {
         label: "Wie viele Personen werden diesen Bereich nutzen?",
         placeholder: "Wählen Sie einen Bereich",
       },
-      workspace_timezone: {
-        label: "Zeitzone des Arbeitsbereichs",
-      },
     },
     errors: {
       creation_disabled: {

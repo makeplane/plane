@@ -1296,9 +1296,6 @@ export default {
         label: "¿Cuántas personas usarán este espacio de trabajo?",
         placeholder: "Selecciona un rango",
       },
-      workspace_timezone: {
-        label: "Zona horaria del espacio de trabajo",
-      },
     },
     errors: {
       creation_disabled: {

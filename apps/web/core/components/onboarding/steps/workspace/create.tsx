@@ -16,7 +16,6 @@ import type { IUser, IWorkspace } from "@plane/types";
 import { Spinner } from "@plane/ui";
 import { cn } from "@plane/utils";
 // helpers
-import { TimezoneSelect } from "@/components/global/timezone-select";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -65,7 +64,6 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
       name: "",
       slug: "",
       organization_size: "",
-      timezone: "UTC",
     },
     mode: "onChange",
   });
@@ -297,22 +295,6 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
             {errors.organization_size && (
               <span className="text-sm text-red-500">{errors.organization_size.message}</span>
             )}
-          </div>
-        </div>
-        <div className="flex flex-col gap-2">
-          <label className="text-sm text-custom-text-300 font-medium" htmlFor="timezone">
-            {t("workspace_creation.form.workspace_timezone.label")}
-          </label>
-          <div className="w-full">
-            <Controller
-              name="timezone"
-              control={control}
-              render={({ field: { value, onChange } }) => (
-                <>
-                  <TimezoneSelect value={value} onChange={onChange} buttonClassName="border-none" />
-                </>
-              )}
-            />
           </div>
         </div>
       </div>

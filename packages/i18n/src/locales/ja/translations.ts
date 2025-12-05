@@ -1280,9 +1280,6 @@ export default {
         label: "このワークスペースを何人で使用しますか？",
         placeholder: "範囲を選択",
       },
-      workspace_timezone: {
-        label: "ワークスペースのタイムゾーン",
-      },
     },
     errors: {
       creation_disabled: {

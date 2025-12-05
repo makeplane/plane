@@ -1286,9 +1286,6 @@ export default {
         label: "Berapa banyak orang yang akan menggunakan ruang kerja ini?",
         placeholder: "Pilih rentang",
       },
-      workspace_timezone: {
-        label: "Zona waktu ruang kerja",
-      },
     },
     errors: {
       creation_disabled: {

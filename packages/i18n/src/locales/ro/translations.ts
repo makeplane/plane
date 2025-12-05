@@ -1287,9 +1287,6 @@ export default {
         label: "Câți oameni vor folosi acest spațiu de lucru?",
         placeholder: "Selectează un interval",
       },
-      workspace_timezone: {
-        label: "Fusul orar al spațiului de lucru",
-      },
     },
     errors: {
       creation_disabled: {

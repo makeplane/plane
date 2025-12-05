@@ -1282,9 +1282,6 @@ export default {
         label: "Ile osób będzie używać tej przestrzeni?",
         placeholder: "Wybierz zakres",
       },
-      workspace_timezone: {
-        label: "Strefa czasowa przestrzeni roboczej",
-      },
     },
     errors: {
       creation_disabled: {

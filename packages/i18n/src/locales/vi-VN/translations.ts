@@ -1288,9 +1288,6 @@ export default {
         label: "Có bao nhiêu người sẽ sử dụng không gian làm việc này?",
         placeholder: "Chọn một phạm vi",
       },
-      workspace_timezone: {
-        label: "Múi giờ không gian làm việc",
-      },
     },
     errors: {
       creation_disabled: {

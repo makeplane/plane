@@ -1286,9 +1286,6 @@ export default {
         label: "Quante persone utilizzeranno questo spazio di lavoro?",
         placeholder: "Seleziona una fascia",
       },
-      workspace_timezone: {
-        label: "Fuso orario dello spazio di lavoro",
-      },
     },
     errors: {
       creation_disabled: {

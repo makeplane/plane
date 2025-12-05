@@ -1282,9 +1282,6 @@ export default {
         label: "Kolik lidí bude tento prostor používat?",
         placeholder: "Vyberte rozsah",
       },
-      workspace_timezone: {
-        label: "Časové pásmo pracovního prostoru",
-      },
     },
     errors: {
       creation_disabled: {
