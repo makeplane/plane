@@ -10,6 +10,7 @@ from datetime import timedelta
 # Django imports
 from django.conf import settings
 from django.utils import timezone
+from django.contrib.auth.hashers import make_password
 
 # Third party imports
 from celery import shared_task
@@ -34,6 +35,8 @@ from plane.db.models import (
     CycleIssue,
     ModuleIssue,
     IssueView,
+    User,
+    BotTypeEnum,
 )
 
 logger = logging.getLogger("plane.worker")
@@ -61,7 +64,7 @@ def read_seed_file(filename):
         return None
 
 
-def create_project_and_member(workspace: Workspace) -> Dict[int, uuid.UUID]:
+def create_project_and_member(workspace: Workspace, bot_user: User) -> Dict[int, uuid.UUID]:
     """Creates a project and associated members for a workspace.
 
     Creates a new project using the workspace name and sets up all necessary
@@ -69,7 +72,7 @@ def create_project_and_member(workspace: Workspace) -> Dict[int, uuid.UUID]:
 
     Args:
         workspace: The workspace to create the project in
-
+        bot_user: The bot user to use for creating the project
     Returns:
         A mapping of seed project IDs to actual project IDs
     """
@@ -96,7 +99,7 @@ def create_project_and_member(workspace: Workspace) -> Dict[int, uuid.UUID]:
             workspace=workspace,
             name=workspace.name,  # Use workspace name
             identifier=project_identifier,
-            created_by_id=workspace.created_by_id,
+            created_by_id=bot_user.id,
             # Enable all views in seed data
             cycle_view=True,
             module_view=True,
@@ -104,60 +107,56 @@ def create_project_and_member(workspace: Workspace) -> Dict[int, uuid.UUID]:
         )
 
         # Create project members
-        ProjectMember.objects.bulk_create(
-            [
-                ProjectMember(
-                    project=project,
-                    member_id=workspace_member["member_id"],
-                    role=workspace_member["role"],
-                    workspace_id=workspace.id,
-                    created_by_id=workspace.created_by_id,
-                )
-                for workspace_member in workspace_members
-            ]
-        )
+        ProjectMember.objects.bulk_create([
+            ProjectMember(
+                project=project,
+                member_id=workspace_member["member_id"],
+                role=workspace_member["role"],
+                workspace_id=workspace.id,
+                created_by_id=bot_user.id,
+            )
+            for workspace_member in workspace_members
+        ])
 
         # Create issue user properties
-        IssueUserProperty.objects.bulk_create(
-            [
-                IssueUserProperty(
-                    project=project,
-                    user_id=workspace_member["member_id"],
-                    workspace_id=workspace.id,
-                    display_filters={
-                        "layout": "list",
-                        "calendar": {"layout": "month", "show_weekends": False},
-                        "group_by": "state",
-                        "order_by": "sort_order",
-                        "sub_issue": True,
-                        "sub_group_by": None,
-                        "show_empty_groups": True,
-                    },
-                    display_properties={
-                        "key": True,
-                        "link": True,
-                        "cycle": False,
-                        "state": True,
-                        "labels": False,
-                        "modules": False,
-                        "assignee": True,
-                        "due_date": False,
-                        "estimate": True,
-                        "priority": True,
-                        "created_on": True,
-                        "issue_type": True,
-                        "start_date": False,
-                        "updated_on": True,
-                        "customer_count": True,
-                        "sub_issue_count": False,
-                        "attachment_count": False,
-                        "customer_request_count": True,
-                    },
-                    created_by_id=workspace.created_by_id,
-                )
-                for workspace_member in workspace_members
-            ]
-        )
+        IssueUserProperty.objects.bulk_create([
+            IssueUserProperty(
+                project=project,
+                user_id=workspace_member["member_id"],
+                workspace_id=workspace.id,
+                display_filters={
+                    "layout": "list",
+                    "calendar": {"layout": "month", "show_weekends": False},
+                    "group_by": "state",
+                    "order_by": "sort_order",
+                    "sub_issue": True,
+                    "sub_group_by": None,
+                    "show_empty_groups": True,
+                },
+                display_properties={
+                    "key": True,
+                    "link": True,
+                    "cycle": False,
+                    "state": True,
+                    "labels": False,
+                    "modules": False,
+                    "assignee": True,
+                    "due_date": False,
+                    "estimate": True,
+                    "priority": True,
+                    "created_on": True,
+                    "issue_type": True,
+                    "start_date": False,
+                    "updated_on": True,
+                    "customer_count": True,
+                    "sub_issue_count": False,
+                    "attachment_count": False,
+                    "customer_request_count": True,
+                },
+                created_by_id=bot_user.id,
+            )
+            for workspace_member in workspace_members
+        ])
         # update map
         projects_map[project_id] = project.id
         logger.info(f"Task: workspace_seed_task -> Project {project_id} created")
@@ -165,13 +164,15 @@ def create_project_and_member(workspace: Workspace) -> Dict[int, uuid.UUID]:
     return projects_map
 
 
-def create_project_states(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> Dict[int, uuid.UUID]:
+def create_project_states(
+    workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_user: User
+) -> Dict[int, uuid.UUID]:
     """Creates states for each project in the workspace.
 
     Args:
         workspace: The workspace containing the projects
         project_map: Mapping of seed project IDs to actual project IDs
-
+        bot_user: The bot user to use for creating the states
     Returns:
         A mapping of seed state IDs to actual state IDs
     """
@@ -190,7 +191,7 @@ def create_project_states(workspace: Workspace, project_map: Dict[int, uuid.UUID
             **state_seed,
             project_id=project_map[project_id],
             workspace=workspace,
-            created_by_id=workspace.created_by_id,
+            created_by_id=bot_user.id,
         )
 
         state_map[state_id] = state.id
@@ -198,13 +199,15 @@ def create_project_states(workspace: Workspace, project_map: Dict[int, uuid.UUID
     return state_map
 
 
-def create_project_labels(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> Dict[int, uuid.UUID]:
+def create_project_labels(
+    workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_user: User
+) -> Dict[int, uuid.UUID]:
     """Creates labels for each project in the workspace.
 
     Args:
         workspace: The workspace containing the projects
         project_map: Mapping of seed project IDs to actual project IDs
-
+        bot_user: The bot user to use for creating the labels
     Returns:
         A mapping of seed label IDs to actual label IDs
     """
@@ -221,7 +224,7 @@ def create_project_labels(workspace: Workspace, project_map: Dict[int, uuid.UUID
             **label_seed,
             project_id=project_map[project_id],
             workspace=workspace,
-            created_by_id=workspace.created_by_id,
+            created_by_id=bot_user.id,
         )
         label_map[label_id] = label.id
 
@@ -236,6 +239,7 @@ def create_project_issues(
     labels_map: Dict[int, uuid.UUID],
     cycles_map: Dict[int, uuid.UUID],
     module_map: Dict[int, uuid.UUID],
+    bot_user: User,
 ) -> None:
     """Creates issues and their associated records for each project.
 
@@ -273,13 +277,13 @@ def create_project_issues(
             state_id=states_map[state_id],
             project_id=project_map[project_id],
             workspace=workspace,
-            created_by_id=workspace.created_by_id,
+            created_by_id=bot_user.id,
         )
         IssueSequence.objects.create(
             issue=issue,
             project_id=project_map[project_id],
             workspace_id=workspace.id,
-            created_by_id=workspace.created_by_id,
+            created_by_id=bot_user.id,
         )
 
         IssueActivity.objects.create(
@@ -288,7 +292,7 @@ def create_project_issues(
             workspace_id=workspace.id,
             comment="created the issue",
             verb="created",
-            actor_id=workspace.created_by_id,
+            actor_id=bot_user.id,
             epoch=time.time(),
         )
 
@@ -299,7 +303,7 @@ def create_project_issues(
                 label_id=labels_map[label_id],
                 project_id=project_map[project_id],
                 workspace_id=workspace.id,
-                created_by_id=workspace.created_by_id,
+                created_by_id=bot_user.id,
             )
 
         # Create cycle issues
@@ -309,7 +313,7 @@ def create_project_issues(
                 cycle_id=cycles_map[cycle_id],
                 project_id=project_map[project_id],
                 workspace_id=workspace.id,
-                created_by_id=workspace.created_by_id,
+                created_by_id=bot_user.id,
             )
 
         # Create module issues
@@ -320,19 +324,20 @@ def create_project_issues(
                     module_id=module_map[module_id],
                     project_id=project_map[project_id],
                     workspace_id=workspace.id,
-                    created_by_id=workspace.created_by_id,
+                    created_by_id=bot_user.id,
                 )
 
         logger.info(f"Task: workspace_seed_task -> Issue {issue_id} created")
     return
 
 
-def create_pages(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> None:
+def create_pages(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_user: User) -> None:
     """Creates pages for each project in the workspace.
 
     Args:
         workspace: The workspace containing the projects
         project_map: Mapping of seed project IDs to actual project IDs
+        bot_user: The bot user to use for creating the pages
     """
     page_seeds = read_seed_file("pages.json")
 
@@ -351,9 +356,9 @@ def create_pages(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> Non
             description_html=page_seed.get("description_html", "<p></p>"),
             description_binary=page_seed.get("description_binary", None),
             description_stripped=page_seed.get("description_stripped", None),
-            created_by_id=workspace.created_by_id,
-            updated_by_id=workspace.created_by_id,
-            owned_by_id=workspace.created_by_id,
+            created_by_id=bot_user.id,
+            updated_by_id=bot_user.id,
+            owned_by_id=bot_user.id,
         )
 
         logger.info(f"Task: workspace_seed_task -> Page {page_id} created")
@@ -362,19 +367,27 @@ def create_pages(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> Non
                 workspace_id=workspace.id,
                 project_id=project_map[page_seed.get("project_id")],
                 page_id=page.id,
-                created_by_id=workspace.created_by_id,
-                updated_by_id=workspace.created_by_id,
+                created_by_id=bot_user.id,
+                updated_by_id=bot_user.id,
             )
 
             logger.info(f"Task: workspace_seed_task -> Project Page {page_id} created")
     return
 
 
-def create_cycles(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> Dict[int, uuid.UUID]:
-    # Create cycles
+def create_cycles(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_user: User) -> Dict[int, uuid.UUID]:
+    """Creates cycles for each project in the workspace.
+
+    Args:
+        workspace: The workspace containing the projects
+        project_map: Mapping of seed project IDs to actual project IDs
+        bot_user: The bot user to use for creating the cycles
+    Returns:
+        A mapping of seed cycle IDs to actual cycle IDs
+    """
     cycle_seeds = read_seed_file("cycles.json")
     if not cycle_seeds:
-        return
+        return {}
 
     cycle_map: Dict[int, uuid.UUID] = {}
 
@@ -403,8 +416,8 @@ def create_cycles(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> Di
             end_date=end_date,
             project_id=project_map[project_id],
             workspace=workspace,
-            created_by_id=workspace.created_by_id,
-            owned_by_id=workspace.created_by_id,
+            created_by_id=bot_user.id,
+            owned_by_id=bot_user.id,
         )
 
         cycle_map[cycle_id] = cycle.id
@@ -412,16 +425,17 @@ def create_cycles(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> Di
     return cycle_map
 
 
-def create_modules(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> None:
+def create_modules(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_user: User) -> None:
     """Creates modules for each project in the workspace.
 
     Args:
         workspace: The workspace containing the projects
         project_map: Mapping of seed project IDs to actual project IDs
+        bot_user: The bot user to use for creating the modules
     """
     module_seeds = read_seed_file("modules.json")
     if not module_seeds:
-        return
+        return {}
 
     module_map: Dict[int, uuid.UUID] = {}
 
@@ -438,19 +452,20 @@ def create_modules(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> N
             target_date=end_date,
             project_id=project_map[project_id],
             workspace=workspace,
-            created_by_id=workspace.created_by_id,
+            created_by_id=bot_user.id,
         )
         module_map[module_id] = module.id
         logger.info(f"Task: workspace_seed_task -> Module {module_id} created")
     return module_map
 
 
-def create_views(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> None:
+def create_views(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_user: User) -> None:
     """Creates views for each project in the workspace.
 
     Args:
         workspace: The workspace containing the projects
         project_map: Mapping of seed project IDs to actual project IDs
+        bot_user: The bot user to use for creating the views
     """
 
     view_seeds = read_seed_file("views.json")
@@ -463,8 +478,8 @@ def create_views(workspace: Workspace, project_map: Dict[int, uuid.UUID]) -> Non
             **view_seed,
             project_id=project_map[project_id],
             workspace=workspace,
-            created_by_id=workspace.created_by_id,
-            owned_by_id=workspace.created_by_id,
+            created_by_id=bot_user.id,
+            owned_by_id=bot_user.id,
         )
 
 
@@ -486,29 +501,42 @@ def workspace_seed(workspace_id: uuid.UUID) -> None:
         # Get the workspace
         workspace = Workspace.objects.get(id=workspace_id)
 
+        # Create a bot user for creating all the workspace data
+        bot_user = User.objects.create(
+            username=f"bot_user_{workspace.id}",
+            display_name="Plane",
+            first_name="Plane",
+            last_name="",
+            is_bot=True,
+            bot_type=BotTypeEnum.WORKSPACE_SEED,
+            email=f"bot_user_{workspace.id}@plane.so",
+            password=make_password(uuid.uuid4().hex),
+            is_password_autoset=True,
+        )
+
         # Create a project with the same name as workspace
-        project_map = create_project_and_member(workspace)
+        project_map = create_project_and_member(workspace, bot_user)
 
         # Create project states
-        state_map = create_project_states(workspace, project_map)
+        state_map = create_project_states(workspace, project_map, bot_user)
 
         # Create project labels
-        label_map = create_project_labels(workspace, project_map)
+        label_map = create_project_labels(workspace, project_map, bot_user)
 
         # Create project cycles
-        cycle_map = create_cycles(workspace, project_map)
+        cycle_map = create_cycles(workspace, project_map, bot_user)
 
         # Create project modules
-        module_map = create_modules(workspace, project_map)
+        module_map = create_modules(workspace, project_map, bot_user)
 
         # create project issues
-        create_project_issues(workspace, project_map, state_map, label_map, cycle_map, module_map)
+        create_project_issues(workspace, project_map, state_map, label_map, cycle_map, module_map, bot_user)
 
         # create project views
-        create_views(workspace, project_map)
+        create_views(workspace, project_map, bot_user)
 
         # create project pages
-        create_pages(workspace, project_map)
+        create_pages(workspace, project_map, bot_user)
 
         logger.info(f"Task: workspace_seed_task -> Workspace {workspace_id} seeded successfully")
         return

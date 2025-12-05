@@ -77,14 +77,6 @@
   width: 0 !important;
 }
 
-/* By applying below class, the autofilled text in form fields will not have the default autofill background color and styles applied by WebKit browsers  */
-.disable-autofill-style:-webkit-autofill,
-.disable-autofill-style:-webkit-autofill:hover,
-.disable-autofill-style:-webkit-autofill:focus,
-.disable-autofill-style:-webkit-autofill:active {
-  -webkit-background-clip: text;
-}
-
 @-moz-document url-prefix() {
   * {
     scrollbar-width: none;
@@ -104,16 +96,6 @@
   }
 }
 
-.vertical-scrollbar {
-  overflow-y: auto;
-}
-.horizontal-scrollbar {
-  overflow-x: auto;
-}
-.vertical-scrollbar::-webkit-scrollbar,
-.horizontal-scrollbar::-webkit-scrollbar {
-  display: block;
-}
 .vertical-scrollbar::-webkit-scrollbar-track,
 .horizontal-scrollbar::-webkit-scrollbar-track {
   background-color: transparent;
@@ -143,32 +125,6 @@
 }
 .vertical-scrollbar-margin-top-md::-webkit-scrollbar-track {
   margin-top: 44px;
-}
-
-/* scrollbar sm size */
-.scrollbar-sm::-webkit-scrollbar {
-  height: 12px;
-  width: 12px;
-}
-.scrollbar-sm::-webkit-scrollbar-thumb {
-  border: 3px solid rgba(0, 0, 0, 0);
-}
-/* scrollbar md size */
-.scrollbar-md::-webkit-scrollbar {
-  height: 14px;
-  width: 14px;
-}
-.scrollbar-md::-webkit-scrollbar-thumb {
-  border: 3px solid rgba(0, 0, 0, 0);
-}
-/* scrollbar lg size */
-
-.scrollbar-lg::-webkit-scrollbar {
-  height: 16px;
-  width: 16px;
-}
-.scrollbar-lg::-webkit-scrollbar-thumb {
-  border: 4px solid rgba(0, 0, 0, 0);
 }
 
 /* Progress Bar Styles */

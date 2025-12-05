@@ -35,6 +35,10 @@ def get_mobile_default_onboarding():
     }
 
 
+class BotTypeEnum(models.TextChoices):
+    WORKSPACE_SEED = "WORKSPACE_SEED", "Workspace Seed"
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False, db_index=True, primary_key=True)
     username = models.CharField(max_length=128, unique=True)
