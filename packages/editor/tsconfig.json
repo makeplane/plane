@@ -1,11 +1,15 @@
 {
   "extends": "@plane/typescript-config/react-library.json",
   "compilerOptions": {
-    "baseUrl": ".",
+    "exactOptionalPropertyTypes": false,
+    "noImplicitReturns": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "paths": {
+      "src/*": ["./src/*"],
       "@/*": ["./src/core/*"],
-      "@/styles/*": ["./src/styles/*"],
-      "@/plane-editor/*": ["./src/ce/*"]
+      "@/plane-editor/*": ["./src/ce/*"],
+      "@/styles/*": ["./src/styles/*"]
     }
   },
   "include": ["src/**/*", "index.d.ts"],
