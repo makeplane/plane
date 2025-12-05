@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
+    "django.contrib.staticfiles",
     # Inhouse apps
     "plane.analytics",
     "plane.app",
