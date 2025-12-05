@@ -30,6 +30,7 @@ function CustomSelect(props: ICustomSelectProps) {
     optionsClassName = "",
     value,
     tabIndex,
+    closeOnSelect = true,
   } = props;
   // states
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
@@ -61,7 +62,10 @@ function CustomSelect(props: ICustomSelectProps) {
       ref={dropdownRef}
       tabIndex={tabIndex}
       value={value}
-      onChange={onChange}
+      onChange={(val) => {
+        onChange?.(val);
+        if (closeOnSelect) closeDropdown();
+      }}
       className={cn("relative flex-shrink-0 text-left", className)}
       onKeyDown={handleKeyDown}
       disabled={disabled}
@@ -72,7 +76,7 @@ function CustomSelect(props: ICustomSelectProps) {
             <button
               ref={setReferenceElement}
               type="button"
-              className={`flex items-center justify-between gap-1 text-xs ${
+              className={`flex items-center justify-between gap-1 text-xs rounded ${
                 disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
               } ${customButtonClassName}`}
               onClick={toggleDropdown}
