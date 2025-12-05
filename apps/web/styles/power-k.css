@@ -1,5 +1,3 @@
-@reference "@plane/tailwind-config/index.css";
-
 @layer components {
   [cmdk-group] {
     padding-left: 0.45rem;

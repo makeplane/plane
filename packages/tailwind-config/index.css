@@ -3,19 +3,6 @@
 @import "./animations.css";
 @source "../**/*.{ts,tsx}";
 
-@layer base {
-  *::before,
-  *::after {
-    box-sizing: border-box;
-  }
-
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-}
-
 * {
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
@@ -30,52 +17,8 @@ body {
   @apply text-primary;
 }
 
-/* scrollbar style */
-::-webkit-scrollbar {
-  display: none;
-}
-
-.tags-input-container {
-  border: 2px solid #000;
-  padding: 0.5em;
-  border-radius: 3px;
-  width: min(80vw, 600px);
-  margin-top: 1em;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5em;
-}
-
-.tag-item {
-  background-color: rgb(218, 216, 216);
-  display: inline-block;
-  padding: 0.5em 0.75em;
-  border-radius: 20px;
-}
-.tag-item .close {
-  height: 20px;
-  width: 20px;
-  background-color: rgb(48, 48, 48);
-  color: #fff;
-  border-radius: 50%;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  margin-left: 0.5em;
-  font-size: 18px;
-  cursor: pointer;
-}
-
-.tags-input {
-  flex-grow: 1;
-  padding: 0.5em 0;
-  border: none;
-  outline: none;
-}
-
 /* emoji icon picker */
-.conical-gradient {
+@utility conical-gradient {
   background: conic-gradient(
     from 180deg at 50% 50%,
     #ff6b00 0deg,
@@ -89,22 +32,9 @@ body {
 }
 
 /* progress bar */
-.progress-bar {
+@utility progress-bar {
   fill: currentColor;
   color: rgba(var(--color-sidebar-background-100));
-}
-
-/* lineclamp */
-.lineclamp {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-}
-
-/* popover2 styling */
-.bp4-popover2-transition-container {
-  z-index: 1 !important;
 }
 
 ::-webkit-input-placeholder,
@@ -113,138 +43,9 @@ body {
   color: rgb(var(--color-text-400));
 }
 
-.bp4-overlay-content {
-  z-index: 555 !important;
-}
-
-.disable-scroll {
-  overflow: hidden !important;
-}
-
-.vertical-lr {
+@utility vertical-lr {
   writing-mode: vertical-lr;
-  -webkit-writing-mode: vertical-lr;
-  -ms-writing-mode: vertical-lr;
   width: fit-content;
-}
-
-div.web-view-spinner {
-  position: relative;
-  width: 54px;
-  height: 54px;
-  display: inline-block;
-  margin-left: 50%;
-  margin-right: 50%;
-  padding: 10px;
-  border-radius: 10px;
-}
-
-div.web-view-spinner div {
-  width: 6%;
-  height: 16%;
-  background: rgb(var(--color-text-400));
-  position: absolute;
-  left: 49%;
-  top: 43%;
-  opacity: 0;
-  border-radius: 50px;
-  -webkit-border-radius: 50px;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
-  -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
-  animation: fade 1s linear infinite;
-  -webkit-animation: fade 1s linear infinite;
-}
-
-@keyframes fade {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0.25;
-  }
-}
-@-webkit-keyframes fade {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0.25;
-  }
-}
-
-div.web-view-spinner div.bar1 {
-  transform: rotate(0deg) translate(0, -130%);
-  -webkit-transform: rotate(0deg) translate(0, -130%);
-  animation-delay: 0s;
-  -webkit-animation-delay: 0s;
-}
-
-div.web-view-spinner div.bar2 {
-  transform: rotate(30deg) translate(0, -130%);
-  -webkit-transform: rotate(30deg) translate(0, -130%);
-  animation-delay: -0.9167s;
-  -webkit-animation-delay: -0.9167s;
-}
-
-div.web-view-spinner div.bar3 {
-  transform: rotate(60deg) translate(0, -130%);
-  -webkit-transform: rotate(60deg) translate(0, -130%);
-  animation-delay: -0.833s;
-  -webkit-animation-delay: -0.833s;
-}
-div.web-view-spinner div.bar4 {
-  transform: rotate(90deg) translate(0, -130%);
-  -webkit-transform: rotate(90deg) translate(0, -130%);
-  animation-delay: -0.7497s;
-  -webkit-animation-delay: -0.7497s;
-}
-div.web-view-spinner div.bar5 {
-  transform: rotate(120deg) translate(0, -130%);
-  -webkit-transform: rotate(120deg) translate(0, -130%);
-  animation-delay: -0.667s;
-  -webkit-animation-delay: -0.667s;
-}
-div.web-view-spinner div.bar6 {
-  transform: rotate(150deg) translate(0, -130%);
-  -webkit-transform: rotate(150deg) translate(0, -130%);
-  animation-delay: -0.5837s;
-  -webkit-animation-delay: -0.5837s;
-}
-div.web-view-spinner div.bar7 {
-  transform: rotate(180deg) translate(0, -130%);
-  -webkit-transform: rotate(180deg) translate(0, -130%);
-  animation-delay: -0.5s;
-  -webkit-animation-delay: -0.5s;
-}
-div.web-view-spinner div.bar8 {
-  transform: rotate(210deg) translate(0, -130%);
-  -webkit-transform: rotate(210deg) translate(0, -130%);
-  animation-delay: -0.4167s;
-  -webkit-animation-delay: -0.4167s;
-}
-div.web-view-spinner div.bar9 {
-  transform: rotate(240deg) translate(0, -130%);
-  -webkit-transform: rotate(240deg) translate(0, -130%);
-  animation-delay: -0.333s;
-  -webkit-animation-delay: -0.333s;
-}
-div.web-view-spinner div.bar10 {
-  transform: rotate(270deg) translate(0, -130%);
-  -webkit-transform: rotate(270deg) translate(0, -130%);
-  animation-delay: -0.2497s;
-  -webkit-animation-delay: -0.2497s;
-}
-div.web-view-spinner div.bar11 {
-  transform: rotate(300deg) translate(0, -130%);
-  -webkit-transform: rotate(300deg) translate(0, -130%);
-  animation-delay: -0.167s;
-  -webkit-animation-delay: -0.167s;
-}
-div.web-view-spinner div.bar12 {
-  transform: rotate(330deg) translate(0, -130%);
-  -webkit-transform: rotate(330deg) translate(0, -130%);
-  animation-delay: -0.0833s;
-  -webkit-animation-delay: -0.0833s;
 }
 
 @-moz-document url-prefix() {
@@ -266,16 +67,27 @@ div.web-view-spinner div.bar12 {
   }
 }
 
-.vertical-scrollbar {
+/* ---------- Scrollbar utilities ----------- */
+::-webkit-scrollbar {
+  @apply hidden;
+}
+
+@utility vertical-scrollbar {
   overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    display: block;
+  }
 }
-.horizontal-scrollbar {
+
+@utility horizontal-scrollbar {
   overflow-x: auto;
+
+  &::-webkit-scrollbar {
+    display: block;
+  }
 }
-.vertical-scrollbar::-webkit-scrollbar,
-.horizontal-scrollbar::-webkit-scrollbar {
-  display: block;
-}
+
 .vertical-scrollbar::-webkit-scrollbar-track,
 .horizontal-scrollbar::-webkit-scrollbar-track {
   background-color: transparent;
@@ -307,46 +119,63 @@ div.web-view-spinner div.bar12 {
   margin-top: 44px;
 }
 
-/* scrollbar sm size */
-.scrollbar-sm::-webkit-scrollbar {
-  height: 12px;
-  width: 12px;
+/* Scrollbar variants */
+@utility scrollbar-xs {
+  &::-webkit-scrollbar {
+    height: 10px;
+    width: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    border: 3px solid rgba(0, 0, 0, 0);
+  }
 }
-.scrollbar-sm::-webkit-scrollbar-thumb {
-  border: 3px solid rgba(0, 0, 0, 0);
-}
-/* scrollbar md size */
-.scrollbar-md::-webkit-scrollbar {
-  height: 14px;
-  width: 14px;
-}
-.scrollbar-md::-webkit-scrollbar-thumb {
-  border: 3px solid rgba(0, 0, 0, 0);
-}
-/* scrollbar lg size */
+@utility scrollbar-sm {
+  &::-webkit-scrollbar {
+    height: 12px;
+    width: 12px;
+  }
 
-.scrollbar-lg::-webkit-scrollbar {
-  height: 16px;
-  width: 16px;
+  &::-webkit-scrollbar-thumb {
+    border: 3px solid rgba(0, 0, 0, 0);
+  }
 }
-.scrollbar-lg::-webkit-scrollbar-thumb {
-  border: 4px solid rgba(0, 0, 0, 0);
+@utility scrollbar-md {
+  &::-webkit-scrollbar {
+    height: 14px;
+    width: 14px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border: 3px solid rgba(0, 0, 0, 0);
+  }
+}
+@utility scrollbar-lg {
+  &::-webkit-scrollbar {
+    height: 16px;
+    width: 16px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border: 4px solid rgba(0, 0, 0, 0);
+  }
 }
 
 /* highlight class */
-.highlight {
+@utility highlight {
   border: 1px solid rgb(var(--color-primary-100)) !important;
 }
-.highlight-with-line {
+
+@utility highlight-with-line {
   border-left: 5px solid rgb(var(--color-primary-100)) !important;
   background: rgb(var(--color-background-80));
 }
 
 /* By applying below class, the autofilled text in form fields will not have the default autofill background color and styles applied by WebKit browsers  */
-
-.disable-autofill-style:-webkit-autofill,
-.disable-autofill-style:-webkit-autofill:hover,
-.disable-autofill-style:-webkit-autofill:focus,
-.disable-autofill-style:-webkit-autofill:active {
-  -webkit-background-clip: text;
+@utility disable-autofill-style {
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus,
+  &:-webkit-autofill:active {
+    -webkit-background-clip: text;
+  }
 }

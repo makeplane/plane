@@ -1,7 +1,6 @@
 @import "@plane/tailwind-config/index.css";
 @import "@plane/propel/styles/fonts.css";
 
-/* scrollbar style */
 @-moz-document url-prefix() {
   * {
     scrollbar-width: none;
@@ -21,16 +20,6 @@
   }
 }
 
-.vertical-scrollbar {
-  overflow-y: auto;
-}
-.horizontal-scrollbar {
-  overflow-x: auto;
-}
-.vertical-scrollbar::-webkit-scrollbar,
-.horizontal-scrollbar::-webkit-scrollbar {
-  display: block;
-}
 .vertical-scrollbar::-webkit-scrollbar-track,
 .horizontal-scrollbar::-webkit-scrollbar-track {
   background-color: transparent;
@@ -62,32 +51,13 @@
   margin-top: 44px;
 }
 
-/* scrollbar sm size */
-.scrollbar-sm::-webkit-scrollbar {
-  height: 12px;
-  width: 12px;
+.shadow-custom {
+  box-shadow: 2px 2px 8px 2px rgba(234, 231, 250, 0.3); /* Convert #EAE7FA4D to rgba */
 }
-.scrollbar-sm::-webkit-scrollbar-thumb {
-  border: 3px solid rgba(0, 0, 0, 0);
+/* backdrop filter */
+.backdrop-blur-custom {
+  @apply backdrop-filter blur-[9px];
 }
-/* scrollbar md size */
-.scrollbar-md::-webkit-scrollbar {
-  height: 14px;
-  width: 14px;
-}
-.scrollbar-md::-webkit-scrollbar-thumb {
-  border: 3px solid rgba(0, 0, 0, 0);
-}
-/* scrollbar lg size */
-
-.scrollbar-lg::-webkit-scrollbar {
-  height: 16px;
-  width: 16px;
-}
-.scrollbar-lg::-webkit-scrollbar-thumb {
-  border: 4px solid rgba(0, 0, 0, 0);
-}
-/* end scrollbar style */
 
 /* progress bar */
 .progress-bar {
