@@ -8,49 +8,15 @@ export const PasteAssetPlugin = (): Plugin =>
       handlePaste: (view, event) => {
         if (!event.clipboardData) return false;
 
-        let htmlContent = event.clipboardData.getData("text/plane-editor-html");
-        if (htmlContent) {
-          const metaTag = document.createElement("meta");
-          metaTag.setAttribute("charset", "utf-8");
-          htmlContent = metaTag.outerHTML + htmlContent;
-        } else {
-          return false;
-        }
-
-        if (!htmlContent || htmlContent.includes('data-uploaded="true"')) return false;
+        const htmlContent = event.clipboardData.getData("text/plane-editor-html");
+        if (!htmlContent) return false;
 
         // Process the HTML content using the registry
         const { processedHtml, hasChanges } = processAssetDuplication(htmlContent);
-
         if (!hasChanges) return false;
 
         event.preventDefault();
-        event.stopPropagation();
-
-        // Mark the content as already processed to avoid infinite loops
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = processedHtml;
-        const metaTag = tempDiv.querySelector("meta[charset='utf-8']");
-        if (metaTag) {
-          metaTag.setAttribute("data-uploaded", "true");
-        }
-        const finalHtml = tempDiv.innerHTML;
-
-        const newDataTransfer = new DataTransfer();
-        newDataTransfer.setData("text/html", finalHtml);
-        newDataTransfer.setData("text/plane-editor-html", finalHtml);
-        if (event.clipboardData) {
-          newDataTransfer.setData("text/plain", event.clipboardData.getData("text/plain"));
-        }
-
-        const pasteEvent = new ClipboardEvent("paste", {
-          clipboardData: newDataTransfer,
-          bubbles: true,
-          cancelable: true,
-        });
-
-        view.dom.dispatchEvent(pasteEvent);
-
+        view.pasteHTML(processedHtml);
         return true;
       },
     },
