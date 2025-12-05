@@ -1,12 +1,11 @@
 import { assetDuplicationHandlers } from "@/plane-editor/helpers/asset-duplication";
 
 // Utility function to process HTML content with all registered handlers
-export const processAssetDuplication = (htmlContent: string): { processedHtml: string; hasChanges: boolean } => {
+export const processAssetDuplication = (htmlContent: string): { processedHtml: string } => {
   const tempDiv = document.createElement("div");
   tempDiv.innerHTML = htmlContent;
 
   let processedHtml = htmlContent;
-  let hasChanges = false;
 
   // Process each registered component type
   for (const [componentName, handler] of Object.entries(assetDuplicationHandlers)) {
@@ -17,7 +16,6 @@ export const processAssetDuplication = (htmlContent: string): { processedHtml: s
         const result = handler({ element, originalHtml: processedHtml });
         if (result.shouldProcess) {
           processedHtml = result.modifiedHtml;
-          hasChanges = true;
         }
       });
 
@@ -26,5 +24,5 @@ export const processAssetDuplication = (htmlContent: string): { processedHtml: s
     }
   }
 
-  return { processedHtml, hasChanges };
+  return { processedHtml };
 };
