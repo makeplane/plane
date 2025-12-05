@@ -1,39 +1,41 @@
 @reference "@plane/tailwind-config/index.css";
 
-[cmdk-group] {
-  padding-left: 0.45rem;
-  padding-right: 0.45rem;
-  margin-top: 0.5rem;
-}
+@layer components {
+  [cmdk-group] {
+    padding-left: 0.45rem;
+    padding-right: 0.45rem;
+    margin-top: 0.5rem;
+  }
 
-[cmdk-group-heading] {
-  @apply text-tertiary;
-  font-size: 0.75rem;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-  padding-left: 0.45rem;
-  padding-right: 0.45rem;
-}
+  [cmdk-group-heading] {
+    @apply text-tertiary;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    padding-left: 0.45rem;
+    padding-right: 0.45rem;
+  }
 
-[cmdk-item] {
-  border-radius: 0.375rem;
-  padding: 0.5rem;
-  font-size: 0.825rem;
-  line-height: 1.25rem;
-  @apply flex items-center justify-between cursor-pointer;
-}
+  [cmdk-item] {
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    font-size: 0.825rem;
+    line-height: 1.25rem;
+    @apply flex items-center justify-between cursor-pointer;
+  }
 
-[cmdk-item]:focus,
-[cmdk-item][aria-selected="true"] {
-  @apply bg-layer-1;
-}
+  [cmdk-item]:focus,
+  [cmdk-item][aria-selected="true"] {
+    @apply bg-layer-1;
+  }
 
-[cmdk-item][aria-disabled="true"],
-[cmdk-item][data-disabled="true"] {
-  @apply bg-transparent opacity-50 cursor-not-allowed;
-}
+  [cmdk-item][aria-disabled="true"],
+  [cmdk-item][data-disabled="true"] {
+    @apply bg-transparent opacity-50 cursor-not-allowed;
+  }
 
-[cmdk-item][aria-disabled="true"]:focus,
-[cmdk-item][data-disabled="true"]:focus {
-  @apply bg-layer-1/70;
+  [cmdk-item][aria-disabled="true"]:focus,
+  [cmdk-item][data-disabled="true"]:focus {
+    @apply bg-layer-1/70;
+  }
 }
