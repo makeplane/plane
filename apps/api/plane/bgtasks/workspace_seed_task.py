@@ -11,7 +11,6 @@ from datetime import timedelta
 from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth.hashers import make_password
-from django.db import models
 
 # Third party imports
 from celery import shared_task
@@ -505,9 +504,9 @@ def workspace_seed(workspace_id: uuid.UUID) -> None:
         # Create a bot user for creating all the workspace data
         bot_user = User.objects.create(
             username=f"bot_user_{workspace.id}",
-            display_name="Plane Bot",
+            display_name="Plane",
             first_name="Plane",
-            last_name="Bot",
+            last_name="",
             is_bot=True,
             bot_type=BotTypeEnum.WORKSPACE_SEED,
             email=f"bot_user_{workspace.id}@plane.so",
