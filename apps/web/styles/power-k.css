@@ -16,11 +16,11 @@
 }
 
 [cmdk-item] {
-  @apply flex items-center justify-between cursor-pointer;
   border-radius: 0.375rem;
   padding: 0.5rem;
   font-size: 0.825rem;
   line-height: 1.25rem;
+  @apply flex items-center justify-between cursor-pointer;
 }
 
 [cmdk-item]:focus,

@@ -124,16 +124,16 @@
 }
 
 .epr-search-container > input {
-  @apply !bg-surface-2 !text-primary;
+  @apply bg-surface-2! text-primary!;
   border: none !important;
 }
 
 .epr-search-container > input::placeholder {
-  @apply !text-placeholder;
+  @apply text-placeholder!;
 }
 
 .epr-search-container > .epr-icn-search {
-  @apply !text-placeholder;
+  @apply text-placeholder!;
 }
 
 /* Lock icon animations */
