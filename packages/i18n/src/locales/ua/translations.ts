@@ -1284,6 +1284,9 @@ export default {
         label: "Скільки людей користуватиметься цим простором?",
         placeholder: "Виберіть діапазон",
       },
+      workspace_timezone: {
+        label: "Часовий пояс робочого простору",
+      },
     },
     errors: {
       creation_disabled: {
@@ -1585,6 +1588,7 @@ export default {
         name: "Назва робочого простору",
         company_size: "Розмір компанії",
         url: "URL робочого простору",
+        workspace_timezone: "Часовий пояс робочого простору",
         update_workspace: "Оновити простір",
         delete_workspace: "Видалити цей простір",
         delete_workspace_description: "Видалення простору призведе до втрати всіх даних і ресурсів. Дія незворотна.",

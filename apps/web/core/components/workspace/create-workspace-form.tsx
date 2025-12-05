@@ -15,6 +15,7 @@ import type { IWorkspace } from "@plane/types";
 // ui
 import { CustomSelect, Input } from "@plane/ui";
 // hooks
+import { TimezoneSelect } from "@/components/global/timezone-select";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
@@ -27,8 +28,9 @@ type Props = {
     name: string;
     slug: string;
     organization_size: string;
+    timezone: string;
   };
-  setDefaultValues: Dispatch<SetStateAction<Pick<IWorkspace, "name" | "slug" | "organization_size">>>;
+  setDefaultValues: Dispatch<SetStateAction<Pick<IWorkspace, "name" | "slug" | "organization_size" | "timezone">>>;
   secondaryButton?: React.ReactNode;
   primaryButtonText?: {
     loading: string;
@@ -67,47 +69,46 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
   } = useForm<IWorkspace>({ defaultValues, mode: "onChange" });
 
   const handleCreateWorkspace = async (formData: IWorkspace) => {
-    await workspaceService
-      .workspaceSlugCheck(formData.slug)
-      .then(async (res) => {
-        if (res.status === true && !RESTRICTED_URLS.includes(formData.slug)) {
-          setSlugError(false);
+    try {
+      const res = (await workspaceService.workspaceSlugCheck(formData.slug)) as { status: boolean };
+      if (res.status === true && !RESTRICTED_URLS.includes(formData.slug)) {
+        setSlugError(false);
 
-          await createWorkspace(formData)
-            .then(async (res) => {
-              captureSuccess({
-                eventName: WORKSPACE_TRACKER_EVENTS.create,
-                payload: { slug: formData.slug },
-              });
-              setToast({
-                type: TOAST_TYPE.SUCCESS,
-                title: t("workspace_creation.toast.success.title"),
-                message: t("workspace_creation.toast.success.message"),
-              });
+        try {
+          const workspaceResponse = await createWorkspace(formData);
+          captureSuccess({
+            eventName: WORKSPACE_TRACKER_EVENTS.create,
+            payload: { slug: formData.slug },
+          });
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: t("workspace_creation.toast.success.title"),
+            message: t("workspace_creation.toast.success.message"),
+          });
 
-              if (onSubmit) await onSubmit(res);
-            })
-            .catch(() => {
-              captureError({
-                eventName: WORKSPACE_TRACKER_EVENTS.create,
-                payload: { slug: formData.slug },
-                error: new Error("Error creating workspace"),
-              });
-              setToast({
-                type: TOAST_TYPE.ERROR,
-                title: t("workspace_creation.toast.error.title"),
-                message: t("workspace_creation.toast.error.message"),
-              });
-            });
-        } else setSlugError(true);
-      })
-      .catch(() => {
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("workspace_creation.toast.error.title"),
-          message: t("workspace_creation.toast.error.message"),
-        });
+          if (onSubmit) await onSubmit(workspaceResponse);
+        } catch {
+          captureError({
+            eventName: WORKSPACE_TRACKER_EVENTS.create,
+            payload: { slug: formData.slug },
+            error: new Error("Error creating workspace"),
+          });
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("workspace_creation.toast.error.title"),
+            message: t("workspace_creation.toast.error.message"),
+          });
+        }
+      } else {
+        setSlugError(true);
+      }
+    } catch {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("workspace_creation.toast.error.title"),
+        message: t("workspace_creation.toast.error.message"),
       });
+    }
   };
 
   useEffect(
@@ -119,7 +120,12 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
   );
 
   return (
-    <form className="space-y-6 sm:space-y-9" onSubmit={handleSubmit(handleCreateWorkspace)}>
+    <form
+      className="space-y-6 sm:space-y-9"
+      onSubmit={(e) => {
+        void handleSubmit(handleCreateWorkspace)(e);
+      }}
+    >
       <div className="space-y-6 sm:space-y-7">
         <div className="space-y-1 text-sm">
           <label htmlFor="workspaceName">
@@ -239,6 +245,20 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
             {errors.organization_size && (
               <span className="text-sm text-red-500">{errors.organization_size.message}</span>
             )}
+          </div>
+        </div>
+        <div className="space-y-1 text-sm">
+          <span>{t("workspace_creation.form.workspace_timezone.label")}</span>
+          <div className="w-full">
+            <Controller
+              name="timezone"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <>
+                  <TimezoneSelect value={value} onChange={onChange} buttonClassName="border-none" />
+                </>
+              )}
+            />
           </div>
         </div>
       </div>

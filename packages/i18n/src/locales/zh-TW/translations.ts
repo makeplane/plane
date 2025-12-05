@@ -1268,6 +1268,9 @@ export default {
         label: "有多少人會使用這個工作區？",
         placeholder: "選擇一個範圍",
       },
+      workspace_timezone: {
+        label: "工作區時區",
+      },
     },
     errors: {
       creation_disabled: {
@@ -1561,6 +1564,7 @@ export default {
         name: "工作區名稱",
         company_size: "公司規模",
         url: "工作區網址",
+        workspace_timezone: "工作區時區",
         update_workspace: "更新工作區",
         delete_workspace: "刪除此工作區",
         delete_workspace_description: "刪除工作區時，該工作區內的所有資料和資源都將被永久移除且無法復原。",

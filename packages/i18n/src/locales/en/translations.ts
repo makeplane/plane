@@ -1121,6 +1121,9 @@ export default {
         label: "How many people will use this workspace?",
         placeholder: "Select a range",
       },
+      workspace_timezone: {
+        label: "Workspace Timezone",
+      },
     },
     errors: {
       creation_disabled: {
@@ -1431,6 +1434,7 @@ export default {
         name: "Workspace name",
         company_size: "Company size",
         url: "Workspace URL",
+        workspace_timezone: "Workspace Timezone",
         update_workspace: "Update workspace",
         delete_workspace: "Delete this workspace",
         delete_workspace_description:

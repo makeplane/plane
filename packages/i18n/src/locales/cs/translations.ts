@@ -1282,6 +1282,9 @@ export default {
         label: "Kolik lidí bude tento prostor používat?",
         placeholder: "Vyberte rozsah",
       },
+      workspace_timezone: {
+        label: "Časové pásmo pracovního prostoru",
+      },
     },
     errors: {
       creation_disabled: {
@@ -1578,6 +1581,7 @@ export default {
         name: "Název pracovního prostoru",
         company_size: "Velikost společnosti",
         url: "URL pracovního prostoru",
+        workspace_timezone: "Časové pásmo pracovního prostoru",
         update_workspace: "Aktualizovat prostor",
         delete_workspace: "Smazat tento prostor",
         delete_workspace_description: "Smazáním prostoru odstraníte všechna data a zdroje. Akce je nevratná.",

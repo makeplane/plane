@@ -1282,6 +1282,9 @@ export default {
         label: "Ile osób będzie używać tej przestrzeni?",
         placeholder: "Wybierz zakres",
       },
+      workspace_timezone: {
+        label: "Strefa czasowa przestrzeni roboczej",
+      },
     },
     errors: {
       creation_disabled: {
@@ -1581,6 +1584,7 @@ export default {
         name: "Nazwa przestrzeni roboczej",
         company_size: "Rozmiar firmy",
         url: "URL przestrzeni roboczej",
+        workspace_timezone: "Strefa czasowa przestrzeni roboczej",
         update_workspace: "Zaktualizuj przestrzeń",
         delete_workspace: "Usuń tę przestrzeń",
         delete_workspace_description:

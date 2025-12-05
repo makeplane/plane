@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { CircleCheck } from "lucide-react";
@@ -16,6 +16,7 @@ import type { IUser, IWorkspace } from "@plane/types";
 import { Spinner } from "@plane/ui";
 import { cn } from "@plane/utils";
 // helpers
+import { TimezoneSelect } from "@/components/global/timezone-select";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -64,6 +65,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
       name: "",
       slug: "",
       organization_size: "",
+      timezone: "UTC",
     },
     mode: "onChange",
   });
@@ -71,47 +73,46 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
   const handleCreateWorkspace = async (formData: IWorkspace) => {
     if (isSubmitting) return;
 
-    await workspaceService
-      .workspaceSlugCheck(formData.slug)
-      .then(async (res) => {
-        if (res.status === true && !RESTRICTED_URLS.includes(formData.slug)) {
-          setSlugError(false);
-          await createWorkspace(formData)
-            .then(async (workspaceResponse) => {
-              setToast({
-                type: TOAST_TYPE.SUCCESS,
-                title: t("workspace_creation.toast.success.title"),
-                message: t("workspace_creation.toast.success.message"),
-              });
-              captureSuccess({
-                eventName: WORKSPACE_TRACKER_EVENTS.create,
-                payload: { slug: formData.slug },
-              });
-              await fetchWorkspaces();
-              await completeStep(workspaceResponse.id);
-              onComplete(formData.organization_size === "Just myself");
-            })
-            .catch(() => {
-              captureError({
-                eventName: WORKSPACE_TRACKER_EVENTS.create,
-                payload: { slug: formData.slug },
-                error: new Error("Error creating workspace"),
-              });
-              setToast({
-                type: TOAST_TYPE.ERROR,
-                title: t("workspace_creation.toast.error.title"),
-                message: t("workspace_creation.toast.error.message"),
-              });
-            });
-        } else setSlugError(true);
-      })
-      .catch(() =>
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: t("workspace_creation.toast.error.title"),
-          message: t("workspace_creation.toast.error.message"),
-        })
-      );
+    try {
+      const res = (await workspaceService.workspaceSlugCheck(formData.slug)) as { status: boolean };
+      if (res.status === true && !RESTRICTED_URLS.includes(formData.slug)) {
+        setSlugError(false);
+        try {
+          const workspaceResponse = await createWorkspace(formData);
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: t("workspace_creation.toast.success.title"),
+            message: t("workspace_creation.toast.success.message"),
+          });
+          captureSuccess({
+            eventName: WORKSPACE_TRACKER_EVENTS.create,
+            payload: { slug: formData.slug },
+          });
+          await fetchWorkspaces();
+          await completeStep(workspaceResponse.id);
+          onComplete(formData.organization_size === "Just myself");
+        } catch {
+          captureError({
+            eventName: WORKSPACE_TRACKER_EVENTS.create,
+            payload: { slug: formData.slug },
+            error: new Error("Error creating workspace"),
+          });
+          setToast({
+            type: TOAST_TYPE.ERROR,
+            title: t("workspace_creation.toast.error.title"),
+            message: t("workspace_creation.toast.error.message"),
+          });
+        }
+      } else {
+        setSlugError(true);
+      }
+    } catch {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("workspace_creation.toast.error.title"),
+        message: t("workspace_creation.toast.error.message"),
+      });
+    }
   };
 
   const completeStep = async (workspaceId: string) => {
@@ -136,7 +137,12 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
     );
   }
   return (
-    <form className="flex flex-col gap-10" onSubmit={handleSubmit(handleCreateWorkspace)}>
+    <form
+      className="flex flex-col gap-10"
+      onSubmit={(e) => {
+        void handleSubmit(handleCreateWorkspace)(e);
+      }}
+    >
       <CommonOnboardingHeader title="Create your workspace" description="All your work — unified." />
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-2">
@@ -181,6 +187,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                       "border-red-500": errors.name,
                     }
                   )}
+                  // eslint-disable-next-line jsx-a11y/no-autofocus
                   autoFocus
                 />
               </div>
@@ -290,6 +297,22 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
             {errors.organization_size && (
               <span className="text-sm text-red-500">{errors.organization_size.message}</span>
             )}
+          </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          <label className="text-sm text-custom-text-300 font-medium" htmlFor="timezone">
+            {t("workspace_creation.form.workspace_timezone.label")}
+          </label>
+          <div className="w-full">
+            <Controller
+              name="timezone"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <>
+                  <TimezoneSelect value={value} onChange={onChange} buttonClassName="border-none" />
+                </>
+              )}
+            />
           </div>
         </div>
       </div>

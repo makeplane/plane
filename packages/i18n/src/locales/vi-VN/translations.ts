@@ -1288,6 +1288,9 @@ export default {
         label: "Có bao nhiêu người sẽ sử dụng không gian làm việc này?",
         placeholder: "Chọn một phạm vi",
       },
+      workspace_timezone: {
+        label: "Múi giờ không gian làm việc",
+      },
     },
     errors: {
       creation_disabled: {
@@ -1587,6 +1590,7 @@ export default {
         name: "Tên không gian làm việc",
         company_size: "Quy mô công ty",
         url: "URL không gian làm việc",
+        workspace_timezone: "Múi giờ không gian làm việc",
         update_workspace: "Cập nhật không gian làm việc",
         delete_workspace: "Xóa không gian làm việc này",
         delete_workspace_description:

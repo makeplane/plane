@@ -1280,6 +1280,9 @@ export default {
         label: "このワークスペースを何人で使用しますか？",
         placeholder: "範囲を選択",
       },
+      workspace_timezone: {
+        label: "ワークスペースのタイムゾーン",
+      },
     },
     errors: {
       creation_disabled: {
@@ -1577,6 +1580,7 @@ export default {
         name: "ワークスペース名",
         company_size: "会社の規模",
         url: "ワークスペースURL",
+        workspace_timezone: "ワークスペースのタイムゾーン",
         update_workspace: "ワークスペースを更新",
         delete_workspace: "このワークスペースを削除",
         delete_workspace_description:

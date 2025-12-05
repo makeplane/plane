@@ -1286,6 +1286,9 @@ export default {
         label: "Berapa banyak orang yang akan menggunakan ruang kerja ini?",
         placeholder: "Pilih rentang",
       },
+      workspace_timezone: {
+        label: "Zona waktu ruang kerja",
+      },
     },
     errors: {
       creation_disabled: {
@@ -1586,6 +1589,7 @@ export default {
         name: "Nama ruang kerja",
         company_size: "Ukuran perusahaan",
         url: "URL ruang kerja",
+        workspace_timezone: "Zona waktu ruang kerja",
         update_workspace: "Perbarui ruang kerja",
         delete_workspace: "Hapus ruang kerja ini",
         delete_workspace_description:

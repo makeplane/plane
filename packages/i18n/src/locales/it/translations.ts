@@ -1286,6 +1286,9 @@ export default {
         label: "Quante persone utilizzeranno questo spazio di lavoro?",
         placeholder: "Seleziona una fascia",
       },
+      workspace_timezone: {
+        label: "Fuso orario dello spazio di lavoro",
+      },
     },
     errors: {
       creation_disabled: {
@@ -1590,6 +1593,7 @@ export default {
         name: "Nome dello spazio di lavoro",
         company_size: "Dimensione aziendale",
         url: "URL dello spazio di lavoro",
+        workspace_timezone: "Fuso orario dello spazio di lavoro",
         update_workspace: "Aggiorna spazio di lavoro",
         delete_workspace: "Elimina questo spazio di lavoro",
         delete_workspace_description:

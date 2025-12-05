@@ -18,7 +18,7 @@ import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 // plane web helpers
 import { getIsWorkspaceCreationDisabled } from "@/plane-web/helpers/instance.helper";
 
-function CreateWorkspacePage() {
+const CreateWorkspacePage = observer(function CreateWorkspacePage() {
   const { t } = useTranslation();
   // router
   const router = useAppRouter();
@@ -26,10 +26,13 @@ function CreateWorkspacePage() {
   const { data: currentUser } = useUser();
   const { updateUserProfile } = useUserProfile();
   // states
-  const [defaultValues, setDefaultValues] = useState<Pick<IWorkspace, "name" | "slug" | "organization_size">>({
+  const [defaultValues, setDefaultValues] = useState<
+    Pick<IWorkspace, "name" | "slug" | "organization_size" | "timezone">
+  >({
     name: "",
     slug: "",
     organization_size: "",
+    timezone: "UTC",
   });
   // derived values
   const isWorkspaceCreationDisabled = getIsWorkspaceCreationDisabled();
@@ -104,6 +107,6 @@ function CreateWorkspacePage() {
       </div>
     </AuthenticationWrapper>
   );
-}
+});
 
-export default observer(CreateWorkspacePage);
+export default CreateWorkspacePage;

@@ -1274,6 +1274,9 @@ export default {
         label: "이 작업 공간을 사용할 사람 수",
         placeholder: "범위 선택",
       },
+      workspace_timezone: {
+        label: "작업 공간 시간대",
+      },
     },
     errors: {
       creation_disabled: {
@@ -1570,6 +1573,7 @@ export default {
         name: "작업 공간 이름",
         company_size: "회사 규모",
         url: "작업 공간 URL",
+        workspace_timezone: "작업 공간 시간대",
         update_workspace: "작업 공간 업데이트",
         delete_workspace: "이 작업 공간 삭제",
         delete_workspace_description:

@@ -1295,6 +1295,9 @@ export default {
         label: "Combien de personnes utiliseront cet espace de travail ?",
         placeholder: "Sélectionnez une plage",
       },
+      workspace_timezone: {
+        label: "Fuseau horaire de l'espace de travail",
+      },
     },
     errors: {
       creation_disabled: {
@@ -1598,6 +1601,7 @@ export default {
         name: "Nom de l’espace de travail",
         company_size: "Taille de l’entreprise",
         url: "URL de l’espace de travail",
+        workspace_timezone: "Fuseau horaire de l’espace de travail",
         update_workspace: "Mettre à jour l’espace de travail",
         delete_workspace: "Supprimer cet espace de travail",
         delete_workspace_description:
