@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { InboxIcon, RefreshCcw } from "lucide-react";
+import { RefreshCcw } from "lucide-react";
 // ui
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -16,6 +16,7 @@ import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
+import { IntakeIcon } from "@plane/propel/icons";
 
 export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
   // states
@@ -46,7 +47,7 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
                 <BreadcrumbLink
                   label="Intake"
                   href={`/${workspaceSlug}/projects/${projectId}/intake/`}
-                  icon={<InboxIcon className="h-4 w-4 text-custom-text-300" />}
+                  icon={<IntakeIcon className="h-4 w-4 text-custom-text-300" />}
                   isLast
                 />
               }
