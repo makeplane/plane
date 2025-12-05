@@ -10,7 +10,7 @@ type TArgs = {
 };
 
 export const CustomPlaceholderExtension = (args: TArgs) => {
-  const { placeholder, showPlaceholderOnEmpty } = args;
+  const { placeholder, showPlaceholderOnEmpty = false } = args;
 
   return Placeholder.configure({
     placeholder: ({ editor, node }) => {
