@@ -58,8 +58,6 @@ import type { IStickyStore } from "./sticky/sticky.store";
 import { StickyStore } from "./sticky/sticky.store";
 import type { IThemeStore } from "./theme.store";
 import { ThemeStore } from "./theme.store";
-import type { ITransientStore } from "./transient.store";
-import { TransientStore } from "./transient.store";
 import type { IUserStore } from "./user";
 import { UserStore } from "./user";
 import type { IWorkspaceRootStore } from "./workspace";
@@ -93,7 +91,6 @@ export class CoreRootStore {
   multipleSelect: IMultipleSelectStore;
   workspaceNotification: IWorkspaceNotificationStore;
   favorite: IFavoriteStore;
-  transient: ITransientStore;
   stickyStore: IStickyStore;
   editorAssetStore: IEditorAssetStore;
   workItemFilters: IWorkItemFilterStore;
@@ -124,7 +121,6 @@ export class CoreRootStore {
     this.projectEstimate = new ProjectEstimateStore(this);
     this.workspaceNotification = new WorkspaceNotificationStore(this);
     this.favorite = new FavoriteStore(this);
-    this.transient = new TransientStore();
     this.stickyStore = new StickyStore();
     this.editorAssetStore = new EditorAssetStore();
     this.analytics = new AnalyticsStore();
@@ -159,7 +155,6 @@ export class CoreRootStore {
     this.projectEstimate = new ProjectEstimateStore(this);
     this.workspaceNotification = new WorkspaceNotificationStore(this);
     this.favorite = new FavoriteStore(this);
-    this.transient = new TransientStore();
     this.stickyStore = new StickyStore();
     this.editorAssetStore = new EditorAssetStore();
     this.workItemFilters = new WorkItemFilterStore();

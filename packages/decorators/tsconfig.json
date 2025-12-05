@@ -3,13 +3,10 @@
   "compilerOptions": {
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "lib": ["ES2020"],
-    "rootDir": ".",
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }
   },
-  "include": ["./src", "./*.ts"],
+  "include": ["src"],
   "exclude": ["dist", "build", "node_modules"]
 }

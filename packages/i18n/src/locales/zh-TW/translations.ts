@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "唯一代碼",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "貼上傳送到您電子郵件的代碼",
         requesting_new_code: "正在請求新代碼",
         sending_code: "正在發送代碼",
@@ -1528,7 +1528,7 @@ export default {
           },
           code: {
             label: "驗證碼",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "驗證碼已傳送到你的新電子郵件。",
             errors: {
               required: "驗證碼為必填",

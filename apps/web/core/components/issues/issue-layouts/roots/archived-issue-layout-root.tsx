@@ -6,7 +6,6 @@ import useSWR from "swr";
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
 // components
-import { LogoSpinner } from "@/components/common/logo-spinner";
 import { ProjectLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/project-level";
 // hooks
 import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
@@ -26,7 +25,7 @@ export const ArchivedIssueLayoutRoot = observer(function ArchivedIssueLayoutRoot
   // derived values
   const workItemFilters = projectId ? issuesFilter?.getIssueFilters(projectId) : undefined;
 
-  const { isLoading } = useSWR(
+  useSWR(
     workspaceSlug && projectId ? `ARCHIVED_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}` : null,
     async () => {
       if (workspaceSlug && projectId) {
@@ -36,15 +35,7 @@ export const ArchivedIssueLayoutRoot = observer(function ArchivedIssueLayoutRoot
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  if (!workspaceSlug || !projectId) return <></>;
-
-  if (isLoading && !workItemFilters)
-    return (
-      <div className="h-full w-full flex items-center justify-center">
-        <LogoSpinner />
-      </div>
-    );
-
+  if (!workspaceSlug || !projectId || !workItemFilters) return <></>;
   return (
     <IssuesStoreContext.Provider value={EIssuesStoreType.ARCHIVED}>
       <ProjectLevelWorkItemFiltersHOC

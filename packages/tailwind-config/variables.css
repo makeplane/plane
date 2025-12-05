@@ -35,16 +35,7 @@
   --color-alpha-black-1200: oklch(0.1482 0.0034 196.79 / 95%);
 
   /* ---------- Border radius ---------- */
-  --radius-*: initial;
-  --radius-none: 0;
-  --radius-xs: 0.125rem;
-  --radius-sm: 0.25rem;
-  --radius-md: 0.375rem;
-  --radius-lg: 0.5rem;
-  --radius-xl: 0.75rem;
-  --radius-2xl: 1rem;
-  --radius-3xl: 1.5rem;
-  --radius-full: 9999px;
+  --radius-4xl: initial;
 
   /* ---------- Border width ---------- */
   --border-width-*: initial;

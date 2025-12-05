@@ -1,5 +1,9 @@
 {
   "extends": "@plane/typescript-config/react-library.json",
+  "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
+    "noUnusedLocals": false
+  },
   "include": ["./src"],
   "exclude": ["dist", "build", "node_modules"]
 }

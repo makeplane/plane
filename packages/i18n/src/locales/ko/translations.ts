@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "고유 코드",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "이메일로 전송된 코드를 붙여넣기",
         requesting_new_code: "새 코드 요청 중",
         sending_code: "코드 전송 중",
@@ -1536,7 +1536,7 @@ export default {
           },
           code: {
             label: "고유 코드",
-            placeholder: "gets-sets-flys",
+            placeholder: "123456",
             helper_text: "인증 코드가 새 이메일로 전송되었습니다.",
             errors: {
               required: "고유 코드는 필수입니다",

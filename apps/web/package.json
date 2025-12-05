@@ -10,11 +10,11 @@
     "preview": "react-router build && serve -s build/client -l 3000",
     "start": "serve -s build/client -l 3000",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf .react-router && rm -rf node_modules && rm -rf dist && rm -rf build",
-    "check:lint": "eslint . --max-warnings 934",
+    "check:lint": "eslint . --max-warnings=14367",
     "check:types": "react-router typegen && tsc --noEmit",
-    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
-    "fix:lint": "eslint . --fix",
-    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\""
+    "check:format": "prettier --check .",
+    "fix:lint": "eslint . --fix --max-warnings=14367",
+    "fix:format": "prettier --write ."
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "catalog:",
@@ -76,10 +76,9 @@
     "uuid": "catalog:"
   },
   "devDependencies": {
-    "@plane/eslint-config": "workspace:*",
+    "@dotenvx/dotenvx": "catalog:",
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@prettier/plugin-oxc": "0.0.4",
     "@react-router/dev": "catalog:",
     "@tailwindcss/typography": "0.5.19",
     "@types/lodash-es": "catalog:",
@@ -87,8 +86,6 @@
     "@types/react": "catalog:",
     "@types/react-color": "^3.0.6",
     "@types/react-dom": "catalog:",
-    "dotenv": "^16.4.5",
-    "prettier": "^3.2.5",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-tsconfig-paths": "^5.1.4"
