@@ -89,7 +89,7 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
       });
       return markdown;
     },
-    copyMarkdownToClipboard: async () => {
+    copyMarkdownToClipboard: () => {
       if (!editor) return;
 
       const html = editor.getHTML();
