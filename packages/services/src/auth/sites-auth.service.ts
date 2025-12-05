@@ -1,6 +1,6 @@
 import { API_BASE_URL } from "@plane/constants";
 // types
-import { IEmailCheckData, IEmailCheckResponse } from "@plane/types";
+import type { IEmailCheckData, IEmailCheckResponse } from "@plane/types";
 // services
 import { APIService } from "../api.service";
 

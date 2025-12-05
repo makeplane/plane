@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
@@ -20,6 +17,8 @@ import type { IUserProfileProjectSegregation } from "@plane/types";
 // plane ui
 import { Loader } from "@plane/ui";
 import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
+// helpers
+import { getCoverImageDisplayURL } from "@/helpers/cover-image.helper";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useProject } from "@/hooks/store/use-project";
@@ -33,7 +32,7 @@ type TProfileSidebar = {
   className?: string;
 };
 
-export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
+export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSidebar) {
   const { userProjectsData, className = "" } = props;
   // refs
   const ref = useRef<HTMLDivElement>(null);
@@ -104,9 +103,8 @@ export const ProfileSidebar: FC<TProfileSidebar> = observer((props) => {
             )}
             <img
               src={
-                userData?.cover_image_url
-                  ? getFileURL(userData?.cover_image_url)
-                  : "/users/user-profile-cover-default-img.png"
+                getCoverImageDisplayURL(userData?.cover_image_url, "/users/user-profile-cover-default-img.png") ||
+                "/users/user-profile-cover-default-img.png"
               }
               alt={userData?.display_name}
               className="h-[110px] w-full object-cover"

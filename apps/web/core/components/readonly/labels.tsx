@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -18,7 +16,7 @@ export type TReadonlyLabelsProps = {
   workspaceSlug: string;
 };
 
-export const ReadonlyLabels: React.FC<TReadonlyLabelsProps> = observer((props) => {
+export const ReadonlyLabels = observer(function ReadonlyLabels(props: TReadonlyLabelsProps) {
   const { className, value, projectId, workspaceSlug } = props;
 
   const { getLabelById, fetchProjectLabels } = useLabel();

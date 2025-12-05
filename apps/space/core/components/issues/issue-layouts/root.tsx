@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -22,7 +20,7 @@ type Props = {
   publishSettings: PublishStore;
 };
 
-export const IssuesLayoutsRoot: React.FC<Props> = observer((props) => {
+export const IssuesLayoutsRoot = observer(function IssuesLayoutsRoot(props: Props) {
   const { peekId, publishSettings } = props;
   // store hooks
   const { getIssueFilters } = useIssueFilter();

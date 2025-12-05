@@ -6,3 +6,5 @@ export default class IntakeService extends APIService {
     super(BASE_URL || API_BASE_URL);
   }
 }
+
+export { IntakeService };

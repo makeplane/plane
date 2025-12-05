@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm, Controller } from "react-hook-form";
@@ -26,7 +24,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const AddComment: React.FC<Props> = observer((props) => {
+export const AddComment = observer(function AddComment(props: Props) {
   const { anchor } = props;
   // states
   const [uploadedAssetIds, setUploadAssetIds] = useState<string[]>([]);
@@ -97,6 +95,9 @@ export const AddComment: React.FC<Props> = observer((props) => {
                 const { asset_id } = await uploadCommentAsset(file, anchor);
                 setUploadAssetIds((prev) => [...prev, asset_id]);
                 return asset_id;
+              }}
+              displayConfig={{
+                fontSize: "small-font",
               }}
             />
           )}

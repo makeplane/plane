@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
@@ -14,7 +12,7 @@ import { useInstance } from "@/hooks/store";
 import { AuthenticationModes } from "@/plane-admin/components/authentication";
 import type { Route } from "./+types/page";
 
-const InstanceAuthenticationPage = observer<React.FC<Route.ComponentProps>>(() => {
+const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(_props: Route.ComponentProps) {
   // store
   const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
 

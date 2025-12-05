@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactNode } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -31,7 +29,7 @@ type Props = TDropdownProps & {
   currentCycleId?: string;
 };
 
-export const CycleDropdown: React.FC<Props> = observer((props) => {
+export const CycleDropdown = observer(function CycleDropdown(props: Props) {
   const {
     button,
     buttonClassName,

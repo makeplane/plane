@@ -13,34 +13,34 @@ type TSingleDateFilterValueInputProps<P extends TFilterProperty> = {
   onChange: (value: string | null | undefined) => void;
 };
 
-export const SingleDateFilterValueInput = observer(
-  <P extends TFilterProperty>(props: TSingleDateFilterValueInputProps<P>) => {
-    const { config, condition, isDisabled, onChange } = props;
-    // derived values
-    const conditionValue = typeof condition.value === "string" ? condition.value : null;
+export const SingleDateFilterValueInput = observer(function SingleDateFilterValueInput<P extends TFilterProperty>(
+  props: TSingleDateFilterValueInputProps<P>
+) {
+  const { config, condition, isDisabled, onChange } = props;
+  // derived values
+  const conditionValue = typeof condition.value === "string" ? condition.value : null;
 
-    return (
-      <DateDropdown
-        value={conditionValue}
-        onChange={(value: Date | null) => {
-          const formattedDate = value ? renderFormattedPayloadDate(value) : null;
-          onChange(formattedDate);
-        }}
-        buttonClassName={cn("rounded-none", {
-          [COMMON_FILTER_ITEM_BORDER_CLASSNAME]: !isDisabled,
-          "text-custom-text-400": !conditionValue,
-          "hover:bg-custom-background-100": isDisabled,
-        })}
-        minDate={config.min}
-        maxDate={config.max}
-        icon={null}
-        placeholder={EMPTY_FILTER_PLACEHOLDER_TEXT}
-        buttonVariant="transparent-with-text"
-        isClearable={false}
-        closeOnSelect
-        defaultOpen={!conditionValue}
-        disabled={isDisabled}
-      />
-    );
-  }
-);
+  return (
+    <DateDropdown
+      value={conditionValue}
+      onChange={(value: Date | null) => {
+        const formattedDate = value ? renderFormattedPayloadDate(value) : null;
+        onChange(formattedDate);
+      }}
+      buttonClassName={cn("rounded-none", {
+        [COMMON_FILTER_ITEM_BORDER_CLASSNAME]: !isDisabled,
+        "text-custom-text-400": !conditionValue,
+        "hover:bg-custom-background-100": isDisabled,
+      })}
+      minDate={config.min}
+      maxDate={config.max}
+      icon={null}
+      placeholder={EMPTY_FILTER_PLACEHOLDER_TEXT}
+      buttonVariant="transparent-with-text"
+      isClearable={false}
+      closeOnSelect
+      defaultOpen={!conditionValue}
+      disabled={isDisabled}
+    />
+  );
+});

@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "Унікальний код",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "Вставте код, надісланий на вашу електронну пошту",
         requesting_new_code: "Запитую новий код",
         sending_code: "Надсилаю код",
@@ -1529,6 +1529,47 @@ export default {
         "Якщо ви підтвердите, всі параметри сортування, фільтрації та відображення + макет, який ви обрали для цього подання, будуть безповоротно видалені без можливості відновлення.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "Змінити email",
+        description: "Введіть нову адресу електронної пошти, щоб отримати посилання для підтвердження.",
+        toasts: {
+          success_title: "Успіх!",
+          success_message: "Email успішно оновлено. Увійдіть знову.",
+        },
+        form: {
+          email: {
+            label: "Новий email",
+            placeholder: "Введіть свій email",
+            errors: {
+              required: "Email є обов’язковим",
+              invalid: "Email недійсний",
+              exists: "Email уже існує. Використайте інший.",
+              validation_failed: "Не вдалося підтвердити email. Спробуйте ще раз.",
+            },
+          },
+          code: {
+            label: "Унікальний код",
+            placeholder: "123456",
+            helper_text: "Код підтвердження надіслано на ваш новий email.",
+            errors: {
+              required: "Унікальний код є обов’язковим",
+              invalid: "Недійсний код підтвердження. Спробуйте ще раз.",
+            },
+          },
+        },
+        actions: {
+          continue: "Продовжити",
+          confirm: "Підтвердити",
+          cancel: "Скасувати",
+        },
+        states: {
+          sending: "Надсилання…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "Налаштування робочого простору",
     page_label: "{workspace} - Загальні налаштування",
@@ -1605,6 +1646,7 @@ export default {
         exporting: "Експортування",
         previous_exports: "Попередні експорти",
         export_separate_files: "Експортувати дані в окремі файли",
+        filters_info: "Застосуйте фільтри для експорту конкретних робочих елементів за вашими критеріями.",
         modal: {
           title: "Експортувати в",
           toasts: {

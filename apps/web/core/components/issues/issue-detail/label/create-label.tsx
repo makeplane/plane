@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useState, Fragment, useEffect } from "react";
 import { TwitterPicker } from "react-color";
 import { Controller, useForm } from "react-hook-form";
@@ -29,7 +26,7 @@ const defaultValues: Partial<IIssueLabel> = {
   color: "#ff0000",
 };
 
-export const LabelCreate: FC<ILabelCreate> = (props) => {
+export function LabelCreate(props: ILabelCreate) {
   const { workspaceSlug, projectId, issueId, values, labelOperations, disabled = false } = props;
   // state
   const [isCreateToggle, setIsCreateToggle] = useState(false);
@@ -164,4 +161,4 @@ export const LabelCreate: FC<ILabelCreate> = (props) => {
       )}
     </>
   );
-};
+}

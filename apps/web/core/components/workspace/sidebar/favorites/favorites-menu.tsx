@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import type {
@@ -34,7 +32,7 @@ import type { TargetData } from "./favorites.helpers";
 import { getInstructionFromPayload } from "./favorites.helpers";
 import { NewFavoriteFolder } from "./new-fav-folder";
 
-export const SidebarFavoritesMenu = observer(() => {
+export const SidebarFavoritesMenu = observer(function SidebarFavoritesMenu() {
   // states
   const [createNewFolder, setCreateNewFolder] = useState<boolean | string | null>(null);
   const [isDragging, setIsDragging] = useState(false);

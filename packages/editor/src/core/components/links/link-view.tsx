@@ -1,5 +1,6 @@
-import { Editor } from "@tiptap/react";
-import { CSSProperties, useEffect, useState } from "react";
+import type { Editor } from "@tiptap/react";
+import type { CSSProperties } from "react";
+import { useEffect, useState } from "react";
 // components
 import { LinkEditView, LinkPreview } from "@/components/links";
 
@@ -15,7 +16,7 @@ export type LinkViewProps = {
   closeLinkView: () => void;
 };
 
-export const LinkView = (props: LinkViewProps & { style: CSSProperties }) => {
+export function LinkView(props: LinkViewProps & { style: CSSProperties }) {
   const [currentView, setCurrentView] = useState<LinkViews>(props.view ?? "LinkPreview");
   const [prevFrom, setPrevFrom] = useState(props.from);
 
@@ -36,4 +37,4 @@ export const LinkView = (props: LinkViewProps & { style: CSSProperties }) => {
       {currentView === "LinkEditView" && <LinkEditView viewProps={props} switchView={switchView} />}
     </>
   );
-};
+}

@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "Jedinečný kód",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "Vložte kód zaslaný na váš e-mail",
         requesting_new_code: "Žiadam o nový kód",
         sending_code: "Odosielam kód",
@@ -1525,6 +1525,47 @@ export default {
         "Ak potvrdíte, všetky možnosti triedenia, filtrovania a zobrazenia + rozloženie, ktoré ste vybrali pre toto zobrazenie, budú natrvalo vymazané bez možnosti obnovenia.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "Zmeniť e-mail",
+        description: "Zadajte novú e-mailovú adresu, aby ste dostali overovací odkaz.",
+        toasts: {
+          success_title: "Úspech!",
+          success_message: "E-mail bol úspešne aktualizovaný. Prihláste sa znova.",
+        },
+        form: {
+          email: {
+            label: "Nový e-mail",
+            placeholder: "Zadajte svoj e-mail",
+            errors: {
+              required: "E-mail je povinný",
+              invalid: "E-mail je neplatný",
+              exists: "E-mail už existuje. Použite iný.",
+              validation_failed: "Overenie e-mailu zlyhalo. Skúste znova.",
+            },
+          },
+          code: {
+            label: "Jedinečný kód",
+            placeholder: "123456",
+            helper_text: "Overovací kód bol odoslaný na váš nový e-mail.",
+            errors: {
+              required: "Jedinečný kód je povinný",
+              invalid: "Neplatný overovací kód. Skúste znova.",
+            },
+          },
+        },
+        actions: {
+          continue: "Pokračovať",
+          confirm: "Potvrdiť",
+          cancel: "Zrušiť",
+        },
+        states: {
+          sending: "Odosielanie…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "Nastavenia pracovného priestoru",
     page_label: "{workspace} - Všeobecné nastavenia",
@@ -1601,6 +1642,7 @@ export default {
         exporting: "Exportovanie",
         previous_exports: "Predchádzajúce exporty",
         export_separate_files: "Exportovať dáta do samostatných súborov",
+        filters_info: "Použite filtre na export konkrétnych pracovných položiek podľa vašich kritérií.",
         modal: {
           title: "Exportovať do",
           toasts: {

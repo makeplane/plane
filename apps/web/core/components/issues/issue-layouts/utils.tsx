@@ -1,5 +1,3 @@
-"use client";
-
 import type { CSSProperties, FC } from "react";
 import { extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { clone, isNil, pull, uniq, concat } from "lodash-es";
@@ -713,12 +711,12 @@ export const getBlockViewDetails = (
  * This method returns the icon for Spreadsheet column headers
  * @param iconKey
  */
-export const SpreadSheetPropertyIcon: FC<ISvgIcons & { iconKey: string }> = (props) => {
+export function SpreadSheetPropertyIcon(props: ISvgIcons & { iconKey: string }) {
   const { iconKey } = props;
   const Icon = SpreadSheetPropertyIconMap[iconKey];
   if (!Icon) return null;
   return <Icon {...props} />;
-};
+}
 
 /**
  * This method returns if the filters are applied

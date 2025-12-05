@@ -16,7 +16,7 @@ type LeftResizableProps = {
     width: number;
   };
 };
-export const LeftResizable = observer((props: LeftResizableProps) => {
+export const LeftResizable = observer(function LeftResizable(props: LeftResizableProps) {
   const { enableBlockLeftResize, isMoving, handleBlockDrag, position } = props;
   const [isHovering, setIsHovering] = useState(false);
 

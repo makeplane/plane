@@ -1,8 +1,5 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import useSWR from "swr";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Loader, ToggleSwitch } from "@plane/ui";
@@ -16,7 +13,9 @@ import { useInstance } from "@/hooks/store";
 import type { Route } from "./+types/page";
 import { InstanceGoogleConfigForm } from "./form";
 
-const InstanceGoogleAuthenticationPage = observer<React.FC<Route.ComponentProps>>(() => {
+const InstanceGoogleAuthenticationPage = observer(function InstanceGoogleAuthenticationPage(
+  _props: Route.ComponentProps
+) {
   // store
   const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
   // state
@@ -64,7 +63,7 @@ const InstanceGoogleAuthenticationPage = observer<React.FC<Route.ComponentProps>
             name="Google"
             description="Allow members to login or sign up to plane with their Google
             accounts."
-            icon={<Image src={GoogleLogo} height={24} width={24} alt="Google Logo" />}
+            icon={<img src={GoogleLogo} height={24} width={24} alt="Google Logo" />}
             config={
               <ToggleSwitch
                 value={Boolean(parseInt(enableGoogleConfig))}

@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 // editor
@@ -18,7 +16,7 @@ type Props = {
   updateTitle: (title: string) => void;
 };
 
-export const PageEditorTitle: React.FC<Props> = observer((props) => {
+export const PageEditorTitle = observer(function PageEditorTitle(props: Props) {
   const { editorRef, readOnly, title, updateTitle } = props;
   // states
   const [isLengthVisible, setIsLengthVisible] = useState(false);

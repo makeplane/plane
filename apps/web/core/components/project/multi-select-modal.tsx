@@ -27,7 +27,7 @@ type Props = {
   onSubmit: (projectIds: string[]) => Promise<void>;
 };
 
-export const ProjectMultiSelectModal: React.FC<Props> = observer((props) => {
+export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal(props: Props) {
   const { isOpen, onClose, selectedProjectIds: selectedProjectIdsProp, projectIds, onSubmit } = props;
   // states
   const [searchTerm, setSearchTerm] = useState("");

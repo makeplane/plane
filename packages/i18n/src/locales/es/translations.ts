@@ -1544,6 +1544,47 @@ export default {
         "Si confirmas, todas las opciones de ordenación, filtro y visualización + el diseño que has elegido para esta vista se eliminarán permanentemente sin posibilidad de restaurarlas.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "Cambiar correo electrónico",
+        description: "Introduce una nueva dirección de correo electrónico para recibir un enlace de verificación.",
+        toasts: {
+          success_title: "¡Éxito!",
+          success_message: "Correo electrónico actualizado correctamente. Inicia sesión de nuevo.",
+        },
+        form: {
+          email: {
+            label: "Nuevo correo electrónico",
+            placeholder: "Introduce tu correo electrónico",
+            errors: {
+              required: "El correo electrónico es obligatorio",
+              invalid: "El correo electrónico no es válido",
+              exists: "El correo electrónico ya existe. Usa uno diferente.",
+              validation_failed: "La validación del correo electrónico falló. Inténtalo de nuevo.",
+            },
+          },
+          code: {
+            label: "Código único",
+            placeholder: "123456",
+            helper_text: "Código de verificación enviado a tu nuevo correo electrónico.",
+            errors: {
+              required: "El código único es obligatorio",
+              invalid: "Código de verificación inválido. Inténtalo de nuevo.",
+            },
+          },
+        },
+        actions: {
+          continue: "Continuar",
+          confirm: "Confirmar",
+          cancel: "Cancelar",
+        },
+        states: {
+          sending: "Enviando…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "Configuración del espacio de trabajo",
     page_label: "{workspace} - Configuración general",
@@ -1624,6 +1665,7 @@ export default {
         exporting: "Exportando",
         previous_exports: "Exportaciones anteriores",
         export_separate_files: "Exportar los datos en archivos separados",
+        filters_info: "Aplica filtros para exportar elementos de trabajo específicos según tus criterios.",
         modal: {
           title: "Exportar a",
           toasts: {

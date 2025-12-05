@@ -15,7 +15,7 @@ type Props = {
   disabled: boolean;
 };
 
-export const SpreadsheetStartDateColumn: React.FC<Props> = observer((props: Props) => {
+export const SpreadsheetStartDateColumn = observer(function SpreadsheetStartDateColumn(props: Props) {
   const { issue, onChange, disabled, onClose } = props;
 
   return (

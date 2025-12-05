@@ -1,7 +1,3 @@
-"use client";
-
-import type { FC } from "react";
-import React from "react";
 import { observer } from "mobx-react";
 import { Earth, Info, Lock, Minus } from "lucide-react";
 // plane imports
@@ -27,7 +23,7 @@ type Props = {
   storeType: EPageStoreType;
 };
 
-export const BlockItemAction: FC<Props> = observer((props) => {
+export const BlockItemAction = observer(function BlockItemAction(props: Props) {
   const { page, parentRef, storeType } = props;
   // store hooks
   const { getUserDetails } = useMember();

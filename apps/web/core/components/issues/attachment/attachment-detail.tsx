@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -37,7 +35,7 @@ type TIssueAttachmentsDetail = {
   disabled?: boolean;
 };
 
-export const IssueAttachmentsDetail: FC<TIssueAttachmentsDetail> = observer((props) => {
+export const IssueAttachmentsDetail = observer(function IssueAttachmentsDetail(props: TIssueAttachmentsDetail) {
   // props
   const { attachmentId, attachmentHelpers, disabled } = props;
   // store hooks

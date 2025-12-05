@@ -33,7 +33,7 @@ type Props = {
   isEditable?: boolean;
 };
 
-export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
+export function ProjectSettingLabelItem(props: Props) {
   const {
     label,
     setIsUpdating,
@@ -121,4 +121,4 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
       )}
     </LabelDndHOC>
   );
-};
+}

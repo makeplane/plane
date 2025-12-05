@@ -27,7 +27,7 @@ type Props = {
   toggleLoading: (value: boolean) => void;
 };
 
-export const AllIssueLayoutRoot: React.FC<Props> = observer((props: Props) => {
+export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Props) {
   const { isDefaultView, isLoading = false, toggleLoading } = props;
   // router
   const router = useAppRouter();

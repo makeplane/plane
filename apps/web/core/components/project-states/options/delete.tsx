@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Loader } from "lucide-react";
@@ -23,7 +20,7 @@ type TStateDelete = {
   shouldTrackEvents: boolean;
 };
 
-export const StateDelete: FC<TStateDelete> = observer((props) => {
+export const StateDelete = observer(function StateDelete(props: TStateDelete) {
   const { totalStates, state, deleteStateCallback, shouldTrackEvents } = props;
   // hooks
   const { isMobile } = usePlatformOS();

@@ -1,5 +1,5 @@
 import React from "react";
-import { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
+import type { NameType, Payload, ValueType } from "recharts/types/component/DefaultTooltipContent";
 import { Card, ECardSpacing } from "../../card";
 import { cn } from "../../utils/classname";
 
@@ -13,7 +13,7 @@ type Props = {
   itemDotColors: Record<string, string>;
 };
 
-export const CustomTooltip = React.memo((props: Props) => {
+export const CustomTooltip = React.memo(function CustomTooltip(props: Props) {
   const { active, activeKey, label, payload, itemKeys, itemLabels, itemDotColors } = props;
   // derived values
   const filteredPayload = payload?.filter((item) => item.dataKey && itemKeys.includes(`${item.dataKey}`));

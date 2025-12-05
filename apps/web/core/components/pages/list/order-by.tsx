@@ -1,5 +1,3 @@
-"use client";
-
 import { ArrowDownWideNarrow, ArrowUpWideNarrow, Check } from "lucide-react";
 // types
 import { getButtonStyling } from "@plane/propel/button";
@@ -25,7 +23,7 @@ const PAGE_SORTING_KEY_OPTIONS: {
   { key: "updated_at", label: "Date modified" },
 ];
 
-export const PageOrderByDropdown: React.FC<Props> = (props) => {
+export function PageOrderByDropdown(props: Props) {
   const { onChange, sortBy, sortKey } = props;
 
   const orderByDetails = PAGE_SORTING_KEY_OPTIONS.find((option) => sortKey === option.key);
@@ -85,4 +83,4 @@ export const PageOrderByDropdown: React.FC<Props> = (props) => {
       </CustomMenu.MenuItem>
     </CustomMenu>
   );
-};
+}

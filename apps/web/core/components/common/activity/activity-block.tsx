@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC, ReactNode } from "react";
 import { Network } from "lucide-react";
 // types
@@ -21,7 +19,7 @@ type TActivityBlockComponent = {
   customUserName?: string;
 };
 
-export const ActivityBlockComponent: FC<TActivityBlockComponent> = (props) => {
+export function ActivityBlockComponent(props: TActivityBlockComponent) {
   const { icon, activity, ends, children, customUserName } = props;
   // hooks
   const { isMobile } = usePlatformOS();
@@ -53,4 +51,4 @@ export const ActivityBlockComponent: FC<TActivityBlockComponent> = (props) => {
       </div>
     </div>
   );
-};
+}

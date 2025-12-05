@@ -34,11 +34,15 @@ const WORKSPACE_ROLE_OPTIONS: IRoleOption[] = [
 ];
 
 // Role filter group component
-const RoleFilterGroup: React.FC<{
+const RoleFilterGroup = observer(function RoleFilterGroup({
+  appliedFilters,
+  handleUpdate,
+  memberType,
+}: {
   appliedFilters: string[] | null;
   handleUpdate: (role: string) => void;
   memberType: "project" | "workspace";
-}> = observer(({ appliedFilters, handleUpdate, memberType }) => {
+}) {
   const [isExpanded, setIsExpanded] = useState(true);
   const appliedFiltersCount = appliedFilters?.length ?? 0;
   const roleOptions = memberType === "project" ? PROJECT_ROLE_OPTIONS : WORKSPACE_ROLE_OPTIONS;
@@ -70,7 +74,7 @@ const RoleFilterGroup: React.FC<{
   );
 });
 
-export const MemberListFilters: React.FC<Props> = observer((props) => {
+export const MemberListFilters = observer(function MemberListFilters(props: Props) {
   const { appliedFilters, handleUpdate, memberType } = props;
 
   return (
@@ -82,7 +86,7 @@ export const MemberListFilters: React.FC<Props> = observer((props) => {
 });
 
 // Dropdown component for member list filters
-export const MemberListFiltersDropdown: React.FC<Props> = observer((props) => {
+export const MemberListFiltersDropdown = observer(function MemberListFiltersDropdown(props: Props) {
   const { appliedFilters, handleUpdate, memberType } = props;
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;

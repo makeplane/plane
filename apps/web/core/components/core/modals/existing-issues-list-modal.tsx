@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState, useRef } from "react";
 import { Rocket, Search } from "lucide-react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
@@ -40,7 +38,7 @@ type Props = {
 
 const projectService = new ProjectService();
 
-export const ExistingIssuesListModal: React.FC<Props> = (props) => {
+export function ExistingIssuesListModal(props: Props) {
   const { t } = useTranslation();
 
   const {
@@ -361,4 +359,4 @@ export const ExistingIssuesListModal: React.FC<Props> = (props) => {
       </Transition.Root>
     </>
   );
-};
+}

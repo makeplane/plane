@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // plane ui
 import { ModuleIcon } from "@plane/propel/icons";
@@ -14,7 +12,7 @@ type Props = {
   shouldShowBorder?: boolean;
 };
 
-export const IssueBlockModules = observer(({ moduleIds, shouldShowBorder = true }: Props) => {
+export const IssueBlockModules = observer(function IssueBlockModules({ moduleIds, shouldShowBorder = true }: Props) {
   const { getModulesByIds } = useModule();
 
   const modules = getModulesByIds(moduleIds ?? []);

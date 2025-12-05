@@ -1,5 +1,3 @@
-"use client";
-
 // plane imports
 import { RANDOM_EMOJI_CODES } from "@plane/constants";
 

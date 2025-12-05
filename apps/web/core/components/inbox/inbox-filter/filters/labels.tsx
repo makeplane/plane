@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
@@ -10,16 +8,16 @@ import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/fi
 // hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 
-const LabelIcons = ({ color }: { color: string }) => (
-  <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />
-);
+function LabelIcons({ color }: { color: string }) {
+  return <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />;
+}
 
 type Props = {
   labels: IIssueLabel[] | undefined;
   searchQuery: string;
 };
 
-export const FilterLabels: FC<Props> = observer((props) => {
+export const FilterLabels = observer(function FilterLabels(props: Props) {
   const { labels, searchQuery } = props;
 
   const [itemsToRender, setItemsToRender] = useState(5);

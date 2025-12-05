@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -27,7 +25,7 @@ const defaultValues = {
   use_case: "",
 };
 
-export const UseCaseSetupStep: FC<Props> = observer(({ handleStepChange }) => {
+export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepChange }: Props) {
   // store hooks
   const { data: profile, updateUserProfile } = useUserProfile();
   // form info

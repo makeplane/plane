@@ -16,7 +16,7 @@ type RightResizableProps = {
     width: number;
   };
 };
-export const RightResizable = observer((props: RightResizableProps) => {
+export const RightResizable = observer(function RightResizable(props: RightResizableProps) {
   const { enableBlockRightResize, handleBlockDrag, isMoving, position } = props;
   const [isHovering, setIsHovering] = useState(false);
 

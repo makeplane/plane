@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "唯一码",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "粘贴发送到您邮箱的验证码",
         requesting_new_code: "正在请求新验证码",
         sending_code: "正在发送验证码",
@@ -1505,6 +1505,47 @@ export default {
       content: "如果您确认，您为此视图选择的所有排序、筛选和显示选项 + 布局将被永久删除，无法恢复。",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "更改邮箱",
+        description: "请输入新的邮箱地址以接收验证链接。",
+        toasts: {
+          success_title: "成功！",
+          success_message: "邮箱已更新，请重新登录。",
+        },
+        form: {
+          email: {
+            label: "新邮箱",
+            placeholder: "请输入邮箱",
+            errors: {
+              required: "邮箱为必填项",
+              invalid: "邮箱格式无效",
+              exists: "邮箱已存在，请使用其他邮箱。",
+              validation_failed: "邮箱验证失败，请重试。",
+            },
+          },
+          code: {
+            label: "验证码",
+            placeholder: "123456",
+            helper_text: "验证码已发送至你的新邮箱。",
+            errors: {
+              required: "验证码为必填项",
+              invalid: "验证码无效，请重试。",
+            },
+          },
+        },
+        actions: {
+          continue: "继续",
+          confirm: "确认",
+          cancel: "取消",
+        },
+        states: {
+          sending: "发送中…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "工作区设置",
     page_label: "{workspace} - 常规设置",
@@ -1581,6 +1622,7 @@ export default {
         exporting: "导出中",
         previous_exports: "以前的导出",
         export_separate_files: "将数据导出为单独的文件",
+        filters_info: "应用筛选器以根据您的条件导出特定工作项。",
         modal: {
           title: "导出到",
           toasts: {

@@ -1,9 +1,10 @@
-.next
-.react-router
-.vite
-.turbo
-out/
-dist/
+.next/
+.react-router/
+.turbo/
+.vite/
 build/
-node_modules
+dist/
+node_modules/
+out/
 pnpm-lock.yaml
+storybook-static/

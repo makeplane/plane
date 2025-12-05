@@ -10,7 +10,8 @@ import {
   haveTableRelatedChanges,
 } from "@/extensions/table/table/utilities/helpers";
 // local imports
-import { ColumnDragHandle, ColumnDragHandleProps } from "./drag-handle";
+import type { ColumnDragHandleProps } from "./drag-handle";
+import { ColumnDragHandle } from "./drag-handle";
 
 type TableColumnDragHandlePluginState = {
   decorations?: DecorationSet;

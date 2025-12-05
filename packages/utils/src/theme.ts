@@ -1,5 +1,6 @@
 // local imports
-import { TRgb, hexToRgb } from "./color";
+import type { TRgb } from "./color";
+import { hexToRgb } from "./color";
 
 type TShades = {
   10: TRgb;

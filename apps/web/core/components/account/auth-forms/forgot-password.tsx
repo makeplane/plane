@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -34,7 +32,7 @@ const defaultValues: TForgotPasswordFormValues = {
 // services
 const authService = new AuthService();
 
-export const ForgotPasswordForm = observer(() => {
+export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
   // search params
   const searchParams = useSearchParams();
   const email = searchParams.get("email");

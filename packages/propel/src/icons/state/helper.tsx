@@ -1,9 +1,18 @@
 import { EIconSize } from "@plane/constants";
+import type { TIntakeStateGroups } from "@plane/types";
 
 export interface IStateGroupIcon {
   className?: string;
   color?: string;
   stateGroup: TStateGroups;
+  size?: EIconSize;
+  percentage?: number;
+}
+
+export interface IIntakeStateGroupIcon {
+  className?: string;
+  color?: string;
+  stateGroup: TIntakeStateGroups;
   size?: EIconSize;
   percentage?: number;
 }
@@ -19,6 +28,8 @@ export const STATE_GROUP_COLORS: {
   completed: "#46A758",
   cancelled: "#9AA4BC",
 };
+
+export const INTAKE_STATE_GROUP_COLORS: { [key in TIntakeStateGroups]: string } = { triage: "#4E5355" };
 
 export const STATE_GROUP_SIZES: {
   [key in EIconSize]: string;

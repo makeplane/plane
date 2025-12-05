@@ -1,7 +1,4 @@
-"use client";
-
 import React, { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
@@ -54,7 +51,7 @@ const integrationWorkflowData: Array<{
 // services
 const jiraImporterService = new JiraImporterService();
 
-export const JiraImporterRoot: React.FC = () => {
+export function JiraImporterRoot() {
   const [currentStep, setCurrentStep] = useState<IJiraIntegrationData>({
     state: "import-configure",
   });
@@ -105,7 +102,7 @@ export const JiraImporterRoot: React.FC = () => {
       <div className="flex h-full flex-col space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4">
         <div className="flex items-center gap-2">
           <div className="h-10 w-10 flex-shrink-0">
-            <Image src={JiraLogo} alt="jira logo" />
+            <img src={JiraLogo} className="w-full h-full object-cover" alt="jira logo" />
           </div>
           <div className="flex h-full w-full items-center justify-center">
             {integrationWorkflowData.map((integration, index) => (
@@ -200,4 +197,4 @@ export const JiraImporterRoot: React.FC = () => {
       </div>
     </div>
   );
-};
+}

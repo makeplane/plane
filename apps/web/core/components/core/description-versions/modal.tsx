@@ -31,7 +31,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const DescriptionVersionsModal: React.FC<Props> = observer((props) => {
+export const DescriptionVersionsModal = observer(function DescriptionVersionsModal(props: Props) {
   const {
     activeVersionDescription,
     activeVersionDetails,

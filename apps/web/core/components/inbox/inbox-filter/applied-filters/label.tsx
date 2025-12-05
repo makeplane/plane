@@ -6,11 +6,11 @@ import { Tag } from "@plane/ui";
 import { useLabel } from "@/hooks/store/use-label";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 
-const LabelIcons = ({ color }: { color: string }) => (
-  <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />
-);
+function LabelIcons({ color }: { color: string }) {
+  return <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />;
+}
 
-export const InboxIssueAppliedFiltersLabel: FC = observer(() => {
+export const InboxIssueAppliedFiltersLabel = observer(function InboxIssueAppliedFiltersLabel() {
   // hooks
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
   const { getLabelById } = useLabel();

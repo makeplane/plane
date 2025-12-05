@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -18,7 +16,7 @@ type Props = {
   onDrop: (draggingBlockId: string | undefined, droppedBlockId: string | undefined, dropAtEndOfList: boolean) => void;
 };
 
-export const GanttDnDHOC = observer((props: Props) => {
+export const GanttDnDHOC = observer(function GanttDnDHOC(props: Props) {
   const { id, isLastChild, children, onDrop, isDragEnabled } = props;
   // states
   const [isDragging, setIsDragging] = useState(false);

@@ -18,7 +18,12 @@ type Props = {
   onSubmit: () => Promise<void>;
 };
 
-export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClose, onSubmit, data }) => {
+export const DeleteInboxIssueModal = observer(function DeleteInboxIssueModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  data,
+}: Props) {
   // states
   const [isDeleting, setIsDeleting] = useState(false);
   // store hooks

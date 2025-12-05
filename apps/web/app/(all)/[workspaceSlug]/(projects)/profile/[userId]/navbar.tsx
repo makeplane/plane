@@ -13,7 +13,7 @@ type Props = {
   isAuthorized: boolean;
 };
 
-export const ProfileNavbar: React.FC<Props> = (props) => {
+export function ProfileNavbar(props: Props) {
   const { isAuthorized } = props;
   const { t } = useTranslation();
   const { workspaceSlug, userId } = useParams();
@@ -40,4 +40,4 @@ export const ProfileNavbar: React.FC<Props> = (props) => {
       </div>
     </Header>
   );
-};
+}

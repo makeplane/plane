@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { Plus } from "lucide-react";
@@ -27,7 +24,7 @@ type TGroupItem = {
   handleExpand: (groupKey: TStateGroups) => void;
 };
 
-export const GroupItem: FC<TGroupItem> = observer((props) => {
+export const GroupItem = observer(function GroupItem(props: TGroupItem) {
   const {
     groupKey,
     groupedStates,

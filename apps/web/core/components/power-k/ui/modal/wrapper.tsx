@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useEffect, useCallback } from "react";
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
@@ -20,7 +18,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const ProjectsAppPowerKModalWrapper = observer((props: Props) => {
+export const ProjectsAppPowerKModalWrapper = observer(function ProjectsAppPowerKModalWrapper(props: Props) {
   const { commandsListComponent: CommandsListComponent, context, hideFooter = false, isOpen, onClose } = props;
   // states
   const [searchTerm, setSearchTerm] = useState("");

@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import type {
@@ -42,10 +40,10 @@ type Props = {
   handleDrop: (self: DropTargetRecord, source: ElementDragPayload, location: DragLocationHistory) => void;
 };
 
-export const FavoriteFolder: React.FC<Props> = (props) => {
+export function FavoriteFolder(props: Props) {
   const { favorite, handleRemoveFromFavorites, isLastChild, handleDrop } = props;
   // store hooks
-  const { getGroupedFavorites } = useFavorite();
+  const { fetchGroupedFavorites } = useFavorite();
   const { isMobile } = usePlatformOS();
   const { workspaceSlug } = useParams();
   // states
@@ -61,9 +59,9 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (favorite.children === undefined && workspaceSlug) {
-      getGroupedFavorites(workspaceSlug.toString(), favorite.id);
+      fetchGroupedFavorites(workspaceSlug.toString(), favorite.id);
     }
-  }, [favorite.id, favorite.children, workspaceSlug, getGroupedFavorites]);
+  }, [favorite.id, favorite.children, workspaceSlug, fetchGroupedFavorites]);
 
   useEffect(() => {
     const element = elementRef.current;
@@ -289,4 +287,4 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
       </Disclosure>
     </>
   );
-};
+}

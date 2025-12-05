@@ -296,6 +296,10 @@ body {
 }
 
 /* scrollbar style */
+::-webkit-scrollbar {
+  display: none;
+}
+
 @-moz-document url-prefix() {
   * {
     scrollbar-width: none;
@@ -354,6 +358,23 @@ body {
 }
 .vertical-scrollbar-margin-top-md::-webkit-scrollbar-track {
   margin-top: 44px;
+}
+
+/* scrollbar xs size */
+.scrollbar-xs::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+.scrollbar-xs::-webkit-scrollbar-thumb {
+  border: 3px solid rgba(0, 0, 0, 0);
+}
+
+.shadow-custom {
+  box-shadow: 2px 2px 8px 2px rgba(234, 231, 250, 0.3); /* Convert #EAE7FA4D to rgba */
+}
+/* backdrop filter */
+.backdrop-blur-custom {
+  @apply backdrop-filter blur-[9px];
 }
 
 /* scrollbar sm size */

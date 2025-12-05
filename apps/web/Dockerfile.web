@@ -14,7 +14,7 @@ RUN apk add --no-cache libc6-compat
 # Set working directory
 WORKDIR /app
 
-ARG TURBO_VERSION=2.5.6
+ARG TURBO_VERSION=2.6.1
 RUN corepack enable pnpm && pnpm add -g turbo@${TURBO_VERSION}
 COPY . .
 
@@ -34,36 +34,38 @@ COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 RUN corepack enable pnpm
-RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm fetch --store-dir=/pnpm/store
 
-# Build the project
+# Copy full directory structure before fetch to ensure all package.json files are available
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
-RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm install --offline --frozen-lockfile --store-dir=/pnpm/store
 
-ARG NEXT_PUBLIC_API_BASE_URL=""
-ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+# Fetch dependencies to cache store, then install offline with dev deps
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm fetch --store-dir=/pnpm/store
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store CI=true pnpm install --offline --frozen-lockfile --store-dir=/pnpm/store
 
-ARG NEXT_PUBLIC_ADMIN_BASE_URL=""
-ENV NEXT_PUBLIC_ADMIN_BASE_URL=$NEXT_PUBLIC_ADMIN_BASE_URL
+ARG VITE_API_BASE_URL=""
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 
-ARG NEXT_PUBLIC_ADMIN_BASE_PATH="/god-mode"
-ENV NEXT_PUBLIC_ADMIN_BASE_PATH=$NEXT_PUBLIC_ADMIN_BASE_PATH
+ARG VITE_ADMIN_BASE_URL=""
+ENV VITE_ADMIN_BASE_URL=$VITE_ADMIN_BASE_URL
 
-ARG NEXT_PUBLIC_LIVE_BASE_URL=""
-ENV NEXT_PUBLIC_LIVE_BASE_URL=$NEXT_PUBLIC_LIVE_BASE_URL
+ARG VITE_ADMIN_BASE_PATH="/god-mode"
+ENV VITE_ADMIN_BASE_PATH=$VITE_ADMIN_BASE_PATH
 
-ARG NEXT_PUBLIC_LIVE_BASE_PATH="/live"
-ENV NEXT_PUBLIC_LIVE_BASE_PATH=$NEXT_PUBLIC_LIVE_BASE_PATH
+ARG VITE_LIVE_BASE_URL=""
+ENV VITE_LIVE_BASE_URL=$VITE_LIVE_BASE_URL
 
-ARG NEXT_PUBLIC_SPACE_BASE_URL=""
-ENV NEXT_PUBLIC_SPACE_BASE_URL=$NEXT_PUBLIC_SPACE_BASE_URL
+ARG VITE_LIVE_BASE_PATH="/live"
+ENV VITE_LIVE_BASE_PATH=$VITE_LIVE_BASE_PATH
 
-ARG NEXT_PUBLIC_SPACE_BASE_PATH="/spaces"
-ENV NEXT_PUBLIC_SPACE_BASE_PATH=$NEXT_PUBLIC_SPACE_BASE_PATH
+ARG VITE_SPACE_BASE_URL=""
+ENV VITE_SPACE_BASE_URL=$VITE_SPACE_BASE_URL
 
-ARG NEXT_PUBLIC_WEB_BASE_URL=""
-ENV NEXT_PUBLIC_WEB_BASE_URL=$NEXT_PUBLIC_WEB_BASE_URL
+ARG VITE_SPACE_BASE_PATH="/spaces"
+ENV VITE_SPACE_BASE_PATH=$VITE_SPACE_BASE_PATH
+
+ARG VITE_WEB_BASE_URL=""
+ENV VITE_WEB_BASE_URL=$VITE_WEB_BASE_URL
 
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV TURBO_TELEMETRY_DISABLED=1

@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -19,7 +17,7 @@ type IssueEmojiReactionsProps = {
   issueIdFromProps?: string;
 };
 
-export const IssueEmojiReactions: React.FC<IssueEmojiReactionsProps> = observer((props) => {
+export const IssueEmojiReactions = observer(function IssueEmojiReactions(props: IssueEmojiReactionsProps) {
   const { anchor, issueIdFromProps } = props;
   // state
   const [isPickerOpen, setIsPickerOpen] = useState(false);

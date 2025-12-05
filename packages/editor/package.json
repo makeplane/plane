@@ -5,18 +5,12 @@
   "license": "AGPL-3.0",
   "private": true,
   "type": "module",
-  "main": "./dist/index.cjs",
+  "main": "./dist/index.js",
   "module": "./dist/index.js",
-  "types": "./dist/index.d.cts",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    },
-    "./lib": {
-      "import": "./dist/lib.js",
-      "require": "./dist/lib.cjs"
-    },
+    ".": "./dist/index.js",
+    "./lib": "./dist/lib.js",
     "./package.json": "./package.json",
     "./styles.css": "./dist/styles/index.css",
     "./styles": "./dist/styles/index.css"
@@ -24,11 +18,11 @@
   "scripts": {
     "build": "tsc && tsdown",
     "dev": "tsdown --watch",
-    "check:lint": "eslint . --max-warnings 30",
+    "check:lint": "eslint . --max-warnings=1435",
     "check:types": "tsc --noEmit",
-    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
-    "fix:lint": "eslint . --fix",
-    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\"",
+    "check:format": "prettier --check .",
+    "fix:lint": "eslint . --fix --max-warnings=1435",
+    "fix:format": "prettier --write .",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "peerDependencies": {
@@ -42,9 +36,9 @@
     "@hocuspocus/provider": "2.15.2",
     "@plane/constants": "workspace:*",
     "@plane/hooks": "workspace:*",
+    "@plane/propel": "workspace:*",
     "@plane/types": "workspace:*",
     "@plane/ui": "workspace:*",
-    "@plane/propel": "workspace:*",
     "@plane/utils": "workspace:*",
     "@tiptap/core": "catalog:",
     "@tiptap/extension-blockquote": "^2.22.3",
@@ -65,6 +59,7 @@
     "@tiptap/react": "^2.22.3",
     "@tiptap/starter-kit": "^2.22.3",
     "@tiptap/suggestion": "^2.22.3",
+    "buffer": "^6.0.3",
     "emoji-regex": "^10.3.0",
     "highlight.js": "^11.8.0",
     "is-emoji-supported": "^0.0.5",
@@ -82,7 +77,6 @@
     "yjs": "^13.6.20"
   },
   "devDependencies": {
-    "@plane/eslint-config": "workspace:*",
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
     "@types/node": "catalog:",

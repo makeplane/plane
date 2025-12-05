@@ -1,17 +1,25 @@
 import { useState } from "react";
 import { intersection } from "lodash-es";
+import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
+import { Info } from "lucide-react";
 import {
   EUserPermissions,
   EUserPermissionsLevel,
   EXPORTERS_LIST,
+  ISSUE_DISPLAY_FILTERS_BY_PAGE,
   WORKSPACE_SETTINGS_TRACKER_EVENTS,
   WORKSPACE_SETTINGS_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
+import { EIssuesStoreType } from "@plane/types";
+import type { TWorkItemFilterExpression } from "@plane/types";
 import { CustomSearchSelect, CustomSelect } from "@plane/ui";
+import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
+import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
@@ -26,14 +34,27 @@ type FormData = {
   provider: (typeof EXPORTERS_LIST)[0];
   project: string[];
   multiple: boolean;
+  filters: TWorkItemFilterExpression;
 };
+
+const initialWorkItemFilters = {
+  richFilters: {},
+  displayFilters: {},
+  displayProperties: {},
+  kanbanFilters: {
+    group_by: [],
+    sub_group_by: [],
+  },
+};
+
 const projectExportService = new ProjectExportService();
 
-export const ExportForm = (props: Props) => {
+export const ExportForm = observer(function ExportForm(props: Props) {
   // props
   const { workspaceSlug, mutateServices } = props;
   // states
   const [exportLoading, setExportLoading] = useState(false);
+
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { data: user, canPerformAnyCreateAction, projectsWithCreatePermissions } = useUser();
@@ -45,8 +66,10 @@ export const ExportForm = (props: Props) => {
       provider: EXPORTERS_LIST[0],
       project: [],
       multiple: false,
+      filters: {},
     },
   });
+
   // derived values
   const hasProjects = workspaceProjectIds && workspaceProjectIds.length > 0;
   const isMember = allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.WORKSPACE);
@@ -69,14 +92,14 @@ export const ExportForm = (props: Props) => {
   });
 
   // handlers
-  const ExportCSVToMail = async (formData: FormData) => {
-    console.log(formData);
+  async function ExportCSVToMail(formData: FormData) {
     setExportLoading(true);
     if (workspaceSlug && user) {
       const payload = {
         provider: formData.provider.provider,
         project: formData.project,
         multiple: formData.project.length > 1,
+        rich_filters: formData.filters,
       };
       await projectExportService
         .csvExport(workspaceSlug as string, payload)
@@ -120,7 +143,8 @@ export const ExportForm = (props: Props) => {
           });
         });
     }
-  };
+  }
+
   return (
     <form onSubmit={handleSubmit(ExportCSVToMail)} className="flex flex-col gap-4 mt-4">
       <div className="flex gap-4">
@@ -185,7 +209,50 @@ export const ExportForm = (props: Props) => {
           />
         </div>
       </div>
-      <div className="flex items-center justify-between ">
+      {/* Rich Filters */}
+      <div className="w-full">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="text-sm font-medium text-custom-text-200 leading-tight">{t("common.filters")}</div>
+          <Tooltip
+            tooltipContent={
+              <div className="max-w-[238px] flex gap-2">
+                <div className=" rounded bg-custom-background-80 flex items-center justify-center p-1 h-5 aspect-square">
+                  <Info className="h-3 w-3" />
+                </div>
+                {t("workspace_settings.settings.exports.filters_info")}
+              </div>
+            }
+            position="top"
+          >
+            <button type="button" className="flex items-center justify-center">
+              <Info className="h-3 w-3 text-custom-text-300" />
+            </button>
+          </Tooltip>
+        </div>
+        <Controller
+          control={control}
+          name="filters"
+          render={({ field: { onChange } }) => (
+            <WorkspaceLevelWorkItemFiltersHOC
+              entityId={workspaceSlug}
+              entityType={EIssuesStoreType.GLOBAL}
+              filtersToShowByLayout={ISSUE_DISPLAY_FILTERS_BY_PAGE.my_issues.filters}
+              initialWorkItemFilters={initialWorkItemFilters}
+              isTemporary
+              updateFilters={(updatedFilters) => onChange(updatedFilters)}
+              showOnMount
+              workspaceSlug={workspaceSlug}
+            >
+              {({ filter: workspaceExportWorkItemsFilter }) =>
+                workspaceExportWorkItemsFilter && (
+                  <WorkItemFiltersRow filter={workspaceExportWorkItemsFilter} variant="modal" />
+                )
+              }
+            </WorkspaceLevelWorkItemFiltersHOC>
+          )}
+        />
+      </div>
+      <div className="flex items-center justify-between">
         <Button
           variant="primary"
           type="submit"
@@ -197,4 +264,4 @@ export const ExportForm = (props: Props) => {
       </div>
     </form>
   );
-};
+});

@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Search } from "lucide-react";
@@ -22,7 +20,7 @@ type Props = {
   isArchived?: boolean;
 };
 
-export const ModuleFiltersSelection: React.FC<Props> = observer((props) => {
+export const ModuleFiltersSelection = observer(function ModuleFiltersSelection(props: Props) {
   const {
     displayFilters,
     filters,

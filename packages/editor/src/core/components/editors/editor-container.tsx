@@ -1,5 +1,6 @@
 import type { Editor } from "@tiptap/react";
-import { FC, ReactNode, useRef } from "react";
+import type { FC, ReactNode } from "react";
+import { useRef } from "react";
 // plane utils
 import { cn } from "@plane/utils";
 // constants
@@ -8,7 +9,7 @@ import { CORE_EXTENSIONS } from "@/constants/extension";
 // components
 import { LinkContainer } from "@/plane-editor/components/link-container";
 // types
-import { TDisplayConfig } from "@/types";
+import type { TDisplayConfig } from "@/types";
 
 type Props = {
   children: ReactNode;
@@ -19,7 +20,7 @@ type Props = {
   isTouchDevice: boolean;
 };
 
-export const EditorContainer: FC<Props> = (props) => {
+export function EditorContainer(props: Props) {
   const { children, displayConfig, editor, editorContainerClassName, id, isTouchDevice } = props;
   // refs
   const containerRef = useRef<HTMLDivElement>(null);
@@ -99,4 +100,4 @@ export const EditorContainer: FC<Props> = (props) => {
       </div>
     </>
   );
-};
+}

@@ -9,7 +9,7 @@ import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useSticky } from "@/hooks/use-stickies";
 import { StickiesLayout } from "./stickies-list";
 
-export const StickiesInfinite = observer(() => {
+export const StickiesInfinite = observer(function StickiesInfinite() {
   const { workspaceSlug } = useParams();
   // hooks
   const { fetchWorkspaceStickies, fetchNextWorkspaceStickies, getWorkspaceStickyIds, loader, paginationInfo } =

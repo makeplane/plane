@@ -1,4 +1,3 @@
-"use client";
 import type { FC } from "react";
 import React, { useRef, useState } from "react";
 import { omit } from "lodash-es";
@@ -28,7 +27,7 @@ type Props = {
   issueId: string;
 };
 
-export const DraftIssueBlock: FC<Props> = observer((props) => {
+export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
   // props
   const { workspaceSlug, issueId } = props;
   // states

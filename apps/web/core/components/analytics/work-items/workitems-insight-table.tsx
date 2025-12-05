@@ -32,7 +32,7 @@ declare module "@tanstack/react-table" {
   }
 }
 
-const WorkItemsInsightTable = observer(() => {
+const WorkItemsInsightTable = observer(function WorkItemsInsightTable() {
   // router
   const params = useParams();
   const workspaceSlug = params.workspaceSlug.toString();

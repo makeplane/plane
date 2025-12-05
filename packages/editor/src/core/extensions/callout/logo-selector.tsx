@@ -3,7 +3,7 @@ import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-ico
 import type { TLogoProps } from "@plane/types";
 import { cn } from "@plane/utils";
 // types
-import { TCalloutBlockAttributes } from "./types";
+import type { TCalloutBlockAttributes } from "./types";
 // utils
 import { DEFAULT_CALLOUT_BLOCK_ATTRIBUTES, updateStoredLogo } from "./utils";
 
@@ -15,7 +15,7 @@ type Props = {
   updateAttributes: (attrs: Partial<TCalloutBlockAttributes>) => void;
 };
 
-export const CalloutBlockLogoSelector: React.FC<Props> = (props) => {
+export function CalloutBlockLogoSelector(props: Props) {
   const { blockAttributes, disabled, handleOpen, isOpen, updateAttributes } = props;
 
   const logoValue: TLogoProps = {
@@ -53,27 +53,29 @@ export const CalloutBlockLogoSelector: React.FC<Props> = (props) => {
           };
           if (val.type === "emoji") {
             // val.value is now a string in decimal format (e.g. "128512")
+            const emojiValue = val.value as string;
             newLogoValue = {
-              "data-emoji-unicode": val.value,
+              "data-emoji-unicode": emojiValue,
               "data-emoji-url": undefined,
             };
             newLogoValueToStoreInLocalStorage = {
               in_use: "emoji",
               emoji: {
-                value: val.value,
+                value: emojiValue,
                 url: undefined,
               },
             };
           } else if (val.type === "icon") {
+            const iconValue = val.value as { name: string; color: string };
             newLogoValue = {
-              "data-icon-name": val.value.name,
-              "data-icon-color": val.value.color,
+              "data-icon-name": iconValue.name,
+              "data-icon-color": iconValue.color,
             };
             newLogoValueToStoreInLocalStorage = {
               in_use: "icon",
               icon: {
-                name: val.value.name,
-                color: val.value.color,
+                name: iconValue.name,
+                color: iconValue.color,
               },
             };
           }
@@ -93,4 +95,4 @@ export const CalloutBlockLogoSelector: React.FC<Props> = (props) => {
       />
     </div>
   );
-};
+}

@@ -29,14 +29,16 @@ export default defineConfig({
     "src/skeleton/index.ts",
     "src/switch/index.ts",
     "src/table/index.ts",
+    "src/tab-navigation/index.ts",
     "src/tabs/index.ts",
     "src/toast/index.ts",
     "src/toolbar/index.ts",
     "src/tooltip/index.ts",
     "src/utils/index.ts",
   ],
-  outDir: "dist",
-  format: ["esm", "cjs"],
+  format: ["esm"],
+  dts: true,
+  copy: ["src/styles"],
   exports: {
     customExports: (exports) => ({
       ...exports,
@@ -46,8 +48,5 @@ export default defineConfig({
       "./styles/react-day-picker": "./dist/styles/react-day-picker.css",
     }),
   },
-  copy: ["src/styles"],
-  dts: true,
-  clean: true,
-  sourcemap: false,
+  platform: "neutral",
 });

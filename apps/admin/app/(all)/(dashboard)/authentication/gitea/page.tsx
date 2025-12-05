@@ -1,8 +1,5 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
-import Image from "next/image";
 import useSWR from "swr";
 // plane internal packages
 import { setPromiseToast } from "@plane/propel/toast";
@@ -16,7 +13,7 @@ import { useInstance } from "@/hooks/store";
 import type { Route } from "./+types/page";
 import { InstanceGiteaConfigForm } from "./form";
 
-const InstanceGiteaAuthenticationPage = observer(() => {
+const InstanceGiteaAuthenticationPage = observer(function InstanceGiteaAuthenticationPage() {
   // store
   const { fetchInstanceConfigurations, formattedConfig, updateInstanceConfigurations } = useInstance();
   // state
@@ -65,7 +62,7 @@ const InstanceGiteaAuthenticationPage = observer(() => {
           <AuthenticationMethodCard
             name="Gitea"
             description="Allow members to login or sign up to plane with their Gitea accounts."
-            icon={<Image src={giteaLogo} height={24} width={24} alt="Gitea Logo" />}
+            icon={<img src={giteaLogo} height={24} width={24} alt="Gitea Logo" />}
             config={
               <ToggleSwitch
                 value={isGiteaEnabled}

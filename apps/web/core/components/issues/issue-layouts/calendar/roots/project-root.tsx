@@ -8,7 +8,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseCalendarRoot } from "../base-calendar-root";
 
-export const CalendarLayout: React.FC = observer(() => {
+export const CalendarLayout = observer(function CalendarLayout() {
   // router
   const { workspaceSlug } = useParams();
   // hooks

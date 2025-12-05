@@ -26,6 +26,17 @@ export default {
     },
   },
   project_empty_state: {
+    no_access: {
+      title: "Parece que no tienes acceso a este proyecto",
+      restricted_description: "Contacta con el administrador para solicitar acceso y podrás continuar aquí.",
+      join_description: "Haz clic en el botón de abajo para unirte.",
+      cta_primary: "Unirse al proyecto",
+      cta_loading: "Uniéndose al proyecto",
+    },
+    invalid_project: {
+      title: "Proyecto no encontrado",
+      description: "El proyecto que buscas no existe.",
+    },
     work_items: {
       title: "Comienza con tu primer elemento de trabajo.",
       description:

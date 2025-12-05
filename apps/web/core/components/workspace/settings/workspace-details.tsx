@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -20,7 +17,6 @@ import type { IWorkspace } from "@plane/types";
 import { CustomSelect, Input } from "@plane/ui";
 import { copyUrlToClipboard, getFileURL } from "@plane/utils";
 // components
-import { LogoSpinner } from "@/components/common/logo-spinner";
 import { WorkspaceImageUploadModal } from "@/components/core/modals/workspace-image-upload-modal";
 // helpers
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
@@ -36,7 +32,7 @@ const defaultValues: Partial<IWorkspace> = {
   logo_url: null,
 };
 
-export const WorkspaceDetails: FC = observer(() => {
+export const WorkspaceDetails = observer(function WorkspaceDetails() {
   // states
   const [isLoading, setIsLoading] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
@@ -132,13 +128,7 @@ export const WorkspaceDetails: FC = observer(() => {
 
   const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
-  if (!currentWorkspace)
-    return (
-      <div className="grid h-full w-full place-items-center px-4 sm:px-0">
-        <LogoSpinner />
-      </div>
-    );
-
+  if (!currentWorkspace) return <></>;
   return (
     <>
       <Controller

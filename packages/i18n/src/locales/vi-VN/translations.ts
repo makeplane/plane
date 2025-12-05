@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "Mã duy nhất",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "Dán mã xác minh đã gửi đến email của bạn",
         requesting_new_code: "Đang yêu cầu mã mới",
         sending_code: "Đang gửi mã",
@@ -1531,6 +1531,47 @@ export default {
         "Nếu bạn xác nhận, tất cả các tùy chọn sắp xếp, lọc và hiển thị + bố cục mà bạn đã chọn cho chế độ xem này sẽ bị xóa vĩnh viễn mà không có cách nào khôi phục.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "Đổi email",
+        description: "Nhập địa chỉ email mới để nhận liên kết xác minh.",
+        toasts: {
+          success_title: "Thành công!",
+          success_message: "Email đã được cập nhật. Vui lòng đăng nhập lại.",
+        },
+        form: {
+          email: {
+            label: "Email mới",
+            placeholder: "Nhập email của bạn",
+            errors: {
+              required: "Email là bắt buộc",
+              invalid: "Email không hợp lệ",
+              exists: "Email đã tồn tại. Vui lòng dùng email khác.",
+              validation_failed: "Xác thực email thất bại. Thử lại.",
+            },
+          },
+          code: {
+            label: "Mã duy nhất",
+            placeholder: "123456",
+            helper_text: "Mã xác minh đã được gửi tới email mới của bạn.",
+            errors: {
+              required: "Mã duy nhất là bắt buộc",
+              invalid: "Mã xác minh không hợp lệ. Thử lại.",
+            },
+          },
+        },
+        actions: {
+          continue: "Tiếp tục",
+          confirm: "Xác nhận",
+          cancel: "Hủy",
+        },
+        states: {
+          sending: "Đang gửi…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "Cài đặt không gian làm việc",
     page_label: "{workspace} - Cài đặt chung",
@@ -1610,6 +1651,7 @@ export default {
         exporting: "Đang xuất",
         previous_exports: "Xuất trước đây",
         export_separate_files: "Xuất dữ liệu thành các tệp riêng biệt",
+        filters_info: "Áp dụng bộ lọc để xuất các mục công việc cụ thể dựa trên tiêu chí của bạn.",
         modal: {
           title: "Xuất đến",
           toasts: {

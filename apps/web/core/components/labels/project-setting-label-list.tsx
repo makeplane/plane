@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -23,7 +21,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { SettingsHeading } from "../settings/heading";
 
-export const ProjectSettingsLabelList: React.FC = observer(() => {
+export const ProjectSettingsLabelList = observer(function ProjectSettingsLabelList() {
   // router
   const { workspaceSlug, projectId } = useParams();
   // refs

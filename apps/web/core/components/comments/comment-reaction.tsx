@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
@@ -18,7 +16,7 @@ export type TProps = {
   activityOperations: TCommentsOperations;
 };
 
-export const CommentReactions: FC<TProps> = observer((props) => {
+export const CommentReactions = observer(function CommentReactions(props: TProps) {
   const { comment, activityOperations, disabled = false } = props;
   // state
   const [isPickerOpen, setIsPickerOpen] = useState(false);

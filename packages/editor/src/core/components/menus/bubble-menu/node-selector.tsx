@@ -1,10 +1,11 @@
-import { Editor } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 import { Check } from "lucide-react";
-import { FC } from "react";
+import type { FC } from "react";
 import { ChevronDownIcon } from "@plane/propel/icons";
 // plane utils
 import { cn } from "@plane/utils";
 // components
+import type { EditorMenuItem } from "@/components/menus";
 import {
   BulletListItem,
   HeadingOneItem,
@@ -18,7 +19,6 @@ import {
   HeadingFourItem,
   HeadingFiveItem,
   HeadingSixItem,
-  EditorMenuItem,
 } from "@/components/menus";
 // types
 import type { TEditorCommands } from "@/types";
@@ -30,7 +30,7 @@ type Props = {
   editor: Editor;
 };
 
-export const BubbleMenuNodeSelector: FC<Props> = (props) => {
+export function BubbleMenuNodeSelector(props: Props) {
   const { editor } = props;
   // floating ui
   const { options, getReferenceProps, getFloatingProps } = useFloatingMenu({});
@@ -102,4 +102,4 @@ export const BubbleMenuNodeSelector: FC<Props> = (props) => {
       </section>
     </FloatingMenuRoot>
   );
-};
+}

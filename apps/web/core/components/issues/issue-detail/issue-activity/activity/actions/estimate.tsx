@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { EstimatePropertyIcon } from "@plane/propel/icons";
 // hooks
@@ -8,7 +7,7 @@ import { IssueActivityBlockComponent, IssueLink } from "./";
 
 type TIssueEstimateActivity = { activityId: string; showIssue?: boolean; ends: "top" | "bottom" | undefined };
 
-export const IssueEstimateActivity: FC<TIssueEstimateActivity> = observer((props) => {
+export const IssueEstimateActivity = observer(function IssueEstimateActivity(props: TIssueEstimateActivity) {
   const { activityId, showIssue = true, ends } = props;
   // hooks
   const {

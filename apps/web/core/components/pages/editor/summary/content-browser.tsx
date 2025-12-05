@@ -14,7 +14,7 @@ type Props = {
   showOutline?: boolean;
 };
 
-export const PageContentBrowser: React.FC<Props> = (props) => {
+export function PageContentBrowser(props: Props) {
   const { className, editorRef, emptyState, setSidePeekVisible, showOutline = false } = props;
   // states
   const [headings, setHeadings] = useState<IMarking[]>([]);
@@ -79,4 +79,4 @@ export const PageContentBrowser: React.FC<Props> = (props) => {
       })}
     </div>
   );
-};
+}

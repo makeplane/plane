@@ -4,4 +4,6 @@ type Props = {
   children: React.ReactNode;
 };
 
-export const AutomationsListWrapper: React.FC<Props> = (props) => <>{props.children}</>;
+export function AutomationsListWrapper(props: Props) {
+  return <>{props.children}</>;
+}

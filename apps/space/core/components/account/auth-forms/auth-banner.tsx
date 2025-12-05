@@ -1,5 +1,3 @@
-"use client";
-
 import { Info } from "lucide-react";
 import { CloseIcon } from "@plane/propel/icons";
 // helpers
@@ -10,7 +8,7 @@ type TAuthBanner = {
   handleBannerData?: (bannerData: TAuthErrorInfo | undefined) => void;
 };
 
-export const AuthBanner: React.FC<TAuthBanner> = (props) => {
+export function AuthBanner(props: TAuthBanner) {
   const { bannerData, handleBannerData } = props;
 
   if (!bannerData) return <></>;
@@ -28,4 +26,4 @@ export const AuthBanner: React.FC<TAuthBanner> = (props) => {
       </div>
     </div>
   );
-};
+}

@@ -1,21 +1,9 @@
 // plane imports
-import {
-  EQUALITY_OPERATOR,
-  ICycle,
-  TCycleGroups,
-  TFilterProperty,
-  COLLECTION_OPERATOR,
-  TSupportedOperators,
-} from "@plane/types";
+import type { ICycle, TCycleGroups, TFilterProperty, TSupportedOperators } from "@plane/types";
+import { EQUALITY_OPERATOR, COLLECTION_OPERATOR } from "@plane/types";
 // local imports
-import {
-  createFilterConfig,
-  TCreateFilterConfigParams,
-  IFilterIconConfig,
-  TCreateFilterConfig,
-  getMultiSelectConfig,
-  createOperatorConfigEntry,
-} from "../../../rich-filters";
+import type { TCreateFilterConfigParams, IFilterIconConfig, TCreateFilterConfig } from "../../../rich-filters";
+import { createFilterConfig, getMultiSelectConfig, createOperatorConfigEntry } from "../../../rich-filters";
 
 /**
  * Cycle filter specific params

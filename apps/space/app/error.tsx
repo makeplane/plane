@@ -1,9 +1,7 @@
-"use client";
-
 // ui
 import { Button } from "@plane/propel/button";
 
-const ErrorPage = () => {
+function ErrorPage() {
   const handleRetry = () => {
     window.location.reload();
   };
@@ -42,6 +40,6 @@ const ErrorPage = () => {
       </div>
     </div>
   );
-};
+}
 
 export default ErrorPage;

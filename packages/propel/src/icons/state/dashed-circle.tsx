@@ -8,7 +8,7 @@ interface DashedCircleProps {
   totalSegments?: number;
 }
 
-export const DashedCircle: React.FC<DashedCircleProps> = ({ center, color, percentage, totalSegments = 15 }) => {
+export function DashedCircle({ center, color, percentage, totalSegments = 15 }: DashedCircleProps) {
   // Ensure percentage is between 0 and 100
   const validPercentage = Math.max(0, Math.min(100, percentage));
 
@@ -37,4 +37,4 @@ export const DashedCircle: React.FC<DashedCircleProps> = ({ center, color, perce
   };
 
   return <g>{generateDashedCircle()}</g>;
-};
+}

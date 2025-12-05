@@ -13,7 +13,7 @@ type Props = {
   values: EViewAccess[];
 };
 
-export const AppliedAccessFilters: React.FC<Props> = observer((props) => {
+export const AppliedAccessFilters = observer(function AppliedAccessFilters(props: Props) {
   const { editable, handleRemove, values } = props;
   const { t } = useTranslation();
 

@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef } from "react";
 import { BProgress } from "@bprogress/core";
 import { useNavigation } from "react-router";
@@ -38,7 +36,6 @@ const PROGRESS_CONFIG: Readonly<ProgressConfig> = {
   easing: "ease",
   trickle: true,
   delay: 0,
-  isDisabled: import.meta.env.PROD, // Disable progress bar in production builds
 } as const;
 
 /**

@@ -1,9 +1,9 @@
 import * as React from "react";
 
 import { IconWrapper } from "../icon-wrapper";
-import { ISvgIcons } from "../type";
+import type { ISvgIcons } from "../type";
 
-export const UserSquarePropertyIcon: React.FC<ISvgIcons> = ({ color = "currentColor", ...rest }) => {
+export function UserSquarePropertyIcon({ color = "currentColor", ...rest }: ISvgIcons) {
   const clipPathId = React.useId();
 
   return (
@@ -14,4 +14,4 @@ export const UserSquarePropertyIcon: React.FC<ISvgIcons> = ({ color = "currentCo
       />
     </IconWrapper>
   );
-};
+}

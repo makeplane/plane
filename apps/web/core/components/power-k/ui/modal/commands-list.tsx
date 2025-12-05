@@ -11,9 +11,10 @@ export type TPowerKCommandsListProps = {
   isWorkspaceLevel: boolean;
   searchTerm: string;
   setSearchTerm: (value: string) => void;
+  handleSearchMenuClose?: () => void;
 };
 
-export const ProjectsAppPowerKCommandsList: React.FC<TPowerKCommandsListProps> = (props) => {
+export function ProjectsAppPowerKCommandsList(props: TPowerKCommandsListProps) {
   const {
     activePage,
     context,
@@ -22,6 +23,7 @@ export const ProjectsAppPowerKCommandsList: React.FC<TPowerKCommandsListProps> =
     isWorkspaceLevel,
     searchTerm,
     setSearchTerm,
+    handleSearchMenuClose,
   } = props;
 
   return (
@@ -32,6 +34,7 @@ export const ProjectsAppPowerKCommandsList: React.FC<TPowerKCommandsListProps> =
         isWorkspaceLevel={!context.params.projectId || isWorkspaceLevel}
         searchTerm={searchTerm}
         updateSearchTerm={setSearchTerm}
+        handleSearchMenuClose={handleSearchMenuClose}
       />
       <PowerKContextBasedPagesList
         activeContext={context.activeContext}
@@ -46,4 +49,4 @@ export const ProjectsAppPowerKCommandsList: React.FC<TPowerKCommandsListProps> =
       />
     </>
   );
-};
+}

@@ -89,15 +89,15 @@ export abstract class BaseCommandPaletteStore implements IBaseCommandPaletteStor
   protected getCoreModalsState(): boolean {
     return Boolean(
       this.isCreateIssueModalOpen ||
-        this.isCreateCycleModalOpen ||
-        this.isCreateProjectModalOpen ||
-        this.isCreateModuleModalOpen ||
-        this.isCreateViewModalOpen ||
-        store.powerK.isShortcutsListModalOpen ||
-        this.isBulkDeleteIssueModalOpen ||
-        this.isDeleteIssueModalOpen ||
-        this.createPageModal.isOpen ||
-        this.allStickiesModal
+      this.isCreateCycleModalOpen ||
+      this.isCreateProjectModalOpen ||
+      this.isCreateModuleModalOpen ||
+      this.isCreateViewModalOpen ||
+      store.powerK.isShortcutsListModalOpen ||
+      this.isBulkDeleteIssueModalOpen ||
+      this.isDeleteIssueModalOpen ||
+      this.createPageModal.isOpen ||
+      this.allStickiesModal
     );
   }
   // computedFn

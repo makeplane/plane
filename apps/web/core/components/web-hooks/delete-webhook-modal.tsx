@@ -1,7 +1,4 @@
-"use client";
-
-import type { FC } from "react";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useParams } from "next/navigation";
 // ui
 import { WORKSPACE_SETTINGS_TRACKER_EVENTS } from "@plane/constants";
@@ -17,7 +14,7 @@ interface IDeleteWebhook {
   onClose: () => void;
 }
 
-export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
+export function DeleteWebhookModal(props: IDeleteWebhook) {
   const { isOpen, onClose } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);
@@ -84,4 +81,4 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
       }
     />
   );
-};
+}

@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
@@ -39,7 +37,7 @@ type Props = TDropdownProps & {
   renderByDefault?: boolean;
 };
 
-export const DateDropdown: React.FC<Props> = observer((props) => {
+export const DateDropdown = observer(function DateDropdown(props: Props) {
   const {
     buttonClassName = "",
     buttonContainerClassName,

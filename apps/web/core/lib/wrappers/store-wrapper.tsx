@@ -1,4 +1,4 @@
-import type { ReactNode, FC } from "react";
+import type { ReactNode } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -16,7 +16,7 @@ type TStoreWrapper = {
   children: ReactNode;
 };
 
-const StoreWrapper: FC<TStoreWrapper> = observer((props) => {
+const StoreWrapper = observer(function StoreWrapper(props: TStoreWrapper) {
   const { children } = props;
   // theme
   const { setTheme } = useTheme();

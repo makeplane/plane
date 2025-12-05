@@ -1,5 +1,5 @@
 // plane types
-import { TSearchEntities } from "@plane/types";
+import type { TSearchEntities } from "@plane/types";
 
 export enum EMentionComponentAttributeNames {
   ID = "id",

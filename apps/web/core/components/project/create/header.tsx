@@ -8,9 +8,11 @@ import { CloseIcon } from "@plane/propel/icons";
 // plane types
 import type { IProject } from "@plane/types";
 // plane ui
-import { getFileURL, getTabIndex } from "@plane/utils";
+import { getTabIndex } from "@plane/utils";
 // components
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
+// helpers
+import { DEFAULT_COVER_IMAGE_URL, getCoverImageDisplayURL } from "@/helpers/cover-image.helper";
 // plane web imports
 import { ProjectTemplateSelect } from "@/plane-web/components/projects/create/template-select";
 
@@ -18,7 +20,8 @@ type Props = {
   handleClose: () => void;
   isMobile?: boolean;
 };
-const ProjectCreateHeader: React.FC<Props> = (props) => {
+
+function ProjectCreateHeader(props: Props) {
   const { handleClose, isMobile = false } = props;
   const { watch, control } = useFormContext<IProject>();
   const { t } = useTranslation();
@@ -32,7 +35,7 @@ const ProjectCreateHeader: React.FC<Props> = (props) => {
     <div className="group relative h-44 w-full rounded-lg bg-custom-background-80">
       {coverImage && (
         <img
-          src={getFileURL(coverImage)}
+          src={getCoverImageDisplayURL(coverImage, DEFAULT_COVER_IMAGE_URL)}
           className="absolute left-0 top-0 h-full w-full rounded-lg object-cover"
           alt={t("project_cover_image_alt")}
         />
@@ -52,8 +55,8 @@ const ProjectCreateHeader: React.FC<Props> = (props) => {
           render={({ field: { value, onChange } }) => (
             <ImagePickerPopover
               label={t("change_cover")}
-              onChange={onChange}
               control={control}
+              onChange={onChange}
               value={value ?? null}
               tabIndex={getIndex("cover_image")}
             />
@@ -101,6 +104,6 @@ const ProjectCreateHeader: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+}
 
 export default ProjectCreateHeader;

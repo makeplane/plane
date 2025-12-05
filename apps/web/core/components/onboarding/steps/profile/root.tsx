@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
@@ -17,6 +15,7 @@ import { UserImageUploadModal } from "@/components/core/modals/user-image-upload
 // helpers
 import { captureError, captureView } from "@/helpers/event-tracker.helper";
 // hooks
+import { useInstance } from "@/hooks/store/use-instance";
 import { useUser, useUserProfile } from "@/hooks/store/user";
 // services
 import { AuthService } from "@/services/auth.service";
@@ -51,12 +50,13 @@ const defaultValues: Partial<TProfileSetupFormValues> = {
   has_marketing_email_consent: true,
 };
 
-export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
+export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepChange }: Props) {
   // states
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   // store hooks
   const { data: user, updateCurrentUser } = useUser();
   const { updateUserProfile } = useUserProfile();
+  const { config: instanceConfig } = useInstance();
   // form info
   const {
     getValues,
@@ -255,12 +255,14 @@ export const ProfileSetupStep: FC<Props> = observer(({ handleStepChange }) => {
       </Button>
 
       {/* Marketing Consent */}
-      <MarketingConsent
-        isChecked={!!watch("has_marketing_email_consent")}
-        handleChange={(has_marketing_email_consent) =>
-          setValue("has_marketing_email_consent", has_marketing_email_consent)
-        }
-      />
+      {!instanceConfig?.is_self_managed && (
+        <MarketingConsent
+          isChecked={!!watch("has_marketing_email_consent")}
+          handleChange={(has_marketing_email_consent) =>
+            setValue("has_marketing_email_consent", has_marketing_email_consent)
+          }
+        />
+      )}
     </form>
   );
 });

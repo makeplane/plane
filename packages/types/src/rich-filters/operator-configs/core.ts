@@ -1,11 +1,11 @@
-import { TFilterValue } from "../expression";
-import {
+import type { TFilterValue } from "../expression";
+import type {
   TDateFilterFieldConfig,
   TDateRangeFilterFieldConfig,
   TSingleSelectFilterFieldConfig,
   TMultiSelectFilterFieldConfig,
 } from "../field-types";
-import { CORE_COLLECTION_OPERATOR, CORE_COMPARISON_OPERATOR, CORE_EQUALITY_OPERATOR } from "../operators";
+import type { CORE_COLLECTION_OPERATOR, CORE_COMPARISON_OPERATOR, CORE_EQUALITY_OPERATOR } from "../operators";
 
 // ----------------------------- EXACT Operator -----------------------------
 export type TCoreExactOperatorConfigs<V extends TFilterValue> =

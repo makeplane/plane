@@ -1,5 +1,3 @@
-"use client";
-
 import type { MutableRefObject } from "react";
 import { Fragment, forwardRef, useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -38,24 +36,29 @@ interface Props {
 }
 
 // List loader component
-const ListLoaderItemRow = forwardRef<HTMLDivElement>((props, ref) => (
-  <div ref={ref} className="flex items-center justify-between h-11 p-3 border-b border-custom-border-200">
-    <div className="flex items-center gap-3">
-      <span className="h-5 w-10 bg-custom-background-80 rounded animate-pulse" />
-      <span className={`h-5 w-52 bg-custom-background-80 rounded animate-pulse`} />
+const ListLoaderItemRow = forwardRef(function ListLoaderItemRow(
+  props: Record<string, unknown>,
+  ref: React.ForwardedRef<HTMLDivElement>
+) {
+  return (
+    <div ref={ref} className="flex items-center justify-between h-11 p-3 border-b border-custom-border-200">
+      <div className="flex items-center gap-3">
+        <span className="h-5 w-10 bg-custom-background-80 rounded animate-pulse" />
+        <span className={`h-5 w-52 bg-custom-background-80 rounded animate-pulse`} />
+      </div>
+      <div className="flex items-center gap-2">
+        {[...Array(6)].map((_, index) => (
+          <Fragment key={index}>
+            <span key={index} className="h-5 w-5 bg-custom-background-80 rounded animate-pulse" />
+          </Fragment>
+        ))}
+      </div>
     </div>
-    <div className="flex items-center gap-2">
-      {[...Array(6)].map((_, index) => (
-        <Fragment key={index}>
-          <span key={index} className="h-5 w-5 bg-custom-background-80 rounded animate-pulse" />
-        </Fragment>
-      ))}
-    </div>
-  </div>
-));
+  );
+});
 ListLoaderItemRow.displayName = "ListLoaderItemRow";
 
-export const ListGroup = observer((props: Props) => {
+export const ListGroup = observer(function ListGroup(props: Props) {
   const {
     groupIssueIds = [],
     group,

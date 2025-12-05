@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 // ui
 import { Checkbox } from "@plane/ui";
@@ -16,7 +14,7 @@ type Props = {
   selectionHelpers: TSelectionHelper;
 };
 
-export const MultipleSelectEntityAction: React.FC<Props> = observer((props) => {
+export const MultipleSelectEntityAction = observer(function MultipleSelectEntityAction(props: Props) {
   const { className, disabled = false, groupId, id, selectionHelpers } = props;
   // derived values
   const isSelected = selectionHelpers.getIsEntitySelected(id);

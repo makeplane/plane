@@ -8,7 +8,7 @@ import type { TPowerKOpenEntityActionsProps } from "./shared";
 import { PowerKOpenWorkspaceSettingsMenu } from "./workspace-settings-menu";
 import { PowerKOpenWorkspaceMenu } from "./workspaces-menu";
 
-export const PowerKOpenEntityPages: React.FC<TPowerKOpenEntityActionsProps> = (props) => {
+export function PowerKOpenEntityPages(props: TPowerKOpenEntityActionsProps) {
   const { activePage, context, handleSelection } = props;
 
   return (
@@ -32,4 +32,4 @@ export const PowerKOpenEntityPages: React.FC<TPowerKOpenEntityActionsProps> = (p
       )}
     </>
   );
-};
+}

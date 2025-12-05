@@ -1,4 +1,3 @@
-"use client";
 import { observer } from "mobx-react";
 // hooks
 import { useInstance } from "@/hooks/store";

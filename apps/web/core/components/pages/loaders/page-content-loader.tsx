@@ -1,5 +1,3 @@
-"use client";
-
 // plane imports
 import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -8,7 +6,7 @@ type Props = {
   className?: string;
 };
 
-export const PageContentLoader = (props: Props) => {
+export function PageContentLoader(props: Props) {
   const { className } = props;
 
   return (
@@ -82,4 +80,4 @@ export const PageContentLoader = (props: Props) => {
       </div>
     </div>
   );
-};
+}

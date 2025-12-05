@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -24,7 +21,7 @@ type Props = {
   invitationId: string;
 };
 
-export const WorkspaceInvitationsListItem: FC<Props> = observer((props) => {
+export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitationsListItem(props: Props) {
   const { invitationId } = props;
   // router
   const { workspaceSlug } = useParams();

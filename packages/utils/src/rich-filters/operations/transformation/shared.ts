@@ -1,6 +1,7 @@
-import { TFilterGroupNode, TFilterProperty } from "@plane/types";
+import type { TFilterGroupNode, TFilterProperty } from "@plane/types";
 import { processGroupNode } from "../../types/shared";
-import { transformGroupWithChildren, TTreeTransformFn, TTreeTransformResult } from "./core";
+import type { TTreeTransformFn, TTreeTransformResult } from "./core";
+import { transformGroupWithChildren } from "./core";
 
 /**
  * Transforms groups by processing children.

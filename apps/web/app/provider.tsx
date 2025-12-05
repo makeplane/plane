@@ -1,6 +1,3 @@
-"use client";
-
-import type { FC, ReactNode } from "react";
 import { lazy, Suspense } from "react";
 import { useTheme, ThemeProvider } from "next-themes";
 import { SWRConfig } from "swr";
@@ -18,21 +15,30 @@ import { AppProgressBar } from "@/lib/b-progress";
 import { StoreProvider } from "@/lib/store-context";
 // wrappers
 import { InstanceWrapper } from "@/lib/wrappers/instance-wrapper";
+
 // lazy imports
-const StoreWrapper = lazy(() => import("@/lib/wrappers/store-wrapper"));
-const PostHogProvider = lazy(() => import("@/lib/posthog-provider"));
-const IntercomProvider = lazy(() => import("@/lib/intercom-provider"));
+const StoreWrapper = lazy(function StoreWrapper() {
+  return import("@/lib/wrappers/store-wrapper");
+});
+
+const PostHogProvider = lazy(function PostHogProvider() {
+  return import("@/lib/posthog-provider");
+});
+
+const ChatSupportModal = lazy(function ChatSupportModal() {
+  return import("@/components/global/chat-support-modal");
+});
 
 export interface IAppProvider {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
-const ToastWithTheme = () => {
+function ToastWithTheme() {
   const { resolvedTheme } = useTheme();
   return <Toast theme={resolveGeneralTheme(resolvedTheme)} />;
-};
+}
 
-export const AppProvider: FC<IAppProvider> = (props) => {
+export function AppProvider(props: IAppProvider) {
   const { children } = props;
   // themes
   return (
@@ -44,11 +50,10 @@ export const AppProvider: FC<IAppProvider> = (props) => {
           <StoreWrapper>
             <InstanceWrapper>
               <Suspense>
-                <IntercomProvider>
-                  <PostHogProvider>
-                    <SWRConfig value={WEB_SWR_CONFIG}>{children}</SWRConfig>
-                  </PostHogProvider>
-                </IntercomProvider>
+                <ChatSupportModal />
+                <PostHogProvider>
+                  <SWRConfig value={WEB_SWR_CONFIG}>{children}</SWRConfig>
+                </PostHogProvider>
               </Suspense>
             </InstanceWrapper>
           </StoreWrapper>
@@ -56,4 +61,4 @@ export const AppProvider: FC<IAppProvider> = (props) => {
       </ThemeProvider>
     </StoreProvider>
   );
-};
+}

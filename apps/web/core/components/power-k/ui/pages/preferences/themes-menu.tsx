@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
@@ -13,7 +11,7 @@ type Props = {
   onSelect: (theme: string) => void;
 };
 
-export const PowerKPreferencesThemesMenu: React.FC<Props> = observer((props) => {
+export const PowerKPreferencesThemesMenu = observer(function PowerKPreferencesThemesMenu(props: Props) {
   const { onSelect } = props;
   // hooks
   const { t } = useTranslation();

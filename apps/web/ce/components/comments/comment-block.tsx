@@ -1,10 +1,9 @@
-import type { FC, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { TIssueComment } from "@plane/types";
-import { EIssueCommentAccessSpecifier } from "@plane/types";
 import { Avatar, Tooltip } from "@plane/ui";
 import { calculateTimeAgo, cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // hooks
@@ -17,7 +16,7 @@ type TCommentBlock = {
   children: ReactNode;
 };
 
-export const CommentBlock: FC<TCommentBlock> = observer((props) => {
+export const CommentBlock = observer(function CommentBlock(props: TCommentBlock) {
   const { comment, ends, quickActions, children } = props;
   // refs
   const commentBlockRef = useRef<HTMLDivElement>(null);
@@ -56,9 +55,7 @@ export const CommentBlock: FC<TCommentBlock> = observer((props) => {
         <div className="flex w-full gap-2">
           <div className="flex-1 flex flex-wrap items-center gap-1">
             <div className="flex items-center gap-1">
-              <span className="text-xs font-medium">
-                {`${displayName}${comment.access === EIssueCommentAccessSpecifier.EXTERNAL ? " (External User)" : ""}`}
-              </span>
+              <span className="text-xs font-medium">{displayName}</span>
             </div>
             <div className="text-xs text-custom-text-300">
               commented{" "}
@@ -67,7 +64,7 @@ export const CommentBlock: FC<TCommentBlock> = observer((props) => {
                 position="bottom"
               >
                 <span className="text-custom-text-350">
-                  {calculateTimeAgo(comment.updated_at)}
+                  {calculateTimeAgo(comment.created_at)}
                   {comment.edited_at && ` (${t("edited")})`}
                 </span>
               </Tooltip>

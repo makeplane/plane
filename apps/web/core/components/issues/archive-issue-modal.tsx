@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 // i18n
@@ -20,7 +18,7 @@ type Props = {
   onSubmit?: () => Promise<void>;
 };
 
-export const ArchiveIssueModal: React.FC<Props> = (props) => {
+export function ArchiveIssueModal(props: Props) {
   const { dataId, data, isOpen, handleClose, onSubmit } = props;
   const { t } = useTranslation();
   // states
@@ -110,4 +108,4 @@ export const ArchiveIssueModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+}

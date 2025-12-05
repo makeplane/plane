@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import type { LucideIcon } from "lucide-react";
 // plane imports
@@ -20,7 +18,7 @@ export type TReadonlyMemberProps = {
   projectId?: string;
 };
 
-export const ReadonlyMember: React.FC<TReadonlyMemberProps> = observer((props) => {
+export const ReadonlyMember = observer(function ReadonlyMember(props: TReadonlyMemberProps) {
   const { className, icon: Icon, hideIcon = false, value, placeholder, multiple = false } = props;
 
   const { t } = useTranslation();

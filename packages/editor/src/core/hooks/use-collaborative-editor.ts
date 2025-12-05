@@ -9,7 +9,7 @@ import { useEditor } from "@/hooks/use-editor";
 // plane editor extensions
 import { DocumentEditorAdditionalExtensions } from "@/plane-editor/extensions";
 // types
-import { TCollaborativeEditorHookProps } from "@/types";
+import type { TCollaborativeEditorHookProps } from "@/types";
 
 export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => {
   const {
@@ -24,6 +24,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     extensions = [],
     fileHandler,
     flaggedExtensions,
+    getEditorMetaData,
     forwardedRef,
     handleEditorReady,
     id,
@@ -109,6 +110,7 @@ export const useCollaborativeEditor = (props: TCollaborativeEditorHookProps) => 
     fileHandler,
     flaggedExtensions,
     forwardedRef,
+    getEditorMetaData,
     handleEditorReady,
     isTouchDevice,
     mentionHandler,

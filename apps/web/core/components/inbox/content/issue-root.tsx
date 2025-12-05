@@ -1,5 +1,3 @@
-"use client";
-
 import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useMemo, useRef } from "react";
 import { observer } from "mobx-react";
@@ -8,7 +6,7 @@ import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue, TNameDescriptionLoader } from "@plane/types";
-import { EFileAssetType, EInboxIssueSource } from "@plane/types";
+import { EFileAssetType, EInboxIssueSource, EInboxIssueStatus } from "@plane/types";
 import { getTextContent } from "@plane/utils";
 // components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
@@ -49,7 +47,7 @@ type Props = {
   setIsSubmitting: Dispatch<SetStateAction<TNameDescriptionLoader>>;
 };
 
-export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
+export const InboxIssueMainContent = observer(function InboxIssueMainContent(props: Props) {
   const { workspaceSlug, projectId, inboxIssue, isEditable, isSubmitting, setIsSubmitting } = props;
   // refs
   const editorRef = useRef<EditorRefApi>(null);
@@ -76,6 +74,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
   // derived values
   const issue = inboxIssue.issue;
   const projectDetails = issue?.project_id ? getProjectById(issue?.project_id) : undefined;
+  const isIntakeAccepted = inboxIssue.status === EInboxIssueStatus.ACCEPTED;
 
   // debounced duplicate issues swr
   const { duplicateIssues } = useDebouncedDuplicateIssues(
@@ -88,8 +87,6 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
       issueId: issue?.id,
     }
   );
-
-  if (!issue) return <></>;
 
   const issueOperations: TIssueOperations = useMemo(
     () => ({
@@ -164,6 +161,8 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
     [inboxIssue]
   );
 
+  if (!issue) return <></>;
+
   if (!issue?.project_id || !issue?.id) return <></>;
 
   return (
@@ -191,10 +190,11 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
           containerClassName="-ml-3"
         />
 
-        {loader === "issue-loading" ? (
+        {loader === "issue-loading" || issue.description_html === undefined ? (
           <DescriptionInputLoader />
         ) : (
           <DescriptionInput
+            issueSequenceId={issue.sequence_id}
             containerClassName="-ml-3 border-none"
             disabled={!isEditable}
             editorRef={editorRef}
@@ -263,6 +263,7 @@ export const InboxIssueMainContent: React.FC<Props> = observer((props) => {
         issueOperations={issueOperations}
         isEditable={isEditable}
         duplicateIssueDetails={inboxIssue?.duplicate_issue_detail}
+        isIntakeAccepted={isIntakeAccepted}
       />
 
       <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issue.id} isIntakeIssue />

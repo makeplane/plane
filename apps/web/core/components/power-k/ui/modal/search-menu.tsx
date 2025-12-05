@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -24,10 +22,11 @@ type Props = {
   isWorkspaceLevel: boolean;
   searchTerm: string;
   updateSearchTerm: (value: string) => void;
+  handleSearchMenuClose?: () => void;
 };
 
-export const PowerKModalSearchMenu: React.FC<Props> = (props) => {
-  const { activePage, context, isWorkspaceLevel, searchTerm, updateSearchTerm } = props;
+export function PowerKModalSearchMenu(props: Props) {
+  const { activePage, context, isWorkspaceLevel, searchTerm, updateSearchTerm, handleSearchMenuClose } = props;
   // states
   const [resultsCount, setResultsCount] = useState(0);
   const [isSearching, setIsSearching] = useState(false);
@@ -70,6 +69,11 @@ export const PowerKModalSearchMenu: React.FC<Props> = (props) => {
 
   if (activePage) return null;
 
+  const handleClosePalette = () => {
+    handleSearchMenuClose?.();
+    togglePowerKModal(false);
+  };
+
   return (
     <>
       {searchTerm.trim() !== "" && (
@@ -99,9 +103,7 @@ export const PowerKModalSearchMenu: React.FC<Props> = (props) => {
         />
       )}
 
-      {searchTerm.trim() !== "" && (
-        <PowerKModalSearchResults closePalette={() => togglePowerKModal(false)} results={results} />
-      )}
+      {searchTerm.trim() !== "" && <PowerKModalSearchResults closePalette={handleClosePalette} results={results} />}
     </>
   );
-};
+}

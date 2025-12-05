@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -18,7 +16,7 @@ type Props = {
   isDisabled?: boolean;
 };
 
-export const MemberSelect: React.FC<Props> = observer((props) => {
+export const MemberSelect = observer(function MemberSelect(props: Props) {
   const { value, onChange, isDisabled = false } = props;
   // router
   const { projectId } = useParams();

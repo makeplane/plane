@@ -1,5 +1,3 @@
-"use client";
-
 import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane types
@@ -40,7 +38,7 @@ const importOptions = [
 // services
 const workspaceService = new WorkspaceService();
 
-export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, setUsers }) => {
+export function SingleUserSelect({ collaborator, index, users, setUsers }: Props) {
   const { workspaceSlug } = useParams();
 
   const { data: members } = useSWR(
@@ -131,4 +129,4 @@ export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, 
       )}
     </div>
   );
-};
+}

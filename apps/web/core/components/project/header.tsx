@@ -1,5 +1,3 @@
-"use client";
-
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // i18n
@@ -19,7 +17,7 @@ import { useUserPermissions } from "@/hooks/store/user";
 import HeaderFilters from "./filters";
 import { ProjectSearch } from "./search-projects";
 
-export const ProjectsBaseHeader = observer(() => {
+export const ProjectsBaseHeader = observer(function ProjectsBaseHeader() {
   // i18n
   const { t } = useTranslation();
   // store hooks

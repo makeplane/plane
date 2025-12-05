@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "Einmaliger Code",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "Fügen Sie den an Ihre E-Mail gesendeten Code ein",
         requesting_new_code: "Neuen Code anfordern",
         sending_code: "Code wird gesendet",
@@ -1540,6 +1540,47 @@ export default {
         "Wenn Sie bestätigen, werden alle Sortier-, Filter- und Anzeigeoptionen + das Layout, das Sie für diese Ansicht gewählt haben, dauerhaft gelöscht und können nicht wiederhergestellt werden.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "E-Mail ändern",
+        description: "Gib eine neue E-Mail-Adresse ein, um einen Verifizierungslink zu erhalten.",
+        toasts: {
+          success_title: "Erfolg!",
+          success_message: "E-Mail erfolgreich aktualisiert. Bitte melde dich erneut an.",
+        },
+        form: {
+          email: {
+            label: "Neue E-Mail",
+            placeholder: "Gib deine E-Mail ein",
+            errors: {
+              required: "E-Mail ist erforderlich",
+              invalid: "E-Mail ist ungültig",
+              exists: "E-Mail existiert bereits. Bitte nutze eine andere.",
+              validation_failed: "E-Mail-Verifizierung fehlgeschlagen. Bitte versuche es erneut.",
+            },
+          },
+          code: {
+            label: "Einmaliger Code",
+            placeholder: "123456",
+            helper_text: "Verifizierungscode wurde an deine neue E-Mail gesendet.",
+            errors: {
+              required: "Einmaliger Code ist erforderlich",
+              invalid: "Ungültiger Verifizierungscode. Bitte versuche es erneut.",
+            },
+          },
+        },
+        actions: {
+          continue: "Weiter",
+          confirm: "Bestätigen",
+          cancel: "Abbrechen",
+        },
+        states: {
+          sending: "Wird gesendet…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "Arbeitsbereich-Einstellungen",
     page_label: "{workspace} - Allgemeine Einstellungen",
@@ -1618,6 +1659,8 @@ export default {
         exporting: "Wird exportiert",
         previous_exports: "Bisherige Exporte",
         export_separate_files: "Daten in separaten Dateien exportieren",
+        filters_info:
+          "Wenden Sie Filter an, um bestimmte Arbeitselemente basierend auf Ihren Kriterien zu exportieren.",
         modal: {
           title: "Exportieren nach",
           toasts: {

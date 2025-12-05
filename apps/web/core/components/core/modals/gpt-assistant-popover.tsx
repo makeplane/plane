@@ -1,5 +1,3 @@
-"use client";
-
 import type { Ref } from "react";
 import React, { useEffect, useState, useRef, Fragment } from "react";
 import type { Placement } from "@popperjs/core";
@@ -37,7 +35,7 @@ type FormData = {
   task: string;
 };
 
-export const GptAssistantPopover: React.FC<Props> = (props) => {
+export function GptAssistantPopover(props: Props) {
   const {
     isOpen,
     handleClose,
@@ -295,4 +293,4 @@ export const GptAssistantPopover: React.FC<Props> = (props) => {
       </Transition>
     </Popover>
   );
-};
+}

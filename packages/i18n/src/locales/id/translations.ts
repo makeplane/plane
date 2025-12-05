@@ -74,7 +74,7 @@ export default {
       },
       unique_code: {
         label: "Kode unik",
-        placeholder: "gets-sets-flys",
+        placeholder: "123456",
         paste_code: "Tempelkan kode yang dikirim ke email anda",
         requesting_new_code: "Meminta kode baru",
         sending_code: "Mengirim kode",
@@ -1530,6 +1530,47 @@ export default {
         "Jika Anda mengonfirmasi, semua opsi pengurutan, filter, dan tampilan + tata letak yang telah Anda pilih untuk tampilan ini akan dihapus secara permanen tanpa cara untuk memulihkannya.",
     },
   },
+  account_settings: {
+    profile: {
+      change_email_modal: {
+        title: "Ubah email",
+        description: "Masukkan alamat email baru untuk menerima tautan verifikasi.",
+        toasts: {
+          success_title: "Berhasil!",
+          success_message: "Email berhasil diperbarui. Silakan masuk kembali.",
+        },
+        form: {
+          email: {
+            label: "Email baru",
+            placeholder: "Masukkan email Anda",
+            errors: {
+              required: "Email wajib diisi",
+              invalid: "Email tidak valid",
+              exists: "Email sudah ada. Gunakan yang lain.",
+              validation_failed: "Validasi email gagal. Coba lagi.",
+            },
+          },
+          code: {
+            label: "Kode unik",
+            placeholder: "123456",
+            helper_text: "Kode verifikasi dikirim ke email baru Anda.",
+            errors: {
+              required: "Kode unik wajib diisi",
+              invalid: "Kode verifikasi tidak valid. Coba lagi.",
+            },
+          },
+        },
+        actions: {
+          continue: "Lanjutkan",
+          confirm: "Konfirmasi",
+          cancel: "Batal",
+        },
+        states: {
+          sending: "Mengirim…",
+        },
+      },
+    },
+  },
   workspace_settings: {
     label: "Pengaturan ruang kerja",
     page_label: "{workspace} - Pengaturan Umum",
@@ -1610,6 +1651,7 @@ export default {
         exporting: "Mengeskpor",
         previous_exports: "Ekspor sebelumnya",
         export_separate_files: "Ekspor data ke file terpisah",
+        filters_info: "Terapkan filter untuk mengekspor item kerja tertentu berdasarkan kriteria Anda.",
         modal: {
           title: "Ekspor ke",
           toasts: {

@@ -1,8 +1,11 @@
 // plane imports
-import { EQUALITY_OPERATOR, IUserLite, TFilterProperty } from "@plane/types";
+import type { IUserLite, TFilterProperty } from "@plane/types";
+import { EQUALITY_OPERATOR } from "@plane/types";
 // local imports
-import { createFilterConfig, createOperatorConfigEntry, TCreateFilterConfig } from "../shared";
-import { getMemberMultiSelectConfig, TCreateUserFilterParams, TCustomPropertyFilterParams } from "./shared";
+import type { TCreateFilterConfig } from "../shared";
+import { createFilterConfig, createOperatorConfigEntry } from "../shared";
+import type { TCreateUserFilterParams, TCustomPropertyFilterParams } from "./shared";
+import { getMemberMultiSelectConfig } from "./shared";
 
 /**
  * Member picker property filter specific params

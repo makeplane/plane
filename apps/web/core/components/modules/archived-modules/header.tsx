@@ -19,7 +19,7 @@ import { ModuleFiltersSelection, ModuleOrderByDropdown } from "@/components/modu
 import { useMember } from "@/hooks/store/use-member";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
 
-export const ArchivedModulesHeader: FC = observer(() => {
+export const ArchivedModulesHeader = observer(function ArchivedModulesHeader() {
   // router
   const { projectId } = useParams();
   // refs

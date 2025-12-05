@@ -25,6 +25,17 @@ export default {
     },
   },
   project_empty_state: {
+    no_access: {
+      title: "Схоже, у вас немає доступу до цього проєкту",
+      restricted_description: "Зверніться до адміністратора, щоб запросити доступ, і ви зможете продовжити тут.",
+      join_description: "Натисніть кнопку нижче, щоб приєднатися.",
+      cta_primary: "Приєднатися до проєкту",
+      cta_loading: "Приєднання до проєкту",
+    },
+    invalid_project: {
+      title: "Проєкт не знайдено",
+      description: "Проєкт, який ви шукаєте, не існує.",
+    },
     work_items: {
       title: "Почніть з вашого першого робочого елемента.",
       description:

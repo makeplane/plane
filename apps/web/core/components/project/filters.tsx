@@ -22,7 +22,12 @@ type Props = {
   isMobile?: boolean;
 };
 
-const HeaderFilters = observer(({ filterMenuButton, isMobile, classname = "", filterClassname = "" }: Props) => {
+const HeaderFilters = observer(function HeaderFilters({
+  filterMenuButton,
+  isMobile,
+  classname = "",
+  filterClassname = "",
+}: Props) {
   // i18n
   const { t } = useTranslation();
   // router

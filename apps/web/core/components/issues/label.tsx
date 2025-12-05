@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 // components
 import { Tooltip } from "@plane/propel/tooltip";
@@ -9,7 +7,7 @@ type Props = {
   maxRender?: number;
 };
 
-export const ViewIssueLabel: React.FC<Props> = ({ labelDetails, maxRender = 1 }) => {
+export function ViewIssueLabel({ labelDetails, maxRender = 1 }: Props) {
   const { isMobile } = usePlatformOS();
   return (
     <>
@@ -55,4 +53,4 @@ export const ViewIssueLabel: React.FC<Props> = ({ labelDetails, maxRender = 1 })
       )}
     </>
   );
-};
+}

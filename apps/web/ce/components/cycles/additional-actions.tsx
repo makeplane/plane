@@ -4,4 +4,6 @@ type Props = {
   cycleId: string;
   projectId: string;
 };
-export const CycleAdditionalActions: FC<Props> = observer(() => <></>);
+export const CycleAdditionalActions = observer(function CycleAdditionalActions(_props: Props) {
+  return <></>;
+});

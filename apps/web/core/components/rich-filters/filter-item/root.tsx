@@ -28,99 +28,99 @@ export interface IFilterItemProps<P extends TFilterProperty, E extends TExternal
   showTransition?: boolean;
 }
 
-export const FilterItem = observer(
-  <P extends TFilterProperty, E extends TExternalFilter>(props: IFilterItemProps<P, E>) => {
-    const { condition, filter, isDisabled = false, showTransition = true } = props;
-    // derived values
-    const filterConfig = condition?.property ? filter.configManager.getConfigByProperty(condition.property) : undefined;
-    const operatorOptions = filterConfig
-      ?.getAllDisplayOperatorOptionsByValue(condition.value as TFilterValue)
-      .map((option) => ({
-        value: option.value,
-        content: option.label,
-        query: option.label.toLowerCase(),
-      }));
-    const selectedOperatorFieldConfig = filterConfig?.getOperatorConfig(condition.operator);
-    const selectedOperatorOption = filterConfig?.getDisplayOperatorByValue(
-      condition.operator,
-      condition.value as TFilterValue
-    );
-    // Disable operator selection when filter is disabled or only one operator option is available and selected
-    const isOperatorSelectionDisabled =
-      isDisabled ||
-      (condition.operator && operatorOptions?.length === 1 && operatorOptions[0]?.value === condition.operator);
+export const FilterItem = observer(function FilterItem<P extends TFilterProperty, E extends TExternalFilter>(
+  props: IFilterItemProps<P, E>
+) {
+  const { condition, filter, isDisabled = false, showTransition = true } = props;
+  // derived values
+  const filterConfig = condition?.property ? filter.configManager.getConfigByProperty(condition.property) : undefined;
+  const operatorOptions = filterConfig
+    ?.getAllDisplayOperatorOptionsByValue(condition.value as TFilterValue)
+    .map((option) => ({
+      value: option.value,
+      content: option.label,
+      query: option.label.toLowerCase(),
+    }));
+  const selectedOperatorFieldConfig = filterConfig?.getOperatorConfig(condition.operator);
+  const selectedOperatorOption = filterConfig?.getDisplayOperatorByValue(
+    condition.operator,
+    condition.value as TFilterValue
+  );
+  // Disable operator selection when filter is disabled or only one operator option is available and selected
+  const isOperatorSelectionDisabled =
+    isDisabled ||
+    (condition.operator && operatorOptions?.length === 1 && operatorOptions[0]?.value === condition.operator);
 
-    const handleOperatorChange = (operator: TAllAvailableOperatorsForDisplay) => {
-      if (operator) {
-        const { operator: positiveOperator, isNegation } = getOperatorForPayload(operator);
-        filter.updateConditionOperator(condition.id, positiveOperator, isNegation);
-      }
-    };
-
-    const handleValueChange = (values: SingleOrArray<TFilterValue>) => {
-      filter.updateConditionValue(condition.id, values);
-    };
-
-    if (!filter.configManager.areConfigsReady) {
-      return <FilterItemLoader />;
+  const handleOperatorChange = (operator: TAllAvailableOperatorsForDisplay) => {
+    if (operator) {
+      const { operator: positiveOperator, isNegation } = getOperatorForPayload(operator);
+      filter.updateConditionOperator(condition.id, positiveOperator, isNegation);
     }
+  };
 
-    if (!filterConfig) {
-      return (
-        <InvalidFilterItem
-          condition={condition}
-          filter={filter}
-          isDisabled={isDisabled}
-          showTransition={showTransition}
-        />
-      );
-    }
+  const handleValueChange = (values: SingleOrArray<TFilterValue>) => {
+    filter.updateConditionValue(condition.id, values);
+  };
 
+  if (!filter.configManager.areConfigsReady) {
+    return <FilterItemLoader />;
+  }
+
+  if (!filterConfig) {
     return (
-      <FilterItemContainer conditionValue={condition.value} showTransition={showTransition}>
-        {/* Property section */}
-        <FilterItemProperty
-          conditionId={condition.id}
-          filter={filter}
-          icon={filterConfig.icon}
-          isDisabled={isDisabled}
-          label={filterConfig.label}
-          tooltipContent={filterConfig.tooltipContent}
-        />
-
-        {/* Operator section */}
-        <CustomSearchSelect
-          value={condition.operator}
-          onChange={handleOperatorChange}
-          options={operatorOptions}
-          className={COMMON_FILTER_ITEM_BORDER_CLASSNAME}
-          customButtonClassName={cn(
-            "h-full px-2 text-sm font-normal",
-            isOperatorSelectionDisabled && "hover:bg-custom-background-100"
-          )}
-          optionsClassName="w-48"
-          maxHeight="2xl"
-          disabled={isOperatorSelectionDisabled}
-          customButton={
-            <div className="flex items-center h-full" aria-disabled={isOperatorSelectionDisabled}>
-              {filterConfig.getLabelForOperator(selectedOperatorOption)}
-            </div>
-          }
-        />
-
-        {/* Value section */}
-        {selectedOperatorFieldConfig && (
-          <FilterValueInput
-            filterFieldConfig={selectedOperatorFieldConfig}
-            condition={condition}
-            onChange={handleValueChange}
-            isDisabled={isDisabled}
-          />
-        )}
-
-        {/* Remove button */}
-        {!isDisabled && <FilterItemCloseButton conditionId={condition.id} filter={filter} />}
-      </FilterItemContainer>
+      <InvalidFilterItem
+        condition={condition}
+        filter={filter}
+        isDisabled={isDisabled}
+        showTransition={showTransition}
+      />
     );
   }
-);
+
+  return (
+    <FilterItemContainer conditionValue={condition.value} showTransition={showTransition}>
+      {/* Property section */}
+      <FilterItemProperty
+        conditionId={condition.id}
+        filter={filter}
+        icon={filterConfig.icon}
+        isDisabled={isDisabled}
+        label={filterConfig.label}
+        tooltipContent={filterConfig.tooltipContent}
+      />
+
+      {/* Operator section */}
+      <CustomSearchSelect
+        value={condition.operator}
+        onChange={handleOperatorChange}
+        options={operatorOptions}
+        className={COMMON_FILTER_ITEM_BORDER_CLASSNAME}
+        customButtonClassName={cn(
+          "h-full px-2 text-sm font-normal",
+          isOperatorSelectionDisabled && "hover:bg-custom-background-100"
+        )}
+        optionsClassName="w-48"
+        maxHeight="2xl"
+        disabled={isOperatorSelectionDisabled}
+        customButton={
+          <div className="flex items-center h-full" aria-disabled={isOperatorSelectionDisabled}>
+            {filterConfig.getLabelForOperator(selectedOperatorOption)}
+          </div>
+        }
+      />
+
+      {/* Value section */}
+      {selectedOperatorFieldConfig && (
+        <FilterValueInput
+          filterFieldConfig={selectedOperatorFieldConfig}
+          condition={condition}
+          onChange={handleValueChange}
+          isDisabled={isDisabled}
+        />
+      )}
+
+      {/* Remove button */}
+      {!isDisabled && <FilterItemCloseButton conditionId={condition.id} filter={filter} />}
+    </FilterItemContainer>
+  );
+});
