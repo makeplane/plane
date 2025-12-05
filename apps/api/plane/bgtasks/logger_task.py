@@ -54,12 +54,13 @@ def safe_decode_body(content: bytes) -> Optional[str]:
         return "[Could not decode content]"
 
 
-def log_to_mongo(mongo_collection: Optional[Collection], log_document: Dict[str, Any]) -> bool:
+def log_to_mongo(log_document: Dict[str, Any]) -> bool:
     """
     Logs the request to MongoDB if available.
     """
-
+    mongo_collection = get_mongo_collection()
     if mongo_collection is None:
+        logger.error("MongoDB not configured")
         return False
 
     try:
@@ -86,8 +87,8 @@ def process_logs(log_data: Dict[str, Any], mongo_log: Dict[str, Any]):
     """
     Process logs to save to MongoDB or Postgres based on the configuration
     """
-    mongo_collection = get_mongo_collection()
-    if mongo_collection is not None:
-        log_to_mongo(mongo_collection, mongo_log)
+
+    if MongoConnection.is_configured():
+        log_to_mongo(mongo_log)
     else:
         log_to_postgres(log_data)
