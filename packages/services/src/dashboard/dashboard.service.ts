@@ -77,3 +77,5 @@ export default class DashboardService extends APIService {
       });
   }
 }
+
+export { DashboardService };

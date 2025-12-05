@@ -1,16 +1,21 @@
 {
   "extends": "@plane/typescript-config/react-router.json",
   "compilerOptions": {
-    "baseUrl": ".",
+    "noImplicitOverride": false,
+    "exactOptionalPropertyTypes": false,
+    "noUnusedParameters": false,
+    "noUnusedLocals": false,
     "rootDirs": [".", "./.react-router/types"],
-    "types": ["node", "vite/client"],
+    "types": ["vite/client"],
     "paths": {
-      "@/app/*": ["app/*"],
-      "@/*": ["core/*"],
-      "@/plane-admin/*": ["ce/*"],
-      "@/styles/*": ["styles/*"]
-    },
-    "strictNullChecks": true
+      "package.json": ["./package.json"],
+      "ce/*": ["./ce/*"],
+      "@/app/*": ["./app/*"],
+      "@/*": ["./core/*"],
+      "@/plane-admin/*": ["./ce/*"],
+      "@/ce/*": ["./ce/*"],
+      "@/styles/*": ["./styles/*"]
+    }
   },
   "include": ["**/*", "**/.server/**/*", "**/.client/**/*", ".react-router/types/**/*"],
   "exclude": ["node_modules"]

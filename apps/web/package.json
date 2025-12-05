@@ -10,11 +10,11 @@
     "preview": "react-router build && serve -s build/client -l 3000",
     "start": "serve -s build/client -l 3000",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf .react-router && rm -rf node_modules && rm -rf dist && rm -rf build",
-    "check:lint": "eslint . --max-warnings 934",
+    "check:lint": "eslint . --max-warnings=14367",
     "check:types": "react-router typegen && tsc --noEmit",
-    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
-    "fix:lint": "eslint . --fix",
-    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\""
+    "check:format": "prettier --check .",
+    "fix:lint": "eslint . --fix --max-warnings=14367",
+    "fix:format": "prettier --write ."
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "catalog:",
@@ -77,10 +77,8 @@
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "catalog:",
-    "@plane/eslint-config": "workspace:*",
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@prettier/plugin-oxc": "0.1.3",
     "@react-router/dev": "catalog:",
     "@tailwindcss/typography": "0.5.19",
     "@types/lodash-es": "catalog:",

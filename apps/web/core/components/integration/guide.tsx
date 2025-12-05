@@ -173,3 +173,5 @@ const IntegrationGuide = observer(function IntegrationGuide() {
 });
 
 export default IntegrationGuide;
+
+export { IntegrationGuide };
