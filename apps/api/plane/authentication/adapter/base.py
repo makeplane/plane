@@ -1,6 +1,8 @@
 # Python imports
 import os
 import uuid
+import requests
+from io import BytesIO
 
 # Django imports
 from django.utils import timezone
@@ -11,12 +13,13 @@ from django.core.exceptions import ValidationError
 from zxcvbn import zxcvbn
 
 # Module imports
-from plane.db.models import Profile, User, WorkspaceMemberInvite
+from plane.db.models import Profile, User, WorkspaceMemberInvite, FileAsset
 from plane.license.utils.instance_value import get_configuration_value
 from .error import AuthenticationException, AUTHENTICATION_ERROR_CODES
 from plane.bgtasks.user_activation_email_task import user_activation_email
 from plane.utils.host import base_host
 from plane.utils.ip_address import get_client_ip
+from plane.utils.exception_logger import log_exception
 
 
 class Adapter:
@@ -86,9 +89,9 @@ class Adapter:
         """Check if sign up is enabled or not and raise exception if not enabled"""
 
         # Get configuration value
-        (ENABLE_SIGNUP,) = get_configuration_value(
-            [{"key": "ENABLE_SIGNUP", "default": os.environ.get("ENABLE_SIGNUP", "1")}]
-        )
+        (ENABLE_SIGNUP,) = get_configuration_value([
+            {"key": "ENABLE_SIGNUP", "default": os.environ.get("ENABLE_SIGNUP", "1")}
+        ])
 
         # Check if sign up is disabled and invite is present or not
         if ENABLE_SIGNUP == "0" and not WorkspaceMemberInvite.objects.filter(email=email).exists():
@@ -100,6 +103,70 @@ class Adapter:
             )
 
         return True
+
+    def download_and_upload_avatar(self, avatar_url, user):
+        """
+        Downloads avatar from OAuth provider and uploads to our storage.
+        Returns the uploaded file path or None if failed.
+        """
+        if not avatar_url:
+            return None
+
+        try:
+            headers = {"Authorization": f"Bearer {self.token_data.get('access_token')}"}
+
+            # Download the avatar image
+            response = requests.get(avatar_url, timeout=10, headers=headers)
+            response.raise_for_status()
+
+            # Get content type and determine file extension
+            content_type = response.headers.get("Content-Type", "image/jpeg")
+            extension_map = {
+                "image/jpeg": "jpg",
+                "image/jpg": "jpg",
+                "image/png": "png",
+                "image/gif": "gif",
+                "image/webp": "webp",
+            }
+            extension = extension_map.get(content_type, "jpg")
+            file_size = len(response.content)
+
+            # Generate unique filename
+            filename = f"{uuid.uuid4().hex}-user-avatar.{extension}"
+
+            # Upload to S3/MinIO storage
+            from plane.settings.storage import S3Storage
+
+            storage = S3Storage(request=self.request)
+
+            # Create file-like object
+            file_obj = BytesIO(response.content)
+            file_obj.seek(0)
+
+            # Upload using boto3 directly
+            storage.upload_file(file_obj=file_obj, object_name=filename, content_type=content_type)
+
+            # Get storage metadata
+            storage_metadata = storage.get_object_metadata(object_name=filename)
+
+            # Create FileAsset record
+            file_asset = FileAsset.objects.create(
+                attributes={"name": f"{self.provider}-avatar.{extension}", "type": content_type, "size": file_size},
+                asset=filename,
+                size=file_size,
+                user=user,
+                created_by=user,
+                entity_type=FileAsset.EntityTypeContext.USER_AVATAR,
+                is_uploaded=True,
+                storage_metadata=storage_metadata,
+            )
+
+            return file_asset
+
+        except Exception as e:
+            log_exception(e)
+            # Return None if upload fails, so original URL can be used as fallback
+            return None
 
     def save_user_data(self, user):
         # Update user details
@@ -151,13 +218,22 @@ class Adapter:
                 user.is_password_autoset = False
 
             # Set user details
-            avatar = self.user_data.get("user", {}).get("avatar", "")
             first_name = self.user_data.get("user", {}).get("first_name", "")
             last_name = self.user_data.get("user", {}).get("last_name", "")
-            user.avatar = avatar if avatar else ""
             user.first_name = first_name if first_name else ""
             user.last_name = last_name if last_name else ""
+
             user.save()
+
+            # Download and upload avatar
+            avatar = self.user_data.get("user", {}).get("avatar", "")
+            if avatar:
+                avatar_asset = self.download_and_upload_avatar(avatar_url=avatar, user=user)
+                if avatar_asset:
+                    user.avatar_asset = avatar_asset
+                # If avatar upload fails, set the avatar to the original URL
+                else:
+                    user.avatar = avatar
 
             # Create profile
             Profile.objects.create(user=user)
