@@ -1,6 +1,9 @@
+import { DOMParser } from "@tiptap/pm/model";
 import type { EditorProps } from "@tiptap/pm/view";
 // plane utils
 import { cn } from "@plane/utils";
+// helpers
+import { processAssetDuplication } from "@/helpers/paste-asset";
 
 type TArgs = {
   editorClassName: string;
@@ -26,6 +29,27 @@ export const CoreEditorProps = (props: TArgs): EditorProps => {
           }
         }
       },
+    },
+    handlePaste: (view, event) => {
+      if (!event.clipboardData) return false;
+
+      const htmlContent = event.clipboardData.getData("text/plane-editor-html");
+      if (!htmlContent) return false;
+
+      // Process the HTML content using the registry
+      const { processedHtml, hasChanges } = processAssetDuplication(htmlContent);
+      if (!hasChanges) return false;
+
+      event.preventDefault();
+
+      // Parse the processed HTML and insert it
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = processedHtml;
+      const slice = DOMParser.fromSchema(view.state.schema).parseSlice(tempDiv);
+      const tr = view.state.tr.replaceSelection(slice);
+      view.dispatch(tr);
+
+      return true;
     },
   };
 };
