@@ -387,7 +387,7 @@ def create_cycles(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_u
     """
     cycle_seeds = read_seed_file("cycles.json")
     if not cycle_seeds:
-        return
+        return {}
 
     cycle_map: Dict[int, uuid.UUID] = {}
 
@@ -435,7 +435,7 @@ def create_modules(workspace: Workspace, project_map: Dict[int, uuid.UUID], bot_
     """
     module_seeds = read_seed_file("modules.json")
     if not module_seeds:
-        return
+        return {}
 
     module_map: Dict[int, uuid.UUID] = {}
 
