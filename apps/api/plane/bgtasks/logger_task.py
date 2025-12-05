@@ -4,6 +4,7 @@ from typing import Optional, Dict, Any
 
 # Third party imports
 from pymongo.collection import Collection
+from celery import shared_task
 
 # Django imports
 from plane.settings.mongo import MongoConnection
@@ -83,7 +84,8 @@ def log_to_postgres(log_data: Dict[str, Any]) -> bool:
         return False
 
 
-def process_logs(log_data: Dict[str, Any], mongo_log: Dict[str, Any]):
+@shared_task
+def process_logs(log_data: Dict[str, Any], mongo_log: Dict[str, Any]) -> None:
     """
     Process logs to save to MongoDB or Postgres based on the configuration
     """
