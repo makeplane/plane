@@ -177,6 +177,7 @@ export const MemberDropdownBase = observer(function MemberDropdownBase(props: TM
           optionsClassName={optionsClassName}
           placement={placement}
           referenceElement={referenceElement}
+          selectedMemberIds={Array.isArray(value) ? value : value ? [value] : []}
         />
       )}
     </ComboDropDown>
