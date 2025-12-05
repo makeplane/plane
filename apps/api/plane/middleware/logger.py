@@ -14,6 +14,7 @@ from plane.utils.ip_address import get_client_ip
 from plane.db.models import APIActivityLog
 from plane.settings.mongo import MongoConnection
 from plane.utils.exception_logger import log_exception
+from plane.bgtasks.logger_task import process_logs
 
 api_logger = logging.getLogger("plane.api.request")
 
@@ -79,30 +80,6 @@ class APITokenLogMiddleware:
 
     def __init__(self, get_response):
         self.get_response = get_response
-        self.mongo_available = False
-
-        # Initialize MongoDB collection
-        try:
-            self.mongo_collection = self.get_mongo_collection()
-            self.mongo_available = True if self.mongo_collection is not None else False
-        except Exception as e:
-            api_logger.error(f"Error getting MongoDB collection: {str(e)}")
-            log_exception(e)
-
-    def get_mongo_collection(self):
-        """
-        Returns the MongoDB collection for API activity logs.
-        """
-        if not MongoConnection.is_configured():
-            api_logger.info("MongoDB not configured")
-            return None
-
-        try:
-            return MongoConnection.get_collection("api_activity_logs")
-        except Exception as e:
-            api_logger.error(f"Error getting MongoDB collection: {str(e)}")
-            log_exception(e)
-            return None
 
     def __call__(self, request):
         request_body = request.body
@@ -131,34 +108,6 @@ class APITokenLogMiddleware:
             return content.decode("utf-8")
         except UnicodeDecodeError:
             return "[Could not decode content]"
-
-    def log_to_mongo(self, log_document):
-        """
-        Logs the request to MongoDB if available.
-        """
-
-        if not self.mongo_available or self.mongo_collection is None:
-            return False
-
-        try:
-            self.mongo_collection.insert_one(log_document)
-            return True
-        except Exception as e:
-            log_exception(e)
-            self.mongo_collection = self.get_mongo_collection()
-            self.mongo_available = True if self.mongo_collection is not None else False
-            return False
-
-    def log_to_postgres(self, log_data):
-        """
-        Fallback to logging to PostgreSQL if MongoDB is unavailable.
-        """
-        try:
-            APIActivityLog.objects.create(**log_data)
-            return True
-        except Exception as e:
-            log_exception(e)
-            return False
 
     def process_request(self, request, response, request_body):
         api_key_header = "X-Api-Key"
@@ -195,10 +144,7 @@ class APITokenLogMiddleware:
                 "updated_by": user_id,
             }
 
-            # Log to MongoDB if available
-            if not self.log_to_mongo(mongo_log):
-                # Fallback to logging to PostgreSQL
-                self.log_to_postgres(log_data)
+            process_logs.delay(log_data=log_data, mongo_log=mongo_log)
 
         except Exception as e:
             log_exception(e)
