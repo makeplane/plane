@@ -37,7 +37,6 @@ export const CoreEditorProps = (props: TArgs): EditorProps => {
       if (!htmlContent) return false;
 
       const { processedHtml } = processAssetDuplication(htmlContent);
-      event.preventDefault();
       view.pasteHTML(processedHtml);
       return true;
     },
