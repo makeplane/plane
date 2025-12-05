@@ -29,7 +29,7 @@ export type TEditorHookProps = TCoreHookProps &
     | "onChange"
     | "onTransaction"
     | "placeholder"
-    | "placeholderOnEmpty"
+    | "showPlaceholderOnEmpty"
     | "tabIndex"
     | "value"
   > & {
@@ -51,7 +51,7 @@ export type TCollaborativeEditorHookProps = TCoreHookProps &
     | "onChange"
     | "onTransaction"
     | "placeholder"
-    | "placeholderOnEmpty"
+    | "showPlaceholderOnEmpty"
     | "tabIndex"
   > &
   Pick<

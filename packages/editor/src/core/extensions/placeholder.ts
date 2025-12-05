@@ -6,11 +6,11 @@ import type { IEditorProps } from "@/types";
 
 type TArgs = {
   placeholder: IEditorProps["placeholder"];
-  placeholderOnEmpty: IEditorProps["placeholderOnEmpty"];
+  showPlaceholderOnEmpty: IEditorProps["showPlaceholderOnEmpty"];
 };
 
 export const CustomPlaceholderExtension = (args: TArgs) => {
-  const { placeholder, placeholderOnEmpty } = args;
+  const { placeholder, showPlaceholderOnEmpty } = args;
 
   return Placeholder.configure({
     placeholder: ({ editor, node }) => {
@@ -30,7 +30,7 @@ export const CustomPlaceholderExtension = (args: TArgs) => {
 
       if (shouldHidePlaceholder) return "";
 
-      if (placeholderOnEmpty) {
+      if (showPlaceholderOnEmpty) {
         const isDocumentEmpty = editor.state.doc.textContent.length === 0;
         if (!isDocumentEmpty) {
           return "";
