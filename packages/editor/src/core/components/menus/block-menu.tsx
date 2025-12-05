@@ -12,6 +12,7 @@ import type { Editor } from "@tiptap/react";
 import type { LucideIcon } from "lucide-react";
 import { Copy, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { ISvgIcons } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
@@ -27,7 +28,7 @@ type Props = {
   workItemIdentifier?: IEditorProps["workItemIdentifier"];
 };
 export type BlockMenuOption = {
-  icon: LucideIcon;
+  icon: LucideIcon | React.FC<ISvgIcons>;
   key: string;
   label: string;
   onClick: (e: React.MouseEvent) => void;

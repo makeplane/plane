@@ -98,10 +98,10 @@ export class SitesFileService extends FileService {
    * @returns {Promise<void>} Promise resolving to void
    * @throws {Error} If the request fails
    */
-  async restoreNewAsset(workspaceSlug: string, src: string): Promise<void> {
+  async restoreNewAsset(anchor: string, src: string): Promise<void> {
     // remove the last slash and get the asset id
     const assetId = getAssetIdFromUrl(src);
-    return this.post(`/api/public/assets/v2/workspaces/${workspaceSlug}/restore/${assetId}/`)
+    return this.post(`/api/public/assets/v2/anchor/${anchor}/restore/${assetId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
