@@ -2699,8 +2699,8 @@ export default {
   // Navigation customization
   customize_navigation: "Customize navigation",
   personal: "Personal",
-  accordion_navigation_control: "Accordion navigation control",
-  horizontal_navigation_bar: "Horizontal navigation bar",
+  accordion_navigation_control: "Accordion sidebar navigation",
+  horizontal_navigation_bar: "Tabbed Navigation",
   show_limited_projects_on_sidebar: "Show limited projects on sidebar",
   enter_number_of_projects: "Enter number of projects",
   pin: "Pin",

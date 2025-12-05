@@ -5,7 +5,7 @@ import { DiscordIcon } from "@plane/propel/icons";
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks
 import { usePowerK } from "@/hooks/store/use-power-k";
-import { useTransient } from "@/hooks/store/use-transient";
+import { useChatSupport } from "@/hooks/use-chat-support";
 
 /**
  * Help commands - Help related commands
@@ -13,7 +13,7 @@ import { useTransient } from "@/hooks/store/use-transient";
 export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
   // store
   const { toggleShortcutsListModal } = usePowerK();
-  const { toggleIntercom } = useTransient();
+  const { isEnabled: isChatSupportEnabled, openChatSupport } = useChatSupport();
 
   return [
     {
@@ -73,9 +73,9 @@ export const usePowerKHelpCommands = (): TPowerKCommandConfig[] => {
       group: "help",
       i18n_title: "power_k.help_actions.chat_with_us",
       icon: MessageSquare,
-      action: () => toggleIntercom(true),
-      isEnabled: () => true,
-      isVisible: () => true,
+      action: () => openChatSupport(),
+      isEnabled: () => isChatSupportEnabled,
+      isVisible: () => isChatSupportEnabled,
       closeOnSelect: true,
     },
   ];

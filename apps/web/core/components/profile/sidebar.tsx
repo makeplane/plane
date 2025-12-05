@@ -17,6 +17,8 @@ import type { IUserProfileProjectSegregation } from "@plane/types";
 // plane ui
 import { Loader } from "@plane/ui";
 import { cn, renderFormattedDate, getFileURL } from "@plane/utils";
+// helpers
+import { getCoverImageDisplayURL } from "@/helpers/cover-image.helper";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useProject } from "@/hooks/store/use-project";
@@ -101,9 +103,8 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
             )}
             <img
               src={
-                userData?.cover_image_url
-                  ? getFileURL(userData?.cover_image_url)
-                  : "/users/user-profile-cover-default-img.png"
+                getCoverImageDisplayURL(userData?.cover_image_url, "/users/user-profile-cover-default-img.png") ||
+                "/users/user-profile-cover-default-img.png"
               }
               alt={userData?.display_name}
               className="h-[110px] w-full object-cover"

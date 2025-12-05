@@ -25,8 +25,8 @@ const PostHogProvider = lazy(function PostHogProvider() {
   return import("@/lib/posthog-provider");
 });
 
-const IntercomProvider = lazy(function IntercomProvider() {
-  return import("@/lib/intercom-provider");
+const ChatSupportModal = lazy(function ChatSupportModal() {
+  return import("@/components/global/chat-support-modal");
 });
 
 export interface IAppProvider {
@@ -50,11 +50,10 @@ export function AppProvider(props: IAppProvider) {
           <StoreWrapper>
             <InstanceWrapper>
               <Suspense>
-                <IntercomProvider>
-                  <PostHogProvider>
-                    <SWRConfig value={WEB_SWR_CONFIG}>{children}</SWRConfig>
-                  </PostHogProvider>
-                </IntercomProvider>
+                <ChatSupportModal />
+                <PostHogProvider>
+                  <SWRConfig value={WEB_SWR_CONFIG}>{children}</SWRConfig>
+                </PostHogProvider>
               </Suspense>
             </InstanceWrapper>
           </StoreWrapper>

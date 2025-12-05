@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@eslint/js": "9.39.1",
-    "@prettier/plugin-oxc": "0.0.5",
+    "@prettier/plugin-oxc": "0.1.3",
     "@vitest/eslint-plugin": "1.5.0",
     "eslint": "9.39.1",
     "eslint-config-prettier": "10.1.8",
@@ -38,7 +38,7 @@
     "globals": "16.5.0",
     "husky": "9.1.7",
     "lint-staged": "16.2.7",
-    "prettier": "3.6.2",
+    "prettier": "3.7.3",
     "turbo": "2.6.1",
     "typescript-eslint": "8.48.0"
   },
@@ -71,11 +71,8 @@
       "vite": "catalog:"
     },
     "onlyBuiltDependencies": [
-      "@swc/core",
-      "core-js",
-      "esbuild",
-      "turbo",
-      "unrs-resolver"
+      "@sentry/cli",
+      "turbo"
     ]
   },
   "packageManager": "pnpm@10.24.0+sha512.01ff8ae71b4419903b65c60fb2dc9d34cf8bb6e06d03bde112ef38f7a34d6904c424ba66bea5cdcf12890230bf39f9580473140ed9c946fef328b6e5238a345a",

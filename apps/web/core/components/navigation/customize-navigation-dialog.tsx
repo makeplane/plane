@@ -259,14 +259,14 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
               <div className="space-y-3">
                 {/* Navigation Mode Radio Buttons */}
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-custom-background-90 cursor-pointer">
+                  <label className="flex gap-2 px-2 py-1.5 rounded-md hover:bg-custom-background-90 cursor-pointer">
                     <input
                       type="radio"
                       name="navigation-mode"
                       value="accordion"
                       checked={projectPreferences.navigationMode === "accordion"}
                       onChange={() => updateNavigationMode("accordion")}
-                      className="size-4 text-custom-primary-100 focus:ring-custom-primary-100"
+                      className="size-4 text-custom-primary-100 focus:ring-custom-primary-100 mt-1"
                     />
                     <div className="flex-1">
                       <div className="text-sm text-custom-text-200">{t("accordion_navigation_control")}</div>
@@ -276,14 +276,14 @@ export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = ob
                     </div>
                   </label>
 
-                  <label className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-custom-background-90 cursor-pointer">
+                  <label className="flex gap-2 px-2 py-1.5 rounded-md hover:bg-custom-background-90 cursor-pointer">
                     <input
                       type="radio"
                       name="navigation-mode"
                       value="horizontal"
                       checked={projectPreferences.navigationMode === "horizontal"}
                       onChange={() => updateNavigationMode("horizontal")}
-                      className="size-4 text-custom-primary-100 focus:ring-custom-primary-100"
+                      className="size-4 text-custom-primary-100 focus:ring-custom-primary-100 mt-1"
                     />
                     <div className="flex-1">
                       <div className="text-sm text-custom-text-200">{t("horizontal_navigation_bar")}</div>

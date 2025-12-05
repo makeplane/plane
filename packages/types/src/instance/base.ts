@@ -56,6 +56,7 @@ export interface IInstanceConfig {
   app_base_url: string | undefined;
   space_base_url: string | undefined;
   admin_base_url: string | undefined;
+  is_self_managed: boolean;
   // intercom
   is_intercom_enabled: boolean;
   intercom_app_id: string | undefined;

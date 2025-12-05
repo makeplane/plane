@@ -69,8 +69,8 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
   const { isMobile } = usePlatformOS();
   const { allowPermissions } = useUserPermissions();
   const { getIsProjectListOpen, toggleProjectListOpen } = useCommandPalette();
-  const { toggleAnySidebarDropdown } = useAppTheme();
   const { preferences: projectPreferences } = useProjectNavigationPreferences();
+  const { isExtendedProjectSidebarOpened, toggleExtendedProjectSidebar, toggleAnySidebarDropdown } = useAppTheme();
 
   // states
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
@@ -258,6 +258,10 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
       setIsProjectListOpen(!isProjectListOpen);
     } else {
       router.push(defaultTabUrl);
+    }
+    // close the extended sidebar if it is open
+    if (isExtendedProjectSidebarOpened) {
+      toggleExtendedProjectSidebar(false);
     }
   };
 
