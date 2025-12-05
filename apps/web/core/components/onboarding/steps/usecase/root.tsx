@@ -122,7 +122,7 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
                     }}
                     className={`w-full px-3 py-2 rounded-lg border transition-all duration-200 flex items-center gap-2 ${
                       isSelected
-                        ? "border-accent-strong bg-custom-primary-10 text-accent-primary"
+                        ? "border-accent-strong bg-accent-subtle text-accent-primary"
                         : "border-subtle hover:border-strong text-tertiary"
                     }`}
                   >
@@ -133,7 +133,7 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
                       })}
                     >
                       <Check
-                        className={cn("w-3 h-3 text-white", {
+                        className={cn("w-3 h-3 text-on-color", {
                           "opacity-100": isSelected,
                           "opacity-0": !isSelected,
                         })}

@@ -37,7 +37,7 @@ export function MaterialIconList(props: MaterialIconListProps) {
           }}
         >
           {isMaterialSymbolsFontLoaded ? (
-            <span style={{ color: activeColor }} className="material-symbols-rounded !text-20 !leading-[1.25rem]">
+            <span style={{ color: activeColor }} className="material-symbols-rounded-sm !text-20 !leading-[1.25rem]">
               {icon.name}
             </span>
           ) : (

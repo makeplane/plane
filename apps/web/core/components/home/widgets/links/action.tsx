@@ -14,7 +14,7 @@ export function AddLink(props: TProps) {
       onClick={onClick}
     >
       <div className="rounded-sm p-2 bg-layer-1/40 w-8 h-8 my-auto">
-        <PlusIcon className="h-4 w-4 stroke-2 text-custom-text-350" />
+        <PlusIcon className="h-4 w-4 stroke-2 text-tertiary" />
       </div>
       <div className="text-13 font-medium my-auto">{t("home.quick_links.add")}</div>
     </button>

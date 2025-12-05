@@ -336,7 +336,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                   <div className="mt-5 flex items-center justify-between gap-2">
                     <button
                       type="button"
-                      className="flex items-center gap-2 bg-transparent py-2 pr-3 text-13 font-medium text-custom-primary outline-custom-primary"
+                      className="flex items-center gap-2 bg-transparent py-2 pr-3 text-13 font-medium text-accent-primary outline-custom-primary"
                       onClick={appendField}
                     >
                       <Plus className="h-4 w-4" />

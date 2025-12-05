@@ -116,7 +116,7 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
             }`}
           >
             <Check
-              className={`h-3 w-3 text-green-500 duration-300 ${isEmpty ? "text-black" : "group-hover:text-white"}`}
+              className={`h-3 w-3 text-green-500 duration-300 ${isEmpty ? "text-black" : "group-hover:text-on-color"}`}
             />
           </button>
         )}
@@ -128,7 +128,7 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
             editorRef.current?.setEditorValue(comment.comment_html ?? "<p></p>");
           }}
         >
-          <CloseIcon className="size-3 text-red-500 duration-300 group-hover:text-white" />
+          <CloseIcon className="size-3 text-red-500 duration-300 group-hover:text-on-color" />
         </button>
       </div>
     </form>

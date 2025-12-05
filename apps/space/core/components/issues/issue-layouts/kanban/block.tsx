@@ -88,7 +88,7 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
       <div
         className={cn(
           "relative block rounded-sm border-[1px] outline-[0.5px] outline-transparent w-full border-subtle bg-surface-1 text-13 transition-all hover:border-strong-1",
-          { "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id) }
+          { "border border-accent-strong hover:border-accent-strong": getIsIssuePeeked(issue.id) }
         )}
       >
         <Link

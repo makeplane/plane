@@ -203,8 +203,8 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                   <Tab
                     key={tab.key}
                     className={({ selected }) =>
-                      `rounded px-4 py-1 text-center text-sm outline-none transition-colors ${
-                        selected ? "bg-custom-primary text-white" : "text-primary"
+                      `rounded-sm px-4 py-1 text-center text-sm outline-none transition-colors ${
+                        selected ? "bg-accent-primary text-on-color" : "text-primary"
                       }`
                     }
                   >
@@ -258,7 +258,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                                 <img
                                   src={image.urls.small}
                                   alt={image.alt_description}
-                                  className="absolute left-0 top-0 h-full w-full cursor-pointer rounded object-cover"
+                                  className="absolute left-0 top-0 h-full w-full cursor-pointer rounded-sm object-cover"
                                 />
                               </div>
                             ))}
@@ -292,7 +292,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                         <img
                           src={imageUrl}
                           alt={`Cover image ${index + 1}`}
-                          className="absolute left-0 top-0 h-full w-full cursor-pointer rounded object-cover hover:opacity-80 transition-opacity"
+                          className="absolute left-0 top-0 h-full w-full cursor-pointer rounded-sm object-cover hover:opacity-80 transition-opacity"
                         />
                       </div>
                     ))}

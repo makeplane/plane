@@ -81,7 +81,7 @@ export const PrevExports = observer(function PrevExports(props: Props) {
             onClick={() => exporterServices?.prev_page_results && setCursor(exporterServices?.prev_cursor)}
             className={`flex items-center rounded-sm border border-accent-strong px-1 text-accent-primary ${
               exporterServices?.prev_page_results
-                ? "cursor-pointer hover:bg-accent-primary hover:text-white"
+                ? "cursor-pointer hover:bg-accent-primary hover:text-on-color"
                 : "cursor-not-allowed opacity-75"
             }`}
           >
@@ -93,7 +93,7 @@ export const PrevExports = observer(function PrevExports(props: Props) {
             onClick={() => exporterServices?.next_page_results && setCursor(exporterServices?.next_cursor)}
             className={`flex items-center rounded-sm border border-accent-strong px-1 text-accent-primary ${
               exporterServices?.next_page_results
-                ? "cursor-pointer hover:bg-accent-primary hover:text-white"
+                ? "cursor-pointer hover:bg-accent-primary hover:text-on-color"
                 : "cursor-not-allowed opacity-75"
             }`}
           >

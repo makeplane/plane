@@ -148,13 +148,13 @@ export function LabelCreate(props: ILabelCreate) {
             onClick={() => setIsCreateToggle(false)}
             disabled={disabled}
           >
-            <CloseIcon className="h-3.5 w-3.5 text-white" />
+            <CloseIcon className="h-3.5 w-3.5 text-on-color" />
           </button>
           <button type="submit" className="grid place-items-center rounded-sm bg-green-500 p-1" disabled={isSubmitting}>
             {isSubmitting ? (
-              <Loader className="spin h-3.5 w-3.5 text-white" />
+              <Loader className="spin h-3.5 w-3.5 text-on-color" />
             ) : (
-              <Plus className="h-3.5 w-3.5 text-white" />
+              <Plus className="h-3.5 w-3.5 text-on-color" />
             )}
           </button>
         </form>

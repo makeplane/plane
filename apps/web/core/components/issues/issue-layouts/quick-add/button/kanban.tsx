@@ -9,7 +9,7 @@ export const KanbanQuickAddIssueButton = observer(function KanbanQuickAddIssueBu
   const { t } = useTranslation();
   return (
     <div
-      className="flex w-full cursor-pointer items-center gap-2 py-1.5 text-custom-text-350 hover:text-tertiary"
+      className="flex w-full cursor-pointer items-center gap-2 py-1.5 text-tertiary hover:text-tertiary"
       onClick={onClick}
     >
       <PlusIcon className="h-3.5 w-3.5 stroke-2" />

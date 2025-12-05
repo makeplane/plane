@@ -84,7 +84,7 @@ export const UserMenuRoot = observer(function UserMenuRoot(props: Props) {
           </div>
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem onClick={() => router.push(`/${workspaceSlug}/settings/account/preferences`)}>
-          <div className="flex w-full items-center gap-2 rounded text-xs">
+          <div className="flex w-full items-center gap-2 rounded-sm text-xs">
             <Settings2 className="h-4 w-4 stroke-[1.5]" />
             <span>Preferences</span>
           </div>
@@ -108,7 +108,7 @@ export const UserMenuRoot = observer(function UserMenuRoot(props: Props) {
           <div className="my-1 border-t border-subtle" />
           <div className="px-1">
             <CustomMenu.MenuItem onClick={() => router.push(GOD_MODE_URL)}>
-              <div className="flex w-full items-center justify-center rounded-sm bg-accent-primary/20 px-2 py-1 text-11 font-medium text-accent-primary hover:bg-accent-primary/30 hover:text-custom-primary-200">
+              <div className="flex w-full items-center justify-center rounded-sm bg-accent-primary/20 px-2 py-1 text-11 font-medium text-accent-primary hover:bg-accent-primary/30 hover:text-accent-secondary">
                 {t("enter_god_mode")}
               </div>
             </CustomMenu.MenuItem>

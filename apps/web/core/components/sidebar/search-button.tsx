@@ -12,13 +12,13 @@ export function SidebarSearchButton(props: Props) {
       className={cn(
         "flex-shrink-0 size-8 aspect-square grid place-items-center rounded-md shadow-sm hover:bg-surface-2 outline-none border-[0.5px] border-strong",
         {
-          "bg-accent-primary/10 hover:bg-accent-primary/10 border-custom-primary-200": isActive,
+          "bg-accent-primary/10 hover:bg-accent-primary/10 border-accent-strong-200": isActive,
         }
       )}
     >
       <Search
         className={cn("size-4 text-tertiary", {
-          "text-custom-primary-200": isActive,
+          "text-accent-secondary": isActive,
         })}
       />
     </div>

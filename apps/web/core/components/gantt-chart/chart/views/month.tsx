@@ -50,7 +50,7 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
                   >
                     {monthBlock?.title}
                     {monthBlock.today && (
-                      <span className={cn("rounded-sm ml-2 font-medium bg-accent-primary px-1 text-9 text-white")}>
+                      <span className={cn("rounded-sm ml-2 font-medium bg-accent-primary px-1 text-9 text-on-color")}>
                         Current
                       </span>
                     )}
@@ -74,7 +74,7 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
                   <div className="space-x-1 text-11 font-medium text-placeholder">
                     <span
                       className={cn({
-                        "rounded-sm bg-accent-primary px-1 text-white": weekBlock.today,
+                        "rounded-sm bg-accent-primary px-1 text-on-color": weekBlock.today,
                       })}
                     >
                       {weekBlock.startDate.getDate()}-{weekBlock.endDate.getDate()}

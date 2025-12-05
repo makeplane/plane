@@ -198,7 +198,7 @@ export const ProfileLayoutSidebar = observer(function ProfileLayoutSidebar() {
                   >
                     <span
                       className={`relative flex h-6 w-6 flex-shrink-0 items-center  justify-center p-2 text-11 uppercase ${
-                        !workspace?.logo_url && "rounded-sm bg-custom-primary-500 text-white"
+                        !workspace?.logo_url && "rounded-sm bg-custom-primary-500 text-on-color"
                       }`}
                     >
                       {workspace?.logo_url && workspace.logo_url !== "" ? (

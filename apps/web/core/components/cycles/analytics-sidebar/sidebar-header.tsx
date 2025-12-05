@@ -159,7 +159,7 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
             className="flex size-4 items-center justify-center rounded-full bg-subtle-1"
             onClick={() => handleClose()}
           >
-            <ChevronRightIcon className="h-3 w-3 stroke-2 text-white" />
+            <ChevronRightIcon className="h-3 w-3 stroke-2 text-on-color" />
           </button>
         </div>
       </div>

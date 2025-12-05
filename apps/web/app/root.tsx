@@ -58,7 +58,7 @@ export function Layout({ children }: { children: ReactNode }) {
         <div id="context-menu-portal" />
         <div id="editor-portal" />
         <AppProvider>
-          <div className={cn("h-screen w-full overflow-hidden bg-surface-1 relative flex flex-col", "app-container")}>
+          <div className={cn("h-screen w-full overflow-hidden bg-canvas relative flex flex-col", "app-container")}>
             <main className="w-full h-full overflow-hidden relative">{children}</main>
           </div>
         </AppProvider>

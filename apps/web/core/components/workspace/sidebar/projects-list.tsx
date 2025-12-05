@@ -249,7 +249,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
                         <button
                           type="button"
                           onClick={() => toggleExtendedProjectSidebar()}
-                          className="flex items-center gap-1.5 text-13 font-medium flex-grow text-custom-text-350"
+                          className="flex items-center gap-1.5 text-13 font-medium flex-grow text-tertiary"
                           id="extended-project-sidebar-toggle"
                           aria-label={t(
                             isExtendedProjectSidebarOpened

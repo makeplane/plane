@@ -91,7 +91,7 @@ export const AdminSidebarMenu = observer(function AdminSidebarMenu() {
                       <div
                         className={cn(
                           `text-10 transition-colors`,
-                          isActive ? "text-custom-primary-90" : "text-placeholder"
+                          isActive ? "text-accent-secondary" : "text-placeholder"
                         )}
                       >
                         {item.description}

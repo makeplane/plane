@@ -131,7 +131,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
             onClick={handleCurrentViewChange}
           >
             I want to join invited workspaces{" "}
-            <span className="bg-custom-primary-200 h-4 w-4 flex items-center justify-center rounded-xs text-11 font-medium text-white">
+            <span className="bg-custom-primary-200 h-4 w-4 flex items-center justify-center rounded-xs text-11 font-medium text-on-color">
               {invitedWorkspaces}
             </span>
           </Button>

@@ -209,9 +209,9 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
       />
       <button
         onClick={openCycleOverview}
-        className={`z-[1] flex text-custom-primary-200 text-11 gap-1 flex-shrink-0 ${isMobile || (isActive && !searchParams.has("peekCycle")) ? "flex" : "hidden group-hover:flex"}`}
+        className={`z-[1] flex text-accent-secondary text-11 gap-1 flex-shrink-0 ${isMobile || (isActive && !searchParams.has("peekCycle")) ? "flex" : "hidden group-hover:flex"}`}
       >
-        <Eye className="h-4 w-4 my-auto  text-custom-primary-200" />
+        <Eye className="h-4 w-4 my-auto  text-accent-secondary" />
         <span>{t("project_cycles.more_details")}</span>
       </button>
       {showIssueCount && (
@@ -223,7 +223,7 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
       <CycleAdditionalActions cycleId={cycleId} projectId={projectId} />
       {showTransferIssues && (
         <div
-          className="px-2 h-6  text-custom-primary-200 flex items-center gap-1 cursor-pointer"
+          className="px-2 h-6  text-accent-secondary flex items-center gap-1 cursor-pointer"
           onClick={() => {
             setTransferIssuesModal(true);
           }}

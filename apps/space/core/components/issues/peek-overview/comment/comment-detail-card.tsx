@@ -70,10 +70,12 @@ export const CommentCard = observer(function CommentCard(props: Props) {
             }
             height={30}
             width={30}
-            className="grid h-7 w-7 place-items-center rounded-full border-2 border-subtle"
+            className="grid h-7 w-7 place-items-center rounded-full border-2 border-subtle text-se"
           />
         ) : (
-          <div className={`grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 text-white`}>
+          <div
+            className={`grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 text-on-color`}
+          >
             {comment.actor_detail.is_bot
               ? comment?.actor_detail?.first_name?.charAt(0)
               : comment?.actor_detail?.display_name?.charAt(0)}
@@ -132,14 +134,14 @@ export const CommentCard = observer(function CommentCard(props: Props) {
                 disabled={isSubmitting}
                 className="group rounded-sm border border-green-500 bg-green-500/20 p-2 shadow-md duration-300 hover:bg-green-500"
               >
-                <Check className="h-3 w-3 text-green-500 duration-300 group-hover:text-white" strokeWidth={2} />
+                <Check className="h-3 w-3 text-green-500 duration-300 group-hover:text-on-color" strokeWidth={2} />
               </button>
               <button
                 type="button"
                 className="group rounded-sm border border-red-500 bg-red-500/20 p-2 shadow-md duration-300 hover:bg-red-500"
                 onClick={() => setIsEditing(false)}
               >
-                <CloseIcon className="h-3 w-3 text-red-500 duration-300 group-hover:text-white" strokeWidth={2} />
+                <CloseIcon className="h-3 w-3 text-red-500 duration-300 group-hover:text-on-color" strokeWidth={2} />
               </button>
             </div>
           </form>

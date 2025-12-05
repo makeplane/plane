@@ -425,7 +425,7 @@ export const InFormContext: Story = {
           </div>
           <button
             type="submit"
-            className="w-full px-4 py-2 bg-accent-primary text-white rounded-sm hover:bg-custom-primary-200"
+            className="w-full px-4 py-2 bg-accent-primary text-on-color rounded-sm hover:bg-custom-primary-200"
           >
             Create Project
           </button>

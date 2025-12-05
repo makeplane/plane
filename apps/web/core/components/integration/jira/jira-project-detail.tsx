@@ -108,7 +108,7 @@ export function JiraProjectDetail(props: Props) {
           <button
             onClick={() => setCurrentStep({ state: "import-configure" })}
             type="button"
-            className="inline text-custom-primary underline"
+            className="inline text-accent-primary underline"
           >
             go back
           </button>{" "}

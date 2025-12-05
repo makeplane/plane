@@ -44,19 +44,19 @@ enum badgeIconStyling {
 
 export const badgeStyling: IBadgeStyling = {
   primary: {
-    default: `text-white bg-accent-primary`,
+    default: `text-on-color bg-accent-primary`,
     hover: `hover:bg-custom-primary-200`,
     disabled: `cursor-not-allowed !bg-custom-primary-60 hover:bg-custom-primary-60`,
   },
   "accent-primary": {
-    default: `bg-custom-primary-10 text-accent-primary`,
-    hover: `hover:bg-custom-primary-20 hover:text-custom-primary-200`,
-    disabled: `cursor-not-allowed !text-custom-primary-60`,
+    default: `bg-accent-subtle text-accent-primary`,
+    hover: `hover:bg-custom-primary-20 hover:text-accent-secondary`,
+    disabled: `cursor-not-allowed !text-accent-primary/60`,
   },
   "outline-primary": {
     default: `text-accent-primary bg-surface-1 border border-accent-strong`,
-    hover: `hover:border-custom-primary-80 hover:bg-custom-primary-10`,
-    disabled: `cursor-not-allowed !text-custom-primary-60 !border-custom-primary-60 `,
+    hover: `hover:border-accent-strong-80 hover:bg-accent-subtle`,
+    disabled: `cursor-not-allowed !text-accent-primary/60 !border-accent-strong-60 `,
   },
 
   neutral: {
@@ -76,7 +76,7 @@ export const badgeStyling: IBadgeStyling = {
   },
 
   success: {
-    default: `text-white bg-green-500`,
+    default: `text-on-color bg-green-500`,
     hover: `hover:bg-green-600`,
     disabled: `cursor-not-allowed !bg-green-300`,
   },
@@ -92,7 +92,7 @@ export const badgeStyling: IBadgeStyling = {
   },
 
   warning: {
-    default: `text-white bg-amber-500`,
+    default: `text-on-color bg-amber-500`,
     hover: `hover:bg-amber-600`,
     disabled: `cursor-not-allowed !bg-amber-300`,
   },
@@ -108,7 +108,7 @@ export const badgeStyling: IBadgeStyling = {
   },
 
   destructive: {
-    default: `text-white bg-red-500`,
+    default: `text-on-color bg-red-500`,
     hover: `hover:bg-red-600`,
     disabled: `cursor-not-allowed !bg-red-300`,
   },

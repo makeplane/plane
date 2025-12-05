@@ -124,12 +124,12 @@ const ToolbarSeparator = React.forwardRef(function ToolbarSeparator(
 });
 
 const buttonVariants = {
-  primary: "bg-accent-primary text-white hover:bg-custom-primary-200 focus:bg-custom-primary-200",
+  primary: "bg-accent-primary text-on-color hover:bg-custom-primary-200 focus:bg-custom-primary-200",
   secondary: "bg-surface-1 text-secondary border border-subtle hover:bg-surface-2 focus:bg-surface-2",
   outline:
     "border border-accent-strong text-accent-primary bg-transparent hover:bg-accent-primary/10 focus:bg-accent-primary/20",
   ghost: "text-secondary hover:bg-surface-2 focus:bg-surface-2",
-  destructive: "bg-red-500 text-white hover:bg-red-600 focus:bg-red-600",
+  destructive: "bg-red-500 text-on-color hover:bg-red-600 focus:bg-red-600",
 };
 
 const ToolbarSubmitButton = React.forwardRef(function ToolbarSubmitButton(

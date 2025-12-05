@@ -182,7 +182,7 @@ export const ListExample: Story = {
                 key={i}
                 className="flex items-center gap-3 p-3 bg-layer-1 rounded-sm hover:bg-surface-2 cursor-pointer"
               >
-                <div className="w-10 h-10 rounded-full bg-accent-primary flex items-center justify-center text-white font-medium">
+                <div className="w-10 h-10 rounded-full bg-accent-primary flex items-center justify-center text-on-color font-medium">
                   {String.fromCharCode(65 + (i % 26))}
                 </div>
                 <div>
@@ -249,7 +249,7 @@ export const ChatMessages: Story = {
           {[...Array(20)].map((_, i) => (
             <div key={i} className={`flex ${i % 3 === 0 ? "justify-end" : "justify-start"}`}>
               <div
-                className={`max-w-[70%] p-3 rounded-lg ${i % 3 === 0 ? "bg-accent-primary text-white" : "bg-layer-1"}`}
+                className={`max-w-[70%] p-3 rounded-lg ${i % 3 === 0 ? "bg-accent-primary text-on-color" : "bg-layer-1"}`}
               >
                 <div className="text-13">{i % 3 === 0 ? "You" : `User ${i + 1}`}</div>
                 <div className="mt-1">Message content for message number {i + 1}</div>

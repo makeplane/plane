@@ -123,7 +123,7 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
       />
       <div className="group flex items-center justify-between px-3 py-4 hover:bg-surface-2 w-full h-full">
         <div className="flex items-center gap-x-4 gap-y-2">
-          <span className="relative flex h-10 w-10 items-center justify-center rounded-sm bg-gray-700 p-4 capitalize text-white">
+          <span className="relative flex h-10 w-10 items-center justify-center rounded-sm bg-gray-700 p-4 capitalize text-on-color">
             {(invitationDetails.email ?? "?")[0]}
           </span>
           <div>

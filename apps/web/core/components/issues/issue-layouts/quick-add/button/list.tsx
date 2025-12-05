@@ -10,7 +10,7 @@ export const ListQuickAddIssueButton = observer(function ListQuickAddIssueButton
   const { t } = useTranslation();
   return (
     <Row
-      className="flex w-full cursor-pointer items-center gap-2 py-3 text-custom-text-350 hover:text-tertiary"
+      className="flex w-full cursor-pointer items-center gap-2 py-3 text-tertiary hover:text-tertiary"
       onClick={onClick}
     >
       <PlusIcon className="h-3.5 w-3.5 stroke-2" />

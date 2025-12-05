@@ -53,7 +53,7 @@ export const IssueLinkItem = observer(function IssueLinkItem(props: TIssueLinkIt
           {faviconUrl ? (
             <img src={faviconUrl} alt="favicon" className="size-4" />
           ) : (
-            <Link className="size-4 text-custom-text-350 group-hover:text-primary" />
+            <Link className="size-4 text-tertiary group-hover:text-primary" />
           )}
           <Tooltip tooltipContent={linkDetail.url} isMobile={isMobile}>
             <a

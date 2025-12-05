@@ -52,7 +52,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
       className={cn(
         "group/list-block min-h-11 relative flex flex-col md:flex-row md:items-center gap-3 bg-surface-1 hover:bg-surface-2 p-3 pl-1.5 text-13 transition-colors border-b border-b-subtle-1",
         {
-          "border-custom-primary-70": getIsIssuePeeked(issue.id),
+          "border-accent-strong": getIsIssuePeeked(issue.id),
           "last:border-b-transparent": !getIsIssuePeeked(issue.id),
         }
       )}

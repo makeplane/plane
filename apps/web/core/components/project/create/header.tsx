@@ -45,7 +45,7 @@ function ProjectCreateHeader(props: Props) {
       </div>
       <div className="absolute right-2 top-2 p-2">
         <button data-posthog="PROJECT_MODAL_CLOSE" type="button" onClick={handleClose} tabIndex={getIndex("close")}>
-          <CloseIcon className="h-5 w-5 text-white" />
+          <CloseIcon className="h-5 w-5 text-on-color" />
         </button>
       </div>
       <div className="absolute bottom-2 right-2">

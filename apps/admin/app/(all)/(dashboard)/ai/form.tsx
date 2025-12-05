@@ -119,7 +119,7 @@ export function InstanceAIForm(props: IInstanceAIForm) {
           {isSubmitting ? "Saving..." : "Save changes"}
         </Button>
 
-        <div className="relative inline-flex items-center gap-2 rounded-sm border border-accent-strong/20 bg-accent-primary/10 px-4 py-2 text-11 text-custom-primary-200">
+        <div className="relative inline-flex items-center gap-2 rounded-sm border border-accent-strong/20 bg-accent-primary/10 px-4 py-2 text-11 text-accent-secondary">
           <Lightbulb height="14" width="14" />
           <div>
             If you have a preferred AI models vendor, please get in{" "}

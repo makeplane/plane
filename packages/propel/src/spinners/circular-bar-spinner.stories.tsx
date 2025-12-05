@@ -114,7 +114,7 @@ export const ColorVariations: Story = {
 export const InButton: Story = {
   render() {
     return (
-      <button className="flex items-center gap-2 rounded-sm bg-green-500 px-4 py-2 text-white">
+      <button className="flex items-center gap-2 rounded-sm bg-green-500 px-4 py-2 text-on-color">
         <CircularBarSpinner height="16px" width="16px" />
         <span>Processing...</span>
       </button>

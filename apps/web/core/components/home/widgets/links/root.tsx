@@ -41,7 +41,7 @@ export const DashboardQuickLinks = observer(function DashboardQuickLinks(props: 
       />
       <div className="mb-2">
         <div className="flex items-center justify-between mb-4">
-          <div className="text-14 font-semibold text-custom-text-350">{t("home.quick_links.title_plural")}</div>
+          <div className="text-14 font-semibold text-tertiary">{t("home.quick_links.title_plural")}</div>
           <button
             onClick={handleCreateLinkModal}
             className="flex gap-1 text-13 font-medium text-accent-primary my-auto"

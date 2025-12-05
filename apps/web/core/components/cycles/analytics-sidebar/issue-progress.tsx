@@ -156,7 +156,7 @@ export const CycleAnalyticsProgress = observer(function CycleAnalyticsProgress(p
                     )}
                   </>
                 ) : (
-                  <div className="my-2 py-2 text-13 text-custom-text-350  bg-surface-2 rounded-md px-2 w-full">
+                  <div className="my-2 py-2 text-13 text-tertiary  bg-surface-2 rounded-md px-2 w-full">
                     {t("no_data_yet")}
                   </div>
                 )}

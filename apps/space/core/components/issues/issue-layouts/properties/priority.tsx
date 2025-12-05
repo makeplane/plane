@@ -22,7 +22,7 @@ export function IssueBlockPriority({
     urgent: "bg-red-600/10 text-red-600 border-red-600 px-1",
     high: "bg-orange-500/20 text-orange-950 border-orange-500",
     medium: "bg-yellow-500/20 text-yellow-950 border-yellow-500",
-    low: "bg-accent-primary/20 text-custom-primary-950 border-accent-strong",
+    low: "bg-accent-primary/20 text-accent-primary border-accent-strong",
     none: "hover:bg-layer-1 border-strong",
   };
 

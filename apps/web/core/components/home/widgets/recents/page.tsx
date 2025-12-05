@@ -42,7 +42,7 @@ export function RecentPage(props: BlockProps) {
             {pageDetails?.logo_props?.in_use ? (
               <Logo logo={pageDetails?.logo_props} size={16} type="lucide" />
             ) : (
-              <PageIcon className="size-4 text-custom-text-350" />
+              <PageIcon className="size-4 text-tertiary" />
             )}
           </div>
           {pageDetails?.project_identifier && (

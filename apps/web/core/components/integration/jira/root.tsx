@@ -118,7 +118,7 @@ export function JiraImporterRoot() {
                   }
                   className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border border-subtle ${
                     index <= activeIntegrationState()
-                      ? `border-custom-primary bg-custom-primary ${
+                      ? `border-accent-strong bg-accent-primary ${
                           index === activeIntegrationState()
                             ? "border-opacity-100 bg-opacity-100"
                             : "border-opacity-80 bg-opacity-80"
@@ -127,14 +127,14 @@ export function JiraImporterRoot() {
                   }`}
                 >
                   <integration.icon
-                    className={`h-5 w-5 ${index <= activeIntegrationState() ? "text-white" : "text-placeholder"}`}
+                    className={`h-5 w-5 ${index <= activeIntegrationState() ? "text-on-color" : "text-placeholder"}`}
                   />
                 </button>
                 {index < integrationWorkflowData.length - 1 && (
                   <div
                     key={index}
                     className={`border-b px-7 ${
-                      index <= activeIntegrationState() - 1 ? `border-custom-primary` : `border-subtle`
+                      index <= activeIntegrationState() - 1 ? `border-accent-strong` : `border-subtle`
                     }`}
                   >
                     {" "}

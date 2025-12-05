@@ -32,7 +32,7 @@ export const NotificationFilterOptionItem = observer(function NotificationFilter
     >
       <div
         className={cn("flex-shrink-0 w-3 h-3 flex justify-center items-center rounded-xs transition-all", {
-          "bg-custom-primary text-white": isSelected,
+          "bg-accent-primary text-on-color": isSelected,
           "bg-surface-2": !isSelected,
         })}
       >

@@ -33,7 +33,7 @@ export const JiraGetImportDetail = observer(function JiraGetImportDetail() {
           <p className="text-13 text-secondary">
             Get to know your access token by navigating to{" "}
             <Link href="https://id.atlassian.com/manage-profile/security/api-tokens" target="_blank" rel="noreferrer">
-              <span className="text-custom-primary underline">Atlassian Settings</span>
+              <span className="text-accent-primary underline">Atlassian Settings</span>
             </Link>
           </p>
         </div>

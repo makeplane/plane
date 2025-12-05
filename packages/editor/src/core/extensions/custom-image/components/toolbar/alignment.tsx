@@ -34,7 +34,7 @@ export function ImageAlignmentAction(props: Props) {
       <Tooltip disabled={isTouchDevice} tooltipContent="Align">
         <button
           type="button"
-          className="h-full flex items-center gap-1 text-white/60 hover:text-white transition-colors"
+          className="h-full flex items-center gap-1 text-on-color/60 hover:text-on-color transition-colors"
           onClick={() => setIsDropdownOpen((prev) => !prev)}
         >
           {activeAlignmentDetails && <activeAlignmentDetails.icon className="flex-shrink-0 size-3" />}
@@ -47,7 +47,7 @@ export function ImageAlignmentAction(props: Props) {
             <Tooltip disabled={isTouchDevice} key={option.value} tooltipContent={option.label}>
               <button
                 type="button"
-                className="flex-shrink-0 h-full grid place-items-center text-white/60 hover:text-white transition-colors"
+                className="flex-shrink-0 h-full grid place-items-center text-on-color/60 hover:text-on-color transition-colors"
                 onClick={() => {
                   handleChange(option.value);
                   setIsDropdownOpen(false);

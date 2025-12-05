@@ -315,11 +315,11 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                   {!userAvatar || userAvatar === "" ? (
                     <div className="flex flex-col items-center justify-between">
                       <div className="relative h-14 w-14 overflow-hidden">
-                        <div className="absolute left-0 top-0 flex items-center justify-center h-full w-full rounded-full text-white text-24 font-medium bg-[#9747FF] uppercase">
+                        <div className="absolute left-0 top-0 flex items-center justify-center h-full w-full rounded-full text-on-color text-24 font-medium bg-[#9747FF] uppercase">
                           {watch("first_name")[0] ?? "R"}
                         </div>
                       </div>
-                      <div className="pt-1 text-13 font-medium text-custom-primary-300 hover:text-custom-primary-400">
+                      <div className="pt-1 text-13 font-medium text-accent-secondary hover:text-tertiary">
                         Choose image
                       </div>
                     </div>

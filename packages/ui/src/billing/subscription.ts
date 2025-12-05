@@ -108,7 +108,7 @@ export const getUpgradeButtonStyle = (
   isDisabled: boolean
 ): string | undefined => {
   const baseClassNames = "border bg-surface-1";
-  const hoverClassNames = !isDisabled ? "hover:text-white hover:bg-gradient-to-br" : "";
+  const hoverClassNames = !isDisabled ? "hover:text-on-color hover:bg-gradient-to-br" : "";
   const disabledClassNames = isDisabled ? "opacity-70 cursor-not-allowed" : "";
 
   const COMMON_CLASSNAME = cn(baseClassNames, hoverClassNames, disabledClassNames);
@@ -206,4 +206,4 @@ export const getSubscriptionTextAndBackgroundColor = (planVariant: EProductSubsc
   cn(getSubscriptionTextColor(planVariant), getSubscriptionBackgroundColor(planVariant));
 
 export const getDiscountPillStyle = (planVariant: EProductSubscriptionEnum): string =>
-  cn(getSubscriptionBackgroundColor(planVariant, "200"), "text-white");
+  cn(getSubscriptionBackgroundColor(planVariant, "200"), "text-on-color");

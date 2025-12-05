@@ -60,7 +60,7 @@ export const StickyActionBar = observer(function StickyActionBar() {
             className="btn btn--icon rounded-full w-10 h-10 flex items-center justify-center shadow-sm bg-surface-1"
             onClick={() => toggleAllStickiesModal(true)}
           >
-            <RecentStickyIcon className="size-5 rotate-90 text-custom-text-350" />
+            <RecentStickyIcon className="size-5 rotate-90 text-tertiary" />
           </button>
         </Tooltip>
         {recentStickyId && (
@@ -103,7 +103,7 @@ export const StickyActionBar = observer(function StickyActionBar() {
               setNewSticky(true);
             }}
           >
-            <Plus className="size-5 rotate-90 text-custom-text-350" />
+            <Plus className="size-5 rotate-90 text-tertiary" />
           </button>
         </Tooltip>
       </div>
@@ -113,9 +113,9 @@ export const StickyActionBar = observer(function StickyActionBar() {
         onClick={() => setIsExpanded(!isExpanded)}
       >
         {isExpanded ? (
-          <CloseIcon className="size-5 text-custom-text-350" />
+          <CloseIcon className="size-5 text-tertiary" />
         ) : (
-          <StickyIcon className="size-5 rotate-90 text-custom-text-350" />
+          <StickyIcon className="size-5 rotate-90 text-tertiary" />
         )}
       </button>
 

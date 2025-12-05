@@ -22,7 +22,7 @@ export const InstanceFailureView = observer(function InstanceFailureView() {
         <div className="relative flex flex-col gap-6 max-w-[22.5rem] w-full">
           <div className="relative flex flex-col justify-center items-center space-y-4">
             <img src={instanceImage} alt="Instance failure illustration" />
-            <h3 className="font-medium text-20 text-white text-center">Unable to fetch instance details.</h3>
+            <h3 className="font-medium text-20 text-on-color text-center">Unable to fetch instance details.</h3>
             <p className="font-medium text-14 text-center">
               We were unable to fetch the details of the instance. Fret not, it might just be a connectivity issue.
             </p>

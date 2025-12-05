@@ -56,13 +56,16 @@ export const Controlled: Story = {
     return (
       <div className="space-y-4">
         <div className="flex gap-2">
-          <button onClick={() => setIsOpen(true)} className="rounded-sm bg-blue-500 px-4 py-2 text-13 text-white">
+          <button onClick={() => setIsOpen(true)} className="rounded-sm bg-blue-500 px-4 py-2 text-13 text-on-color">
             Open
           </button>
-          <button onClick={() => setIsOpen(false)} className="rounded-sm bg-gray-500 px-4 py-2 text-13 text-white">
+          <button onClick={() => setIsOpen(false)} className="rounded-sm bg-gray-500 px-4 py-2 text-13 text-on-color">
             Close
           </button>
-          <button onClick={() => setIsOpen(!isOpen)} className="rounded-sm bg-green-500 px-4 py-2 text-13 text-white">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="rounded-sm bg-green-500 px-4 py-2 text-13 text-on-color"
+          >
             Toggle
           </button>
         </div>
@@ -115,7 +118,7 @@ export const CustomStyling: Story = {
     const [isOpen, setIsOpen] = useState(args.isOpen);
     return (
       <Collapsible.CollapsibleRoot {...args} isOpen={isOpen} onToggle={() => setIsOpen(!isOpen)} className="w-96">
-        <Collapsible.CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-3 text-white shadow-lg transition-all hover:shadow-xl">
+        <Collapsible.CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-3 text-on-color shadow-lg transition-all hover:shadow-xl">
           <span className="text-16 font-bold">Custom Styled Trigger</span>
           <ChevronDownIcon className="h-5 w-5 transition-transform group-data-[panel-open]:rotate-180" />
         </Collapsible.CollapsibleTrigger>

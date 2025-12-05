@@ -168,7 +168,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
             className={
               isRequestNewCodeDisabled
                 ? "text-placeholder"
-                : "font-medium text-custom-primary-300 hover:text-custom-primary-200"
+                : "font-medium text-accent-secondary hover:text-accent-secondary"
             }
             disabled={isRequestNewCodeDisabled}
           >

@@ -130,7 +130,7 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
                     }}
                     className={`w-full px-3 py-2 rounded-lg border transition-all duration-200 flex items-center justify-between ${
                       isSelected
-                        ? "border-accent-strong bg-custom-primary-10 text-accent-primary"
+                        ? "border-accent-strong bg-accent-subtle text-accent-primary"
                         : "border-subtle hover:border-strong text-tertiary"
                     }`}
                   >
@@ -143,7 +143,7 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
                         <button
                           className={`size-4 rounded-sm border-2 flex items-center justify-center bg-blue-500 border-blue-500`}
                         >
-                          <Check className="w-3 h-3 text-white" />
+                          <Check className="w-3 h-3 text-on-color" />
                         </button>
                       </>
                     )}

@@ -46,7 +46,7 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
       <div className="flex w-full items-start justify-between gap-2">
         <div className="flex items-start gap-2 truncate">
           <span className="py-1">
-            <Icon className="size-3 stroke-2 text-custom-text-350 group-hover:text-primary flex-shrink-0" />
+            <Icon className="size-3 stroke-2 text-tertiary group-hover:text-primary flex-shrink-0" />
           </span>
           <Tooltip tooltipContent={link.title && link.title !== "" ? link.title : link.url} isMobile={isMobile}>
             <a href={link.url} target="_blank" rel="noopener noreferrer" className="cursor-pointer truncate text-11">

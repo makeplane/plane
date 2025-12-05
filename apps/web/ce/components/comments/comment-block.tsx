@@ -63,7 +63,7 @@ export const CommentBlock = observer(function CommentBlock(props: TCommentBlock)
                 tooltipContent={`${renderFormattedDate(comment.created_at)} at ${renderFormattedTime(comment.created_at)}`}
                 position="bottom"
               >
-                <span className="text-custom-text-350">
+                <span className="text-tertiary">
                   {calculateTimeAgo(comment.created_at)}
                   {comment.edited_at && ` (${t("edited")})`}
                 </span>

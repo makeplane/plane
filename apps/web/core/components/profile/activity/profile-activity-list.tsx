@@ -70,10 +70,10 @@ export const ProfileActivityListPage = observer(function ProfileActivityListPage
                           alt={activityItem.actor_detail.display_name}
                           height={30}
                           width={30}
-                          className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 text-white"
+                          className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 text-on-color"
                         />
                       ) : (
-                        <div className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 capitalize text-white">
+                        <div className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-gray-500 capitalize text-on-color">
                           {activityItem.actor_detail.display_name?.[0]}
                         </div>
                       )}
@@ -139,7 +139,7 @@ export const ProfileActivityListPage = observer(function ProfileActivityListPage
                                     className="h-full w-full rounded-full object-cover"
                                   />
                                 ) : (
-                                  <div className="grid h-6 w-6 place-items-center rounded-full border-2 border-white bg-gray-700 text-11 capitalize text-white">
+                                  <div className="grid h-6 w-6 place-items-center rounded-full border-2 border-white bg-gray-700 text-11 capitalize text-on-color">
                                     {activityItem.actor_detail.display_name?.[0]}
                                   </div>
                                 )}

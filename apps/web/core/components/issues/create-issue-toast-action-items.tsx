@@ -60,7 +60,7 @@ export const CreateIssueToastActionItems = observer(function CreateIssueToastAct
         href={workItemLink}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-custom-primary px-2 py-1 hover:bg-surface-2 font-medium rounded-sm"
+        className="text-accent-primary px-2 py-1 hover:bg-surface-2 font-medium rounded-sm"
       >
         {`View ${isEpic ? "epic" : "work item"}`}
       </a>

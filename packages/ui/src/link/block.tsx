@@ -25,7 +25,7 @@ export function LinkItemBlock(props: TLinkItemBlockProps) {
       className="cursor-pointer group flex items-center bg-surface-1 px-4 w-[230px] h-[56px] border-[0.5px] border-subtle rounded-md gap-4"
     >
       <div className="flex-shrink-0 size-8 rounded-sm p-2 bg-surface-2 grid place-items-center">
-        <Icon className="size-4 stroke-2 text-custom-text-350 group-hover:text-primary" />
+        <Icon className="size-4 stroke-2 text-tertiary group-hover:text-primary" />
       </div>
       <div className="flex-1 truncate">
         <div className="text-13 font-medium truncate">{title}</div>

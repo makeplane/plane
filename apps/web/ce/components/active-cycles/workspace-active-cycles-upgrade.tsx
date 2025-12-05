@@ -90,7 +90,7 @@ export const WorkspaceActiveCyclesUpgrade = observer(function WorkspaceActiveCyc
               target="_blank"
               rel="noreferrer"
             >
-              <ProIcon className="h-3.5 w-3.5 text-white" />
+              <ProIcon className="h-3.5 w-3.5 text-on-color" />
               {t("upgrade")}
             </a>
           </div>

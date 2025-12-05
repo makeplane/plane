@@ -61,7 +61,7 @@ export const ISSUE_PRIORITY_FILTERS: TIssueFilterPriorityObject[] = [
   {
     key: "urgent",
     titleTranslationKey: "issue.priority.urgent",
-    className: "bg-red-500 border-red-500 text-white",
+    className: "bg-red-500 border-red-500 text-on-color",
     icon: "error",
   },
   {

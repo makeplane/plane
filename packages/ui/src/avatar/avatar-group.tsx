@@ -68,7 +68,7 @@ export function AvatarGroup(props: Props) {
         <Tooltip tooltipContent={`${totalAvatars} total`} disabled={!showTooltip}>
           <div
             className={cn(
-              "grid place-items-center rounded-full bg-custom-primary-10 text-9 text-accent-primary ring-1 ring-custom-background-100",
+              "grid place-items-center rounded-full bg-accent-subtle text-9 text-accent-primary ring-1 ring-custom-background-100",
               {
                 [sizeInfo.avatarSize]: !isAValidNumber(size),
               }

@@ -142,7 +142,7 @@ export const CustomButton: Story = {
     return (
       <Menu
         customButton={
-          <button className="rounded-sm bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">Custom Button</button>
+          <button className="rounded-sm bg-blue-500 px-4 py-2 text-on-color hover:bg-blue-600">Custom Button</button>
         }
       >
         <Menu.MenuItem onClick={() => alert("Option 1")}>Option 1</Menu.MenuItem>
@@ -209,7 +209,7 @@ export const ComplexMenu: Story = {
           <div className="flex items-center gap-2">
             <Bell className="h-4 w-4" />
             <span>Notifications</span>
-            <span className="ml-auto rounded-sm bg-red-500 px-2 py-0.5 text-11 text-white">3</span>
+            <span className="ml-auto rounded-sm bg-red-500 px-2 py-0.5 text-11 text-on-color">3</span>
           </div>
         </Menu.MenuItem>
         <Menu.MenuItem onClick={() => alert("Help")}>
@@ -243,7 +243,7 @@ export const CustomStyles: Story = {
     return (
       <Menu
         label="Styled Menu"
-        buttonClassName="bg-purple-500 text-white hover:bg-purple-600"
+        buttonClassName="bg-purple-500 text-on-color hover:bg-purple-600"
         optionsClassName="bg-purple-50 border-purple-300"
       >
         <Menu.MenuItem onClick={() => alert("Item 1")} className="hover:bg-purple-200">

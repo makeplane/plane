@@ -102,13 +102,13 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
             "flex items-center justify-center gap-x-1 overflow-hidden rounded-sm border focus:outline-none bg-surface-1",
             votingDimensions,
             {
-              "border-custom-primary-200 text-custom-primary-200": isUpVotedByUser,
+              "border-accent-strong-200 text-accent-secondary": isUpVotedByUser,
               "border-strong": !isUpVotedByUser,
               "cursor-default": isInIframe,
             }
           )}
         >
-          <span className="material-symbols-rounded !m-0 !p-0 text-14">arrow_upward_alt</span>
+          <span className="material-symbols-rounded-sm !m-0 !p-0 text-14">arrow_upward_alt</span>
           <span className="text-13 font-regular transition-opacity ease-in-out">{allUpVotes.length}</span>
         </button>
       </Tooltip>
@@ -149,7 +149,7 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
             }
           )}
         >
-          <span className="material-symbols-rounded !m-0 !p-0 text-14">arrow_downward_alt</span>
+          <span className="material-symbols-rounded-sm !m-0 !p-0 text-14">arrow_downward_alt</span>
           <span className="text-13 font-regular transition-opacity ease-in-out">{allDownVotes.length}</span>
         </button>
       </Tooltip>

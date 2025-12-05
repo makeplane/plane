@@ -175,7 +175,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
         className={cn(
           "group/list-block min-h-11 relative flex flex-col gap-3 bg-surface-1 hover:bg-surface-2 py-3 text-13 transition-colors border border-transparent",
           {
-            "border-custom-primary-70": getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
+            "border-accent-strong": getIsIssuePeeked(issue.id) && peekIssue?.nestingLevel === nestingLevel,
             "border-strong-1": isIssueActive,
             "last:border-b-transparent": !getIsIssuePeeked(issue.id) && !isIssueActive,
             "bg-accent-primary/5 hover:bg-accent-primary/10": isIssueSelected,
@@ -278,7 +278,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
                 displayPropertyKey="sub_issue_count"
                 shouldRenderProperty={(properties) => !!properties.sub_issue_count}
               >
-                <IssueStats issueId={issue.id} className="ml-2 font-medium text-custom-text-350" />
+                <IssueStats issueId={issue.id} className="ml-2 font-medium text-tertiary" />
               </WithDisplayPropertiesHOC>
             )}
           </div>

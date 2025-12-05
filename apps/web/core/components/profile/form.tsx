@@ -197,7 +197,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
           />
         )}
       />
-      <div className="w-full flex text-custom-primary-200 bg-accent-primary/10 rounded-md p-2 gap-2 items-center mb-4">
+      <div className="w-full flex text-accent-secondary bg-accent-primary/10 rounded-md p-2 gap-2 items-center mb-4">
         <InfoIcon className="h-4 w-4 flex-shrink-0" />
         <div className="text-13 font-medium flex-1">{t("settings_moved_to_preferences")}</div>
         <Link

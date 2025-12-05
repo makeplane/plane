@@ -43,7 +43,7 @@ export const ReadonlyLabels = observer(function ReadonlyLabels(props: TReadonlyL
             disabled={labels.length === 0}
           >
             <div className="h-full flex items-center gap-1 rounded-sm py-1 text-13">
-              <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
+              <span className="h-2 w-2 flex-shrink-0 rounded-full bg-accent-primary" />
               <span>{value.length}</span>
               <span>Labels</span>
             </div>

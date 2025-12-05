@@ -42,7 +42,7 @@ export function ViewIssueLabel({ labelDetails, maxRender = 1 }: Props) {
               isMobile={isMobile}
             >
               <div className="flex items-center gap-1.5 text-secondary">
-                <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
+                <span className="h-2 w-2 flex-shrink-0 rounded-full bg-accent-primary" />
                 {`${labelDetails.length} Labels`}
               </div>
             </Tooltip>

@@ -26,7 +26,7 @@ export const Default: Story = {
       <div className="space-y-6 p-4">
         <div className="flex items-center justify-center gap-6">
           <button
-            className="px-4 py-2 bg-red-500 text-white font-medium rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 transition-colors shadow-md"
+            className="px-4 py-2 bg-red-500 text-on-color font-medium rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 transition-colors shadow-md"
             onClick={() => setCount((prev) => Math.max(0, prev - 1))}
           >
             -1
@@ -35,7 +35,7 @@ export const Default: Story = {
             <AnimatedCounter {...args} count={count} />
           </div>
           <button
-            className="px-4 py-2 bg-green-500 text-white font-medium rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition-colors shadow-md"
+            className="px-4 py-2 bg-green-500 text-on-color font-medium rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 transition-colors shadow-md"
             onClick={() => setCount((prev) => prev + 1)}
           >
             +1
@@ -99,13 +99,13 @@ export const LargeNumbers: Story = {
       <div className="space-y-6 p-4">
         <div className="flex items-center gap-4">
           <button
-            className="px-3 py-1 bg-red-500 text-white text-13 rounded-sm hover:bg-red-600"
+            className="px-3 py-1 bg-red-500 text-on-color text-13 rounded-sm hover:bg-red-600"
             onClick={() => setCount((prev) => Math.max(0, prev - 1000))}
           >
             -1000
           </button>
           <button
-            className="px-3 py-1 bg-green-500 text-white text-13 rounded-sm hover:bg-green-600"
+            className="px-3 py-1 bg-green-500 text-on-color text-13 rounded-sm hover:bg-green-600"
             onClick={() => setCount((prev) => prev + 1000)}
           >
             +1000
@@ -146,7 +146,7 @@ export const Countdown: Story = {
             <AnimatedCounter count={count} size="lg" className="text-20" />
           </div>
           <button
-            className="px-6 py-2 bg-accent-primary text-white font-medium rounded-lg hover:bg-custom-primary-200"
+            className="px-6 py-2 bg-accent-primary text-on-color font-medium rounded-lg hover:bg-custom-primary-200"
             onClick={handleStart}
             disabled={isRunning}
           >
@@ -178,21 +178,21 @@ export const LiveCounter: Story = {
           </div>
           <div className="flex gap-2">
             <button
-              className="px-4 py-2 bg-green-500 text-white font-medium rounded-sm hover:bg-green-600"
+              className="px-4 py-2 bg-green-500 text-on-color font-medium rounded-sm hover:bg-green-600"
               onClick={() => setIsRunning(true)}
               disabled={isRunning}
             >
               Start
             </button>
             <button
-              className="px-4 py-2 bg-red-500 text-white font-medium rounded-sm hover:bg-red-600"
+              className="px-4 py-2 bg-red-500 text-on-color font-medium rounded-sm hover:bg-red-600"
               onClick={() => setIsRunning(false)}
               disabled={!isRunning}
             >
               Stop
             </button>
             <button
-              className="px-4 py-2 bg-gray-500 text-white font-medium rounded-sm hover:bg-gray-600"
+              className="px-4 py-2 bg-gray-500 text-on-color font-medium rounded-sm hover:bg-gray-600"
               onClick={() => {
                 setIsRunning(false);
                 setCount(0);
@@ -278,12 +278,12 @@ export const InBadge: Story = {
         <div className="flex flex-col items-center gap-4">
           <div className="relative">
             <button className="px-4 py-2 bg-layer-1 border border-subtle rounded-lg">Notifications</button>
-            <div className="absolute -top-2 -right-2 min-w-[24px] h-6 flex items-center justify-center bg-red-500 text-white rounded-full px-1.5">
+            <div className="absolute -top-2 -right-2 min-w-[24px] h-6 flex items-center justify-center bg-red-500 text-on-color rounded-full px-1.5">
               <AnimatedCounter count={notifications} size="sm" className="text-11 font-medium" />
             </div>
           </div>
           <button
-            className="px-4 py-2 bg-accent-primary text-white rounded-sm hover:bg-custom-primary-200"
+            className="px-4 py-2 bg-accent-primary text-on-color rounded-sm hover:bg-custom-primary-200"
             onClick={() => setNotifications((prev) => prev + 1)}
           >
             Add Notification
@@ -312,7 +312,7 @@ export const FastAnimation: Story = {
           </div>
           <div className="flex gap-2">
             <button
-              className="px-4 py-2 bg-accent-primary text-white rounded-sm hover:bg-custom-primary-200"
+              className="px-4 py-2 bg-accent-primary text-on-color rounded-sm hover:bg-custom-primary-200"
               onClick={incrementFast}
             >
               +10 Fast

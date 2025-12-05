@@ -109,7 +109,7 @@ export const CalendarIssueBlock = observer(
                     {
                       "bg-surface-2 shadow-custom-shadow-rg border-accent-strong": isDragging,
                       "bg-surface-1 hover:bg-surface-2": !isDragging,
-                      "border border-custom-primary-70 hover:border-custom-primary-70": getIsIssuePeeked(issue.id),
+                      "border border-accent-strong hover:border-accent-strong": getIsIssuePeeked(issue.id),
                     }
                   )}
                 >

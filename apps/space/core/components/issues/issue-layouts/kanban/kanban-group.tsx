@@ -88,7 +88,7 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
     <KanbanIssueBlockLoader />
   ) : (
     <div
-      className="w-full p-3 text-13 font-medium text-accent-primary hover:text-custom-primary-200 hover:underline cursor-pointer"
+      className="w-full p-3 text-13 font-medium text-accent-primary hover:text-accent-secondary hover:underline cursor-pointer"
       onClick={loadMoreIssuesInThisGroup}
     >
       {" "}

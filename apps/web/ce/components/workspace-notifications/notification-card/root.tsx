@@ -40,11 +40,11 @@ export const NotificationCardListRoot = observer(function NotificationCardListRo
         <>
           {loader === ENotificationLoader.PAGINATION_LOADER ? (
             <div className="py-4 flex justify-center items-center text-13 font-medium">
-              <div className="text-custom-primary-90">{t("loading")}...</div>
+              <div className="text-accent-secondary">{t("loading")}...</div>
             </div>
           ) : (
             <div className="py-4 flex justify-center items-center text-13 font-medium" onClick={getNextNotifications}>
-              <div className="text-custom-primary-90 hover:text-accent-primary transition-all cursor-pointer">
+              <div className="text-accent-secondary hover:text-accent-primary transition-all cursor-pointer">
                 {t("load_more")}
               </div>
             </div>

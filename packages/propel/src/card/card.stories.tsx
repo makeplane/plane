@@ -78,7 +78,7 @@ export const ColumnDirection: Story = {
       <>
         <h3 className="text-16 font-semibold">Column Direction</h3>
         <p className="text-13 text-gray-600">Content is arranged vertically.</p>
-        <button className="rounded-sm bg-blue-500 px-4 py-2 text-white">Action</button>
+        <button className="rounded-sm bg-blue-500 px-4 py-2 text-on-color">Action</button>
       </>
     ),
   },
@@ -113,7 +113,7 @@ export const ProductCard: Story = {
         <p className="text-13 text-gray-600">A brief description of the product goes here.</p>
         <div className="flex items-center justify-between">
           <span className="text-16 font-semibold">$99.99</span>
-          <button className="rounded-sm bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">Add to Cart</button>
+          <button className="rounded-sm bg-blue-500 px-4 py-2 text-on-color hover:bg-blue-600">Add to Cart</button>
         </div>
       </>
     ),
@@ -196,7 +196,7 @@ export const AllDirections: Story = {
         <Card direction={ECardDirection.COLUMN}>
           <h3 className="font-semibold">Column Direction</h3>
           <p className="text-13 text-gray-600">Vertical layout</p>
-          <button className="w-fit rounded-sm bg-blue-500 px-4 py-2 text-white">Button</button>
+          <button className="w-fit rounded-sm bg-blue-500 px-4 py-2 text-on-color">Button</button>
         </Card>
         <Card direction={ECardDirection.ROW}>
           <div className="h-12 w-12 flex-shrink-0 rounded-sm bg-blue-500" />

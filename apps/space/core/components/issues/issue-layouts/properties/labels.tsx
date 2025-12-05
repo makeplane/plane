@@ -59,7 +59,7 @@ export const IssueBlockLabels = observer(function IssueBlockLabels({ labelIds, s
         >
           <Tooltip position="top" tooltipHeading="Labels" tooltipContent={labelsString}>
             <div className="flex h-full items-center gap-1.5 text-secondary">
-              <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
+              <span className="h-2 w-2 flex-shrink-0 rounded-full bg-accent-primary" />
               {`${labels.length} Labels`}
             </div>
           </Tooltip>
