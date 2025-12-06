@@ -709,7 +709,11 @@ export default function TestCasesPage() {
       key: "review",
       render: (v: string) => {
         const color = reviewEnums?.CaseReviewThrough_Result?.[v]?.color || "default";
-        return <Tag color={color}>{v || "-"}</Tag>;
+        return (
+          <Tag color={color} className="inline-flex justify-center w-[55px]">
+            {v || "-"}
+          </Tag>
+        );
       },
       width: 140,
       // filters: Object.entries((globalEnums.Enums as any)?.case_state || {}).map(([value, label]) => ({

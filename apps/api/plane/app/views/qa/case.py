@@ -2,12 +2,13 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from django.db import transaction
+from django.shortcuts import get_object_or_404
 
 from plane.app.serializers.qa import CaseAttachmentSerializer, IssueListSerializer, CaseIssueSerializer, \
-    TestCaseCommentSerializer, PlanCaseRecordSerializer
+    TestCaseCommentSerializer, PlanCaseRecordSerializer, CaseListSerializer
 from plane.app.serializers.qa.case import CaseExecuteRecordSerializer
 from plane.app.views import BaseAPIView, BaseViewSet
-from plane.db.models import TestCase, FileAsset, TestCaseComment, PlanCase, Issue
+from plane.db.models import TestCase, FileAsset, TestCaseComment, PlanCase, Issue, CaseModule
 from plane.utils.paginator import CustomPaginator
 from plane.utils.response import list_response
 
@@ -133,3 +134,53 @@ class CaseAPI(BaseViewSet):
         paginated_queryset = paginator.paginate_queryset(issues, request)
         serializer = IssueListSerializer(paginated_queryset, many=True)
         return list_response(data=serializer.data, count=issues.count())
+
+    @action(detail=False, methods=['get'], url_path='issue-case')
+    def get_issue_case(self, request, slug):
+        issue_id = request.query_params.get('issue_id')
+        issue = Issue.objects.get(id=issue_id)
+        cases = issue.cases.all()
+        serializer = CaseListSerializer(cases, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'], url_path='unselect-issue-case')
+    def get_unselect_issue_case(self, request, slug):
+        issue_id = request.query_params.get('issue_id')
+        repository_id = request.query_params.get('repository_id')
+        module_id = request.query_params.get('module_id')
+
+        issue = Issue.objects.get(id=issue_id)
+        case_id = issue.cases.values_list('id', flat=True)
+        cases = TestCase.objects.filter(repository__workspace__slug=slug, repository_id=repository_id)
+        if module_id:
+            case_module = CaseModule.objects.get(id=module_id)
+            cases = cases.filter(module_id__in=case_module.get_all_children)
+        cases = cases.exclude(id__in=case_id)
+        serializer = CaseListSerializer(cases, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['delete'], url_path='delete-issue-case')
+    def delete_issue_case(self, request, slug):
+        issue_id = request.data.get('issue_id')
+        case_id = request.data.get('case_id')
+
+        if not issue_id or not case_id:
+            return Response({"error": "issue_id and case_id are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        issue = get_object_or_404(Issue, id=issue_id)
+        case = get_object_or_404(TestCase, id=case_id)
+        issue.cases.remove(case)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=False, methods=['delete'], url_path='add-issue-case')
+    def add_issue_case(self, request, slug):
+        issue_id = request.data.get('issue_id')
+        case_id = request.data.get('case_id')
+
+        if not issue_id or not case_id:
+            return Response({"error": "issue_id and case_id are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        issue = get_object_or_404(Issue, id=issue_id)
+        case = get_object_or_404(TestCase, id=case_id)
+        issue.cases.add(case)
+        return Response(status=status.HTTP_201_CREATED)

@@ -307,6 +307,10 @@ class PlanView(BaseViewSet):
             
         return Response(status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['post'], url_path='associate-modules')
+    def associate_modules(self, request, slug):
+        ...
+
 
 class CaseAPIView(BaseAPIView):
     model = TestCase

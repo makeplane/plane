@@ -265,4 +265,33 @@ export class CaseService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async getIssueCase(workspaceSlug: string, issueId: string): Promise<any> {
+    return this.get(`/api/workspaces/${workspaceSlug}/test/case/issue-case/`, {params: {issue_id: issueId}})
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+  async deleteIssueCase(workspaceSlug: string, issueId: string, caseId: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/test/case/delete-issue-case/`, {issue_id: issueId, case_id: caseId})
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+  async getUnselectIssueCase(workspaceSlug: string, issueId: string, repositoryId: string, moduleId?: string): Promise<any> {
+    return this.get(`/api/workspaces/${workspaceSlug}/test/case/unselect-issue-case/`, {params: {issue_id: issueId, repository_id: repositoryId, module_id: moduleId}})
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+  async addIssueCase(workspaceSlug: string, issueId: string, caseId: string): Promise<any> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/test/case/add-issue-case/`, {issue_id: issueId, case_id: caseId})
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

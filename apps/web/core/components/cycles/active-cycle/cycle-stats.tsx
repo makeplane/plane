@@ -1,7 +1,7 @@
 "use client";
 
 import type { FC } from "react";
-import { Fragment, useCallback, useRef, useState } from "react";
+import { Fragment, useCallback, useRef, useState, useEffect } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { CalendarCheck } from "lucide-react";
@@ -10,13 +10,14 @@ import { Tab } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { PriorityIcon } from "@plane/propel/icons";
-import { Tooltip } from "@plane/propel/tooltip";
 import type { TWorkItemFilterCondition } from "@plane/shared-state";
 import type { ICycle } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 // ui
 import { Loader, Avatar } from "@plane/ui";
 import { cn, renderFormattedDate, renderFormattedDateWithoutYear, getFileURL } from "@plane/utils";
+// antd
+import { Tag, Tooltip } from "antd";
 // components
 import { SingleProgressStats } from "@/components/core/sidebar/single-progress-stats";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
@@ -30,8 +31,10 @@ import useLocalStorage from "@/hooks/use-local-storage";
 // plane web components
 import { useResolvedAssetPath } from "@/hooks/use-resolved-asset-path";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+// services
 // store
 import type { ActiveCycleIssueDetails } from "@/store/issue/cycle";
+// types
 
 export type ActiveCycleStatsProps = {
   workspaceSlug: string;
@@ -50,6 +53,9 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
   const issuesContainerRef = useRef<HTMLDivElement | null>(null);
   // states
   const [issuesLoaderElement, setIssueLoaderElement] = useState<HTMLDivElement | null>(null);
+  const [testPlans, setTestPlans] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   // plane hooks
   const { t } = useTranslation();
   // derived values
@@ -83,6 +89,109 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
   }, [workspaceSlug, projectId, cycleId, issuesLoaderElement, cycleIssueDetails?.nextPageResults]);
 
   useIntersectionObserver(issuesContainerRef, issuesLoaderElement, loadMoreIssues, `0% 0% 100% 0%`);
+
+  // 渲染测试计划状态
+  const renderState = (state: any) => {
+    const colorMap: Record<string, string> = {
+      未开始: "default",
+      进行中: "processing",
+      已完成: "success",
+    };
+    const color = colorMap[state] || "default";
+    const text = state ? state.toString() : "-";
+    return <Tag color={color}>{text}</Tag>;
+  };
+
+  // 渲染通过率
+  const renderPassRate = (passRate: any) => {
+    if (!passRate) return "-";
+
+    const orderKeys = ["成功", "失败", "阻塞", "未执行"];
+    const totalCount = orderKeys.reduce((s, k) => s + Number(passRate?.[k] || 0), 0);
+    const passed = Number(passRate?.["成功"] || 0);
+    const percent = totalCount > 0 ? Math.floor((passed / totalCount) * 100) : 0;
+
+    const colorHexMap: Record<string, string> = {
+      green: "#52c41a",
+      red: "#ff4d4f",
+      gold: "#faad14",
+      blue: "#1677ff",
+      gray: "#bfbfbf",
+      default: "#d9d9d9",
+    };
+
+    const categoryColor: Record<string, string> = {
+      成功: colorHexMap.green,
+      失败: colorHexMap.red,
+      阻塞: colorHexMap.gold,
+      未执行: colorHexMap.gray,
+    };
+
+    const segments = orderKeys.map((k) => {
+      const count = Number(passRate?.[k] || 0);
+      const color = categoryColor[k] || colorHexMap.default;
+      const widthPct = totalCount > 0 ? (count / totalCount) * 100 : 0;
+      return { key: k, count, color, widthPct };
+    });
+
+    const tooltipContent = (
+      <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+        {orderKeys.map((k) => (
+          <div key={k} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <span
+              style={{
+                width: "10px",
+                height: "10px",
+                borderRadius: "2px",
+                backgroundColor: categoryColor[k] || colorHexMap.default,
+                display: "inline-block",
+              }}
+            />
+            <span style={{ fontSize: "12px", color: "var(--color-text, #333)" }}>{k}</span>
+            <span style={{ marginLeft: "auto", fontSize: "12px", color: "#8c8c8c" }}>{Number(passRate?.[k] || 0)}</span>
+          </div>
+        ))}
+      </div>
+    );
+
+    return (
+      <Tooltip mouseEnterDelay={0.25} title={tooltipContent} color="#fff" overlayInnerStyle={{ color: "#333" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px", minWidth: "80px" }}>
+          <div style={{ flex: "1", minWidth: "50px" }}>
+            <div
+              style={{
+                width: "100%",
+                height: "5px",
+                border: "1px solid #e8e8e8",
+                borderRadius: "5px",
+                overflow: "hidden",
+                display: "flex",
+              }}
+            >
+              {segments.map((seg, idx) => (
+                <div
+                  key={`${seg.key}-${idx}`}
+                  style={{ width: `${seg.widthPct}%`, backgroundColor: seg.color, height: "100%" }}
+                />
+              ))}
+            </div>
+          </div>
+          <span style={{ fontSize: "11px", color: "var(--color-text, #333)", minWidth: "25px" }}>{percent}%</span>
+        </div>
+      </Tooltip>
+    );
+  };
+
+  // 从 cycle 数据中获取测试计划
+  useEffect(() => {
+    if (cycle && cycle.plans) {
+      setTestPlans(cycle.plans);
+      setLoading(false);
+    } else {
+      setTestPlans([]);
+      setLoading(false);
+    }
+  }, [cycle]);
 
   const loaders = (
     <Loader className="space-y-3">
@@ -129,7 +238,8 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
               )
             }
           >
-            {t("project_cycles.active_cycle.priority_issue")}
+            {/* {t("project_cycles.active_cycle.priority_issue")} */}
+            测试计划
           </Tab>
           <Tab
             className={({ selected }) =>
@@ -160,99 +270,61 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
         </Tab.List>
 
         <Tab.Panels as={Fragment}>
-          <Tab.Panel
-            as="div"
-            className="flex h-52 w-full flex-col gap-1 overflow-y-auto  text-custom-text-200 vertical-scrollbar scrollbar-sm"
-          >
-            <div
-              ref={issuesContainerRef}
-              className="flex flex-col gap-1 h-full w-full overflow-y-auto vertical-scrollbar scrollbar-sm"
-            >
-              {cycleIssueDetails && "issueIds" in cycleIssueDetails ? (
-                cycleIssueDetails.issueCount > 0 ? (
-                  <>
-                    {cycleIssueDetails.issueIds.map((issueId: string) => {
-                      const issue = getIssueById(issueId);
+          <Tab.Panel as="div" className="flex h-52 w-full flex-col overflow-hidden text-custom-text-200">
+            {loading ? (
+              <div className="h-full w-full p-4 overflow-y-auto vertical-scrollbar scrollbar-sm">{loaders}</div>
+            ) : error ? (
+              <div className="flex items-center justify-center h-full w-full">
+                <div className="text-sm text-custom-text-300">{error}</div>
+              </div>
+            ) : testPlans.length > 0 ? (
+              <div className="flex flex-col h-full w-full">
+                {/* 表格头部 */}
+                <div className="grid grid-cols-4 gap-2 px-2 py-1 text-xs font-medium text-custom-text-400 border-b border-custom-border-200 shrink-0 bg-custom-background-100">
+                  <div>测试计划名称</div>
+                  <div>用例库名称</div>
+                  <div>状态</div>
+                  <div>通过率</div>
+                </div>
 
-                      if (!issue) return null;
-
-                      return (
-                        <div
-                          key={issue.id}
-                          className="group flex cursor-pointer items-center justify-between gap-2 rounded-md hover:bg-custom-background-90 p-1"
-                          onClick={() => {
-                            if (issue.id) {
-                              setPeekIssue({
-                                workspaceSlug,
-                                projectId,
-                                issueId: issue.id,
-                                isArchived: !!issue.archived_at,
-                              });
-                              handleFiltersUpdate([
-                                { property: "priority", operator: "in", value: ["urgent", "high"] },
-                              ]);
-                            }
-                          }}
-                        >
-                          <div className="flex items-center gap-1.5 flex-grow w-full min-w-24 truncate">
-                            <IssueIdentifier
-                              issueId={issue.id}
-                              projectId={projectId}
-                              textContainerClassName="text-xs text-custom-text-200"
-                            />
-                            <Tooltip position="top-start" tooltipHeading="Title" tooltipContent={issue.name}>
-                              <span className="text-[0.825rem] text-custom-text-100 truncate">{issue.name}</span>
-                            </Tooltip>
-                          </div>
-                          <PriorityIcon priority={issue.priority} withContainer size={12} />
-                          <div className="flex items-center gap-1.5 flex-shrink-0">
-                            <StateDropdown
-                              value={issue.state_id}
-                              onChange={() => {}}
-                              projectId={projectId?.toString() ?? ""}
-                              disabled
-                              buttonVariant="background-with-text"
-                              buttonContainerClassName="cursor-pointer max-w-24"
-                              showTooltip
-                            />
-                            {issue.target_date && (
-                              <Tooltip
-                                tooltipHeading="Target Date"
-                                tooltipContent={renderFormattedDate(issue.target_date)}
-                              >
-                                <div className="h-full flex truncate items-center gap-1.5 rounded text-xs px-2 py-0.5 bg-custom-background-80 group-hover:bg-custom-background-100 cursor-pointer">
-                                  <CalendarCheck className="h-3 w-3 flex-shrink-0" />
-                                  <span className="text-xs truncate">
-                                    {renderFormattedDateWithoutYear(issue.target_date)}
-                                  </span>
-                                </div>
-                              </Tooltip>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                    {(cycleIssueDetails.nextPageResults === undefined || cycleIssueDetails.nextPageResults) && (
+                {/* 表格内容 */}
+                <div
+                  ref={issuesContainerRef}
+                  className="flex-1 overflow-y-auto vertical-scrollbar scrollbar-sm divide-y divide-custom-border-200"
+                >
+                  {testPlans.map((plan) => (
+                    <div
+                      key={plan.id}
+                      className="grid grid-cols-4 gap-2 px-2 py-2 text-sm hover:bg-custom-background-90 cursor-pointer"
+                      onClick={() => {
+                        const planId = plan?.id;
+                        const repo = plan?.repository;
+                        const repositoryId = typeof repo === "string" ? repo : repo?.id;
+                        if (!planId || !repositoryId) return;
+                        const url = `http://10.32.190.212:3000/my-proj/test-management/plan-cases/?planId=${planId}&repositoryId=${repositoryId}`;
+                        window.location.href = url;
+                      }}
+                    >
+                      <div className="truncate text-custom-text-100" title={plan.name}>
+                        {plan.name}
+                      </div>
                       <div
-                        ref={setIssueLoaderElement}
-                        className={
-                          "h-11 relative flex items-center gap-3 bg-custom-background-80 p-3 text-sm cursor-pointer animate-pulse"
-                        }
-                      />
-                    )}
-                  </>
-                ) : (
-                  <div className="flex items-center justify-center h-full w-full">
-                    <SimpleEmptyState
-                      title={t("active_cycle.empty_state.priority_issue.title")}
-                      assetPath={priorityResolvedPath}
-                    />
-                  </div>
-                )
-              ) : (
-                loaders
-              )}
-            </div>
+                        className="truncate text-custom-text-300"
+                        title={(plan.repository?.name ?? plan.repository_name) || "未知"}
+                      >
+                        {(plan.repository?.name ?? plan.repository_name) || "未知"}
+                      </div>
+                      <div className="flex items-center">{renderState(plan.state)}</div>
+                      <div className="flex items-center">{renderPassRate(plan.pass_rate)}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center h-full w-full">
+                <SimpleEmptyState title="暂无关联测试计划" assetPath={priorityResolvedPath} />
+              </div>
+            )}
           </Tab.Panel>
 
           <Tab.Panel

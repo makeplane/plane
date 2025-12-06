@@ -235,43 +235,6 @@ export default function TestCaseSelectionModal({
     },
   ];
 
-  const selectedColumns: TableProps<TTestCase>["columns"] = [
-    { title: "名称", dataIndex: "name", key: "name", render: (v) => <span className={styles.nameCell}>{v}</span> },
-    { title: "创建时间", dataIndex: "created_at", key: "created_at", width: 180, render: (d) => formatDateTime(d) },
-    {
-      title: "优先级",
-      dataIndex: "priority",
-      key: "priority",
-      width: 120,
-      render: (v) => renderEnumTag("case_priority", v, "warning"),
-    },
-    {
-      title: "",
-      key: "actions",
-      width: 60,
-      render: (_: any, record: TTestCase) => (
-        <Button
-          type="text"
-          icon={<DeleteOutlined />}
-          onClick={() => {
-            const id = String(record.id);
-            setSelectedIds((prev) => {
-              const next = new Set(prev);
-              next.delete(id);
-              onChangeSelected?.(Array.from(next));
-              return next;
-            });
-            setSelectedMap((prev) => {
-              const next = { ...prev };
-              delete next[id];
-              return next;
-            });
-          }}
-        />
-      ),
-    },
-  ];
-
   const handleConfirm = () => {
     onConfirm(Array.from(selectedIds));
   };
@@ -282,8 +245,9 @@ export default function TestCaseSelectionModal({
       onCancel={onClose}
       title="选择测试用例"
       width={1200}
-      keyboard
-      maskClosable
+      keyboard={false}
+      maskClosable={false}
+      getContainer={false}
       destroyOnClose
       footer={
         <Space>
@@ -331,6 +295,7 @@ export default function TestCaseSelectionModal({
               loading={loadingCases}
               dataSource={orderedCases}
               columns={caseColumns as any}
+              showHeader
               pagination={{
                 current: currentPage,
                 pageSize,

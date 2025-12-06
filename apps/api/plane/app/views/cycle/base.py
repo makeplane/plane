@@ -2,7 +2,6 @@
 import json
 import pytz
 
-
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
@@ -29,6 +28,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 # Third party imports
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers import (
@@ -36,6 +36,7 @@ from plane.app.serializers import (
     CycleUserPropertiesSerializer,
     CycleWriteSerializer,
 )
+from plane.app.serializers.qa import TestPlanDetailSerializer
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Cycle,
@@ -47,6 +48,7 @@ from plane.db.models import (
     User,
     Project,
     UserRecentVisit,
+    TestPlan,
 )
 from plane.utils.analytics_plot import burndown_plot
 from plane.bgtasks.recent_visited_task import recent_visited_task
@@ -108,6 +110,7 @@ class CycleViewSet(BaseViewSet):
                     queryset=Label.objects.only("name", "color", "id").distinct(),
                 )
             )
+            .prefetch_related("plans")
             .annotate(is_favorite=Exists(favorite_subquery))
             .annotate(
                 total_issues=Count(
@@ -179,6 +182,12 @@ class CycleViewSet(BaseViewSet):
                     Value([], output_field=ArrayField(UUIDField())),
                 )
             )
+            .annotate(
+                plan_ids=Coalesce(
+                    ArrayAgg("plans__id", distinct=True),
+                    Value([], output_field=ArrayField(UUIDField())),
+                )
+            )
             .order_by("-is_favorite", "name")
             .distinct()
         )
@@ -232,11 +241,25 @@ class CycleViewSet(BaseViewSet):
                 "cancelled_issues",
                 "assignee_ids",
                 "status",
+                "plan_ids",
                 "version",
                 "created_by",
             )
             datetime_fields = ["start_date", "end_date"]
             data = user_timezone_converter(data, datetime_fields, project_timezone)
+
+            # enrich with plans
+            all_plan_ids = set()
+            for item in data:
+                for pid in item.get("plan_ids", []) or []:
+                    all_plan_ids.add(str(pid))
+            plans_map = {}
+            if all_plan_ids:
+                plans_qs = TestPlan.objects.filter(id__in=list(all_plan_ids), deleted_at__isnull=True)
+                plans_serialized = TestPlanDetailSerializer(plans_qs, many=True).data
+                plans_map = {str(p.get("id")): p for p in plans_serialized}
+            for item in data:
+                item["plans"] = [plans_map[str(pid)] for pid in item.get("plan_ids", []) if str(pid) in plans_map]
 
             if data:
                 return Response(data, status=status.HTTP_200_OK)
@@ -264,22 +287,39 @@ class CycleViewSet(BaseViewSet):
             "cancelled_issues",
             "completed_issues",
             "assignee_ids",
+            "plan_ids",
             "status",
             "version",
             "created_by",
         )
         datetime_fields = ["start_date", "end_date"]
         data = user_timezone_converter(data, datetime_fields, project_timezone)
+
+        # enrich with plans
+        all_plan_ids = set()
+        for item in data:
+            for pid in item.get("plan_ids", []) or []:
+                if not pid:
+                    continue
+                all_plan_ids.add(str(pid))
+        plans_map = {}
+        if all_plan_ids:
+            plans_qs = TestPlan.objects.filter(id__in=list(all_plan_ids), deleted_at__isnull=True)
+            plans_serialized = TestPlanDetailSerializer(plans_qs, many=True).data
+            plans_map = {str(p.get("id")): p for p in plans_serialized}
+        for item in data:
+            item["plans"] = [plans_map[str(pid)] for pid in item.get("plan_ids", []) if str(pid) in plans_map]
+
         return Response(data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id):
         if (
-            request.data.get("start_date", None) is None
-            and request.data.get("end_date", None) is None
+                request.data.get("start_date", None) is None
+                and request.data.get("end_date", None) is None
         ) or (
-            request.data.get("start_date", None) is not None
-            and request.data.get("end_date", None) is not None
+                request.data.get("start_date", None) is not None
+                and request.data.get("end_date", None) is not None
         ):
             serializer = CycleWriteSerializer(
                 data=request.data, context={"project_id": project_id}
@@ -548,7 +588,7 @@ class CycleViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class  CycleDateCheckEndpoint(BaseAPIView):
+class CycleDateCheckEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
         start_date = request.data.get("start_date", False)
@@ -573,9 +613,9 @@ class  CycleDateCheckEndpoint(BaseAPIView):
             Q(workspace__slug=slug)
             & Q(project_id=project_id)
             & (
-                Q(start_date__lte=start_date, end_date__gte=start_date)
-                | Q(start_date__lte=end_date, end_date__gte=end_date)
-                | Q(start_date__gte=start_date, end_date__lte=end_date)
+                    Q(start_date__lte=start_date, end_date__gte=start_date)
+                    | Q(start_date__lte=end_date, end_date__gte=end_date)
+                    | Q(start_date__gte=start_date, end_date__lte=end_date)
             )
         ).exclude(pk=cycle_id)
         if cycles.exists():
@@ -813,21 +853,21 @@ class CycleProgressEndpoint(BaseAPIView):
         return Response(
             {
                 "backlog_estimate_points": aggregate_estimates["backlog_estimate_point"]
-                or 0,
+                                           or 0,
                 "unstarted_estimate_points": aggregate_estimates[
-                    "unstarted_estimate_point"
-                ]
-                or 0,
+                                                 "unstarted_estimate_point"
+                                             ]
+                                             or 0,
                 "started_estimate_points": aggregate_estimates["started_estimate_point"]
-                or 0,
+                                           or 0,
                 "cancelled_estimate_points": aggregate_estimates[
-                    "cancelled_estimate_point"
-                ]
-                or 0,
+                                                 "cancelled_estimate_point"
+                                             ]
+                                             or 0,
                 "completed_estimate_points": aggregate_estimates[
-                    "completed_estimate_points"
-                ]
-                or 0,
+                                                 "completed_estimate_points"
+                                             ]
+                                             or 0,
                 "total_estimate_points": aggregate_estimates["total_estimate_points"],
                 "backlog_issues": backlog_issues,
                 "total_issues": total_issues,

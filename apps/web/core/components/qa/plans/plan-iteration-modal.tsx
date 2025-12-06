@@ -143,7 +143,7 @@ const PlanIterationModal: React.FC<Props> = (props) => {
         onClosed && onClosed();
       }}
       position={EModalPosition.CENTER}
-      width={EModalWidth.VXL}
+      width={EModalWidth.VIXL}
     >
       <div className="w-full">
         <div className="flex items-center justify-between gap-4 border-b border-custom-border-200 px-6 py-4">
@@ -163,7 +163,7 @@ const PlanIterationModal: React.FC<Props> = (props) => {
           </Button>
         </div>
         <Row wrap={false} className="h-[70vh] max-h-[70vh] overflow-hidden p-6" gutter={[16, 16]}>
-          <Col flex="0 0 auto" className="border-r border-custom-border-200" style={{ width: 360, minWidth: 300 }}>
+          <Col flex="0 0 auto" className="border-r border-custom-border-200" style={{ width: 320, minWidth: 280 }}>
             <div className="flex items-center justify-between gap-2 pb-3">
               <div className="text-sm text-custom-text-300">项目列表</div>
             </div>
@@ -315,13 +315,23 @@ const PlanIterationModal: React.FC<Props> = (props) => {
                       ),
                     },
                     {
-                      title: "时间信息",
-                      key: "date",
-                      render: (_, record) => (
-                        <div className="flex flex-col text-xs text-custom-text-200">
-                          <div>开始: {record.start_date ? dayjs(record.start_date).format("YYYY-MM-DD") : "-"}</div>
-                          <div>结束: {record.end_date ? dayjs(record.end_date).format("YYYY-MM-DD") : "-"}</div>
-                        </div>
+                      title: "开始时间",
+                      dataIndex: "start_date",
+                      key: "start_date",
+                      render: (date: string | null) => (
+                        <span className="text-xs text-custom-text-200">
+                          {date ? dayjs(date).format("YYYY-MM-DD") : "-"}
+                        </span>
+                      ),
+                    },
+                    {
+                      title: "结束时间",
+                      dataIndex: "end_date",
+                      key: "end_date",
+                      render: (date: string | null) => (
+                        <span className="text-xs text-custom-text-200">
+                          {date ? dayjs(date).format("YYYY-MM-DD") : "-"}
+                        </span>
                       ),
                     },
                   ]}

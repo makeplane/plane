@@ -62,6 +62,11 @@ class TestPlanDetailSerializer(ModelSerializer):
 
     case_count = serializers.SerializerMethodField()
     pass_rate = serializers.SerializerMethodField()
+    repository_name = serializers.SlugRelatedField(
+        source='repository',
+        read_only=True,
+        slug_field='name'
+    )
 
     def get_case_count(self, obj: TestPlan):
         return obj.plan_cases.count()

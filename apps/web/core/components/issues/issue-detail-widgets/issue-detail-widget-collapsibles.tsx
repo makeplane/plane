@@ -14,6 +14,7 @@ import { AttachmentsCollapsible } from "./attachments";
 import { LinksCollapsible } from "./links";
 import { RelationsCollapsible } from "./relations";
 import { SubIssuesCollapsible } from "./sub-issues";
+import { QaCasesCollapsible } from "./qa-cases/root";
 
 type Props = {
   workspaceSlug: string;
@@ -61,6 +62,14 @@ export const IssueDetailWidgetCollapsibles: FC<Props> = observer((props) => {
       )}
       {shouldRenderRelations && (
         <RelationsCollapsible
+          workspaceSlug={workspaceSlug}
+          issueId={issueId}
+          disabled={disabled}
+          issueServiceType={issueServiceType}
+        />
+      )}
+      {!hideWidgets?.includes("qa-cases") && (
+        <QaCasesCollapsible
           workspaceSlug={workspaceSlug}
           issueId={issueId}
           disabled={disabled}

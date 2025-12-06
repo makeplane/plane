@@ -56,6 +56,17 @@ class CaseModule(BaseModel):
     repository = models.ForeignKey(TestCaseRepository, on_delete=models.CASCADE, verbose_name="TestCaseRepository",
                                    related_name="modules")
 
+    @property
+    def get_all_children(self) -> list:
+        """获取当前模块及其所有子模块的ID（包括多层嵌套的子模块）"""
+        def get_children_ids(module):
+            ids = [module.id]
+            for child in module.children.all():
+                ids.extend(get_children_ids(child))
+            return ids
+        
+        return get_children_ids(self)
+
     class Meta:
         constraints = [
             # Enforce uniqueness of project and name when project is not NULL and deleted_at is NULL
@@ -116,7 +127,6 @@ class TestCase(BaseModel):
 
         return crr.result if crr else CaseReviewThrough.Result.NOT_START
 
-
     class Meta:
         db_table = "test_case"
         ordering = ("-created_at",)
@@ -140,11 +150,11 @@ class TestPlan(BaseModel):
         COMPLETED = '已完成', 'green'
 
     name = models.CharField(max_length=255, verbose_name="TestPlan Name")
-    description = models.TextField(verbose_name="TestPlan Description", blank=True,null=True)
+    description = models.TextField(verbose_name="TestPlan Description", blank=True, null=True)
     begin_time = models.DateField(null=True, blank=True, verbose_name="TestPlan Begin Time")
     end_time = models.DateField(null=True, blank=True, verbose_name="TestPlan End Time")
     state = models.CharField(choices=State.choices, default=State.NOT_START, verbose_name="TestPlan State")
-    result = models.CharField(max_length=30,default='-', verbose_name="TestPlan execute result")
+    result = models.CharField(max_length=30, default='-', verbose_name="TestPlan execute result")
     threshold = models.IntegerField(null=True, blank=True, default=100, verbose_name="TestPlan Threshold")
 
     module = models.ForeignKey(PlanModule, null=True, on_delete=models.CASCADE, verbose_name="PlanModule",
@@ -155,8 +165,7 @@ class TestPlan(BaseModel):
                                    through_fields=("plan", "case"))
 
     cycles = models.ManyToManyField("db.Cycle", blank=True, related_name="plans")
-    modules = models.ManyToManyField("db.Module", blank=True, related_name="plans",db_table="plan_modules_relations")
-
+    modules = models.ManyToManyField("db.Module", blank=True, related_name="plans", db_table="plan_modules_relations")
 
     @property
     def state_display(self):
