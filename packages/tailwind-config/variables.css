@@ -615,10 +615,15 @@
 /* ---------- Typography tokens ---------- */
 @theme {
   /* ---------- Font family ---------- */
-  --font-family-*: initial;
-  --font-family-heading: Inter;
-  --font-family-body: Inter;
-  --font-family-code: IBM Mono;
+  --font-*: initial;
+  --font-heading:
+    "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    "Noto Color Emoji";
+  --font-body:
+    "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    "Noto Color Emoji";
+  --font-code:
+    "IBM Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
   /* ---------- Font weight ---------- */
   --font-weight-*: initial;

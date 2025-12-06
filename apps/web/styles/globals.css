@@ -1,5 +1,5 @@
-@import "@plane/tailwind-config/index.css";
 @import "@plane/propel/styles/fonts";
+@import "@plane/tailwind-config/index.css";
 @import "@plane/editor/styles";
 @import "./power-k.css";
 @import "./emoji.css";
