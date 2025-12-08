@@ -68,13 +68,13 @@
   --outline-width-xl: var(--border-width-xl);
   --default-outline-width: var(--default-border-width);
 
-  /* ---------- Stroke width ---------- */
-  --stroke-width-*: initial;
-  --stroke-width-sm: var(--border-width-sm);
-  --stroke-width-md: var(--border-width-md);
-  --stroke-width-lg: var(--border-width-lg);
-  --stroke-width-xl: var(--border-width-xl);
-  --default-stroke-width: var(--default-border-width);
+  /* ---------- Ring width ---------- */
+  --ring-width-*: initial;
+  --ring-width-sm: var(--border-width-sm);
+  --ring-width-md: var(--border-width-md);
+  --ring-width-lg: var(--border-width-lg);
+  --ring-width-xl: var(--border-width-xl);
+  --default-ring-width: var(--default-border-width);
 
   /* ---------- Shadow ---------- */
   --shadow-*: initial;
@@ -347,21 +347,21 @@
   --outline-color-danger-strong: var(--border-color-danger-strong);
   --outline-color-danger-subtle: var(--border-color-danger-subtle);
 
-  /* Stroke colors */
-  --stroke-subtle: var(--border-color-subtle);
-  --stroke-subtle-1: var(--border-color-subtle-1);
-  --stroke-strong: var(--border-color-strong);
-  --stroke-strong-1: var(--border-color-strong-1);
-  --stroke-inverse: var(--border-color-inverse);
-  --stroke-disabled: var(--border-color-disabled);
-  --stroke-accent-strong: var(--border-color-accent-strong);
-  --stroke-accent-subtle: var(--border-color-accent-subtle);
-  --stroke-success-strong: var(--border-color-success-strong);
-  --stroke-success-subtle: var(--border-color-success-subtle);
-  --stroke-warning-strong: var(--border-color-warning-strong);
-  --stroke-warning-subtle: var(--border-color-warning-subtle);
-  --stroke-danger-strong: var(--border-color-danger-strong);
-  --stroke-danger-subtle: var(--border-color-danger-subtle);
+  /* Ring colors */
+  --ring-color-subtle: var(--border-color-subtle);
+  --ring-color-subtle-1: var(--border-color-subtle-1);
+  --ring-color-strong: var(--border-color-strong);
+  --ring-color-strong-1: var(--border-color-strong-1);
+  --ring-color-inverse: var(--border-color-inverse);
+  --ring-color-disabled: var(--border-color-disabled);
+  --ring-color-accent-strong: var(--border-color-accent-strong);
+  --ring-color-accent-subtle: var(--border-color-accent-subtle);
+  --ring-color-success-strong: var(--border-color-success-strong);
+  --ring-color-success-subtle: var(--border-color-success-subtle);
+  --ring-color-warning-strong: var(--border-color-warning-strong);
+  --ring-color-warning-subtle: var(--border-color-warning-subtle);
+  --ring-color-danger-strong: var(--border-color-danger-strong);
+  --ring-color-danger-subtle: var(--border-color-danger-subtle);
 
   /* Text colors */
   --text-color-primary: var(--color-neutral-1200);
@@ -383,6 +383,48 @@
   --text-color-danger: var(--color-red-700);
   --text-color-danger-primary: var(--color-red-900);
   --text-color-danger-secondary: var(--color-red-700);
+
+  /* Stroke colors */
+  --stroke-primary: var(--text-color-primary);
+  --stroke-secondary: var(--text-color-secondary);
+  --stroke-tertiary: var(--text-color-tertiary);
+  --stroke-placeholder: var(--text-color-placeholder);
+  --stroke-disabled: var(--text-color-disabled);
+  --stroke-accent-primary: var(--text-color-accent-primary);
+  --stroke-accent-secondary: var(--text-color-accent-secondary);
+  --stroke-on-color: var(--text-color-on-color);
+  --stroke-on-color-disabled: var(--text-color-on-color-disabled);
+  --stroke-inverse: var(--text-color-inverse);
+  --stroke-success: var(--text-color-success);
+  --stroke-success-primary: var(--text-color-success-primary);
+  --stroke-success-secondary: var(--text-color-success-secondary);
+  --stroke-warning: var(--text-color-warning);
+  --stroke-warning-primary: var(--text-color-warning-primary);
+  --stroke-warning-secondary: var(--text-color-warning-secondary);
+  --stroke-danger: var(--text-color-danger);
+  --stroke-danger-primary: var(--text-color-danger-primary);
+  --stroke-danger-secondary: var(--text-color-danger-secondary);
+
+  /* Fill colors */
+  --fill-primary: var(--text-color-primary);
+  --fill-secondary: var(--text-color-secondary);
+  --fill-tertiary: var(--text-color-tertiary);
+  --fill-placeholder: var(--text-color-placeholder);
+  --fill-disabled: var(--text-color-disabled);
+  --fill-accent-primary: var(--text-color-accent-primary);
+  --fill-accent-secondary: var(--text-color-accent-secondary);
+  --fill-on-color: var(--text-color-on-color);
+  --fill-on-color-disabled: var(--text-color-on-color-disabled);
+  --fill-inverse: var(--text-color-inverse);
+  --fill-success: var(--text-color-success);
+  --fill-success-primary: var(--text-color-success-primary);
+  --fill-success-secondary: var(--text-color-success-secondary);
+  --fill-warning: var(--text-color-warning);
+  --fill-warning-primary: var(--text-color-warning-primary);
+  --fill-warning-secondary: var(--text-color-warning-secondary);
+  --fill-danger: var(--text-color-danger);
+  --fill-danger-primary: var(--text-color-danger-primary);
+  --fill-danger-secondary: var(--text-color-danger-secondary);
 
   /* Icon colors */
   --text-color-icon-primary: var(--color-neutral-1200);
