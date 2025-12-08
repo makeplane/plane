@@ -343,7 +343,7 @@ export default {
   project_id_is_required: "ID projektu je povinné",
   project_id_allowed_char: "Jsou povoleny pouze alfanumerické a nelatinské znaky.",
   project_id_min_char: "ID projektu musí mít alespoň 1 znak",
-  project_id_max_char: "ID projektu může mít maximálně 5 znaků",
+  project_id_max_char: "ID projektu může mít maximálně 10 znaků",
   project_description_placeholder: "Zadejte popis projektu",
   select_network: "Vybrat síť",
   lead: "Vedoucí",

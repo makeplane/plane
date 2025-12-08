@@ -346,7 +346,7 @@ export default {
   project_id_is_required: "ID proyek diperlukan",
   project_id_allowed_char: "Hanya karakter alfanumerik & Non-latin yang diizinkan.",
   project_id_min_char: "ID proyek harus minimal 1 karakter",
-  project_id_max_char: "ID proyek maksimal 5 karakter",
+  project_id_max_char: "ID proyek maksimal 10 karakter",
   project_description_placeholder: "Masukkan deskripsi proyek",
   select_network: "Pilih jaringan",
   lead: "Pemimpin",

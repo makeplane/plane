@@ -334,7 +334,7 @@ export default {
   project_id_is_required: "项目ID为必填项",
   project_id_allowed_char: "仅允许字母数字和非拉丁字符。",
   project_id_min_char: "项目ID至少需要1个字符",
-  project_id_max_char: "项目ID最多只能有5个字符",
+  project_id_max_char: "项目ID最多只能有10个字符",
   project_description_placeholder: "输入项目描述",
   select_network: "选择网络",
   lead: "负责人",

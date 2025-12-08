@@ -344,7 +344,7 @@ export default {
   project_id_is_required: "ID dự án là bắt buộc",
   project_id_allowed_char: "Chỉ cho phép các ký tự chữ số và không phải Latin.",
   project_id_min_char: "ID dự án phải có ít nhất 1 ký tự",
-  project_id_max_char: "ID dự án chỉ được tối đa 5 ký tự",
+  project_id_max_char: "ID dự án chỉ được tối đa 10 ký tự",
   project_description_placeholder: "Nhập mô tả dự án",
   select_network: "Chọn mạng",
   lead: "Người phụ trách",

@@ -351,7 +351,7 @@ export default {
   project_id_is_required: "El ID del proyecto es requerido",
   project_id_allowed_char: "Solo se permiten caracteres alfanuméricos y no latinos.",
   project_id_min_char: "El ID del proyecto debe tener al menos 1 carácter",
-  project_id_max_char: "El ID del proyecto debe tener como máximo 5 caracteres",
+  project_id_max_char: "El ID del proyecto debe tener como máximo 10 caracteres",
   project_description_placeholder: "Ingresa la descripción del proyecto",
   select_network: "Seleccionar red",
   lead: "Líder",

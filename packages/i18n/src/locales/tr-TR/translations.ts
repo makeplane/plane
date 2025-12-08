@@ -343,7 +343,7 @@ export default {
   project_id_is_required: "Proje ID gereklidir",
   project_id_allowed_char: "Yalnızca alfasayısal ve Latin olmayan karakterlere izin verilir.",
   project_id_min_char: "Proje ID en az 1 karakter olmalı",
-  project_id_max_char: "Proje ID en fazla 5 karakter olmalı",
+  project_id_max_char: "Proje ID en fazla 10 karakter olmalı",
   project_description_placeholder: "Proje açıklamasını girin",
   select_network: "Ağ seç",
   lead: "Lider",

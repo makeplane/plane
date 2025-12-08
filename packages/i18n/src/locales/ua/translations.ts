@@ -343,7 +343,7 @@ export default {
   project_id_is_required: "ID проєкту є обов’язковим",
   project_id_allowed_char: "Дозволені лише алфанумеричні та нелатинські символи.",
   project_id_min_char: "ID проєкту має містити принаймні 1 символ",
-  project_id_max_char: "ID проєкту може містити максимум 5 символів",
+  project_id_max_char: "ID проєкту може містити максимум 10 символів",
   project_description_placeholder: "Введіть опис проєкту",
   select_network: "Вибрати мережу",
   lead: "Керівник",

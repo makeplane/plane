@@ -344,7 +344,7 @@ export default {
   project_id_is_required: "ID-ul proiectului este obligatoriu",
   project_id_allowed_char: "Sunt permise doar caractere alfanumerice și non-latine.",
   project_id_min_char: "ID-ul proiectului trebuie să aibă cel puțin 1 caracter",
-  project_id_max_char: "ID-ul proiectului trebuie să aibă cel mult 5 caractere",
+  project_id_max_char: "ID-ul proiectului trebuie să aibă cel mult 10 caractere",
   project_description_placeholder: "Introdu descrierea proiectului",
   select_network: "Selectează rețeaua",
   lead: "Lider",

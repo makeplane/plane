@@ -341,7 +341,7 @@ export default {
   project_id_is_required: "Требуется ID проекта",
   project_id_allowed_char: "Допускаются только буквенно-цифровые и нелатинские символы.",
   project_id_min_char: "ID проекта должен содержать минимум 1 символ",
-  project_id_max_char: "ID проекта должен содержать максимум 5 символов",
+  project_id_max_char: "ID проекта должен содержать максимум 10 символов",
   project_description_placeholder: "Введите описание проекта",
   select_network: "Выбрать сеть",
   lead: "Руководитель",

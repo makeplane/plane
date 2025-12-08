@@ -333,7 +333,7 @@ export default {
   project_id_is_required: "專案 ID 為必填",
   project_id_allowed_char: "僅允許英數字元和非拉丁字元。",
   project_id_min_char: "專案 ID 至少必須有 1 個字元",
-  project_id_max_char: "專案 ID 最多只能有 5 個字元",
+  project_id_max_char: "專案 ID 最多只能有 10 個字元",
   project_description_placeholder: "輸入專案描述",
   select_network: "選擇網路",
   lead: "負責人",

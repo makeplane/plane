@@ -341,7 +341,7 @@ export default {
   project_id_is_required: "プロジェクトIDは必須です",
   project_id_allowed_char: "英数字と非ラテン文字のみ使用できます。",
   project_id_min_char: "プロジェクトIDは最低1文字必要です",
-  project_id_max_char: "プロジェクトIDは最大5文字までです",
+  project_id_max_char: "プロジェクトIDは最大10文字までです",
   project_description_placeholder: "プロジェクトの説明を入力",
   select_network: "ネットワークを選択",
   lead: "リード",

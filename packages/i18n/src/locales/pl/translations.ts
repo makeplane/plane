@@ -341,7 +341,7 @@ export default {
   project_id_is_required: "ID projektu jest wymagane",
   project_id_allowed_char: "Dozwolone są tylko znaki alfanumeryczne i nielatynowskie.",
   project_id_min_char: "ID projektu musi mieć co najmniej 1 znak",
-  project_id_max_char: "ID projektu może mieć maksymalnie 5 znaków",
+  project_id_max_char: "ID projektu może mieć maksymalnie 10 znaków",
   project_description_placeholder: "Wpisz opis projektu",
   select_network: "Wybierz sieć",
   lead: "Lead",

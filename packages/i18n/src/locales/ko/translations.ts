@@ -338,7 +338,7 @@ export default {
   project_id_is_required: "프로젝트 ID가 필요합니다",
   project_id_allowed_char: "영숫자 및 비라틴 문자만 허용됩니다.",
   project_id_min_char: "프로젝트 ID는 최소 1자 이상이어야 합니다",
-  project_id_max_char: "프로젝트 ID는 최대 5자 이하여야 합니다",
+  project_id_max_char: "프로젝트 ID는 최대 10자 이하여야 합니다",
   project_description_placeholder: "프로젝트 설명 입력",
   select_network: "네트워크 선택",
   lead: "리드",
