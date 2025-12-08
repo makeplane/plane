@@ -2,48 +2,38 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-// plane imports
-// components
 import { PageHead } from "@/components/core/page-title";
-// services
 import { RepositoryService } from "@/services/qa/repository.service";
 import { Space, Table, Tag, Input, Button, Modal, message } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined, EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import type { TableProps, InputRef, TableColumnType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
-import { Repository, RepositoryResponse } from "./data-model";
 import { formatDateTime, getEnums, globalEnums } from "./util";
-import RepositoryModal from "./repository-modal";
-import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { Logo } from "@/components/common/logo";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import RepositoryModal from "./repository-modal";
 
-// 初始化服务
 const repositoryService = new RepositoryService();
 
 export default function TestManagementHomePage() {
-  const { workspaceSlug } = useParams(); // ✅ 在组件内部调用
+  const { workspaceSlug, projectId } = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [repositories, setRepositories] = useState<Repository[]>([]);
+  const [repositories, setRepositories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
 
-  // ✅ 使用 useEffect 处理异步初始化
   useEffect(() => {
     const initializeEnums = async () => {
       if (workspaceSlug) {
         try {
           const enumTypes = await getEnums(workspaceSlug as string);
           globalEnums.setEnums(enumTypes);
-        } catch (error) {
-          console.error("Failed to initialize enums:", error);
-        }
+        } catch {}
       }
     };
-
     initializeEnums();
   }, [workspaceSlug]);
 
@@ -55,33 +45,24 @@ export default function TestManagementHomePage() {
     } catch {}
     const redirectTo = searchParams.get("redirect_to");
     const ws = String(workspaceSlug || "");
-    const pid = typeof window !== "undefined" ? (sessionStorage.getItem("currentProjectId") || "") : "";
+    const pid = String(projectId || "");
     let target = redirectTo ? decodeURIComponent(redirectTo) : `/${ws}/projects/${pid}/test-management/plans`;
     target = target.includes("?")
       ? `${target}&repositoryId=${encodeURIComponent(String(repositoryIdFromUrl))}`
       : `${target}?repositoryId=${encodeURIComponent(String(repositoryIdFromUrl))}`;
     router.push(target);
-  }, [searchParams, workspaceSlug, router]);
+  }, [searchParams, workspaceSlug, projectId, router]);
 
   const searchInput = useRef<InputRef>(null);
-
-  // 分页状态管理
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
-
-  // 筛选状态管理
-  const [filters, setFilters] = useState<{
-    name?: string;
-    project?: string;
-  }>({});
-
+  const [filters, setFilters] = useState<{ name?: string; project?: string }>({});
   const [modalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState<Repository | null>(null);
+  const [editing, setEditing] = useState<any | null>(null);
   const [apiLoading, setApiLoading] = useState(false);
 
-  // 搜索筛选函数
-  const getColumnSearchProps = (dataIndex: keyof Repository | string): TableColumnType<Repository> => ({
+  const getColumnSearchProps = (dataIndex: keyof any | string): TableColumnType<any> => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }: FilterDropdownProps) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
@@ -89,14 +70,12 @@ export default function TestManagementHomePage() {
           placeholder={`搜索 ${dataIndex === "name" ? "名称" : "项目"}`}
           value={selectedKeys[0]}
           onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          // 将 confirm 改为 close，避免触发 Table 内部回调导致的首个“无筛选”请求
           onPressEnter={() => handleSearch(selectedKeys as string[], dataIndex, close)}
           style={{ marginBottom: 8, display: "block" }}
         />
         <Space>
           <Button
             type="primary"
-            // 同样使用 close 而不是 confirm
             onClick={() => handleSearch(selectedKeys as string[], dataIndex, close)}
             icon={<SearchOutlined />}
             size="small"
@@ -115,13 +94,9 @@ export default function TestManagementHomePage() {
       </div>
     ),
     filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />,
-    // 移除客户端的 onFilter 逻辑
     onFilterDropdownOpenChange: (visible) => {
-      if (visible) {
-        setTimeout(() => searchInput.current?.select(), 100);
-      }
+      if (visible) setTimeout(() => searchInput.current?.select(), 100);
     },
-    // 显示当前筛选状态
     filteredValue:
       dataIndex === "name"
         ? filters.name
@@ -134,11 +109,9 @@ export default function TestManagementHomePage() {
           : null,
   });
 
-  // 移除 confirm 的参数与调用，改为手动 close 下拉，仅发起一次服务端请求
-  const handleSearch = (selectedKeys: string[], dataIndex: keyof Repository | string, close?: () => void) => {
+  const handleSearch = (selectedKeys: string[], dataIndex: keyof any | string, close?: () => void) => {
     setSearchText(selectedKeys[0]);
-    setSearchedColumn(dataIndex);
-
+    setSearchedColumn(String(dataIndex));
     const newFilters = { ...filters };
     if (selectedKeys[0]) {
       if (dataIndex === "name") newFilters.name = selectedKeys[0];
@@ -147,32 +120,22 @@ export default function TestManagementHomePage() {
       if (dataIndex === "name") delete newFilters.name;
       else if (dataIndex === "project") delete newFilters.project;
     }
-
     setFilters(newFilters);
-    // 重置到第一页并应用筛选，仅此一次请求
     fetchRepositories(1, pageSize, newFilters);
-    // 手动关闭下拉
     close?.();
   };
 
-  const handleReset = (clearFilters: () => void, dataIndex: keyof Repository | string) => {
+  const handleReset = (clearFilters: () => void, dataIndex: keyof any | string) => {
     clearFilters();
     setSearchText("");
-
-    // 清除对应的筛选条件
     const newFilters = { ...filters };
-    if (dataIndex === "name") {
-      delete newFilters.name;
-    } else if (dataIndex === "project") {
-      delete newFilters.project;
-    }
-
+    if (dataIndex === "name") delete newFilters.name;
+    else if (dataIndex === "project") delete newFilters.project;
     setFilters(newFilters);
-    // 重置到第一页并清除筛选
     fetchRepositories(1, pageSize, newFilters);
   };
 
-  const columns: TableProps<Repository>["columns"] = [
+  const columns: TableProps<any>["columns"] = [
     {
       title: "名称",
       dataIndex: "name",
@@ -180,15 +143,11 @@ export default function TestManagementHomePage() {
       render: (text, record) => (
         <a
           onClick={() => {
-            // 将repositoryId存储到sessionStorage
             sessionStorage.setItem("selectedRepositoryId", record.id);
             sessionStorage.setItem("selectedRepositoryName", record.name);
-            const redirectTo = searchParams.get("redirect_to");
             const ws = String(workspaceSlug || "");
-            let target = redirectTo ? decodeURIComponent(redirectTo) : `/${ws}/test-management/plans`;
-            target = target.includes("?")
-              ? `${target}&repositoryId=${encodeURIComponent(String(record.id))}`
-              : `${target}?repositoryId=${encodeURIComponent(String(record.id))}`;
+            const pid = String(projectId || "");
+            let target = `/${ws}/projects/${pid}/test-management/plans?repositoryId=${encodeURIComponent(String(record.id))}`;
             router.push(target);
           }}
           style={{ cursor: "pointer" }}
@@ -198,11 +157,7 @@ export default function TestManagementHomePage() {
       ),
       ...getColumnSearchProps("name"),
     },
-    {
-      title: "描述",
-      dataIndex: "description",
-      key: "description",
-    },
+    { title: "描述", dataIndex: "description", key: "description" },
     {
       title: "项目",
       dataIndex: "project",
@@ -224,7 +179,7 @@ export default function TestManagementHomePage() {
       title: "创建者",
       key: "created_by",
       dataIndex: "created_by",
-      render: (_, record) => (
+      render: (_: any, record: any) => (
         <MemberDropdown
           multiple={true}
           value={[record.created_by.id]}
@@ -244,15 +199,15 @@ export default function TestManagementHomePage() {
       title: "创建时间",
       key: "created_at",
       dataIndex: "created_at",
-      render: (dateString) => formatDateTime(dateString),
+      render: (dateString: string) => formatDateTime(dateString),
       defaultSortOrder: "descend",
-      sorter: (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+      sorter: (a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
     },
     {
       title: "操作",
       key: "actions",
       width: 120,
-      render: (_, record) => (
+      render: (_: any, record: any) => (
         <Space>
           <Button
             type="text"
@@ -269,50 +224,28 @@ export default function TestManagementHomePage() {
     },
   ];
 
-  // 获取用例库数据
-  const fetchRepositories = async (
-    page: number = currentPage,
-    size: number = pageSize,
-    filterParams: typeof filters = filters
-  ) => {
+  const fetchRepositories = async (page: number = currentPage, size: number = pageSize, filterParams = filters) => {
     if (!workspaceSlug) return;
-
     try {
       setLoading(true);
       setError(null);
-
-      // 构建查询参数
-      const queryParams: any = {
-        page: page,
-        page_size: size,
-      };
-
-      // 添加筛选参数
-      if (filterParams.name) {
-        queryParams.name__icontains = filterParams.name;
-      }
-      if (filterParams.project) {
-        queryParams.project__name__icontains = filterParams.project; // 假设后端支持这种嵌套查询
-      }
-
-      const response: RepositoryResponse = await repositoryService.getRepositories(
-        workspaceSlug as string,
-        queryParams
-      );
-
-      setRepositories(response.data || []);
-      setTotal(response.count || 0);
+      const queryParams: any = { page, page_size: size };
+      if (filterParams.name) queryParams.name__icontains = filterParams.name;
+      if (filterParams.project) queryParams.project__name__icontains = filterParams.project;
+      const response: any = await repositoryService.getRepositories(workspaceSlug as string, queryParams);
+      const list = response?.data || [];
+      setRepositories(list);
+      setTotal(response.count || list.length || 0);
       setCurrentPage(page);
       setPageSize(size);
     } catch (err) {
-      console.error("获取用例库数据失败:", err);
       setError("获取用例库数据失败，请稍后重试");
     } finally {
       setLoading(false);
     }
   };
 
-  const confirmDelete = (repo: Repository) => {
+  const confirmDelete = (repo: any) => {
     Modal.confirm({
       title: "确认删除",
       content: `确定删除用例库“${repo.name}”吗？删除后不可恢复。`,
@@ -335,15 +268,12 @@ export default function TestManagementHomePage() {
     });
   };
 
-  // 处理分页变化
   const handlePaginationChange = (page: number, size?: number) => {
     const newPageSize = size || pageSize;
     fetchRepositories(page, newPageSize, filters);
   };
 
-  // 处理每页大小变化
-  const handlePageSizeChange = (current: number, size: number) => {
-    // 当改变每页大小时，重置到第一页
+  const handlePageSizeChange = (_current: number, size: number) => {
     fetchRepositories(1, size, filters);
   };
 
@@ -361,18 +291,16 @@ export default function TestManagementHomePage() {
               <div className="text-custom-text-300">加载中...</div>
             </div>
           )}
-
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-4">
               <div className="text-red-800 text-sm">{error}</div>
             </div>
           )}
-
           {!loading && !error && (
             <>
               <div>
                 <div className="flex items-center justify-between gap-4 border-b border-custom-border-200 px-4 py-3 sm:px-5">
-                  <h3 className="text-lg font-medium">用例库</h3>
+                  <div>测试用例库</div>
                   <Button
                     type="primary"
                     icon={<PlusOutlined />}
@@ -397,7 +325,6 @@ export default function TestManagementHomePage() {
                     showSizeChanger: true,
                     showQuickJumper: true,
                     showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，共 ${total} 条`,
-                    // 修正误写的 "1" -> "100"
                     pageSizeOptions: ["10", "20", "50", "100"],
                     onChange: handlePaginationChange,
                     onShowSizeChange: handlePageSizeChange,

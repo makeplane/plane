@@ -34,7 +34,7 @@ import type { TIssue, TPartialProject } from "@plane/types";
 import { WorkItemSelectModal } from "./work-item-select-modal";
 import { projectIssueTypesCache, ProjectIssueTypeService, ProjectService, TIssueType } from "@/services/project";
 import { Logo } from "@plane/ui";
-import { getEnums } from "app/(all)/[workspaceSlug]/(projects)/test-management/util";
+import { getEnums } from "app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/test-management/util";
 import { useMember } from "@/hooks/store/use-member";
 import { IssueService } from "@/services/issue/issue.service";
 

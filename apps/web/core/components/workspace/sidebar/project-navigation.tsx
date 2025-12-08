@@ -8,7 +8,15 @@ import { useParams, usePathname } from "next/navigation";
 import { FileText, Rss, Layers } from "lucide-react";
 import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
+import {
+  CycleIcon,
+  IntakeIcon,
+  ModuleIcon,
+  PageIcon,
+  ViewsIcon,
+  WorkItemsIcon,
+  TestManagementIcon,
+} from "@plane/propel/icons";
 import type { EUserProjectRoles } from "@plane/types";
 // plane ui
 // components
@@ -135,6 +143,16 @@ export const ProjectNavigation: FC<TProjectItemsProps> = observer((props) => {
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
         shouldRender: project.inbox_view,
         sortOrder: 6,
+      },
+      {
+        i18n_key: "test_management",
+        key: "test-management",
+        name: "测试",
+        href: `/${workspaceSlug}/projects/${projectId}/test-management`,
+        icon: TestManagementIcon,
+        access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+        shouldRender: true,
+        sortOrder: 7,
       },
     ],
     [project]

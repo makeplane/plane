@@ -11,5 +11,10 @@ type TProjectItemsRootProps = {
 
 export const ProjectNavigationRoot: FC<TProjectItemsRootProps> = (props) => {
   const { workspaceSlug, projectId } = props;
+  if (typeof window !== "undefined") {
+    try {
+      sessionStorage.setItem("currentProjectId", projectId);
+    } catch {}
+  }
   return <ProjectNavigation workspaceSlug={workspaceSlug} projectId={projectId} />;
 };

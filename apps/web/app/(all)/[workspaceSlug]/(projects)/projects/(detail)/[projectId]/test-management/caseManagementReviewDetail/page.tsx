@@ -160,11 +160,12 @@ export default function CaseManagementReviewDetailPage() {
     }
   }, [repositoryId]);
 
+  const pid = typeof window !== "undefined" ? sessionStorage.getItem("currentProjectId") || "" : "";
   useEffect(() => {
     if (!repositoryId && workspaceSlug) {
       const ws = String(workspaceSlug || "");
-      const current = `/${ws}/test-management/caseManagementReviewDetail${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
-      router.push(`/${ws}/test-management?redirect_to=${encodeURIComponent(current)}`);
+      const current = `/${ws}/projects/${pid}/test-management/caseManagementReviewDetail${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
+      router.push(`/${ws}/projects/${pid}/test-management?redirect_to=${encodeURIComponent(current)}`);
     }
   }, [repositoryId, workspaceSlug, searchParams, router]);
 
@@ -336,7 +337,7 @@ export default function CaseManagementReviewDetailPage() {
             size="small"
             onClick={() => {
               if (!workspaceSlug || !reviewId) return;
-              const pid = typeof window !== "undefined" ? (sessionStorage.getItem("currentProjectId") || "") : "";
+              const pid = typeof window !== "undefined" ? sessionStorage.getItem("currentProjectId") || "" : "";
               const href = `/${workspaceSlug}/projects/${pid}/test-management/case-review?review_id=${encodeURIComponent(reviewId)}&case_id=${encodeURIComponent(record.case_id)}`;
               router.push(href);
             }}
@@ -370,7 +371,9 @@ export default function CaseManagementReviewDetailPage() {
       <PageHead title="评审详情" />
       <Breadcrumbs>
         <Breadcrumbs.Item
-          component={<BreadcrumbLink href={`/${workspaceSlug}/test-management/reviews`} label="用例评审" />}
+          component={
+            <BreadcrumbLink href={`/${workspaceSlug}/projects/${pid}/test-management/reviews`} label="用例评审" />
+          }
         />
         <Breadcrumbs.Item component={<BreadcrumbLink label="评审详情" isLast />} />
       </Breadcrumbs>

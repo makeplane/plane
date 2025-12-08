@@ -9,7 +9,7 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { useMember } from "@/hooks/store/use-member";
 import { useSearchParams } from "next/navigation";
-import { getEnums } from "app/(all)/[workspaceSlug]/(projects)/test-management/util";
+import { getEnums } from "app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/test-management/util";
 
 type ExecRecord = {
   id: string;

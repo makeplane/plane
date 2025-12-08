@@ -1,0 +1,47 @@
+.container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.split { display: flex; height: calc(100% - 48px); width: 100%; }
+.left { position: relative; border-right: 1px solid #e8e8e8; transition: width 0.2s ease; min-width: 200px; max-width: 300px; overflow: hidden; display: flex; flex-direction: column; }
+.leftHeader { padding: 8px; }
+.treeRoot { flex: 1; overflow: auto; }
+.treeList { display: block; }
+.row { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; cursor: pointer; transition: background-color 0.2s ease; }
+.row:hover { background-color: #f5f5f5; }
+.rowSelected { background-color: #f0faff; }
+.rowLeft { display: flex; align-items: center; gap: 8px; }
+.icon { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; color: #8c8c8c; }
+.name { font-size: 13px; color: var(--color-text, #333); }
+.rowRight { display: flex; align-items: center; gap: 8px; width: 140px; justify-content: flex-end; }
+.count { font-size: 12px; color: #8c8c8c; }
+.actionIcon { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; color: #1677ff; }
+.actionMenu { opacity: 0; transition: opacity 0.2s ease; width: 24px; }
+.row:hover .actionMenu { opacity: 1; }
+.menuSpace { width: 24px; display: inline-flex; align-items: center; justify-content: center; }
+.resizer { position: absolute; top: 0; right: 0; width: 6px; height: 100%; cursor: col-resize; }
+.right { flex: 1; overflow: auto; padding: 8px 8px 8px 0; }
+.passRateCell { display: flex; align-items: center; gap: 8px; }
+.progressWrap { flex: 0 0 75%; min-width: 120px; }
+.progressBar { width: 100%; height: 6px; border: 1px solid #e8e8e8; border-radius: 6px; overflow: hidden; display: flex; }
+.progressSegment { height: 100%; }
+.progressPercent { font-size: 12px; color: var(--color-text, #333); }
+.legend { display: flex; flex-direction: column; gap: 6px; }
+.legendItem { display: flex; align-items: center; gap: 8px; }
+.legendColor { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.legendLabel { font-size: 12px; color: var(--color-text, #333); }
+.legendCount { margin-left: auto; font-size: 12px; color: #8c8c8c; }
+.lightTooltip :global(.ant-tooltip-inner) { background-color: #ffffff; color: #333; }
+.lightTooltip :global(.ant-tooltip-arrow) { border-color: #ffffff; }
+.right :global(.ant-table-content::-webkit-scrollbar), .right :global(.ant-table-body::-webkit-scrollbar) { height: 4px; background: transparent; }
+.right :global(.ant-table-content::-webkit-scrollbar-thumb), .right :global(.ant-table-body::-webkit-scrollbar-thumb) { background-color: transparent; border-radius: 2px; transition: background-color 0.3s ease; }
+.right :global(.ant-table-content::-webkit-scrollbar-track), .right :global(.ant-table-body::-webkit-scrollbar-track) { background: transparent; }
+.right :global(.ant-table-content:hover::-webkit-scrollbar), .right :global(.ant-table-body:hover::-webkit-scrollbar) { height: 4px; }
+.right :global(.ant-table-content:hover::-webkit-scrollbar-thumb), .right :global(.ant-table-body:hover::-webkit-scrollbar-thumb) { background-color: #dddde0; }
+.right :global(.ant-table-content) { scrollbar-width: thin; scrollbar-color: transparent transparent; }
+.right :global(.ant-table-content:hover) { scrollbar-width: thin; scrollbar-color: #dddde0 transparent; }
+.right :global(.ant-table-body) { scrollbar-width: thin; scrollbar-color: transparent transparent; }
+.right :global(.ant-table-body:hover) { scrollbar-width: thin; scrollbar-color: #dddde0 transparent; }
+@media (max-width: 768px) { .split { flex-direction: column; } .left { width: 100% !important; max-width: none; min-width: 0; border-right: none; border-bottom: 1px solid #e8e8e8; } .resizer { display: none; } }

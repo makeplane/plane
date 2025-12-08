@@ -5,7 +5,6 @@ import { useEffect, useMemo, useRef, useState, cloneElement } from "react";
 import { PageHead } from "@/components/core/page-title";
 import { Breadcrumbs } from "@plane/ui";
 import { Button } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
 import PlanCasesModal from "@/components/qa/plans/plan-cases-modal";
 import PlanIterationModal from "@/components/qa/plans/plan-iteration-modal";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
@@ -16,8 +15,7 @@ import { CaseModuleService } from "@/services/qa";
 import { PlanService } from "@/services/qa/plan.service";
 import { AppstoreOutlined, DeploymentUnitOutlined, DownOutlined } from "@ant-design/icons";
 import { FolderOpenDot } from "lucide-react";
-import { globalEnums } from "../../projects/(detail)/[projectId]/test-management/util";
-import { formatDateTime } from "../util";
+import { formatDateTime, globalEnums } from "../util";
 
 type TLabel = { id?: string; name?: string } | string;
 type TestCase = {
@@ -312,7 +310,9 @@ export default function PlanCasesPage() {
         <div>
           <Breadcrumbs>
             <Breadcrumbs.Item
-              component={<BreadcrumbLink href={`/${workspaceSlug}/test-management/plans`} label="测试计划" />}
+              component={
+                <BreadcrumbLink href={`/${workspaceSlug}/projects/${pid}/test-management/plans`} label="测试计划" />
+              }
             />
             <Breadcrumbs.Item component={<BreadcrumbLink label="测试计划详情" isLast />} />
           </Breadcrumbs>

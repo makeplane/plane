@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { Modal, Space, Button, Input, Tree, Table, Tag, message } from "antd";
-import { globalEnums, getEnums } from "app/(all)/[workspaceSlug]/(projects)/test-management/util";
+import { globalEnums, getEnums } from "app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/test-management/util";
 import type { TableProps } from "antd";
 import { CaseService as QaCaseService } from "@/services/qa/case.service";
 import styles from "./TestCaseSelectionModal.module.css";

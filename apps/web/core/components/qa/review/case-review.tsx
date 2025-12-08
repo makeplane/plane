@@ -11,7 +11,7 @@ import debounce from "lodash-es/debounce";
 import { CaseService as CaseApiService } from "@/services/qa/case.service";
 import { CaseService as ReviewApiService } from "@/services/qa/review.service";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
-import { getEnums } from "app/(all)/[workspaceSlug]/(projects)/test-management/util";
+import { getEnums } from "app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/test-management/util";
 import * as LucideIcons from "lucide-react";
 import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
@@ -367,18 +367,21 @@ export default function CaseReview() {
     }
     debouncedSubmit(payload);
   };
+  const pid = typeof window !== "undefined" ? sessionStorage.getItem("currentProjectId") || "" : "";
 
   return (
     <div className="flex flex-col gap-3 p-4 w-full">
       <PageHead title="用例详情" />
       <Breadcrumbs>
         <Breadcrumbs.Item
-          component={<BreadcrumbLink href={`/${workspaceSlug}/test-management/plans`} label="测试计划" />}
+          component={
+            <BreadcrumbLink href={`/${workspaceSlug}/projects/${pid}/test-management/plans`} label="测试计划" />
+          }
         />
         <Breadcrumbs.Item
           component={
             <BreadcrumbLink
-              href={`/${workspaceSlug}/test-management/caseManagementReviewDetail?review_id=${encodeURIComponent(String(reviewId))}`}
+              href={`/${workspaceSlug}/projects/${pid}/test-management/caseManagementReviewDetail?review_id=${encodeURIComponent(String(reviewId))}`}
               label="测试计划详情"
             />
           }

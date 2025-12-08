@@ -3,23 +3,19 @@
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useRef, useMemo } from "react";
 import { PageHead } from "@/components/core/page-title";
-// services
 import { PlanService } from "@/services/qa/plan.service";
-import { Space, Table, Tag, Input, Button, Dropdown, Modal, Tooltip, message } from "antd";
+import { Space, Table, Tag, Input, Button, Dropdown, Modal, Tooltip } from "antd";
 import {
   SearchOutlined,
   PlusOutlined,
-  MoreOutlined,
   FolderOutlined,
   EllipsisOutlined,
   DeleteOutlined,
   PlayCircleOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
-import { EditOutlined } from "@ant-design/icons";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TableProps, InputRef, TableColumnType } from "antd";
 import type { FilterDropdownProps } from "antd/es/table/interface";
-// plane ui
 import { Avatar, AvatarGroup } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 type PlanModule = { id: string; name: string; is_default?: boolean; repository?: string; count?: number };
@@ -42,7 +38,7 @@ import { CreateUpdatePlanModal } from "@/components/qa/plans/create-update-modal
 import styles from "../reviews/reviews.module.css";
 
 export default function TestPlanDetailPage() {
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug, projectId } = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
   const Enums = globalEnums.Enums;
@@ -50,7 +46,6 @@ export default function TestPlanDetailPage() {
   const repositoryId =
     repositoryIdFromUrl || (typeof window !== "undefined" ? sessionStorage.getItem("selectedRepositoryId") : null);
   const repositoryName = typeof window !== "undefined" ? sessionStorage.getItem("selectedRepositoryName") : "";
-  // 解码URL编码的repositoryName
   const decodedRepositoryName = repositoryName ? decodeURIComponent(repositoryName as string) : "";
 
   const [testPlans, setTestPlans] = useState<TestPlan[]>([]);
@@ -59,9 +54,7 @@ export default function TestPlanDetailPage() {
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef<InputRef>(null);
-  // 新增：创建计划模态框开关
   const [showCreateModal, setShowCreateModal] = useState(false);
-  // 新增：PlanService 实例
   const planService = new PlanService();
   const [leftWidth, setLeftWidth] = useState<number>(300);
   const isDraggingRef = useRef<boolean>(false);
@@ -73,17 +66,10 @@ export default function TestPlanDetailPage() {
   const [creatingName, setCreatingName] = useState<string>("");
   const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
 
-  // 分页状态管理
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
-
-  // 筛选状态管理（新增：状态多选与负责人名称）
-  const [filters, setFilters] = useState<{
-    name?: string;
-    assigneeName?: string;
-    states?: number[];
-  }>({});
+  const [filters, setFilters] = useState<{ name?: string; assigneeName?: string; states?: number[] }>({});
 
   const totalPlans = useMemo(() => modules.reduce((sum, m) => sum + (m.count || 0), 0), [modules]);
 
@@ -112,14 +98,14 @@ export default function TestPlanDetailPage() {
     document.body.style.userSelect = "auto";
   };
 
-  useEffect(() => {
-    return () => {
+  useEffect(
+    () => () => {
       window.removeEventListener("mousemove", onMouseMoveResize as any);
       window.removeEventListener("mouseup", onMouseUpResize as any);
-    };
-  }, []);
+    },
+    []
+  );
 
-  // 当repositoryId获取到后，开始获取测试计划数据
   useEffect(() => {
     if (repositoryId && workspaceSlug) {
       try {
@@ -130,30 +116,27 @@ export default function TestPlanDetailPage() {
       fetchModules();
       fetchTestPlans(1, pageSize);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [repositoryId, workspaceSlug]);
 
   useEffect(() => {
     if (!repositoryId && workspaceSlug) {
       const ws = String(workspaceSlug || "");
-      const pid = typeof window !== "undefined" ? sessionStorage.getItem("currentProjectId") || "" : "";
+      const pid = String(projectId || "");
       const current = `/${ws}/projects/${pid}/test-management/plans${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
       try {
-        message.warning("未检测到用例库，请选择一个用例库后自动跳回");
       } catch {}
       router.push(`/${ws}/projects/${pid}/test-management?redirect_to=${encodeURIComponent(current)}`);
     }
-  }, [repositoryId, workspaceSlug, searchParams, router]);
+  }, [repositoryId, workspaceSlug, projectId, searchParams, router]);
 
   const fetchModules = async () => {
     if (!workspaceSlug || !repositoryId) return;
     try {
       const data: any[] = await planService.getPlanModules(workspaceSlug as string, { repository_id: repositoryId });
       setModules(Array.isArray(data) ? data : []);
-    } catch (e) {}
+    } catch {}
   };
 
-  // 搜索筛选函数（支持 name 与 assignees 两列）
   const getColumnSearchProps = (dataIndex: keyof TestPlan | string): TableColumnType<TestPlan> => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }: FilterDropdownProps) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
@@ -187,9 +170,7 @@ export default function TestPlanDetailPage() {
     ),
     filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? "#1677ff" : undefined }} />,
     onFilterDropdownOpenChange: (visible) => {
-      if (visible) {
-        setTimeout(() => searchInput.current?.select(), 100);
-      }
+      if (visible) setTimeout(() => searchInput.current?.select(), 100);
     },
     filteredValue:
       dataIndex === "name"
@@ -206,7 +187,6 @@ export default function TestPlanDetailPage() {
   const handleSearch = (selectedKeys: string[], dataIndex: keyof TestPlan | string, close?: () => void) => {
     setSearchText(selectedKeys[0]);
     setSearchedColumn(dataIndex);
-
     const newFilters = { ...filters };
     if (selectedKeys[0]) {
       if (dataIndex === "name") newFilters.name = selectedKeys[0];
@@ -215,7 +195,6 @@ export default function TestPlanDetailPage() {
       if (dataIndex === "name") delete newFilters.name;
       if (dataIndex === "assignees") delete newFilters.assigneeName;
     }
-
     setFilters(newFilters);
     fetchTestPlans(1, pageSize, newFilters);
     close?.();
@@ -224,25 +203,15 @@ export default function TestPlanDetailPage() {
   const handleReset = (clearFilters: () => void, dataIndex: keyof TestPlan | string) => {
     clearFilters();
     setSearchText("");
-
     const newFilters = { ...filters };
-    if (dataIndex === "name") {
-      delete newFilters.name;
-    }
-    if (dataIndex === "assignees") {
-      delete newFilters.assigneeName;
-    }
-
+    if (dataIndex === "name") delete newFilters.name;
+    if (dataIndex === "assignees") delete newFilters.assigneeName;
     setFilters(newFilters);
     fetchTestPlans(1, pageSize, newFilters);
   };
 
-  // 渲染分配人员
   const renderAssignees = (assignees: TestPlan["assignees"]) => {
-    if (!assignees || assignees.length === 0) {
-      return <span className="text-custom-text-400">-</span>;
-    }
-
+    if (!assignees || assignees.length === 0) return <span className="text-custom-text-400">-</span>;
     return (
       <AvatarGroup max={3} size="md" showTooltip={true}>
         {assignees.map((assignee) => (
@@ -270,7 +239,6 @@ export default function TestPlanDetailPage() {
     const totalCount = orderKeys.reduce((s, k) => s + Number(passRate?.[k] || 0), 0);
     const passed = Number(passRate?.["成功"] || 0);
     const percent = totalCount > 0 ? Math.floor((passed / totalCount) * 100) : 0;
-
     const colorHexMap: Record<string, string> = {
       green: "#52c41a",
       red: "#ff4d4f",
@@ -279,21 +247,18 @@ export default function TestPlanDetailPage() {
       gray: "#bfbfbf",
       default: "#d9d9d9",
     };
-
     const categoryColor: Record<string, string> = {
       成功: colorHexMap.green,
       失败: colorHexMap.red,
       阻塞: colorHexMap.gold,
       未执行: colorHexMap.gray,
     };
-
     const segments = orderKeys.map((k) => {
       const count = Number(passRate?.[k] || 0);
       const color = categoryColor[k] || colorHexMap.default;
       const widthPct = totalCount > 0 ? (count / totalCount) * 100 : 0;
       return { key: k, count, color, widthPct };
     });
-
     const tooltipContent = (
       <div className={styles.legend}>
         {orderKeys.map((k) => (
@@ -305,7 +270,6 @@ export default function TestPlanDetailPage() {
         ))}
       </div>
     );
-
     return (
       <div className={styles.passRateCell}>
         <Tooltip mouseEnterDelay={0.25} overlayClassName={styles.lightTooltip} title={tooltipContent}>
@@ -326,18 +290,11 @@ export default function TestPlanDetailPage() {
     );
   };
 
-  const renderResult = (result: any) => {
-    const text = result ?? "-";
-    return <span className="text-sm text-custom-text-500">{text}</span>;
-  };
+  const renderResult = (result: any) => <span className="text-sm text-custom-text-500">{result ?? "-"}</span>;
 
-  // 表格变更回调：统一处理分页与服务端过滤（状态/负责人）
   const handleTableChange: TableProps<TestPlan>["onChange"] = (pagination, tableFilters) => {
     const selectedStates = (tableFilters?.state as number[] | undefined) || [];
-    const newFilters = {
-      ...filters,
-      states: selectedStates.length ? selectedStates.map((v) => Number(v)) : undefined,
-    };
+    const newFilters = { ...filters, states: selectedStates.length ? selectedStates.map((v) => Number(v)) : undefined };
     const nextPage = pagination.current || 1;
     const nextPageSize = pagination.pageSize || pageSize;
     const filtersChanged = JSON.stringify(filters) !== JSON.stringify(newFilters);
@@ -347,34 +304,27 @@ export default function TestPlanDetailPage() {
     fetchTestPlans(nextPage, nextPageSize, filtersChanged ? newFilters : filters);
   };
 
-  // 新增：编辑模态框状态与当前编辑项
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingPlan, setEditingPlan] = useState<TestPlan | null>(null);
-
   const openEditModal = (plan: TestPlan) => {
     setEditingPlan(plan);
     setShowEditModal(true);
   };
-
   const handleEditSuccess = async () => {
     return;
   };
-
   const refreshAll = async () => {
     await fetchTestPlans(currentPage, pageSize, filters, selectedModuleId ?? undefined);
     await fetchModules();
   };
-
   const prevShowCreateRef = useRef<boolean>(false);
   const prevShowEditRef = useRef<boolean>(false);
-
   useEffect(() => {
     if (prevShowCreateRef.current && !showCreateModal) {
       refreshAll();
     }
     prevShowCreateRef.current = showCreateModal;
   }, [showCreateModal]);
-
   useEffect(() => {
     if (prevShowEditRef.current && !showEditModal) {
       refreshAll();
@@ -392,13 +342,9 @@ export default function TestPlanDetailPage() {
       onOk: async () => {
         try {
           await planService.deletePlan(workspaceSlug as string, [plan.id]);
-          // 如果已引入 @plane/propel/toast，则复用统一提示
-          // setToast({ type: TOAST_TYPE.SUCCESS, title: "成功", message: "测试计划删除成功" });
           await fetchTestPlans(currentPage, pageSize, filters, selectedModuleId ?? undefined);
           await fetchModules();
-        } catch (e: any) {
-          // setToast({ type: TOAST_TYPE.ERROR, title: "失败", message: e?.message || "删除失败，请稍后重试" });
-        }
+        } catch (e: any) {}
       },
     });
   };
@@ -409,33 +355,23 @@ export default function TestPlanDetailPage() {
       dataIndex: "name",
       key: "name",
       ...getColumnSearchProps("name"),
-      render: (_name: string, record: TestPlan) => {
-        return (
-          <Button
-            type="link"
-            className="!p-0"
-            onClick={() => {
-              if (!record?.id) return;
-              const ws = (workspaceSlug as string) || "";
-              const repoQuery = repositoryId ? `&repositoryId=${encodeURIComponent(String(repositoryId))}` : "";
-              const pid = typeof window !== "undefined" ? sessionStorage.getItem("currentProjectId") || "" : "";
-              router.push(`/${ws}/projects/${pid}/test-management/plan-cases?planId=${record.id}${repoQuery}`);
-            }}
-          >
-            <span className="truncate">{record.name}</span>
-          </Button>
-        );
-      },
+      render: (_name: string, record: TestPlan) => (
+        <Button
+          type="link"
+          className="!p-0"
+          onClick={() => {
+            if (!record?.id) return;
+            const ws = (workspaceSlug as string) || "";
+            const pid = (projectId as string) || "";
+            const repoQuery = repositoryId ? `&repositoryId=${encodeURIComponent(String(repositoryId))}` : "";
+            router.push(`/${ws}/projects/${pid}/test-management/plan-cases?planId=${record.id}${repoQuery}`);
+          }}
+        >
+          <span className="truncate">{record.name}</span>
+        </Button>
+      ),
     },
-
-    {
-      title: "状态",
-      dataIndex: "state",
-      key: "state",
-      width: 120,
-      render: (state: any) => renderState(state as any),
-    },
-
+    { title: "状态", dataIndex: "state", key: "state", width: 120, render: (state: any) => renderState(state as any) },
     {
       title: "通过率",
       dataIndex: "pass_rate",
@@ -443,7 +379,6 @@ export default function TestPlanDetailPage() {
       width: 180,
       render: (passRate: any, record: TestPlan) => renderPassRate(passRate, record),
     },
-
     {
       title: "执行结果",
       dataIndex: "result",
@@ -451,13 +386,7 @@ export default function TestPlanDetailPage() {
       width: 140,
       render: (result: any) => renderResult(result),
     },
-
-    {
-      title: "用例数",
-      dataIndex: "cases",
-      key: "cases",
-      render: (cases) => (cases ? cases.length : 0),
-    },
+    { title: "用例数", dataIndex: "cases", key: "cases", render: (cases) => (cases ? cases.length : 0) },
     {
       title: "开始日期",
       dataIndex: "begin_time",
@@ -484,8 +413,8 @@ export default function TestPlanDetailPage() {
             onClick={() => {
               if (!record?.id) return;
               const ws = (workspaceSlug as string) || "";
+              const pid = (projectId as string) || "";
               const repoQuery = repositoryId ? `&repositoryId=${encodeURIComponent(String(repositoryId))}` : "";
-              const pid = typeof window !== "undefined" ? sessionStorage.getItem("currentProjectId") || "" : "";
               router.push(`/${ws}/projects/${pid}/test-management/plan-cases?planId=${record.id}${repoQuery}`);
             }}
           />
@@ -509,78 +438,45 @@ export default function TestPlanDetailPage() {
     },
   ];
 
-  // 获取测试计划数据：严格使用 state__in 和 assignee_display_name
   const fetchTestPlans = async (
     page: number = currentPage,
     size: number = pageSize,
-    filterParams: typeof filters = filters,
+    filterParams = filters,
     moduleOverride?: string | null
   ) => {
     if (!workspaceSlug || !repositoryId) return;
-
     try {
       setLoading(true);
       setError(null);
-
-      const queryParams: any = {
-        repository_id: repositoryId,
-        page: page,
-        page_size: size,
-      };
-
+      const queryParams: any = { repository_id: repositoryId, page: page, page_size: size };
       const moduleParam = typeof moduleOverride !== "undefined" ? moduleOverride : selectedModuleId;
-      if (moduleParam) {
-        queryParams.module_id = moduleParam;
-      }
-
-      // 名称模糊
-      if (filterParams.name) {
-        queryParams.name__icontains = filterParams.name;
-      }
-      // 负责人名称（服务端 icontains）
-      if (filterParams.assigneeName) {
-        queryParams.assignee_display_name = filterParams.assigneeName;
-      }
-      // 状态多选（服务端 in）
-      if (filterParams.states && filterParams.states.length > 0) {
-        queryParams.state__in = filterParams.states.join(",");
-      }
-
+      if (moduleParam) queryParams.module_id = moduleParam;
+      if (filterParams.name) queryParams.name__icontains = filterParams.name;
+      if (filterParams.assigneeName) queryParams.assignee_display_name = filterParams.assigneeName;
+      if (filterParams.states && filterParams.states.length > 0) queryParams.state__in = filterParams.states.join(",");
       const response: TestPlanResponse = await planService.getPlans(workspaceSlug as string, queryParams);
-
       setTestPlans(response.data || []);
       setTotal(response.count || 0);
       setCurrentPage(page);
       setPageSize(size);
     } catch (err) {
-      console.error("获取测试计划数据失败:", err);
       setError("获取测试计划数据失败，请稍后重试");
     } finally {
       setLoading(false);
     }
   };
 
-  // 处理分页变化
   const handlePaginationChange = (page: number, size?: number) => {
     const newPageSize = size || pageSize;
     fetchTestPlans(page, newPageSize, filters);
   };
-
-  // 处理每页大小变化
   const handlePageSizeChange = (current: number, size: number) => {
     fetchTestPlans(1, size, filters);
   };
-
-  const handleCreateSuccess = async () => {
-    // 创建成功后刷新当前列表数据
-    await fetchTestPlans(currentPage, pageSize, filters);
-  };
-
   const filteredModules = useMemo(() => {
     const q = searchModule.trim().toLowerCase();
     return modules.filter((n) => (n?.name || "").toLowerCase().includes(q));
   }, [searchModule, modules]);
-
   const moduleCountsMap = useMemo(() => {
     const map: Record<string, number> = {};
     modules.forEach((m) => {
@@ -589,7 +485,6 @@ export default function TestPlanDetailPage() {
     });
     return map;
   }, [modules]);
-
   const confirmDeleteModule = (node: PlanModule) => {
     Modal.confirm({
       title: "删除模块",
@@ -608,7 +503,6 @@ export default function TestPlanDetailPage() {
       },
     });
   };
-
   const handleCreateModule = async () => {
     const name = creatingName.trim();
     if (!name || !workspaceSlug || !repositoryId) {
@@ -633,11 +527,6 @@ export default function TestPlanDetailPage() {
       <PageHead title={`测试计划 - ${decodedRepositoryName}`} />
       <div className="h-full w-full">
         <div className="flex h-full w-full flex-col">
-          <div className="flex items-center justify-between gap-4 border-b border-custom-border-200 px-4 py-3 sm:px-5">
-            <div></div>
-            <div></div>
-          </div>
-
           <div className="flex-1 overflow-hidden p-0">
             <div className="flex h-[calc(100%-0px)] w-full">
               <div
@@ -764,19 +653,16 @@ export default function TestPlanDetailPage() {
                     <div className="text-custom-text-300">加载中...</div>
                   </div>
                 )}
-
                 {error && (
                   <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-4">
                     <div className="text-red-800 text-sm">{error}</div>
                   </div>
                 )}
-
                 {!repositoryId && !loading && (
                   <div className="flex items-center justify-center py-12">
                     <div className="text-custom-text-300">未找到用例库ID，请重新选择用例库</div>
                   </div>
                 )}
-
                 {repositoryId && !loading && !error && (
                   <Table
                     dataSource={testPlans}
@@ -802,7 +688,6 @@ export default function TestPlanDetailPage() {
         </div>
       </div>
 
-      {/* 新增：创建/编辑测试计划模态框（当前用创建模式） */}
       <CreateUpdatePlanModal
         isOpen={showCreateModal}
         handleClose={() => {
@@ -816,9 +701,8 @@ export default function TestPlanDetailPage() {
         onSuccess={refreshAll}
       />
 
-      {/* 新增：编辑测试计划模态框 */}
       <CreateUpdatePlanModal
-        key={editingPlan?.id || "edit"} // 新增：强制不同计划编辑时重新挂载，避免状态残留
+        key={editingPlan?.id || "edit"}
         isOpen={showEditModal}
         handleClose={() => {
           setShowEditModal(false);

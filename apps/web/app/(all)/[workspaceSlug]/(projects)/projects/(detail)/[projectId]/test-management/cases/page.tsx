@@ -1,31 +1,22 @@
 "use client";
 
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { PageHead } from "@/components/core/page-title";
 import { Table, Tag, Input, Button, Space, Modal, Dropdown, message } from "antd";
-import { EllipsisOutlined, MoreOutlined, SearchOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { EllipsisOutlined, SearchOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import type { TableProps, InputRef, TableColumnType } from "antd";
-import type { FilterDropdownProps } from "antd/es/table/interface";
 import { CaseService } from "@/services/qa/case.service";
-import { formatDateTime, globalEnums } from "../../projects/(detail)/[projectId]/test-management/util";
 import { CreateCaseModal } from "@/components/qa/cases/create-modal";
-import { Tree, Row, Col, Segmented } from "antd";
+import { Tree, Row, Col } from "antd";
 import type { TreeProps } from "antd";
-import {
-  FolderOutlined,
-  FolderOpenOutlined,
-  AppstoreOutlined,
-  FileTextOutlined,
-  DownOutlined,
-  PlusOutlined,
-  DeploymentUnitOutlined,
-} from "@ant-design/icons";
+import { AppstoreOutlined, PlusOutlined } from "@ant-design/icons";
 import { CaseModuleService } from "@/services/qa";
 import UpdateModal from "@/components/qa/cases/update-modal";
 import { useQueryParams } from "@/hooks/use-query-params";
 import { CaseService as ReviewApiService } from "@/services/qa/review.service";
 import { FolderOpenDot } from "lucide-react";
+import { formatDateTime, globalEnums } from "../util";
 
 type TCreator = {
   display_name?: string;
@@ -67,9 +58,21 @@ export default function TestCasesPage() {
   const searchParams = useSearchParams();
   const { updateQueryParams } = useQueryParams();
   const repositoryIdFromUrl = searchParams.get("repositoryId");
-  const repositoryId =
-    repositoryIdFromUrl || (typeof window !== "undefined" ? sessionStorage.getItem("selectedRepositoryId") : null);
-  const repositoryName = typeof window !== "undefined" ? sessionStorage.getItem("selectedRepositoryName") : "";
+  const [repositoryId, setRepositoryId] = useState<string | null>(repositoryIdFromUrl);
+  const [repositoryName, setRepositoryName] = useState<string>("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedId = sessionStorage.getItem("selectedRepositoryId");
+      const storedName = sessionStorage.getItem("selectedRepositoryName");
+      if (!repositoryIdFromUrl && storedId) {
+        setRepositoryId(storedId);
+      }
+      if (storedName) {
+        setRepositoryName(storedName);
+      }
+    }
+  }, [repositoryIdFromUrl]);
 
   const [cases, setCases] = useState<TestCase[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -110,12 +113,13 @@ export default function TestCasesPage() {
 
   // 新增：树主题（默认/紧凑/高对比）
   const [treeTheme, setTreeTheme] = useState<"light" | "compact" | "high-contrast">("light");
-  const [expandedKeys, setExpandedKeys] = useState<string[] | undefined>(undefined);
+  const [expandedKeys, setExpandedKeys] = useState<string[]>(["all"]);
   const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
   const onExpand: TreeProps["onExpand"] = (keys) => {
     setExpandedKeys(keys as string[]);
     setAutoExpandParent(false);
   };
+  const [searchModule, setSearchModule] = useState<string>("");
 
   const [leftWidth, setLeftWidth] = useState<number>(280);
   const isDraggingRef = useRef<boolean>(false);
@@ -456,6 +460,27 @@ export default function TestCasesPage() {
     });
   };
 
+  const filterModulesByName = (list: any[], q: string): any[] => {
+    if (!q) return list || [];
+    const query = q.trim().toLowerCase();
+    const walk = (nodes: any[]): any[] => {
+      return (nodes || [])
+        .map((n) => {
+          const name = String(n?.name || "").toLowerCase();
+          const childMatches = walk(n?.children || []);
+          const selfMatch = name.includes(query);
+          if (selfMatch || childMatches.length) {
+            return { ...n, children: childMatches };
+          }
+          return null;
+        })
+        .filter(Boolean) as any[];
+    };
+    return walk(list || []);
+  };
+
+  const filteredModules = useMemo(() => filterModulesByName(modules, searchModule), [modules, searchModule]);
+
   const treeData = [
     {
       // 修改：根节点“全部模块”仅显示添加，不显示删除
@@ -510,7 +535,7 @@ export default function TestCasesPage() {
             ]
           : []),
         // 递归构建所有模块与子模块（任意层级）
-        ...buildTreeNodes(modules),
+        ...buildTreeNodes(filteredModules),
       ],
     },
   ];
@@ -785,31 +810,23 @@ export default function TestCasesPage() {
       <PageHead title={`测试用例${repositoryName ? " - " + decodeURIComponent(repositoryName) : ""}`} />
       <div className="h-full w-full">
         <div className="flex h-full w-full flex-col">
-          <div className="flex items-center justify-between gap-4 border-b border-custom-border-200 px-4 py-3 sm:px-5">
-            <h3 className="text-lg font-medium">测试用例</h3>
-            <div>
-              <Button type="primary" onClick={() => setIsCreateModalOpen(true)} disabled={!repositoryId}>
-                新增
-              </Button>
-            </div>
-          </div>
           <Row wrap={false} className="flex-1 overflow-hidden p-4 sm:p-5" gutter={[0, 16]}>
             <Col
               className="relative border-r border-custom-border-200 overflow-y-auto"
               flex="0 0 auto"
               style={{ width: leftWidth, minWidth: 200, maxWidth: 300 }}
             >
-              {/* 树头部工具栏（贴近图片样式） */}
-              <div className="flex items-center justify-between px-2 pb-2">
-                <div className="text-sm text-custom-text-300">用例模块</div>
-                <Space size={4}>
-                  <Button
-                    type="text"
-                    size="small"
-                    icon={<PlusOutlined />}
-                    disabled={!repositoryId}
-                    onClick={() => handleAddUnderNode("all")}
+              <div className="p-2">
+                <Space>
+                  <Input
+                    allowClear
+                    placeholder="按模块名称搜索"
+                    value={searchModule}
+                    onChange={(e) => setSearchModule(e.target.value)}
                   />
+                  <Button type="primary" onClick={() => setIsCreateModalOpen(true)} disabled={!repositoryId}>
+                    新 建
+                  </Button>
                 </Space>
               </div>
               <div

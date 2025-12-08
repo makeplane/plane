@@ -4,7 +4,7 @@ import React, { useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { CaseService } from "../../../services/qa/case.service";
 import { Tag, Spin, Tooltip, message, Input, Table } from "antd";
-import { getEnums } from "../../../../app/(all)/[workspaceSlug]/(projects)/test-management/util";
+import { getEnums } from "../../../../app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/test-management/util";
 import { useMember } from "@/hooks/store/use-member";
 import * as LucideIcons from "lucide-react";
 import { useUser } from "@/hooks/store/user";

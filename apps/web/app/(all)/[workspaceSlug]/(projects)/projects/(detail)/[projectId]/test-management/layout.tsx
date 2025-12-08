@@ -3,11 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { AppHeader } from "@/components/core/app-header";
 import { TestManagementMenuBar } from "./menu";
-import { TestManagementSidebar } from "./_sidebar";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { useParams, usePathname } from "next/navigation";
 // 顶部：增加共享工具的导入
-import { isTMOverviewActive } from "./route-helpers";
 import { getEnums, globalEnums } from "./util"; // 新增：全局枚举初始化工具
 
 export default function TestManagementLayout({ children }: { children: React.ReactNode }) {
@@ -43,11 +41,16 @@ export default function TestManagementLayout({ children }: { children: React.Rea
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sidebarWidth]);
 
+  const startDrag = () => {
+    isDraggingRef.current = true;
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+  };
+
   // 根据路径判断是否为“测试用例库”激活状态
   const pathname = usePathname();
   const { workspaceSlug } = useParams();
   const ws = workspaceSlug?.toString() || "";
-  const isOverviewActive = isTMOverviewActive(pathname, ws);
 
   // 新增：模块进入时初始化全局枚举
   useEffect(() => {
@@ -70,6 +73,22 @@ export default function TestManagementLayout({ children }: { children: React.Rea
 
       {/* 主体区域：左侧共享侧边栏 + 可拖拽边框 + 右侧子页面内容 */}
       <div className="relative flex h-full w-full overflow-hidden">
+        {/* 左侧共享侧边栏（仅非“测试用例库”时展示） */}
+        {/* {!isOverviewActive && (
+          <aside
+            className="relative h-full flex-shrink-0 overflow-hidden bg-custom-background-90 border-r border-custom-border-200"
+            style={{ width: sidebarWidth }}
+          >
+            <TestManagementSidebar />
+            <div className="absolute top-0 right-0 h-full w-[1px] bg-custom-border-200 pointer-events-none" />
+            <div
+              className="absolute top-0 right-[-4px] h-full w-[8px] cursor-col-resize"
+              onMouseDown={startDrag}
+              aria-label="Resize test management sidebar"
+            />
+          </aside>
+        )} */}
+
         {/* 右侧内容区域（子页面） */}
         <main className="relative h-full w-full overflow-hidden bg-custom-background-100">{children}</main>
       </div>

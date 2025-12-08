@@ -6,7 +6,7 @@ import { CaseService as QaCaseService } from "@/services/qa/case.service";
 import { RepositoryService } from "@/services/qa/repository.service";
 import styles from "../../../qa/review/TestCaseSelectionModal.module.css";
 import { Trash2 } from "lucide-react";
-import { globalEnums, getEnums } from "app/(all)/[workspaceSlug]/(projects)/test-management/util";
+import { globalEnums, getEnums } from "app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/test-management/util";
 
 type TModuleNode = { id: string; name: string; children?: TModuleNode[]; total?: number };
 type TTestCase = {

@@ -10,7 +10,7 @@ import { Button } from "@plane/propel/button";
 import { CaseService } from "@/services/qa/case.service";
 import { CaseModuleService } from "@/services/qa";
 import { PlanService } from "@/services/qa/plan.service";
-import { formatDateTime, globalEnums } from "app/(all)/[workspaceSlug]/(projects)/test-management/util";
+import { formatDateTime, globalEnums } from "app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/test-management/util";
 
 type TLabel = { id?: string; name?: string } | string;
 type TestCase = {

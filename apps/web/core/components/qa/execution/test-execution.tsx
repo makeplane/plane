@@ -10,7 +10,7 @@ import * as LucideIcons from "lucide-react";
 import debounce from "lodash-es/debounce";
 import { CaseService as CaseApiService } from "@/services/qa/case.service";
 import { PlanService as PlanApiService } from "@/services/qa/plan.service";
-import { getEnums } from "app/(all)/[workspaceSlug]/(projects)/test-management/util";
+import { getEnums } from "app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/test-management/util";
 import { RichTextEditor } from "../cases/util";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { useMember } from "@/hooks/store/use-member";

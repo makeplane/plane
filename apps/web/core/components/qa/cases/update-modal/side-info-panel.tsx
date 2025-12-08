@@ -7,7 +7,7 @@ import { CaseService } from "../../../../services/qa/case.service";
 import { CaseService as ReviewApiService } from "../../../../services/qa/review.service";
 import { formatCNDateTime } from "../util";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
-import { getEnums } from "app/(all)/[workspaceSlug]/(projects)/test-management/util";
+import { getEnums } from "app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/test-management/util";
 
 const enumsCache: Record<
   string,
