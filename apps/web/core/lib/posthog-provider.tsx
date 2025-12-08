@@ -6,13 +6,11 @@ import { useParams } from "next/navigation";
 import posthog from "posthog-js";
 // constants
 import { GROUP_WORKSPACE_TRACKER_EVENT } from "@plane/constants";
-// helpers
-import { getUserRole } from "@plane/utils";
 // hooks
 import { captureClick, joinEventGroup } from "@/helpers/event-tracker.helper";
 import { useInstance } from "@/hooks/store/use-instance";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { useUser, useUserPermissions, useUserProfile } from "@/hooks/store/user";
 // dynamic imports
 const PostHogPageView = lazy(function PostHogPageView() {
   return import("@/lib/posthog-view");
@@ -25,6 +23,7 @@ export interface IPosthogWrapper {
 const PostHogProvider = observer(function PostHogProvider(props: IPosthogWrapper) {
   const { children } = props;
   const { data: user } = useUser();
+  const { data: profile } = useUserProfile();
   const { currentWorkspace } = useWorkspace();
   const { instance } = useInstance();
   const { workspaceSlug, projectId } = useParams();
@@ -43,24 +42,26 @@ const PostHogProvider = observer(function PostHogProvider(props: IPosthogWrapper
   const is_posthog_enabled = process.env.VITE_POSTHOG_KEY && process.env.VITE_POSTHOG_HOST && is_telemetry_enabled;
 
   useEffect(() => {
-    if (user && hydrated) {
+    if (user && profile && hydrated) {
       // Identify sends an event, so you want may want to limit how often you call it
       posthog?.identify(user.email, {
         id: user.id,
         first_name: user.first_name,
         last_name: user.last_name,
         email: user.email,
-        workspace_role: currentWorkspaceRole ? getUserRole(currentWorkspaceRole) : undefined,
-        project_role: currentProjectRole ? getUserRole(currentProjectRole) : undefined,
+        display_name: user.display_name,
+        date_joined: user.date_joined,
+        last_login_medium: user.last_login_medium,
+        is_email_verified: user.is_email_verified,
+        timezone: user.user_timezone,
+        is_onboarded: profile.is_onboarded,
+        role: profile.role,
+        use_case: profile.use_case,
+        language: profile.language,
+        last_workspace_id: profile.last_workspace_id,
       });
-      if (currentWorkspace) {
-        joinEventGroup(GROUP_WORKSPACE_TRACKER_EVENT, currentWorkspace?.id, {
-          date: new Date().toDateString(),
-          workspace_id: currentWorkspace?.id,
-        });
-      }
     }
-  }, [user, currentProjectRole, currentWorkspaceRole, currentWorkspace, hydrated]);
+  }, [user, profile, hydrated]);
 
   useEffect(() => {
     if (isInitializedRef.current) return; // prevent multiple initializations
