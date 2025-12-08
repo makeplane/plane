@@ -337,7 +337,8 @@ export default {
   project_id_must_be_at_least_1_character: "Proje ID en az 1 karakter olmalı",
   project_id_must_be_at_most_5_characters: "Proje ID en fazla 5 karakter olmalı",
   project_id: "Proje ID",
-  project_id_tooltip_content: "Projedeki iş öğelerini benzersiz şekilde tanımlamanıza yardımcı olur. Maks. 10 karakter.",
+  project_id_tooltip_content:
+    "Projedeki iş öğelerini benzersiz şekilde tanımlamanıza yardımcı olur. Maks. 10 karakter.",
   description_placeholder: "Açıklama",
   only_alphanumeric_non_latin_characters_allowed: "Yalnızca alfasayısal ve Latin olmayan karakterlere izin verilir.",
   project_id_is_required: "Proje ID gereklidir",
