@@ -77,7 +77,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
             />
           ) : (
             <div className="flex gap-2 items-center justify-center">
-              <div className="flex-shrink-0 grid place-items-center rounded-sm bg-layer-1 size-8">
+              <div className="flex-shrink-0 grid place-items-center rounded-sm bg-layer-2 size-8">
                 <WorkItemsIcon className="size-4 text-tertiary" />
               </div>
               <div className="font-medium text-placeholder text-13 whitespace-nowrap">
@@ -130,7 +130,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
       }
       parentRef={ref}
       disableLink={false}
-      className="bg-transparent my-auto !px-2 border-none py-3"
+      className="bg-layer-transparent hover:bg-layer-transparent-hover my-auto !px-2 border-none py-3"
       itemClassName="my-auto"
       onItemClick={handlePeekOverview}
       preventDefaultProgress
