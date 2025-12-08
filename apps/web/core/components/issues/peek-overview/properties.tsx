@@ -31,13 +31,11 @@ import type { TIssueOperations } from "../issue-detail";
 import { IssueCycleSelect } from "../issue-detail/cycle-select";
 import { IssueLabel } from "../issue-detail/label";
 import { IssueModuleSelect } from "../issue-detail/module-select";
-import OppositionTeamProperty from "@/plane-web/components/issues/issue-details/opposition-team-property";
 import SportProperty from "@/plane-web/components/issues/issue-details/sport-property";
 import LevelProperty from "@/plane-web/components/issues/issue-details/level-property";
 import ProgramProperty from "@/plane-web/components/issues/issue-details/program-property";
 import CategoryProperty from "@/plane-web/components/issues/issue-details/category-property";
 import YearProperty from "@/plane-web/components/issues/issue-details/year-property";
-import TimeProperty from "@/plane-web/components/issues/issue-details/time-property";
 import YearRangeProperty from "@/plane-web/components/issues/issue-details/year-property";
 
 interface IPeekOverviewProperties {
