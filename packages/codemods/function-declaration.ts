@@ -441,6 +441,7 @@ export default function transform(file: FileInfo, api: API, options: Options) {
 
         const wrappedFunction = j.callExpression(init.callee, [
           functionExpression,
+          ...init.arguments.slice(1),
         ]);
 
         if (!j.Identifier.check(firstDeclaration.id)) {

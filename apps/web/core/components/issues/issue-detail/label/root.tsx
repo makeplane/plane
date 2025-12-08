@@ -13,7 +13,6 @@ import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 // types
 import { LabelList, IssueLabelSelectRoot } from "./";
 // TODO: Fix this import statement, as core should not import from ee
-// eslint-disable-next-line import/order
 
 export type TIssueLabel = {
   workspaceSlug: string;

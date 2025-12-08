@@ -81,7 +81,7 @@ export function CustomImageNodeView(props: CustomImageNodeViewProps) {
       try {
         hasRetriedOnMount.current = true;
 
-        const newAssetId = await extension.options.duplicateImage!(imgNodeSrc);
+        const newAssetId = await extension.options.duplicateImage(imgNodeSrc);
 
         if (!newAssetId) {
           throw new Error("Duplication returned invalid asset ID");

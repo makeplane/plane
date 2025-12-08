@@ -90,11 +90,10 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
 
   const issueOperations: TIssueOperations = useMemo(
     () => ({
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars, arrow-body-style
       fetch: async (_workspaceSlug: string, _projectId: string, _issueId: string) => {
         return;
       },
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars, arrow-body-style
+
       remove: async (_workspaceSlug: string, _projectId: string, _issueId: string) => {
         try {
           await removeIssue(workspaceSlug, projectId, _issueId);

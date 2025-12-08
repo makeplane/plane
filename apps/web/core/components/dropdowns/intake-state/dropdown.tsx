@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -16,7 +14,7 @@ type TWorkItemStateDropdownProps = Omit<
   stateIds?: string[];
 };
 
-export const IntakeStateDropdown: React.FC<TWorkItemStateDropdownProps> = observer((props) => {
+export const IntakeStateDropdown = observer(function IntakeStateDropdown(props: TWorkItemStateDropdownProps) {
   const { projectId, stateIds: propsStateIds } = props;
   // router params
   const { workspaceSlug } = useParams();

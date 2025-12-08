@@ -10,7 +10,7 @@ export const broadcastError = async (
   pageId: string,
   errorMessage: string,
   errorType: "fetch" | "store",
-  context: FetchPayloadWithContext["context"] | StorePayloadWithContext["context"],
+  context: FetchPayloadWithContext["context"],
   errorCode?: "content_too_large" | "page_locked" | "page_archived",
   shouldDisconnect?: boolean
 ) => {

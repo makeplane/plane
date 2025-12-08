@@ -461,5 +461,53 @@ export const MyObserverComponent = observer(() => {
 
     expect(result).toContain("/* leading comment */");
   });
+
+  it("should preserve dependency arrays when transforming wrapped components", async () => {
+    const result = await applyTransform(
+      transformer,
+      `
+      import { useMemo } from "react";
+
+      const MyComponent = useMemo(() => {
+        return () => <div>Hello</div>;
+      }, [dep]);
+      `,
+      { parser: "tsx", path: "file.tsx" },
+    );
+
+    expect(result).toMatchInlineSnapshot(`
+      "import { useMemo } from "react";
+
+            const MyComponent = useMemo(function MyComponent() {
+              return () => <div>Hello</div>;
+            }, [dep]);"
+    `);
+  });
+
+  it("should preserve dependency arrays for constants that look like components", async () => {
+    const result = await applyTransform(
+      transformer,
+      `
+      import { useMemo } from "react";
+
+      const ACTION_HANDLERS = useMemo(function ACTION_HANDLERS() {
+        return {
+          archived: () => {},
+        };
+      }, []);
+      `,
+      { parser: "tsx", path: "file.tsx" },
+    );
+
+    expect(result).toMatchInlineSnapshot(`
+      "import { useMemo } from "react";
+
+            const ACTION_HANDLERS = useMemo(function ACTION_HANDLERS() {
+              return {
+                archived: () => {},
+              };
+            }, []);"
+    `);
+  });
 });
 

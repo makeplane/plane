@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import React, { useEffect } from "react";
 import { observer } from "mobx-react";
@@ -44,7 +42,7 @@ type TTabNavigationRootProps = {
   projectId: string;
 };
 
-export const TabNavigationRoot: FC<TTabNavigationRootProps> = observer((props) => {
+export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTabNavigationRootProps) {
   const { workspaceSlug, projectId } = props;
   const { workItem: workItemIdentifierFromRoute } = useParams();
   const location = useLocation();
