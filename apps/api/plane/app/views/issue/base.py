@@ -612,7 +612,8 @@ class IssueViewSet(BaseViewSet):
         queryset = self.get_queryset()
         queryset = self.apply_annotations(queryset)
 
-        no_activity = request.data.pop("no_activity", "false") == "true"
+        skip_activity = request.data.pop("skip_activity", False)
+        is_description_update = request.data.get("description_html") is not None
 
         issue = (
             queryset.annotate(
@@ -663,8 +664,7 @@ class IssueViewSet(BaseViewSet):
         if serializer.is_valid():
             serializer.save()
 
-            # Track the issue activity
-            if not no_activity:
+            if not skip_activity or not is_description_update:
                 issue_activity.delay(
                     type="issue.activity.updated",
                     requested_data=requested_data,
