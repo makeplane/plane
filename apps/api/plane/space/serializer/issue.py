@@ -202,6 +202,11 @@ class IssueFlatSerializer(BaseSerializer):
             "sequence_id",
             "sort_order",
             "is_draft",
+            "level",       # sport app Field
+            "sport",       # sport app Field
+            "program",     # sport app Field
+            "category",    # sport app Field
+            "year",        # sport app Field
         ]
 
 

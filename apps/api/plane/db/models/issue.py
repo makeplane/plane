@@ -137,6 +137,15 @@ class Issue(ProjectBaseModel):
     description_stripped = models.TextField(blank=True, null=True)
     description_binary = models.BinaryField(null=True)
     start_time = models.DateTimeField(null=True)        # For issues that require time tracking
+
+    # full-stack Sport App Fields
+    # These fields define the classification and context of a sport-related program
+    level = models.CharField(max_length=100, null=True, blank=True)
+    program = models.CharField(max_length=100, null=True, blank=True)
+    sport = models.CharField(max_length=100, null=True, blank=True)
+    year = models.CharField(max_length=20, null=True, blank=True)
+    category = models.CharField(max_length=100, null=True, blank=True)
+
     priority = models.CharField(
         max_length=30,
         choices=PRIORITY_CHOICES,
@@ -727,6 +736,14 @@ class IssueVersion(ProjectBaseModel):
                 start_date=issue.start_date,
                 target_date=issue.target_date,
                 start_time=issue.start_time,
+
+               # Sport App Fields
+                level=issue.level,
+                sport=issue.sport,
+                program=issue.program,
+                year= issue.year,
+                category= issue.category,
+          
                 assignees=list(IssueAssignee.objects.filter(issue=issue).values_list("assignee_id", flat=True)),
                 sequence_id=issue.sequence_id,
                 labels=list(IssueLabel.objects.filter(issue=issue).values_list("label_id", flat=True)),

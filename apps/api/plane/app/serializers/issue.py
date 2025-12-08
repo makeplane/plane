@@ -62,8 +62,12 @@ class IssueFlatSerializer(BaseSerializer):
             "sequence_id",
             "sort_order",
             "is_draft",
+            "level",    # sport app Field
+            "sport",    # sport app Field
+            "program",  # sport app Field
+            "year",     # sport app Field
+            "category"  # sport app Field
         ]
-
 
 class IssueProjectLiteSerializer(BaseSerializer):
     project_detail = ProjectLiteSerializer(source="project", read_only=True)
@@ -781,6 +785,11 @@ class IssueSerializer(DynamicBaseSerializer):
             "link_count",
             "is_draft",
             "archived_at",
+            "level",    # sport app Field
+            "sport",    # sport app Field
+            "program",  # sport app Field
+            "year",     # sport app Field
+            "category"  # sport app Field
         ]
         read_only_fields = fields
 
@@ -832,6 +841,12 @@ class IssueListDetailSerializer(serializers.Serializer):
             "sub_issues_count": instance.sub_issues_count,
             "attachment_count": instance.attachment_count,
             "link_count": instance.link_count,
+            # sport app fields
+            "level": instance.level,
+            "sport": instance.sport,
+            "program": instance.program,
+            "year": instance.year,
+            "category": instance.category,
         }
 
         # Handle expanded fields only when requested - using direct field access
