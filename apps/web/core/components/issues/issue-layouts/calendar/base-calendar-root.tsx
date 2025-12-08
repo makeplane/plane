@@ -81,7 +81,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   const groupedIssueIds = (issues.groupedIssueIds ?? {}) as TGroupedIssues;
 
   const layout = displayFilters?.calendar?.layout ?? "month";
-  const { startDate, endDate } = (layout === "month" || layout === "week") ? (issueCalendarView.getStartAndEndDate(layout) ?? {}) : {};
+  const { startDate, endDate } = (layout === "month" ) ? (issueCalendarView.getStartAndEndDate(layout) ?? {}) : {};
 
   useEffect(() => {
     if (startDate && endDate && layout) {
@@ -158,7 +158,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
           issues={issueMap}
           groupedIssueIds={groupedIssueIds}
           layout={displayFilters?.calendar?.layout}
-          showWeekends={displayFilters?.calendar?.show_weekends ?? false}
+          showWeekends={displayFilters?.calendar?.show_weekends ?? true}
           issueCalendarView={issueCalendarView}
           quickActions={({ issue, parentRef, customActionButton, placement }) => (
             <QuickActions

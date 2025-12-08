@@ -143,6 +143,7 @@ export interface ISearchIssueResponse {
   project__name: string;
   sequence_id: number;
   start_date: string | null;
+  start_time: string | null;
   state__color: string;
   state__group: TStateGroups;
   state__name: string;

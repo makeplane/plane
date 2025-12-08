@@ -114,13 +114,13 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
   const calendarPayload = issueCalendarView.calendarPayload;
   const allWeeksOfActiveMonth = issueCalendarView.allWeeksOfActiveMonth;
   const formattedDatePayload = renderFormattedPayloadDate(selectedDate) ?? undefined;
-  // console.log("🔥 LAYOUT:", layout);
-  // console.log("📅 SELECTED DATE:", selectedDate);
-  // console.log("📌 FORMATTED DATE:", formattedDatePayload);
-  // console.log("🧩 calendarPayload:", calendarPayload);
-  // console.log("🗓️ allWeeksOfActiveMonth:", allWeeksOfActiveMonth);
-  // console.log("📆 allDaysOfActiveWeek:", issueCalendarView.allDaysOfActiveWeek);
-  // console.log("🗂 groupedIssueIds:", groupedIssueIds);
+  // console.log("LAYOUT:", layout);
+  // console.log("SELECTED DATE:", selectedDate);
+  // console.log("FORMATTED DATE:", formattedDatePayload);
+  // console.log("calendarPayload:", calendarPayload);
+  // console.log("allWeeksOfActiveMonth:", allWeeksOfActiveMonth);
+  // console.log("allDaysOfActiveWeek:", issueCalendarView.allDaysOfActiveWeek);
+  // console.log("groupedIssueIds:", groupedIssueIds);
 
   useEffect(() => {
     const element = scrollableContainerRef.current;
@@ -231,7 +231,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                   />
                 </>
               )}
-              {/* TODO : add a day layout */}
+
               {layout === "day" && (
                 <div className="h-full w-full">
                   <DayView

@@ -15,5 +15,6 @@ export const DEFAULT_WORK_ITEM_FORM_VALUES: Partial<TIssue> = {
   cycle_id: null,
   module_ids: null,
   start_date: null,
+  start_time: null,
   target_date: null,
 };

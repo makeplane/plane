@@ -6,7 +6,7 @@ import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { CalendarCheck2, CalendarClock, Link, Paperclip } from "lucide-react";
+import { CalendarCheck2, CalendarClock, Link, Paperclip, Clock } from "lucide-react";
 // types
 import { WORK_ITEM_TRACKER_EVENTS } from "@plane/constants";
 // i18n
@@ -32,6 +32,7 @@ import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // helpers
+import { TimeDropdown } from "@/components/dropdowns/time-picker";
 import { captureSuccess } from "@/helpers/event-tracker.helper";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
@@ -194,6 +195,18 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       );
   };
 
+  const handleStartTime = (data: string | null) => {
+    if (updateIssue)
+      updateIssue(issue.project_id, issue.id, { start_time: data ? renderFormattedPayloadDate(data) : null }).then(
+        () => {
+          captureSuccess({
+            eventName: WORK_ITEM_TRACKER_EVENTS.update,
+            payload: { id: issue.id },
+          });
+        }
+      );
+  };
+
   const handleTargetDate = (date: Date | null) => {
     if (updateIssue)
       updateIssue(issue.project_id, issue.id, { target_date: date ? renderFormattedPayloadDate(date) : null }).then(
@@ -334,23 +347,16 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
         </div>
       </WithDisplayPropertiesHOC>
 
-      {/* target/due date */}
-      <WithDisplayPropertiesHOC
-        displayProperties={displayProperties}
-        displayPropertyKey="due_date"
-        shouldRenderProperty={() => !isDateRangeEnabled}
-      >
+      {/* start time */}
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="start_time">
         <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
-          <DateDropdown
-            value={issue?.target_date ?? null}
-            onChange={handleTargetDate}
-            minDate={minDate}
-            placeholder={t("common.order_by.due_date")}
-            icon={<CalendarCheck2 className="h-3 w-3 flex-shrink-0" />}
-            buttonVariant={issue.target_date ? "border-with-text" : "border-without-text"}
-            buttonClassName={shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-red-500" : ""}
+          <TimeDropdown
+            value={issue?.start_time ?? null}
+            onChange={handleStartTime}
+            placeholder={t("common.start_time")}
+            icon={<Clock className="h-3 w-3 flex-shrink-0" />}
+            buttonVariant={issue?.start_time ? "border-with-text" : "border-without-text"}
             clearIconClassName="!text-custom-text-100"
-            optionsClassName="z-10"
             disabled={isReadOnly}
             renderByDefault={isMobile}
             showTooltip

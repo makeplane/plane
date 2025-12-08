@@ -27,12 +27,12 @@ interface Props {
 
 export default function OppositionTeamsList({ teams, workspaceSlug, searchQuery = "" }: Props) {
   const filteredTeams = teams.filter((team) => team.name.toLowerCase().includes(searchQuery.toLowerCase()));
-
+  console.log(filteredTeams,'filteredItems');
   return (
     <div className="w-full border-b border-custom-border-200">
-      {filteredTeams.map((team, index) => (
+      {filteredTeams.map((team) => (
         <div
-          key={index}
+          key={team.id}
           className="flex items-center justify-between px-4 py-4 border-b border-custom-border-200 last:border-b-0 transition"
         >
           <div className="flex items-center gap-4">

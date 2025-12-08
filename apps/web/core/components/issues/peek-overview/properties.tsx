@@ -2,7 +2,7 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { Signal, Tag, Triangle, LayoutPanelTop, CalendarClock, CalendarCheck2, Users, UserCircle2 ,Handshake} from "lucide-react";
+import { Signal, Tag, Triangle, LayoutPanelTop, CalendarClock, Clock, CalendarCheck2, Users, UserCircle2 ,Handshake} from "lucide-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // ui icons
@@ -16,19 +16,20 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // helpers
+import { TimeDropdown } from "@/components/dropdowns/time-picker";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web components
 import { WorkItemAdditionalSidebarProperties } from "@/plane-web/components/issues/issue-details/additional-properties";
+import OppositionTeamProperty from "@/plane-web/components/issues/issue-details/opposition-team-property";
 import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
 import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
 import type { TIssueOperations } from "../issue-detail";
 import { IssueCycleSelect } from "../issue-detail/cycle-select";
 import { IssueLabel } from "../issue-detail/label";
 import { IssueModuleSelect } from "../issue-detail/module-select";
-import OppositionTeamProperty from "@/plane-web/components/issues/issue-details/opposition-team-property";
 
 interface IPeekOverviewProperties {
   workspaceSlug: string;
@@ -171,6 +172,28 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           // TODO: add this logic
           // showPlaceholderIcon
           />
+        </div>
+         {/* start time  */}
+        <div className="flex w-full items-center gap-3 h-8">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+            <Clock className="h-4 w-4 flex-shrink-0" />
+            <span>{t("starting_time")}</span>
+          </div>
+          <TimeDropdown
+           value={issue.start_time}
+                onChange={(val) => {
+                  if (!val) return;
+                  issueOperations.update(workspaceSlug, projectId, issueId, {
+                    start_time: val,
+                  });
+                }}
+                placeholder={t("add_start_time")}
+                buttonVariant="transparent-with-text"
+                className="w-3/4 flex-grow group"
+                buttonContainerClassName="w-full text-left"
+                buttonClassName={`text-sm ${issue?.start_time ? "" : "text-custom-text-400"}`}
+                hideIcon
+                clearIconClassName="h-3 w-3 hidden group-hover:inline"/>
         </div>
 
         {/* due date */}

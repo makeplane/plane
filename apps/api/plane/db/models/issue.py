@@ -726,6 +726,7 @@ class IssueVersion(ProjectBaseModel):
                 priority=issue.priority,
                 start_date=issue.start_date,
                 target_date=issue.target_date,
+                start_time=issue.start_time,
                 assignees=list(IssueAssignee.objects.filter(issue=issue).values_list("assignee_id", flat=True)),
                 sequence_id=issue.sequence_id,
                 labels=list(IssueLabel.objects.filter(issue=issue).values_list("label_id", flat=True)),

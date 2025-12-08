@@ -38,6 +38,8 @@ export type TIssueOrderByOptions =
   | "-issue_cycle__cycle__name"
   | "target_date"
   | "-target_date"
+  | "start_time"
+  | "-start_time"
   | "estimate_point__key"
   | "-estimate_point__key"
   | "start_date"
@@ -65,6 +67,7 @@ export type TIssueParams =
   | "cycle"
   | "module"
   | "start_date"
+  | "start_time"
   | "target_date"
   | "project"
   | "team_project"
@@ -81,7 +84,7 @@ export type TIssueParams =
   | "expand"
   | "filters";
 
-export type TCalendarLayouts = "month" | "week" | "day";
+export type TCalendarLayouts = "month"  | "day";
 
 /**
  * Keys for the work item filter properties
@@ -90,6 +93,7 @@ export const WORK_ITEM_FILTER_PROPERTY_KEYS = [
   "state_group",
   "priority",
   "start_date",
+  "start_time",
   "target_date",
   "assignee_id",
   "mention_id",
@@ -132,6 +136,7 @@ export interface IIssueFilterOptions {
   project?: string[] | null;
   team_project?: string[] | null;
   start_date?: string[] | null;
+  start_time?: string[] | null;
   state?: string[] | null;
   state_group?: string[] | null;
   subscriber?: string[] | null;
@@ -153,6 +158,7 @@ export interface IIssueDisplayFilterOptions {
 }
 export interface IIssueDisplayProperties {
   assignee?: boolean;
+  start_time?: boolean;
   start_date?: boolean;
   due_date?: boolean;
   labels?: boolean;
@@ -202,6 +208,7 @@ export interface IWorkspaceIssueFilterOptions {
   state_group?: string[] | null;
   subscriber?: string[] | null;
   start_date?: string[] | null;
+  start_time?: string[] | null;
   target_date?: string[] | null;
   project?: string[] | null;
 }
@@ -212,6 +219,7 @@ export interface IWorkspaceViewIssuesParams {
   labels?: string | undefined;
   priority?: string | undefined;
   start_date?: string | undefined;
+  start_time?: string | undefined;
   state?: string | undefined;
   state_group?: string | undefined;
   subscriber?: string | undefined;

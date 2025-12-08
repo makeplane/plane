@@ -10,6 +10,7 @@ export const getUpdateFormDataForReset = (projectId: string | null | undefined, 
   description_html: formData.description_html,
   priority: formData.priority,
   start_date: formData.start_date,
+  start_time: formData.start_time,
   target_date: formData.target_date,
 });
 
@@ -28,6 +29,7 @@ export const convertWorkItemDataToSearchResponse = (
   type_id: workItem.type_id ?? "",
   state__color: state?.color ?? "",
   start_date: workItem.start_date,
+  start_time: workItem.start_time,
   state__group: state?.group ?? "backlog",
   state__name: state?.name ?? "",
   workspace__slug: workspaceSlug,

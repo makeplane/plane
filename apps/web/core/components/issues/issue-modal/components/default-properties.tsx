@@ -35,7 +35,6 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import OppositionTeamProperty from "@/plane-web/components/issues/issue-details/opposition-team-property";
 
-
 type TIssueDefaultPropertiesProps = {
   control: Control<TIssue>;
   id: string | undefined;
@@ -59,7 +58,6 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
     workspaceSlug,
     selectedParentIssue,
     startDate,
-    startTime,
     targetDate,
     parentId,
     isDraft,
@@ -203,23 +201,27 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
           </div>
         )}
       />
+
       <Controller
         control={control}
         name="start_time"
-        render={({ field: { value, onChange } }) => (
+        render={({ field: { value, onChange } }) =>{
+          console.log("Time value:", value);
+          return(
           <div className="h-7">
             <TimeDropdown
-              value={value}
+              value={value ?? null}
               onChange={(time) => {
                 onChange(time);
                 handleFormChange();
               }}
-              placeholder={t("start_time")}
+              placeholder={t("starting_time")}
               buttonVariant="border-with-text"
               tabIndex={getIndex("start_time")}
             />
           </div>
-        )}
+        )
+        } }
       />
 
       {projectDetails?.cycle_view && (

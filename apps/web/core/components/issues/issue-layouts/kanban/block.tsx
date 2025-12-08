@@ -7,7 +7,7 @@ import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-d
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane helpers
-import { MoreHorizontal } from "lucide-react";
+import { Clock, MoreHorizontal } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -34,7 +34,6 @@ import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-st
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { IssueProperties } from "../properties/all-properties";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
-import OppositionTeamProperty from "@/plane-web/components/issues/issue-details/opposition-team-property";
 
 interface IssueBlockProps {
   issueId: string;
@@ -42,7 +41,6 @@ interface IssueBlockProps {
   subGroupId: string;
   issuesMap: IIssueMap;
   displayProperties: IIssueDisplayProperties | undefined;
-  
   draggableId: string;
   canDropOverIssue: boolean;
   canDragIssuesInCurrentGrouping: boolean;
@@ -141,10 +139,8 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = observer((prop
   {/* Show only the logo */}
   {/* <div className="mt-2   gap-2 flex items-center">
   <OppositionTeamProperty onlyLogo={true}
-  /> 
+  />
 </div> */}
-          
-  
 </div>
       {isEpic && displayProperties && (
         <WithDisplayPropertiesHOC

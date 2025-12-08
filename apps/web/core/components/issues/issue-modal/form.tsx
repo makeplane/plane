@@ -5,7 +5,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
-import { format, isValid, parse, parseISO, set } from "date-fns";
 // editor
 import { ETabIndices, DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
@@ -24,6 +23,7 @@ import {
   getTextContent,
   getChangedIssuefields,
   getTabIndex,
+  isoTo12Hour,
 } from "@plane/utils";
 // components
 import {
@@ -186,7 +186,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   // Reset form when data prop changes
   useEffect(() => {
     if (data) {
-      reset({ ...DEFAULT_WORK_ITEM_FORM_VALUES, project_id: projectId, ...data });
+      console.log("Resetting form with data:", data);
+      reset({ ...DEFAULT_WORK_ITEM_FORM_VALUES, project_id: projectId, ...data});
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [...dataResetProperties]);
@@ -216,28 +217,6 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workItemTemplateId]);
 
-  const normalizeStartTime = (startDate: string | null, startTime: string | null) => {
-    // Require a date to build a valid ISO datetime
-    if (!startTime || !startDate) return null;
-
-    const parsedTime12 = parse(startTime, "hh:mm a", new Date());
-    const parsedTime24 = parse(startTime, "HH:mm", new Date());
-    const timeSource = isValid(parsedTime12) ? parsedTime12 : parsedTime24;
-    if (!isValid(timeSource)) return null;
-
-    const parsedDate = parseISO(startDate);
-    if (!isValid(parsedDate)) return null;
-
-    const combined = set(parsedDate, {
-      hours: timeSource.getHours(),
-      minutes: timeSource.getMinutes(),
-      seconds: 0,
-      milliseconds: 0,
-    });
-
-    return isValid(combined) ? combined.toISOString() : null;
-  };
-
   const handleFormSubmit = async (formData: Partial<TIssue>, is_draft_issue = false) => {
     // Check if the editor is ready to discard
     if (!editorRef.current?.isEditorReadyToDiscard()) {
@@ -259,19 +238,10 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     )
       return;
 
-    // Ensure we always have a date when a time is provided (fallback to today)
-    const effectiveStartDate =
-      formData.start_date ?? (formData.start_time ? format(new Date(), "yyyy-MM-dd") : null);
-    const normalizedStartTime = normalizeStartTime(effectiveStartDate, formData.start_time ?? null);
-    const basePayload = { ...formData, start_date: effectiveStartDate, start_time: normalizedStartTime };
-
     const submitData = !data?.id
-      ? basePayload
+      ? formData
       : {
-          ...getChangedIssuefields(
-            basePayload,
-            dirtyFields as { [key: string]: boolean | undefined }
-          ),
+          ...getChangedIssuefields(formData, dirtyFields as { [key: string]: boolean | undefined }),
           project_id: getValues<"project_id">("project_id"),
           id: data.id,
           description_html: formData.description_html ?? "<p></p>",
