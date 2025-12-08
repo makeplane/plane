@@ -91,6 +91,7 @@ export const TestManagementMenuBar = () => {
           <RepositorySelect
             key={`repository-select-${defaultRepositoryId || "all"}`}
             workspaceSlug={ws}
+            projectId={pid}
             className="flex-shrink-0"
             defaultRepositoryId={defaultRepositoryId}
             onRepositoryChange={handleRepositoryChange}

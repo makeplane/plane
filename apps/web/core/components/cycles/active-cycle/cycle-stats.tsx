@@ -4,6 +4,7 @@ import type { FC } from "react";
 import { Fragment, useCallback, useRef, useState, useEffect } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
+import { useRouter } from "next/navigation";
 import { CalendarCheck } from "lucide-react";
 // headless ui
 import { Tab } from "@headlessui/react";
@@ -47,6 +48,7 @@ export type ActiveCycleStatsProps = {
 
 export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
   const { workspaceSlug, projectId, cycle, cycleId, handleFiltersUpdate, cycleIssueDetails } = props;
+  const router = useRouter();
   // local storage
   const { storedValue: tab, setValue: setTab } = useLocalStorage("activeCycleTab", "Assignees");
   // refs
@@ -301,8 +303,9 @@ export const ActiveCycleStats: FC<ActiveCycleStatsProps> = observer((props) => {
                         const repo = plan?.repository;
                         const repositoryId = typeof repo === "string" ? repo : repo?.id;
                         if (!planId || !repositoryId) return;
-                        const url = `http://10.32.190.212:3000/my-proj/test-management/plan-cases/?planId=${planId}&repositoryId=${repositoryId}`;
-                        window.location.href = url;
+                        router.push(
+                          `/${workspaceSlug}/projects/${projectId}/test-management/plan-cases/?planId=${planId}&repositoryId=${repositoryId}`
+                        );
                       }}
                     >
                       <div className="truncate text-custom-text-100" title={plan.name}>

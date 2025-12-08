@@ -232,6 +232,7 @@ export default function TestManagementHomePage() {
       const queryParams: any = { page, page_size: size };
       if (filterParams.name) queryParams.name__icontains = filterParams.name;
       if (filterParams.project) queryParams.project__name__icontains = filterParams.project;
+      if (projectId) queryParams.project_id = projectId;
       const response: any = await repositoryService.getRepositories(workspaceSlug as string, queryParams);
       const list = response?.data || [];
       setRepositories(list);
@@ -334,6 +335,7 @@ export default function TestManagementHomePage() {
                 <RepositoryModal
                   open={modalOpen}
                   workspaceSlug={String(workspaceSlug || "")}
+                  projectId={String(projectId || "")}
                   initialValues={editing}
                   onCancel={() => setModalOpen(false)}
                   onSuccess={() => fetchRepositories(1, pageSize, filters)}

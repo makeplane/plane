@@ -419,7 +419,7 @@ export default function PlanCasesPage() {
         isOpen={isIterationModalOpen}
         onClose={() => setIsIterationModalOpen(false)}
         workspaceSlug={String(workspaceSlug)}
-        repositoryId={String(repositoryId)}
+        projectId={String(pid)}
         planId={String(planId || "")}
         onClosed={() => {
           fetchCases(currentPage, pageSize, selectedModuleId || undefined);

@@ -16,11 +16,19 @@ type Props = {
     description?: string;
     project?: { id: string; name: string } | string | null;
   } | null;
+  projectId?: string;
   onCancel: () => void;
   onSuccess: () => void;
 };
 
-export const RepositoryModal: React.FC<Props> = ({ open, workspaceSlug, initialValues, onCancel, onSuccess }) => {
+export const RepositoryModal: React.FC<Props> = ({
+  open,
+  workspaceSlug,
+  initialValues,
+  projectId,
+  onCancel,
+  onSuccess,
+}) => {
   const [form] = Form.useForm();
   const [submitting, setSubmitting] = React.useState(false);
   const [projects, setProjects] = React.useState<Array<{ id: string; name: string; logo_props?: any }>>([]);
@@ -54,8 +62,13 @@ export const RepositoryModal: React.FC<Props> = ({ open, workspaceSlug, initialV
   }, [workspaceSlug, workspaceService, projectService]);
 
   React.useEffect(() => {
-    if (!initialValues) form.resetFields();
-    else {
+    if (!open) return;
+    if (!initialValues) {
+      form.resetFields();
+      if (projectId) {
+        form.setFieldValue("project", projectId);
+      }
+    } else {
       form.setFieldsValue({
         name: initialValues.name ?? "",
         description: initialValues.description ?? "",
@@ -63,22 +76,27 @@ export const RepositoryModal: React.FC<Props> = ({ open, workspaceSlug, initialV
           typeof initialValues.project === "string" ? initialValues.project : (initialValues.project?.id ?? null),
       });
     }
-  }, [initialValues, form]);
+  }, [open, initialValues, form, projectId]);
 
   React.useEffect(() => {
     const ensureSelectedProjectInOptions = async () => {
-      if (!initialValues?.project || !workspaceSlug) return;
-      const projectId = typeof initialValues.project === "string" ? initialValues.project : initialValues.project.id;
-      if (!projectId) return;
-      const exists = projects.some((p) => p.id === projectId);
+      if (!workspaceSlug) return;
+      const currentProjectId = initialValues?.project
+        ? typeof initialValues.project === "string"
+          ? initialValues.project
+          : initialValues.project.id
+        : projectId;
+
+      if (!currentProjectId) return;
+      const exists = projects.some((p) => p.id === currentProjectId);
       if (exists) return;
       try {
-        const detail = await projectService.getProject(workspaceSlug, projectId);
+        const detail = await projectService.getProject(workspaceSlug, currentProjectId);
         setProjects((prev) => [{ id: detail.id, name: detail.name, logo_props: detail.logo_props }, ...prev]);
       } catch {}
     };
     ensureSelectedProjectInOptions();
-  }, [projects, initialValues, workspaceSlug, projectService]);
+  }, [projects, initialValues, workspaceSlug, projectService, projectId]);
 
   const handleSubmit = async () => {
     try {
@@ -136,6 +154,7 @@ export const RepositoryModal: React.FC<Props> = ({ open, workspaceSlug, initialV
               const name = String(option?.props?.["data-name"] || "");
               return name.toLowerCase().includes(input.toLowerCase());
             }}
+            disabled={true}
           >
             {projects.map((p) => (
               <Select.Option key={p.id} value={p.id} data-name={p.name}>

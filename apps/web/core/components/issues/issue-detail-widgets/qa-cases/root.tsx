@@ -66,6 +66,10 @@ export const QaCasesCollapsible: FC<Props> = observer((props) => {
     [workspaceSlug, issueId]
   );
 
+  const count = data.length;
+
+  if (!loading && count === 0) return null;
+
   return (
     <Collapsible
       isOpen={isCollapsibleOpen}
@@ -75,6 +79,7 @@ export const QaCasesCollapsible: FC<Props> = observer((props) => {
           isOpen={isCollapsibleOpen}
           disabled={disabled}
           onRefresh={() => setRefreshKey((k) => k + 1)}
+          count={count}
         />
       }
       buttonClassName="w-full"

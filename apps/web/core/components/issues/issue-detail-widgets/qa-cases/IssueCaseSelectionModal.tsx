@@ -1,4 +1,5 @@
 "use client";
+import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { Modal, Space, Button, Input, Table, Tag, message, Tree, Select } from "antd";
 import type { TableProps } from "antd";
@@ -6,7 +7,10 @@ import { CaseService as QaCaseService } from "@/services/qa/case.service";
 import { RepositoryService } from "@/services/qa/repository.service";
 import styles from "../../../qa/review/TestCaseSelectionModal.module.css";
 import { Trash2 } from "lucide-react";
-import { globalEnums, getEnums } from "app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/test-management/util";
+import {
+  globalEnums,
+  getEnums,
+} from "app/(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/test-management/util";
 
 type TModuleNode = { id: string; name: string; children?: TModuleNode[]; total?: number };
 type TTestCase = {
@@ -56,6 +60,7 @@ const renderEnumTag = (
 };
 
 export default function IssueCaseSelectionModal({ open, workspaceSlug, issueId, onClose, onConfirmed }: Props) {
+  const { projectId } = useParams();
   const qaCaseService = useMemo(() => new QaCaseService(), []);
   const repositoryService = useMemo(() => new RepositoryService(), []);
 
@@ -84,8 +89,12 @@ export default function IssueCaseSelectionModal({ open, workspaceSlug, issueId, 
 
   useEffect(() => {
     if (!open || !workspaceSlug) return;
+    const params: any = { page: 1, page_size: 10000 };
+    console.log("🚀 ~ IssueCaseSelectionModal ~ projectId:", projectId);
+    if (projectId) params.project_id = projectId;
+
     repositoryService
-      .getRepositories(workspaceSlug, { page: 1, page_size: 10000 })
+      .getRepositories(workspaceSlug, params)
       .then((res) => {
         // Adjusting for potential data structure differences
         const list = Array.isArray(res) ? res : res?.results || res?.data || [];

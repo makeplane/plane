@@ -1,6 +1,6 @@
 // 文件顶部 imports
 import React, { useEffect, useMemo, useState } from "react";
-import { Modal, List, Button, Checkbox, Spin, Empty, Tag, message, Input, Table, Space } from "antd";
+import { Modal, Button, Checkbox, Spin, Empty, Tag, message, Input, Table, Space } from "antd";
 import type { TPartialProject, TIssue, TIssuesResponse } from "@plane/types";
 import { ProjectService } from "@/services/project/project.service";
 import { IssueService } from "@/services/issue/issue.service";
@@ -12,6 +12,7 @@ import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { SearchOutlined } from "@ant-design/icons";
 import type { TableProps, InputRef, TableColumnType } from "antd";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useParams } from "next/navigation";
 
 type Props = {
   isOpen: boolean;
@@ -30,13 +31,12 @@ export const WorkItemSelectModal: React.FC<Props> = ({
   initialSelectedIssues,
   forceTypeName,
 }) => {
+  const { projectId } = useParams();
+  const currentProjectId = projectId?.toString();
+
   const projectService = useMemo(() => new ProjectService(), []);
   const issueService = useMemo(() => new IssueService(), []);
   const { fetchProjectStates, getStateById } = useProjectState();
-  const [projects, setProjects] = useState<TPartialProject[]>([]);
-  const [loadingProjects, setLoadingProjects] = useState(false);
-
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
 
   const [issues, setIssues] = useState<TIssue[]>([]);
   const [loadingIssues, setLoadingIssues] = useState(false);
@@ -126,29 +126,24 @@ export const WorkItemSelectModal: React.FC<Props> = ({
 
   const [projectSearch, setProjectSearch] = useState<string>("");
 
-  // 新增：过滤后的项目列表
-  const filteredProjects = useMemo(
-    () => projects.filter((p) => (p.name || "").toLowerCase().includes(projectSearch.toLowerCase())),
-    [projects, projectSearch]
-  );
   const issueTypeService = useMemo(() => new ProjectIssueTypeService(), []);
   const [projectIssueTypesMap, setProjectIssueTypesMap] = useState<Record<string, TIssueType> | undefined>(undefined);
 
   useEffect(() => {
-    if (!isOpen || !selectedProjectId) {
+    if (!isOpen || !currentProjectId) {
       setProjectIssueTypesMap(undefined);
       return;
     }
     issueTypeService
-      .fetchProjectIssueTypes(workspaceSlug, selectedProjectId)
+      .fetchProjectIssueTypes(workspaceSlug, currentProjectId)
       .then(() => {
         // 使用缓存的映射
-        setProjectIssueTypesMap(projectIssueTypesCache.get(selectedProjectId));
+        setProjectIssueTypesMap(projectIssueTypesCache.get(currentProjectId));
       })
       .catch(() => {
         setProjectIssueTypesMap(undefined);
       });
-  }, [isOpen, workspaceSlug, selectedProjectId, issueTypeService]);
+  }, [isOpen, workspaceSlug, currentProjectId, issueTypeService]);
 
   const displayIssues = useMemo(
     () => displayIssuesSelector(issues, projectIssueTypesMap, forceTypeName),
@@ -354,24 +349,7 @@ export const WorkItemSelectModal: React.FC<Props> = ({
     const map = Object.fromEntries(arr.map((i) => [String(i.id), i]));
     setSelectedIssueIds(new Set(ids));
     setSelectedIssuesMap(map);
-    if (!isOpen) return;
-    setLoadingProjects(true);
-    projectService
-      .getProjectsLite(workspaceSlug)
-      .then((data) => {
-        setProjects(data || []);
-        // 默认选中第一项项目
-        if (data && data.length > 0) {
-          setSelectedProjectId(data[0].id as string);
-        } else {
-          setSelectedProjectId(null);
-        }
-      })
-      .catch((err) => {
-        message.error(`获取项目列表失败：${err?.message || "未知错误"}`);
-      })
-      .finally(() => setLoadingProjects(false));
-  }, [isOpen, workspaceSlug, projectService]);
+  }, [isOpen, initialSelectedIssues]);
 
   const normalizeIssues = (res: TIssuesResponse): TIssue[] => {
     const { results } = res || {};
@@ -408,9 +386,6 @@ export const WorkItemSelectModal: React.FC<Props> = ({
     onConfirm(selected);
   };
 
-  const leftWidth = "30%";
-  const rightWidth = "70%";
-
   // 受控分页：页大小与当前页
   const [pageSize, setPageSize] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -418,11 +393,11 @@ export const WorkItemSelectModal: React.FC<Props> = ({
 
   // 封装获取工作项（带 per_page 与首页 cursor）
   const fetchIssuesWithPageSize = async (perPage: number) => {
-    if (!isOpen || !selectedProjectId) return;
+    if (!isOpen || !currentProjectId) return;
     setLoadingIssues(true);
     try {
       const queries: any = { per_page: perPage, cursor: `${perPage}:0:0` };
-      const res = await issueService.getIssues(workspaceSlug, selectedProjectId, queries);
+      const res = await issueService.getIssues(workspaceSlug, currentProjectId, queries);
       const flat = normalizeIssues(res);
       setIssues(flat);
       // 提取总数，若无则以当前数量兜底
@@ -438,13 +413,13 @@ export const WorkItemSelectModal: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    if (!isOpen || !selectedProjectId) {
+    if (!isOpen || !currentProjectId) {
       setIssues([]);
       return;
     }
     // 加载项目变更或弹窗开启时按当前 pageSize 拉首屏数据
     fetchIssuesWithPageSize(pageSize);
-  }, [isOpen, workspaceSlug, selectedProjectId, issueService]);
+  }, [isOpen, workspaceSlug, currentProjectId, issueService]);
 
   return (
     <Modal
@@ -464,48 +439,8 @@ export const WorkItemSelectModal: React.FC<Props> = ({
       }
     >
       <div style={{ display: "flex", gap: 16, height: "60vh" }}>
-        <div style={{ width: leftWidth, borderRight: "1px solid #f0f0f0", paddingRight: 12, overflowY: "auto" }}>
-          {/* 左侧项目列表 */}
-          <div style={{ fontWeight: 500, marginBottom: 8 }}>项目</div>
-          <Input
-            size="small"
-            placeholder="搜索项目"
-            allowClear
-            value={projectSearch}
-            onChange={(e) => setProjectSearch(e.target.value)}
-            style={{ marginBottom: 8 }}
-          />
-          {loadingProjects ? (
-            <Spin />
-          ) : filteredProjects.length === 0 ? (
-            <Empty description="暂无项目" />
-          ) : (
-            <List
-              size="small"
-              dataSource={filteredProjects}
-              renderItem={(p) => (
-                <List.Item
-                  style={{
-                    cursor: "pointer",
-                    background: selectedProjectId === p.id ? "#e6f4ff" : undefined,
-                  }}
-                  onClick={() => setSelectedProjectId(p.id as string)}
-                >
-                  <div style={{ width: "100%" }}>
-                    <div className="flex items-center gap-2">
-                      <Logo logo={p.logo_props} size={18} />
-                      <span className="truncate">{p.name}</span>
-                    </div>
-                    {/* <span style={{ fontWeight: selectedProjectId === p.id ? 600 : 400 }}>{p.name}</span> */}
-                  </div>
-                </List.Item>
-              )}
-            />
-          )}
-        </div>
-
         {/* 右侧工作项：Table + 分页 */}
-        <div style={{ width: rightWidth }}>
+        <div style={{ width: "100%" }}>
           <div style={{ fontWeight: 500, marginBottom: 8 }}>工作项</div>
           <Table<TIssue>
             size="small"
