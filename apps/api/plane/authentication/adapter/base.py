@@ -105,6 +105,9 @@ class Adapter:
 
         return True
 
+    def get_avatar_download_headers(self):
+        return {}
+
     def download_and_upload_avatar(self, avatar_url, user):
         """
         Downloads avatar from OAuth provider and uploads to our storage.
@@ -114,12 +117,7 @@ class Adapter:
             return None
 
         try:
-            # Get the token data
-            if not self.token_data:
-                headers = {}
-            else:
-                headers = {}
-
+            headers = self.get_avatar_download_headers()
             # Download the avatar image
             response = requests.get(avatar_url, timeout=10, headers=headers)
             response.raise_for_status()
