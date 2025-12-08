@@ -61,6 +61,7 @@
   --default-border-width: 1px;
 
   /* ---------- Shadow ---------- */
+  --shadow-*: initial;
   --shadow-raised-100: 0px 1px 6px -1px #292f3d08, 0px 1px 4px 0px #292f3d0a;
   --shadow-raised-200: 0px 1px 2px -1px #292f3d0f, 0px 1px 3px 0px #292f3d0d;
   --shadow-raised-300: 0px 2px 4px -1px #292f3d0a, 0px 4px 6px -1px #292f3d0d;
@@ -264,7 +265,7 @@
   --background-color-layer-2-hover: var(--color-alpha-black-100);
   --background-color-layer-2-active: var(--color-alpha-black-200);
   --background-color-layer-2-selected: var(--color-alpha-black-300);
-  --background-color-layer-3: var(--color-neutral-200);
+  --background-color-layer-3: var(--color-neutral-300);
   --background-color-layer-3-hover: var(--color-alpha-black-100);
   --background-color-layer-3-active: var(--color-alpha-black-200);
   --background-color-layer-3-selected: var(--color-alpha-black-300);

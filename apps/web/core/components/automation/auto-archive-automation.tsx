@@ -64,12 +64,12 @@ export const AutoArchiveAutomation = observer(function AutoArchiveAutomation(pro
       <div className="flex flex-col gap-4 border-b border-subtle py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-start gap-3">
-            <div className="flex items-center justify-center rounded-sm bg-surface-2 p-3">
+            <div className="flex items-center justify-center rounded-sm bg-layer-3 p-3">
               <ArchiveRestore className="h-4 w-4 flex-shrink-0 text-primary" />
             </div>
             <div className="">
               <h4 className="text-13 font-medium">{t("project_settings.automations.auto-archive.title")}</h4>
-              <p className="text-13 tracking-tight text-secondary">
+              <p className="text-13 tracking-tight text-tertiary">
                 {t("project_settings.automations.auto-archive.description")}
               </p>
             </div>
