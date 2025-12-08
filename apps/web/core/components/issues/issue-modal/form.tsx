@@ -23,6 +23,7 @@ import {
   getTextContent,
   getChangedIssuefields,
   getTabIndex,
+  isoTo12Hour,
 } from "@plane/utils";
 // components
 import {
@@ -185,7 +186,8 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
   // Reset form when data prop changes
   useEffect(() => {
     if (data) {
-      reset({ ...DEFAULT_WORK_ITEM_FORM_VALUES, project_id: projectId, ...data });
+      console.log("Resetting form with data:", data);
+      reset({ ...DEFAULT_WORK_ITEM_FORM_VALUES, project_id: projectId, ...data});
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [...dataResetProperties]);
@@ -499,6 +501,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   workspaceSlug={workspaceSlug?.toString()}
                   selectedParentIssue={selectedParentIssue}
                   startDate={watch("start_date")}
+                  startTime={watch("start_time")}
                   targetDate={watch("target_date")}
                   parentId={watch("parent_id")}
                   isDraft={isDraft}

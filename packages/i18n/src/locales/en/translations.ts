@@ -296,6 +296,8 @@ export default {
   start_date: "Start date",
   end_date: "End date",
   due_date: "Due date",
+  starting_time: "Start Time",
+  add_start_time: "Add start time",
   estimate: "Estimate",
   change_parent_issue: "Change parent work item",
   remove_parent_issue: "Remove parent work item",

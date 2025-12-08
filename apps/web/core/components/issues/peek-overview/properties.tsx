@@ -2,7 +2,7 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { Signal, Tag, Triangle, LayoutPanelTop, CalendarClock, CalendarCheck2, Users, UserCircle2 ,Handshake, Volleyball, Calendar} from "lucide-react";
+import { Signal, Tag, Triangle, LayoutPanelTop, CalendarClock, CalendarCheck2, Users, UserCircle2, Handshake, Volleyball, Calendar } from "lucide-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // ui icons
@@ -16,6 +16,7 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // helpers
+import { TimeDropdown } from "@/components/dropdowns/time-picker";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
@@ -23,6 +24,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 
 // plane web components
 import { WorkItemAdditionalSidebarProperties } from "@/plane-web/components/issues/issue-details/additional-properties";
+import OppositionTeamProperty from "@/plane-web/components/issues/issue-details/opposition-team-property";
 import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
 import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
 import type { TIssueOperations } from "../issue-detail";
@@ -154,7 +156,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           </div>
         )}
 
-   
+
 
         {/* due date */}
         {/* <div className="flex w-full items-center gap-3 h-8">
@@ -209,7 +211,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             />
           </div>
         )} */}
-{/* 
+        {/* 
         {projectDetails?.module_view && (
           <div className="flex w-full items-center gap-3 min-h-8 h-full">
             <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
@@ -273,8 +275,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
 
 
-{/* start date */}
-<div className="flex w-full items-center gap-3 h-8">
+        {/* start date */}
+        <div className="flex w-full items-center gap-3 h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
             <CalendarClock className="h-4 w-4 flex-shrink-0" />
             <span>{t("common.order_by.start_date")}</span>
@@ -296,63 +298,63 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             hideIcon
             clearIconClassName="h-3 w-3 hidden group-hover:inline"
           />
-</div>
-{/* Level */}
-<div className="flex w-full items-center gap-3 h-8">
-  <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-    <Signal className="h-4 w-4 flex-shrink-0" />
-    <p>Level</p>
-  </div>
+        </div>
+        {/* Level */}
+        <div className="flex w-full items-center gap-3 h-8">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+            <Signal className="h-4 w-4 flex-shrink-0" />
+            <p>Level</p>
+          </div>
 
-  <LevelProperty
-    storageKey={`level-${issueId}`}
-    value={issue?.level}
-    onChange={(level) =>
-      issueOperations.update(workspaceSlug, projectId, issueId, {
-        level,
-      })
-    }
-    disabled={disabled}
-  />
-</div>
-{/* Program */}
-<div className="flex w-full items-center gap-3 h-8">
-  <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-    <Users className="h-4 w-4 flex-shrink-0" />
-    <p>Program</p>
-  </div>
+          <LevelProperty
+            storageKey={`level-${issueId}`}
+            value={issue?.level}
+            onChange={(level) =>
+              issueOperations.update(workspaceSlug, projectId, issueId, {
+                level,
+              })
+            }
+            disabled={disabled}
+          />
+        </div>
+        {/* Program */}
+        <div className="flex w-full items-center gap-3 h-8">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+            <Users className="h-4 w-4 flex-shrink-0" />
+            <p>Program</p>
+          </div>
 
-  <ProgramProperty
-    storageKey={`program-${issueId}`}
-    value={issue?.program}
-    onChange={(program) =>
-      issueOperations.update(workspaceSlug, projectId, issueId, {
-        program,
-      })
-    }
-    disabled={disabled}
-  />
-</div>
-{/* Sport */}
-<div className="flex w-full items-center gap-3 h-8">
-  <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-    <Volleyball  className="h-4 w-4 flex-shrink-0" />
-    <p>Sport</p>
-  </div>
+          <ProgramProperty
+            storageKey={`program-${issueId}`}
+            value={issue?.program}
+            onChange={(program) =>
+              issueOperations.update(workspaceSlug, projectId, issueId, {
+                program,
+              })
+            }
+            disabled={disabled}
+          />
+        </div>
+        {/* Sport */}
+        <div className="flex w-full items-center gap-3 h-8">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+            <Volleyball className="h-4 w-4 flex-shrink-0" />
+            <p>Sport</p>
+          </div>
 
-  <SportProperty
-    storageKey={`sport-${issueId}`}
-    value={issue?.sport}
-    onChange={(sport) =>
-      issueOperations.update(workspaceSlug, projectId, issueId, {
-        sport,
-      })
-    }
-    disabled={disabled}
-  />
-</div>
-{/* opposition team */}
-<div className="flex w-full items-center gap-3 h-8">
+          <SportProperty
+            storageKey={`sport-${issueId}`}
+            value={issue?.sport}
+            onChange={(sport) =>
+              issueOperations.update(workspaceSlug, projectId, issueId, {
+                sport,
+              })
+            }
+            disabled={disabled}
+          />
+        </div>
+        {/* opposition team */}
+        <div className="flex w-full items-center gap-3 h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
             <Handshake className="h-4 w-4 flex-shrink-0" />
             <p>Opposition</p>
@@ -367,41 +369,41 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             }
             disabled={disabled}
           />
-</div>
- {/* category */}
-<div className="flex w-full items-center gap-3 h-8">
-  <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-    <Tag className="h-4 w-4 flex-shrink-0" />
-    <p>Category</p>
-  </div>
+        </div>
+        {/* category */}
+        <div className="flex w-full items-center gap-3 h-8">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+            <Tag className="h-4 w-4 flex-shrink-0" />
+            <p>Category</p>
+          </div>
 
-  <CategoryProperty
-    storageKey={`category-${issueId}`}
-    value={issue?.category}
-    onChange={(category) =>
-      issueOperations.update(workspaceSlug, projectId, issueId, {
-        category,
-      })
-    }
-    disabled={disabled}
-  />
-</div>
-{/* year */}
-<div className="flex w-full items-center gap-3 h-8">
-  <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
-    <Calendar className="h-4 w-4 flex-shrink-0" />
-    <p>Year</p>
-  </div>
+          <CategoryProperty
+            storageKey={`category-${issueId}`}
+            value={issue?.category}
+            onChange={(category) =>
+              issueOperations.update(workspaceSlug, projectId, issueId, {
+                category,
+              })
+            }
+            disabled={disabled}
+          />
+        </div>
+        {/* year */}
+        <div className="flex w-full items-center gap-3 h-8">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+            <Calendar className="h-4 w-4 flex-shrink-0" />
+            <p>Year</p>
+          </div>
 
-  <YearRangeProperty
-    storageKey={`year-${issueId}`}
-    value={issue?.year}
-    onChange={(year) =>
-      issueOperations.update(workspaceSlug, projectId, issueId, { year })
-    }
-    disabled={disabled}
-  />
-</div>
+          <YearRangeProperty
+            storageKey={`year-${issueId}`}
+            value={issue?.year}
+            onChange={(year) =>
+              issueOperations.update(workspaceSlug, projectId, issueId, { year })
+            }
+            disabled={disabled}
+          />
+        </div>
 
 
 

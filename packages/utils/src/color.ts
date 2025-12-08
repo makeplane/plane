@@ -40,6 +40,7 @@ export const toHex = (value: number) => validateColor(value).toString(16).padSta
  * hexToRgb("#00ff00") // returns { r: 0, g: 255, b: 0 }
  * hexToRgb("#0000ff") // returns { r: 0, g: 0, b: 255 }
  */
+
 export const hexToRgb = (hex: string): TRgb => {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex.trim());
   return result
@@ -124,6 +125,8 @@ export const hexToHsl = (hex: string): THsl => {
  * hslToHex({ h: 120, s: 100, l: 50 }) // returns "#00ff00"
  * hslToHex({ h: 240, s: 100, l: 50 }) // returns "#0000ff"
  */
+
+
 export const hslToHex = ({ h, s, l }: THsl): string => {
   if (h < 0 || h > 360) return "#000000";
   if (s < 0 || s > 100) return "#000000";

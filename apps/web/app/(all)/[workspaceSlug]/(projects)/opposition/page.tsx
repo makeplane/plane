@@ -25,7 +25,6 @@ const WorkspaceOppositionPage = () => {
   return (
     <>
       <PageHead title={pageTitle} />
-
       <div className="relative h-full w-full overflow-hidden overflow-y-auto">
         <OppositionTeamsList teams={teams} workspaceSlug={workspaceSlug} searchQuery={search} />
       </div>

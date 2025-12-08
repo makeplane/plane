@@ -56,13 +56,18 @@ class IssueFlatSerializer(BaseSerializer):
             "description",
             "description_html",
             "priority",
+            "start_time",
             "start_date",
             "target_date",
             "sequence_id",
             "sort_order",
             "is_draft",
+            "level",    # sport app Field
+            "sport",    # sport app Field
+            "program",  # sport app Field
+            "year",     # sport app Field
+            "category"  # sport app Field
         ]
-
 
 class IssueProjectLiteSerializer(BaseSerializer):
     project_detail = ProjectLiteSerializer(source="project", read_only=True)
@@ -761,6 +766,7 @@ class IssueSerializer(DynamicBaseSerializer):
             "completed_at",
             "estimate_point",
             "priority",
+            "start_time",
             "start_date",
             "target_date",
             "sequence_id",
@@ -779,6 +785,11 @@ class IssueSerializer(DynamicBaseSerializer):
             "link_count",
             "is_draft",
             "archived_at",
+            "level",    # sport app Field
+            "sport",    # sport app Field
+            "program",  # sport app Field
+            "year",     # sport app Field
+            "category"  # sport app Field
         ]
         read_only_fields = fields
 
@@ -810,6 +821,7 @@ class IssueListDetailSerializer(serializers.Serializer):
             "completed_at": instance.completed_at,
             "estimate_point": instance.estimate_point_id,
             "priority": instance.priority,
+            "start_time": instance.start_time,
             "start_date": instance.start_date,
             "target_date": instance.target_date,
             "sequence_id": instance.sequence_id,
@@ -829,6 +841,12 @@ class IssueListDetailSerializer(serializers.Serializer):
             "sub_issues_count": instance.sub_issues_count,
             "attachment_count": instance.attachment_count,
             "link_count": instance.link_count,
+            # sport app fields
+            "level": instance.level,
+            "sport": instance.sport,
+            "program": instance.program,
+            "year": instance.year,
+            "category": instance.category,
         }
 
         # Handle expanded fields only when requested - using direct field access

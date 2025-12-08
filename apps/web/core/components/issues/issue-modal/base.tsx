@@ -81,17 +81,42 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
   const projectId = data?.project_id ?? routerProjectId?.toString() ?? projectIdFromRouter;
 
   const fetchIssueDetail = async (issueId: string | undefined) => {
-    setDescription(undefined);
-    if (!workspaceSlug) return;
+  console.log("Fetching issue detail for ID:", issueId);
 
-    if (!projectId || issueId === undefined || !fetchIssueDetails) {
-      // Set description to the issue description from the props if available
-      setDescription(data?.description_html || "<p></p>");
-      return;
-    }
-    const response = await fetchIssue(workspaceSlug.toString(), projectId.toString(), issueId);
-    if (response) setDescription(response?.description_html || "<p></p>");
-  };
+  setDescription(undefined);
+
+  if (!workspaceSlug) {
+    console.log("No workspace slug provided, exiting.");
+    return;
+  }
+
+  if (!projectId || issueId === undefined || !fetchIssueDetails) {
+    console.log(
+      "Missing projectId, issueId, or fetchIssueDetails function. Using props data if available."
+    );
+    console.log("data?.description_html:", data?.description_html);
+    setDescription(data?.description_html || "<p></p>");
+    return;
+  }
+
+  console.log(
+    "Calling fetchIssue with workspaceSlug:",
+    workspaceSlug,
+    "projectId:",
+    projectId,
+    "issueId:",
+    issueId
+  );
+
+  const response = await fetchIssue(workspaceSlug.toString(), projectId.toString(), issueId);
+  console.log("fetchIssue response:", response);
+
+  if (response) {
+    console.log("Setting description from response:", response.description_html);
+    setDescription(response?.description_html || "<p></p>");
+  }
+};
+
 
   useEffect(() => {
     // fetching issue details
@@ -265,62 +290,118 @@ export const CreateUpdateIssueModalBase: React.FC<IssuesModalProps> = observer((
     }
   };
 
-  const handleUpdateIssue = async (payload: Partial<TIssue>): Promise<TIssue | undefined> => {
-    if (!workspaceSlug || !payload.project_id || !data?.id) return;
+ const handleUpdateIssue = async (
+  payload: Partial<TIssue>
+): Promise<TIssue | undefined> => {
+  console.log("▶️ handleUpdateIssue called");
+  console.log("📦 Payload:", payload);
+  console.log("🔑 workspaceSlug:", workspaceSlug);
+  console.log("🆔 issueId:", data?.id);
+  console.log("📁 projectId:", payload.project_id);
+  console.log("📝 isDraft:", isDraft);
+  console.log("🏪 storeType:", storeType);
 
-    try {
-      if (isDraft) await draftIssues.updateIssue(workspaceSlug.toString(), data.id, payload);
-      else if (updateIssue) await updateIssue(payload.project_id, data.id, payload);
+  if (!workspaceSlug || !payload.project_id || !data?.id) {
+    console.warn("⛔ Missing required data, update aborted");
+    return;
+  }
 
-      // check if we should add issue to cycle/module
-      if (
-        payload.cycle_id &&
-        payload.cycle_id !== "" &&
-        (payload.cycle_id !== cycleId || storeType !== EIssuesStoreType.CYCLE)
-      ) {
-        await addIssueToCycle(data as TBaseIssue, payload.cycle_id);
-      }
-      if (
-        payload.module_ids &&
-        payload.module_ids.length > 0 &&
-        (!payload.module_ids.includes(moduleId?.toString()) || storeType !== EIssuesStoreType.MODULE)
-      ) {
-        await addIssueToModule(data as TBaseIssue, payload.module_ids);
-      }
+  try {
+    console.log("🚀 Starting update request");
 
-      // add other property values
-      await handleCreateUpdatePropertyValues({
-        issueId: data.id,
-        issueTypeId: payload.type_id,
-        projectId: payload.project_id,
-        workspaceSlug: workspaceSlug?.toString(),
-        isDraft: isDraft,
-      });
+    let updateResponse;
 
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: t("success"),
-        message: t("issue_updated_successfully"),
-      });
-      captureSuccess({
-        eventName: WORK_ITEM_TRACKER_EVENTS.update,
-        payload: { id: data.id },
-      });
-      handleClose();
-    } catch (error: any) {
-      console.error(error);
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: t("error"),
-        message: error?.error ?? t("issue_could_not_be_updated"),
-      });
-      captureError({
-        eventName: WORK_ITEM_TRACKER_EVENTS.update,
-        payload: { id: data.id },
-        error: error as Error,
-      });
+    if (isDraft) {
+      console.log("📝 Updating draft issue");
+      updateResponse = await draftIssues.updateIssue(
+        workspaceSlug.toString(),
+        data.id,
+        payload
+      );
+    } else if (updateIssue) {
+      console.log("📝 Updating regular issue");
+      updateResponse = await updateIssue(
+        payload.project_id,
+        data.id,
+        payload
+      );
     }
-  };
+
+    console.log("✅ Update API response:", updateResponse);
+
+    // ─── Cycle handling ─────────────────────────────────────
+    if (
+      payload.cycle_id &&
+      payload.cycle_id !== "" &&
+      (payload.cycle_id !== cycleId ||
+        storeType !== EIssuesStoreType.CYCLE)
+    ) {
+      console.log("🔄 Adding issue to cycle:", payload.cycle_id);
+      await addIssueToCycle(data as TBaseIssue, payload.cycle_id);
+    } else {
+      console.log("✅ No cycle update needed");
+    }
+
+    // ─── Module handling ────────────────────────────────────
+    if (
+      payload.module_ids &&
+      payload.module_ids.length > 0 &&
+      (!payload.module_ids.includes(moduleId?.toString()) ||
+        storeType !== EIssuesStoreType.MODULE)
+    ) {
+      console.log("📦 Adding issue to modules:", payload.module_ids);
+      await addIssueToModule(
+        data as TBaseIssue,
+        payload.module_ids
+      );
+    } else {
+      console.log("✅ No module update needed");
+    }
+
+    // ─── Property values ────────────────────────────────────
+    console.log("⚙️ Updating custom properties");
+
+    await handleCreateUpdatePropertyValues({
+      issueId: data.id,
+      issueTypeId: payload.type_id,
+      projectId: payload.project_id,
+      workspaceSlug: workspaceSlug?.toString(),
+      isDraft: isDraft,
+    });
+
+    console.log("✅ Property values updated");
+
+    setToast({
+      type: TOAST_TYPE.SUCCESS,
+      title: t("success"),
+      message: t("issue_updated_successfully"),
+    });
+
+    captureSuccess({
+      eventName: WORK_ITEM_TRACKER_EVENTS.update,
+      payload: { id: data.id },
+    });
+
+    console.log("✅ Update flow completed successfully");
+
+    handleClose();
+  } catch (error: any) {
+    console.error("❌ Error while updating issue:", error);
+
+    setToast({
+      type: TOAST_TYPE.ERROR,
+      title: t("error"),
+      message: error?.error ?? t("issue_could_not_be_updated"),
+    });
+
+    captureError({
+      eventName: WORK_ITEM_TRACKER_EVENTS.update,
+      payload: { id: data.id },
+      error: error as Error,
+    });
+  }
+};
+
 
   const handleFormSubmit = async (payload: Partial<TIssue>, is_draft_issue: boolean = false) => {
     if (!workspaceSlug || !payload.project_id || !storeType) return;

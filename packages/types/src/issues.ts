@@ -47,6 +47,7 @@ export interface IIssueParent {
   project_detail: IProjectLite;
   sequence_id: number;
   start_date: string | null;
+  start_time: string | null;
   state_detail: IStateLite;
   target_date: string | null;
 }
@@ -151,6 +152,7 @@ export interface IIssueLite {
   project_id: string;
   start_date?: string | null;
   target_date?: string | null;
+  start_time?: string | null;
   workspace__slug: string;
 }
 

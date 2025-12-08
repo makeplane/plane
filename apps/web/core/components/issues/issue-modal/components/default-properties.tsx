@@ -21,6 +21,8 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
+
+import { TimeDropdown } from "@/components/dropdowns/time-picker";
 import { ParentIssuesListModal } from "@/components/issues/parent-issues-list-modal";
 import { IssueLabelSelect } from "@/components/issues/select";
 // helpers
@@ -40,6 +42,7 @@ type TIssueDefaultPropertiesProps = {
   workspaceSlug: string;
   selectedParentIssue: ISearchIssueResponse | null;
   startDate: string | null;
+  startTime: string | null;
   targetDate: string | null;
   parentId: string | null;
   isDraft: boolean;
@@ -198,6 +201,29 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
           </div>
         )}
       />
+
+      <Controller
+        control={control}
+        name="start_time"
+        render={({ field: { value, onChange } }) =>{
+          console.log("Time value:", value);
+          return(
+          <div className="h-7">
+            <TimeDropdown
+              value={value ?? null}
+              onChange={(time) => {
+                onChange(time);
+                handleFormChange();
+              }}
+              placeholder={t("starting_time")}
+              buttonVariant="border-with-text"
+              tabIndex={getIndex("start_time")}
+            />
+          </div>
+        )
+        } }
+      />
+
       {projectDetails?.cycle_view && (
         <Controller
           control={control}

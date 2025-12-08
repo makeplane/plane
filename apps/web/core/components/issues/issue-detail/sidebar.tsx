@@ -2,7 +2,17 @@
 
 import React from "react";
 import { observer } from "mobx-react";
-import { CalendarCheck2, CalendarClock, LayoutPanelTop, Signal, Tag, Triangle, UserCircle2, Users } from "lucide-react";
+import {
+  CalendarCheck2,
+  CalendarClock,
+  Clock,
+  LayoutPanelTop,
+  Signal,
+  Tag,
+  Triangle,
+  UserCircle2,
+  Users,
+} from "lucide-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // ui
@@ -15,6 +25,8 @@ import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
+
+import { TimeDropdown } from "@/components/dropdowns/time-picker";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -64,6 +76,21 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const maxDate = issue.target_date ? getDate(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
+
+  const isoTo12Hour = (iso: string | null): string | null => {
+    if (!iso) return null;
+
+    const date = new Date(iso);
+    if (isNaN(date.getTime())) return null;
+
+    let hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12;
+
+    return `${hours.toString().padStart(2, "0")}:${minutes} ${ampm}`;
+  };
 
   return (
     <>
@@ -167,6 +194,31 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 clearIconClassName="h-3 w-3 hidden group-hover:inline"
                 // TODO: add this logic
                 // showPlaceholderIcon
+              />
+            </div>
+
+            <div className="flex h-8 items-center gap-2">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+                <Clock className="h-4 w-4 flex-shrink-0" />
+                <span>{t("starting_time")}</span>
+              </div>
+              <TimeDropdown
+                value={issue.start_time}
+                onChange={(val) => {
+                  if (!val) return;
+                  console.log("⌨️ Selected value (val):", val);
+                  console.log("🕒 Old issue.start_time:", issue.start_time);
+                  issueOperations.update(workspaceSlug, projectId, issueId, {
+                    start_time: val,
+                  });
+                }}
+                placeholder={t("add_start_time")}
+                buttonVariant="transparent-with-text"
+                className="w-3/4 flex-grow group"
+                buttonContainerClassName="w-full text-left"
+                buttonClassName={`text-sm ${issue?.start_time ? "" : "text-custom-text-400"}`}
+                hideIcon
+                clearIconClassName="h-3 w-3 hidden group-hover:inline"
               />
             </div>
 

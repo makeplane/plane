@@ -162,6 +162,8 @@ const ISSUE_ORDERBY_KEY: Record<TIssueOrderByOptions, keyof TIssue> = {
   "-estimate_point__key": "estimate_point",
   start_date: "start_date",
   "-start_date": "start_date",
+  start_time : "start_time",
+  "-start_time": "start_time",
   link_count: "link_count",
   "-link_count": "link_count",
   attachment_count: "attachment_count",

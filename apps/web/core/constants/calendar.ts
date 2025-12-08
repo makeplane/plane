@@ -111,8 +111,12 @@ export const CALENDAR_LAYOUTS: {
     key: "month",
     title: "Month layout",
   },
-  week: {
-    key: "week",
-    title: "Week layout",
-  },
+  // week: {
+  //   key: "week",
+  //   title: "Week layout",
+  // },
+  day: {
+    key: "day",
+    title: "Daily layout"
+  }
 };

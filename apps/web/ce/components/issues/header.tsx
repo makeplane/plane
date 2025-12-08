@@ -114,7 +114,7 @@ export const IssuesHeader = observer(() => {
             size="sm"
           >
             <div className="block sm:hidden">{t("issue.label", { count: 1 })}</div>
-            <div className="hidden sm:block">{t("issue.add.label")}</div>
+            <div className="hidden sm:block">Add Streaming Event</div>
           </Button>
         ) : (
           <></>

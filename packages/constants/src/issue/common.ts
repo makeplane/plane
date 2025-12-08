@@ -135,6 +135,7 @@ export const ISSUE_ORDER_BY_OPTIONS: {
 
 export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = [
   "assignee",
+  "start_time",
   "start_date",
   "due_date",
   "labels",
@@ -215,6 +216,7 @@ export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
   "labels",
   "modules",
   "cycle",
+  "start_time",
   "start_date",
   "due_date",
   "estimate",

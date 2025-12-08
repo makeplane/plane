@@ -196,11 +196,17 @@ class IssueFlatSerializer(BaseSerializer):
             "description",
             "description_html",
             "priority",
+            "start_time",
             "start_date",
             "target_date",
             "sequence_id",
             "sort_order",
             "is_draft",
+            "level",       # sport app Field
+            "sport",       # sport app Field
+            "program",     # sport app Field
+            "category",    # sport app Field
+            "year",        # sport app Field
         ]
 
 

@@ -93,6 +93,51 @@ export const renderFormattedTime = (date: string | Date, timeFormat: "12-hour" |
   return formattedTime;
 };
 
+//Format ISO Time
+
+/**
+ * Convert ISO string to 12-hour format for display
+ * @param iso - ISO date string like "2025-12-08T11:38:00.000Z"
+ * @returns Formatted time like "11:38 AM" or null
+ */
+export const isoTo12Hour = (iso: string | null): string | null => {
+  if (!iso) return null;
+  const date = new Date(iso);
+  const h = date.getHours();
+  const m = date.getMinutes();
+  const period = h >= 12 ? "PM" : "AM";
+  const hour12 = h % 12 === 0 ? 12 : h % 12;
+  return `${hour12.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")} ${period}`;
+};
+
+/**
+ * Convert ISO string to 24-hour format for HTML time input
+ * @param iso - ISO date string like "2025-12-08T11:38:00.000Z"
+ * @returns Time string like "11:38"
+ */
+export const isoTo24Hour = (iso: string | null): string => {
+  if (!iso) return "";
+  const date = new Date(iso);
+  const h = date.getHours().toString().padStart(2, "0");
+  const m = date.getMinutes().toString().padStart(2, "0");
+  return `${h}:${m}`;
+};
+
+/**
+ * Update time in an ISO string
+ * @param oldISO - Existing ISO string or null
+ * @param time24 - Time in 24-hour format like "11:38"
+ * @returns New ISO string with updated time
+ */
+export const updateISOTime = (oldISO: string | null, time24: string): string | null => {
+  if (!time24) return null;
+  const date = oldISO ? new Date(oldISO) : new Date();
+  const [h, m] = time24.split(":").map(Number);
+  date.setHours(h, m, 0, 0);
+  return date.toISOString();
+};
+
+
 // Date Difference Helpers
 /**
  * @returns {number} total number of days in range
