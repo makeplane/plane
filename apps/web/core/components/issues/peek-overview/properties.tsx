@@ -2,20 +2,34 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { Signal, Tag, Triangle, LayoutPanelTop, CalendarClock, CalendarCheck2, Users, UserCircle2, Handshake, Volleyball, Calendar } from "lucide-react";
+import {
+  Signal,
+  Tag,
+  Triangle,
+  LayoutPanelTop,
+  CalendarClock,
+  CalendarCheck2,
+  Users,
+  UserCircle2,
+  Handshake,
+  Volleyball,
+  Calendar,
+  Clock,
+} from "lucide-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // ui icons
-import { CycleIcon, DoubleCircleIcon, ModuleIcon } from "@plane/propel/icons";
+// import { CycleIcon, DoubleCircleIcon, ModuleIcon } from "@plane/propel/icons";
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
-import { EstimateDropdown } from "@/components/dropdowns/estimate";
+// import { EstimateDropdown } from "@/components/dropdowns/estimate";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
-import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
-import { PriorityDropdown } from "@/components/dropdowns/priority";
-import { StateDropdown } from "@/components/dropdowns/state/dropdown";
+// import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+// import { PriorityDropdown } from "@/components/dropdowns/priority";
+// import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // helpers
+// import { TimeDropdown } from "@/components/dropdowns/time-picker";
 import { TimeDropdown } from "@/components/dropdowns/time-picker";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
@@ -23,22 +37,19 @@ import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 
 // plane web components
-import { WorkItemAdditionalSidebarProperties } from "@/plane-web/components/issues/issue-details/additional-properties";
-import OppositionTeamProperty from "@/plane-web/components/issues/issue-details/opposition-team-property";
-import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
-import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
-import type { TIssueOperations } from "../issue-detail";
-import { IssueCycleSelect } from "../issue-detail/cycle-select";
-import { IssueLabel } from "../issue-detail/label";
-import { IssueModuleSelect } from "../issue-detail/module-select";
-import OppositionTeamProperty from "@/plane-web/components/issues/issue-details/opposition-team-property";
-import SportProperty from "@/plane-web/components/issues/issue-details/sport-property";
-import LevelProperty from "@/plane-web/components/issues/issue-details/level-property";
-import ProgramProperty from "@/plane-web/components/issues/issue-details/program-property";
+// import { WorkItemAdditionalSidebarProperties } from "@/plane-web/components/issues/issue-details/additional-properties";
 import CategoryProperty from "@/plane-web/components/issues/issue-details/category-property";
-import YearProperty from "@/plane-web/components/issues/issue-details/year-property";
-import TimeProperty from "@/plane-web/components/issues/issue-details/time-property";
+import LevelProperty from "@/plane-web/components/issues/issue-details/level-property";
+import OppositionTeamProperty from "@/plane-web/components/issues/issue-details/opposition-team-property";
+// import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
+import ProgramProperty from "@/plane-web/components/issues/issue-details/program-property";
+import SportProperty from "@/plane-web/components/issues/issue-details/sport-property";
 import YearRangeProperty from "@/plane-web/components/issues/issue-details/year-property";
+// import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
+import type { TIssueOperations } from "../issue-detail";
+// import { IssueCycleSelect } from "../issue-detail/cycle-select";
+// import { IssueLabel } from "../issue-detail/label";
+// import { IssueModuleSelect } from "../issue-detail/module-select";
 
 interface IPeekOverviewProperties {
   workspaceSlug: string;
@@ -156,8 +167,6 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           </div>
         )}
 
-
-
         {/* due date */}
         {/* <div className="flex w-full items-center gap-3 h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
@@ -211,7 +220,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             />
           </div>
         )} */}
-        {/* 
+        {/*
         {projectDetails?.module_view && (
           <div className="flex w-full items-center gap-3 min-h-8 h-full">
             <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
@@ -273,8 +282,6 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           </div>
         </div> */}
 
-
-
         {/* start date */}
         <div className="flex w-full items-center gap-3 h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
@@ -299,6 +306,32 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             clearIconClassName="h-3 w-3 hidden group-hover:inline"
           />
         </div>
+
+        {/* start time */}
+        <div className="flex h-8 items-center gap-3 w-full">
+          <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
+            <Clock className="h-4 w-4 flex-shrink-0" />
+            <span>{t("starting_time")}</span>
+          </div>
+          <TimeDropdown
+            value={issue.start_time}
+            onChange={(val) => {
+              if (!val) return;
+              issueOperations.update(workspaceSlug, projectId, issueId, {
+                start_time: val,
+              });
+            }}
+            placeholder={t("add_start_time")}
+            buttonVariant="transparent-with-text"
+            className="w-3/4 flex-grow group"
+            disabled={disabled}
+            buttonContainerClassName="w-full text-left"
+            buttonClassName={`text-sm ${issue?.start_time ? "" : "text-custom-text-400"}`}
+            hideIcon
+            clearIconClassName="h-3 w-3 hidden group-hover:inline"
+          />
+        </div>
+
         {/* Level */}
         <div className="flex w-full items-center gap-3 h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
@@ -360,7 +393,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <p>Opposition</p>
           </div>
           <OppositionTeamProperty
-            storageKey={`opp-team-${issueId}`}   // unique key for each card ✔
+            storageKey={`opp-team-${issueId}`} // unique key for each card ✔
             value={issue?.opposition_team}
             onChange={(team) =>
               issueOperations.update(workspaceSlug, projectId, issueId, {
@@ -398,15 +431,10 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           <YearRangeProperty
             storageKey={`year-${issueId}`}
             value={issue?.year}
-            onChange={(year) =>
-              issueOperations.update(workspaceSlug, projectId, issueId, { year })
-            }
+            onChange={(year) => issueOperations.update(workspaceSlug, projectId, issueId, { year })}
             disabled={disabled}
           />
         </div>
-
-
-
       </div>
     </div>
   );
