@@ -203,7 +203,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                   <Tab
                     key={tab.key}
                     className={({ selected }) =>
-                      `rounded-sm px-4 py-1 text-center text-sm outline-none transition-colors ${
+                      `rounded-sm px-4 py-1 text-center text-13 outline-none transition-colors ${
                         selected ? "bg-accent-primary text-on-color" : "text-primary"
                       }`
                     }
@@ -235,7 +235,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                               onChange={(e) => setFormData({ ...formData, search: e.target.value })}
                               ref={ref}
                               placeholder="Search for images"
-                              className="w-full text-sm"
+                              className="w-full text-13"
                             />
                           )}
                         />
@@ -264,7 +264,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                             ))}
                           </div>
                         ) : (
-                          <p className="pt-7 text-center text-xs text-secondary">No images found.</p>
+                          <p className="pt-7 text-center text-11 text-secondary">No images found.</p>
                         )
                       ) : (
                         <Loader className="grid grid-cols-4 gap-4">

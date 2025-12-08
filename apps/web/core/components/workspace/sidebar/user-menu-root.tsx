@@ -84,7 +84,7 @@ export const UserMenuRoot = observer(function UserMenuRoot(props: Props) {
           </div>
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem onClick={() => router.push(`/${workspaceSlug}/settings/account/preferences`)}>
-          <div className="flex w-full items-center gap-2 rounded-sm text-xs">
+          <div className="flex w-full items-center gap-2 rounded-sm text-11">
             <Settings2 className="h-4 w-4 stroke-[1.5]" />
             <span>Preferences</span>
           </div>

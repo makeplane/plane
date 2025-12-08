@@ -74,7 +74,7 @@ export const AppRailRoot = observer(() => {
             </ContextMenu.Item>
             <ContextMenu.Separator />
             <ContextMenu.Item onClick={toggleAppRail}>
-              <span className="text-xs">{isCollapsed ? "Dock App Rail" : "Undock App Rail"}</span>
+              <span className="text-11">{isCollapsed ? "Dock App Rail" : "Undock App Rail"}</span>
             </ContextMenu.Item>
           </ContextMenu.Content>
         </ContextMenu.Portal>
