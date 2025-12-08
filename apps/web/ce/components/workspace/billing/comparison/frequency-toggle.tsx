@@ -22,7 +22,7 @@ export const PlanFrequencyToggle = observer(function PlanFrequencyToggle(props: 
     <div className="flex w-full items-center cursor-pointer py-1 animate-slide-up">
       <div
         className={cn(
-          "flex space-x-1 rounded-md bg-custom-primary-200/10 p-0.5 w-full",
+          "flex space-x-1 rounded-md bg-accent-primary/80/10 p-0.5 w-full",
           getSubscriptionBackgroundColor(subscriptionType, "50")
         )}
       >

@@ -68,7 +68,7 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
               </div>
               <div className="text-13 text-tertiary flex gap-2 capitalize w-fit">
                 <span>{getUserRole(workspace.role)?.toLowerCase() || "guest"}</span>
-                <div className="w-1 h-1 bg-custom-text-300/50 rounded-full m-auto" />
+                <div className="w-1 h-1 bg-layer-1/50 rounded-full m-auto" />
                 <span className="capitalize">{t("member", { count: workspace.total_members || 0 })}</span>
               </div>
             </div>

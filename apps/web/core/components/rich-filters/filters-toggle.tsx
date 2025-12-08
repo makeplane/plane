@@ -66,7 +66,7 @@ export const FiltersToggle = observer(function FiltersToggle<P extends TFilterPr
         {showFilterRowChangesPill && (
           <span
             className={cn("p-[3px] rounded-full bg-accent-primary absolute top-[0.2px] -right-[0.4px]", {
-              "bg-custom-text-300": hasAnyConditions === false && filter?.hasChanges === true, // If there are no conditions and there are changes, show the pill in the background color
+              "bg-layer-1": hasAnyConditions === false && filter?.hasChanges === true, // If there are no conditions and there are changes, show the pill in the background color
             })}
           />
         )}
