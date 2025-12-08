@@ -16,5 +16,9 @@
   "exports": {
     "./index.css": "./index.css",
     "./postcss.config.js": "./postcss.config.js"
+  },
+  "dependencies": {
+    "@fontsource/ibm-plex-mono": "^5.2.7",
+    "@fontsource/inter": "5.2.8"
   }
 }
