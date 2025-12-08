@@ -39,7 +39,7 @@
     "husky": "9.1.7",
     "lint-staged": "16.2.7",
     "prettier": "3.7.3",
-    "turbo": "2.6.1",
+    "turbo": "2.6.3",
     "typescript-eslint": "8.48.0"
   },
   "lint-staged": {
@@ -68,11 +68,15 @@
       "prosemirror-view": "1.40.0",
       "@types/express": "4.17.23",
       "typescript": "catalog:",
-      "vite": "catalog:"
+      "vite": "catalog:",
+      "next": "16.0.7"
     },
     "onlyBuiltDependencies": [
       "@sentry/cli",
       "turbo"
+    ],
+    "ignoredBuiltDependencies": [
+      "sharp"
     ]
   },
   "packageManager": "pnpm@10.24.0+sha512.01ff8ae71b4419903b65c60fb2dc9d34cf8bb6e06d03bde112ef38f7a34d6904c424ba66bea5cdcf12890230bf39f9580473140ed9c946fef328b6e5238a345a",
