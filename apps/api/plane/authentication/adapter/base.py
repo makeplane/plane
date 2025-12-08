@@ -118,7 +118,7 @@ class Adapter:
             if not self.token_data:
                 headers = {}
             else:
-                headers = {"Authorization": f"Bearer {self.token_data.get('access_token')}"}
+                headers = {}
 
             # Download the avatar image
             response = requests.get(avatar_url, timeout=10, headers=headers)
