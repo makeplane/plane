@@ -198,10 +198,10 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
   return (
     <div
       className={cn(
-        "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-tertiary bg-surface-2 border border-dashed border-strong transition-all duration-200 ease-in-out cursor-default",
+        "image-upload-component flex items-center justify-start gap-2 py-3 px-2 rounded-lg text-tertiary bg-layer-1 border border-dashed border-strong transition-all duration-200 ease-in-out cursor-default",
         {
           "hover:text-secondary hover:bg-layer-1 cursor-pointer": editor.isEditable,
-          "bg-layer-1 text-secondary": draggedInside && editor.isEditable,
+          "bg-layer-1-hover text-secondary": draggedInside && editor.isEditable,
           "text-accent-secondary bg-accent-primary/10 border-accent-strong-200/10 hover:bg-accent-primary/10 hover:text-accent-secondary":
             selected && editor.isEditable,
           "text-red-500 cursor-default": failedToLoadImage || hasDuplicationFailed,
@@ -227,7 +227,7 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
           type="button"
           onClick={handleRetryClick}
           className={cn(
-            "flex items-center gap-1 px-2 py-1 text-11 font-medium text-tertiary hover:bg-surface-2 hover:text-secondary rounded-md transition-all duration-200 ease-in-out",
+            "flex items-center gap-1 px-2 py-1 text-11 font-medium text-tertiary hover:bg-layer-1 hover:text-secondary rounded-md transition-all duration-200 ease-in-out",
             {
               "hover:bg-red-500/20": selected,
             }

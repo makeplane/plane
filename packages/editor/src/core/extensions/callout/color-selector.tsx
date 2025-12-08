@@ -60,11 +60,11 @@ export function CalloutBlockColorSelector(props: Props) {
                   onClick={() => handleColorSelect(color.key)}
                 />
               ))}
-              <button
-                type="button"
-                className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-tertiary border-[0.5px] border-strong-1 hover:bg-layer-1 transition-colors"
-                onClick={() => handleColorSelect(null)}
-              >
+                <button
+                  type="button"
+                  className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-tertiary border-[0.5px] border-strong-1 hover:bg-layer-1 transition-colors"
+                  onClick={() => handleColorSelect(null)}
+                >
                 <Ban className="size-4" />
               </button>
             </div>
