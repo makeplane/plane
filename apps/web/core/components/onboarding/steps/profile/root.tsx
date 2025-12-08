@@ -35,7 +35,7 @@ export type TProfileSetupFormValues = {
   password?: string;
   confirm_password?: string;
   role?: string;
-  use_case?: string;
+  use_case?: string[];
   has_marketing_email_consent?: boolean;
 };
 
