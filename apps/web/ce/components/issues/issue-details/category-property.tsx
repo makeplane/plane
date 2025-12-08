@@ -1,77 +1,59 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Ban, CirclePlus, Search } from "lucide-react";
 
-interface Team {
-  name: string;
-  logo: string;
-}
-
-interface OppositionTeamPropertyProps {
-  value?: Team | null;
-  onChange?: (team: Team | null) => void;
+interface CategoryPropertyProps {
+  value?: string | null;
+  onChange?: (category: string | null) => void;
   disabled?: boolean;
   storageKey: string;
 }
 
-const TEMP_STORAGE_KEY = "opp-team-temp-create";
+const TEMP_STORAGE_KEY = "category-temp-create";
 
 const determineStorageKey = (key: string): { actualKey: string; isCreating: boolean } => {
   const isCreating = key.includes("undefined");
-  const actualKey = isCreating ? TEMP_STORAGE_KEY : key;
-  return { actualKey, isCreating };
+  return { actualKey: isCreating ? TEMP_STORAGE_KEY : key, isCreating };
 };
 
-const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
+const CategoryProperty: React.FC<CategoryPropertyProps> = ({
   value,
   onChange,
   disabled = false,
   storageKey,
 }) => {
-  const [teams, setTeams] = useState<Team[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [loadError, setLoadError] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Determine the current keys/status based on the prop
   const { actualKey, isCreating } = determineStorageKey(storageKey);
 
+  // Load from localStorage
   useEffect(() => {
-    // 💡 FIX: Check for both undefined and null (which react-hook-form uses for empty fields)
     if (value === undefined || value === null) {
       try {
         const saved = localStorage.getItem(actualKey);
-        if (saved) {
-          const loadedValue = JSON.parse(saved) as Team | null;
-          onChange?.(loadedValue);
-        }
-      } catch (e) {
-        console.warn("LocalStorage read failed", e);
-      }
+        if (saved) onChange?.(JSON.parse(saved));
+      } catch {}
     }
   }, [actualKey, value, onChange]);
 
+  // Move temp to real key
   useEffect(() => {
     if (!isCreating && actualKey !== TEMP_STORAGE_KEY) {
       try {
-        const tempSaved = localStorage.getItem(TEMP_STORAGE_KEY);
-
-        if (tempSaved) {
-          localStorage.setItem(actualKey, tempSaved);
-
-        }
-
-        // Clean up the temporary key now that we've successfully transferred/checked it
+        const temp = localStorage.getItem(TEMP_STORAGE_KEY);
+        if (temp) localStorage.setItem(actualKey, temp);
         localStorage.removeItem(TEMP_STORAGE_KEY);
-      } catch (e) {
-        console.error("Failed to transition/clean up storage key.", e);
-      }
+      } catch {}
     }
-  }, [isCreating, actualKey]); // Dependency on the status change
+  }, [isCreating, actualKey]);
 
+  // Fetch categories
   useEffect(() => {
-    const API_URL = `${process.env.NEXT_PUBLIC_CP_SERVER_URL}/meta-type?key='OPPOSITIONTEAM'`;
+    const API_URL = `${process.env.NEXT_PUBLIC_CP_SERVER_URL}/meta-type?key='CATEGORY'`;
     setLoading(true);
 
     fetch(API_URL)
@@ -79,17 +61,17 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
         if (!res.ok) throw new Error("Failed to fetch");
         const data = await res.json();
 
-        const items = data?.["Gateway Response"]?.result?.[0] ?? [];
-        const values = items.find((i: any) => i?.field === "values")?.value;
-        if (!Array.isArray(values)) throw new Error("Invalid structure");
+        const responseBlock = data?.["Gateway Response"]?.result?.[0] ?? [];
+        const values = responseBlock.find((i: any) => i?.field === "values")?.value;
+        if (!Array.isArray(values)) throw new Error("Invalid response");
 
-        setTeams(values.sort((a: Team, b: Team) => a.name.localeCompare(b.name)));
+        setCategories(values.sort());
       })
       .catch((e) => setLoadError(e.message))
       .finally(() => setLoading(false));
   }, []);
 
-  // Outside click handler (remains the same)
+  // Outside click to close dropdown
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (!dropdownRef.current?.contains(e.target as Node)) setOpen(false);
@@ -98,44 +80,33 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // 3. Handling Select (Write Logic)
-  const handleSelect = (team: Team | null) => {
+  const handleSelect = (category: string | null) => {
     try {
-      if (team) {
-        // Use actualKey to save (either the temp key or the permanent ID key)
-        localStorage.setItem(actualKey, JSON.stringify(team));
-      } else {
-        localStorage.removeItem(actualKey);
-      }
+      if (category) localStorage.setItem(actualKey, JSON.stringify(category));
+      else localStorage.removeItem(actualKey);
     } catch {}
 
-    onChange?.(team);
+    onChange?.(category);
     setOpen(false);
     setSearch("");
   };
 
-  const filteredTeams = teams.filter((t) => t.name.toLowerCase().includes(search.toLowerCase()));
+  const filteredCategories = categories.filter((c) =>
+    c.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    // ... (rest of the component JSX remains the same) ...
     <div className="relative w-52" ref={dropdownRef}>
       <div
         onClick={() => !disabled && setOpen((o) => !o)}
-        className="rounded-lg px-2 py-1 flex items-center justify-between cursor-pointer text-custom-text-300 hover:bg-custom-background-80 hover:text-custom-text-100"
+        className="rounded-lg px-2 py-1 flex items-center gap-1.5 cursor-pointer text-custom-text-300 hover:bg-custom-background-80 hover:text-custom-text-100"
       >
         {value ? (
-          <div className="flex items-center gap-1.5">
-            <img
-              src={`${process.env.NEXT_PUBLIC_CP_SERVER_URL}/blobs/${value.logo}`}
-              alt={value.name}
-              className="w-5 h-5 rounded-full object-cover"
-            />
-            <span className="text-xs whitespace-normal">{value.name}</span>
-          </div>
+          <span className="text-xs">{value}</span>
         ) : (
           <div className="flex items-center gap-1.5">
             <CirclePlus className="w-4 h-4" />
-            <span className="text-xs">Add Opposition Team</span>
+            <span className="text-xs">Add Category</span>
           </div>
         )}
       </div>
@@ -166,18 +137,13 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
 
           {!loading &&
             !loadError &&
-            filteredTeams.map((team) => (
+            filteredCategories.map((category) => (
               <div
-                key={team.name}
-                onClick={() => handleSelect(team)}
+                key={category}
+                onClick={() => handleSelect(category)}
                 className="flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-custom-background-80"
               >
-                <img
-                  src={`${process.env.NEXT_PUBLIC_CP_SERVER_URL}/blobs/${team.logo}`}
-                  alt={team.name}
-                  className="w-5 h-5 rounded-full object-cover"
-                />
-                <span className="text-xs whitespace-normal">{team.name}</span>
+                <span className="text-xs whitespace-normal">{category}</span>
               </div>
             ))}
         </div>
@@ -186,4 +152,4 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
   );
 };
 
-export default OppositionTeamProperty;
+export default CategoryProperty;
