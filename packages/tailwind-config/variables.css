@@ -60,6 +60,22 @@
   --border-width-xl: 2.5px;
   --default-border-width: 1px;
 
+  /* ---------- Outline width ---------- */
+  --outline-width-*: initial;
+  --outline-width-sm: var(--border-width-sm);
+  --outline-width-md: var(--border-width-md);
+  --outline-width-lg: var(--border-width-lg);
+  --outline-width-xl: var(--border-width-xl);
+  --default-outline-width: var(--default-border-width);
+
+  /* ---------- Stroke width ---------- */
+  --stroke-width-*: initial;
+  --stroke-width-sm: var(--border-width-sm);
+  --stroke-width-md: var(--border-width-md);
+  --stroke-width-lg: var(--border-width-lg);
+  --stroke-width-xl: var(--border-width-xl);
+  --default-stroke-width: var(--default-border-width);
+
   /* ---------- Shadow ---------- */
   --shadow-*: initial;
   --shadow-raised-100: 0px 1px 6px -1px #292f3d08, 0px 1px 4px 0px #292f3d0a;
@@ -314,6 +330,38 @@
   --border-color-warning-subtle: var(--color-amber-400);
   --border-color-danger-strong: var(--color-red-700);
   --border-color-danger-subtle: var(--color-red-400);
+
+  /* Outline colors */
+  --outline-color-subtle: var(--border-color-subtle);
+  --outline-color-subtle-1: var(--border-color-subtle-1);
+  --outline-color-strong: var(--border-color-strong);
+  --outline-color-strong-1: var(--border-color-strong-1);
+  --outline-color-inverse: var(--border-color-inverse);
+  --outline-color-disabled: var(--border-color-disabled);
+  --outline-color-accent-strong: var(--border-color-accent-strong);
+  --outline-color-accent-subtle: var(--border-color-accent-subtle);
+  --outline-color-success-strong: var(--border-color-success-strong);
+  --outline-color-success-subtle: var(--border-color-success-subtle);
+  --outline-color-warning-strong: var(--border-color-warning-strong);
+  --outline-color-warning-subtle: var(--border-color-warning-subtle);
+  --outline-color-danger-strong: var(--border-color-danger-strong);
+  --outline-color-danger-subtle: var(--border-color-danger-subtle);
+
+  /* Stroke colors */
+  --stroke-subtle: var(--border-color-subtle);
+  --stroke-subtle-1: var(--border-color-subtle-1);
+  --stroke-strong: var(--border-color-strong);
+  --stroke-strong-1: var(--border-color-strong-1);
+  --stroke-inverse: var(--border-color-inverse);
+  --stroke-disabled: var(--border-color-disabled);
+  --stroke-accent-strong: var(--border-color-accent-strong);
+  --stroke-accent-subtle: var(--border-color-accent-subtle);
+  --stroke-success-strong: var(--border-color-success-strong);
+  --stroke-success-subtle: var(--border-color-success-subtle);
+  --stroke-warning-strong: var(--border-color-warning-strong);
+  --stroke-warning-subtle: var(--border-color-warning-subtle);
+  --stroke-danger-strong: var(--border-color-danger-strong);
+  --stroke-danger-subtle: var(--border-color-danger-subtle);
 
   /* Text colors */
   --text-color-primary: var(--color-neutral-1200);
@@ -914,11 +962,6 @@
   --text-caption-xs-bold--line-height: 1;
   --text-caption-xs-bold--letter-spacing: calc(0.01 * var(--text-10));
   --text-caption-xs-bold--font-weight: var(--font-weight-bold);
-}
-
-@utility outline-* {
-  outline-width: --value(--border-width-*);
-  outline-color: --value(--border-color-*);
 }
 
 @utility px-page-x {
