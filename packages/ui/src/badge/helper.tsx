@@ -45,7 +45,7 @@ enum badgeIconStyling {
 export const badgeStyling: IBadgeStyling = {
   primary: {
     default: `text-on-color bg-accent-primary`,
-    hover: `hover:bg-custom-primary-200`,
+    hover: `hover:bg-accent-primary/80`,
     disabled: `cursor-not-allowed !bg-custom-primary-60 hover:bg-custom-primary-60`,
   },
   "accent-primary": {
@@ -60,8 +60,8 @@ export const badgeStyling: IBadgeStyling = {
   },
 
   neutral: {
-    default: `text-custom-background-100 bg-custom-text-100 border border-subtle`,
-    hover: `hover:bg-custom-text-200`,
+    default: `text-custom-background-100 bg-layer-1 border border-subtle`,
+    hover: `hover:bg-layer-1`,
     disabled: `cursor-not-allowed bg-subtle-1 !text-placeholder`,
   },
   "accent-neutral": {

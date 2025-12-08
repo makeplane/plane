@@ -304,7 +304,7 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
           />
         )}
         {selected && displayedImageSrc === resolvedImageSrc && (
-          <div className="absolute inset-0 size-full bg-custom-primary-500/30 pointer-events-none" />
+          <div className="absolute inset-0 size-full bg-accent-primary/30 pointer-events-none" />
         )}
         {showImageResizer && (
           <>

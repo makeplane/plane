@@ -34,7 +34,7 @@ const TableFooter = React.forwardRef(function TableFooter(
   { className, ...props }: React.ComponentPropsWithoutRef<"tfoot">,
   ref: React.ForwardedRef<React.ComponentRef<"tfoot">>
 ) {
-  return <tfoot ref={ref} className={cn("bg-custom-background-300 font-medium", className)} {...props} />;
+  return <tfoot ref={ref} className={cn("bg-layer-1 font-medium", className)} {...props} />;
 });
 TableFooter.displayName = "TableFooter";
 

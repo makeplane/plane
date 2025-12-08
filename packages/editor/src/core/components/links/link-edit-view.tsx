@@ -21,7 +21,7 @@ function InputView({ label, value, placeholder, onChange, autoFocus }: InputView
       <input
         placeholder={placeholder}
         onClick={(e) => e.stopPropagation()}
-        className="w-[280px] outline-none bg-surface-2 text-custom-text-900 text-13 border border-strong rounded-md p-2"
+        className="w-[280px] outline-none bg-surface-2 text-primary text-13 border border-strong rounded-md p-2"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         autoFocus={autoFocus}
@@ -141,7 +141,7 @@ export function LinkEditView({ viewProps }: LinkEditViewProps) {
       <InputView label="URL" placeholder="Enter or paste URL" value={localUrl} onChange={setLocalUrl} autoFocus />
       <InputView label="Text" placeholder="Enter Text to display" value={localText} onChange={handleTextChange} />
       <div className="mb-1 bg-strong h-[1px] w-full gap-2" />
-      <div className="flex text-13 text-custom-text-800 gap-2 items-center">
+      <div className="flex text-13 text-secondary gap-2 items-center">
         <Link2Off size={14} className="inline-block" />
         <button onClick={removeLink} className="cursor-pointer hover:text-placeholder transition-colors">
           Remove Link
