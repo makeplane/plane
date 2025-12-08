@@ -75,14 +75,12 @@ class WorkSpaceViewSet(BaseViewSet):
 
     def create(self, request):
         try:
-            (DISABLE_WORKSPACE_CREATION,) = get_configuration_value(
-                [
-                    {
-                        "key": "DISABLE_WORKSPACE_CREATION",
-                        "default": os.environ.get("DISABLE_WORKSPACE_CREATION", "0"),
-                    }
-                ]
-            )
+            (DISABLE_WORKSPACE_CREATION,) = get_configuration_value([
+                {
+                    "key": "DISABLE_WORKSPACE_CREATION",
+                    "default": os.environ.get("DISABLE_WORKSPACE_CREATION", "0"),
+                }
+            ])
 
             if DISABLE_WORKSPACE_CREATION == "1":
                 return Response(
