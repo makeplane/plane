@@ -1,3 +1,18 @@
+@import "@fontsource/inter/200.css";
+@import "@fontsource/inter/300.css";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+@import "@fontsource/inter/800.css";
+@import "@fontsource/ibm-plex-mono/200.css";
+@import "@fontsource/ibm-plex-mono/300.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+@import "@fontsource/ibm-plex-mono/600.css";
+@import "@fontsource/ibm-plex-mono/700.css";
+@import "@fontsource/material-symbols-rounded/400.css";
+
 @custom-variant dark (&:where([data-theme*="dark"], [data-theme*="dark"] *));
 
 @theme {
@@ -45,7 +60,24 @@
   --border-width-xl: 2.5px;
   --default-border-width: 1px;
 
+  /* ---------- Outline width ---------- */
+  --outline-width-*: initial;
+  --outline-width-sm: var(--border-width-sm);
+  --outline-width-md: var(--border-width-md);
+  --outline-width-lg: var(--border-width-lg);
+  --outline-width-xl: var(--border-width-xl);
+  --default-outline-width: var(--default-border-width);
+
+  /* ---------- Ring width ---------- */
+  --ring-width-*: initial;
+  --ring-width-sm: var(--border-width-sm);
+  --ring-width-md: var(--border-width-md);
+  --ring-width-lg: var(--border-width-lg);
+  --ring-width-xl: var(--border-width-xl);
+  --default-ring-width: var(--default-border-width);
+
   /* ---------- Shadow ---------- */
+  --shadow-*: initial;
   --shadow-raised-100: 0px 1px 6px -1px #292f3d08, 0px 1px 4px 0px #292f3d0a;
   --shadow-raised-200: 0px 1px 2px -1px #292f3d0f, 0px 1px 3px 0px #292f3d0d;
   --shadow-raised-300: 0px 2px 4px -1px #292f3d0a, 0px 4px 6px -1px #292f3d0d;
@@ -249,7 +281,7 @@
   --background-color-layer-2-hover: var(--color-alpha-black-100);
   --background-color-layer-2-active: var(--color-alpha-black-200);
   --background-color-layer-2-selected: var(--color-alpha-black-300);
-  --background-color-layer-3: var(--color-neutral-200);
+  --background-color-layer-3: var(--color-neutral-300);
   --background-color-layer-3-hover: var(--color-alpha-black-100);
   --background-color-layer-3-active: var(--color-alpha-black-200);
   --background-color-layer-3-selected: var(--color-alpha-black-300);
@@ -299,6 +331,38 @@
   --border-color-danger-strong: var(--color-red-700);
   --border-color-danger-subtle: var(--color-red-400);
 
+  /* Outline colors */
+  --outline-color-subtle: var(--border-color-subtle);
+  --outline-color-subtle-1: var(--border-color-subtle-1);
+  --outline-color-strong: var(--border-color-strong);
+  --outline-color-strong-1: var(--border-color-strong-1);
+  --outline-color-inverse: var(--border-color-inverse);
+  --outline-color-disabled: var(--border-color-disabled);
+  --outline-color-accent-strong: var(--border-color-accent-strong);
+  --outline-color-accent-subtle: var(--border-color-accent-subtle);
+  --outline-color-success-strong: var(--border-color-success-strong);
+  --outline-color-success-subtle: var(--border-color-success-subtle);
+  --outline-color-warning-strong: var(--border-color-warning-strong);
+  --outline-color-warning-subtle: var(--border-color-warning-subtle);
+  --outline-color-danger-strong: var(--border-color-danger-strong);
+  --outline-color-danger-subtle: var(--border-color-danger-subtle);
+
+  /* Ring colors */
+  --ring-color-subtle: var(--border-color-subtle);
+  --ring-color-subtle-1: var(--border-color-subtle-1);
+  --ring-color-strong: var(--border-color-strong);
+  --ring-color-strong-1: var(--border-color-strong-1);
+  --ring-color-inverse: var(--border-color-inverse);
+  --ring-color-disabled: var(--border-color-disabled);
+  --ring-color-accent-strong: var(--border-color-accent-strong);
+  --ring-color-accent-subtle: var(--border-color-accent-subtle);
+  --ring-color-success-strong: var(--border-color-success-strong);
+  --ring-color-success-subtle: var(--border-color-success-subtle);
+  --ring-color-warning-strong: var(--border-color-warning-strong);
+  --ring-color-warning-subtle: var(--border-color-warning-subtle);
+  --ring-color-danger-strong: var(--border-color-danger-strong);
+  --ring-color-danger-subtle: var(--border-color-danger-subtle);
+
   /* Text colors */
   --text-color-primary: var(--color-neutral-1200);
   --text-color-secondary: var(--color-neutral-1100);
@@ -319,6 +383,48 @@
   --text-color-danger: var(--color-red-700);
   --text-color-danger-primary: var(--color-red-900);
   --text-color-danger-secondary: var(--color-red-700);
+
+  /* Stroke colors */
+  --stroke-primary: var(--text-color-primary);
+  --stroke-secondary: var(--text-color-secondary);
+  --stroke-tertiary: var(--text-color-tertiary);
+  --stroke-placeholder: var(--text-color-placeholder);
+  --stroke-disabled: var(--text-color-disabled);
+  --stroke-accent-primary: var(--text-color-accent-primary);
+  --stroke-accent-secondary: var(--text-color-accent-secondary);
+  --stroke-on-color: var(--text-color-on-color);
+  --stroke-on-color-disabled: var(--text-color-on-color-disabled);
+  --stroke-inverse: var(--text-color-inverse);
+  --stroke-success: var(--text-color-success);
+  --stroke-success-primary: var(--text-color-success-primary);
+  --stroke-success-secondary: var(--text-color-success-secondary);
+  --stroke-warning: var(--text-color-warning);
+  --stroke-warning-primary: var(--text-color-warning-primary);
+  --stroke-warning-secondary: var(--text-color-warning-secondary);
+  --stroke-danger: var(--text-color-danger);
+  --stroke-danger-primary: var(--text-color-danger-primary);
+  --stroke-danger-secondary: var(--text-color-danger-secondary);
+
+  /* Fill colors */
+  --fill-primary: var(--text-color-primary);
+  --fill-secondary: var(--text-color-secondary);
+  --fill-tertiary: var(--text-color-tertiary);
+  --fill-placeholder: var(--text-color-placeholder);
+  --fill-disabled: var(--text-color-disabled);
+  --fill-accent-primary: var(--text-color-accent-primary);
+  --fill-accent-secondary: var(--text-color-accent-secondary);
+  --fill-on-color: var(--text-color-on-color);
+  --fill-on-color-disabled: var(--text-color-on-color-disabled);
+  --fill-inverse: var(--text-color-inverse);
+  --fill-success: var(--text-color-success);
+  --fill-success-primary: var(--text-color-success-primary);
+  --fill-success-secondary: var(--text-color-success-secondary);
+  --fill-warning: var(--text-color-warning);
+  --fill-warning-primary: var(--text-color-warning-primary);
+  --fill-warning-secondary: var(--text-color-warning-secondary);
+  --fill-danger: var(--text-color-danger);
+  --fill-danger-primary: var(--text-color-danger-primary);
+  --fill-danger-secondary: var(--text-color-danger-secondary);
 
   /* Icon colors */
   --text-color-icon-primary: var(--color-neutral-1200);
@@ -623,7 +729,7 @@
     "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
     "Noto Color Emoji";
   --font-code:
-    "IBM Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
   /* ---------- Font weight ---------- */
   --font-weight-*: initial;
@@ -900,11 +1006,6 @@
   --text-caption-xs-bold--font-weight: var(--font-weight-bold);
 }
 
-@utility outline-* {
-  outline-width: --value(--border-width-*);
-  outline-color: --value(--border-color-*);
-}
-
 @utility px-page-x {
   padding-left: 1.35rem;
   padding-right: 1.35rem;
@@ -913,4 +1014,20 @@
 @utility py-page-y {
   padding-top: 1.35rem;
   padding-bottom: 1.35rem;
+}
+
+@utility material-symbols-rounded {
+  font-family: "Material Symbols Rounded";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 1.5rem;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
 }
