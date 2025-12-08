@@ -130,6 +130,20 @@ class Adapter:
             if content_length and int(content_length) > max_size:
                 return None
 
+            # Get content type and determine file extension
+            content_type = response.headers.get("Content-Type", "image/jpeg")
+            extension_map = {
+                "image/jpeg": "jpg",
+                "image/jpg": "jpg",
+                "image/png": "png",
+                "image/gif": "gif",
+                "image/webp": "webp",
+            }
+            extension = extension_map.get(content_type)
+
+            if not extension:
+                return None
+
             # Download with size limit
             chunks = []
             total_size = 0
@@ -140,17 +154,6 @@ class Adapter:
                 chunks.append(chunk)
             content = b"".join(chunks)
             file_size = len(content)
-
-            # Get content type and determine file extension
-            content_type = response.headers.get("Content-Type", "image/jpeg")
-            extension_map = {
-                "image/jpeg": "jpg",
-                "image/jpg": "jpg",
-                "image/png": "png",
-                "image/gif": "gif",
-                "image/webp": "webp",
-            }
-            extension = extension_map.get(content_type, "jpg")
 
             # Generate unique filename
             filename = f"{uuid.uuid4().hex}-user-avatar.{extension}"
