@@ -32,9 +32,9 @@ def migrate_existing_api_tokens(apps, schema_editor):
     APIToken = apps.get_model('db', 'APIToken')
     
     # Update all the existing non-service api tokens to not have a workspace
-    APIToken.objects.filter(is_service=False).update(
+    APIToken.objects.filter(is_service=False, user__is_bot=False).update(
         workspace_id=None,
-        user__is_bot=False
+
     )
     return
 
