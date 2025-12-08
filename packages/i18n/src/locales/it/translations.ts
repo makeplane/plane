@@ -340,7 +340,7 @@ export default {
   project_id_must_be_at_most_5_characters: "L'ID del progetto deve contenere al massimo 5 caratteri",
   project_id: "ID del progetto",
   project_id_tooltip_content:
-    "Ti aiuta a identificare in modo univoco gli elementi di lavoro nel progetto. Massimo 5 caratteri.",
+    "Ti aiuta a identificare in modo univoco gli elementi di lavoro nel progetto. Massimo 10 caratteri.",
   description_placeholder: "Descrizione",
   only_alphanumeric_non_latin_characters_allowed: "Sono ammessi solo caratteri alfanumerici e non latini.",
   project_id_is_required: "L'ID del progetto è obbligatorio",

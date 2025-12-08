@@ -39,7 +39,7 @@ function ProjectCommonAttributes(props: Props) {
       return;
     }
     if (e.target.value === "") setValue("identifier", "");
-    else setValue("identifier", projectIdentifierSanitizer(e.target.value).substring(0, 5));
+    else setValue("identifier", projectIdentifierSanitizer(e.target.value).substring(0, 10));
     onChange(e);
     handleFormOnChange?.();
   };

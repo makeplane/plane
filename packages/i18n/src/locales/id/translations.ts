@@ -340,7 +340,7 @@ export default {
   project_id_must_be_at_most_5_characters: "ID proyek maksimal 5 karakter",
   project_id: "ID proyek",
   project_id_tooltip_content:
-    "Membantu Anda mengidentifikasi item kerja dalam proyek secara unik. Maksimal 5 karakter.",
+    "Membantu Anda mengidentifikasi item kerja dalam proyek secara unik. Maksimal 10 karakter.",
   description_placeholder: "Deskripsi",
   only_alphanumeric_non_latin_characters_allowed: "Hanya karakter alfanumerik & Non-latin yang diizinkan.",
   project_id_is_required: "ID proyek diperlukan",

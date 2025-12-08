@@ -335,7 +335,7 @@ export default {
   project_id_must_be_at_least_1_character: "ID проекта должен содержать минимум 1 символ",
   project_id_must_be_at_most_5_characters: "ID проекта должен содержать максимум 5 символов",
   project_id: "ID проекта",
-  project_id_tooltip_content: "Помогает идентифицировать рабочие элементы в проекте. Макс. 5 символов.",
+  project_id_tooltip_content: "Помогает идентифицировать рабочие элементы в проекте. Макс. 10 символов.",
   description_placeholder: "Описание",
   only_alphanumeric_non_latin_characters_allowed: "Допускаются только буквенно-цифровые и нелатинские символы.",
   project_id_is_required: "Требуется ID проекта",

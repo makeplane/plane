@@ -344,7 +344,7 @@ export default {
   project_id_must_be_at_least_1_character: "Projekt-ID muss mindestens 1 Zeichen lang sein",
   project_id_must_be_at_most_5_characters: "Projekt-ID darf maximal 5 Zeichen lang sein",
   project_id: "Projekt-ID",
-  project_id_tooltip_content: "Hilft, Arbeitselemente im Projekt eindeutig zu identifizieren. Max. 5 Zeichen.",
+  project_id_tooltip_content: "Hilft, Arbeitselemente im Projekt eindeutig zu identifizieren. Max. 10 Zeichen.",
   description_placeholder: "Beschreibung",
   only_alphanumeric_non_latin_characters_allowed: "Es sind nur alphanumerische und nicht-lateinische Zeichen erlaubt.",
   project_id_is_required: "Projekt-ID ist erforderlich",

@@ -338,7 +338,7 @@ export default {
   project_id_must_be_at_least_1_character: "ID dự án phải có ít nhất 1 ký tự",
   project_id_must_be_at_most_5_characters: "ID dự án chỉ được tối đa 5 ký tự",
   project_id: "ID dự án",
-  project_id_tooltip_content: "Giúp xác định duy nhất mục công việc trong dự án của bạn. Tối đa 5 ký tự.",
+  project_id_tooltip_content: "Giúp xác định duy nhất mục công việc trong dự án của bạn. Tối đa 10 ký tự.",
   description_placeholder: "Mô tả",
   only_alphanumeric_non_latin_characters_allowed: "Chỉ cho phép các ký tự chữ số và không phải Latin.",
   project_id_is_required: "ID dự án là bắt buộc",

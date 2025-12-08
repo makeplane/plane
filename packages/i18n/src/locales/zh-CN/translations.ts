@@ -328,7 +328,7 @@ export default {
   project_id_must_be_at_least_1_character: "项目ID至少需要1个字符",
   project_id_must_be_at_most_5_characters: "项目ID最多只能有5个字符",
   project_id: "项目ID",
-  project_id_tooltip_content: "帮助您唯一标识项目中的工作项。最多5个字符。",
+  project_id_tooltip_content: "帮助您唯一标识项目中的工作项。最多10个字符。",
   description_placeholder: "描述",
   only_alphanumeric_non_latin_characters_allowed: "仅允许字母数字和非拉丁字符。",
   project_id_is_required: "项目ID为必填项",

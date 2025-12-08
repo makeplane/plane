@@ -327,7 +327,7 @@ export default {
   project_id_must_be_at_least_1_character: "專案 ID 至少必須有 1 個字元",
   project_id_must_be_at_most_5_characters: "專案 ID 最多只能有 5 個字元",
   project_id: "專案 ID",
-  project_id_tooltip_content: "協助您唯一識別專案中的工作事項。最多 5 個字元。",
+  project_id_tooltip_content: "協助您唯一識別專案中的工作事項。最多 10 個字元。",
   description_placeholder: "描述",
   only_alphanumeric_non_latin_characters_allowed: "僅允許英數字元和非拉丁字元。",
   project_id_is_required: "專案 ID 為必填",

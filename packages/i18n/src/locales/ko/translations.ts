@@ -332,7 +332,7 @@ export default {
   project_id_must_be_at_least_1_character: "프로젝트 ID는 최소 1자 이상이어야 합니다",
   project_id_must_be_at_most_5_characters: "프로젝트 ID는 최대 5자 이하여야 합니다",
   project_id: "프로젝트 ID",
-  project_id_tooltip_content: "작업 항목을 고유하게 식별하는 데 도움이 됩니다. 최대 5자.",
+  project_id_tooltip_content: "작업 항목을 고유하게 식별하는 데 도움이 됩니다. 최대 10자.",
   description_placeholder: "설명",
   only_alphanumeric_non_latin_characters_allowed: "영숫자 및 비라틴 문자만 허용됩니다.",
   project_id_is_required: "프로젝트 ID가 필요합니다",

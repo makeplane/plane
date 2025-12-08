@@ -337,7 +337,7 @@ export default {
   project_id_must_be_at_least_1_character: "ID projektu musí mít alespoň 1 znak",
   project_id_must_be_at_most_5_characters: "ID projektu může mít maximálně 5 znaků",
   project_id: "ID projektu",
-  project_id_tooltip_content: "Pomáhá jednoznačně identifikovat pracovní položky v projektu. Max. 5 znaků.",
+  project_id_tooltip_content: "Pomáhá jednoznačně identifikovat pracovní položky v projektu. Max. 10 znaků.",
   description_placeholder: "Popis",
   only_alphanumeric_non_latin_characters_allowed: "Jsou povoleny pouze alfanumerické a nelatinské znaky.",
   project_id_is_required: "ID projektu je povinné",

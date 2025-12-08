@@ -337,7 +337,7 @@ export default {
   project_id_must_be_at_least_1_character: "Ідентифікатор проєкту має містити принаймні 1 символ",
   project_id_must_be_at_most_5_characters: "Ідентифікатор проєкту може містити максимум 5 символів",
   project_id: "ID проєкту",
-  project_id_tooltip_content: "Допомагає унікально ідентифікувати робочі одиниці в проєкті. Макс. 5 символів.",
+  project_id_tooltip_content: "Допомагає унікально ідентифікувати робочі одиниці в проєкті. Макс. 10 символів.",
   description_placeholder: "Опис",
   only_alphanumeric_non_latin_characters_allowed: "Дозволені лише алфанумеричні та нелатинські символи.",
   project_id_is_required: "ID проєкту є обов’язковим",

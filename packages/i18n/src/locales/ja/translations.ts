@@ -335,7 +335,7 @@ export default {
   project_id_must_be_at_least_1_character: "プロジェクトIDは最低1文字必要です",
   project_id_must_be_at_most_5_characters: "プロジェクトIDは最大5文字までです",
   project_id: "プロジェクトID",
-  project_id_tooltip_content: "プロジェクト内の作業項目を一意に識別するのに役立ちます。最大5文字。",
+  project_id_tooltip_content: "プロジェクト内の作業項目を一意に識別するのに役立ちます。最大10文字。",
   description_placeholder: "説明",
   only_alphanumeric_non_latin_characters_allowed: "英数字と非ラテン文字のみ使用できます。",
   project_id_is_required: "プロジェクトIDは必須です",
