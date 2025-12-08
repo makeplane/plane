@@ -136,7 +136,8 @@ export const SurfaceLayerAssociation: Story = {
   render: () => (
     <DemoRoot>
       <Info title="✅ Surface-Layer Association">
-        Each surface should use its corresponding layer: surface-1 → layer-1, surface-2 → layer-2
+        Each surface should use its corresponding layer: surface-1 → layer-1, surface-2 → layer-2. Very rare exception:
+        inputs/buttons can go one level above for visual separation.
       </Info>
 
       <TwoColGrid>
@@ -156,6 +157,30 @@ export const SurfaceLayerAssociation: Story = {
           </Layer>
         </Surface>
       </TwoColGrid>
+
+      <div className="mt-6">
+        <Info title="✅ Rare Exception: Visual Separation for Form Elements">
+          In very rare cases, form elements (inputs, buttons, switches) can use one level above for visual separation.
+        </Info>
+        <Surface>
+          <h4 className="text-primary mb-3 font-semibold">Modal with Input (Rare Exception)</h4>
+          <div className="space-y-3">
+            <div>
+              <label htmlFor="example-input" className="text-secondary text-sm">
+                Name
+              </label>
+              <input
+                id="example-input"
+                className="w-full bg-layer-2 border border-subtle rounded-md px-3 py-2 text-primary mt-1"
+                placeholder="Input uses layer-2 for visual separation"
+              />
+              <p className="text-tertiary text-xs mt-1">
+                Input uses bg-layer-2 (one level above) for visual separation from modal surface
+              </p>
+            </div>
+          </div>
+        </Surface>
+      </div>
     </DemoRoot>
   ),
 };
@@ -214,16 +239,19 @@ export const CardListPattern: Story = {
 export const SidebarLayoutPattern: Story = {
   render: () => (
     <DemoRoot>
-      <Info title="✅ Sidebar Layout Pattern">Sidebar and main content are both part of the same surface</Info>
+      <Info title="✅ Sidebar Layout Pattern">
+        Sidebar and main content are both part of the same surface. Sidebar menu items use transparent backgrounds with
+        hover states.
+      </Info>
 
       <Surface className="bg-surface-1 flex rounded-md">
         <aside className="border-subtle w-64 border-r p-4">
           <h4 className="text-primary mb-3 font-semibold">Sidebar</h4>
           <div className="space-y-2">
             {["Home", "Projects", "Settings"].map((item) => (
-              <Layer key={item} className="bg-layer-1 hover:bg-layer-1-hover rounded-md p-2">
+              <div key={item} className="hover:bg-layer-1-hover rounded-md p-2 transition-colors">
                 <p className="text-primary text-sm">{item}</p>
-              </Layer>
+              </div>
             ))}
           </div>
         </aside>
@@ -366,10 +394,13 @@ export const CommonMistakes: Story = {
           <Surface>
             <p className="text-secondary mb-2 text-sm">Surface 1</p>
             <div className="bg-layer-2 rounded-md p-4">
-              <p className="text-secondary text-sm">Using layer-2 with surface-1 - WRONG!</p>
+              <p className="text-secondary text-sm">Using layer-2 with surface-1 for content box - WRONG!</p>
             </div>
           </Surface>
-          <p className="text-tertiary mt-2 text-xs">✅ Fix: Use bg-layer-1 with bg-surface-1</p>
+          <p className="text-tertiary mt-2 text-xs">
+            ✅ Fix: Use bg-layer-1 with bg-surface-1 for content boxes. Exception: Very rare cases for inputs/buttons
+            that need visual separation (e.g., input in modal can use bg-layer-2 for separation).
+          </p>
         </div>
 
         <div className="border-2 border-red-500 rounded-md p-4">

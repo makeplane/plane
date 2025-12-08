@@ -154,6 +154,14 @@ function Page() {
 - `bg-surface-2` → use `bg-layer-2` for nested elements
 - `bg-surface-3` → use `bg-layer-3` for nested elements
 
+**Rare Exception - Visual Separation**:
+
+In very rare cases, you may go one level above for visual separation when needed for specific UI elements:
+
+- Inputs in modals (modal has `bg-surface-1`, input can use `bg-layer-2` for separation)
+- Buttons, switches, and form controls that need more visual distinction
+- **Important**: This is very rare and should only be used for interactive form elements, not for content boxes or cards
+
 **Example**:
 
 ```tsx
@@ -171,11 +179,19 @@ function Page() {
   </div>
 </div>
 
-// ❌ Wrong: Surface-1 with layer-2
+// ❌ Wrong: Surface-1 with layer-2 (for content boxes)
 <div className="bg-surface-1 p-4">
   <div className="bg-layer-2">
-    {/* Wrong layer for this surface */}
+    {/* Wrong layer for this surface - use layer-1 for content boxes */}
   </div>
+</div>
+
+// ✅ Correct: Rare exception - Input in modal for visual separation
+<div className="bg-surface-1 rounded-lg p-6">
+  <form>
+    <input className="bg-layer-2 border border-subtle rounded-md px-3 py-2" />
+    {/* Input uses layer-2 for visual separation from modal surface */}
+  </form>
 </div>
 ```
 
@@ -359,12 +375,13 @@ function PageWithModal() {
 ```tsx
 // ✅ Correct: Sidebar with main content (page level, not app root)
 // Both sidebar and main are siblings on the same surface
+// Sidebar menu items use transparent backgrounds with hover states
 function DashboardPage() {
   return (
     <div className="bg-surface-1 flex">
       {/* Sidebar - part of the page surface */}
       <aside className="border-r border-subtle w-64">
-        <div className="bg-layer-1 hover:bg-layer-1-hover p-4">Sidebar item</div>
+        <div className="hover:bg-layer-1-hover p-4">Sidebar item</div>
       </aside>
 
       {/* Main content - part of the page surface */}
@@ -395,10 +412,20 @@ function DashboardPage() {
   <form className="bg-layer-1 rounded-md p-4 space-y-4">
     <div>
       <label className="text-primary font-medium">Name</label>
+      {/* Input can use bg-surface-1 or bg-layer-2 for visual separation (rare exception) */}
       <input className="bg-surface-1 border border-subtle rounded-md px-3 py-2 text-primary" type="text" />
     </div>
 
     <button className="bg-layer-2 hover:bg-layer-2-hover rounded-md px-4 py-2 text-primary">Submit</button>
+  </form>
+</div>
+
+// ✅ Correct: Input in modal (rare exception for visual separation)
+<div className="bg-surface-1 rounded-lg p-6">
+  <form>
+    <label className="text-primary font-medium">Name</label>
+    {/* Input uses layer-2 for visual separation from modal surface - rare exception */}
+    <input className="bg-layer-2 border border-subtle rounded-md px-3 py-2 text-primary" type="text" />
   </form>
 </div>
 ```
@@ -524,20 +551,28 @@ function Page() {
 ### ❌ Mistake 3: Wrong Layer for Surface
 
 ```tsx
-// ❌ Wrong: surface-1 with layer-2
+// ❌ Wrong: surface-1 with layer-2 (for content boxes)
 <div className="bg-surface-1">
   <div className="bg-layer-2">
-    Content
+    Content box
   </div>
 </div>
 
-// ✅ Correct: surface-1 with layer-1
+// ✅ Correct: surface-1 with layer-1 (for content boxes)
 <div className="bg-surface-1">
   <div className="bg-layer-1">
-    Content
+    Content box
   </div>
 </div>
+
+// ✅ Correct: Rare exception - Input/button for visual separation
+<div className="bg-surface-1">
+  <input className="bg-layer-2" />
+  {/* Input uses layer-2 for visual separation - very rare exception */}
+</div>
 ```
+
+**Note**: Going one level above (e.g., `bg-layer-2` with `bg-surface-1`) is only valid in very rare cases for interactive form elements (inputs, buttons, switches) that need extra visual separation. For content boxes, cards, and normal nested elements, always match the layer number to the surface number.
 
 ### ❌ Mistake 4: Mismatched Hover
 
@@ -573,7 +608,7 @@ function Page() {
 
 2. **Use Surfaces for Pages and Top-Level Containers**: Surfaces are siblings, not nested (except modals/overlays on different planes)
 
-3. **Match Layers to Surfaces**: surface-1 → layer-1, surface-2 → layer-2, etc.
+3. **Match Layers to Surfaces**: surface-1 → layer-1, surface-2 → layer-2, etc. (Very rare exception: form elements can go one level above for visual separation)
 
 4. **Stack Layers Properly**: Use layer-1 first, then layer-2, then layer-3 as needed
 
@@ -605,6 +640,7 @@ Canvas (one per page)
 - Card: `bg-surface-1` → `bg-layer-1 hover:bg-layer-1-hover`
 - Nested Card: `bg-surface-1` → `bg-layer-1` → `bg-layer-2`
 - Sidebar Layout: `bg-surface-1` (sidebar) + `bg-surface-1` (main) - both siblings
+- Sidebar Menu Items: Transparent background with `hover:bg-layer-1-hover` (no base `bg-layer-1`)
 
 ### State Variants
 
@@ -619,7 +655,8 @@ When reviewing components, ensure:
 - [ ] Canvas is only used at the application root (one place in entire app)
 - [ ] Pages use surfaces, not canvas
 - [ ] Surfaces are siblings, not nested (except modals/overlays on different planes)
-- [ ] Layers match their surface (surface-1 → layer-1)
+- [ ] Layers match their surface (surface-1 → layer-1) - except rare cases for form elements
+- [ ] Sidebar menu items use transparent backgrounds with hover states
 - [ ] Hover states match base layers
 - [ ] Layers stack properly (1 → 2 → 3)
 - [ ] Text colors are semantic (primary, secondary, tertiary, placeholder)
