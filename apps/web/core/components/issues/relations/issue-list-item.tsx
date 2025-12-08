@@ -63,7 +63,7 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
   // derived values
   const issue = getIssueById(relationIssueId);
   const { handleRedirection } = useIssuePeekOverviewRedirection(!!issue?.is_epic);
-  const issueOperations = useRelationOperations(!!issue?.is_epic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
+  const issueOperations = useRelationOperations(issue?.is_epic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
   const projectDetail = (issue && issue.project_id && project.getProjectById(issue.project_id)) || undefined;
   const projectId = issue?.project_id;
 

@@ -22,7 +22,7 @@ type TProjectHeaderProps = {
   projectId: string;
 };
 
-export const ProjectHeader = observer((props: TProjectHeaderProps) => {
+export const ProjectHeader = observer(function ProjectHeader(props: TProjectHeaderProps) {
   const { workspaceSlug, projectId } = props;
   // router
   const router = useAppRouter();

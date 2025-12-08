@@ -180,7 +180,7 @@ export const IssueDescriptionEditor = observer(function IssueDescriptionEditor(p
                 id="issue-modal-editor"
                 initialValue={value ?? ""}
                 value={descriptionHtmlData}
-                workspaceSlug={workspaceSlug?.toString() as string}
+                workspaceSlug={workspaceSlug?.toString()}
                 workspaceId={workspaceId}
                 projectId={projectId}
                 onChange={(_description: object, description_html: string) => {

@@ -38,7 +38,9 @@ const PERSONAL_ITEMS: Array<{ key: TPersonalNavigationItemKey; labelTranslationK
   { key: "drafts", labelTranslationKey: "drafts" },
 ];
 
-export const CustomizeNavigationDialog: FC<TCustomizeNavigationDialogProps> = observer((props) => {
+export const CustomizeNavigationDialog = observer(function CustomizeNavigationDialog(
+  props: TCustomizeNavigationDialogProps
+) {
   const { isOpen, onClose } = props;
   const { t } = useTranslation();
 

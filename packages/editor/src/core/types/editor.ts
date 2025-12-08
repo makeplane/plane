@@ -129,7 +129,7 @@ export type EditorRefApi = {
   onStateChange: (callback: () => void) => () => void;
   redo: () => void;
   scrollSummary: (marking: IMarking) => void;
-  // eslint-disable-next-line no-undef
+
   scrollToNodeViaDOMCoordinates: ({ pos, behavior }: { pos?: number; behavior?: ScrollBehavior }) => void;
   setEditorValue: (content: string, emitUpdate?: boolean) => void;
   setEditorValueAtCursorPosition: (content: string) => void;

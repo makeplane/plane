@@ -207,7 +207,7 @@ export class ModuleIssuesFilter extends IssueFilterHelperStore implements IModul
       if (isEmpty(this.filters) || isEmpty(this.filters[moduleId])) return;
 
       const _filters = {
-        richFilters: this.filters[moduleId].richFilters as TWorkItemFilterExpression,
+        richFilters: this.filters[moduleId].richFilters,
         displayFilters: this.filters[moduleId].displayFilters as IIssueDisplayFilterOptions,
         displayProperties: this.filters[moduleId].displayProperties as IIssueDisplayProperties,
         kanbanFilters: this.filters[moduleId].kanbanFilters as TIssueKanbanFilters,

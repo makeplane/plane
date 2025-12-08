@@ -43,8 +43,8 @@ export const DeleteInboxIssueModal = observer(function DeleteInboxIssueModal({
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: `${t("success")!}`,
-          message: `${t("inbox_issue.modals.delete.success")!}`,
+          title: `${t("success")}`,
+          message: `${t("inbox_issue.modals.delete.success")}`,
         });
       })
       .catch((errors) => {

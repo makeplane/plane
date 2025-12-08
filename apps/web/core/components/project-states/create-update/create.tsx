@@ -47,7 +47,7 @@ export const StateCreate = observer(function StateCreate(props: TStateCreate) {
       handleClose();
       return { status: "success" };
     } catch (error) {
-      const errorStatus = error as unknown as { status: number; data: { error: string } };
+      const errorStatus = error as { status: number; data: { error: string } };
       if (shouldTrackEvents)
         captureError({
           eventName: STATE_TRACKER_EVENTS.create,
