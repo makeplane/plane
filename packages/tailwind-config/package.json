@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@fontsource/ibm-plex-mono": "^5.2.7",
-    "@fontsource/inter": "5.2.8"
+    "@fontsource/inter": "5.2.8",
+    "@fontsource/material-symbols-rounded": "^5.2.30"
   }
 }

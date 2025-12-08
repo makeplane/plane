@@ -1242,6 +1242,9 @@ importers:
       '@fontsource/inter':
         specifier: 5.2.8
         version: 5.2.8
+      '@fontsource/material-symbols-rounded':
+        specifier: ^5.2.30
+        version: 5.2.30
     devDependencies:
       '@tailwindcss/postcss':
         specifier: 4.1.13
@@ -2021,6 +2024,9 @@ packages:
 
   '@fontsource/inter@5.2.8':
     resolution: {integrity: sha512-P6r5WnJoKiNVV+zvW2xM13gNdFhAEpQ9dQJHt3naLvfg+LkF2ldgSLiF4T41lf1SQCM9QmkqPTn4TH568IRagg==}
+
+  '@fontsource/material-symbols-rounded@5.2.30':
+    resolution: {integrity: sha512-svIEPUzsJGdBMr0PwLH3wKndh7ZNB8IVlyKZPKvbGEX0f36gpGPzE2EZiXppb4UJgDUnyjphWzjJ28StuK6NCg==}
 
   '@formatjs/ecma402-abstract@2.3.4':
     resolution: {integrity: sha512-qrycXDeaORzIqNhBOx0btnhpD1c+/qFIHAN9znofuMJX6QBwtbrmlpWfD4oiUUD2vJUOIYFA/gYtg2KAMGG7sA==}
@@ -10086,6 +10092,8 @@ snapshots:
   '@fontsource/ibm-plex-mono@5.2.7': {}
 
   '@fontsource/inter@5.2.8': {}
+
+  '@fontsource/material-symbols-rounded@5.2.30': {}
 
   '@formatjs/ecma402-abstract@2.3.4':
     dependencies:
