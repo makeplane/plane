@@ -11,6 +11,7 @@
 @import "@fontsource/ibm-plex-mono/500.css";
 @import "@fontsource/ibm-plex-mono/600.css";
 @import "@fontsource/ibm-plex-mono/700.css";
+@import "@fontsource/material-symbols-rounded/400.css";
 
 @custom-variant dark (&:where([data-theme*="dark"], [data-theme*="dark"] *));
 
@@ -927,4 +928,20 @@
 @utility py-page-y {
   padding-top: 1.35rem;
   padding-bottom: 1.35rem;
+}
+
+@utility material-symbols-rounded {
+  font-family: "Material Symbols Rounded";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 1.5rem;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
 }
