@@ -421,8 +421,11 @@ class IntakeIssueViewSet(BaseViewSet):
         # Both serializers are valid, now save them
         if issue_serializer:
             issue_serializer.save()
+
+            # Check if the update is a migration description update
+            is_migration_description_update = skip_activity and is_description_update
             # Log all the updates
-            if not skip_activity or not is_description_update:
+            if not is_migration_description_update:
                 if issue is not None:
                     issue_activity.delay(
                         type="issue.activity.updated",

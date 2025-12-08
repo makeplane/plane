@@ -663,8 +663,10 @@ class IssueViewSet(BaseViewSet):
         serializer = IssueCreateSerializer(issue, data=request.data, partial=True, context={"project_id": project_id})
         if serializer.is_valid():
             serializer.save()
-
-            if not skip_activity or not is_description_update:
+            # Check if the update is a migration description update
+            is_migration_description_update = skip_activity and is_description_update
+            # Log all the updates
+            if not is_migration_description_update:
                 issue_activity.delay(
                     type="issue.activity.updated",
                     requested_data=requested_data,
