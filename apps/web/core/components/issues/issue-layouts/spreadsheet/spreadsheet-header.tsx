@@ -49,23 +49,8 @@ export const SpreadsheetHeader = observer(function SpreadsheetHeader(props: Prop
           tabIndex={-1}
         >
           <div className="flex items-center gap-2 h-full w-full px-page-x">
-            {/* Identifier header section - conditionally rendered */}
-            {displayProperties?.key && (
-              <div
-                className="flex-shrink-0 flex items-center justify-center border-r-[0.5px] border-custom-border-100 h-full px-2"
-                style={{ width: "120px" }}
-              >
-                <span className="text-sm font-medium">ID</span>
-              </div>
-            )}
-
             {/* Workitem header section */}
-            <div
-              className={cn("flex items-center gap-1 flex-grow h-full py-2.5 px-2", {
-                "min-w-[360px]": !displayProperties?.key,
-                "min-w-60": displayProperties?.key,
-              })}
-            >
+            <div className="flex items-center gap-1 flex-grow h-full py-2.5 min-w-80">
               {canSelectIssues && (
                 <div className="flex-shrink-0 flex items-center w-3.5 mr-1">
                   <MultipleSelectGroupAction

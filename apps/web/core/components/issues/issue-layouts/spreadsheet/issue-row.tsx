@@ -276,10 +276,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
           >
             {/* Identifier section - conditionally rendered */}
             {displayProperties?.key && (
-              <div
-                className="flex-shrink-0 flex items-center justify-center border-r-[0.5px] border-custom-border-200 h-full"
-                style={{ width: "120px" }}
-              >
+              <div className="flex-shrink-0 flex items-center h-full min-w-24">
                 <div className="relative flex cursor-pointer items-center text-xs hover:text-custom-text-100">
                   {issueDetail.project_id && (
                     <IssueIdentifier
@@ -294,10 +291,12 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
             )}
 
             {/* Workitem section */}
-            <div className={cn("flex items-center gap-0.5 py-2 flex-grow", {
-              "min-w-[360px]": !displayProperties?.key,
-              "min-w-60": displayProperties?.key,
-            })}>
+            <div
+              className={cn("flex items-center gap-0.5 py-2 flex-grow", {
+                "min-w-[360px]": !displayProperties?.key,
+                "min-w-60": displayProperties?.key,
+              })}
+            >
               {/* select checkbox */}
               {projectId && canSelectIssues && (
                 <Tooltip
@@ -362,7 +361,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
                   </div>
                 </div>
                 <div
-                  className={`hidden group-hover:block ${isMenuActive ? "!block" : ""}`}
+                  className={`opacity-0 group-hover:opacity-100 transition-opacity ${isMenuActive ? "!opacity-100" : ""}`}
                   onClick={(e) => e.stopPropagation()}
                 >
                   {quickActions({
