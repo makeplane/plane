@@ -45,9 +45,14 @@
       "dependsOn": ["^build"],
       "cache": false
     },
-    "check:lint": {
+    "lint": {
       "cache": false,
-      "inputs": ["**/*", "!**/build/**", "!**/dist/**"]
+      "inputs": ["**/*.{js,ts,tsx,mjs,jsx}", "!**/node_modules/**", "!**/build/**", "!**/dist/**"]
+    },
+    "check:lint": {
+      "dependsOn": ["lint"],
+      "cache": false,
+      "inputs": ["**/*.{js,ts,tsx,mjs,jsx}", "!**/build/**", "!**/dist/**"]
     },
     "check:format": {
       "cache": false

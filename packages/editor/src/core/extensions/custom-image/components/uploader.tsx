@@ -40,6 +40,7 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
   // refs
   const fileInputRef = useRef<HTMLInputElement>(null);
   const hasTriggeredFilePickerRef = useRef(false);
+  const hasTriedUploadingOnMountRef = useRef(false);
   const { id: imageEntityId } = node.attrs;
   // derived values
   const imageComponentImageFileMap = useMemo(() => getImageComponentImageFileMap(editor), [editor]);
@@ -124,17 +125,16 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
     uploader: uploadFile,
   });
 
-  // the meta data of the image component
-  const meta = useMemo(
-    () => imageComponentImageFileMap?.get(imageEntityId ?? ""),
-    [imageComponentImageFileMap, imageEntityId]
-  );
-
   // after the image component is mounted we start the upload process based on
   // it's uploaded
   useEffect(() => {
+    if (hasTriedUploadingOnMountRef.current) return;
+
+    // the meta data of the image component
+    const meta = imageComponentImageFileMap?.get(imageEntityId ?? "");
     if (meta) {
       if (meta.event === "drop" && "file" in meta) {
+        hasTriedUploadingOnMountRef.current = true;
         uploadFile(meta.file);
       } else if (meta.event === "insert" && fileInputRef.current && !hasTriggeredFilePickerRef.current) {
         if (meta.hasOpenedFileInputOnce) return;
@@ -144,8 +144,10 @@ export function CustomImageUploader(props: CustomImageUploaderProps) {
         hasTriggeredFilePickerRef.current = true;
         imageComponentImageFileMap?.set(imageEntityId ?? "", { ...meta, hasOpenedFileInputOnce: true });
       }
+    } else {
+      hasTriedUploadingOnMountRef.current = true;
     }
-  }, [meta, uploadFile, imageComponentImageFileMap, imageEntityId, isTouchDevice]);
+  }, [imageEntityId, isTouchDevice, uploadFile, imageComponentImageFileMap]);
 
   const onFileChange = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {

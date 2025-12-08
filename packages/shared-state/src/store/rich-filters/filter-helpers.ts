@@ -70,9 +70,10 @@ export interface IFilterInstanceHelper<P extends TFilterProperty, E extends TExt
  * @template K - The filter property type extending TFilterProperty
  * @template E - The external filter type extending TExternalFilter
  */
-export class FilterInstanceHelper<P extends TFilterProperty, E extends TExternalFilter>
-  implements IFilterInstanceHelper<P, E>
-{
+export class FilterInstanceHelper<
+  P extends TFilterProperty,
+  E extends TExternalFilter,
+> implements IFilterInstanceHelper<P, E> {
   // parent filter instance
   private _filterInstance: IFilterInstance<P, E>;
   // adapter

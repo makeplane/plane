@@ -60,7 +60,8 @@ export type TIssueCrudOperationState = {
 };
 
 export interface IIssueDetail
-  extends IIssueStoreActions,
+  extends
+    IIssueStoreActions,
     IIssueReactionStoreActions,
     IIssueLinkStoreActions,
     IIssueSubIssuesStoreActions,

@@ -51,14 +51,14 @@ export type UtilityExtensionStorage = {
   isTouchDevice: boolean;
 };
 
-type Props = Pick<IEditorProps, "disabledExtensions" | "getEditorMetaData"> & {
+type Props = Pick<IEditorProps, "disabledExtensions" | "flaggedExtensions" | "getEditorMetaData"> & {
   fileHandler: TFileHandler;
   isEditable: boolean;
   isTouchDevice: boolean;
 };
 
 export const UtilityExtension = (props: Props) => {
-  const { disabledExtensions, fileHandler, getEditorMetaData, isEditable, isTouchDevice } = props;
+  const { disabledExtensions, flaggedExtensions, fileHandler, getEditorMetaData, isEditable, isTouchDevice } = props;
   const { restore } = fileHandler;
 
   return Extension.create<Record<string, unknown>, UtilityExtensionStorage>({
@@ -79,6 +79,7 @@ export const UtilityExtension = (props: Props) => {
         }),
         DropHandlerPlugin({
           disabledExtensions,
+          flaggedExtensions,
           editor: this.editor,
         }),
         PasteAssetPlugin(),

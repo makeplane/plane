@@ -63,7 +63,6 @@ export const CommentCard = observer(function CommentCard(props: Props) {
     <div className="relative flex items-start space-x-3">
       <div className="relative px-1">
         {comment.actor_detail.avatar_url && comment.actor_detail.avatar_url !== "" ? (
-          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={getFileURL(comment.actor_detail.avatar_url)}
             alt={

@@ -526,49 +526,6 @@ class ProjectFavoritesViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ProjectPublicCoverImagesEndpoint(BaseAPIView):
-    permission_classes = [AllowAny]
-
-    # Cache the below api for 24 hours
-    @cache_response(60 * 60 * 24, user=False)
-    def get(self, request):
-        files = []
-        if settings.USE_MINIO:
-            s3 = boto3.client(
-                "s3",
-                endpoint_url=settings.AWS_S3_ENDPOINT_URL,
-                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-            )
-        else:
-            s3 = boto3.client(
-                "s3",
-                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-            )
-        params = {
-            "Bucket": settings.AWS_STORAGE_BUCKET_NAME,
-            "Prefix": "static/project-cover/",
-        }
-
-        try:
-            response = s3.list_objects_v2(**params)
-            # Extracting file keys from the response
-            if "Contents" in response:
-                for content in response["Contents"]:
-                    if not content["Key"].endswith(
-                        "/"
-                    ):  # This line ensures we're only getting files, not "sub-folders"
-                        files.append(
-                            f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{content['Key']}"
-                        )
-
-            return Response(files, status=status.HTTP_200_OK)
-        except Exception as e:
-            log_exception(e)
-            return Response([], status=status.HTTP_200_OK)
-
-
 class DeployBoardViewSet(BaseViewSet):
     permission_classes = [ProjectMemberPermission]
     serializer_class = DeployBoardSerializer

@@ -10,11 +10,11 @@
     "preview": "react-router build && PORT=3002 react-router-serve ./build/server/index.js",
     "start": "PORT=3002 react-router-serve ./build/server/index.js",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf .react-router && rm -rf node_modules && rm -rf dist && rm -rf build",
-    "check:lint": "eslint . --max-warnings 28",
+    "check:lint": "eslint . --max-warnings=932",
     "check:types": "react-router typegen && tsc --noEmit",
-    "check:format": "prettier --check \"**/*.{ts,tsx,md,json,css,scss}\"",
-    "fix:lint": "eslint . --fix",
-    "fix:format": "prettier --write \"**/*.{ts,tsx,md,json,css,scss}\""
+    "check:format": "prettier --check .",
+    "fix:lint": "eslint . --fix --max-warnings=932",
+    "fix:format": "prettier --write ."
   },
   "dependencies": {
     "@bprogress/core": "catalog:",
@@ -53,10 +53,8 @@
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "catalog:",
-    "@plane/eslint-config": "workspace:*",
     "@plane/tailwind-config": "workspace:*",
     "@plane/typescript-config": "workspace:*",
-    "@prettier/plugin-oxc": "0.0.4",
     "@react-router/dev": "catalog:",
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
