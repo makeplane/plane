@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, LOGIN_MEDIUM_LABELS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { renderFormattedDate } from "@plane/utils";
 import { MemberHeaderColumn } from "@/components/project/member-header-column";
@@ -30,16 +30,6 @@ export const useMemberColumns = () => {
 
   const isSuspended = (rowData: RowData) => rowData.is_active === false;
 
-  const formatAuthMethod = (method: string | undefined): string => {
-    if (!method) return "";
-    const normalized = method.toLowerCase().replace("-", " ");
-    if (normalized === "github") return "GitHub";
-    if (normalized === "gitlab") return "GitLab";
-    // can add more special cases like these
-
-    return normalized.charAt(0).toUpperCase() + normalized.slice(1);
-  };
-
   // handlers
   const handleDisplayFilterUpdate = (filterUpdates: Partial<IMemberFilters>) => {
     updateFilters(filterUpdates);
@@ -60,7 +50,7 @@ export const useMemberColumns = () => {
       tdRender: (rowData: RowData) => (
         <NameColumn
           rowData={rowData}
-          workspaceSlug={workspaceSlug as string}
+          workspaceSlug={workspaceSlug}
           isAdmin={isAdmin}
           currentUser={currentUser}
           setRemoveMemberModal={setRemoveMemberModal}
@@ -112,16 +102,18 @@ export const useMemberColumns = () => {
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
         />
       ),
-      tdRender: (rowData: RowData) => <AccountTypeColumn rowData={rowData} workspaceSlug={workspaceSlug as string} />,
+      tdRender: (rowData: RowData) => <AccountTypeColumn rowData={rowData} workspaceSlug={workspaceSlug} />,
     },
 
     {
       key: "Authentication",
       content: t("workspace_settings.settings.members.details.authentication"),
-      tdRender: (rowData: RowData) =>
-        isSuspended(rowData) ? null : (
-          <div>{formatAuthMethod(rowData.member.last_login_medium)}</div>
-        ),
+      tdRender: (rowData: RowData) => {
+        if (isSuspended(rowData)) return null;
+        const loginMedium = rowData.member.last_login_medium;
+        if (!loginMedium) return null;
+        return <div>{LOGIN_MEDIUM_LABELS[loginMedium]}</div>;
+      },
     },
 
     {

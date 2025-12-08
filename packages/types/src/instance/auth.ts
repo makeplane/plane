@@ -43,3 +43,5 @@ export type TGetBaseAuthenticationModeProps = {
   updateConfig: (key: TInstanceAuthenticationMethodKeys, value: string) => void;
   resolvedTheme: string | undefined;
 };
+
+export type TCoreLoginMediums = "email" | "magic-code" | "github" | "gitlab" | "google" | "gitea";
