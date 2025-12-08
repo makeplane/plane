@@ -10,7 +10,8 @@
   [cmdk-item] {
     @apply flex items-center justify-between cursor-pointer bg-layer-transparent text-body-xs-regular p-2 rounded-md;
 
-    &:focus, &[aria-selected="true"] {
+    &:focus,
+    &[aria-selected="true"] {
       @apply bg-layer-transparent-active;
     }
 
