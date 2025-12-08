@@ -28,6 +28,17 @@ def move_issue_user_properties_to_project_user_properties(apps, schema_editor):
 
 
 
+def migrate_existing_api_tokens(apps, schema_editor):
+    APIToken = apps.get_model('db', 'APIToken')
+    
+    # Update all the existing non-service api tokens to not have a workspace
+    APIToken.objects.filter(is_service=False).update(
+        workspace_id=None,
+        user__is_bot=False
+    )
+    return
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -36,4 +47,5 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(move_issue_user_properties_to_project_user_properties, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(migrate_existing_api_tokens, reverse_code=migrations.RunPython.noop),
     ]
