@@ -48,7 +48,7 @@ export const SpreadsheetHeader = observer(function SpreadsheetHeader(props: Prop
           className="group/list-header md:sticky min-w-60 left-0 z-[15] h-11 bg-custom-background-90 text-sm font-medium border-r-[0.5px] border-custom-border-100"
           tabIndex={-1}
         >
-          <div className="flex items-center h-full w-full px-page-x">
+          <div className="flex items-center gap-2 h-full w-full px-page-x">
             {/* Identifier header section - conditionally rendered */}
             {displayProperties?.key && (
               <div
