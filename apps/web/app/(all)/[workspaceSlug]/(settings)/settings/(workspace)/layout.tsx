@@ -8,12 +8,14 @@ import type { EUserWorkspaceRoles } from "@plane/types";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { getWorkspaceActivePath, pathnameToAccessKey } from "@/components/settings/helper";
 import { SettingsMobileNav } from "@/components/settings/mobile";
+// plane web components
+import { WorkspaceSettingsSidebarDetails } from "@/plane-web/components/workspace/sidebar-details";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 // local components
 import { WorkspaceSettingsSidebar } from "./sidebar";
 
-function WorkspaceSettingLayout() {
+export const WorkspaceSettingLayout = observer(function WorkspaceSettingLayout() {
   // store hooks
   const { workspaceUserInfo, getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   // next hooks
@@ -42,11 +44,10 @@ function WorkspaceSettingLayout() {
             <div className="w-full h-full overflow-y-scroll md:pt-page-y">
               <Outlet />
             </div>
+            <WorkspaceSettingsSidebarDetails />
           </div>
         )}
       </div>
     </>
   );
-}
-
-export default observer(WorkspaceSettingLayout);
+});
