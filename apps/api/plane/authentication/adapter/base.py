@@ -8,6 +8,7 @@ from io import BytesIO
 from django.utils import timezone
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from django.conf import settings
 
 # Third party imports
 from zxcvbn import zxcvbn
@@ -113,11 +114,32 @@ class Adapter:
             return None
 
         try:
-            headers = {"Authorization": f"Bearer {self.token_data.get('access_token')}"}
+            # Get the token data
+            if not self.token_data:
+                headers = {}
+            else:
+                headers = {"Authorization": f"Bearer {self.token_data.get('access_token')}"}
 
             # Download the avatar image
             response = requests.get(avatar_url, timeout=10, headers=headers)
             response.raise_for_status()
+
+            # Check content length before downloading
+            content_length = response.headers.get("Content-Length")
+            max_size = settings.DATA_UPLOAD_MAX_MEMORY_SIZE
+            if content_length and int(content_length) > max_size:
+                return None
+
+            # Download with size limit
+            chunks = []
+            total_size = 0
+            for chunk in response.iter_content(chunk_size=8192):
+                total_size += len(chunk)
+                if total_size > max_size:
+                    return None
+                chunks.append(chunk)
+            content = b"".join(chunks)
+            file_size = len(content)
 
             # Get content type and determine file extension
             content_type = response.headers.get("Content-Type", "image/jpeg")
@@ -129,7 +151,6 @@ class Adapter:
                 "image/webp": "webp",
             }
             extension = extension_map.get(content_type, "jpg")
-            file_size = len(response.content)
 
             # Generate unique filename
             filename = f"{uuid.uuid4().hex}-user-avatar.{extension}"
@@ -144,7 +165,9 @@ class Adapter:
             file_obj.seek(0)
 
             # Upload using boto3 directly
-            storage.upload_file(file_obj=file_obj, object_name=filename, content_type=content_type)
+            upload_success = storage.upload_file(file_obj=file_obj, object_name=filename, content_type=content_type)
+            if not upload_success:
+                return None
 
             # Get storage metadata
             storage_metadata = storage.get_object_metadata(object_name=filename)
