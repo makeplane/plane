@@ -109,7 +109,6 @@ export const ConfirmProjectMemberRemove = observer(function ConfirmProjectMember
                   </Button>
                   <Button
                     variant="error-fill"
-                    size="sm"
                     tabIndex={1}
                     onClick={handleDeletion}
                     loading={isDeleteLoading}

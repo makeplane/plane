@@ -140,7 +140,6 @@ export function PageForm(props: Props) {
           </Button>
           <Button
             variant="primary"
-            size="sm"
             type="submit"
             loading={isSubmitting}
             disabled={isTitleLengthMoreThan255Character}

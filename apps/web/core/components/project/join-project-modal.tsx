@@ -86,7 +86,6 @@ export function JoinProjectModal(props: TJoinProjectModalProps) {
                   </Button>
                   <Button
                     variant="primary"
-                    size="sm"
                     tabIndex={1}
                     type="submit"
                     onClick={handleJoin}

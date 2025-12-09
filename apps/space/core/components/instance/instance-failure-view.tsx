@@ -25,7 +25,7 @@ export function InstanceFailureView() {
           </p>
         </div>
         <div className="flex justify-center">
-          <Button size="md" onClick={handleRetry}>
+          <Button size="lg" onClick={handleRetry}>
             Retry
           </Button>
         </div>

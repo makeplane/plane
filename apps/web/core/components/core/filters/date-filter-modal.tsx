@@ -147,7 +147,6 @@ export function DateFilterModal({ title, handleClose, isOpen, onSelect }: Props)
                     </Button>
                     <Button
                       variant="primary"
-                      size="sm"
                       type="button"
                       onClick={handleSubmit(handleFormSubmit)}
                       disabled={isInvalid}

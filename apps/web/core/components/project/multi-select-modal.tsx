@@ -175,7 +175,6 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
         <Button
           ref={moveButtonRef}
           variant="primary"
-          size="sm"
           onClick={handleSubmit}
           loading={isSubmitting}
           disabled={!areSelectedProjectsChanged}

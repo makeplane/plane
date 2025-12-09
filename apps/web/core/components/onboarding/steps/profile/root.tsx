@@ -250,7 +250,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
         )}
       </div>
       {/* Continue Button */}
-      <Button variant="primary" type="submit" className="w-full" size="lg" disabled={isButtonDisabled}>
+      <Button variant="primary" type="submit" className="w-full" size="xl" disabled={isButtonDisabled}>
         Continue
       </Button>
 

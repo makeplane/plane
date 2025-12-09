@@ -118,7 +118,6 @@ export function ArchiveRestoreProjectModal(props: Props) {
                       Cancel
                     </Button>
                     <Button
-                      size="sm"
                       tabIndex={1}
                       onClick={archive ? handleArchiveProject : handleRestoreProject}
                       loading={isLoading}

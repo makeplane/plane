@@ -27,7 +27,7 @@ export function EmptyState({ title, description, image, primaryButton, secondary
         <div className="flex items-center gap-4">
           {primaryButton && (
             <Button
-              size="lg"
+              size="xl"
               variant="primary"
               prependIcon={primaryButton.icon}
               onClick={primaryButton.onClick}

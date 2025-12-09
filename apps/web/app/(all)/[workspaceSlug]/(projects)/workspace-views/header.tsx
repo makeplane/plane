@@ -167,7 +167,6 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
 
           <Button
             variant="primary"
-            size="sm"
             data-ph-element={GLOBAL_VIEW_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
             onClick={() => setCreateViewModal(true)}
           >

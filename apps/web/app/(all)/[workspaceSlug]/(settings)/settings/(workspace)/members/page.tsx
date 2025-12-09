@@ -149,7 +149,6 @@ function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
             {canPerformWorkspaceAdminActions && (
               <Button
                 variant="primary"
-                size="sm"
                 onClick={() => setInviteModal(true)}
                 data-ph-element={MEMBER_TRACKER_ELEMENTS.HEADER_ADD_BUTTON}
               >

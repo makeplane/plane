@@ -30,7 +30,6 @@ function ProjectSettingsPage() {
           Learn more about projects
         </Link>
         <Button
-          size="sm"
           onClick={() => toggleCreateProjectModal(true)}
           data-ph-element={PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON}
         >

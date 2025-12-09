@@ -296,14 +296,14 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
           data-ph-element={WORKSPACE_TRACKER_ELEMENTS.ONBOARDING_CREATE_WORKSPACE_BUTTON}
           variant="primary"
           type="submit"
-          size="lg"
+          size="xl"
           className="w-full"
           disabled={isButtonDisabled}
         >
           {isSubmitting ? <Spinner height="20px" width="20px" /> : t("workspace_creation.button.default")}
         </Button>
         {hasInvitations && (
-          <Button variant="ghost" size="lg" className="w-full" onClick={handleCurrentViewChange}>
+          <Button variant="ghost" size="xl" className="w-full" onClick={handleCurrentViewChange}>
             Join existing workspace
           </Button>
         )}

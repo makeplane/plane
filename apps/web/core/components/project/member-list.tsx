@@ -96,7 +96,6 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
           {isAdmin && (
             <Button
               variant="primary"
-              size="sm"
               onClick={() => {
                 setInviteModal(true);
               }}

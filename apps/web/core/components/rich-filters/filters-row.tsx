@@ -89,7 +89,6 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
       <ElementTransition show={filter.canClearFilters}>
         <Button
           variant="secondary"
-          size="sm"
           className={COMMON_OPERATION_BUTTON_CLASSNAME}
           onClick={filter.clearFilters}
           data-ph-element={trackerElements?.clearFilter}
@@ -100,7 +99,6 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
       <ElementTransition show={filter.canSaveView}>
         <Button
           variant="secondary"
-          size="sm"
           className={COMMON_OPERATION_BUTTON_CLASSNAME}
           onClick={filter.saveView}
           data-ph-element={trackerElements?.saveView}
@@ -111,7 +109,6 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
       <ElementTransition show={filter.canUpdateView}>
         <Button
           variant="secondary"
-          size="sm"
           className={COMMON_OPERATION_BUTTON_CLASSNAME}
           onClick={handleUpdate}
           loading={isUpdating}

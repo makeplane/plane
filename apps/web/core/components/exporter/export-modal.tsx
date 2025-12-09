@@ -179,7 +179,6 @@ export const Exporter = observer(function Exporter(props: Props) {
                     </Button>
                     <Button
                       variant="primary"
-                      size="sm"
                       onClick={ExportCSVToMail}
                       disabled={exportLoading}
                       loading={exportLoading}

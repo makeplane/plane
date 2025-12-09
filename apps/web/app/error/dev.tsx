@@ -13,11 +13,11 @@ interface ErrorActionsProps {
 function ErrorActions({ onGoHome, onReload }: ErrorActionsProps) {
   return (
     <div className="flex gap-3 pt-2">
-      <Button variant="primary" size="md" onClick={onGoHome}>
+      <Button variant="primary" size="lg" onClick={onGoHome}>
         Go to home
       </Button>
       {onReload && (
-        <Button variant="secondary" size="md" onClick={onReload}>
+        <Button variant="secondary" size="lg" onClick={onReload}>
           Reload page
         </Button>
       )}

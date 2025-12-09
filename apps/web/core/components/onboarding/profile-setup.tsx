@@ -580,7 +580,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
               </div>
             </>
           )}
-          <Button variant="primary" type="submit" size="lg" className="w-full" disabled={isButtonDisabled}>
+          <Button variant="primary" type="submit" size="xl" className="w-full" disabled={isButtonDisabled}>
             {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
           </Button>
         </form>

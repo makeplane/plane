@@ -171,7 +171,6 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
             {!isRestoreDisabled && (
               <Button
                 variant="primary"
-                size="sm"
                 onClick={() => {
                   handleRestore(activeVersionDescription ?? "<p></p>");
                   handleClose();

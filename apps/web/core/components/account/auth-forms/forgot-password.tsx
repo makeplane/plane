@@ -129,7 +129,7 @@ export const ForgotPasswordForm = observer(function ForgotPasswordForm() {
           type="submit"
           variant="primary"
           className="w-full"
-          size="lg"
+          size="xl"
           disabled={!isValid}
           loading={isSubmitting || resendTimerCode > 0}
         >

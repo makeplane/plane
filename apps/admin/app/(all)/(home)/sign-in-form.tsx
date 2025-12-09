@@ -181,7 +181,7 @@ export function InstanceSignInForm() {
               </div>
             </div>
             <div className="py-2">
-              <Button type="submit" size="lg" className="w-full" disabled={isButtonDisabled}>
+              <Button type="submit" size="xl" className="w-full" disabled={isButtonDisabled}>
                 {isSubmitting ? <Spinner height="20px" width="20px" /> : "Sign in"}
               </Button>
             </div>

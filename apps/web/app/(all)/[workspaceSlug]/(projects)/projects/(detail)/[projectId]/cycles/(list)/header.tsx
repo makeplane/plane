@@ -56,7 +56,6 @@ export const CyclesListHeader = observer(function CyclesListHeader() {
           <CyclesViewHeader projectId={currentProjectDetails.id} />
           <Button
             variant="primary"
-            size="sm"
             data-ph-element={CYCLE_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
             onClick={() => {
               toggleCreateCycleModal(true);

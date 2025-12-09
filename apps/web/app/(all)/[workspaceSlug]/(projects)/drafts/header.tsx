@@ -62,7 +62,6 @@ export const WorkspaceDraftHeader = observer(function WorkspaceDraftHeader() {
           {joinedProjectIds && joinedProjectIds.length > 0 && (
             <Button
               variant="primary"
-              size="sm"
               className="items-center gap-1"
               onClick={() => setIsDraftIssueModalOpen(true)}
               disabled={!isAuthorizedUser}

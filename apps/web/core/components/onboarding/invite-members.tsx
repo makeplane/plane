@@ -398,14 +398,14 @@ export function InviteMembers(props: Props) {
               <Button
                 variant="primary"
                 type="submit"
-                size="lg"
+                size="xl"
                 className="w-full"
                 disabled={isInvitationDisabled || !isValid || isSubmitting}
                 data-ph-element={MEMBER_TRACKER_ELEMENTS.ONBOARDING_INVITE_MEMBER}
               >
                 {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
               </Button>
-              <Button variant="ghost" size="lg" className="w-full" onClick={nextStep}>
+              <Button variant="ghost" size="xl" className="w-full" onClick={nextStep}>
                 I’ll do it later
               </Button>
             </div>

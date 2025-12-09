@@ -248,14 +248,14 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
           data-ph-element={WORKSPACE_TRACKER_ELEMENTS.CREATE_WORKSPACE_BUTTON}
           variant="primary"
           type="submit"
-          size="md"
+          size="xl"
           disabled={!isValid}
           loading={isSubmitting}
         >
           {isSubmitting ? t(primaryButtonText.loading) : t(primaryButtonText.default)}
         </Button>
         {!secondaryButton && (
-          <Button variant="secondary" type="button" size="md" onClick={() => router.back()}>
+          <Button variant="secondary" type="button" size="xl" onClick={() => router.back()}>
             {t("common.go_back")}
           </Button>
         )}

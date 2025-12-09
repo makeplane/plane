@@ -54,7 +54,6 @@ export const ProjectsBaseHeader = observer(function ProjectsBaseHeader() {
         </div>
         {isAuthorizedUser && !isArchived ? (
           <Button
-            size="sm"
             onClick={() => {
               toggleCreateProjectModal(true);
             }}

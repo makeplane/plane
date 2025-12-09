@@ -15,7 +15,7 @@ export function InstanceNotReady() {
 
         <div>
           <Link href={"/setup/?auth_enabled=0"}>
-            <Button size="lg" className="w-full">
+            <Button size="xl" className="w-full">
               Get started
             </Button>
           </Link>

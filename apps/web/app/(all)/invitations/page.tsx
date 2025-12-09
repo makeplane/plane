@@ -179,7 +179,7 @@ function UserInvitationsPage() {
                   <Button
                     variant="primary"
                     type="submit"
-                    size="md"
+                    size="lg"
                     onClick={submitInvitations}
                     disabled={isJoiningWorkspaces || invitationsRespond.length === 0}
                     loading={isJoiningWorkspaces}
@@ -189,7 +189,7 @@ function UserInvitationsPage() {
                   </Button>
                   <Link href={`/${redirectWorkspaceSlug}`}>
                     <span>
-                      <Button variant="secondary" size="md">
+                      <Button variant="secondary" size="lg">
                         {t("go_home")}
                       </Button>
                     </span>

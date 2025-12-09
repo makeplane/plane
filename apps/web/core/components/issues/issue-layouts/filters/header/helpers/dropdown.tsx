@@ -9,7 +9,7 @@ import { ChevronUpIcon } from "@plane/propel/icons";
 
 type Props = {
   children: React.ReactNode;
-  icon?: React.ReactNode;
+  icon?: React.ReactElement;
   miniIcon?: React.ReactNode;
   title?: string;
   placement?: Placement;
@@ -57,7 +57,6 @@ export function FiltersDropdown(props: Props) {
                     <Button
                       disabled={disabled}
                       variant="secondary"
-                      size="sm"
                       prependIcon={icon}
                       appendIcon={
                         <ChevronUpIcon
@@ -85,7 +84,6 @@ export function FiltersDropdown(props: Props) {
                       disabled={disabled}
                       ref={setReferenceElement}
                       variant="secondary"
-                      size="sm"
                       tabIndex={tabIndex}
                       className="relative px-2"
                     >

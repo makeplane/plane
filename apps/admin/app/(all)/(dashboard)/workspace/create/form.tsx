@@ -195,7 +195,6 @@ export function WorkspaceCreateForm() {
       <div className="flex max-w-4xl items-center py-1 gap-4">
         <Button
           variant="primary"
-          size="sm"
           onClick={handleSubmit(handleCreateWorkspace)}
           disabled={!isValid}
           loading={isSubmitting}

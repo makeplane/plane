@@ -30,10 +30,10 @@ function ErrorPage() {
           </p>
         </div>
         <div className="flex items-center justify-center gap-2">
-          <Button variant="primary" size="md" onClick={handleRetry}>
+          <Button variant="primary" size="lg" onClick={handleRetry}>
             Refresh
           </Button>
-          {/* <Button variant="secondary" size="md" onClick={() => {}}>
+          {/* <Button variant="secondary" size="lg" onClick={() => {}}>
             Sign out
           </Button> */}
         </div>

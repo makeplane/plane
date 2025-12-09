@@ -110,7 +110,7 @@ export function Invitations(props: Props) {
       </div>
       <Button
         variant="primary"
-        size="lg"
+        size="xl"
         className="w-full"
         onClick={submitInvitations}
         disabled={isJoiningWorkspaces || !invitationsRespond.length}
@@ -125,7 +125,7 @@ export function Invitations(props: Props) {
       </div>
       <Button
         variant="ghost"
-        size="lg"
+        size="xl"
         className="w-full text-14 bg-surface-2"
         onClick={handleCurrentViewChange}
         disabled={isJoiningWorkspaces}

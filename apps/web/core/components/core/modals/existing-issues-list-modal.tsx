@@ -330,7 +330,6 @@ export function ExistingIssuesListModal(props: Props) {
                 <div className="flex justify-between items-center p-3">
                   <Button
                     variant="link"
-                    size="sm"
                     onClick={handleSelectIssues}
                     disabled={filteredIssues.length === 0}
                     className={filteredIssues.length === 0 ? "p-0" : ""}
@@ -345,7 +344,6 @@ export function ExistingIssuesListModal(props: Props) {
                     </Button>
                     <Button
                       variant="primary"
-                      size="sm"
                       onClick={onSubmit}
                       loading={isSubmitting}
                       disabled={isSubmitting || selectedIssues.length === 0}

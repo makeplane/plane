@@ -160,10 +160,10 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
 
       {/* Action Buttons */}
       <div className="space-y-3">
-        <Button variant="primary" type="submit" className="w-full" size="lg" disabled={isButtonDisabled}>
+        <Button variant="primary" type="submit" className="w-full" size="xl" disabled={isButtonDisabled}>
           Continue
         </Button>
-        <Button variant="ghost" onClick={handleSkip} className="w-full" size="lg">
+        <Button variant="ghost" onClick={handleSkip} className="w-full" size="xl">
           Skip
         </Button>
       </div>

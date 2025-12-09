@@ -68,7 +68,6 @@ function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
             action={
               <Button
                 variant="secondary"
-                size="sm"
                 onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/archives/issues/`)}
               >
                 Go to archives
