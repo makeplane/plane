@@ -87,7 +87,7 @@ export const PageVersionsMainContent = observer(function PageVersionsMainContent
               <h6 className="text-16 font-semibold">Something went wrong!</h6>
               <p className="text-13 text-tertiary">The version could not be loaded, please try again.</p>
             </div>
-            <Button variant="link-primary" onClick={handleRetry} loading={isRetrying}>
+            <Button variant="link" onClick={handleRetry} loading={isRetrying}>
               Try again
             </Button>
           </div>

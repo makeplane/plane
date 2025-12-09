@@ -221,7 +221,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               <Button
                 type="button"
                 onClick={redirectToUniqueCodeSignIn}
-                variant="outline-primary"
+                variant="secondary"
                 className="w-full"
                 size="lg"
               >

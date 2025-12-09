@@ -123,12 +123,11 @@ export function DeleteImportModal({ isOpen, handleClose, data }: Props) {
                     />
                   </div>
                   <div className="flex justify-end gap-2">
-                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                    <Button variant="secondary" onClick={handleClose}>
                       Cancel
                     </Button>
                     <Button
-                      variant="danger"
-                      size="sm"
+                      variant="error-fill"
                       tabIndex={1}
                       onClick={handleDeletion}
                       disabled={!confirmDeleteImport}

@@ -20,7 +20,7 @@ export function GithubImportConfirm({ handleStepChange, watch }: Props) {
         to complete the process.
       </h4>
       <div className="mt-6 flex items-center justify-between">
-        <Button variant="neutral-primary" onClick={() => handleStepChange("import-users")}>
+        <Button variant="secondary" onClick={() => handleStepChange("import-users")}>
           Back
         </Button>
         <Button variant="primary" type="submit">

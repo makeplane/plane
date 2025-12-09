@@ -24,12 +24,7 @@ export const ActivityFilter = observer(function ActivityFilter(props: TActivityF
     <PopoverMenu
       buttonClassName="outline-none"
       button={
-        <Button
-          variant="neutral-primary"
-          size="sm"
-          prependIcon={<ListFilter className="h-3 w-3" />}
-          className="relative"
-        >
+        <Button variant="secondary" prependIcon={<ListFilter className="h-3 w-3" />} className="relative">
           <span className="text-secondary">{t("common.filters")}</span>
           {selectedFilters.length < filterOptions.length && (
             <span className="absolute h-2 w-2 -right-0.5 -top-0.5 bg-accent-primary rounded-full" />

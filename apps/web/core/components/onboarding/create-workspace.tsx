@@ -125,7 +125,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
       {!!invitedWorkspaces && (
         <>
           <Button
-            variant="link-neutral"
+            variant="ghost"
             size="lg"
             className="w-full flex items-center gap-2 text-14 bg-surface-2"
             onClick={handleCurrentViewChange}

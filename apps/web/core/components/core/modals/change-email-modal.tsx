@@ -225,10 +225,10 @@ export const ChangeEmailModal: React.FC<Props> = observer((props) => {
                     </div>
                   )}
                   <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-subtle py-4">
-                    <Button type="button" variant="neutral-primary" size="sm" onClick={handleClose}>
+                    <Button type="button" variant="secondary" onClick={handleClose}>
                       {changeEmailT("actions.cancel")}
                     </Button>
-                    <Button type="submit" variant="primary" size="sm" disabled={isSubmitting}>
+                    <Button type="submit" variant="primary" disabled={isSubmitting}>
                       {isSubmitting
                         ? changeEmailT("states.sending")
                         : secondStep

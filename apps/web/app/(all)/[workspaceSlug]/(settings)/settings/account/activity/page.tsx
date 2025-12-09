@@ -13,6 +13,7 @@ import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-stat
 import { ProfileActivityListPage } from "@/components/profile/activity/profile-activity-list";
 // hooks
 import { SettingsHeading } from "@/components/settings/heading";
+import { ChevronDown } from "lucide-react";
 
 const PER_PAGE = 100;
 
@@ -79,8 +80,8 @@ function ProfileActivityPage() {
       />
       <div className="w-full">{activityPages}</div>
       {isLoadMoreVisible && (
-        <div className="flex w-full items-center justify-center text-11">
-          <Button variant="accent-primary" size="sm" onClick={handleLoadMore}>
+        <div className="flex w-full items-center justify-center mt-4">
+          <Button variant="ghost" onClick={handleLoadMore} appendIcon={<ChevronDown />}>
             {t("load_more")}
           </Button>
         </div>

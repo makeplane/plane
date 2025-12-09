@@ -101,10 +101,10 @@ export function ArchiveCycleModal(props: Props) {
                     Are you sure you want to archive the cycle? All your archives can be restored later.
                   </p>
                   <div className="mt-3 flex justify-end gap-2">
-                    <Button variant="neutral-primary" size="sm" onClick={onClose}>
+                    <Button variant="secondary" onClick={onClose}>
                       Cancel
                     </Button>
-                    <Button size="sm" tabIndex={1} onClick={handleArchiveCycle} loading={isArchiving}>
+                    <Button tabIndex={1} onClick={handleArchiveCycle} loading={isArchiving}>
                       {isArchiving ? "Archiving" : "Archive"}
                     </Button>
                   </div>

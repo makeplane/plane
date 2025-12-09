@@ -124,7 +124,7 @@ export const PlansComparisonBase = observer(function PlansComparisonBase(props: 
         {/* Toggle Button */}
         <div className="flex items-center justify-center gap-1 my-4 pb-2">
           <Button
-            variant="link-neutral"
+            variant="ghost"
             onClick={() => {
               setIsCompareAllFeaturesSectionOpen(!isCompareAllFeaturesSectionOpen);
             }}

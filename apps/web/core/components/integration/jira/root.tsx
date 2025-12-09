@@ -160,7 +160,7 @@ export function JiraImporterRoot() {
               <div className="-mx-4 mt-4 flex justify-end gap-4 border-t border-subtle p-4 pb-0">
                 {currentStep?.state !== "import-configure" && (
                   <Button
-                    variant="neutral-primary"
+                    variant="secondary"
                     onClick={() => {
                       const currentElementIndex = integrationWorkflowData.findIndex(
                         (i) => i?.key === currentStep?.state

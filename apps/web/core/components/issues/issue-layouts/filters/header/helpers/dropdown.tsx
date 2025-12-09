@@ -56,7 +56,7 @@ export function FiltersDropdown(props: Props) {
                   <div className="hidden @4xl:flex">
                     <Button
                       disabled={disabled}
-                      variant="neutral-primary"
+                      variant="secondary"
                       size="sm"
                       prependIcon={icon}
                       appendIcon={
@@ -84,7 +84,7 @@ export function FiltersDropdown(props: Props) {
                     <Button
                       disabled={disabled}
                       ref={setReferenceElement}
-                      variant="neutral-primary"
+                      variant="secondary"
                       size="sm"
                       tabIndex={tabIndex}
                       className="relative px-2"

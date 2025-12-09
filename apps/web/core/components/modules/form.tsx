@@ -227,10 +227,10 @@ export function ModuleForm(props: Props) {
         </div>
       </div>
       <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={getIndex("cancel")}>
+        <Button variant="secondary" onClick={handleClose} tabIndex={getIndex("cancel")}>
           {t("cancel")}
         </Button>
-        <Button variant="primary" size="sm" type="submit" loading={isSubmitting} tabIndex={getIndex("submit")}>
+        <Button variant="primary" type="submit" loading={isSubmitting} tabIndex={getIndex("submit")}>
           {status
             ? isSubmitting
               ? t("updating")

@@ -174,7 +174,7 @@ export const Exporter = observer(function Exporter(props: Props) {
                     </div>
                   </div>
                   <div className="flex justify-end gap-2">
-                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                    <Button variant="secondary" onClick={handleClose}>
                       {t("cancel")}
                     </Button>
                     <Button

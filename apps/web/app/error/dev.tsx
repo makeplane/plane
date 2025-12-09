@@ -17,7 +17,7 @@ function ErrorActions({ onGoHome, onReload }: ErrorActionsProps) {
         Go to home
       </Button>
       {onReload && (
-        <Button variant="outline-primary" size="md" onClick={onReload}>
+        <Button variant="secondary" size="md" onClick={onReload}>
           Reload page
         </Button>
       )}

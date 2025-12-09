@@ -33,12 +33,7 @@ export const WorkspaceDashboardHeader = observer(function WorkspaceDashboardHead
           </div>
         </Header.LeftItem>
         <Header.RightItem>
-          <Button
-            variant="neutral-primary"
-            size="sm"
-            onClick={() => toggleWidgetSettings(true)}
-            className="my-auto mb-0"
-          >
+          <Button variant="secondary" onClick={() => toggleWidgetSettings(true)} className="my-auto mb-0">
             <Shapes size={16} />
             <div className="hidden text-11 font-medium sm:hidden md:block">{t("home.manage_widgets")}</div>
           </Button>

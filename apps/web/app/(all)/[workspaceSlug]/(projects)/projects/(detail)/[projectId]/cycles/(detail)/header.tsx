@@ -230,7 +230,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
 
             {canUserCreateIssue && (
               <>
-                <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
+                <Button onClick={() => setAnalyticsModal(true)} variant="secondary">
                   <div className="hidden @4xl:flex">Analytics</div>
                   <div className="flex @4xl:hidden">
                     <ChartNoAxesColumn className="size-3.5" />
@@ -243,7 +243,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
                       toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                     }}
                     data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.CYCLE}
-                    size="sm"
+
                   >
                     {t("issue.add.label")}
                   </Button>

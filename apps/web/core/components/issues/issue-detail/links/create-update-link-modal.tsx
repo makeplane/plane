@@ -127,10 +127,10 @@ export const IssueLinkCreateUpdateModal = observer(function IssueLinkCreateUpdat
           </div>
         </div>
         <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
-          <Button variant="neutral-primary" size="sm" onClick={onClose}>
+          <Button variant="secondary" onClick={onClose}>
             {t("common.cancel")}
           </Button>
-          <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+          <Button variant="primary" type="submit" loading={isSubmitting}>
             {`${
               preloadedData?.id
                 ? isSubmitting

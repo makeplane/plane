@@ -114,7 +114,7 @@ export function ArchiveRestoreProjectModal(props: Props) {
                       : "Restoring a project will activate it and make it visible to all members of the project. Are you sure you want to continue?"}
                   </p>
                   <div className="mt-3 flex justify-end gap-2">
-                    <Button variant="neutral-primary" size="sm" onClick={onClose}>
+                    <Button variant="secondary" onClick={onClose}>
                       Cancel
                     </Button>
                     <Button

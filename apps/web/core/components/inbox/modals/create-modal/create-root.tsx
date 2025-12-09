@@ -253,7 +253,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
             </div>
             <div className="flex items-center gap-3">
               <Button
-                variant="neutral-primary"
+                variant="secondary"
                 size="sm"
                 type="button"
                 onClick={() => {

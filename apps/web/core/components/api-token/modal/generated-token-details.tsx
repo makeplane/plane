@@ -52,7 +52,7 @@ export function GeneratedTokenDetails(props: Props) {
             ? `Expires ${renderFormattedDate(tokenDetails.expired_at!)} at ${renderFormattedTime(tokenDetails.expired_at!)}`
             : "Never expires"}
         </p>
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+        <Button variant="secondary" onClick={handleClose}>
           {t("close")}
         </Button>
       </div>

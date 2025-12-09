@@ -88,7 +88,7 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
     <>
       <ElementTransition show={filter.canClearFilters}>
         <Button
-          variant="neutral-primary"
+          variant="secondary"
           size="sm"
           className={COMMON_OPERATION_BUTTON_CLASSNAME}
           onClick={filter.clearFilters}
@@ -99,7 +99,7 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
       </ElementTransition>
       <ElementTransition show={filter.canSaveView}>
         <Button
-          variant="accent-primary"
+          variant="secondary"
           size="sm"
           className={COMMON_OPERATION_BUTTON_CLASSNAME}
           onClick={filter.saveView}
@@ -110,7 +110,7 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
       </ElementTransition>
       <ElementTransition show={filter.canUpdateView}>
         <Button
-          variant="accent-primary"
+          variant="secondary"
           size="sm"
           className={COMMON_OPERATION_BUTTON_CLASSNAME}
           onClick={handleUpdate}

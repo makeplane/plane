@@ -27,7 +27,7 @@ export const WorkspaceEditionBadge = observer(function WorkspaceEditionBadge() {
       <Tooltip tooltipContent={`Version: v${packageJson.version}`} isMobile={isMobile}>
         <Button
           tabIndex={-1}
-          variant="accent-primary"
+          variant="secondary"
           className="w-fit min-w-24 cursor-pointer rounded-2xl px-2 py-1 text-center text-13 font-medium outline-none"
           onClick={() => setIsPaidPlanPurchaseModalOpen(true)}
           aria-haspopup="dialog"

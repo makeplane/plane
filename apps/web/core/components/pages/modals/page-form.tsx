@@ -135,7 +135,7 @@ export function PageForm(props: Props) {
           <h6 className="text-11 font-medium">{t(i18n_access_label || "")}</h6>
         </div>
         <div className="flex items-center justify-end gap-2">
-          <Button variant="neutral-primary" size="sm" onClick={handleModalClose} tabIndex={getIndex("cancel")}>
+          <Button variant="secondary" onClick={handleModalClose} tabIndex={getIndex("cancel")}>
             Cancel
           </Button>
           <Button

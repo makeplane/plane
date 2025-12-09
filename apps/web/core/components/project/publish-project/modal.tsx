@@ -175,7 +175,11 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
         <div className="flex items-center justify-between gap-2 p-5">
           <h5 className="text-18 font-medium text-secondary">Publish project</h5>
           {isProjectPublished && (
-            <Button variant="danger" onClick={() => handleUnPublishProject(watch("id") ?? "")} loading={isUnPublishing}>
+            <Button
+              variant="error-fill"
+              onClick={() => handleUnPublishProject(watch("id") ?? "")}
+              loading={isUnPublishing}
+            >
               {isUnPublishing ? "Unpublishing" : "Unpublish"}
             </Button>
           )}
@@ -307,17 +311,17 @@ export const PublishProjectModal = observer(function PublishProjectModal(props: 
           </div>
           {!fetchSettingsLoader && (
             <div className="relative flex items-center gap-2">
-              <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+              <Button variant="secondary" onClick={handleClose}>
                 Cancel
               </Button>
               {isProjectPublished ? (
                 isDirty && (
-                  <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+                  <Button variant="primary" type="submit" loading={isSubmitting}>
                     {isSubmitting ? "Updating" : "Update settings"}
                   </Button>
                 )
               ) : (
-                <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+                <Button variant="primary" type="submit" loading={isSubmitting}>
                   {isSubmitting ? "Publishing" : "Publish"}
                 </Button>
               )}

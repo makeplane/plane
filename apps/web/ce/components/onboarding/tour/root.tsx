@@ -156,7 +156,7 @@ export const TourRoot = observer(function TourRoot(props: TOnboardingTourProps) 
               <div className="mt-3 flex h-full items-end justify-between gap-4">
                 <div className="flex items-center gap-4">
                   {currentStep?.prevStep && (
-                    <Button variant="neutral-primary" onClick={() => setStep(currentStep.prevStep ?? "welcome")}>
+                    <Button variant="secondary" onClick={() => setStep(currentStep.prevStep ?? "welcome")}>
                       Back
                     </Button>
                   )}

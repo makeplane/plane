@@ -33,7 +33,7 @@ function ErrorPage() {
           <Button variant="primary" size="md" onClick={handleRetry}>
             Refresh
           </Button>
-          {/* <Button variant="neutral-primary" size="md" onClick={() => {}}>
+          {/* <Button variant="secondary" size="md" onClick={() => {}}>
             Sign out
           </Button> */}
         </div>

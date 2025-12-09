@@ -345,7 +345,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                 {!isMemberOfProject && (
                   <div className="flex items-center">
                     <Button
-                      variant="link-primary"
+                      variant="link"
                       className="!p-0 font-semibold"
                       onClick={(e) => {
                         e.preventDefault();

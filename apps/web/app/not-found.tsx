@@ -28,7 +28,7 @@ function PageNotFound() {
           </div>
           <Link href="/">
             <span className="flex justify-center">
-              <Button variant="neutral-primary" size="md">
+              <Button variant="secondary" size="md">
                 Go to Home
               </Button>
             </span>

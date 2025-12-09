@@ -160,7 +160,7 @@ export const RoleSetupStep = observer(function RoleSetupStep({ handleStepChange 
         <Button variant="primary" type="submit" className="w-full" size="lg" disabled={isButtonDisabled}>
           Continue
         </Button>
-        <Button variant="link-neutral" onClick={handleSkip} className="w-full" size="lg">
+        <Button variant="ghost" onClick={handleSkip} className="w-full" size="lg">
           Skip
         </Button>
       </div>

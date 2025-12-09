@@ -405,7 +405,7 @@ export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
         >
           {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
         </Button>
-        <Button variant="link-neutral" size="lg" className="w-full" onClick={nextStep}>
+        <Button variant="ghost" size="lg" className="w-full" onClick={nextStep}>
           I’ll do it later
         </Button>
       </div>

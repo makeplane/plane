@@ -524,7 +524,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                   <div className="flex items-center gap-2">
                     <div tabIndex={getIndex("discard_button")}>
                       <Button
-                        variant="neutral-primary"
+                        variant="secondary"
                         size="sm"
                         onClick={() => {
                           if (editorRef.current?.isEditorReadyToDiscard()) {

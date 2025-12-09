@@ -189,7 +189,7 @@ function UserInvitationsPage() {
                   </Button>
                   <Link href={`/${redirectWorkspaceSlug}`}>
                     <span>
-                      <Button variant="neutral-primary" size="md">
+                      <Button variant="secondary" size="md">
                         {t("go_home")}
                       </Button>
                     </span>

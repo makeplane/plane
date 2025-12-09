@@ -119,7 +119,7 @@ export function WorkspaceJoinInvitesStep(props: Props) {
           {isJoiningWorkspaces ? <Spinner height="20px" width="20px" /> : "Continue"}
         </Button>
         <Button
-          variant="link-neutral"
+          variant="ghost"
           size="lg"
           className="w-full"
           onClick={handleCurrentViewChange}

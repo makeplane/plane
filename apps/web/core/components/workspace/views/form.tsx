@@ -180,10 +180,10 @@ export const WorkspaceViewForm = observer(function WorkspaceViewForm(props: Prop
         </div>
       </div>
       <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+        <Button variant="secondary" onClick={handleClose}>
           {t("common.cancel")}
         </Button>
-        <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+        <Button variant="primary" type="submit" loading={isSubmitting}>
           {data
             ? isSubmitting
               ? t("common.updating")

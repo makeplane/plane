@@ -88,7 +88,7 @@ export function GithubRepoDetails({ selectedRepo, handleStepChange, setUsers, se
         </Loader>
       )}
       <div className="mt-6 flex items-center justify-end gap-2">
-        <Button variant="neutral-primary" onClick={() => handleStepChange("import-data")}>
+        <Button variant="secondary" onClick={() => handleStepChange("import-data")}>
           Back
         </Button>
         <Button
