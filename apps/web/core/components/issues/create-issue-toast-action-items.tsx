@@ -55,7 +55,7 @@ export const CreateIssueToastActionItems = observer(function CreateIssueToastAct
   };
 
   return (
-    <div className="flex items-center gap-1 text-11 text-secondary">
+    <div className="flex items-center gap-1 text-11 text-secondary -ml-2">
       <a
         href={workItemLink}
         target="_blank"
