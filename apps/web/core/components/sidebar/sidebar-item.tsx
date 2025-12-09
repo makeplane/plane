@@ -50,8 +50,8 @@ interface AppSidebarButtonItemProps {
 const styles = {
   base: "group flex flex-col gap-0.5 items-center justify-center text-tertiary",
   icon: "flex items-center justify-center gap-2 size-8 rounded-md text-tertiary",
-  iconActive: "bg-layer-1 text-secondary",
-  iconInactive: "group-hover:text-secondary group-hover:bg-layer-1",
+  iconActive: "bg-layer-transparent-selected text-secondary !text-icon-primary",
+  iconInactive: "group-hover:text-icon-secondary group-hover:bg-layer-transparent-hover !text-icon-tertiary",
   label: "text-11 font-medium",
   labelActive: "text-secondary",
   labelInactive: "group-hover:text-secondary text-tertiary",
