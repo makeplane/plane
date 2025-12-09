@@ -42,7 +42,7 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
           issueTypeId={workItem.type_id}
           projectIdentifier={workItem.project__identifier}
           issueSequenceId={workItem.sequence_id}
-          textContainerClassName="text-11"
+          size="xs"
         />{" "}
         {workItem.name}
       </div>

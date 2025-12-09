@@ -153,7 +153,8 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                       issueTypeId={issue.type_id}
                       projectIdentifier={projectDetail.identifier}
                       issueSequenceId={issue.sequence_id}
-                      textContainerClassName="text-11 text-secondary"
+                      size="xs"
+                      variant="secondary"
                     />
                   )}
                 </div>

@@ -73,7 +73,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
               projectId={issueDetails?.project_id || ""}
               projectIdentifier={issueDetails?.project_identifier || ""}
               issueSequenceId={issueDetails?.sequence_id || ""}
-              textContainerClassName="text-placeholder text-13 whitespace-nowrap"
+             variant="tertiary"
             />
           ) : (
             <div className="flex gap-2 items-center justify-center">

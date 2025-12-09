@@ -123,7 +123,8 @@ export const CalendarIssueBlock = observer(
                       <IssueIdentifier
                         issueId={issue.id}
                         projectId={issue.project_id}
-                        textContainerClassName="text-13 md:text-11 text-tertiary"
+                        size="xs"
+                        variant="tertiary"
                         displayProperties={issuesFilter?.issueFilters?.displayProperties}
                       />
                     )}

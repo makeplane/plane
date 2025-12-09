@@ -93,7 +93,8 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
                     issueTypeId={parentIssue.type_id}
                     projectIdentifier={parentIssueProjectDetails?.identifier}
                     issueSequenceId={parentIssue.sequence_id}
-                    textContainerClassName="text-11 font-medium text-green-700"
+                    size="xs"
+                    variant="success"
                   />
                 )}
               </Link>

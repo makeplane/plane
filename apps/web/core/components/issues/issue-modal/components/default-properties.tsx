@@ -273,7 +273,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
                     issueTypeId={selectedParentIssue.type_id}
                     projectIdentifier={selectedParentIssue?.project__identifier}
                     issueSequenceId={selectedParentIssue.sequence_id}
-                    textContainerClassName="text-11"
+                    size="xs"
                   />
                 )}
               </button>

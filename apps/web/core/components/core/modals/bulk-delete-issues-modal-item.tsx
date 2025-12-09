@@ -39,7 +39,7 @@ export const BulkDeleteIssuesModalItem = observer(function BulkDeleteIssuesModal
           issueTypeId={issue.type_id}
           projectIdentifier={issue.project__identifier}
           issueSequenceId={issue.sequence_id}
-          textContainerClassName="text-11"
+          size="xs"
         />
         <span>{issue.name}</span>
       </div>

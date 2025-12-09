@@ -282,7 +282,8 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
                     <IssueIdentifier
                       issueId={issueDetail.id}
                       projectId={issueDetail.project_id}
-                      textContainerClassName="text-13 md:text-11 text-custom-text-300"
+                      size="xs"
+                      variant="tertiary"
                       displayProperties={displayProperties}
                     />
                   )}
