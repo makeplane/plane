@@ -113,7 +113,7 @@ export const UserAvatar = observer(function UserAvatar() {
       ) : (
         <div className="flex-shrink-0">
           <Link href={`/?next_path=${pathName}?${queryParam}`}>
-            <Button variant="outline-primary">Sign in</Button>
+            <Button variant="secondary">Sign in</Button>
           </Link>
         </div>
       )}

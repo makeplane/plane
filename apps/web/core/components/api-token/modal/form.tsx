@@ -239,10 +239,10 @@ export function CreateApiTokenForm(props: Props) {
           <span className="text-11">{t("workspace_settings.settings.api_tokens.never_expires")}</span>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+          <Button variant="secondary" onClick={handleClose}>
             {t("cancel")}
           </Button>
-          <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
+          <Button variant="primary" type="submit" loading={isSubmitting}>
             {isSubmitting
               ? t("workspace_settings.settings.api_tokens.generating")
               : t("workspace_settings.settings.api_tokens.generate_token")}

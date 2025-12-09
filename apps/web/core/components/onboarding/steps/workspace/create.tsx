@@ -303,7 +303,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
           {isSubmitting ? <Spinner height="20px" width="20px" /> : t("workspace_creation.button.default")}
         </Button>
         {hasInvitations && (
-          <Button variant="link-neutral" size="lg" className="w-full" onClick={handleCurrentViewChange}>
+          <Button variant="ghost" size="lg" className="w-full" onClick={handleCurrentViewChange}>
             Join existing workspace
           </Button>
         )}

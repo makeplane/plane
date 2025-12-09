@@ -39,7 +39,7 @@ export const ProjectFeatureUpdate = observer(function ProjectFeatureUpdate(props
           {t("created").toLowerCase()}.
         </div>
         <div className="flex gap-2">
-          <Button variant="neutral-primary" size="sm" onClick={onClose} tabIndex={1}>
+          <Button variant="secondary" onClick={onClose} tabIndex={1}>
             {t("close")}
           </Button>
           <Link

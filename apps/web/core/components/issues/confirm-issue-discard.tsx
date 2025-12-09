@@ -71,15 +71,15 @@ export function ConfirmIssueDiscard(props: Props) {
                 </div>
                 <div className="flex justify-between gap-2 p-4 sm:px-6">
                   <div>
-                    <Button variant="neutral-primary" size="sm" onClick={onDiscard}>
+                    <Button variant="secondary" onClick={onDiscard}>
                       Discard
                     </Button>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button variant="neutral-primary" size="sm" onClick={onClose}>
+                    <Button variant="secondary" onClick={onClose}>
                       Cancel
                     </Button>
-                    <Button variant="primary" size="sm" onClick={handleDeletion} loading={isLoading}>
+                    <Button variant="primary" onClick={handleDeletion} loading={isLoading}>
                       {isLoading ? "Saving" : "Save to Drafts"}
                     </Button>
                   </div>

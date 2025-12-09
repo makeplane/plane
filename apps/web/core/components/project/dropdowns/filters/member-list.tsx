@@ -95,7 +95,7 @@ export const MemberListFiltersDropdown = observer(function MemberListFiltersDrop
     <CustomMenu
       customButton={
         <div className="relative">
-          <Button variant="neutral-primary" size="sm" className="flex items-center gap-2">
+          <Button variant="secondary" className="flex items-center gap-2">
             <span>Filters</span>
             <ChevronDownIcon className="h-3 w-3" />
           </Button>

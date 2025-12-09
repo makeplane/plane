@@ -158,10 +158,10 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
       </div>
 
       <div className="flex justify-end gap-2">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+        <Button variant="secondary" onClick={handleClose}>
           {t("cancel")}
         </Button>
-        <Button variant="danger" size="sm" type="submit" disabled={!canDelete} loading={isSubmitting}>
+        <Button variant="error-fill" type="submit" disabled={!canDelete} loading={isSubmitting}>
           {isSubmitting ? t("deleting") : t("confirm")}
         </Button>
       </div>

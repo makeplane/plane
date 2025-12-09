@@ -22,7 +22,7 @@ function PageNotFound() {
           </div>
           <Link to="/general/">
             <span className="flex justify-center py-4">
-              <Button variant="neutral-primary" size="md">
+              <Button variant="secondary" size="md">
                 Go to general settings
               </Button>
             </span>

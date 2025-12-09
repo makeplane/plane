@@ -426,7 +426,7 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
                   <span className="text-13 tracking-tight">{t("deactivate_account_description")}</span>
                   <div>
                     <Button
-                      variant="danger"
+                      variant="error-fill"
                       onClick={() => setDeactivateAccountModal(true)}
                       data-ph-element={PROFILE_SETTINGS_TRACKER_ELEMENTS.DEACTIVATE_ACCOUNT_BUTTON}
                     >

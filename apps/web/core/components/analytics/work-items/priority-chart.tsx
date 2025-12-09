@@ -220,7 +220,7 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
             searchPlaceholder={`${parsedData.data.length} ${xAxisLabel}`}
             actions={(table: Table<TChartDatum>) => (
               <Button
-                variant="accent-primary"
+                variant="secondary"
                 prependIcon={<Download className="h-3.5 w-3.5" />}
                 onClick={() => exportCSV(table.getRowModel().rows, [...defaultColumns, ...columns], workspaceSlug)}
               >

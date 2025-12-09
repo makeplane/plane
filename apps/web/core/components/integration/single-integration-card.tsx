@@ -136,7 +136,7 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
           >
             <Button
               className={`${!isUserAdmin ? "hover:cursor-not-allowed" : ""}`}
-              variant="danger"
+              variant="error-fill"
               onClick={() => {
                 if (!isUserAdmin) return;
                 handleRemoveIntegration();

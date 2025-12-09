@@ -105,7 +105,7 @@ export const GithubImportData = observer(function GithubImportData(props: Props)
         </div>
       </div>
       <div className="mt-6 flex items-center justify-end gap-2">
-        <Button variant="neutral-primary" onClick={() => handleStepChange("import-configure")}>
+        <Button variant="secondary" onClick={() => handleStepChange("import-configure")}>
           Back
         </Button>
         <Button

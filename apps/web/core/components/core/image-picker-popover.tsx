@@ -239,7 +239,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                             />
                           )}
                         />
-                        <Button variant="primary" onClick={() => setSearchParams(formData.search)} size="sm">
+                        <Button variant="primary" onClick={() => setSearchParams(formData.search)}>
                           Search
                         </Button>
                       </div>
@@ -346,7 +346,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
 
                     <div className="flex h-12 items-start justify-end gap-2">
                       <Button
-                        variant="neutral-primary"
+                        variant="secondary"
                         onClick={() => {
                           setIsOpen(false);
                           setImage(null);

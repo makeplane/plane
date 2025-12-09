@@ -180,10 +180,10 @@ export function DeleteProjectModal(props: DeleteProjectModal) {
                     />
                   </div>
                   <div className="flex justify-end gap-2">
-                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                    <Button variant="secondary" onClick={handleClose}>
                       Cancel
                     </Button>
-                    <Button variant="danger" size="sm" type="submit" disabled={!canDelete} loading={isSubmitting}>
+                    <Button variant="error-fill" type="submit" disabled={!canDelete} loading={isSubmitting}>
                       {isSubmitting ? "Deleting" : "Delete project"}
                     </Button>
                   </div>

@@ -70,7 +70,7 @@ function ProfileActivityPage() {
         {activityPages}
         {isLoadMoreVisible && (
           <div className="flex w-full items-center justify-center text-11">
-            <Button variant="accent-primary" size="sm" onClick={handleLoadMore}>
+            <Button variant="secondary" onClick={handleLoadMore}>
               {t("load_more")}
             </Button>
           </div>

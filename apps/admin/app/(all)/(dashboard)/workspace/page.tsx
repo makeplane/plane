@@ -139,7 +139,7 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
               {hasNextPage && (
                 <div className="flex justify-center">
                   <Button
-                    variant="link-primary"
+                    variant="link"
                     onClick={() => fetchNextWorkspaces()}
                     disabled={workspaceLoader === "pagination"}
                   >

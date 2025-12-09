@@ -169,7 +169,7 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
         </Combobox.Options>
       </Combobox>
       <div className="flex items-center justify-end gap-2 p-3 border-t border-subtle">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+        <Button variant="secondary" onClick={handleClose}>
           {t("cancel")}
         </Button>
         <Button

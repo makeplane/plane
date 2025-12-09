@@ -207,14 +207,14 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
             <div className="flex items-center justify-center gap-2">
               <Link href="/invitations">
                 <span>
-                  <Button variant="neutral-primary" size="sm">
+                  <Button variant="secondary">
                     Check pending invites
                   </Button>
                 </span>
               </Link>
               <Link href="/create-workspace">
                 <span>
-                  <Button variant="primary" size="sm">
+                  <Button variant="primary">
                     Create new workspace
                   </Button>
                 </span>

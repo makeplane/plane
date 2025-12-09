@@ -165,7 +165,7 @@ export const EstimatePointCreateRoot = observer(function EstimatePointCreateRoot
           />
         ))}
       {estimatePoints && estimatePoints.length + (estimatePointCreate?.length || 0) <= estimateCount.max - 1 && (
-        <Button variant="link-primary" size="sm" prependIcon={<Plus />} onClick={handleCreate}>
+        <Button variant="link" prependIcon={<Plus />} onClick={handleCreate}>
           Add {estimateType}
         </Button>
       )}

@@ -165,7 +165,7 @@ export const DescriptionVersionsModal = observer(function DescriptionVersionsMod
             </button>
           </Tooltip>
           <div className="flex items-center gap-2">
-            <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={1}>
+            <Button variant="secondary" onClick={handleClose} tabIndex={1}>
               {t("common.cancel")}
             </Button>
             {!isRestoreDisabled && (

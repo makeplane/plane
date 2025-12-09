@@ -255,7 +255,7 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
           {isSubmitting ? t(primaryButtonText.loading) : t(primaryButtonText.default)}
         </Button>
         {!secondaryButton && (
-          <Button variant="neutral-primary" type="button" size="md" onClick={() => router.back()}>
+          <Button variant="secondary" type="button" size="md" onClick={() => router.back()}>
             {t("common.go_back")}
           </Button>
         )}

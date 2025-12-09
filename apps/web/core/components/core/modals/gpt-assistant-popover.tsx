@@ -281,10 +281,10 @@ export function GptAssistantPopover(props: Props) {
               </>
             )}
             <div className="flex items-center gap-2">
-              <Button variant="neutral-primary" size="sm" onClick={onClose}>
+              <Button variant="secondary" onClick={onClose}>
                 Close
               </Button>
-              <Button variant="primary" size="sm" onClick={handleSubmit(handleAIResponse)} loading={isSubmitting}>
+              <Button variant="primary" onClick={handleSubmit(handleAIResponse)} loading={isSubmitting}>
                 {generateResponseButtonText}
               </Button>
             </div>

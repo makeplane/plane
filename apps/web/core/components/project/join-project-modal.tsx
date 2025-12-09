@@ -81,7 +81,7 @@ export function JoinProjectModal(props: TJoinProjectModalProps) {
                   <div className="space-y-3" />
                 </div>
                 <div className="mt-5 flex justify-end gap-2">
-                  <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                  <Button variant="secondary" onClick={handleClose}>
                     Cancel
                   </Button>
                   <Button

@@ -93,9 +93,7 @@ export const DetailedEmptyState = observer(function DetailedEmptyState(props: Pr
               (primaryButton?.text && <CustomButton config={primaryButton} variant="primary" size={size} />)}
             {/* secondary button */}
             {customSecondaryButton ??
-              (secondaryButton?.text && (
-                <CustomButton config={secondaryButton} variant="neutral-primary" size={size} />
-              ))}
+              (secondaryButton?.text && <CustomButton config={secondaryButton} variant="secondary" size={size} />)}
           </div>
         )}
       </div>

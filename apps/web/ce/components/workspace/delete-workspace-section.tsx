@@ -52,7 +52,7 @@ export const DeleteWorkspaceSection = observer(function DeleteWorkspaceSection(p
               </span>
               <div>
                 <Button
-                  variant="danger"
+                  variant="error-fill"
                   onClick={() => setDeleteWorkspaceModal(true)}
                   data-ph-element={WORKSPACE_TRACKER_ELEMENTS.DELETE_WORKSPACE_BUTTON}
                 >

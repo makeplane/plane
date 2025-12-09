@@ -304,7 +304,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
                   type="button"
                   data-ph-element={AUTH_TRACKER_ELEMENTS.SIGN_IN_WITH_UNIQUE_CODE}
                   onClick={redirectToUniqueCodeSignIn}
-                  variant="outline-primary"
+                  variant="secondary"
                   className="w-full"
                   size="lg"
                 >

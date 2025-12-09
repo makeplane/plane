@@ -124,7 +124,7 @@ export function Invitations(props: Props) {
         <hr className="w-full border-strong" />
       </div>
       <Button
-        variant="link-neutral"
+        variant="ghost"
         size="lg"
         className="w-full text-14 bg-surface-2"
         onClick={handleCurrentViewChange}

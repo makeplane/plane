@@ -221,12 +221,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
 
           {canUserCreateIssue ? (
             <>
-              <Button
-                className="hidden md:block"
-                onClick={() => setAnalyticsModal(true)}
-                variant="neutral-primary"
-                size="sm"
-              >
+              <Button className="hidden md:block" onClick={() => setAnalyticsModal(true)} variant="secondary">
                 <div className="hidden @4xl:flex">Analytics</div>
                 <div className="flex @4xl:hidden">
                   <ChartNoAxesColumn className="size-3.5" />
@@ -238,7 +233,6 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
                   toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
                 }}
                 data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.MODULE}
-                size="sm"
               >
                 Add work item
               </Button>

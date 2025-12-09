@@ -329,7 +329,7 @@ export function ExistingIssuesListModal(props: Props) {
                 </Combobox>
                 <div className="flex justify-between items-center p-3">
                   <Button
-                    variant="link-primary"
+                    variant="link"
                     size="sm"
                     onClick={handleSelectIssues}
                     disabled={filteredIssues.length === 0}
@@ -340,7 +340,7 @@ export function ExistingIssuesListModal(props: Props) {
                       : t("issue.select.select_all")}
                   </Button>
                   <div className="flex items-center justify-end gap-2">
-                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                    <Button variant="secondary" onClick={handleClose}>
                       {t("common.cancel")}
                     </Button>
                     <Button

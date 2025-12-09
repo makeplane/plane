@@ -85,10 +85,10 @@ export function AlertModalCore(props: Props) {
         </div>
       </div>
       <div className="px-5 py-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t-[0.5px] border-subtle">
-        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+        <Button variant="neutral-primary" onClick={handleClose}>
           {secondaryButtonText}
         </Button>
-        <Button variant={BUTTON_VARIANTS[variant]} size="sm" tabIndex={1} onClick={handleSubmit} loading={isSubmitting}>
+        <Button variant={BUTTON_VARIANTS[variant]} tabIndex={1} onClick={handleSubmit} loading={isSubmitting}>
           {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
         </Button>
       </div>
