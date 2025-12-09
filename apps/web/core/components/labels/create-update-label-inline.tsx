@@ -268,7 +268,6 @@ export const CreateUpdateLabelInline = observer(
               e.preventDefault();
               handleSubmit(handleFormSubmit)();
             }}
-
             loading={isSubmitting}
           >
             {isUpdating ? (isSubmitting ? t("updating") : t("update")) : isSubmitting ? t("adding") : t("add")}

@@ -208,11 +208,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
                       <Button variant="secondary" onClick={handleClose}>
                         Cancel
                       </Button>
-                      <Button
-                        variant="error-fill"
-                        onClick={handleSubmit(handleDelete)}
-                        loading={isSubmitting}
-                      >
+                      <Button variant="error-fill" onClick={handleSubmit(handleDelete)} loading={isSubmitting}>
                         {isSubmitting ? "Deleting..." : "Delete selected work items"}
                       </Button>
                     </div>

@@ -172,12 +172,7 @@ export const UserImageUploadModal = observer(function UserImageUploadModal(props
                     <Button variant="secondary" onClick={handleClose}>
                       Cancel
                     </Button>
-                    <Button
-                      variant="primary"
-                      onClick={handleSubmit}
-                      disabled={!image}
-                      loading={isImageUploading}
-                    >
+                    <Button variant="primary" onClick={handleSubmit} disabled={!image} loading={isImageUploading}>
                       {isImageUploading ? "Uploading" : "Upload & Save"}
                     </Button>
                   </div>

@@ -243,7 +243,6 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
                       toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                     }}
                     data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.CYCLE}
-
                   >
                     {t("issue.add.label")}
                   </Button>
