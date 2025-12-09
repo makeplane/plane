@@ -15,11 +15,10 @@ import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
 import { StickyEditorToolbar } from "./toolbar";
 
-interface StickyEditorWrapperProps
-  extends Omit<
-    Omit<ILiteTextEditorProps, "extendedEditorProps">,
-    "disabledExtensions" | "editable" | "flaggedExtensions" | "fileHandler" | "mentionHandler" | "getEditorMetaData"
-  > {
+interface StickyEditorWrapperProps extends Omit<
+  Omit<ILiteTextEditorProps, "extendedEditorProps">,
+  "disabledExtensions" | "editable" | "flaggedExtensions" | "fileHandler" | "mentionHandler" | "getEditorMetaData"
+> {
   workspaceSlug: string;
   workspaceId: string;
   projectId?: string;
