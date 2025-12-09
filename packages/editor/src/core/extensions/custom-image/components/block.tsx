@@ -80,7 +80,7 @@ export function CustomImageBlock(props: CustomImageBlockProps) {
     if (editorContainer) {
       closestEditorContainer = editorContainer;
     } else {
-      closestEditorContainer = img.closest(".editor-container") as HTMLDivElement | null;
+      closestEditorContainer = img.closest(".editor-container");
       if (!closestEditorContainer) {
         console.error("Editor container not found");
         return;

@@ -1,5 +1,6 @@
 import type { TUserPermissions } from "./enums";
 import type { IIssueActivity, TIssuePriorities, TStateGroups } from ".";
+import type { TLoginMediums } from "./instance";
 
 /**
  * @description The start of the week for the user
@@ -14,8 +15,6 @@ export enum EStartOfTheWeek {
   FRIDAY = 5,
   SATURDAY = 6,
 }
-
-export type TLoginMediums = "email" | "magic-code" | "github" | "gitlab" | "google";
 
 export interface IUserLite {
   avatar_url: string;

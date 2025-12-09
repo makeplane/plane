@@ -22,7 +22,7 @@ type Props = {
 };
 
 const defaultValues = {
-  use_case: "",
+  use_case: [] as string[],
 };
 
 export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepChange }: Props) {
@@ -36,7 +36,7 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
   } = useForm<TProfileSetupFormValues>({
     defaultValues: {
       ...defaultValues,
-      use_case: profile?.use_case,
+      use_case: profile?.use_case ? profile.use_case.split(". ") : [],
     },
     mode: "onChange",
   });
@@ -44,7 +44,7 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
   // handle submit
   const handleSubmitUserPersonalization = async (formData: TProfileSetupFormValues) => {
     const profileUpdatePayload: Partial<TUserProfile> = {
-      use_case: formData.use_case,
+      use_case: formData.use_case && formData.use_case.length > 0 ? formData.use_case.join(". ") : undefined,
     };
     try {
       await Promise.all([
@@ -54,7 +54,7 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
       captureSuccess({
         eventName: USER_TRACKER_EVENTS.add_details,
         payload: {
-          use_case: formData.use_case,
+          use_case: profileUpdatePayload.use_case,
         },
       });
       setToast({
@@ -100,25 +100,33 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
 
       {/* Use Case Selection */}
       <div className="flex flex-col gap-3">
-        <p className="text-sm font-medium text-custom-text-400">Select any</p>
+        <p className="text-sm font-medium text-custom-text-400">Select one or more</p>
 
         <Controller
           control={control}
           name="use_case"
           rules={{
-            required: "This field is required",
+            required: "Please select at least one option",
+            validate: (value) => (value && value.length > 0) || "Please select at least one option",
           }}
           render={({ field: { value, onChange } }) => (
             <div className="flex flex-col gap-3">
               {USE_CASES.map((useCase) => {
-                const isSelected = value === useCase;
+                const isSelected = value?.includes(useCase) || false;
                 return (
                   <button
                     key={useCase}
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      onChange(useCase);
+                      const currentValue = value || [];
+                      if (isSelected) {
+                        // Remove from array
+                        onChange(currentValue.filter((item) => item !== useCase));
+                      } else {
+                        // Add to array
+                        onChange([...currentValue, useCase]);
+                      }
                     }}
                     className={`w-full px-3 py-2 rounded-lg border transition-all duration-200 flex items-center gap-2 ${
                       isSelected

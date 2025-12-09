@@ -53,7 +53,7 @@ export function CalloutBlockLogoSelector(props: Props) {
           };
           if (val.type === "emoji") {
             // val.value is now a string in decimal format (e.g. "128512")
-            const emojiValue = val.value as string;
+            const emojiValue = val.value;
             newLogoValue = {
               "data-emoji-unicode": emojiValue,
               "data-emoji-url": undefined,

@@ -35,15 +35,13 @@ export const PrevExports = observer(function PrevExports(props: Props) {
   const columns = useExportColumns();
 
   const { data: exporterServices } = useSWR(
-    workspaceSlug && cursor ? EXPORT_SERVICES_LIST(workspaceSlug as string, cursor, `${per_page}`) : null,
-    workspaceSlug && cursor
-      ? () => integrationService.getExportsServicesList(workspaceSlug as string, cursor, per_page)
-      : null
+    workspaceSlug && cursor ? EXPORT_SERVICES_LIST(workspaceSlug, cursor, `${per_page}`) : null,
+    workspaceSlug && cursor ? () => integrationService.getExportsServicesList(workspaceSlug, cursor, per_page) : null
   );
 
   const handleRefresh = () => {
     setRefreshing(true);
-    mutate(EXPORT_SERVICES_LIST(workspaceSlug as string, `${cursor}`, `${per_page}`)).then(() => setRefreshing(false));
+    mutate(EXPORT_SERVICES_LIST(workspaceSlug, `${cursor}`, `${per_page}`)).then(() => setRefreshing(false));
   };
 
   useEffect(() => {

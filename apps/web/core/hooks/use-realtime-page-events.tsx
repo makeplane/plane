@@ -51,7 +51,7 @@ export const useRealtimePageEvents = ({
     (userId: string | undefined) => {
       if (!userId) return "";
       try {
-        const userDetails = getUserDetails(userId as string);
+        const userDetails = getUserDetails(userId);
         return userDetails?.display_name ? ` by ${userDetails.display_name}` : "";
       } catch {
         return "";
@@ -61,110 +61,112 @@ export const useRealtimePageEvents = ({
   );
 
   const ACTION_HANDLERS = useMemo(
-    () => ({
-      archived: ({ pageIds, data }: { pageIds: string[]; data: EventToPayloadMap["archived"] }) => {
-        pageIds.forEach((pageId) => {
-          const pageItem = getPageById(pageId);
-          if (pageItem) pageItem.archive({ archived_at: data.archived_at, shouldSync: false });
-        });
-      },
-
-      unarchived: ({ pageIds }: { pageIds: string[] }) => {
-        pageIds.forEach((pageId) => {
-          const pageItem = getPageById(pageId);
-          if (pageItem) pageItem.restore({ shouldSync: false });
-        });
-      },
-
-      locked: ({ pageIds }: { pageIds: string[] }) => {
-        pageIds.forEach((pageId) => {
-          const pageItem = getPageById(pageId);
-          if (pageItem) pageItem.lock({ shouldSync: false, recursive: false });
-        });
-      },
-
-      unlocked: ({ pageIds }: { pageIds: string[] }) => {
-        pageIds.forEach((pageId) => {
-          const pageItem = getPageById(pageId);
-          if (pageItem) pageItem.unlock({ shouldSync: false, recursive: false });
-        });
-      },
-
-      "made-public": ({ pageIds }: { pageIds: string[] }) => {
-        pageIds.forEach((pageId) => {
-          const pageItem = getPageById(pageId);
-          if (pageItem) pageItem.makePublic({ shouldSync: false });
-        });
-      },
-
-      "made-private": ({ pageIds }: { pageIds: string[] }) => {
-        pageIds.forEach((pageId) => {
-          const pageItem = getPageById(pageId);
-          if (pageItem) pageItem.makePrivate({ shouldSync: false });
-        });
-      },
-
-      deleted: ({ pageIds, data }: { pageIds: string[]; data: EventToPayloadMap["deleted"] }) => {
-        pageIds.forEach((pageId) => {
-          const pageItem = getPageById(pageId);
-          if (pageItem) {
-            removePage({ pageId, shouldSync: false });
-            if (page.id === pageId && data?.user_id !== currentUser?.id) {
-              setToast({
-                type: TOAST_TYPE.ERROR,
-                title: "Page deleted",
-                message: `Page deleted${getUserDisplayText(data.user_id)}`,
-              });
-              router.push(handlers.getRedirectionLink());
-            } else if (page.id === pageId) {
-              router.push(handlers.getRedirectionLink());
-            }
-          }
-        });
-      },
-
-      property_updated: ({ pageIds, data }: { pageIds: string[]; data: EventToPayloadMap["property_updated"] }) => {
-        pageIds.forEach((pageId) => {
-          const pageInstance = getPageById(pageId);
-          const { name: updatedName, ...rest } = data;
-          if (updatedName != null) pageInstance?.updateTitle(updatedName);
-          pageInstance?.mutateProperties(rest);
-        });
-      },
-
-      error: ({ pageIds, data }: { pageIds: string[]; data: EventToPayloadMap["error"] }) => {
-        const errorType = data.error_type;
-        const errorMessage = data.error_message || "An error occurred";
-        const errorCode = data.error_code;
-
-        if (page.id && pageIds.includes(page.id)) {
-          // Show toast notification
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: errorType === "fetch" ? "Failed to load page" : "Failed to save page",
-            message: errorMessage,
+    function ACTION_HANDLERS() {
+      return {
+        archived: ({ pageIds, data }: { pageIds: string[]; data: EventToPayloadMap["archived"] }) => {
+          pageIds.forEach((pageId) => {
+            const pageItem = getPageById(pageId);
+            if (pageItem) pageItem.archive({ archived_at: data.archived_at, shouldSync: false });
           });
+        },
 
-          // Handle specific error codes
-          const pageInstance = getPageById(page.id);
-          if (pageInstance) {
-            if (errorCode === "page_locked") {
-              // Lock the page if not already locked
-              if (!pageInstance.is_locked) {
-                pageInstance.mutateProperties({ is_locked: true });
+        unarchived: ({ pageIds }: { pageIds: string[] }) => {
+          pageIds.forEach((pageId) => {
+            const pageItem = getPageById(pageId);
+            if (pageItem) pageItem.restore({ shouldSync: false });
+          });
+        },
+
+        locked: ({ pageIds }: { pageIds: string[] }) => {
+          pageIds.forEach((pageId) => {
+            const pageItem = getPageById(pageId);
+            if (pageItem) pageItem.lock({ shouldSync: false, recursive: false });
+          });
+        },
+
+        unlocked: ({ pageIds }: { pageIds: string[] }) => {
+          pageIds.forEach((pageId) => {
+            const pageItem = getPageById(pageId);
+            if (pageItem) pageItem.unlock({ shouldSync: false, recursive: false });
+          });
+        },
+
+        "made-public": ({ pageIds }: { pageIds: string[] }) => {
+          pageIds.forEach((pageId) => {
+            const pageItem = getPageById(pageId);
+            if (pageItem) pageItem.makePublic({ shouldSync: false });
+          });
+        },
+
+        "made-private": ({ pageIds }: { pageIds: string[] }) => {
+          pageIds.forEach((pageId) => {
+            const pageItem = getPageById(pageId);
+            if (pageItem) pageItem.makePrivate({ shouldSync: false });
+          });
+        },
+
+        deleted: ({ pageIds, data }: { pageIds: string[]; data: EventToPayloadMap["deleted"] }) => {
+          pageIds.forEach((pageId) => {
+            const pageItem = getPageById(pageId);
+            if (pageItem) {
+              removePage({ pageId, shouldSync: false });
+              if (page.id === pageId && data?.user_id !== currentUser?.id) {
+                setToast({
+                  type: TOAST_TYPE.ERROR,
+                  title: "Page deleted",
+                  message: `Page deleted${getUserDisplayText(data.user_id)}`,
+                });
+                router.push(handlers.getRedirectionLink());
+              } else if (page.id === pageId) {
+                router.push(handlers.getRedirectionLink());
               }
-            } else if (errorCode === "page_archived") {
-              // Mark page as archived if not already
-              if (!pageInstance.archived_at) {
-                pageInstance.mutateProperties({ archived_at: new Date().toISOString() });
+            }
+          });
+        },
+
+        property_updated: ({ pageIds, data }: { pageIds: string[]; data: EventToPayloadMap["property_updated"] }) => {
+          pageIds.forEach((pageId) => {
+            const pageInstance = getPageById(pageId);
+            const { name: updatedName, ...rest } = data;
+            if (updatedName != null) pageInstance?.updateTitle(updatedName);
+            pageInstance?.mutateProperties(rest);
+          });
+        },
+
+        error: ({ pageIds, data }: { pageIds: string[]; data: EventToPayloadMap["error"] }) => {
+          const errorType = data.error_type;
+          const errorMessage = data.error_message || "An error occurred";
+          const errorCode = data.error_code;
+
+          if (page.id && pageIds.includes(page.id)) {
+            // Show toast notification
+            setToast({
+              type: TOAST_TYPE.ERROR,
+              title: errorType === "fetch" ? "Failed to load page" : "Failed to save page",
+              message: errorMessage,
+            });
+
+            // Handle specific error codes
+            const pageInstance = getPageById(page.id);
+            if (pageInstance) {
+              if (errorCode === "page_locked") {
+                // Lock the page if not already locked
+                if (!pageInstance.is_locked) {
+                  pageInstance.mutateProperties({ is_locked: true });
+                }
+              } else if (errorCode === "page_archived") {
+                // Mark page as archived if not already
+                if (!pageInstance.archived_at) {
+                  pageInstance.mutateProperties({ archived_at: new Date().toISOString() });
+                }
               }
             }
           }
-        }
-      },
+        },
 
-      ...customRealtimeEventHandlers,
-    }),
+        ...customRealtimeEventHandlers,
+      };
+    },
     [getPageById, removePage, page, currentUser, getUserDisplayText, router, handlers, customRealtimeEventHandlers]
   );
 

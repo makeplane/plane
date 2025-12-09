@@ -13,7 +13,7 @@ import { InboxIcon } from "@plane/propel/icons";
 import useSWR from "swr";
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 
-export const TopNavigationRoot = observer(() => {
+export const TopNavigationRoot = observer(function TopNavigationRoot() {
   // router
   const { workspaceSlug, projectId, workItem } = useParams();
   const pathname = usePathname();
