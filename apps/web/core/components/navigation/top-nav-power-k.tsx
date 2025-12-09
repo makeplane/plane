@@ -272,6 +272,7 @@ export const TopNavPowerK = observer(() => {
                 isWorkspaceLevel={isWorkspaceLevel}
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
+                handleSearchMenuClose={() => closePanel()}
               />
             </Command.List>
             <PowerKModalFooter

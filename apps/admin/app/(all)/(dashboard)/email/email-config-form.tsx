@@ -163,7 +163,6 @@ export function InstanceEmailForm(props: IInstanceEmailForm) {
               label={EMAIL_SECURITY_OPTIONS[emailSecurityKey]}
               onChange={handleEmailSecurityChange}
               buttonClassName="rounded-md border-custom-border-200"
-              optionsClassName="w-full"
               input
             >
               {Object.entries(EMAIL_SECURITY_OPTIONS).map(([key, value]) => (

@@ -25,8 +25,10 @@ type TOperatorOptionForDisplay = {
   label: string;
 };
 
-export interface IFilterConfig<P extends TFilterProperty, V extends TFilterValue = TFilterValue>
-  extends TFilterConfig<P, V> {
+export interface IFilterConfig<P extends TFilterProperty, V extends TFilterValue = TFilterValue> extends TFilterConfig<
+  P,
+  V
+> {
   // computed
   allEnabledSupportedOperators: TSupportedOperators[];
   firstOperator: TSupportedOperators | undefined;
@@ -44,9 +46,10 @@ export interface IFilterConfig<P extends TFilterProperty, V extends TFilterValue
   mutate: (updates: Partial<TFilterConfig<P, V>>) => void;
 }
 
-export class FilterConfig<P extends TFilterProperty, V extends TFilterValue = TFilterValue>
-  implements IFilterConfig<P, V>
-{
+export class FilterConfig<P extends TFilterProperty, V extends TFilterValue = TFilterValue> implements IFilterConfig<
+  P,
+  V
+> {
   // observables
   id: IFilterConfig<P, V>["id"];
   label: IFilterConfig<P, V>["label"];

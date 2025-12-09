@@ -8,6 +8,7 @@ import { cn } from "@plane/utils";
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 // hooks
 import { useAppRailPreferences } from "@/hooks/use-navigation-preferences";
+import { useAppRailVisibility } from "@/lib/app-rail/context";
 // plane web imports
 import { DesktopSidebarWorkspaceMenu } from "@/plane-web/components/desktop";
 // local imports
@@ -19,6 +20,7 @@ export const AppRailRoot = observer(() => {
   const pathname = usePathname();
   // preferences
   const { preferences, updateDisplayMode } = useAppRailPreferences();
+  const { isCollapsed, toggleAppRail } = useAppRailVisibility();
 
   const isSettingsPath = pathname.includes(`/${workspaceSlug}/settings`);
   const showLabel = preferences.displayMode === "icon_with_label";
@@ -69,6 +71,10 @@ export const AppRailRoot = observer(() => {
                 <span className="text-xs">Icon with name</span>
                 {preferences.displayMode === "icon_with_label" && <Check className="size-3.5" />}
               </div>
+            </ContextMenu.Item>
+            <ContextMenu.Separator />
+            <ContextMenu.Item onClick={toggleAppRail}>
+              <span className="text-xs">{isCollapsed ? "Dock App Rail" : "Undock App Rail"}</span>
             </ContextMenu.Item>
           </ContextMenu.Content>
         </ContextMenu.Portal>

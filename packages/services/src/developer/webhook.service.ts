@@ -102,3 +102,5 @@ export default class WebhookService extends APIService {
       });
   }
 }
+
+export { WebhookService };

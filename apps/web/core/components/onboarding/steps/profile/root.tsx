@@ -15,6 +15,7 @@ import { UserImageUploadModal } from "@/components/core/modals/user-image-upload
 // helpers
 import { captureError, captureView } from "@/helpers/event-tracker.helper";
 // hooks
+import { useInstance } from "@/hooks/store/use-instance";
 import { useUser, useUserProfile } from "@/hooks/store/user";
 // services
 import { AuthService } from "@/services/auth.service";
@@ -34,7 +35,7 @@ export type TProfileSetupFormValues = {
   password?: string;
   confirm_password?: string;
   role?: string;
-  use_case?: string;
+  use_case?: string[];
   has_marketing_email_consent?: boolean;
 };
 
@@ -55,6 +56,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
   // store hooks
   const { data: user, updateCurrentUser } = useUser();
   const { updateUserProfile } = useUserProfile();
+  const { config: instanceConfig } = useInstance();
   // form info
   const {
     getValues,
@@ -253,12 +255,14 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
       </Button>
 
       {/* Marketing Consent */}
-      <MarketingConsent
-        isChecked={!!watch("has_marketing_email_consent")}
-        handleChange={(has_marketing_email_consent) =>
-          setValue("has_marketing_email_consent", has_marketing_email_consent)
-        }
-      />
+      {!instanceConfig?.is_self_managed && (
+        <MarketingConsent
+          isChecked={!!watch("has_marketing_email_consent")}
+          handleChange={(has_marketing_email_consent) =>
+            setValue("has_marketing_email_consent", has_marketing_email_consent)
+          }
+        />
+      )}
     </form>
   );
 });

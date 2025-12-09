@@ -16,3 +16,5 @@ export default class IntakeIssueService extends APIService {
       });
   }
 }
+
+export { IntakeIssueService };

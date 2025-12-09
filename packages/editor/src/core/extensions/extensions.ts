@@ -115,6 +115,7 @@ export const CoreEditorExtensions = (args: TArguments): Extensions => {
     CustomCalloutExtension,
     UtilityExtension({
       disabledExtensions,
+      flaggedExtensions,
       fileHandler,
       getEditorMetaData,
       isEditable: editable,

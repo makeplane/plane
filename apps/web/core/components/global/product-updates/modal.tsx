@@ -1,18 +1,15 @@
-import type { FC } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { USER_TRACKER_ELEMENTS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
 // ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // components
 import { ProductUpdatesFooter } from "@/components/global";
 // helpers
 import { captureView } from "@/helpers/event-tracker.helper";
-// hooks
-import { useInstance } from "@/hooks/store/use-instance";
 // plane web components
-import { ProductUpdatesHeader } from "@/plane-web/components/global";
+import { ProductUpdatesChangelog } from "@/plane-web/components/global/product-updates/changelog";
+import { ProductUpdatesHeader } from "@/plane-web/components/global/product-updates/header";
 
 export type ProductUpdatesModalProps = {
   isOpen: boolean;
@@ -21,8 +18,6 @@ export type ProductUpdatesModalProps = {
 
 export const ProductUpdatesModal = observer(function ProductUpdatesModal(props: ProductUpdatesModalProps) {
   const { isOpen, handleClose } = props;
-  const { t } = useTranslation();
-  const { config } = useInstance();
 
   useEffect(() => {
     if (isOpen) {
@@ -33,27 +28,7 @@ export const ProductUpdatesModal = observer(function ProductUpdatesModal(props: 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXXXL}>
       <ProductUpdatesHeader />
-      <div className="flex flex-col h-[60vh] vertical-scrollbar scrollbar-xs overflow-hidden overflow-y-scroll px-6 mx-0.5">
-        {config?.instance_changelog_url && config?.instance_changelog_url !== "" ? (
-          <iframe src={config?.instance_changelog_url} className="w-full h-full" />
-        ) : (
-          <div className="flex flex-col items-center justify-center w-full h-full mb-8">
-            <div className="text-lg font-medium">{t("we_are_having_trouble_fetching_the_updates")}</div>
-            <div className="text-sm text-custom-text-200">
-              {t("please_visit")}
-              <a
-                data-ph-element={USER_TRACKER_ELEMENTS.CHANGELOG_REDIRECTED}
-                href="https://go.plane.so/p-changelog"
-                target="_blank"
-                className="text-sm text-custom-primary-100 font-medium hover:text-custom-primary-200 underline underline-offset-1 outline-none"
-              >
-                {t("our_changelogs")}
-              </a>{" "}
-              {t("for_the_latest_updates")}.
-            </div>
-          </div>
-        )}
-      </div>
+      <ProductUpdatesChangelog />
       <ProductUpdatesFooter />
     </ModalCore>
   );
