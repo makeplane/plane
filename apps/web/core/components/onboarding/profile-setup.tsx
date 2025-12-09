@@ -520,7 +520,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                         <div
                           key={userRole}
                           className={cn(
-                            "shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-surface-2 rounded px-3 py-1.5 text-sm font-medium",
+                            "shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-surface-2 rounded px-3 py-1.5 text-13 font-medium",
                             {
                               "border-accent-strong": value === userRole,
                               "border-strong": value !== userRole,
@@ -559,7 +559,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                             key={userDomain}
                             className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-surface-2 ${
                               isSelected ? "border-accent-strong" : "border-strong"
-                            } rounded px-3 py-1.5 text-sm font-medium`}
+                            } rounded px-3 py-1.5 text-13 font-medium`}
                             onClick={() => {
                               const currentValue = value || [];
                               if (isSelected) {

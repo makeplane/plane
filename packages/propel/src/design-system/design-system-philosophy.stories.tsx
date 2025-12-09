@@ -334,7 +334,7 @@ export const CompleteExample: Story = {
           <Surface key={idx}>
             <Layer className="bg-layer-1 hover:bg-layer-1-hover rounded-md p-4">
               <p className="text-tertiary mb-1 text-13">{stat.label}</p>
-              <p className="text-primary text-2xl font-bold">{stat.value}</p>
+              <p className="text-primary text-20 font-bold">{stat.value}</p>
             </Layer>
           </Surface>
         ))}
