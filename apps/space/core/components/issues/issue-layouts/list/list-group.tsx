@@ -97,6 +97,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
         "h-11 relative flex items-center gap-3 bg-surface-1 border border-transparent border-t-subtle-1 pl-6 p-3 text-13 font-medium text-accent-primary hover:text-accent-secondary hover:underline cursor-pointer"
       }
       onClick={() => loadMoreIssues(group.id)}
+      role="button"
     >
       {t("common.load_more")} &darr;
     </div>
@@ -114,8 +115,8 @@ export const ListGroup = observer(function ListGroup(props: Props) {
   const shouldExpand = (!!groupIssueCount && isExpanded) || !groupBy;
 
   return validateEmptyIssueGroups(groupIssueCount) ? (
-    <div ref={groupRef} className={cn(`relative flex flex-shrink-0 flex-col border-[1px] border-transparent`)}>
-      <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-subtle bg-surface-2 pl-2 pr-3 py-1">
+    <div ref={groupRef} className={cn(`relative flex shrink-0 flex-col border-[1px] border-transparent`)}>
+      <div className="sticky top-0 z-2 w-full shrink-0 border-b border-subtle">
         <HeaderGroupByCard
           groupID={group.id}
           icon={group.icon}

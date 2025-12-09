@@ -91,7 +91,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
                       ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
                       : priority?.key === "low"
                         ? "border-green-500/20 bg-green-500/20 text-green-500"
-                        : "border-subtle bg-layer-1"
+                        : "border-subtle bg-layer-3"
               }`}
             >
               {priority && (
@@ -120,7 +120,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
                 {renderFormattedDate(issueDetails.target_date)}
               </div>
             ) : (
-              <span className="text-secondary">Empty</span>
+              <span className="text-secondary text-13">Empty</span>
             )}
           </div>
         </div>

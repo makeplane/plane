@@ -69,7 +69,7 @@ export const PeekOverviewHeader = observer(function PeekOverviewHeader(props: Pr
             as="div"
             value={peekMode}
             onChange={(val) => setPeekMode(val)}
-            className="relative flex-shrink-0 text-left"
+            className="relative shrink-0 text-left"
           >
             <Listbox.Button
               className={`grid place-items-center text-tertiary hover:text-secondary ${peekMode === "full" ? "rotate-45" : ""}`}
@@ -94,7 +94,7 @@ export const PeekOverviewHeader = observer(function PeekOverviewHeader(props: Pr
                       value={mode.key}
                       className={({ active, selected }) =>
                         `cursor-pointer select-none truncate rounded-sm px-1 py-1.5 ${
-                          active ? "bg-layer-1" : ""
+                          active ? "bg-layer-transparent-hover" : ""
                         } ${selected ? "text-primary" : "text-secondary"}`
                       }
                     >
@@ -110,16 +110,14 @@ export const PeekOverviewHeader = observer(function PeekOverviewHeader(props: Pr
           </Listbox>
         </div>
         {isClipboardWriteAllowed && (peekMode === "side" || peekMode === "modal") && (
-          <div className="flex flex-shrink-0 items-center gap-2">
-            <button
-              type="button"
-              onClick={handleCopyLink}
-              className="focus:outline-none text-tertiary hover:text-secondary"
-              tabIndex={1}
-            >
-              <Link2 className="h-4 w-4 -rotate-45" />
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={handleCopyLink}
+            className="shrink-0 focus:outline-none text-tertiary hover:text-secondary"
+            tabIndex={1}
+          >
+            <Link2 className="h-4 w-4 -rotate-45" />
+          </button>
         )}
       </div>
     </>
