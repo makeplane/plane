@@ -42,7 +42,7 @@ export const IssuesLayoutSelection = observer(function IssuesLayoutSelection(pro
   };
 
   return (
-    <div className="flex items-center gap-1 rounded-sm bg-layer-1 p-1">
+    <div className="flex items-center gap-1 rounded-sm bg-layer-2 p-1">
       {SITES_ISSUE_LAYOUTS.map((layout) => {
         if (!layoutOptions[layout.key]) return;
 
@@ -50,8 +50,8 @@ export const IssuesLayoutSelection = observer(function IssuesLayoutSelection(pro
           <Tooltip key={layout.key} tooltipContent={t(layout.titleTranslationKey)}>
             <button
               type="button"
-              className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded-sm transition-all hover:bg-surface-1 ${
-                activeLayout == layout.key ? "bg-surface-1 shadow-custom-shadow-2xs" : ""
+              className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded-sm transition-all bg-layer-transparent hover:bg-layer-transparent-hover ${
+                activeLayout == layout.key ? "bg-layer-transparent-active hover:bg-layer-transparent-selected" : ""
               }`}
               onClick={() => handleCurrentBoardView(layout.key)}
             >
