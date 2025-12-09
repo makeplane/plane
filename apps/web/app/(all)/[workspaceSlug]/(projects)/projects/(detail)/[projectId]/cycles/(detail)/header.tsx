@@ -50,11 +50,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
   const [analyticsModal, setAnalyticsModal] = useState(false);
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId, cycleId } = useParams() as {
-    workspaceSlug: string;
-    projectId: string;
-    cycleId: string;
-  };
+  const { workspaceSlug, projectId, cycleId } = useParams();
   // i18n
   const { t } = useTranslation();
   // store hooks

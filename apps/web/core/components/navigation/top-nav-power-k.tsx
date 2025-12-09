@@ -15,7 +15,7 @@ import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useExpandableSearch } from "@/hooks/use-expandable-search";
 
-export const TopNavPowerK = observer(() => {
+export const TopNavPowerK = observer(function TopNavPowerK() {
   // router
   const router = useAppRouter();
   const params = useParams();

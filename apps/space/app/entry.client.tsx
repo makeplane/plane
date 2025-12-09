@@ -1,4 +1,3 @@
-/* eslint-disable import/order */
 import * as Sentry from "@sentry/react-router";
 import { startTransition, StrictMode } from "react";
 import { hydrateRoot } from "react-dom/client";

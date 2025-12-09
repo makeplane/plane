@@ -15,7 +15,7 @@ import { DateDropdown } from "@/components/dropdowns/date";
 type TNotificationSnoozeModal = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (dateTime?: Date | undefined) => Promise<void>;
+  onSubmit: (dateTime?: Date) => Promise<void>;
 };
 
 type FormValues = {

@@ -37,10 +37,7 @@ export interface IFilterConfig<P extends TFilterProperty, V extends TFilterValue
     operator: TAllAvailableOperatorsForDisplay
   ) => TOperatorSpecificConfigs<V>[keyof TOperatorSpecificConfigs<V>] | undefined;
   getLabelForOperator: (operator: TAllAvailableOperatorsForDisplay | undefined) => string;
-  getDisplayOperatorByValue: <T extends TSupportedOperators | TAllAvailableOperatorsForDisplay>(
-    operator: T,
-    value: V
-  ) => T;
+  getDisplayOperatorByValue: <T extends TSupportedOperators>(operator: T, value: V) => T;
   getAllDisplayOperatorOptionsByValue: (value: V) => TOperatorOptionForDisplay[];
   // actions
   mutate: (updates: Partial<TFilterConfig<P, V>>) => void;

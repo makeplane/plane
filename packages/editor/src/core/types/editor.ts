@@ -130,7 +130,7 @@ export type EditorRefApi = {
   onStateChange: (callback: () => void) => () => void;
   redo: () => void;
   scrollSummary: (marking: IMarking) => void;
-  // eslint-disable-next-line no-undef
+
   scrollToNodeViaDOMCoordinates: ({ pos, behavior }: { pos?: number; behavior?: ScrollBehavior }) => void;
   setEditorValue: (content: string, emitUpdate?: boolean) => void;
   setEditorValueAtCursorPosition: (content: string) => void;
@@ -161,7 +161,7 @@ export type IEditorProps = {
   mentionHandler: TMentionHandler;
   onAssetChange?: (assets: TEditorAsset[]) => void;
   onEditorFocus?: () => void;
-  onChange?: (json: object, html: string) => void;
+  onChange?: (json: object, html: string, { isMigrationUpdate }?: { isMigrationUpdate?: boolean }) => void;
   onEnterKeyPress?: (e?: any) => void;
   onTransaction?: () => void;
   placeholder?: string | ((isFocused: boolean, value: string) => string);
