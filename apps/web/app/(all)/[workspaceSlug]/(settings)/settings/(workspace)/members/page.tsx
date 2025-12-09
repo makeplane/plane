@@ -31,9 +31,7 @@ import { BillingActionsButton } from "@/plane-web/components/workspace/billing/b
 import { SendWorkspaceInvitationModal, MembersActivityButton } from "@/plane-web/components/workspace/members";
 import type { Route } from "./+types/page";
 
-export const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsPage({
-  params,
-}: Route.ComponentProps) {
+const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
   // states
   const [inviteModal, setInviteModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -172,3 +170,5 @@ export const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSe
     </SettingsContentWrapper>
   );
 });
+
+export default WorkspaceMembersSettingsPage;
