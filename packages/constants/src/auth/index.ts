@@ -1,3 +1,7 @@
+import type { TLoginMediums } from "@plane/types";
+import { CORE_LOGIN_MEDIUM_LABELS } from "./core";
+import { EXTENDED_LOGIN_MEDIUM_LABELS } from "./extended";
+
 export enum E_PASSWORD_STRENGTH {
   EMPTY = "empty",
   LENGTH_NOT_VALID = "length_not_valid",
@@ -156,3 +160,8 @@ export enum EAuthErrorCodes {
   // Rate limit
   RATE_LIMIT_EXCEEDED = "5900",
 }
+
+export const LOGIN_MEDIUM_LABELS: Record<TLoginMediums, string> = {
+  ...CORE_LOGIN_MEDIUM_LABELS,
+  ...EXTENDED_LOGIN_MEDIUM_LABELS,
+} as const;

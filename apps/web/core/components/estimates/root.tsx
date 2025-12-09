@@ -104,6 +104,7 @@ export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot)
                     href={"https://docs.plane.so/core-concepts/projects/run-project#estimate"}
                     target="_blank"
                     className="text-accent-primary/80 hover:text-accent-primary"
+                    rel="noreferrer"
                   >
                     here.
                   </a>

@@ -79,7 +79,7 @@ export const WorkItemStateDropdownBase = observer(function WorkItemStateDropdown
   const { t } = useTranslation();
   const statesList = stateIds.map((stateId) => getStateById(stateId)).filter((state) => !!state);
   const defaultState = statesList?.find((state) => state?.default);
-  const stateValue = !!value ? value : showDefaultState ? defaultState?.id : undefined;
+  const stateValue = value ? value : showDefaultState ? defaultState?.id : undefined;
   // popper-js init
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",

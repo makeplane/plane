@@ -41,13 +41,13 @@ export function DeleteImportModal({ isOpen, handleClose, data }: Props) {
     setDeleteLoading(true);
 
     mutate<IImporterService[]>(
-      IMPORTER_SERVICES_LIST(workspaceSlug as string),
+      IMPORTER_SERVICES_LIST(workspaceSlug),
       (prevData) => (prevData ?? []).filter((i) => i.id !== data.id),
       false
     );
 
     integrationService
-      .deleteImporterService(workspaceSlug as string, data.service, data.id)
+      .deleteImporterService(workspaceSlug, data.service, data.id)
       .catch(() =>
         setToast({
           type: TOAST_TYPE.ERROR,

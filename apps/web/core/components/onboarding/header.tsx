@@ -56,7 +56,11 @@ export const OnboardingHeader = observer(function OnboardingHeader(props: Onboar
   // derived values
   const currentStepNumber = getCurrentStepNumber();
   const totalSteps = hasInvitations ? 4 : 5; // 4 if invites available, 5 if not
-  const userName = user?.display_name ?? `${user?.first_name} ${user?.last_name}` ?? user?.email;
+  const userName = user?.display_name
+    ? user?.display_name
+    : user?.first_name
+      ? `${user?.first_name} ${user?.last_name ?? ""}`
+      : user?.email;
 
   return (
     <div className="flex flex-col gap-4 sticky top-0 z-10">

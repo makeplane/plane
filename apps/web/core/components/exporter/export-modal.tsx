@@ -74,7 +74,7 @@ export const Exporter = observer(function Exporter(props: Props) {
         multiple: multiple,
       };
       await projectExportService
-        .csvExport(workspaceSlug as string, payload)
+        .csvExport(workspaceSlug, payload)
         .then(() => {
           mutateServices();
           router.push(`/${workspaceSlug}/settings/exports`);

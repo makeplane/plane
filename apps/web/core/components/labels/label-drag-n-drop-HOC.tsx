@@ -150,7 +150,7 @@ export const LabelDndHOC = observer(function LabelDndHOC(props: Props) {
           if (instruction === "reorder-below") dropAtEndOfList = true;
 
           const sourceData = source.data as TargetData;
-          if (sourceData.id) onDrop(sourceData.id as string, parentId, droppedLabelId, dropAtEndOfList);
+          if (sourceData.id) onDrop(sourceData.id, parentId, droppedLabelId, dropAtEndOfList);
         },
       })
     );

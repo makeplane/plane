@@ -65,7 +65,7 @@ export const useProjectColumns = (props: TUseProjectColumnsProps) => {
       tdRender: (rowData: RowData) => (
         <NameColumn
           rowData={rowData}
-          workspaceSlug={workspaceSlug as string}
+          workspaceSlug={workspaceSlug}
           isAdmin={isAdmin}
           currentUser={currentUser}
           setRemoveMemberModal={setRemoveMemberModal}
@@ -110,8 +110,8 @@ export const useProjectColumns = (props: TUseProjectColumnsProps) => {
         <AccountTypeColumn
           rowData={rowData}
           currentProjectRole={currentProjectRole}
-          projectId={projectId as string}
-          workspaceSlug={workspaceSlug as string}
+          projectId={projectId}
+          workspaceSlug={workspaceSlug}
         />
       ),
     },

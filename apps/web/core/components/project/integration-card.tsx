@@ -34,12 +34,10 @@ const projectService = new ProjectService();
 export function IntegrationCard({ integration }: Props) {
   const { workspaceSlug, projectId } = useParams();
 
-  const { data: syncedGithubRepository } = useSWR(
-    projectId ? PROJECT_GITHUB_REPOSITORY(projectId as string) : null,
-    () =>
-      workspaceSlug && projectId && integration
-        ? projectService.getProjectGithubRepository(workspaceSlug as string, projectId as string, integration.id)
-        : null
+  const { data: syncedGithubRepository } = useSWR(projectId ? PROJECT_GITHUB_REPOSITORY(projectId) : null, () =>
+    workspaceSlug && projectId && integration
+      ? projectService.getProjectGithubRepository(workspaceSlug, projectId, integration.id)
+      : null
   );
 
   const handleChange = (repo: any) => {
@@ -53,14 +51,14 @@ export function IntegrationCard({ integration }: Props) {
     } = repo;
 
     projectService
-      .syncGithubRepository(workspaceSlug as string, projectId as string, integration.id, {
+      .syncGithubRepository(workspaceSlug, projectId, integration.id, {
         name,
         owner: login,
         repository_id: id,
         url: html_url,
       })
       .then(() => {
-        mutate(PROJECT_GITHUB_REPOSITORY(projectId as string));
+        mutate(PROJECT_GITHUB_REPOSITORY(projectId));
 
         setToast({
           type: TOAST_TYPE.SUCCESS,

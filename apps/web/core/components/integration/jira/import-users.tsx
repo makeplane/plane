@@ -94,7 +94,7 @@ export function JiraImportUsers() {
                         input
                         value={value}
                         onChange={onChange}
-                        label={<span className="capitalize">{Boolean(value) ? value : ("Ignore" as any)}</span>}
+                        label={<span className="capitalize">{value ? value : ("Ignore" as any)}</span>}
                       >
                         <CustomSelect.Option value="invite">Invite by email</CustomSelect.Option>
                         <CustomSelect.Option value="map">Map to existing</CustomSelect.Option>

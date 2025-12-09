@@ -60,9 +60,8 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
     slack_client_id: config?.slack_client_id || "",
   });
 
-  const { data: workspaceIntegrations } = useSWR(
-    workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug as string) : null,
-    () => (workspaceSlug ? integrationService.getWorkspaceIntegrationsList(workspaceSlug as string) : null)
+  const { data: workspaceIntegrations } = useSWR(workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug) : null, () =>
+    workspaceSlug ? integrationService.getWorkspaceIntegrationsList(workspaceSlug) : null
   );
 
   const handleRemoveIntegration = async () => {
@@ -73,10 +72,10 @@ export const SingleIntegrationCard = observer(function SingleIntegrationCard({ i
     setDeletingIntegration(true);
 
     await integrationService
-      .deleteWorkspaceIntegration(workspaceSlug as string, workspaceIntegrationId ?? "")
+      .deleteWorkspaceIntegration(workspaceSlug, workspaceIntegrationId ?? "")
       .then(() => {
         mutate<IWorkspaceIntegration[]>(
-          WORKSPACE_INTEGRATIONS(workspaceSlug as string),
+          WORKSPACE_INTEGRATIONS(workspaceSlug),
           (prevData) => prevData?.filter((i) => i.id !== workspaceIntegrationId),
           false
         );

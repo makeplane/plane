@@ -268,7 +268,7 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
   const canDragIssuesInCurrentGrouping =
     !!group_by &&
     DRAG_ALLOWED_GROUPS.includes(group_by) &&
-    (!!sub_group_by ? DRAG_ALLOWED_GROUPS.includes(sub_group_by) : true);
+    (sub_group_by ? DRAG_ALLOWED_GROUPS.includes(sub_group_by) : true);
 
   return (
     <div

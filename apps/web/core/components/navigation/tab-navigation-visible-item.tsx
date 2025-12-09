@@ -23,14 +23,14 @@ export type TTabNavigationVisibleItemProps = {
  * Individual visible tab navigation item with context menu
  * Handles right-click actions for setting default and hiding tabs
  */
-export const TabNavigationVisibleItem: React.FC<TTabNavigationVisibleItemProps> = ({
+export function TabNavigationVisibleItem({
   item,
   isActive,
   tabPreferences,
   onToggleDefault,
   onHide,
   itemRef,
-}) => {
+}: TTabNavigationVisibleItemProps) {
   const { t } = useTranslation();
   const isDefault = item.key === tabPreferences.defaultTab;
 
@@ -76,4 +76,4 @@ export const TabNavigationVisibleItem: React.FC<TTabNavigationVisibleItemProps> 
       </div>
     </div>
   );
-};
+}

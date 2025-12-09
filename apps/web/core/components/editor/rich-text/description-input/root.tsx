@@ -22,6 +22,7 @@ const workspaceService = new WorkspaceService();
 type TFormData = {
   id: string;
   description_html: string;
+  isMigrationUpdate: boolean;
 };
 
 type Props = {
@@ -56,7 +57,7 @@ type Props = {
   /**
    * @description Submit handler, the actual function which will be called when the form is submitted
    */
-  onSubmit: (value: string) => Promise<void>;
+  onSubmit: (value: string, isMigrationUpdate?: boolean) => Promise<void>;
   /**
    * @description Placeholder, if not provided, the placeholder will be the default placeholder
    */
@@ -108,6 +109,7 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
   const [localDescription, setLocalDescription] = useState<TFormData>({
     id: entityId,
     description_html: initialValue?.trim() ?? "",
+    isMigrationUpdate: false,
   });
   // ref to track if there are unsaved changes
   const hasUnsavedChanges = useRef(false);
@@ -119,17 +121,18 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
   // translation
   const { t } = useTranslation();
   // form info
-  const { handleSubmit, reset, control } = useForm<TFormData>({
+  const { handleSubmit, reset, control, setValue } = useForm<TFormData>({
     defaultValues: {
       id: entityId,
       description_html: initialValue?.trim() ?? "",
+      isMigrationUpdate: false,
     },
   });
 
   // submit handler
   const handleDescriptionFormSubmit = useCallback(
     async (formData: TFormData) => {
-      await onSubmit(formData.description_html);
+      await onSubmit(formData.description_html, formData.isMigrationUpdate);
     },
     [onSubmit]
   );
@@ -140,10 +143,12 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
     reset({
       id: entityId,
       description_html: initialValue?.trim() === "" ? "<p></p>" : (initialValue ?? "<p></p>"),
+      isMigrationUpdate: false,
     });
     setLocalDescription({
       id: entityId,
       description_html: initialValue?.trim() === "" ? "<p></p>" : (initialValue ?? "<p></p>"),
+      isMigrationUpdate: false,
     });
     // Reset unsaved changes flag when form is reset
     hasUnsavedChanges.current = false;
@@ -206,9 +211,10 @@ export const DescriptionInput = observer(function DescriptionInput(props: Props)
               workspaceId={workspaceDetails.id}
               projectId={projectId}
               dragDropEnabled
-              onChange={(_description, description_html) => {
+              onChange={(_description, description_html, options) => {
                 setIsSubmitting("submitting");
                 onChange(description_html);
+                setValue("isMigrationUpdate", options?.isMigrationUpdate ?? false);
                 hasUnsavedChanges.current = true;
                 debouncedFormSave();
               }}

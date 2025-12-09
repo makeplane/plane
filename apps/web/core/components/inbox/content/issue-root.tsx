@@ -90,11 +90,10 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
 
   const issueOperations: TIssueOperations = useMemo(
     () => ({
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars, arrow-body-style
       fetch: async (_workspaceSlug: string, _projectId: string, _issueId: string) => {
         return;
       },
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars, arrow-body-style
+
       remove: async (_workspaceSlug: string, _projectId: string, _issueId: string) => {
         try {
           await removeIssue(workspaceSlug, projectId, _issueId);
@@ -201,10 +200,11 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
             entityId={issue.id}
             fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
             initialValue={issue.description_html ?? "<p></p>"}
-            onSubmit={async (value) => {
+            onSubmit={async (value, isMigrationUpdate) => {
               if (!issue.id || !issue.project_id) return;
               await issueOperations.update(workspaceSlug, issue.project_id, issue.id, {
                 description_html: value,
+                ...(isMigrationUpdate ? { skip_activity: "true" } : {}),
               });
             }}
             projectId={issue.project_id}

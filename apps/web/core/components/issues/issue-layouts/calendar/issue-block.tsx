@@ -1,4 +1,3 @@
-/* eslint-disable react/display-name */
 import { useState, useRef, forwardRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";

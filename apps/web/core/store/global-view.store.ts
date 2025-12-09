@@ -174,7 +174,7 @@ export class GlobalViewStore implements IGlobalViewStore {
         );
         this.rootStore.issue.workspaceIssues.fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation");
       }
-      return currentView as IWorkspaceView;
+      return currentView;
     } catch {
       Object.keys(data).forEach((key) => {
         const currentKey = key as keyof IWorkspaceView;
