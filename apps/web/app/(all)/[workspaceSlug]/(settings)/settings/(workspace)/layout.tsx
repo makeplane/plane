@@ -26,7 +26,7 @@ const WorkspaceSettingLayout = observer(function WorkspaceSettingLayout({ params
   const pathname = usePathname();
   // derived values
   const { accessKey } = pathnameToAccessKey(pathname);
-  const userWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug.toString());
+  const userWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
 
   let isAuthorized: boolean | string = false;
   if (pathname && workspaceSlug && userWorkspaceRole) {
