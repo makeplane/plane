@@ -207,6 +207,16 @@ export const IssueProperties: React.FC<IIssueProperties> = observer((props) => {
       );
   };
 
+  const handleSport = (sport: string | null) => {
+    if (updateIssue)
+      updateIssue(issue.project_id, issue.id, { sport: sport ?? null}).then(() => {
+         captureSuccess({
+          eventName: WORK_ITEM_TRACKER_EVENTS.update,
+          payload: { id: issue.id },
+         })
+      })
+  }
+
   const handleTargetDate = (date: Date | null) => {
     if (updateIssue)
       updateIssue(issue.project_id, issue.id, { target_date: date ? renderFormattedPayloadDate(date) : null }).then(

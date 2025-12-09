@@ -9,6 +9,11 @@ export const ISSUE_FORM_TAB_INDICES = [
   "start_date",
   "target_date",
   "start_time",
+  "level",
+  "sport",
+  "program",
+  "year",
+  "category",
   "cycle_id",
   "module_ids",
   "estimate_point",
@@ -27,10 +32,15 @@ export const INTAKE_ISSUE_CREATE_FORM_TAB_INDICES = [
   "state_id",
   "priority",
   "assignee_ids",
+  "year",        // sport app field
+  "category",   // sport app field
+  "sport",     // sport app field
   "label_ids",
   "start_date",
   "target_date",
-  "start_time",
+  "start_time",  // sport app field
+  "program",    // sport app field
+  "level",      // sport app field
   "cycle_id",
   "module_ids",
   "estimate_point",

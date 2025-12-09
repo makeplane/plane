@@ -49,7 +49,17 @@ export type TIssueOrderByOptions =
   | "attachment_count"
   | "-attachment_count"
   | "sub_issues_count"
-  | "-sub_issues_count";
+  | "-sub_issues_count"
+  | "sport"
+  | "-sport"
+  | "program"
+  | "-program"
+  | "level"
+  | "-level"
+  | "year"
+  | "-year"
+  | "category"
+  | "-category";
 
 export type TIssueGroupingFilters = "active" | "backlog";
 
@@ -69,6 +79,11 @@ export type TIssueParams =
   | "start_date"
   | "start_time"
   | "target_date"
+  | "level"
+  | "sport"
+  | "program"
+  | "year"
+  | "category"
   | "project"
   | "team_project"
   | "group_by"
@@ -94,6 +109,11 @@ export const WORK_ITEM_FILTER_PROPERTY_KEYS = [
   "priority",
   "start_date",
   "start_time",
+  "level",
+  "sport",
+  "program",
+  "year",
+  "category",
   "target_date",
   "assignee_id",
   "mention_id",
@@ -142,6 +162,13 @@ export interface IIssueFilterOptions {
   subscriber?: string[] | null;
   target_date?: string[] | null;
   issue_type?: string[] | null;
+
+  // Sport App Fields
+  level?: string[] | null;
+  sport?: string[] | null;
+  program?: string[] | null;
+  year?: string[] | null;
+  category?: string[] | null;
 }
 
 export interface IIssueDisplayFilterOptions {
@@ -174,6 +201,13 @@ export interface IIssueDisplayProperties {
   modules?: boolean;
   cycle?: boolean;
   issue_type?: boolean;
+
+  // Sport App Fields
+  level?: boolean;
+  sport?: boolean;
+  program?: boolean;
+  year?: boolean;
+  category?: boolean;
 }
 
 export type TIssueKanbanFilters = {
@@ -211,6 +245,13 @@ export interface IWorkspaceIssueFilterOptions {
   start_time?: string[] | null;
   target_date?: string[] | null;
   project?: string[] | null;
+
+  // Sport App Fields
+  level?: string[] | null;
+  sport?: string[] | null;
+  program?: string[] | null;
+  year?: string[] | null;
+  category?: string[] | null;
 }
 
 export interface IWorkspaceViewIssuesParams {
@@ -227,6 +268,13 @@ export interface IWorkspaceViewIssuesParams {
   project?: string | undefined;
   order_by?: string | undefined;
   sub_issue?: boolean;
+
+  // Sport App Fields
+  level?: string | undefined;
+  sport?: string | undefined;
+  program?: string | undefined;
+  year?: string | undefined;
+  category?: string | undefined;
 }
 
 export interface IProjectViewProps {

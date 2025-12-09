@@ -50,6 +50,13 @@ export interface IIssueParent {
   start_time: string | null;
   state_detail: IStateLite;
   target_date: string | null;
+
+  // Sport App Fields
+  level: string | null;
+  program: string | null;
+  sport: string | null;
+  year: string | null;
+  category: string | null;
 }
 
 export interface IIssueLink {
@@ -154,6 +161,13 @@ export interface IIssueLite {
   target_date?: string | null;
   start_time?: string | null;
   workspace__slug: string;
+
+  // Sport App Fields
+  level: string | null;
+  sport: string | null;
+  program: string | null;
+  category: string | null;
+  year: string | null;
 }
 
 export interface IIssueAttachment {

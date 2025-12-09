@@ -11,20 +11,23 @@ import { useTranslation } from "@plane/i18n";
 // types
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
 // ui
-import { CustomMenu } from "@plane/ui";
+// import { CustomMenu } from "@plane/ui";
 import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 // components
-import { CycleDropdown } from "@/components/dropdowns/cycle";
+// import { CycleDropdown } from "@/components/dropdowns/cycle";
 import { DateDropdown } from "@/components/dropdowns/date";
-import { EstimateDropdown } from "@/components/dropdowns/estimate";
+// import { EstimateDropdown } from "@/components/dropdowns/estimate";
+import { LevelDropdown } from "@/components/dropdowns/level-property";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
-import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
-import { PriorityDropdown } from "@/components/dropdowns/priority";
-import { StateDropdown } from "@/components/dropdowns/state/dropdown";
+// import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
+// import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { ProgramDropdown } from "@/components/dropdowns/program-property";
+ // import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 
 import { TimeDropdown } from "@/components/dropdowns/time-picker";
-import { ParentIssuesListModal } from "@/components/issues/parent-issues-list-modal";
-import { IssueLabelSelect } from "@/components/issues/select";
+import { YearRangeDropdown } from "@/components/dropdowns/year-property";
+// import { ParentIssuesListModal } from "@/components/issues/parent-issues-list-modal";
+// import { IssueLabelSelect } from "@/components/issues/select";
 // helpers
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
@@ -32,8 +35,10 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
-import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
+// import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import OppositionTeamProperty from "@/plane-web/components/issues/issue-details/opposition-team-property";
+import SportDropdown from "@/components/dropdowns/sport-property";
+
 
 type TIssueDefaultPropertiesProps = {
   control: Control<TIssue>;
@@ -44,6 +49,11 @@ type TIssueDefaultPropertiesProps = {
   startDate: string | null;
   startTime: string | null;
   targetDate: string | null;
+  Level: string | null;
+  Sport: string | null;
+  Program: string | null;
+  Year: string | null;
+  Category: string | null;
   parentId: string | null;
   isDraft: boolean;
   handleFormChange: () => void;
@@ -88,7 +98,7 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <Controller
+      {/* <Controller
         control={control}
         name="state_id"
         render={({ field: { value, onChange } }) => (
@@ -106,8 +116,9 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
             />
           </div>
         )}
-      />
-      <Controller
+      /> */}
+
+      {/* <Controller
         control={control}
         name="priority"
         render={({ field: { value, onChange } }) => (
@@ -123,7 +134,25 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
             />
           </div>
         )}
+      /> */}
+
+      <Controller
+        control={control}
+        name="year"
+        render={({ field: { value, onChange } }) => (
+          <div className="h-7">
+            <YearRangeDropdown
+              value={value}
+              onChange={(year) => {
+                onChange(year);
+                handleFormChange();
+              }}
+              buttonVariant="border-with-text"
+            />
+          </div>
+        )}
       />
+
       <Controller
         control={control}
         name="assignee_ids"
@@ -145,7 +174,29 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
           </div>
         )}
       />
+
       <Controller
+        control={control}
+        name="sport"
+        render={({ field: { value, onChange } }) => {
+          console.log("Sport Property:", value);
+          return(<div className="h-7">
+            <SportDropdown
+              value={value}
+              onChange={(sport) => {
+                console.log("sport change value:", sport)
+                onChange(sport);
+                handleFormChange();
+              }}
+              buttonVariant="border-with-text"
+              tabIndex={getIndex("sport")}
+            />
+          </div>)
+
+        }}
+      />
+
+      {/* <Controller
         control={control}
         name="label_ids"
         render={({ field: { value, onChange } }) => (
@@ -162,7 +213,8 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
             />
           </div>
         )}
-      />
+      /> */}
+
       <Controller
         control={control}
         name="start_date"
@@ -205,26 +257,60 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
       <Controller
         control={control}
         name="start_time"
-        render={({ field: { value, onChange } }) =>{
+        render={({ field: { value, onChange } }) => {
           console.log("Time value:", value);
-          return(
-          <div className="h-7">
-            <TimeDropdown
-              value={value ?? null}
-              onChange={(time) => {
-                onChange(time);
-                handleFormChange();
-              }}
-              placeholder={t("starting_time")}
-              buttonVariant="border-with-text"
-              tabIndex={getIndex("start_time")}
-            />
-          </div>
-        )
-        } }
+          return (
+            <div className="h-7">
+              <TimeDropdown
+                value={value ?? null}
+                onChange={(time) => {
+                  onChange(time);
+                  handleFormChange();
+                }}
+                placeholder={t("starting_time")}
+                buttonVariant="border-with-text"
+                tabIndex={getIndex("start_time")}
+              />
+            </div>
+          );
+        }}
       />
 
-      {projectDetails?.cycle_view && (
+      <Controller
+        control={control}
+        name="program"
+        render={({ field: { value, onChange } }) => (
+          <div className="h-7">
+            <ProgramDropdown
+              value={value}
+              onChange={(program) => {
+                onChange(program);
+                handleFormChange();
+              }}
+              buttonVariant="border-with-text"
+            />
+          </div>
+        )}
+      />
+
+      <Controller
+        control={control}
+        name="level"
+        render={({ field: { value, onChange } }) => (
+          <div className="h-7">
+            <LevelDropdown
+              value={value}
+              onChange={(level) => {
+                onChange(level);
+                handleFormChange();
+              }}
+              buttonVariant="border-with-text"
+            />
+          </div>
+        )}
+      />
+
+      {/* {projectDetails?.cycle_view && (
         <Controller
           control={control}
           name="cycle_id"
@@ -244,8 +330,9 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
             </div>
           )}
         />
-      )}
-      {projectDetails?.module_view && workspaceSlug && (
+      )} */}
+
+      {/* {projectDetails?.module_view && workspaceSlug && (
         <Controller
           control={control}
           name="module_ids"
@@ -267,8 +354,9 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
             </div>
           )}
         />
-      )}
-      {projectId && areEstimateEnabledByProjectId(projectId) && (
+      )} */}
+
+      {/* {projectId && areEstimateEnabledByProjectId(projectId) && (
         <Controller
           control={control}
           name="estimate_point"
@@ -288,8 +376,9 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
             </div>
           )}
         />
-      )}
-      <div className="h-7">
+      )} */}
+
+      {/* <div className="h-7">
         {parentId ? (
           <CustomMenu
             customButton={
@@ -361,7 +450,8 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
             issueId={isDraft ? undefined : id}
           />
         )}
-      />
+      /> */}
+
       <Controller
         control={control}
         name="opposition_team"

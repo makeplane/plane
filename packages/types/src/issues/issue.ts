@@ -69,6 +69,13 @@ export type TBaseIssue = {
   created_by: string;
   updated_by: string;
 
+  // Sport App Fields
+  level: string | null;
+  program: string | null;
+  sport: string | null;
+  year: string | null;
+  category: string | null;
+
   is_draft: boolean;
   is_epic?: boolean;
   is_intake?: boolean;
@@ -144,6 +151,11 @@ export type TBulkIssueProperties = Pick<
   | "module_ids"
   | "cycle_id"
   | "estimate_point"
+  | "level"
+  | "sport"
+  | "program"
+  | "year"
+  | "category"
 >;
 
 export type TBulkOperationsPayload = {
@@ -180,6 +192,11 @@ export interface IPublicIssue
     | "sub_issues_count"
     | "link_count"
     | "estimate_point"
+    | "level"
+    | "sport"
+    | "program"
+    | "year"
+    | "category"
   > {
   comments: TIssuePublicComment[];
   reaction_items: IIssuePublicReaction[];

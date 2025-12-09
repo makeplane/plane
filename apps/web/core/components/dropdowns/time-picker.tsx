@@ -33,6 +33,7 @@ export const TimeDropdown: React.FC<Props> = observer((props) => {
     className = "",
     clearIconClassName = "",
     placeholder = "Time",
+    hideIcon = false,
     icon = <Clock className="h-3 w-3 flex-shrink-0" />,
     buttonVariant,
     isClearable = true,
@@ -129,7 +130,7 @@ export const TimeDropdown: React.FC<Props> = observer((props) => {
         variant={buttonVariant}
         renderToolTipByDefault={renderByDefault}
       >
-        {!disabled && icon}
+        {!hideIcon && icon}
 
         {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
           <span className="flex-grow truncate">

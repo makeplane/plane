@@ -6,13 +6,12 @@
         "name": "next"
       }
     ],
-    "baseUrl": ".",
     "paths": {
-      "@/app/*": ["app/*"],
-      "@/*": ["core/*"],
-      "@/public/*": ["public/*"],
-      "@/plane-admin/*": ["ce/*"],
-      "@/styles/*": ["styles/*"]
+      "@/app/*": ["./app/*"],
+      "@/*": ["./core/*"],
+      "@/public/*": ["./public/*"],
+      "@/plane-admin/*": ["./ce/*"],
+      "@/styles/*": ["./styles/*"]
     },
     "strictNullChecks": true
   },

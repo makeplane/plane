@@ -17,4 +17,11 @@ export const DEFAULT_WORK_ITEM_FORM_VALUES: Partial<TIssue> = {
   start_date: null,
   start_time: null,
   target_date: null,
+
+  // Sport App Fields
+  level : null,
+  sport: null,
+  program: null,
+  year: null,
+  category: null,
 };

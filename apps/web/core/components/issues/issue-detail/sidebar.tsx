@@ -77,20 +77,6 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const maxDate = issue.target_date ? getDate(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
 
-  const isoTo12Hour = (iso: string | null): string | null => {
-    if (!iso) return null;
-
-    const date = new Date(iso);
-    if (isNaN(date.getTime())) return null;
-
-    let hours = date.getHours();
-    const minutes = date.getMinutes().toString().padStart(2, "0");
-
-    const ampm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
-
-    return `${hours.toString().padStart(2, "0")}:${minutes} ${ampm}`;
-  };
 
   return (
     <>
@@ -206,8 +192,6 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 value={issue.start_time}
                 onChange={(val) => {
                   if (!val) return;
-                  console.log("⌨️ Selected value (val):", val);
-                  console.log("🕒 Old issue.start_time:", issue.start_time);
                   issueOperations.update(workspaceSlug, projectId, issueId, {
                     start_time: val,
                   });

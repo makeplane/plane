@@ -23,7 +23,6 @@ import {
   getTextContent,
   getChangedIssuefields,
   getTabIndex,
-  isoTo12Hour,
 } from "@plane/utils";
 // components
 import {
@@ -88,7 +87,7 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
     onCreateMoreToggleChange,
     isDraft,
     moveToIssue = false,
-    modalTitle = `${data?.id ? t("update") : isDraft ? t("create_a_draft") : t("create_new_issue")}`,
+    modalTitle = `${data?.id ? t("update") : isDraft ? t("create_a_draft") : "Create new scheduled streaming event"}`,
     primaryButtonText = {
       default: `${data?.id ? t("update") : isDraft ? t("save_to_drafts") : t("save")}`,
       loading: `${data?.id ? t("updating") : t("saving")}`,
@@ -503,6 +502,11 @@ export const IssueFormRoot: FC<IssueFormProps> = observer((props) => {
                   startDate={watch("start_date")}
                   startTime={watch("start_time")}
                   targetDate={watch("target_date")}
+                  Sport={watch("sport")}
+                  Level={watch("level")}
+                  Program={watch("program")}
+                  Year= {watch("year")}
+                  Category={watch("category")}
                   parentId={watch("parent_id")}
                   isDraft={isDraft}
                   handleFormChange={handleFormChange}

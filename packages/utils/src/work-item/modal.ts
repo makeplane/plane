@@ -12,6 +12,11 @@ export const getUpdateFormDataForReset = (projectId: string | null | undefined, 
   start_date: formData.start_date,
   start_time: formData.start_time,
   target_date: formData.target_date,
+  level: formData.level,
+  sport: formData.sport,
+  program: formData.program,
+  year: formData.year,
+  category: formData.category,
 });
 
 export const convertWorkItemDataToSearchResponse = (
@@ -33,6 +38,13 @@ export const convertWorkItemDataToSearchResponse = (
   state__group: state?.group ?? "backlog",
   state__name: state?.name ?? "",
   workspace__slug: workspaceSlug,
+
+  // Sport App Fields
+  level: workItem.level,
+  sport: workItem.sport,
+  program: workItem.program,
+  year: workItem.year,
+  category: workItem.category,
 });
 
 export function getChangedIssuefields(formData: Partial<TIssue>, dirtyFields: { [key: string]: boolean | undefined }) {

@@ -3,13 +3,9 @@
 import React, { useEffect, useRef } from "react";
 import type { TIssueMap, TGroupedIssues, TPaginationData, TIssue } from "@plane/types";
 import type { TRenderQuickActions } from "../list/list-view-types";
-import {
-  isoToLocalHour,
-  isoToLocalDateString,
-  hourLabel,
-} from "./calendar-time";
-import { CalendarIssueBlocks } from "./issue-blocks";
+import { isoToLocalHour, isoToLocalDateString, hourLabel } from "./calendar-time";
 import { CalendarEventBlock } from "./event-block";
+import { CalendarIssueBlocks } from "./issue-blocks";
 
 type Props = {
   date: Date;
@@ -41,10 +37,10 @@ const calculateEventPosition = (startTime: string, endTime?: string) => {
   const start = new Date(startTime);
   const startHour = start.getHours();
   const startMinute = start.getMinutes();
-  
+
   // Position from top of the hour
   const topOffset = (startMinute / 60) * HOUR_HEIGHT;
-  
+
   // Calculate height
   let height = HOUR_HEIGHT; // default 1 hour
   if (endTime) {
@@ -53,7 +49,7 @@ const calculateEventPosition = (startTime: string, endTime?: string) => {
     const durationHours = durationMs / (1000 * 60 * 60);
     height = Math.max(durationHours * HOUR_HEIGHT, 30); // min 30px
   }
-  
+
   return {
     hourIndex: startHour,
     topOffset,
@@ -83,11 +79,11 @@ export const DayView: React.FC<Props> = ({
   // Group issues: events (with start_time) vs all-day (without)
   const { eventIssues, allDayIssues } = React.useMemo(() => {
     if (!issues) return { eventIssues: [], allDayIssues: [] };
-    
+
     const allIssues = Object.values(issues).filter(
       (issue) => isoToLocalDateString(issue.start_time || issue.target_date) === selectedDateString
     );
-    
+
     return {
       eventIssues: allIssues.filter((issue) => issue.start_time),
       allDayIssues: allIssues.filter((issue) => !issue.start_time),
@@ -97,17 +93,17 @@ export const DayView: React.FC<Props> = ({
   // Create a map of hour -> events for positioning
   const eventsByHour = React.useMemo(() => {
     const map: Record<number, Array<{ issue: TIssue; position: ReturnType<typeof calculateEventPosition> }>> = {};
-    
+
     eventIssues.forEach((issue) => {
       if (!issue.start_time) return;
-      
+
       const position = calculateEventPosition(issue.start_time, issue.end_time);
       if (!map[position.hourIndex]) {
         map[position.hourIndex] = [];
       }
       map[position.hourIndex].push({ issue, position });
     });
-    
+
     return map;
   }, [eventIssues]);
 
@@ -158,7 +154,9 @@ export const DayView: React.FC<Props> = ({
           return (
             <div
               key={hour}
-              ref={(el) => {hourRefs.current[hour] = el}}
+              ref={(el) => {
+                hourRefs.current[hour] = el;
+              }}
               className="flex border-b border-custom-border-200 relative"
               style={{ height: `${HOUR_HEIGHT}px` }}
             >
@@ -221,7 +219,7 @@ const CurrentTimeIndicator: React.FC<{ selectedDate: Date }> = ({ selectedDate }
   useEffect(() => {
     const updatePosition = () => {
       const now = new Date();
-      
+
       // Only show if viewing today
       if (
         now.getDate() !== selectedDate.getDate() ||
@@ -236,7 +234,7 @@ const CurrentTimeIndicator: React.FC<{ selectedDate: Date }> = ({ selectedDate }
       const minute = now.getMinutes();
       const totalMinutes = hour * 60 + minute;
       const positionPx = (totalMinutes / 60) * HOUR_HEIGHT;
-      
+
       setPosition(positionPx);
     };
 
@@ -249,10 +247,7 @@ const CurrentTimeIndicator: React.FC<{ selectedDate: Date }> = ({ selectedDate }
   if (position === null) return null;
 
   return (
-    <div
-      className="absolute left-0 right-0 z-10 pointer-events-none"
-      style={{ top: `${position}px` }}
-    >
+    <div className="absolute left-0 right-0 z-10 pointer-events-none" style={{ top: `${position}px` }}>
       <div className="flex items-center">
         <div className="w-20 flex-shrink-0" />
         <div className="flex-1 flex items-center">

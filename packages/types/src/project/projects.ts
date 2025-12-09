@@ -149,6 +149,11 @@ export interface ISearchIssueResponse {
   state__name: string;
   workspace__slug: string;
   type_id: string;
+  level: string | null;
+  sport: string | null;
+  program: string | null;
+  year: string | null;
+  category: string | null;
 }
 
 export type TPartialProject = IPartialProject;

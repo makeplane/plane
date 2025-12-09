@@ -2,20 +2,7 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import {
-  Signal,
-  Tag,
-  Triangle,
-  LayoutPanelTop,
-  CalendarClock,
-  CalendarCheck2,
-  Users,
-  UserCircle2,
-  Handshake,
-  Volleyball,
-  Calendar,
-  Clock,
-} from "lucide-react";
+import { Signal, Tag, CalendarClock, Users, UserCircle2, Handshake, Volleyball, Calendar, Clock } from "lucide-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // ui icons
@@ -38,14 +25,16 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 
 // plane web components
 // import { WorkItemAdditionalSidebarProperties } from "@/plane-web/components/issues/issue-details/additional-properties";
-import CategoryProperty from "@/plane-web/components/issues/issue-details/category-property";
-import LevelProperty from "@/plane-web/components/issues/issue-details/level-property";
+
+import { CategoryDropdown } from "@/components/dropdowns/category-property";
+import { LevelDropdown } from "@/components/dropdowns/level-property";
 import OppositionTeamProperty from "@/plane-web/components/issues/issue-details/opposition-team-property";
 // import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
-import ProgramProperty from "@/plane-web/components/issues/issue-details/program-property";
-import SportProperty from "@/plane-web/components/issues/issue-details/sport-property";
-import YearRangeProperty from "@/plane-web/components/issues/issue-details/year-property";
+
+import { ProgramDropdown } from "@/components/dropdowns/program-property";
+import SportDropdown from "@/components/dropdowns/sport-property";
 // import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
+import { YearRangeDropdown } from "@/components/dropdowns/year-property";
 import type { TIssueOperations } from "../issue-detail";
 // import { IssueCycleSelect } from "../issue-detail/cycle-select";
 // import { IssueLabel } from "../issue-detail/label";
@@ -336,18 +325,25 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         <div className="flex w-full items-center gap-3 h-8">
           <div className="flex items-center gap-1 w-1/4 flex-shrink-0 text-sm text-custom-text-300">
             <Signal className="h-4 w-4 flex-shrink-0" />
-            <p>Level</p>
+            <p>{t("level_field")}</p>
           </div>
 
-          <LevelProperty
-            storageKey={`level-${issueId}`}
+          <LevelDropdown
             value={issue?.level}
-            onChange={(level) =>
+            onChange={(level) => {
+              if (!level) return;
               issueOperations.update(workspaceSlug, projectId, issueId, {
-                level,
-              })
-            }
+                level: level,
+              });
+            }}
+            placeholder={t("add_level")}
+            buttonVariant="transparent-with-text"
+            className="w-3/4 flex-grow group"
             disabled={disabled}
+            buttonContainerClassName="w-full text-left"
+            buttonClassName={`text-sm ${issue?.level ? "" : "text-custom-text-400"}`}
+            hideIcon
+            clearIconClassName="h-3 w-3 hidden group-hover:inline"
           />
         </div>
         {/* Program */}
@@ -357,15 +353,22 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <p>Program</p>
           </div>
 
-          <ProgramProperty
-            storageKey={`program-${issueId}`}
+          <ProgramDropdown
             value={issue?.program}
-            onChange={(program) =>
+            onChange={(program) => {
+              if (!program) return;
               issueOperations.update(workspaceSlug, projectId, issueId, {
-                program,
-              })
-            }
+                program: program,
+              });
+            }}
+            placeholder={t("add_program")}
+            buttonVariant="transparent-with-text"
+            className="w-3/4 flex-grow group"
             disabled={disabled}
+            buttonContainerClassName="w-full text-left"
+            buttonClassName={`text-sm ${issue?.program ? "" : "text-custom-text-400"}`}
+            hideIcon
+            clearIconClassName="h-3 w-3 hidden group-hover:inline"
           />
         </div>
         {/* Sport */}
@@ -375,15 +378,22 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <p>Sport</p>
           </div>
 
-          <SportProperty
-            storageKey={`sport-${issueId}`}
+          <SportDropdown
             value={issue?.sport}
-            onChange={(sport) =>
+            onChange={(sport) => {
+              if (!sport) return;
               issueOperations.update(workspaceSlug, projectId, issueId, {
-                sport,
-              })
-            }
+                sport: sport,
+              });
+            }}
+            placeholder={t("add_sport")}
+            buttonVariant="transparent-with-text"
+            className="w-3/4 flex-grow group"
             disabled={disabled}
+            buttonContainerClassName="w-full text-left"
+            buttonClassName={`text-sm ${issue?.sport ? "" : "text-custom-text-400"}`}
+            hideIcon
+            clearIconClassName="h-3 w-3 hidden group-hover:inline"
           />
         </div>
         {/* opposition team */}
@@ -410,15 +420,22 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <p>Category</p>
           </div>
 
-          <CategoryProperty
-            storageKey={`category-${issueId}`}
+          <CategoryDropdown
             value={issue?.category}
-            onChange={(category) =>
+            onChange={(category) => {
+              if (!category) return;
               issueOperations.update(workspaceSlug, projectId, issueId, {
-                category,
-              })
-            }
+                category: category,
+              });
+            }}
+            placeholder={t("add_category")}
+            buttonVariant="transparent-with-text"
+            className="w-3/4 flex-grow group"
             disabled={disabled}
+            buttonContainerClassName="w-full text-left"
+            buttonClassName={`text-sm ${issue?.category ? "" : "text-custom-text-400"}`}
+            hideIcon
+            clearIconClassName="h-3 w-3 hidden group-hover:inline"
           />
         </div>
         {/* year */}
@@ -428,11 +445,20 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <p>Year</p>
           </div>
 
-          <YearRangeProperty
-            storageKey={`year-${issueId}`}
+          <YearRangeDropdown
             value={issue?.year}
-            onChange={(year) => issueOperations.update(workspaceSlug, projectId, issueId, { year })}
+            onChange={(year) => {
+              if (!year) return;
+              issueOperations.update(workspaceSlug, projectId, issueId, { year: year });
+            }}
+            placeholder={t("add_year")}
+            buttonVariant="transparent-with-text"
+            className="w-3/4 flex-grow group"
             disabled={disabled}
+            buttonContainerClassName="w-full text-left"
+            buttonClassName={`text-sm ${issue?.year ? "" : "text-custom-text-400"}`}
+            hideIcon
+            clearIconClassName="h-3 w-3 hidden group-hover:inline"
           />
         </div>
       </div>
