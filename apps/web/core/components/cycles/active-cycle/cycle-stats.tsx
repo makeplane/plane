@@ -205,7 +205,8 @@ export const ActiveCycleStats = observer(function ActiveCycleStats(props: Active
                             <IssueIdentifier
                               issueId={issue.id}
                               projectId={projectId}
-                              textContainerClassName="text-11 text-secondary"
+                              size="xs"
+                              variant="secondary"
                             />
                             <Tooltip position="top-start" tooltipHeading="Title" tooltipContent={issue.name}>
                               <span className="text-13 text-primary truncate">{issue.name}</span>

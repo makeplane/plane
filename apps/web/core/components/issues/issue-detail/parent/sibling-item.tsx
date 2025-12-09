@@ -49,7 +49,7 @@ export const IssueParentSiblingItem = observer(function IssueParentSiblingItem(p
               issueTypeId={issueDetail.type_id}
               projectIdentifier={projectDetails?.identifier}
               issueSequenceId={issueDetail.sequence_id}
-              textContainerClassName="text-11"
+              size="xs"
             />
           )}
         </div>

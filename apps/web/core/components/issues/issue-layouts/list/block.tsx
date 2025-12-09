@@ -233,7 +233,8 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
                     <IssueIdentifier
                       issueId={issueId}
                       projectId={issue.project_id}
-                      textContainerClassName="text-11 font-medium text-tertiary"
+                      size="xs"
+                      variant="tertiary"
                       displayProperties={displayProperties}
                     />
                   )}

@@ -148,7 +148,8 @@ export const IssueGanttSidebarBlock = observer(function IssueGanttSidebarBlock(p
           <IssueIdentifier
             issueId={issueDetails.id}
             projectId={issueDetails.project_id}
-            textContainerClassName="text-11 text-tertiary"
+            size="xs"
+            variant="tertiary"
             displayProperties={issuesFilter?.issueFilters?.displayProperties}
           />
         )}

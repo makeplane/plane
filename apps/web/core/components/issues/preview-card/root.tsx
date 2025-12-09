@@ -35,12 +35,12 @@ export const WorkItemPreviewCard = observer(function WorkItemPreviewCard(props: 
     <div className="p-3 space-y-2 w-72 rounded-lg shadow-custom-shadow-rg bg-surface-1 border-[0.5px] border-strong">
       <div className="flex items-center justify-between gap-3 text-secondary">
         <IssueIdentifier
-          textContainerClassName="shrink-0 text-11 text-secondary"
+          size="xs"
+          variant="secondary"
           projectId={projectId}
           projectIdentifier={projectIdentifier}
           issueSequenceId={workItem.sequence_id}
           issueTypeId={workItem.type_id}
-          size="xs"
         />
         <div className="shrink-0 flex items-center gap-1">
           <StateGroupIcon stateGroup={stateGroup} className="shrink-0 size-3" />

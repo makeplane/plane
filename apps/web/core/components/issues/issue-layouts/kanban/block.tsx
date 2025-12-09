@@ -98,7 +98,8 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
           <IssueIdentifier
             issueId={issue.id}
             projectId={issue.project_id}
-            textContainerClassName="line-clamp-1 text-11 text-tertiary"
+            size="xs"
+            variant="tertiary"
             displayProperties={displayProperties}
           />
         )}
