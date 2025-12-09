@@ -1586,6 +1586,7 @@ export default {
         name: "Çalışma Alanı Adı",
         company_size: "Şirket Büyüklüğü",
         url: "Çalışma Alanı URL'si",
+        workspace_timezone: "Çalışma Alanı Saat Dilimi",
         update_workspace: "Çalışma Alanını Güncelle",
         delete_workspace: "Bu çalışma alanını sil",
         delete_workspace_description:

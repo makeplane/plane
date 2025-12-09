@@ -1598,6 +1598,7 @@ export default {
         name: "Nome do espaço de trabalho",
         company_size: "Tamanho da empresa",
         url: "URL do espaço de trabalho",
+        workspace_timezone: "Fuso horário do espaço de trabalho",
         update_workspace: "Atualizar espaço de trabalho",
         delete_workspace: "Excluir este espaço de trabalho",
         delete_workspace_description:
