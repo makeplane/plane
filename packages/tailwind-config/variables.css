@@ -1031,3 +1031,23 @@
   font-feature-settings: "liga";
   -webkit-font-smoothing: antialiased;
 }
+
+/* Tailwind typography plugin overwrites */
+@utility prose {
+  --tw-prose-body: var(--text-color-primary);
+  --tw-prose-p: var(--text-color-primary);
+  --tw-prose-headings: var(--text-color-primary);
+  --tw-prose-lead: var(--text-color-primary);
+  --tw-prose-links: var(--text-color-link-primary);
+  --tw-prose-bold: "inherit";
+  --tw-prose-counters: var(--text-color-primary);
+  --tw-prose-bullets: var(--text-color-primary);
+  --tw-prose-hr: var(--text-color-primary);
+  --tw-prose-quotes: var(--text-color-primary);
+  --tw-prose-quote-borders: var(--border-color-subtle);
+  --tw-prose-code: var(--text-color-primary);
+  --tw-prose-pre-code: var(--text-color-primary);
+  --tw-prose-pre-bg: var(--background-color-layer-1);
+  --tw-prose-th-borders: var(--border-color-subtle);
+  --tw-prose-td-borders: var(--border-color-subtle);
+}
