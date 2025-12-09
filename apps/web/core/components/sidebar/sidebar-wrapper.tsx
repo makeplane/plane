@@ -48,12 +48,12 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
           {/* Workspace switcher and settings */}
 
           <div className="flex items-center justify-between gap-2 px-2">
-            <span className="text-md text-secondary font-medium pt-1">{title}</span>
+            <span className="text-16 text-primary font-medium pt-1">{title}</span>
             {title === "Projects" && (
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  className="flex items-center justify-center size-6 rounded-md text-placeholder hover:text-accent-primary hover:bg-surface-2"
+                  className="flex items-center justify-center size-6 rounded-md text-secondary hover:text-accent-primary hover:bg-surface-2"
                   onClick={() => setIsCustomizeNavDialogOpen(true)}
                 >
                   <PreferencesIcon className="size-4" />

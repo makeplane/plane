@@ -15,7 +15,7 @@ import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useExpandableSearch } from "@/hooks/use-expandable-search";
 
-export const TopNavPowerK = observer(function TopNavPowerK() {
+export const TopNavPowerK = observer(() => {
   // router
   const router = useAppRouter();
   const params = useParams();
@@ -203,16 +203,13 @@ export const TopNavPowerK = observer(function TopNavPowerK() {
   return (
     <div ref={containerRef} className="relative">
       <div
-        className={cn(
-          "relative w-[364px] flex items-center transition-all duration-300 ease-in-out z-30",
-          {
-            "w-[554px]": isOpen,
-          }
-        )}
+        className={cn("relative w-[364px] flex items-center transition-all duration-300 ease-in-out z-30", {
+          "w-[554px]": isOpen,
+        })}
       >
         <div
           className={cn(
-            "flex items-center w-full h-7 p-2 rounded-md bg-surface-1 hover:bg-surface-1 border border-transparent transition-colors duration-200",
+            "flex items-center w-full h-7 p-2 rounded-lg bg-layer-1-active hover:bg-layer-1-hover border border-transparent transition-colors duration-200",
             {
               "border-subtle": isOpen,
             }

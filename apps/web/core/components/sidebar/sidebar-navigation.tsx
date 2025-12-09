@@ -11,10 +11,10 @@ export function SidebarNavItem(props: TSidebarNavItem) {
   return (
     <div
       className={cn(
-        "cursor-pointer relative group w-full flex items-center justify-between gap-1.5 rounded-sm px-2 py-1 outline-none",
+        "cursor-pointer relative group w-full flex items-center justify-between gap-1.5 rounded-md px-2 py-1 outline-none",
         {
-          "text-secondary bg-layer-1/75": isActive,
-          "text-secondary hover:bg-surface-2 active:bg-surface-2": !isActive,
+          "text-secondary !bg-layer-transparent-active": isActive,
+          "text-secondary hover:bg-layer-transparent-hover active:bg-layer-transparent-active": !isActive,
         },
         className
       )}
