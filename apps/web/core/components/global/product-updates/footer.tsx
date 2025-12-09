@@ -15,6 +15,7 @@ export function ProductUpdatesFooter() {
           href="https://go.plane.so/p-docs"
           target="_blank"
           className="text-sm text-custom-text-200 hover:text-custom-text-100 hover:underline underline-offset-1 outline-none"
+          rel="noreferrer"
         >
           {t("docs")}
         </a>
@@ -26,6 +27,7 @@ export function ProductUpdatesFooter() {
           href="https://go.plane.so/p-changelog"
           target="_blank"
           className="text-sm text-custom-text-200 hover:text-custom-text-100 hover:underline underline-offset-1 outline-none"
+          rel="noreferrer"
         >
           {t("full_changelog")}
         </a>
@@ -36,6 +38,7 @@ export function ProductUpdatesFooter() {
           href="mailto:support@plane.so"
           target="_blank"
           className="text-sm text-custom-text-200 hover:text-custom-text-100 hover:underline underline-offset-1 outline-none"
+          rel="noreferrer"
         >
           {t("support")}
         </a>
@@ -46,6 +49,7 @@ export function ProductUpdatesFooter() {
           href="https://go.plane.so/p-discord"
           target="_blank"
           className="text-sm text-custom-text-200 hover:text-custom-text-100 hover:underline underline-offset-1 outline-none"
+          rel="noreferrer"
         >
           Discord
         </a>
@@ -57,6 +61,7 @@ export function ProductUpdatesFooter() {
           getButtonStyling("accent-primary", "sm"),
           "flex gap-1.5 items-center text-center font-medium hover:underline underline-offset-2 outline-none"
         )}
+        rel="noreferrer"
       >
         <PlaneLogo className="h-4 w-auto text-custom-text-100" />
         {t("powered_by_plane_pages")}

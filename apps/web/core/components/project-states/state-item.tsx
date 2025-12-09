@@ -96,10 +96,10 @@ export const StateItem = observer(function StateItem(props: TStateItem) {
             const destinationData = self.data as TDraggableData;
 
             if (sourceData && destinationData && sourceData.id) {
-              const destinationGroupKey = destinationData.groupKey as TStateGroups;
+              const destinationGroupKey = destinationData.groupKey;
               const edge = extractClosestEdge(destinationData) || undefined;
               const payload: Partial<IState> = {
-                id: sourceData.id as string,
+                id: sourceData.id,
                 group: destinationGroupKey,
                 sequence: getCurrentStateSequence(groupedStates[destinationGroupKey], destinationData, edge),
               };

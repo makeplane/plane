@@ -59,7 +59,20 @@ function isComponentNameIdentifier(identifier: Identifier | null | undefined) {
     return false;
   }
 
-  return COMPONENT_NAME_PATTERN.test(identifier.name);
+  // Must start with uppercase
+  if (!COMPONENT_NAME_PATTERN.test(identifier.name)) {
+    return false;
+  }
+
+  // Ignore CONSTANT_CASE (all uppercase)
+  if (
+    identifier.name.toUpperCase() === identifier.name &&
+    identifier.name.length > 1
+  ) {
+    return false;
+  }
+
+  return true;
 }
 
 function addComments(target: Node, comments: CommentKind[]) {
@@ -121,7 +134,10 @@ function toBlockBody(j: JSCodeshift, body: BlockStatement | Expression) {
   return j.blockStatement([returnStatement]);
 }
 
-function isFunction(node: Node, j: JSCodeshift): node is ArrowFunctionExpression | FunctionExpression {
+function isFunction(
+  node: Node,
+  j: JSCodeshift
+): node is ArrowFunctionExpression | FunctionExpression {
   return (
     j.ArrowFunctionExpression.check(node) || j.FunctionExpression.check(node)
   );
@@ -166,15 +182,39 @@ function extractPropsTypeFromWrapper(
   }
 
   const typeParam = typeParameters.params?.[0];
-  if (
-    !j.TSTypeReference.check(typeParam) ||
-    !isReactComponentType(typeParam, j)
-  ) {
+
+  if (!typeParam) {
     return;
   }
 
-  // Extract the generic type from React.FC<PropsType>
-  return typeParam.typeParameters?.params?.[0];
+  if (
+    j.TSTypeReference.check(typeParam) &&
+    isReactComponentType(typeParam, j)
+  ) {
+    // Extract the generic type from React.FC<PropsType>
+    return typeParam.typeParameters?.params?.[0];
+  }
+
+  // Check for memo<Props>
+  const callee = init.callee;
+  let isMemo = false;
+  if (j.Identifier.check(callee) && callee.name === "memo") {
+    isMemo = true;
+  } else if (
+    j.MemberExpression.check(callee) &&
+    j.Identifier.check(callee.property) &&
+    callee.property.name === "memo"
+  ) {
+    isMemo = true;
+  }
+
+  if (isMemo) {
+    // For memo<Props>, the first type parameter is the props type
+    // @ts-expect-error: jscodeshift types are too strict here
+    return typeParam;
+  }
+
+  return;
 }
 
 function isReactForwardRef(
@@ -242,12 +282,12 @@ function extractForwardRefTypes(
     typeParams.length >= 2 && typeParams[1]
       ? typeParams[1]
       : j.tsTypeReference(
-        j.identifier("Record"),
-        j.tsTypeParameterInstantiation([
-          j.tsStringKeyword(),
-          j.tsUnknownKeyword(),
-        ])
-      );
+          j.identifier("Record"),
+          j.tsTypeParameterInstantiation([
+            j.tsStringKeyword(),
+            j.tsUnknownKeyword(),
+          ])
+        );
 
   // Create React.ForwardedRef<ElementType> for the ref parameter
   const refType = j.tsTypeReference(
@@ -411,7 +451,10 @@ export default function transform(file: FileInfo, api: API, options: Options) {
       // Try to get props type from variable type annotation first
       let propsType: TSType | undefined = undefined;
 
-      if (j.TSTypeReference.check(typeAnnotation) && isReactComponentType(typeAnnotation, j)) {
+      if (
+        j.TSTypeReference.check(typeAnnotation) &&
+        isReactComponentType(typeAnnotation, j)
+      ) {
         propsType = typeAnnotation.typeParameters?.params?.[0];
       }
 
@@ -441,6 +484,7 @@ export default function transform(file: FileInfo, api: API, options: Options) {
 
         const wrappedFunction = j.callExpression(init.callee, [
           functionExpression,
+          ...init.arguments.slice(1),
         ]);
 
         if (!j.Identifier.check(firstDeclaration.id)) {

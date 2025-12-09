@@ -7,12 +7,12 @@ import { TriageGroupIcon } from "./triage-group-icon";
 
 const iconComponents = { triage: TriageGroupIcon };
 
-export const IntakeStateGroupIcon: React.FC<IIntakeStateGroupIcon> = ({
+export function IntakeStateGroupIcon({
   className = "",
   color,
   stateGroup,
   size = EIconSize.SM,
-}) => {
+}: IIntakeStateGroupIcon) {
   const IntakeStateIconComponent = iconComponents[stateGroup] || TriageGroupIcon;
 
   return (
@@ -23,4 +23,4 @@ export const IntakeStateGroupIcon: React.FC<IIntakeStateGroupIcon> = ({
       className={`flex-shrink-0 ${className}`}
     />
   );
-};
+}

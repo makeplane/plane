@@ -17,12 +17,7 @@ import type { IProjectViewIssuesFilter } from "@/store/issue/project-views";
 // helpers
 
 interface Props {
-  issuesFilterStore:
-    | IProjectIssuesFilter
-    | IModuleIssuesFilter
-    | ICycleIssuesFilter
-    | IProjectViewIssuesFilter
-    | IProjectEpicsFilter;
+  issuesFilterStore: IProjectIssuesFilter | IModuleIssuesFilter | ICycleIssuesFilter | IProjectViewIssuesFilter;
 }
 export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(props: Props) {
   const { issuesFilterStore } = props;

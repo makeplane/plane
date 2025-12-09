@@ -307,15 +307,15 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     const allIssues = groupedIssueIds[ALL_ISSUES] ?? [];
     if (!this.groupBy && !this.subGroupBy && allIssues && Array.isArray(allIssues)) {
-      return allIssues as string[];
+      return allIssues;
     }
 
     if (this.groupBy && groupId && groupedIssueIds?.[groupId] && Array.isArray(groupedIssueIds[groupId])) {
-      return (groupedIssueIds[groupId] ?? []) as string[];
+      return groupedIssueIds[groupId] ?? [];
     }
 
     if (this.groupBy && this.subGroupBy && groupId && subGroupId) {
-      return ((groupedIssueIds as TSubGroupedIssues)[groupId]?.[subGroupId] ?? []) as string[];
+      return (groupedIssueIds as TSubGroupedIssues)[groupId]?.[subGroupId] ?? [];
     }
 
     return undefined;
@@ -1405,7 +1405,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // if groupedIssueIds is an array, update the `groupedIssueIds` store at the issuePath
     if (groupedIssueIds && Array.isArray(groupedIssueIds)) {
       update(this, ["groupedIssueIds", ...issuePath], (issueIds: string[] = []) =>
-        this.issuesSortWithOrderBy(uniq(concat(issueIds, groupedIssueIds as string[])), this.orderBy)
+        this.issuesSortWithOrderBy(uniq(concat(issueIds, groupedIssueIds)), this.orderBy)
       );
       // return true to indicate the store has been updated
       return true;
@@ -1617,7 +1617,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   getArrayStringArray = (
     issueObject: Partial<TIssue> | undefined,
     value: string | string[] | undefined | null,
-    groupByKey?: TIssueGroupByOptions | undefined
+    groupByKey?: TIssueGroupByOptions
   ): string[] => {
     // if issue object is undefined return empty array
     if (!issueObject) return [];
