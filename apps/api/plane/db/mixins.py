@@ -188,3 +188,30 @@ class ChangeTrackerMixin:
                   all non-deferred fields).
         """
         return self._original_values
+
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        """
+        Override save to automatically capture changed fields and reset tracking.
+
+        Before saving, the current changed_fields are captured and stored in
+        _changes_on_save. After saving, the tracked fields are reset so
+        that subsequent saves correctly detect changes relative to the last
+        saved state, not the original load-time state.
+
+        Models that need to access the changed fields after save (e.g., for
+        syncing related models) can use self._changes_on_save.
+        """
+        self._changes_on_save = self.changed_fields
+        super().save(*args, **kwargs)
+        self._reset_tracked_fields()
+
+    def _reset_tracked_fields(self) -> None:
+        """
+        Reset the tracked field values to the current state.
+
+        This is called automatically after save() to ensure that subsequent
+        saves correctly detect changes relative to the last saved state,
+        rather than the original load-time state.
+        """
+        self._original_values = {}
+        self._track_fields()

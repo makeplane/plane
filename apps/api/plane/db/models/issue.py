@@ -513,10 +513,12 @@ class IssueComment(ChangeTrackerMixin, ProjectBaseModel):
                     "comment_json": "description_json",
                 }
 
+                # Use _changes_on_save which is captured by ChangeTrackerMixin.save()
+                # before the tracked fields are reset
                 changed_fields = {
                     desc_field: getattr(self, comment_field)
                     for comment_field, desc_field in field_mapping.items()
-                    if self.has_changed(comment_field)
+                    if comment_field in self._changes_on_save
                 }
 
                 # Update description only if comment fields changed
