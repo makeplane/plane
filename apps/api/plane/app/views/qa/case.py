@@ -1,14 +1,18 @@
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from django.db import transaction
 from django.shortcuts import get_object_or_404
+from django.db.utils import IntegrityError
+from django.core.exceptions import ValidationError
 
 from plane.app.serializers.qa import CaseAttachmentSerializer, IssueListSerializer, CaseIssueSerializer, \
     TestCaseCommentSerializer, PlanCaseRecordSerializer, CaseListSerializer
 from plane.app.serializers.qa.case import CaseExecuteRecordSerializer
 from plane.app.views import BaseAPIView, BaseViewSet
-from plane.db.models import TestCase, FileAsset, TestCaseComment, PlanCase, Issue, CaseModule
+from plane.app.views.qa.utils import parser_case_file
+from plane.db.models import TestCase, FileAsset, TestCaseComment, PlanCase, Issue, CaseModule, CaseLabel
 from plane.utils.paginator import CustomPaginator
 from plane.utils.response import list_response
 
@@ -184,3 +188,44 @@ class CaseAPI(BaseViewSet):
         case = get_object_or_404(TestCase, id=case_id)
         issue.cases.add(case)
         return Response(status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=['post'], url_path='import-case')
+    def import_case(self, request, slug):
+        repository_id = request.data['repository_id']
+        files: list[InMemoryUploadedFile] = request.FILES.getlist('file')
+        try:
+            case_data = parser_case_file(files)
+        except Exception as e:
+            return Response({'error': f'用例导入失败:{str(e)}'})
+        total_count = len(case_data)
+        success_count = 0
+        fail_list = []
+        for data in case_data:
+            try:
+                instance = TestCase.objects.create(
+                    name=data['name'],
+                    priority=TestCase.Priority[data['priority']].value,
+                    remark=data['remark'],
+                    precondition=data['precondition'],
+                    steps=data['steps'],
+                    repository_id=repository_id,
+                )
+
+                # 创建模块
+                case_module, _ = CaseModule.objects.get_or_create(repository_id=repository_id, name=data['module'])
+                instance.module = case_module
+                # 创建标签
+                for label in data['label']:
+                    label_instance, _ = CaseLabel.objects.get_or_create(repository_id=repository_id, name=label)
+                    instance.labels.add(label_instance)
+                instance.save()
+            except IntegrityError as e:
+                fail_list.append(dict(name=data['name'], error='case name already exists'))
+                continue
+            except Exception as e:
+                fail_list.append(dict(name=data['name'], error=str(e).replace('\n', '')))
+                continue
+            success_count += 1
+
+        return Response(data={'total_count': total_count, 'success_count': success_count, 'fail': fail_list},
+                        status=status.HTTP_200_OK)

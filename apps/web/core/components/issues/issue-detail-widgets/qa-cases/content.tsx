@@ -44,6 +44,7 @@ export const QaCasesCollapsibleContent: React.FC<Props> = (props) => {
         return "default";
     }
   };
+  const pid = typeof window !== "undefined" ? sessionStorage.getItem("currentProjectId") || "" : "";
 
   return (
     <div className="px-2.5 pb-2.5">
@@ -73,7 +74,7 @@ export const QaCasesCollapsibleContent: React.FC<Props> = (props) => {
                       setToast({ type: TOAST_TYPE.ERROR, title: "无法跳转", message: "缺少用例仓库ID" });
                       return;
                     }
-                    const url = `/${workspaceSlug}/test-management/cases/?repositoryId=${repoId}&peekCase=${item.id}`;
+                    const url = `/${workspaceSlug}/projects/${pid}/test-management/cases/?repositoryId=${repoId}&peekCase=${item.id}`;
                     router.push(url);
                   }}
                 >

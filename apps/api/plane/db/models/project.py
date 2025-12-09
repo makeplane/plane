@@ -116,6 +116,14 @@ class Project(BaseModel):
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
 
+    template = models.ForeignKey(
+        "db.ProjectTemplate",
+        on_delete=models.SET_NULL,
+        related_name="projects",
+        null=True,
+        blank=True,
+    )
+
     @property
     def cover_image_url(self):
         # Return cover image url
@@ -313,3 +321,22 @@ class ProjectPublicMember(ProjectBaseModel):
         verbose_name_plural = "Project Public Members"
         db_table = "project_public_members"
         ordering = ("-created_at",)
+
+
+class ProjectTemplate(models.Model):
+    NETWORK_CHOICES = ((0, "Secret"), (2, "Public"))
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=255, verbose_name="Project Name")
+    template_name = models.CharField(max_length=255, verbose_name="Project Template Name")
+    description = models.TextField(verbose_name="Project Description", blank=True)
+    template_description = models.TextField(verbose_name="Project Template Description", blank=True)
+    network = models.PositiveSmallIntegerField(default=2, choices=NETWORK_CHOICES)
+
+    project_lead = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="project_template_lead",
+        null=True,
+        blank=True,
+    )
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="workspace_%(class)s")

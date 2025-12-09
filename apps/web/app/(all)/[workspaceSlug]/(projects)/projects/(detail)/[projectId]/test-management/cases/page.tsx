@@ -707,6 +707,68 @@ export default function TestCasesPage() {
     return <Tag color={color}>{label}</Tag>;
   };
 
+  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!repositoryId) {
+      message.error("请先选择用例库");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("repository_id", repositoryId);
+
+    try {
+      setLoading(true);
+      const res = await caseService.importCase(workspaceSlug as string, formData);
+      console.log("🚀 ~ handleImport ~ res:", res.data);
+
+      // 如果有失败的记录，生成CSV并下载
+      if (res.data?.fail && res.data.fail.length > 0) {
+        message.warning(`导入完成，有 ${res.data.fail.length} 条数据导入失败，详情请查看下载的文件`);
+
+        // 创建CSV内容
+        const headers = ["用例名称", "失败原因"];
+        const csvContent = [
+          headers.join(","),
+          ...res.data.fail.map(
+            (item: any) =>
+              // 处理字段中可能包含的逗号，用引号包裹
+              `"${item.name || ""}","${item.error || ""}"`
+          ),
+        ].join("\n");
+
+        // 创建Blob并下载
+        const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+
+        link.setAttribute("href", url);
+        link.setAttribute("download", `导入失败记录_${new Date().getTime()}.csv`);
+        link.style.visibility = "hidden";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        message.success("导入成功");
+      }
+
+      fetchCases();
+      fetchModules();
+    } catch (err: any) {
+      console.error(err);
+      message.error(err?.error || "导入失败");
+    } finally {
+      setLoading(false);
+      // 清空 input value，允许重复上传同一文件
+      e.target.value = "";
+    }
+  };
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const columns: TableProps<TestCase>["columns"] = [
     {
       title: "名称",
@@ -823,10 +885,21 @@ export default function TestCasesPage() {
                     placeholder="按模块名称搜索"
                     value={searchModule}
                     onChange={(e) => setSearchModule(e.target.value)}
+                    style={{ width: 140 }}
                   />
                   <Button type="primary" onClick={() => setIsCreateModalOpen(true)} disabled={!repositoryId}>
-                    新 建
+                    新建
                   </Button>
+                  <Button onClick={() => fileInputRef.current?.click()} disabled={!repositoryId}>
+                    导入
+                  </Button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    style={{ display: "none" }}
+                    accept=".xlsx,.xls"
+                    onChange={handleImport}
+                  />
                 </Space>
               </div>
               <div

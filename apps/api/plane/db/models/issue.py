@@ -174,6 +174,14 @@ class Issue(ProjectBaseModel):
         blank=True,
     )
 
+    template = models.ForeignKey(
+        "db.ProjectTemplate",
+        on_delete=models.CASCADE,
+        related_name="issues",
+        null=True,
+        blank=True,
+    )
+
     issue_objects = IssueManager()
 
     class Meta:
@@ -251,9 +259,6 @@ class Issue(ProjectBaseModel):
                 else strip_tags(self.description_html)
             )
             super(Issue, self).save(*args, **kwargs)
-
-
-
 
     def __str__(self):
         """Return name of the issue"""

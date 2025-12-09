@@ -128,6 +128,14 @@ class TestCase(BaseModel):
         return crr.result if crr else CaseReviewThrough.Result.NOT_START
 
     class Meta:
+        constraints = [
+            # Enforce uniqueness of project and name when project is not NULL and deleted_at is NULL
+            models.UniqueConstraint(
+                fields=["repository", "name"],
+                condition=Q(repository__isnull=False, deleted_at__isnull=True),
+                name="unique_case_repository_name_when_not_deleted",
+            ),
+        ]
         db_table = "test_case"
         ordering = ("-created_at",)
 

@@ -17,6 +17,7 @@ from plane.app.views import (
     ProjectArchiveUnarchiveEndpoint,
 )
 from plane.app.views.project.base import ProjectAPI
+from plane.app.views.project.template import ProjectTemplateAPIView
 
 router = SimpleRouter()
 router.register('project', ProjectAPI, basename='projects')
@@ -130,4 +131,6 @@ urlpatterns = [
         ProjectArchiveUnarchiveEndpoint.as_view(),
         name="project-archive-unarchive",
     ),
+    path('workspaces/<str:slug>/projects/template/', ProjectTemplateAPIView.as_view(), name='project-template'),
+
 ]

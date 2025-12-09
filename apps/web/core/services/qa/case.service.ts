@@ -294,4 +294,16 @@ export class CaseService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async importCase(workspaceSlug: string, formData: FormData): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/test/case/import-case/`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+      .then((response) => response)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

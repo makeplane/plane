@@ -441,7 +441,6 @@ export const WorkItemSelectModal: React.FC<Props> = ({
       <div style={{ display: "flex", gap: 16, height: "60vh" }}>
         {/* 右侧工作项：Table + 分页 */}
         <div style={{ width: "100%" }}>
-          <div style={{ fontWeight: 500, marginBottom: 8 }}>工作项</div>
           <Table<TIssue>
             size="small"
             rowKey="id"
