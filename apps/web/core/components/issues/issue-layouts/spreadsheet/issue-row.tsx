@@ -349,7 +349,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
               </div>
 
               <div className="flex items-center gap-2 justify-between h-full w-full truncate my-auto">
-                <div className="w-full line-clamp-1 text-13 text-primary">
+                <div className="w-full line-clamp-1 text-14 text-primary">
                   <div className="w-full overflow-hidden">
                     <Tooltip tooltipContent={issueDetail.name} isMobile={isMobile}>
                       <div
