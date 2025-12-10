@@ -99,7 +99,7 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
             else router.push(`/?next_path=${pathName}?${queryParam}`);
           }}
           className={cn(
-            "flex items-center justify-center gap-x-1 overflow-hidden rounded-sm border focus:outline-none bg-surface-1",
+            "flex items-center justify-center gap-x-1 overflow-hidden rounded-sm border focus:outline-none hover:bg-layer-transparent-hover",
             votingDimensions,
             {
               "border-accent-strong-200 text-accent-secondary": isUpVotedByUser,
@@ -108,7 +108,7 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
             }
           )}
         >
-          <span className="material-symbols-rounded-sm !m-0 !p-0 text-14">arrow_upward_alt</span>
+          <span className="material-symbols-rounded !m-0 !p-0 text-14">arrow_upward_alt</span>
           <span className="text-13 font-regular transition-opacity ease-in-out">{allUpVotes.length}</span>
         </button>
       </Tooltip>
@@ -140,7 +140,7 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
             else router.push(`/?next_path=${pathName}?${queryParam}`);
           }}
           className={cn(
-            "flex items-center justify-center gap-x-1 overflow-hidden rounded-sm border focus:outline-none bg-surface-1",
+            "flex items-center justify-center gap-x-1 overflow-hidden rounded-sm border focus:outline-none hover:bg-layer-transparent-hover",
             votingDimensions,
             {
               "border-red-600 text-red-600": isDownVotedByUser,
@@ -149,7 +149,7 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
             }
           )}
         >
-          <span className="material-symbols-rounded-sm !m-0 !p-0 text-14">arrow_downward_alt</span>
+          <span className="material-symbols-rounded !m-0 !p-0 text-14">arrow_downward_alt</span>
           <span className="text-13 font-regular transition-opacity ease-in-out">{allDownVotes.length}</span>
         </button>
       </Tooltip>
