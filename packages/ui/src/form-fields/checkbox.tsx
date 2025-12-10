@@ -36,6 +36,8 @@ const Checkbox = React.forwardRef(function Checkbox(props: CheckboxProps, ref: R
             "border-strong hover:border-strong-1 bg-transparent": !disabled,
             "border-accent-strong-40 hover:border-accent-strong-40 bg-accent-primary hover:bg-accent-primary/80":
               !disabled && (checked || indeterminate),
+
+            "border-none": checked,
           },
           className
         )}
@@ -44,10 +46,10 @@ const Checkbox = React.forwardRef(function Checkbox(props: CheckboxProps, ref: R
       />
       <svg
         className={cn(
-          "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-4 p-0.5 pointer-events-none outline-none hidden stroke-white",
+          "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-4 p-0.5 pointer-events-none outline-none hidden text-on-color",
           {
             block: checked,
-            "stroke-custom-text-400 opacity-40": disabled,
+            "text-placeholder opacity-40": disabled,
           },
           iconClassName
         )}
