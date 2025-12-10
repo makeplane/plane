@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useMemo } from "react";
 import { Search } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { CloseIcon } from "@plane/propel/icons";
@@ -14,36 +14,39 @@ type Props = {
 export function PageSearchInput(props: Props) {
   const { searchQuery, updateSearchQuery } = props;
   // states
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [manuallyOpened, setManuallyOpened] = useState(false);
   // refs
   const inputRef = useRef<HTMLInputElement>(null);
+  
+  // Derive isSearchOpen from searchQuery and manual state
+  const isSearchOpen = useMemo(
+    () => searchQuery.trim() !== "" || manuallyOpened,
+    [searchQuery, manuallyOpened]
+  );
+  
   // outside click detector hook
   useOutsideClickDetector(inputRef, () => {
-    if (isSearchOpen && searchQuery.trim() === "") setIsSearchOpen(false);
+    if (isSearchOpen && searchQuery.trim() === "") setManuallyOpened(false);
   });
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
       if (searchQuery && searchQuery.trim() !== "") updateSearchQuery("");
       else {
-        setIsSearchOpen(false);
+        setManuallyOpened(false);
         inputRef.current?.blur();
       }
     }
   };
-
-  useEffect(() => {
-    if (searchQuery.trim() !== "") setIsSearchOpen(true);
-  }, [searchQuery]);
 
   return (
     <div className="flex">
       {!isSearchOpen && (
         <button
           type="button"
-          className="flex-shrink-0 hover:bg-layer-1 rounded-sm text-placeholder relative flex justify-center items-center w-6 h-6 my-auto"
+          className="shrink-0 hover:bg-layer-transparent-hover rounded-sm text-placeholder relative flex justify-center items-center w-6 h-6 my-auto"
           onClick={() => {
-            setIsSearchOpen(true);
+            setManuallyOpened(true);
             inputRef.current?.focus();
           }}
         >
@@ -52,7 +55,7 @@ export function PageSearchInput(props: Props) {
       )}
       <div
         className={cn(
-          "flex items-center justify-start rounded-md border border-transparent bg-surface-1 text-placeholder w-0 transition-[width] ease-linear overflow-hidden opacity-0",
+          "flex items-center justify-start rounded-md border border-transparent text-placeholder w-0 transition-[width] ease-linear overflow-hidden opacity-0",
           {
             "w-64 px-2.5 py-1.5 border-subtle opacity-100": isSearchOpen,
           }
@@ -73,7 +76,7 @@ export function PageSearchInput(props: Props) {
             className="grid place-items-center"
             onClick={() => {
               updateSearchQuery("");
-              setIsSearchOpen(false);
+              setManuallyOpened(false);
             }}
           >
             <CloseIcon className="h-3 w-3" />

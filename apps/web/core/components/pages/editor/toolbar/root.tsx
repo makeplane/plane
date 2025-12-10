@@ -56,7 +56,7 @@ export const PageEditorToolbarRoot = observer(function PageEditorToolbarRoot(pro
               {!isNavigationPaneOpen && (
                 <button
                   type="button"
-                  className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-secondary hover:text-primary hover:bg-layer-1 transition-colors"
+                  className="shrink-0 size-6 grid place-items-center rounded-sm text-secondary hover:text-primary hover:bg-layer-transparent-hover transition-colors"
                   onClick={handleOpenNavigationPane}
                 >
                   <PanelRight className="size-3.5" />
@@ -72,7 +72,7 @@ export const PageEditorToolbarRoot = observer(function PageEditorToolbarRoot(pro
             <Tooltip tooltipContent={t("page_navigation_pane.open_button")}>
               <button
                 type="button"
-                className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-secondary hover:text-primary hover:bg-layer-1 transition-colors"
+                className="shrink-0 size-6 grid place-items-center rounded-sm text-secondary hover:text-primary hover:bg-layer-transparent-hover transition-colors"
                 onClick={handleOpenNavigationPane}
                 aria-label={t("page_navigation_pane.open_button")}
               >

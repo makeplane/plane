@@ -83,7 +83,7 @@ export const PageNavigationPaneRoot = observer(function PageNavigationPaneRoot(p
 
   return (
     <aside
-      className="flex-shrink-0 h-full flex flex-col bg-surface-1 pt-3.5 border-l border-subtle transition-all duration-300 ease-out"
+      className="shrink-0 h-full flex flex-col bg-surface-1 pt-3.5 border-l border-subtle transition-all duration-300 ease-out"
       style={{
         width: `${paneWidth}px`,
         marginRight: isNavigationPaneOpen ? "0px" : `-${paneWidth}px`,

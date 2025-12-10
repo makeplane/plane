@@ -44,9 +44,12 @@ const ToolbarButton = React.memo(function ToolbarButton(props: ToolbarButtonProp
             ...item.extraProps,
           })
         }
-        className={cn("shrink-0 grid size-7 place-items-center rounded-sm text-tertiary hover:bg-layer-1", {
-          "bg-layer-1 text-primary": isActive,
-        })}
+        className={cn(
+          "shrink-0 grid size-7 place-items-center rounded-sm text-tertiary hover:bg-layer-transparent-hover-1",
+          {
+            "bg-layer-transparent-selected text-primary": isActive,
+          }
+        )}
       >
         <item.icon
           className={cn("size-4", {
@@ -65,7 +68,20 @@ const toolbarItems = TOOLBAR_ITEMS.document;
 export function PageToolbar(props: Props) {
   const { editorRef } = props;
   // states
-  const [activeStates, setActiveStates] = useState<Record<string, boolean>>({});
+  const [activeStates, setActiveStates] = useState<Record<string, boolean>>(() => {
+    const initialStates: Record<string, boolean> = {};
+    Object.values(toolbarItems)
+      .flat()
+      .forEach((item) => {
+        // TODO: update this while toolbar homogenization
+        // @ts-expect-error type mismatch here
+        initialStates[item.renderKey] = editorRef.isMenuItemActive({
+          itemKey: item.itemKey,
+          ...item.extraProps,
+        });
+      });
+    return initialStates;
+  });
 
   const updateActiveStates = useCallback(() => {
     const newActiveStates: Record<string, boolean> = {};
@@ -84,7 +100,6 @@ export function PageToolbar(props: Props) {
 
   useEffect(() => {
     const unsubscribe = editorRef.onStateChange(updateActiveStates);
-    updateActiveStates();
     return () => unsubscribe();
   }, [editorRef, updateActiveStates]);
 
@@ -99,9 +114,9 @@ export function PageToolbar(props: Props) {
     <div className="flex items-center divide-x divide-subtle-1 overflow-x-scroll">
       <CustomMenu
         customButton={
-          <span className="text-tertiary text-13 border-[0.5px] border-strong hover:bg-layer-1 h-7 w-24 rounded-sm px-2 flex items-center justify-between gap-2 whitespace-nowrap text-left">
+          <span className="text-tertiary text-13 border-[0.5px] border-strong hover:bg-layer-transparent-hover h-7 w-24 rounded-sm px-2 flex items-center justify-between gap-2 whitespace-nowrap text-left">
             {activeTypography?.name || "Text"}
-            <ChevronDownIcon className="flex-shrink-0 size-3" />
+            <ChevronDownIcon className="shrink-0 size-3" />
           </span>
         }
         className="pr-2"
@@ -124,11 +139,11 @@ export function PageToolbar(props: Props) {
               <item.icon className="size-3" />
               {item.name}
             </span>
-            {activeTypography?.itemKey === item.itemKey && <Check className="size-3 text-tertiary flex-shrink-0" />}
+            {activeTypography?.itemKey === item.itemKey && <Check className="size-3 text-tertiary shrink-0" />}
           </CustomMenu.MenuItem>
         ))}
       </CustomMenu>
-      <div className="flex-shrink-0">
+      <div className="shrink-0">
         <ColorDropdown
           handleColorSelect={(key, color) =>
             editorRef.executeMenuItemCommand({
