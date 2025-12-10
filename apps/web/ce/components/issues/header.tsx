@@ -35,7 +35,7 @@ import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/com
 export const IssuesHeader = observer(function IssuesHeader() {
   // router
   const router = useAppRouter();
-  const { workspaceSlug, projectId } = useParams() as { workspaceSlug: string; projectId: string };
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
   const {
     issues: { getGroupIssueCount },

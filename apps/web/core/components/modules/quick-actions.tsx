@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 
-// icons
-import { ArchiveRestoreIcon } from "lucide-react";
 // plane imports
 import {
   EUserPermissions,
@@ -11,13 +9,12 @@ import {
   MODULE_TRACKER_EVENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon , NewTabIcon , EditIcon , ArchiveIcon, TrashIcon } from "@plane/propel/icons";
-// ui
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // components
+import { useModuleMenuItems } from "@/components/common/quick-actions-helper";
 import { ArchiveModuleModal, CreateUpdateModuleModal, DeleteModuleModal } from "@/components/modules";
 // helpers
 import { captureClick, captureSuccess, captureError } from "@/helpers/event-tracker.helper";
@@ -50,7 +47,6 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
   const { t } = useTranslation();
   // derived values
   const moduleDetails = getModuleById(moduleId);
-  const isArchived = !!moduleDetails?.archived_at;
   // auth
   const isEditingAllowed = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -58,9 +54,6 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
     workspaceSlug,
     projectId
   );
-
-  const moduleState = moduleDetails?.status?.toLocaleLowerCase();
-  const isInArchivableGroup = !!moduleState && ["completed", "cancelled"].includes(moduleState);
 
   const moduleLink = `${workspaceSlug}/projects/${projectId}/modules/${moduleId}`;
   const handleCopyText = () =>
@@ -72,12 +65,6 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
       });
     });
   const handleOpenInNewTab = () => window.open(`/${moduleLink}`, "_blank");
-
-  const handleEditModule = () => {
-    setEditModal(true);
-  };
-
-  const handleArchiveModule = () => setArchiveModuleModal(true);
 
   const handleRestoreModule = async () =>
     await restoreModule(workspaceSlug, projectId, moduleId)
@@ -106,71 +93,34 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
         });
       });
 
-  const handleDeleteModule = () => {
-    setDeleteModal(true);
-  };
-
-  const MENU_ITEMS: TContextMenuItem[] = [
-    {
-      key: "edit",
-      title: t("edit"),
-      icon: EditIcon,
-      action: handleEditModule,
-      shouldRender: isEditingAllowed && !isArchived,
-    },
-    {
-      key: "open-new-tab",
-      action: handleOpenInNewTab,
-      title: t("open_in_new_tab"),
-      icon: NewTabIcon,
-      shouldRender: !isArchived,
-    },
-    {
-      key: "copy-link",
-      action: handleCopyText,
-      title: t("copy_link"),
-      icon: LinkIcon,
-      shouldRender: !isArchived,
-    },
-    {
-      key: "archive",
-      action: handleArchiveModule,
-      title: t("archive"),
-      description: isInArchivableGroup ? undefined : t("project_module.quick_actions.archive_module_description"),
-      icon: ArchiveIcon,
-      className: "items-start",
-      iconClassName: "mt-1",
-      shouldRender: isEditingAllowed && !isArchived,
-      disabled: !isInArchivableGroup,
-    },
-    {
-      key: "restore",
-      action: handleRestoreModule,
-      title: t("restore"),
-      icon: ArchiveRestoreIcon,
-      shouldRender: isEditingAllowed && isArchived,
-    },
-    {
-      key: "delete",
-      action: handleDeleteModule,
-      title: t("delete"),
-      icon: TrashIcon,
-      shouldRender: isEditingAllowed,
-    },
-  ];
-
-  const CONTEXT_MENU_ITEMS = MENU_ITEMS.map(function CONTEXT_MENU_ITEMS(item) {
-    return {
-      ...item,
-
-      onClick: () => {
-        captureClick({
-          elementName: MODULE_TRACKER_ELEMENTS.CONTEXT_MENU,
-        });
-        item.action();
-      },
-    };
+  // Use unified menu hook from plane-web (resolves to CE or EE)
+  const menuResult = useModuleMenuItems({
+    moduleDetails: moduleDetails ?? undefined,
+    workspaceSlug,
+    projectId,
+    moduleId,
+    isEditingAllowed,
+    handleEdit: () => setEditModal(true),
+    handleArchive: () => setArchiveModuleModal(true),
+    handleRestore: handleRestoreModule,
+    handleDelete: () => setDeleteModal(true),
+    handleCopyLink: handleCopyText,
+    handleOpenInNewTab,
   });
+
+  // Handle both CE (array) and EE (object) return types
+  const MENU_ITEMS: TContextMenuItem[] = Array.isArray(menuResult) ? menuResult : menuResult.items;
+  const additionalModals = Array.isArray(menuResult) ? null : menuResult.modals;
+
+  const CONTEXT_MENU_ITEMS: TContextMenuItem[] = MENU_ITEMS.map((item) => ({
+    ...item,
+    action: () => {
+      captureClick({
+        elementName: MODULE_TRACKER_ELEMENTS.CONTEXT_MENU,
+      });
+      item.action();
+    },
+  }));
 
   return (
     <>
@@ -191,6 +141,7 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
             handleClose={() => setArchiveModuleModal(false)}
           />
           <DeleteModuleModal data={moduleDetails} isOpen={deleteModal} onClose={() => setDeleteModal(false)} />
+          {additionalModals}
         </div>
       )}
       <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />

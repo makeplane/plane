@@ -64,7 +64,7 @@ export interface IProjectInboxStore {
     workspaceSlug: string,
     projectId: string,
     loadingType?: TLoader,
-    tab?: TInboxIssueCurrentTab | undefined
+    tab?: TInboxIssueCurrentTab
   ) => Promise<void>;
   fetchInboxPaginationIssues: (workspaceSlug: string, projectId: string) => Promise<void>;
   fetchInboxIssueById: (workspaceSlug: string, projectId: string, inboxIssueId: string) => Promise<TInboxIssue>;

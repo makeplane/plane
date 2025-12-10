@@ -105,7 +105,7 @@ export const BulkDeleteIssuesModal = observer(function BulkDeleteIssuesModal(pro
 
     if (!Array.isArray(data.delete_issue_ids)) data.delete_issue_ids = [data.delete_issue_ids];
 
-    await removeBulkIssues(workspaceSlug as string, projectId as string, data.delete_issue_ids)
+    await removeBulkIssues(workspaceSlug, projectId, data.delete_issue_ids)
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,

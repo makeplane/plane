@@ -82,7 +82,7 @@ export const EstimatePointCreate = observer(function EstimatePointCreate(props: 
 
       const currentEstimatePointValues = estimatePoints
         .map((point) => point?.value || undefined)
-        .filter((value) => value != undefined) as string[];
+        .filter((value) => value != undefined);
       const isRepeated =
         (estimateType && isEstimatePointValuesRepeated(currentEstimatePointValues, estimateType, estimateInputValue)) ||
         false;

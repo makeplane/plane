@@ -1,5 +1,3 @@
-"use client";
-
 import type { FC } from "react";
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router";
@@ -22,7 +20,7 @@ type Props = {
   onPublishModal: () => void;
 };
 
-export const ProjectActionsMenu: FC<Props> = ({
+export function ProjectActionsMenu({
   workspaceSlug,
   project,
   isAdmin,
@@ -30,7 +28,7 @@ export const ProjectActionsMenu: FC<Props> = ({
   onCopyText,
   onLeaveProject,
   onPublishModal,
-}) => {
+}: Props) {
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
   // translation
@@ -112,4 +110,4 @@ export const ProjectActionsMenu: FC<Props> = ({
       )}
     </CustomMenu>
   );
-};
+}

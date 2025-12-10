@@ -22,10 +22,7 @@ export const ProjectIssuesMobileHeader = observer(function ProjectIssuesMobileHe
   // i18n
   const { t } = useTranslation();
   const [analyticsModal, setAnalyticsModal] = useState(false);
-  const { workspaceSlug, projectId } = useParams() as {
-    workspaceSlug: string;
-    projectId: string;
-  };
+  const { workspaceSlug, projectId } = useParams();
   const { currentProjectDetails } = useProject();
 
   // store hooks

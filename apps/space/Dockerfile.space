@@ -13,7 +13,7 @@ RUN corepack enable pnpm
 
 FROM base AS builder
 
-RUN pnpm add -g turbo@2.6.1
+RUN pnpm add -g turbo@2.6.3
 
 COPY . .
 

@@ -10,6 +10,7 @@ import promisePlugin from "eslint-plugin-promise";
 import reactPlugin from "eslint-plugin-react";
 import reactHooksPlugin from "eslint-plugin-react-hooks";
 import reactRefreshPlugin from "eslint-plugin-react-refresh";
+import turboPlugin from "eslint-plugin-turbo";
 import vitestPlugin from "@vitest/eslint-plugin";
 // import storybookPlugin from "eslint-plugin-storybook";
 
@@ -42,6 +43,7 @@ export default defineConfig([
   jsxA11yPlugin.flatConfigs.recommended,
   reactRefreshPlugin.configs.recommended,
   reactRefreshPlugin.configs.vite,
+  turboPlugin.configs["flat/recommended"],
   tseslint.configs.recommendedTypeChecked,
   vitestPlugin.configs.recommended,
   // TODO: enable storybook linting once issues are resolved
@@ -69,6 +71,7 @@ export default defineConfig([
       "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/no-floating-promises": "warn",
       "@typescript-eslint/no-for-in-array": "warn",
+      "@typescript-eslint/no-import-type-side-effects": "error",
       "@typescript-eslint/no-misused-promises": "warn",
       "@typescript-eslint/no-redundant-type-constituents": "warn",
       "@typescript-eslint/no-unnecessary-type-assertion": "warn",
@@ -79,13 +82,25 @@ export default defineConfig([
       "@typescript-eslint/no-unsafe-member-access": "warn",
       "@typescript-eslint/no-unsafe-return": "warn",
       "@typescript-eslint/no-unused-expressions": "warn",
-      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          args: "all",
+          argsIgnorePattern: "^_",
+          caughtErrors: "all",
+          caughtErrorsIgnorePattern: "^_",
+          destructuredArrayIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          ignoreRestSiblings: true,
+        },
+      ],
       "@typescript-eslint/only-throw-error": "warn",
       "@typescript-eslint/prefer-promise-reject-errors": "warn",
       "@typescript-eslint/require-await": "warn",
       "@typescript-eslint/restrict-plus-operands": "warn",
       "@typescript-eslint/restrict-template-expressions": "warn",
       "@typescript-eslint/unbound-method": "warn",
+      "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
       "jsdoc/require-jsdoc": "off",
       "jsx-a11y/alt-text": "warn",
       "jsx-a11y/anchor-is-valid": "warn",

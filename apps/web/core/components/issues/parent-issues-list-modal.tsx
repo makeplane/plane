@@ -71,7 +71,7 @@ export function ParentIssuesListModal({
     setIsLoading(true);
 
     projectService
-      .projectIssuesSearch(workspaceSlug as string, projectId as string, {
+      .projectIssuesSearch(workspaceSlug, projectId, {
         search: debouncedSearchTerm,
         parent: searchEpic ? undefined : true,
         issue_id: issueId,

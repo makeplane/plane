@@ -45,7 +45,7 @@ export const WebhookSecretKey = observer(function WebhookSecretKey(props: Props)
       .then(() =>
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: `${t("success")!}`,
+          title: `${t("success")}`,
           message: t("workspace_settings.settings.webhooks.toasts.secret_key_copied.message"),
         })
       )
@@ -67,7 +67,7 @@ export const WebhookSecretKey = observer(function WebhookSecretKey(props: Props)
       .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: `${t("success")!}`,
+          title: `${t("success")}`,
           message: "New key regenerated successfully.",
         });
 

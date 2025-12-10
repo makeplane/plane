@@ -95,12 +95,7 @@ export function Tooltip({
         </div>
       }
       position={position}
-      renderTarget={({
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        isOpen: isTooltipOpen,
-        ref: eleReference,
-        ...tooltipProps
-      }) =>
+      renderTarget={({ isOpen: isTooltipOpen, ref: eleReference, ...tooltipProps }) =>
         React.cloneElement(children, {
           ref: eleReference,
           ...tooltipProps,

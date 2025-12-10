@@ -186,7 +186,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
 
     if (project.identifier !== formData.identifier)
       await projectService
-        .checkProjectIdentifierAvailability(workspaceSlug as string, payload.identifier ?? "")
+        .checkProjectIdentifierAvailability(workspaceSlug, payload.identifier ?? "")
         .then(async (res) => {
           if (res.exists) setError("identifier", { message: t("common.identifier_already_exists") });
           else await handleUpdateChange(payload);
@@ -339,7 +339,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                     message: t("project_id_min_char"),
                   },
                   maxLength: {
-                    value: 5,
+                    value: 10,
                     message: t("project_id_max_char"),
                   },
                 }}
@@ -360,7 +360,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               />
               <Tooltip
                 isMobile={isMobile}
-                tooltipContent="Helps you identify work items in the project uniquely. Max 5 characters."
+                tooltipContent={t("project_id_tooltip_content")}
                 className="text-sm"
                 position="right-start"
               >

@@ -52,7 +52,7 @@ export const RelationActionButton = observer(function RelationActionButton(props
           <CustomMenu.MenuItem
             key={index}
             onClick={() => {
-              handleOnClick(item.key as TIssueRelationTypes);
+              handleOnClick(item.key);
             }}
           >
             <div className="flex items-center gap-2">

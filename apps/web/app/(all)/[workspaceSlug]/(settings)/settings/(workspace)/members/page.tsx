@@ -28,10 +28,10 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { BillingActionsButton } from "@/plane-web/components/workspace/billing/billing-actions-button";
-import { SendWorkspaceInvitationModal } from "@/plane-web/components/workspace/members/invite-modal";
+import { SendWorkspaceInvitationModal, MembersActivityButton } from "@/plane-web/components/workspace/members";
 import type { Route } from "./+types/page";
 
-function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
+const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
   // states
   const [inviteModal, setInviteModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -70,23 +70,27 @@ function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
         title: "Success!",
         message: t("workspace_settings.settings.members.invitations_sent_successfully"),
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
+    } catch (error: unknown) {
+      let message = undefined;
+      if (error instanceof Error) {
+        const err = error as Error & { error?: string };
+        message = err.error;
+      }
       captureError({
         eventName: MEMBER_TRACKER_EVENTS.invite,
         payload: {
           emails: data.emails.map((email) => email.email),
         },
-        error: err,
+        error: error as Error,
       });
 
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
-        message: `${err.error ?? t("something_went_wrong_please_try_again")}`,
+        message: `${message ?? t("something_went_wrong_please_try_again")}`,
       });
 
-      throw err;
+      throw error;
     }
   };
 
@@ -137,6 +141,7 @@ function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
                 className="w-full max-w-[234px] border-none bg-transparent text-sm outline-none placeholder:text-custom-text-400"
                 placeholder={`${t("search")}...`}
                 value={searchQuery}
+                // eslint-disable-next-line jsx-a11y/no-autofocus
                 autoFocus
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -146,6 +151,7 @@ function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
               handleUpdate={handleRoleFilterUpdate}
               memberType="workspace"
             />
+            <MembersActivityButton workspaceSlug={workspaceSlug} />
             {canPerformWorkspaceAdminActions && (
               <Button
                 variant="primary"
@@ -163,6 +169,6 @@ function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
       </section>
     </SettingsContentWrapper>
   );
-}
+});
 
-export default observer(WorkspaceMembersSettingsPage);
+export default WorkspaceMembersSettingsPage;
