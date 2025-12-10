@@ -1,85 +1,95 @@
 {
-  "$schema": "https://turbo.build/schema.json",
+  "$schema": "https://turborepo.com/schema.json",
+  "globalDependencies": [".npmrc"],
   "globalEnv": [
+    "APP_VERSION",
+    "DEV",
+    "LOG_LEVEL",
     "NODE_ENV",
-    "VITE_API_BASE_URL",
-    "VITE_ADMIN_BASE_URL",
+    "SENTRY_DSN",
+    "SENTRY_ENVIRONMENT",
+    "SENTRY_TRACES_SAMPLE_RATE",
     "VITE_ADMIN_BASE_PATH",
-    "VITE_SPACE_BASE_URL",
-    "VITE_SPACE_BASE_PATH",
-    "VITE_WEB_BASE_URL",
-    "VITE_LIVE_BASE_URL",
-    "VITE_LIVE_BASE_PATH",
+    "VITE_ADMIN_BASE_URL",
+    "VITE_API_BASE_PATH",
+    "VITE_API_BASE_URL",
+    "VITE_APP_VERSION",
     "VITE_ENABLE_SESSION_RECORDER",
-    "VITE_SESSION_RECORDER_KEY",
-    "VITE_POSTHOG_KEY",
-    "VITE_POSTHOG_HOST",
+    "VITE_LIVE_BASE_PATH",
+    "VITE_LIVE_BASE_URL",
     "VITE_POSTHOG_DEBUG",
-    "VITE_SUPPORT_EMAIL",
-    "ENABLE_EXPERIMENTAL_COREPACK",
+    "VITE_POSTHOG_HOST",
+    "VITE_POSTHOG_KEY",
     "VITE_SENTRY_DSN",
     "VITE_SENTRY_ENVIRONMENT",
+    "VITE_SENTRY_PROFILES_SAMPLE_RATE",
+    "VITE_SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE",
+    "VITE_SENTRY_REPLAYS_SESSION_SAMPLE_RATE",
     "VITE_SENTRY_SEND_DEFAULT_PII",
     "VITE_SENTRY_TRACES_SAMPLE_RATE",
-    "VITE_SENTRY_PROFILES_SAMPLE_RATE",
-    "VITE_SENTRY_REPLAYS_SESSION_SAMPLE_RATE",
-    "VITE_SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE",
-    "VITE_APP_VERSION"
+    "VITE_SESSION_RECORDER_KEY",
+    "VITE_SPACE_BASE_PATH",
+    "VITE_SPACE_BASE_URL",
+    "VITE_SUPPORT_EMAIL",
+    "VITE_WEB_BASE_PATH",
+    "VITE_WEB_BASE_URL",
+    "VITE_WEBSITE_URL"
   ],
-  "globalDependencies": ["pnpm-lock.yaml", "pnpm-workspace.yaml", ".npmrc"],
+  "remoteCache": {
+    "enabled": false
+  },
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", "build/**"]
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/**", "build/**", ".react-router/**"]
     },
     "build-storybook": {
       "dependsOn": ["^build"],
       "outputs": ["storybook-static/**"]
     },
-    "dev": {
+    "check": {
+      "dependsOn": ["check:format", "check:lint", "check:types"]
+    },
+    "check:format": {
+      "inputs": ["$TURBO_DEFAULT$"],
+      "outputs": []
+    },
+    "check:lint": {
       "dependsOn": ["^build"],
-      "cache": false,
-      "persistent": true
+      "inputs": ["$TURBO_DEFAULT$", "!**/*.md"],
+      "outputs": []
     },
     "check:types": {
       "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "!**/*.md"],
+      "outputs": []
+    },
+    "clean": {
       "cache": false
     },
-    "lint": {
+    "dev": {
       "cache": false,
-      "inputs": ["**/*.{js,ts,tsx,mjs,jsx}", "!**/node_modules/**", "!**/build/**", "!**/dist/**"]
+      "dependsOn": ["^build"],
+      "persistent": true
     },
-    "check:lint": {
-      "dependsOn": ["lint"],
+    "fix": {
       "cache": false,
-      "inputs": ["**/*.{js,ts,tsx,mjs,jsx}", "!**/build/**", "!**/dist/**"]
+      "dependsOn": ["fix:format", "fix:lint"]
     },
-    "check:format": {
-      "cache": false
-    },
-    "check": {
-      "dependsOn": ["check:format", "check:lint", "check:types"],
+    "fix:format": {
       "cache": false
     },
     "fix:lint": {
       "cache": false
     },
-    "fix:format": {
-      "cache": false
-    },
-    "fix": {
-      "dependsOn": ["fix:format", "fix:lint"],
-      "cache": false
+    "start": {
+      "cache": false,
+      "persistent": true
     },
     "test": {
       "dependsOn": ["^build"],
       "outputs": []
-    },
-    "start": {
-      "cache": false
-    },
-    "clean": {
-      "cache": false
     }
   }
 }
