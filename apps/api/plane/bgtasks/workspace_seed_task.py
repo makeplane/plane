@@ -107,56 +107,60 @@ def create_project_and_member(workspace: Workspace, bot_user: User) -> Dict[int,
         )
 
         # Create project members
-        ProjectMember.objects.bulk_create([
-            ProjectMember(
-                project=project,
-                member_id=workspace_member["member_id"],
-                role=workspace_member["role"],
-                workspace_id=workspace.id,
-                created_by_id=bot_user.id,
-            )
-            for workspace_member in workspace_members
-        ])
+        ProjectMember.objects.bulk_create(
+            [
+                ProjectMember(
+                    project=project,
+                    member_id=workspace_member["member_id"],
+                    role=workspace_member["role"],
+                    workspace_id=workspace.id,
+                    created_by_id=bot_user.id,
+                )
+                for workspace_member in workspace_members
+            ]
+        )
 
         # Create issue user properties
-        IssueUserProperty.objects.bulk_create([
-            IssueUserProperty(
-                project=project,
-                user_id=workspace_member["member_id"],
-                workspace_id=workspace.id,
-                display_filters={
-                    "layout": "list",
-                    "calendar": {"layout": "month", "show_weekends": False},
-                    "group_by": "state",
-                    "order_by": "sort_order",
-                    "sub_issue": True,
-                    "sub_group_by": None,
-                    "show_empty_groups": True,
-                },
-                display_properties={
-                    "key": True,
-                    "link": True,
-                    "cycle": False,
-                    "state": True,
-                    "labels": False,
-                    "modules": False,
-                    "assignee": True,
-                    "due_date": False,
-                    "estimate": True,
-                    "priority": True,
-                    "created_on": True,
-                    "issue_type": True,
-                    "start_date": False,
-                    "updated_on": True,
-                    "customer_count": True,
-                    "sub_issue_count": False,
-                    "attachment_count": False,
-                    "customer_request_count": True,
-                },
-                created_by_id=bot_user.id,
-            )
-            for workspace_member in workspace_members
-        ])
+        IssueUserProperty.objects.bulk_create(
+            [
+                IssueUserProperty(
+                    project=project,
+                    user_id=workspace_member["member_id"],
+                    workspace_id=workspace.id,
+                    display_filters={
+                        "layout": "list",
+                        "calendar": {"layout": "month", "show_weekends": False},
+                        "group_by": "state",
+                        "order_by": "sort_order",
+                        "sub_issue": True,
+                        "sub_group_by": None,
+                        "show_empty_groups": True,
+                    },
+                    display_properties={
+                        "key": True,
+                        "link": True,
+                        "cycle": False,
+                        "state": True,
+                        "labels": False,
+                        "modules": False,
+                        "assignee": True,
+                        "due_date": False,
+                        "estimate": True,
+                        "priority": True,
+                        "created_on": True,
+                        "issue_type": True,
+                        "start_date": False,
+                        "updated_on": True,
+                        "customer_count": True,
+                        "sub_issue_count": False,
+                        "attachment_count": False,
+                        "customer_request_count": True,
+                    },
+                    created_by_id=bot_user.id,
+                )
+                for workspace_member in workspace_members
+            ]
+        )
         # update map
         projects_map[project_id] = project.id
         logger.info(f"Task: workspace_seed_task -> Project {project_id} created")
