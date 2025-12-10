@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
-import { Ban, CirclePlus, Search, X } from "lucide-react";
+import { Ban, Calendar, Search, X } from "lucide-react";
 
 import { ComboDropDown } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -33,7 +33,7 @@ export const YearRangeDropdown: React.FC<Props> = observer((props) => {
     placeholder = "Season",
     buttonVariant,
     renderByDefault = true,
-    icon = <CirclePlus className="h-3 w-3 flex-shrink-0" />,
+    icon = <Calendar className="h-3 w-3 flex-shrink-0" />,
     hideIcon = false,
     showTooltip = false,
     disabled = false,
@@ -60,7 +60,7 @@ export const YearRangeDropdown: React.FC<Props> = observer((props) => {
     setIsOpen,
   });
 
-  // Generate Year Ranges
+  /* Generate Year Ranges */
   const generateYearSessions = (startYear: number): string[] => {
     const currentYear = new Date().getFullYear();
     const sessions: string[] = [];
@@ -69,12 +69,14 @@ export const YearRangeDropdown: React.FC<Props> = observer((props) => {
     }
     return sessions;
   };
+
   const yearRanges = generateYearSessions(startYear);
   const filteredRanges = yearRanges.filter((y) =>
     y.toLowerCase().includes(search.toLowerCase())
   );
 
   const handleSelect = (range: string | null) => {
+    console.log("[YearRangeDropdown] selected:", range);
     onChange?.(range);
     setSearch("");
     handleClose();
@@ -83,6 +85,7 @@ export const YearRangeDropdown: React.FC<Props> = observer((props) => {
 
   const displayValue = value ?? placeholder;
 
+  /* Button */
   const comboButton = (
     <button
       type="button"
@@ -91,7 +94,10 @@ export const YearRangeDropdown: React.FC<Props> = observer((props) => {
       disabled={disabled}
       className={cn(
         "clickable block h-full max-w-full outline-none",
-        { "cursor-not-allowed text-custom-text-200": disabled, "cursor-pointer": !disabled },
+        {
+          "cursor-not-allowed text-custom-text-200": disabled,
+          "cursor-pointer": !disabled,
+        },
         buttonContainerClassName
       )}
     >
@@ -107,15 +113,15 @@ export const YearRangeDropdown: React.FC<Props> = observer((props) => {
         {!hideIcon && icon}
 
         {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-          <span className="flex-grow truncate text-xs">{displayValue}</span>
+          <span className="flex-grow truncate">{displayValue}</span>
         )}
 
         {!!value && !disabled && (
           <X
             className={cn("h-2.5 w-2.5 flex-shrink-0", clearIconClassName)}
             onClick={(e) => {
-              e.stopPropagation();
               e.preventDefault();
+              e.stopPropagation();
               onChange?.(null);
             }}
           />
@@ -159,7 +165,11 @@ export const YearRangeDropdown: React.FC<Props> = observer((props) => {
 
             {/* None */}
             <div
-              onClick={() => handleSelect(null)}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleSelect(null);
+              }}
               className="flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-custom-background-80"
             >
               <Ban className="w-3.5 h-3.5 text-gray-400" />
@@ -169,7 +179,11 @@ export const YearRangeDropdown: React.FC<Props> = observer((props) => {
             {filteredRanges.map((range) => (
               <div
                 key={range}
-                onClick={() => handleSelect(range)}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleSelect(range);
+                }}
                 className="px-2 py-1 cursor-pointer hover:bg-custom-background-80"
               >
                 <span className="text-xs">{range}</span>

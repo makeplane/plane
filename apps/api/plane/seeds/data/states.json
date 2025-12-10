@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "name": "Backlog",
+    "name": "Scheduled Streaming Event",
     "color": "#A3A3A3",
     "sequence": 15000,
     "group": "backlog",
@@ -10,7 +10,7 @@
   },
   {
     "id": 2,
-    "name": "Todo",
+    "name": "Past Event",
     "color": "#3A3A3A",
     "sequence": 25000,
     "group": "unstarted",

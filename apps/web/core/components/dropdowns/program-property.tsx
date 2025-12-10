@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 import { usePopper } from "react-popper";
-import { Ban, CirclePlus, Search, X } from "lucide-react";
+import { Ban, Search, Users, X } from "lucide-react";
 
 import { ComboDropDown } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -32,7 +32,7 @@ export const ProgramDropdown: React.FC<Props> = observer((props) => {
     placeholder = "Program",
     buttonVariant,
     renderByDefault = true,
-    icon = <CirclePlus className="h-3 w-3 flex-shrink-0" />,
+    icon = <Users className="h-3 w-3 flex-shrink-0" />,
     hideIcon = false,
     showTooltip = false,
     disabled = false,
@@ -86,6 +86,7 @@ export const ProgramDropdown: React.FC<Props> = observer((props) => {
   );
 
   const handleSelect = (program: string | null) => {
+    console.log("[ProgramDropdown] selected:", program);
     onChange?.(program);
     setSearch("");
     handleClose();
@@ -103,7 +104,10 @@ export const ProgramDropdown: React.FC<Props> = observer((props) => {
       disabled={disabled}
       className={cn(
         "clickable block h-full max-w-full outline-none",
-        { "cursor-not-allowed text-custom-text-200": disabled, "cursor-pointer": !disabled },
+        {
+          "cursor-not-allowed text-custom-text-200": disabled,
+          "cursor-pointer": !disabled,
+        },
         buttonContainerClassName
       )}
     >
@@ -119,15 +123,15 @@ export const ProgramDropdown: React.FC<Props> = observer((props) => {
         {!hideIcon && icon}
 
         {BUTTON_VARIANTS_WITH_TEXT.includes(buttonVariant) && (
-          <span className="flex-grow truncate text-xs">{displayValue}</span>
+          <span className="flex-grow truncate ">{displayValue}</span>
         )}
 
         {!!value && !disabled && (
           <X
             className={cn("h-2.5 w-2.5 flex-shrink-0", clearIconClassName)}
             onClick={(e) => {
-              e.stopPropagation();
               e.preventDefault();
+              e.stopPropagation();
               onChange?.(null);
             }}
           />
@@ -171,7 +175,11 @@ export const ProgramDropdown: React.FC<Props> = observer((props) => {
 
             {/* None */}
             <div
-              onClick={() => handleSelect(null)}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleSelect(null);
+              }}
               className="flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-custom-background-80"
             >
               <Ban className="w-3.5 h-3.5 text-gray-400" />
@@ -186,7 +194,11 @@ export const ProgramDropdown: React.FC<Props> = observer((props) => {
               filteredPrograms.map((program) => (
                 <div
                   key={program}
-                  onClick={() => handleSelect(program)}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleSelect(program);
+                  }}
                   className="px-2 py-1 cursor-pointer hover:bg-custom-background-80"
                 >
                   <span className="text-xs">{program}</span>

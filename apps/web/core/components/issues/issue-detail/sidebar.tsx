@@ -3,15 +3,16 @@
 import React from "react";
 import { observer } from "mobx-react";
 import {
+  Calendar,
   CalendarCheck2,
   CalendarClock,
   Clock,
-  LayoutPanelTop,
-  Signal,
+  SignalIcon,
   Tag,
   Triangle,
   UserCircle2,
   Users,
+  Volleyball,
 } from "lucide-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
@@ -19,15 +20,20 @@ import { useTranslation } from "@plane/i18n";
 import { CycleIcon, DoubleCircleIcon, ModuleIcon } from "@plane/propel/icons";
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
+import { CategoryDropdown } from "@/components/dropdowns/category-property";
 import { DateDropdown } from "@/components/dropdowns/date";
 import { EstimateDropdown } from "@/components/dropdowns/estimate";
+import LevelDropdown from "@/components/dropdowns/level-property";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
-import { PriorityDropdown } from "@/components/dropdowns/priority";
+// import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { ProgramDropdown } from "@/components/dropdowns/program-property";
+import SportDropdown from "@/components/dropdowns/sport-property";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 
 import { TimeDropdown } from "@/components/dropdowns/time-picker";
 // hooks
+import { YearRangeDropdown } from "@/components/dropdowns/year-property";
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
@@ -36,10 +42,10 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 // plane web components
 // components
 import { WorkItemAdditionalSidebarProperties } from "@/plane-web/components/issues/issue-details/additional-properties";
-import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
+// import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
 import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
 import { IssueCycleSelect } from "./cycle-select";
-import { IssueLabel } from "./label";
+// import { IssueLabel } from "./label";
 import { IssueModuleSelect } from "./module-select";
 import type { TIssueOperations } from "./root";
 
@@ -82,7 +88,8 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
     <>
       <div className="flex items-center h-full w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
         <div className="h-full w-full overflow-y-auto px-6">
-          <h5 className="mt-6 text-sm font-medium">{t("common.properties")}</h5>
+          {/* <h5 className="mt-6 text-sm font-medium">{t("common.properties")}</h5> */}
+          <h5 className="mt-6 text-sm font-medium">Event Details</h5>
           {/* TODO: render properties using a common component */}
           <div className={`mb-2 mt-3 space-y-2.5 ${!isEditable ? "opacity-60" : ""}`}>
             <div className="flex h-8 items-center gap-2">
@@ -102,6 +109,44 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 dropdownArrow
                 dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
               />
+            </div>
+
+            {/* Season Field */}
+
+            <div className="flex h-8 items-center gap-2">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+                <Calendar className="h-4 w-4 flex-shrink-0" />
+                <span>{t("year_field")}</span>
+              </div>
+              <YearRangeDropdown
+               value={issue?.year}
+               onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { year: val })}
+               disabled={!isEditable}
+               placeholder={t("add_year")}
+                buttonVariant="transparent-with-text"
+                className="group w-3/5 flex-grow"
+                buttonContainerClassName="w-full text-left"
+                buttonClassName="text-sm"
+                hideIcon
+                clearIconClassName="h-3 w-3 hidden group-hover:inline"/>
+            </div>
+
+            {/* category field */}
+            <div className="flex h-8 items-center gap-2">
+              <div className=" flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+                <Tag className="h-4 w-4 flex-shrink-0" />
+                <span>{t("category_field")}</span>
+              </div>
+              <CategoryDropdown value={issue?.category} onChange={(val) => {issueOperations.update(workspaceSlug, projectId, issueId, { category: val })}}
+                disabled={!isEditable}
+                 placeholder={t("add_category")}
+                buttonVariant="transparent-with-text"
+                className="group w-3/5 flex-grow"
+                buttonContainerClassName="w-full text-left"
+                buttonClassName="text-sm"
+                hideIcon
+                clearIconClassName="h-3 w-3 hidden group-hover:inline"
+                 />
             </div>
 
             <div className="flex h-8 items-center gap-2">
@@ -128,7 +173,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               />
             </div>
 
-            <div className="flex h-8 items-center gap-2">
+            {/* <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <Signal className="h-4 w-4 flex-shrink-0" />
                 <span>{t("common.priority")}</span>
@@ -142,7 +187,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 buttonContainerClassName="w-full text-left"
                 buttonClassName="w-min h-auto whitespace-nowrap"
               />
-            </div>
+            </div> */}
 
             {createdByDetails && (
               <div className="flex h-8 items-center gap-2">
@@ -196,6 +241,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                     start_time: val,
                   });
                 }}
+                disabled={!isEditable}
                 placeholder={t("add_start_time")}
                 buttonVariant="transparent-with-text"
                 className="w-3/4 flex-grow group"
@@ -233,6 +279,63 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 // TODO: add this logic
                 // showPlaceholderIcon
               />
+            </div>
+
+           {/* sport field */}
+            <div className="flex h-8 items-center gap-2">
+              <div className="flex w-2/5 flex-shrink-0 items-center gapa-1 text-sm text-custom-text-300">
+                <Volleyball className="h-4 w-4 flex-shrink-0" />
+                <span>{t("sport_field")}</span>
+              </div>
+              <SportDropdown value={issue.sport} onChange={(val: string | null) => {
+                issueOperations.update(workspaceSlug, projectId, issueId, {sport: val})
+              }}
+                disabled={!isEditable}
+                placeholder={t("add_sport")}
+                hideIcon
+                buttonVariant="transparent-with-text"
+                className="group w-3/5 flex-grow"
+                buttonContainerClassName="w-full text-left"
+                buttonClassName={`text-sm ${issue?.sport ? "" : "text-custom-text-400"}`}
+                clearIconClassName="h-3 w-3 hidden group-hover:inline" />
+            </div>
+
+            {/* program field */}
+            <div className="flex h-8 items-center gap-2">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+                <Users className="h-4 w-4 flex-shrink-0" />
+                <span>{t("program_field")}</span>
+              </div>
+              <ProgramDropdown value={issue.program} onChange={(val: string | null) => {
+                issueOperations.update(workspaceSlug, projectId, issueId, {program: val})
+              }}
+              disabled={!isEditable}
+              placeholder={t("add_program")}
+              hideIcon
+              buttonVariant="transparent-with-text"
+              className="group w-3/5 flex-grow"
+              buttonContainerClassName="w-full text-left"
+              buttonClassName="text-sm"
+              clearIconClassName="h-3 w-3 hidden group-hover:inline" />
+            </div>
+
+            {/* level field */}
+            <div className="flex h-8 items-center gap-2">
+              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
+                <SignalIcon className="h-4 w-4 flex-shrink-0" />
+                <span>{t("level_field")}</span>
+              </div>
+              <LevelDropdown value={issue.level} onChange={(val: string | null) => {
+                issueOperations.update(workspaceSlug, projectId, issueId, { level : val})
+              }}
+                disabled={!isEditable}
+                placeholder={t("add_level")}
+                hideIcon
+                buttonVariant="transparent-with-text"
+                className="group w-3/5 flex-grow"
+                buttonContainerClassName="w-full text-left"
+                buttonClassName="text-sm"
+                clearIconClassName="h-3 w-3 hidden group-hover:inline" />
             </div>
 
             {projectId && areEstimateEnabledByProjectId(projectId) && (
@@ -294,7 +397,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               </div>
             )}
 
-            <div className="flex h-8 items-center gap-2">
+            {/* <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-sm text-custom-text-300">
                 <LayoutPanelTop className="h-4 w-4 flex-shrink-0" />
                 <span>{t("common.parent")}</span>
@@ -307,9 +410,9 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 issueOperations={issueOperations}
                 disabled={!isEditable}
               />
-            </div>
+            </div> */}
 
-            <div className="flex min-h-8 gap-2">
+            {/* <div className="flex min-h-8 gap-2">
               <div className="flex w-2/5 flex-shrink-0 gap-1 pt-2 text-sm text-custom-text-300">
                 <Tag className="h-4 w-4 flex-shrink-0" />
                 <span>{t("common.labels")}</span>
@@ -322,7 +425,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   disabled={!isEditable}
                 />
               </div>
-            </div>
+            </div> */}
 
             <IssueWorklogProperty
               workspaceSlug={workspaceSlug}
