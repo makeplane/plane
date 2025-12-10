@@ -36,9 +36,9 @@ export function CalloutBlockColorSelector(props: Props) {
             e.stopPropagation();
           }}
           className={cn(
-            "flex items-center gap-1 h-full whitespace-nowrap py-1 px-2.5 text-13 font-medium text-tertiary hover:bg-white/10 active:bg-layer-1 rounded-sm transition-colors",
+            "flex items-center gap-1 h-full whitespace-nowrap py-1 px-2.5 text-13 font-medium text-tertiary hover:bg-layer-1-hover active:bg-layer-1-active rounded-sm transition-colors",
             {
-              "bg-white/10": isOpen,
+              "bg-layer-1": isOpen,
             }
           )}
           disabled={disabled}
@@ -62,7 +62,7 @@ export function CalloutBlockColorSelector(props: Props) {
               ))}
               <button
                 type="button"
-                className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-tertiary border-[0.5px] border-strong-1 hover:bg-layer-1 transition-colors"
+                className="flex-shrink-0 size-6 grid place-items-center rounded-sm text-tertiary border-[0.5px] border-strong-1 hover:bg-layer-1-hover transition-colors"
                 onClick={() => handleColorSelect(null)}
               >
                 <Ban className="size-4" />
