@@ -189,3 +189,15 @@ body {
     -webkit-background-clip: text;
   }
 }
+
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    @apply text-placeholder;
+  }
+}
