@@ -14,8 +14,9 @@ import { Input } from "@plane/ui";
 import { cn } from "@plane/utils";
 import { captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserSettings } from "@/hooks/store/user";
+import { useUser, useUserPermissions, useUserSettings } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { getUserRoleString, trackWorkspaceDeleted } from "@/plane-web/helpers/event-tracker-v2.helper";
 
 type Props = {
   data: IWorkspace | null;
@@ -36,6 +37,9 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
   const { t } = useTranslation();
   const { getWorkspaceRedirectionUrl } = useWorkspace();
   const { fetchCurrentUserSettings } = useUserSettings();
+  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
+  const { data: currentUser } = useUser();
+
   // form info
   const {
     control,
@@ -64,10 +68,12 @@ export const DeleteWorkspaceForm = observer(function DeleteWorkspaceForm(props: 
         await fetchCurrentUserSettings();
         handleClose();
         router.push(getWorkspaceRedirectionUrl());
-        captureSuccess({
-          eventName: WORKSPACE_TRACKER_EVENTS.delete,
-          payload: { slug: data.slug },
-        });
+
+        if (currentUser && data) {
+          const role = getWorkspaceRoleByWorkspaceSlug(data.slug);
+          trackWorkspaceDeleted(data, currentUser, getUserRoleString(role));
+        }
+
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("workspace_settings.settings.general.delete_modal.success_title"),

@@ -29,6 +29,8 @@ import { FileService } from "@/services/file.service";
 import { InboxIssueDescription } from "./issue-description";
 import { InboxIssueProperties } from "./issue-properties";
 import { InboxIssueTitle } from "./issue-title";
+import { getUserRoleString, trackWorkItemCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 
 const fileService = new FileService();
 
@@ -69,6 +71,9 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
   const { isMobile } = usePlatformOS();
   const { getProjectById } = useProject();
+  const { currentWorkspace } = useWorkspace();
+  const { data: currentUser } = useUser();
+  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   const { t } = useTranslation();
   // states
   const [createMore, setCreateMore] = useState<boolean>(false);
@@ -170,12 +175,16 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
           descriptionEditorRef?.current?.clearEditor();
           setFormData(defaultIssueData);
         }
-        captureSuccess({
-          eventName: WORK_ITEM_TRACKER_EVENTS.create,
-          payload: {
-            id: res?.issue?.id,
-          },
-        });
+        if (currentWorkspace && currentUser) {
+          const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
+          trackWorkItemCreated(
+            { id: res?.issue?.id ?? "", created_at: new Date().toISOString() },
+            { id: projectId },
+            currentWorkspace,
+            currentUser,
+            getUserRoleString(role)
+          );
+        }
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: `Success!`,

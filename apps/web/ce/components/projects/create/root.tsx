@@ -20,6 +20,9 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import type { TProject } from "@/plane-web/types/projects";
 import ProjectAttributes from "./attributes";
 import { getProjectFormValues } from "./utils";
+import { getUserRoleString, trackProjectCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 export type TCreateProjectFormProps = {
   setToFavorite?: boolean;
@@ -36,6 +39,9 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
   // store
   const { t } = useTranslation();
   const { addProjectToFavorites, createProject, updateProject } = useProject();
+  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
+  const { data: currentUser } = useUser();
+  const { currentWorkspace } = useWorkspace();
   // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
   // form info
@@ -98,12 +104,15 @@ export const CreateProjectForm = observer(function CreateProjectForm(props: TCre
           await updateCoverImageStatus(res.id, coverImage);
           await updateProject(workspaceSlug.toString(), res.id, { cover_image_url: coverImage });
         }
-        captureSuccess({
-          eventName: PROJECT_TRACKER_EVENTS.create,
-          payload: {
-            identifier: formData.identifier,
-          },
-        });
+        if (currentUser && currentWorkspace && res) {
+          const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
+          trackProjectCreated(
+            { id: res.id, created_at: res.created_at instanceof Date ? res.created_at : new Date() },
+            currentWorkspace,
+            currentUser,
+            getUserRoleString(role)
+          );
+        }
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("success"),

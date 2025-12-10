@@ -28,6 +28,9 @@ import { DraftIssueLayout } from "./draft-issue-layout";
 import { IssueFormRoot } from "./form";
 import type { IssueFormProps } from "./form";
 import type { IssuesModalProps } from "./modal";
+import { getUserRoleString, trackWorkItemCreated } from "@/plane-web/helpers/event-tracker-v2.helper";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 
 export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueModalBase(props: IssuesModalProps) {
   const {
@@ -72,6 +75,9 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
   const { fetchIssue } = useIssueDetail();
   const { allowedProjectIds, handleCreateUpdatePropertyValues, handleCreateSubWorkItem } = useIssueModal();
   const { getProjectByIdentifier } = useProject();
+  const { currentWorkspace } = useWorkspace();
+  const { data: currentUser } = useUser();
+  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   // current store details
   const { createIssue, updateIssue } = useIssuesActions(storeType);
   // derived values
@@ -240,10 +246,16 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
           />
         ),
       });
-      captureSuccess({
-        eventName: WORK_ITEM_TRACKER_EVENTS.create,
-        payload: { id: response.id },
-      });
+      if (currentWorkspace && currentUser && response) {
+        const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
+        trackWorkItemCreated(
+          { id: response.id, created_at: new Date().toISOString() },
+          { id: payload.project_id },
+          currentWorkspace,
+          currentUser,
+          getUserRoleString(role)
+        );
+      }
       if (!createMore) handleClose();
       if (createMore && issueTitleRef) issueTitleRef?.current?.focus();
       setDescription("<p></p>");
@@ -319,10 +331,17 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
         title: t("success"),
         message: t("issue_updated_successfully"),
       });
-      captureSuccess({
-        eventName: WORK_ITEM_TRACKER_EVENTS.update,
-        payload: { id: data.id },
-      });
+
+      if (currentWorkspace && currentUser) {
+        const role = getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug);
+        trackWorkItemCreated(
+          { id: data.id, created_at: new Date().toISOString() },
+          { id: payload.project_id },
+          currentWorkspace,
+          currentUser,
+          getUserRoleString(role)
+        );
+      }
       handleClose();
     } catch (error: any) {
       console.error(error);
