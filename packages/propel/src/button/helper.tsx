@@ -24,7 +24,7 @@ export interface IButtonStyling {
 }
 
 export const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-1 rounded-md transition-colors focus-visible:outline-none disabled:pointer-events-none",
+  "inline-flex items-center justify-center gap-1 rounded-md whitespace-nowrap transition-colors focus-visible:outline-none disabled:pointer-events-none",
   {
     variants: {
       variant: {
