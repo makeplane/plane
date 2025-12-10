@@ -1,17 +1,14 @@
 # Python imports
 import json
 
-import boto3
 
 # Django imports
-from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Exists, F, OuterRef, Prefetch, Q, Subquery
 from django.utils import timezone
 
 # Third Party imports
 from rest_framework import status
-from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 # Module imports
@@ -38,8 +35,6 @@ from plane.db.models import (
     Workspace,
     WorkspaceMember,
 )
-from plane.utils.cache import cache_response
-from plane.utils.exception_logger import log_exception
 from plane.utils.host import base_host
 
 
