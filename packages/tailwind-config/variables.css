@@ -157,6 +157,12 @@
   --color-red-1000: oklch(0.3967 0.1408 25.71);
   --color-red-1100: oklch(0.3493 0.1215 25.21);
 
+  /* Scrollbar colors */
+  --color-scrollbar-thumb: var(--color-alpha-black-200);
+  --color-scrollbar-thumb-surface-hover: var(--color-alpha-black-300);
+  --color-scrollbar-thumb-hover: var(--color-alpha-black-400);
+  --color-scrollbar-thumb-active: var(--color-alpha-black-500);
+
   /* --------- Extended colors ---------- */
   /* Purple colors */
   --extended-color-purple-25: oklch(0.981 0.0054 297.73);
@@ -568,6 +574,12 @@
       --color-red-1000: oklch(0.9365 0.032 17.74);
       --color-red-1100: oklch(0.9705 0.0129 17.38);
 
+      /* Scrollbar colors */
+      --color-scrollbar-thumb: var(--color-alpha-white-200);
+      --color-scrollbar-thumb-surface-hover: var(--color-alpha-white-300);
+      --color-scrollbar-thumb-hover: var(--color-alpha-white-400);
+      --color-scrollbar-thumb-active: var(--color-alpha-white-500);
+
       /* -------------------- Dark mode derived colors -------------------- */
       /* Background colors */
       --background-color-canvas: var(--color-neutral-black);
@@ -585,7 +597,7 @@
       --background-color-layer-3-hover: var(--color-alpha-white-100);
       --background-color-layer-3-active: var(--color-alpha-white-200);
       --background-color-layer-3-selected: var(--color-alpha-white-300);
-      --background-color-layer-transparent: var(--alpha-black-0);
+      --background-color-layer-transparent: var(--color-alpha-black-0);
       --background-color-layer-transparent-hover: var(--color-alpha-white-100);
       --background-color-layer-transparent-active: var(--color-alpha-white-200);
       --background-color-layer-transparent-selected: var(--color-alpha-white-300);
