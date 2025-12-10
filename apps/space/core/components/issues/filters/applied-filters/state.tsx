@@ -23,7 +23,7 @@ export const AppliedStateFilters = observer(function AppliedStateFilters(props: 
         if (!stateDetails) return null;
 
         return (
-          <div key={stateId} className="flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
+          <div key={stateId} className="flex items-center gap-1 rounded-sm bg-layer-3 p-1 text-11">
             <StateGroupIcon color={stateDetails.color} stateGroup={stateDetails.group} size={EIconSize.SM} />
             {stateDetails.name}
             <button
