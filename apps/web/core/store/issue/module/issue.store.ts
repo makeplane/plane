@@ -85,7 +85,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
    * @param projectId
    * @param id is the module Id
    */
-  fetchParentStats = (workspaceSlug: string, projectId?: string | undefined, id?: string | undefined) => {
+  fetchParentStats = (workspaceSlug: string, projectId?: string, id?: string) => {
     const moduleId = id ?? this.moduleId;
     projectId &&
       moduleId &&
@@ -98,7 +98,7 @@ export class ModuleIssues extends BaseIssuesStore implements IModuleIssues {
    * @param nextIssueState
    * @param id
    */
-  updateParentStats = (prevIssueState?: TIssue, nextIssueState?: TIssue, id?: string | undefined) => {
+  updateParentStats = (prevIssueState?: TIssue, nextIssueState?: TIssue, id?: string) => {
     try {
       // get distribution updates
       const distributionUpdates = getDistributionPathsPostUpdate(

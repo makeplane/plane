@@ -24,7 +24,7 @@ import type { IBaseIssueFilterStore, IIssueFilterHelperStore } from "../helpers/
 import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
 import type { IIssueRootStore } from "../root.store";
 
-type TWorkspaceFilters = TStaticViewTypes | string;
+type TWorkspaceFilters = TStaticViewTypes;
 
 export type TBaseFilterStore = IBaseIssueFilterStore & IIssueFilterHelperStore;
 
@@ -132,7 +132,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
 
       if (STATIC_VIEW_TYPES.includes(viewId)) {
         const currentUserId = this.rootIssueStore.currentUserId;
-        const paramForStaticView = this.getFilterConditionBasedOnViews(currentUserId, viewId as TStaticViewTypes);
+        const paramForStaticView = this.getFilterConditionBasedOnViews(currentUserId, viewId);
         if (paramForStaticView) {
           filterParams = { ...filterParams, ...paramForStaticView };
         }
@@ -212,7 +212,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       if (!issueFilters) return;
 
       const _filters = {
-        richFilters: issueFilters.richFilters as TWorkItemFilterExpression,
+        richFilters: issueFilters.richFilters,
         displayFilters: issueFilters.displayFilters as IIssueDisplayFilterOptions,
         displayProperties: issueFilters.displayProperties as IIssueDisplayProperties,
         kanbanFilters: issueFilters.kanbanFilters as TIssueKanbanFilters,

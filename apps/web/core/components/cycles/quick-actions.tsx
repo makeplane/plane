@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 
-// icons
-import { ArchiveRestoreIcon, ExternalLink, LinkIcon, Pencil, Trash2 } from "lucide-react";
 // ui
 import {
   CYCLE_TRACKER_EVENTS,
@@ -11,18 +9,17 @@ import {
   CYCLE_TRACKER_ELEMENTS,
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ArchiveIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // helpers
 // hooks
+import { useCycleMenuItems } from "@/components/common/quick-actions-helper";
 import { captureClick, captureError, captureSuccess } from "@/helpers/event-tracker.helper";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { useEndCycle, EndCycleModal } from "@/plane-web/components/cycles";
 // local imports
 import { ArchiveCycleModal } from "./archived-cycles/modal";
 import { CycleDeleteModal } from "./delete-modal";
@@ -50,12 +47,6 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
   const { t } = useTranslation();
   // derived values
   const cycleDetails = getCycleById(cycleId);
-  const isArchived = !!cycleDetails?.archived_at;
-  const isCompleted = cycleDetails?.status?.toLowerCase() === "completed";
-  const isCurrentCycle = cycleDetails?.status?.toLowerCase() === "current";
-  const transferrableIssuesCount = cycleDetails
-    ? cycleDetails.total_issues - (cycleDetails.cancelled_issues + cycleDetails.completed_issues)
-    : 0;
   // auth
   const isEditingAllowed = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -63,8 +54,6 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
     workspaceSlug,
     projectId
   );
-
-  const { isEndCycleModalOpen, setEndCycleModalOpen, endCycleContextMenu } = useEndCycle(isCurrentCycle);
 
   const cycleLink = `${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`;
   const handleCopyText = () =>
@@ -76,12 +65,6 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
       });
     });
   const handleOpenInNewTab = () => window.open(`/${cycleLink}`, "_blank");
-
-  const handleEditCycle = () => {
-    setUpdateModal(true);
-  };
-
-  const handleArchiveCycle = () => setArchiveCycleModal(true);
 
   const handleRestoreCycle = async () =>
     await restoreCycle(workspaceSlug, projectId, cycleId)
@@ -113,60 +96,22 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
         });
       });
 
-  const handleDeleteCycle = () => {
-    setDeleteModal(true);
-  };
+  const menuResult = useCycleMenuItems({
+    cycleDetails: cycleDetails ?? undefined,
+    workspaceSlug,
+    projectId,
+    cycleId,
+    isEditingAllowed,
+    handleEdit: () => setUpdateModal(true),
+    handleArchive: () => setArchiveCycleModal(true),
+    handleRestore: handleRestoreCycle,
+    handleDelete: () => setDeleteModal(true),
+    handleCopyLink: handleCopyText,
+    handleOpenInNewTab,
+  });
 
-  const MENU_ITEMS: TContextMenuItem[] = [
-    {
-      key: "edit",
-      title: t("edit"),
-      icon: Pencil,
-      action: handleEditCycle,
-      shouldRender: isEditingAllowed && !isCompleted && !isArchived,
-    },
-    {
-      key: "open-new-tab",
-      action: handleOpenInNewTab,
-      title: t("open_in_new_tab"),
-      icon: ExternalLink,
-      shouldRender: !isArchived,
-    },
-    {
-      key: "copy-link",
-      action: handleCopyText,
-      title: t("copy_link"),
-      icon: LinkIcon,
-      shouldRender: !isArchived,
-    },
-    {
-      key: "archive",
-      action: handleArchiveCycle,
-      title: t("archive"),
-      description: isCompleted ? undefined : t("project_cycles.only_completed_cycles_can_be_archived"),
-      icon: ArchiveIcon,
-      className: "items-start",
-      iconClassName: "mt-1",
-      shouldRender: isEditingAllowed && !isArchived,
-      disabled: !isCompleted,
-    },
-    {
-      key: "restore",
-      action: handleRestoreCycle,
-      title: t("restore"),
-      icon: ArchiveRestoreIcon,
-      shouldRender: isEditingAllowed && isArchived,
-    },
-    {
-      key: "delete",
-      action: handleDeleteCycle,
-      title: t("delete"),
-      icon: Trash2,
-      shouldRender: isEditingAllowed && !isCompleted && !isArchived,
-    },
-  ];
-
-  if (endCycleContextMenu) MENU_ITEMS.splice(3, 0, endCycleContextMenu);
+  const MENU_ITEMS: TContextMenuItem[] = Array.isArray(menuResult) ? menuResult : menuResult.items;
+  const additionalModals = Array.isArray(menuResult) ? null : menuResult.modals;
 
   const CONTEXT_MENU_ITEMS = MENU_ITEMS.map(function CONTEXT_MENU_ITEMS(item) {
     return {
@@ -206,17 +151,7 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
             workspaceSlug={workspaceSlug}
             projectId={projectId}
           />
-          {isCurrentCycle && (
-            <EndCycleModal
-              isOpen={isEndCycleModalOpen}
-              handleClose={() => setEndCycleModalOpen(false)}
-              cycleId={cycleId}
-              projectId={projectId}
-              workspaceSlug={workspaceSlug}
-              transferrableIssuesCount={transferrableIssuesCount}
-              cycleName={cycleDetails.name}
-            />
-          )}
+          {additionalModals}
         </div>
       )}
       <ContextMenu parentRef={parentRef} items={CONTEXT_MENU_ITEMS} />

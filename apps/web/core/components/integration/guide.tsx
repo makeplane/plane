@@ -54,8 +54,8 @@ const IntegrationGuide = observer(function IntegrationGuide() {
   const { t } = useTranslation();
 
   const { data: importerServices } = useSWR(
-    workspaceSlug ? IMPORTER_SERVICES_LIST(workspaceSlug as string) : null,
-    workspaceSlug ? () => integrationService.getImporterServicesList(workspaceSlug as string) : null
+    workspaceSlug ? IMPORTER_SERVICES_LIST(workspaceSlug) : null,
+    workspaceSlug ? () => integrationService.getImporterServicesList(workspaceSlug) : null
   );
 
   const handleDeleteImport = (importService: IImporterService) => {
@@ -129,7 +129,7 @@ const IntegrationGuide = observer(function IntegrationGuide() {
                     className="flex flex-shrink-0 items-center gap-1 rounded bg-custom-background-80 px-1.5 py-1 text-xs outline-none"
                     onClick={() => {
                       setRefreshing(true);
-                      mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string)).then(() => setRefreshing(false));
+                      mutate(IMPORTER_SERVICES_LIST(workspaceSlug)).then(() => setRefreshing(false));
                     }}
                   >
                     <RefreshCw className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`} />{" "}

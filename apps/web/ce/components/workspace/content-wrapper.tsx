@@ -23,9 +23,9 @@ export const WorkspaceContentWrapper = observer(function WorkspaceContentWrapper
         {shouldRenderAppRail && <AppRailRoot />}
         <div
           className={cn(
-            "relative size-full pl-0 pb-2 pr-2 flex-grow transition-all ease-in-out duration-300 overflow-hidden",
+            "relative size-full pl-2 pb-2 pr-2 flex-grow transition-all ease-in-out duration-300 overflow-hidden",
             {
-              "pl-2": shouldRenderAppRail,
+              "pl-0": shouldRenderAppRail,
             }
           )}
         >

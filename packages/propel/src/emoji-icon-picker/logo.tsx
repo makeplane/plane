@@ -1,7 +1,7 @@
 import type { FC } from "react";
 // Due to some weird issue with the import order, the import of useFontFaceObserver
 // should be after the imported here rather than some below helper functions as it is in the original file
-// eslint-disable-next-line import/order
+
 import useFontFaceObserver from "use-font-face-observer";
 // plane imports
 import type { TLogoProps } from "@plane/types";
