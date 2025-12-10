@@ -15,7 +15,7 @@ export function MaterialIconList(props: MaterialIconListProps) {
 
   const isMaterialSymbolsFontLoaded = useFontFaceObserver([
     {
-      family: `Material Symbols rounded-sm`,
+      family: `Material Symbols Rounded`,
       style: `normal`,
       weight: `normal`,
       stretch: `condensed`,
