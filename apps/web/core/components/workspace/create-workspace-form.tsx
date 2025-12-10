@@ -58,10 +58,9 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
   // router
   const router = useAppRouter();
   // store hooks
-  const { createWorkspace, currentWorkspace } = useWorkspace();
+  const { createWorkspace } = useWorkspace();
   const { data: currentUser } = useUser();
   const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
-  const { extraWorkspaceProperties } = useEventTracker(currentWorkspace);
 
   // form info
   const {

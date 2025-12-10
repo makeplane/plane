@@ -51,10 +51,10 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
   const { updateUserProfile } = useUserProfile();
   const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   const { fetchCurrentUserSettings } = useUserSettings();
-  const { createWorkspace, fetchWorkspaces, currentWorkspace } = useWorkspace();
+  const { createWorkspace, fetchWorkspaces } = useWorkspace();
   const { data: currentUser } = useUser();
   const isWorkspaceCreationEnabled = getIsWorkspaceCreationDisabled() === false;
-  const { extraWorkspaceProperties } = useEventTracker(currentWorkspace);
+
   // form info
   const {
     handleSubmit,
