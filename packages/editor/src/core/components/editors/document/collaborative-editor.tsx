@@ -78,6 +78,7 @@ const CollaborativeDocumentEditorInner: React.FC<ICollaborativeDocumentEditorPro
     placeholder,
     tabIndex,
     titleRef,
+    updatePageProperties,
     user,
     actions,
   });

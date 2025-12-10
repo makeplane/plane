@@ -27,7 +27,7 @@ import { useUser } from "@/hooks/store/user";
 import { usePageFilters } from "@/hooks/use-page-filters";
 import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 // plane web imports
-import type { TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
+import { useRealtimePageEvents, type TCustomEventHandlers } from "@/hooks/use-realtime-page-events";
 import { EditorAIMenu } from "@/plane-web/components/pages";
 import type { TExtendedEditorExtensionsConfig } from "@/plane-web/hooks/pages";
 import type { EPageStoreType } from "@/plane-web/hooks/store";
@@ -94,9 +94,7 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
   // derived values
   const {
     id: pageId,
-    name: pageTitle,
     isContentEditable,
-    updateTitle,
     editor: { editorRef, updateAssetsList },
     setSyncingStatus,
   } = page;
@@ -131,6 +129,24 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
     [fontSize, fontStyle, isFullWidth]
   );
 
+  // Use the new hook to handle page events
+  const { updatePageProperties } = useRealtimePageEvents({
+    storeType,
+    page,
+    getUserDetails,
+    handlers,
+  });
+
+  // Set syncing status when page changes and reset collaboration state
+  useEffect(() => {
+    setSyncingStatus("syncing");
+    onCollaborationStateChange?.({
+      stage: { kind: "connecting" },
+      isServerSynced: false,
+      isServerDisconnected: false,
+    });
+  }, [pageId, setSyncingStatus, onCollaborationStateChange]);
+
   const getAIMenu = useCallback(
     ({ isOpen, onClose }: TAIMenuProps) => (
       <EditorAIMenu
@@ -143,16 +159,6 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
     ),
     [editorRef, workspaceId, workspaceSlug]
   );
-
-  // Set syncing status when page changes and reset collaboration state
-  useEffect(() => {
-    setSyncingStatus("syncing");
-    onCollaborationStateChange?.({
-      stage: { kind: "connecting" },
-      isServerSynced: false,
-      isServerDisconnected: false,
-    });
-  }, [pageId, setSyncingStatus, onCollaborationStateChange]);
 
   const serverHandler: TServerHandler = useMemo(
     () => ({
@@ -271,6 +277,7 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
             renderComponent: (props) => <EditorMentionsRoot {...props} />,
             getMentionedEntityDetails: (id: string) => ({ display_name: getUserDetails(id)?.display_name ?? "" }),
           }}
+          updatePageProperties={updatePageProperties}
           realtimeConfig={realtimeConfig}
           serverHandler={serverHandler}
           user={userConfig}

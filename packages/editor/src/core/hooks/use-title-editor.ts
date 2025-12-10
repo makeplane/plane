@@ -32,14 +32,23 @@ type Props = {
  * Uses the same Y.Doc as the main editor but a different field
  */
 export const useTitleEditor = (props: Props) => {
-  const { editable = true, id, initialValue = "", extensions, provider, updatePageProperties, titleRef, getEditorMetaData } = props;
+  const {
+    editable = true,
+    id,
+    initialValue = "",
+    extensions,
+    provider,
+    updatePageProperties,
+    titleRef,
+    getEditorMetaData,
+  } = props;
 
   // Force editor recreation when Y.Doc changes (provider.document.guid)
   const docKey = provider?.document?.guid ?? id;
 
   const editor = useEditor(
     {
-      onUpdate: () => {
+      onUpdate: ({ editor }) => {
         updatePageProperties?.(id, "property_updated", { name: editor?.getText() });
       },
       editable,
