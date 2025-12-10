@@ -11,6 +11,7 @@ import {
   DocumentEditorExtensionsWithoutProps,
 } from "@/extensions/core-without-props";
 import { TitleExtensions } from "@/extensions/title-extension";
+import { sanitizeHTML } from "@plane/utils";
 
 // editor extension configs
 const RICH_TEXT_EDITOR_EXTENSIONS = CoreEditorExtensionsWithoutProps;
@@ -206,7 +207,8 @@ export const convertHTMLDocumentToAllFormats = (args: TConvertHTMLDocumentToAllF
 };
 
 export const extractTextFromHTML = (html: string): string => {
-  // Use a regex to extract text between tags
-  const textMatch = html.replace(/<[^>]*>/g, "");
-  return textMatch || "";
+  // Use sanitizeHTML to safely extract text and remove all HTML tags
+  // This is more secure than regex as it handles edge cases and prevents injection
+  // Note: sanitizeHTML trims whitespace, which is acceptable for title extraction
+  return sanitizeHTML(html) || "";
 };
