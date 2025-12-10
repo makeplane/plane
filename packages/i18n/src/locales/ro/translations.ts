@@ -1590,6 +1590,7 @@ export default {
         name: "Numele spațiului de lucru",
         company_size: "Dimensiunea companiei",
         url: "URL-ul spațiului de lucru",
+        workspace_timezone: "Fusul orar al spațiului de lucru",
         update_workspace: "Actualizează spațiul de lucru",
         delete_workspace: "Șterge acest spațiu de lucru",
         delete_workspace_description:

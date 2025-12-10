@@ -164,7 +164,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
       >
         <>
           <Disclosure as="div" className="flex flex-col" defaultOpen={isAllProjectsListOpen}>
-            <div className="group w-full flex items-center justify-between px-2 py-1.5 rounded-sm text-placeholder hover:bg-surface-2">
+            <div className="group w-full flex items-center justify-between px-2 py-1.5 rounded-sm text-placeholder hover:bg-layer-transparent-hover">
               <Disclosure.Button
                 as="button"
                 type="button"

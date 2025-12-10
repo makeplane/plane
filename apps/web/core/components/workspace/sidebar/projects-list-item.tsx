@@ -282,7 +282,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
           <DropIndicator classNames="absolute top-0" isVisible={instruction === "DRAG_OVER"} />
           <div
             className={cn(
-              "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-primary hover:bg-surface-2",
+              "group/project-item relative w-full px-2 py-1.5 flex items-center rounded-md text-primary hover:bg-layer-transparent-hover",
               {
                 "bg-surface-2": isMenuActive,
               }

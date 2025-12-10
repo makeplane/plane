@@ -71,7 +71,7 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
 
   return (
     <div className="relative">
-      <div className="sticky top-0 z-[4] h-[50px] bg-surface-2 px-2">
+      <div className="sticky top-0 z-4 h-[50px] px-2">
         <SubGroupSwimlaneHeader
           groupBy={groupBy}
           subGroupBy={subGroupBy}
