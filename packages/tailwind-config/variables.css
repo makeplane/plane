@@ -89,7 +89,7 @@
   --shadow-direction-right: 10px 0px 30px -5px #0000000a, 5px 0px 80px -5px #0000000a;
 
   /* --------- Priority colors --------- */
-  --color-priority-urgent: oklch(0.5992 0.1714 34.02);
+  --color-priority-urgent: oklch(0.5798 0.1766 26.99);
   --color-priority-high: oklch(0.6802 0.1633 50.67);
   --color-priority-medium: oklch(0.79 0.1466 82.04);
   --color-priority-low: oklch(0.579 0.1807 262.31);
@@ -223,6 +223,7 @@
   --extended-color-grey-950: oklch(0.2603 0 0);
 }
 
+/* -------------------- Light mode color tokens -------------------- */
 @theme {
   /* Neutral colors */
   --color-neutral-white: oklch(1 0 0);
@@ -521,6 +522,18 @@
   --illustration-stroke-primary: var(--color-neutral-700);
   --illustration-stroke-secondary: var(--color-neutral-800);
   --illustration-stroke-tertiary: var(--color-neutral-1200);
+
+  /* Neutral plan colors */
+  --text-color-plans-neutral-primary: var(--color-neutral-1000);
+  --text-color-plans-neutral-color: var(--color-neutral-100);
+  --background-color-plans-neutral-subtle: var(--color-neutral-400);
+  --background-color-plans-neutral-solid: var(--color-neutral-1200);
+
+  /* Brand plan colors */
+  --text-color-plans-brand-primary: var(--color-brand-1200);
+  --text-color-plans-brand-color: var(--color-neutral-100);
+  --background-color-plans-brand-subtle: var(--color-brand-200);
+  --background-color-plans-brand-solid: var(--color-brand-1200);
 }
 
 @layer theme {
@@ -751,6 +764,18 @@
       --illustration-stroke-primary: var(--color-neutral-700);
       --illustration-stroke-secondary: var(--color-neutral-800);
       --illustration-stroke-tertiary: var(--color-neutral-1000);
+
+      /* Neutral plan colors */
+      --text-color-plans-neutral-primary: var(--color-neutral-1000);
+      --text-color-plans-neutral-color: var(--color-neutral-100);
+      --background-color-plans-neutral-subtle: var(--color-neutral-500);
+      --background-color-plans-neutral-solid: var(--color-neutral-1100);
+
+      /* Brand plan colors */
+      --text-color-plans-brand-primary: var(--color-brand-1000);
+      --text-color-plans-brand-color: var(--color-brand-100);
+      --background-color-plans-brand-subtle: var(--color-brand-200);
+      --background-color-plans-brand-solid: var(--colo-brand-1100);
     }
 
     /* -------------------- Dark high contrast mode derived colors -------------------- */
