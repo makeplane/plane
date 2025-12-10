@@ -24,7 +24,7 @@ export interface IButtonStyling {
 }
 
 export const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-1 rounded-md whitespace-nowrap transition-colors focus-visible:outline-none disabled:pointer-events-none",
+  "inline-flex items-center justify-center gap-1 whitespace-nowrap transition-colors focus-visible:outline-none disabled:pointer-events-none",
   {
     variants: {
       variant: {
@@ -43,10 +43,10 @@ export const buttonVariants = cva(
         link: "px-0 underline text-link-primary hover:text-link-primary-hover active:text-link-primary-hover focus:text-link-primary-hover disabled:text-disabled",
       },
       size: {
-        sm: "h-5 px-1.5 text-caption-md-medium",
-        base: "h-6 px-2 text-body-xs-medium",
-        lg: "h-7 px-2 text-body-sm-medium",
-        xl: "h-8 px-2 text-body-sm-medium",
+        sm: "h-5 px-1.5 text-caption-md-medium rounded-sm",
+        base: "h-6 px-2 text-body-xs-medium rounded-md",
+        lg: "h-7 px-2 text-body-sm-medium rounded-md",
+        xl: "h-8 px-2 text-body-sm-medium rounded-md",
       },
     },
     defaultVariants: {
