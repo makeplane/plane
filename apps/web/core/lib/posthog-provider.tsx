@@ -6,10 +6,11 @@ import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react"
 // constants
 // hooks
 import { captureClick } from "@/helpers/event-tracker.helper";
-import { identifyUser, joinWorkspaceGroup } from "@/plane-web/helpers/event-tracker-v2.helper";
 import { useInstance } from "@/hooks/store/use-instance";
 import { useUser, useUserProfile } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { usePosthogWorkspace } from "@/plane-web/hooks/use-posthog-workspace";
+import { identifyUser, joinWorkspaceGroup } from "@/plane-web/helpers/event-tracker-v2.helper";
 // dynamic imports
 const PostHogPageView = lazy(function PostHogPageView() {
   return import("@/lib/posthog-view");
@@ -25,6 +26,7 @@ const PostHogProvider = observer(function PostHogProvider(props: IPosthogWrapper
   const { data: profile } = useUserProfile();
   const { instance } = useInstance();
   const { currentWorkspace } = useWorkspace();
+  const workspaceData = usePosthogWorkspace(currentWorkspace);
   // refs
   const isInitializedRef = useRef(false);
   // states
@@ -41,9 +43,9 @@ const PostHogProvider = observer(function PostHogProvider(props: IPosthogWrapper
 
   useEffect(() => {
     if (currentWorkspace && hydrated && is_posthog_enabled) {
-      joinWorkspaceGroup(currentWorkspace);
+      joinWorkspaceGroup(currentWorkspace, workspaceData || {});
     }
-  }, [currentWorkspace, hydrated, is_posthog_enabled]);
+  }, [currentWorkspace, hydrated, is_posthog_enabled, workspaceData]);
 
   useEffect(() => {
     if (isInitializedRef.current) return; // prevent multiple initializations
