@@ -32,6 +32,7 @@
     "@hocuspocus/transformer": "2.15.2",
     "@plane/decorators": "workspace:*",
     "@plane/editor": "workspace:*",
+    "@plane/utils": "workspace:*",
     "@plane/logger": "workspace:*",
     "@plane/types": "workspace:*",
     "@sentry/node": "catalog:",
