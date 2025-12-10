@@ -45,7 +45,6 @@
     "express-ws": "^5.0.2",
     "helmet": "^7.1.0",
     "ioredis": "5.7.0",
-    "isomorphic-dompurify": "^1.8.0",
     "uuid": "catalog:",
     "ws": "^8.18.3",
     "y-prosemirror": "^1.3.7",
