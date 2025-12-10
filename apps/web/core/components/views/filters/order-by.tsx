@@ -25,7 +25,7 @@ export function ViewOrderByDropdown(props: Props) {
 
   const buttonClassName = isMobile
     ? "flex items-center text-13 text-secondary gap-2 w-full"
-    : `${getButtonStyling("neutral-primary", "sm")} px-2 text-tertiary`;
+    : `${getButtonStyling("secondary", "lg")} px-2 text-tertiary`;
 
   const chevronClassName = isMobile ? "h-4 w-4 text-secondary" : "h-3 w-3";
   const icon = (

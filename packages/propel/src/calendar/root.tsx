@@ -1,6 +1,6 @@
 import * as React from "react";
 import { DayPicker } from "react-day-picker";
-import { ChevronLeftIcon } from "../icons";
+import { ChevronLeftIcon } from "../icons/arrows/chevron-left";
 
 import { cn } from "../utils";
 

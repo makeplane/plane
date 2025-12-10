@@ -56,14 +56,14 @@ body {
   .horizontal-scrollbar {
     scrollbar-width: initial;
     scrollbar-color: rgba(96, 100, 108, 0.1) transparent;
-  }
-  .vertical-scrollbar:hover,
-  .horizontal-scrollbar:hover {
-    scrollbar-color: rgba(96, 100, 108, 0.25) transparent;
-  }
-  .vertical-scrollbar:active,
-  .horizontal-scrollbar:active {
-    scrollbar-color: rgba(96, 100, 108, 0.7) transparent;
+
+    &:hover {
+      scrollbar-color: rgba(96, 100, 108, 0.25) transparent;
+    }
+
+    &:active {
+      scrollbar-color: rgba(96, 100, 108, 0.7) transparent;
+    }
   }
 }
 
@@ -72,49 +72,46 @@ body {
   @apply hidden;
 }
 
-@utility vertical-scrollbar {
-  overflow-y: auto;
+.vertical-scrollbar {
+  @apply overflow-y-auto;
+}
 
+.horizontal-scrollbar {
+  @apply overflow-x-auto;
+}
+
+.vertical-scrollbar,
+.horizontal-scrollbar {
   &::-webkit-scrollbar {
-    display: block;
+    @apply block;
+  }
+
+  &::-webkit-scrollbar-track {
+    @apply bg-layer-transparent rounded-full;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-clip: padding-box;
+    @apply bg-scrollbar-thumb rounded-full;
+
+    &:hover {
+      @apply bg-scrollbar-thumb-hover;
+    }
+
+    &:active {
+      @apply bg-scrollbar-thumb-active;
+    }
+  }
+
+  &:hover::-webkit-scrollbar-thumb {
+    @apply bg-scrollbar-thumb-surface-hover;
+  }
+
+  &::-webkit-scrollbar-corner {
+    @apply bg-layer-transparent;
   }
 }
 
-@utility horizontal-scrollbar {
-  overflow-x: auto;
-
-  &::-webkit-scrollbar {
-    display: block;
-  }
-}
-
-.vertical-scrollbar::-webkit-scrollbar-track,
-.horizontal-scrollbar::-webkit-scrollbar-track {
-  background-color: transparent;
-  border-radius: 9999px;
-}
-.vertical-scrollbar::-webkit-scrollbar-thumb,
-.horizontal-scrollbar::-webkit-scrollbar-thumb {
-  background-clip: padding-box;
-  background-color: rgba(96, 100, 108, 0.1);
-  border-radius: 9999px;
-}
-.vertical-scrollbar:hover::-webkit-scrollbar-thumb,
-.horizontal-scrollbar:hover::-webkit-scrollbar-thumb {
-  background-color: rgba(96, 100, 108, 0.25);
-}
-.vertical-scrollbar::-webkit-scrollbar-thumb:hover,
-.horizontal-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(96, 100, 108, 0.5);
-}
-.vertical-scrollbar::-webkit-scrollbar-thumb:active,
-.horizontal-scrollbar::-webkit-scrollbar-thumb:active {
-  background-color: rgba(96, 100, 108, 0.7);
-}
-.vertical-scrollbar::-webkit-scrollbar-corner,
-.horizontal-scrollbar::-webkit-scrollbar-corner {
-  background-color: transparent;
-}
 .vertical-scrollbar-margin-top-md::-webkit-scrollbar-track {
   margin-top: 44px;
 }
@@ -160,6 +157,19 @@ body {
   }
 }
 
+.hide-vertical-scrollbar::-webkit-scrollbar {
+  width: 0 !important;
+}
+
+.hide-horizontal-scrollbar::-webkit-scrollbar {
+  height: 0 !important;
+}
+
+.hide-both-scrollbars::-webkit-scrollbar {
+  height: 0 !important;
+  width: 0 !important;
+}
+
 /* highlight class */
 @utility highlight {
   border: 1px solid rgb(var(--color-primary-100)) !important;
@@ -177,5 +187,17 @@ body {
   &:-webkit-autofill:focus,
   &:-webkit-autofill:active {
     -webkit-background-clip: text;
+  }
+}
+
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    @apply text-placeholder;
   }
 }

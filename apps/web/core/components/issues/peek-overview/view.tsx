@@ -128,7 +128,7 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
   const portalContainer = document.getElementById("full-screen-portal") as HTMLElement;
 
   const content = (
-    <div className="w-full !text-14">
+    <div className="w-full text-body-sm-regular">
       {issueId && (
         <div
           ref={issuePeekOverviewRef}

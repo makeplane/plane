@@ -22,7 +22,7 @@ export function IssueDetailWidgetButton(props: Props) {
       )}
     >
       {icon && icon}
-      <span className="text-13 font-medium">{title}</span>
+      <span className="text-body-xs-medium">{title}</span>
     </div>
   );
 }
